@@ -1,0 +1,18 @@
+syntax: glob
+.DS_Store
+.gradle/
+.idea/caches
+.idea/codeStyles
+.idea/compiler.xml
+.idea/dictionaries/
+.idea/gradle.xml
+.idea/libraries/
+.idea/modules.xml
+.idea/tasks.xml
+.idea/workspace.xml
+.settings
+*.iml
+bin/
+build/
+gen/
+local.properties
