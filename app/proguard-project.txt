@@ -1,0 +1,9 @@
+# This improves obfuscation.
+-repackageclasses 'cash.z.ecc.android'
+
+# Ensure that stacktraces are reversible.
+-renamesourcefileattribute SourceFile
+-keepattributes SourceFile,LineNumberTable
+
+# Generate the combined proguard configuration for debugging.
+-printconfiguration build/outputs/proguard-config.txt

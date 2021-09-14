@@ -9,9 +9,7 @@ While we aim to continue improving this sample, it is not an official product.  
 If you'd like to compile this application from source, please see our [Setup Documentation](docs/Setup.md) to get started.
 
 # Reporting an issue
-If you wish to report a security issue, please follow our [Responsible Disclosure guidelines](https://github.com/zcash/ZcashLightClientKit/blob/master/responsible_disclosure.md).  See the [Wallet App Threat Model](https://zcash.readthedocs.io/en/latest/rtd_pages/wallet_threat_model.html) for more information about the security and privacy limitations of the wallet.  There are some known security and privacy limitations:
-- Traffic analysis, like in other cryptocurrency wallets, can leak some privacy of the user.
-- The wallet requires a trust in the server to display accurate transaction information.
+If you wish to report a security issue, please follow our [Responsible Disclosure guidelines](https://github.com/zcash/ZcashLightClientKit/blob/master/responsible_disclosure.md).  See the [Wallet App Threat Model](https://zcash.readthedocs.io/en/latest/rtd_pages/wallet_threat_model.html) for more information about the security and privacy limitations of the wallet.
 
 If you'd like to report a technical issue or feature request for the Android Wallet, please file a [GitHub issue](https://github.com/zcash/secant-android-wallet/issues/new/choose).
 
@@ -21,3 +19,16 @@ General Zcash questions and/or support requests and are best directed to either:
 
 # Contributing
 Contributions are very much welcomed!  Please read our [Contributing Guidelines](docs/CONTRIBUTING.md) to learn about our process.
+
+# Forking
+If you plan to fork the project to create a new app of your own, please make the following changes.  (If you're making a GitHub fork to contribute back to the project, these steps are not necessary.)  
+
+1. Change the app name under app/
+1. Remove any copyrighted ZCash or Electric Coin Company icons, logos, or assets
+1. Change the package name
+    1. Under [app/build.gradle.kts](app/build.gradle.kts), change the package name of the application
+    1. Under [app/proguard-project.txt](app/proguard-project.txt), change the `-repackageclasses` directive to your own package name
+
+# Known Issues
+
+1. During builds, a warning will be printed that says "Unable to detect AGP versions for included builds. All projects in the build should use the same AGP version."  This can be safely ignored.  The version under build-conventions is the same as the version used elsewhere in the application.

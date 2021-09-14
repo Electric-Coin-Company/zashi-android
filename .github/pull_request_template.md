@@ -6,7 +6,7 @@ This code review checklist is intended to serve as a starting point for the auth
 - [ ] Automated tests: Did you add appropriate automated tests for any code changes?
 - [ ] Manual tests: Did you update the [manual tests](../blob/main/docs/testing/manual_testing) as appropriate? _While we aim for automated testing of the application, some aspects require manual testing. If you had to manually test something during development of this pull request, write those steps down._
 - [ ] Code coverage: Did you check the code coverage report for the automated tests?  _While we are not looking for perfect coverage, the tool can point out potential cases that have been missed._
-- [ ] Documentation: Did you update documentation as appropiate? (e.g [README.md](../blob/main/README.md), etc.)
+- [ ] Documentation: Did you update documentation as appropriate? (e.g [README.md](../blob/main/README.md), etc.)
 - [ ] Run the app: Did you run the app and try the changes?
 - [ ] Screenshots: Did you provide before and after UI screenshots in the description of this pull request?  _This is only applicable for changes that modify the UI._
 - [ ] Rebase and squash: Did you pull in the latest changes from the main branch and squash your commits before assigning a reviewer? _Having your code up to date and squashed will make it easier for others to review. Use best judgement when squashing commits, as some changes (such as refactoring) might be easier to review as a separate commit._

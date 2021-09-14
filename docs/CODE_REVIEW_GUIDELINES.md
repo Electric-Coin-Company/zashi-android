@@ -1,8 +1,8 @@
 # Overall:
 
-- Does the contribution referece an existing Issue?
+- Does the contribution reference an existing GitHub issue?
 - Are the requirements well defined?
-
+- Does static analysis pass?  (e.g. `./gradlew detektAll` and `./gradlew lint`)
 
 #  Specification:
 

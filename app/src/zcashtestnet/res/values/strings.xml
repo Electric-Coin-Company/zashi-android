@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Testnet Demo</string>
+    <string name="network_name">Testnet</string>
+</resources>
