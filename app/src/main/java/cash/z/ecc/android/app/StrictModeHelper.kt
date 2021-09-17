@@ -6,7 +6,6 @@ import android.os.Handler
 import android.os.Looper
 import android.os.StrictMode
 
-
 object StrictModeHelper {
 
     fun enableStrictMode() {

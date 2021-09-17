@@ -1,0 +1,11 @@
+disabled_rules=import-ordering,no-wildcard-imports
+
+# Defines the imports layout. The layout can be composed by the following symbols:
+# "*" - wildcard. There must be at least one entry of a single wildcard to match all other imports. Matches anything after a specified symbol/import as well.
+# "|" - blank line. Supports only single blank lines between imports. No blank line is allowed in the beginning or end of the layout.
+# "^" - alias import, e.g. "^android.*" will match all android alias imports, "^" will match all other alias imports.
+# import paths - these can be full paths, e.g. "java.util.List.*" as well as wildcard paths, e.g. "kotlin.**"
+# Examples (we use ij_kotlin_imports_layout to set an imports layout for both ktlint and IDEA via a single property):
+ij_kotlin_imports_layout=* # alphabetical with capital letters before lower case letters (e.g. Z before a), no blank lines
+ij_kotlin_imports_layout=*,java.**,javax.**,kotlin.**,^ # default IntelliJ IDEA style, same as alphabetical, but with "java", "javax", "kotlin" and alias imports in the end of the imports list
+ij_kotlin_imports_layout=android.**,|,^org.junit.**,kotlin.io.Closeable.*,|,*,^ # custom imports layout

@@ -3,8 +3,8 @@ pluginManager.withPlugin("com.android.application") {
         configureBaseExtension()
 
         defaultConfig {
-            minSdk = (project.property("ANDROID_MIN_SDK_VERSION").toString().toInt())
-            targetSdk = (project.property("ANDROID_TARGET_SDK_VERSION").toString().toInt())
+            minSdk = project.property("ANDROID_MIN_SDK_VERSION").toString().toInt()
+            targetSdk = project.property("ANDROID_TARGET_SDK_VERSION").toString().toInt()
 
             // en_XA and ar_XB are pseudolocales for debugging.
             // The rest of the locales provides an explicit list of the languages to keep in the
