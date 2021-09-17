@@ -15,7 +15,7 @@ Start by making sure the command line with Gradle works first, because **all the
     1. To simplify installation, use [Oracle's JDK](https://www.oracle.com/java/technologies/javase-jdk16-downloads.html) installer that will place the Java installation in the right place
 1. Install Android Studio and the Android SDK
     1. Download the [stable release of Android Studio](https://developer.android.com/studio#downloads)
-    1. TODO: Fill in step-by-step instructions for setting up a new environment and installing the Android SDK from within Android Studio.
+    1. TODO: Fill in step-by-step instructions for setting up a new environment and installing the Android SDK from within Android Studio
 1. Check out the code.  _Use the command line (instead of Android Studio) to check out the code. This will ensure that your command line environment is set up correctly and avoids a few pitfalls with trying to use Android Studio directly.  Android Studio's built-in git client is not as robust as standalone clients_
 1. Compile from the command line
     1. Navigate to the repo checkout in a terminal
@@ -31,19 +31,22 @@ Start by making sure the command line with Gradle works first, because **all the
    2. Deleting the invisible `.idea` in the root directory of the project
    3. Relaunch Android Studio
 2. Clean the individual Gradle project by running `./gradlew clean` which will purge local build outputs.
-3. Run Gradle with the flag `--rerun-tasks` which will effectively disable the build cache by re-running tasks and repopulating the cache.  E.g. `./gradlew assemble --rerun-tasks`
+3. Run Gradle with the argument `--rerun-tasks` which will effectively disable the build cache by re-running tasks and repopulating the cache.  E.g. `./gradlew assemble --rerun-tasks`
 4. Reboot your computer, which will ensure that Gradle and Kotlin daemons are completely killed and relaunched
 5. Delete the global Gradle cache under `~/.gradle/caches`
 
 ## Gradle Tasks
 A variety of Gradle tasks are set up within the project, and these tasks are also accessible in Android Studio as run configurations.
-`assemble` - Compiles the application
-`detektAll` - Performs static analysis with Detekt
-`lint` - Performs static analysis with Android lint
-`dependencyUpdates` - Checks for available dependency updates
+ * `assemble` - Compiles the application but does not deploy it
+ * `assembleAndroidTest` - Compiles the application and tests, but does not deploy the application or run the tests
+ * `detektAll` - Performs static analysis with Detekt
+ * `ktlint` - Performs code formatting checks with ktlint
+ * `lint` - Performs static analysis with Android lint
+ * `dependencyUpdates` - Checks for available dependency updates
 
 ## Gradle Properties
 A variety of Gradle properties can be used to configure the build.
+
 ### Debug Signing
 By default, the application is signed by the developers automatically generated debug signing key.  In a team of developers, it may be advantageous to share a debug key so that debug builds can access key-restricted services such as Firebase or Google Maps.  For such a setup, the path to a shared debug signing key can be set with the property `ZCASH_DEBUG_KEYSTORE_PATH`.
 

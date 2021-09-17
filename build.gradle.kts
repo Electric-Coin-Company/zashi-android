@@ -14,9 +14,9 @@ buildscript {
 }
 
 plugins {
-    kotlin("jvm")
     id("com.github.ben-manes.versions")
     id("io.gitlab.arturbosch.detekt")
+    id("zcash.ktlint-conventions")
 }
 
 tasks {

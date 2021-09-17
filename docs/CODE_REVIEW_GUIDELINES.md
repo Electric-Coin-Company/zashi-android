@@ -2,7 +2,7 @@
 
 - Does the contribution reference an existing GitHub issue?
 - Are the requirements well defined?
-- Does static analysis pass?  (e.g. `./gradlew detektAll` and `./gradlew lint`)
+- Does static analysis pass?  (e.g. `./gradlew detektAll`, `./gradlew lint`, `./gradlew ktlint`)
 
 #  Specification:
 
