@@ -6,7 +6,7 @@ plugins {
     id("zcash.android-build-conventions")
 }
 
-val packageName = "cash.z.ecc.android"
+val packageName = "cash.z.ecc"
 
 android {
     defaultConfig {
@@ -99,6 +99,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.zcash)
+    implementation(projects.uiLib)
 
     androidTestImplementation(libs.bundles.androidx.test)
 }

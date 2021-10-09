@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
-    package="cash.z.ecc.android.sdk.demoapp">
+    package="cash.z.ecc">
 
     <application
-        android:name="cash.z.ecc.android.app.App"
+        android:name="cash.z.ecc.app.AppImpl"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -18,20 +18,13 @@
         <activity-alias
             android:name=".LauncherActivity"
             android:label="@string/"
-            android:targetActivity="cash.z.ecc.android.app.MainActivity"
+            android:targetActivity="cash.z.ecc.ui.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity-alias>
-
-        <activity
-            android:name="cash.z.ecc.android.app.MainActivity"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.MyApplication"
-            android:exported="false">
-        </activity>
     </application>
 
 </manifest>

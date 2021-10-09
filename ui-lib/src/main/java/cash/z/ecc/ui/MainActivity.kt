@@ -1,4 +1,4 @@
-package cash.z.ecc.android.app
+package cash.z.ecc.ui
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -8,7 +8,7 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import cash.z.ecc.android.app.ui.theme.MyApplicationTheme
+import cash.z.ecc.ui.theme.MyApplicationTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
