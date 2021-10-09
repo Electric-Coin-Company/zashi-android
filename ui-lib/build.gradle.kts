@@ -43,4 +43,6 @@ dependencies {
     implementation(libs.zcash)
 
     androidTestImplementation(libs.bundles.androidx.test)
+    androidTestImplementation(libs.androidx.compose.test.junit)
+    androidTestImplementation(libs.androidx.compose.test.manifest)
 }

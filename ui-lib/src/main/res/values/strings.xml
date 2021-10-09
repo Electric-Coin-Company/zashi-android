@@ -1,3 +1,21 @@
 <resources>
     <string name="app_name">Demo App</string>
+
+    <string name="onboarding_back">Back</string>
+    <string name="onboarding_skip">Skip</string>
+    <string name="onboarding_next">Next</string>
+    <string name="onboarding_1_header">Shielded by Default</string>
+    <string name="onboarding_1_body">Tired of worrying about which wallet you used last?  US TOO!  Now you don‘t have to, as all funds will automatically be moved to your shielded wallet (and migrated for you).</string>
+    <string name="onboarding_1_image_content_description"></string>
+    <string name="onboarding_2_header">Unified Addresses</string>
+    <string name="onboarding_2_body">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin eget metus euismod, hendrerit dui vel, faucibus ante. Curabitur tortor elit, varius eu leo id, fringilla auctor odio. Donec fringilla tortor purus.</string>
+    <string name="onboarding_2_image_content_description"></string>
+    <string name="onboarding_3_header">And so much more…</string>
+    <string name="onboarding_3_body">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin eget metus euismod, hendrerit dui vel, faucibus ante. Curabitur tortor elit, varius eu leo id, fringilla auctor odio. Donec fringilla tortor purus.</string>
+    <string name="onboarding_3_image_content_description"></string>
+    <string name="onboarding_4_header">Ready for the Future</string>
+    <string name="onboarding_4_body">Let‘s get you set up!</string>
+    <string name="onboarding_4_image_content_description"></string>
+    <string name="onboarding_4_create_new_wallet">Create New Wallet</string>
+    <string name="onboarding_4_import_existing_wallet">Import an Existing Wallet</string>
 </resources>

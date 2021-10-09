@@ -75,11 +75,31 @@ fun com.android.build.gradle.BaseExtension.configureBaseExtension() {
         }
     }
 
+    // TODO [#22]: This doesn't work, so there's a duplicate in build.gradle.kts
     testOptions {
         animationsDisabled = true
 
         if (project.property("IS_USE_TEST_ORCHESTRATOR").toString().toBoolean()) {
             execution = "ANDROIDX_TEST_ORCHESTRATOR"
         }
+    }
+
+    packagingOptions {
+        resources.excludes.addAll(
+            listOf(
+                "META-INF/AL2.0",
+                "META-INF/ASL2.0",
+                "META-INF/DEPENDENCIES",
+                "META-INF/LGPL2.1",
+                "META-INF/LICENSE",
+                "META-INF/LICENSE-notice.md",
+                "META-INF/LICENSE.md",
+                "META-INF/LICENSE.txt",
+                "META-INF/NOTICE",
+                "META-INF/NOTICE.txt",
+                "META-INF/license.txt",
+                "META-INF/notice.txt",
+            )
+        )
     }
 }

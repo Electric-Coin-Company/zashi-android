@@ -15,15 +15,6 @@ android {
         versionName = "1.0"
     }
 
-    buildFeatures {
-        viewBinding = true
-        compose = true
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.compose.get()
-    }
-
     flavorDimensions.add("network")
 
     productFlavors {

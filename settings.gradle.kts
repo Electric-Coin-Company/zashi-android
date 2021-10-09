@@ -59,7 +59,7 @@ dependencyResolutionManagement {
             alias("androidx-compose-foundation").to("androidx.compose.foundation:foundation:$androidxComposeVersion")
             alias("androidx-compose-material").to("androidx.compose.material:material:$androidxComposeVersion")
             alias("androidx-compose-material-icons-core").to("androidx.compose.material:material-icons-core:$androidxComposeVersion")
-            alias("androidx-compose-tooling").to("androidx.compose.ui:ui-tooling-preview:$androidxComposeVersion")
+            alias("androidx-compose-tooling").to("androidx.compose.ui:ui-tooling:$androidxComposeVersion")
             alias("androidx-compose-ui").to("androidx.compose.ui:ui:$androidxComposeVersion")
             alias("androidx-core").to("androidx.core:core-ktx:$androidxCoreVersion")
             alias("androidx-lifecycle-livedata").to("androidx.lifecycle:lifecycle-livedata-ktx:$androidxLifecycleVersion")
@@ -70,7 +70,10 @@ dependencyResolutionManagement {
             alias("kotlinx-coroutines-core").to("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
             alias("zcash").to("cash.z.ecc.android:zcash-android-sdk:$zcashSdkVersion")
             // Test libraries
-            alias("androidx-espresso-contrib").to("androidx.test.espresso:espresso-contrib:$androidxEspressoVersion")
+            alias("androidx-compose-test-junit").to("androidx.compose.ui:ui-test-junit4:$androidxComposeVersion")
+            alias("androidx-compose-test-manifest").to("androidx.compose.ui:ui-test-manifest:$androidxComposeVersion")
+            // Cannot use espresso-contrib, because it causes a build failure
+            //alias("androidx-espresso-contrib").to("androidx.test.espresso:espresso-contrib:$androidxEspressoVersion")
             alias("androidx-espresso-core").to("androidx.test.espresso:espresso-core:$androidxEspressoVersion")
             alias("androidx-espresso-intents").to("androidx.test.espresso:espresso-intents:$androidxEspressoVersion")
             alias("androidx-junit").to("androidx.test.ext:junit:$androidxTestJunitVersion")
