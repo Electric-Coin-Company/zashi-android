@@ -35,6 +35,7 @@ dependencyResolutionManagement {
             val androidxComposeVersion = extra["ANDROIDX_COMPOSE_VERSION"].toString()
             val androidxCoreVersion = extra["ANDROIDX_CORE_VERSION"].toString()
             val androidxEspressoVersion = extra["ANDROIDX_ESPRESSO_VERSION"].toString()
+            val androidxLifecycleVersion = extra["ANDROIDX_LIFECYCLE_VERSION"].toString()
             val androidxTestJunitVersion = extra["ANDROIDX_TEST_JUNIT_VERSION"].toString()
             val androidxTestOrchestratorVersion = extra["ANDROIDX_ESPRESSO_VERSION"].toString()
             val androidxUiAutomatorVersion = extra["ANDROIDX_UI_AUTOMATOR_VERSION"].toString()
@@ -53,23 +54,26 @@ dependencyResolutionManagement {
             // Aliases
             alias("androidx-activity").to("androidx.activity:activity-ktx:$androidxActivityVersion")
             alias("androidx-activity-compose").to("androidx.activity:activity-compose:$androidxActivityVersion")
-            alias("androidx-appcompat").to("androidx.appcompat:appcompat:$androidxAppcompatVersion")
             alias("androidx-annotation").to("androidx.annotation:annotation:$androidxAnnotationVersion")
+            alias("androidx-appcompat").to("androidx.appcompat:appcompat:$androidxAppcompatVersion")
             alias("androidx-compose-foundation").to("androidx.compose.foundation:foundation:$androidxComposeVersion")
             alias("androidx-compose-material").to("androidx.compose.material:material:$androidxComposeVersion")
             alias("androidx-compose-material-icons-core").to("androidx.compose.material:material-icons-core:$androidxComposeVersion")
-            alias("androidx-compose-tooling").to("androidx.compose.ui:ui-tooling-preview:$androidxComposeVersion")
+            alias("androidx-compose-tooling").to("androidx.compose.ui:ui-tooling:$androidxComposeVersion")
             alias("androidx-compose-ui").to("androidx.compose.ui:ui:$androidxComposeVersion")
             alias("androidx-core").to("androidx.core:core-ktx:$androidxCoreVersion")
+            alias("androidx-lifecycle-livedata").to("androidx.lifecycle:lifecycle-livedata-ktx:$androidxLifecycleVersion")
             alias("androidx-viewmodel-compose").to("androidx.activity:activity-compose:$androidxActivityVersion")
             alias("google-material").to("com.google.android.material:material:$googleMaterialVersion")
             alias("kotlin").to("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
             alias("kotlinx-coroutines-android").to("org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlinxCoroutinesVersion")
             alias("kotlinx-coroutines-core").to("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
             alias("zcash").to("cash.z.ecc.android:zcash-android-sdk:$zcashSdkVersion")
-
             // Test libraries
-            alias("androidx-espresso-contrib").to("androidx.test.espresso:espresso-contrib:$androidxEspressoVersion")
+            alias("androidx-compose-test-junit").to("androidx.compose.ui:ui-test-junit4:$androidxComposeVersion")
+            alias("androidx-compose-test-manifest").to("androidx.compose.ui:ui-test-manifest:$androidxComposeVersion")
+            // Cannot use espresso-contrib, because it causes a build failure
+            //alias("androidx-espresso-contrib").to("androidx.test.espresso:espresso-contrib:$androidxEspressoVersion")
             alias("androidx-espresso-core").to("androidx.test.espresso:espresso-core:$androidxEspressoVersion")
             alias("androidx-espresso-intents").to("androidx.test.espresso:espresso-intents:$androidxEspressoVersion")
             alias("androidx-junit").to("androidx.test.ext:junit:$androidxTestJunitVersion")
@@ -95,7 +99,6 @@ dependencyResolutionManagement {
                 listOf(
                     "androidx-espresso-core",
                     "androidx-espresso-intents",
-                    "androidx-espresso-contrib",
                     "androidx-junit"
                 )
             )
@@ -108,3 +111,4 @@ rootProject.name = "zcash-android-app"
 includeBuild("build-conventions")
 
 include("app")
+include("ui-lib")

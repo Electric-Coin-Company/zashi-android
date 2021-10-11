@@ -6,22 +6,13 @@ plugins {
     id("zcash.android-build-conventions")
 }
 
-val packageName = "cash.z.ecc.android"
+val packageName = "cash.z.ecc"
 
 android {
     defaultConfig {
         applicationId = packageName
         versionCode = 1
         versionName = "1.0"
-    }
-
-    buildFeatures {
-        viewBinding = true
-        compose = true
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.compose.get()
     }
 
     flavorDimensions.add("network")
@@ -99,6 +90,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.zcash)
+    implementation(projects.uiLib)
 
     androidTestImplementation(libs.bundles.androidx.test)
 }

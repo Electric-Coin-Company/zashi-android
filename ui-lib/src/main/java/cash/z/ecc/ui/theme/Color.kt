@@ -1,4 +1,4 @@
-package cash.z.ecc.android.app.ui.theme
+package cash.z.ecc.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

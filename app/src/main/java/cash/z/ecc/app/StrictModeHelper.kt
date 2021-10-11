@@ -1,4 +1,4 @@
-package cash.z.ecc.android.app
+package cash.z.ecc.app
 
 import android.annotation.SuppressLint
 import android.os.Build

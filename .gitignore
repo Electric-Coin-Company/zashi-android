@@ -2,7 +2,6 @@ syntax: glob
 .DS_Store
 .gradle/
 .idea/caches
-.idea/codeStyles
 .idea/compiler.xml
 .idea/dictionaries/
 .idea/gradle.xml
