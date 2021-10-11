@@ -6,8 +6,6 @@ plugins {
     id("zcash.android-build-conventions")
 }
 
-val packageName = "cash.z.ecc.ui"
-
 android {
     buildFeatures {
         viewBinding = true
@@ -16,11 +14,6 @@ android {
 
     composeOptions {
         kotlinCompilerExtensionVersion = libs.versions.compose.get()
-    }
-
-    // TODO [#5]: Figure out how to move this into the build-conventions
-    testCoverage {
-        jacocoVersion = libs.versions.jacoco.get()
     }
 
     // TODO [#6]: Figure out how to move this into the build-conventions
@@ -45,4 +38,12 @@ dependencies {
     androidTestImplementation(libs.bundles.androidx.test)
     androidTestImplementation(libs.androidx.compose.test.junit)
     androidTestImplementation(libs.androidx.compose.test.manifest)
+
+    if (project.property("IS_USE_TEST_ORCHESTRATOR").toString().toBoolean()) {
+        androidTestUtil(libs.androidx.test.orchestrator) {
+            artifact {
+                type = "apk"
+            }
+        }
+    }
 }

@@ -37,7 +37,8 @@ dependencyResolutionManagement {
             val androidxEspressoVersion = extra["ANDROIDX_ESPRESSO_VERSION"].toString()
             val androidxLifecycleVersion = extra["ANDROIDX_LIFECYCLE_VERSION"].toString()
             val androidxTestJunitVersion = extra["ANDROIDX_TEST_JUNIT_VERSION"].toString()
-            val androidxTestOrchestratorVersion = extra["ANDROIDX_ESPRESSO_VERSION"].toString()
+            val androidxTestOrchestratorVersion = extra["ANDROIDX_TEST_ORCHESTRATOR_VERSION"].toString()
+            val androidxTestVersion = extra["ANDROIDX_TEST_VERSION"].toString()
             val androidxUiAutomatorVersion = extra["ANDROIDX_UI_AUTOMATOR_VERSION"].toString()
             val googleMaterialVersion = extra["GOOGLE_MATERIAL_VERSION"].toString()
             val jacocoVersion = extra["JACOCO_VERSION"].toString()
@@ -76,8 +77,10 @@ dependencyResolutionManagement {
             //alias("androidx-espresso-contrib").to("androidx.test.espresso:espresso-contrib:$androidxEspressoVersion")
             alias("androidx-espresso-core").to("androidx.test.espresso:espresso-core:$androidxEspressoVersion")
             alias("androidx-espresso-intents").to("androidx.test.espresso:espresso-intents:$androidxEspressoVersion")
-            alias("androidx-junit").to("androidx.test.ext:junit:$androidxTestJunitVersion")
-            alias("androidx-testOrchestrator").to("androidx.test:orchestrator:$androidxTestOrchestratorVersion")
+            alias("androidx-test-core").to("androidx.test:core:$androidxTestVersion")
+            alias("androidx-test-junit").to("androidx.test.ext:junit:$androidxTestJunitVersion")
+            alias("androidx-test-orchestrator").to("androidx.test:orchestrator:$androidxTestOrchestratorVersion")
+            alias("androidx-test-runner").to("androidx.test:runner:$androidxTestVersion")
             alias("androidx-uiAutomator").to("androidx.test.uiautomator:uiautomator-v18:$androidxUiAutomatorVersion")
             alias("kotlinx-coroutines-test").to("org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinxCoroutinesVersion")
 
@@ -99,7 +102,9 @@ dependencyResolutionManagement {
                 listOf(
                     "androidx-espresso-core",
                     "androidx-espresso-intents",
-                    "androidx-junit"
+                    "androidx-test-core",
+                    "androidx-test-junit",
+                    "androidx-test-runner"
                 )
             )
         }

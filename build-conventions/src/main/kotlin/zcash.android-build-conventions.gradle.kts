@@ -1,3 +1,6 @@
+// Note: due to a few limitations with build-conventions, there is some common Android Gradle Plugin
+// configuration happening in the root build.gradle.kts with a subprojects block.
+
 pluginManager.withPlugin("com.android.application") {
     project.the<com.android.build.gradle.AppExtension>().apply {
         configureBaseExtension()
