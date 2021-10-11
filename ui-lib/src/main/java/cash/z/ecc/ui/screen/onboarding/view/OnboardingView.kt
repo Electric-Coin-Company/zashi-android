@@ -18,7 +18,7 @@ import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import cash.z.ecc.R
+import cash.z.ecc.ui.R
 import cash.z.ecc.ui.screen.onboarding.model.OnboardingStage
 import cash.z.ecc.ui.screen.onboarding.model.Progress
 import cash.z.ecc.ui.screen.onboarding.state.OnboardingState

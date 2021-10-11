@@ -7,7 +7,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.filters.MediumTest
-import cash.z.ecc.R
+import cash.z.ecc.ui.R
 import cash.z.ecc.ui.screen.onboarding.model.OnboardingStage
 import cash.z.ecc.ui.screen.onboarding.state.OnboardingState
 import cash.z.ecc.ui.screen.onboarding.test.getStringResource

@@ -68,11 +68,6 @@ android {
         }
     }
 
-    // TODO [#5]: Figure out how to move this into the build-conventions
-    testCoverage {
-        jacocoVersion = libs.versions.jacoco.get()
-    }
-
     // TODO [#6]: Figure out how to move this into the build-conventions
     kotlinOptions {
         jvmTarget = libs.versions.java.get()
@@ -93,4 +88,12 @@ dependencies {
     implementation(projects.uiLib)
 
     androidTestImplementation(libs.bundles.androidx.test)
+
+    if (project.property("IS_USE_TEST_ORCHESTRATOR").toString().toBoolean()) {
+        androidTestUtil(libs.androidx.test.orchestrator) {
+            artifact {
+                type = "apk"
+            }
+        }
+    }
 }

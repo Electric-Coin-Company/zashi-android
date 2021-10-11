@@ -56,3 +56,35 @@ fun isNonStable(version: String): Boolean {
 
     return unstableKeywords.any { versionLowerCase.contains(it) }
 }
+
+
+// All of this should be refactored to build-conventions
+subprojects {
+    pluginManager.withPlugin("com.android.library") {
+        project.the<com.android.build.gradle.LibraryExtension>().apply {
+            configureBaseExtension()
+
+            // TODO [#5]: Figure out how to move this into the build-conventions
+            testCoverage {
+                jacocoVersion = libs.versions.jacoco.get()
+            }
+        }
+    }
+
+    pluginManager.withPlugin("com.android.application") {
+        project.the<com.android.build.gradle.AppExtension>().apply {
+            configureBaseExtension()
+        }
+    }
+}
+
+fun com.android.build.gradle.BaseExtension.configureBaseExtension() {
+    // TODO [#22]: Figure out how to move this into build-conventions
+    testOptions {
+        animationsDisabled = true
+
+        if (project.property("IS_USE_TEST_ORCHESTRATOR").toString().toBoolean()) {
+            execution = "ANDROIDX_TEST_ORCHESTRATOR"
+        }
+    }
+}
