@@ -64,7 +64,7 @@ dependencyResolutionManagement {
             alias("androidx-compose-ui").to("androidx.compose.ui:ui:$androidxComposeVersion")
             alias("androidx-core").to("androidx.core:core-ktx:$androidxCoreVersion")
             alias("androidx-lifecycle-livedata").to("androidx.lifecycle:lifecycle-livedata-ktx:$androidxLifecycleVersion")
-            alias("androidx-viewmodel-compose").to("androidx.activity:activity-compose:$androidxActivityVersion")
+            alias("androidx-viewmodel-compose").to("androidx.lifecycle:lifecycle-viewmodel-compose:$androidxLifecycleVersion")
             alias("google-material").to("com.google.android.material:material:$googleMaterialVersion")
             alias("kotlin").to("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
             alias("kotlinx-coroutines-android").to("org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlinxCoroutinesVersion")
