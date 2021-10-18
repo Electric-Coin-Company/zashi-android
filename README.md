@@ -32,3 +32,4 @@ If you plan to fork the project to create a new app of your own, please make the
 # Known Issues
 
 1. During builds, a warning will be printed that says "Unable to detect AGP versions for included builds. All projects in the build should use the same AGP version."  This can be safely ignored.  The version under build-conventions is the same as the version used elsewhere in the application.
+2. Test
