@@ -33,6 +33,7 @@ dependencyResolutionManagement {
             val androidxAnnotationVersion = extra["ANDROIDX_ANNOTATION_VERSION"].toString()
             val androidxAppcompatVersion = extra["ANDROIDX_APPCOMPAT_VERSION"].toString()
             val androidxComposeVersion = extra["ANDROIDX_COMPOSE_VERSION"].toString()
+            val androidxComposeCompilerVersion = extra["ANDROIDX_COMPOSE_COMPILER_VERSION"].toString()
             val androidxCoreVersion = extra["ANDROIDX_CORE_VERSION"].toString()
             val androidxEspressoVersion = extra["ANDROIDX_ESPRESSO_VERSION"].toString()
             val androidxLifecycleVersion = extra["ANDROIDX_LIFECYCLE_VERSION"].toString()
@@ -48,7 +49,6 @@ dependencyResolutionManagement {
             val zcashSdkVersion = extra["ZCASH_SDK_VERSION"].toString()
 
             // Standalone versions
-            version("compose", androidxComposeVersion)
             version("jacoco", jacocoVersion)
             version("java", javaVersion)
 
@@ -62,6 +62,7 @@ dependencyResolutionManagement {
             alias("androidx-compose-material-icons-core").to("androidx.compose.material:material-icons-core:$androidxComposeVersion")
             alias("androidx-compose-tooling").to("androidx.compose.ui:ui-tooling:$androidxComposeVersion")
             alias("androidx-compose-ui").to("androidx.compose.ui:ui:$androidxComposeVersion")
+            alias("androidx-compose-compiler").to("androidx.compose.compiler:compiler:$androidxComposeCompilerVersion")
             alias("androidx-core").to("androidx.core:core-ktx:$androidxCoreVersion")
             alias("androidx-lifecycle-livedata").to("androidx.lifecycle:lifecycle-livedata-ktx:$androidxLifecycleVersion")
             alias("androidx-viewmodel-compose").to("androidx.activity:activity-compose:$androidxActivityVersion")
@@ -89,6 +90,7 @@ dependencyResolutionManagement {
                 "androidx-compose",
                 listOf(
                     "androidx-activity-compose",
+                    "androidx-compose-compiler",
                     "androidx-compose-foundation",
                     "androidx-compose-material",
                     "androidx-compose-material-icons-core",
