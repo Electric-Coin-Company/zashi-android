@@ -21,7 +21,7 @@ General Zcash questions and/or support requests and are best directed to either:
 Contributions are very much welcomed!  Please read our [Contributing Guidelines](docs/CONTRIBUTING.md) to learn about our process.
 
 # Forking
-If you plan to fork the project to create a new app of your own, please make the following changes.  (If you're making a GitHub fork to contribute back to the project, these steps are not necessary.)  
+If you plan to fork the project to create a new app of your own, please make the following changes.  (If you're making a GitHub fork to contribute back to the project, these steps are not necessary.)
 
 1. Change the app name under app/
 1. Remove any copyrighted ZCash or Electric Coin Company icons, logos, or assets

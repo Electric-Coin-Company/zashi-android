@@ -13,6 +13,7 @@ pluginManagement {
         val kotlinVersion = extra["KOTLIN_VERSION"].toString()
 
         kotlin("jvm") version (kotlinVersion)
+        kotlin("multiplatform") version (kotlinVersion)
         id("com.github.ben-manes.versions") version (gradleVersionsPluginVersion) apply (false)
         id("io.gitlab.arturbosch.detekt") version (detektVersion) apply (false)
     }
@@ -41,6 +42,7 @@ dependencyResolutionManagement {
             val androidxTestOrchestratorVersion = extra["ANDROIDX_TEST_ORCHESTRATOR_VERSION"].toString()
             val androidxTestVersion = extra["ANDROIDX_TEST_VERSION"].toString()
             val androidxUiAutomatorVersion = extra["ANDROIDX_UI_AUTOMATOR_VERSION"].toString()
+            val androidxSecurityCryptoVersion = extra["ANDROIDX_SECURITY_CRYPTO_VERSION"].toString()
             val googleMaterialVersion = extra["GOOGLE_MATERIAL_VERSION"].toString()
             val jacocoVersion = extra["JACOCO_VERSION"].toString()
             val javaVersion = extra["ANDROID_JVM_TARGET"].toString()
@@ -65,6 +67,7 @@ dependencyResolutionManagement {
             alias("androidx-compose-compiler").to("androidx.compose.compiler:compiler:$androidxComposeCompilerVersion")
             alias("androidx-core").to("androidx.core:core-ktx:$androidxCoreVersion")
             alias("androidx-lifecycle-livedata").to("androidx.lifecycle:lifecycle-livedata-ktx:$androidxLifecycleVersion")
+            alias("androidx-security-crypto").to("androidx.security:security-crypto-ktx:$androidxSecurityCryptoVersion")
             alias("androidx-viewmodel-compose").to("androidx.lifecycle:lifecycle-viewmodel-compose:$androidxLifecycleVersion")
             alias("google-material").to("com.google.android.material:material:$googleMaterialVersion")
             alias("kotlin").to("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
@@ -118,4 +121,7 @@ rootProject.name = "zcash-android-app"
 includeBuild("build-conventions")
 
 include("app")
+include("preference-api-lib")
+include("preference-impl-android-lib")
+include("test-lib")
 include("ui-lib")
