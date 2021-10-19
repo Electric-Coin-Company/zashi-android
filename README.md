@@ -32,3 +32,6 @@ If you plan to fork the project to create a new app of your own, please make the
 # Known Issues
 
 1. During builds, a warning will be printed that says "Unable to detect AGP versions for included builds. All projects in the build should use the same AGP version."  This can be safely ignored.  The version under build-conventions is the same as the version used elsewhere in the application.
+1. When the code coverage Gradle property `IS_COVERAGE_ENABLED` is enabled, the debug app APK cannot be run.  The coverage flag should therefore only be set when running automated tests.
+1. Test coverage for Compose code will be low, due to [known limitations](https://github.com/jacoco/jacoco/issues/1208) in the interaction between Compose and Jacoco.
+1. Adding the `espresso-contrib` dependency will cause builds to fail, due to conflicting classes.  This is a [known issue](https://github.com/zcash/zcash-android-wallet-sdk/issues/306) with the Zcash Android SDK.
