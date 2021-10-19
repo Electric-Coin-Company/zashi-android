@@ -2,11 +2,6 @@ enableFeaturePreview("VERSION_CATALOGS")
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
-    repositories {
-        gradlePluginPortal()
-        google()
-    }
-
     plugins {
         val detektVersion = extra["DETEKT_VERSION"].toString()
         val gradleVersionsPluginVersion = extra["GRADLE_VERSIONS_PLUGIN_VERSION"].toString()
@@ -22,9 +17,30 @@ pluginManagement {
 dependencyResolutionManagement {
     @Suppress("UnstableApiUsage")
     repositories {
-        google()
-        mavenCentral()
-        maven("https://jitpack.io")
+        val isRepoRestrictionEnabled = true
+
+        maven("https://dl.google.com/dl/android/maven2/") { // google()
+            if (isRepoRestrictionEnabled) {
+                content {
+                    includeGroup("android.arch.lifecycle")
+                    includeGroup("android.arch.core")
+                    includeGroup("com.google.android.material")
+                    includeGroupByRegex("androidx.*")
+                    includeGroupByRegex("com\\.android.*")
+                }
+            }
+        }
+        maven("https://repo.maven.apache.org/maven2/") { // mavenCentral()
+            if (isRepoRestrictionEnabled) {
+                content {
+                    excludeGroup("android.arch.lifecycle")
+                    excludeGroup("android.arch.core")
+                    excludeGroup("com.google.android.material")
+                    excludeGroupByRegex("androidx.*")
+                    excludeGroupByRegex("com\\.android.*")
+                }
+            }
+        }
     }
 
     @Suppress("UnstableApiUsage", "MaxLineLength")

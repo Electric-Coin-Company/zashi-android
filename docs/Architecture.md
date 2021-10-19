@@ -6,6 +6,7 @@ _Note: This document will continue to be updated as the app is implemented._
  * Much of the Gradle configuration lives in [build-conventions](../build-conventions/) to prevent repetitive configuration as additional modules are added to the project
  * Build scripts are written in Kotlin, so that a single language is used across build and the app code bases
  * Only Gradle, Google, and JetBrains plug-ins are included in the critical path.  Third party plug-ins can be used, but they're outside the critical path.  For example, the Gradle Versions Plugin could be removed and wouldn't negative impact building, testing, or deploying the app
+ * Repository restrictions are enabled in [build-conventions](../build-conventions/settings.gradle.kts), [settings.gradle.kts](../settings.gradle.kts), and [build.gradle.kts](../build.gradle.kts) to reduce likelihood of pulling in an incorrect dependency.  If adding a new dependency, these restrictions may need to be changed otherwise an error that the dependency cannot be found will be displayed
 
 # Multiplatform
 While this repository is for an Android application, efforts are made to give multiplatform flexibility in the future.  Specific adaptions that are being made:
@@ -26,6 +27,6 @@ The logical components of the app are implemented as a number of Gradle modules.
  * build-info-lib — Collects information from the build environment (e.g. Git SHA, Git commit count) and compiles them into the application.  Can also be used for injection of API keys or other secrets.
  * ui-lib — User interface that the user interacts with.  This contains 99% of the UI code, along with localizations, icons, and other assets.
  * preference
-     * preference-api-lib — Multiplatform interfaces for key-value storage of preferences
-     * preference-impl-android-lib — Android-specific implementation for preference storage
- * test-lib — Provides common test utilities
+     * preference-api-lib — Multiplatform interfaces for key-value storage of preferences.
+     * preference-impl-android-lib — Android-specific implementation for preference storage.
+ * test-lib — Provides common test utilities.
