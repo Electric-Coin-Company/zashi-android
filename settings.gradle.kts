@@ -121,6 +121,7 @@ rootProject.name = "zcash-android-app"
 includeBuild("build-conventions")
 
 include("app")
+include("build-info-lib")
 include("preference-api-lib")
 include("preference-impl-android-lib")
 include("test-lib")
