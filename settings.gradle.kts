@@ -78,6 +78,7 @@ dependencyResolutionManagement {
             alias("androidx-compose-foundation").to("androidx.compose.foundation:foundation:$androidxComposeVersion")
             alias("androidx-compose-material").to("androidx.compose.material:material:$androidxComposeVersion")
             alias("androidx-compose-material-icons-core").to("androidx.compose.material:material-icons-core:$androidxComposeVersion")
+            alias("androidx-compose-material-icons-extended").to("androidx.compose.material:material-icons-extended:$androidxComposeVersion")
             alias("androidx-compose-tooling").to("androidx.compose.ui:ui-tooling:$androidxComposeVersion")
             alias("androidx-compose-ui").to("androidx.compose.ui:ui:$androidxComposeVersion")
             alias("androidx-compose-compiler").to("androidx.compose.compiler:compiler:$androidxComposeCompilerVersion")
@@ -113,6 +114,7 @@ dependencyResolutionManagement {
                     "androidx-compose-foundation",
                     "androidx-compose-material",
                     "androidx-compose-material-icons-core",
+                    "androidx-compose-material-icons-extended",
                     "androidx-compose-tooling",
                     "androidx-compose-ui",
                     "androidx-viewmodel-compose"

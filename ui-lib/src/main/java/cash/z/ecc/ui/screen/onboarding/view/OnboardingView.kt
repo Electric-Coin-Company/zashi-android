@@ -1,37 +1,49 @@
 package cash.z.ecc.ui.screen.onboarding.view
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.Button
-import androidx.compose.material.LinearProgressIndicator
-import androidx.compose.material.Text
+import androidx.compose.material.Icon
+import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import cash.z.ecc.ui.R
+import cash.z.ecc.ui.screen.common.Body
+import cash.z.ecc.ui.screen.common.Header
+import cash.z.ecc.ui.screen.common.NavigationButton
+import cash.z.ecc.ui.screen.common.PinkProgress
+import cash.z.ecc.ui.screen.common.PrimaryButton
+import cash.z.ecc.ui.screen.common.SecondaryButton
+import cash.z.ecc.ui.screen.common.TertiaryButton
 import cash.z.ecc.ui.screen.onboarding.model.OnboardingStage
 import cash.z.ecc.ui.screen.onboarding.model.Progress
 import cash.z.ecc.ui.screen.onboarding.state.OnboardingState
 import cash.z.ecc.ui.theme.MINIMAL_WEIGHT
+import cash.z.ecc.ui.theme.ZcashTheme
 
 @Preview
 @Composable
 fun ComposablePreview() {
-    Onboarding(
-        OnboardingState(OnboardingStage.UnifiedAddresses),
-        onImportWallet = {},
-        onCreateWallet = {}
-    )
+    ZcashTheme(darkTheme = true) {
+        Onboarding(
+            OnboardingState(OnboardingStage.UnifiedAddresses),
+            onImportWallet = {},
+            onCreateWallet = {}
+        )
+    }
 }
 
 /**
@@ -44,22 +56,24 @@ fun Onboarding(
     onImportWallet: () -> Unit,
     onCreateWallet: () -> Unit
 ) {
-    Column {
-        TopNavButtons(onboardingState)
+    Surface {
+        Column {
+            TopNavButtons(onboardingState)
 
-        val onboardingStage = onboardingState.current.collectAsState().value
+            val onboardingStage = onboardingState.current.collectAsState().value
 
-        when (onboardingStage) {
-            OnboardingStage.ShieldedByDefault -> ShieldedByDefault()
-            OnboardingStage.UnifiedAddresses -> UnifiedAddresses()
-            OnboardingStage.More -> More()
-            OnboardingStage.Wallet -> Wallet(
-                onCreateWallet = onCreateWallet,
-                onImportWallet = onImportWallet
-            )
+            when (onboardingStage) {
+                OnboardingStage.ShieldedByDefault -> ShieldedByDefault()
+                OnboardingStage.UnifiedAddresses -> UnifiedAddresses()
+                OnboardingStage.More -> More()
+                OnboardingStage.Wallet -> Wallet(
+                    onCreateWallet = onCreateWallet,
+                    onImportWallet = onImportWallet
+                )
+            }
+
+            BottomNav(onboardingStage.getProgress(), onboardingState::goNext)
         }
-
-        BottomNav(onboardingStage.getProgress(), onboardingState::goNext)
     }
 }
 
@@ -67,17 +81,17 @@ fun Onboarding(
 private fun TopNavButtons(onboardingState: OnboardingState) {
     Row {
         if (onboardingState.hasPrevious()) {
-            Button(onboardingState::goPrevious) {
-                Text(stringResource(R.string.onboarding_back))
-            }
+            NavigationButton(onboardingState::goPrevious, stringResource(R.string.onboarding_back))
         }
 
-        Spacer(Modifier.fillMaxWidth().weight(MINIMAL_WEIGHT, true))
+        Spacer(
+            Modifier
+                .fillMaxWidth()
+                .weight(MINIMAL_WEIGHT, true)
+        )
 
         if (onboardingState.hasNext()) {
-            Button(onboardingState::goToEnd) {
-                Text(stringResource(R.string.onboarding_skip))
-            }
+            NavigationButton(onboardingState::goToEnd, stringResource(R.string.onboarding_skip))
         }
     }
 }
@@ -86,14 +100,12 @@ private fun TopNavButtons(onboardingState: OnboardingState) {
 private fun BottomNav(progress: Progress, onNext: () -> Unit) {
     if (progress.current != progress.last) {
         Column {
-            Button(onNext, Modifier.fillMaxWidth()) {
-                Text(stringResource(R.string.onboarding_next))
-            }
+            SecondaryButton(onNext, stringResource(R.string.onboarding_next), Modifier.fillMaxWidth())
 
             // Converts from index to human numbering
-            Text((progress.current.value + 1).toString())
+            Body((progress.current.value + 1).toString())
 
-            LinearProgressIndicator(progress = progress.percent().decimal, Modifier.fillMaxWidth())
+            PinkProgress(progress, Modifier.fillMaxWidth())
         }
     }
 }
@@ -137,12 +149,9 @@ private fun More() {
 @Composable
 private fun Wallet(onCreateWallet: () -> Unit, onImportWallet: () -> Unit) {
     Column {
-        Button(onCreateWallet, Modifier.fillMaxWidth()) {
-            Text(stringResource(R.string.onboarding_4_create_new_wallet))
-        }
-        Button(onImportWallet, Modifier.fillMaxWidth()) {
-            Text(stringResource(R.string.onboarding_4_import_existing_wallet))
-        }
+        PrimaryButton(onCreateWallet, stringResource(R.string.onboarding_4_create_new_wallet), Modifier.fillMaxWidth())
+        TertiaryButton(onImportWallet, stringResource(R.string.onboarding_4_import_existing_wallet),
+            Modifier.fillMaxWidth())
     }
 }
 
@@ -159,7 +168,14 @@ private fun Content(
             @Suppress("MagicNumber")
             Image(image, imageContentDescription, Modifier.fillMaxSize(0.50f))
         }
-        Text(headline)
-        Text(body)
+        Header(headline)
+        Body(body)
+    }
+}
+
+@Composable
+fun Callout(imageVector: ImageVector, contentDescription: String) {
+    Box(modifier = Modifier.background(ZcashTheme.colors.callout)) {
+        Icon(imageVector, contentDescription, tint = ZcashTheme.colors.onCallout)
     }
 }

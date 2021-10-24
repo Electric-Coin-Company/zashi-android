@@ -20,6 +20,18 @@ android {
     kotlinOptions {
         jvmTarget = libs.versions.java.get()
         allWarningsAsErrors = project.property("IS_TREAT_WARNINGS_AS_ERRORS").toString().toBoolean()
+        freeCompilerArgs = freeCompilerArgs.plus("-Xopt-in=kotlin.RequiresOptIn")
+    }
+
+    sourceSets {
+        getByName("main").apply {
+            res.setSrcDirs(
+                setOf(
+                    "src/main/res/ui/common",
+                    "src/main/res/ui/onboarding"
+                )
+            )
+        }
     }
 }
 
