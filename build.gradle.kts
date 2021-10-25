@@ -1,4 +1,9 @@
 buildscript {
+    dependencyLocking {
+        lockMode.set(LockMode.STRICT)
+        lockAllConfigurations()
+    }
+
     repositories {
         val isRepoRestrictionEnabled = true
 
