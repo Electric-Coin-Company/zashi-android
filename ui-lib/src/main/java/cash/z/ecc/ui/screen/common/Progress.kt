@@ -10,6 +10,8 @@ import cash.z.ecc.ui.theme.ZcashTheme
 @Composable
 fun PinkProgress(progress: Progress, modifier: Modifier = Modifier) {
     // Needs custom implementation to apply gradient
-    LinearProgressIndicator(progress = progress.percent().decimal, modifier,
-        ZcashTheme.colors.progressStart, ZcashTheme.colors.progressBackground)
+    LinearProgressIndicator(
+        progress = progress.percent().decimal, modifier,
+        ZcashTheme.colors.progressStart, ZcashTheme.colors.progressBackground
+    )
 }

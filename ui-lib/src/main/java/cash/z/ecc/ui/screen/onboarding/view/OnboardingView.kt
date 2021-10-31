@@ -150,8 +150,10 @@ private fun More() {
 private fun Wallet(onCreateWallet: () -> Unit, onImportWallet: () -> Unit) {
     Column {
         PrimaryButton(onCreateWallet, stringResource(R.string.onboarding_4_create_new_wallet), Modifier.fillMaxWidth())
-        TertiaryButton(onImportWallet, stringResource(R.string.onboarding_4_import_existing_wallet),
-            Modifier.fillMaxWidth())
+        TertiaryButton(
+            onImportWallet, stringResource(R.string.onboarding_4_import_existing_wallet),
+            Modifier.fillMaxWidth()
+        )
     }
 }
 
