@@ -6,7 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import cash.z.ecc.ui.screen.onboarding.view.Onboarding
 import cash.z.ecc.ui.screen.onboarding.viewmodel.OnboardingViewModel
-import cash.z.ecc.ui.theme.MyApplicationTheme
+import cash.z.ecc.ui.theme.ZcashTheme
 
 class MainActivity : ComponentActivity() {
 
@@ -15,7 +15,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MyApplicationTheme {
+            ZcashTheme {
                 Onboarding(
                     onboardingState = onboardingViewModel.onboardingState,
                     onImportWallet = { TODO("Implement wallet import") },
