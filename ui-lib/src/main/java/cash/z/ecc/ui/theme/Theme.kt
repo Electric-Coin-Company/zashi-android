@@ -41,7 +41,8 @@ data class ExtendedColors(
     val onCallout: Color,
     val progressStart: Color,
     val progressEnd: Color,
-    val progressBackground: Color
+    val progressBackground: Color,
+    val chipIndex: Color
 )
 
 val DarkExtendedColorPalette = ExtendedColors(
@@ -52,7 +53,8 @@ val DarkExtendedColorPalette = ExtendedColors(
     onCallout = Dark.onCallout,
     progressStart = Dark.progressStart,
     progressEnd = Dark.progressEnd,
-    progressBackground = Dark.progressBackground
+    progressBackground = Dark.progressBackground,
+    chipIndex = Dark.textChipIndex
 )
 
 val LightExtendedColorPalette = ExtendedColors(
@@ -63,7 +65,8 @@ val LightExtendedColorPalette = ExtendedColors(
     onCallout = Light.onCallout,
     progressStart = Light.progressStart,
     progressEnd = Light.progressEnd,
-    progressBackground = Light.progressBackground
+    progressBackground = Light.progressBackground,
+    chipIndex = Light.textChipIndex
 )
 
 val LocalExtendedColors = staticCompositionLocalOf {
@@ -75,7 +78,8 @@ val LocalExtendedColors = staticCompositionLocalOf {
         onCallout = Color.Unspecified,
         progressStart = Color.Unspecified,
         progressEnd = Color.Unspecified,
-        progressBackground = Color.Unspecified
+        progressBackground = Color.Unspecified,
+        chipIndex = Color.Unspecified
     )
 }
 
@@ -111,4 +115,8 @@ object ZcashTheme {
     val colors: ExtendedColors
         @Composable
         get() = LocalExtendedColors.current
+
+    val typography: ExtendedTypography
+        @Composable
+        get() = LocalExtendedTypography.current
 }

@@ -15,6 +15,7 @@ object Dark {
     val textTertiaryButton = Color.White
     val textNavigationButton = Color.Black
     val textCaption = Color(0xFF68728B)
+    val textChipIndex = Color(0xFFFFB900)
 
     val primaryButton = Color(0xFFFFB900)
     val primaryButtonPressed = Color(0xFFFFD800)
@@ -50,6 +51,7 @@ object Light {
     val textSecondaryButton = Color(0xFF2E476E)
     val textTertiaryButton = Color(0xFF283559)
     val textCaption = Color(0xFF2D3747)
+    val textChipIndex = Color(0xFFEE8592)
 
     // TODO The button colors are wrong for light
     val primaryButton = Color(0xFF263357)
