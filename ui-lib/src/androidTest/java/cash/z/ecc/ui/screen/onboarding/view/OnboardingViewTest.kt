@@ -10,7 +10,7 @@ import androidx.test.filters.MediumTest
 import cash.z.ecc.ui.R
 import cash.z.ecc.ui.screen.onboarding.model.OnboardingStage
 import cash.z.ecc.ui.screen.onboarding.state.OnboardingState
-import cash.z.ecc.ui.screen.onboarding.test.getStringResource
+import cash.z.ecc.ui.test.getStringResource
 import cash.z.ecc.ui.theme.ZcashTheme
 import org.junit.Assert.assertEquals
 import org.junit.Rule

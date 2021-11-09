@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Resource that can be overlaid downstream with build variants to support
+         testnet builds. -->
+    <bool name="zcash_is_testnet">false</bool>
+</resources>

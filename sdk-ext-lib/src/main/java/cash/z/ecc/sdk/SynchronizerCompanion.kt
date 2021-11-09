@@ -14,7 +14,7 @@ import kotlinx.coroutines.withContext
 // Synchronizer needs a Companion object
 // https://github.com/zcash/zcash-android-wallet-sdk/issues/310
 object SynchronizerCompanion {
-    suspend fun load(context: Context, persistableWallet: PersistableWallet) {
+    suspend fun load(context: Context, persistableWallet: PersistableWallet): Synchronizer {
         val config = persistableWallet.toConfig()
         val initializer = withContext(Dispatchers.IO) { Initializer(context, config) }
         return withContext(Dispatchers.IO) { Synchronizer(initializer) }
@@ -24,11 +24,15 @@ object SynchronizerCompanion {
 private suspend fun PersistableWallet.deriveViewingKey(): UnifiedViewingKey {
     // Dispatcher needed because SecureRandom is loaded, which is slow and performs IO
     // https://github.com/zcash/kotlin-bip39/issues/13
-    val bip39Seed = withContext(Dispatchers.IO) { Mnemonics.MnemonicCode(seedPhrase).toSeed() }
+    val bip39Seed = withContext(Dispatchers.IO) {
+        Mnemonics.MnemonicCode(seedPhrase.phrase).toSeed()
+    }
 
     // Dispatchers needed until an SDK is published with the implementation of
     // https://github.com/zcash/zcash-android-wallet-sdk/issues/269
-    val viewingKey = withContext(Dispatchers.IO) { DerivationTool.deriveUnifiedViewingKeys(bip39Seed, network)[0] }
+    val viewingKey = withContext(Dispatchers.IO) {
+        DerivationTool.deriveUnifiedViewingKeys(bip39Seed, network)[0]
+    }
 
     return viewingKey
 }

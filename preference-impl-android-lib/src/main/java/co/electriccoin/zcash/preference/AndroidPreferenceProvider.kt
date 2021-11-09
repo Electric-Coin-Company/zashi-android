@@ -18,7 +18,7 @@ import kotlinx.coroutines.withContext
 import java.util.concurrent.Executors
 
 /**
- * Provides encrypted shared preferences.
+ * Provides an Android implementation of shared preferences.
  *
  * This class is thread-safe.
  *
@@ -30,7 +30,7 @@ import java.util.concurrent.Executors
  * Implementation note: EncryptedSharedPreferences are not thread-safe, so this implementation
  * confines them to a single background thread.
  */
-class EncryptedPreferenceProvider(
+class AndroidPreferenceProvider(
     private val sharedPreferences: SharedPreferences,
     private val dispatcher: CoroutineDispatcher
 ) : PreferenceProvider {
@@ -71,7 +71,21 @@ class EncryptedPreferenceProvider(
     }.flowOn(dispatcher)
 
     companion object {
-        suspend fun new(context: Context, filename: String): PreferenceProvider {
+        suspend fun newStandard(context: Context, filename: String): PreferenceProvider {
+            /*
+             * Because of this line, we don't want multiple instances of this object created
+             * because we don't clean up the thread afterwards.
+             */
+            val singleThreadedDispatcher = Executors.newSingleThreadExecutor().asCoroutineDispatcher()
+
+            val sharedPreferences = withContext(singleThreadedDispatcher) {
+                context.getSharedPreferences(filename, Context.MODE_PRIVATE)
+            }
+
+            return AndroidPreferenceProvider(sharedPreferences, singleThreadedDispatcher)
+        }
+
+        suspend fun newEncrypted(context: Context, filename: String): PreferenceProvider {
             /*
              * Because of this line, we don't want multiple instances of this object created
              * because we don't clean up the thread afterwards.
@@ -96,7 +110,7 @@ class EncryptedPreferenceProvider(
                 )
             }
 
-            return EncryptedPreferenceProvider(sharedPreferences, singleThreadedDispatcher)
+            return AndroidPreferenceProvider(sharedPreferences, singleThreadedDispatcher)
         }
     }
 }
