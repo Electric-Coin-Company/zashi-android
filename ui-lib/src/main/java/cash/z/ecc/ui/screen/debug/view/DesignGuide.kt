@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import cash.z.ecc.ui.screen.common.Body
+import cash.z.ecc.ui.screen.common.Chip
 import cash.z.ecc.ui.screen.common.Header
 import cash.z.ecc.ui.screen.common.NavigationButton
 import cash.z.ecc.ui.screen.common.PinkProgress
@@ -47,6 +48,7 @@ fun DesignGuide() {
             Callout(Icons.Filled.Person, contentDescription = "Person")
             Callout(Icons.Filled.List, contentDescription = "List")
             PinkProgress(progress = Progress(Index(1), Index(4)), Modifier.fillMaxWidth())
+            Chip(Index(1), "edict")
         }
     }
 }

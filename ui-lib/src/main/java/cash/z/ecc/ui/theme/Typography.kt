@@ -1,10 +1,13 @@
 package cash.z.ecc.ui.theme
 
 import androidx.compose.material.Typography
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.BaselineShift
 import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.compose.ui.unit.sp
 import cash.z.ecc.ui.R
@@ -37,3 +40,18 @@ val Typography = Typography(
         fontSize = 16.sp
     ),
 )
+
+@Immutable
+data class ExtendedTypography(
+    val chipIndex: TextStyle,
+)
+
+val LocalExtendedTypography = staticCompositionLocalOf {
+    ExtendedTypography(
+        chipIndex = Typography.body1.copy(
+            fontSize = 10.sp,
+            baselineShift = BaselineShift.Superscript,
+            fontWeight = FontWeight.Bold
+        )
+    )
+}
