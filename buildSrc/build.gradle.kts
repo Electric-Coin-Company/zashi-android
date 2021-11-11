@@ -1,8 +1,7 @@
 import org.jetbrains.kotlin.konan.properties.loadProperties
 
 plugins {
-    `java-gradle-plugin`
-    `kotlin-dsl`
+    `kotlin-dsl-base`
 }
 
 repositories {
