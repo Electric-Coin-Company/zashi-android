@@ -42,14 +42,20 @@ dependencies {
     implementation(libs.androidx.lifecycle.livedata)
     implementation(libs.bundles.androidx.compose)
     implementation(libs.google.material)
-    implementation(libs.kotlin)
+    implementation(libs.kotlin.stdlib)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.core)
-    implementation(libs.zcash)
+    implementation(libs.zcash.sdk)
+    implementation(libs.zcash.bip39)
+
+    implementation(projects.preferenceApiLib)
+    implementation(projects.preferenceImplAndroidLib)
+    implementation(projects.sdkExtLib)
 
     androidTestImplementation(libs.bundles.androidx.test)
     androidTestImplementation(libs.androidx.compose.test.junit)
     androidTestImplementation(libs.androidx.compose.test.manifest)
+    androidTestImplementation(libs.kotlin.reflect)
 
     if (project.property("IS_USE_TEST_ORCHESTRATOR").toString().toBoolean()) {
         androidTestUtil(libs.androidx.test.orchestrator) {

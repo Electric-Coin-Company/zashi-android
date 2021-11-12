@@ -85,12 +85,9 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.annotation)
     implementation(libs.androidx.core)
-    implementation(libs.bundles.androidx.compose)
-    implementation(libs.google.material)
-    implementation(libs.kotlin)
+    implementation(libs.kotlin.stdlib)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.core)
-    implementation(libs.zcash)
     implementation(projects.uiLib)
 
     androidTestImplementation(libs.bundles.androidx.test)

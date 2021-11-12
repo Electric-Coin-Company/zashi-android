@@ -69,6 +69,10 @@ class EncryptedPreferenceProviderTest {
     fun verify_no_plaintext() = runBlocking {
         val expectedValue = StringDefaultPreferenceFixture.DEFAULT_VALUE + "extra"
 
+        new().apply {
+            putString(StringDefaultPreferenceFixture.KEY, expectedValue)
+        }
+
         val text = File(File(ApplicationProvider.getApplicationContext<Context>().dataDir, "shared_prefs"), "$FILENAME.xml").readText()
 
         assertFalse(text.contains(expectedValue))

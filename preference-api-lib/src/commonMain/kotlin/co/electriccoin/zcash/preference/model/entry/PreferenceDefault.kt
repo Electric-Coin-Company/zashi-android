@@ -1,6 +1,9 @@
 package co.electriccoin.zcash.preference.model.entry
 
 import co.electriccoin.zcash.preference.api.PreferenceProvider
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 
 /**
  * An entry represents a key and a default value for a preference.  By using a Default object,
@@ -22,8 +25,23 @@ interface PreferenceDefault<T> {
     val key: Key
 
     /**
-     * @param preferenceProvider Provides actual preference values
+     * @param preferenceProvider Provides actual preference values.
      * @return The value in the preference, or the default value if no preference exists.
      */
     suspend fun getValue(preferenceProvider: PreferenceProvider): T
+
+    /**
+     * @param preferenceProvider Provides actual preference values.
+     * @param newValue New value to write.
+     */
+    suspend fun putValue(preferenceProvider: PreferenceProvider, newValue: T)
+
+    /**
+     * @param preferenceProvider Provides actual preference values.
+     * @return Flow that emits preference changes.  Note that implementations should emit an initial value
+     * indicating what was stored in the preferences, in addition to subsequent updates.
+     */
+    fun observe(preferenceProvider: PreferenceProvider): Flow<T> = preferenceProvider.observe(key)
+        .map { getValue(preferenceProvider) }
+        .distinctUntilChanged()
 }

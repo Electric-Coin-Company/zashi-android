@@ -15,4 +15,8 @@ data class IntegerPreferenceDefault(
             defaultValue
         }
     } ?: defaultValue
+
+    override suspend fun putValue(preferenceProvider: PreferenceProvider, newValue: Int) {
+        preferenceProvider.putString(key, newValue.toString())
+    }
 }

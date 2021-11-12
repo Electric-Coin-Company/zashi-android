@@ -14,7 +14,6 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import java.util.concurrent.Executors
 
@@ -41,7 +40,7 @@ class EncryptedPreferenceProvider(
     }
 
     @SuppressLint("ApplySharedPref")
-    override suspend fun putString(key: Key, value: String) = withContext(dispatcher) {
+    override suspend fun putString(key: Key, value: String?) = withContext(dispatcher) {
         val editor = sharedPreferences.edit()
 
         editor.putString(key.key, value)
@@ -56,7 +55,7 @@ class EncryptedPreferenceProvider(
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    override suspend fun observe(key: Key): Flow<String?> = callbackFlow<Unit> {
+    override fun observe(key: Key): Flow<Unit> = callbackFlow<Unit> {
         val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, _ ->
             // Callback on main thread
             trySend(Unit)
@@ -70,10 +69,13 @@ class EncryptedPreferenceProvider(
             sharedPreferences.unregisterOnSharedPreferenceChangeListener(listener)
         }
     }.flowOn(dispatcher)
-        .map { getString(key) }
 
     companion object {
         suspend fun new(context: Context, filename: String): PreferenceProvider {
+            /*
+             * Because of this line, we don't want multiple instances of this object created
+             * because we don't clean up the thread afterwards.
+             */
             val singleThreadedDispatcher = Executors.newSingleThreadExecutor().asCoroutineDispatcher()
 
             val mainKey = withContext(singleThreadedDispatcher) {

@@ -16,4 +16,8 @@ data class BooleanPreferenceDefault(
             defaultValue
         }
     } ?: defaultValue
+
+    override suspend fun putValue(preferenceProvider: PreferenceProvider, newValue: Boolean) {
+        preferenceProvider.putString(key, newValue.toString())
+    }
 }

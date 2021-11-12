@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Demo App</string>
+    <string name="app_name">zcash-ui</string>
 
     <string name="onboarding_back">Back</string>
     <string name="onboarding_skip">Skip</string>

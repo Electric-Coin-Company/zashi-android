@@ -23,10 +23,25 @@ The main entrypoints of the application are:
 ## Modules
 The logical components of the app are implemented as a number of Gradle modules.
 
- * app — Compiles all of the modules together into the final application.  This module contains minimal actual code.  Note that the Java package structure for this module is under `cash.z.ecc.app` while the Android package name is `cash.z.ecc`.
- * build-info-lib — Collects information from the build environment (e.g. Git SHA, Git commit count) and compiles them into the application.  Can also be used for injection of API keys or other secrets.
- * ui-lib — User interface that the user interacts with.  This contains 99% of the UI code, along with localizations, icons, and other assets.
+ * `app` — Compiles all of the modules together into the final application.  This module contains minimal actual code.  Note that the Java package structure for this module is under `cash.z.ecc.app` while the Android package name is `cash.z.ecc`.
+ * `build-info-lib` — Collects information from the build environment (e.g. Git SHA, Git commit count) and compiles them into the application.  Can also be used for injection of API keys or other secrets.
+ * `ui-lib` — User interface that the user interacts with.  This contains 99% of the UI code, along with localizations, icons, and other assets.
  * preference
-     * preference-api-lib — Multiplatform interfaces for key-value storage of preferences.
-     * preference-impl-android-lib — Android-specific implementation for preference storage.
- * test-lib — Provides common test utilities.
+     * `preference-api-lib` — Multiplatform interfaces for key-value storage of preferences.
+     * `preference-impl-android-lib` — Android-specific implementation for preference storage.
+ * `sdk-ext-lib` — Contains extensions on top of the to the Zcash SDK.  Some of these extensions might be migrated into the SDK eventually, while others might represent Android-centric idioms.  Depending on how this module evolves, it could adopt another name such as `wallet-lib` or be split into two.
+ * `test-lib` — Provides common test utilities.
+
+## Shared Resources
+There are some app-wide resources that share a common namespace, and these should be documented here to make it easy to ensure there are no collisions.
+
+* SharedPreferences
+    * "co.electriccoin.zcash.encrypted" is defined as a preference file in `EncryptedPreferenceSingleton.kt`
+* Databases
+    * Some databases are defined by the SDK
+* Notification IDs
+    * No notification IDs are currently defined
+* Notification Channels
+    * No notification channels are currently defined
+* WorkManager Tags
+    * No WorkManager tags are currently defined
