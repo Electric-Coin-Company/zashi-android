@@ -1,6 +1,5 @@
 package co.electriccoin.zcash.preference
 
-import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.filters.SmallTest
 import co.electriccoin.zcash.preference.test.fixture.StringDefaultPreferenceFixture
@@ -10,11 +9,10 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import java.io.File
 
 // Areas that are not covered yet:
 // 1. Test observer behavior
-class EncryptedPreferenceProviderTest {
+class StandardPreferenceProviderTest {
     /*
      * Note: This test relies on Test Orchestrator to avoid issues with multiple runs. Specifically,
      * it purges the preference file and avoids corruption due to multiple instances of the
@@ -62,25 +60,8 @@ class EncryptedPreferenceProviderTest {
         assertTrue(preferenceProvider.hasKey(StringDefaultPreferenceFixture.new().key))
     }
 
-    // Note: this test case relies on undocumented implementation details of SharedPreferences
-    // e.g. the directory path and the fact the preferences are stored as XML
-    @Test
-    @SmallTest
-    fun verify_no_plaintext() = runBlocking {
-        val expectedValue = StringDefaultPreferenceFixture.DEFAULT_VALUE + "extra"
-
-        new().apply {
-            putString(StringDefaultPreferenceFixture.KEY, expectedValue)
-        }
-
-        val text = File(File(ApplicationProvider.getApplicationContext<Context>().dataDir, "shared_prefs"), "$FILENAME.xml").readText()
-
-        assertFalse(text.contains(expectedValue))
-        assertFalse(text.contains(StringDefaultPreferenceFixture.KEY.key))
-    }
-
     companion object {
         private val FILENAME = "encrypted_preference_test"
-        private suspend fun new() = AndroidPreferenceProvider.newEncrypted(ApplicationProvider.getApplicationContext(), FILENAME)
+        private suspend fun new() = AndroidPreferenceProvider.newStandard(ApplicationProvider.getApplicationContext(), FILENAME)
     }
 }

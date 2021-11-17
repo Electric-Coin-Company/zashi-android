@@ -1,7 +1,14 @@
 package cash.z.ecc.sdk.model
 
+import android.app.Application
+import cash.z.ecc.android.bip39.Mnemonics
+import cash.z.ecc.android.bip39.toEntropy
+import cash.z.ecc.android.sdk.tool.WalletBirthdayTool
 import cash.z.ecc.android.sdk.type.WalletBirthday
 import cash.z.ecc.android.sdk.type.ZcashNetwork
+import cash.z.ecc.sdk.type.fromResources
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.json.JSONObject
 
 /**
@@ -10,7 +17,7 @@ import org.json.JSONObject
 data class PersistableWallet(
     val network: ZcashNetwork,
     val birthday: WalletBirthday,
-    val seedPhrase: String
+    val seedPhrase: SeedPhrase
 ) {
 
     /**
@@ -22,7 +29,7 @@ data class PersistableWallet(
         put(KEY_VERSION, VERSION_1)
         put(KEY_NETWORK_ID, network.id)
         put(KEY_BIRTHDAY, birthday.toJson())
-        put(KEY_SEED_PHRASE, seedPhrase)
+        put(KEY_SEED_PHRASE, seedPhrase.phrase)
     }
 
     override fun toString(): String {
@@ -45,12 +52,34 @@ data class PersistableWallet(
                     val birthday = WalletBirthdayCompanion.from(jsonObject.getJSONObject(KEY_BIRTHDAY))
                     val seedPhrase = jsonObject.getString(KEY_SEED_PHRASE)
 
-                    return PersistableWallet(ZcashNetwork.from(networkId), birthday, seedPhrase)
+                    return PersistableWallet(ZcashNetwork.from(networkId), birthday, SeedPhrase(seedPhrase))
                 }
                 else -> {
                     throw IllegalArgumentException("Unsupported version $version")
                 }
             }
         }
+
+        /**
+         * @return A new PersistableWallet with a random seed phrase.
+         */
+        suspend fun new(application: Application): PersistableWallet {
+            val zcashNetwork = ZcashNetwork.fromResources(application)
+            // Dispatchers can be removed once a new SDK is released implementing
+            // https://github.com/zcash/zcash-android-wallet-sdk/issues/269
+            val walletBirthday = withContext(Dispatchers.IO) {
+                WalletBirthdayTool.loadNearest(application, zcashNetwork)
+            }
+            val seedPhrase = newSeedPhrase()
+
+            return PersistableWallet(zcashNetwork, walletBirthday, seedPhrase)
+        }
     }
 }
+
+// Using IO context because of https://github.com/zcash/kotlin-bip39/issues/13
+private suspend fun newMnemonic() = withContext(Dispatchers.IO) {
+    Mnemonics.MnemonicCode(cash.z.ecc.android.bip39.Mnemonics.WordCount.COUNT_24.toEntropy()).words
+}
+
+private suspend fun newSeedPhrase() = SeedPhrase(newMnemonic().joinToString(separator = " ") { it.concatToString() })

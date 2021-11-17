@@ -5,11 +5,11 @@ import cash.z.ecc.ui.util.Lazy
 import co.electriccoin.zcash.preference.AndroidPreferenceProvider
 import co.electriccoin.zcash.preference.api.PreferenceProvider
 
-object EncryptedPreferenceSingleton {
+object StandardPreferenceSingleton {
 
-    private const val PREF_FILENAME = "co.electriccoin.zcash.encrypted"
+    private const val PREF_FILENAME = "co.electriccoin.zcash"
 
-    private val lazy = Lazy<Context, PreferenceProvider> { AndroidPreferenceProvider.newEncrypted(it, PREF_FILENAME) }
+    private val lazy = Lazy<Context, PreferenceProvider> { AndroidPreferenceProvider.newStandard(it, PREF_FILENAME) }
 
     suspend fun getInstance(context: Context) = lazy.getInstance(context)
 }

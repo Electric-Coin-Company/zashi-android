@@ -1,4 +1,4 @@
 <resources>
-    <string name="app_name">Testnet Demo</string>
+    <string name="app_name">Zcash Testnet Wallet</string>
     <string name="network_name">Testnet</string>
 </resources>

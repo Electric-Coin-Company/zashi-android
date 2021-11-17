@@ -3,72 +3,118 @@ package cash.z.ecc.ui.screen.home.viewmodel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.sdk.SynchronizerCompanion
 import cash.z.ecc.sdk.model.PersistableWallet
 import cash.z.ecc.ui.common.ANDROID_STATE_FLOW_TIMEOUT_MILLIS
 import cash.z.ecc.ui.preference.EncryptedPreferenceKeys
 import cash.z.ecc.ui.preference.EncryptedPreferenceSingleton
+import cash.z.ecc.ui.preference.StandardPreferenceKeys
+import cash.z.ecc.ui.preference.StandardPreferenceSingleton
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 // To make this more multiplatform compatible, we need to remove the dependency on Context
 // for loading the preferences.
 class WalletViewModel(application: Application) : AndroidViewModel(application) {
+    /*
+     * Using the Mutex may be overkill, but it ensures that if multiple calls are accidentally made
+     * that they have a consistent ordering.
+     */
+    private val persistWalletMutex = Mutex()
+
     /**
      * A flow of the user's stored wallet.  Null indicates that no wallet has been stored.
      */
-    /*
-     * This is exposed, because loading the value here is faster than loading the entire Zcash SDK.
-     *
-     * This allows the UI to load the first launch onboarding experience a few hundred milliseconds
-     * faster.
-     */
-    val persistableWallet = flow {
+    private val persistableWalletFlow = flow {
         // EncryptedPreferenceSingleton.getInstance() is a suspending function, which is why we need
         // the flow builder to provide a coroutine context.
         val encryptedPreferenceProvider = EncryptedPreferenceSingleton.getInstance(application)
 
         emitAll(EncryptedPreferenceKeys.PERSISTABLE_WALLET.observe(encryptedPreferenceProvider))
-    }.stateIn(
-        viewModelScope,
-        SharingStarted.WhileSubscribed(stopTimeoutMillis = ANDROID_STATE_FLOW_TIMEOUT_MILLIS),
-        null
-    )
+    }
 
     /**
-     * A flow of the Zcash SDK initialized with the user's stored wallet.  Null indicates that no
-     * wallet has been stored.
+     * A flow of whether a backup of the user's wallet has been performed.
      */
-    // Note: in the future we might want to convert this to emitting a sealed class with states like:
-    // - No wallet
-    // - Current wallet
-    // - Error loading wallet
-    val synchronizer = persistableWallet.map { persistableWallet ->
-        persistableWallet?.let { SynchronizerCompanion.load(application, persistableWallet) }
-    }.stateIn(
-        viewModelScope,
-        SharingStarted.WhileSubscribed(stopTimeoutMillis = ANDROID_STATE_FLOW_TIMEOUT_MILLIS),
-        null
-    )
+    private val isBackupCompleteFlow = flow {
+        val preferenceProvider = StandardPreferenceSingleton.getInstance(application)
+        emitAll(StandardPreferenceKeys.IS_USER_BACKUP_COMPLETE.observe(preferenceProvider))
+    }
+
+    val state: StateFlow<WalletState> = persistableWalletFlow
+        .combine(isBackupCompleteFlow) { persistableWallet: PersistableWallet?, isBackupComplete: Boolean ->
+            if (null == persistableWallet) {
+                WalletState.NoWallet
+            } else if (!isBackupComplete) {
+                WalletState.NeedsBackup(persistableWallet)
+            } else {
+                WalletState.Ready(persistableWallet, SynchronizerCompanion.load(application, persistableWallet))
+            }
+        }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(stopTimeoutMillis = ANDROID_STATE_FLOW_TIMEOUT_MILLIS),
+            WalletState.Loading
+        )
 
     /**
      * Persists a wallet asynchronously.  Clients observe either [persistableWallet] or [synchronizer]
-     * to see the side effects.
-     *
-     * This method does not prevent multiple calls, so clients should be careful not to call this
-     * method multiple times in rapid succession.  While the persistableWallet write is atomic,
-     * the ordering of the writes is not specified.  If the same persistableWallet is passed in,
-     * then there's no problem.  But if different persistableWallets are passed in, then which one
-     * actually gets written is non-deterministic.
+     * to see the side effects.  This would be used for a user restoring a wallet from a backup.
      */
     fun persistWallet(persistableWallet: PersistableWallet) {
         viewModelScope.launch {
             val preferenceProvider = EncryptedPreferenceSingleton.getInstance(getApplication())
-            EncryptedPreferenceKeys.PERSISTABLE_WALLET.putValue(preferenceProvider, persistableWallet)
+            persistWalletMutex.withLock {
+                EncryptedPreferenceKeys.PERSISTABLE_WALLET.putValue(preferenceProvider, persistableWallet)
+            }
         }
     }
+
+    /**
+     * Creates a wallet asynchronously and then persists it.  Clients observe
+     * [state] to see the side effects.  This would be used for a user creating a new wallet.
+     */
+    /*
+     * Although waiting for the wallet to be written and then read back is slower, it is probably
+     * safer because it 1. guarantees the wallet is written to disk and 2. has a single source of truth.
+     */
+    fun createAndPersistWallet() {
+        val application = getApplication<Application>()
+
+        viewModelScope.launch {
+            val newWallet = PersistableWallet.new(application)
+            persistWallet(newWallet)
+        }
+    }
+
+    /**
+     * Asynchronously notes that the user has completed the backup steps, which means the wallet
+     * is ready to use.  Clients observe [state] to see the side effects.  This would be used
+     * for a user creating a new wallet.
+     */
+    fun persistBackupComplete() {
+        val application = getApplication<Application>()
+
+        viewModelScope.launch {
+            val preferenceProvider = StandardPreferenceSingleton.getInstance(application)
+            StandardPreferenceKeys.IS_USER_BACKUP_COMPLETE.putValue(preferenceProvider, true)
+        }
+    }
+}
+
+/**
+ * Represents the state of the wallet
+ */
+sealed class WalletState {
+    object Loading : WalletState()
+    object NoWallet : WalletState()
+    class NeedsBackup(val persistableWallet: PersistableWallet) : WalletState()
+    class Ready(val persistableWallet: PersistableWallet, val synchronizer: Synchronizer) : WalletState()
 }

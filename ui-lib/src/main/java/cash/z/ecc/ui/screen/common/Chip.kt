@@ -17,7 +17,7 @@ import cash.z.ecc.ui.theme.ZcashTheme
 @Composable
 fun ComposablePreview() {
     ZcashTheme(darkTheme = false) {
-        Chip(Index(1), "edict")
+        Chip(Index(0), "edict")
     }
 }
 
@@ -25,16 +25,17 @@ fun ComposablePreview() {
 fun Chip(
     index: Index,
     text: String,
+    modifier: Modifier = Modifier,
 ) {
     Surface(
-        modifier = Modifier.padding(4.dp),
+        modifier = modifier.then(Modifier.padding(4.dp)),
         shape = MaterialTheme.shapes.medium,
         color = MaterialTheme.colors.secondary,
         elevation = 8.dp,
     ) {
         Row(modifier = Modifier.padding(8.dp)) {
             Text(
-                text = index.value.toString(),
+                text = (index.value + 1).toString(),
                 style = ZcashTheme.typography.chipIndex,
                 color = ZcashTheme.colors.chipIndex,
             )

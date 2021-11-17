@@ -1,4 +1,4 @@
-package cash.z.ecc.ui.screen.onboarding.test
+package cash.z.ecc.ui.test
 
 import android.content.Context
 import androidx.annotation.StringRes
