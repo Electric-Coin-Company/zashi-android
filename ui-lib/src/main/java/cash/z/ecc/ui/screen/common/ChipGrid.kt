@@ -17,9 +17,11 @@ fun ChipGrid(persistableWallet: PersistableWallet) {
         persistableWallet.seedPhrase.split.chunked(CHIP_GRID_ROW_SIZE).forEachIndexed { chunkIndex, chunk ->
             Row(Modifier.fillMaxWidth()) {
                 chunk.forEachIndexed { subIndex, word ->
-                    Chip(index = Index(chunkIndex * CHIP_GRID_ROW_SIZE + subIndex),
+                    Chip(
+                        index = Index(chunkIndex * CHIP_GRID_ROW_SIZE + subIndex),
                         text = word,
-                        modifier = Modifier.weight(MINIMAL_WEIGHT))
+                        modifier = Modifier.weight(MINIMAL_WEIGHT)
+                    )
                 }
             }
         }

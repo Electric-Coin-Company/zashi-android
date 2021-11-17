@@ -14,7 +14,9 @@ object PersistableWalletFixture {
     @Suppress("MaxLineLength")
     val SEED_PHRASE = "still champion voice habit trend flight survey between bitter process artefact blind carbon truly provide dizzy crush flush breeze blouse charge solid fish spread"
 
-    fun new(network: ZcashNetwork = NETWORK,
+    fun new(
+        network: ZcashNetwork = NETWORK,
         birthday: WalletBirthday = BIRTHDAY,
-        seedPhrase: String = SEED_PHRASE) = PersistableWallet(network, birthday, SeedPhrase(seedPhrase))
+        seedPhrase: String = SEED_PHRASE
+    ) = PersistableWallet(network, birthday, SeedPhrase(seedPhrase))
 }

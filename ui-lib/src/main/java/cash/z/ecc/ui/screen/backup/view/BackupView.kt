@@ -68,10 +68,12 @@ fun BackupWallet(
                         // TODO [#49]
                     }
                 )
-                BackupStage.Test -> Test(wallet,
+                BackupStage.Test -> Test(
+                    wallet,
                     selectedTestChoices,
                     onBack = backupState::goPrevious,
-                    onNext = backupState::goNext)
+                    onNext = backupState::goNext
+                )
                 BackupStage.Complete -> Complete(
                     onComplete = onComplete,
                     onBackToSeedPhrase = backupState::goToSeed
@@ -207,9 +209,11 @@ private fun TestInProgress(
                                 )
                             }
                         } else {
-                            Chip(index = Index(chunkIndex * CHIP_GRID_ROW_SIZE + subIndex),
+                            Chip(
+                                index = Index(chunkIndex * CHIP_GRID_ROW_SIZE + subIndex),
                                 text = word,
-                                modifier = Modifier.weight(MINIMAL_WEIGHT))
+                                modifier = Modifier.weight(MINIMAL_WEIGHT)
+                            )
                         }
                     }
                 }
