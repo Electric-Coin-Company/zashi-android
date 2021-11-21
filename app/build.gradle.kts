@@ -4,6 +4,7 @@ plugins {
     id("kotlin-parcelize")
     id("androidx.navigation.safeargs")
     id("zcash.android-build-conventions")
+    id("com.github.triplet.play")
 }
 
 val packageName = "cash.z.ecc"
@@ -11,8 +12,11 @@ val packageName = "cash.z.ecc"
 android {
     defaultConfig {
         applicationId = packageName
-        versionCode = 1
-        versionName = "1.0"
+
+        // If Google Play deployment is triggered, then these are placeholders which are overwritten
+        // when the deployment runs
+        versionCode = project.property("ZCASH_VERSION_CODE").toString().toInt()
+        versionName = project.property("ZCASH_VERSION_NAME").toString()
     }
 
     compileOptions {
@@ -97,6 +101,51 @@ dependencies {
             artifact {
                 type = "apk"
             }
+        }
+    }
+}
+
+val googlePlayServiceKeyFilePath = project.property("ZCASH_GOOGLE_PLAY_SERVICE_KEY_FILE_PATH").toString()
+if (googlePlayServiceKeyFilePath.isNotEmpty()) {
+    // Update the versionName to reflect bumps in versionCode
+    androidComponents {
+        val versionCodeOffset = 0  // Change this to zero the final digit of the versionName
+        onVariants { variant ->
+            for (output in variant.outputs) {
+                val processedVersionCode = output.versionCode.map { playVersionCode ->
+                    val defaultVersionName = project.property("ZCASH_VERSION_NAME").toString()
+                    // Version names will look like `myCustomVersionName.123`
+                    playVersionCode?.let {
+                        val delta = it - versionCodeOffset
+                        if (delta < 0) {
+                            defaultVersionName
+                        } else {
+                            "$defaultVersionName.$delta"
+                        }
+                    } ?: defaultVersionName
+                }
+
+                output.versionName.set(processedVersionCode)
+            }
+        }
+    }
+
+    configure<com.github.triplet.gradle.play.PlayPublisherExtension> {
+        serviceAccountCredentials.set(File(googlePlayServiceKeyFilePath))
+
+        // For safety, only allow deployment to internal testing track
+        track.set("internal")
+
+        // Automatically manage version incrementing
+        resolutionStrategy.set(com.github.triplet.gradle.androidpublisher.ResolutionStrategy.AUTO)
+
+        val deployMode = project.property("ZCASH_GOOGLE_PLAY_DEPLOY_MODE").toString()
+        if ("build" == deployMode) {
+            releaseStatus.set(com.github.triplet.gradle.androidpublisher.ReleaseStatus.DRAFT)
+            // Prevent upload; only generates a build with the correct version number
+            commit.set(false)
+        } else if ("deploy" == deployMode) {
+            releaseStatus.set(com.github.triplet.gradle.androidpublisher.ReleaseStatus.COMPLETED)
         }
     }
 }

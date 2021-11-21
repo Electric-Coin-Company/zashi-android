@@ -6,10 +6,12 @@ pluginManagement {
         val detektVersion = extra["DETEKT_VERSION"].toString()
         val gradleVersionsPluginVersion = extra["GRADLE_VERSIONS_PLUGIN_VERSION"].toString()
         val kotlinVersion = extra["KOTLIN_VERSION"].toString()
+        val playPublisherVersion = extra["PLAY_PUBLISHER_PLUGIN_VERSION_MATCHER"].toString()
 
         kotlin("jvm") version (kotlinVersion)
         kotlin("multiplatform") version (kotlinVersion)
         id("com.github.ben-manes.versions") version (gradleVersionsPluginVersion) apply (false)
+        id("com.github.triplet.play") version (playPublisherVersion) apply (false)
         id("io.gitlab.arturbosch.detekt") version (detektVersion) apply (false)
     }
 }
