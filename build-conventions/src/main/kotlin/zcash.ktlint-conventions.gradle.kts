@@ -5,7 +5,11 @@ plugins {
 val ktlint by configurations.creating
 
 dependencies {
-    ktlint("com.pinterest:ktlint:${project.property("KTLINT_VERSION")}")
+    ktlint("com.pinterest:ktlint:${project.property("KTLINT_VERSION")}") {
+        attributes {
+            attribute(Bundling.BUNDLING_ATTRIBUTE, objects.named<Bundling>(Bundling.EXTERNAL))
+        }
+    }
 }
 
 tasks {
@@ -20,6 +24,12 @@ tasks {
     }
 
     register("ktlintFormat", org.gradle.api.tasks.JavaExec::class) {
+        // Workaround for ktlint bug; force to run on an older JDK
+        // https://github.com/pinterest/ktlint/issues/1274
+        javaLauncher.set(javaToolchains.launcherFor {
+            languageVersion.set(JavaLanguageVersion.of(JavaVersion.VERSION_11.majorVersion))
+        })
+
         description = "Apply code style formatting with ktlint"
         classpath = ktlint
         mainClass.set("com.pinterest.ktlint.Main")
