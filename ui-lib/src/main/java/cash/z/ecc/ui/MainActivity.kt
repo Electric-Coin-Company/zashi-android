@@ -1,5 +1,7 @@
 package cash.z.ecc.ui
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -41,9 +43,19 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     private fun WrapBackup(persistableWallet: PersistableWallet) {
-        BackupWallet(persistableWallet, backupViewModel.backupState, backupViewModel.testChoices) {
+        BackupWallet(
+            persistableWallet, backupViewModel.backupState, backupViewModel.testChoices,
+            onCopyToClipboard = {
+                val clipboardManager = getSystemService(ClipboardManager::class.java)
+                val data = ClipData.newPlainText(
+                    getString(R.string.new_wallet_clipboard_tag),
+                    persistableWallet.seedPhrase.phrase
+                )
+                clipboardManager.setPrimaryClip(data)
+            }, onComplete = {
             walletViewModel.persistBackupComplete()
         }
+        )
     }
 
     @Composable

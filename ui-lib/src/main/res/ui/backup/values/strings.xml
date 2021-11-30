@@ -1,4 +1,6 @@
 <resources>
+    <string name="new_wallet_clipboard_tag">Zcash Seed Phrase</string>
+
     <string name="new_wallet_1_header">First things first</string>
     <string name="new_wallet_1_body_1">It is important to understand that you are in charge here. Great, right? YOU get to be the bank!</string>
     <string name="new_wallet_1_body_2">But it also means that YOU are the customer, and you need to be self-reliant.\n\nSo how do you recover funds that you‘ve hidden on a complete decentralized and private block-chain?</string>

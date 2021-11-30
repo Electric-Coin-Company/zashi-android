@@ -42,6 +42,7 @@ fun ComposablePreview() {
             PersistableWalletFixture.new(),
             BackupState(BackupStage.Test),
             TestChoices(),
+            onCopyToClipboard = {},
             onComplete = {}
         )
     }
@@ -55,6 +56,7 @@ fun BackupWallet(
     wallet: PersistableWallet,
     backupState: BackupState,
     selectedTestChoices: TestChoices,
+    onCopyToClipboard: () -> Unit,
     onComplete: () -> Unit,
 ) {
     Surface {
@@ -63,10 +65,9 @@ fun BackupWallet(
                 BackupStage.EducationOverview -> EducationOverview(onNext = backupState::goNext)
                 BackupStage.EducationRecoveryPhrase -> EducationRecoveryPhrase(onNext = backupState::goNext)
                 BackupStage.Seed -> SeedPhrase(
-                    wallet, onNext = backupState::goNext,
-                    onCopyToClipboard = {
-                        // TODO [#49]
-                    }
+                    wallet,
+                    onNext = backupState::goNext,
+                    onCopyToClipboard = onCopyToClipboard
                 )
                 BackupStage.Test -> Test(
                     wallet,
