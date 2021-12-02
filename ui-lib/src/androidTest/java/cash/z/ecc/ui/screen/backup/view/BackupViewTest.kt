@@ -34,6 +34,7 @@ class BackupViewTest {
 
         assertEquals(BackupStage.EducationOverview, testSetup.getStage())
         assertEquals(0, testSetup.getOnCompleteCallbackCount())
+        assertEquals(0, testSetup.getOnCopyToClipboardCount())
     }
 
     @Test
@@ -43,6 +44,19 @@ class BackupViewTest {
 
         assertEquals(BackupStage.Complete, testSetup.getStage())
         assertEquals(0, testSetup.getOnCompleteCallbackCount())
+        assertEquals(0, testSetup.getOnCopyToClipboardCount())
+    }
+
+    @Test
+    @MediumTest
+    fun copy_to_clipboard() {
+        val testSetup = newTestSetup(BackupStage.Seed)
+
+        composeTestRule.onNodeWithText(getStringResource(R.string.new_wallet_3_button_copy)).also {
+            it.performClick()
+        }
+
+        assertEquals(1, testSetup.getOnCopyToClipboardCount())
     }
 
     @Test
@@ -107,6 +121,7 @@ class BackupViewTest {
         val goToWalletButton = composeTestRule.onNodeWithText(getStringResource(R.string.new_wallet_5_button_finished))
         goToWalletButton.performClick()
 
+        assertEquals(0, testSetup.getOnCopyToClipboardCount())
         assertEquals(1, testSetup.getOnCompleteCallbackCount())
     }
 
@@ -118,6 +133,7 @@ class BackupViewTest {
         val newWalletButton = composeTestRule.onNodeWithText(getStringResource(R.string.new_wallet_5_button_back))
         newWalletButton.performClick()
 
+        assertEquals(0, testSetup.getOnCopyToClipboardCount())
         assertEquals(0, testSetup.getOnCompleteCallbackCount())
         assertEquals(BackupStage.Seed, testSetup.getStage())
     }
@@ -138,6 +154,12 @@ class BackupViewTest {
         }
 
         assertEquals(BackupStage.Seed, testSetup.getStage())
+
+        composeTestRule.onNodeWithText(getStringResource(R.string.new_wallet_3_button_copy)).also {
+            it.performClick()
+        }
+
+        assertEquals(1, testSetup.getOnCopyToClipboardCount())
 
         composeTestRule.onNodeWithText(getStringResource(R.string.new_wallet_3_button_finished)).also {
             it.performClick()
@@ -173,7 +195,14 @@ class BackupViewTest {
     private class TestSetup(private val composeTestRule: ComposeContentTestRule, initalStage: BackupStage) {
         private val state = BackupState(initalStage)
 
+        private var onCopyToClipboardCount = 0
+
         private var onCompleteCallbackCount = 0
+
+        fun getOnCopyToClipboardCount(): Int {
+            composeTestRule.waitForIdle()
+            return onCopyToClipboardCount
+        }
 
         fun getOnCompleteCallbackCount(): Int {
             composeTestRule.waitForIdle()
@@ -192,6 +221,7 @@ class BackupViewTest {
                         PersistableWalletFixture.new(),
                         state,
                         TestChoices(),
+                        onCopyToClipboard = { onCopyToClipboardCount++ },
                         onComplete = { onCompleteCallbackCount++ }
                     )
                 }
