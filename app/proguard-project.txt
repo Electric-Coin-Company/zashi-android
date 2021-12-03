@@ -1,5 +1,6 @@
-# This improves obfuscation.
--repackageclasses 'cash.z.ecc.android'
+# Commenting this out would improve obfuscation. The wallet is already open source so obfuscation doesn't provide much benefit
+# and makes analyzing the release build of the app more difficult.
+-dontobfuscate
 
 # Ensure that stacktraces are reversible.
 -renamesourcefileattribute SourceFile
@@ -7,3 +8,10 @@
 
 # Generate the combined proguard configuration for debugging.
 -printconfiguration build/outputs/proguard-config.txt
+
+-dontwarn javax.naming.NamingEnumeration
+-dontwarn javax.naming.NamingException
+-dontwarn javax.naming.directory.Attribute
+-dontwarn javax.naming.directory.Attributes
+-dontwarn javax.naming.directory.DirContext
+-dontwarn javax.naming.directory.InitialDirContext
