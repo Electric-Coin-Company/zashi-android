@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="cash.z.ecc.ui">
 
     <application
         android:icon="@mipmap/ic_launcher_square"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.MaterialComponents.DayNight">
+        android:theme="@style/Theme.App.Starting">
+
         <activity
             android:name="cash.z.ecc.ui.MainActivity"
-            android:label="@string/app_name"
-            android:exported="false">
-        </activity>
+            android:exported="false"
+            android:label="@string/app_name" />
     </application>
 
 </manifest>

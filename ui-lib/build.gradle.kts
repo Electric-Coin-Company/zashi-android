@@ -41,6 +41,7 @@ dependencies {
     implementation(libs.androidx.annotation)
     implementation(libs.androidx.core)
     implementation(libs.androidx.lifecycle.livedata)
+    implementation(libs.androidx.splash)
     implementation(libs.bundles.androidx.compose)
     implementation(libs.google.material)
     implementation(libs.kotlin.stdlib)
