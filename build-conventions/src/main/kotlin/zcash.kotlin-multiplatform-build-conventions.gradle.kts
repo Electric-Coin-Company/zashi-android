@@ -28,10 +28,5 @@ pluginManager.withPlugin("org.jetbrains.kotlin.multiplatform") {
                 }
             }
         }
-
-        sourceSets.all {
-            // Configure opt-in to various Kotlin APIs
-            // languageSettings.optIn("kotlin.time.ExperimentalTime")
-        }
     }
 }

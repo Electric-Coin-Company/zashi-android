@@ -4,6 +4,7 @@ import java.util.*
 plugins {
     kotlin("multiplatform")
     id("zcash.kotlin-multiplatform-build-conventions")
+    id("zcash.dependency-conventions")
 }
 
 // Injects build information
