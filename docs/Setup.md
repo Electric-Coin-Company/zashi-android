@@ -10,10 +10,10 @@ To get set up for development, there are several steps that you need to go throu
 
 Start by making sure the command line with Gradle works first, because **all the Android Studio run configurations use Gradle internally.**  The run configurations are not magic—they map directly to command line invocations with different arguments.
 
-1. Configure Java
-    1. Java 16 is currently recommended. Java 11 is the minimum requirement for Android Studio.
+1. Install Java
+    1. Android Studio has an embedded JVM, although running Gradle tasks from the command line requires a separate JVM to be installed.  Our Gradle scripts are configured to use toolchains to automatically install the correct JVM version.  _Note: The ktlintFormat task will fail on Apple Silicon unless a Java 11 virtual machine is installed manually._
 1. Install Android Studio and the Android SDK
-    1. Download the [Android Studio Bumblebee Canary](https://developer.android.com/studio/preview) (we're using the Canary version, due to its improved integration with Jetpack Compose)
+    1. Download the [Android Studio Bumblebee Beta](https://developer.android.com/studio/preview) (we're using the Beta version, due to its improved integration with Jetpack Compose)
     1. TODO: Fill in step-by-step instructions for setting up a new environment and installing the Android SDK from within Android Studio
 1. Check out the code.  _Use the command line (instead of Android Studio) to check out the code. This will ensure that your command line environment is set up correctly and avoids a few pitfalls with trying to use Android Studio directly.  Android Studio's built-in git client is not as robust as standalone clients_
 1. Compile from the command line

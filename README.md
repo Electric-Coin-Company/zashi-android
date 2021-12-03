@@ -27,7 +27,6 @@ If you plan to fork the project to create a new app of your own, please make the
 1. Remove any copyrighted ZCash or Electric Coin Company icons, logos, or assets
 1. Change the package name
     1. Under [app/build.gradle.kts](app/build.gradle.kts), change the package name of the application
-    1. Under [app/proguard-project.txt](app/proguard-project.txt), change the `-repackageclasses` directive to your own package name
 
 # Known Issues
 
@@ -38,4 +37,4 @@ If you plan to fork the project to create a new app of your own, please make the
 1. Android Studio will warn about the Gradle checksum.  This is a [known issue](https://github.com/gradle/gradle/issues/9361) and can be safely ignored.
 1. [#96](https://github.com/zcash/secant-android-wallet/issues/96) - Release builds print some R8 warnings which can be safely ignored.
 1. During app first launch, the following exception starting with `AndroidKeysetManager: keyset not found, will generate a new one` is printed twice.  This exception is not an error, and the code is not being invoked twice.
-1. The task `ktlintFormat` fails on Java 16 or greater.  As a workaround, the task is run under Java 11.  This requires that JDK 11 be installed, even if a newer JDK is also installed.  While this is configured to use the Java toolchain API, [toolchain support for Java 11 does not work on Apple Silicon](https://github.com/gradle/gradle/issues/19140).  [Azul Zulu](https://www.azul.com/downloads/?os=macos&architecture=arm-64-bit&package=jdk) does offer JDK 11, which must be installed manually to run this task from the command line on Apple Silicon.
+1. The task `ktlintFormat` fails on Java 16 and greater.  As a workaround, the task is run under Java 11.  This requires that JDK 11 be installed, even if a newer JDK is also installed.  While this is configured to use the Java toolchain API, [toolchain support for Java 11 does not work on Apple Silicon](https://github.com/gradle/gradle/issues/19140).  [Azul Zulu](https://www.azul.com/downloads/?os=macos&architecture=arm-64-bit&package=jdk) does offer JDK 11, which must be installed manually to run this task from the command line on Apple Silicon.
