@@ -43,11 +43,10 @@ android {
     buildTypes {
         getByName("release").apply {
             isMinifyEnabled = project.property("IS_MINIFY_ENABLED").toString().toBoolean()
-            proguardFiles.addAll(
-                listOf(
-                    getDefaultProguardFile("proguard-android-optimize.txt"),
-                    File("proguard-project.txt")
-                )
+            isShrinkResources = project.property("IS_MINIFY_ENABLED").toString().toBoolean()
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-project.txt"
             )
         }
     }
@@ -80,6 +79,32 @@ android {
     kotlinOptions {
         jvmTarget = libs.versions.java.get()
         allWarningsAsErrors = project.property("IS_TREAT_WARNINGS_AS_ERRORS").toString().toBoolean()
+    }
+
+    packagingOptions {
+        resources.excludes.addAll(
+            listOf(
+                "**/*.kotlin_metadata",
+                ".readme",
+                "build-data.properties",
+                "META-INF/*.kotlin_module",
+                "META-INF/android.arch**",
+                "META-INF/androidx**",
+                "META-INF/com.android**",
+                "META-INF/com.google.android.material_material.version",
+                "META-INF/com.google.dagger_dagger.version",
+                "META-INF/services/org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor",
+                "META-INF/services/org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar",
+                "META-INF/services/org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages\$Extension",
+                "firebase-**.properties",
+                "kotlin/**",
+                "play-services-**.properties",
+                "protolite-well-known-types.properties",
+                "transport-api.properties",
+                "transport-backend-cct.properties",
+                "transport-runtime.properties",
+            )
+        )
     }
 }
 

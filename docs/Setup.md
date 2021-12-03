@@ -10,9 +10,8 @@ To get set up for development, there are several steps that you need to go throu
 
 Start by making sure the command line with Gradle works first, because **all the Android Studio run configurations use Gradle internally.**  The run configurations are not magic—they map directly to command line invocations with different arguments.
 
-1. Install Java
+1. Configure Java
     1. Java 16 is currently recommended. Java 11 is the minimum requirement for Android Studio.
-    1. To simplify installation, use [Oracle's JDK](https://www.oracle.com/java/technologies/javase-jdk16-downloads.html) installer that will place the Java installation in the right place
 1. Install Android Studio and the Android SDK
     1. Download the [Android Studio Bumblebee Canary](https://developer.android.com/studio/preview) (we're using the Canary version, due to its improved integration with Jetpack Compose)
     1. TODO: Fill in step-by-step instructions for setting up a new environment and installing the Android SDK from within Android Studio
