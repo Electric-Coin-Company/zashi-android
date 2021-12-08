@@ -155,7 +155,11 @@ private fun Test(
             onNext()
         }
         currentSelectedTestChoice.none { null == it.value } -> {
-            TestFailure(onBack)
+            TestFailure {
+                // Clear the user's prior test inputs for the retest
+                selectedTestChoices.set(emptyMap())
+                onBack()
+            }
         }
     }
 }

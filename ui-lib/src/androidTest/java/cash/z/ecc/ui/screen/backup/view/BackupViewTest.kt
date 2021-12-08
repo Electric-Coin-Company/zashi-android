@@ -111,6 +111,20 @@ class BackupViewTest {
         composeTestRule.onNode(hasText(getStringResource(R.string.new_wallet_4_button_retry))).performClick()
 
         assertEquals(BackupStage.Seed, testSetup.getStage())
+
+        composeTestRule.onNode(hasText(getStringResource(R.string.new_wallet_3_button_finished))).performClick()
+
+        assertEquals(BackupStage.Test, testSetup.getStage())
+
+        // These verify that the test itself is re-displayed
+
+        composeTestRule.onNode(hasText(getStringResource(R.string.new_wallet_4_header_verify))).also {
+            it.assertExists()
+        }
+
+        composeTestRule.onNode(hasText(getStringResource(R.string.new_wallet_4_header_ouch))).also {
+            it.assertDoesNotExist()
+        }
     }
 
     @Test
