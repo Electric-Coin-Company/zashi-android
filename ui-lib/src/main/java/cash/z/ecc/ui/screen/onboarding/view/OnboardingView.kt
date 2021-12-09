@@ -7,10 +7,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.Icon
-import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
@@ -22,6 +22,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import cash.z.ecc.ui.R
 import cash.z.ecc.ui.screen.common.Body
+import cash.z.ecc.ui.screen.common.GradientSurface
 import cash.z.ecc.ui.screen.common.Header
 import cash.z.ecc.ui.screen.common.NavigationButton
 import cash.z.ecc.ui.screen.common.PinkProgress
@@ -38,11 +39,13 @@ import cash.z.ecc.ui.theme.ZcashTheme
 @Composable
 fun ComposablePreview() {
     ZcashTheme(darkTheme = true) {
-        Onboarding(
-            OnboardingState(OnboardingStage.UnifiedAddresses),
-            onImportWallet = {},
-            onCreateWallet = {}
-        )
+        GradientSurface {
+            Onboarding(
+                OnboardingState(OnboardingStage.UnifiedAddresses),
+                onImportWallet = {},
+                onCreateWallet = {}
+            )
+        }
     }
 }
 
@@ -56,24 +59,22 @@ fun Onboarding(
     onImportWallet: () -> Unit,
     onCreateWallet: () -> Unit
 ) {
-    Surface {
-        Column {
-            TopNavButtons(onboardingState)
+    Column {
+        TopNavButtons(onboardingState)
 
-            val onboardingStage = onboardingState.current.collectAsState().value
+        val onboardingStage = onboardingState.current.collectAsState().value
 
-            when (onboardingStage) {
-                OnboardingStage.ShieldedByDefault -> ShieldedByDefault()
-                OnboardingStage.UnifiedAddresses -> UnifiedAddresses()
-                OnboardingStage.More -> More()
-                OnboardingStage.Wallet -> Wallet(
-                    onCreateWallet = onCreateWallet,
-                    onImportWallet = onImportWallet
-                )
-            }
-
-            BottomNav(onboardingStage.getProgress(), onboardingState::goNext)
+        when (onboardingStage) {
+            OnboardingStage.ShieldedByDefault -> ShieldedByDefault()
+            OnboardingStage.UnifiedAddresses -> UnifiedAddresses()
+            OnboardingStage.More -> More()
+            OnboardingStage.Wallet -> Wallet(
+                onCreateWallet = onCreateWallet,
+                onImportWallet = onImportWallet
+            )
         }
+
+        BottomNav(onboardingStage.getProgress(), onboardingState::goNext)
     }
 }
 
@@ -100,6 +101,8 @@ private fun TopNavButtons(onboardingState: OnboardingState) {
 private fun BottomNav(progress: Progress, onNext: () -> Unit) {
     if (progress.current != progress.last) {
         Column {
+            Spacer(modifier = Modifier.fillMaxHeight().weight(MINIMAL_WEIGHT, true))
+
             SecondaryButton(onNext, stringResource(R.string.onboarding_next), Modifier.fillMaxWidth())
 
             // Converts from index to human numbering

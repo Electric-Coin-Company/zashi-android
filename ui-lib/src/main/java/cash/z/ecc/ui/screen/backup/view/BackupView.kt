@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.Card
-import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
@@ -26,6 +25,7 @@ import cash.z.ecc.ui.screen.common.Body
 import cash.z.ecc.ui.screen.common.CHIP_GRID_ROW_SIZE
 import cash.z.ecc.ui.screen.common.Chip
 import cash.z.ecc.ui.screen.common.ChipGrid
+import cash.z.ecc.ui.screen.common.GradientSurface
 import cash.z.ecc.ui.screen.common.Header
 import cash.z.ecc.ui.screen.common.NavigationButton
 import cash.z.ecc.ui.screen.common.PrimaryButton
@@ -37,14 +37,16 @@ import cash.z.ecc.ui.theme.ZcashTheme
 @Preview(device = Devices.PIXEL_4)
 @Composable
 fun ComposablePreview() {
-    ZcashTheme(darkTheme = true) {
-        BackupWallet(
-            PersistableWalletFixture.new(),
-            BackupState(BackupStage.Test),
-            TestChoices(),
-            onCopyToClipboard = {},
-            onComplete = {}
-        )
+    ZcashTheme(darkTheme = false) {
+        GradientSurface {
+            BackupWallet(
+                PersistableWalletFixture.new(),
+                BackupState(BackupStage.EducationOverview),
+                TestChoices(),
+                onCopyToClipboard = {},
+                onComplete = {}
+            )
+        }
     }
 }
 
@@ -59,27 +61,25 @@ fun BackupWallet(
     onCopyToClipboard: () -> Unit,
     onComplete: () -> Unit,
 ) {
-    Surface {
-        Column {
-            when (backupState.current.collectAsState().value) {
-                BackupStage.EducationOverview -> EducationOverview(onNext = backupState::goNext)
-                BackupStage.EducationRecoveryPhrase -> EducationRecoveryPhrase(onNext = backupState::goNext)
-                BackupStage.Seed -> SeedPhrase(
-                    wallet,
-                    onNext = backupState::goNext,
-                    onCopyToClipboard = onCopyToClipboard
-                )
-                BackupStage.Test -> Test(
-                    wallet,
-                    selectedTestChoices,
-                    onBack = backupState::goPrevious,
-                    onNext = backupState::goNext
-                )
-                BackupStage.Complete -> Complete(
-                    onComplete = onComplete,
-                    onBackToSeedPhrase = backupState::goToSeed
-                )
-            }
+    Column {
+        when (backupState.current.collectAsState().value) {
+            BackupStage.EducationOverview -> EducationOverview(onNext = backupState::goNext)
+            BackupStage.EducationRecoveryPhrase -> EducationRecoveryPhrase(onNext = backupState::goNext)
+            BackupStage.Seed -> SeedPhrase(
+                wallet,
+                onNext = backupState::goNext,
+                onCopyToClipboard = onCopyToClipboard
+            )
+            BackupStage.Test -> Test(
+                wallet,
+                selectedTestChoices,
+                onBack = backupState::goPrevious,
+                onNext = backupState::goNext
+            )
+            BackupStage.Complete -> Complete(
+                onComplete = onComplete,
+                onBackToSeedPhrase = backupState::goToSeed
+            )
         }
     }
 }
