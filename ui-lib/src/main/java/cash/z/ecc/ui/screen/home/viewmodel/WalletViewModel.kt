@@ -65,19 +65,6 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
         )
 
     /**
-     * Persists a wallet asynchronously.  Clients observe either [persistableWallet] or [synchronizer]
-     * to see the side effects.  This would be used for a user restoring a wallet from a backup.
-     */
-    fun persistWallet(persistableWallet: PersistableWallet) {
-        viewModelScope.launch {
-            val preferenceProvider = EncryptedPreferenceSingleton.getInstance(getApplication())
-            persistWalletMutex.withLock {
-                EncryptedPreferenceKeys.PERSISTABLE_WALLET.putValue(preferenceProvider, persistableWallet)
-            }
-        }
-    }
-
-    /**
      * Creates a wallet asynchronously and then persists it.  Clients observe
      * [state] to see the side effects.  This would be used for a user creating a new wallet.
      */
@@ -85,12 +72,27 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
      * Although waiting for the wallet to be written and then read back is slower, it is probably
      * safer because it 1. guarantees the wallet is written to disk and 2. has a single source of truth.
      */
-    fun createAndPersistWallet() {
+    fun persistNewWallet() {
         val application = getApplication<Application>()
 
         viewModelScope.launch {
             val newWallet = PersistableWallet.new(application)
-            persistWallet(newWallet)
+            persistExistingWallet(newWallet)
+        }
+    }
+
+    /**
+     * Persists a wallet asynchronously.  Clients observe [state]
+     * to see the side effects.  This would be used for a user restoring a wallet from a backup.
+     */
+    fun persistExistingWallet(persistableWallet: PersistableWallet) {
+        val application = getApplication<Application>()
+
+        viewModelScope.launch {
+            val preferenceProvider = EncryptedPreferenceSingleton.getInstance(application)
+            persistWalletMutex.withLock {
+                EncryptedPreferenceKeys.PERSISTABLE_WALLET.putValue(preferenceProvider, persistableWallet)
+            }
         }
     }
 
@@ -104,7 +106,14 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
 
         viewModelScope.launch {
             val preferenceProvider = StandardPreferenceSingleton.getInstance(application)
-            StandardPreferenceKeys.IS_USER_BACKUP_COMPLETE.putValue(preferenceProvider, true)
+
+            // Use the Mutex here to avoid timing issues.  During wallet restore, persistBackupComplete()
+            // is called prior to persistExistingWallet().  Although persistBackupComplete() should
+            // complete quickly, it isn't guaranteed to complete before persistExistingWallet()
+            // unless a mutex is used here.
+            persistWalletMutex.withLock {
+                StandardPreferenceKeys.IS_USER_BACKUP_COMPLETE.putValue(preferenceProvider, true)
+            }
         }
     }
 }

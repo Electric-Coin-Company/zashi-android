@@ -22,7 +22,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
-import cash.z.ecc.ui.screen.backup.BackupTags
+import cash.z.ecc.ui.screen.backup.BackupTag
 import cash.z.ecc.ui.screen.onboarding.model.Index
 import cash.z.ecc.ui.theme.MINIMAL_WEIGHT
 import cash.z.ecc.ui.theme.ZcashTheme
@@ -67,7 +67,7 @@ fun ChipDropDown(
             )
         }
         val dropdownModifier = if (expanded) {
-            Modifier.testTag(BackupTags.DROPDOWN_MENU)
+            Modifier.testTag(BackupTag.DROPDOWN_MENU)
         } else {
             Modifier
         }

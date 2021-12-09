@@ -5,13 +5,14 @@
     <application
         android:icon="@mipmap/ic_launcher_square"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true"
-        android:theme="@style/Theme.App.Starting">
+        android:supportsRtl="true">
 
         <activity
             android:name="cash.z.ecc.ui.MainActivity"
             android:exported="false"
-            android:label="@string/app_name" />
+            android:label="@string/app_name"
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/Theme.App.Starting"/>
     </application>
 
 </manifest>

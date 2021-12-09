@@ -38,6 +38,9 @@ object Dark {
 
     val callout = Color(0xFFa7bed8)
     val onCallout = Color(0xFF3d698f)
+
+    val overlay = Color(0x22000000)
+    val highlight = Color(0xFFFFD800)
 }
 
 object Light {
@@ -74,4 +77,7 @@ object Light {
 
     val callout = Color(0xFFe6f0f9)
     val onCallout = Color(0xFFa1b8d0)
+
+    val overlay = Color(0x22000000)
+    val highlight = Color(0xFFFFD800)
 }

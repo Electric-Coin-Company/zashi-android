@@ -30,7 +30,7 @@ private val LightColorPalette = lightColors(
     surface = Light.backgroundStart,
     onSurface = Light.textBodyOnBackground,
     background = Light.backgroundStart,
-    onBackground = Light.textBodyOnBackground
+    onBackground = Light.textBodyOnBackground,
 )
 
 @Immutable
@@ -44,7 +44,9 @@ data class ExtendedColors(
     val progressStart: Color,
     val progressEnd: Color,
     val progressBackground: Color,
-    val chipIndex: Color
+    val chipIndex: Color,
+    val overlay: Color,
+    val highlight: Color
 ) {
     @Composable
     fun surfaceGradient() = Brush.verticalGradient(
@@ -65,7 +67,9 @@ val DarkExtendedColorPalette = ExtendedColors(
     progressStart = Dark.progressStart,
     progressEnd = Dark.progressEnd,
     progressBackground = Dark.progressBackground,
-    chipIndex = Dark.textChipIndex
+    chipIndex = Dark.textChipIndex,
+    overlay = Dark.overlay,
+    highlight = Dark.highlight
 )
 
 val LightExtendedColorPalette = ExtendedColors(
@@ -78,7 +82,9 @@ val LightExtendedColorPalette = ExtendedColors(
     progressStart = Light.progressStart,
     progressEnd = Light.progressEnd,
     progressBackground = Light.progressBackground,
-    chipIndex = Light.textChipIndex
+    chipIndex = Light.textChipIndex,
+    overlay = Light.overlay,
+    highlight = Light.highlight
 )
 
 val LocalExtendedColors = staticCompositionLocalOf {
@@ -92,7 +98,9 @@ val LocalExtendedColors = staticCompositionLocalOf {
         progressStart = Color.Unspecified,
         progressEnd = Color.Unspecified,
         progressBackground = Color.Unspecified,
-        chipIndex = Color.Unspecified
+        chipIndex = Color.Unspecified,
+        overlay = Color.Unspecified,
+        highlight = Color.Unspecified
     )
 }
 

@@ -12,6 +12,16 @@ android {
         allWarningsAsErrors = project.property("IS_TREAT_WARNINGS_AS_ERRORS").toString().toBoolean()
         freeCompilerArgs = freeCompilerArgs + "-Xopt-in=kotlin.RequiresOptIn"
     }
+
+    // Force orchestrator to be used for this module, because we need the preference files
+    // to be purged between tests
+    defaultConfig {
+        testInstrumentationRunnerArguments["clearPackageData"] = "true"
+    }
+
+    testOptions {
+        execution = "ANDROIDX_TEST_ORCHESTRATOR"
+    }
 }
 
 dependencies {
@@ -24,11 +34,9 @@ dependencies {
     androidTestImplementation(libs.bundles.androidx.test)
     androidTestImplementation(libs.kotlinx.coroutines.test)
 
-    if (project.property("IS_USE_TEST_ORCHESTRATOR").toString().toBoolean()) {
-        androidTestUtil(libs.androidx.test.orchestrator) {
-            artifact {
-                type = "apk"
-            }
+    androidTestUtil(libs.androidx.test.orchestrator) {
+        artifact {
+            type = "apk"
         }
     }
 }

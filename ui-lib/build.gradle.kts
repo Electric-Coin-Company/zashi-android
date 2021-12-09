@@ -29,7 +29,8 @@ android {
                 setOf(
                     "src/main/res/ui/common",
                     "src/main/res/ui/onboarding",
-                    "src/main/res/ui/backup"
+                    "src/main/res/ui/backup",
+                    "src/main/res/ui/restore"
                 )
             )
         }
