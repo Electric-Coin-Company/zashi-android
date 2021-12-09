@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 
 private val DarkColorPalette = darkColors(
@@ -34,6 +35,7 @@ private val LightColorPalette = lightColors(
 
 @Immutable
 data class ExtendedColors(
+    val surfaceEnd: Color,
     val onBackgroundHeader: Color,
     val tertiary: Color,
     val onTertiary: Color,
@@ -43,9 +45,18 @@ data class ExtendedColors(
     val progressEnd: Color,
     val progressBackground: Color,
     val chipIndex: Color
-)
+) {
+    @Composable
+    fun surfaceGradient() = Brush.verticalGradient(
+        colors = listOf(
+            MaterialTheme.colors.surface,
+            ZcashTheme.colors.surfaceEnd
+        )
+    )
+}
 
 val DarkExtendedColorPalette = ExtendedColors(
+    surfaceEnd = Dark.backgroundEnd,
     onBackgroundHeader = Dark.textHeaderOnBackground,
     tertiary = Dark.tertiaryButton,
     onTertiary = Dark.textTertiaryButton,
@@ -58,6 +69,7 @@ val DarkExtendedColorPalette = ExtendedColors(
 )
 
 val LightExtendedColorPalette = ExtendedColors(
+    surfaceEnd = Light.backgroundEnd,
     onBackgroundHeader = Light.textHeaderOnBackground,
     tertiary = Light.tertiaryButton,
     onTertiary = Light.textTertiaryButton,
@@ -71,6 +83,7 @@ val LightExtendedColorPalette = ExtendedColors(
 
 val LocalExtendedColors = staticCompositionLocalOf {
     ExtendedColors(
+        surfaceEnd = Color.Unspecified,
         onBackgroundHeader = Color.Unspecified,
         tertiary = Color.Unspecified,
         onTertiary = Color.Unspecified,

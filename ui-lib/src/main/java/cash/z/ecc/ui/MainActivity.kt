@@ -9,14 +9,18 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.annotation.VisibleForTesting
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Modifier
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import cash.z.ecc.sdk.model.PersistableWallet
 import cash.z.ecc.ui.screen.backup.view.BackupWallet
 import cash.z.ecc.ui.screen.backup.viewmodel.BackupViewModel
+import cash.z.ecc.ui.screen.common.GradientSurface
 import cash.z.ecc.ui.screen.home.view.Home
 import cash.z.ecc.ui.screen.home.viewmodel.WalletState
 import cash.z.ecc.ui.screen.home.viewmodel.WalletViewModel
@@ -56,42 +60,48 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun setupSplashScreen() {
-        installSplashScreen().also {
-            val start = SystemClock.elapsedRealtime().milliseconds
-            it.setKeepVisibleCondition {
-                if (SPLASH_SCREEN_DELAY > Duration.ZERO) {
-                    val now = SystemClock.elapsedRealtime().milliseconds
+        val splashScreen = installSplashScreen()
+        val start = SystemClock.elapsedRealtime().milliseconds
 
-                    // This delay is for debug purposes only; do not enable for production usage.
-                    if (now - start < SPLASH_SCREEN_DELAY) {
-                        return@setKeepVisibleCondition true
-                    }
+        splashScreen.setKeepVisibleCondition {
+            if (SPLASH_SCREEN_DELAY > Duration.ZERO) {
+                val now = SystemClock.elapsedRealtime().milliseconds
+
+                // This delay is for debug purposes only; do not enable for production usage.
+                if (now - start < SPLASH_SCREEN_DELAY) {
+                    return@setKeepVisibleCondition true
                 }
-
-                WalletState.Loading == walletViewModel.state.value
             }
+
+            WalletState.Loading == walletViewModel.state.value
         }
     }
 
     private fun setupUiContent() {
         setContent {
             ZcashTheme {
-                val walletState = walletViewModel.state.collectAsState().value
+                GradientSurface(
+                    Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight()
+                ) {
+                    val walletState = walletViewModel.state.collectAsState().value
 
-                when (walletState) {
-                    WalletState.Loading -> {
-                        // For now, keep displaying splash screen using condition above.
-                        // In the future, we might consider displaying something different here.
+                    when (walletState) {
+                        WalletState.Loading -> {
+                            // For now, keep displaying splash screen using condition above.
+                            // In the future, we might consider displaying something different here.
+                        }
+                        WalletState.NoWallet -> {
+                            WrapOnboarding()
+                        }
+                        is WalletState.NeedsBackup -> WrapBackup(walletState.persistableWallet)
+                        is WalletState.Ready -> WrapHome(walletState.persistableWallet)
                     }
-                    WalletState.NoWallet -> {
-                        WrapOnboarding()
-                    }
-                    is WalletState.NeedsBackup -> WrapBackup(walletState.persistableWallet)
-                    is WalletState.Ready -> WrapHome(walletState.persistableWallet)
-                }
 
-                if (walletState != WalletState.Loading) {
-                    reportFullyDrawn()
+                    if (walletState != WalletState.Loading) {
+                        reportFullyDrawn()
+                    }
                 }
             }
         }

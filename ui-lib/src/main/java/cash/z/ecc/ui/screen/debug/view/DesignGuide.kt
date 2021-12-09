@@ -2,7 +2,6 @@ package cash.z.ecc.ui.screen.debug.view
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Person
@@ -12,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import cash.z.ecc.ui.screen.common.Body
 import cash.z.ecc.ui.screen.common.Chip
+import cash.z.ecc.ui.screen.common.GradientSurface
 import cash.z.ecc.ui.screen.common.Header
 import cash.z.ecc.ui.screen.common.NavigationButton
 import cash.z.ecc.ui.screen.common.PinkProgress
@@ -35,7 +35,7 @@ fun ComposablePreview() {
 // Allowing magic numbers since this is debug-only
 @Suppress("MagicNumber")
 fun DesignGuide() {
-    Surface {
+    GradientSurface {
         Column {
             Header(text = "H1")
             Body(text = "body")
