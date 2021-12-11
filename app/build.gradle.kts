@@ -102,7 +102,7 @@ android {
                 "protolite-well-known-types.properties",
                 "transport-api.properties",
                 "transport-backend-cct.properties",
-                "transport-runtime.properties",
+                "transport-runtime.properties"
             )
         )
     }
