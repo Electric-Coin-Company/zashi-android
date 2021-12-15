@@ -17,4 +17,6 @@ For a Gradle dependency:
 
 For Gradle itself:
 1. Run `./gradle wrapper --gradle-version $X`
-1. Add `distributionSha256Sum=` in `gradle/wrapper/gradle-wrapper.properties`, referencing https://gradle.org/release-checksums/
+1. Add `distributionSha256Sum=` in `gradle/wrapper/gradle-wrapper.properties`, referencing [Gradle Release Checksums](https://gradle.org/release-checksums/)
+1. Update the continuous integration server environment variables with the updated SHA for the Gradle wrapper, referencing [Gradle Release Checksums](https://gradle.org/release-checksums/). _Note: Bitrise builds for other branches may temporarily fail since only a single checksum at a time is currently supported. The wrapper is not updated with every Gradle version so in practice this problem should occur infrequently._
+1. Are there any new APIs or possible migrations?
