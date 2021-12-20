@@ -25,7 +25,7 @@ private suspend fun PersistableWallet.deriveViewingKey(): UnifiedViewingKey {
     // Dispatcher needed because SecureRandom is loaded, which is slow and performs IO
     // https://github.com/zcash/kotlin-bip39/issues/13
     val bip39Seed = withContext(Dispatchers.IO) {
-        Mnemonics.MnemonicCode(seedPhrase.phrase).toSeed()
+        Mnemonics.MnemonicCode(seedPhrase.joinToString()).toSeed()
     }
 
     // Dispatchers needed until an SDK is published with the implementation of
@@ -42,6 +42,6 @@ private suspend fun PersistableWallet.toConfig(): Initializer.Config {
     val vk = deriveViewingKey()
 
     return Initializer.Config {
-        it.importWallet(vk, birthday.height, network, network.defaultHost, network.defaultPort)
+        it.importWallet(vk, birthday?.height, network, network.defaultHost, network.defaultPort)
     }
 }

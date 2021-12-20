@@ -8,6 +8,7 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cash.z.ecc.ui.screen.onboarding.model.Index
@@ -33,7 +34,10 @@ fun Chip(
         color = MaterialTheme.colors.secondary,
         elevation = 8.dp,
     ) {
-        Row(modifier = Modifier.padding(8.dp)) {
+        Row(
+            modifier = Modifier
+                .padding(8.dp)
+        ) {
             Text(
                 text = (index.value + 1).toString(),
                 style = ZcashTheme.typography.chipIndex,
@@ -44,6 +48,7 @@ fun Chip(
                 text = text,
                 style = MaterialTheme.typography.body1,
                 color = MaterialTheme.colors.onSecondary,
+                modifier = Modifier.testTag(CommonTag.CHIP)
             )
         }
     }

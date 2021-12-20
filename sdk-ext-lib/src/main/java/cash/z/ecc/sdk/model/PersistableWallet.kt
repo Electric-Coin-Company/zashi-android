@@ -16,7 +16,7 @@ import org.json.JSONObject
  */
 data class PersistableWallet(
     val network: ZcashNetwork,
-    val birthday: WalletBirthday,
+    val birthday: WalletBirthday?,
     val seedPhrase: SeedPhrase
 ) {
 
@@ -28,8 +28,10 @@ data class PersistableWallet(
     fun toJson() = JSONObject().apply {
         put(KEY_VERSION, VERSION_1)
         put(KEY_NETWORK_ID, network.id)
-        put(KEY_BIRTHDAY, birthday.toJson())
-        put(KEY_SEED_PHRASE, seedPhrase.phrase)
+        birthday?.let {
+            put(KEY_BIRTHDAY, it.toJson())
+        }
+        put(KEY_SEED_PHRASE, seedPhrase.joinToString())
     }
 
     override fun toString(): String {
@@ -49,10 +51,14 @@ data class PersistableWallet(
             when (val version = jsonObject.getInt(KEY_VERSION)) {
                 VERSION_1 -> {
                     val networkId = jsonObject.getInt(KEY_NETWORK_ID)
-                    val birthday = WalletBirthdayCompanion.from(jsonObject.getJSONObject(KEY_BIRTHDAY))
+                    val birthday = if (jsonObject.has(KEY_BIRTHDAY)) {
+                        WalletBirthdayCompanion.from(jsonObject.getJSONObject(KEY_BIRTHDAY))
+                    } else {
+                        null
+                    }
                     val seedPhrase = jsonObject.getString(KEY_SEED_PHRASE)
 
-                    return PersistableWallet(ZcashNetwork.from(networkId), birthday, SeedPhrase(seedPhrase))
+                    return PersistableWallet(ZcashNetwork.from(networkId), birthday, SeedPhrase.new(seedPhrase))
                 }
                 else -> {
                     throw IllegalArgumentException("Unsupported version $version")
@@ -82,4 +88,4 @@ private suspend fun newMnemonic() = withContext(Dispatchers.IO) {
     Mnemonics.MnemonicCode(cash.z.ecc.android.bip39.Mnemonics.WordCount.COUNT_24.toEntropy()).words
 }
 
-private suspend fun newSeedPhrase() = SeedPhrase(newMnemonic().joinToString(separator = " ") { it.concatToString() })
+private suspend fun newSeedPhrase() = SeedPhrase(newMnemonic().map { it.concatToString() })

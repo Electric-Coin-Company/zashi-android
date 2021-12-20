@@ -3,6 +3,7 @@ package cash.z.ecc.sdk.model
 import androidx.test.filters.SmallTest
 import cash.z.ecc.android.sdk.type.ZcashNetwork
 import cash.z.ecc.sdk.fixture.PersistableWalletFixture
+import cash.z.ecc.sdk.fixture.SeedPhraseFixture
 import cash.z.ecc.sdk.test.count
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -24,7 +25,7 @@ class PersistableWalletTest {
 
         assertEquals(1, jsonObject.getInt(PersistableWallet.KEY_VERSION))
         assertEquals(ZcashNetwork.Testnet.id, jsonObject.getInt(PersistableWallet.KEY_NETWORK_ID))
-        assertEquals(PersistableWalletFixture.SEED_PHRASE, jsonObject.getString(PersistableWallet.KEY_SEED_PHRASE))
+        assertEquals(PersistableWalletFixture.SEED_PHRASE.joinToString(), jsonObject.getString(PersistableWallet.KEY_SEED_PHRASE))
 
         // Birthday serialization is tested in a separate file
     }
@@ -45,6 +46,6 @@ class PersistableWalletTest {
     fun toString_security() {
         val actual = PersistableWalletFixture.new().toString()
 
-        assertFalse(actual.contains(PersistableWalletFixture.SEED_PHRASE))
+        assertFalse(actual.contains(SeedPhraseFixture.SEED_PHRASE))
     }
 }

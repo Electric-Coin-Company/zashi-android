@@ -1,0 +1,15 @@
+<resources>
+    <string name="restore_header">Restore Wallet</string>
+    <string name="restore_back_content_description">Back</string>
+    <string name="restore_button_clear">Clear</string>
+    <string name="restore_instructions">You will need to enter all 24 seed words. Don’t worry, we’ll autocomplete them as you type.</string>
+
+    <string name="restore_warning_suggestions">This word is not in the seed phrase dictionary.  Please select the correct one from the suggestions.</string>
+    <string name="restore_warning_no_suggestions">This word is not in the seed phrase dictionary.</string>
+
+    <string name="restore_complete_header">Seed phrase imported!</string>
+    <string name="restore_complete_info">We will now scan the blockchain to find your transactions and balance.  You can do this faster by adding a wallet birthday below.</string>
+    <string name="restore_button_see_wallet">Take me to my wallet</string>
+    <string name="restore_button_add_birthday">Add a wallet birthday</string>
+
+</resources>

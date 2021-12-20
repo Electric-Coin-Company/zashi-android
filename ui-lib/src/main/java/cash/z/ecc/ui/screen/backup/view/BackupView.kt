@@ -17,7 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import cash.z.ecc.sdk.fixture.PersistableWalletFixture
 import cash.z.ecc.sdk.model.PersistableWallet
 import cash.z.ecc.ui.R
-import cash.z.ecc.ui.screen.backup.BackupTags
+import cash.z.ecc.ui.screen.backup.BackupTag
 import cash.z.ecc.ui.screen.backup.model.BackupStage
 import cash.z.ecc.ui.screen.backup.state.BackupState
 import cash.z.ecc.ui.screen.backup.state.TestChoices
@@ -123,7 +123,7 @@ private fun SeedPhrase(persistableWallet: PersistableWallet, onNext: () -> Unit,
         Header(stringResource(R.string.new_wallet_3_header))
         Body(stringResource(R.string.new_wallet_3_body_1))
 
-        ChipGrid(persistableWallet)
+        ChipGrid(persistableWallet.seedPhrase.split)
 
         PrimaryButton(onClick = onNext, text = stringResource(R.string.new_wallet_3_button_finished))
         TertiaryButton(onClick = onCopyToClipboard, text = stringResource(R.string.new_wallet_3_button_copy))
@@ -205,7 +205,7 @@ private fun TestInProgress(
                                 choices = testChoices.map { it.word },
                                 modifier = Modifier
                                     .weight(MINIMAL_WEIGHT)
-                                    .testTag(BackupTags.DROPDOWN_CHIP)
+                                    .testTag(BackupTag.DROPDOWN_CHIP)
                             ) {
                                 selectedTestChoices.set(
                                     HashMap(currentSelectedTestChoice).apply {

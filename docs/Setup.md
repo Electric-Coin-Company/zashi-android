@@ -11,7 +11,7 @@ To get set up for development, there are several steps that you need to go throu
 Start by making sure the command line with Gradle works first, because **all the Android Studio run configurations use Gradle internally.**  The run configurations are not magic—they map directly to command line invocations with different arguments.
 
 1. Install Java
-    1. Install JVM 11 or greater on your system.  Our setup has been tested with Java 11-17.  For Windows or Linux, be sure that the `JAVA_HOME` environment variable points to the right Java version.
+    1. Install JVM 11 or greater on your system.  Our setup has been tested with Java 11-17.  For Windows or Linux, be sure that the `JAVA_HOME` environment variable points to the right Java version.  Note: If you switch from a newer to an older JVM version, you may see an error like the following `> com.android.ide.common.signing.KeytoolException: Failed to read key AndroidDebugKey from store "~/.android/debug.keystore": Integrity check failed: java.security.NoSuchAlgorithmException: Algorithm HmacPBESHA256 not available`.  A solution is to delete the debug keystore and allow it to be re-generated.
     1. Android Studio has an embedded JVM, although running Gradle tasks from the command line requires a separate JVM to be installed.  Our Gradle scripts are configured to use toolchains to automatically install the correct JVM version.  _Note: The ktlintFormat task will fail on Apple Silicon unless a Java 11 virtual machine is installed manually._
 1. Install Android Studio and the Android SDK
     1. Download the [Android Studio Bumblebee Beta](https://developer.android.com/studio/preview) (we're using the Beta version, due to its improved integration with Jetpack Compose)
@@ -34,6 +34,8 @@ Start by making sure the command line with Gradle works first, because **all the
     1. After Android Studio finishes syncing with Gradle, look for the green "play" run button in the toolbar.  To the left of it, choose the "app" run configuration under the dropdown menu.  Then hit the run button
 
 ## Troubleshooting
+1. Verify that the Git repo has not been modified.  Due to strict dependency locking (for security reasons), the build will fail unless the locks are also updated
+1. If you 
 1. Try running from the command line instead of Android Studio, to rule out Android Studio issues.  If it works from the command line, try this step to reset Android Studio
    1. Quit Android Studio
    2. Deleting the invisible `.idea` in the root directory of the project

@@ -12,7 +12,7 @@ import androidx.compose.ui.test.performClick
 import androidx.test.filters.MediumTest
 import cash.z.ecc.sdk.fixture.PersistableWalletFixture
 import cash.z.ecc.ui.R
-import cash.z.ecc.ui.screen.backup.BackupTags
+import cash.z.ecc.ui.screen.backup.BackupTag
 import cash.z.ecc.ui.screen.backup.model.BackupStage
 import cash.z.ecc.ui.screen.backup.state.BackupState
 import cash.z.ecc.ui.screen.backup.state.TestChoices
@@ -64,20 +64,20 @@ class BackupViewTest {
     fun test_pass() {
         val testSetup = newTestSetup(BackupStage.Test)
 
-        composeTestRule.onAllNodesWithTag(BackupTags.DROPDOWN_CHIP).also {
+        composeTestRule.onAllNodesWithTag(BackupTag.DROPDOWN_CHIP).also {
             it.assertCountEquals(4)
 
             it[0].performClick()
-            composeTestRule.onNode(hasTestTag(BackupTags.DROPDOWN_MENU)).onChildren()[1].performClick()
+            composeTestRule.onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[1].performClick()
 
             it[1].performClick()
-            composeTestRule.onNode(hasTestTag(BackupTags.DROPDOWN_MENU)).onChildren()[0].performClick()
+            composeTestRule.onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[0].performClick()
 
             it[2].performClick()
-            composeTestRule.onNode(hasTestTag(BackupTags.DROPDOWN_MENU)).onChildren()[3].performClick()
+            composeTestRule.onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[3].performClick()
 
             it[3].performClick()
-            composeTestRule.onNode(hasTestTag(BackupTags.DROPDOWN_MENU)).onChildren()[2].performClick()
+            composeTestRule.onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[2].performClick()
         }
 
         assertEquals(BackupStage.Complete, testSetup.getStage())
@@ -88,20 +88,20 @@ class BackupViewTest {
     fun test_fail() {
         val testSetup = newTestSetup(BackupStage.Test)
 
-        composeTestRule.onAllNodesWithTag(BackupTags.DROPDOWN_CHIP).also {
+        composeTestRule.onAllNodesWithTag(BackupTag.DROPDOWN_CHIP).also {
             it.assertCountEquals(4)
 
             it[0].performClick()
-            composeTestRule.onNode(hasTestTag(BackupTags.DROPDOWN_MENU)).onChildren()[0].performClick()
+            composeTestRule.onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[0].performClick()
 
             it[1].performClick()
-            composeTestRule.onNode(hasTestTag(BackupTags.DROPDOWN_MENU)).onChildren()[1].performClick()
+            composeTestRule.onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[1].performClick()
 
             it[2].performClick()
-            composeTestRule.onNode(hasTestTag(BackupTags.DROPDOWN_MENU)).onChildren()[2].performClick()
+            composeTestRule.onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[2].performClick()
 
             it[3].performClick()
-            composeTestRule.onNode(hasTestTag(BackupTags.DROPDOWN_MENU)).onChildren()[3].performClick()
+            composeTestRule.onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[3].performClick()
         }
 
         assertEquals(BackupStage.Test, testSetup.getStage())
@@ -181,20 +181,20 @@ class BackupViewTest {
 
         assertEquals(BackupStage.Test, testSetup.getStage())
 
-        composeTestRule.onAllNodesWithTag(BackupTags.DROPDOWN_CHIP).also {
+        composeTestRule.onAllNodesWithTag(BackupTag.DROPDOWN_CHIP).also {
             it.assertCountEquals(4)
 
             it[0].performClick()
-            composeTestRule.onNode(hasTestTag(BackupTags.DROPDOWN_MENU)).onChildren()[1].performClick()
+            composeTestRule.onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[1].performClick()
 
             it[1].performClick()
-            composeTestRule.onNode(hasTestTag(BackupTags.DROPDOWN_MENU)).onChildren()[0].performClick()
+            composeTestRule.onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[0].performClick()
 
             it[2].performClick()
-            composeTestRule.onNode(hasTestTag(BackupTags.DROPDOWN_MENU)).onChildren()[3].performClick()
+            composeTestRule.onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[3].performClick()
 
             it[3].performClick()
-            composeTestRule.onNode(hasTestTag(BackupTags.DROPDOWN_MENU)).onChildren()[2].performClick()
+            composeTestRule.onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[2].performClick()
         }
 
         assertEquals(BackupStage.Complete, testSetup.getStage())
