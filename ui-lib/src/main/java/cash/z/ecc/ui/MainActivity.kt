@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
+import cash.z.ecc.android.sdk.type.WalletBirthday
 import cash.z.ecc.android.sdk.type.ZcashNetwork
 import cash.z.ecc.sdk.model.PersistableWallet
 import cash.z.ecc.sdk.model.SeedPhrase
@@ -176,9 +177,10 @@ class MainActivity : ComponentActivity() {
                         // a backup, then the user has a valid backup.
                         walletViewModel.persistBackupComplete()
 
+                        val network = ZcashNetwork.fromResources(application)
                         val restoredWallet = PersistableWallet(
-                            ZcashNetwork.fromResources(application),
-                            null,
+                            network,
+                            WalletBirthday(network.saplingActivationHeight),
                             SeedPhrase(restoreViewModel.userWordList.current.value)
                         )
                         walletViewModel.persistExistingWallet(restoredWallet)
