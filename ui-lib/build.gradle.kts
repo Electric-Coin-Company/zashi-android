@@ -27,9 +27,10 @@ android {
         getByName("main").apply {
             res.setSrcDirs(
                 setOf(
-                    "src/main/res/ui/common",
-                    "src/main/res/ui/onboarding",
                     "src/main/res/ui/backup",
+                    "src/main/res/ui/common",
+                    "src/main/res/ui/home",
+                    "src/main/res/ui/onboarding",
                     "src/main/res/ui/restore"
                 )
             )

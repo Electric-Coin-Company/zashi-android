@@ -1,0 +1,7 @@
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="home_scan_content_description">Scan</string>
+    <string name="home_profile_content_description">Profile</string>
+    <string name="home_button_send">Send</string>
+    <string name="home_status_shielding_format" formatted="true">Shielding <xliff:g id="shielded_amount" example=".023">%1$s</xliff:g></string>
+    <string name="home_button_request">Request ZEC</string>
+</resources>

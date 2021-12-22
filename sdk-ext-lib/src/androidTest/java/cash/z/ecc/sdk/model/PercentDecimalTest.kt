@@ -1,4 +1,4 @@
-package cash.z.ecc.ui.screen.onboarding.model
+package cash.z.ecc.sdk.model
 
 import androidx.test.filters.SmallTest
 import org.junit.Test

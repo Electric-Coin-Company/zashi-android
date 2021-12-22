@@ -56,6 +56,7 @@ dependencyResolutionManagement {
             val androidxCoreVersion = extra["ANDROIDX_CORE_VERSION"].toString()
             val androidxEspressoVersion = extra["ANDROIDX_ESPRESSO_VERSION"].toString()
             val androidxLifecycleVersion = extra["ANDROIDX_LIFECYCLE_VERSION"].toString()
+            val androidxNavigationComposeVersion = extra["ANDROIDX_NAVIGATION_COMPOSE_VERSION"].toString()
             val androidxSecurityCryptoVersion = extra["ANDROIDX_SECURITY_CRYPTO_VERSION"].toString()
             val androidxSplashScreenVersion = extra["ANDROIDX_SPLASH_SCREEN_VERSION"].toString()
             val androidxTestJunitVersion = extra["ANDROIDX_TEST_JUNIT_VERSION"].toString()
@@ -89,6 +90,7 @@ dependencyResolutionManagement {
             alias("androidx-compose-compiler").to("androidx.compose.compiler:compiler:$androidxComposeCompilerVersion")
             alias("androidx-core").to("androidx.core:core-ktx:$androidxCoreVersion")
             alias("androidx-lifecycle-livedata").to("androidx.lifecycle:lifecycle-livedata-ktx:$androidxLifecycleVersion")
+            alias("androidx-navigation-compose").to("androidx.navigation:navigation-compose:$androidxNavigationComposeVersion")
             alias("androidx-security-crypto").to("androidx.security:security-crypto-ktx:$androidxSecurityCryptoVersion")
             alias("androidx-splash").to("androidx.core:core-splashscreen:$androidxSplashScreenVersion")
             alias("androidx-viewmodel-compose").to("androidx.lifecycle:lifecycle-viewmodel-compose:$androidxLifecycleVersion")
@@ -127,6 +129,7 @@ dependencyResolutionManagement {
                     "androidx-compose-material-icons-extended",
                     "androidx-compose-tooling",
                     "androidx-compose-ui",
+                    "androidx-navigation-compose",
                     "androidx-viewmodel-compose"
                 )
             )

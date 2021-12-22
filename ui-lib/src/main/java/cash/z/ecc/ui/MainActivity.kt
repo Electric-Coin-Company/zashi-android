@@ -8,6 +8,7 @@ import android.os.SystemClock
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.annotation.FontRes
 import androidx.annotation.VisibleForTesting
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,6 +18,9 @@ import androidx.compose.ui.Modifier
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import cash.z.ecc.android.sdk.type.WalletBirthday
 import cash.z.ecc.android.sdk.type.ZcashNetwork
 import cash.z.ecc.sdk.model.PersistableWallet
@@ -26,7 +30,7 @@ import cash.z.ecc.ui.screen.backup.view.BackupWallet
 import cash.z.ecc.ui.screen.backup.viewmodel.BackupViewModel
 import cash.z.ecc.ui.screen.common.GradientSurface
 import cash.z.ecc.ui.screen.home.view.Home
-import cash.z.ecc.ui.screen.home.viewmodel.WalletState
+import cash.z.ecc.ui.screen.home.viewmodel.SecretState
 import cash.z.ecc.ui.screen.home.viewmodel.WalletViewModel
 import cash.z.ecc.ui.screen.onboarding.view.Onboarding
 import cash.z.ecc.ui.screen.onboarding.viewmodel.OnboardingViewModel
@@ -77,7 +81,7 @@ class MainActivity : ComponentActivity() {
                 }
             }
 
-            WalletState.Loading == walletViewModel.state.value
+            SecretState.Loading == walletViewModel.secretState.value
         }
     }
 
@@ -89,21 +93,21 @@ class MainActivity : ComponentActivity() {
                         .fillMaxWidth()
                         .fillMaxHeight()
                 ) {
-                    val walletState = walletViewModel.state.collectAsState().value
+                    val secretState = walletViewModel.secretState.collectAsState().value
 
-                    when (walletState) {
-                        WalletState.Loading -> {
+                    when (secretState) {
+                        SecretState.Loading -> {
                             // For now, keep displaying splash screen using condition above.
                             // In the future, we might consider displaying something different here.
                         }
-                        WalletState.NoWallet -> {
+                        SecretState.None -> {
                             WrapOnboarding()
                         }
-                        is WalletState.NeedsBackup -> WrapBackup(walletState.persistableWallet)
-                        is WalletState.Ready -> WrapHome(walletState.persistableWallet)
+                        is SecretState.NeedsBackup -> WrapBackup(secretState.persistableWallet)
+                        is SecretState.Ready -> Navigation()
                     }
 
-                    if (walletState != WalletState.Loading) {
+                    if (secretState != SecretState.Loading) {
                         reportFullyDrawn()
                     }
                 }
@@ -191,8 +195,34 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    private fun WrapHome(persistableWallet: PersistableWallet) {
-        Home(persistableWallet)
+    private fun Navigation() {
+        val navController = rememberNavController()
+
+        NavHost(navController = navController, startDestination = "home") {
+            composable("home") { WrapHome({}, {}, {}, {}) }
+        }
+    }
+
+    @Composable
+    private fun WrapHome(
+        goScan: () -> Unit,
+        goProfile: () -> Unit,
+        goSend: () -> Unit,
+        goRequest: () -> Unit
+    ) {
+        val walletSnapshot = walletViewModel.walletSnapshot.collectAsState().value
+        if (null == walletSnapshot) {
+            // Display loading indicator
+        } else {
+            Home(
+                walletSnapshot,
+                walletViewModel.transactionSnapshot.collectAsState().value,
+                goScan = goScan,
+                goRequest = goRequest,
+                goSend = goSend,
+                goProfile = goProfile
+            )
+        }
     }
 
     companion object {
@@ -210,7 +240,7 @@ class MainActivity : ComponentActivity() {
  * caches the results.  This moves that IO off the main thread, to prevent ANRs and
  * jank during app startup.
  */
-private suspend fun prefetchFontLegacy(context: Context, @androidx.annotation.FontRes fontRes: Int) =
+private suspend fun prefetchFontLegacy(context: Context, @FontRes fontRes: Int) =
     withContext(Dispatchers.IO) {
         ResourcesCompat.getFont(context, fontRes)
     }

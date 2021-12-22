@@ -4,6 +4,12 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.android.sdk.Synchronizer
+import cash.z.ecc.android.sdk.block.CompactBlockProcessor
+import cash.z.ecc.android.sdk.db.entity.PendingTransaction
+import cash.z.ecc.android.sdk.db.entity.Transaction
+import cash.z.ecc.android.sdk.db.entity.isMined
+import cash.z.ecc.android.sdk.db.entity.isSubmitSuccess
+import cash.z.ecc.android.sdk.type.WalletBalance
 import cash.z.ecc.sdk.SynchronizerCompanion
 import cash.z.ecc.sdk.model.PersistableWallet
 import cash.z.ecc.ui.common.ANDROID_STATE_FLOW_TIMEOUT_MILLIS
@@ -11,10 +17,19 @@ import cash.z.ecc.ui.preference.EncryptedPreferenceKeys
 import cash.z.ecc.ui.preference.EncryptedPreferenceSingleton
 import cash.z.ecc.ui.preference.StandardPreferenceKeys
 import cash.z.ecc.ui.preference.StandardPreferenceSingleton
+import cash.z.ecc.ui.screen.home.model.WalletSnapshot
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -33,7 +48,7 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
     /**
      * A flow of the user's stored wallet.  Null indicates that no wallet has been stored.
      */
-    private val persistableWalletFlow = flow {
+    private val persistableWallet = flow {
         // EncryptedPreferenceSingleton.getInstance() is a suspending function, which is why we need
         // the flow builder to provide a coroutine context.
         val encryptedPreferenceProvider = EncryptedPreferenceSingleton.getInstance(application)
@@ -44,29 +59,70 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
     /**
      * A flow of whether a backup of the user's wallet has been performed.
      */
-    private val isBackupCompleteFlow = flow {
+    private val isBackupComplete = flow {
         val preferenceProvider = StandardPreferenceSingleton.getInstance(application)
         emitAll(StandardPreferenceKeys.IS_USER_BACKUP_COMPLETE.observe(preferenceProvider))
     }
 
-    val state: StateFlow<WalletState> = persistableWalletFlow
-        .combine(isBackupCompleteFlow) { persistableWallet: PersistableWallet?, isBackupComplete: Boolean ->
+    val secretState: StateFlow<SecretState> = persistableWallet
+        .combine(isBackupComplete) { persistableWallet: PersistableWallet?, isBackupComplete: Boolean ->
             if (null == persistableWallet) {
-                WalletState.NoWallet
+                SecretState.None
             } else if (!isBackupComplete) {
-                WalletState.NeedsBackup(persistableWallet)
+                SecretState.NeedsBackup(persistableWallet)
             } else {
-                WalletState.Ready(persistableWallet, SynchronizerCompanion.load(application, persistableWallet))
+                SecretState.Ready(persistableWallet)
             }
         }.stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(stopTimeoutMillis = ANDROID_STATE_FLOW_TIMEOUT_MILLIS),
-            WalletState.Loading
+            SecretState.Loading
+        )
+
+    // This will likely move to an application global, so that it can be referenced by WorkManager
+    // for background synchronization
+    @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
+    val synchronizer: StateFlow<Synchronizer?> = secretState
+        .filterIsInstance<SecretState.Ready>()
+        .flatMapConcat {
+            callbackFlow {
+                val synchronizer = SynchronizerCompanion.load(application, it.persistableWallet)
+
+                synchronizer.start(viewModelScope)
+
+                trySend(synchronizer)
+                awaitClose {
+                    synchronizer.stop()
+                }
+            }
+        }.stateIn(
+            viewModelScope, SharingStarted.WhileSubscribed(stopTimeoutMillis = ANDROID_STATE_FLOW_TIMEOUT_MILLIS),
+            null
+        )
+
+    @OptIn(FlowPreview::class)
+    val walletSnapshot: StateFlow<WalletSnapshot?> = synchronizer
+        .filterNotNull()
+        .flatMapConcat { it.toWalletSnapshot() }
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(stopTimeoutMillis = ANDROID_STATE_FLOW_TIMEOUT_MILLIS),
+            null
+        )
+
+    // This is not the right API, because the transaction list could be very long and might need UI filtering
+    @OptIn(FlowPreview::class)
+    val transactionSnapshot: StateFlow<List<Transaction>> = synchronizer
+        .filterNotNull()
+        .flatMapConcat { it.toTransactions() }
+        .stateIn(
+            viewModelScope, SharingStarted.WhileSubscribed(stopTimeoutMillis = ANDROID_STATE_FLOW_TIMEOUT_MILLIS),
+            emptyList()
         )
 
     /**
      * Creates a wallet asynchronously and then persists it.  Clients observe
-     * [state] to see the side effects.  This would be used for a user creating a new wallet.
+     * [secretState] to see the side effects.  This would be used for a user creating a new wallet.
      */
     /*
      * Although waiting for the wallet to be written and then read back is slower, it is probably
@@ -82,7 +138,7 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     /**
-     * Persists a wallet asynchronously.  Clients observe [state]
+     * Persists a wallet asynchronously.  Clients observe [secretState]
      * to see the side effects.  This would be used for a user restoring a wallet from a backup.
      */
     fun persistExistingWallet(persistableWallet: PersistableWallet) {
@@ -98,7 +154,7 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
 
     /**
      * Asynchronously notes that the user has completed the backup steps, which means the wallet
-     * is ready to use.  Clients observe [state] to see the side effects.  This would be used
+     * is ready to use.  Clients observe [secretState] to see the side effects.  This would be used
      * for a user creating a new wallet.
      */
     fun persistBackupComplete() {
@@ -119,11 +175,51 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
 }
 
 /**
- * Represents the state of the wallet
+ * Represents the state of the wallet secret.
  */
-sealed class WalletState {
-    object Loading : WalletState()
-    object NoWallet : WalletState()
-    class NeedsBackup(val persistableWallet: PersistableWallet) : WalletState()
-    class Ready(val persistableWallet: PersistableWallet, val synchronizer: Synchronizer) : WalletState()
+sealed class SecretState {
+    object Loading : SecretState()
+    object None : SecretState()
+    class NeedsBackup(val persistableWallet: PersistableWallet) : SecretState()
+    class Ready(val persistableWallet: PersistableWallet) : SecretState()
 }
+
+private fun Synchronizer.toWalletSnapshot() =
+    combine(
+        status, // 0
+        processorInfo, // 1
+        orchardBalances, // 2
+        saplingBalances, // 3
+        transparentBalances, // 4
+        pendingTransactions.distinctUntilChanged() // 5
+    ) { flows ->
+        val unminedCount = (flows[5] as List<*>)
+            .filterIsInstance(PendingTransaction::class.java)
+            .count {
+                it.isSubmitSuccess() && !it.isMined()
+            }
+        WalletSnapshot(
+            status = flows[0] as Synchronizer.Status,
+            processorInfo = flows[1] as CompactBlockProcessor.ProcessorInfo,
+            orchardBalance = flows[2] as WalletBalance,
+            saplingBalance = flows[3] as WalletBalance,
+            transparentBalance = flows[4] as WalletBalance,
+            unminedCount = unminedCount
+        )
+    }
+
+private fun Synchronizer.toTransactions() =
+    combine(
+        clearedTransactions.distinctUntilChanged(),
+        pendingTransactions.distinctUntilChanged(),
+        sentTransactions.distinctUntilChanged(),
+        receivedTransactions.distinctUntilChanged(),
+    ) { cleared, pending, sent, received ->
+        // TODO [#157]: Sort the transactions to show the most recent
+        buildList<Transaction> {
+            addAll(cleared)
+            addAll(pending)
+            addAll(sent)
+            addAll(received)
+        }
+    }
