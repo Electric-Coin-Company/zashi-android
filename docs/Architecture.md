@@ -30,7 +30,6 @@ The logical components of the app are implemented as a number of Gradle modules.
      * `preference-api-lib` — Multiplatform interfaces for key-value storage of preferences.
      * `preference-impl-android-lib` — Android-specific implementation for preference storage.
  * `sdk-ext-lib` — Contains extensions on top of the to the Zcash SDK.  Some of these extensions might be migrated into the SDK eventually, while others might represent Android-centric idioms.  Depending on how this module evolves, it could adopt another name such as `wallet-lib` or be split into two.
- * `test-lib` — Provides common test utilities.
 
 ## Shared Resources
 There are some app-wide resources that share a common namespace, and these should be documented here to make it easy to ensure there are no collisions.

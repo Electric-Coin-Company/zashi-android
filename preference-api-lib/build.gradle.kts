@@ -16,7 +16,7 @@ kotlin {
         getByName("commonTest") {
             dependencies {
                 implementation(kotlin("test"))
-                implementation(projects.testLib)
+                implementation(libs.kotlinx.coroutines.test)
             }
         }
        getByName("jvmMain") {
@@ -26,7 +26,6 @@ kotlin {
         getByName("jvmTest") {
             dependencies {
                 implementation(kotlin("test"))
-                implementation(libs.kotlinx.coroutines.test)
             }
         }
     }

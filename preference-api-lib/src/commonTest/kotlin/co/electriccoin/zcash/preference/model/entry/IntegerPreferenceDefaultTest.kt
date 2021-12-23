@@ -3,10 +3,11 @@ package co.electriccoin.zcash.preference.model.entry
 import co.electriccoin.zcash.preference.test.MockPreferenceProvider
 import co.electriccoin.zcash.preference.test.fixture.IntegerPreferenceDefaultFixture
 import co.electriccoin.zcash.preference.test.fixture.StringDefaultPreferenceFixture
-import co.electriccoin.zcash.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
+@OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
 class IntegerPreferenceDefaultTest {
     @Test
     fun key() {
@@ -14,13 +15,13 @@ class IntegerPreferenceDefaultTest {
     }
 
     @Test
-    fun value_default() = runBlockingTest {
+    fun value_default() = runTest {
         val entry = IntegerPreferenceDefaultFixture.new()
         assertEquals(IntegerPreferenceDefaultFixture.DEFAULT_VALUE, entry.getValue(MockPreferenceProvider()))
     }
 
     @Test
-    fun value_override() = runBlockingTest {
+    fun value_override() = runTest {
         val expected = IntegerPreferenceDefaultFixture.DEFAULT_VALUE + 5
 
         val entry = IntegerPreferenceDefaultFixture.new()
