@@ -12,10 +12,11 @@ data class WalletSnapshot(
     val orchardBalance: WalletBalance,
     val saplingBalance: WalletBalance,
     val transparentBalance: WalletBalance,
-    val unminedCount: Int
+    val pendingCount: Int
 ) {
     // Note: the wallet is effectively empty if it cannot cover the miner's fee
-    val hasFunds = saplingBalance.availableZatoshi > (ZcashSdk.MINERS_FEE_ZATOSHI.toDouble() / ZcashSdk.ZATOSHI_PER_ZEC) // 0.00001
+    val hasFunds = saplingBalance.availableZatoshi >
+        (ZcashSdk.MINERS_FEE_ZATOSHI.toDouble() / ZcashSdk.ZATOSHI_PER_ZEC) // 0.00001
     val hasSaplingBalance = saplingBalance.totalZatoshi > 0
 
     val isSendEnabled: Boolean get() = status == Synchronizer.Status.SYNCED && hasFunds

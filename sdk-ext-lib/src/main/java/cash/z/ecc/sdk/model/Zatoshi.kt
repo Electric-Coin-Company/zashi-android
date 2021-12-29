@@ -9,5 +9,9 @@ value class Zatoshi(val amount: Long) {
         require(amount >= 0)
     }
 
-    override fun toString() = amount.convertZatoshiToZecString(8, 8)
+    override fun toString() = amount.convertZatoshiToZecString(DECIMALS, DECIMALS)
+
+    companion object {
+        private const val DECIMALS = 8
+    }
 }

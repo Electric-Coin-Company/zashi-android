@@ -184,6 +184,8 @@ sealed class SecretState {
     class Ready(val persistableWallet: PersistableWallet) : SecretState()
 }
 
+// No good way around needing magic numbers for the indices
+@Suppress("MagicNumber")
 private fun Synchronizer.toWalletSnapshot() =
     combine(
         status, // 0
@@ -193,7 +195,7 @@ private fun Synchronizer.toWalletSnapshot() =
         transparentBalances, // 4
         pendingTransactions.distinctUntilChanged() // 5
     ) { flows ->
-        val unminedCount = (flows[5] as List<*>)
+        val pendingCount = (flows[5] as List<*>)
             .filterIsInstance(PendingTransaction::class.java)
             .count {
                 it.isSubmitSuccess() && !it.isMined()
@@ -204,7 +206,7 @@ private fun Synchronizer.toWalletSnapshot() =
             orchardBalance = flows[2] as WalletBalance,
             saplingBalance = flows[3] as WalletBalance,
             transparentBalance = flows[4] as WalletBalance,
-            unminedCount = unminedCount
+            pendingCount = pendingCount
         )
     }
 

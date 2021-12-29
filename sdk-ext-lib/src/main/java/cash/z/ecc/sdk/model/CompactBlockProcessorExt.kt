@@ -27,6 +27,7 @@ fun CompactBlockProcessor.ProcessorInfo.scanProgress() = if (lastScanRange.isEmp
 }
 
 // These are estimates
+@Suppress("MagicNumber")
 private val DOWNLOAD_WEIGHT = PercentDecimal(0.4f)
 private val SCAN_WEIGHT = PercentDecimal(PercentDecimal.MAX - DOWNLOAD_WEIGHT.decimal)
 
@@ -34,5 +35,8 @@ fun CompactBlockProcessor.ProcessorInfo.totalProgress(): PercentDecimal {
     val downloadWeighted = DOWNLOAD_WEIGHT.decimal * (downloadProgress().decimal).coerceAtMost(PercentDecimal.MAX)
     val scanWeighted = SCAN_WEIGHT.decimal * (scanProgress().decimal).coerceAtMost(PercentDecimal.MAX)
 
-    return PercentDecimal(downloadWeighted.coerceAtLeast(PercentDecimal.MIN) + scanWeighted.coerceAtLeast(PercentDecimal.MIN))
+    return PercentDecimal(
+        downloadWeighted.coerceAtLeast(PercentDecimal.MIN) +
+            scanWeighted.coerceAtLeast(PercentDecimal.MIN)
+    )
 }

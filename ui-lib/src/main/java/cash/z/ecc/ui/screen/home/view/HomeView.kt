@@ -50,6 +50,7 @@ fun ComposablePreview() {
     }
 }
 
+@Suppress("LongParameterList")
 @Composable
 fun Home(
     walletSnapshot: WalletSnapshot,
@@ -62,7 +63,14 @@ fun Home(
     Scaffold(topBar = {
         HomeTopAppBar()
     }) {
-        HomeMainContent(walletSnapshot, transactionHistory, goScan = goScan, goProfile = goProfile, goSend = goSend, goRequest = goRequest)
+        HomeMainContent(
+            walletSnapshot,
+            transactionHistory,
+            goScan = goScan,
+            goProfile = goProfile,
+            goSend = goSend,
+            goRequest = goRequest
+        )
     }
 }
 
@@ -78,6 +86,7 @@ private fun HomeTopAppBar() {
     }
 }
 
+@Suppress("LongParameterList")
 @Composable
 private fun HomeMainContent(
     walletSnapshot: WalletSnapshot,
