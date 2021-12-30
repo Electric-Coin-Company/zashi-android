@@ -31,3 +31,29 @@ fun Body(
         modifier = modifier
     )
 }
+
+@Composable
+fun ListItem(
+    text: String,
+    modifier: Modifier = Modifier
+) {
+    Text(
+        text = text,
+        style = ZcashTheme.typography.listItem,
+        color = MaterialTheme.colors.onBackground,
+        modifier = modifier
+    )
+}
+
+@Composable
+fun ListHeader(
+    text: String,
+    modifier: Modifier = Modifier
+) {
+    Text(
+        text = text,
+        style = ZcashTheme.typography.listItem,
+        color = MaterialTheme.colors.onBackground,
+        modifier = modifier
+    )
+}

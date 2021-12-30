@@ -37,6 +37,7 @@ import cash.z.ecc.ui.screen.onboarding.viewmodel.OnboardingViewModel
 import cash.z.ecc.ui.screen.restore.view.RestoreWallet
 import cash.z.ecc.ui.screen.restore.viewmodel.CompleteWordSetState
 import cash.z.ecc.ui.screen.restore.viewmodel.RestoreViewModel
+import cash.z.ecc.ui.screen.wallet_address.view.WalletAddresses
 import cash.z.ecc.ui.theme.ZcashTheme
 import cash.z.ecc.ui.util.AndroidApiVersion
 import kotlinx.coroutines.Dispatchers
@@ -199,7 +200,21 @@ class MainActivity : ComponentActivity() {
         val navController = rememberNavController()
 
         NavHost(navController = navController, startDestination = "home") {
-            composable("home") { WrapHome({}, {}, {}, {}) }
+            composable("home") {
+                WrapHome(
+                    goScan = {},
+                    goProfile = { navController.navigate("wallet_address_details") },
+                    goSend = {},
+                    goRequest = {}
+                )
+            }
+            composable("wallet_address_details") {
+                WrapWalletAddresses(
+                    goBack = {
+                        navController.popBackStack()
+                    }
+                )
+            }
         }
     }
 
@@ -221,6 +236,21 @@ class MainActivity : ComponentActivity() {
                 goRequest = goRequest,
                 goSend = goSend,
                 goProfile = goProfile
+            )
+        }
+    }
+
+    @Composable
+    private fun WrapWalletAddresses(
+        goBack: () -> Unit,
+    ) {
+        val walletAddresses = walletViewModel.addresses.collectAsState().value
+        if (null == walletAddresses) {
+            // Display loading indicator
+        } else {
+            WalletAddresses(
+                walletAddresses,
+                goBack
             )
         }
     }

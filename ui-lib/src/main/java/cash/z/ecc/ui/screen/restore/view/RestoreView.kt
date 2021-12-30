@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -123,13 +122,10 @@ fun RestoreWallet(
 
 @Composable
 private fun RestoreTopAppBar(onBack: () -> Unit, onClear: () -> Unit) {
-    TopAppBar {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
-        ) {
+    TopAppBar(
+        title = { Text(text = stringResource(id = R.string.restore_header)) },
+        navigationIcon = {
             IconButton(
-                modifier = Modifier.padding(16.dp),
                 onClick = onBack
             ) {
                 Icon(
@@ -137,18 +133,11 @@ private fun RestoreTopAppBar(onBack: () -> Unit, onClear: () -> Unit) {
                     contentDescription = stringResource(R.string.restore_back_content_description)
                 )
             }
-
-            Text(text = stringResource(id = R.string.restore_header))
-
-            Spacer(
-                Modifier
-                    .fillMaxWidth()
-                    .weight(MINIMAL_WEIGHT)
-            )
-
+        },
+        actions = {
             NavigationButton(onClick = onClear, stringResource(R.string.restore_button_clear))
         }
-    }
+    )
 }
 
 @Suppress("UNUSED_PARAMETER")

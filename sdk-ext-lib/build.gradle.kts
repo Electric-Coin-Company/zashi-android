@@ -21,6 +21,7 @@ dependencies {
     implementation(libs.zcash.bip39)
 
     androidTestImplementation(libs.bundles.androidx.test)
+    androidTestImplementation(libs.kotlinx.coroutines.test)
 
     if (project.property("IS_USE_TEST_ORCHESTRATOR").toString().toBoolean()) {
         androidTestUtil(libs.androidx.test.orchestrator) {
