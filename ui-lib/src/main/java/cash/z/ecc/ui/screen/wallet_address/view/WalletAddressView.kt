@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
@@ -47,6 +46,7 @@ import cash.z.ecc.ui.screen.common.ListHeader
 import cash.z.ecc.ui.screen.common.ListItem
 import cash.z.ecc.ui.theme.MINIMAL_WEIGHT
 import cash.z.ecc.ui.theme.ZcashTheme
+import kotlinx.coroutines.runBlocking
 
 @Preview
 @Composable
@@ -54,7 +54,7 @@ fun ComposablePreview() {
     ZcashTheme(darkTheme = true) {
         GradientSurface {
             WalletAddresses(
-                WalletAddressesFixture.new(),
+                runBlocking { WalletAddressesFixture.new() },
                 onBack = {}
             )
         }
@@ -79,7 +79,6 @@ private fun WalletDetailTopAppBar(onBack: () -> Unit) {
         },
         navigationIcon = {
             IconButton(
-                modifier = Modifier.padding(16.dp),
                 onClick = onBack
             ) {
                 Icon(
@@ -114,7 +113,7 @@ private fun WalletDetailAddresses(walletAddresses: WalletAddresses) {
             Column(Modifier.fillMaxWidth()) {
                 ExpandableRow(
                     title = stringResource(R.string.wallet_address_unified),
-                    content = walletAddresses.unified,
+                    content = walletAddresses.unified.address,
                     isInitiallyExpanded = true
                 )
 
@@ -123,9 +122,9 @@ private fun WalletDetailAddresses(walletAddresses: WalletAddresses) {
                     ListHeader(text = stringResource(R.string.wallet_address_header_includes))
                 }
 
-                OrchardAddress(walletAddresses.shieldedOrchard)
-                SaplingAddress(walletAddresses.shieldedSapling)
-                TransparentAddress(walletAddresses.transparent)
+                OrchardAddress(walletAddresses.shieldedOrchard.address)
+                SaplingAddress(walletAddresses.shieldedSapling.address)
+                TransparentAddress(walletAddresses.transparent.address)
             }
         }
     }

@@ -34,6 +34,7 @@ import cash.z.ecc.ui.screen.home.viewmodel.SecretState
 import cash.z.ecc.ui.screen.home.viewmodel.WalletViewModel
 import cash.z.ecc.ui.screen.onboarding.view.Onboarding
 import cash.z.ecc.ui.screen.onboarding.viewmodel.OnboardingViewModel
+import cash.z.ecc.ui.screen.profile.view.Profile
 import cash.z.ecc.ui.screen.restore.view.RestoreWallet
 import cash.z.ecc.ui.screen.restore.viewmodel.CompleteWordSetState
 import cash.z.ecc.ui.screen.restore.viewmodel.RestoreViewModel
@@ -203,10 +204,20 @@ class MainActivity : ComponentActivity() {
             composable("home") {
                 WrapHome(
                     goScan = {},
-                    goProfile = { navController.navigate("wallet_address_details") },
+                    goProfile = { navController.navigate("profile") },
                     goSend = {},
                     goRequest = {}
                 )
+            }
+            composable("profile") {
+                WrapProfile(
+                    onBack = { navController.popBackStack() },
+                    onAddressDetails = { navController.navigate("wallet_address_details") },
+                    onAddressBook = { },
+                    onSettings = { },
+                    onCoinholderVote = { }
+                ) {
+                }
             }
             composable("wallet_address_details") {
                 WrapWalletAddresses(
@@ -236,6 +247,32 @@ class MainActivity : ComponentActivity() {
                 goRequest = goRequest,
                 goSend = goSend,
                 goProfile = goProfile
+            )
+        }
+    }
+
+    @Composable
+    @Suppress("LongParameterList")
+    private fun WrapProfile(
+        onBack: () -> Unit,
+        onAddressDetails: () -> Unit,
+        onAddressBook: () -> Unit,
+        onSettings: () -> Unit,
+        onCoinholderVote: () -> Unit,
+        onSupport: () -> Unit
+    ) {
+        val walletAddresses = walletViewModel.addresses.collectAsState().value
+        if (null == walletAddresses) {
+            // Display loading indicator
+        } else {
+            Profile(
+                walletAddresses.unified,
+                onBack = onBack,
+                onAddressDetails = onAddressDetails,
+                onAddressBook = onAddressBook,
+                onSettings = onSettings,
+                onCoinholderVote = onCoinholderVote,
+                onSupport = onSupport
             )
         }
     }

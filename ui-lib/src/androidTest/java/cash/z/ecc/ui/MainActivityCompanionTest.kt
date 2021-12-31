@@ -5,7 +5,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 import kotlin.time.Duration
 
-class MainActivityTest {
+class MainActivityCompanionTest {
 
     @Test
     @SmallTest
