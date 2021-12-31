@@ -31,7 +31,8 @@ android {
                     "src/main/res/ui/common",
                     "src/main/res/ui/home",
                     "src/main/res/ui/onboarding",
-                    "src/main/res/ui/restore"
+                    "src/main/res/ui/restore",
+                    "src/main/res/ui/wallet_address"
                 )
             )
         }

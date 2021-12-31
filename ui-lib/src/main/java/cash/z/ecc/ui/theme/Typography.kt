@@ -44,6 +44,7 @@ val Typography = Typography(
 @Immutable
 data class ExtendedTypography(
     val chipIndex: TextStyle,
+    val listItem: TextStyle,
 )
 
 val LocalExtendedTypography = staticCompositionLocalOf {
@@ -52,6 +53,9 @@ val LocalExtendedTypography = staticCompositionLocalOf {
             fontSize = 10.sp,
             baselineShift = BaselineShift.Superscript,
             fontWeight = FontWeight.Bold
+        ),
+        listItem = Typography.body1.copy(
+            fontSize = 24.sp
         )
     )
 }

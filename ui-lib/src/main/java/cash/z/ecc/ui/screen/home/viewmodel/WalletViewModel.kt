@@ -12,6 +12,7 @@ import cash.z.ecc.android.sdk.db.entity.isSubmitSuccess
 import cash.z.ecc.android.sdk.type.WalletBalance
 import cash.z.ecc.sdk.SynchronizerCompanion
 import cash.z.ecc.sdk.model.PersistableWallet
+import cash.z.ecc.sdk.model.WalletAddresses
 import cash.z.ecc.ui.common.ANDROID_STATE_FLOW_TIMEOUT_MILLIS
 import cash.z.ecc.ui.preference.EncryptedPreferenceKeys
 import cash.z.ecc.ui.preference.EncryptedPreferenceSingleton
@@ -31,6 +32,7 @@ import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
@@ -118,6 +120,15 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
         .stateIn(
             viewModelScope, SharingStarted.WhileSubscribed(stopTimeoutMillis = ANDROID_STATE_FLOW_TIMEOUT_MILLIS),
             emptyList()
+        )
+
+    @OptIn(FlowPreview::class)
+    val addresses: StateFlow<WalletAddresses?> = secretState
+        .filterIsInstance<SecretState.Ready>()
+        .map { WalletAddresses.new(it.persistableWallet) }
+        .stateIn(
+            viewModelScope, SharingStarted.WhileSubscribed(stopTimeoutMillis = ANDROID_STATE_FLOW_TIMEOUT_MILLIS),
+            null
         )
 
     /**

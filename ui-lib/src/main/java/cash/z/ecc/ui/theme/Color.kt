@@ -41,6 +41,13 @@ object Dark {
 
     val overlay = Color(0x22000000)
     val highlight = Color(0xFFFFD800)
+
+    val addressHighlightBorder = Color(0xFF525252)
+    val addressHighlightUnified = Color(0xFFFFD800)
+    val addressHighlightOrchard = Color(0xFFFFD800)
+    val addressHighlightSapling = Color(0xFF1BBFF6)
+    val addressHighlightTransparent = Color(0xFF97999A)
+    val addressHighlightViewing = Color(0xFF504062)
 }
 
 object Light {
@@ -80,4 +87,12 @@ object Light {
 
     val overlay = Color(0x22000000)
     val highlight = Color(0xFFFFD800)
+
+    // [TODO #159]: The colors are wrong for light theme
+    val addressHighlightBorder = Color(0xFF525252)
+    val addressHighlightUnified = Color(0xFFFFD800)
+    val addressHighlightOrchard = Color(0xFFFFD800)
+    val addressHighlightSapling = Color(0xFF1BBFF6)
+    val addressHighlightTransparent = Color(0xFF97999A)
+    val addressHighlightViewing = Color(0xFF504062)
 }

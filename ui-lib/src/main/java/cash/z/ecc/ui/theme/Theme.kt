@@ -46,7 +46,13 @@ data class ExtendedColors(
     val progressBackground: Color,
     val chipIndex: Color,
     val overlay: Color,
-    val highlight: Color
+    val highlight: Color,
+    val addressHighlightBorder: Color,
+    val addressHighlightUnified: Color,
+    val addressHighlightOrchard: Color,
+    val addressHighlightSapling: Color,
+    val addressHighlightTransparent: Color,
+    val addressHighlightViewing: Color
 ) {
     @Composable
     fun surfaceGradient() = Brush.verticalGradient(
@@ -69,7 +75,13 @@ val DarkExtendedColorPalette = ExtendedColors(
     progressBackground = Dark.progressBackground,
     chipIndex = Dark.textChipIndex,
     overlay = Dark.overlay,
-    highlight = Dark.highlight
+    highlight = Dark.highlight,
+    addressHighlightBorder = Dark.addressHighlightBorder,
+    addressHighlightUnified = Dark.addressHighlightUnified,
+    addressHighlightOrchard = Dark.addressHighlightOrchard,
+    addressHighlightSapling = Dark.addressHighlightSapling,
+    addressHighlightTransparent = Dark.addressHighlightTransparent,
+    addressHighlightViewing = Dark.addressHighlightViewing
 )
 
 val LightExtendedColorPalette = ExtendedColors(
@@ -84,7 +96,13 @@ val LightExtendedColorPalette = ExtendedColors(
     progressBackground = Light.progressBackground,
     chipIndex = Light.textChipIndex,
     overlay = Light.overlay,
-    highlight = Light.highlight
+    highlight = Light.highlight,
+    addressHighlightBorder = Light.addressHighlightBorder,
+    addressHighlightUnified = Light.addressHighlightUnified,
+    addressHighlightOrchard = Light.addressHighlightOrchard,
+    addressHighlightSapling = Light.addressHighlightSapling,
+    addressHighlightTransparent = Light.addressHighlightTransparent,
+    addressHighlightViewing = Light.addressHighlightViewing
 )
 
 val LocalExtendedColors = staticCompositionLocalOf {
@@ -100,7 +118,13 @@ val LocalExtendedColors = staticCompositionLocalOf {
         progressBackground = Color.Unspecified,
         chipIndex = Color.Unspecified,
         overlay = Color.Unspecified,
-        highlight = Color.Unspecified
+        highlight = Color.Unspecified,
+        addressHighlightBorder = Color.Unspecified,
+        addressHighlightUnified = Color.Unspecified,
+        addressHighlightOrchard = Color.Unspecified,
+        addressHighlightSapling = Color.Unspecified,
+        addressHighlightTransparent = Color.Unspecified,
+        addressHighlightViewing = Color.Unspecified
     )
 }
 
