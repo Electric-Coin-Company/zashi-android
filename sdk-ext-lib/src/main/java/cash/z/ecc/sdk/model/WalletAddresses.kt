@@ -8,7 +8,6 @@ import kotlinx.coroutines.withContext
 
 data class WalletAddresses(
     val unified: WalletAddress.Unified,
-    val shieldedOrchard: WalletAddress.Shielded,
     val shieldedSapling: WalletAddress.Shielded,
     val transparent: WalletAddress.Transparent,
     val viewingKey: String
@@ -45,7 +44,6 @@ data class WalletAddresses(
             // TODO [#161]: Pending SDK support, fix providing correct values for the unified
             return WalletAddresses(
                 unified = WalletAddress.Unified.new("Unified GitHub Issue #161"),
-                shieldedOrchard = WalletAddress.Shielded.new("Shielded Orchard GitHub Issue #161"),
                 shieldedSapling = shieldedSaplingAddress,
                 transparent = transparentAddress,
                 viewingKey = viewingKey

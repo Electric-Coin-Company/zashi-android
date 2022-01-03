@@ -9,14 +9,13 @@ object WalletAddressesFixture {
 
     suspend fun new(
         unified: String = WalletAddressFixture.UNIFIED_ADDRESS_STRING,
-        shieldedOrchard: String = WalletAddressFixture.SHIELDED_ORCHARD_ADDRESS_STRING,
         shieldedSapling: String = WalletAddressFixture.SHIELDED_SAPLING_ADDRESS_STRING,
         transparent: String = WalletAddressFixture.TRANSPARENT_ADDRESS_STRING,
         viewingKey: String = VIEWING_KEY
     ) = WalletAddresses(
         WalletAddress.Unified.new(unified),
-        WalletAddress.Shielded.new(shieldedOrchard),
-        WalletAddress.Shielded.new(shieldedSapling), WalletAddress.Transparent.new(transparent),
+        WalletAddress.Shielded.new(shieldedSapling),
+        WalletAddress.Transparent.new(transparent),
         viewingKey
     )
 }

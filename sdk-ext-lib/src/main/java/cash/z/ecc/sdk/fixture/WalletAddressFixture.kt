@@ -7,14 +7,12 @@ object WalletAddressFixture {
 
     // TODO [#161]: Pending SDK support
     const val UNIFIED_ADDRESS_STRING = "Unified GitHub Issue #161"
-    const val SHIELDED_ORCHARD_ADDRESS_STRING = "Shielded Orchard GitHub Issue #161"
 
     @Suppress("MaxLineLength")
     const val SHIELDED_SAPLING_ADDRESS_STRING = "ztestsapling1475xtm56czrzmleqzzlu4cxvjjfsy2p6rv78q07232cpsx5ee52k0mn5jyndq09mampkgvrxnwg"
     const val TRANSPARENT_ADDRESS_STRING = "tmXuTnE11JojToagTqxXUn6KvdxDE3iLKbp"
 
     suspend fun unified() = WalletAddress.Unified.new(UNIFIED_ADDRESS_STRING)
-    suspend fun shieldedOrchard() = WalletAddress.Shielded.new(SHIELDED_ORCHARD_ADDRESS_STRING)
     suspend fun shieldedSapling() = WalletAddress.Shielded.new(SHIELDED_SAPLING_ADDRESS_STRING)
     suspend fun transparent() = WalletAddress.Transparent.new(TRANSPARENT_ADDRESS_STRING)
 }

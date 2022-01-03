@@ -31,9 +31,6 @@ class WalletAddressViewTest {
         composeTestRule.onNodeWithText(getStringResource(R.string.wallet_address_unified)).also {
             it.assertExists()
         }
-        composeTestRule.onNodeWithText(getStringResource(R.string.wallet_address_shielded_orchard)).also {
-            it.assertExists()
-        }
         composeTestRule.onNodeWithText(getStringResource(R.string.wallet_address_shielded_sapling)).also {
             it.assertExists()
         }
@@ -48,9 +45,6 @@ class WalletAddressViewTest {
             it.assertExists()
         }
 
-        composeTestRule.onNodeWithText(walletAddresses.shieldedOrchard.address).also {
-            it.assertDoesNotExist()
-        }
         composeTestRule.onNodeWithText(walletAddresses.shieldedSapling.address).also {
             it.assertDoesNotExist()
         }
@@ -79,26 +73,6 @@ class WalletAddressViewTest {
 
         composeTestRule.onNodeWithText(walletAddresses.unified.address).also {
             it.assertDoesNotExist()
-        }
-    }
-
-    @Test
-    @MediumTest
-    fun shielded_orchard_expands() = runTest {
-        val walletAddresses = WalletAddressesFixture.new()
-        newTestSetup(walletAddresses)
-
-        composeTestRule.onNodeWithText(walletAddresses.shieldedOrchard.address).also {
-            it.assertDoesNotExist()
-        }
-
-        composeTestRule.onNodeWithText(getStringResource(R.string.wallet_address_shielded_orchard)).also {
-            it.assertExists()
-            it.performClick()
-        }
-
-        composeTestRule.onNodeWithText(walletAddresses.shieldedOrchard.address).also {
-            it.assertExists()
         }
     }
 

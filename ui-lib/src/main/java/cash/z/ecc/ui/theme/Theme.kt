@@ -49,7 +49,6 @@ data class ExtendedColors(
     val highlight: Color,
     val addressHighlightBorder: Color,
     val addressHighlightUnified: Color,
-    val addressHighlightOrchard: Color,
     val addressHighlightSapling: Color,
     val addressHighlightTransparent: Color,
     val addressHighlightViewing: Color
@@ -78,7 +77,6 @@ val DarkExtendedColorPalette = ExtendedColors(
     highlight = Dark.highlight,
     addressHighlightBorder = Dark.addressHighlightBorder,
     addressHighlightUnified = Dark.addressHighlightUnified,
-    addressHighlightOrchard = Dark.addressHighlightOrchard,
     addressHighlightSapling = Dark.addressHighlightSapling,
     addressHighlightTransparent = Dark.addressHighlightTransparent,
     addressHighlightViewing = Dark.addressHighlightViewing
@@ -99,7 +97,6 @@ val LightExtendedColorPalette = ExtendedColors(
     highlight = Light.highlight,
     addressHighlightBorder = Light.addressHighlightBorder,
     addressHighlightUnified = Light.addressHighlightUnified,
-    addressHighlightOrchard = Light.addressHighlightOrchard,
     addressHighlightSapling = Light.addressHighlightSapling,
     addressHighlightTransparent = Light.addressHighlightTransparent,
     addressHighlightViewing = Light.addressHighlightViewing
@@ -121,7 +118,6 @@ val LocalExtendedColors = staticCompositionLocalOf {
         highlight = Color.Unspecified,
         addressHighlightBorder = Color.Unspecified,
         addressHighlightUnified = Color.Unspecified,
-        addressHighlightOrchard = Color.Unspecified,
         addressHighlightSapling = Color.Unspecified,
         addressHighlightTransparent = Color.Unspecified,
         addressHighlightViewing = Color.Unspecified

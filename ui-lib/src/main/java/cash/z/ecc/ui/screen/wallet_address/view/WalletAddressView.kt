@@ -122,7 +122,6 @@ private fun WalletDetailAddresses(walletAddresses: WalletAddresses) {
                     ListHeader(text = stringResource(R.string.wallet_address_header_includes))
                 }
 
-                OrchardAddress(walletAddresses.shieldedOrchard.address)
                 SaplingAddress(walletAddresses.shieldedSapling.address)
                 TransparentAddress(walletAddresses.transparent.address)
             }
@@ -137,22 +136,6 @@ private fun WalletDetailAddresses(walletAddresses: WalletAddresses) {
 // Note: The addresses code below has opportunities to be made more DRY.
 // Refactoring that is being held off until issue #160 is fixed, since knowledge
 // of row position will be needed.
-
-@Composable
-private fun OrchardAddress(orchardAddress: String) {
-    Row(
-        Modifier
-            .fillMaxWidth()
-            .height(IntrinsicSize.Min)
-    ) {
-        SmallIndicator(ZcashTheme.colors.addressHighlightOrchard)
-        ExpandableRow(
-            title = stringResource(R.string.wallet_address_shielded_orchard),
-            content = orchardAddress,
-            isInitiallyExpanded = false
-        )
-    }
-}
 
 @Composable
 private fun SaplingAddress(saplingAddress: String) {
