@@ -35,7 +35,6 @@ Start by making sure the command line with Gradle works first, because **all the
 
 ## Troubleshooting
 1. Verify that the Git repo has not been modified.  Due to strict dependency locking (for security reasons), the build will fail unless the locks are also updated
-1. If you 
 1. Try running from the command line instead of Android Studio, to rule out Android Studio issues.  If it works from the command line, try this step to reset Android Studio
    1. Quit Android Studio
    2. Deleting the invisible `.idea` in the root directory of the project
@@ -69,3 +68,19 @@ To enable release signing, a release keystore needs to be provided during the bu
 * ZCASH_RELEASE_KEY_ALIAS_PASSWORD
 
 On a developer machine, these might be set under the user's global properties (e.g. `~/.gradle/gradle.properties` on macOS and Linux).  On a continuous integration machine, these can also be set using environment variables with the prefix `ORG_GRADLE_PROJECT_` (e.g. `ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEYSTORE_PATH`).  DO NOT set these in the gradle.properties inside the Git repository, as this will leak your keystore password.
+
+### Included builds
+To simplify implementation of SDK features in conjunction with changes to the app, a Gradle [Included Build](https://docs.gradle.org/current/userguide/composite_builds.html) can be configured.
+
+1. Check out the SDK to a directory path of `../zcash-android-sdk` relative to the root of this app's repo.  For example:
+
+        parent/
+            secant-android-wallet/
+            zcash-android-sdk/
+
+1. Verify that the `zcash-android-sdk` builds correctly on its own
+1. Build `secant-android-wallet`, setting the Gradle property `IS_SDK_INCLUDED_BUILD=true`
+
+There are some limitations of included builds:
+1. Properties from `secant-android-wallet` will override those set in `zcash-android-sdk` with the same name
+1. Modules in each project cannot share the same name.  For this reason, build-conventions have different names in each repo (`zcash-android-sdk/build-conventions` vs `secant-android-wallet/build-convention`)

@@ -29,5 +29,3 @@ dependencyResolutionManagement {
         }
     }
 }
-
-rootProject.name = "build-conventions"

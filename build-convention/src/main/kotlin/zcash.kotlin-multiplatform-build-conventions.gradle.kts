@@ -23,7 +23,7 @@ pluginManager.withPlugin("org.jetbrains.kotlin.multiplatform") {
         targets.all {
             compilations.all {
                 kotlinOptions {
-                    allWarningsAsErrors = project.property("IS_TREAT_WARNINGS_AS_ERRORS").toString().toBoolean()
+                    allWarningsAsErrors = project.property("ZCASH_IS_TREAT_WARNINGS_AS_ERRORS").toString().toBoolean()
                     freeCompilerArgs = freeCompilerArgs + "-Xopt-in=kotlin.RequiresOptIn"
                 }
             }

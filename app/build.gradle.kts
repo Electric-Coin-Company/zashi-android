@@ -78,7 +78,7 @@ android {
     // TODO [#6]: Figure out how to move this into the build-conventions
     kotlinOptions {
         jvmTarget = libs.versions.java.get()
-        allWarningsAsErrors = project.property("IS_TREAT_WARNINGS_AS_ERRORS").toString().toBoolean()
+        allWarningsAsErrors = project.property("ZCASH_IS_TREAT_WARNINGS_AS_ERRORS").toString().toBoolean()
     }
 
     packagingOptions {
