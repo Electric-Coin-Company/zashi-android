@@ -149,7 +149,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "zcash-android-app"
 
-includeBuild("build-conventions")
+includeBuild("build-convention")
 
 include("app")
 include("build-info-lib")
@@ -157,3 +157,14 @@ include("preference-api-lib")
 include("preference-impl-android-lib")
 include("sdk-ext-lib")
 include("ui-lib")
+
+if (extra["IS_SDK_INCLUDED_BUILD"].toString().toBoolean()) {
+    // Currently assume the SDK is up one level with a hardcoded directory name
+    // If this becomes problematic, `IS_SDK_INCLUDED_BUILD` could be turned into a path
+    // instead.
+    includeBuild("../zcash-android-sdk") {
+        dependencySubstitution {
+            substitute(module("cash.z.ecc.android:zcash-android-sdk")).using(project(":sdk-lib"))
+        }
+    }
+}
