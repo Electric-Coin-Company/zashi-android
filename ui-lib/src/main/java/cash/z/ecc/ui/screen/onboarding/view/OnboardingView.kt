@@ -1,3 +1,5 @@
+@file:Suppress("TooManyFunctions")
+
 package cash.z.ecc.ui.screen.onboarding.view
 
 import androidx.compose.foundation.Image
@@ -11,13 +13,17 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import cash.z.ecc.ui.R
@@ -49,6 +55,10 @@ fun ComposablePreview() {
     }
 }
 
+// Pending internal discussion on where the navigation should live.
+// This toggles between the app bar or custom buttons below the app bar
+private const val IS_NAVIGATION_IN_APP_BAR = false
+
 /**
  * @param onImportWallet Callback when the user decides to import an existing wallet.
  * @param onCreateWallet Callback when the user decides to create a new wallet.
@@ -60,7 +70,52 @@ fun Onboarding(
     onCreateWallet: () -> Unit
 ) {
     Column {
-        TopNavButtons(onboardingState)
+        OnboardingTopAppBar(onboardingState)
+        OnboardingMainContent(onboardingState, onImportWallet = onImportWallet, onCreateWallet = onCreateWallet)
+    }
+}
+
+@Composable
+private fun OnboardingTopAppBar(onboardingState: OnboardingState) {
+    val currentStage = onboardingState.current.collectAsState().value
+
+    TopAppBar(
+        title = { Text(text = stringResource(id = R.string.app_name)) },
+        navigationIcon =
+        if (IS_NAVIGATION_IN_APP_BAR && currentStage.hasPrevious()) {
+            {
+                IconButton(onboardingState::goPrevious) {
+                    Icon(
+                        imageVector = Icons.Filled.ArrowBack,
+                        contentDescription = stringResource(R.string.onboarding_back)
+                    )
+                }
+            }
+        } else {
+            null
+        },
+        actions = {
+            if (IS_NAVIGATION_IN_APP_BAR && currentStage.hasNext()) {
+                NavigationButton(onboardingState::goToEnd, stringResource(R.string.onboarding_skip))
+            }
+        }
+    )
+}
+
+/**
+ * @param onImportWallet Callback when the user decides to import an existing wallet.
+ * @param onCreateWallet Callback when the user decides to create a new wallet.
+ */
+@Composable
+fun OnboardingMainContent(
+    onboardingState: OnboardingState,
+    onImportWallet: () -> Unit,
+    onCreateWallet: () -> Unit
+) {
+    Column {
+        if (!IS_NAVIGATION_IN_APP_BAR) {
+            TopNavButtons(onboardingState)
+        }
 
         val onboardingStage = onboardingState.current.collectAsState().value
 
@@ -81,7 +136,8 @@ fun Onboarding(
 @Composable
 private fun TopNavButtons(onboardingState: OnboardingState) {
     Row {
-        if (onboardingState.hasPrevious()) {
+        val currentStage = onboardingState.current.collectAsState().value
+        if (currentStage.hasPrevious()) {
             NavigationButton(onboardingState::goPrevious, stringResource(R.string.onboarding_back))
         }
 
@@ -91,7 +147,7 @@ private fun TopNavButtons(onboardingState: OnboardingState) {
                 .weight(MINIMAL_WEIGHT, true)
         )
 
-        if (onboardingState.hasNext()) {
+        if (currentStage.hasNext()) {
             NavigationButton(onboardingState::goToEnd, stringResource(R.string.onboarding_skip))
         }
     }
@@ -101,7 +157,11 @@ private fun TopNavButtons(onboardingState: OnboardingState) {
 private fun BottomNav(progress: Progress, onNext: () -> Unit) {
     if (progress.current != progress.last) {
         Column {
-            Spacer(modifier = Modifier.fillMaxHeight().weight(MINIMAL_WEIGHT, true))
+            Spacer(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .weight(MINIMAL_WEIGHT, true)
+            )
 
             SecondaryButton(onNext, stringResource(R.string.onboarding_next), Modifier.fillMaxWidth())
 
@@ -117,7 +177,7 @@ private fun BottomNav(progress: Progress, onNext: () -> Unit) {
 private fun ShieldedByDefault() {
     Column {
         Content(
-            image = ColorPainter(Color.Blue),
+            image = painterResource(id = R.drawable.onboarding_1_shielded),
             imageContentDescription = stringResource(R.string.onboarding_1_image_content_description),
             headline = stringResource(R.string.onboarding_1_header),
             body = stringResource(R.string.onboarding_1_body)
@@ -129,7 +189,7 @@ private fun ShieldedByDefault() {
 private fun UnifiedAddresses() {
     Column {
         Content(
-            image = ColorPainter(Color.Blue),
+            image = painterResource(id = R.drawable.onboarding_2_unified),
             imageContentDescription = stringResource(R.string.onboarding_2_image_content_description),
             headline = stringResource(R.string.onboarding_2_header),
             body = stringResource(R.string.onboarding_2_body)
@@ -141,7 +201,7 @@ private fun UnifiedAddresses() {
 private fun More() {
     Column {
         Content(
-            image = ColorPainter(Color.Blue),
+            image = painterResource(id = R.drawable.onboarding_3_more),
             imageContentDescription = stringResource(R.string.onboarding_3_image_content_description),
             headline = stringResource(R.string.onboarding_3_header),
             body = stringResource(R.string.onboarding_3_body)
