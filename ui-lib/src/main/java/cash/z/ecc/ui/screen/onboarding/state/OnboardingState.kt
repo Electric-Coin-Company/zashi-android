@@ -15,10 +15,6 @@ class OnboardingState(initialState: OnboardingStage = OnboardingStage.values().f
 
     val current: StateFlow<OnboardingStage> = mutableState
 
-    fun hasNext() = current.value.hasNext()
-
-    fun hasPrevious() = current.value.hasPrevious()
-
     fun goNext() {
         mutableState.value = current.value.getNext()
     }
