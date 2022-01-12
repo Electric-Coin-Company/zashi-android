@@ -11,12 +11,12 @@ sealed class WalletAddress(val address: String) {
         }
     }
 
-    class Shielded private constructor(address: String) : WalletAddress(address) {
+    class ShieldedSapling private constructor(address: String) : WalletAddress(address) {
         companion object {
-            suspend fun new(address: String): WalletAddress.Shielded {
+            suspend fun new(address: String): WalletAddress.ShieldedSapling {
                 // https://github.com/zcash/zcash-android-wallet-sdk/issues/342
                 // TODO [#342]: refactor SDK to enable direct calls for address verification
-                return WalletAddress.Shielded(address)
+                return WalletAddress.ShieldedSapling(address)
             }
         }
     }

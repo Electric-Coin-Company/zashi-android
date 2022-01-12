@@ -14,7 +14,7 @@ object WalletAddressesFixture {
         viewingKey: String = VIEWING_KEY
     ) = WalletAddresses(
         WalletAddress.Unified.new(unified),
-        WalletAddress.Shielded.new(shieldedSapling),
+        WalletAddress.ShieldedSapling.new(shieldedSapling),
         WalletAddress.Transparent.new(transparent),
         viewingKey
     )

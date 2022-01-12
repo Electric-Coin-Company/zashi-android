@@ -8,7 +8,7 @@ import kotlinx.coroutines.withContext
 
 data class WalletAddresses(
     val unified: WalletAddress.Unified,
-    val shieldedSapling: WalletAddress.Shielded,
+    val shieldedSapling: WalletAddress.ShieldedSapling,
     val transparent: WalletAddress.Transparent,
     val viewingKey: String
 ) {
@@ -32,7 +32,7 @@ data class WalletAddresses(
             val shieldedSaplingAddress = withContext(Dispatchers.IO) {
                 DerivationTool.deriveShieldedAddress(bip39Seed, persistableWallet.network)
             }.let {
-                WalletAddress.Shielded.new(it)
+                WalletAddress.ShieldedSapling.new(it)
             }
 
             val transparentAddress = withContext(Dispatchers.IO) {
