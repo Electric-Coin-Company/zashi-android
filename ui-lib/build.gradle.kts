@@ -31,6 +31,7 @@ android {
                     "src/main/res/ui/common",
                     "src/main/res/ui/home",
                     "src/main/res/ui/onboarding",
+                    "src/main/res/ui/profile",
                     "src/main/res/ui/restore",
                     "src/main/res/ui/wallet_address"
                 )
@@ -52,6 +53,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.zcash.sdk)
     implementation(libs.zcash.bip39)
+    implementation(libs.zxing)
 
     implementation(projects.preferenceApiLib)
     implementation(projects.preferenceImplAndroidLib)

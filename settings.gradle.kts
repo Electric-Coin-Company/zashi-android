@@ -71,6 +71,7 @@ dependencyResolutionManagement {
             val kotlinxCoroutinesVersion = extra["KOTLINX_COROUTINES_VERSION"].toString()
             val zcashBip39Version = extra["ZCASH_BIP39_VERSION"].toString()
             val zcashSdkVersion = extra["ZCASH_SDK_VERSION"].toString()
+            val zxingVersion = extra["ZXING_VERSION"].toString()
 
             // Standalone versions
             version("jacoco", jacocoVersion)
@@ -103,6 +104,7 @@ dependencyResolutionManagement {
             alias("zcash-sdk").to("cash.z.ecc.android:zcash-android-sdk:$zcashSdkVersion")
             alias("zcash-bip39").to("cash.z.ecc.android:kotlin-bip39:$zcashBip39Version")
             alias("zcash-walletplgns").to("cash.z.ecc.android:zcash-android-wallet-plugins:$zcashBip39Version")
+            alias("zxing").to("com.google.zxing:core:$zxingVersion")
             // Test libraries
             alias("androidx-compose-test-junit").to("androidx.compose.ui:ui-test-junit4:$androidxComposeVersion")
             alias("androidx-compose-test-manifest").to("androidx.compose.ui:ui-test-manifest:$androidxComposeVersion")

@@ -7,10 +7,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 data class WalletAddresses(
-    val unified: String,
-    val shieldedOrchard: String,
-    val shieldedSapling: String,
-    val transparent: String,
+    val unified: WalletAddress.Unified,
+    val shieldedSapling: WalletAddress.ShieldedSapling,
+    val transparent: WalletAddress.Transparent,
     val viewingKey: String
 ) {
     // Override to prevent leaking details in logs
@@ -32,16 +31,19 @@ data class WalletAddresses(
 
             val shieldedSaplingAddress = withContext(Dispatchers.IO) {
                 DerivationTool.deriveShieldedAddress(bip39Seed, persistableWallet.network)
+            }.let {
+                WalletAddress.ShieldedSapling.new(it)
             }
 
             val transparentAddress = withContext(Dispatchers.IO) {
                 DerivationTool.deriveTransparentAddress(bip39Seed, persistableWallet.network)
+            }.let {
+                WalletAddress.Transparent.new(it)
             }
 
             // TODO [#161]: Pending SDK support, fix providing correct values for the unified
             return WalletAddresses(
-                unified = "Unified GitHub Issue #161",
-                shieldedOrchard = "Shielded Orchard GitHub Issue #161",
+                unified = WalletAddress.Unified.new("Unified GitHub Issue #161"),
                 shieldedSapling = shieldedSaplingAddress,
                 transparent = transparentAddress,
                 viewingKey = viewingKey

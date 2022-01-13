@@ -1,5 +1,6 @@
 package cash.z.ecc.ui.screen.common
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
@@ -9,8 +10,24 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cash.z.ecc.ui.theme.ZcashTheme
+
+@Preview
+@Composable
+fun ButtonComposablePreview() {
+    ZcashTheme(darkTheme = true) {
+        GradientSurface {
+            Column {
+                PrimaryButton(onClick = { }, text = "Primary")
+                SecondaryButton(onClick = { }, text = "Secondary")
+                TertiaryButton(onClick = { }, text = "Tertiary")
+                NavigationButton(onClick = { }, text = "Navigation")
+            }
+        }
+    }
+}
 
 @Composable
 fun PrimaryButton(

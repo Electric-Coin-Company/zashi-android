@@ -9,20 +9,19 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Test
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class WalletAddressesTest {
     @Test
     @SmallTest
-    fun security() {
+    fun security() = runTest {
         val walletAddresses = WalletAddressesFixture.new()
         val actual = WalletAddressesFixture.new().toString()
-        assertFalse(actual.contains(walletAddresses.shieldedOrchard))
-        assertFalse(actual.contains(walletAddresses.shieldedSapling))
-        assertFalse(actual.contains(walletAddresses.transparent))
-        assertFalse(actual.contains(walletAddresses.unified))
+        assertFalse(actual.contains(walletAddresses.shieldedSapling.address))
+        assertFalse(actual.contains(walletAddresses.transparent.address))
+        assertFalse(actual.contains(walletAddresses.unified.address))
         assertFalse(actual.contains(walletAddresses.viewingKey))
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     @SmallTest
     fun new() = runTest {
