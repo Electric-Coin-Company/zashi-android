@@ -74,6 +74,7 @@ jobs:
           project_id: ${{ secrets.GOOGLE_PLAY_CLOUD_PROJECT }}
           service_account: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT }}
           workload_identity_provider: ${{ secrets.GOOGLE_PLAY_WORKLOAD_IDENTITY_PROVIDER }}
+          access_token_lifetime: '1500s'
       - name: Export Signing Key
         env:
           SIGNING_KEYSTORE_BASE_64: ${{ secrets.SIGNING_KEYSTORE_BASE_64 }}

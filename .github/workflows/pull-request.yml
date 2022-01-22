@@ -220,6 +220,7 @@ jobs:
           project_id: ${{ secrets.FIREBASE_TEST_LAB_PROJECT }}
           service_account: ${{ secrets.FIREBASE_TEST_LAB_SERVICE_ACCOUNT }}
           workload_identity_provider: ${{ secrets.FIREBASE_TEST_LAB_WORKLOAD_IDENTITY_PROVIDER }}
+          access_token_lifetime: '1200s'
       - name: Test
         timeout-minutes: 20
         env:
@@ -317,6 +318,7 @@ jobs:
           project_id: ${{ secrets.FIREBASE_TEST_LAB_PROJECT }}
           service_account: ${{ secrets.FIREBASE_TEST_LAB_SERVICE_ACCOUNT }}
           workload_identity_provider: ${{ secrets.FIREBASE_TEST_LAB_WORKLOAD_IDENTITY_PROVIDER }}
+          access_token_lifetime: '900s'
       - name: Download a single artifact
         uses: actions/download-artifact@v2
         with:
