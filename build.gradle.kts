@@ -3,51 +3,6 @@ buildscript {
         lockMode.set(LockMode.STRICT)
         lockAllConfigurations()
     }
-
-    repositories {
-        val isRepoRestrictionEnabled = true
-
-        maven("https://dl.google.com/dl/android/maven2/") { //google()
-            if (isRepoRestrictionEnabled) {
-                content {
-                    includeGroup("androidx.navigation")
-                    includeGroup("com.android.tools")
-                    includeGroup("com.google.testing.platform")
-                    includeGroupByRegex("androidx.*")
-                    includeGroupByRegex("com\\.android.*")
-                    includeGroupByRegex("com\\.android\\.tools.*")
-                }
-            }
-        }
-        maven("https://plugins.gradle.org/m2/") { // gradlePluginPortal()
-            if (isRepoRestrictionEnabled) {
-                content {
-                    excludeGroup("androidx.navigation")
-                    excludeGroup("com.android.tools")
-                    excludeGroup("com.google.testing.platform")
-                    excludeGroupByRegex("androidx.*")
-                    excludeGroupByRegex("com\\.android.*")
-                    excludeGroupByRegex("com\\.android\\.tools.*")
-                }
-            }
-        }
-        maven("https://repo.maven.apache.org/maven2/") { // mavenCentral()
-            if (isRepoRestrictionEnabled) {
-                content {
-                    excludeGroup("androidx.navigation")
-                    excludeGroup("com.android.tools")
-                    excludeGroup("com.google.testing.platform")
-                    excludeGroupByRegex("androidx.*")
-                    excludeGroupByRegex("com\\.android.*")
-                    excludeGroupByRegex("com\\.android\\.tools.*")
-                }
-            }
-        }
-    }
-    dependencies {
-        classpath("com.android.tools.build:gradle:${properties["ANDROID_GRADLE_PLUGIN_VERSION"]}")
-        classpath("androidx.navigation:navigation-safe-args-gradle-plugin:${properties["ANDROIDX_NAVIGATION_VERSION"]}")
-    }
 }
 
 plugins {

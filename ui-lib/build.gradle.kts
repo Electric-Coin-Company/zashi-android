@@ -2,7 +2,6 @@ plugins {
     id("com.android.library")
     kotlin("android")
     id("kotlin-parcelize")
-    id("androidx.navigation.safeargs")
     id("zcash.android-build-conventions")
 }
 

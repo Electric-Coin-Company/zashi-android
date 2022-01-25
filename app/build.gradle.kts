@@ -2,7 +2,6 @@ plugins {
     id("com.android.application")
     kotlin("android")
     id("kotlin-parcelize")
-    id("androidx.navigation.safeargs")
     id("zcash.android-build-conventions")
     id("com.github.triplet.play")
 }

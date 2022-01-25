@@ -2,17 +2,50 @@ enableFeaturePreview("VERSION_CATALOGS")
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
+    repositories {
+        val isRepoRestrictionEnabled = true
+
+        google {
+            if (isRepoRestrictionEnabled) {
+                content {
+                    includeGroup("androidx.navigation")
+                    includeGroup("com.android.tools")
+                    includeGroup("com.google.testing.platform")
+                    includeGroupByRegex("androidx.*")
+                    includeGroupByRegex("com\\.android.*")
+                    includeGroupByRegex("com\\.android\\.tools.*")
+                }
+            }
+        }
+        gradlePluginPortal {
+            if (isRepoRestrictionEnabled) {
+                content {
+                    excludeGroup("androidx.navigation")
+                    excludeGroup("com.android.tools")
+                    excludeGroup("com.google.testing.platform")
+                    excludeGroupByRegex("androidx.*")
+                    excludeGroupByRegex("com\\.android.*")
+                    excludeGroupByRegex("com\\.android\\.tools.*")
+                }
+            }
+        }
+    }
+
     plugins {
+        val androidGradlePluginVersion = extra["ANDROID_GRADLE_PLUGIN_VERSION"].toString()
         val detektVersion = extra["DETEKT_VERSION"].toString()
         val gradleVersionsPluginVersion = extra["GRADLE_VERSIONS_PLUGIN_VERSION"].toString()
         val kotlinVersion = extra["KOTLIN_VERSION"].toString()
         val playPublisherVersion = extra["PLAY_PUBLISHER_PLUGIN_VERSION_MATCHER"].toString()
 
-        kotlin("jvm") version (kotlinVersion)
-        kotlin("multiplatform") version (kotlinVersion)
+        id("com.android.application") version (androidGradlePluginVersion) apply (false)
+        id("com.android.library") version (androidGradlePluginVersion) apply (false)
         id("com.github.ben-manes.versions") version (gradleVersionsPluginVersion) apply (false)
         id("com.github.triplet.play") version (playPublisherVersion) apply (false)
         id("io.gitlab.arturbosch.detekt") version (detektVersion) apply (false)
+        kotlin("android") version (kotlinVersion) apply (false)
+        kotlin("jvm") version (kotlinVersion)
+        kotlin("multiplatform") version (kotlinVersion)
     }
 }
 
