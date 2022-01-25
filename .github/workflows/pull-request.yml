@@ -1,0 +1,334 @@
+# Expected secrets
+# FIREBASE_TEST_LAB_PROJECT - Firebase Test Lab project name
+# FIREBASE_TEST_LAB_SERVICE_ACCOUNT - Email address of Firebase Test Lab service account
+# FIREBASE_TEST_LAB_WORKLOAD_IDENTITY_PROVIDER - Workload identity provider to generate temporary service account key
+
+name: Pull Request
+
+on:
+  pull_request:
+    paths-ignore:
+      - '.github/ISSUE_TEMPLATE/*'
+      - '.github/PULL_REQUEST_TEMPLATE.md'
+      - 'LICENSE'
+      - 'README.md'
+      - 'docs/**'
+
+jobs:
+  validate_gradle_wrapper:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        timeout-minutes: 1
+        uses: actions/checkout@v2.4.0
+      # Gradle Wrapper validation can be flaky
+      # https://github.com/gradle/wrapper-validation-action/issues/40
+      - name: Gradle Wrapper Validation
+        timeout-minutes: 1
+        uses: gradle/wrapper-validation-action@v1.0.4
+
+  prime_cache:
+    needs: validate_gradle_wrapper
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        timeout-minutes: 1
+        uses: actions/checkout@v2.4.0
+      - name: Setup
+        id: setup
+        timeout-minutes: 8
+        uses: ./.github/actions/setup
+
+  check_secrets:
+    runs-on: ubuntu-latest
+    outputs:
+      has-secrets: ${{ steps.check_secrets.outputs.defined }}
+    steps:
+      - id: check_secrets
+        env:
+          FIREBASE_TEST_LAB_PROJECT: ${{ secrets.FIREBASE_TEST_LAB_PROJECT }}
+          FIREBASE_TEST_LAB_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_TEST_LAB_SERVICE_ACCOUNT }}
+          FIREBASE_TEST_LAB_WORKLOAD_IDENTITY_PROVIDER: ${{ secrets.FIREBASE_TEST_LAB_WORKLOAD_IDENTITY_PROVIDER }}
+        if: "${{ env.FIREBASE_TEST_LAB_PROJECT != '' && env.FIREBASE_TEST_LAB_SERVICE_ACCOUNT != '' && env.FIREBASE_TEST_LAB_WORKLOAD_IDENTITY_PROVIDER != '' }}"
+        run: echo "::set-output name=defined::true"
+
+  static_analysis_detekt:
+    needs: prime_cache
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        timeout-minutes: 1
+        uses: actions/checkout@v2.4.0
+      - name: Setup
+        id: setup
+        timeout-minutes: 5
+        uses: ./.github/actions/setup
+      - name: Detekt
+        timeout-minutes: 4
+        run: |
+          ./gradlew detektAll
+      - name: Collect Artifacts
+        timeout-minutes: 1
+        if: ${{ always() }}
+        env:
+          ARTIFACTS_DIR_PATH: ${{ format('{0}/artifacts', env.home) }}
+          REPORTS_ZIP_PATH: ${{ format('{0}/artifacts/static_analysis_detekt.zip', env.home) }}
+        run: |
+          mkdir ${ARTIFACTS_DIR_PATH}
+
+          zip -r ${REPORTS_ZIP_PATH} . -i build/reports/detekt/*
+      - name: Upload Artifacts
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v2
+        timeout-minutes: 1
+        with:
+          name: Detekt static analysis results
+          path: ~/artifacts
+
+  static_analysis_ktlint:
+    needs: prime_cache
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        timeout-minutes: 1
+        uses: actions/checkout@v2.4.0
+      - name: Setup
+        id: setup
+        timeout-minutes: 5
+        uses: ./.github/actions/setup
+      - name: Ktlint
+        timeout-minutes: 4
+        run: |
+          ./gradlew ktlint
+      - name: Collect Artifacts
+        timeout-minutes: 1
+        if: ${{ always() }}
+        env:
+          ARTIFACTS_DIR_PATH: ${{ format('{0}/artifacts', env.home) }}
+          REPORTS_ZIP_PATH: ${{ format('{0}/artifacts/static_analysis_ktlint.zip', env.home) }}
+        run: |
+          mkdir ${ARTIFACTS_DIR_PATH}
+
+          zip -r ${REPORTS_ZIP_PATH} . -i build/reports/ktlint/*
+      - name: Upload Artifacts
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v2
+        timeout-minutes: 1
+        with:
+          name: Ktlint static analysis results
+          path: ~/artifacts
+
+  static_analysis_android_lint:
+    needs: prime_cache
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        timeout-minutes: 1
+        uses: actions/checkout@v2.4.0
+      - name: Setup
+        id: setup
+        timeout-minutes: 5
+        uses: ./.github/actions/setup
+      - name: Android Lint
+        timeout-minutes: 15
+        env:
+          # Disable minify, since it makes lint run faster
+          ORG_GRADLE_PROJECT_IS_MINIFY_ENABLED: false
+        run: |
+          ./gradlew :app:lintZcashmainnetRelease
+      - name: Collect Artifacts
+        timeout-minutes: 1
+        env:
+          ARTIFACTS_DIR_PATH: ${{ format('{0}/artifacts', env.home) }}
+          LINT_ZIP_PATH: ${{ format('{0}/artifacts/android_lint.zip', env.home) }}
+        run: |
+          mkdir ${ARTIFACTS_DIR_PATH}
+          zip -r ${LINT_ZIP_PATH} . -i *build/reports/*
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        timeout-minutes: 1
+        with:
+          name: Android Lint static analysis results
+          path: ~/artifacts
+
+  test_kotlin_modules:
+    needs: prime_cache
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        timeout-minutes: 1
+        uses: actions/checkout@v2.4.0
+      - name: Setup
+        id: setup
+        timeout-minutes: 5
+        uses: ./.github/actions/setup
+      - name: Test
+        timeout-minutes: 4
+        run: |
+          ./gradlew ktlint
+      - name: Collect Artifacts
+        timeout-minutes: 1
+        env:
+          ARTIFACTS_DIR_PATH: ${{ format('{0}/artifacts', env.home) }}
+          RESULTS_ZIP_PATH: ${{ format('{0}/artifacts/test_kotlin.zip', env.home) }}
+        run: |
+          mkdir ${ARTIFACTS_DIR_PATH}
+          zip -r ${RESULTS_ZIP_PATH} . -i *build/reports/*
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        timeout-minutes: 1
+        with:
+          name: Test Kotlin modules results
+          path: ~/artifacts
+
+  test_android_modules:
+    if: needs.check_secrets.outputs.has-secrets == 'true'
+    needs: [prime_cache, check_secrets]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout
+        timeout-minutes: 1
+        uses: actions/checkout@v2.4.0
+      - name: Setup
+        id: setup
+        timeout-minutes: 5
+        uses: ./.github/actions/setup
+      - name: Build
+        timeout-minutes: 20
+        run: |
+          ./gradlew assembleDebug assembleAndroidTest
+      - name: Authenticate to Google Cloud for Firebase Test Lab
+        id: auth_test_lab
+        uses: google-github-actions/auth@v0.4.4
+        with:
+          create_credentials_file: true
+          project_id: ${{ secrets.FIREBASE_TEST_LAB_PROJECT }}
+          service_account: ${{ secrets.FIREBASE_TEST_LAB_SERVICE_ACCOUNT }}
+          workload_identity_provider: ${{ secrets.FIREBASE_TEST_LAB_WORKLOAD_IDENTITY_PROVIDER }}
+      - name: Test
+        timeout-minutes: 20
+        env:
+          # This first environment variable is used by Flank, since the temporary token is missing the project name
+          GOOGLE_CLOUD_PROJECT: ${{ secrets.FIREBASE_TEST_LAB_PROJECT }}
+          ORG_GRADLE_PROJECT_ZCASH_FIREBASE_TEST_LAB_API_KEY_PATH: ${{ steps.auth_test_lab.outputs.credentials_file_path }}
+        run: |
+          # NEED Firebase Test Lab API key
+          # ./gradlew runFlank --parallel
+      - name: Collect Artifacts
+        timeout-minutes: 1
+        env:
+          ARTIFACTS_DIR_PATH: ${{ format('{0}/artifacts', env.home) }}
+          TEST_RESULTS_ZIP_PATH: ${{ format('{0}/artifacts/test_results.zip', env.home) }}
+        run: |
+          mkdir ${ARTIFACTS_DIR_PATH}
+
+          zip -r ${TEST_RESULTS_ZIP_PATH} . -i *build/outputs/androidTest-results/*
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        timeout-minutes: 1
+        with:
+          name: Test Android modules results
+          path: ~/artifacts
+
+  release_build:
+    needs: prime_cache
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        timeout-minutes: 1
+        uses: actions/checkout@v2.4.0
+      - name: Setup
+        id: setup
+        timeout-minutes: 5
+        uses: ./.github/actions/setup
+      # A fake signing key to satisfy creating a "release" build
+      - name: Export Signing Key
+        env:
+          SIGNING_KEY_PATH: ${{ format('{0}/release.jks', env.home) }}
+        shell: bash
+        run: |
+          keytool -genkey -v -keystore $SIGNING_KEY_PATH -keypass android -storepass android -alias androiddebugkey -keyalg RSA -keysize 2048 -validity 100000 -dname "CN=, OU=, O=Test, L=, S=, C=" -noprompt
+      - name: Build
+        timeout-minutes: 20
+        env:
+          ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEYSTORE_PATH: ${{ format('{0}/release.jks', env.home) }}
+          ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEYSTORE_PASSWORD: android
+          ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEY_ALIAS: androiddebugkey
+          ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEY_ALIAS_PASSWORD: android
+        run: |
+          ./gradlew :app:assembleRelease
+      - name: Collect Artifacts
+        timeout-minutes: 1
+        env:
+          ARTIFACTS_DIR_PATH: ${{ format('{0}/artifacts', env.home) }}
+          BINARIES_ZIP_PATH: ${{ format('{0}/artifacts/binaries.zip', env.home) }}
+          MAPPINGS_ZIP_PATH: ${{ format('{0}/artifacts/mappings.zip', env.home) }}
+        run: |
+          mkdir ${ARTIFACTS_DIR_PATH}
+          zip -r ${BINARIES_ZIP_PATH} . -i *app/build/outputs/apk/*/release/*.apk *app/build/outputs/bundle/*/release/*.aab
+          zip -r ${MAPPINGS_ZIP_PATH} . -i *app/build/outputs/mapping/*/mapping.txt
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        timeout-minutes: 1
+        with:
+          name: Release binaries
+          path: ~/artifacts
+
+  # Performs a button mash test on the release build of the app
+  # Note that we might need to help it get past the onboarding test with a script
+  test_robo:
+    if: needs.check_secrets.outputs.has-secrets == 'true'
+    needs: [release_build, check_secrets]
+    runs-on: ubuntu-latest
+    permissions:
+      packages: read
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout
+        timeout-minutes: 1
+        uses: actions/checkout@v2.4.0
+      - name: Setup
+        id: setup
+        timeout-minutes: 5
+        uses: ./.github/actions/setup
+      - name: Authenticate to Google Cloud for Firebase Test Lab
+        id: auth_test_lab
+        uses: google-github-actions/auth@v0.4.4
+        with:
+          create_credentials_file: true
+          project_id: ${{ secrets.FIREBASE_TEST_LAB_PROJECT }}
+          service_account: ${{ secrets.FIREBASE_TEST_LAB_SERVICE_ACCOUNT }}
+          workload_identity_provider: ${{ secrets.FIREBASE_TEST_LAB_WORKLOAD_IDENTITY_PROVIDER }}
+      - name: Download a single artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: Release binaries
+      - name: Robo test
+        timeout-minutes: 15
+        env:
+          # Path depends on `release_build` job, plus path of `Download a single artifact` step
+          BINARIES_ZIP_PATH: binaries.zip
+          # This first environment variable is used by Flank, since the temporary token is missing the project name
+          GOOGLE_CLOUD_PROJECT: ${{ secrets.FIREBASE_TEST_LAB_PROJECT }}
+          ORG_GRADLE_PROJECT_ZCASH_FIREBASE_TEST_LAB_API_KEY_PATH: ${{ steps.auth_test_lab.outputs.credentials_file_path }}
+        run: |
+          unzip ${BINARIES_ZIP_PATH}
+          ./gradlew :app:runFlankSanityConfig
