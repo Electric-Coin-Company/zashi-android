@@ -38,6 +38,8 @@ import cash.z.ecc.ui.screen.profile.view.Profile
 import cash.z.ecc.ui.screen.restore.view.RestoreWallet
 import cash.z.ecc.ui.screen.restore.viewmodel.CompleteWordSetState
 import cash.z.ecc.ui.screen.restore.viewmodel.RestoreViewModel
+import cash.z.ecc.ui.screen.seed.view.Seed
+import cash.z.ecc.ui.screen.settings.view.Settings
 import cash.z.ecc.ui.screen.wallet_address.view.WalletAddresses
 import cash.z.ecc.ui.theme.ZcashTheme
 import cash.z.ecc.ui.util.AndroidApiVersion
@@ -48,6 +50,7 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
+@Suppress("TooManyFunctions")
 class MainActivity : ComponentActivity() {
 
     private val walletViewModel by viewModels<WalletViewModel>()
@@ -141,12 +144,7 @@ class MainActivity : ComponentActivity() {
         BackupWallet(
             persistableWallet, backupViewModel.backupState, backupViewModel.testChoices,
             onCopyToClipboard = {
-                val clipboardManager = getSystemService(ClipboardManager::class.java)
-                val data = ClipData.newPlainText(
-                    getString(R.string.new_wallet_clipboard_tag),
-                    persistableWallet.seedPhrase.joinToString()
-                )
-                clipboardManager.setPrimaryClip(data)
+                copyToClipboard(applicationContext, persistableWallet)
             }, onComplete = {
             walletViewModel.persistBackupComplete()
         }
@@ -200,27 +198,50 @@ class MainActivity : ComponentActivity() {
     private fun Navigation() {
         val navController = rememberNavController()
 
-        NavHost(navController = navController, startDestination = "home") {
-            composable("home") {
+        val home = "home"
+        val profile = "profile"
+        val walletAddressDetails = "wallet_address_details"
+        val settings = "settings"
+        val seed = "seed"
+
+        NavHost(navController = navController, startDestination = home) {
+            composable(home) {
                 WrapHome(
                     goScan = {},
-                    goProfile = { navController.navigate("profile") },
+                    goProfile = { navController.navigate(profile) },
                     goSend = {},
                     goRequest = {}
                 )
             }
-            composable("profile") {
+            composable(profile) {
                 WrapProfile(
                     onBack = { navController.popBackStack() },
-                    onAddressDetails = { navController.navigate("wallet_address_details") },
+                    onAddressDetails = { navController.navigate(walletAddressDetails) },
                     onAddressBook = { },
-                    onSettings = { },
-                    onCoinholderVote = { }
-                ) {
-                }
+                    onSettings = { navController.navigate(settings) },
+                    onCoinholderVote = { },
+                    onSupport = {}
+                )
             }
-            composable("wallet_address_details") {
+            composable(walletAddressDetails) {
                 WrapWalletAddresses(
+                    goBack = {
+                        navController.popBackStack()
+                    }
+                )
+            }
+            composable(settings) {
+                WrapSettings(
+                    goBack = {
+                        navController.popBackStack()
+                    },
+                    goWalletBackup = {
+                        navController.navigate(seed)
+                    }
+                )
+            }
+            composable(seed) {
+                WrapSeed(
                     goBack = {
                         navController.popBackStack()
                     }
@@ -292,10 +313,72 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    @Composable
+    private fun WrapSettings(
+        goBack: () -> Unit,
+        goWalletBackup: () -> Unit
+    ) {
+        val synchronizer = walletViewModel.synchronizer.collectAsState().value
+        if (null == synchronizer) {
+            // Display loading indicator
+        } else {
+            Settings(
+                onBack = goBack,
+                onBackupWallet = goWalletBackup,
+                onRescanWallet = {
+                    walletViewModel.rescanBlockchain()
+                }, onWipeWallet = {
+                walletViewModel.wipeWallet()
+
+                // If wipe ever becomes an operation to also delete the seed, then we'll also need
+                // to do the following to clear any retained state from onboarding (only happens if
+                // occuring during same session as onboarding)
+                // onboardingViewModel.onboardingState.goToBeginning()
+                // onboardingViewModel.isImporting.value = false
+            }
+            )
+        }
+    }
+
+    @Composable
+    private fun WrapSeed(
+        goBack: () -> Unit
+    ) {
+        val persistableWallet = run {
+            val secretState = walletViewModel.secretState.collectAsState().value
+            if (secretState is SecretState.Ready) {
+                secretState.persistableWallet
+            } else {
+                null
+            }
+        }
+        val synchronizer = walletViewModel.synchronizer.collectAsState().value
+        if (null == synchronizer || null == persistableWallet) {
+            // Display loading indicator
+        } else {
+            Seed(
+                persistableWallet = persistableWallet,
+                onBack = goBack,
+                onCopyToClipboard = {
+                    copyToClipboard(applicationContext, persistableWallet)
+                }
+            )
+        }
+    }
+
     companion object {
         @VisibleForTesting
         internal val SPLASH_SCREEN_DELAY = 0.seconds
     }
+}
+
+private fun copyToClipboard(context: Context, persistableWallet: PersistableWallet) {
+    val clipboardManager = context.getSystemService(ClipboardManager::class.java)
+    val data = ClipData.newPlainText(
+        context.getString(R.string.new_wallet_clipboard_tag),
+        persistableWallet.seedPhrase.joinToString()
+    )
+    clipboardManager.setPrimaryClip(data)
 }
 
 /**

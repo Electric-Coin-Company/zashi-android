@@ -23,6 +23,10 @@ class OnboardingState(initialState: OnboardingStage = OnboardingStage.values().f
         mutableState.value = current.value.getPrevious()
     }
 
+    fun goToBeginning() {
+        mutableState.value = OnboardingStage.values().first()
+    }
+
     fun goToEnd() {
         mutableState.value = OnboardingStage.values().last()
     }

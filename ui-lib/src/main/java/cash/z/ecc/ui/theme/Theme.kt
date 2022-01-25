@@ -19,7 +19,7 @@ private val DarkColorPalette = darkColors(
     surface = Dark.backgroundStart,
     onSurface = Dark.textBodyOnBackground,
     background = Dark.backgroundStart,
-    onBackground = Dark.textBodyOnBackground
+    onBackground = Dark.textBodyOnBackground,
 )
 
 private val LightColorPalette = lightColors(
@@ -51,7 +51,9 @@ data class ExtendedColors(
     val addressHighlightUnified: Color,
     val addressHighlightSapling: Color,
     val addressHighlightTransparent: Color,
-    val addressHighlightViewing: Color
+    val addressHighlightViewing: Color,
+    val dangerous: Color,
+    val onDangerous: Color
 ) {
     @Composable
     fun surfaceGradient() = Brush.verticalGradient(
@@ -79,7 +81,9 @@ val DarkExtendedColorPalette = ExtendedColors(
     addressHighlightUnified = Dark.addressHighlightUnified,
     addressHighlightSapling = Dark.addressHighlightSapling,
     addressHighlightTransparent = Dark.addressHighlightTransparent,
-    addressHighlightViewing = Dark.addressHighlightViewing
+    addressHighlightViewing = Dark.addressHighlightViewing,
+    dangerous = Dark.dangerous,
+    onDangerous = Dark.onDangerous
 )
 
 val LightExtendedColorPalette = ExtendedColors(
@@ -99,7 +103,9 @@ val LightExtendedColorPalette = ExtendedColors(
     addressHighlightUnified = Light.addressHighlightUnified,
     addressHighlightSapling = Light.addressHighlightSapling,
     addressHighlightTransparent = Light.addressHighlightTransparent,
-    addressHighlightViewing = Light.addressHighlightViewing
+    addressHighlightViewing = Light.addressHighlightViewing,
+    dangerous = Light.dangerous,
+    onDangerous = Light.onDangerous
 )
 
 val LocalExtendedColors = staticCompositionLocalOf {
@@ -120,7 +126,9 @@ val LocalExtendedColors = staticCompositionLocalOf {
         addressHighlightUnified = Color.Unspecified,
         addressHighlightSapling = Color.Unspecified,
         addressHighlightTransparent = Color.Unspecified,
-        addressHighlightViewing = Color.Unspecified
+        addressHighlightViewing = Color.Unspecified,
+        dangerous = Color.Unspecified,
+        onDangerous = Color.Unspecified
     )
 }
 

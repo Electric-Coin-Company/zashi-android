@@ -98,7 +98,6 @@ fun PreviewRestoreComplete() {
     }
 }
 
-@Suppress("UNUSED_PARAMETER")
 @Composable
 fun RestoreWallet(
     completeWordList: Set<String>,

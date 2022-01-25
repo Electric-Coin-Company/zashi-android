@@ -3,6 +3,7 @@ package cash.z.ecc.ui.screen.home.viewmodel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import cash.z.ecc.android.sdk.Initializer
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.block.CompactBlockProcessor
 import cash.z.ecc.android.sdk.db.entity.PendingTransaction
@@ -10,9 +11,11 @@ import cash.z.ecc.android.sdk.db.entity.Transaction
 import cash.z.ecc.android.sdk.db.entity.isMined
 import cash.z.ecc.android.sdk.db.entity.isSubmitSuccess
 import cash.z.ecc.android.sdk.type.WalletBalance
+import cash.z.ecc.android.sdk.type.ZcashNetwork
 import cash.z.ecc.sdk.SynchronizerCompanion
 import cash.z.ecc.sdk.model.PersistableWallet
 import cash.z.ecc.sdk.model.WalletAddresses
+import cash.z.ecc.sdk.type.fromResources
 import cash.z.ecc.ui.common.ANDROID_STATE_FLOW_TIMEOUT_MILLIS
 import cash.z.ecc.ui.preference.EncryptedPreferenceKeys
 import cash.z.ecc.ui.preference.EncryptedPreferenceSingleton
@@ -46,6 +49,7 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
      * that they have a consistent ordering.
      */
     private val persistWalletMutex = Mutex()
+    private val synchronizerMutex = Mutex()
 
     /**
      * A flow of the user's stored wallet.  Null indicates that no wallet has been stored.
@@ -88,9 +92,11 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
         .filterIsInstance<SecretState.Ready>()
         .flatMapConcat {
             callbackFlow {
-                val synchronizer = SynchronizerCompanion.load(application, it.persistableWallet)
+                val synchronizer = synchronizerMutex.withLock {
+                    val synchronizer = SynchronizerCompanion.load(application, it.persistableWallet)
 
-                synchronizer.start(viewModelScope)
+                    synchronizer.start(viewModelScope)
+                }
 
                 trySend(synchronizer)
                 awaitClose {
@@ -180,6 +186,67 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
             // unless a mutex is used here.
             persistWalletMutex.withLock {
                 StandardPreferenceKeys.IS_USER_BACKUP_COMPLETE.putValue(preferenceProvider, true)
+            }
+        }
+    }
+
+    /**
+     * This method only has an effect if the synchronizer currently is loaded.
+     */
+    fun rescanBlockchain() {
+        viewModelScope.launch {
+            synchronizerMutex.withLock {
+                synchronizer.value?.let {
+                    it.rewindToNearestHeight(it.latestBirthdayHeight, true)
+                }
+            }
+        }
+    }
+
+    /**
+     * This asynchronously wipes the wallet state.
+     *
+     * This method only has an effect if the synchronizer currently is loaded.
+     */
+    fun wipeWallet() {
+        /*
+         * This implementation could perhaps be a little brittle due to needing to stop and start the
+         * synchronizer.  If another client is interacting with the synchronizer at the same time,
+         * it isn't well defined exactly what the behavior should be.
+         *
+         * Possible enhancements to improve this:
+         *  - Hide the synchronizer from clients; prefer to add additional APIs to WalletViewModel
+         *    which delegate to the synchronizer
+         *  - Add a private StateFlow to WalletViewModel to signal internal operations which should
+         *    cancel the synchronizer for other observers. Modify synchronizer flow to use a combine
+         *    operator to check the private stateflow.  When initiating a wipe, set that private
+         *    StateFlow to cancel other observers of the synchronizer.
+         */
+
+        viewModelScope.launch {
+            synchronizerMutex.withLock {
+                synchronizer.value?.let {
+                    // There is a minor race condition here.  With the right timing, it is possible
+                    // that the collection of the Synchronizer flow is canceled during an erase.
+                    // In such a situation, the Synchronizer would be restarted at the end of
+                    // this method even though it shouldn't.  Overall it shouldn't be too harmful,
+                    // since the viewModelScope would still eventually be canceled.
+                    // By at least checking for referential equality at the end, we can reduce that
+                    // timing gap.
+                    val wasStarted = it.isStarted
+                    if (wasStarted) {
+                        it.stop()
+                    }
+
+                    Initializer.erase(
+                        getApplication(),
+                        ZcashNetwork.fromResources(getApplication())
+                    )
+
+                    if (wasStarted && synchronizer.value === it) {
+                        it.start(viewModelScope)
+                    }
+                }
             }
         }
     }

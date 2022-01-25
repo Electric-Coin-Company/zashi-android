@@ -47,6 +47,9 @@ object Dark {
     val addressHighlightSapling = Color(0xFF1BBFF6)
     val addressHighlightTransparent = Color(0xFF97999A)
     val addressHighlightViewing = Color(0xFF504062)
+
+    val dangerous = Color(0xFFEC0008)
+    val onDangerous = Color(0xFFFFFFFF)
 }
 
 object Light {
@@ -93,4 +96,7 @@ object Light {
     val addressHighlightSapling = Color(0xFF1BBFF6)
     val addressHighlightTransparent = Color(0xFF97999A)
     val addressHighlightViewing = Color(0xFF504062)
+
+    val dangerous = Color(0xFFEC0008)
+    val onDangerous = Color(0xFFFFFFFF)
 }
