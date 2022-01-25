@@ -214,7 +214,7 @@ jobs:
           ./gradlew assembleDebug assembleAndroidTest
       - name: Authenticate to Google Cloud for Firebase Test Lab
         id: auth_test_lab
-        uses: google-github-actions/auth@v0.4.4
+        uses: google-github-actions/auth@v0.5.0
         with:
           create_credentials_file: true
           project_id: ${{ secrets.FIREBASE_TEST_LAB_PROJECT }}
@@ -312,7 +312,7 @@ jobs:
         uses: ./.github/actions/setup
       - name: Authenticate to Google Cloud for Firebase Test Lab
         id: auth_test_lab
-        uses: google-github-actions/auth@v0.4.4
+        uses: google-github-actions/auth@v0.5.0
         with:
           create_credentials_file: true
           project_id: ${{ secrets.FIREBASE_TEST_LAB_PROJECT }}
