@@ -1,0 +1,44 @@
+name: 'Setup Java and Dependency Cache'
+description: "Configures the build environment and caches Gradle and dependencies."
+runs:
+  using: "composite"
+  steps:
+    - name: Set Env
+      shell: bash
+      run: |
+        echo "home=${HOME}" >> "$GITHUB_ENV"
+    - name: Set up Java
+      uses: actions/setup-java@v2
+      with:
+        distribution: 'zulu'
+        java-version: 17
+    - name: Disable Gradle Daemon
+      shell: bash
+      run: |
+        mkdir ~/.gradle
+
+        echo "org.gradle.daemon=false" >> ~/.gradle/gradle.properties
+    - name: Gradle Wrapper Cache
+      id: gradle-wrapper-cache
+      uses: actions/cache@v2.1.7
+      with:
+        path: ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles(format('{0}{1}', github.workspace, '/gradle/wrapper/gradle-wrapper.properties')) }}
+    - name: Gradle Dependency Cache
+      id: gradle-dependency-cache
+      uses: actions/cache@v2.1.7
+      with:
+        path: ~/.gradle/caches/modules-2
+        key: ${{ runner.os }}-gradle-deps-${{ hashFiles(format('{0}{1}', github.workspace, '/gradle.properties')) }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-deps
+    - name: Download Gradle
+      if: steps.gradle-wrapper-cache.outputs.cache-hit != 'true'
+      shell: bash
+      run: |
+        ./gradlew --version
+    - name: Download Dependencies
+      if: steps.gradle-dependency-cache.outputs.cache-hit != 'true'
+      shell: bash
+      run: |
+        ./gradlew resolveAll

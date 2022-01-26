@@ -1,0 +1,112 @@
+# Expected secrets
+# GOOGLE_PLAY_CLOUD_PROJECT - Google Cloud project associated with Google Play
+# GOOGLE_PLAY_SERVICE_ACCOUNT - Email address of service account
+# GOOGLE_PLAY_WORKLOAD_IDENTITY_PROVIDER - Workload identity provider to generate temporary service account key
+# SIGNING_KEYSTORE_BASE_64 - The signing key for the app
+# SIGNING_KEYSTORE_PASSWORD - The password for SIGNING_KEYSTORE_BASE_64
+# SIGNING_KEY_ALIAS - The key alias inside SIGNING_KEYSTORE_BASE_64
+# SIGNING_KEY_ALIAS_PASSWORD - The password for the key alias
+
+name: Deploy
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '.github/ISSUE_TEMPLATE/*'
+      - '.github/PULL_REQUEST_TEMPLATE.md'
+      - 'LICENSE'
+      - 'README.md'
+      - 'docs/**'
+
+concurrency: deploy
+
+jobs:
+  validate_gradle_wrapper:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        timeout-minutes: 1
+        uses: actions/checkout@v2.4.0
+      # Gradle Wrapper validation can be flaky
+      # https://github.com/gradle/wrapper-validation-action/issues/40
+      - name: Gradle Wrapper Validation
+        timeout-minutes: 1
+        uses: gradle/wrapper-validation-action@v1.0.4
+
+  check_secrets:
+    runs-on: ubuntu-latest
+    outputs:
+      has-secrets: ${{ steps.check_secrets.outputs.defined }}
+    steps:
+      - id: check_secrets
+        env:
+          GOOGLE_PLAY_CLOUD_PROJECT: ${{ secrets.GOOGLE_PLAY_CLOUD_PROJECT }}
+          GOOGLE_PLAY_SERVICE_ACCOUNT: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT }}
+          GOOGLE_PLAY_WORKLOAD_IDENTITY_PROVIDER: ${{ secrets.GOOGLE_PLAY_WORKLOAD_IDENTITY_PROVIDER }}
+        if: "${{ env.GOOGLE_PLAY_CLOUD_PROJECT != '' && env.GOOGLE_PLAY_SERVICE_ACCOUNT != '' && env.GOOGLE_PLAY_WORKLOAD_IDENTITY_PROVIDER != '' }}"
+        run: echo "::set-output name=defined::true"
+
+  build_and_deploy:
+    if: needs.check_secrets.outputs.has-secrets == 'true'
+    needs: [validate_gradle_wrapper, check_secrets]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout
+        timeout-minutes: 1
+        uses: actions/checkout@v2.4.0
+      - name: Setup
+        id: setup
+        timeout-minutes: 8
+        uses: ./.github/actions/setup
+      - name: Authenticate to Google Cloud for Google Play
+        id: auth_google_play
+        uses: google-github-actions/auth@v0.5.0
+        with:
+          create_credentials_file: true
+          project_id: ${{ secrets.GOOGLE_PLAY_CLOUD_PROJECT }}
+          service_account: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT }}
+          workload_identity_provider: ${{ secrets.GOOGLE_PLAY_WORKLOAD_IDENTITY_PROVIDER }}
+          access_token_lifetime: '1500s'
+      - name: Export Signing Key
+        env:
+          SIGNING_KEYSTORE_BASE_64: ${{ secrets.SIGNING_KEYSTORE_BASE_64 }}
+          SIGNING_KEY_PATH: ${{ format('{0}/release.jks', env.home) }}
+        shell: bash
+        run: |
+          echo ${SIGNING_KEYSTORE_BASE_64} | base64 --decode > ${SIGNING_KEY_PATH}
+      - name: Upload to Play Store
+        timeout-minutes: 25
+        env:
+          ZCASH_GOOGLE_PLAY_SERVICE_KEY_FILE_PATH: ${{ steps.auth_google_play.outputs.credentials_file_path }}
+          ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEYSTORE_PATH: ${{ format('{0}/release.jks', env.home) }}
+          ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEYSTORE_PASSWORD: ${{ secrets.SIGNING_KEYSTORE_PASSWORD }}
+          ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+          ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEY_ALIAS_PASSWORD: ${{ secrets.SIGNING_KEY_ALIAS_PASSWORD }}
+          # Change to deploy once we've finished setting up the build scripts
+          ORG_GRADLE_PROJECT_ZCASH_GOOGLE_PLAY_DEPLOY_MODE: build
+        run: |
+          ./gradlew :app:publishBundle
+      - name: Collect Artifacts
+        timeout-minutes: 1
+        env:
+          ARTIFACTS_DIR_PATH: ${{ format('{0}/artifacts', env.home) }}
+          BINARIES_ZIP_PATH: ${{ format('{0}/artifacts/binaries.zip', env.home) }}
+          MAPPINGS_ZIP_PATH: ${{ format('{0}/artifacts/mappings.zip', env.home) }}
+        run: |
+          mkdir ${ARTIFACTS_DIR_PATH}
+          zip -r ${BINARIES_ZIP_PATH} . -i *app/build/outputs/apk/*/release/*.apk *app/build/outputs/bundle/*/release/*.aab
+          zip -r ${MAPPINGS_ZIP_PATH} . -i *app/build/outputs/mapping/*/mapping.txt
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        timeout-minutes: 1
+        with:
+          name: Release binaries
+          path: ~/artifacts

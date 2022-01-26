@@ -28,6 +28,8 @@ If you plan to fork the project to create a new app of your own, please make the
     1. ui-lib/src/main/res/common/ - All of the the ic_launcher assets
 1. Change the package name
     1. Under [app/build.gradle.kts](app/build.gradle.kts), change the package name of the application
+1. Optional
+    1. Configure secrets for [Continuous Integration](docs/CI.md).
 
 # Known Issues
 
