@@ -32,6 +32,8 @@ android {
                     "src/main/res/ui/onboarding",
                     "src/main/res/ui/profile",
                     "src/main/res/ui/restore",
+                    "src/main/res/ui/seed",
+                    "src/main/res/ui/settings",
                     "src/main/res/ui/wallet_address"
                 )
             )

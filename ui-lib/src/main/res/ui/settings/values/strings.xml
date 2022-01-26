@@ -1,0 +1,10 @@
+<resources>
+    <string name="settings_header">Settings</string>
+    <string name="settings_back_content_description">Back</string>
+
+    <string name="settings_backup">Backup Wallet</string>
+    <string name="settings_wipe">Wipe Wallet Data</string>
+
+    <string name="settings_rescan">Rescan Blockchain</string>
+
+</resources>

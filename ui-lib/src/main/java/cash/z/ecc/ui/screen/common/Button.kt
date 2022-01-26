@@ -104,3 +104,22 @@ fun TertiaryButton(
         Text(style = MaterialTheme.typography.button, text = text, color = ZcashTheme.colors.onTertiary)
     }
 }
+
+@Composable
+fun DangerousButton(
+    onClick: () -> Unit,
+    text: String,
+    modifier: Modifier = Modifier
+) {
+    Button(
+        onClick = onClick,
+        modifier = modifier.then(
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp)
+        ),
+        colors = buttonColors(backgroundColor = ZcashTheme.colors.dangerous)
+    ) {
+        Text(style = MaterialTheme.typography.button, text = text, color = ZcashTheme.colors.onDangerous)
+    }
+}
