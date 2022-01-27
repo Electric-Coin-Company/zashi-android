@@ -8,6 +8,9 @@ plugins {
 
 val packageName = "cash.z.ecc"
 
+// Force orchestrator to be used for this module, because we need cleared state to generate screenshots
+val isOrchestratorEnabled = true
+
 android {
     defaultConfig {
         applicationId = packageName
@@ -16,6 +19,16 @@ android {
         // when the deployment runs
         versionCode = project.property("ZCASH_VERSION_CODE").toString().toInt()
         versionName = project.property("ZCASH_VERSION_NAME").toString()
+
+        if (isOrchestratorEnabled) {
+            testInstrumentationRunnerArguments["clearPackageData"] = "true"
+        }
+    }
+
+    if (isOrchestratorEnabled) {
+        testOptions {
+            execution = "ANDROIDX_TEST_ORCHESTRATOR"
+        }
     }
 
     compileOptions {
@@ -118,9 +131,13 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(projects.uiLib)
 
+    androidTestImplementation(libs.androidx.compose.test.junit)
+    androidTestImplementation(libs.androidx.navigation.compose)
+    androidTestImplementation(libs.androidx.uiAutomator)
     androidTestImplementation(libs.bundles.androidx.test)
+    androidTestImplementation(projects.sdkExtLib)
 
-    if (project.property("IS_USE_TEST_ORCHESTRATOR").toString().toBoolean()) {
+    if (isOrchestratorEnabled) {
         androidTestUtil(libs.androidx.test.orchestrator) {
             artifact {
                 type = "apk"
@@ -171,5 +188,27 @@ if (googlePlayServiceKeyFilePath.isNotEmpty()) {
         } else if ("deploy" == deployMode) {
             releaseStatus.set(com.github.triplet.gradle.androidpublisher.ReleaseStatus.COMPLETED)
         }
+    }
+}
+
+val reportsDirectory = "${buildDir}/reports/androidTests/connected"
+
+// This is coordinated with `EccScreenCaptureProcessor`
+val onDeviceScreenshotsDirectory = "/sdcard/Pictures/zcash_screenshots"
+
+val clearScreenshotsTask = tasks.create<Exec>("clearScreenshots") {
+    executable = project.android.adbExecutable.absolutePath
+    args = listOf("shell", "rm", "-r", onDeviceScreenshotsDirectory)
+}
+
+val fetchScreenshotsTask = tasks.create<Exec>("fetchScreenshots") {
+    executable = project.android.adbExecutable.absolutePath
+    args = listOf("pull", onDeviceScreenshotsDirectory, reportsDirectory)
+    finalizedBy(clearScreenshotsTask)
+}
+
+tasks.whenTaskAdded {
+    if (name == "connectedZcashmainnetDebugAndroidTest") {
+        finalizedBy(fetchScreenshotsTask)
     }
 }

@@ -54,6 +54,10 @@ A variety of Gradle tasks are set up within the project, and these tasks are als
  * `lint` - Performs static analysis with Android lint
  * `dependencyUpdates` - Checks for available dependency updates
 
+A few notes on running instrumentation tests on the app module:
+ - Screenshots are generated automatically and copied to (/app/build/reports/androidTests/connected/zcash_screenshots)[../app/build/reports/androidTests/connected/zcash_screenshots]
+ - Running the Android tests on the app module will erase the data stored by the app.  This is because Test Orchestrator is required to reset app state to successfully perform integration tests.
+
 ## Gradle Properties
 A variety of Gradle properties can be used to configure the build.
 

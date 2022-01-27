@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -44,6 +45,7 @@ import cash.z.ecc.ui.screen.wallet_address.view.WalletAddresses
 import cash.z.ecc.ui.theme.ZcashTheme
 import cash.z.ecc.ui.util.AndroidApiVersion
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.time.Duration
@@ -53,7 +55,11 @@ import kotlin.time.Duration.Companion.seconds
 @Suppress("TooManyFunctions")
 class MainActivity : ComponentActivity() {
 
-    private val walletViewModel by viewModels<WalletViewModel>()
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    val walletViewModel by viewModels<WalletViewModel>()
+
+    @VisibleForTesting(otherwise = VisibleForTesting.NONE)
+    lateinit var navControllerForTesting: NavHostController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -98,9 +104,7 @@ class MainActivity : ComponentActivity() {
                         .fillMaxWidth()
                         .fillMaxHeight()
                 ) {
-                    val secretState = walletViewModel.secretState.collectAsState().value
-
-                    when (secretState) {
+                    when (val secretState = walletViewModel.secretState.collectAsState().value) {
                         SecretState.Loading -> {
                             // For now, keep displaying splash screen using condition above.
                             // In the future, we might consider displaying something different here.
@@ -111,12 +115,15 @@ class MainActivity : ComponentActivity() {
                         is SecretState.NeedsBackup -> WrapBackup(secretState.persistableWallet)
                         is SecretState.Ready -> Navigation()
                     }
-
-                    if (secretState != SecretState.Loading) {
-                        reportFullyDrawn()
-                    }
                 }
             }
+        }
+
+        // Force collection to improve performance; sync can start happening while
+        // the user is going through the backup flow. Don't use eager collection in the view model,
+        // so that the collection is still tied to UI lifecycle.
+        lifecycleScope.launch {
+            walletViewModel.synchronizer.collect()
         }
     }
 
@@ -132,6 +139,8 @@ class MainActivity : ComponentActivity() {
                     walletViewModel.persistNewWallet()
                 }
             )
+
+            reportFullyDrawn()
         } else {
             WrapRestore()
         }
@@ -196,51 +205,47 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     private fun Navigation() {
-        val navController = rememberNavController()
+        val navController = rememberNavController().also {
+            navControllerForTesting = it
+        }
 
-        val home = "home"
-        val profile = "profile"
-        val walletAddressDetails = "wallet_address_details"
-        val settings = "settings"
-        val seed = "seed"
-
-        NavHost(navController = navController, startDestination = home) {
-            composable(home) {
+        NavHost(navController = navController, startDestination = NAV_HOME) {
+            composable(NAV_HOME) {
                 WrapHome(
                     goScan = {},
-                    goProfile = { navController.navigate(profile) },
+                    goProfile = { navController.navigate(NAV_PROFILE) },
                     goSend = {},
                     goRequest = {}
                 )
             }
-            composable(profile) {
+            composable(NAV_PROFILE) {
                 WrapProfile(
                     onBack = { navController.popBackStack() },
-                    onAddressDetails = { navController.navigate(walletAddressDetails) },
+                    onAddressDetails = { navController.navigate(NAV_WALLET_ADDRESS_DETAILS) },
                     onAddressBook = { },
-                    onSettings = { navController.navigate(settings) },
+                    onSettings = { navController.navigate(NAV_SETTINGS) },
                     onCoinholderVote = { },
                     onSupport = {}
                 )
             }
-            composable(walletAddressDetails) {
+            composable(NAV_WALLET_ADDRESS_DETAILS) {
                 WrapWalletAddresses(
                     goBack = {
                         navController.popBackStack()
                     }
                 )
             }
-            composable(settings) {
+            composable(NAV_SETTINGS) {
                 WrapSettings(
                     goBack = {
                         navController.popBackStack()
                     },
                     goWalletBackup = {
-                        navController.navigate(seed)
+                        navController.navigate(NAV_SEED)
                     }
                 )
             }
-            composable(seed) {
+            composable(NAV_SEED) {
                 WrapSeed(
                     goBack = {
                         navController.popBackStack()
@@ -269,6 +274,8 @@ class MainActivity : ComponentActivity() {
                 goSend = goSend,
                 goProfile = goProfile
             )
+
+            reportFullyDrawn()
         }
     }
 
@@ -332,7 +339,7 @@ class MainActivity : ComponentActivity() {
 
                 // If wipe ever becomes an operation to also delete the seed, then we'll also need
                 // to do the following to clear any retained state from onboarding (only happens if
-                // occuring during same session as onboarding)
+                // occurring during same session as onboarding)
                 // onboardingViewModel.onboardingState.goToBeginning()
                 // onboardingViewModel.isImporting.value = false
             }
@@ -369,6 +376,21 @@ class MainActivity : ComponentActivity() {
     companion object {
         @VisibleForTesting
         internal val SPLASH_SCREEN_DELAY = 0.seconds
+
+        @VisibleForTesting
+        const val NAV_HOME = "home"
+
+        @VisibleForTesting
+        const val NAV_PROFILE = "profile"
+
+        @VisibleForTesting
+        const val NAV_WALLET_ADDRESS_DETAILS = "wallet_address_details"
+
+        @VisibleForTesting
+        const val NAV_SETTINGS = "settings"
+
+        @VisibleForTesting
+        const val NAV_SEED = "seed"
     }
 }
 
