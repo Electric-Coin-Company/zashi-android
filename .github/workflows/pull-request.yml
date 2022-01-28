@@ -177,7 +177,8 @@ jobs:
       - name: Test
         timeout-minutes: 4
         run: |
-          ./gradlew ktlint
+          # Note that we explicitly check just the Kotlin modules, to avoid compiling the Android modules here
+          ./gradlew :preference-api-lib:check
       - name: Collect Artifacts
         timeout-minutes: 1
         env:
