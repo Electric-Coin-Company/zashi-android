@@ -152,6 +152,26 @@ class ScreenshotTest {
             it.performClick()
         }
         addressDetailsScreenshots(composeTestRule)
+
+        // Back to profile
+        composeTestRule.onNode(hasContentDescription(getStringResource(R.string.wallet_address_back_content_description))).also {
+            it.assertExists()
+            it.performClick()
+        }
+
+        // Back to home screen
+        composeTestRule.onNode(hasContentDescription(getStringResource(R.string.settings_back_content_description))).also {
+            it.assertExists()
+            it.performClick()
+        }
+
+        composeTestRule.waitUntil { composeTestRule.activity.walletViewModel.secretState.value is SecretState.Ready }
+        composeTestRule.waitUntil { composeTestRule.activity.walletViewModel.walletSnapshot.value != null }
+        composeTestRule.onNode(hasText(getStringResource(R.string.home_button_request))).also {
+            it.assertExists()
+            it.performClick()
+        }
+        requestZecScreenshots(composeTestRule)
     }
 }
 
@@ -321,4 +341,12 @@ private fun addressDetailsScreenshots(composeTestRule: ComposeTestRule) {
     }
 
     ScreenshotTest.takeScreenshot("Addresses 1")
+}
+
+private fun requestZecScreenshots(composeTestRule: ComposeTestRule) {
+    composeTestRule.onNode(hasText(getStringResource(R.string.request_title))).also {
+        it.assertExists()
+    }
+
+    ScreenshotTest.takeScreenshot("Request 1")
 }

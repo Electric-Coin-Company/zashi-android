@@ -26,11 +26,11 @@ If you wish to report a security issue, please follow our Responsible Disclosure
 2. 
 3. 
 
-### Expected behaviour
+### Expected behavior
 <!-- Tell us what should happen -->
 
-### Actual behaviour + errors
-<!-- Tell us what happens instead including any noticable error output (any messages
+### Actual behavior + errors
+<!-- Tell us what happens instead including any noticeable error output (any messages
 displayed on-screen when e.g. a crash occurred) -->
 <!-- Note: please do not include sensitive information. blur, scratch or annotate any
 information like addresses, usernames, amounts or anything other that you might consider sensitive and it's not relevant to the problem you are reporting.  -->

@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import cash.z.ecc.android.sdk.db.entity.Transaction
+import cash.z.ecc.sdk.model.toZecString
 import cash.z.ecc.sdk.model.total
 import cash.z.ecc.ui.R
 import cash.z.ecc.ui.fixture.WalletSnapshotFixture
@@ -126,11 +127,11 @@ private fun HomeMainContent(
 @Composable
 private fun Status(walletSnapshot: WalletSnapshot) {
     Column(Modifier.fillMaxWidth()) {
-        Header(text = walletSnapshot.totalBalance().toString())
+        Header(text = walletSnapshot.totalBalance().toZecString())
         Body(
             text = stringResource(
                 id = R.string.home_status_shielding_format,
-                walletSnapshot.saplingBalance.total.toString()
+                walletSnapshot.saplingBalance.total.toZecString()
             )
         )
     }
