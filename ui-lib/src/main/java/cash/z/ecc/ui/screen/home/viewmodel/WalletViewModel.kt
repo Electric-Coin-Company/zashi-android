@@ -87,13 +87,17 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
 
     // This will likely move to an application global, so that it can be referenced by WorkManager
     // for background synchronization
+    /**
+     * Synchronizer for the Zcash SDK.  Note that the synchronizer loads as soon as a secret is stored,
+     * even if the backup of the secret has not occurred yet.
+     */
     @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
-    val synchronizer: StateFlow<Synchronizer?> = secretState
-        .filterIsInstance<SecretState.Ready>()
+    val synchronizer: StateFlow<Synchronizer?> = persistableWallet
+        .filterNotNull()
         .flatMapConcat {
             callbackFlow {
                 val synchronizer = synchronizerMutex.withLock {
-                    val synchronizer = SynchronizerCompanion.load(application, it.persistableWallet)
+                    val synchronizer = SynchronizerCompanion.load(application, it)
 
                     synchronizer.start(viewModelScope)
                 }

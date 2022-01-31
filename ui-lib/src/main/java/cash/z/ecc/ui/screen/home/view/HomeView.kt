@@ -124,7 +124,7 @@ private fun HomeMainContent(
 }
 
 @Composable
-private fun Status(@Suppress("UNUSED_PARAMETER") walletSnapshot: WalletSnapshot) {
+private fun Status(walletSnapshot: WalletSnapshot) {
     Column(Modifier.fillMaxWidth()) {
         Header(text = walletSnapshot.totalBalance().toString())
         Body(

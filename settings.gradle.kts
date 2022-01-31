@@ -62,6 +62,7 @@ dependencyResolutionManagement {
                     includeGroup("android.arch.lifecycle")
                     includeGroup("android.arch.core")
                     includeGroup("com.google.android.material")
+                    includeGroup("com.google.testing.platform")
                     includeGroupByRegex("androidx.*")
                     includeGroupByRegex("com\\.android.*")
                 }
