@@ -47,6 +47,7 @@ dependencies {
     implementation(libs.androidx.core)
     implementation(libs.androidx.lifecycle.livedata)
     implementation(libs.androidx.splash)
+    implementation(libs.androidx.workmanager)
     implementation(libs.bundles.androidx.compose)
     implementation(libs.google.material)
     implementation(libs.kotlin.stdlib)
