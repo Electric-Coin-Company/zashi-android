@@ -1,6 +1,7 @@
 package cash.z.ecc.work
 
 import android.content.Context
+import androidx.annotation.Keep
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
 import androidx.work.NetworkType
@@ -18,6 +19,7 @@ import kotlinx.coroutines.flow.takeWhile
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.toJavaDuration
 
+@Keep
 class SyncWorker(context: Context, workerParameters: WorkerParameters) : CoroutineWorker(context, workerParameters) {
     @OptIn(ExperimentalCoroutinesApi::class)
     override suspend fun doWork(): Result {
