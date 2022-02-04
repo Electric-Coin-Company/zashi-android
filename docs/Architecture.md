@@ -43,4 +43,4 @@ There are some app-wide resources that share a common namespace, and these shoul
 * Notification Channels
     * No notification channels are currently defined
 * WorkManager Tags
-    * No WorkManager tags are currently defined
+    * "co.electriccoin.zcash.background_sync" is defined in `WorkIds.kt`

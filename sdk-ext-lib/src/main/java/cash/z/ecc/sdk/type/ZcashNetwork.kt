@@ -1,6 +1,6 @@
 package cash.z.ecc.sdk.type
 
-import android.app.Application
+import android.content.Context
 import cash.z.ecc.android.sdk.type.ZcashNetwork
 import cash.z.ecc.sdk.ext.R
 
@@ -23,8 +23,8 @@ import cash.z.ecc.sdk.ext.R
  * @return Zcash network determined from resources.  A resource overlay of [R.bool.zcash_is_testnet]
  * can be used for different build variants to change the network type.
  */
-fun ZcashNetwork.Companion.fromResources(application: Application) =
-    if (application.resources.getBoolean(R.bool.zcash_is_testnet)) {
+fun ZcashNetwork.Companion.fromResources(context: Context) =
+    if (context.resources.getBoolean(R.bool.zcash_is_testnet)) {
         ZcashNetwork.Testnet
     } else {
         ZcashNetwork.Mainnet

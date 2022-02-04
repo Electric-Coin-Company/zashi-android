@@ -3,7 +3,6 @@ package cash.z.ecc.ui.screen.home.viewmodel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import cash.z.ecc.android.sdk.Initializer
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.block.CompactBlockProcessor
 import cash.z.ecc.android.sdk.db.entity.PendingTransaction
@@ -11,23 +10,19 @@ import cash.z.ecc.android.sdk.db.entity.Transaction
 import cash.z.ecc.android.sdk.db.entity.isMined
 import cash.z.ecc.android.sdk.db.entity.isSubmitSuccess
 import cash.z.ecc.android.sdk.type.WalletBalance
-import cash.z.ecc.android.sdk.type.ZcashNetwork
-import cash.z.ecc.sdk.SynchronizerCompanion
+import cash.z.ecc.global.WalletCoordinator
 import cash.z.ecc.sdk.model.PersistableWallet
 import cash.z.ecc.sdk.model.WalletAddresses
-import cash.z.ecc.sdk.type.fromResources
 import cash.z.ecc.ui.common.ANDROID_STATE_FLOW_TIMEOUT_MILLIS
 import cash.z.ecc.ui.preference.EncryptedPreferenceKeys
 import cash.z.ecc.ui.preference.EncryptedPreferenceSingleton
 import cash.z.ecc.ui.preference.StandardPreferenceKeys
 import cash.z.ecc.ui.preference.StandardPreferenceSingleton
 import cash.z.ecc.ui.screen.home.model.WalletSnapshot
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import cash.z.ecc.work.WorkIds
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emitAll
@@ -44,23 +39,22 @@ import kotlinx.coroutines.sync.withLock
 // To make this more multiplatform compatible, we need to remove the dependency on Context
 // for loading the preferences.
 class WalletViewModel(application: Application) : AndroidViewModel(application) {
+    private val walletCoordinator = WalletCoordinator.getInstance(application)
+
     /*
      * Using the Mutex may be overkill, but it ensures that if multiple calls are accidentally made
      * that they have a consistent ordering.
      */
     private val persistWalletMutex = Mutex()
-    private val synchronizerMutex = Mutex()
 
     /**
-     * A flow of the user's stored wallet.  Null indicates that no wallet has been stored.
+     * Synchronizer that is retained long enough to survive configuration changes.
      */
-    private val persistableWallet = flow {
-        // EncryptedPreferenceSingleton.getInstance() is a suspending function, which is why we need
-        // the flow builder to provide a coroutine context.
-        val encryptedPreferenceProvider = EncryptedPreferenceSingleton.getInstance(application)
-
-        emitAll(EncryptedPreferenceKeys.PERSISTABLE_WALLET.observe(encryptedPreferenceProvider))
-    }
+    val synchronizer = walletCoordinator.synchronizer.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(stopTimeoutMillis = ANDROID_STATE_FLOW_TIMEOUT_MILLIS),
+        null
+    )
 
     /**
      * A flow of whether a backup of the user's wallet has been performed.
@@ -70,7 +64,7 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
         emitAll(StandardPreferenceKeys.IS_USER_BACKUP_COMPLETE.observe(preferenceProvider))
     }
 
-    val secretState: StateFlow<SecretState> = persistableWallet
+    val secretState: StateFlow<SecretState> = walletCoordinator.persistableWallet
         .combine(isBackupComplete) { persistableWallet: PersistableWallet?, isBackupComplete: Boolean ->
             if (null == persistableWallet) {
                 SecretState.None
@@ -83,33 +77,6 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
             viewModelScope,
             SharingStarted.WhileSubscribed(stopTimeoutMillis = ANDROID_STATE_FLOW_TIMEOUT_MILLIS),
             SecretState.Loading
-        )
-
-    // This will likely move to an application global, so that it can be referenced by WorkManager
-    // for background synchronization
-    /**
-     * Synchronizer for the Zcash SDK.  Note that the synchronizer loads as soon as a secret is stored,
-     * even if the backup of the secret has not occurred yet.
-     */
-    @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
-    val synchronizer: StateFlow<Synchronizer?> = persistableWallet
-        .filterNotNull()
-        .flatMapConcat {
-            callbackFlow {
-                val synchronizer = synchronizerMutex.withLock {
-                    val synchronizer = SynchronizerCompanion.load(application, it)
-
-                    synchronizer.start(viewModelScope)
-                }
-
-                trySend(synchronizer)
-                awaitClose {
-                    synchronizer.stop()
-                }
-            }
-        }.stateIn(
-            viewModelScope, SharingStarted.WhileSubscribed(stopTimeoutMillis = ANDROID_STATE_FLOW_TIMEOUT_MILLIS),
-            null
         )
 
     @OptIn(FlowPreview::class)
@@ -170,6 +137,8 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
             persistWalletMutex.withLock {
                 EncryptedPreferenceKeys.PERSISTABLE_WALLET.putValue(preferenceProvider, persistableWallet)
             }
+
+            WorkIds.enableBackgroundSynchronization(application)
         }
     }
 
@@ -199,11 +168,7 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
      */
     fun rescanBlockchain() {
         viewModelScope.launch {
-            synchronizerMutex.withLock {
-                synchronizer.value?.let {
-                    it.rewindToNearestHeight(it.latestBirthdayHeight, true)
-                }
-            }
+            walletCoordinator.rescanBlockchain()
         }
     }
 
@@ -213,45 +178,8 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
      * This method only has an effect if the synchronizer currently is loaded.
      */
     fun wipeWallet() {
-        /*
-         * This implementation could perhaps be a little brittle due to needing to stop and start the
-         * synchronizer.  If another client is interacting with the synchronizer at the same time,
-         * it isn't well defined exactly what the behavior should be.
-         *
-         * Possible enhancements to improve this:
-         *  - Hide the synchronizer from clients; prefer to add additional APIs to WalletViewModel
-         *    which delegate to the synchronizer
-         *  - Add a private StateFlow to WalletViewModel to signal internal operations which should
-         *    cancel the synchronizer for other observers. Modify synchronizer flow to use a combine
-         *    operator to check the private stateflow.  When initiating a wipe, set that private
-         *    StateFlow to cancel other observers of the synchronizer.
-         */
-
         viewModelScope.launch {
-            synchronizerMutex.withLock {
-                synchronizer.value?.let {
-                    // There is a minor race condition here.  With the right timing, it is possible
-                    // that the collection of the Synchronizer flow is canceled during an erase.
-                    // In such a situation, the Synchronizer would be restarted at the end of
-                    // this method even though it shouldn't.  Overall it shouldn't be too harmful,
-                    // since the viewModelScope would still eventually be canceled.
-                    // By at least checking for referential equality at the end, we can reduce that
-                    // timing gap.
-                    val wasStarted = it.isStarted
-                    if (wasStarted) {
-                        it.stop()
-                    }
-
-                    Initializer.erase(
-                        getApplication(),
-                        ZcashNetwork.fromResources(getApplication())
-                    )
-
-                    if (wasStarted && synchronizer.value === it) {
-                        it.start(viewModelScope)
-                    }
-                }
-            }
+            walletCoordinator.wipeWallet()
         }
     }
 }

@@ -8,7 +8,7 @@ import kotlinx.coroutines.sync.withLock
  *
  * This class is thread-safe.
  */
-class Lazy<in Input, out Output>(private val deferredCreator: suspend ((Input) -> Output)) {
+class SuspendingLazy<in Input, out Output>(private val deferredCreator: suspend ((Input) -> Output)) {
     private var singletonInstance: Output? = null
 
     private val mutex = Mutex()
