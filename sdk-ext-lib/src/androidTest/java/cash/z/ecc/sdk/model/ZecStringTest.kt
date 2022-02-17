@@ -3,6 +3,7 @@ package cash.z.ecc.sdk.model
 import org.junit.Assert.assertEquals
 import org.junit.Ignore
 import org.junit.Test
+import kotlin.test.assertNull
 
 class ZecStringTest {
 
@@ -57,5 +58,21 @@ class ZecStringTest {
         val actual = Zatoshi.fromZecString(expected.toZecString(), EN_US_MONETARY_SEPARATORS)
 
         assertEquals(expected, actual)
+    }
+
+    @Test
+    @Ignore("https://github.com/zcash/secant-android-wallet/issues/223")
+    fun parse_bad_string() {
+        val actual = Zatoshi.fromZecString("asdf", EN_US_MONETARY_SEPARATORS)
+
+        assertNull(actual)
+    }
+
+    @Test
+    @Ignore("https://github.com/zcash/secant-android-wallet/issues/223")
+    fun parse_bad_number() {
+        val actual = Zatoshi.fromZecString("1.2,3,4", EN_US_MONETARY_SEPARATORS)
+
+        assertNull(actual)
     }
 }
