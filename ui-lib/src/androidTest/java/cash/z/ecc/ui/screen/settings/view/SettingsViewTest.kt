@@ -79,10 +79,10 @@ class SettingsViewTest {
 
     private class TestSetup(private val composeTestRule: ComposeContentTestRule) {
 
-        private var onBackCount = AtomicInteger(0)
-        private var onBackupCount = AtomicInteger(0)
-        private var onRescanCount = AtomicInteger(0)
-        private var onWipeCount = AtomicInteger(0)
+        private val onBackCount = AtomicInteger(0)
+        private val onBackupCount = AtomicInteger(0)
+        private val onRescanCount = AtomicInteger(0)
+        private val onWipeCount = AtomicInteger(0)
 
         fun getOnBackCount(): Int {
             composeTestRule.waitForIdle()

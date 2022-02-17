@@ -137,6 +137,7 @@ dependencyResolutionManagement {
             alias("google-material").to("com.google.android.material:material:$googleMaterialVersion")
             alias("kotlin-stdlib").to("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
             alias("kotlin-reflect").to("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
+            alias("kotlin-test").to("org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
             alias("kotlinx-coroutines-android").to("org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlinxCoroutinesVersion")
             alias("kotlinx-coroutines-core").to("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
             alias("zcash-sdk").to("cash.z.ecc.android:zcash-android-sdk:$zcashSdkVersion")

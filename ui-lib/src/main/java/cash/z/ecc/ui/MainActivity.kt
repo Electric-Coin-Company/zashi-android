@@ -3,6 +3,7 @@ package cash.z.ecc.ui
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.os.SystemClock
 import androidx.activity.ComponentActivity
@@ -26,6 +27,7 @@ import cash.z.ecc.android.sdk.type.WalletBirthday
 import cash.z.ecc.android.sdk.type.ZcashNetwork
 import cash.z.ecc.sdk.model.PersistableWallet
 import cash.z.ecc.sdk.model.SeedPhrase
+import cash.z.ecc.sdk.model.ZecRequest
 import cash.z.ecc.sdk.type.fromResources
 import cash.z.ecc.ui.screen.backup.view.BackupWallet
 import cash.z.ecc.ui.screen.backup.viewmodel.BackupViewModel
@@ -36,6 +38,7 @@ import cash.z.ecc.ui.screen.home.viewmodel.WalletViewModel
 import cash.z.ecc.ui.screen.onboarding.view.Onboarding
 import cash.z.ecc.ui.screen.onboarding.viewmodel.OnboardingViewModel
 import cash.z.ecc.ui.screen.profile.view.Profile
+import cash.z.ecc.ui.screen.request.view.Request
 import cash.z.ecc.ui.screen.restore.view.RestoreWallet
 import cash.z.ecc.ui.screen.restore.viewmodel.CompleteWordSetState
 import cash.z.ecc.ui.screen.restore.viewmodel.RestoreViewModel
@@ -215,7 +218,7 @@ class MainActivity : ComponentActivity() {
                     goScan = {},
                     goProfile = { navController.navigate(NAV_PROFILE) },
                     goSend = {},
-                    goRequest = {}
+                    goRequest = { navController.navigate(NAV_REQUEST) }
                 )
             }
             composable(NAV_PROFILE) {
@@ -251,6 +254,9 @@ class MainActivity : ComponentActivity() {
                         navController.popBackStack()
                     }
                 )
+            }
+            composable(NAV_REQUEST) {
+                WrapRequest(goBack = { navController.popBackStack() })
             }
         }
     }
@@ -373,6 +379,28 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    @Composable
+    private fun WrapRequest(
+        goBack: () -> Unit
+    ) {
+        val walletAddresses = walletViewModel.addresses.collectAsState().value
+        if (null == walletAddresses) {
+            // Display loading indicator
+        } else {
+            Request(
+                walletAddresses.unified,
+                goBack = goBack,
+                onCreateAndSend = {
+                    val chooserIntent = Intent.createChooser(it.newShareIntent(applicationContext), null)
+
+                    startActivity(chooserIntent)
+
+                    goBack()
+                },
+            )
+        }
+    }
+
     companion object {
         @VisibleForTesting
         internal val SPLASH_SCREEN_DELAY = 0.seconds
@@ -391,6 +419,9 @@ class MainActivity : ComponentActivity() {
 
         @VisibleForTesting
         const val NAV_SEED = "seed"
+
+        @VisibleForTesting
+        const val NAV_REQUEST = "request"
     }
 }
 
@@ -416,3 +447,9 @@ private suspend fun prefetchFontLegacy(context: Context, @FontRes fontRes: Int) 
     withContext(Dispatchers.IO) {
         ResourcesCompat.getFont(context, fontRes)
     }
+
+private fun ZecRequest.newShareIntent(context: Context) = Intent().apply {
+    action = Intent.ACTION_SEND
+    putExtra(Intent.EXTRA_TEXT, context.getString(R.string.request_template_format, toUri()))
+    type = "text/plain"
+}

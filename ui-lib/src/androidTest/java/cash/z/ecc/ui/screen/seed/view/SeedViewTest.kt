@@ -54,8 +54,8 @@ class SeedViewTest {
 
     private class TestSetup(private val composeTestRule: ComposeContentTestRule) {
 
-        private var onBackCount = AtomicInteger(0)
-        private var onCopyToClipboardCount = AtomicInteger(0)
+        private val onBackCount = AtomicInteger(0)
+        private val onCopyToClipboardCount = AtomicInteger(0)
 
         fun getOnBackCount(): Int {
             composeTestRule.waitForIdle()

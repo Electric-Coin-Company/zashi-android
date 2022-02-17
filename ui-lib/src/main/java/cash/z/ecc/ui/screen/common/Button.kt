@@ -33,7 +33,8 @@ fun ButtonComposablePreview() {
 fun PrimaryButton(
     onClick: () -> Unit,
     text: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
 ) {
     Button(
         onClick = onClick,
@@ -42,6 +43,7 @@ fun PrimaryButton(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 8.dp)
         ),
+        enabled = enabled,
         colors = buttonColors(backgroundColor = MaterialTheme.colors.primary)
     ) {
         Text(style = MaterialTheme.typography.button, text = text, color = MaterialTheme.colors.onPrimary)
