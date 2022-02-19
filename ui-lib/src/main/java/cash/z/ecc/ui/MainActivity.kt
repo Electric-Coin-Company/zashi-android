@@ -158,8 +158,8 @@ class MainActivity : ComponentActivity() {
             onCopyToClipboard = {
                 copyToClipboard(applicationContext, persistableWallet)
             }, onComplete = {
-            walletViewModel.persistBackupComplete()
-        }
+                walletViewModel.persistBackupComplete()
+            }
         )
     }
 
@@ -341,14 +341,14 @@ class MainActivity : ComponentActivity() {
                 onRescanWallet = {
                     walletViewModel.rescanBlockchain()
                 }, onWipeWallet = {
-                walletViewModel.wipeWallet()
+                    walletViewModel.wipeWallet()
 
-                // If wipe ever becomes an operation to also delete the seed, then we'll also need
-                // to do the following to clear any retained state from onboarding (only happens if
-                // occurring during same session as onboarding)
-                // onboardingViewModel.onboardingState.goToBeginning()
-                // onboardingViewModel.isImporting.value = false
-            }
+                    // If wipe ever becomes an operation to also delete the seed, then we'll also need
+                    // to do the following to clear any retained state from onboarding (only happens if
+                    // occurring during same session as onboarding)
+                    // onboardingViewModel.onboardingState.goToBeginning()
+                    // onboardingViewModel.isImporting.value = false
+                }
             )
         }
     }
