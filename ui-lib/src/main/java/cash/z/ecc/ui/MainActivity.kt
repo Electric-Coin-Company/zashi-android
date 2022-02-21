@@ -9,14 +9,12 @@ import android.os.SystemClock
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.annotation.FontRes
 import androidx.annotation.VisibleForTesting
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.core.content.res.ResourcesCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
@@ -29,9 +27,10 @@ import cash.z.ecc.sdk.model.PersistableWallet
 import cash.z.ecc.sdk.model.SeedPhrase
 import cash.z.ecc.sdk.model.ZecRequest
 import cash.z.ecc.sdk.type.fromResources
+import cash.z.ecc.ui.design.compat.FontCompat
+import cash.z.ecc.ui.design.component.GradientSurface
 import cash.z.ecc.ui.screen.backup.view.BackupWallet
 import cash.z.ecc.ui.screen.backup.viewmodel.BackupViewModel
-import cash.z.ecc.ui.screen.common.GradientSurface
 import cash.z.ecc.ui.screen.home.view.Home
 import cash.z.ecc.ui.screen.home.viewmodel.SecretState
 import cash.z.ecc.ui.screen.home.viewmodel.WalletViewModel
@@ -46,11 +45,7 @@ import cash.z.ecc.ui.screen.seed.view.Seed
 import cash.z.ecc.ui.screen.settings.view.Settings
 import cash.z.ecc.ui.screen.wallet_address.view.WalletAddresses
 import cash.z.ecc.ui.theme.ZcashTheme
-import cash.z.ecc.ui.util.AndroidApiVersion
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
@@ -69,15 +64,14 @@ class MainActivity : ComponentActivity() {
 
         setupSplashScreen()
 
-        if (AndroidApiVersion.isAtLeastO) {
-            setupUiContent()
-        } else {
+        if (FontCompat.isFontPrefetchNeeded()) {
             lifecycleScope.launch {
-                prefetchFontLegacy(applicationContext, R.font.rubik_medium)
-                prefetchFontLegacy(applicationContext, R.font.rubik_regular)
+                FontCompat.prefetchFontsLegacy(applicationContext)
 
                 setupUiContent()
             }
+        } else {
+            setupUiContent()
         }
     }
 
@@ -126,7 +120,8 @@ class MainActivity : ComponentActivity() {
         // the user is going through the backup flow. Don't use eager collection in the view model,
         // so that the collection is still tied to UI lifecycle.
         lifecycleScope.launch {
-            walletViewModel.synchronizer.collect()
+            walletViewModel.synchronizer.collect {
+            }
         }
     }
 
@@ -433,20 +428,6 @@ private fun copyToClipboard(context: Context, persistableWallet: PersistableWall
     )
     clipboardManager.setPrimaryClip(data)
 }
-
-/**
- * Pre-fetches fonts on Android N (API 25) and below.
- */
-/*
- * ResourcesCompat is used implicitly by Compose on older Android versions.
- * The backwards compatibility library performs disk IO and then
- * caches the results.  This moves that IO off the main thread, to prevent ANRs and
- * jank during app startup.
- */
-private suspend fun prefetchFontLegacy(context: Context, @FontRes fontRes: Int) =
-    withContext(Dispatchers.IO) {
-        ResourcesCompat.getFont(context, fontRes)
-    }
 
 private fun ZecRequest.newShareIntent(context: Context) = Intent().apply {
     action = Intent.ACTION_SEND

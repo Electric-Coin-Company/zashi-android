@@ -50,7 +50,8 @@ dependencies {
     implementation(libs.androidx.lifecycle.livedata)
     implementation(libs.androidx.splash)
     implementation(libs.androidx.workmanager)
-    implementation(libs.bundles.androidx.compose)
+    implementation(libs.bundles.androidx.compose.core)
+    implementation(libs.bundles.androidx.compose.extended)
     implementation(libs.kotlin.stdlib)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.core)
@@ -61,6 +62,8 @@ dependencies {
     implementation(projects.preferenceApiLib)
     implementation(projects.preferenceImplAndroidLib)
     implementation(projects.sdkExtLib)
+    implementation(projects.spackleLib)
+    implementation(projects.uiDesignLib)
 
     androidTestImplementation(libs.bundles.androidx.test)
     androidTestImplementation(libs.androidx.compose.test.junit)

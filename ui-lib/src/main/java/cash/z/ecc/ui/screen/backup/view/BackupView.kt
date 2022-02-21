@@ -18,22 +18,22 @@ import androidx.compose.ui.tooling.preview.Preview
 import cash.z.ecc.sdk.fixture.PersistableWalletFixture
 import cash.z.ecc.sdk.model.PersistableWallet
 import cash.z.ecc.ui.R
+import cash.z.ecc.ui.design.MINIMAL_WEIGHT
+import cash.z.ecc.ui.design.component.Body
+import cash.z.ecc.ui.design.component.CHIP_GRID_ROW_SIZE
+import cash.z.ecc.ui.design.component.Chip
+import cash.z.ecc.ui.design.component.ChipGrid
+import cash.z.ecc.ui.design.component.GradientSurface
+import cash.z.ecc.ui.design.component.Header
+import cash.z.ecc.ui.design.component.NavigationButton
+import cash.z.ecc.ui.design.component.PrimaryButton
+import cash.z.ecc.ui.design.component.TertiaryButton
 import cash.z.ecc.ui.screen.backup.BackupTag
 import cash.z.ecc.ui.screen.backup.model.BackupStage
 import cash.z.ecc.ui.screen.backup.state.BackupState
 import cash.z.ecc.ui.screen.backup.state.TestChoices
-import cash.z.ecc.ui.screen.common.Body
-import cash.z.ecc.ui.screen.common.CHIP_GRID_ROW_SIZE
-import cash.z.ecc.ui.screen.common.Chip
-import cash.z.ecc.ui.screen.common.ChipGrid
-import cash.z.ecc.ui.screen.common.GradientSurface
-import cash.z.ecc.ui.screen.common.Header
-import cash.z.ecc.ui.screen.common.NavigationButton
-import cash.z.ecc.ui.screen.common.PrimaryButton
-import cash.z.ecc.ui.screen.common.TertiaryButton
-import cash.z.ecc.ui.screen.onboarding.model.Index
-import cash.z.ecc.ui.theme.MINIMAL_WEIGHT
 import cash.z.ecc.ui.theme.ZcashTheme
+import co.electriccoin.zcash.spackle.model.Index
 
 @Preview(device = Devices.PIXEL_4)
 @Composable

@@ -18,11 +18,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import cash.z.ecc.sdk.fixture.PersistableWalletFixture
 import cash.z.ecc.sdk.model.PersistableWallet
 import cash.z.ecc.ui.R
-import cash.z.ecc.ui.screen.common.Body
-import cash.z.ecc.ui.screen.common.ChipGrid
-import cash.z.ecc.ui.screen.common.GradientSurface
-import cash.z.ecc.ui.screen.common.Header
-import cash.z.ecc.ui.screen.common.TertiaryButton
+import cash.z.ecc.ui.design.component.Body
+import cash.z.ecc.ui.design.component.ChipGrid
+import cash.z.ecc.ui.design.component.GradientSurface
+import cash.z.ecc.ui.design.component.Header
+import cash.z.ecc.ui.design.component.TertiaryButton
 import cash.z.ecc.ui.theme.ZcashTheme
 
 @Preview("Seed")

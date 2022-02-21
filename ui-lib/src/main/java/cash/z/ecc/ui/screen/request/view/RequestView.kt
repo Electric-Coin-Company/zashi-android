@@ -31,10 +31,10 @@ import cash.z.ecc.sdk.model.ZecRequestMessage
 import cash.z.ecc.sdk.model.ZecString
 import cash.z.ecc.sdk.model.fromZecString
 import cash.z.ecc.ui.R
-import cash.z.ecc.ui.screen.common.GradientSurface
-import cash.z.ecc.ui.screen.common.PrimaryButton
-import cash.z.ecc.ui.screen.common.TextField
-import cash.z.ecc.ui.theme.MINIMAL_WEIGHT
+import cash.z.ecc.ui.design.MINIMAL_WEIGHT
+import cash.z.ecc.ui.design.component.GradientSurface
+import cash.z.ecc.ui.design.component.PrimaryButton
+import cash.z.ecc.ui.design.component.TextField
 import cash.z.ecc.ui.theme.ZcashTheme
 import kotlinx.coroutines.runBlocking
 

@@ -8,7 +8,7 @@ import cash.z.ecc.sdk.SynchronizerCompanion
 import cash.z.ecc.sdk.type.fromResources
 import cash.z.ecc.ui.preference.EncryptedPreferenceKeys
 import cash.z.ecc.ui.preference.EncryptedPreferenceSingleton
-import cash.z.ecc.ui.util.LazyWithArgument
+import co.electriccoin.zcash.spackle.LazyWithArgument
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers

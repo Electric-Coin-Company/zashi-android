@@ -8,7 +8,7 @@ import cash.z.ecc.android.sdk.ext.collectWith
 import cash.z.ecc.ui.screen.backup.model.BackupStage
 import cash.z.ecc.ui.screen.backup.state.BackupState
 import cash.z.ecc.ui.screen.backup.state.TestChoices
-import cash.z.ecc.ui.screen.onboarding.model.Index
+import co.electriccoin.zcash.spackle.model.Index
 
 class BackupViewModel(application: Application, savedStateHandle: SavedStateHandle) : AndroidViewModel(application) {
     val backupState: BackupState = run {

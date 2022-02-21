@@ -13,10 +13,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import cash.z.ecc.ui.R
-import cash.z.ecc.ui.screen.common.DangerousButton
-import cash.z.ecc.ui.screen.common.GradientSurface
-import cash.z.ecc.ui.screen.common.PrimaryButton
-import cash.z.ecc.ui.screen.common.TertiaryButton
+import cash.z.ecc.ui.design.component.DangerousButton
+import cash.z.ecc.ui.design.component.GradientSurface
+import cash.z.ecc.ui.design.component.PrimaryButton
+import cash.z.ecc.ui.design.component.TertiaryButton
 import cash.z.ecc.ui.theme.ZcashTheme
 
 @Preview("Settings")
