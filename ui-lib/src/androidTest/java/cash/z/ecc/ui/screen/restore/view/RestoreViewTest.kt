@@ -20,7 +20,7 @@ import cash.z.ecc.android.bip39.Mnemonics
 import cash.z.ecc.sdk.fixture.SeedPhraseFixture
 import cash.z.ecc.sdk.model.SeedPhrase
 import cash.z.ecc.ui.R
-import cash.z.ecc.ui.screen.common.CommonTag
+import cash.z.ecc.ui.design.component.CommonTag
 import cash.z.ecc.ui.screen.restore.RestoreTag
 import cash.z.ecc.ui.screen.restore.state.WordList
 import cash.z.ecc.ui.test.getStringResource

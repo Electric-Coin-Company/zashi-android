@@ -40,11 +40,11 @@ import androidx.compose.ui.unit.dp
 import cash.z.ecc.sdk.fixture.WalletAddressesFixture
 import cash.z.ecc.sdk.model.WalletAddresses
 import cash.z.ecc.ui.R
-import cash.z.ecc.ui.screen.common.Body
-import cash.z.ecc.ui.screen.common.GradientSurface
-import cash.z.ecc.ui.screen.common.ListHeader
-import cash.z.ecc.ui.screen.common.ListItem
-import cash.z.ecc.ui.theme.MINIMAL_WEIGHT
+import cash.z.ecc.ui.design.MINIMAL_WEIGHT
+import cash.z.ecc.ui.design.component.Body
+import cash.z.ecc.ui.design.component.GradientSurface
+import cash.z.ecc.ui.design.component.ListHeader
+import cash.z.ecc.ui.design.component.ListItem
 import cash.z.ecc.ui.theme.ZcashTheme
 import kotlinx.coroutines.runBlocking
 

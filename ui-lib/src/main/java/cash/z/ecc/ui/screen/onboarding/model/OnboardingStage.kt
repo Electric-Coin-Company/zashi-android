@@ -1,5 +1,8 @@
 package cash.z.ecc.ui.screen.onboarding.model
 
+import co.electriccoin.zcash.spackle.model.Index
+import co.electriccoin.zcash.spackle.model.Progress
+
 enum class OnboardingStage {
     // Note: the ordinal order is used to manage progression through each stage
     // so be careful if reordering these

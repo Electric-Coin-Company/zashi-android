@@ -1,6 +1,6 @@
 package cash.z.ecc.ui.screen.backup.state
 
-import cash.z.ecc.ui.screen.onboarding.model.Index
+import co.electriccoin.zcash.spackle.model.Index
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 

@@ -24,10 +24,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+import cash.z.ecc.ui.design.MINIMAL_WEIGHT
 import cash.z.ecc.ui.screen.backup.BackupTag
-import cash.z.ecc.ui.screen.onboarding.model.Index
-import cash.z.ecc.ui.theme.MINIMAL_WEIGHT
 import cash.z.ecc.ui.theme.ZcashTheme
+import co.electriccoin.zcash.spackle.model.Index
 
 /**
  * @param chipIndex The index of the chip, which is displayed to the user.

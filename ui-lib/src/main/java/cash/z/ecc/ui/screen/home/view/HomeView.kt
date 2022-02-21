@@ -23,15 +23,15 @@ import cash.z.ecc.android.sdk.db.entity.Transaction
 import cash.z.ecc.sdk.model.toZecString
 import cash.z.ecc.sdk.model.total
 import cash.z.ecc.ui.R
+import cash.z.ecc.ui.design.MINIMAL_WEIGHT
+import cash.z.ecc.ui.design.component.Body
+import cash.z.ecc.ui.design.component.GradientSurface
+import cash.z.ecc.ui.design.component.Header
+import cash.z.ecc.ui.design.component.PrimaryButton
+import cash.z.ecc.ui.design.component.TertiaryButton
 import cash.z.ecc.ui.fixture.WalletSnapshotFixture
-import cash.z.ecc.ui.screen.common.Body
-import cash.z.ecc.ui.screen.common.GradientSurface
-import cash.z.ecc.ui.screen.common.Header
-import cash.z.ecc.ui.screen.common.PrimaryButton
-import cash.z.ecc.ui.screen.common.TertiaryButton
 import cash.z.ecc.ui.screen.home.model.WalletSnapshot
 import cash.z.ecc.ui.screen.home.model.totalBalance
-import cash.z.ecc.ui.theme.MINIMAL_WEIGHT
 import cash.z.ecc.ui.theme.ZcashTheme
 
 @Preview

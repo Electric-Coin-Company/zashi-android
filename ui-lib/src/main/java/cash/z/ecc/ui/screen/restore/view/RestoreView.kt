@@ -47,22 +47,22 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cash.z.ecc.sdk.model.SeedPhraseValidation
 import cash.z.ecc.ui.R
-import cash.z.ecc.ui.screen.common.Body
-import cash.z.ecc.ui.screen.common.CHIP_GRID_ROW_SIZE
-import cash.z.ecc.ui.screen.common.Chip
-import cash.z.ecc.ui.screen.common.CommonTag
-import cash.z.ecc.ui.screen.common.GradientSurface
-import cash.z.ecc.ui.screen.common.Header
-import cash.z.ecc.ui.screen.common.NavigationButton
-import cash.z.ecc.ui.screen.common.PrimaryButton
-import cash.z.ecc.ui.screen.common.TextField
-import cash.z.ecc.ui.screen.onboarding.model.Index
+import cash.z.ecc.ui.design.MINIMAL_WEIGHT
+import cash.z.ecc.ui.design.component.Body
+import cash.z.ecc.ui.design.component.CHIP_GRID_ROW_SIZE
+import cash.z.ecc.ui.design.component.Chip
+import cash.z.ecc.ui.design.component.CommonTag
+import cash.z.ecc.ui.design.component.GradientSurface
+import cash.z.ecc.ui.design.component.Header
+import cash.z.ecc.ui.design.component.NavigationButton
+import cash.z.ecc.ui.design.component.PrimaryButton
+import cash.z.ecc.ui.design.component.TextField
 import cash.z.ecc.ui.screen.restore.RestoreTag
 import cash.z.ecc.ui.screen.restore.model.ParseResult
 import cash.z.ecc.ui.screen.restore.state.WordList
 import cash.z.ecc.ui.screen.restore.state.wordValidation
-import cash.z.ecc.ui.theme.MINIMAL_WEIGHT
 import cash.z.ecc.ui.theme.ZcashTheme
+import co.electriccoin.zcash.spackle.model.Index
 
 @Preview("Restore Wallet")
 @Composable

@@ -1,9 +1,9 @@
 package cash.z.ecc.ui.preference
 
 import android.content.Context
-import cash.z.ecc.ui.util.SuspendingLazy
 import co.electriccoin.zcash.preference.AndroidPreferenceProvider
 import co.electriccoin.zcash.preference.api.PreferenceProvider
+import co.electriccoin.zcash.spackle.SuspendingLazy
 
 object EncryptedPreferenceSingleton {
 

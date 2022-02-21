@@ -24,10 +24,10 @@ import androidx.compose.ui.unit.dp
 import cash.z.ecc.sdk.fixture.WalletAddressFixture
 import cash.z.ecc.sdk.model.WalletAddress
 import cash.z.ecc.ui.R
-import cash.z.ecc.ui.screen.common.Body
-import cash.z.ecc.ui.screen.common.GradientSurface
-import cash.z.ecc.ui.screen.common.PrimaryButton
-import cash.z.ecc.ui.screen.common.TertiaryButton
+import cash.z.ecc.ui.design.component.Body
+import cash.z.ecc.ui.design.component.GradientSurface
+import cash.z.ecc.ui.design.component.PrimaryButton
+import cash.z.ecc.ui.design.component.TertiaryButton
 import cash.z.ecc.ui.screen.profile.util.AndroidQrCodeImageGenerator
 import cash.z.ecc.ui.screen.profile.util.JvmQrCodeGenerator
 import cash.z.ecc.ui.theme.ZcashTheme

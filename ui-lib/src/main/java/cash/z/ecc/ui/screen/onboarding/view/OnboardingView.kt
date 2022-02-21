@@ -27,19 +27,19 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import cash.z.ecc.ui.R
-import cash.z.ecc.ui.screen.common.Body
-import cash.z.ecc.ui.screen.common.GradientSurface
-import cash.z.ecc.ui.screen.common.Header
-import cash.z.ecc.ui.screen.common.NavigationButton
-import cash.z.ecc.ui.screen.common.PinkProgress
-import cash.z.ecc.ui.screen.common.PrimaryButton
-import cash.z.ecc.ui.screen.common.SecondaryButton
-import cash.z.ecc.ui.screen.common.TertiaryButton
+import cash.z.ecc.ui.design.MINIMAL_WEIGHT
+import cash.z.ecc.ui.design.component.Body
+import cash.z.ecc.ui.design.component.GradientSurface
+import cash.z.ecc.ui.design.component.Header
+import cash.z.ecc.ui.design.component.NavigationButton
+import cash.z.ecc.ui.design.component.PinkProgress
+import cash.z.ecc.ui.design.component.PrimaryButton
+import cash.z.ecc.ui.design.component.SecondaryButton
+import cash.z.ecc.ui.design.component.TertiaryButton
 import cash.z.ecc.ui.screen.onboarding.model.OnboardingStage
-import cash.z.ecc.ui.screen.onboarding.model.Progress
 import cash.z.ecc.ui.screen.onboarding.state.OnboardingState
-import cash.z.ecc.ui.theme.MINIMAL_WEIGHT
 import cash.z.ecc.ui.theme.ZcashTheme
+import co.electriccoin.zcash.spackle.model.Progress
 
 @Preview
 @Composable

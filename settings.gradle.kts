@@ -161,17 +161,21 @@ dependencyResolutionManagement {
 
             // Bundles
             bundle(
-                "androidx-compose",
+                "androidx-compose-core",
                 listOf(
-                    "androidx-activity-compose",
                     "androidx-compose-compiler",
                     "androidx-compose-foundation",
-                    "androidx-compose-material",
                     "androidx-compose-material3",
-                    "androidx-compose-material-icons-core",
-                    "androidx-compose-material-icons-extended",
                     "androidx-compose-tooling",
                     "androidx-compose-ui",
+                )
+            )
+            bundle(
+                "androidx-compose-extended",
+                listOf(
+                    "androidx-activity-compose",
+                    "androidx-compose-material-icons-core",
+                    "androidx-compose-material-icons-extended",
                     "androidx-navigation-compose",
                     "androidx-viewmodel-compose"
                 )
@@ -199,6 +203,8 @@ include("build-info-lib")
 include("preference-api-lib")
 include("preference-impl-android-lib")
 include("sdk-ext-lib")
+include("spackle-lib")
+include("ui-design-lib")
 include("ui-lib")
 
 if (extra["IS_SDK_INCLUDED_BUILD"].toString().toBoolean()) {

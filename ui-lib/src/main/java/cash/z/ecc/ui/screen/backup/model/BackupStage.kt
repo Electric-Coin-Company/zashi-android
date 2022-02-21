@@ -1,7 +1,7 @@
 package cash.z.ecc.ui.screen.backup.model
 
-import cash.z.ecc.ui.screen.onboarding.model.Index
-import cash.z.ecc.ui.screen.onboarding.model.Progress
+import co.electriccoin.zcash.spackle.model.Index
+import co.electriccoin.zcash.spackle.model.Progress
 
 enum class BackupStage {
     // Note: the ordinal order is used to manage progression through each stage
