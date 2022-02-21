@@ -4,14 +4,14 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.Divider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SmallTopAppBar
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -78,7 +78,7 @@ fun Profile(
 
 @Composable
 private fun ProfileTopAppBar(onBack: () -> Unit) {
-    TopAppBar(
+    SmallTopAppBar(
         title = {
             Text(
                 text = stringResource(id = R.string.profile_title)
@@ -91,7 +91,7 @@ private fun ProfileTopAppBar(onBack: () -> Unit) {
                 Icon(
                     imageVector = Icons.Filled.ArrowBack,
                     contentDescription = stringResource(R.string.profile_back_content_description),
-                    tint = MaterialTheme.colors.secondary
+                    tint = MaterialTheme.colorScheme.secondary
                 )
             }
         }
@@ -116,8 +116,8 @@ private fun ProfileContents(
         // TODO [#163]: Ellipsize center of the string
         Text(
             text = walletAddress.address,
-            style = MaterialTheme.typography.body1,
-            color = MaterialTheme.colors.onBackground,
+            style = MaterialTheme.typography.headlineLarge,
+            color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier.align(Alignment.CenterHorizontally),
             overflow = TextOverflow.Ellipsis
         )

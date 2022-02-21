@@ -15,15 +15,15 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDownCircle
+import androidx.compose.material3.Divider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SmallTopAppBar
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -71,7 +71,7 @@ fun WalletAddresses(walletAddresses: WalletAddresses, onBack: () -> Unit) {
 
 @Composable
 private fun WalletDetailTopAppBar(onBack: () -> Unit) {
-    TopAppBar(
+    SmallTopAppBar(
         title = {
             Text(
                 text = stringResource(id = R.string.wallet_address_title)
@@ -84,7 +84,7 @@ private fun WalletDetailTopAppBar(onBack: () -> Unit) {
                 Icon(
                     imageVector = Icons.Filled.ArrowBack,
                     contentDescription = stringResource(R.string.wallet_address_back_content_description),
-                    tint = MaterialTheme.colors.secondary
+                    tint = MaterialTheme.colorScheme.secondary
                 )
             }
         }
@@ -251,6 +251,6 @@ private fun ExpandableArrow(isExpanded: Boolean) {
         } else {
             Modifier.rotate(NINETY_DEGREES)
         },
-        tint = MaterialTheme.colors.onBackground
+        tint = MaterialTheme.colorScheme.onBackground
     )
 }

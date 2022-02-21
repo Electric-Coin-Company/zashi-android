@@ -1,6 +1,6 @@
 package cash.z.ecc.ui.screen.common
 
-import androidx.compose.material.LinearProgressIndicator
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import cash.z.ecc.ui.screen.onboarding.model.Progress

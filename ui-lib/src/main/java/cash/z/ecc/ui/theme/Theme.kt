@@ -1,9 +1,9 @@
 package cash.z.ecc.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.darkColors
-import androidx.compose.material.lightColors
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
@@ -11,7 +11,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 
-private val DarkColorPalette = darkColors(
+private val DarkColorPalette = darkColorScheme(
     primary = Dark.primaryButton,
     secondary = Dark.secondaryButton,
     onPrimary = Dark.textPrimaryButton,
@@ -22,7 +22,7 @@ private val DarkColorPalette = darkColors(
     onBackground = Dark.textBodyOnBackground,
 )
 
-private val LightColorPalette = lightColors(
+private val LightColorPalette = lightColorScheme(
     primary = Light.primaryButton,
     secondary = Light.secondaryButton,
     onPrimary = Light.textPrimaryButton,
@@ -58,7 +58,7 @@ data class ExtendedColors(
     @Composable
     fun surfaceGradient() = Brush.verticalGradient(
         colors = listOf(
-            MaterialTheme.colors.surface,
+            MaterialTheme.colorScheme.surface,
             ZcashTheme.colors.surfaceEnd
         )
     )
@@ -151,9 +151,8 @@ fun ZcashTheme(
 
     CompositionLocalProvider(LocalExtendedColors provides extendedColors) {
         MaterialTheme(
-            colors = baseColors,
+            colorScheme = baseColors,
             typography = Typography,
-            shapes = Shapes,
             content = content
         )
     }

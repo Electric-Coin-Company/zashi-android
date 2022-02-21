@@ -1,13 +1,14 @@
 package cash.z.ecc.ui.screen.settings.view
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SmallTopAppBar
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,6 +34,7 @@ fun PreviewSettings() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Settings(
     onBack: () -> Unit,
@@ -53,7 +55,7 @@ fun Settings(
 
 @Composable
 private fun SettingsTopAppBar(onBack: () -> Unit) {
-    TopAppBar(
+    SmallTopAppBar(
         title = { Text(text = stringResource(id = R.string.settings_header)) },
         navigationIcon = {
             IconButton(

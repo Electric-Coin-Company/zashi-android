@@ -12,12 +12,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.SmallTopAppBar
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
@@ -79,7 +79,7 @@ fun Onboarding(
 private fun OnboardingTopAppBar(onboardingState: OnboardingState) {
     val currentStage = onboardingState.current.collectAsState().value
 
-    TopAppBar(
+    SmallTopAppBar(
         title = { Text(text = stringResource(id = R.string.app_name)) },
         navigationIcon =
         if (IS_NAVIGATION_IN_APP_BAR && currentStage.hasPrevious()) {
@@ -92,7 +92,7 @@ private fun OnboardingTopAppBar(onboardingState: OnboardingState) {
                 }
             }
         } else {
-            null
+            { Unit }
         },
         actions = {
             if (IS_NAVIGATION_IN_APP_BAR && currentStage.hasNext()) {
