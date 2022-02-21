@@ -5,14 +5,14 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SmallTopAppBar
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,6 +33,7 @@ import cash.z.ecc.sdk.model.fromZecString
 import cash.z.ecc.ui.R
 import cash.z.ecc.ui.screen.common.GradientSurface
 import cash.z.ecc.ui.screen.common.PrimaryButton
+import cash.z.ecc.ui.screen.common.TextField
 import cash.z.ecc.ui.theme.MINIMAL_WEIGHT
 import cash.z.ecc.ui.theme.ZcashTheme
 import kotlinx.coroutines.runBlocking
@@ -53,6 +54,7 @@ fun PreviewRequest() {
 /**
  * @param myAddress The address that ZEC should be sent to.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Request(
     myAddress: WalletAddress.Unified,
@@ -71,7 +73,7 @@ fun Request(
 
 @Composable
 private fun RequestTopAppBar(onBack: () -> Unit) {
-    TopAppBar(
+    SmallTopAppBar(
         title = { Text(text = stringResource(id = R.string.request_title)) },
         navigationIcon = {
             IconButton(

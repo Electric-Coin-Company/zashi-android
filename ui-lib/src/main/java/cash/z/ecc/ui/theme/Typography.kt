@@ -1,6 +1,6 @@
 package cash.z.ecc.ui.theme
 
-import androidx.compose.material.Typography
+import androidx.compose.material3.Typography
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.text.TextStyle
@@ -19,22 +19,22 @@ private val Rubik = FontFamily(
 
 @OptIn(ExperimentalUnitApi::class)
 val Typography = Typography(
-    h1 = TextStyle(
+    headlineLarge = TextStyle(
         fontFamily = Rubik,
         fontWeight = FontWeight.W600,
         fontSize = 30.sp,
     ),
-    body1 = TextStyle(
+    bodyLarge = TextStyle(
         fontFamily = Rubik,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp
     ),
-    caption = TextStyle(
+    bodySmall = TextStyle(
         fontFamily = Rubik,
         fontWeight = FontWeight.Medium,
         fontSize = 16.sp
     ),
-    button = TextStyle(
+    labelLarge = TextStyle(
         fontFamily = Rubik,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp
@@ -49,12 +49,12 @@ data class ExtendedTypography(
 
 val LocalExtendedTypography = staticCompositionLocalOf {
     ExtendedTypography(
-        chipIndex = Typography.body1.copy(
+        chipIndex = Typography.bodyLarge.copy(
             fontSize = 10.sp,
             baselineShift = BaselineShift.Superscript,
             fontWeight = FontWeight.Bold
         ),
-        listItem = Typography.body1.copy(
+        listItem = Typography.bodyLarge.copy(
             fontSize = 24.sp
         )
     )

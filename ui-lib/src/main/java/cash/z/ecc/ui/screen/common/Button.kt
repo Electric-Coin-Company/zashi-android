@@ -3,11 +3,11 @@ package cash.z.ecc.ui.screen.common
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.ButtonDefaults.buttonColors
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ButtonDefaults.buttonColors
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -44,9 +44,13 @@ fun PrimaryButton(
                 .padding(horizontal = 16.dp, vertical = 8.dp)
         ),
         enabled = enabled,
-        colors = buttonColors(backgroundColor = MaterialTheme.colors.primary)
+        colors = buttonColors(containerColor = MaterialTheme.colorScheme.primary)
     ) {
-        Text(style = MaterialTheme.typography.button, text = text, color = MaterialTheme.colors.onPrimary)
+        Text(
+            style = MaterialTheme.typography.labelLarge,
+            text = text,
+            color = MaterialTheme.colorScheme.onPrimary
+        )
     }
 }
 
@@ -63,9 +67,13 @@ fun SecondaryButton(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 8.dp)
         ),
-        colors = buttonColors(backgroundColor = MaterialTheme.colors.secondary)
+        colors = buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
     ) {
-        Text(style = MaterialTheme.typography.button, text = text, color = MaterialTheme.colors.onSecondary)
+        Text(
+            style = MaterialTheme.typography.labelLarge,
+            text = text,
+            color = MaterialTheme.colorScheme.onSecondary
+        )
     }
 }
 
@@ -81,9 +89,9 @@ fun NavigationButton(
             Modifier
                 .padding(horizontal = 16.dp, vertical = 8.dp)
         ),
-        colors = buttonColors(backgroundColor = MaterialTheme.colors.secondary)
+        colors = buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
     ) {
-        Text(style = MaterialTheme.typography.button, text = text, color = MaterialTheme.colors.onSecondary)
+        Text(style = MaterialTheme.typography.labelLarge, text = text, color = MaterialTheme.colorScheme.onSecondary)
     }
 }
 
@@ -100,10 +108,14 @@ fun TertiaryButton(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 8.dp)
         ),
-        elevation = ButtonDefaults.elevation(0.dp, 0.dp, 0.dp),
-        colors = buttonColors(backgroundColor = ZcashTheme.colors.tertiary)
+        elevation = ButtonDefaults.buttonElevation(0.dp, 0.dp, 0.dp),
+        colors = buttonColors(containerColor = ZcashTheme.colors.tertiary)
     ) {
-        Text(style = MaterialTheme.typography.button, text = text, color = ZcashTheme.colors.onTertiary)
+        Text(
+            style = MaterialTheme.typography.labelLarge,
+            text = text,
+            color = ZcashTheme.colors.onTertiary
+        )
     }
 }
 
@@ -120,8 +132,12 @@ fun DangerousButton(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 8.dp)
         ),
-        colors = buttonColors(backgroundColor = ZcashTheme.colors.dangerous)
+        colors = buttonColors(containerColor = ZcashTheme.colors.dangerous)
     ) {
-        Text(style = MaterialTheme.typography.button, text = text, color = ZcashTheme.colors.onDangerous)
+        Text(
+            style = MaterialTheme.typography.labelLarge,
+            text = text,
+            color = ZcashTheme.colors.onDangerous
+        )
     }
 }

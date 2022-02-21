@@ -1,7 +1,7 @@
 package cash.z.ecc.ui.screen.common
 
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import cash.z.ecc.ui.theme.ZcashTheme
@@ -13,7 +13,7 @@ fun Header(
 ) {
     Text(
         text = text,
-        style = MaterialTheme.typography.h1,
+        style = MaterialTheme.typography.headlineLarge,
         color = ZcashTheme.colors.onBackgroundHeader,
         modifier = modifier
     )
@@ -26,8 +26,8 @@ fun Body(
 ) {
     Text(
         text = text,
-        style = MaterialTheme.typography.body1,
-        color = MaterialTheme.colors.onBackground,
+        style = MaterialTheme.typography.bodyLarge,
+        color = MaterialTheme.colorScheme.onBackground,
         modifier = modifier
     )
 }
@@ -40,7 +40,7 @@ fun ListItem(
     Text(
         text = text,
         style = ZcashTheme.typography.listItem,
-        color = MaterialTheme.colors.onBackground,
+        color = MaterialTheme.colorScheme.onBackground,
         modifier = modifier
     )
 }
@@ -53,7 +53,7 @@ fun ListHeader(
     Text(
         text = text,
         style = ZcashTheme.typography.listItem,
-        color = MaterialTheme.colors.onBackground,
+        color = MaterialTheme.colorScheme.onBackground,
         modifier = modifier
     )
 }
