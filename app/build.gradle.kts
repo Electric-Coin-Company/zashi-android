@@ -6,7 +6,7 @@ plugins {
     id("com.github.triplet.play")
 }
 
-val packageName = "cash.z.ecc"
+val packageName = "co.electriccoin.zcash"
 
 // Force orchestrator to be used for this module, because we need cleared state to generate screenshots
 val isOrchestratorEnabled = true
