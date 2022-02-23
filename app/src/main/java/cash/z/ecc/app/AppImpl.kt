@@ -1,7 +1,7 @@
 package cash.z.ecc.app
 
 import android.app.Application
-import cash.z.ecc.BuildConfig
+import co.electriccoin.zcash.BuildConfig
 
 @Suppress("unused")
 class AppImpl : Application() {
