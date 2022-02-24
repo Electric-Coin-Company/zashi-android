@@ -21,9 +21,9 @@ data class ZecRequest(val address: WalletAddress.Unified, val amount: Zatoshi, v
 }
 
 @JvmInline
-value class ZecRequestMessage(val message: String) {
+value class ZecRequestMessage(val value: String) {
     init {
-        require(message.length <= MAX_MESSAGE_LENGTH)
+        require(value.length <= MAX_MESSAGE_LENGTH)
     }
 
     companion object {

@@ -15,6 +15,7 @@ import cash.z.ecc.ui.theme.ZcashTheme
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
+import java.util.concurrent.atomic.AtomicInteger
 
 class OnboardingViewTest {
     @get:Rule
@@ -243,17 +244,17 @@ class OnboardingViewTest {
     private class TestSetup(private val composeTestRule: ComposeContentTestRule, initalStage: OnboardingStage) {
         private val onboardingState = OnboardingState(initalStage)
 
-        private var onCreateWalletCallbackCount = 0
-        private var onImportWalletCallbackCount = 0
+        private val onCreateWalletCallbackCount = AtomicInteger(0)
+        private val onImportWalletCallbackCount = AtomicInteger(0)
 
         fun getOnCreateWalletCallbackCount(): Int {
             composeTestRule.waitForIdle()
-            return onCreateWalletCallbackCount
+            return onCreateWalletCallbackCount.get()
         }
 
         fun getOnImportWalletCallbackCount(): Int {
             composeTestRule.waitForIdle()
-            return onImportWalletCallbackCount
+            return onImportWalletCallbackCount.get()
         }
 
         fun getOnboardingStage(): OnboardingStage {
@@ -266,8 +267,8 @@ class OnboardingViewTest {
                 ZcashTheme {
                     Onboarding(
                         onboardingState,
-                        onCreateWallet = { onCreateWalletCallbackCount++ },
-                        onImportWallet = { onImportWalletCallbackCount++ }
+                        onCreateWallet = { onCreateWalletCallbackCount.incrementAndGet() },
+                        onImportWallet = { onImportWalletCallbackCount.incrementAndGet() }
                     )
                 }
             }

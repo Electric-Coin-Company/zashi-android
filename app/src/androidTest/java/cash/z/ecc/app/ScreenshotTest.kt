@@ -23,6 +23,8 @@ import androidx.test.rule.GrantPermissionRule
 import androidx.test.runner.screenshot.Screenshot
 import cash.z.ecc.app.test.EccScreenCaptureProcessor
 import cash.z.ecc.sdk.fixture.SeedPhraseFixture
+import cash.z.ecc.sdk.fixture.WalletAddressFixture
+import cash.z.ecc.sdk.model.MonetarySeparators
 import cash.z.ecc.ui.MainActivity
 import cash.z.ecc.ui.R
 import cash.z.ecc.ui.screen.backup.BackupTag
@@ -158,20 +160,33 @@ class ScreenshotTest {
             it.assertExists()
             it.performClick()
         }
-
-        // Back to home screen
+        // Back to home
         composeTestRule.onNode(hasContentDescription(getStringResource(R.string.settings_back_content_description))).also {
             it.assertExists()
             it.performClick()
         }
 
         composeTestRule.waitUntil { composeTestRule.activity.walletViewModel.secretState.value is SecretState.Ready }
-        composeTestRule.waitUntil { composeTestRule.activity.walletViewModel.walletSnapshot.value != null }
         composeTestRule.onNode(hasText(getStringResource(R.string.home_button_request))).also {
             it.assertExists()
             it.performClick()
         }
+        composeTestRule.waitUntil { composeTestRule.activity.walletViewModel.walletSnapshot.value != null }
         requestZecScreenshots(composeTestRule)
+
+        navigateTo(MainActivity.NAV_HOME)
+        composeTestRule.waitUntil { composeTestRule.activity.walletViewModel.secretState.value is SecretState.Ready }
+
+        composeTestRule.onNode(hasText(getStringResource(R.string.home_button_send))).also {
+            it.assertExists()
+            it.performClick()
+        }
+        composeTestRule.waitUntil { composeTestRule.activity.walletViewModel.synchronizer.value != null }
+        composeTestRule.waitUntil { composeTestRule.activity.walletViewModel.spendingKey.value != null }
+        composeTestRule.waitUntil { composeTestRule.activity.walletViewModel.walletSnapshot.value != null }
+        sendZecScreenshots(composeTestRule)
+
+        navigateTo(MainActivity.NAV_HOME)
     }
 }
 
@@ -349,4 +364,30 @@ private fun requestZecScreenshots(composeTestRule: ComposeTestRule) {
     }
 
     ScreenshotTest.takeScreenshot("Request 1")
+}
+
+private fun sendZecScreenshots(composeTestRule: ComposeTestRule) {
+    composeTestRule.onNode(hasText(getStringResource(R.string.send_title))).also {
+        it.assertExists()
+    }
+
+    ScreenshotTest.takeScreenshot("Send 1")
+
+    composeTestRule.onNodeWithText(getStringResource(R.string.send_amount)).also {
+        val separators = MonetarySeparators.current()
+
+        it.performTextInput("{${separators.decimal}}123")
+    }
+
+    composeTestRule.onNodeWithText(getStringResource(R.string.send_to)).also {
+        it.performTextInput(WalletAddressFixture.UNIFIED_ADDRESS_STRING)
+    }
+
+    composeTestRule.onNodeWithText(getStringResource(R.string.send_create)).also {
+        it.performClick()
+    }
+
+    composeTestRule.waitForIdle()
+
+    ScreenshotTest.takeScreenshot("Send 2")
 }

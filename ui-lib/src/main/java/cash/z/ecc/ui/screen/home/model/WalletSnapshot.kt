@@ -27,3 +27,9 @@ fun WalletSnapshot.totalBalance(): Zatoshi {
 
     return Zatoshi(total.coerceAtLeast(0))
 }
+
+fun WalletSnapshot.spendableBalance(): Zatoshi {
+    val total = (orchardBalance + saplingBalance).totalZatoshi
+
+    return Zatoshi(total.coerceAtLeast(0))
+}

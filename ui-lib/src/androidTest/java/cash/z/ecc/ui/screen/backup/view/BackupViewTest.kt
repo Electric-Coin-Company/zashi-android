@@ -21,6 +21,7 @@ import cash.z.ecc.ui.theme.ZcashTheme
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
+import java.util.concurrent.atomic.AtomicInteger
 
 class BackupViewTest {
     @get:Rule
@@ -209,18 +210,18 @@ class BackupViewTest {
     private class TestSetup(private val composeTestRule: ComposeContentTestRule, initalStage: BackupStage) {
         private val state = BackupState(initalStage)
 
-        private var onCopyToClipboardCount = 0
+        private val onCopyToClipboardCount = AtomicInteger(0)
 
-        private var onCompleteCallbackCount = 0
+        private val onCompleteCallbackCount = AtomicInteger(0)
 
         fun getOnCopyToClipboardCount(): Int {
             composeTestRule.waitForIdle()
-            return onCopyToClipboardCount
+            return onCopyToClipboardCount.get()
         }
 
         fun getOnCompleteCallbackCount(): Int {
             composeTestRule.waitForIdle()
-            return onCompleteCallbackCount
+            return onCompleteCallbackCount.get()
         }
 
         fun getStage(): BackupStage {
@@ -235,8 +236,8 @@ class BackupViewTest {
                         PersistableWalletFixture.new(),
                         state,
                         TestChoices(),
-                        onCopyToClipboard = { onCopyToClipboardCount++ },
-                        onComplete = { onCompleteCallbackCount++ }
+                        onCopyToClipboard = { onCopyToClipboardCount.incrementAndGet() },
+                        onComplete = { onCompleteCallbackCount.incrementAndGet() }
                     )
                 }
             }

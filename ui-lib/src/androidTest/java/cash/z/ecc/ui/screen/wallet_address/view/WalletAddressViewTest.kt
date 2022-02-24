@@ -16,6 +16,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
+import java.util.concurrent.atomic.AtomicInteger
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class WalletAddressViewTest {
@@ -154,11 +155,11 @@ class WalletAddressViewTest {
 
     private class TestSetup(private val composeTestRule: ComposeContentTestRule, initialState: WalletAddresses) {
 
-        private var onBackCount = 0
+        private val onBackCount = AtomicInteger(0)
 
         fun getOnBackCount(): Int {
             composeTestRule.waitForIdle()
-            return onBackCount
+            return onBackCount.get()
         }
 
         init {
@@ -167,7 +168,7 @@ class WalletAddressViewTest {
                     WalletAddresses(
                         initialState,
                         onBack = {
-                            onBackCount++
+                            onBackCount.incrementAndGet()
                         }
                     )
                 }

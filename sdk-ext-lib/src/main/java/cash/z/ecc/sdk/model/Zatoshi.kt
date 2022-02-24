@@ -4,9 +4,9 @@ package cash.z.ecc.sdk.model
  *
  */
 @JvmInline
-value class Zatoshi(val amount: Long) {
+value class Zatoshi(val value: Long) {
     init {
-        require(amount >= 0)
+        require(value >= 0)
     }
 
     companion object
