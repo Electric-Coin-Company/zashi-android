@@ -29,6 +29,9 @@ fun WalletSnapshot.totalBalance(): Zatoshi {
 }
 
 fun WalletSnapshot.spendableBalance(): Zatoshi {
+    // Note that considering both to be spendable is subject to change.
+    // The user experience could be confusing, and in the future we might prefer to ask users
+    // to transfer their balance to the latest balance type to make it spendable.
     val total = (orchardBalance + saplingBalance).totalZatoshi
 
     return Zatoshi(total.coerceAtLeast(0))
