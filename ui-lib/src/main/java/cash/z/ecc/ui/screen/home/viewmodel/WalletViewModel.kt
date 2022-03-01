@@ -3,12 +3,15 @@ package cash.z.ecc.ui.screen.home.viewmodel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import cash.z.ecc.android.bip39.Mnemonics
+import cash.z.ecc.android.bip39.toSeed
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.block.CompactBlockProcessor
 import cash.z.ecc.android.sdk.db.entity.PendingTransaction
 import cash.z.ecc.android.sdk.db.entity.Transaction
 import cash.z.ecc.android.sdk.db.entity.isMined
 import cash.z.ecc.android.sdk.db.entity.isSubmitSuccess
+import cash.z.ecc.android.sdk.tool.DerivationTool
 import cash.z.ecc.android.sdk.type.WalletBalance
 import cash.z.ecc.global.WalletCoordinator
 import cash.z.ecc.sdk.model.PersistableWallet
@@ -20,6 +23,7 @@ import cash.z.ecc.ui.preference.StandardPreferenceKeys
 import cash.z.ecc.ui.preference.StandardPreferenceSingleton
 import cash.z.ecc.ui.screen.home.model.WalletSnapshot
 import cash.z.ecc.work.WorkIds
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -35,6 +39,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 
 // To make this more multiplatform compatible, we need to remove the dependency on Context
 // for loading the preferences.
@@ -77,6 +82,22 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
             viewModelScope,
             SharingStarted.WhileSubscribed(stopTimeoutMillis = ANDROID_STATE_FLOW_TIMEOUT_MILLIS),
             SecretState.Loading
+        )
+
+    // This needs to be refactored once we support pin lock
+    val spendingKey = secretState
+        .filterIsInstance<SecretState.Ready>()
+        .map { it.persistableWallet }
+        .map {
+            val bip39Seed = withContext(Dispatchers.IO) {
+                Mnemonics.MnemonicCode(it.seedPhrase.joinToString()).toSeed()
+            }
+
+            DerivationTool.deriveSpendingKeys(bip39Seed, it.network)[0]
+        }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(stopTimeoutMillis = ANDROID_STATE_FLOW_TIMEOUT_MILLIS),
+            null
         )
 
     @OptIn(FlowPreview::class)

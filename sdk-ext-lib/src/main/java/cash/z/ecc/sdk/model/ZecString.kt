@@ -52,7 +52,7 @@ private const val DECIMALS = 8
 
 // TODO [#412]: https://github.com/zcash/zcash-android-wallet-sdk/issues/412
 // The SDK needs to fix the API for currency conversion
-fun Zatoshi.toZecString() = amount.convertZatoshiToZecString(DECIMALS, DECIMALS)
+fun Zatoshi.toZecString() = value.convertZatoshiToZecString(DECIMALS, DECIMALS)
 
 /*
  * ZEC is our own currency, so there's not going to be an existing localization that matches it perfectly.

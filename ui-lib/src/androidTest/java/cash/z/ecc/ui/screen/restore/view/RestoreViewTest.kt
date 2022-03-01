@@ -30,6 +30,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import java.util.Locale
+import java.util.concurrent.atomic.AtomicInteger
 
 class RestoreViewTest {
     @get:Rule
@@ -194,9 +195,9 @@ class RestoreViewTest {
     private class TestSetup(private val composeTestRule: ComposeContentTestRule, initialState: List<String>) {
         private val state = WordList(initialState)
 
-        private var onBackCount = 0
+        private val onBackCount = AtomicInteger(0)
 
-        private var onFinishedCount = 0
+        private val onFinishedCount = AtomicInteger(0)
 
         fun getUserInputWords(): List<String> {
             composeTestRule.waitForIdle()
@@ -205,12 +206,12 @@ class RestoreViewTest {
 
         fun getOnBackCount(): Int {
             composeTestRule.waitForIdle()
-            return onBackCount
+            return onBackCount.get()
         }
 
         fun getOnFinishedCount(): Int {
             composeTestRule.waitForIdle()
-            return onFinishedCount
+            return onFinishedCount.get()
         }
 
         init {
@@ -220,11 +221,11 @@ class RestoreViewTest {
                         Mnemonics.getCachedWords(Locale.ENGLISH.language).toSortedSet(),
                         state,
                         onBack = {
-                            onBackCount++
+                            onBackCount.incrementAndGet()
                         },
                         paste = { "" },
                         onFinished = {
-                            onFinishedCount++
+                            onFinishedCount.incrementAndGet()
                         },
                     )
                 }

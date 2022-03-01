@@ -26,11 +26,13 @@ import cash.z.ecc.android.sdk.type.ZcashNetwork
 import cash.z.ecc.sdk.model.PersistableWallet
 import cash.z.ecc.sdk.model.SeedPhrase
 import cash.z.ecc.sdk.model.ZecRequest
+import cash.z.ecc.sdk.send
 import cash.z.ecc.sdk.type.fromResources
 import cash.z.ecc.ui.design.compat.FontCompat
 import cash.z.ecc.ui.design.component.GradientSurface
 import cash.z.ecc.ui.screen.backup.view.BackupWallet
 import cash.z.ecc.ui.screen.backup.viewmodel.BackupViewModel
+import cash.z.ecc.ui.screen.home.model.spendableBalance
 import cash.z.ecc.ui.screen.home.view.Home
 import cash.z.ecc.ui.screen.home.viewmodel.SecretState
 import cash.z.ecc.ui.screen.home.viewmodel.WalletViewModel
@@ -42,6 +44,7 @@ import cash.z.ecc.ui.screen.restore.view.RestoreWallet
 import cash.z.ecc.ui.screen.restore.viewmodel.CompleteWordSetState
 import cash.z.ecc.ui.screen.restore.viewmodel.RestoreViewModel
 import cash.z.ecc.ui.screen.seed.view.Seed
+import cash.z.ecc.ui.screen.send.view.Send
 import cash.z.ecc.ui.screen.settings.view.Settings
 import cash.z.ecc.ui.screen.wallet_address.view.WalletAddresses
 import cash.z.ecc.ui.theme.ZcashTheme
@@ -212,7 +215,7 @@ class MainActivity : ComponentActivity() {
                 WrapHome(
                     goScan = {},
                     goProfile = { navController.navigate(NAV_PROFILE) },
-                    goSend = {},
+                    goSend = { navController.navigate(NAV_SEND) },
                     goRequest = { navController.navigate(NAV_REQUEST) }
                 )
             }
@@ -252,6 +255,9 @@ class MainActivity : ComponentActivity() {
             }
             composable(NAV_REQUEST) {
                 WrapRequest(goBack = { navController.popBackStack() })
+            }
+            composable(NAV_SEND) {
+                WrapSend(goBack = { navController.popBackStack() })
             }
         }
     }
@@ -396,6 +402,28 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    @Composable
+    private fun WrapSend(
+        goBack: () -> Unit
+    ) {
+        val synchronizer = walletViewModel.synchronizer.collectAsState().value
+        val spendableBalance = walletViewModel.walletSnapshot.collectAsState().value?.spendableBalance()
+        val spendingKey = walletViewModel.spendingKey.collectAsState().value
+        if (null == synchronizer || null == spendableBalance || null == spendingKey) {
+            // Display loading indicator
+        } else {
+            Send(
+                mySpendableBalance = spendableBalance,
+                goBack = goBack,
+                onCreateAndSend = {
+                    synchronizer.send(spendingKey, it)
+
+                    goBack()
+                },
+            )
+        }
+    }
+
     companion object {
         @VisibleForTesting
         internal val SPLASH_SCREEN_DELAY = 0.seconds
@@ -417,6 +445,9 @@ class MainActivity : ComponentActivity() {
 
         @VisibleForTesting
         const val NAV_REQUEST = "request"
+
+        @VisibleForTesting
+        const val NAV_SEND = "send"
     }
 }
 

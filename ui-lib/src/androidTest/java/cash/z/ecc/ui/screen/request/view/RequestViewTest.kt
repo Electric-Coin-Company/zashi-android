@@ -68,7 +68,7 @@ class RequestViewTest {
             assertNotNull(it)
             assertEquals(WalletAddressFixture.unified(), it.address)
             assertEquals(Zatoshi(12300000), it.amount)
-            assertTrue(it.message.message.isEmpty())
+            assertTrue(it.message.value.isEmpty())
         }
     }
 
@@ -88,7 +88,7 @@ class RequestViewTest {
         }
 
         composeTestRule.onNodeWithText(getStringResource(R.string.request_message)).also {
-            it.performTextInput(ZecRequestFixture.MESSAGE.message)
+            it.performTextInput(ZecRequestFixture.MESSAGE.value)
         }
 
         composeTestRule.onNodeWithText(getStringResource(R.string.request_create)).also {
@@ -101,7 +101,7 @@ class RequestViewTest {
             assertNotNull(it)
             assertEquals(WalletAddressFixture.unified(), it.address)
             assertEquals(Zatoshi(12300000), it.amount)
-            assertEquals(ZecRequestFixture.MESSAGE.message, it.message.message)
+            assertEquals(ZecRequestFixture.MESSAGE.value, it.message.value)
         }
     }
 
@@ -159,7 +159,7 @@ class RequestViewTest {
             assertNotNull(it)
             assertEquals(WalletAddressFixture.unified(), it.address)
             assertEquals(Zatoshi(12300000), it.amount)
-            assertTrue(it.message.message.isEmpty())
+            assertTrue(it.message.value.isEmpty())
         }
     }
 

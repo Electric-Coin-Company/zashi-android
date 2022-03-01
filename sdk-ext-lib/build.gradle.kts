@@ -17,8 +17,8 @@ dependencies {
     implementation(libs.kotlin.stdlib)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.core)
-    implementation(libs.zcash.sdk)
-    implementation(libs.zcash.bip39)
+    api(libs.zcash.sdk)
+    api(libs.zcash.bip39)
 
     androidTestImplementation(libs.bundles.androidx.test)
     androidTestImplementation(libs.kotlinx.coroutines.test)
