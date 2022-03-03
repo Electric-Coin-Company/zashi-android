@@ -3,10 +3,10 @@ _Note: This document will continue to be updated as the app is implemented._
 
 # Gradle
  * Versions are declared in [gradle.properties](../gradle.properties).  There's still enough inconsistency in how versions are handled in Gradle, that this is as close as we can get to a universal system.  A version catalog is used for dependencies and is configured in [settings.gradle.kts](../settings.gradle.kts), but other versions like Gradle Plug-ins, the NDK version, Java version, and Android SDK versions don't fit into the version catalog model and are read directly from the properties
- * Much of the Gradle configuration lives in [build-conventions](../build-conventions/) to prevent repetitive configuration as additional modules are added to the project
+ * Much of the Gradle configuration lives in [build-convention](../build-convention/) to prevent repetitive configuration as additional modules are added to the project
  * Build scripts are written in Kotlin, so that a single language is used across build and the app code bases
  * Only Gradle, Google, and JetBrains plug-ins are included in the critical path.  Third party plug-ins can be used, but they're outside the critical path.  For example, the Gradle Versions Plugin could be removed and wouldn't negatively impact local building, testing, or releasing the app
- * Repository restrictions are enabled in [build-conventions](../build-conventions/settings.gradle.kts), [settings.gradle.kts](../settings.gradle.kts), and [build.gradle.kts](../build.gradle.kts) to reduce likelihood of pulling in an incorrect dependency.  If adding a new dependency, these restrictions may need to be changed otherwise an error that the dependency cannot be found will be displayed
+ * Repository restrictions are enabled in [build-convention](../build-convention/settings.gradle.kts), [settings.gradle.kts](../settings.gradle.kts), and [build.gradle.kts](../build.gradle.kts) to reduce likelihood of pulling in an incorrect dependency.  If adding a new dependency, these restrictions may need to be changed otherwise an error that the dependency cannot be found will be displayed
 
 # Multiplatform
 While this repository is for an Android application, efforts are made to give multiplatform flexibility in the future.  Specific adaptions that are being made:
@@ -34,6 +34,30 @@ The logical components of the app are implemented as a number of Gradle modules.
      * `preference-impl-android-lib` — Android-specific implementation for preference storage.
  * `sdk-ext-lib` — Contains extensions on top of the to the Zcash SDK.  Some of these extensions might be migrated into the SDK eventually, while others might represent Android-centric idioms.  Depending on how this module evolves, it could adopt another name such as `wallet-lib` or be split into two.
  * `spackle-lib` — Random utilities, to fill in the cracks in the Kotlin and Android frameworks.
+
+The following diagram shows a rough depiction of dependencies between the modules.  Two notes on this diagram:
+ * `sdk-lib` is in a [different repository](https://github.com/zcash/zcash-android-wallet-sdk)
+ * Although effort goes into ensuring this diagram stays up-to-date, Gradle build files are the authoritative source on dependencies
+
+```mermaid
+  flowchart TB;
+      subgraph sdk
+          sdkLib[[sdk-lib]];
+          sdkExtLib[[sdk-ext-lib]];
+      end
+      sdkLib[[sdk-lib]] --> sdkExtLib[[sdk-ext-lib]];
+      subgraph preference
+          preference-api-lib[[preference-api-lib]];
+          preference-impl-android-lib[[preference-impl-android-lib]];
+      end
+      preference-api-lib[[preference-api-lib]] --> preference-impl-android-lib[[preference-impl-android-lib]];
+      preference --> ui-lib[[ui-lib]];
+      sdk --> ui-lib[[ui-lib]];
+      spackle-lib[[spackle-lib]] --> ui-design-lib[[ui-design-lib]];
+      spackle-lib[[spackle-lib]] --> ui-lib[[ui-lib]];
+      ui-design-lib[[ui-design-lib]] --> ui-lib[[ui-lib]];
+      ui-lib[[ui-lib]] --> app{app};
+```
 
 # Test Fixtures
 Until the Kotlin adopts support for fixtures, fixtures live within the main source modules.  These fixtures make it easy to write automated tests, as well as create Compose previews.  Although these fixtures are compiled into the main application, they should be removed by R8 in release builds.
