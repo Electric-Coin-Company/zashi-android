@@ -52,30 +52,19 @@ android {
         }
     }
 
-    buildTypes {
-        getByName("release").apply {
-            isMinifyEnabled = project.property("IS_MINIFY_ENABLED").toString().toBoolean()
-            isShrinkResources = project.property("IS_MINIFY_ENABLED").toString().toBoolean()
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-project.txt"
-            )
-        }
-    }
+    val releaseKeystorePath = project.property("ZCASH_RELEASE_KEYSTORE_PATH").toString()
+    val releaseKeystorePassword = project.property("ZCASH_RELEASE_KEYSTORE_PASSWORD").toString()
+    val releaseKeyAlias = project.property("ZCASH_RELEASE_KEY_ALIAS").toString()
+    val releaseKeyAliasPassword =
+        project.property("ZCASH_RELEASE_KEY_ALIAS_PASSWORD").toString()
+    val isReleaseSigningConfigured = listOf(
+        releaseKeystorePath,
+        releaseKeystorePassword,
+        releaseKeyAlias,
+        releaseKeyAliasPassword
+    ).all { !it.isNullOrBlank() }
 
     signingConfigs {
-        val releaseKeystorePath = project.property("ZCASH_RELEASE_KEYSTORE_PATH").toString()
-        val releaseKeystorePassword = project.property("ZCASH_RELEASE_KEYSTORE_PASSWORD").toString()
-        val releaseKeyAlias = project.property("ZCASH_RELEASE_KEY_ALIAS").toString()
-        val releaseKeyAliasPassword =
-            project.property("ZCASH_RELEASE_KEY_ALIAS_PASSWORD").toString()
-        val isReleaseSigningConfigured = listOf(
-            releaseKeystorePath,
-            releaseKeystorePassword,
-            releaseKeyAlias,
-            releaseKeyAliasPassword
-        ).all { !it.isNullOrBlank() }
-
         if (isReleaseSigningConfigured) {
             // If this block doesn't execute, the output will be unsigned
             create("release").apply {
@@ -87,6 +76,20 @@ android {
         }
     }
 
+    buildTypes {
+        getByName("release").apply {
+            isMinifyEnabled = project.property("IS_MINIFY_ENABLED").toString().toBoolean()
+            isShrinkResources = project.property("IS_MINIFY_ENABLED").toString().toBoolean()
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-project.txt"
+            )
+            if (isReleaseSigningConfigured) {
+                signingConfig = signingConfigs.getByName("release")
+            }
+        }
+    }
+    
     // TODO [#6]: Figure out how to move this into the build-conventions
     kotlinOptions {
         jvmTarget = libs.versions.java.get()
