@@ -2,10 +2,10 @@
 # GOOGLE_PLAY_CLOUD_PROJECT - Google Cloud project associated with Google Play
 # GOOGLE_PLAY_SERVICE_ACCOUNT - Email address of service account
 # GOOGLE_PLAY_WORKLOAD_IDENTITY_PROVIDER - Workload identity provider to generate temporary service account key
-# SIGNING_KEYSTORE_BASE_64 - The signing key for the app
-# SIGNING_KEYSTORE_PASSWORD - The password for SIGNING_KEYSTORE_BASE_64
-# SIGNING_KEY_ALIAS - The key alias inside SIGNING_KEYSTORE_BASE_64
-# SIGNING_KEY_ALIAS_PASSWORD - The password for the key alias
+# UPLOAD_KEYSTORE_BASE_64 - The upload signing key for the app
+# UPLOAD_KEYSTORE_PASSWORD - The password for UPLOAD_KEYSTORE_BASE_64
+# UPLOAD_KEY_ALIAS - The key alias inside UPLOAD_KEYSTORE_BASE_64
+# UPLOAD_KEY_ALIAS_PASSWORD - The password for the key alias
 
 name: Deploy
 
@@ -77,7 +77,7 @@ jobs:
           access_token_lifetime: '1500s'
       - name: Export Signing Key
         env:
-          SIGNING_KEYSTORE_BASE_64: ${{ secrets.SIGNING_KEYSTORE_BASE_64 }}
+          SIGNING_KEYSTORE_BASE_64: ${{ secrets.UPLOAD_KEYSTORE_BASE_64 }}
           SIGNING_KEY_PATH: ${{ format('{0}/release.jks', env.home) }}
         shell: bash
         run: |
@@ -87,9 +87,9 @@ jobs:
         env:
           ZCASH_GOOGLE_PLAY_SERVICE_KEY_FILE_PATH: ${{ steps.auth_google_play.outputs.credentials_file_path }}
           ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEYSTORE_PATH: ${{ format('{0}/release.jks', env.home) }}
-          ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEYSTORE_PASSWORD: ${{ secrets.SIGNING_KEYSTORE_PASSWORD }}
-          ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
-          ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEY_ALIAS_PASSWORD: ${{ secrets.SIGNING_KEY_ALIAS_PASSWORD }}
+          ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEYSTORE_PASSWORD: ${{ secrets.UPLOAD_KEYSTORE_PASSWORD }}
+          ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEY_ALIAS: ${{ secrets.UPLOAD_KEY_ALIAS }}
+          ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEY_ALIAS_PASSWORD: ${{ secrets.UPLOAD_KEY_ALIAS_PASSWORD }}
           # Change to deploy once we've finished setting up the build scripts
           ORG_GRADLE_PROJECT_ZCASH_GOOGLE_PLAY_DEPLOY_MODE: build
         run: |
