@@ -25,9 +25,9 @@ concurrency: deploy
 
 jobs:
   validate_gradle_wrapper:
-    runs-on: ubuntu-latest
     permissions:
       contents: read
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         timeout-minutes: 1
@@ -39,6 +39,9 @@ jobs:
         uses: gradle/wrapper-validation-action@v1.0.4
 
   check_secrets:
+    environment: deployment
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     outputs:
       has-secrets: ${{ steps.check_secrets.outputs.defined }}
@@ -54,10 +57,11 @@ jobs:
   build_and_deploy:
     if: needs.check_secrets.outputs.has-secrets == 'true'
     needs: [validate_gradle_wrapper, check_secrets]
-    runs-on: ubuntu-latest
+    environment: deployment
     permissions:
       contents: read
       id-token: write
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         timeout-minutes: 1
