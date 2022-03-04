@@ -29,10 +29,10 @@ Note that pull requests will create a "release" build with a temporary fake sign
 * `GOOGLE_PLAY_CLOUD_PROJECT` - Google Cloud project associated with Google Play.
 * `GOOGLE_PLAY_SERVICE_ACCOUNT` - Email address of service account.
 * `GOOGLE_PLAY_WORKLOAD_IDENTITY_PROVIDER` - Workload identity provider to generate temporary service account key
-* `SIGNING_KEYSTORE_BASE_64` — Base64 encoded upload keystore.
-* `SIGNING_KEYSTORE_PASSWORD` — Password for upload keystore.
-* `SIGNING_KEY_ALIAS` — Name of key inside upload keystore.
-* `SIGNING_KEY_ALIAS_PASSWORD` — Password for key alias.
+* `UPLOAD_KEYSTORE_BASE_64` — Base64 encoded upload keystore.
+* `UPLOAD_KEYSTORE_PASSWORD` — Password for upload keystore.
+* `UPLOAD_KEY_ALIAS` — Name of key inside upload keystore.
+* `UPLOAD_KEY_ALIAS_PASSWORD` — Password for key alias.
 
 To obtain the values for the Google Play deployment, you'll need to
 
