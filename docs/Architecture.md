@@ -24,7 +24,7 @@ The main entrypoints of the application are:
 # Modules
 The logical components of the app are implemented as a number of Gradle modules.
 
- * `app` — Compiles all of the modules together into the final application.  This module contains minimal actual code.  Note that the Java package structure for this module is under `cash.z.ecc.app` while the Android package name is `cash.z.ecc`.
+ * `app` — Compiles all of the modules together into the final application.  This module contains minimal actual code.  Note that the Java package structure for this module is under `co.electriccoin.zcash.app` while the Android package name is `co.electriccoin.zcash`.
  * `build-info-lib` — Collects information from the build environment (e.g. Git SHA, Git commit count) and compiles them into the application.  Can also be used for injection of API keys or other secrets.
  * ui
      * `ui-design` — Contains UI theme elements only.  Besides offering modularization, this allows for hiding of some Material Design components behind our own custom components.
