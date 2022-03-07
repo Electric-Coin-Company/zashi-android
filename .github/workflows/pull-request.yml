@@ -14,6 +14,10 @@ on:
       - 'README.md'
       - 'docs/**'
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   validate_gradle_wrapper:
     runs-on: ubuntu-latest
