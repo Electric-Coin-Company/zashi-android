@@ -3,6 +3,7 @@ Multiple tools can be put in place to enhance build integrity and reduce the ris
  * Policy — We try to minimize third party dependencies, especially when they are not provided by Google and JetBrains. We also try to minimize the number of Gradle plugins.
  * Checklists — Our [pull request checklist](../.github/pull_request_template.md) specifies only running code from contributors after reviewing the changes first. Our [dependency update checklist](../.github/ISSUE_TEMPLATE/dependency.md) specifies verifying lock file changes during dependency updates.
  * Fixed dependency versions — For our dependency declarations, we use exact dependency versions in gradle.properties instead of version ranges.
+ * GitHub Actions versions use SHA instead of tags
  * Dependency locking
      * Gradle buildscript (e.g. plugins) dependencies are locked
      * Kotlin Multiplatform modules have dependency locking enabled

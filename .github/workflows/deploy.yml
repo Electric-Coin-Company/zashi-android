@@ -31,12 +31,12 @@ jobs:
     steps:
       - name: Checkout
         timeout-minutes: 1
-        uses: actions/checkout@v2.4.0
+        uses: actions/checkout@a12a3943b4bdde767164f792f33f40b04645d846
       # Gradle Wrapper validation can be flaky
       # https://github.com/gradle/wrapper-validation-action/issues/40
       - name: Gradle Wrapper Validation
         timeout-minutes: 1
-        uses: gradle/wrapper-validation-action@v1.0.4
+        uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
 
   check_secrets:
     environment: deployment
@@ -65,14 +65,14 @@ jobs:
     steps:
       - name: Checkout
         timeout-minutes: 1
-        uses: actions/checkout@v2.4.0
+        uses: actions/checkout@a12a3943b4bdde767164f792f33f40b04645d846
       - name: Setup
         id: setup
         timeout-minutes: 8
         uses: ./.github/actions/setup
       - name: Authenticate to Google Cloud for Google Play
         id: auth_google_play
-        uses: google-github-actions/auth@v0.5.0
+        uses: google-github-actions/auth@8d125895b958610ec414ca4dae010257eaa814d3
         with:
           create_credentials_file: true
           project_id: ${{ secrets.GOOGLE_PLAY_CLOUD_PROJECT }}
@@ -109,7 +109,7 @@ jobs:
           zip -r ${BINARIES_ZIP_PATH} . -i *app/build/outputs/apk/*/release/*.apk *app/build/outputs/bundle/*/release/*.aab
           zip -r ${MAPPINGS_ZIP_PATH} . -i *app/build/outputs/mapping/*/mapping.txt
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535
         timeout-minutes: 1
         with:
           name: Release binaries
