@@ -109,7 +109,7 @@ private fun ProfileContents(
     onSettings: () -> Unit,
     onCoinholderVote: () -> Unit,
     onSupport: () -> Unit,
-    isHidden: Boolean = false
+    isAddressBookEnabled: Boolean = false
 ) {
     Column(Modifier.verticalScroll(rememberScrollState())) {
         QrCode(data = walletAddress.address, DEFAULT_QR_CODE_SIZE, Modifier.align(Alignment.CenterHorizontally))
@@ -123,7 +123,7 @@ private fun ProfileContents(
             overflow = TextOverflow.Ellipsis
         )
         PrimaryButton(onClick = onAddressDetails, text = stringResource(id = R.string.profile_see_address_details))
-        if (isHidden) {
+        if (isAddressBookEnabled) {
             TertiaryButton(onClick = onAddressBook, text = stringResource(id = R.string.profile_address_book))
         }
         TertiaryButton(onClick = onSettings, text = stringResource(id = R.string.profile_settings))
