@@ -15,6 +15,7 @@ import cash.z.ecc.ui.theme.ZcashTheme
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import java.util.concurrent.atomic.AtomicInteger
@@ -71,6 +72,7 @@ class ProfileViewTest {
 
     @Test
     @MediumTest
+    @Ignore("https://github.com/zcash/secant-android-wallet/issues/247")
     fun address_book() = runTest {
         val testSetup = newTestSetup(WalletAddressFixture.unified())
 
