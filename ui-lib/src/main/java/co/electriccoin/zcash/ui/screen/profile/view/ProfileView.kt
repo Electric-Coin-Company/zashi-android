@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.twotone.ArrowBack
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -89,9 +89,8 @@ private fun ProfileTopAppBar(onBack: () -> Unit) {
                 onClick = onBack
             ) {
                 Icon(
-                    imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = stringResource(R.string.profile_back_content_description),
-                    tint = MaterialTheme.colorScheme.secondary
+                    imageVector = Icons.TwoTone.ArrowBack,
+                    contentDescription = stringResource(R.string.profile_back_content_description)
                 )
             }
         }
