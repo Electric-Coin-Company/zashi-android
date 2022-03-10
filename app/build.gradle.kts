@@ -37,9 +37,10 @@ android {
 
     flavorDimensions.add("network")
 
+    val testNetFlavorName = "zcashtestnet"
     productFlavors {
         // would rather name them "testnet" and "mainnet" but product flavor names cannot start with the word "test"
-        create("zcashtestnet") {
+        create(testNetFlavorName) {
             dimension = "network"
             applicationId = "$packageName.testnet" // allow to be installed alongside mainnet
             matchingFallbacks.addAll(listOf("zcashtestnet", "debug"))
@@ -120,6 +121,12 @@ android {
                 "transport-runtime.properties"
             )
         )
+    }
+
+    playConfigs {
+        register(testNetFlavorName) {
+            enabled.set(false)
+        }
     }
 }
 
