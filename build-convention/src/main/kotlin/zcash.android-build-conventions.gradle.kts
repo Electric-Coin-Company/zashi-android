@@ -101,7 +101,7 @@ fun com.android.build.gradle.BaseExtension.configureBaseExtension() {
                 "META-INF/NOTICE",
                 "META-INF/NOTICE.txt",
                 "META-INF/license.txt",
-                "META-INF/notice.txt",
+                "META-INF/notice.txt"
             )
         )
     }
