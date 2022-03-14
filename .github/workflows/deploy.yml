@@ -94,8 +94,7 @@ jobs:
           ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEYSTORE_PASSWORD: ${{ secrets.UPLOAD_KEYSTORE_PASSWORD }}
           ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEY_ALIAS: ${{ secrets.UPLOAD_KEY_ALIAS }}
           ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEY_ALIAS_PASSWORD: ${{ secrets.UPLOAD_KEY_ALIAS_PASSWORD }}
-          # Change to deploy once we've finished setting up the build scripts
-          ORG_GRADLE_PROJECT_ZCASH_GOOGLE_PLAY_DEPLOY_MODE: build
+          ORG_GRADLE_PROJECT_ZCASH_GOOGLE_PLAY_DEPLOY_MODE: deploy
         run: |
           ./gradlew :app:publishBundle
       - name: Collect Artifacts
