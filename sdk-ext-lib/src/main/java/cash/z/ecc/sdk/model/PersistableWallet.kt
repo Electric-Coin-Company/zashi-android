@@ -34,10 +34,8 @@ data class PersistableWallet(
         put(KEY_SEED_PHRASE, seedPhrase.joinToString())
     }
 
-    override fun toString(): String {
-        // For security, intentionally override the toString method to reduce risk of accidentally logging secrets
-        return "PersistableWallet"
-    }
+    // For security, intentionally override the toString method to reduce risk of accidentally logging secrets
+    override fun toString() = "PersistableWallet"
 
     companion object {
         private const val VERSION_1 = 1
@@ -52,7 +50,7 @@ data class PersistableWallet(
                 VERSION_1 -> {
                     val networkId = jsonObject.getInt(KEY_NETWORK_ID)
                     val birthday = if (jsonObject.has(KEY_BIRTHDAY)) {
-                        WalletBirthdayCompanion.from(jsonObject.getJSONObject(KEY_BIRTHDAY))
+                        WalletBirthday.from(jsonObject.getJSONObject(KEY_BIRTHDAY))
                     } else {
                         null
                     }
@@ -71,11 +69,8 @@ data class PersistableWallet(
          */
         suspend fun new(application: Application): PersistableWallet {
             val zcashNetwork = ZcashNetwork.fromResources(application)
-            // Dispatchers can be removed once a new SDK is released implementing
-            // https://github.com/zcash/zcash-android-wallet-sdk/issues/269
-            val walletBirthday = withContext(Dispatchers.IO) {
-                WalletBirthdayTool.loadNearest(application, zcashNetwork)
-            }
+            val walletBirthday = WalletBirthdayTool.loadNearest(application, zcashNetwork)
+
             val seedPhrase = newSeedPhrase()
 
             return PersistableWallet(zcashNetwork, walletBirthday, seedPhrase)

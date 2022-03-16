@@ -1,10 +1,14 @@
 package co.electriccoin.zcash.global
 
 import android.content.Context
+import cash.z.ecc.android.bip39.Mnemonics
+import cash.z.ecc.android.bip39.toSeed
 import cash.z.ecc.android.sdk.Initializer
 import cash.z.ecc.android.sdk.Synchronizer
+import cash.z.ecc.android.sdk.tool.DerivationTool
+import cash.z.ecc.android.sdk.type.UnifiedViewingKey
 import cash.z.ecc.android.sdk.type.ZcashNetwork
-import cash.z.ecc.sdk.SynchronizerCompanion
+import cash.z.ecc.sdk.model.PersistableWallet
 import cash.z.ecc.sdk.type.fromResources
 import co.electriccoin.zcash.spackle.LazyWithArgument
 import co.electriccoin.zcash.ui.preference.EncryptedPreferenceKeys
@@ -26,6 +30,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 
 class WalletCoordinator(context: Context) {
     companion object {
@@ -67,9 +72,9 @@ class WalletCoordinator(context: Context) {
         .filterNotNull()
         .flatMapConcat {
             callbackFlow {
+                val initializer = Initializer.new(context, it.toConfig())
                 val synchronizer = synchronizerMutex.withLock {
-                    val synchronizer = SynchronizerCompanion.load(applicationContext, it)
-
+                    val synchronizer = Synchronizer.new(initializer)
                     synchronizer.start(walletScope)
                 }
 
@@ -151,5 +156,24 @@ class WalletCoordinator(context: Context) {
         }
 
         return false
+    }
+}
+
+private suspend fun PersistableWallet.deriveViewingKey(): UnifiedViewingKey {
+    // Dispatcher needed because SecureRandom is loaded, which is slow and performs IO
+    // https://github.com/zcash/kotlin-bip39/issues/13
+    val bip39Seed = withContext(Dispatchers.IO) {
+        Mnemonics.MnemonicCode(seedPhrase.joinToString()).toSeed()
+    }
+
+    return DerivationTool.deriveUnifiedViewingKeys(bip39Seed, network)[0]
+}
+
+private suspend fun PersistableWallet.toConfig(): Initializer.Config {
+    val network = network
+    val vk = deriveViewingKey()
+
+    return Initializer.Config {
+        it.importWallet(vk, birthday?.height, network, network.defaultHost, network.defaultPort)
     }
 }
