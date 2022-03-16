@@ -21,7 +21,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import cash.z.ecc.android.sdk.type.WalletBirthday
 import cash.z.ecc.android.sdk.type.ZcashNetwork
 import cash.z.ecc.sdk.model.PersistableWallet
 import cash.z.ecc.sdk.model.SeedPhrase
@@ -194,7 +193,7 @@ class MainActivity : ComponentActivity() {
                         val network = ZcashNetwork.fromResources(application)
                         val restoredWallet = PersistableWallet(
                             network,
-                            WalletBirthday(network.saplingActivationHeight),
+                            null,
                             SeedPhrase(restoreViewModel.userWordList.current.value)
                         )
                         walletViewModel.persistExistingWallet(restoredWallet)
