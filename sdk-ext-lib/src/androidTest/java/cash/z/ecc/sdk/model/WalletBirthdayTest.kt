@@ -1,6 +1,7 @@
 package cash.z.ecc.sdk.model
 
 import androidx.test.filters.SmallTest
+import cash.z.ecc.android.sdk.type.WalletBirthday
 import cash.z.ecc.sdk.fixture.WalletBirthdayFixture
 import cash.z.ecc.sdk.test.count
 import org.junit.Assert.assertEquals
@@ -16,17 +17,17 @@ class WalletBirthdayTest {
 
         val jsonObject = walletBirthday.toJson()
         assertEquals(5, jsonObject.keys().count())
-        assertTrue(jsonObject.has(WalletBirthdayCompanion.KEY_VERSION))
-        assertTrue(jsonObject.has(WalletBirthdayCompanion.KEY_HEIGHT))
-        assertTrue(jsonObject.has(WalletBirthdayCompanion.KEY_HASH))
-        assertTrue(jsonObject.has(WalletBirthdayCompanion.KEY_EPOCH_SECONDS))
-        assertTrue(jsonObject.has(WalletBirthdayCompanion.KEY_TREE))
+        assertTrue(jsonObject.has(WalletBirthday.KEY_VERSION))
+        assertTrue(jsonObject.has(WalletBirthday.KEY_HEIGHT))
+        assertTrue(jsonObject.has(WalletBirthday.KEY_HASH))
+        assertTrue(jsonObject.has(WalletBirthday.KEY_EPOCH_SECONDS))
+        assertTrue(jsonObject.has(WalletBirthday.KEY_TREE))
 
-        assertEquals(1, jsonObject.getInt(WalletBirthdayCompanion.KEY_VERSION))
-        assertEquals(WalletBirthdayFixture.HEIGHT, jsonObject.getInt(WalletBirthdayCompanion.KEY_HEIGHT))
-        assertEquals(WalletBirthdayFixture.HASH, jsonObject.getString(WalletBirthdayCompanion.KEY_HASH))
-        assertEquals(WalletBirthdayFixture.EPOCH_SECONDS, jsonObject.getLong(WalletBirthdayCompanion.KEY_EPOCH_SECONDS))
-        assertEquals(WalletBirthdayFixture.TREE, jsonObject.getString(WalletBirthdayCompanion.KEY_TREE))
+        assertEquals(1, jsonObject.getInt(WalletBirthday.KEY_VERSION))
+        assertEquals(WalletBirthdayFixture.HEIGHT, jsonObject.getInt(WalletBirthday.KEY_HEIGHT))
+        assertEquals(WalletBirthdayFixture.HASH, jsonObject.getString(WalletBirthday.KEY_HASH))
+        assertEquals(WalletBirthdayFixture.EPOCH_SECONDS, jsonObject.getLong(WalletBirthday.KEY_EPOCH_SECONDS))
+        assertEquals(WalletBirthdayFixture.TREE, jsonObject.getString(WalletBirthday.KEY_TREE))
     }
 
     @Test
@@ -36,9 +37,9 @@ class WalletBirthdayTest {
 
         val jsonObject = walletBirthday.toJson()
 
-        assertEquals(Long.MAX_VALUE, jsonObject.getLong(WalletBirthdayCompanion.KEY_EPOCH_SECONDS))
+        assertEquals(Long.MAX_VALUE, jsonObject.getLong(WalletBirthday.KEY_EPOCH_SECONDS))
 
-        WalletBirthdayCompanion.from(jsonObject).also {
+        WalletBirthday.from(jsonObject).also {
             assertEquals(Long.MAX_VALUE, it.time)
         }
     }
@@ -48,7 +49,7 @@ class WalletBirthdayTest {
     fun round_trip() {
         val walletBirthday = WalletBirthdayFixture.new()
 
-        val deserialized = WalletBirthdayCompanion.from(walletBirthday.toJson())
+        val deserialized = WalletBirthday.from(walletBirthday.toJson())
 
         assertEquals(walletBirthday, deserialized)
         assertFalse(walletBirthday === deserialized)

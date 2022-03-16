@@ -79,6 +79,13 @@ dependencyResolutionManagement {
                 }
             }
         }
+        maven("https://oss.sonatype.org/content/repositories/snapshots") {
+            if (isRepoRestrictionEnabled) {
+                content {
+                    includeGroup("cash.z.ecc.android")
+                }
+            }
+        }
     }
 
     @Suppress("UnstableApiUsage", "MaxLineLength")

@@ -23,21 +23,19 @@ data class WalletAddresses(
                 Mnemonics.MnemonicCode(persistableWallet.seedPhrase.joinToString()).toSeed()
             }
 
-            // Dispatchers needed until an SDK is published with the implementation of
-            // https://github.com/zcash/zcash-android-wallet-sdk/issues/269
-            val viewingKey = withContext(Dispatchers.IO) {
-                DerivationTool.deriveUnifiedViewingKeys(bip39Seed, persistableWallet.network)[0]
-            }.extpub
+            val viewingKey = DerivationTool.deriveUnifiedViewingKeys(bip39Seed, persistableWallet.network)[0].extpub
 
-            val shieldedSaplingAddress = withContext(Dispatchers.IO) {
-                DerivationTool.deriveShieldedAddress(bip39Seed, persistableWallet.network)
-            }.let {
+            val shieldedSaplingAddress = DerivationTool.deriveShieldedAddress(
+                bip39Seed,
+                persistableWallet.network
+            ).let {
                 WalletAddress.ShieldedSapling.new(it)
             }
 
-            val transparentAddress = withContext(Dispatchers.IO) {
-                DerivationTool.deriveTransparentAddress(bip39Seed, persistableWallet.network)
-            }.let {
+            val transparentAddress = DerivationTool.deriveTransparentAddress(
+                bip39Seed,
+                persistableWallet.network
+            ).let {
                 WalletAddress.Transparent.new(it)
             }
 
