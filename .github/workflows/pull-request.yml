@@ -121,7 +121,7 @@ jobs:
         run: |
           mkdir ${ARTIFACTS_DIR_PATH}
 
-          zip -r ${REPORTS_ZIP_PATH} . -i build/reports/ktlint/*
+          zip -r ${REPORTS_ZIP_PATH} . -i build/reports/ktlint/\*
       - name: Upload Artifacts
         if: ${{ always() }}
         uses: actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535
@@ -151,6 +151,7 @@ jobs:
         run: |
           ./gradlew :app:lintZcashmainnetRelease
       - name: Collect Artifacts
+        if: ${{ always() }}
         timeout-minutes: 1
         env:
           ARTIFACTS_DIR_PATH: ${{ format('{0}/artifacts', env.home) }}
@@ -159,6 +160,7 @@ jobs:
           mkdir ${ARTIFACTS_DIR_PATH}
           zip -r ${LINT_ZIP_PATH} . -i *build/reports/*
       - name: Upload Artifacts
+        if: ${{ always() }}
         uses: actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535
         timeout-minutes: 1
         with:
@@ -184,6 +186,7 @@ jobs:
           # Note that we explicitly check just the Kotlin modules, to avoid compiling the Android modules here
           ./gradlew :preference-api-lib:check
       - name: Collect Artifacts
+        if: ${{ always() }}
         timeout-minutes: 1
         env:
           ARTIFACTS_DIR_PATH: ${{ format('{0}/artifacts', env.home) }}
@@ -192,6 +195,7 @@ jobs:
           mkdir ${ARTIFACTS_DIR_PATH}
           zip -r ${RESULTS_ZIP_PATH} . -i *build/reports/*
       - name: Upload Artifacts
+        if: ${{ always() }}
         uses: actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535
         timeout-minutes: 1
         with:
@@ -232,10 +236,12 @@ jobs:
           # This first environment variable is used by Flank, since the temporary token is missing the project name
           GOOGLE_CLOUD_PROJECT: ${{ secrets.FIREBASE_TEST_LAB_PROJECT }}
           ORG_GRADLE_PROJECT_ZCASH_FIREBASE_TEST_LAB_API_KEY_PATH: ${{ steps.auth_test_lab.outputs.credentials_file_path }}
+          # Because Fulladle doesn't allow Test Orchestrator to be enabled/disabled for a specific submodule, it must be enabled for all modules
+          ORG_GRADLE_PROJECT_IS_USE_TEST_ORCHESTRATOR: true
         run: |
-          # NEED Firebase Test Lab API key
-          # ./gradlew runFlank --parallel
+          ./gradlew runFlank --parallel
       - name: Collect Artifacts
+        if: ${{ always() }}
         timeout-minutes: 1
         env:
           ARTIFACTS_DIR_PATH: ${{ format('{0}/artifacts', env.home) }}
@@ -243,8 +249,9 @@ jobs:
         run: |
           mkdir ${ARTIFACTS_DIR_PATH}
 
-          zip -r ${TEST_RESULTS_ZIP_PATH} . -i *build/outputs/androidTest-results/*
+          zip -r ${TEST_RESULTS_ZIP_PATH} . -i build/fladle/\* \*/build/outputs/androidTest-results/\*
       - name: Upload Artifacts
+        if: ${{ always() }}
         uses: actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535
         timeout-minutes: 1
         with:

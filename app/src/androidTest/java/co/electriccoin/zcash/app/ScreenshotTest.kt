@@ -16,7 +16,9 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.rules.ActivityScenarioRule
+import androidx.test.filters.SdkSuppress
 import androidx.test.filters.SmallTest
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
@@ -26,6 +28,7 @@ import cash.z.ecc.sdk.fixture.WalletAddressFixture
 import cash.z.ecc.sdk.model.MonetarySeparators
 import co.electriccoin.zcash.app.test.EccScreenCaptureProcessor
 import co.electriccoin.zcash.app.test.getStringResource
+import co.electriccoin.zcash.spackle.FirebaseTestLabUtil
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.screen.backup.BackupTag
@@ -39,6 +42,8 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.RuleChain
 
+// TODO [#285]: Screenshot tests fail on older devices due to issue granting external storage permission
+@SdkSuppress(minSdkVersion = Build.VERSION_CODES.Q)
 class ScreenshotTest {
 
     companion object {
@@ -80,6 +85,11 @@ class ScreenshotTest {
     @Test
     @SmallTest
     fun take_screenshots_for_restore_wallet() {
+        // TODO [#286]: Screenshot tests fail on Firebase Test Lab
+        if (FirebaseTestLabUtil.isFirebaseTestLab(ApplicationProvider.getApplicationContext())) {
+            return
+        }
+
         composeTestRule.waitUntil { composeTestRule.activity.walletViewModel.secretState.value is SecretState.None }
 
         composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_1_header)).also {
@@ -124,6 +134,11 @@ class ScreenshotTest {
     @Test
     @SmallTest
     fun take_screenshots_for_new_wallet_and_rest_of_app() {
+        // TODO [#286]: Screenshot tests fail on Firebase Test Lab
+        if (FirebaseTestLabUtil.isFirebaseTestLab(ApplicationProvider.getApplicationContext())) {
+            return
+        }
+
         onboardingScreenshots(composeTestRule)
         backupScreenshots(composeTestRule)
         homeScreenshots(composeTestRule)

@@ -5,6 +5,10 @@ plugins {
     id("zcash.android-build-conventions")
 }
 
+// Force orchestrator to be used for this module, because we need the preference files
+// to be purged between tests
+val isOrchestratorEnabled = true
+
 android {
     // TODO [#6]: Figure out how to move this into the build-conventions
     kotlinOptions {
@@ -13,14 +17,15 @@ android {
         freeCompilerArgs = freeCompilerArgs + "-Xopt-in=kotlin.RequiresOptIn"
     }
 
-    // Force orchestrator to be used for this module, because we need the preference files
-    // to be purged between tests
-    defaultConfig {
-        testInstrumentationRunnerArguments["clearPackageData"] = "true"
-    }
 
-    testOptions {
-        execution = "ANDROIDX_TEST_ORCHESTRATOR"
+    if (isOrchestratorEnabled) {
+        defaultConfig {
+            testInstrumentationRunnerArguments["clearPackageData"] = "true"
+        }
+
+        testOptions {
+            execution = "ANDROIDX_TEST_ORCHESTRATOR"
+        }
     }
 }
 
@@ -34,9 +39,11 @@ dependencies {
     androidTestImplementation(libs.bundles.androidx.test)
     androidTestImplementation(libs.kotlinx.coroutines.test)
 
-    androidTestUtil(libs.androidx.test.orchestrator) {
-        artifact {
-            type = "apk"
+    if (isOrchestratorEnabled) {
+        androidTestUtil(libs.androidx.test.orchestrator) {
+            artifact {
+                type = "apk"
+            }
         }
     }
 }
