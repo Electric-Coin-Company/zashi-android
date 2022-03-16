@@ -4,6 +4,7 @@ plugins {
     id("kotlin-parcelize")
     id("zcash.android-build-conventions")
     id("com.github.triplet.play")
+    id("com.osacky.fladle")
 }
 
 val packageName = "co.electriccoin.zcash"
@@ -146,6 +147,7 @@ dependencies {
     androidTestImplementation(libs.androidx.uiAutomator)
     androidTestImplementation(libs.bundles.androidx.test)
     androidTestImplementation(projects.sdkExtLib)
+    androidTestImplementation(projects.spackleLib)
 
     if (isOrchestratorEnabled) {
         androidTestUtil(libs.androidx.test.orchestrator) {
@@ -220,5 +222,50 @@ val fetchScreenshotsTask = tasks.create<Exec>("fetchScreenshots") {
 tasks.whenTaskAdded {
     if (name == "connectedZcashmainnetDebugAndroidTest") {
         finalizedBy(fetchScreenshotsTask)
+    }
+}
+
+// Firebase Test Lab has min and max values that might differ from our project's
+// These are determined by `gcloud firebase test android models list`
+@Suppress("MagicNumber", "PropertyName", "VariableNaming")
+val FIREBASE_TEST_LAB_MIN_API = 23
+
+@Suppress("MagicNumber", "PropertyName", "VariableNaming")
+val FIREBASE_TEST_LAB_MAX_API = 30
+
+val firebaseTestLabKeyPath = project.properties["ZCASH_FIREBASE_TEST_LAB_API_KEY_PATH"].toString()
+if (firebaseTestLabKeyPath.isNotBlank()) {
+    val minSdkVersion = run {
+        val buildMinSdk =
+            project.properties["ANDROID_MIN_SDK_VERSION"].toString().toInt()
+        buildMinSdk.coerceAtLeast(FIREBASE_TEST_LAB_MIN_API).toString()
+    }
+    val targetSdkVersion = run {
+        val buildTargetSdk =
+            project.properties["ANDROID_TARGET_SDK_VERSION"].toString().toInt()
+        buildTargetSdk.coerceAtMost(FIREBASE_TEST_LAB_MAX_API).toString()
+    }
+
+    fladle {
+        serviceAccountCredentials.set(File(firebaseTestLabKeyPath))
+
+        configs {
+            create("sanityConfig") {
+                clearPropertiesForSanityRobo()
+
+                debugApk.set(
+                    project.provider {
+                        "${buildDir}/outputs/apk/zcashmainnet/release/app-zcashmainnet-release.apk"
+                    }
+                )
+
+                testTimeout.set("5m")
+                
+                devices.addAll(
+                    mapOf("model" to "Nexus6", "version" to minSdkVersion),
+                    mapOf("model" to "Pixel2", "version" to targetSdkVersion)
+                )
+            }
+        }
     }
 }
