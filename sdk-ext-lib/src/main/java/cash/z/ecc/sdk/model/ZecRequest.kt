@@ -1,21 +1,17 @@
 package cash.z.ecc.sdk.model
 
-import cash.z.ecc.sdk.fixture.ZecRequestFixture
-import kotlinx.coroutines.runBlocking
+import cash.z.ecc.sdk.fixture.Zip321UriBuildFixture
+import cash.z.ecc.sdk.fixture.Zip321UriParseFixture
 
 data class ZecRequest(val address: WalletAddress.Unified, val amount: Zatoshi, val message: ZecRequestMessage) {
 
-    // https://github.com/zcash/zcash-android-wallet-sdk/issues/397
-    // TODO [#397]: There's an issue in the SDK to implement the parser
-    @Suppress("FunctionOnlyReturningConstant")
-    fun toUri(): String = ""
+    fun toUri(): String {
+        return Zip321UriBuildFixture.new(this)
+    }
 
     companion object {
-
-        @Suppress("UNUSED_PARAMETER")
         suspend fun fromUri(uriString: String) {
-            // TODO [#397]: Use URI parser
-            runBlocking { ZecRequestFixture.new() }
+            Zip321UriParseFixture.new(uriString)
         }
     }
 }
