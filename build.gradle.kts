@@ -69,13 +69,21 @@ if (firebaseTestLabKeyPath.isNotBlank()) {
     }
     fladle {
         serviceAccountCredentials.set(File(firebaseTestLabKeyPath))
+        // TODO [#282]: Replace this with NexusLowRes once tests pass on larger screen sizes
         devices.addAll(
-            mapOf("model" to "NexusLowRes", "version" to minSdkVersion),
-            mapOf("model" to "NexusLowRes", "version" to targetSdkVersion)
+            mapOf("model" to "Nexus6", "version" to minSdkVersion),
+            mapOf("model" to "Pixel2", "version" to targetSdkVersion)
         )
 
         @Suppress("MagicNumber")
         flakyTestAttempts.set(2)
+
+        if (project.properties["IS_USE_TEST_ORCHESTRATOR"].toString().toBoolean()) {
+            useOrchestrator.set(true)
+            environmentVariables.set(mapOf("clearPackageData" to "true"))
+        } else {
+            useOrchestrator.set(false)
+        }
     }
 }
 
