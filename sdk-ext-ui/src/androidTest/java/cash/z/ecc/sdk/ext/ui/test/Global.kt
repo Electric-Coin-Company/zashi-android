@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.test
+package cash.z.ecc.sdk.ext.ui.test
 
 import android.content.Context
 import androidx.annotation.StringRes

@@ -42,6 +42,7 @@ import kotlinx.coroutines.withContext
 
 // To make this more multiplatform compatible, we need to remove the dependency on Context
 // for loading the preferences.
+// TODO [#292]: Should be moved to SDK-EXT-UI module.
 class WalletViewModel(application: Application) : AndroidViewModel(application) {
     private val walletCoordinator = co.electriccoin.zcash.global.WalletCoordinator.getInstance(application)
 

@@ -1,11 +1,13 @@
 package co.electriccoin.zcash.ui.screen.send.view
 
+import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import androidx.test.filters.MediumTest
 import cash.z.ecc.sdk.fixture.MemoFixture
@@ -21,7 +23,6 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.test.getStringResource
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import java.util.concurrent.atomic.AtomicInteger
@@ -65,7 +66,7 @@ class SendViewTest {
         testSetup.getLastSend().also {
             assertNotNull(it)
             assertEquals(WalletAddressFixture.unified(), it.destination)
-            assertEquals(Zatoshi(12300000), it.amount)
+            assertEquals(Zatoshi(12345600000), it.amount)
             assertTrue(it.memo.value.isEmpty())
         }
     }
@@ -81,10 +82,7 @@ class SendViewTest {
 
         composeTestRule.setValidAmount()
         composeTestRule.setValidAddress()
-
-        composeTestRule.onNodeWithText(getStringResource(R.string.send_memo)).also {
-            it.performTextInput(MemoFixture.MEMO_STRING)
-        }
+        composeTestRule.setValidMemo()
 
         composeTestRule.clickCreateAndSend()
         composeTestRule.assertOnConfirmation()
@@ -95,31 +93,96 @@ class SendViewTest {
         testSetup.getLastSend().also {
             assertNotNull(it)
             assertEquals(WalletAddressFixture.unified(), it.destination)
-            assertEquals(Zatoshi(12300000), it.amount)
+            assertEquals(Zatoshi(12345600000), it.amount)
             assertEquals(ZecRequestFixture.MESSAGE.value, it.memo.value)
         }
     }
 
     @Test
     @MediumTest
-    @Ignore("https://github.com/zcash/secant-android-wallet/issues/218")
-    fun create_request_illegal_amount() {
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun check_regex_functionality_valid_inputs() = runTest {
         val testSetup = TestSetup(composeTestRule)
+        val separators = MonetarySeparators.current()
 
         assertEquals(0, testSetup.getOnCreateCount())
         assertEquals(null, testSetup.getLastSend())
+        composeTestRule.assertSendDisabled()
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.send_amount)).also {
-            val separators = MonetarySeparators.current()
-
-            it.performTextInput("{${separators.decimal}}1{${separators.decimal}}2{${separators.decimal}}3{${separators.decimal}}4")
-        }
-
+        composeTestRule.setValidAmount()
         composeTestRule.setValidAddress()
+        composeTestRule.setValidMemo()
+        composeTestRule.assertSendEnabled()
+
+        composeTestRule.setAmount("123")
+        composeTestRule.assertSendEnabled()
+
+        // e.g. 123,
+        composeTestRule.setAmount("123${separators.grouping}")
+        composeTestRule.assertSendEnabled()
+
+        // e.g. 123.
+        composeTestRule.setAmount("123${separators.decimal}")
+        composeTestRule.assertSendEnabled()
+
+        // e.g. 123,456.
+        composeTestRule.setAmount("123${separators.grouping}456${separators.decimal}")
+        composeTestRule.assertSendEnabled()
+
+        // e.g. 123,456.789
+        composeTestRule.setAmount("123${separators.grouping}456${separators.decimal}789")
+        composeTestRule.assertSendEnabled()
 
         composeTestRule.clickCreateAndSend()
+        composeTestRule.assertOnConfirmation()
+        composeTestRule.clickConfirmation()
+
+        assertEquals(1, testSetup.getOnCreateCount())
+
+        testSetup.getLastSend().also {
+            assertNotNull(it)
+            assertEquals(WalletAddressFixture.unified(), it.destination)
+            assertEquals(Zatoshi(12345678900000), it.amount)
+            assertEquals(ZecRequestFixture.MESSAGE.value, it.memo.value)
+        }
+    }
+
+    @Test
+    @MediumTest
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun check_regex_functionality_invalid_inputs() = runTest {
+        val testSetup = TestSetup(composeTestRule)
+        val separators = MonetarySeparators.current()
 
         assertEquals(0, testSetup.getOnCreateCount())
+        assertEquals(null, testSetup.getLastSend())
+        composeTestRule.assertSendDisabled()
+
+        composeTestRule.setAmount("aaa")
+        composeTestRule.assertSendDisabled()
+
+        composeTestRule.setAmount("123aaa")
+        composeTestRule.assertSendDisabled()
+
+        // e.g. ,.
+        composeTestRule.setAmount("${separators.grouping}${separators.decimal}")
+        composeTestRule.assertSendDisabled()
+
+        // e.g. 123,.
+        composeTestRule.setAmount("123${separators.grouping}${separators.decimal}")
+        composeTestRule.assertSendDisabled()
+
+        // e.g. 1,2,3
+        composeTestRule.setAmount("1${separators.grouping}2${separators.grouping}3")
+        composeTestRule.assertSendDisabled()
+
+        // e.g. 1.2.3
+        composeTestRule.setAmount("1${separators.decimal}2${separators.decimal}3")
+        composeTestRule.assertSendDisabled()
+
+        assertEquals(0, testSetup.getOnCreateCount())
+        assertEquals(null, testSetup.getLastSend())
+        composeTestRule.assertSendDisabled()
     }
 
     @Test
@@ -137,9 +200,7 @@ class SendViewTest {
             }
         }
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.send_memo)).also {
-            it.performTextInput(input)
-        }
+        composeTestRule.setMemo(input)
 
         composeTestRule.clickCreateAndSend()
         composeTestRule.assertOnConfirmation()
@@ -150,7 +211,7 @@ class SendViewTest {
         testSetup.getLastSend().also {
             assertNotNull(it)
             assertEquals(WalletAddressFixture.unified(), it.destination)
-            assertEquals(Zatoshi(12300000), it.amount)
+            assertEquals(Zatoshi(12345600000), it.amount)
             assertTrue(it.memo.value.isEmpty())
         }
     }
@@ -235,14 +296,36 @@ private fun ComposeContentTestRule.clickBack() {
 private fun ComposeContentTestRule.setValidAmount() {
     onNodeWithText(getStringResource(R.string.send_amount)).also {
         val separators = MonetarySeparators.current()
+        it.performTextClearance()
+        it.performTextInput("123${separators.decimal}456")
+    }
+}
 
-        it.performTextInput("{${separators.decimal}}123")
+private fun ComposeContentTestRule.setAmount(amount: String) {
+    onNodeWithText(getStringResource(R.string.send_amount)).also {
+        it.performTextClearance()
+        it.performTextInput(amount)
     }
 }
 
 private fun ComposeContentTestRule.setValidAddress() {
     onNodeWithText(getStringResource(R.string.send_to)).also {
+        it.performTextClearance()
         it.performTextInput(WalletAddressFixture.UNIFIED_ADDRESS_STRING)
+    }
+}
+
+private fun ComposeContentTestRule.setValidMemo() {
+    onNodeWithText(getStringResource(R.string.send_memo)).also {
+        it.performTextClearance()
+        it.performTextInput(MemoFixture.MEMO_STRING)
+    }
+}
+
+private fun ComposeContentTestRule.setMemo(memo: String) {
+    onNodeWithText(getStringResource(R.string.send_memo)).also {
+        it.performTextClearance()
+        it.performTextInput(memo)
     }
 }
 
@@ -267,5 +350,17 @@ private fun ComposeContentTestRule.assertOnForm() {
 private fun ComposeContentTestRule.assertOnConfirmation() {
     onNodeWithText(getStringResource(R.string.send_confirm)).also {
         it.assertExists()
+    }
+}
+
+private fun ComposeContentTestRule.assertSendEnabled() {
+    onNodeWithText(getStringResource(R.string.send_create)).also {
+        it.assertIsEnabled()
+    }
+}
+
+private fun ComposeContentTestRule.assertSendDisabled() {
+    onNodeWithText(getStringResource(R.string.send_create)).also {
+        it.assertIsNotEnabled()
     }
 }

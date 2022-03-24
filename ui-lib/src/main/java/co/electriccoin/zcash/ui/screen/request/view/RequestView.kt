@@ -19,9 +19,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import cash.z.ecc.sdk.ext.ui.regex.ZecRegex
 import cash.z.ecc.sdk.fixture.WalletAddressFixture
 import cash.z.ecc.sdk.model.MonetarySeparators
 import cash.z.ecc.sdk.model.WalletAddress
@@ -90,6 +92,7 @@ private fun RequestTopAppBar(onBack: () -> Unit) {
 
 // TODO [#215]: Need to add some UI to explain to the user if a request is invalid
 // TODO [#217]: Need to handle changing of Locale after user input, but before submitting the button.
+// TODO [#288]: TextField component can't do long-press backspace.
 @Composable
 private fun RequestMainContent(
     myAddress: WalletAddress.Unified,
@@ -97,15 +100,19 @@ private fun RequestMainContent(
 ) {
     val monetarySeparators = MonetarySeparators.current()
     val allowedCharacters = ZecString.allowedCharacters(monetarySeparators)
+    val regexAmountChecker = ZecRegex.getZecAmountContinuousFilter(LocalContext.current, monetarySeparators)
 
     var amountZecString by rememberSaveable { mutableStateOf("") }
     var message by rememberSaveable { mutableStateOf("") }
 
     Column(Modifier.fillMaxHeight()) {
+        // TODO [#289]: Crash occurs while typed more than some acceptable amount to this field.
         TextField(
             value = amountZecString,
             onValueChange = { newValue ->
-                // TODO [#218]: this doesn't prevent illegal input. So users could still type `1.2.3.4`
+                if (!regexAmountChecker.matches(newValue)) {
+                    return@TextField
+                }
                 amountZecString = newValue.filter { allowedCharacters.contains(it) }
             },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),

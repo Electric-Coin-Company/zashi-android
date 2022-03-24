@@ -22,10 +22,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import cash.z.ecc.sdk.ext.ui.regex.ZecRegex
 import cash.z.ecc.sdk.fixture.ZatoshiFixture
 import cash.z.ecc.sdk.model.Memo
 import cash.z.ecc.sdk.model.MonetarySeparators
@@ -134,6 +136,7 @@ private fun SendMainContent(
 }
 
 // TODO [#217]: Need to handle changing of Locale after user input, but before submitting the button.
+// TODO [#288]: TextField component can't do long-press backspace.
 @Composable
 private fun SendForm(
     myBalance: Zatoshi,
@@ -142,6 +145,7 @@ private fun SendForm(
 ) {
     val monetarySeparators = MonetarySeparators.current()
     val allowedCharacters = ZecString.allowedCharacters(monetarySeparators)
+    val regexAmountChecker = ZecRegex.getZecAmountContinuousFilter(LocalContext.current, monetarySeparators)
 
     var amountZecString by rememberSaveable {
         mutableStateOf(previousZecSend?.amount?.toZecString() ?: "")
@@ -161,7 +165,9 @@ private fun SendForm(
         TextField(
             value = amountZecString,
             onValueChange = { newValue ->
-                // TODO [#218]: this doesn't prevent illegal input. So users could still type `1.2.3.4`
+                if (!regexAmountChecker.matches(newValue)) {
+                    return@TextField
+                }
                 amountZecString = newValue.filter { allowedCharacters.contains(it) }
             },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),

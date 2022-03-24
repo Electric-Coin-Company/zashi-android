@@ -6,6 +6,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import androidx.test.filters.MediumTest
 import cash.z.ecc.sdk.fixture.WalletAddressFixture
@@ -20,7 +21,6 @@ import co.electriccoin.zcash.ui.test.getStringResource
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import java.util.concurrent.atomic.AtomicInteger
@@ -38,9 +38,7 @@ class RequestViewTest {
         @Suppress("UNUSED_VARIABLE")
         val testSetup = TestSetup(composeTestRule)
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.request_create)).also {
-            it.assertIsNotEnabled()
-        }
+        composeTestRule.assertSendDisabled()
     }
 
     @Test
@@ -52,22 +50,16 @@ class RequestViewTest {
         assertEquals(0, testSetup.getOnCreateCount())
         assertEquals(null, testSetup.getLastCreateZecRequest())
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.request_amount)).also {
-            val separators = MonetarySeparators.current()
+        composeTestRule.setValidAmount()
 
-            it.performTextInput("{${separators.decimal}}123")
-        }
-
-        composeTestRule.onNodeWithText(getStringResource(R.string.request_create)).also {
-            it.performClick()
-        }
+        composeTestRule.clickCreateAndSend()
 
         assertEquals(1, testSetup.getOnCreateCount())
 
         testSetup.getLastCreateZecRequest().also {
             assertNotNull(it)
             assertEquals(WalletAddressFixture.unified(), it.address)
-            assertEquals(Zatoshi(12300000), it.amount)
+            assertEquals(Zatoshi(12345600000), it.amount)
             assertTrue(it.message.value.isEmpty())
         }
     }
@@ -81,49 +73,91 @@ class RequestViewTest {
         assertEquals(0, testSetup.getOnCreateCount())
         assertEquals(null, testSetup.getLastCreateZecRequest())
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.request_amount)).also {
-            val separators = MonetarySeparators.current()
+        composeTestRule.setValidAmount()
 
-            it.performTextInput("{${separators.decimal}}123")
-        }
+        composeTestRule.setValidMessage()
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.request_message)).also {
-            it.performTextInput(ZecRequestFixture.MESSAGE.value)
-        }
-
-        composeTestRule.onNodeWithText(getStringResource(R.string.request_create)).also {
-            it.performClick()
-        }
+        composeTestRule.clickCreateAndSend()
 
         assertEquals(1, testSetup.getOnCreateCount())
 
         testSetup.getLastCreateZecRequest().also {
             assertNotNull(it)
             assertEquals(WalletAddressFixture.unified(), it.address)
-            assertEquals(Zatoshi(12300000), it.amount)
+            assertEquals(Zatoshi(12345600000), it.amount)
             assertEquals(ZecRequestFixture.MESSAGE.value, it.message.value)
         }
     }
 
     @Test
     @MediumTest
-    @Ignore("https://github.com/zcash/secant-android-wallet/issues/218")
-    fun create_request_illegal_input() {
+    fun check_regex_functionality_valid_inputs() {
         val testSetup = TestSetup(composeTestRule)
+        val separators = MonetarySeparators.current()
 
         assertEquals(0, testSetup.getOnCreateCount())
         assertEquals(null, testSetup.getLastCreateZecRequest())
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.request_amount)).also {
-            val separators = MonetarySeparators.current()
+        composeTestRule.setAmount("123")
+        composeTestRule.clickCreateAndSend()
+        assertEquals(1, testSetup.getOnCreateCount())
 
-            it.performTextInput("{${separators.decimal}}1{${separators.decimal}}2{${separators.decimal}}3{${separators.decimal}}4")
-        }
+        // e.g. 123,
+        composeTestRule.setAmount("123${separators.grouping}")
+        composeTestRule.clickCreateAndSend()
+        assertEquals(2, testSetup.getOnCreateCount())
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.request_create)).also {
-            it.performClick()
-        }
+        // e.g. 123.
+        composeTestRule.setAmount("123${separators.decimal}")
+        composeTestRule.clickCreateAndSend()
+        assertEquals(3, testSetup.getOnCreateCount())
 
+        // e.g. 123,456.
+        composeTestRule.setAmount("123${separators.grouping}456${separators.decimal}")
+        composeTestRule.clickCreateAndSend()
+        assertEquals(4, testSetup.getOnCreateCount())
+
+        // e.g. 123,456.789
+        composeTestRule.setAmount("123${separators.grouping}456${separators.decimal}789")
+        composeTestRule.clickCreateAndSend()
+        assertEquals(5, testSetup.getOnCreateCount())
+    }
+
+    @Test
+    @MediumTest
+    fun check_regex_functionality_invalid_inputs() {
+        val testSetup = TestSetup(composeTestRule)
+        val separators = MonetarySeparators.current()
+
+        assertEquals(0, testSetup.getOnCreateCount())
+        assertEquals(null, testSetup.getLastCreateZecRequest())
+
+        composeTestRule.setAmount("aaa")
+        composeTestRule.clickCreateAndSend()
+        assertEquals(0, testSetup.getOnCreateCount())
+
+        composeTestRule.setAmount("123aaa")
+        composeTestRule.clickCreateAndSend()
+        assertEquals(0, testSetup.getOnCreateCount())
+
+        // e.g. ,.
+        composeTestRule.setAmount("${separators.grouping}${separators.decimal}")
+        composeTestRule.clickCreateAndSend()
+        assertEquals(0, testSetup.getOnCreateCount())
+
+        // e.g. 123,.
+        composeTestRule.setAmount("123${separators.grouping}${separators.decimal}")
+        composeTestRule.clickCreateAndSend()
+        assertEquals(0, testSetup.getOnCreateCount())
+
+        // e.g. 1,2,3
+        composeTestRule.setAmount("1${separators.grouping}2${separators.grouping}3")
+        composeTestRule.clickCreateAndSend()
+        assertEquals(0, testSetup.getOnCreateCount())
+
+        // e.g. 1.2.3
+        composeTestRule.setAmount("1${separators.decimal}2${separators.decimal}3")
+        composeTestRule.clickCreateAndSend()
         assertEquals(0, testSetup.getOnCreateCount())
     }
 
@@ -133,32 +167,24 @@ class RequestViewTest {
     fun max_message_length() = runTest {
         val testSetup = TestSetup(composeTestRule)
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.request_amount)).also {
-            val separators = MonetarySeparators.current()
+        composeTestRule.setValidAmount()
 
-            it.performTextInput("{${separators.decimal}}123")
-        }
-
-        composeTestRule.onNodeWithText(getStringResource(R.string.request_message)).also {
-            val input = buildString {
-                repeat(ZecRequestMessage.MAX_MESSAGE_LENGTH + 1) { _ ->
-                    append("$it")
+        composeTestRule.setMessage(
+            buildString {
+                repeat(ZecRequestMessage.MAX_MESSAGE_LENGTH + 1) { number ->
+                    append("$number")
                 }
             }
+        )
 
-            it.performTextInput(input)
-        }
-
-        composeTestRule.onNodeWithText(getStringResource(R.string.request_create)).also {
-            it.performClick()
-        }
+        composeTestRule.clickCreateAndSend()
 
         assertEquals(1, testSetup.getOnCreateCount())
 
         testSetup.getLastCreateZecRequest().also {
             assertNotNull(it)
             assertEquals(WalletAddressFixture.unified(), it.address)
-            assertEquals(Zatoshi(12300000), it.amount)
+            assertEquals(Zatoshi(12345600000), it.amount)
             assertTrue(it.message.value.isEmpty())
         }
     }
@@ -170,9 +196,7 @@ class RequestViewTest {
 
         assertEquals(0, testSetup.getOnBackCount())
 
-        composeTestRule.onNodeWithContentDescription(getStringResource(R.string.request_back_content_description)).also {
-            it.performClick()
-        }
+        composeTestRule.clickBack()
 
         assertEquals(1, testSetup.getOnBackCount())
     }
@@ -215,5 +239,52 @@ class RequestViewTest {
                 }
             }
         }
+    }
+}
+
+private fun ComposeContentTestRule.clickBack() {
+    onNodeWithContentDescription(getStringResource(R.string.request_back_content_description)).also {
+        it.performClick()
+    }
+}
+
+private fun ComposeContentTestRule.setValidAmount() {
+    onNodeWithText(getStringResource(R.string.request_amount)).also {
+        val separators = MonetarySeparators.current()
+        it.performTextClearance()
+        it.performTextInput("123${separators.decimal}456")
+    }
+}
+
+private fun ComposeContentTestRule.setAmount(amount: String) {
+    onNodeWithText(getStringResource(R.string.request_amount)).also {
+        it.performTextClearance()
+        it.performTextInput(amount)
+    }
+}
+
+private fun ComposeContentTestRule.setValidMessage() {
+    onNodeWithText(getStringResource(R.string.request_message)).also {
+        it.performTextClearance()
+        it.performTextInput(ZecRequestFixture.MESSAGE.value)
+    }
+}
+
+private fun ComposeContentTestRule.setMessage(message: String) {
+    onNodeWithText(getStringResource(R.string.request_message)).also {
+        it.performTextClearance()
+        it.performTextInput(message)
+    }
+}
+
+private fun ComposeContentTestRule.clickCreateAndSend() {
+    onNodeWithText(getStringResource(R.string.request_create)).also {
+        it.performClick()
+    }
+}
+
+private fun ComposeContentTestRule.assertSendDisabled() {
+    onNodeWithText(getStringResource(R.string.request_create)).also {
+        it.assertIsNotEnabled()
     }
 }

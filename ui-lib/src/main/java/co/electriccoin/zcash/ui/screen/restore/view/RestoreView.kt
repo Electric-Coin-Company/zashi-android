@@ -247,6 +247,7 @@ private fun ChipGridWithText(
     }
 }
 
+// TODO [#288]: TextField component can't do long-press backspace.
 @Composable
 private fun NextWordTextField(modifier: Modifier = Modifier, text: String, setText: (String) -> Unit) {
     /*

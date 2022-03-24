@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest package="cash.z.ecc.sdk.ext"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application
+        android:label="sdk-ext-ui-test"/>
+
+</manifest>
