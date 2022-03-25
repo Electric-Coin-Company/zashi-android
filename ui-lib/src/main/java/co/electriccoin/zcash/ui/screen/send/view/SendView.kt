@@ -137,6 +137,7 @@ private fun SendMainContent(
 
 // TODO [#217]: Need to handle changing of Locale after user input, but before submitting the button.
 // TODO [#288]: TextField component can't do long-press backspace.
+// TODO [#294]: DetektAll failed LongMethod
 @Composable
 private fun SendForm(
     myBalance: Zatoshi,
@@ -165,10 +166,8 @@ private fun SendForm(
         TextField(
             value = amountZecString,
             onValueChange = { newValue ->
-                if (!regexAmountChecker.matches(newValue)) {
-                    return@TextField
-                }
-                amountZecString = newValue.filter { allowedCharacters.contains(it) }
+                if (regexAmountChecker.matches(newValue))
+                    amountZecString = newValue.filter { allowedCharacters.contains(it) }
             },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             label = { Text(stringResource(id = R.string.send_amount)) }

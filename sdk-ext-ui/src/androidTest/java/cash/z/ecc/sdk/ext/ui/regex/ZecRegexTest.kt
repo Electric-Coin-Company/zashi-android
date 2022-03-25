@@ -17,10 +17,12 @@ class ZecRegexTest {
         val separators = MonetarySeparators.current()
         val regexString = getStringResourceWithArgs(
             R.string.zec_amount_regex_filter,
-            arrayOf(separators.grouping,
+            arrayOf(
+                separators.grouping,
                 separators.grouping,
                 separators.decimal,
-                separators.decimal)
+                separators.decimal
+            )
         )
         assertNotNull(regexString)
 
