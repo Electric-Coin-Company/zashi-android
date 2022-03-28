@@ -1,3 +1,3 @@
 <resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="zec_amount_regex_filter" formatted="true" tools:ignore="TypographyDashes">^^$|[0-9]+([<xliff:g id="group" example="12,345">%1$s</xliff:g>]$|[<xliff:g id="group" example="12,345">%2$s</xliff:g>][0-9]+)?([<xliff:g id="dec" example="1.2345">%3$s</xliff:g>]$|[<xliff:g id="dec" example="1.2345">%4$s</xliff:g>][0-9]+)?$</string>
+    <string name="zec_amount_regex_filter" formatted="true" tools:ignore="TypographyDashes">^([0-9]*([0-9]+([<xliff:g id="group" example="12,345">%1$s</xliff:g>]$|[<xliff:g id="group" example="12,345">%1$s</xliff:g>][0-9]+))*([<xliff:g id="dec" example="1.2345">%2$s</xliff:g>]$|[<xliff:g id="dec" example="1.2345">%2$s</xliff:g>][0-9]+)?)?$</string>
 </resources>

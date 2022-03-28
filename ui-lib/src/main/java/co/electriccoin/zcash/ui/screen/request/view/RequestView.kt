@@ -23,7 +23,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import cash.z.ecc.sdk.ext.ui.regex.ZecRegex
+import cash.z.ecc.sdk.ext.ui.ZecStringExt
 import cash.z.ecc.sdk.fixture.WalletAddressFixture
 import cash.z.ecc.sdk.model.MonetarySeparators
 import cash.z.ecc.sdk.model.WalletAddress
@@ -98,9 +98,9 @@ private fun RequestMainContent(
     myAddress: WalletAddress.Unified,
     onCreateAndSend: (ZecRequest) -> Unit
 ) {
+    val context = LocalContext.current
     val monetarySeparators = MonetarySeparators.current()
     val allowedCharacters = ZecString.allowedCharacters(monetarySeparators)
-    val regexAmountChecker = ZecRegex.getZecAmountContinuousFilter(LocalContext.current, monetarySeparators)
 
     var amountZecString by rememberSaveable { mutableStateOf("") }
     var message by rememberSaveable { mutableStateOf("") }
@@ -110,7 +110,7 @@ private fun RequestMainContent(
         TextField(
             value = amountZecString,
             onValueChange = { newValue ->
-                if (!regexAmountChecker.matches(newValue)) {
+                if (!ZecStringExt.filterContinuous(context, monetarySeparators, newValue)) {
                     return@TextField
                 }
                 amountZecString = newValue.filter { allowedCharacters.contains(it) }

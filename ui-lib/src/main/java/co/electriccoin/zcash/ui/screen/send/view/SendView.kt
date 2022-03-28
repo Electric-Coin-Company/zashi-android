@@ -27,7 +27,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import cash.z.ecc.sdk.ext.ui.regex.ZecRegex
+import cash.z.ecc.sdk.ext.ui.ZecStringExt
 import cash.z.ecc.sdk.fixture.ZatoshiFixture
 import cash.z.ecc.sdk.model.Memo
 import cash.z.ecc.sdk.model.MonetarySeparators
@@ -138,15 +138,16 @@ private fun SendMainContent(
 // TODO [#217]: Need to handle changing of Locale after user input, but before submitting the button.
 // TODO [#288]: TextField component can't do long-press backspace.
 // TODO [#294]: DetektAll failed LongMethod
+@Suppress("LongMethod")
 @Composable
 private fun SendForm(
     myBalance: Zatoshi,
     previousZecSend: ZecSend?,
     onCreateAndSend: (ZecSend) -> Unit
 ) {
+    val context = LocalContext.current
     val monetarySeparators = MonetarySeparators.current()
     val allowedCharacters = ZecString.allowedCharacters(monetarySeparators)
-    val regexAmountChecker = ZecRegex.getZecAmountContinuousFilter(LocalContext.current, monetarySeparators)
 
     var amountZecString by rememberSaveable {
         mutableStateOf(previousZecSend?.amount?.toZecString() ?: "")
@@ -166,8 +167,10 @@ private fun SendForm(
         TextField(
             value = amountZecString,
             onValueChange = { newValue ->
-                if (regexAmountChecker.matches(newValue))
-                    amountZecString = newValue.filter { allowedCharacters.contains(it) }
+                if (!ZecStringExt.filterContinuous(context, monetarySeparators, newValue)) {
+                    return@TextField
+                }
+                amountZecString = newValue.filter { allowedCharacters.contains(it) }
             },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             label = { Text(stringResource(id = R.string.send_amount)) }
