@@ -5,13 +5,15 @@ import cash.z.ecc.sdk.fixture.Zip321UriParseFixture
 
 data class ZecRequest(val address: WalletAddress.Unified, val amount: Zatoshi, val message: ZecRequestMessage) {
 
-    fun toUri(): String {
+    // TODO [#397]: Waiting for an implementation of Uri parser in SDK project
+    suspend fun toUri(): String {
         return Zip321UriBuildFixture.new(this)
     }
 
     companion object {
-        suspend fun fromUri(uriString: String) {
-            Zip321UriParseFixture.new(uriString)
+        // TODO [#397]: Waiting for an implementation of Uri parser in SDK project
+        suspend fun fromUri(uriString: String): ZecRequest {
+            return Zip321UriParseFixture.new(uriString)
         }
     }
 }
