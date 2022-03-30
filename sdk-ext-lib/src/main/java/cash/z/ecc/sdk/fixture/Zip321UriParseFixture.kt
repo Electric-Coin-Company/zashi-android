@@ -15,6 +15,8 @@ object Zip321UriParseFixture {
     val AMOUNT = Zatoshi(123)
     val MESSAGE = ZecRequestMessage("Thank you for your purchase")
 
+    // TODO [#397]: Waiting for an implementation of Uri parser in SDK project
+    // Should return ZecRequest.fromUri(toParse) ideally, but it'd end up with an infinite loop for now.
     @Suppress("UNUSED_PARAMETER")
     suspend fun new(
         toParse: String = URI,

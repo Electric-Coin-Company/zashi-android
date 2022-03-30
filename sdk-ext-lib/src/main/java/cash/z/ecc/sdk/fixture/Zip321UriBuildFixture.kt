@@ -19,6 +19,8 @@ object Zip321UriBuildFixture {
     }
     val REQUEST = ZecRequest(ADDRESS, AMOUNT, MESSAGE)
 
+    // TODO [#397]: Waiting for an implementation of Uri parser in SDK project
+    // Should return ZecRequest.toUri(request) ideally, but it'd end up with an infinite loop for now.
     @Suppress("UNUSED_PARAMETER")
     suspend fun new(request: ZecRequest = REQUEST) = URI
 }
