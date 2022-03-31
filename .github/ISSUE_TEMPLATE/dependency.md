@@ -16,6 +16,8 @@ For a Gradle dependency:
 1. Are there any new APIs or possible migrations for this dependency?
 
 For Gradle itself:
-1. Run `./gradle wrapper --gradle-version $X`
-1. Add `distributionSha256Sum=` in `gradle/wrapper/gradle-wrapper.properties`, referencing [Gradle Release Checksums](https://gradle.org/release-checksums/)
+1. Update the Gradle version in `gradle/wrapper/gradle-wrapper.properties`
+1. Update the [Gradle SHA](https://gradle.org/release-checksums/) in `gradle/wrapper/gradle-wrapper.properties`
+1. Update the Gradle wrapper by running `./gradlew wrapper`
+1. Re-add the [Gradle SHA](https://gradle.org/release-checksums/) to `gradle/wrapper/gradle-wrapper.properties`
 1. Are there any new APIs or possible migrations?
