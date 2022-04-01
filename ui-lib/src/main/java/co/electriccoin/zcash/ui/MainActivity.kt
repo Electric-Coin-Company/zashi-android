@@ -48,6 +48,7 @@ import co.electriccoin.zcash.ui.screen.send.view.Send
 import co.electriccoin.zcash.ui.screen.settings.view.Settings
 import co.electriccoin.zcash.ui.screen.wallet_address.view.WalletAddresses
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
@@ -459,8 +460,10 @@ private fun copyToClipboard(context: Context, persistableWallet: PersistableWall
     clipboardManager.setPrimaryClip(data)
 }
 
-private fun ZecRequest.newShareIntent(context: Context) = Intent().apply {
-    action = Intent.ACTION_SEND
-    putExtra(Intent.EXTRA_TEXT, context.getString(R.string.request_template_format, toUri()))
-    type = "text/plain"
+private fun ZecRequest.newShareIntent(context: Context) = runBlocking {
+    Intent().apply {
+        action = Intent.ACTION_SEND
+        putExtra(Intent.EXTRA_TEXT, context.getString(R.string.request_template_format, toUri()))
+        type = "text/plain"
+    }
 }
