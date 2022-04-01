@@ -75,6 +75,7 @@ fun Zatoshi.Companion.fromZecString(zecString: String, monetarySeparators: Monet
     }
     val localizedPattern = "#${monetarySeparators.grouping}##0${monetarySeparators.decimal}0#"
 
+    // TODO [#321]: https://github.com/zcash/secant-android-wallet/issues/321
     val decimalFormat = DecimalFormat(localizedPattern, symbols).apply {
         isParseBigDecimal = true
         roundingMode = RoundingMode.HALF_EVEN // aka Bankers rounding

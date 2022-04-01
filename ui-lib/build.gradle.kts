@@ -63,6 +63,7 @@ dependencies {
     implementation(projects.preferenceApiLib)
     implementation(projects.preferenceImplAndroidLib)
     implementation(projects.sdkExtLib)
+    implementation(projects.sdkExtUi)
     implementation(projects.spackleLib)
     implementation(projects.uiDesignLib)
 

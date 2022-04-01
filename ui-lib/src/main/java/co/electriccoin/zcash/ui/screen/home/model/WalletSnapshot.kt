@@ -6,6 +6,7 @@ import cash.z.ecc.android.sdk.ext.ZcashSdk
 import cash.z.ecc.android.sdk.type.WalletBalance
 import cash.z.ecc.sdk.model.Zatoshi
 
+// TODO [#292]: Should be moved to SDK-EXT-UI module.
 data class WalletSnapshot(
     val status: Synchronizer.Status,
     val processorInfo: CompactBlockProcessor.ProcessorInfo,
