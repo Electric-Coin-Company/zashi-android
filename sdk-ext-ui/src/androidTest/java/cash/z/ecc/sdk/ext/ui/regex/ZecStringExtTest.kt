@@ -16,11 +16,21 @@ class ZecStringExtTest {
         private val EN_US_SEPARATORS = MonetarySeparators(',', '.')
     }
 
+    private fun getContinuousRegex(): Regex {
+        return getStringResourceWithArgs(
+            R.string.zec_amount_regex_continuous_filter,
+            arrayOf(
+                EN_US_SEPARATORS.grouping,
+                EN_US_SEPARATORS.decimal
+            )
+        ).toRegex()
+    }
+
     @Test
     @SmallTest
     fun check_regex_validity() {
         val regexString = getStringResourceWithArgs(
-            R.string.zec_amount_regex_filter,
+            R.string.zec_amount_regex_continuous_filter,
             arrayOf(
                 EN_US_SEPARATORS.grouping,
                 EN_US_SEPARATORS.decimal
@@ -39,15 +49,7 @@ class ZecStringExtTest {
     @Test
     @SmallTest
     fun check_regex_functionality_valid_inputs() {
-        val regex = getStringResourceWithArgs(
-            R.string.zec_amount_regex_filter,
-            arrayOf(
-                EN_US_SEPARATORS.grouping,
-                EN_US_SEPARATORS.decimal
-            )
-        ).toRegex()
-
-        regex.also {
+        getContinuousRegex().also {
             assertTrue(it.matches(""))
             assertTrue(it.matches("123"))
             assertTrue(it.matches("${EN_US_SEPARATORS.decimal}"))
@@ -65,15 +67,7 @@ class ZecStringExtTest {
     @Test
     @SmallTest
     fun check_regex_functionality_invalid_inputs() {
-        val regex = getStringResourceWithArgs(
-            R.string.zec_amount_regex_filter,
-            arrayOf(
-                EN_US_SEPARATORS.grouping,
-                EN_US_SEPARATORS.decimal
-            )
-        ).toRegex()
-
-        regex.also {
+        getContinuousRegex().also {
             assertFalse(it.matches("aaa"))
             assertFalse(it.matches("123aaa"))
             assertFalse(it.matches("${EN_US_SEPARATORS.grouping}"))

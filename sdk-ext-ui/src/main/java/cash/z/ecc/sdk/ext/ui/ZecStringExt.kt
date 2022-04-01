@@ -25,7 +25,7 @@ object ZecStringExt {
      */
     fun filterContinuous(context: Context, separators: MonetarySeparators, zecString: String): Boolean {
         if (!context.getString(
-                R.string.zec_amount_regex_filter,
+                R.string.zec_amount_regex_continuous_filter,
                 separators.grouping,
                 separators.decimal
             ).toRegex().matches(zecString) || !checkFor3Digits(separators, zecString)
