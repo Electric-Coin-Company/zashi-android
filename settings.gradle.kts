@@ -128,7 +128,6 @@ dependencyResolutionManagement {
             alias("androidx-annotation").to("androidx.annotation:annotation:$androidxAnnotationVersion")
             alias("androidx-appcompat").to("androidx.appcompat:appcompat:$androidxAppcompatVersion")
             alias("androidx-compose-foundation").to("androidx.compose.foundation:foundation:$androidxComposeVersion")
-            alias("androidx-compose-material").to("androidx.compose.material:material:$androidxComposeVersion")
             alias("androidx-compose-material3").to("androidx.compose.material3:material3:$androidxComposeMaterial3Version")
             alias("androidx-compose-material-icons-core").to("androidx.compose.material:material-icons-core:$androidxComposeVersion")
             alias("androidx-compose-material-icons-extended").to("androidx.compose.material:material-icons-extended:$androidxComposeVersion")
