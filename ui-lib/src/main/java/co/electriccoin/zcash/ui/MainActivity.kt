@@ -82,13 +82,13 @@ class MainActivity : ComponentActivity() {
         val splashScreen = installSplashScreen()
         val start = SystemClock.elapsedRealtime().milliseconds
 
-        splashScreen.setKeepVisibleCondition {
+        splashScreen.setKeepOnScreenCondition {
             if (SPLASH_SCREEN_DELAY > Duration.ZERO) {
                 val now = SystemClock.elapsedRealtime().milliseconds
 
                 // This delay is for debug purposes only; do not enable for production usage.
                 if (now - start < SPLASH_SCREEN_DELAY) {
-                    return@setKeepVisibleCondition true
+                    return@setKeepOnScreenCondition true
                 }
             }
 
