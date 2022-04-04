@@ -1,7 +1,6 @@
 package co.electriccoin.zcash.ui.screen.backup.view
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -57,7 +56,6 @@ fun ChipDropDown(
         contentColor = MaterialTheme.colorScheme.secondary,
         tonalElevation = 8.dp,
         shadowElevation = 8.dp,
-        interactionSource = MutableInteractionSource(),
     ) {
         Row(modifier = Modifier.padding(8.dp)) {
             Text(

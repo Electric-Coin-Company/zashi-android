@@ -43,9 +43,6 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(projects.spackleLib)
 
-    // Material2 is only used for the EditText
-    implementation(libs.androidx.compose.material)
-
     androidTestImplementation(libs.bundles.androidx.test)
     androidTestImplementation(libs.androidx.compose.test.junit)
     androidTestImplementation(libs.androidx.compose.test.manifest)
