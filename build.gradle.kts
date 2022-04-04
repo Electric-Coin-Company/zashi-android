@@ -84,6 +84,8 @@ if (firebaseTestLabKeyPath.isNotBlank()) {
         } else {
             useOrchestrator.set(false)
         }
+
+        flankVersion.set(libs.versions.flank.get())
     }
 }
 

@@ -265,6 +265,8 @@ if (firebaseTestLabKeyPath.isNotBlank()) {
                     mapOf("model" to "Nexus6", "version" to minSdkVersion),
                     mapOf("model" to "Pixel2", "version" to targetSdkVersion)
                 )
+
+                flankVersion.set(libs.versions.flank.get())
             }
         }
     }

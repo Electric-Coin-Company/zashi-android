@@ -33,10 +33,10 @@ pluginManagement {
     plugins {
         val androidGradlePluginVersion = extra["ANDROID_GRADLE_PLUGIN_VERSION"].toString()
         val detektVersion = extra["DETEKT_VERSION"].toString()
-        val fulladleVersion = extra["FULLADLE_VERSION_MATCHER"].toString()
+        val fulladleVersion = extra["FULLADLE_VERSION"].toString()
         val gradleVersionsPluginVersion = extra["GRADLE_VERSIONS_PLUGIN_VERSION"].toString()
         val kotlinVersion = extra["KOTLIN_VERSION"].toString()
-        val playPublisherVersion = extra["PLAY_PUBLISHER_PLUGIN_VERSION_MATCHER"].toString()
+        val playPublisherVersion = extra["PLAY_PUBLISHER_PLUGIN_VERSION"].toString()
 
         id("com.android.application") version (androidGradlePluginVersion) apply (false)
         id("com.android.library") version (androidGradlePluginVersion) apply (false)
@@ -109,6 +109,7 @@ dependencyResolutionManagement {
             val androidxUiAutomatorVersion = extra["ANDROIDX_UI_AUTOMATOR_VERSION"].toString()
             val androidxWorkManagerVersion = extra["ANDROIDX_WORK_MANAGER_VERSION"].toString()
             val coreLibraryDesugaringVersion = extra["CORE_LIBRARY_DESUGARING_VERSION"].toString()
+            val flankVersion = extra["FLANK_VERSION"].toString()
             val jacocoVersion = extra["JACOCO_VERSION"].toString()
             val javaVersion = extra["ANDROID_JVM_TARGET"].toString()
             val kotlinVersion = extra["KOTLIN_VERSION"].toString()
@@ -118,6 +119,7 @@ dependencyResolutionManagement {
             val zxingVersion = extra["ZXING_VERSION"].toString()
 
             // Standalone versions
+            version("flank", flankVersion)
             version("jacoco", jacocoVersion)
             version("java", javaVersion)
 
