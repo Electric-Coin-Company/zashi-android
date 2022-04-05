@@ -27,16 +27,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import cash.z.ecc.sdk.ext.ui.ZecSendExt
 import cash.z.ecc.sdk.ext.ui.ZecStringExt
+import cash.z.ecc.sdk.ext.ui.model.MonetarySeparators
+import cash.z.ecc.sdk.ext.ui.model.ZecString
+import cash.z.ecc.sdk.ext.ui.model.toZecString
 import cash.z.ecc.sdk.fixture.ZatoshiFixture
 import cash.z.ecc.sdk.model.Memo
-import cash.z.ecc.sdk.model.MonetarySeparators
 import cash.z.ecc.sdk.model.Zatoshi
 import cash.z.ecc.sdk.model.ZecSend
-import cash.z.ecc.sdk.model.ZecSendValidation
-import cash.z.ecc.sdk.model.ZecString
-import cash.z.ecc.sdk.model.new
-import cash.z.ecc.sdk.model.toZecString
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.GradientSurface
@@ -157,7 +156,9 @@ private fun SendForm(
     }
     var memoString by rememberSaveable { mutableStateOf(previousZecSend?.memo?.value ?: "") }
 
-    var validation by rememberSaveable { mutableStateOf<Set<ZecSendValidation.Invalid.ValidationError>>(emptySet()) }
+    var validation by rememberSaveable {
+        mutableStateOf<Set<ZecSendExt.ZecSendValidation.Invalid.ValidationError>>(emptySet())
+    }
 
     Column(Modifier.fillMaxHeight()) {
         Row(Modifier.fillMaxWidth()) {
@@ -205,7 +206,8 @@ private fun SendForm(
 
         PrimaryButton(
             onClick = {
-                val zecSendValidation = ZecSend.new(
+                val zecSendValidation = ZecSendExt.new(
+                    context,
                     recipientAddressString,
                     amountZecString,
                     memoString,
@@ -213,8 +215,8 @@ private fun SendForm(
                 )
 
                 when (zecSendValidation) {
-                    is ZecSendValidation.Valid -> onCreateAndSend(zecSendValidation.zecSend)
-                    is ZecSendValidation.Invalid -> validation = zecSendValidation.validationErrors
+                    is ZecSendExt.ZecSendValidation.Valid -> onCreateAndSend(zecSendValidation.zecSend)
+                    is ZecSendExt.ZecSendValidation.Invalid -> validation = zecSendValidation.validationErrors
                 }
             },
             text = stringResource(id = R.string.send_create),

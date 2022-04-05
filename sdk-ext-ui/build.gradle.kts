@@ -16,6 +16,8 @@ android {
 dependencies {
     implementation(projects.sdkExtLib)
 
+    implementation(libs.kotlinx.coroutines.android)
+
     androidTestImplementation(libs.bundles.androidx.test)
     androidTestImplementation(libs.kotlin.test)
 

@@ -148,6 +148,7 @@ dependencies {
     androidTestImplementation(libs.bundles.androidx.test)
     androidTestImplementation(projects.sdkExtLib)
     androidTestImplementation(projects.spackleLib)
+    androidTestImplementation(projects.sdkExtUi)
 
     if (isOrchestratorEnabled) {
         androidTestUtil(libs.androidx.test.orchestrator) {

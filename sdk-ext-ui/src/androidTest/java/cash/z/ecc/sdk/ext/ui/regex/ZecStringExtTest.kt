@@ -3,8 +3,8 @@ package cash.z.ecc.sdk.ext.ui.regex
 import androidx.test.filters.SmallTest
 import cash.z.ecc.sdk.ext.ui.R
 import cash.z.ecc.sdk.ext.ui.ZecStringExt
+import cash.z.ecc.sdk.ext.ui.model.MonetarySeparators
 import cash.z.ecc.sdk.ext.ui.test.getStringResourceWithArgs
-import cash.z.ecc.sdk.model.MonetarySeparators
 import org.junit.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
