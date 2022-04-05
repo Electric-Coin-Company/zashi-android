@@ -25,7 +25,7 @@ object ZecStringExt {
      */
     fun filterContinuous(context: Context, separators: MonetarySeparators, zecString: String): Boolean {
         if (!context.getString(
-                R.string.zec_amount_regex_continuous_filter,
+                R.string.co_electriccoin_zcash_zec_amount_regex_continuous_filter,
                 separators.grouping,
                 separators.decimal
             ).toRegex().matches(zecString) || !checkFor3Digits(separators, zecString)
@@ -82,7 +82,7 @@ object ZecStringExt {
 
         return (
             context.getString(
-                R.string.zec_amount_regex_confirm_filter,
+                R.string.co_electriccoin_zcash_zec_amount_regex_confirm_filter,
                 separators.grouping,
                 separators.decimal
             ).toRegex().matches(zecString) && checkFor3Digits(separators, zecString)

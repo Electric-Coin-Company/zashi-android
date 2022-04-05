@@ -18,7 +18,7 @@ class ZecStringExtTest {
 
     private fun getContinuousRegex(): Regex {
         return getStringResourceWithArgs(
-            R.string.zec_amount_regex_continuous_filter,
+            R.string.co_electriccoin_zcash_zec_amount_regex_continuous_filter,
             arrayOf(
                 EN_US_SEPARATORS.grouping,
                 EN_US_SEPARATORS.decimal
@@ -28,7 +28,7 @@ class ZecStringExtTest {
 
     private fun getConfirmRegex(): Regex {
         return getStringResourceWithArgs(
-            R.string.zec_amount_regex_confirm_filter,
+            R.string.co_electriccoin_zcash_zec_amount_regex_confirm_filter,
             arrayOf(
                 EN_US_SEPARATORS.grouping,
                 EN_US_SEPARATORS.decimal
@@ -40,7 +40,7 @@ class ZecStringExtTest {
     @SmallTest
     fun check_continuous_regex_validity() {
         val regexString = getStringResourceWithArgs(
-            R.string.zec_amount_regex_continuous_filter,
+            R.string.co_electriccoin_zcash_zec_amount_regex_continuous_filter,
             arrayOf(
                 EN_US_SEPARATORS.grouping,
                 EN_US_SEPARATORS.decimal
@@ -60,7 +60,7 @@ class ZecStringExtTest {
     @SmallTest
     fun check_confirm_regex_validity() {
         val regexString = getStringResourceWithArgs(
-            R.string.zec_amount_regex_confirm_filter,
+            R.string.co_electriccoin_zcash_zec_amount_regex_confirm_filter,
             arrayOf(
                 EN_US_SEPARATORS.grouping,
                 EN_US_SEPARATORS.decimal
