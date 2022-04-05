@@ -26,9 +26,19 @@ class ZecStringExtTest {
         ).toRegex()
     }
 
+    private fun getConfirmRegex(): Regex {
+        return getStringResourceWithArgs(
+            R.string.zec_amount_regex_confirm_filter,
+            arrayOf(
+                EN_US_SEPARATORS.grouping,
+                EN_US_SEPARATORS.decimal
+            )
+        ).toRegex()
+    }
+
     @Test
     @SmallTest
-    fun check_regex_validity() {
+    fun check_continuous_regex_validity() {
         val regexString = getStringResourceWithArgs(
             R.string.zec_amount_regex_continuous_filter,
             arrayOf(
@@ -48,7 +58,27 @@ class ZecStringExtTest {
 
     @Test
     @SmallTest
-    fun check_regex_functionality_valid_inputs() {
+    fun check_confirm_regex_validity() {
+        val regexString = getStringResourceWithArgs(
+            R.string.zec_amount_regex_confirm_filter,
+            arrayOf(
+                EN_US_SEPARATORS.grouping,
+                EN_US_SEPARATORS.decimal
+            )
+        )
+        assertNotNull(regexString)
+
+        val regexAmountChecker = regexString.toRegex()
+
+        regexAmountChecker.also {
+            assertNotNull(regexAmountChecker)
+            assertTrue(regexAmountChecker.pattern.isNotEmpty())
+        }
+    }
+
+    @Test
+    @SmallTest
+    fun check_continuous_regex_functionality_valid_inputs() {
         getContinuousRegex().also {
             assertTrue(it.matches(""))
             assertTrue(it.matches("123"))
@@ -66,7 +96,7 @@ class ZecStringExtTest {
 
     @Test
     @SmallTest
-    fun check_regex_functionality_invalid_inputs() {
+    fun check_continuous_regex_functionality_invalid_inputs() {
         getContinuousRegex().also {
             assertFalse(it.matches("aaa"))
             assertFalse(it.matches("123aaa"))
@@ -77,6 +107,44 @@ class ZecStringExtTest {
             assertFalse(it.matches("1${EN_US_SEPARATORS.grouping}2${EN_US_SEPARATORS.grouping}3"))
             assertFalse(it.matches("1${EN_US_SEPARATORS.decimal}2${EN_US_SEPARATORS.decimal}3"))
             assertFalse(it.matches("1${EN_US_SEPARATORS.decimal}2${EN_US_SEPARATORS.grouping}3"))
+        }
+    }
+
+    @Test
+    @SmallTest
+    fun check_confirm_regex_functionality_valid_inputs() {
+        getConfirmRegex().also {
+            assertTrue(it.matches("123"))
+            assertTrue(it.matches(".123"))
+            assertTrue(it.matches("1,234"))
+            assertTrue(it.matches("1,234,567,890"))
+            assertTrue(it.matches("1.2"))
+            assertTrue(it.matches("123.4"))
+            assertTrue(it.matches("1.234"))
+            assertTrue(it.matches("1,123."))
+            assertTrue(it.matches("1,234.567"))
+            assertTrue(it.matches("1,234,567.890"))
+        }
+    }
+
+    @Test
+    @SmallTest
+    fun check_confirm_regex_functionality_invalid_inputs() {
+        getContinuousRegex().also {
+            assertFalse(it.matches("+@#$~^&*="))
+            assertFalse(it.matches("asdf"))
+            assertFalse(it.matches(".."))
+            assertFalse(it.matches(","))
+            assertFalse(it.matches(",,"))
+            assertFalse(it.matches(",."))
+            assertFalse(it.matches(".,"))
+            assertFalse(it.matches(",123"))
+            assertFalse(it.matches("1,2,3"))
+            assertFalse(it.matches("1.2,3,4"))
+            assertFalse(it.matches("123,,456"))
+            assertFalse(it.matches("123..456"))
+            assertFalse(it.matches("1.234,567"))
+            assertFalse(it.matches("1.234,567,890"))
         }
     }
 

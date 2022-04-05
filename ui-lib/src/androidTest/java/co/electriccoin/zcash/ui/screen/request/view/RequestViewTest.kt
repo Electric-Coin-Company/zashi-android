@@ -9,9 +9,9 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import androidx.test.filters.MediumTest
+import cash.z.ecc.sdk.ext.ui.model.MonetarySeparators
 import cash.z.ecc.sdk.fixture.WalletAddressFixture
 import cash.z.ecc.sdk.fixture.ZecRequestFixture
-import cash.z.ecc.sdk.model.MonetarySeparators
 import cash.z.ecc.sdk.model.Zatoshi
 import cash.z.ecc.sdk.model.ZecRequest
 import cash.z.ecc.sdk.model.ZecRequestMessage
@@ -102,8 +102,8 @@ class RequestViewTest {
         composeTestRule.clickCreateAndSend()
         assertEquals(1, testSetup.getOnCreateCount())
 
-        // e.g. 123,
-        composeTestRule.setAmount("123${separators.grouping}")
+        // e.g. 123,456
+        composeTestRule.setAmount("123${separators.grouping}456")
         composeTestRule.clickCreateAndSend()
         assertEquals(2, testSetup.getOnCreateCount())
 
