@@ -66,12 +66,17 @@ fun ChipDropDown(
                 color = ZcashTheme.colors.chipIndex,
             )
             Spacer(modifier = Modifier.padding(horizontal = 2.dp, vertical = 0.dp))
-            Text(dropdownText)
+            Text(
+                text = dropdownText,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSecondary
+            )
             Spacer(modifier = modifier.fillMaxWidth(MINIMAL_WEIGHT))
             Icon(
                 imageVector = Icons.Filled.ArrowDropDown,
                 contentDescription = null,
-                modifier = Modifier.size(18.dp)
+                modifier = Modifier.size(18.dp),
+                tint = MaterialTheme.colorScheme.onSecondary
             )
         }
         val dropdownModifier = if (expanded) {
