@@ -64,7 +64,7 @@ fun Profile(
     onSupport: () -> Unit
 ) {
     Column {
-        ProfileTopAppBar(onBack)
+        ProfileTopAppBar(onBack = onBack)
         ProfileContents(
             walletAddress = walletAddress,
             onAddressDetails = onAddressDetails,
@@ -79,11 +79,7 @@ fun Profile(
 @Composable
 private fun ProfileTopAppBar(onBack: () -> Unit) {
     SmallTopAppBar(
-        title = {
-            Text(
-                text = stringResource(id = R.string.profile_title)
-            )
-        },
+        title = { Text(text = stringResource(id = R.string.profile_title)) },
         navigationIcon = {
             IconButton(
                 onClick = onBack
@@ -91,7 +87,6 @@ private fun ProfileTopAppBar(onBack: () -> Unit) {
                 Icon(
                     imageVector = Icons.Filled.ArrowBack,
                     contentDescription = stringResource(R.string.profile_back_content_description),
-                    tint = MaterialTheme.colorScheme.secondary
                 )
             }
         }
