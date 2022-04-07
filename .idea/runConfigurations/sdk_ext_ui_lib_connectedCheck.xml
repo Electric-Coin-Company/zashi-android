@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="sdk-ext-ui:connectedCheck" type="AndroidTestRunConfigurationType" factoryName="Android Instrumented Tests">
+  <configuration default="false" name="sdk-ext-ui-lib:connectedCheck" type="AndroidTestRunConfigurationType" factoryName="Android Instrumented Tests">
     <module name="zcash-android-app.sdk-ext-ui-lib" />
     <option name="TESTING_TYPE" value="0" />
     <option name="METHOD_NAME" value="" />
