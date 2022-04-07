@@ -1,18 +1,28 @@
 package cash.z.ecc.sdk.ext.ui.model
 
 import android.content.Context
+import android.content.ContextWrapper
+import android.content.res.Configuration
+import android.content.res.Resources
 import androidx.test.core.app.ApplicationProvider
 import cash.z.ecc.sdk.model.Zatoshi
 import org.junit.Assert.assertEquals
 import org.junit.Ignore
 import org.junit.Test
+import java.util.Locale
 import kotlin.test.assertNull
 
 class ZecStringTest {
 
     companion object {
         private val EN_US_MONETARY_SEPARATORS = MonetarySeparators(',', '.')
-        private val context = ApplicationProvider.getApplicationContext<Context>()
+        private val context = run {
+            val applicationContext = ApplicationProvider.getApplicationContext<Context>()
+            val enUsConfiguration = Configuration(applicationContext.resources.configuration).apply {
+                setLocale(Locale.US)
+            }
+            applicationContext.createConfigurationContext(enUsConfiguration)
+        }
     }
 
     @Test
