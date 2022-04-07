@@ -65,6 +65,7 @@ fun Zatoshi.toZecString() = value.convertZatoshiToZecString(DECIMALS, DECIMALS)
 /**
  * @return [zecString] parsed into Zatoshi or null if parsing failed.
  */
+@SuppressWarnings("ReturnCount")
 fun Zatoshi.Companion.fromZecString(zecString: String, monetarySeparators: MonetarySeparators): Zatoshi? {
     if (zecString.isBlank()) {
         return null
