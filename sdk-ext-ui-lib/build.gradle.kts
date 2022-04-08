@@ -11,10 +11,14 @@ android {
         allWarningsAsErrors = project.property("ZCASH_IS_TREAT_WARNINGS_AS_ERRORS").toString().toBoolean()
         freeCompilerArgs = freeCompilerArgs.plus("-Xopt-in=kotlin.RequiresOptIn")
     }
+
+    resourcePrefix = "co_electriccoin_zcash_"
 }
 
 dependencies {
     implementation(projects.sdkExtLib)
+
+    implementation(libs.kotlinx.coroutines.core)
 
     androidTestImplementation(libs.bundles.androidx.test)
     androidTestImplementation(libs.kotlin.test)
