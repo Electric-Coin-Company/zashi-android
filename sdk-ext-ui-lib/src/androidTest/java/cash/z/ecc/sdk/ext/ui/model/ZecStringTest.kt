@@ -1,9 +1,7 @@
 package cash.z.ecc.sdk.ext.ui.model
 
 import android.content.Context
-import android.content.ContextWrapper
 import android.content.res.Configuration
-import android.content.res.Resources
 import androidx.test.core.app.ApplicationProvider
 import cash.z.ecc.sdk.model.Zatoshi
 import org.junit.Assert.assertEquals
