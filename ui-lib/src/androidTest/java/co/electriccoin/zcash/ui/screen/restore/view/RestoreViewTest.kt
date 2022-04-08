@@ -2,6 +2,7 @@ package co.electriccoin.zcash.ui.screen.restore.view
 
 import android.content.Context
 import android.view.inputmethod.InputMethodManager
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.assertTextEquals
@@ -9,6 +10,7 @@ import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onChildren
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -95,6 +97,43 @@ class RestoreViewTest {
 
         composeTestRule.onNodeWithTag(RestoreTag.SEED_WORD_TEXT_FIELD).also {
             it.assertTextEquals("")
+        }
+    }
+
+    @Test
+    @MediumTest
+    fun automatic_selection_test() {
+        newTestSetup(emptyList())
+
+        // contains only the TextField for now
+        composeTestRule.onNodeWithTag(RestoreTag.CHIP_LAYOUT).also {
+            it.onChildren().assertCountEquals(1)
+        }
+
+        composeTestRule.onNodeWithTag(RestoreTag.SEED_WORD_TEXT_FIELD).also {
+            it.performTextInput("rib")
+        }
+
+        // 2 autocomplete items provided
+        composeTestRule.onNode(hasText("rib") and hasTestTag(RestoreTag.AUTOCOMPLETE_ITEM)).also {
+            it.assertExists()
+        }
+        composeTestRule.onNode(hasText("ribbon") and hasTestTag(RestoreTag.AUTOCOMPLETE_ITEM)).also {
+            it.assertExists()
+        }
+
+        // no automatic selection have been done yet
+        composeTestRule.onNodeWithTag(RestoreTag.CHIP_LAYOUT).also {
+            it.onChildren().assertCountEquals(1)
+        }
+
+        composeTestRule.onNodeWithTag(RestoreTag.SEED_WORD_TEXT_FIELD).also {
+            it.performTextInput("bon")
+        }
+
+        // now automatic selection have been - ribbon selected
+        composeTestRule.onNodeWithTag(RestoreTag.CHIP_LAYOUT).also {
+            it.onChildren().assertCountEquals(2)
         }
     }
 

@@ -53,7 +53,6 @@ import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.CHIP_GRID_ROW_SIZE
 import co.electriccoin.zcash.ui.design.component.Chip
-import co.electriccoin.zcash.ui.design.component.CommonTag
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.Header
 import co.electriccoin.zcash.ui.design.component.NavigationButton
@@ -78,7 +77,9 @@ fun PreviewRestore() {
                     "above",
                     "absent",
                     "absorb",
-                    "abstract"
+                    "abstract",
+                    "rib",
+                    "ribbon"
                 ),
                 userWordList = WordList(listOf("abandon", "absorb")),
                 onBack = {},
@@ -215,7 +216,7 @@ private fun ChipGridWithText(
     Column(
         Modifier
             .verticalScroll(scrollState)
-            .testTag(CommonTag.CHIP_LAYOUT)
+            .testTag(RestoreTag.CHIP_LAYOUT)
     ) {
         userWordList.chunked(CHIP_GRID_ROW_SIZE).forEachIndexed { chunkIndex, chunk ->
             Row(Modifier.fillMaxWidth()) {
