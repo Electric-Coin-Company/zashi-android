@@ -86,6 +86,10 @@ if (firebaseTestLabKeyPath.isNotBlank()) {
         }
 
         flankVersion.set(libs.versions.flank.get())
+
+        filesToDownload.set(listOf(
+            "*/matrix_*/*test_results_merged\\.xml"
+        ))
     }
 }
 
