@@ -6,7 +6,10 @@ import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.lifecycle.Lifecycle
+import androidx.test.core.app.ActivityScenario
 import androidx.test.filters.MediumTest
+import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.onboarding.model.OnboardingStage
@@ -239,10 +242,37 @@ class OnboardingViewTest {
         assertEquals(OnboardingStage.Wallet, testSetup.getOnboardingStage())
     }
 
-    private fun newTestSetup(initalStage: OnboardingStage) = TestSetup(composeTestRule, initalStage)
+    @Test
+    @MediumTest
+    fun stage_restoration() {
+        val testSetup = newTestSetup(OnboardingStage.ShieldedByDefault)
 
-    private class TestSetup(private val composeTestRule: ComposeContentTestRule, initalStage: OnboardingStage) {
-        private val onboardingState = OnboardingState(initalStage)
+        assertEquals(OnboardingStage.ShieldedByDefault, testSetup.getOnboardingStage())
+
+        composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_next)).also {
+            it.performClick()
+        }
+
+        ActivityScenario.launch(MainActivity::class.java).also { scenario ->
+
+            assertEquals(OnboardingStage.UnifiedAddresses, testSetup.getOnboardingStage())
+
+            scenario.moveToState(Lifecycle.State.RESUMED)
+            assert(scenario.state == Lifecycle.State.RESUMED)
+
+            // recreates activity synchronously, it is ensured that the Activity state goes back to
+            // the same state as its previous state
+            scenario.recreate()
+
+            assert(scenario.state == Lifecycle.State.RESUMED)
+            assertEquals(OnboardingStage.UnifiedAddresses, testSetup.getOnboardingStage())
+        }
+    }
+
+    private fun newTestSetup(initialStage: OnboardingStage) = TestSetup(composeTestRule, initialStage)
+
+    private class TestSetup(private val composeTestRule: ComposeContentTestRule, initialStage: OnboardingStage) {
+        private val onboardingState = OnboardingState(initialStage)
 
         private val onCreateWalletCallbackCount = AtomicInteger(0)
         private val onImportWalletCallbackCount = AtomicInteger(0)
