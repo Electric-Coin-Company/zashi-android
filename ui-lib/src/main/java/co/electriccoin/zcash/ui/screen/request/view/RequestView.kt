@@ -25,14 +25,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import cash.z.ecc.sdk.ext.ui.ZecStringExt
+import cash.z.ecc.sdk.ext.ui.model.MonetarySeparators
+import cash.z.ecc.sdk.ext.ui.model.ZecString
+import cash.z.ecc.sdk.ext.ui.model.fromZecString
 import cash.z.ecc.sdk.fixture.WalletAddressFixture
-import cash.z.ecc.sdk.model.MonetarySeparators
 import cash.z.ecc.sdk.model.WalletAddress
 import cash.z.ecc.sdk.model.Zatoshi
 import cash.z.ecc.sdk.model.ZecRequest
 import cash.z.ecc.sdk.model.ZecRequestMessage
-import cash.z.ecc.sdk.model.ZecString
-import cash.z.ecc.sdk.model.fromZecString
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.GradientSurface
@@ -129,7 +129,7 @@ private fun RequestMainContent(
 
         Spacer(Modifier.fillMaxHeight(MINIMAL_WEIGHT))
 
-        val zatoshi = Zatoshi.fromZecString(amountZecString, monetarySeparators)
+        val zatoshi = Zatoshi.fromZecString(context, amountZecString, monetarySeparators)
 
         PrimaryButton(
             onClick = {

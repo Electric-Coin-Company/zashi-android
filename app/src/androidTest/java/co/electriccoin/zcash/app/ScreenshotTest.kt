@@ -23,9 +23,9 @@ import androidx.test.filters.SmallTest
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
 import androidx.test.runner.screenshot.Screenshot
+import cash.z.ecc.sdk.ext.ui.model.MonetarySeparators
 import cash.z.ecc.sdk.fixture.SeedPhraseFixture
 import cash.z.ecc.sdk.fixture.WalletAddressFixture
-import cash.z.ecc.sdk.model.MonetarySeparators
 import co.electriccoin.zcash.app.test.EccScreenCaptureProcessor
 import co.electriccoin.zcash.app.test.getStringResource
 import co.electriccoin.zcash.spackle.FirebaseTestLabUtil
