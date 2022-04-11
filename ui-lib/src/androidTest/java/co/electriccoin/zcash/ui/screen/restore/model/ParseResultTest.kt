@@ -10,6 +10,10 @@ import org.junit.Test
 class ParseResultTest {
     companion object {
         private val SAMPLE_WORD_LIST = setOf("bar", "baz", "foo")
+        private val SAMPLE_WORD_LIST_EXT = mutableSetOf<String>().also {
+            it.addAll(SAMPLE_WORD_LIST)
+            it.add("bazooka")
+        }
     }
 
     @Test
@@ -67,6 +71,29 @@ class ParseResultTest {
     fun autocomplete_multiple() {
         val actual = ParseResult.new(SAMPLE_WORD_LIST, "ba")
         assertEquals(ParseResult.Autocomplete(listOf("bar", "baz")), actual)
+    }
+
+    @Test
+    @SmallTest
+    fun autocomplete_multiple_same_base() {
+        ParseResult.new(SAMPLE_WORD_LIST_EXT, "baz").also {
+            assertTrue(it is ParseResult.Autocomplete)
+            assertTrue((it as ParseResult.Autocomplete).suggestions.size == 2)
+            assertTrue((it).suggestions.contains("baz"))
+            assertTrue((it).suggestions.contains("bazooka"))
+        }
+
+        ParseResult.new(SAMPLE_WORD_LIST_EXT, "bazo").also {
+            assertTrue(it is ParseResult.Autocomplete)
+            assertTrue((it as ParseResult.Autocomplete).suggestions.size == 1)
+            assertTrue((it).suggestions.contains("bazooka"))
+        }
+
+        ParseResult.new(SAMPLE_WORD_LIST_EXT, "bazooka").also {
+            assertTrue(it is ParseResult.Add)
+            assertTrue((it as ParseResult.Add).words.size == 1)
+            assertTrue(it.words.contains("bazooka"))
+        }
     }
 
     @Test
