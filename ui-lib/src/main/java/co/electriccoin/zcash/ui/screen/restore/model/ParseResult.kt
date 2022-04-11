@@ -31,11 +31,13 @@ internal sealed class ParseResult {
                 return Continue
             }
 
-            if (completeWordList.contains(trimmed)) {
+            val autocomplete = completeWordList.filter { it.startsWith(trimmed) }
+
+            // we accept the word only in case that there is no other available
+            if (completeWordList.contains(trimmed) && autocomplete.size == 1) {
                 return Add(listOf(trimmed))
             }
 
-            val autocomplete = completeWordList.filter { it.startsWith(trimmed) }
             if (autocomplete.isNotEmpty()) {
                 return Autocomplete(autocomplete)
             }
