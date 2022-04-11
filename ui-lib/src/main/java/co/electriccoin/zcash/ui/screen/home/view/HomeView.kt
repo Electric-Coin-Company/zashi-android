@@ -20,7 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import cash.z.ecc.android.sdk.db.entity.Transaction
-import cash.z.ecc.sdk.model.toZecString
+import cash.z.ecc.sdk.ext.ui.model.toZecString
 import cash.z.ecc.sdk.model.total
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT

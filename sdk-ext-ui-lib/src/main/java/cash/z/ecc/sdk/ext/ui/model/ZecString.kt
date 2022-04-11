@@ -1,8 +1,11 @@
-package cash.z.ecc.sdk.model
+package cash.z.ecc.sdk.ext.ui.model
 
+import android.content.Context
 import cash.z.ecc.android.sdk.ext.Conversions
 import cash.z.ecc.android.sdk.ext.convertZatoshiToZecString
 import cash.z.ecc.android.sdk.ext.convertZecToZatoshi
+import cash.z.ecc.sdk.ext.ui.ZecStringExt
+import cash.z.ecc.sdk.model.Zatoshi
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.text.DecimalFormat
@@ -66,8 +69,12 @@ fun Zatoshi.toZecString() = value.convertZatoshiToZecString(DECIMALS, DECIMALS)
  * @return [zecString] parsed into Zatoshi or null if parsing failed.
  */
 @SuppressWarnings("ReturnCount")
-fun Zatoshi.Companion.fromZecString(zecString: String, monetarySeparators: MonetarySeparators): Zatoshi? {
-    if (zecString.isBlank()) {
+fun Zatoshi.Companion.fromZecString(
+    context: Context,
+    zecString: String,
+    monetarySeparators: MonetarySeparators
+): Zatoshi? {
+    if (!ZecStringExt.filterConfirm(context, monetarySeparators, zecString)) {
         return null
     }
 
@@ -83,6 +90,7 @@ fun Zatoshi.Companion.fromZecString(zecString: String, monetarySeparators: Monet
         roundingMode = RoundingMode.HALF_EVEN // aka Bankers rounding
     }
 
+    // TODO [#343]: https://github.com/zcash/secant-android-wallet/issues/343
     val bigDecimal = try {
         decimalFormat.parse(zecString) as BigDecimal
     } catch (e: NumberFormatException) {
