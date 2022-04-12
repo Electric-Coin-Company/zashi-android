@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
@@ -121,7 +123,7 @@ private fun EducationRecoveryPhrase(onNext: () -> Unit) {
 
 @Composable
 private fun SeedPhrase(persistableWallet: PersistableWallet, onNext: () -> Unit, onCopyToClipboard: () -> Unit) {
-    Column {
+    Column(Modifier.verticalScroll(rememberScrollState())) {
         Header(stringResource(R.string.new_wallet_3_header))
         Body(stringResource(R.string.new_wallet_3_body_1))
 

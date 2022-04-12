@@ -93,6 +93,7 @@ class ProfileViewTest {
         assertEquals(0, testSetup.getOnSettingsCount())
 
         composeTestRule.onNodeWithText(getStringResource(R.string.profile_settings)).also {
+            it.performScrollTo()
             it.performClick()
         }
 
