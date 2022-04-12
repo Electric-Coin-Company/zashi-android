@@ -1,6 +1,7 @@
 package cash.z.ecc.sdk.ext.ui.model
 
 import android.content.Context
+import cash.z.ecc.android.sdk.ext.Conversions
 import cash.z.ecc.android.sdk.ext.convertZatoshiToZecString
 import cash.z.ecc.android.sdk.ext.convertZecToZatoshi
 import cash.z.ecc.sdk.ext.ui.ZecStringExt
@@ -67,6 +68,7 @@ fun Zatoshi.toZecString() = value.convertZatoshiToZecString(DECIMALS, DECIMALS)
 /**
  * @return [zecString] parsed into Zatoshi or null if parsing failed.
  */
+@SuppressWarnings("ReturnCount")
 fun Zatoshi.Companion.fromZecString(
     context: Context,
     zecString: String,
@@ -95,6 +97,12 @@ fun Zatoshi.Companion.fromZecString(
         null
     } catch (e: ParseException) {
         null
+    }
+
+    // TODO [472]: https://github.com/zcash/zcash-android-wallet-sdk/issues/472
+    // temporary workaround to prevent SDK to returns us negative result
+    if (bigDecimal?.times(Conversions.ONE_ZEC_IN_ZATOSHI)?.compareTo(BigDecimal(Long.MAX_VALUE)) ?: 0 > 0) {
+        return null
     }
 
     return Zatoshi(bigDecimal.convertZecToZatoshi())
