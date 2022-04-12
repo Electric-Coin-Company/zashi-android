@@ -256,7 +256,7 @@ if (firebaseTestLabKeyPath.isNotBlank()) {
 
                 debugApk.set(
                     project.provider {
-                        "${buildDir}/outputs/apk/zcashmainnet/release/app-zcashmainnet-release.apk"
+                        "${buildDir}/outputs/universal_apk/zcashmainnetRelease/app-zcashmainnet-release-universal.apk"
                     }
                 )
 
