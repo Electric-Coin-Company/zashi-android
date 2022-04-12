@@ -15,6 +15,7 @@ import androidx.compose.ui.test.onChildren
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.rules.ActivityScenarioRule
@@ -176,6 +177,21 @@ class ScreenshotTest {
             it.assertExists()
             it.performClick()
         }
+
+        // Contact Support is a subscreen of profile
+        composeTestRule.onNode(hasText(getStringResource(R.string.profile_support))).also {
+            it.performScrollTo()
+            it.assertExists()
+            it.performClick()
+        }
+        supportScreenshots(composeTestRule)
+
+        // Back to profile
+        composeTestRule.onNode(hasContentDescription(getStringResource(R.string.support_back_content_description))).also {
+            it.assertExists()
+            it.performClick()
+        }
+
         // Back to home
         composeTestRule.onNode(hasContentDescription(getStringResource(R.string.settings_back_content_description))).also {
             it.assertExists()
@@ -406,4 +422,12 @@ private fun sendZecScreenshots(composeTestRule: ComposeTestRule) {
     composeTestRule.waitForIdle()
 
     ScreenshotTest.takeScreenshot("Send 2")
+}
+
+private fun supportScreenshots(composeTestRule: ComposeTestRule) {
+    composeTestRule.onNode(hasText(getStringResource(R.string.support_header))).also {
+        it.assertExists()
+    }
+
+    ScreenshotTest.takeScreenshot("Support 1")
 }

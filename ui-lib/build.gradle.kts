@@ -36,6 +36,7 @@ android {
                     "src/main/res/ui/seed",
                     "src/main/res/ui/send",
                     "src/main/res/ui/settings",
+                    "src/main/res/ui/support",
                     "src/main/res/ui/wallet_address"
                 )
             )
@@ -56,10 +57,12 @@ dependencies {
     implementation(libs.kotlin.stdlib)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.datetime)
     implementation(libs.zcash.sdk)
     implementation(libs.zcash.bip39)
     implementation(libs.zxing)
 
+    implementation(projects.buildInfoLib)
     implementation(projects.preferenceApiLib)
     implementation(projects.preferenceImplAndroidLib)
     implementation(projects.sdkExtLib)
