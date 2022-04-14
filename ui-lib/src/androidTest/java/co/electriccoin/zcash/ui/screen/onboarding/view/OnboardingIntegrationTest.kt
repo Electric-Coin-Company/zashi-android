@@ -31,20 +31,23 @@ class OnboardingIntegrationTest {
     @MediumTest
     fun current_stage_restoration() {
         val restorationTester = StateRestorationTester(composeTestRule)
-        var testSetup: OnboardingTestSetup? = null
+        val testSetup = newTestSetup(OnboardingStage.UnifiedAddresses)
 
         restorationTester.setContent {
-            testSetup = newTestSetup(OnboardingStage.UnifiedAddresses)
-            testSetup!!.getDefaultContent()
+            testSetup.getDefaultContent()
         }
 
-        assertEquals(OnboardingStage.UnifiedAddresses, testSetup!!.getOnboardingStage())
+        assertEquals(OnboardingStage.UnifiedAddresses, testSetup.getOnboardingStage())
 
-        testSetup = null
+        composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_next)).also {
+            it.performClick()
+        }
+
+        assertEquals(OnboardingStage.More, testSetup.getOnboardingStage())
 
         restorationTester.emulateSavedInstanceStateRestore()
 
-        assertEquals(OnboardingStage.UnifiedAddresses, testSetup!!.getOnboardingStage())
+        assertEquals(OnboardingStage.More, testSetup.getOnboardingStage())
     }
 
     @Test
