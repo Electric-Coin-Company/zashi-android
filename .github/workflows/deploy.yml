@@ -96,7 +96,7 @@ jobs:
           ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEY_ALIAS_PASSWORD: ${{ secrets.UPLOAD_KEY_ALIAS_PASSWORD }}
           ORG_GRADLE_PROJECT_ZCASH_GOOGLE_PLAY_DEPLOY_MODE: deploy
         run: |
-          ./gradlew :app:publishBundle
+          ./gradlew :app:publishBundle :app:packageZcashmainnetReleaseUniversalApk
       - name: Collect Artifacts
         timeout-minutes: 1
         env:
@@ -105,8 +105,8 @@ jobs:
           MAPPINGS_ZIP_PATH: ${{ format('{0}/artifacts/mappings.zip', env.home) }}
         run: |
           mkdir ${ARTIFACTS_DIR_PATH}
-          zip -r ${BINARIES_ZIP_PATH} . -i *app/build/outputs/apk/*/release/*.apk *app/build/outputs/bundle/*/release/*.aab
-          zip -r ${MAPPINGS_ZIP_PATH} . -i *app/build/outputs/mapping/*/mapping.txt
+          zip -r ${BINARIES_ZIP_PATH} . -i app/build/outputs/apk/\*/\*.apk app/build/outputs/universal_apk/\*/\*.apk app/build/outputs/bundle/\*/\*.aab
+          zip -r ${MAPPINGS_ZIP_PATH} . -i app/build/outputs/mapping/\*/mapping.txt
       - name: Upload Artifacts
         uses: actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535
         timeout-minutes: 1

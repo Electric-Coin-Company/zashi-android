@@ -9,6 +9,7 @@ import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onChildren
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.test.filters.MediumTest
 import cash.z.ecc.sdk.fixture.PersistableWalletFixture
 import co.electriccoin.zcash.ui.R
@@ -54,6 +55,7 @@ class BackupViewTest {
         val testSetup = newTestSetup(BackupStage.Seed)
 
         composeTestRule.onNodeWithText(getStringResource(R.string.new_wallet_3_button_copy)).also {
+            it.performScrollTo()
             it.performClick()
         }
 
@@ -113,7 +115,10 @@ class BackupViewTest {
 
         assertEquals(BackupStage.Seed, testSetup.getStage())
 
-        composeTestRule.onNode(hasText(getStringResource(R.string.new_wallet_3_button_finished))).performClick()
+        composeTestRule.onNode(hasText(getStringResource(R.string.new_wallet_3_button_finished))).also {
+            it.performScrollTo()
+            it.performClick()
+        }
 
         assertEquals(BackupStage.Test, testSetup.getStage())
 
@@ -171,12 +176,14 @@ class BackupViewTest {
         assertEquals(BackupStage.Seed, testSetup.getStage())
 
         composeTestRule.onNodeWithText(getStringResource(R.string.new_wallet_3_button_copy)).also {
+            it.performScrollTo()
             it.performClick()
         }
 
         assertEquals(1, testSetup.getOnCopyToClipboardCount())
 
         composeTestRule.onNodeWithText(getStringResource(R.string.new_wallet_3_button_finished)).also {
+            it.performScrollTo()
             it.performClick()
         }
 
