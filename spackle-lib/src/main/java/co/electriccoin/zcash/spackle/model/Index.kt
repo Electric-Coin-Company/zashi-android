@@ -10,7 +10,7 @@ import kotlinx.parcelize.Parcelize
  */
 @JvmInline
 @Parcelize
-value class Index(val value: Int): Parcelable {
+value class Index(val value: Int) : Parcelable {
     init {
         require(value >= 0) { "Index must be >= 0 but actually is $value" }
     }
