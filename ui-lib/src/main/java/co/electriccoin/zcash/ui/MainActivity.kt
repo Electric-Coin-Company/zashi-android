@@ -132,6 +132,7 @@ class MainActivity : ComponentActivity() {
     private fun WrapOnboarding() {
         val onboardingViewModel by viewModels<OnboardingViewModel>()
 
+        // TODO [#383]: https://github.com/zcash/secant-android-wallet/issues/383
         if (!onboardingViewModel.isImporting.collectAsState().value) {
             Onboarding(
                 onboardingState = onboardingViewModel.onboardingState,
