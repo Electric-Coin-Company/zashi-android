@@ -4,6 +4,10 @@
     package="co.electriccoin.zcash.ui">
 
     <application
-        android:label="zcash-ui-test"/>
+        android:label="zcash-ui-test" >
+        <activity
+            android:name=".screen.onboarding.TestOnboardingActivity"
+            android:exported="false" />
+    </application>
 
 </manifest>
