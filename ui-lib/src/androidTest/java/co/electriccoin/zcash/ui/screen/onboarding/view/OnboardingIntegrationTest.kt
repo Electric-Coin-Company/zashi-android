@@ -24,8 +24,7 @@ class OnboardingIntegrationTest {
      * The test semantics are built upon StateRestorationTester component. We simulate screen state
      * restoration with method emulateSavedInstanceStateRestore(), which needs to have setContent()
      * method called beforehand. Then, after state restores after emulateSavedInstanceStateRestore(),
-     * setContent() callback is called again. Thus we can null the testSetup variable, call state
-     * restoration, and then make the assertion on it again.
+     * setContent() callback is called again.
      */
     @Test
     @MediumTest
