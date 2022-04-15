@@ -17,7 +17,6 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.backup.BackupTag
 import co.electriccoin.zcash.ui.screen.backup.model.BackupStage
 import co.electriccoin.zcash.ui.screen.backup.state.BackupState
-import co.electriccoin.zcash.ui.screen.backup.state.TestChoices
 import co.electriccoin.zcash.ui.test.getStringResource
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -242,7 +241,6 @@ class BackupViewTest {
                     BackupWallet(
                         PersistableWalletFixture.new(),
                         state,
-                        TestChoices(),
                         onCopyToClipboard = { onCopyToClipboardCount.incrementAndGet() },
                         onComplete = { onCompleteCallbackCount.incrementAndGet() }
                     )

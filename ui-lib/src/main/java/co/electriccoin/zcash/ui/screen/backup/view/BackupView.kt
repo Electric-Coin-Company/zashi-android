@@ -12,6 +12,9 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -33,6 +36,7 @@ import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.TertiaryButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.backup.BackupTag
+import co.electriccoin.zcash.ui.screen.backup.ext.Saver
 import co.electriccoin.zcash.ui.screen.backup.model.BackupStage
 import co.electriccoin.zcash.ui.screen.backup.state.BackupState
 import co.electriccoin.zcash.ui.screen.backup.state.TestChoices
@@ -45,7 +49,6 @@ fun ComposablePreview() {
             BackupWallet(
                 PersistableWalletFixture.new(),
                 BackupState(BackupStage.EducationOverview),
-                TestChoices(),
                 onCopyToClipboard = {},
                 onComplete = {}
             )
@@ -60,10 +63,11 @@ fun ComposablePreview() {
 fun BackupWallet(
     wallet: PersistableWallet,
     backupState: BackupState,
-    selectedTestChoices: TestChoices,
     onCopyToClipboard: () -> Unit,
     onComplete: () -> Unit,
 ) {
+    val selectedTestChoices by rememberSaveable(stateSaver = TestChoices.Saver) { mutableStateOf(TestChoices()) }
+
     Column {
         when (backupState.current.collectAsState().value) {
             BackupStage.EducationOverview -> EducationOverview(onNext = backupState::goNext)

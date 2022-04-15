@@ -152,7 +152,7 @@ class MainActivity : ComponentActivity() {
         val backupViewModel by viewModels<BackupViewModel>()
 
         BackupWallet(
-            persistableWallet, backupViewModel.backupState, backupViewModel.testChoices,
+            persistableWallet, backupViewModel.backupState,
             onCopyToClipboard = {
                 copyToClipboard(applicationContext, persistableWallet)
             }, onComplete = {
