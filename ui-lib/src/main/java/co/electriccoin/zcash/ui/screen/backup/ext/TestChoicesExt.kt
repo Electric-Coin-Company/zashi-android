@@ -17,10 +17,13 @@ val TestChoices.Companion.Saver
     }
 
 private fun TestChoices.toSaverMap() = buildMap {
-    put(KEY_TEST_CHOICES, current.value)
+    put(KEY_TEST_CHOICES, current.value.mapKeys { it.key.value })
 }
 
 @Suppress("UNCHECKED_CAST")
 private fun fromSaverMap(map: Map<String, Any?>): Map<Index, String?> {
-    return map.getOrDefault(KEY_TEST_CHOICES, emptyMap<Index, String?>()) as Map<Index, String?>
+    return if(map.isEmpty())
+        emptyMap()
+    else
+        (map[KEY_TEST_CHOICES] as Map<Int, String?>).mapKeys { Index(it.key) }
 }
