@@ -2,24 +2,26 @@ package co.electriccoin.zcash.ui.screen.onboarding.view
 
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsEnabled
-import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.filters.MediumTest
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.onboarding.model.OnboardingStage
-import co.electriccoin.zcash.ui.screen.onboarding.state.OnboardingState
 import co.electriccoin.zcash.ui.test.getStringResource
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
-import java.util.concurrent.atomic.AtomicInteger
 
 class OnboardingViewTest {
     @get:Rule
     val composeTestRule = createComposeRule()
+
+    private fun newTestSetup(initialStage: OnboardingStage): OnboardingTestSetup {
+        return OnboardingTestSetup(composeTestRule, initialStage).apply {
+            setDefaultContent()
+        }
+    }
 
     // Sanity check the TestSetup
     @Test
@@ -237,41 +239,5 @@ class OnboardingViewTest {
         }
 
         assertEquals(OnboardingStage.Wallet, testSetup.getOnboardingStage())
-    }
-
-    private fun newTestSetup(initalStage: OnboardingStage) = TestSetup(composeTestRule, initalStage)
-
-    private class TestSetup(private val composeTestRule: ComposeContentTestRule, initalStage: OnboardingStage) {
-        private val onboardingState = OnboardingState(initalStage)
-
-        private val onCreateWalletCallbackCount = AtomicInteger(0)
-        private val onImportWalletCallbackCount = AtomicInteger(0)
-
-        fun getOnCreateWalletCallbackCount(): Int {
-            composeTestRule.waitForIdle()
-            return onCreateWalletCallbackCount.get()
-        }
-
-        fun getOnImportWalletCallbackCount(): Int {
-            composeTestRule.waitForIdle()
-            return onImportWalletCallbackCount.get()
-        }
-
-        fun getOnboardingStage(): OnboardingStage {
-            composeTestRule.waitForIdle()
-            return onboardingState.current.value
-        }
-
-        init {
-            composeTestRule.setContent {
-                ZcashTheme {
-                    Onboarding(
-                        onboardingState,
-                        onCreateWallet = { onCreateWalletCallbackCount.incrementAndGet() },
-                        onImportWallet = { onImportWalletCallbackCount.incrementAndGet() }
-                    )
-                }
-            }
-        }
     }
 }
