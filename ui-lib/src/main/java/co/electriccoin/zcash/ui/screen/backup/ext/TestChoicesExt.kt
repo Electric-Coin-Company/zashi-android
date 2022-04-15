@@ -22,7 +22,7 @@ private fun TestChoices.toSaverMap() = buildMap {
 
 @Suppress("UNCHECKED_CAST")
 private fun fromSaverMap(map: Map<String, Any?>): Map<Index, String?> {
-    return if(map.isEmpty())
+    return if (map.isEmpty())
         emptyMap()
     else
         (map[KEY_TEST_CHOICES] as Map<Int, String?>).mapKeys { Index(it.key) }
