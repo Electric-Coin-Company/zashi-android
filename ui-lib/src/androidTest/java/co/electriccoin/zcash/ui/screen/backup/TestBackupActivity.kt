@@ -5,15 +5,12 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import cash.z.ecc.sdk.fixture.PersistableWalletFixture
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
-import co.electriccoin.zcash.ui.fixture.TestChoicesFixture
 import co.electriccoin.zcash.ui.screen.backup.model.BackupStage
 import co.electriccoin.zcash.ui.screen.backup.state.BackupState
-import co.electriccoin.zcash.ui.screen.backup.view.BackupWallet
 
 class TestBackupActivity : ComponentActivity() {
 
@@ -30,21 +27,14 @@ class TestBackupActivity : ComponentActivity() {
                         .fillMaxWidth()
                         .fillMaxHeight()
                 ) {
-                    WrapBackup()
+                    WrapBackup(
+                        persistableWallet = PersistableWalletFixture.new(),
+                        backupState = BackupState(BackupStage.EducationOverview),
+                        onCopyToClipboard = {},
+                        onBackupComplete = {}
+                    )
                 }
             }
         }
-    }
-
-    @Composable
-    private fun WrapBackup() {
-        BackupWallet(
-            PersistableWalletFixture.new(),
-            BackupState(BackupStage.EducationOverview),
-            TestChoicesFixture.new(mutableMapOf()),
-            onCopyToClipboard = {},
-            onComplete = {},
-            onChoicesChanged = {}
-        )
     }
 }
