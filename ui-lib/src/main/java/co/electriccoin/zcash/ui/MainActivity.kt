@@ -14,6 +14,9 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
@@ -30,6 +33,7 @@ import cash.z.ecc.sdk.type.fromResources
 import co.electriccoin.zcash.ui.design.compat.FontCompat
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.screen.backup.ext.Saver
 import co.electriccoin.zcash.ui.screen.backup.state.TestChoices
 import co.electriccoin.zcash.ui.screen.backup.view.BackupWallet
 import co.electriccoin.zcash.ui.screen.backup.viewmodel.BackupViewModel
@@ -153,8 +157,10 @@ class MainActivity : ComponentActivity() {
     private fun WrapBackup(persistableWallet: PersistableWallet) {
         val backupViewModel by viewModels<BackupViewModel>()
 
+        val selectedTestChoices by rememberSaveable(stateSaver = TestChoices.Saver) { mutableStateOf(TestChoices()) }
+
         BackupWallet(
-            persistableWallet, backupViewModel.backupState, TestChoices(),
+            persistableWallet, backupViewModel.backupState, selectedTestChoices,
             onCopyToClipboard = {
                 copyToClipboard(applicationContext, persistableWallet)
             }, onComplete = {
