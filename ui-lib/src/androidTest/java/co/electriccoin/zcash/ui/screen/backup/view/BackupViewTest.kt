@@ -3,7 +3,6 @@ package co.electriccoin.zcash.ui.screen.backup.view
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
-import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onChildren
@@ -11,21 +10,24 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.test.filters.MediumTest
-import cash.z.ecc.sdk.fixture.PersistableWalletFixture
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.fixture.TestChoicesFixture
 import co.electriccoin.zcash.ui.screen.backup.BackupTag
 import co.electriccoin.zcash.ui.screen.backup.model.BackupStage
-import co.electriccoin.zcash.ui.screen.backup.state.BackupState
 import co.electriccoin.zcash.ui.test.getStringResource
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
-import java.util.concurrent.atomic.AtomicInteger
 
 class BackupViewTest {
     @get:Rule
     val composeTestRule = createComposeRule()
+
+    private fun newTestSetup(initialStage: BackupStage): BackupTestSetup {
+        return BackupTestSetup(composeTestRule, initialStage, TestChoicesFixture.new(mutableMapOf())).apply {
+            setDefaultContent()
+        }
+    }
 
     // Sanity check the TestSetup
     @Test
@@ -209,43 +211,5 @@ class BackupViewTest {
         composeTestRule.onNode(hasText(getStringResource(R.string.new_wallet_5_button_finished))).performClick()
 
         assertEquals(1, testSetup.getOnCompleteCallbackCount())
-    }
-
-    private fun newTestSetup(initalStage: BackupStage) = TestSetup(composeTestRule, initalStage)
-
-    private class TestSetup(private val composeTestRule: ComposeContentTestRule, initalStage: BackupStage) {
-        private val state = BackupState(initalStage)
-
-        private val onCopyToClipboardCount = AtomicInteger(0)
-
-        private val onCompleteCallbackCount = AtomicInteger(0)
-
-        fun getOnCopyToClipboardCount(): Int {
-            composeTestRule.waitForIdle()
-            return onCopyToClipboardCount.get()
-        }
-
-        fun getOnCompleteCallbackCount(): Int {
-            composeTestRule.waitForIdle()
-            return onCompleteCallbackCount.get()
-        }
-
-        fun getStage(): BackupStage {
-            composeTestRule.waitForIdle()
-            return state.current.value
-        }
-
-        init {
-            composeTestRule.setContent {
-                ZcashTheme {
-                    BackupWallet(
-                        PersistableWalletFixture.new(),
-                        state,
-                        onCopyToClipboard = { onCopyToClipboardCount.incrementAndGet() },
-                        onComplete = { onCompleteCallbackCount.incrementAndGet() }
-                    )
-                }
-            }
-        }
     }
 }

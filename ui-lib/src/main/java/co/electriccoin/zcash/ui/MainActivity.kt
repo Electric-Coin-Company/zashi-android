@@ -30,6 +30,7 @@ import cash.z.ecc.sdk.type.fromResources
 import co.electriccoin.zcash.ui.design.compat.FontCompat
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.screen.backup.state.TestChoices
 import co.electriccoin.zcash.ui.screen.backup.view.BackupWallet
 import co.electriccoin.zcash.ui.screen.backup.viewmodel.BackupViewModel
 import co.electriccoin.zcash.ui.screen.home.model.spendableBalance
@@ -153,12 +154,12 @@ class MainActivity : ComponentActivity() {
         val backupViewModel by viewModels<BackupViewModel>()
 
         BackupWallet(
-            persistableWallet, backupViewModel.backupState,
+            persistableWallet, backupViewModel.backupState, TestChoices(),
             onCopyToClipboard = {
                 copyToClipboard(applicationContext, persistableWallet)
             }, onComplete = {
                 walletViewModel.persistBackupComplete()
-            }
+            }, null
         )
     }
 

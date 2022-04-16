@@ -19,14 +19,7 @@ class TestChoicesTest {
     @SmallTest
     @OptIn(ExperimentalCoroutinesApi::class)
     fun save_restore_comparison() = runTest {
-        val original = TestChoicesFixture.new(
-            mapOf(
-                Pair(Index(0), "rib"),
-                Pair(Index(1), "eye"),
-                Pair(Index(2), "baz"),
-                Pair(Index(3), "foo"),
-            )
-        )
+        val original = TestChoicesFixture.new(TestChoicesFixture.INITIAL_CHOICES)
         val saved = with(TestChoices.Saver) {
             val allowingScope = SaverScope { true }
             allowingScope.save(original)
