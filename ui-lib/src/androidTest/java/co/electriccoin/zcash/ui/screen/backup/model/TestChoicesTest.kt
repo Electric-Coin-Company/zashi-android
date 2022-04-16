@@ -6,8 +6,6 @@ import co.electriccoin.zcash.spackle.model.Index
 import co.electriccoin.zcash.ui.fixture.TestChoicesFixture
 import co.electriccoin.zcash.ui.screen.backup.ext.Saver
 import co.electriccoin.zcash.ui.screen.backup.state.TestChoices
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -17,8 +15,7 @@ class TestChoicesTest {
 
     @Test
     @SmallTest
-    @OptIn(ExperimentalCoroutinesApi::class)
-    fun save_restore_comparison() = runTest {
+    fun save_restore_comparison() {
         val original = TestChoicesFixture.new(TestChoicesFixture.INITIAL_CHOICES)
         val saved = with(TestChoices.Saver) {
             val allowingScope = SaverScope { true }
