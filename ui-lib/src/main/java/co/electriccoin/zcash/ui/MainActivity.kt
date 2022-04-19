@@ -1,6 +1,5 @@
 package co.electriccoin.zcash.ui
 
-import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
@@ -14,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
@@ -30,8 +30,8 @@ import cash.z.ecc.sdk.type.fromResources
 import co.electriccoin.zcash.ui.design.compat.FontCompat
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
-import co.electriccoin.zcash.ui.screen.backup.view.BackupWallet
-import co.electriccoin.zcash.ui.screen.backup.viewmodel.BackupViewModel
+import co.electriccoin.zcash.ui.screen.backup.WrapBackup
+import co.electriccoin.zcash.ui.screen.backup.copyToClipboard
 import co.electriccoin.zcash.ui.screen.home.model.spendableBalance
 import co.electriccoin.zcash.ui.screen.home.view.Home
 import co.electriccoin.zcash.ui.screen.home.viewmodel.SecretState
@@ -112,7 +112,10 @@ class MainActivity : ComponentActivity() {
                         SecretState.None -> {
                             WrapOnboarding()
                         }
-                        is SecretState.NeedsBackup -> WrapBackup(secretState.persistableWallet)
+                        is SecretState.NeedsBackup -> WrapBackup(
+                            secretState.persistableWallet,
+                            onBackupComplete = { walletViewModel.persistBackupComplete() }
+                        )
                         is SecretState.Ready -> Navigation()
                     }
                 }
@@ -146,20 +149,6 @@ class MainActivity : ComponentActivity() {
         } else {
             WrapRestore()
         }
-    }
-
-    @Composable
-    private fun WrapBackup(persistableWallet: PersistableWallet) {
-        val backupViewModel by viewModels<BackupViewModel>()
-
-        BackupWallet(
-            persistableWallet, backupViewModel.backupState, backupViewModel.testChoices,
-            onCopyToClipboard = {
-                copyToClipboard(applicationContext, persistableWallet)
-            }, onComplete = {
-                walletViewModel.persistBackupComplete()
-            }
-        )
     }
 
     @Composable
@@ -450,15 +439,6 @@ class MainActivity : ComponentActivity() {
         @VisibleForTesting
         const val NAV_SEND = "send"
     }
-}
-
-private fun copyToClipboard(context: Context, persistableWallet: PersistableWallet) {
-    val clipboardManager = context.getSystemService(ClipboardManager::class.java)
-    val data = ClipData.newPlainText(
-        context.getString(R.string.new_wallet_clipboard_tag),
-        persistableWallet.seedPhrase.joinToString()
-    )
-    clipboardManager.setPrimaryClip(data)
 }
 
 private fun ZecRequest.newShareIntent(context: Context) = runBlocking {

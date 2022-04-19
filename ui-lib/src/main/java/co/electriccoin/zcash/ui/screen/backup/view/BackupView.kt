@@ -12,6 +12,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -32,6 +33,7 @@ import co.electriccoin.zcash.ui.design.component.NavigationButton
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.TertiaryButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.fixture.TestChoicesFixture
 import co.electriccoin.zcash.ui.screen.backup.BackupTag
 import co.electriccoin.zcash.ui.screen.backup.model.BackupStage
 import co.electriccoin.zcash.ui.screen.backup.state.BackupState
@@ -45,9 +47,10 @@ fun ComposablePreview() {
             BackupWallet(
                 PersistableWalletFixture.new(),
                 BackupState(BackupStage.EducationOverview),
-                TestChoices(),
+                TestChoicesFixture.new(mutableMapOf()),
                 onCopyToClipboard = {},
-                onComplete = {}
+                onComplete = {},
+                onChoicesChanged = {}
             )
         }
     }
@@ -57,12 +60,14 @@ fun ComposablePreview() {
  * @param onComplete Callback when the user has completed the backup test.
  */
 @Composable
+@Suppress("LongParameterList")
 fun BackupWallet(
     wallet: PersistableWallet,
     backupState: BackupState,
-    selectedTestChoices: TestChoices,
+    choices: TestChoices,
     onCopyToClipboard: () -> Unit,
     onComplete: () -> Unit,
+    onChoicesChanged: ((choicesCount: Int) -> Unit)?,
 ) {
     Column {
         when (backupState.current.collectAsState().value) {
@@ -75,9 +80,10 @@ fun BackupWallet(
             )
             BackupStage.Test -> Test(
                 wallet,
-                selectedTestChoices,
+                choices,
                 onBack = backupState::goPrevious,
-                onNext = backupState::goNext
+                onNext = backupState::goNext,
+                onChoicesChanged = onChoicesChanged
             )
             BackupStage.Complete -> Complete(
                 onComplete = onComplete,
@@ -144,7 +150,8 @@ private fun Test(
     wallet: PersistableWallet,
     selectedTestChoices: TestChoices,
     onBack: () -> Unit,
-    onNext: () -> Unit
+    onNext: () -> Unit,
+    onChoicesChanged: ((choicesCount: Int) -> Unit)?
 ) {
     val splitSeedPhrase = wallet.seedPhrase.split
 
@@ -152,7 +159,7 @@ private fun Test(
 
     when {
         currentSelectedTestChoice.size != testIndices.size -> {
-            TestInProgress(splitSeedPhrase, selectedTestChoices, onBack)
+            TestInProgress(splitSeedPhrase, selectedTestChoices, onBack, onChoicesChanged)
         }
         currentSelectedTestChoice.all { splitSeedPhrase[it.key.value] == it.value } -> {
             // The user got the test correct
@@ -178,6 +185,7 @@ private fun TestInProgress(
     splitSeedPhrase: List<String>,
     selectedTestChoices: TestChoices,
     onBack: () -> Unit,
+    onChoicesChanged: ((choicesCount: Int) -> Unit)?,
 ) {
     val testChoices = splitSeedPhrase
         .mapIndexed { index, word -> TestChoice(Index(index), word) }
@@ -216,6 +224,8 @@ private fun TestInProgress(
                                         this[currentIndex] = testChoices[it.value].word
                                     }
                                 )
+                                if (onChoicesChanged != null)
+                                    onChoicesChanged(selectedTestChoices.current.value.size)
                             }
                         } else {
                             Chip(

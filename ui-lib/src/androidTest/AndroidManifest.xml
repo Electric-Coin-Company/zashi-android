@@ -8,6 +8,9 @@
         <activity
             android:name=".screen.onboarding.TestOnboardingActivity"
             android:exported="false" />
+        <activity
+            android:name=".screen.backup.TestBackupActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

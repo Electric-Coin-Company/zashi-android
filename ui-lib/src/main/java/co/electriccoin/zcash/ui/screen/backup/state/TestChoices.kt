@@ -12,4 +12,6 @@ class TestChoices(initial: Map<Index, String?> = emptyMap()) {
     fun set(map: Map<Index, String?>) {
         mutableState.value = HashMap(map)
     }
+
+    companion object
 }
