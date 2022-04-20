@@ -9,7 +9,7 @@ android {
     kotlinOptions {
         jvmTarget = libs.versions.java.get()
         allWarningsAsErrors = project.property("ZCASH_IS_TREAT_WARNINGS_AS_ERRORS").toString().toBoolean()
-        freeCompilerArgs = freeCompilerArgs.plus("-Xopt-in=kotlin.RequiresOptIn")
+        freeCompilerArgs = freeCompilerArgs.plus("-opt-in=kotlin.RequiresOptIn")
     }
 
     resourcePrefix = "co_electriccoin_zcash_"
