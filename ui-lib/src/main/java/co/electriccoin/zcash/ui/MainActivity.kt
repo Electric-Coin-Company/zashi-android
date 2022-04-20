@@ -46,6 +46,7 @@ import co.electriccoin.zcash.ui.screen.restore.viewmodel.RestoreViewModel
 import co.electriccoin.zcash.ui.screen.seed.view.Seed
 import co.electriccoin.zcash.ui.screen.send.view.Send
 import co.electriccoin.zcash.ui.screen.settings.view.Settings
+import co.electriccoin.zcash.ui.screen.support.WrapSupport
 import co.electriccoin.zcash.ui.screen.wallet_address.view.WalletAddresses
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -216,7 +217,7 @@ class MainActivity : ComponentActivity() {
                     onAddressBook = { },
                     onSettings = { navController.navigate(NAV_SETTINGS) },
                     onCoinholderVote = { },
-                    onSupport = {}
+                    onSupport = { navController.navigate(NAV_SUPPORT) }
                 )
             }
             composable(NAV_WALLET_ADDRESS_DETAILS) {
@@ -248,6 +249,10 @@ class MainActivity : ComponentActivity() {
             }
             composable(NAV_SEND) {
                 WrapSend(goBack = { navController.popBackStack() })
+            }
+            composable(NAV_SUPPORT) {
+                // Pop back stack won't be right if we deep link into support
+                WrapSupport(goBack = { navController.popBackStack() })
             }
         }
     }
@@ -438,6 +443,9 @@ class MainActivity : ComponentActivity() {
 
         @VisibleForTesting
         const val NAV_SEND = "send"
+
+        @VisibleForTesting
+        const val NAV_SUPPORT = "support"
     }
 }
 
