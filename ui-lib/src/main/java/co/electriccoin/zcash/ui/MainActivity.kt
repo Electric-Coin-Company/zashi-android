@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
@@ -47,6 +46,7 @@ import co.electriccoin.zcash.ui.screen.seed.view.Seed
 import co.electriccoin.zcash.ui.screen.send.view.Send
 import co.electriccoin.zcash.ui.screen.settings.view.Settings
 import co.electriccoin.zcash.ui.screen.support.WrapSupport
+import co.electriccoin.zcash.ui.screen.update_available.WrapUpdateAvailable
 import co.electriccoin.zcash.ui.screen.wallet_address.view.WalletAddresses
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -196,6 +196,7 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
+    @SuppressWarnings("LongMethod")
     private fun Navigation() {
         val navController = rememberNavController().also {
             navControllerForTesting = it
@@ -204,7 +205,10 @@ class MainActivity : ComponentActivity() {
         NavHost(navController = navController, startDestination = NAV_HOME) {
             composable(NAV_HOME) {
                 WrapHome(
-                    goScan = {},
+                    goScan = {
+                        // TODO temporary action usage
+                        navController.navigate(NAV_UPDATE_AVAILABLE)
+                    },
                     goProfile = { navController.navigate(NAV_PROFILE) },
                     goSend = { navController.navigate(NAV_SEND) },
                     goRequest = { navController.navigate(NAV_REQUEST) }
@@ -253,6 +257,9 @@ class MainActivity : ComponentActivity() {
             composable(NAV_SUPPORT) {
                 // Pop back stack won't be right if we deep link into support
                 WrapSupport(goBack = { navController.popBackStack() })
+            }
+            composable(NAV_UPDATE_AVAILABLE) {
+                WrapUpdateAvailable()
             }
         }
     }
@@ -446,6 +453,9 @@ class MainActivity : ComponentActivity() {
 
         @VisibleForTesting
         const val NAV_SUPPORT = "support"
+
+        @VisibleForTesting
+        const val NAV_UPDATE_AVAILABLE = "update_available"
     }
 }
 

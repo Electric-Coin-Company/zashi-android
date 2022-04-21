@@ -58,7 +58,8 @@ fun PrimaryButton(
 fun SecondaryButton(
     onClick: () -> Unit,
     text: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true
 ) {
     Button(
         onClick = onClick,
@@ -67,6 +68,7 @@ fun SecondaryButton(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 8.dp)
         ),
+        enabled = enabled,
         colors = buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
     ) {
         Text(
@@ -99,7 +101,8 @@ fun NavigationButton(
 fun TertiaryButton(
     onClick: () -> Unit,
     text: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true
 ) {
     Button(
         onClick = onClick,
@@ -108,6 +111,7 @@ fun TertiaryButton(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 8.dp)
         ),
+        enabled = enabled,
         elevation = ButtonDefaults.buttonElevation(0.dp, 0.dp, 0.dp),
         colors = buttonColors(containerColor = ZcashTheme.colors.tertiary)
     ) {
