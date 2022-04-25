@@ -62,6 +62,7 @@ dependencyResolutionManagement {
                     includeGroup("android.arch.core")
                     includeGroup("com.google.android.material")
                     includeGroup("com.google.testing.platform")
+                    includeGroup("com.google.android.play")
                     includeGroupByRegex("androidx.*")
                     includeGroupByRegex("com\\.android.*")
                 }
@@ -73,6 +74,7 @@ dependencyResolutionManagement {
                     excludeGroup("android.arch.lifecycle")
                     excludeGroup("android.arch.core")
                     excludeGroup("com.google.android.material")
+                    excludeGroup("com.google.android.play")
                     excludeGroupByRegex("androidx.*")
                     excludeGroupByRegex("com\\.android.*")
                 }
@@ -118,6 +120,8 @@ dependencyResolutionManagement {
             val zcashBip39Version = extra["ZCASH_BIP39_VERSION"].toString()
             val zcashSdkVersion = extra["ZCASH_SDK_VERSION"].toString()
             val zxingVersion = extra["ZXING_VERSION"].toString()
+            val inappUpdateVersion = extra["IN_APP_UPDATE_VERSION"].toString()
+            val inappUpdateKtxVersion = extra["IN_APP_UPDATE_KTX_VERSION"].toString()
 
             // Standalone versions
             version("flank", flankVersion)
@@ -154,6 +158,8 @@ dependencyResolutionManagement {
             library("zcash-bip39", "cash.z.ecc.android:kotlin-bip39:$zcashBip39Version")
             library("zcash-walletplgns", "cash.z.ecc.android:zcash-android-wallet-plugins:$zcashBip39Version")
             library("zxing", "com.google.zxing:core:$zxingVersion")
+            library("inapp-update", "com.google.android.play:core:$inappUpdateVersion")
+            library("inapp-update_ktx", "com.google.android.play:core-ktx:$inappUpdateKtxVersion")
             // Test libraries
             library("androidx-compose-test-junit", "androidx.compose.ui:ui-test-junit4:$androidxComposeVersion")
             library("androidx-compose-test-manifest", "androidx.compose.ui:ui-test-manifest:$androidxComposeVersion")

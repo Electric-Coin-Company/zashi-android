@@ -68,6 +68,8 @@ dependencies {
     implementation(libs.zcash.sdk)
     implementation(libs.zcash.bip39)
     implementation(libs.zxing)
+    implementation(libs.inapp.update)
+    implementation(libs.inapp.update.ktx)
 
     implementation(projects.buildInfoLib)
     implementation(projects.preferenceApiLib)

@@ -1,14 +1,21 @@
 package co.electriccoin.zcash.ui.fixture
 
+import co.electriccoin.zcash.ui.AppUpdateChecker
 import co.electriccoin.zcash.ui.screen.update_available.model.UpdateInfo
+import com.google.android.play.core.appupdate.AppUpdateInfo
 
 object UpdateInfoFixture {
 
-    const val INITIAL_PRIORITY = 0
-    const val INITIAL_FORCE = true
+    private val INITIAL_PRIORITY = AppUpdateChecker.Priority.LOW
+    private const val INITIAL_FORCE = false
 
     fun new(
-        priority: Int = INITIAL_PRIORITY,
-        force: Boolean = INITIAL_FORCE
-    ) = UpdateInfo(priority, force)
+        priority: AppUpdateChecker.Priority = INITIAL_PRIORITY,
+        force: Boolean = INITIAL_FORCE,
+        appUpdateInfo: AppUpdateInfo?
+    ) = UpdateInfo(
+        priority,
+        force,
+        appUpdateInfo
+    )
 }

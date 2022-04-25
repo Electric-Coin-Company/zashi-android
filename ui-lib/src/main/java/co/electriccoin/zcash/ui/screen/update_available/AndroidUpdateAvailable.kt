@@ -8,15 +8,19 @@ import androidx.compose.runtime.collectAsState
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.screen.update_available.view.UpdateAvailable
 import co.electriccoin.zcash.ui.screen.update_available.viewmodel.UpdateAvailableViewModel
+import com.google.android.play.core.appupdate.AppUpdateInfo
 
 @Composable
-internal fun MainActivity.WrapUpdateAvailable() {
-    WrapUpdateAvailable(this)
+internal fun MainActivity.WrapUpdateAvailable(appUpdateInfo: AppUpdateInfo) {
+    WrapUpdateAvailable(this, appUpdateInfo)
 }
 
 @Composable
-internal fun WrapUpdateAvailable(activity: ComponentActivity) {
-    val viewModel by activity.viewModels<UpdateAvailableViewModel>()
+internal fun WrapUpdateAvailable(activity: ComponentActivity, appUpdateInfo: AppUpdateInfo) {
+    val viewModel by activity.viewModels<UpdateAvailableViewModel> {
+        UpdateAvailableViewModel.UpdateAvailableViewModelFactory(activity.application, appUpdateInfo)
+    }
+
     val updateInfo = viewModel.updateInfo.collectAsState().value
 
     UpdateAvailable(

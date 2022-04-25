@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
@@ -48,6 +49,7 @@ import co.electriccoin.zcash.ui.screen.settings.view.Settings
 import co.electriccoin.zcash.ui.screen.support.WrapSupport
 import co.electriccoin.zcash.ui.screen.update_available.WrapUpdateAvailable
 import co.electriccoin.zcash.ui.screen.wallet_address.view.WalletAddresses
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlin.time.Duration
@@ -205,13 +207,19 @@ class MainActivity : ComponentActivity() {
         NavHost(navController = navController, startDestination = NAV_HOME) {
             composable(NAV_HOME) {
                 WrapHome(
-                    goScan = {
-                        // TODO temporary action usage
-                        navController.navigate(NAV_UPDATE_AVAILABLE)
-                    },
+                    goScan = {},
                     goProfile = { navController.navigate(NAV_PROFILE) },
                     goSend = { navController.navigate(NAV_SEND) },
                     goRequest = { navController.navigate(NAV_REQUEST) }
+                )
+                AppUpdateCheckerImpl.checkForUpdateAvailability(
+                    AppUpdateManagerFactory.create(LocalContext.current),
+                    AppUpdateCheckerImpl.stanelessDays,
+                    onUpdateAvailable = { appUpdateInfo ->
+                        composable(NAV_UPDATE_AVAILABLE) {
+                            WrapUpdateAvailable(appUpdateInfo)
+                        }
+                    }
                 )
             }
             composable(NAV_PROFILE) {
@@ -257,9 +265,6 @@ class MainActivity : ComponentActivity() {
             composable(NAV_SUPPORT) {
                 // Pop back stack won't be right if we deep link into support
                 WrapSupport(goBack = { navController.popBackStack() })
-            }
-            composable(NAV_UPDATE_AVAILABLE) {
-                WrapUpdateAvailable()
             }
         }
     }

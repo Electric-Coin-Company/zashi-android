@@ -36,7 +36,7 @@ fun PreviewUpdateAvailable() {
     ZcashTheme(darkTheme = true) {
         GradientSurface {
             UpdateAvailable(
-                UpdateInfoFixture.new(),
+                UpdateInfoFixture.new(appUpdateInfo = null),
                 onDownload = {},
                 onLater = {}
             )
