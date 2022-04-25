@@ -11,11 +11,11 @@ import cash.z.ecc.sdk.fixture.WalletAddressFixture
 import cash.z.ecc.sdk.model.WalletAddress
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.screen.profile.util.ProfileConfiguration
 import co.electriccoin.zcash.ui.test.getStringResource
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import java.util.concurrent.atomic.AtomicInteger
@@ -72,17 +72,18 @@ class ProfileViewTest {
 
     @Test
     @MediumTest
-    @Ignore("https://github.com/zcash/secant-android-wallet/issues/247")
     fun address_book() = runTest {
-        val testSetup = newTestSetup(WalletAddressFixture.unified())
+        if (ProfileConfiguration.IS_ADDRESS_BOOK_ENABLED) {
+            val testSetup = newTestSetup(WalletAddressFixture.unified())
 
-        assertEquals(0, testSetup.getOnAddressBookCount())
+            assertEquals(0, testSetup.getOnAddressBookCount())
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.profile_address_book)).also {
-            it.performClick()
+            composeTestRule.onNodeWithText(getStringResource(R.string.profile_address_book)).also {
+                it.performClick()
+            }
+
+            assertEquals(1, testSetup.getOnAddressBookCount())
         }
-
-        assertEquals(1, testSetup.getOnAddressBookCount())
     }
 
     @Test
@@ -103,16 +104,18 @@ class ProfileViewTest {
     @Test
     @MediumTest
     fun coinholder_vote() = runTest {
-        val testSetup = newTestSetup(WalletAddressFixture.unified())
+        if (ProfileConfiguration.IS_COINHOLDER_VOTE_ENABLED) {
+            val testSetup = newTestSetup(WalletAddressFixture.unified())
 
-        assertEquals(0, testSetup.getOnCoinholderVoteCount())
+            assertEquals(0, testSetup.getOnCoinholderVoteCount())
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.profile_coinholder_vote)).also {
-            it.performScrollTo()
-            it.performClick()
+            composeTestRule.onNodeWithText(getStringResource(R.string.profile_coinholder_vote)).also {
+                it.performScrollTo()
+                it.performClick()
+            }
+
+            assertEquals(1, testSetup.getOnCoinholderVoteCount())
         }
-
-        assertEquals(1, testSetup.getOnCoinholderVoteCount())
     }
 
     @Test
@@ -131,6 +134,22 @@ class ProfileViewTest {
         assertEquals(1, testSetup.getOnSupportCount())
     }
 
+    @Test
+    @MediumTest
+    fun about() = runTest {
+        val testSetup = newTestSetup(WalletAddressFixture.unified())
+
+        assertEquals(0, testSetup.getOnAboutCount())
+
+        composeTestRule.onNodeWithText(getStringResource(R.string.profile_about)).also {
+            it.performScrollTo()
+            it.assertExists()
+            it.performClick()
+        }
+
+        assertEquals(1, testSetup.getOnAboutCount())
+    }
+
     private fun newTestSetup(walletAddress: WalletAddress) = TestSetup(composeTestRule, walletAddress)
 
     private class TestSetup(private val composeTestRule: ComposeContentTestRule, walletAddress: WalletAddress) {
@@ -141,6 +160,7 @@ class ProfileViewTest {
         private val onSettingsCount = AtomicInteger(0)
         private val onCoinholderVoteCount = AtomicInteger(0)
         private val onSupportCount = AtomicInteger(0)
+        private val onAboutCount = AtomicInteger(0)
 
         fun getOnBackCount(): Int {
             composeTestRule.waitForIdle()
@@ -172,6 +192,11 @@ class ProfileViewTest {
             return onSupportCount.get()
         }
 
+        fun getOnAboutCount(): Int {
+            composeTestRule.waitForIdle()
+            return onAboutCount.get()
+        }
+
         init {
             composeTestRule.setContent {
                 ZcashTheme {
@@ -194,6 +219,9 @@ class ProfileViewTest {
                         },
                         onSupport = {
                             onSupportCount.getAndIncrement()
+                        },
+                        onAbout = {
+                            onAboutCount.getAndIncrement()
                         }
                     )
                 }

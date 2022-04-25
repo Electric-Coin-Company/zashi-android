@@ -1,0 +1,11 @@
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="about_title">About</string>
+    <string name="about_back_content_description">Back</string>
+    <string name="about_icon_content_description">Zcash icon</string>
+    <string name="about_version_header">Version</string>
+    <string name="about_version_format" formatted="true"><xliff:g id="version_name" example="1.0">%1$s</xliff:g> (<xliff:g id="version_code" example="1.0">%2$d</xliff:g>)</string>
+    <string name="about_build_header">Build</string>
+    <string name="about_legal_header">Legal</string>
+    <!-- TODO [#392] Update with real legal info. -->
+    <string name="about_legal_info">GitHub Issue #392</string>
+</resources>
