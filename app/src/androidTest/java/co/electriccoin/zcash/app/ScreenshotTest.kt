@@ -192,6 +192,25 @@ class ScreenshotTest {
             it.performClick()
         }
 
+        composeTestRule.onNode(hasText(getStringResource(R.string.profile_title))).also {
+            it.assertExists()
+            it.performClick()
+        }
+
+        // About is a subscreen of profile
+        composeTestRule.onNode(hasText(getStringResource(R.string.profile_about))).also {
+            it.performScrollTo()
+            it.assertExists()
+            it.performClick()
+        }
+        aboutScreenshots(composeTestRule)
+
+        // Back to profile
+        composeTestRule.onNode(hasContentDescription(getStringResource(R.string.about_back_content_description))).also {
+            it.assertExists()
+            it.performClick()
+        }
+
         // Back to home
         composeTestRule.onNode(hasContentDescription(getStringResource(R.string.settings_back_content_description))).also {
             it.assertExists()
@@ -430,4 +449,12 @@ private fun supportScreenshots(composeTestRule: ComposeTestRule) {
     }
 
     ScreenshotTest.takeScreenshot("Support 1")
+}
+
+private fun aboutScreenshots(composeTestRule: ComposeTestRule) {
+    composeTestRule.onNode(hasText(getStringResource(R.string.about_title))).also {
+        it.assertExists()
+    }
+
+    ScreenshotTest.takeScreenshot("About 1")
 }

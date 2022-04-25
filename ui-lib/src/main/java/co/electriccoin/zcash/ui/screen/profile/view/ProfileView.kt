@@ -31,6 +31,7 @@ import co.electriccoin.zcash.ui.design.component.TertiaryButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.profile.util.AndroidQrCodeImageGenerator
 import co.electriccoin.zcash.ui.screen.profile.util.JvmQrCodeGenerator
+import co.electriccoin.zcash.ui.screen.profile.util.ProfileConfiguration
 import kotlinx.coroutines.runBlocking
 import kotlin.math.roundToInt
 
@@ -46,7 +47,8 @@ fun ComposablePreview() {
                 onAddressBook = {},
                 onSettings = {},
                 onCoinholderVote = {},
-                onSupport = {}
+                onSupport = {},
+                onAbout = {}
             )
         }
     }
@@ -61,7 +63,8 @@ fun Profile(
     onAddressBook: () -> Unit,
     onSettings: () -> Unit,
     onCoinholderVote: () -> Unit,
-    onSupport: () -> Unit
+    onSupport: () -> Unit,
+    onAbout: () -> Unit
 ) {
     Column {
         ProfileTopAppBar(onBack = onBack)
@@ -71,7 +74,10 @@ fun Profile(
             onAddressBook = onAddressBook,
             onSettings = onSettings,
             onCoinholderVote = onCoinholderVote,
-            onSupport = onSupport
+            onSupport = onSupport,
+            onAbout = onAbout,
+            isAddressBookEnabled = ProfileConfiguration.IS_ADDRESS_BOOK_ENABLED,
+            isCoinholderVoteEnabled = ProfileConfiguration.IS_COINHOLDER_VOTE_ENABLED
         )
     }
 }
@@ -104,7 +110,9 @@ private fun ProfileContents(
     onSettings: () -> Unit,
     onCoinholderVote: () -> Unit,
     onSupport: () -> Unit,
-    isAddressBookEnabled: Boolean = false
+    onAbout: () -> Unit,
+    isAddressBookEnabled: Boolean,
+    isCoinholderVoteEnabled: Boolean
 ) {
     Column(Modifier.verticalScroll(rememberScrollState())) {
         QrCode(data = walletAddress.address, DEFAULT_QR_CODE_SIZE, Modifier.align(Alignment.CenterHorizontally))
@@ -123,8 +131,11 @@ private fun ProfileContents(
         }
         TertiaryButton(onClick = onSettings, text = stringResource(id = R.string.profile_settings))
         Divider()
-        TertiaryButton(onClick = onCoinholderVote, text = stringResource(id = R.string.profile_coinholder_vote))
+        if (isCoinholderVoteEnabled) {
+            TertiaryButton(onClick = onCoinholderVote, text = stringResource(id = R.string.profile_coinholder_vote))
+        }
         TertiaryButton(onClick = onSupport, text = stringResource(id = R.string.profile_support))
+        TertiaryButton(onClick = onAbout, text = stringResource(id = R.string.profile_about))
     }
 }
 
