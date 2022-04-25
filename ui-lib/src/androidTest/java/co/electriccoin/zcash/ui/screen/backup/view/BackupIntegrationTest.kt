@@ -8,6 +8,7 @@ import androidx.compose.ui.test.onChildren
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.filters.MediumTest
+import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.fixture.TestChoicesFixture
 import co.electriccoin.zcash.ui.screen.backup.BackupTag
@@ -18,7 +19,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 
-class BackupIntegrationTest {
+class BackupIntegrationTest : UiTestPrerequisites() {
     @get:Rule
     val composeTestRule = createAndroidComposeRule<TestBackupActivity>()
 

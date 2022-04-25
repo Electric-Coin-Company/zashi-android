@@ -10,6 +10,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.test.filters.MediumTest
+import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.fixture.TestChoicesFixture
 import co.electriccoin.zcash.ui.screen.backup.BackupTag
@@ -19,7 +20,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 
-class BackupViewTest {
+class BackupViewTest : UiTestPrerequisites() {
     @get:Rule
     val composeTestRule = createComposeRule()
 

@@ -5,6 +5,7 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.filters.MediumTest
+import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.screen.onboarding.TestOnboardingActivity
 import co.electriccoin.zcash.ui.screen.onboarding.model.OnboardingStage
@@ -14,7 +15,7 @@ import org.junit.Rule
 import org.junit.Test
 
 // TODO [#382]: https://github.com/zcash/secant-android-wallet/issues/382
-class OnboardingIntegrationTest {
+class OnboardingIntegrationTest : UiTestPrerequisites() {
     @get:Rule
     val composeTestRule = createAndroidComposeRule<TestOnboardingActivity>()
 

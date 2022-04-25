@@ -6,6 +6,10 @@ plugins {
 }
 
 android {
+    defaultConfig {
+        testInstrumentationRunner = "co.electriccoin.zcash.test.ZcashUiTestRunner"
+    }
+
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
     }
@@ -76,6 +80,7 @@ dependencies {
     implementation(projects.spackleLib)
     implementation(projects.uiDesignLib)
 
+    androidTestImplementation(projects.testLib)
     androidTestImplementation(libs.bundles.androidx.test)
     androidTestImplementation(libs.androidx.compose.test.junit)
     androidTestImplementation(libs.androidx.compose.test.manifest)
