@@ -1,8 +1,10 @@
-package co.electriccoin.zcash.ui
+@file:Suppress("PackageNaming")
+package co.electriccoin.zcash.ui.screen.update_available
 
+import android.content.Context
 import androidx.activity.ComponentActivity
 import com.google.android.play.core.appupdate.AppUpdateInfo
-import com.google.android.play.core.appupdate.AppUpdateManager
+import kotlinx.coroutines.flow.Flow
 
 interface AppUpdateChecker {
 
@@ -45,15 +47,13 @@ interface AppUpdateChecker {
     }
 
     fun checkForUpdateAvailability(
-        appUpdateManager: AppUpdateManager,
-        stalenessDays: Int,
-        onUpdateAvailable: (appUpdateInfo: AppUpdateInfo) -> Unit
-    )
+        context: Context,
+        stalenessDays: Int
+    ): Flow<AppUpdateInfo?>
 
     fun startUpdate(
         activity: ComponentActivity,
-        appUpdateManager: AppUpdateManager,
-        appUpdateInfo: AppUpdateInfo,
-        requestCode: Int
+        appUpdateInfo: AppUpdateInfo?,
+        onUpdateResult: (resultCode: Int) -> Unit
     )
 }

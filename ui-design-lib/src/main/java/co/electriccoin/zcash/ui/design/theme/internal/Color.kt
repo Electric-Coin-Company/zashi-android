@@ -174,7 +174,7 @@ internal val LightExtendedColorPalette = ExtendedColors(
     addressHighlightViewing = Light.addressHighlightViewing,
     dangerous = Light.dangerous,
     onDangerous = Light.onDangerous,
-    reference = Dark.reference
+    reference = Light.reference
 )
 
 internal val LocalExtendedColors = staticCompositionLocalOf {

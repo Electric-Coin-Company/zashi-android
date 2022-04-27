@@ -1,11 +1,16 @@
 @file:Suppress("PackageNaming")
 package co.electriccoin.zcash.ui.screen.update_available.view
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallTopAppBar
@@ -24,8 +29,9 @@ import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.Reference
 import co.electriccoin.zcash.ui.design.component.TertiaryButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
-import co.electriccoin.zcash.ui.fixture.UpdateInfoFixture
+import co.electriccoin.zcash.ui.screen.update_available.fixture.UpdateInfoFixture
 import co.electriccoin.zcash.ui.screen.update_available.model.UpdateInfo
+import co.electriccoin.zcash.ui.screen.update_available.model.UpdateStage
 import co.electriccoin.zcash.ui.screen.update_available.util.PlayStoreUtil
 
 const val REFERENCE_TAG: String = "link_to_play_store"
@@ -51,6 +57,9 @@ fun UpdateAvailable(
     onDownload: () -> Unit,
     onLater: () -> Unit
 ) {
+    BackHandler(enabled = true) {
+        onLater()
+    }
     Scaffold(
         topBar = {
             UpdateAvailableTopAppBar(updateInfo)
@@ -63,7 +72,25 @@ fun UpdateAvailable(
             )
         }
     ) {
-        UpdateAvailableContent()
+        UpdateAvailableContentNormal()
+    }
+    UpdateAvailableOverlayRunning(updateInfo)
+}
+
+@Suppress("MagicNumber")
+@Composable
+fun UpdateAvailableOverlayRunning(updateInfo: UpdateInfo) {
+    if (updateInfo.stage == UpdateStage.Running) {
+        Column(
+            Modifier
+                .background(ZcashTheme.colors.overlay.copy(0.5f))
+                .fillMaxWidth()
+                .fillMaxHeight(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            CircularProgressIndicator()
+        }
     }
 }
 
@@ -95,7 +122,8 @@ private fun UpdateAvailableBottomAppBar(
         PrimaryButton(
             onClick = onDownload,
             text = stringResource(R.string.update_available_download_button),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            enabled = updateInfo.stage != UpdateStage.Running
         )
 
         TertiaryButton(
@@ -109,13 +137,13 @@ private fun UpdateAvailableBottomAppBar(
                 }
             ),
             modifier = Modifier.fillMaxWidth(),
-            enabled = updateInfo.isForce
+            enabled = !updateInfo.isForce && updateInfo.stage != UpdateStage.Running
         )
     }
 }
 
 @Composable
-private fun UpdateAvailableContent() {
+private fun UpdateAvailableContentNormal() {
     val context = LocalContext.current
 
     Column(
