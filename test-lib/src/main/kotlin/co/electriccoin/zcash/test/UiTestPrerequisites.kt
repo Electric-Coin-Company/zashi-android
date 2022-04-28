@@ -42,7 +42,7 @@ open class UiTestPrerequisites {
             }
         }
 
-        fun isKeyguardLocked(): Boolean {
+        private fun isKeyguardLocked(): Boolean {
             val keyguardService = (
                 ApplicationProvider.getApplicationContext<Context>()
                     .getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
