@@ -6,20 +6,29 @@ import androidx.activity.ComponentActivity
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import cash.z.ecc.android.sdk.ext.onFirst
 import co.electriccoin.zcash.ui.screen.update_available.AppUpdateChecker
-import com.google.android.play.core.appupdate.AppUpdateInfo
-import kotlinx.coroutines.flow.Flow
+import co.electriccoin.zcash.ui.screen.update_available.model.UpdateInfo
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 
 class CheckUpdateViewModel(
     application: Application,
     private val appUpdateChecker: AppUpdateChecker
 ) : AndroidViewModel(application) {
 
-    fun checkForAppUpdate(activity: ComponentActivity): Flow<AppUpdateInfo?> {
-        return appUpdateChecker.checkForUpdateAvailability(
-            activity,
-            appUpdateChecker.stanelessDays
-        )
+    val updateInfo: MutableStateFlow<UpdateInfo?> = MutableStateFlow(null)
+
+    fun checkForAppUpdate(activity: ComponentActivity) {
+        activity.lifecycleScope.launch {
+            appUpdateChecker.checkForUpdateAvailability(
+                activity,
+                appUpdateChecker.stanelessDays
+            ).onFirst { newInfo ->
+                updateInfo.value = newInfo
+            }
+        }
     }
 
     @Suppress("UNCHECKED_CAST")

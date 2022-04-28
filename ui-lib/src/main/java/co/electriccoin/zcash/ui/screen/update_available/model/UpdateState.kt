@@ -1,7 +1,7 @@
 @file:Suppress("PackageNaming")
 package co.electriccoin.zcash.ui.screen.update_available.model
 
-enum class UpdateStage {
+enum class UpdateState {
     Prepared,
     Running,
     Failed,

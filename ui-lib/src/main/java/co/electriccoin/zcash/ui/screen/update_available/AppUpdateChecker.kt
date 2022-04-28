@@ -3,6 +3,7 @@ package co.electriccoin.zcash.ui.screen.update_available
 
 import android.content.Context
 import androidx.activity.ComponentActivity
+import co.electriccoin.zcash.ui.screen.update_available.model.UpdateInfo
 import com.google.android.play.core.appupdate.AppUpdateInfo
 import kotlinx.coroutines.flow.Flow
 
@@ -43,13 +44,13 @@ interface AppUpdateChecker {
     }
 
     fun isHighPriority(inAppUpdatePriority: Int): Boolean {
-        return Priority.HIGH.belongs(inAppUpdatePriority)
+        return getPriority(inAppUpdatePriority) == Priority.HIGH
     }
 
     fun checkForUpdateAvailability(
         context: Context,
         stalenessDays: Int
-    ): Flow<AppUpdateInfo?>
+    ): Flow<UpdateInfo>
 
     fun startUpdate(
         activity: ComponentActivity,

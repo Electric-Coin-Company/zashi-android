@@ -31,7 +31,7 @@ import co.electriccoin.zcash.ui.design.component.TertiaryButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.update_available.fixture.UpdateInfoFixture
 import co.electriccoin.zcash.ui.screen.update_available.model.UpdateInfo
-import co.electriccoin.zcash.ui.screen.update_available.model.UpdateStage
+import co.electriccoin.zcash.ui.screen.update_available.model.UpdateState
 import co.electriccoin.zcash.ui.screen.update_available.util.PlayStoreUtil
 
 const val REFERENCE_TAG: String = "link_to_play_store"
@@ -80,7 +80,7 @@ fun UpdateAvailable(
 @Suppress("MagicNumber")
 @Composable
 fun UpdateAvailableOverlayRunning(updateInfo: UpdateInfo) {
-    if (updateInfo.stage == UpdateStage.Running) {
+    if (updateInfo.state == UpdateState.Running) {
         Column(
             Modifier
                 .background(ZcashTheme.colors.overlay.copy(0.5f))
@@ -123,7 +123,7 @@ private fun UpdateAvailableBottomAppBar(
             onClick = onDownload,
             text = stringResource(R.string.update_available_download_button),
             modifier = Modifier.fillMaxWidth(),
-            enabled = updateInfo.stage != UpdateStage.Running
+            enabled = updateInfo.state != UpdateState.Running
         )
 
         TertiaryButton(
@@ -137,7 +137,7 @@ private fun UpdateAvailableBottomAppBar(
                 }
             ),
             modifier = Modifier.fillMaxWidth(),
-            enabled = !updateInfo.isForce && updateInfo.stage != UpdateStage.Running
+            enabled = !updateInfo.isForce && updateInfo.state != UpdateState.Running
         )
     }
 }

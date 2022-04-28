@@ -47,8 +47,9 @@ import co.electriccoin.zcash.ui.screen.seed.view.Seed
 import co.electriccoin.zcash.ui.screen.send.view.Send
 import co.electriccoin.zcash.ui.screen.settings.view.Settings
 import co.electriccoin.zcash.ui.screen.support.WrapSupport
-import co.electriccoin.zcash.ui.screen.update_available.AppUpdateCheckerImp
+import co.electriccoin.zcash.ui.screen.update_available.AppUpdateCheckerTest
 import co.electriccoin.zcash.ui.screen.update_available.WrapUpdateAvailable
+import co.electriccoin.zcash.ui.screen.update_available.model.UpdateState
 import co.electriccoin.zcash.ui.screen.wallet_address.view.WalletAddresses
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -66,7 +67,7 @@ class MainActivity : ComponentActivity() {
     val checkUpdateViewModel by viewModels<CheckUpdateViewModel> {
         CheckUpdateViewModel.CheckUpdateViewModelFactory(
             application,
-            AppUpdateCheckerImp.new()
+            AppUpdateCheckerTest.new()
         )
     }
 
@@ -218,12 +219,7 @@ class MainActivity : ComponentActivity() {
                     goScan = {},
                     goProfile = { navController.navigate(NAV_PROFILE) },
                     goSend = { navController.navigate(NAV_SEND) },
-                    goRequest = { navController.navigate(NAV_REQUEST) },
-                    onUpdateDone = {
-                        navController.navigate(NAV_HOME) {
-                            launchSingleTop = true
-                        }
-                    }
+                    goRequest = { navController.navigate(NAV_REQUEST) }
                 )
             }
             composable(NAV_PROFILE) {
@@ -278,8 +274,7 @@ class MainActivity : ComponentActivity() {
         goScan: () -> Unit,
         goProfile: () -> Unit,
         goSend: () -> Unit,
-        goRequest: () -> Unit,
-        onUpdateDone: () -> Unit
+        goRequest: () -> Unit
     ) {
         val walletSnapshot = walletViewModel.walletSnapshot.collectAsState().value
         if (null == walletSnapshot) {
@@ -294,16 +289,22 @@ class MainActivity : ComponentActivity() {
                 goProfile = goProfile
             )
 
-            // and check for an app update asynchronously
-            val info = checkUpdateViewModel.checkForAppUpdate(this).collectAsState(null).value
-            if (info != null) {
-                WrapUpdateAvailable(
-                    info,
-                    onUpdateDone
-                )
-            }
-
             reportFullyDrawn()
+
+            // and then check for an app update asynchronously
+            checkUpdateViewModel.checkForAppUpdate(this)
+            WrapCheckForUpdate()
+        }
+    }
+
+    @Composable
+    private fun WrapCheckForUpdate() {
+        val updateInfo = checkUpdateViewModel.updateInfo.collectAsState().value
+
+        if (updateInfo?.appUpdateInfo != null &&
+            updateInfo.state == UpdateState.Prepared
+        ) {
+            WrapUpdateAvailable(updateInfo)
         }
     }
 

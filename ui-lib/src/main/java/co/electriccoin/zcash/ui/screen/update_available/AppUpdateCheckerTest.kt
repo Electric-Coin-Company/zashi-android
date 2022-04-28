@@ -5,8 +5,11 @@ import android.app.Activity
 import android.content.Context
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.lifecycleScope
+import co.electriccoin.zcash.ui.screen.update_available.fixture.UpdateInfoFixture
+import co.electriccoin.zcash.ui.screen.update_available.model.UpdateInfo
 import com.google.android.play.core.appupdate.AppUpdateInfo
-import kotlinx.coroutines.cancel
+import com.google.android.play.core.install.model.InstallStatus
+import com.google.android.play.core.install.model.UpdateAvailability
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -25,12 +28,30 @@ class AppUpdateCheckerTest : AppUpdateChecker {
     override fun checkForUpdateAvailability(
         context: Context,
         stalenessDays: Int
-    ): Flow<AppUpdateInfo?> = callbackFlow {
-        delay(2000L)
-        // AppUpdateInfo object from Play Core lib, unfortunately can not be easily instantiated,
-        // so we need to pass null.
-        trySend(null)
-        awaitClose { cancel() }
+    ): Flow<UpdateInfo> = callbackFlow {
+        delay(1000L)
+        trySend(
+            UpdateInfoFixture.new(
+                // just for test purposes we use very simple AppUpdateInfo object instance
+                appUpdateInfo = AppUpdateInfo.zzb(
+                    "",
+                    -1,
+                    UpdateAvailability.UPDATE_AVAILABLE,
+                    InstallStatus.UNKNOWN,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    null,
+                    null,
+                    null,
+                    null
+                )
+            )
+        )
+        awaitClose {}
     }
 
     override fun startUpdate(
@@ -39,7 +60,7 @@ class AppUpdateCheckerTest : AppUpdateChecker {
         onUpdateResult: (resultCode: Int) -> Unit
     ) {
         activity.lifecycleScope.launch {
-            delay(3000L)
+            delay(1000L)
             onUpdateResult(Activity.RESULT_OK)
         }
     }
