@@ -12,13 +12,13 @@ class ZcashUiTestRunner : AndroidJUnitRunner() {
     override fun onCreate(arguments: Bundle?) {
         super.onCreate(arguments)
 
+        val powerManager = ApplicationProvider.getApplicationContext<Context>()
+            .getSystemService(Context.POWER_SERVICE) as PowerManager
         // There is no alternative to this deprecated API.  The suggestion of a view to keep the screen
         // on won't work well for our tests.
         @Suppress("DEPRECATION")
-        wakeLock = (
-            ApplicationProvider.getApplicationContext<Context>()
-                .getSystemService(Context.POWER_SERVICE) as PowerManager
-            ).newWakeLock(PowerManager.FULL_WAKE_LOCK, "zcash:keep_screen_on_for_tests")
+        val flags = PowerManager.FULL_WAKE_LOCK or PowerManager.ON_AFTER_RELEASE
+        wakeLock = powerManager.newWakeLock(flags, "zcash:keep_screen_on_for_tests")
     }
 
     override fun onDestroy() {
