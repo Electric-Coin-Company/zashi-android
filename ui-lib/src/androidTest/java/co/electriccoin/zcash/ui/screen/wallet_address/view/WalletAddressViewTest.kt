@@ -8,6 +8,7 @@ import androidx.compose.ui.test.performClick
 import androidx.test.filters.MediumTest
 import cash.z.ecc.sdk.fixture.WalletAddressesFixture
 import cash.z.ecc.sdk.model.WalletAddresses
+import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.test.getStringResource
@@ -19,7 +20,7 @@ import org.junit.Test
 import java.util.concurrent.atomic.AtomicInteger
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class WalletAddressViewTest {
+class WalletAddressViewTest : UiTestPrerequisites() {
     @get:Rule
     val composeTestRule = createComposeRule()
 

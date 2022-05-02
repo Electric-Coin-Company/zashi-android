@@ -19,6 +19,7 @@ import androidx.test.filters.MediumTest
 import cash.z.ecc.android.bip39.Mnemonics
 import cash.z.ecc.sdk.fixture.SeedPhraseFixture
 import cash.z.ecc.sdk.model.SeedPhrase
+import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.CommonTag
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
@@ -32,7 +33,7 @@ import org.junit.Test
 import java.util.Locale
 import java.util.concurrent.atomic.AtomicInteger
 
-class RestoreViewTest {
+class RestoreViewTest : UiTestPrerequisites() {
     @get:Rule
     val composeTestRule = createComposeRule()
 
