@@ -36,7 +36,7 @@ class CheckUpdateViewModel(
         private val application: Application,
         private val appUpdateChecker: AppUpdateChecker
     ) : ViewModelProvider.Factory {
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
             return if (modelClass.isAssignableFrom(CheckUpdateViewModel::class.java)) {
                 CheckUpdateViewModel(application, appUpdateChecker) as T
             } else {

@@ -69,7 +69,7 @@ class UpdateAvailableViewModel(
         private val updateInfo: UpdateInfo,
         private val appUpdateChecker: AppUpdateChecker
     ) : ViewModelProvider.Factory {
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
             return if (modelClass.isAssignableFrom(UpdateAvailableViewModel::class.java)) {
                 UpdateAvailableViewModel(application, updateInfo, appUpdateChecker) as T
             } else {

@@ -1,6 +1,7 @@
 package co.electriccoin.zcash.ui.screen.update_available.integration
 
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.lifecycle.viewModelScope
 import androidx.test.filters.MediumTest
 import cash.z.ecc.android.sdk.ext.onFirst
 import co.electriccoin.zcash.ui.screen.update_available.TestUpdateAvailableActivity
@@ -10,9 +11,11 @@ import co.electriccoin.zcash.ui.screen.update_available.model.UpdateState
 import co.electriccoin.zcash.ui.screen.update_available.view.AppUpdateCheckerMock
 import co.electriccoin.zcash.ui.screen.update_available.viewmodel.UpdateAvailableViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.test.runTest
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -39,6 +42,11 @@ class UpdateAvailableViewModelTest {
             updateInfo,
             checker
         )
+    }
+
+    @After
+    fun cleanup() {
+        viewModel.viewModelScope.cancel()
     }
 
     @Test
