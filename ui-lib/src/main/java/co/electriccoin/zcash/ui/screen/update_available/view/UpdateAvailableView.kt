@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -29,6 +30,7 @@ import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.Reference
 import co.electriccoin.zcash.ui.design.component.TertiaryButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.screen.update_available.RestoreTag
 import co.electriccoin.zcash.ui.screen.update_available.fixture.UpdateInfoFixture
 import co.electriccoin.zcash.ui.screen.update_available.model.UpdateInfo
 import co.electriccoin.zcash.ui.screen.update_available.model.UpdateState
@@ -44,7 +46,8 @@ fun PreviewUpdateAvailable() {
             UpdateAvailable(
                 UpdateInfoFixture.new(appUpdateInfo = null),
                 onDownload = {},
-                onLater = {}
+                onLater = {},
+                onReference = {}
             )
         }
     }
@@ -54,10 +57,13 @@ fun PreviewUpdateAvailable() {
 @Composable
 fun UpdateAvailable(
     updateInfo: UpdateInfo,
-    onDownload: () -> Unit,
-    onLater: () -> Unit
+    onDownload: (state: UpdateState) -> Unit,
+    onLater: () -> Unit,
+    onReference: () -> Unit
 ) {
     BackHandler(enabled = true) {
+        if (updateInfo.isForce)
+            return@BackHandler
         onLater()
     }
     Scaffold(
@@ -72,7 +78,7 @@ fun UpdateAvailable(
             )
         }
     ) {
-        UpdateAvailableContentNormal()
+        UpdateAvailableContentNormal(onReference)
     }
     UpdateAvailableOverlayRunning(updateInfo)
 }
@@ -85,7 +91,8 @@ fun UpdateAvailableOverlayRunning(updateInfo: UpdateInfo) {
             Modifier
                 .background(ZcashTheme.colors.overlay.copy(0.5f))
                 .fillMaxWidth()
-                .fillMaxHeight(),
+                .fillMaxHeight()
+                .testTag(RestoreTag.PROGRESSBAR_DOWNLOADING),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -115,14 +122,16 @@ private fun UpdateAvailableTopAppBar(updateInfo: UpdateInfo) {
 @Composable
 private fun UpdateAvailableBottomAppBar(
     updateInfo: UpdateInfo,
-    onDownload: () -> Unit,
+    onDownload: (state: UpdateState) -> Unit,
     onLater: () -> Unit
 ) {
     Column {
         PrimaryButton(
-            onClick = onDownload,
+            onClick = { onDownload(UpdateState.Running) },
             text = stringResource(R.string.update_available_download_button),
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag(RestoreTag.BTN_DOWNLOAD),
             enabled = updateInfo.state != UpdateState.Running
         )
 
@@ -136,14 +145,18 @@ private fun UpdateAvailableBottomAppBar(
                         R.string.update_available_later_enabled_button
                 }
             ),
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag(RestoreTag.BTN_LATER),
             enabled = !updateInfo.isForce && updateInfo.state != UpdateState.Running
         )
     }
 }
 
 @Composable
-private fun UpdateAvailableContentNormal() {
+private fun UpdateAvailableContentNormal(
+    onReference: () -> Unit
+) {
     val context = LocalContext.current
 
     Column(
@@ -175,6 +188,7 @@ private fun UpdateAvailableContentNormal() {
             onClick = {
                 val storeIntent = PlayStoreUtil.newActivityIntent(context)
                 context.startActivity(storeIntent)
+                onReference()
             }
         )
     }

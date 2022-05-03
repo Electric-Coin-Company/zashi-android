@@ -30,7 +30,7 @@ internal fun WrapUpdateAvailable(
         UpdateAvailableViewModel.UpdateAvailableViewModelFactory(
             activity.application,
             inputUpdateInfo,
-            AppUpdateCheckerTest.new()
+            AppUpdateCheckerImp.new()
         )
     }
 
@@ -60,6 +60,7 @@ internal fun WrapUpdateAvailable(
         },
         onLater = {
             viewModel.remindLater()
-        }
+        },
+        onReference = {}
     )
 }

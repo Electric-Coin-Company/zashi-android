@@ -9,8 +9,10 @@ import co.electriccoin.zcash.ui.screen.update_available.model.UpdateState
 import com.google.android.play.core.appupdate.AppUpdateInfo
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.appupdate.AppUpdateOptions
+import com.google.android.play.core.install.model.ActivityResult
 import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.UpdateAvailability
+import kotlinx.coroutines.channels.ProducerScope
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -43,8 +45,10 @@ class AppUpdateCheckerImp : AppUpdateChecker {
         val appUpdateInfoTask = AppUpdateManagerFactory.create(context).appUpdateInfo
 
         appUpdateInfoTask.addOnCompleteListener { infoTask ->
-            if (!infoTask.isSuccessful)
+            if (!infoTask.isSuccessful) {
+                emitFailure(this)
                 return@addOnCompleteListener
+            }
 
             val appUpdateInfo = infoTask.result
             if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE &&
@@ -55,18 +59,35 @@ class AppUpdateCheckerImp : AppUpdateChecker {
                 if (isHighPriority(appUpdateInfo.updatePriority()) ||
                     (appUpdateInfo.clientVersionStalenessDays() ?: -1) >= stalenessDays
                 ) {
-                    trySend(
-                        UpdateInfoFixture.new(
-                            getPriority(appUpdateInfo.updatePriority()),
-                            isHighPriority(appUpdateInfo.updatePriority()),
-                            appUpdateInfo,
-                            UpdateState.Prepared
-                        )
-                    )
+                    emitSuccess(this, infoTask.result, UpdateState.Prepared)
+                } else {
+                    emitSuccess(this, infoTask.result, UpdateState.Done)
                 }
             }
         }
         awaitClose {}
+    }
+
+    private fun emitSuccess(producerScope: ProducerScope<UpdateInfo>, info: AppUpdateInfo, state: UpdateState) {
+        producerScope.trySend(
+            UpdateInfoFixture.new(
+                getPriority(info.updatePriority()),
+                isHighPriority(info.updatePriority()),
+                info,
+                state
+            )
+        )
+    }
+
+    private fun emitFailure(producerScope: ProducerScope<UpdateInfo>) {
+        producerScope.trySend(
+            UpdateInfoFixture.new(
+                AppUpdateChecker.Priority.LOW,
+                false,
+                null,
+                UpdateState.Failed
+            )
+        )
     }
 
     /**
@@ -87,9 +108,8 @@ class AppUpdateCheckerImp : AppUpdateChecker {
      */
     override fun startUpdate(
         activity: ComponentActivity,
-        appUpdateInfo: AppUpdateInfo?,
-        onUpdateResult: (resultCode: Int) -> Unit
-    ) {
+        appUpdateInfo: AppUpdateInfo?
+    ): Flow<Int> = callbackFlow {
         val appUpdateResultTask = AppUpdateManagerFactory.create(activity).startUpdateFlow(
             appUpdateInfo!!,
             activity,
@@ -97,11 +117,12 @@ class AppUpdateCheckerImp : AppUpdateChecker {
         )
 
         appUpdateResultTask.addOnCompleteListener { resultTask ->
-            if (!resultTask.isSuccessful)
-                return@addOnCompleteListener
-
-            val resultCode = resultTask.result
-            onUpdateResult(resultCode)
+            if (resultTask.isSuccessful)
+                trySend(resultTask.result)
+            else
+                trySend(ActivityResult.RESULT_IN_APP_UPDATE_FAILED)
         }
+
+        awaitClose {}
     }
 }

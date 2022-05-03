@@ -7,7 +7,7 @@ import androidx.activity.ComponentActivity
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewModelScope
 import cash.z.ecc.android.sdk.ext.onFirst
 import co.electriccoin.zcash.ui.screen.update_available.AppUpdateChecker
 import co.electriccoin.zcash.ui.screen.update_available.model.UpdateInfo
@@ -26,7 +26,7 @@ class UpdateAvailableViewModel(
     val updateInfo: MutableStateFlow<UpdateInfo> = MutableStateFlow(updateInfo)
 
     fun checkForAppUpdate(activity: ComponentActivity) {
-        activity.lifecycleScope.launch {
+        viewModelScope.launch {
             appUpdateChecker.checkForUpdateAvailability(
                 activity,
                 appUpdateChecker.stanelessDays
@@ -42,19 +42,20 @@ class UpdateAvailableViewModel(
     ) {
         updateInfo.value = updateInfo.value.copy(state = UpdateState.Running)
 
-        appUpdateChecker.startUpdate(
-            activity,
-            appUpdateInfo,
-            onUpdateResult = { resultCode ->
-                val stage = when (resultCode) {
+        viewModelScope.launch {
+            appUpdateChecker.startUpdate(
+                activity,
+                appUpdateInfo
+            ).onFirst { resultCode ->
+                val state = when (resultCode) {
                     Activity.RESULT_OK -> UpdateState.Done
                     Activity.RESULT_CANCELED -> UpdateState.Canceled
                     ActivityResult.RESULT_IN_APP_UPDATE_FAILED -> UpdateState.Failed
                     else -> UpdateState.Prepared
                 }
-                updateInfo.value = updateInfo.value.copy(state = stage)
+                updateInfo.value = updateInfo.value.copy(state = state)
             }
-        )
+        }
     }
 
     fun remindLater() {

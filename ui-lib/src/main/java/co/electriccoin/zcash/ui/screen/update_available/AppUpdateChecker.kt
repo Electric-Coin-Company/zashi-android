@@ -9,8 +9,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface AppUpdateChecker {
 
-    // TODO javadocs
-
     val stanelessDays: Int
 
     enum class Priority {
@@ -54,7 +52,6 @@ interface AppUpdateChecker {
 
     fun startUpdate(
         activity: ComponentActivity,
-        appUpdateInfo: AppUpdateInfo?,
-        onUpdateResult: (resultCode: Int) -> Unit
-    )
+        appUpdateInfo: AppUpdateInfo?
+    ): Flow<Int>
 }

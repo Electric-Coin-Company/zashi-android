@@ -47,7 +47,7 @@ import co.electriccoin.zcash.ui.screen.seed.view.Seed
 import co.electriccoin.zcash.ui.screen.send.view.Send
 import co.electriccoin.zcash.ui.screen.settings.view.Settings
 import co.electriccoin.zcash.ui.screen.support.WrapSupport
-import co.electriccoin.zcash.ui.screen.update_available.AppUpdateCheckerTest
+import co.electriccoin.zcash.ui.screen.update_available.AppUpdateCheckerImp
 import co.electriccoin.zcash.ui.screen.update_available.WrapUpdateAvailable
 import co.electriccoin.zcash.ui.screen.update_available.model.UpdateState
 import co.electriccoin.zcash.ui.screen.wallet_address.view.WalletAddresses
@@ -63,11 +63,13 @@ class MainActivity : ComponentActivity() {
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     val walletViewModel by viewModels<WalletViewModel>()
 
+    // TODO [#382]: https://github.com/zcash/secant-android-wallet/issues/382
+    // TODO [#403]: https://github.com/zcash/secant-android-wallet/issues/403
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     val checkUpdateViewModel by viewModels<CheckUpdateViewModel> {
         CheckUpdateViewModel.CheckUpdateViewModelFactory(
             application,
-            AppUpdateCheckerTest.new()
+            AppUpdateCheckerImp.new()
         )
     }
 
@@ -301,9 +303,7 @@ class MainActivity : ComponentActivity() {
     private fun WrapCheckForUpdate() {
         val updateInfo = checkUpdateViewModel.updateInfo.collectAsState().value
 
-        if (updateInfo?.appUpdateInfo != null &&
-            updateInfo.state == UpdateState.Prepared
-        ) {
+        if (updateInfo?.appUpdateInfo != null && updateInfo.state == UpdateState.Prepared) {
             WrapUpdateAvailable(updateInfo)
         }
     }

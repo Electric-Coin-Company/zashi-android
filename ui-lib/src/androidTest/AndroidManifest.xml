@@ -11,6 +11,9 @@
         <activity
             android:name=".screen.backup.TestBackupActivity"
             android:exported="false" />
+        <activity
+            android:name=".screen.update_available.TestUpdateAvailableActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

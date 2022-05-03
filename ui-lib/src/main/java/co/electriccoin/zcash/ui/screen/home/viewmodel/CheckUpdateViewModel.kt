@@ -6,7 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewModelScope
 import cash.z.ecc.android.sdk.ext.onFirst
 import co.electriccoin.zcash.ui.screen.update_available.AppUpdateChecker
 import co.electriccoin.zcash.ui.screen.update_available.model.UpdateInfo
@@ -21,7 +21,7 @@ class CheckUpdateViewModel(
     val updateInfo: MutableStateFlow<UpdateInfo?> = MutableStateFlow(null)
 
     fun checkForAppUpdate(activity: ComponentActivity) {
-        activity.lifecycleScope.launch {
+        viewModelScope.launch {
             appUpdateChecker.checkForUpdateAvailability(
                 activity,
                 appUpdateChecker.stanelessDays
