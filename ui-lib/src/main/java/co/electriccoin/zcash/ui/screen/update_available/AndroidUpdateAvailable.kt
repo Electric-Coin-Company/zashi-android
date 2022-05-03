@@ -30,6 +30,7 @@ internal fun WrapUpdateAvailable(
         UpdateAvailableViewModel.UpdateAvailableViewModelFactory(
             activity.application,
             inputUpdateInfo,
+            // AppUpdateCheckerTest.new() MANUAL_IN_APP_UPDATE_TEST (use instead of AppUpdateCheckerImp)
             AppUpdateCheckerImp.new()
         )
     }

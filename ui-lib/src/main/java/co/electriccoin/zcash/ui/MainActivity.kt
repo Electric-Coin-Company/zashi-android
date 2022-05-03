@@ -70,6 +70,7 @@ class MainActivity : ComponentActivity() {
     val checkUpdateViewModel by viewModels<CheckUpdateViewModel> {
         CheckUpdateViewModel.CheckUpdateViewModelFactory(
             application,
+            // AppUpdateCheckerTest.new() MANUAL_IN_APP_UPDATE_TEST (use instead of AppUpdateCheckerImp)
             AppUpdateCheckerImp.new()
         )
     }
