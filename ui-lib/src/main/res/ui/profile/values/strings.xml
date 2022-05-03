@@ -9,5 +9,6 @@
     <string name="profile_settings">Settings</string>
     <string name="profile_coinholder_vote">Coinholder Vote</string>
     <string name="profile_support">Support</string>
+    <string name="profile_about">About</string>
 
 </resources>

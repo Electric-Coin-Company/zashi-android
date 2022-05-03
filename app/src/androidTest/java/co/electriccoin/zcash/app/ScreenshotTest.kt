@@ -30,6 +30,7 @@ import cash.z.ecc.sdk.fixture.WalletAddressFixture
 import co.electriccoin.zcash.app.test.EccScreenCaptureProcessor
 import co.electriccoin.zcash.app.test.getStringResource
 import co.electriccoin.zcash.spackle.FirebaseTestLabUtil
+import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.screen.backup.BackupTag
@@ -45,7 +46,7 @@ import org.junit.rules.RuleChain
 
 // TODO [#285]: Screenshot tests fail on older devices due to issue granting external storage permission
 @SdkSuppress(minSdkVersion = Build.VERSION_CODES.Q)
-class ScreenshotTest {
+class ScreenshotTest : UiTestPrerequisites() {
 
     companion object {
         @BeforeClass
@@ -188,6 +189,25 @@ class ScreenshotTest {
 
         // Back to profile
         composeTestRule.onNode(hasContentDescription(getStringResource(R.string.support_back_content_description))).also {
+            it.assertExists()
+            it.performClick()
+        }
+
+        composeTestRule.onNode(hasText(getStringResource(R.string.profile_title))).also {
+            it.assertExists()
+            it.performClick()
+        }
+
+        // About is a subscreen of profile
+        composeTestRule.onNode(hasText(getStringResource(R.string.profile_about))).also {
+            it.performScrollTo()
+            it.assertExists()
+            it.performClick()
+        }
+        aboutScreenshots(composeTestRule)
+
+        // Back to profile
+        composeTestRule.onNode(hasContentDescription(getStringResource(R.string.about_back_content_description))).also {
             it.assertExists()
             it.performClick()
         }
@@ -430,4 +450,12 @@ private fun supportScreenshots(composeTestRule: ComposeTestRule) {
     }
 
     ScreenshotTest.takeScreenshot("Support 1")
+}
+
+private fun aboutScreenshots(composeTestRule: ComposeTestRule) {
+    composeTestRule.onNode(hasText(getStringResource(R.string.about_title))).also {
+        it.assertExists()
+    }
+
+    ScreenshotTest.takeScreenshot("About 1")
 }

@@ -6,6 +6,10 @@ plugins {
 }
 
 android {
+    defaultConfig {
+        testInstrumentationRunner = "co.electriccoin.zcash.test.ZcashUiTestRunner"
+    }
+
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
     }
@@ -23,13 +27,14 @@ android {
     kotlinOptions {
         jvmTarget = libs.versions.java.get()
         allWarningsAsErrors = project.property("ZCASH_IS_TREAT_WARNINGS_AS_ERRORS").toString().toBoolean()
-        freeCompilerArgs = freeCompilerArgs.plus("-Xopt-in=kotlin.RequiresOptIn")
+        freeCompilerArgs = freeCompilerArgs.plus("-opt-in=kotlin.RequiresOptIn")
     }
 
     sourceSets {
         getByName("main").apply {
             res.setSrcDirs(
                 setOf(
+                    "src/main/res/ui/about",
                     "src/main/res/ui/backup",
                     "src/main/res/ui/common",
                     "src/main/res/ui/home",
@@ -79,6 +84,7 @@ dependencies {
     implementation(projects.spackleLib)
     implementation(projects.uiDesignLib)
 
+    androidTestImplementation(projects.testLib)
     androidTestImplementation(libs.bundles.androidx.test)
     androidTestImplementation(libs.androidx.compose.test.junit)
     androidTestImplementation(libs.androidx.compose.test.manifest)

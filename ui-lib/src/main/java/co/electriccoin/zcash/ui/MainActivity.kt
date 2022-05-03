@@ -29,6 +29,7 @@ import cash.z.ecc.sdk.type.fromResources
 import co.electriccoin.zcash.ui.design.compat.FontCompat
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.screen.about.WrapAbout
 import co.electriccoin.zcash.ui.screen.backup.WrapBackup
 import co.electriccoin.zcash.ui.screen.backup.copyToClipboard
 import co.electriccoin.zcash.ui.screen.home.model.spendableBalance
@@ -38,7 +39,7 @@ import co.electriccoin.zcash.ui.screen.home.viewmodel.SecretState
 import co.electriccoin.zcash.ui.screen.home.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.onboarding.view.Onboarding
 import co.electriccoin.zcash.ui.screen.onboarding.viewmodel.OnboardingViewModel
-import co.electriccoin.zcash.ui.screen.profile.view.Profile
+import co.electriccoin.zcash.ui.screen.profile.WrapProfile
 import co.electriccoin.zcash.ui.screen.request.view.Request
 import co.electriccoin.zcash.ui.screen.restore.view.RestoreWallet
 import co.electriccoin.zcash.ui.screen.restore.viewmodel.CompleteWordSetState
@@ -208,6 +209,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    @Suppress("LongMethod")
     @Composable
     @SuppressWarnings("LongMethod")
     private fun Navigation() {
@@ -231,7 +233,8 @@ class MainActivity : ComponentActivity() {
                     onAddressBook = { },
                     onSettings = { navController.navigate(NAV_SETTINGS) },
                     onCoinholderVote = { },
-                    onSupport = { navController.navigate(NAV_SUPPORT) }
+                    onSupport = { navController.navigate(NAV_SUPPORT) },
+                    onAbout = { navController.navigate(NAV_ABOUT) }
                 )
             }
             composable(NAV_WALLET_ADDRESS_DETAILS) {
@@ -267,6 +270,9 @@ class MainActivity : ComponentActivity() {
             composable(NAV_SUPPORT) {
                 // Pop back stack won't be right if we deep link into support
                 WrapSupport(goBack = { navController.popBackStack() })
+            }
+            composable(NAV_ABOUT) {
+                WrapAbout(goBack = { navController.popBackStack() })
             }
         }
     }
@@ -305,32 +311,6 @@ class MainActivity : ComponentActivity() {
 
         if (updateInfo?.appUpdateInfo != null && updateInfo.state == UpdateState.Prepared) {
             WrapUpdateAvailable(updateInfo)
-        }
-    }
-
-    @Composable
-    @Suppress("LongParameterList")
-    private fun WrapProfile(
-        onBack: () -> Unit,
-        onAddressDetails: () -> Unit,
-        onAddressBook: () -> Unit,
-        onSettings: () -> Unit,
-        onCoinholderVote: () -> Unit,
-        onSupport: () -> Unit
-    ) {
-        val walletAddresses = walletViewModel.addresses.collectAsState().value
-        if (null == walletAddresses) {
-            // Display loading indicator
-        } else {
-            Profile(
-                walletAddresses.unified,
-                onBack = onBack,
-                onAddressDetails = onAddressDetails,
-                onAddressBook = onAddressBook,
-                onSettings = onSettings,
-                onCoinholderVote = onCoinholderVote,
-                onSupport = onSupport
-            )
         }
     }
 
@@ -475,7 +455,7 @@ class MainActivity : ComponentActivity() {
         const val NAV_SUPPORT = "support"
 
         @VisibleForTesting
-        const val NAV_UPDATE_AVAILABLE = "update_available"
+        const val NAV_ABOUT = "about"
     }
 }
 

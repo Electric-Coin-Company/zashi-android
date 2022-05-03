@@ -220,6 +220,7 @@ include("preference-impl-android-lib")
 include("sdk-ext-lib")
 include("sdk-ext-ui-lib")
 include("spackle-lib")
+include("test-lib")
 include("ui-design-lib")
 include("ui-lib")
 

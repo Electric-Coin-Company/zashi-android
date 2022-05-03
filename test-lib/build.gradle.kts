@@ -16,18 +16,5 @@ android {
 }
 
 dependencies {
-    implementation(projects.sdkExtLib)
-
-    implementation(libs.kotlinx.coroutines.core)
-
-    androidTestImplementation(libs.bundles.androidx.test)
-    androidTestImplementation(libs.kotlin.test)
-
-    if (project.property("IS_USE_TEST_ORCHESTRATOR").toString().toBoolean()) {
-        androidTestUtil(libs.androidx.test.orchestrator) {
-            artifact {
-                type = "apk"
-            }
-        }
-    }
+    api(libs.bundles.androidx.test)
 }

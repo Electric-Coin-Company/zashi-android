@@ -24,6 +24,8 @@ android {
         if (isOrchestratorEnabled) {
             testInstrumentationRunnerArguments["clearPackageData"] = "true"
         }
+
+        testInstrumentationRunner = "co.electriccoin.zcash.test.ZcashUiTestRunner"
     }
 
     if (isOrchestratorEnabled) {
@@ -142,6 +144,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(projects.uiLib)
 
+    androidTestImplementation(projects.testLib)
     androidTestImplementation(libs.androidx.compose.test.junit)
     androidTestImplementation(libs.androidx.navigation.compose)
     androidTestImplementation(libs.androidx.uiAutomator)
