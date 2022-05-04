@@ -117,11 +117,11 @@ dependencyResolutionManagement {
             val kotlinVersion = extra["KOTLIN_VERSION"].toString()
             val kotlinxDateTimeVersion = extra["KOTLINX_DATETIME_VERSION"].toString()
             val kotlinxCoroutinesVersion = extra["KOTLINX_COROUTINES_VERSION"].toString()
+            val playCoreVersion = extra["PLAY_CORE_VERSION"].toString()
+            val playCoreKtxVersion = extra["PLAY_CORE_KTX_VERSION"].toString()
             val zcashBip39Version = extra["ZCASH_BIP39_VERSION"].toString()
             val zcashSdkVersion = extra["ZCASH_SDK_VERSION"].toString()
             val zxingVersion = extra["ZXING_VERSION"].toString()
-            val inappUpdateVersion = extra["IN_APP_UPDATE_VERSION"].toString()
-            val inappUpdateKtxVersion = extra["IN_APP_UPDATE_KTX_VERSION"].toString()
 
             // Standalone versions
             version("flank", flankVersion)
@@ -154,12 +154,13 @@ dependencyResolutionManagement {
             library("kotlinx-coroutines-android", "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlinxCoroutinesVersion")
             library("kotlinx-coroutines-core", "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
             library("kotlinx-datetime", "org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDateTimeVersion")
+            library("play-core", "com.google.android.play:core:$playCoreVersion")
+            library("play-core-ktx", "com.google.android.play:core-ktx:$playCoreKtxVersion")
             library("zcash-sdk", "cash.z.ecc.android:zcash-android-sdk:$zcashSdkVersion")
             library("zcash-bip39", "cash.z.ecc.android:kotlin-bip39:$zcashBip39Version")
             library("zcash-walletplgns", "cash.z.ecc.android:zcash-android-wallet-plugins:$zcashBip39Version")
             library("zxing", "com.google.zxing:core:$zxingVersion")
-            library("inapp-update", "com.google.android.play:core:$inappUpdateVersion")
-            library("inapp-update_ktx", "com.google.android.play:core-ktx:$inappUpdateKtxVersion")
+
             // Test libraries
             library("androidx-compose-test-junit", "androidx.compose.ui:ui-test-junit4:$androidxComposeVersion")
             library("androidx-compose-test-manifest", "androidx.compose.ui:ui-test-manifest:$androidxComposeVersion")
@@ -193,6 +194,13 @@ dependencyResolutionManagement {
                     "androidx-compose-material-icons-extended",
                     "androidx-navigation-compose",
                     "androidx-viewmodel-compose"
+                )
+            )
+            bundle(
+                "play-core",
+                listOf(
+                    "play-core",
+                    "play-core-ktx",
                 )
             )
             bundle(

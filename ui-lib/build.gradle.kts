@@ -66,6 +66,7 @@ dependencies {
     implementation(libs.androidx.workmanager)
     implementation(libs.bundles.androidx.compose.core)
     implementation(libs.bundles.androidx.compose.extended)
+    implementation(libs.bundles.play.core)
     implementation(libs.kotlin.stdlib)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.core)
@@ -73,8 +74,6 @@ dependencies {
     implementation(libs.zcash.sdk)
     implementation(libs.zcash.bip39)
     implementation(libs.zxing)
-    implementation(libs.inapp.update)
-    implementation(libs.inapp.update.ktx)
 
     implementation(projects.buildInfoLib)
     implementation(projects.preferenceApiLib)
