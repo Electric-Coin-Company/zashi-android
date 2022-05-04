@@ -123,6 +123,8 @@ class AppUpdateCheckerImp : AppUpdateChecker {
                 trySend(ActivityResult.RESULT_IN_APP_UPDATE_FAILED)
         }
 
-        awaitClose {}
+        awaitClose {
+            // No resources to release
+        }
     }
 }
