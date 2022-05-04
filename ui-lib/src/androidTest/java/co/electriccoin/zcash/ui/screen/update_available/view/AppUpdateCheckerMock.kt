@@ -9,11 +9,9 @@ import co.electriccoin.zcash.ui.screen.update_available.fixture.UpdateInfoFixtur
 import co.electriccoin.zcash.ui.screen.update_available.model.UpdateInfo
 import co.electriccoin.zcash.ui.screen.update_available.model.UpdateState
 import com.google.android.play.core.appupdate.AppUpdateInfo
-import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.flow
 
-@Suppress("MagicNumber")
 class AppUpdateCheckerMock : AppUpdateChecker {
 
     companion object {
@@ -25,23 +23,20 @@ class AppUpdateCheckerMock : AppUpdateChecker {
         )
     }
 
+    @Suppress("MagicNumber")
     override val stalenessDays = 3
 
     override fun checkForUpdateAvailability(
         context: Context,
         stalenessDays: Int
-    ): Flow<UpdateInfo> = callbackFlow {
-        // delay(1000)
-        trySend(resultUpdateInfo)
-        awaitClose {}
+    ): Flow<UpdateInfo> = flow {
+        emit(resultUpdateInfo)
     }
 
     override fun startUpdate(
         activity: ComponentActivity,
         appUpdateInfo: AppUpdateInfo?
-    ): Flow<Int> = callbackFlow {
-        // delay(3000)
-        trySend(Activity.RESULT_OK)
-        awaitClose {}
+    ): Flow<Int> = flow {
+        emit(Activity.RESULT_OK)
     }
 }
