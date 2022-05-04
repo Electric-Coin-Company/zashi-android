@@ -44,7 +44,7 @@ internal fun WrapUpdateAvailable(
         }
         UpdateState.Failed -> {
             // we need to refresh AppUpdateInfo object, as it can be used only once
-            viewModel.checkForAppUpdate(activity)
+            viewModel.checkForAppUpdate()
         }
         UpdateState.Prepared, UpdateState.Running -> {
             // valid stages
@@ -55,7 +55,6 @@ internal fun WrapUpdateAvailable(
         updateInfo,
         onDownload = {
             viewModel.goForUpdate(
-                activity,
                 updateInfo.appUpdateInfo
             )
         },

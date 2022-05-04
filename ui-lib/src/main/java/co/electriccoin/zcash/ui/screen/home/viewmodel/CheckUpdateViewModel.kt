@@ -20,10 +20,10 @@ class CheckUpdateViewModel(
 
     val updateInfo: MutableStateFlow<UpdateInfo?> = MutableStateFlow(null)
 
-    fun checkForAppUpdate(activity: ComponentActivity) {
+    fun checkForAppUpdate() {
         viewModelScope.launch {
             appUpdateChecker.checkForUpdateAvailability(
-                activity,
+                getApplication(),
                 appUpdateChecker.stanelessDays
             ).onFirst { newInfo ->
                 updateInfo.value = newInfo

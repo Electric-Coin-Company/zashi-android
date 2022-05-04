@@ -57,14 +57,14 @@ class UpdateAvailableViewModelTest {
             assertEquals(newInfo.state, AppUpdateCheckerMock.resultUpdateInfo.state)
         }
 
-        viewModel.checkForAppUpdate(composeTestRule.activity)
+        viewModel.checkForAppUpdate()
     }
 
     @Test
     @MediumTest
     fun validate_result_of_go_for_update() = runTest {
         // vm emits Running and then one of the result states
-        viewModel.goForUpdate(composeTestRule.activity, updateInfo.appUpdateInfo)
+        viewModel.goForUpdate(updateInfo.appUpdateInfo)
 
         viewModel.updateInfo.take(2).collectIndexed { index, newInfo ->
             if (index == 0)

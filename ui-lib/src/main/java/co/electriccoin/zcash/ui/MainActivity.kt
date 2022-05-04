@@ -301,7 +301,7 @@ class MainActivity : ComponentActivity() {
             reportFullyDrawn()
 
             // and then check for an app update asynchronously
-            checkUpdateViewModel.checkForAppUpdate(this)
+            checkUpdateViewModel.checkForAppUpdate()
             WrapCheckForUpdate()
         }
     }
