@@ -31,7 +31,7 @@ class AppUpdateCheckerImp : AppUpdateChecker {
      * encapsulated in Flow in case of high priority update or in case of staleness days passed.
      *
      * For setting up the PRIORITY of an update in Google Play
-     * @see https://developer.android.com/guide/playcore/in-app-updates/kotlin-java#update-priority.
+     * https://developer.android.com/guide/playcore/in-app-updates/kotlin-java#update-priority.
      *
      * @param context
      * @param stalenessDays can be used for postponing trigger of In-App Update UI
