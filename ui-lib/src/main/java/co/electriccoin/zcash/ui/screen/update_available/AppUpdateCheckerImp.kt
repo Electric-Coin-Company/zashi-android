@@ -42,7 +42,7 @@ class AppUpdateCheckerImp : AppUpdateChecker {
         context: Context,
         stalenessDays: Int
     ): Flow<UpdateInfo> = callbackFlow {
-        val appUpdateInfoTask = AppUpdateManagerFactory.create(context).appUpdateInfo
+        val appUpdateInfoTask = AppUpdateManagerFactory.create(context.applicationContext).appUpdateInfo
 
         appUpdateInfoTask.addOnCompleteListener { infoTask ->
             if (!infoTask.isSuccessful) {
