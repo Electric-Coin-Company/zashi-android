@@ -28,7 +28,7 @@ class AppUpdateCheckerTest : AppUpdateChecker {
         )
     }
 
-    override val stanelessDays = 3
+    override val stalenessDays = 3
 
     override fun checkForUpdateAvailability(
         context: Context,

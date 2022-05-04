@@ -28,7 +28,7 @@ class UpdateAvailableViewModel(
         viewModelScope.launch {
             appUpdateChecker.checkForUpdateAvailability(
                 getApplication(),
-                appUpdateChecker.stanelessDays
+                appUpdateChecker.stalenessDays
             ).onFirst { newInfo ->
                 updateInfo.value = newInfo
             }

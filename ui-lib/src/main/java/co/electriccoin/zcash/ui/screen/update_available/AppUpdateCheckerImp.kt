@@ -24,7 +24,7 @@ class AppUpdateCheckerImp : AppUpdateChecker {
     }
 
     @Suppress("MagicNumber")
-    override val stanelessDays = 3
+    override val stalenessDays = 3
 
     /**
      * This function checks available app update released on Google Play. It returns UpdateInfo object

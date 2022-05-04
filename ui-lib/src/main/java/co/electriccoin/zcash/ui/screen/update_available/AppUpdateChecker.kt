@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface AppUpdateChecker {
 
-    val stanelessDays: Int
+    val stalenessDays: Int
 
     enum class Priority {
         LOW {

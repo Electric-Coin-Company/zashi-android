@@ -2,7 +2,6 @@
 package co.electriccoin.zcash.ui.screen.home.viewmodel
 
 import android.app.Application
-import androidx.activity.ComponentActivity
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -24,7 +23,7 @@ class CheckUpdateViewModel(
         viewModelScope.launch {
             appUpdateChecker.checkForUpdateAvailability(
                 getApplication(),
-                appUpdateChecker.stanelessDays
+                appUpdateChecker.stalenessDays
             ).onFirst { newInfo ->
                 updateInfo.value = newInfo
             }
