@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
@@ -22,11 +21,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import cash.z.ecc.android.sdk.type.ZcashNetwork
+import cash.z.ecc.sdk.fixture.SeedPhraseFixture
 import cash.z.ecc.sdk.model.PersistableWallet
 import cash.z.ecc.sdk.model.SeedPhrase
 import cash.z.ecc.sdk.model.ZecRequest
 import cash.z.ecc.sdk.send
 import cash.z.ecc.sdk.type.fromResources
+import co.electriccoin.zcash.spackle.FirebaseTestLabUtil
 import co.electriccoin.zcash.ui.design.compat.FontCompat
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
@@ -133,6 +134,35 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    /**
+     * The body of this function is meat to be execute only while the app run on Firebase Test Lab or
+     * Google Play pre-launch report tests.
+     *
+     * It skips creating a new or restoring an existing wallet by persisting a wallet with a mock seed.
+     * As a result of this, it navigates the monkey test runner from onboarding screens right to the
+     * app home screen.
+     *
+     * @return true if the app is currently being messed with by a monkey test runner and the described
+     * has proceeded or false otherwise.
+     */
+    private fun changeAppFlowForAutomationTests(): Boolean {
+        if (!FirebaseTestLabUtil.isFirebaseTestLab(this))
+            return false
+
+        walletViewModel.persistBackupComplete()
+
+        val network = ZcashNetwork.fromResources(application)
+        val wallet = PersistableWallet(
+            network,
+            null,
+            SeedPhraseFixture.new()
+        )
+
+        walletViewModel.persistExistingWallet(wallet)
+
+        return true
+    }
+
     @Composable
     private fun WrapOnboarding() {
         val onboardingViewModel by viewModels<OnboardingViewModel>()
@@ -141,8 +171,14 @@ class MainActivity : ComponentActivity() {
         if (!onboardingViewModel.isImporting.collectAsState().value) {
             Onboarding(
                 onboardingState = onboardingViewModel.onboardingState,
-                onImportWallet = { onboardingViewModel.isImporting.value = true },
+                onImportWallet = {
+                    if (changeAppFlowForAutomationTests())
+                        return@Onboarding
+                    onboardingViewModel.isImporting.value = true
+                },
                 onCreateWallet = {
+                    if (changeAppFlowForAutomationTests())
+                        return@Onboarding
                     walletViewModel.persistNewWallet()
                 }
             )
