@@ -134,35 +134,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    /**
-     * The body of this function is meat to be execute only while the app run on Firebase Test Lab or
-     * Google Play pre-launch report tests.
-     *
-     * It skips creating a new or restoring an existing wallet by persisting a wallet with a mock seed.
-     * As a result of this, it navigates the monkey test runner from onboarding screens right to the
-     * app home screen.
-     *
-     * @return true if the app is currently being messed with by a monkey test runner and the described
-     * has proceeded or false otherwise.
-     */
-    private fun changeAppFlowForAutomationTests(): Boolean {
-        if (!FirebaseTestLabUtil.isFirebaseTestLab(this))
-            return false
-
-        walletViewModel.persistBackupComplete()
-
-        val network = ZcashNetwork.fromResources(application)
-        val wallet = PersistableWallet(
-            network,
-            null,
-            SeedPhraseFixture.new()
-        )
-
-        walletViewModel.persistExistingWallet(wallet)
-
-        return true
-    }
-
     @Composable
     private fun WrapOnboarding() {
         val onboardingViewModel by viewModels<OnboardingViewModel>()
@@ -172,13 +143,23 @@ class MainActivity : ComponentActivity() {
             Onboarding(
                 onboardingState = onboardingViewModel.onboardingState,
                 onImportWallet = {
-                    if (changeAppFlowForAutomationTests())
+                    // In the case of the app currently being messed with by the robo test runner on
+                    // Firebase Test Lab or Google Play pre-launch report, we want to skip creating
+                    // a new or restoring an existing wallet screens by persisting an existing wallet
+                    // with a mock seed.
+                    if (FirebaseTestLabUtil.isFirebaseTestLab(applicationContext)) {
+                        persistExistingWalletWithSeedPhrase(SeedPhraseFixture.new())
                         return@Onboarding
+                    }
+
                     onboardingViewModel.isImporting.value = true
                 },
                 onCreateWallet = {
-                    if (changeAppFlowForAutomationTests())
+                    if (FirebaseTestLabUtil.isFirebaseTestLab(applicationContext)) {
+                        persistExistingWalletWithSeedPhrase(SeedPhraseFixture.new())
                         return@Onboarding
+                    }
+
                     walletViewModel.persistNewWallet()
                 }
             )
@@ -214,22 +195,34 @@ class MainActivity : ComponentActivity() {
                         return@RestoreWallet clipboardManager?.primaryClip?.toString()
                     },
                     onFinished = {
-                        // Write the backup complete flag first, then the seed phrase.  That avoids the UI
-                        // flickering to the backup screen.  Assume if a user is restoring from
-                        // a backup, then the user has a valid backup.
-                        walletViewModel.persistBackupComplete()
-
-                        val network = ZcashNetwork.fromResources(application)
-                        val restoredWallet = PersistableWallet(
-                            network,
-                            null,
+                        persistExistingWalletWithSeedPhrase(
                             SeedPhrase(restoreViewModel.userWordList.current.value)
                         )
-                        walletViewModel.persistExistingWallet(restoredWallet)
                     }
                 )
             }
         }
+    }
+
+    /**
+     * Persists existing wallet together with the backup complete flag to disk. Be aware of that, it
+     * triggers navigation changes, as we observe the WalletViewModel.secretState.
+     *
+     * Write the backup complete flag first, then the seed phrase. That avoids the UI flickering to
+     * the backup screen. Assume if a user is restoring from a backup, then the user has a valid backup.
+     *
+     * @param seedPhrase to be persisted along with the wallet object
+     */
+    private fun persistExistingWalletWithSeedPhrase(seedPhrase: SeedPhrase) {
+        walletViewModel.persistBackupComplete()
+
+        val network = ZcashNetwork.fromResources(application)
+        val restoredWallet = PersistableWallet(
+            network,
+            null,
+            seedPhrase
+        )
+        walletViewModel.persistExistingWallet(restoredWallet)
     }
 
     @Suppress("LongMethod")
