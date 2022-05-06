@@ -8,40 +8,33 @@ import android.net.Uri
 object PlayStoreUtil {
 
     const val PLAY_STORE_APP_URI = "market://details?id="
-    const val BROWSER_PAGE_URI = "https://play.google.com/store/apps/details?id="
 
     const val FLAGS = Intent.FLAG_ACTIVITY_NO_HISTORY or
+        Intent.FLAG_ACTIVITY_NEW_TASK or
         Intent.FLAG_ACTIVITY_NEW_DOCUMENT or
         Intent.FLAG_ACTIVITY_MULTIPLE_TASK
 
     /**
-     * Checks and returns Google Play store app intent, an internet browser app intent, or null in
-     * case of the apps not installed.
+     * Checks and returns Google Play store app intent, or null in case the app is not installed. We
+     * assume the Play store app is installed, as we use In-app update API.
      *
      * @param context
      *
-     * @return an Intent for launching the Play Store, an internet browser app, or null in case of
-     * the apps are not installed.
+     * @return an Intent for launching the Play Store, or null in case of failure.
      */
     @Suppress("ReturnCount")
     internal fun newActivityIntent(context: Context): Intent? {
         val packageName = context.packageName
-        var storeUri = Uri.parse("$PLAY_STORE_APP_URI$packageName")
-        var storeIntent = Intent(Intent.ACTION_VIEW, storeUri)
+        val storeUri = Uri.parse("$PLAY_STORE_APP_URI$packageName")
+        val storeIntent = Intent(Intent.ACTION_VIEW, storeUri)
 
-        // To properly handle the Play Store app backstack while navigate back to our app.
+        // To properly handle the Play store app backstack while navigate back to our app.
         storeIntent.addFlags(FLAGS)
 
-        // Play store app
-        if (isIntentAvailable(context, storeIntent))
+        // Check Play store app availability.
+        if (isIntentAvailable(context, storeIntent)) {
             return storeIntent
-
-        storeUri = Uri.parse("$BROWSER_PAGE_URI$packageName")
-        storeIntent = Intent(Intent.ACTION_VIEW, storeUri)
-
-        // Browser app
-        if (isIntentAvailable(context, storeIntent))
-            return storeIntent
+        }
 
         return null
     }

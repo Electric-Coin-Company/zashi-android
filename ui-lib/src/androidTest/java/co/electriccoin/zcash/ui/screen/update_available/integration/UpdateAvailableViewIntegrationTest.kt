@@ -30,7 +30,7 @@ class UpdateAvailableViewIntegrationTest {
             UpdateInfoFixture.new(
                 priority = AppUpdateChecker.Priority.HIGH,
                 force = true,
-                appUpdateInfo = UpdateInfoFixture.APP_UPDATE_INFO,
+                appUpdateInfo = null,
                 state = UpdateState.Prepared,
             )
         )

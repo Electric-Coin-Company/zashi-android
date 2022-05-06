@@ -18,7 +18,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -34,9 +33,6 @@ import co.electriccoin.zcash.ui.screen.update_available.RestoreTag
 import co.electriccoin.zcash.ui.screen.update_available.fixture.UpdateInfoFixture
 import co.electriccoin.zcash.ui.screen.update_available.model.UpdateInfo
 import co.electriccoin.zcash.ui.screen.update_available.model.UpdateState
-import co.electriccoin.zcash.ui.screen.update_available.util.PlayStoreUtil
-
-const val REFERENCE_TAG: String = "link_to_play_store"
 
 @Preview("UpdateAvailable")
 @Composable
@@ -62,8 +58,9 @@ fun UpdateAvailable(
     onReference: () -> Unit
 ) {
     BackHandler(enabled = true) {
-        if (updateInfo.isForce)
+        if (updateInfo.isForce) {
             return@BackHandler
+        }
         onLater()
     }
     Scaffold(
@@ -108,10 +105,11 @@ private fun UpdateAvailableTopAppBar(updateInfo: UpdateInfo) {
             Text(
                 text = stringResource(
                     updateInfo.isForce.let { force ->
-                        if (force)
+                        if (force) {
                             R.string.update_available_critical_header
-                        else
+                        } else {
                             R.string.update_available_header
+                        }
                     }
                 )
             )
@@ -139,10 +137,11 @@ private fun UpdateAvailableBottomAppBar(
             onClick = onLater,
             text = stringResource(
                 updateInfo.isForce.let { force ->
-                    if (force)
+                    if (force) {
                         R.string.update_available_later_disabled_button
-                    else
+                    } else {
                         R.string.update_available_later_enabled_button
+                    }
                 }
             ),
             modifier = Modifier
@@ -157,8 +156,6 @@ private fun UpdateAvailableBottomAppBar(
 private fun UpdateAvailableContentNormal(
     onReference: () -> Unit
 ) {
-    val context = LocalContext.current
-
     Column(
         Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -180,14 +177,12 @@ private fun UpdateAvailableContentNormal(
 
         Reference(
             text = stringResource(id = R.string.update_available_link_text),
-            tag = REFERENCE_TAG,
+            tag = "link_to_play_store", // $NON-NLS
             link = stringResource(id = R.string.update_available_link),
             modifier = Modifier
                 .wrapContentHeight()
                 .align(Alignment.CenterHorizontally),
             onClick = {
-                val storeIntent = PlayStoreUtil.newActivityIntent(context)
-                context.startActivity(storeIntent)
                 onReference()
             }
         )

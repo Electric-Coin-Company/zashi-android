@@ -3,6 +3,7 @@ package co.electriccoin.zcash.ui.screen.update_available.viewmodel
 
 import android.app.Activity
 import android.app.Application
+import androidx.activity.ComponentActivity
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -36,13 +37,14 @@ class UpdateAvailableViewModel(
     }
 
     fun goForUpdate(
+        activity: ComponentActivity,
         appUpdateInfo: AppUpdateInfo?
     ) {
         updateInfo.value = updateInfo.value.copy(state = UpdateState.Running)
 
         viewModelScope.launch {
             appUpdateChecker.startUpdate(
-                getApplication(),
+                activity,
                 appUpdateInfo
             ).onFirst { resultCode ->
                 val state = when (resultCode) {

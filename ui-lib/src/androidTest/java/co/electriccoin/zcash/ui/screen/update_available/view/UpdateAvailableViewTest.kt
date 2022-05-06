@@ -31,7 +31,7 @@ class UpdateAvailableViewTest {
         val updateInfo = UpdateInfoFixture.new(
             priority = AppUpdateChecker.Priority.HIGH,
             force = true,
-            appUpdateInfo = UpdateInfoFixture.APP_UPDATE_INFO,
+            appUpdateInfo = null,
             state = UpdateState.Prepared,
         )
         val testSetup = newTestSetup(updateInfo)
@@ -53,7 +53,7 @@ class UpdateAvailableViewTest {
         val updateInfo = UpdateInfoFixture.new(
             priority = AppUpdateChecker.Priority.HIGH,
             force = true,
-            appUpdateInfo = UpdateInfoFixture.APP_UPDATE_INFO,
+            appUpdateInfo = null,
             state = UpdateState.Prepared,
         )
 
@@ -78,7 +78,7 @@ class UpdateAvailableViewTest {
         val updateInfo = UpdateInfoFixture.new(
             priority = AppUpdateChecker.Priority.LOW,
             force = false,
-            appUpdateInfo = UpdateInfoFixture.APP_UPDATE_INFO,
+            appUpdateInfo = null,
             state = UpdateState.Prepared,
         )
         val testSetup = newTestSetup(updateInfo)
@@ -96,7 +96,7 @@ class UpdateAvailableViewTest {
         val updateInfo = UpdateInfoFixture.new(
             priority = AppUpdateChecker.Priority.MEDIUM,
             force = false,
-            appUpdateInfo = UpdateInfoFixture.APP_UPDATE_INFO,
+            appUpdateInfo = null,
             state = UpdateState.Prepared,
         )
 
@@ -116,7 +116,7 @@ class UpdateAvailableViewTest {
     @Test
     @MediumTest
     fun download_btn_test() {
-        val updateInfo = UpdateInfoFixture.new(appUpdateInfo = UpdateInfoFixture.APP_UPDATE_INFO)
+        val updateInfo = UpdateInfoFixture.new(appUpdateInfo = null)
 
         val testSetup = newTestSetup(updateInfo)
 
@@ -134,7 +134,7 @@ class UpdateAvailableViewTest {
     @Test
     @MediumTest
     fun play_store_ref_test() {
-        val updateInfo = UpdateInfoFixture.new(appUpdateInfo = UpdateInfoFixture.APP_UPDATE_INFO)
+        val updateInfo = UpdateInfoFixture.new(appUpdateInfo = null)
 
         val testSetup = newTestSetup(updateInfo)
 
@@ -147,9 +147,6 @@ class UpdateAvailableViewTest {
         }
 
         assertEquals(1, testSetup.getOnReferenceCount())
-
-        // to test the fact that the compose screen is covered by Play Store or Browser app
-        composeTestRule.onRoot().assertDoesNotExist()
     }
 
     private fun newTestSetup(updateInfo: UpdateInfo) = UpdateAvailableViewTestSetup(

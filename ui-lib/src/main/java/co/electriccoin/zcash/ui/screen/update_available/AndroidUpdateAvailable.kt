@@ -1,6 +1,7 @@
 @file:Suppress("PackageNaming")
 package co.electriccoin.zcash.ui.screen.update_available
 
+import android.content.Context
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
@@ -8,6 +9,7 @@ import androidx.compose.runtime.collectAsState
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.screen.update_available.model.UpdateInfo
 import co.electriccoin.zcash.ui.screen.update_available.model.UpdateState
+import co.electriccoin.zcash.ui.screen.update_available.util.PlayStoreUtil
 import co.electriccoin.zcash.ui.screen.update_available.view.UpdateAvailable
 import co.electriccoin.zcash.ui.screen.update_available.viewmodel.UpdateAvailableViewModel
 
@@ -55,12 +57,20 @@ internal fun WrapUpdateAvailable(
         updateInfo,
         onDownload = {
             viewModel.goForUpdate(
+                activity,
                 updateInfo.appUpdateInfo
             )
         },
         onLater = {
             viewModel.remindLater()
         },
-        onReference = {}
+        onReference = {
+            openPlayStoreAppPage(activity.applicationContext)
+        }
     )
+}
+
+fun openPlayStoreAppPage(context: Context) {
+    val storeIntent = PlayStoreUtil.newActivityIntent(context)
+    context.startActivity(storeIntent)
 }

@@ -14,8 +14,6 @@ class PlayStoreUtilTest {
     companion object {
         val PLAY_STORE_URI = PlayStoreUtil.PLAY_STORE_APP_URI +
             ApplicationProvider.getApplicationContext<Context>().packageName
-        val BROWSER_PAGE_URI = PlayStoreUtil.BROWSER_PAGE_URI +
-            ApplicationProvider.getApplicationContext<Context>().packageName
     }
 
     @Test
@@ -24,7 +22,7 @@ class PlayStoreUtilTest {
         val intent = PlayStoreUtil.newActivityIntent(ApplicationProvider.getApplicationContext())
         assertNotNull(intent)
         assertEquals(intent.action, Intent.ACTION_VIEW)
-        assertContains(arrayOf(PLAY_STORE_URI, BROWSER_PAGE_URI), intent.data.toString())
+        assertContains(PLAY_STORE_URI, intent.data.toString())
         assertEquals(PlayStoreUtil.FLAGS, intent.flags)
     }
 }

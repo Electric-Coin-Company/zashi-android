@@ -65,7 +65,9 @@ class AppUpdateCheckerImp : AppUpdateChecker {
                 }
             }
         }
-        awaitClose {}
+        awaitClose {
+            // No resources to release
+        }
     }
 
     private fun emitSuccess(producerScope: ProducerScope<UpdateInfo>, info: AppUpdateInfo, state: UpdateState) {
@@ -117,10 +119,11 @@ class AppUpdateCheckerImp : AppUpdateChecker {
         )
 
         appUpdateResultTask.addOnCompleteListener { resultTask ->
-            if (resultTask.isSuccessful)
+            if (resultTask.isSuccessful) {
                 trySend(resultTask.result)
-            else
+            } else {
                 trySend(ActivityResult.RESULT_IN_APP_UPDATE_FAILED)
+            }
         }
 
         awaitClose {

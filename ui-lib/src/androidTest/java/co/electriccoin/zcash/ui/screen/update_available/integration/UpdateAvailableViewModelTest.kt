@@ -3,7 +3,7 @@ package co.electriccoin.zcash.ui.screen.update_available.integration
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.lifecycle.viewModelScope
 import androidx.test.filters.MediumTest
-import cash.z.ecc.android.sdk.ext.onFirst
+import co.electriccoin.zcash.ui.screen.update_available.AppUpdateChecker
 import co.electriccoin.zcash.ui.screen.update_available.TestUpdateAvailableActivity
 import co.electriccoin.zcash.ui.screen.update_available.fixture.UpdateInfoFixture
 import co.electriccoin.zcash.ui.screen.update_available.model.UpdateInfo
@@ -19,8 +19,8 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import kotlin.test.assertContains
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
 @ExperimentalCoroutinesApi
 class UpdateAvailableViewModelTest {
@@ -29,17 +29,22 @@ class UpdateAvailableViewModelTest {
 
     private lateinit var viewModel: UpdateAvailableViewModel
     private lateinit var checker: AppUpdateCheckerMock
-    private lateinit var updateInfo: UpdateInfo
+    private lateinit var initialUpdateInfo: UpdateInfo
 
     @Before
     fun setup() {
         checker = AppUpdateCheckerMock.new()
 
-        updateInfo = UpdateInfoFixture.new(appUpdateInfo = UpdateInfoFixture.APP_UPDATE_INFO)
+        initialUpdateInfo = UpdateInfoFixture.new(
+            appUpdateInfo = null,
+            state = UpdateState.Prepared,
+            priority = AppUpdateChecker.Priority.LOW,
+            force = false
+        )
 
         viewModel = UpdateAvailableViewModel(
             composeTestRule.activity.application,
-            updateInfo,
+            initialUpdateInfo,
             checker
         )
     }
@@ -52,28 +57,42 @@ class UpdateAvailableViewModelTest {
     @Test
     @MediumTest
     fun validate_result_of_check_for_app_update() = runTest {
-        viewModel.updateInfo.onFirst { newInfo ->
-            assertEquals(newInfo.priority, AppUpdateCheckerMock.resultUpdateInfo.priority)
-            assertEquals(newInfo.state, AppUpdateCheckerMock.resultUpdateInfo.state)
-        }
-
         viewModel.checkForAppUpdate()
+
+        // Although this test does not copy the real world situation, as the initial and result objects
+        // should be mostly the same, we test VM proper functionality. VM emits the initial object
+        // defined in this class, then we expect the result object from the AppUpdateCheckerMock class
+        // and a newly acquired AppUpdateInfo object.
+        viewModel.updateInfo.take(2).collectIndexed { index, incomingInfo ->
+            if (index == 0) {
+                assertEquals(initialUpdateInfo.appUpdateInfo, incomingInfo.appUpdateInfo)
+                assertEquals(initialUpdateInfo.priority, incomingInfo.priority)
+                assertEquals(initialUpdateInfo.state, incomingInfo.state)
+                assertEquals(initialUpdateInfo.isForce, incomingInfo.isForce)
+            } else {
+                assertNotNull(incomingInfo.appUpdateInfo)
+                assertEquals(AppUpdateCheckerMock.resultUpdateInfo.priority, incomingInfo.priority)
+                assertEquals(AppUpdateCheckerMock.resultUpdateInfo.state, incomingInfo.state)
+                assertEquals(AppUpdateCheckerMock.resultUpdateInfo.isForce, incomingInfo.isForce)
+            }
+        }
     }
 
     @Test
     @MediumTest
     fun validate_result_of_go_for_update() = runTest {
-        // vm emits Running and then one of the result states
-        viewModel.goForUpdate(updateInfo.appUpdateInfo)
+        viewModel.goForUpdate(composeTestRule.activity, initialUpdateInfo.appUpdateInfo)
 
-        viewModel.updateInfo.take(2).collectIndexed { index, newInfo ->
-            if (index == 0)
-                assertEquals(UpdateState.Running, newInfo.state)
-            else
-                assertContains(
-                    listOf(UpdateState.Done, UpdateState.Canceled, UpdateState.Failed),
-                    newInfo.state
-                )
+        // In this case we only test that the VM changes state once it finishes the update.
+        viewModel.updateInfo.take(2).collectIndexed { index, incomingInfo ->
+            if (index == 0) {
+                assertEquals(UpdateState.Running, incomingInfo.state)
+                assertEquals(initialUpdateInfo.appUpdateInfo, incomingInfo.appUpdateInfo)
+                assertEquals(initialUpdateInfo.priority, incomingInfo.priority)
+                assertEquals(initialUpdateInfo.isForce, incomingInfo.isForce)
+            } else {
+                assertEquals(UpdateState.Done, incomingInfo.state)
+            }
         }
     }
 }
