@@ -100,6 +100,7 @@ fun PreviewRestoreComplete() {
     }
 }
 
+// TODO [#409]: https://github.com/zcash/secant-android-wallet/issues/409
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RestoreWallet(
