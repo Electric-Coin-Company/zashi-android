@@ -300,14 +300,14 @@ class MainActivity : ComponentActivity() {
 
             reportFullyDrawn()
 
-            // and then check for an app update asynchronously
-            checkUpdateViewModel.checkForAppUpdate()
             WrapCheckForUpdate()
         }
     }
 
     @Composable
     private fun WrapCheckForUpdate() {
+        // and then check for an app update asynchronously
+        checkUpdateViewModel.checkForAppUpdate()
         val updateInfo = checkUpdateViewModel.updateInfo.collectAsState().value
 
         if (updateInfo?.appUpdateInfo != null && updateInfo.state == UpdateState.Prepared) {
