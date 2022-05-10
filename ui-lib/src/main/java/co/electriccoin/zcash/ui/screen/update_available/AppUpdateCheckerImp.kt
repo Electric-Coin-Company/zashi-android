@@ -20,11 +20,12 @@ import kotlinx.coroutines.flow.callbackFlow
 class AppUpdateCheckerImp : AppUpdateChecker {
 
     companion object {
+        private const val DEFAULT_STALENESS_DAYS = 3
+
         fun new() = AppUpdateCheckerImp()
     }
 
-    @Suppress("MagicNumber")
-    override val stalenessDays = 3
+    override val stalenessDays = DEFAULT_STALENESS_DAYS
 
     /**
      * This function checks available app update released on Google Play. It returns UpdateInfo object
