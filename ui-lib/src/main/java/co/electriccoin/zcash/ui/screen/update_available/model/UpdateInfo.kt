@@ -6,7 +6,7 @@ import com.google.android.play.core.appupdate.AppUpdateInfo
 
 data class UpdateInfo(
     val priority: AppUpdateChecker.Priority,
-    var isForce: Boolean,
-    var appUpdateInfo: AppUpdateInfo?,
-    var state: UpdateState
+    val isForce: Boolean,
+    val appUpdateInfo: AppUpdateInfo?,
+    val state: UpdateState
 )
