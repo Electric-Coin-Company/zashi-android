@@ -1,4 +1,3 @@
-@file:Suppress("PackageNaming")
 package co.electriccoin.zcash.ui.screen.home.viewmodel
 
 import android.app.Application
