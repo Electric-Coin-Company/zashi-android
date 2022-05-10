@@ -106,8 +106,6 @@ class AppUpdateCheckerImp : AppUpdateChecker {
      * @param activity
      * @param appUpdateInfo object is necessary for starting the update process,
      * for getting it see {@link #checkForUpdateAvailability()}
-     * @param onUpdateResult callback for sending resultCode to the caller
-     *
      */
     override fun startUpdate(
         activity: ComponentActivity,
