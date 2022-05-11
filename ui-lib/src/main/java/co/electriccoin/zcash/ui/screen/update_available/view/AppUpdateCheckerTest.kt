@@ -24,14 +24,15 @@ import kotlinx.coroutines.flow.callbackFlow
 class AppUpdateCheckerTest private constructor() : AppUpdateChecker {
 
     companion object {
+        private const val DEFAULT_STALENESS_DAYS = 3
+
         fun new() = AppUpdateCheckerTest()
     }
 
-    override val stalenessDays = 3
+    override val stalenessDays = DEFAULT_STALENESS_DAYS
 
     override fun checkForUpdateAvailability(
-        context: Context,
-        stalenessDays: Int
+        context: Context
     ): Flow<UpdateInfo> = callbackFlow {
         delay(2000)
         val fakeAppUpdateManager = FakeAppUpdateManager(context.applicationContext).also {

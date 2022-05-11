@@ -33,8 +33,7 @@ class AppUpdateCheckerImpTest {
     private fun getAppUpdateInfoFlow(): Flow<UpdateInfo> {
         @Suppress("MagicNumber")
         return updateChecker.checkForUpdateAvailability(
-            context,
-            3
+            context
         )
     }
 

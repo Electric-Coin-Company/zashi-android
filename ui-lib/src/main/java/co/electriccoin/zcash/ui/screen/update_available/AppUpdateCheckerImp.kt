@@ -35,13 +35,11 @@ class AppUpdateCheckerImp private constructor() : AppUpdateChecker {
      * https://developer.android.com/guide/playcore/in-app-updates/kotlin-java#update-priority.
      *
      * @param context
-     * @param stalenessDays can be used for postponing trigger of In-App Update UI
      *
      * @return UpdateInfo object encapsulated in Flow in case of conditions succeeded
      */
     override fun checkForUpdateAvailability(
-        context: Context,
-        stalenessDays: Int
+        context: Context
     ): Flow<UpdateInfo> = callbackFlow {
         val appUpdateInfoTask = AppUpdateManagerFactory.create(context.applicationContext).appUpdateInfo
 

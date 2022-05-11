@@ -22,6 +22,8 @@ import kotlinx.coroutines.flow.flow
 class AppUpdateCheckerMock private constructor() : AppUpdateChecker {
 
     companion object {
+        private const val DEFAULT_STALENESS_DAYS = 3
+
         fun new() = AppUpdateCheckerMock()
 
         // used mostly for tests
@@ -33,12 +35,10 @@ class AppUpdateCheckerMock private constructor() : AppUpdateChecker {
         )
     }
 
-    @Suppress("MagicNumber")
-    override val stalenessDays = 3
+    override val stalenessDays = DEFAULT_STALENESS_DAYS
 
     override fun checkForUpdateAvailability(
-        context: Context,
-        stalenessDays: Int
+        context: Context
     ): Flow<UpdateInfo> = callbackFlow {
         val fakeAppUpdateManager = FakeAppUpdateManager(context.applicationContext).also {
             it.setClientVersionStalenessDays(stalenessDays)

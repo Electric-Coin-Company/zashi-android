@@ -47,7 +47,6 @@ interface AppUpdateChecker {
 
     fun checkForUpdateAvailability(
         context: Context,
-        stalenessDays: Int
     ): Flow<UpdateInfo>
 
     fun startUpdate(
