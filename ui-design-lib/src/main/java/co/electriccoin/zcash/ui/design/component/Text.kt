@@ -5,9 +5,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 
 @Composable
@@ -65,29 +64,16 @@ fun ListHeader(
 @Composable
 fun Reference(
     text: String,
-    tag: String,
-    link: String,
     modifier: Modifier = Modifier,
-    onClick: (link: String) -> Unit
+    onClick: () -> Unit
 ) {
-    val annotatedString = buildAnnotatedString {
-        pushStringAnnotation(
-            tag = tag,
-            annotation = link
-        )
-        withStyle(style = SpanStyle(color = ZcashTheme.colors.reference)) {
-            append(text)
-        }
-        pop()
-    }
     ClickableText(
-        text = annotatedString,
-        style = MaterialTheme.typography.bodyLarge,
+        text = AnnotatedString(text),
+        style = MaterialTheme.typography.bodyLarge
+            .merge(TextStyle(color = ZcashTheme.colors.reference)),
         modifier = modifier,
-        onClick = { offset ->
-            annotatedString.getStringAnnotations(tag = tag, start = offset, end = offset).firstOrNull()?.let {
-                onClick(it.item)
-            }
+        onClick = {
+            onClick()
         }
     )
 }

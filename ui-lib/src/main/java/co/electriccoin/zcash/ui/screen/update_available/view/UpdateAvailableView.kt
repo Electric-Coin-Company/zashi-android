@@ -178,8 +178,6 @@ private fun UpdateAvailableContentNormal(
 
         Reference(
             text = stringResource(id = R.string.update_available_link_text),
-            tag = "link_to_play_store", // $NON-NLS
-            link = stringResource(id = R.string.update_available_link),
             modifier = Modifier
                 .wrapContentHeight()
                 .align(Alignment.CenterHorizontally),

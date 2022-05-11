@@ -5,7 +5,6 @@
     <string name="update_available_image_content_description"></string>
     <string name="update_available_description">There is a new version of the app available.</string>
     <string name="update_available_link_text">Learn more about this update here.</string>
-    <string name="update_available_link">https://play.google.com/store</string>
     <string name="update_available_download_button">Download Update</string>
     <string name="update_available_later_enabled_button">Remind me later</string>
     <string name="update_available_later_disabled_button">This can not be skipped.</string>
