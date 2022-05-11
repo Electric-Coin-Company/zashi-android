@@ -18,8 +18,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import co.electriccoin.zcash.ui.R
@@ -163,7 +164,7 @@ private fun UpdateAvailableContentNormal(
         // TODO [#17]: This suppression and magic number will get replaced once we have real assets
         @Suppress("MagicNumber")
         Image(
-            painter = painterResource(id = R.drawable.update_available_main_graphic),
+            ImageBitmap.imageResource(id = R.drawable.update_available_main_graphic),
             contentDescription = stringResource(id = R.string.update_available_image_content_description),
             Modifier.fillMaxSize(0.50f)
         )
