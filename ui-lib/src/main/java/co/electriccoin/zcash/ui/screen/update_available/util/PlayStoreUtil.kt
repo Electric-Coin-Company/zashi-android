@@ -15,15 +15,14 @@ object PlayStoreUtil {
         Intent.FLAG_ACTIVITY_MULTIPLE_TASK
 
     /**
-     * Checks and returns Google Play store app intent, or null in case the app is not installed. We
-     * assume the Play store app is installed, as we use In-app update API.
+     * Returns Google Play store app intent. We assume the Play store app is installed, as we use
+     * In-app update API.
      *
      * @param context
      *
-     * @return an Intent for launching the Play Store, or null in case of failure.
+     * @return Intent for launching the Play Store.
      */
-    @Suppress("ReturnCount")
-    internal fun newActivityIntent(context: Context): Intent? {
+    internal fun newActivityIntent(context: Context): Intent {
         val packageName = context.packageName
         val storeUri = Uri.parse("$PLAY_STORE_APP_URI$packageName")
         val storeIntent = Intent(Intent.ACTION_VIEW, storeUri)
@@ -31,16 +30,6 @@ object PlayStoreUtil {
         // To properly handle the Play store app backstack while navigate back to our app.
         storeIntent.addFlags(FLAGS)
 
-        // Check Play store app availability.
-        if (isIntentAvailable(context, storeIntent)) {
-            return storeIntent
-        }
-
-        return null
-    }
-
-    private fun isIntentAvailable(context: Context, intent: Intent): Boolean {
-        val info = context.packageManager.queryIntentActivities(intent, 0)
-        return info.size > 0
+        return storeIntent
     }
 }
