@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui
 
+import android.annotation.SuppressLint
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
@@ -229,6 +230,8 @@ class MainActivity : ComponentActivity() {
     @Composable
     private fun Navigation() {
         val navController = rememberNavController().also {
+            // This suppress is necessary, as this is how we set up the nav controller for tests.
+            @SuppressLint("RestrictedApi")
             navControllerForTesting = it
         }
 
