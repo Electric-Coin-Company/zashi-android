@@ -40,6 +40,7 @@ class AppUpdateCheckerTest : AppUpdateChecker {
                 VersionCodeCompat.getVersionCode(context.myPackageInfo(0)).toInt(),
                 AppUpdateType.IMMEDIATE
             )
+            // MANUAL_IN_APP_UPDATE_TEST - change this value from 0-5 to test force/available update types
             it.setUpdatePriority(5)
         }
 
