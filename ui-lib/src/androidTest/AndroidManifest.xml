@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
-    package="co.electriccoin.zcash.ui">
+    package="co.electriccoin.zcash.ui.test">
 
     <application
         android:label="zcash-ui-test" >
         <activity
-            android:name=".screen.onboarding.TestOnboardingActivity"
+            android:name="co.electriccoin.zcash.ui.screen.onboarding.TestOnboardingActivity"
             android:exported="false" />
         <activity
-            android:name=".screen.backup.TestBackupActivity"
+            android:name="co.electriccoin.zcash.ui.screen.backup.TestBackupActivity"
             android:exported="false" />
     </application>
 
