@@ -39,6 +39,9 @@ internal fun WrapUpdateAvailable(
 
     val updateInfo = viewModel.updateInfo.collectAsState().value
 
+    // In this state of the update we should already have the AppUpdateInfo filled.
+    requireNotNull(updateInfo.appUpdateInfo)
+
     when (updateInfo.state) {
         UpdateState.Done, UpdateState.Canceled -> {
             // just return as we are already in Home compose

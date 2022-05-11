@@ -107,10 +107,10 @@ class AppUpdateCheckerImp private constructor() : AppUpdateChecker {
      */
     override fun startUpdate(
         activity: ComponentActivity,
-        appUpdateInfo: AppUpdateInfo?
+        appUpdateInfo: AppUpdateInfo
     ): Flow<Int> = callbackFlow {
         val appUpdateResultTask = AppUpdateManagerFactory.create(activity).startUpdateFlow(
-            appUpdateInfo!!,
+            appUpdateInfo,
             activity,
             AppUpdateOptions.defaultOptions(AppUpdateType.IMMEDIATE)
         )

@@ -73,7 +73,7 @@ class AppUpdateCheckerMock private constructor() : AppUpdateChecker {
 
     override fun startUpdate(
         activity: ComponentActivity,
-        appUpdateInfo: AppUpdateInfo?
+        appUpdateInfo: AppUpdateInfo
     ): Flow<Int> = flow {
         emit(Activity.RESULT_OK)
     }

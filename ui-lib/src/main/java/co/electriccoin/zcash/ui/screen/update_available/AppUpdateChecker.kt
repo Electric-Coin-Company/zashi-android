@@ -51,6 +51,6 @@ interface AppUpdateChecker {
 
     fun startUpdate(
         activity: ComponentActivity,
-        appUpdateInfo: AppUpdateInfo?
+        appUpdateInfo: AppUpdateInfo
     ): Flow<Int>
 }

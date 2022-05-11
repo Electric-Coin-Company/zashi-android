@@ -37,7 +37,7 @@ class UpdateAvailableViewModel(
 
     fun goForUpdate(
         activity: ComponentActivity,
-        appUpdateInfo: AppUpdateInfo?
+        appUpdateInfo: AppUpdateInfo
     ) {
         updateInfo.value = updateInfo.value.copy(state = UpdateState.Running)
 

@@ -69,7 +69,7 @@ class AppUpdateCheckerTest private constructor() : AppUpdateChecker {
 
     override fun startUpdate(
         activity: ComponentActivity,
-        appUpdateInfo: AppUpdateInfo?
+        appUpdateInfo: AppUpdateInfo
     ): Flow<Int> = callbackFlow {
         delay(3000)
         trySend(Activity.RESULT_OK)
