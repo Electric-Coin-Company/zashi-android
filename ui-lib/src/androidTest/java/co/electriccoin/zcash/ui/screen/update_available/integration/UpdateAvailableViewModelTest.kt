@@ -21,6 +21,7 @@ import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 
 @ExperimentalCoroutinesApi
 class UpdateAvailableViewModelTest {
@@ -56,42 +57,50 @@ class UpdateAvailableViewModelTest {
 
     @Test
     @MediumTest
-    fun validate_result_of_check_for_app_update() = runTest {
+    fun validate_result_of_update_methods_calls() = runTest {
         viewModel.checkForAppUpdate()
 
         // Although this test does not copy the real world situation, as the initial and result objects
         // should be mostly the same, we test VM proper functionality. VM emits the initial object
         // defined in this class, then we expect the result object from the AppUpdateCheckerMock class
         // and a newly acquired AppUpdateInfo object.
-        viewModel.updateInfo.take(2).collectIndexed { index, incomingInfo ->
-            if (index == 0) {
-                assertEquals(initialUpdateInfo.appUpdateInfo, incomingInfo.appUpdateInfo)
-                assertEquals(initialUpdateInfo.priority, incomingInfo.priority)
-                assertEquals(initialUpdateInfo.state, incomingInfo.state)
-                assertEquals(initialUpdateInfo.isForce, incomingInfo.isForce)
-            } else {
-                assertNotNull(incomingInfo.appUpdateInfo)
-                assertEquals(AppUpdateCheckerMock.resultUpdateInfo.priority, incomingInfo.priority)
-                assertEquals(AppUpdateCheckerMock.resultUpdateInfo.state, incomingInfo.state)
-                assertEquals(AppUpdateCheckerMock.resultUpdateInfo.isForce, incomingInfo.isForce)
-            }
-        }
-    }
+        viewModel.updateInfo.take(4).collectIndexed { index, incomingInfo ->
+            when (index) {
+                0 -> {
+                    // checkForAppUpdate initial callback
+                    incomingInfo.also {
+                        assertNull(it.appUpdateInfo)
 
-    @Test
-    @MediumTest
-    fun validate_result_of_go_for_update() = runTest {
-        viewModel.goForUpdate(composeTestRule.activity, initialUpdateInfo.appUpdateInfo)
+                        assertEquals(initialUpdateInfo.state, it.state)
+                        assertEquals(initialUpdateInfo.appUpdateInfo, it.appUpdateInfo)
+                        assertEquals(initialUpdateInfo.priority, it.priority)
+                        assertEquals(initialUpdateInfo.state, it.state)
+                        assertEquals(initialUpdateInfo.isForce, it.isForce)
+                    }
+                }
+                1 -> {
+                    // checkForAppUpdate result callback
+                    incomingInfo.also {
+                        assertNotNull(it.appUpdateInfo)
 
-        // In this case we only test that the VM changes state once it finishes the update.
-        viewModel.updateInfo.take(2).collectIndexed { index, incomingInfo ->
-            if (index == 0) {
-                assertEquals(UpdateState.Running, incomingInfo.state)
-                assertEquals(initialUpdateInfo.appUpdateInfo, incomingInfo.appUpdateInfo)
-                assertEquals(initialUpdateInfo.priority, incomingInfo.priority)
-                assertEquals(initialUpdateInfo.isForce, incomingInfo.isForce)
-            } else {
-                assertEquals(UpdateState.Done, incomingInfo.state)
+                        assertEquals(AppUpdateCheckerMock.resultUpdateInfo.state, it.state)
+                        assertEquals(AppUpdateCheckerMock.resultUpdateInfo.priority, it.priority)
+                        assertEquals(AppUpdateCheckerMock.resultUpdateInfo.isForce, it.isForce)
+                    }
+
+                    // now we can start the update
+                    viewModel.goForUpdate(composeTestRule.activity, incomingInfo.appUpdateInfo!!)
+                }
+                2 -> {
+                    // goForUpdate initial callback
+                    assertNotNull(incomingInfo.appUpdateInfo)
+                    assertEquals(UpdateState.Running, incomingInfo.state)
+                }
+                3 -> {
+                    // goForUpdate result callback
+                    assertNotNull(incomingInfo.appUpdateInfo)
+                    assertEquals(UpdateState.Done, incomingInfo.state)
+                }
             }
         }
     }

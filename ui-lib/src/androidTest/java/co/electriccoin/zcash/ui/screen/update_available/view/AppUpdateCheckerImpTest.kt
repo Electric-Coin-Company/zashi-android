@@ -67,9 +67,11 @@ class AppUpdateCheckerImpTest {
                 return@onFirst
             }
 
+            assertNotNull(updateInfo.appUpdateInfo)
+
             updateChecker.startUpdate(
                 composeTestRule.activity,
-                updateInfo.appUpdateInfo
+                updateInfo.appUpdateInfo!!
             ).onFirst { result ->
                 assertTrue {
                     listOf(
