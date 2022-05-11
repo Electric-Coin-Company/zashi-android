@@ -48,9 +48,9 @@ import co.electriccoin.zcash.ui.screen.seed.view.Seed
 import co.electriccoin.zcash.ui.screen.send.view.Send
 import co.electriccoin.zcash.ui.screen.settings.view.Settings
 import co.electriccoin.zcash.ui.screen.support.WrapSupport
-import co.electriccoin.zcash.ui.screen.update_available.AppUpdateCheckerImp
-import co.electriccoin.zcash.ui.screen.update_available.WrapUpdateAvailable
-import co.electriccoin.zcash.ui.screen.update_available.model.UpdateState
+import co.electriccoin.zcash.ui.screen.update.AppUpdateCheckerImp
+import co.electriccoin.zcash.ui.screen.update.WrapUpdateAvailable
+import co.electriccoin.zcash.ui.screen.update.model.UpdateState
 import co.electriccoin.zcash.ui.screen.wallet_address.view.WalletAddresses
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
