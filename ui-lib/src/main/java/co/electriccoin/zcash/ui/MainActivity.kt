@@ -310,8 +310,10 @@ class MainActivity : ComponentActivity() {
         checkUpdateViewModel.checkForAppUpdate()
         val updateInfo = checkUpdateViewModel.updateInfo.collectAsState().value
 
-        if (updateInfo?.appUpdateInfo != null && updateInfo?.state == UpdateState.Prepared) {
-            WrapUpdateAvailable(updateInfo)
+        updateInfo?.let {
+            if (it.appUpdateInfo != null && it.state == UpdateState.Prepared) {
+                WrapUpdateAvailable(updateInfo)
+            }
         }
     }
 
