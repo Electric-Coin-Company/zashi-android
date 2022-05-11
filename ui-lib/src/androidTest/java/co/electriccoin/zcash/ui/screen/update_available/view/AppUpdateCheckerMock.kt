@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 
-class AppUpdateCheckerMock : AppUpdateChecker {
+class AppUpdateCheckerMock private constructor() : AppUpdateChecker {
 
     companion object {
         fun new() = AppUpdateCheckerMock()

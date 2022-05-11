@@ -17,7 +17,7 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 
-class AppUpdateCheckerImp : AppUpdateChecker {
+class AppUpdateCheckerImp private constructor() : AppUpdateChecker {
 
     companion object {
         private const val DEFAULT_STALENESS_DAYS = 3

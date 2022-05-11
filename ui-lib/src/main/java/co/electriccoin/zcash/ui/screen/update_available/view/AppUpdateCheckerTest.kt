@@ -21,7 +21,7 @@ import kotlinx.coroutines.flow.callbackFlow
 
 // MANUAL_IN_APP_UPDATE_TEST (use instead of AppUpdateCheckerImp. Remove this class after test)
 @Suppress("MagicNumber")
-class AppUpdateCheckerTest : AppUpdateChecker {
+class AppUpdateCheckerTest private constructor() : AppUpdateChecker {
 
     companion object {
         fun new() = AppUpdateCheckerTest()
