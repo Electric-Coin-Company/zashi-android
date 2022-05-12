@@ -17,7 +17,7 @@ import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 
-class UpdateAvailableViewIntegrationTest {
+class UpdateViewIntegrationTest {
 
     @get:Rule
     val composeTestRule = createComposeRule()
