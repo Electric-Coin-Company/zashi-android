@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.screen.update.view
 
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
@@ -45,6 +46,7 @@ class UpdateAvailableViewTestSetup(
     @Composable
     fun getDefaultContent() {
         UpdateAvailable(
+            snackbarHostState = SnackbarHostState(),
             updateInfo = updateInfo,
             onDownload = { newState ->
                 onDownloadCount.incrementAndGet()

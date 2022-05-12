@@ -8,4 +8,5 @@
     <string name="update_download_button">Download Update</string>
     <string name="update_later_enabled_button">Remind me later</string>
     <string name="update_later_disabled_button">This can not be skipped.</string>
+    <string name="update_unable_to_open_play_store">Unable to launch Google Play store app.</string>
 </resources>
