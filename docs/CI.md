@@ -13,11 +13,14 @@ The secrets passed to GitHub Actions then map to Gradle properties set up within
 To enhance security, [OpenID Connect](https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-google-cloud-platform) is used to generate temporary access tokens for each build.
 
 ### Pull request
+* `EMULATOR_WTF_API_KEY` - API key for [Emulator.wtf](https://emulator.wtf)
 * `FIREBASE_TEST_LAB_PROJECT` - Firebase Test Lab project name.
 * `FIREBASE_TEST_LAB_SERVICE_ACCOUNT` - Email address of Firebase Test Lab service account.
 * `FIREBASE_TEST_LAB_WORKLOAD_IDENTITY_PROVIDER` - Workload identity provider to generate temporary service account key.
 
-To obtain the values for these, you'll need to enable the necessary Google Cloud APIs to enable automated access to Firebase Test Lab.
+The Pull Request workflow supports testing of the app and libraries with both Emulator.wtf and Firebase Test Lab.  By default Emulator.wtf is used for library instrumentation tests, while Firebase Test Lab is used for a robo test.
+
+To configure Firebase Test Lab, you'll need to enable the necessary Google Cloud APIs to enable automated access to Firebase Test Lab.
 * Configure Firebase Test Lab.  Google has [documentation for Jenkins](https://firebase.google.com/docs/test-lab/android/continuous).  Although we're using GitHub Actions, the initial requirements are the same.
 * Configure [workload identity federation](https://github.com/google-github-actions/auth#setting-up-workload-identity-federation)
 

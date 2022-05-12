@@ -41,4 +41,4 @@ runs:
       if: steps.gradle-dependency-cache.outputs.cache-hit != 'true'
       shell: bash
       run: |
-        ./gradlew resolveAll
+        ./gradlew dependencies resolveAll

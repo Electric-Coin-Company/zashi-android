@@ -4,6 +4,13 @@ pluginManagement {
     repositories {
         val isRepoRestrictionEnabled = true
 
+        mavenCentral {
+            if (isRepoRestrictionEnabled) {
+                content {
+                    includeGroup("wtf.emulator")
+                }
+            }
+        }
         google {
             if (isRepoRestrictionEnabled) {
                 content {
@@ -32,6 +39,7 @@ pluginManagement {
 
     plugins {
         val androidGradlePluginVersion = extra["ANDROID_GRADLE_PLUGIN_VERSION"].toString()
+        val emulatorWtfGradlePluginVersion = extra["EMULATOR_WTF_GRADLE_PLUGIN_VERSION"].toString()
         val detektVersion = extra["DETEKT_VERSION"].toString()
         val fulladleVersion = extra["FULLADLE_VERSION"].toString()
         val gradleVersionsPluginVersion = extra["GRADLE_VERSIONS_PLUGIN_VERSION"].toString()
@@ -44,6 +52,7 @@ pluginManagement {
         id("com.github.triplet.play") version (playPublisherVersion) apply (false)
         id("com.osacky.fulladle") version (fulladleVersion) apply (false)
         id("io.gitlab.arturbosch.detekt") version (detektVersion) apply (false)
+        id("wtf.emulator.gradle") version (emulatorWtfGradlePluginVersion) apply (false)
         kotlin("android") version (kotlinVersion) apply (false)
         kotlin("jvm") version (kotlinVersion)
         kotlin("multiplatform") version (kotlinVersion)
@@ -51,6 +60,8 @@ pluginManagement {
 }
 
 dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+
     @Suppress("UnstableApiUsage")
     repositories {
         val isRepoRestrictionEnabled = true
@@ -58,8 +69,8 @@ dependencyResolutionManagement {
         google {
             if (isRepoRestrictionEnabled) {
                 content {
-                    includeGroup("android.arch.lifecycle")
                     includeGroup("android.arch.core")
+                    includeGroup("android.arch.lifecycle")
                     includeGroup("com.google.android.material")
                     includeGroup("com.google.testing.platform")
                     includeGroup("com.google.android.play")
@@ -73,6 +84,7 @@ dependencyResolutionManagement {
                 content {
                     excludeGroup("android.arch.lifecycle")
                     excludeGroup("android.arch.core")
+                    excludeGroup("wtf.emulator")
                     excludeGroup("com.google.android.material")
                     excludeGroup("com.google.android.play")
                     excludeGroupByRegex("androidx.*")
@@ -84,6 +96,13 @@ dependencyResolutionManagement {
             if (isRepoRestrictionEnabled) {
                 content {
                     includeGroup("cash.z.ecc.android")
+                }
+            }
+        }
+        maven("https://maven.emulator.wtf/releases/") {
+            if (isRepoRestrictionEnabled) {
+                content {
+                    includeGroup("wtf.emulator")
                 }
             }
         }

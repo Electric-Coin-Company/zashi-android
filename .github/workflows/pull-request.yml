@@ -1,4 +1,5 @@
 # Expected secrets
+# EMULATOR_WTF_API_KEY - Optional API key for emulator.wtf
 # FIREBASE_TEST_LAB_PROJECT - Firebase Test Lab project name
 # FIREBASE_TEST_LAB_SERVICE_ACCOUNT - Email address of Firebase Test Lab service account
 # FIREBASE_TEST_LAB_WORKLOAD_IDENTITY_PROVIDER - Workload identity provider to generate temporary service account key
@@ -47,17 +48,28 @@ jobs:
         timeout-minutes: 12
         uses: ./.github/actions/setup
 
-  check_secrets:
+  check_firebase_secrets:
     runs-on: ubuntu-latest
     outputs:
-      has-secrets: ${{ steps.check_secrets.outputs.defined }}
+      has-secrets: ${{ steps.check_firebase_secrets.outputs.defined }}
     steps:
-      - id: check_secrets
+      - id: check_firebase_secrets
         env:
           FIREBASE_TEST_LAB_PROJECT: ${{ secrets.FIREBASE_TEST_LAB_PROJECT }}
           FIREBASE_TEST_LAB_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_TEST_LAB_SERVICE_ACCOUNT }}
           FIREBASE_TEST_LAB_WORKLOAD_IDENTITY_PROVIDER: ${{ secrets.FIREBASE_TEST_LAB_WORKLOAD_IDENTITY_PROVIDER }}
         if: "${{ env.FIREBASE_TEST_LAB_PROJECT != '' && env.FIREBASE_TEST_LAB_SERVICE_ACCOUNT != '' && env.FIREBASE_TEST_LAB_WORKLOAD_IDENTITY_PROVIDER != '' }}"
+        run: echo "::set-output name=defined::true"
+
+  check_emulator_wtf_secrets:
+    runs-on: ubuntu-latest
+    outputs:
+      has-secrets: ${{ steps.check_emulator_wtf_secrets.outputs.defined }}
+    steps:
+      - id: check_emulator_wtf_secrets
+        env:
+          EMULATOR_WTF_API_KEY: ${{ secrets.EMULATOR_WTF_API_KEY }}
+        if: "${{ env.EMULATOR_WTF_API_KEY != '' }}"
         run: echo "::set-output name=defined::true"
 
   static_analysis_detekt:
@@ -202,9 +214,10 @@ jobs:
           name: Test Kotlin modules results
           path: ~/artifacts
 
-  test_android_modules:
-    if: needs.check_secrets.outputs.has-secrets == 'true'
-    needs: [prime_cache, check_secrets]
+# Emulator.wtf is preferred if it has an API key.
+  test_android_modules_ftl:
+    if: needs.check_firebase_secrets.outputs.has-secrets == 'true' && needs.check_emulator_wtf_secrets.outputs.has-secrets == 'false'
+    needs: [prime_cache, check_firebase_secrets, check_emulator_wtf_secrets]
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -255,7 +268,45 @@ jobs:
         uses: actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535
         timeout-minutes: 1
         with:
-          name: Test Android modules results
+          name: Test Android modules with FTL results
+          path: ~/artifacts
+
+  test_android_modules_wtf:
+    if: needs.check_emulator_wtf_secrets.outputs.has-secrets == 'true'
+    needs: [ prime_cache, check_emulator_wtf_secrets ]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        timeout-minutes: 1
+        uses: actions/checkout@a12a3943b4bdde767164f792f33f40b04645d846
+      - name: Setup
+        id: setup
+        timeout-minutes: 5
+        uses: ./.github/actions/setup
+      - name: Build and test
+        timeout-minutes: 25
+        env:
+          ORG_GRADLE_PROJECT_ZCASH_EMULATOR_WTF_API_KEY: ${{ secrets.EMULATOR_WTF_API_KEY }}
+        run: |
+          ./gradlew testDebugWithEmulatorWtf
+      - name: Collect Artifacts
+        if: ${{ always() }}
+        timeout-minutes: 1
+        env:
+          ARTIFACTS_DIR_PATH: ${{ format('{0}/artifacts', env.home) }}
+          TEST_RESULTS_ZIP_PATH: ${{ format('{0}/artifacts/test_results.zip', env.home) }}
+        run: |
+          mkdir ${ARTIFACTS_DIR_PATH}
+
+          zip -r ${TEST_RESULTS_ZIP_PATH} . -i \*/build/test-results/\*
+      - name: Upload Artifacts
+        if: ${{ always() }}
+        uses: actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535
+        timeout-minutes: 1
+        with:
+          name: Test Android modules with WTF results
           path: ~/artifacts
 
   release_build:
@@ -307,8 +358,8 @@ jobs:
   # Performs a button mash test on the release build of the app
   # Note that we might need to help it get past the onboarding test with a script
   test_robo:
-    if: needs.check_secrets.outputs.has-secrets == 'true'
-    needs: [release_build, check_secrets]
+    if: needs.check_firebase_secrets.outputs.has-secrets == 'true'
+    needs: [release_build, check_firebase_secrets]
     runs-on: ubuntu-latest
     permissions:
       packages: read
