@@ -9,7 +9,7 @@ import co.electriccoin.zcash.ui.screen.update.model.UpdateState
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicReference
 
-class UpdateAvailableViewTestSetup(
+class UpdateViewTestSetup(
     private val composeTestRule: ComposeContentTestRule,
     private val updateInfo: UpdateInfo
 ) {
@@ -45,7 +45,7 @@ class UpdateAvailableViewTestSetup(
 
     @Composable
     fun getDefaultContent() {
-        UpdateAvailable(
+        Update(
             snackbarHostState = SnackbarHostState(),
             updateInfo = updateInfo,
             onDownload = { newState ->

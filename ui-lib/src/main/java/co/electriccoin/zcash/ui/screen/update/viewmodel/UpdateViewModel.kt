@@ -16,7 +16,7 @@ import com.google.android.play.core.install.model.ActivityResult
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
-class UpdateAvailableViewModel(
+class UpdateViewModel(
     application: Application,
     updateInfo: UpdateInfo,
     private val appUpdateChecker: AppUpdateChecker
@@ -62,14 +62,14 @@ class UpdateAvailableViewModel(
     }
 
     @Suppress("UNCHECKED_CAST")
-    class UpdateAvailableViewModelFactory(
+    class UpdateViewModelFactory(
         private val application: Application,
         private val updateInfo: UpdateInfo,
         private val appUpdateChecker: AppUpdateChecker
     ) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return if (modelClass.isAssignableFrom(UpdateAvailableViewModel::class.java)) {
-                UpdateAvailableViewModel(application, updateInfo, appUpdateChecker) as T
+            return if (modelClass.isAssignableFrom(UpdateViewModel::class.java)) {
+                UpdateViewModel(application, updateInfo, appUpdateChecker) as T
             } else {
                 throw IllegalArgumentException("ViewModel Not Found.")
             }

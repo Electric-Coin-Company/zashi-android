@@ -12,7 +12,7 @@
             android:name=".screen.backup.TestBackupActivity"
             android:exported="false" />
         <activity
-            android:name=".screen.update.TestUpdateAvailableActivity"
+            android:name=".screen.update.TestUpdateActivity"
             android:exported="false" />
     </application>
 

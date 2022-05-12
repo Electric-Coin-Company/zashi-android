@@ -7,7 +7,7 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.filters.MediumTest
 import cash.z.ecc.android.sdk.ext.onFirst
 import co.electriccoin.zcash.ui.screen.update.AppUpdateCheckerImp
-import co.electriccoin.zcash.ui.screen.update.TestUpdateAvailableActivity
+import co.electriccoin.zcash.ui.screen.update.TestUpdateActivity
 import co.electriccoin.zcash.ui.screen.update.model.UpdateInfo
 import co.electriccoin.zcash.ui.screen.update.model.UpdateState
 import com.google.android.play.core.install.model.ActivityResult
@@ -23,7 +23,7 @@ import kotlin.test.assertTrue
 class AppUpdateCheckerImpTest {
 
     @get:Rule
-    val composeTestRule = createAndroidComposeRule<TestUpdateAvailableActivity>()
+    val composeTestRule = createAndroidComposeRule<TestUpdateActivity>()
 
     companion object {
         val context: Context = ApplicationProvider.getApplicationContext()

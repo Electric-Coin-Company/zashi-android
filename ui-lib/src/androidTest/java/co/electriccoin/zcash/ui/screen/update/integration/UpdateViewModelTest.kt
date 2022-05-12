@@ -4,12 +4,12 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.lifecycle.viewModelScope
 import androidx.test.filters.MediumTest
 import co.electriccoin.zcash.ui.screen.update.AppUpdateChecker
-import co.electriccoin.zcash.ui.screen.update.TestUpdateAvailableActivity
+import co.electriccoin.zcash.ui.screen.update.TestUpdateActivity
 import co.electriccoin.zcash.ui.screen.update.fixture.UpdateInfoFixture
 import co.electriccoin.zcash.ui.screen.update.model.UpdateInfo
 import co.electriccoin.zcash.ui.screen.update.model.UpdateState
 import co.electriccoin.zcash.ui.screen.update.view.AppUpdateCheckerMock
-import co.electriccoin.zcash.ui.screen.update.viewmodel.UpdateAvailableViewModel
+import co.electriccoin.zcash.ui.screen.update.viewmodel.UpdateViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collectIndexed
@@ -24,11 +24,11 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 
 @ExperimentalCoroutinesApi
-class UpdateAvailableViewModelTest {
+class UpdateViewModelTest {
     @get:Rule
-    val composeTestRule = createAndroidComposeRule<TestUpdateAvailableActivity>()
+    val composeTestRule = createAndroidComposeRule<TestUpdateActivity>()
 
-    private lateinit var viewModel: UpdateAvailableViewModel
+    private lateinit var viewModel: UpdateViewModel
     private lateinit var checker: AppUpdateCheckerMock
     private lateinit var initialUpdateInfo: UpdateInfo
 
@@ -43,7 +43,7 @@ class UpdateAvailableViewModelTest {
             force = false
         )
 
-        viewModel = UpdateAvailableViewModel(
+        viewModel = UpdateViewModel(
             composeTestRule.activity.application,
             initialUpdateInfo,
             checker

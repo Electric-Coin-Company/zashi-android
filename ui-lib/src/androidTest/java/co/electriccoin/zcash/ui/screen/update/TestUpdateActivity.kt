@@ -10,7 +10,7 @@ import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.update.fixture.UpdateInfoFixture
 
-class TestUpdateAvailableActivity : ComponentActivity() {
+class TestUpdateActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,7 +25,7 @@ class TestUpdateAvailableActivity : ComponentActivity() {
                         .fillMaxWidth()
                         .fillMaxHeight()
                 ) {
-                    WrapUpdateAvailable(
+                    WrapUpdate(
                         this,
                         UpdateInfoFixture.new(appUpdateInfo = null)
                     )

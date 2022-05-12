@@ -10,7 +10,7 @@ import androidx.test.filters.MediumTest
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.screen.update.AppUpdateChecker
 import co.electriccoin.zcash.ui.screen.update.RestoreTag
-import co.electriccoin.zcash.ui.screen.update.TestUpdateAvailableActivity
+import co.electriccoin.zcash.ui.screen.update.TestUpdateActivity
 import co.electriccoin.zcash.ui.screen.update.fixture.UpdateInfoFixture
 import co.electriccoin.zcash.ui.screen.update.model.UpdateInfo
 import co.electriccoin.zcash.ui.screen.update.model.UpdateState
@@ -20,10 +20,10 @@ import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 
-class UpdateAvailableViewTest {
+class UpdateViewTest {
 
     @get:Rule
-    val composeTestRule = createAndroidComposeRule<TestUpdateAvailableActivity>()
+    val composeTestRule = createAndroidComposeRule<TestUpdateActivity>()
 
     @Test
     @MediumTest
@@ -149,7 +149,7 @@ class UpdateAvailableViewTest {
         assertEquals(1, testSetup.getOnReferenceCount())
     }
 
-    private fun newTestSetup(updateInfo: UpdateInfo) = UpdateAvailableViewTestSetup(
+    private fun newTestSetup(updateInfo: UpdateInfo) = UpdateViewTestSetup(
         composeTestRule,
         updateInfo
     ).apply {

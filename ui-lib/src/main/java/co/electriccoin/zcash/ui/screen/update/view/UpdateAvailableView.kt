@@ -36,12 +36,12 @@ import co.electriccoin.zcash.ui.screen.update.fixture.UpdateInfoFixture
 import co.electriccoin.zcash.ui.screen.update.model.UpdateInfo
 import co.electriccoin.zcash.ui.screen.update.model.UpdateState
 
-@Preview("UpdateAvailable")
+@Preview("Update")
 @Composable
-fun PreviewUpdateAvailable() {
+fun PreviewUpdate() {
     ZcashTheme(darkTheme = true) {
         GradientSurface {
-            UpdateAvailable(
+            Update(
                 snackbarHostState = SnackbarHostState(),
                 UpdateInfoFixture.new(appUpdateInfo = null),
                 onDownload = {},
@@ -54,7 +54,7 @@ fun PreviewUpdateAvailable() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UpdateAvailable(
+fun Update(
     snackbarHostState: SnackbarHostState,
     updateInfo: UpdateInfo,
     onDownload: (state: UpdateState) -> Unit,
@@ -69,27 +69,27 @@ fun UpdateAvailable(
     }
     Scaffold(
         topBar = {
-            UpdateAvailableTopAppBar(updateInfo)
+            UpdateTopAppBar(updateInfo)
         },
         snackbarHost = {
             SnackbarHost(snackbarHostState)
         },
         bottomBar = {
-            UpdateAvailableBottomAppBar(
+            UpdateBottomAppBar(
                 updateInfo,
                 onDownload,
                 onLater
             )
         }
     ) {
-        UpdateAvailableContentNormal(onReference)
+        UpdateContentNormal(onReference)
     }
-    UpdateAvailableOverlayRunning(updateInfo)
+    UpdateOverlayRunning(updateInfo)
 }
 
 @Suppress("MagicNumber")
 @Composable
-fun UpdateAvailableOverlayRunning(updateInfo: UpdateInfo) {
+fun UpdateOverlayRunning(updateInfo: UpdateInfo) {
     if (updateInfo.state == UpdateState.Running) {
         Column(
             Modifier
@@ -106,7 +106,7 @@ fun UpdateAvailableOverlayRunning(updateInfo: UpdateInfo) {
 }
 
 @Composable
-private fun UpdateAvailableTopAppBar(updateInfo: UpdateInfo) {
+private fun UpdateTopAppBar(updateInfo: UpdateInfo) {
     SmallTopAppBar(
         title = {
             Text(
@@ -125,7 +125,7 @@ private fun UpdateAvailableTopAppBar(updateInfo: UpdateInfo) {
 }
 
 @Composable
-private fun UpdateAvailableBottomAppBar(
+private fun UpdateBottomAppBar(
     updateInfo: UpdateInfo,
     onDownload: (state: UpdateState) -> Unit,
     onLater: () -> Unit
@@ -160,7 +160,7 @@ private fun UpdateAvailableBottomAppBar(
 }
 
 @Composable
-private fun UpdateAvailableContentNormal(
+private fun UpdateContentNormal(
     onReference: () -> Unit
 ) {
     Column(

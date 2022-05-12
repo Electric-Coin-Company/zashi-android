@@ -10,7 +10,7 @@ import co.electriccoin.zcash.ui.screen.update.AppUpdateChecker
 import co.electriccoin.zcash.ui.screen.update.fixture.UpdateInfoFixture
 import co.electriccoin.zcash.ui.screen.update.model.UpdateInfo
 import co.electriccoin.zcash.ui.screen.update.model.UpdateState
-import co.electriccoin.zcash.ui.screen.update.view.UpdateAvailableViewTestSetup
+import co.electriccoin.zcash.ui.screen.update.view.UpdateViewTestSetup
 import co.electriccoin.zcash.ui.test.getStringResource
 import org.junit.Rule
 import org.junit.Test
@@ -55,7 +55,7 @@ class UpdateAvailableViewIntegrationTest {
         assertNotEquals(testSetup.getUpdateState(), UpdateState.Prepared)
     }
 
-    private fun newTestSetup(updateInfo: UpdateInfo) = UpdateAvailableViewTestSetup(
+    private fun newTestSetup(updateInfo: UpdateInfo) = UpdateViewTestSetup(
         composeTestRule,
         updateInfo
     )

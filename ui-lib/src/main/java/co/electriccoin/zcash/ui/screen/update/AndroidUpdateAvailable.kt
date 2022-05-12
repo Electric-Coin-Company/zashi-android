@@ -13,28 +13,28 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.screen.update.model.UpdateInfo
 import co.electriccoin.zcash.ui.screen.update.model.UpdateState
 import co.electriccoin.zcash.ui.screen.update.util.PlayStoreUtil
-import co.electriccoin.zcash.ui.screen.update.view.UpdateAvailable
-import co.electriccoin.zcash.ui.screen.update.viewmodel.UpdateAvailableViewModel
+import co.electriccoin.zcash.ui.screen.update.view.Update
+import co.electriccoin.zcash.ui.screen.update.viewmodel.UpdateViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
-internal fun MainActivity.WrapUpdateAvailable(
+internal fun MainActivity.WrapUpdate(
     updateInfo: UpdateInfo
 ) {
-    WrapUpdateAvailable(
+    WrapUpdate(
         activity = this,
         inputUpdateInfo = updateInfo
     )
 }
 
 @Composable
-internal fun WrapUpdateAvailable(
+internal fun WrapUpdate(
     activity: ComponentActivity,
     inputUpdateInfo: UpdateInfo
 ) {
-    val viewModel by activity.viewModels<UpdateAvailableViewModel> {
-        UpdateAvailableViewModel.UpdateAvailableViewModelFactory(
+    val viewModel by activity.viewModels<UpdateViewModel> {
+        UpdateViewModel.UpdateViewModelFactory(
             activity.application,
             inputUpdateInfo,
             // AppUpdateCheckerTest.new() MANUAL_IN_APP_UPDATE_TEST (use instead of AppUpdateCheckerImp)
@@ -61,7 +61,7 @@ internal fun WrapUpdateAvailable(
         }
     }
 
-    UpdateAvailable(
+    Update(
         snackbarHostState,
         updateInfo,
         onDownload = {

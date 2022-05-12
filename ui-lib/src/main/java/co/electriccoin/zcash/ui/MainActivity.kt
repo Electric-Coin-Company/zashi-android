@@ -49,7 +49,7 @@ import co.electriccoin.zcash.ui.screen.send.view.Send
 import co.electriccoin.zcash.ui.screen.settings.view.Settings
 import co.electriccoin.zcash.ui.screen.support.WrapSupport
 import co.electriccoin.zcash.ui.screen.update.AppUpdateCheckerImp
-import co.electriccoin.zcash.ui.screen.update.WrapUpdateAvailable
+import co.electriccoin.zcash.ui.screen.update.WrapUpdate
 import co.electriccoin.zcash.ui.screen.update.model.UpdateState
 import co.electriccoin.zcash.ui.screen.wallet_address.view.WalletAddresses
 import kotlinx.coroutines.launch
@@ -312,7 +312,7 @@ class MainActivity : ComponentActivity() {
 
         updateInfo?.let {
             if (it.appUpdateInfo != null && it.state == UpdateState.Prepared) {
-                WrapUpdateAvailable(updateInfo)
+                WrapUpdate(updateInfo)
             }
         }
     }
