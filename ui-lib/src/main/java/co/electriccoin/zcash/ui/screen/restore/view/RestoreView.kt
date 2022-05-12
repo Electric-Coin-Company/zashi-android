@@ -35,9 +35,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -100,7 +102,8 @@ fun PreviewRestoreComplete() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+// TODO [#409]: https://github.com/zcash/secant-android-wallet/issues/409
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun RestoreWallet(
     completeWordList: Set<String>,
@@ -117,6 +120,10 @@ fun RestoreWallet(
                 RestoreMainContent(completeWordList, userWordList, paste)
             }
         } else {
+            // In some cases we need to hide the software keyboard manually, as it stays shown after
+            // all words are filled successfully.
+            LocalSoftwareKeyboardController.current?.hide()
+
             RestoreComplete(onComplete = onFinished)
         }
     }
