@@ -2,7 +2,6 @@ package co.electriccoin.zcash.ui.screen.update
 
 import android.content.Context
 import androidx.activity.ComponentActivity
-import co.electriccoin.zcash.ui.screen.update.fixture.UpdateInfoFixture
 import co.electriccoin.zcash.ui.screen.update.model.UpdateInfo
 import co.electriccoin.zcash.ui.screen.update.model.UpdateState
 import com.google.android.play.core.appupdate.AppUpdateInfo
@@ -70,7 +69,7 @@ class AppUpdateCheckerImp private constructor() : AppUpdateChecker {
 
     private fun emitSuccess(producerScope: ProducerScope<UpdateInfo>, info: AppUpdateInfo, state: UpdateState) {
         producerScope.trySend(
-            UpdateInfoFixture.new(
+            UpdateInfo(
                 getPriority(info.updatePriority()),
                 isHighPriority(info.updatePriority()),
                 info,
@@ -81,7 +80,7 @@ class AppUpdateCheckerImp private constructor() : AppUpdateChecker {
 
     private fun emitFailure(producerScope: ProducerScope<UpdateInfo>) {
         producerScope.trySend(
-            UpdateInfoFixture.new(
+            UpdateInfo(
                 AppUpdateChecker.Priority.LOW,
                 false,
                 null,
