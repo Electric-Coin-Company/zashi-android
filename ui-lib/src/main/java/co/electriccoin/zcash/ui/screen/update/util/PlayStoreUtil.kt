@@ -10,7 +10,6 @@ object PlayStoreUtil {
 
     const val FLAGS = Intent.FLAG_ACTIVITY_NO_HISTORY or
         Intent.FLAG_ACTIVITY_NEW_TASK or
-        Intent.FLAG_ACTIVITY_NEW_DOCUMENT or
         Intent.FLAG_ACTIVITY_MULTIPLE_TASK
 
     /**
