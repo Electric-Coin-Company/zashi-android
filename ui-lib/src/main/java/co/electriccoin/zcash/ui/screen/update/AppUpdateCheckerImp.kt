@@ -36,7 +36,7 @@ class AppUpdateCheckerImp private constructor() : AppUpdateChecker {
      *
      * @return UpdateInfo object encapsulated in Flow in case of conditions succeeded
      */
-    override fun checkForUpdateAvailability(
+    override fun newCheckForUpdateAvailabilityFlow(
         context: Context
     ): Flow<UpdateInfo> = callbackFlow {
         val appUpdateInfoTask = AppUpdateManagerFactory.create(context.applicationContext).appUpdateInfo
@@ -103,7 +103,7 @@ class AppUpdateCheckerImp private constructor() : AppUpdateChecker {
      * @param appUpdateInfo object is necessary for starting the update process,
      * for getting it see {@link #checkForUpdateAvailability()}
      */
-    override fun startUpdate(
+    override fun newStartUpdateFlow(
         activity: ComponentActivity,
         appUpdateInfo: AppUpdateInfo
     ): Flow<Int> = callbackFlow {

@@ -32,7 +32,7 @@ class AppUpdateCheckerImpTest {
 
     private fun getAppUpdateInfoFlow(): Flow<UpdateInfo> {
         @Suppress("MagicNumber")
-        return updateChecker.checkForUpdateAvailability(
+        return updateChecker.newCheckForUpdateAvailabilityFlow(
             context
         )
     }
@@ -69,7 +69,7 @@ class AppUpdateCheckerImpTest {
 
             assertNotNull(updateInfo.appUpdateInfo)
 
-            updateChecker.startUpdate(
+            updateChecker.newStartUpdateFlow(
                 composeTestRule.activity,
                 updateInfo.appUpdateInfo!!
             ).onFirst { result ->

@@ -30,7 +30,7 @@ class AppUpdateCheckerTest private constructor() : AppUpdateChecker {
 
     override val stalenessDays = DEFAULT_STALENESS_DAYS
 
-    override fun checkForUpdateAvailability(
+    override fun newCheckForUpdateAvailabilityFlow(
         context: Context
     ): Flow<UpdateInfo> = callbackFlow {
         delay(2000)
@@ -66,7 +66,7 @@ class AppUpdateCheckerTest private constructor() : AppUpdateChecker {
         )
     }
 
-    override fun startUpdate(
+    override fun newStartUpdateFlow(
         activity: ComponentActivity,
         appUpdateInfo: AppUpdateInfo
     ): Flow<Int> = callbackFlow {

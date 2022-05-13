@@ -44,11 +44,11 @@ interface AppUpdateChecker {
         return getPriority(inAppUpdatePriority) == Priority.HIGH
     }
 
-    fun checkForUpdateAvailability(
+    fun newCheckForUpdateAvailabilityFlow(
         context: Context,
     ): Flow<UpdateInfo>
 
-    fun startUpdate(
+    fun newStartUpdateFlow(
         activity: ComponentActivity,
         appUpdateInfo: AppUpdateInfo
     ): Flow<Int>

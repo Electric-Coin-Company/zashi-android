@@ -26,7 +26,7 @@ class UpdateViewModel(
 
     fun checkForAppUpdate() {
         viewModelScope.launch {
-            appUpdateChecker.checkForUpdateAvailability(
+            appUpdateChecker.newCheckForUpdateAvailabilityFlow(
                 getApplication()
             ).onFirst { newInfo ->
                 updateInfo.value = newInfo
@@ -45,7 +45,7 @@ class UpdateViewModel(
         updateInfo.value = updateInfo.value.copy(state = UpdateState.Running)
 
         viewModelScope.launch {
-            appUpdateChecker.startUpdate(
+            appUpdateChecker.newStartUpdateFlow(
                 activity,
                 appUpdateInfo
             ).onFirst { resultCode ->

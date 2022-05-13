@@ -20,7 +20,7 @@ class CheckUpdateViewModel(
 
     fun checkForAppUpdate() {
         viewModelScope.launch {
-            appUpdateChecker.checkForUpdateAvailability(
+            appUpdateChecker.newCheckForUpdateAvailabilityFlow(
                 getApplication()
             ).onFirst { newInfo ->
                 updateInfo.value = newInfo
