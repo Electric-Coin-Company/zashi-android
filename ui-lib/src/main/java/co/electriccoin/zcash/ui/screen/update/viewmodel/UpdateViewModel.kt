@@ -38,6 +38,10 @@ class UpdateViewModel(
         activity: ComponentActivity,
         appUpdateInfo: AppUpdateInfo
     ) {
+        if (updateInfo.value.state == UpdateState.Running) {
+            return
+        }
+
         updateInfo.value = updateInfo.value.copy(state = UpdateState.Running)
 
         viewModelScope.launch {
