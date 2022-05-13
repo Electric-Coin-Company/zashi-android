@@ -1,3 +1,6 @@
+import com.android.build.api.dsl.CommonExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
+
 // Note: due to a few limitations with build-conventions, there is some common Android Gradle Plugin
 // configuration happening in the root build.gradle.kts with a subprojects block.
 
@@ -105,4 +108,16 @@ fun com.android.build.gradle.BaseExtension.configureBaseExtension() {
             )
         )
     }
+
+    if (this is CommonExtension<*, *, *, *>) {
+        kotlinOptions {
+            jvmTarget = project.property("ANDROID_JVM_TARGET").toString()
+            allWarningsAsErrors = project.property("ZCASH_IS_TREAT_WARNINGS_AS_ERRORS").toString().toBoolean()
+            freeCompilerArgs = freeCompilerArgs + "-opt-in=kotlin.RequiresOptIn"
+        }
+    }
+}
+
+fun CommonExtension<*, *, *, *>.kotlinOptions(block: KotlinJvmOptions.() -> Unit) {
+    (this as ExtensionAware).extensions.configure("kotlinOptions", block)
 }
