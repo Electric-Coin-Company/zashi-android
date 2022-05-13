@@ -83,8 +83,7 @@ private fun WalletDetailTopAppBar(onBack: () -> Unit) {
             ) {
                 Icon(
                     imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = stringResource(R.string.wallet_address_back_content_description),
-                    tint = MaterialTheme.colorScheme.secondary
+                    contentDescription = stringResource(R.string.wallet_address_back_content_description)
                 )
             }
         }
