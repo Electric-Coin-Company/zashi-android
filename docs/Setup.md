@@ -12,7 +12,7 @@ Start by making sure the command line with Gradle works first, because **all the
 
 1. Install Java
     1. Install JVM 11 or greater on your system.  Our setup has been tested with Java 11-17.  For Windows or Linux, be sure that the `JAVA_HOME` environment variable points to the right Java version.  Note: If you switch from a newer to an older JVM version, you may see an error like the following `> com.android.ide.common.signing.KeytoolException: Failed to read key AndroidDebugKey from store "~/.android/debug.keystore": Integrity check failed: java.security.NoSuchAlgorithmException: Algorithm HmacPBESHA256 not available`.  A solution is to delete the debug keystore and allow it to be re-generated.
-    1. Android Studio has an embedded JVM, although running Gradle tasks from the command line requires a separate JVM to be installed.  Our Gradle scripts are configured to use toolchains to automatically install the correct JVM version.  _Note: The ktlintFormat task will fail on Apple Silicon unless a Java 11 virtual machine is installed manually._
+    1. Android Studio has an embedded JVM, although running Gradle tasks from the command line requires a separate JVM to be installed.  Our Gradle scripts are configured to use toolchains to automatically install the correct JVM version.
 1. Install Android Studio and the Android SDK
     1. Download the [Android Studio](https://developer.android.com/studio/)
     1. Note: Do not open the project in Android Studio yet.  That happens in a subsequent step below.  At this stage, we're just using Android Studio to install the Android SDK
