@@ -114,6 +114,7 @@ dependencyResolutionManagement {
             val androidxActivityVersion = extra["ANDROIDX_ACTIVITY_VERSION"].toString()
             val androidxAnnotationVersion = extra["ANDROIDX_ANNOTATION_VERSION"].toString()
             val androidxAppcompatVersion = extra["ANDROIDX_APPCOMPAT_VERSION"].toString()
+            val androidxCamera = extra["ANDROIDX_CAMERA_VERSION"].toString()
             val androidxComposeCompilerVersion = extra["ANDROIDX_COMPOSE_COMPILER_VERSION"].toString()
             val androidxComposeMaterial3Version = extra["ANDROIDX_COMPOSE_MATERIAL3_VERSION"].toString()
             val androidxComposeVersion = extra["ANDROIDX_COMPOSE_VERSION"].toString()
@@ -131,6 +132,7 @@ dependencyResolutionManagement {
             val androidxWorkManagerVersion = extra["ANDROIDX_WORK_MANAGER_VERSION"].toString()
             val coreLibraryDesugaringVersion = extra["CORE_LIBRARY_DESUGARING_VERSION"].toString()
             val flankVersion = extra["FLANK_VERSION"].toString()
+            val guavaVersion = extra["GUAVA_VERSION"].toString()
             val jacocoVersion = extra["JACOCO_VERSION"].toString()
             val javaVersion = extra["ANDROID_JVM_TARGET"].toString()
             val kotlinVersion = extra["KOTLIN_VERSION"].toString()
@@ -152,6 +154,9 @@ dependencyResolutionManagement {
             library("androidx-activity-compose", "androidx.activity:activity-compose:$androidxActivityVersion")
             library("androidx-annotation", "androidx.annotation:annotation:$androidxAnnotationVersion")
             library("androidx-appcompat", "androidx.appcompat:appcompat:$androidxAppcompatVersion")
+            library("androidx-camera", "androidx.camera:camera-camera2:$androidxCamera")
+            library("androidx-camera-lifecycle", "androidx.camera:camera-lifecycle:$androidxCamera")
+            library("androidx-camera-view", "androidx.camera:camera-view:$androidxCamera")
             library("androidx-compose-foundation", "androidx.compose.foundation:foundation:$androidxComposeVersion")
             library("androidx-compose-material3", "androidx.compose.material3:material3:$androidxComposeMaterial3Version")
             library("androidx-compose-material-icons-core", "androidx.compose.material:material-icons-core:$androidxComposeVersion")
@@ -167,6 +172,7 @@ dependencyResolutionManagement {
             library("androidx-viewmodel-compose", "androidx.lifecycle:lifecycle-viewmodel-compose:$androidxLifecycleVersion")
             library("androidx-workmanager", "androidx.work:work-runtime-ktx:$androidxWorkManagerVersion")
             library("desugaring", "com.android.tools:desugar_jdk_libs:$coreLibraryDesugaringVersion")
+            library("guava", "com.google.guava:guava:$guavaVersion")
             library("kotlin-stdlib", "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
             library("kotlin-reflect", "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
             library("kotlin-test", "org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
@@ -195,6 +201,14 @@ dependencyResolutionManagement {
             library("kotlinx-coroutines-test", "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinxCoroutinesVersion")
 
             // Bundles
+            bundle(
+                "androidx-camera-core",
+                listOf(
+                    "androidx-camera",
+                    "androidx-camera-lifecycle",
+                    "androidx-camera-view"
+                )
+            )
             bundle(
                 "androidx-compose-core",
                 listOf(

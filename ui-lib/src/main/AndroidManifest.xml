@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="co.electriccoin.zcash.ui">
 
+    <uses-permission android:name="android.permission.CAMERA" />
+
     <application
         android:icon="@mipmap/ic_launcher_square"
         android:roundIcon="@mipmap/ic_launcher_round"
