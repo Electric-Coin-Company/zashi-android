@@ -11,6 +11,9 @@
         <activity
             android:name="co.electriccoin.zcash.ui.screen.backup.TestBackupActivity"
             android:exported="false" />
+        <activity
+            android:name="co.electriccoin.zcash.ui.screen.update.TestUpdateActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

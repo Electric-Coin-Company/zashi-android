@@ -46,6 +46,7 @@ android {
                     "src/main/res/ui/send",
                     "src/main/res/ui/settings",
                     "src/main/res/ui/support",
+                    "src/main/res/ui/update",
                     "src/main/res/ui/wallet_address"
                 )
             )
@@ -65,6 +66,7 @@ dependencies {
     implementation(libs.androidx.workmanager)
     implementation(libs.bundles.androidx.compose.core)
     implementation(libs.bundles.androidx.compose.extended)
+    implementation(libs.bundles.play.core)
     implementation(libs.kotlin.stdlib)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.core)

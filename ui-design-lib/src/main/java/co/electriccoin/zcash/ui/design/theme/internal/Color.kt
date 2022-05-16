@@ -54,6 +54,8 @@ internal object Dark {
 
     val dangerous = Color(0xFFEC0008)
     val onDangerous = Color(0xFFFFFFFF)
+
+    val reference = Color(0xFF10A5FF)
 }
 
 internal object Light {
@@ -103,6 +105,8 @@ internal object Light {
 
     val dangerous = Color(0xFFEC0008)
     val onDangerous = Color(0xFFFFFFFF)
+
+    val reference = Color(0xFF10A5FF)
 }
 
 internal val DarkColorPalette = darkColorScheme(
@@ -146,7 +150,8 @@ internal val DarkExtendedColorPalette = ExtendedColors(
     addressHighlightTransparent = Dark.addressHighlightTransparent,
     addressHighlightViewing = Dark.addressHighlightViewing,
     dangerous = Dark.dangerous,
-    onDangerous = Dark.onDangerous
+    onDangerous = Dark.onDangerous,
+    reference = Dark.reference
 )
 
 internal val LightExtendedColorPalette = ExtendedColors(
@@ -168,7 +173,8 @@ internal val LightExtendedColorPalette = ExtendedColors(
     addressHighlightTransparent = Light.addressHighlightTransparent,
     addressHighlightViewing = Light.addressHighlightViewing,
     dangerous = Light.dangerous,
-    onDangerous = Light.onDangerous
+    onDangerous = Light.onDangerous,
+    reference = Light.reference
 )
 
 internal val LocalExtendedColors = staticCompositionLocalOf {
@@ -191,6 +197,7 @@ internal val LocalExtendedColors = staticCompositionLocalOf {
         addressHighlightTransparent = Color.Unspecified,
         addressHighlightViewing = Color.Unspecified,
         dangerous = Color.Unspecified,
-        onDangerous = Color.Unspecified
+        onDangerous = Color.Unspecified,
+        reference = Color.Unspecified
     )
 }

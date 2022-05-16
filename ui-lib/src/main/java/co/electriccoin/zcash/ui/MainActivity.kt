@@ -37,6 +37,7 @@ import co.electriccoin.zcash.ui.screen.backup.WrapBackup
 import co.electriccoin.zcash.ui.screen.backup.copyToClipboard
 import co.electriccoin.zcash.ui.screen.home.model.spendableBalance
 import co.electriccoin.zcash.ui.screen.home.view.Home
+import co.electriccoin.zcash.ui.screen.home.viewmodel.CheckUpdateViewModel
 import co.electriccoin.zcash.ui.screen.home.viewmodel.SecretState
 import co.electriccoin.zcash.ui.screen.home.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.onboarding.view.Onboarding
@@ -50,6 +51,9 @@ import co.electriccoin.zcash.ui.screen.seed.view.Seed
 import co.electriccoin.zcash.ui.screen.send.view.Send
 import co.electriccoin.zcash.ui.screen.settings.view.Settings
 import co.electriccoin.zcash.ui.screen.support.WrapSupport
+import co.electriccoin.zcash.ui.screen.update.AppUpdateCheckerImp
+import co.electriccoin.zcash.ui.screen.update.WrapUpdate
+import co.electriccoin.zcash.ui.screen.update.model.UpdateState
 import co.electriccoin.zcash.ui.screen.wallet_address.view.WalletAddresses
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -62,6 +66,16 @@ class MainActivity : ComponentActivity() {
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     val walletViewModel by viewModels<WalletViewModel>()
+
+    // TODO [#382]: https://github.com/zcash/secant-android-wallet/issues/382
+    // TODO [#403]: https://github.com/zcash/secant-android-wallet/issues/403
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    val checkUpdateViewModel by viewModels<CheckUpdateViewModel> {
+        CheckUpdateViewModel.CheckUpdateViewModelFactory(
+            application,
+            AppUpdateCheckerImp.new()
+        )
+    }
 
     @VisibleForTesting(otherwise = VisibleForTesting.NONE)
     lateinit var navControllerForTesting: NavHostController
@@ -228,6 +242,7 @@ class MainActivity : ComponentActivity() {
 
     @Suppress("LongMethod")
     @Composable
+    @SuppressWarnings("LongMethod")
     private fun Navigation() {
         val navController = rememberNavController().also {
             // This suppress is necessary, as this is how we set up the nav controller for tests.
@@ -316,6 +331,21 @@ class MainActivity : ComponentActivity() {
             )
 
             reportFullyDrawn()
+
+            WrapCheckForUpdate()
+        }
+    }
+
+    @Composable
+    private fun WrapCheckForUpdate() {
+        // and then check for an app update asynchronously
+        checkUpdateViewModel.checkForAppUpdate()
+        val updateInfo = checkUpdateViewModel.updateInfo.collectAsState().value
+
+        updateInfo?.let {
+            if (it.appUpdateInfo != null && it.state == UpdateState.Prepared) {
+                WrapUpdate(updateInfo)
+            }
         }
     }
 
