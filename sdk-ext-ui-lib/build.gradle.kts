@@ -2,6 +2,8 @@ plugins {
     id("com.android.library")
     kotlin("android")
     id("zcash.android-build-conventions")
+    id("wtf.emulator.gradle")
+    id("zcash.emulator-wtf-conventions")
 }
 
 android {

@@ -5,6 +5,8 @@ plugins {
     id("zcash.android-build-conventions")
     id("com.github.triplet.play")
     id("com.osacky.fladle")
+    id("wtf.emulator.gradle")
+    id("zcash.emulator-wtf-conventions")
 }
 
 val packageName = "co.electriccoin.zcash"
@@ -226,22 +228,22 @@ tasks.whenTaskAdded {
 // Firebase Test Lab has min and max values that might differ from our project's
 // These are determined by `gcloud firebase test android models list`
 @Suppress("MagicNumber", "PropertyName", "VariableNaming")
-val FIREBASE_TEST_LAB_MIN_API = 23
+val FIREBASE_TEST_LAB_MIN_SDK = 23
 
 @Suppress("MagicNumber", "PropertyName", "VariableNaming")
-val FIREBASE_TEST_LAB_MAX_API = 30
+val FIREBASE_TEST_LAB_MAX_SDK = 30
 
 val firebaseTestLabKeyPath = project.properties["ZCASH_FIREBASE_TEST_LAB_API_KEY_PATH"].toString()
 if (firebaseTestLabKeyPath.isNotBlank()) {
     val minSdkVersion = run {
         val buildMinSdk =
-            project.properties["ANDROID_MIN_SDK_VERSION"].toString().toInt()
-        buildMinSdk.coerceAtLeast(FIREBASE_TEST_LAB_MIN_API).toString()
+            project.properties["ANDROID_APP_MIN_SDK_VERSION"].toString().toInt()
+        buildMinSdk.coerceAtLeast(FIREBASE_TEST_LAB_MIN_SDK).toString()
     }
     val targetSdkVersion = run {
         val buildTargetSdk =
             project.properties["ANDROID_TARGET_SDK_VERSION"].toString().toInt()
-        buildTargetSdk.coerceAtMost(FIREBASE_TEST_LAB_MAX_API).toString()
+        buildTargetSdk.coerceAtMost(FIREBASE_TEST_LAB_MAX_SDK).toString()
     }
 
     fladle {
@@ -260,7 +262,7 @@ if (firebaseTestLabKeyPath.isNotBlank()) {
                 testTimeout.set("5m")
                 
                 devices.addAll(
-                    mapOf("model" to "Nexus6", "version" to minSdkVersion),
+                    mapOf("model" to "Nexus6P", "version" to minSdkVersion),
                     mapOf("model" to "Pixel2", "version" to targetSdkVersion)
                 )
 
