@@ -2,6 +2,7 @@ package co.electriccoin.zcash.ui.screen.scan.view
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.view.ViewGroup
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -14,6 +15,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -40,6 +42,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.testTag
@@ -219,10 +222,36 @@ private fun ScanMainContent(
                 lifecycleOwner,
                 snackbarHostState
             )
+
+            ScanFrame()
         }
 
         ScanBottomItems(scanState, onOpenSettings)
     }
+}
+
+@Suppress("MagicNumber")
+@Composable
+fun ScanFrame() {
+    val frameModifier = when (LocalConfiguration.current.orientation) {
+        Configuration.ORIENTATION_LANDSCAPE -> {
+            Modifier
+                .fillMaxHeight(0.7f)
+                .aspectRatio(1f)
+                .background(Color.Transparent)
+                .border(BorderStroke(12.dp, Color.White), RoundedCornerShape(10))
+                .testTag(ScanTag.QR_FRAME)
+        }
+        else -> {
+            Modifier
+                .fillMaxWidth(0.7f)
+                .aspectRatio(1f)
+                .background(Color.Transparent)
+                .border(BorderStroke(12.dp, Color.White), RoundedCornerShape(10))
+                .testTag(ScanTag.QR_FRAME)
+        }
+    }
+    Box(modifier = frameModifier)
 }
 
 @Suppress("MagicNumber")
@@ -276,14 +305,5 @@ fun ScanCameraView(
         Modifier
             .fillMaxSize()
             .testTag(ScanTag.CAMERA_VIEW),
-    )
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize(0.7f)
-            .aspectRatio(1f)
-            .background(Color.Transparent)
-            .border(BorderStroke(12.dp, Color.White), RoundedCornerShape(10))
-            .testTag(ScanTag.QR_FRAME)
     )
 }
