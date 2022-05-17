@@ -19,7 +19,7 @@ internal fun MainActivity.WrapScan(
 }
 
 @Composable
-private fun WrapScan(
+fun WrapScan(
     activity: ComponentActivity,
     goBack: () -> Unit
 ) {
@@ -34,8 +34,8 @@ private fun WrapScan(
             runCatching {
                 activity.startActivity(SettingsUtil.newSettingsIntent(activity.packageName))
             }.onFailure {
-                // this case should not really happen, as the Settings app should be available on every
-                // Android device, but we need to handle it somehow
+                // This case should not really happen, as the Settings app should be available on every
+                // Android device, but we need to handle it somehow.
                 scope.launch {
                     snackbarHostState.showSnackbar(
                         message = activity.getString(R.string.scan_settings_open_failed)

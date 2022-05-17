@@ -31,7 +31,7 @@ import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.Reference
 import co.electriccoin.zcash.ui.design.component.TertiaryButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
-import co.electriccoin.zcash.ui.screen.update.RestoreTag
+import co.electriccoin.zcash.ui.screen.update.UpdateTag
 import co.electriccoin.zcash.ui.screen.update.fixture.UpdateInfoFixture
 import co.electriccoin.zcash.ui.screen.update.model.UpdateInfo
 import co.electriccoin.zcash.ui.screen.update.model.UpdateState
@@ -96,7 +96,7 @@ fun UpdateOverlayRunning(updateInfo: UpdateInfo) {
                 .background(ZcashTheme.colors.overlay.copy(0.5f))
                 .fillMaxWidth()
                 .fillMaxHeight()
-                .testTag(RestoreTag.PROGRESSBAR_DOWNLOADING),
+                .testTag(UpdateTag.PROGRESSBAR_DOWNLOADING),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -136,7 +136,7 @@ private fun UpdateBottomAppBar(
             text = stringResource(R.string.update_download_button),
             modifier = Modifier
                 .fillMaxWidth()
-                .testTag(RestoreTag.BTN_DOWNLOAD),
+                .testTag(UpdateTag.BTN_DOWNLOAD),
             enabled = updateInfo.state != UpdateState.Running
         )
 
@@ -153,7 +153,7 @@ private fun UpdateBottomAppBar(
             ),
             modifier = Modifier
                 .fillMaxWidth()
-                .testTag(RestoreTag.BTN_LATER),
+                .testTag(UpdateTag.BTN_LATER),
             enabled = !updateInfo.isForce && updateInfo.state != UpdateState.Running
         )
     }

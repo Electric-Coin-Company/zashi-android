@@ -42,6 +42,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -54,12 +55,14 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.SecondaryButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.screen.scan.ScanTag
 import co.electriccoin.zcash.ui.screen.scan.model.ScanState
 import com.google.common.util.concurrent.ListenableFuture
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
 // TODO [#423]: https://github.com/zcash/secant-android-wallet/issues/423
+// TODO [#313]: https://github.com/zcash/secant-android-wallet/issues/313
 @Preview("Support")
 @Composable
 fun PreviewScan() {
@@ -131,6 +134,7 @@ fun ScanBottomItems(
                 .fillMaxWidth()
                 .align(CenterHorizontally)
                 .padding(horizontal = 24.dp, vertical = 12.dp)
+                .testTag(ScanTag.TEXT_STATE)
         )
 
         if (scanState == ScanState.Permission) {
@@ -269,7 +273,9 @@ fun ScanCameraView(
 
             previewView
         },
-        Modifier.fillMaxSize()
+        Modifier
+            .fillMaxSize()
+            .testTag(ScanTag.CAMERA_VIEW),
     )
 
     Box(
@@ -278,5 +284,6 @@ fun ScanCameraView(
             .aspectRatio(1f)
             .background(Color.Transparent)
             .border(BorderStroke(12.dp, Color.White), RoundedCornerShape(10))
+            .testTag(ScanTag.QR_FRAME)
     )
 }

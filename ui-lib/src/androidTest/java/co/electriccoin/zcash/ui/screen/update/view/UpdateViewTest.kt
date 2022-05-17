@@ -7,10 +7,11 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.test.filters.MediumTest
+import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.screen.update.AppUpdateChecker
-import co.electriccoin.zcash.ui.screen.update.RestoreTag
 import co.electriccoin.zcash.ui.screen.update.TestUpdateActivity
+import co.electriccoin.zcash.ui.screen.update.UpdateTag
 import co.electriccoin.zcash.ui.screen.update.fixture.UpdateInfoFixture
 import co.electriccoin.zcash.ui.screen.update.model.UpdateInfo
 import co.electriccoin.zcash.ui.screen.update.model.UpdateState
@@ -20,7 +21,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 
-class UpdateViewTest {
+class UpdateViewTest : UiTestPrerequisites() {
 
     @get:Rule
     val composeTestRule = createAndroidComposeRule<TestUpdateActivity>()
@@ -122,7 +123,7 @@ class UpdateViewTest {
 
         assertEquals(0, testSetup.getOnDownloadCount())
 
-        composeTestRule.onNodeWithText(RestoreTag.PROGRESSBAR_DOWNLOADING).also {
+        composeTestRule.onNodeWithText(UpdateTag.PROGRESSBAR_DOWNLOADING).also {
             it.assertDoesNotExist()
         }
 
@@ -158,13 +159,13 @@ class UpdateViewTest {
 }
 
 private fun ComposeContentTestRule.clickLater() {
-    onNodeWithTag(RestoreTag.BTN_LATER).also {
+    onNodeWithTag(UpdateTag.BTN_LATER).also {
         it.performClick()
     }
 }
 
 private fun ComposeContentTestRule.clickDownload() {
-    onNodeWithTag(RestoreTag.BTN_DOWNLOAD).also {
+    onNodeWithTag(UpdateTag.BTN_DOWNLOAD).also {
         it.performClick()
     }
 }
