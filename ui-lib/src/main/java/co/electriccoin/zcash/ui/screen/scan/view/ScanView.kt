@@ -62,7 +62,7 @@ import co.electriccoin.zcash.ui.screen.scan.ScanTag
 import co.electriccoin.zcash.ui.screen.scan.model.ScanState
 import com.google.common.util.concurrent.ListenableFuture
 import kotlinx.coroutines.launch
-import kotlin.random.Random
+import java.util.UUID
 
 // TODO [#423]: https://github.com/zcash/secant-android-wallet/issues/423
 // TODO [#313]: https://github.com/zcash/secant-android-wallet/issues/313
@@ -204,9 +204,9 @@ private fun ScanMainContent(
         }
     )
 
-    // We use a random number as a launcher key to be able to show the permission popup after a user
+    // We use a random value to show the permission popup after a user
     // makes a change in app permissions via the system settings.
-    LaunchedEffect(key1 = Random.nextInt()) {
+    LaunchedEffect(key1 = UUID.randomUUID()) {
         launcher.launch(Manifest.permission.CAMERA)
     }
 
