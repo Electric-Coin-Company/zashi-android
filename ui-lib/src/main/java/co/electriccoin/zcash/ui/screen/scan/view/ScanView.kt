@@ -254,7 +254,6 @@ fun ScanFrame() {
     Box(modifier = frameModifier)
 }
 
-@Suppress("MagicNumber")
 @Composable
 fun ScanCameraView(
     onBack: () -> Unit,
