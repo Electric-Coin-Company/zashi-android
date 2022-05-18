@@ -202,7 +202,7 @@ dependencyResolutionManagement {
 
             // Bundles
             bundle(
-                "androidx-camera-core",
+                "androidx-camera",
                 listOf(
                     "androidx-camera",
                     "androidx-camera-lifecycle",

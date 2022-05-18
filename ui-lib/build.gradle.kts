@@ -59,7 +59,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.livedata)
     implementation(libs.androidx.splash)
     implementation(libs.androidx.workmanager)
-    implementation(libs.bundles.androidx.camera.core)
+    implementation(libs.bundles.androidx.camera)
     implementation(libs.bundles.androidx.compose.core)
     implementation(libs.bundles.androidx.compose.extended)
     implementation(libs.bundles.play.core)
