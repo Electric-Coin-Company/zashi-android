@@ -69,7 +69,7 @@ import java.util.UUID
 
 // TODO [#423]: https://github.com/zcash/secant-android-wallet/issues/423
 // TODO [#313]: https://github.com/zcash/secant-android-wallet/issues/313
-@Preview("Support")
+@Preview("Scan")
 @Composable
 fun PreviewScan() {
     ZcashTheme(darkTheme = true) {
