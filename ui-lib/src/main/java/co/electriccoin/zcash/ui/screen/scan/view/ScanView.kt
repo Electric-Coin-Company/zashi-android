@@ -34,6 +34,7 @@ import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -60,7 +61,9 @@ import co.electriccoin.zcash.ui.design.component.SecondaryButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.scan.ScanTag
 import co.electriccoin.zcash.ui.screen.scan.model.ScanState
-import com.google.common.util.concurrent.ListenableFuture
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.guava.await
 import kotlinx.coroutines.launch
 import java.util.UUID
 
@@ -210,15 +213,15 @@ private fun ScanMainContent(
         launcher.launch(Manifest.permission.CAMERA)
     }
 
-    val cameraProviderFuture = remember {
-        ProcessCameraProvider.getInstance(context)
+    val cameraProviderFlow = remember {
+        flow<ProcessCameraProvider> { emit(ProcessCameraProvider.getInstance(context).await()) }
     }
 
     Box(contentAlignment = Alignment.Center) {
         if (scanState == ScanState.Scanning) {
             ScanCameraView(
                 onBack,
-                cameraProviderFuture,
+                cameraProviderFlow,
                 lifecycleOwner,
                 snackbarHostState
             )
@@ -257,53 +260,57 @@ fun ScanFrame() {
 @Composable
 fun ScanCameraView(
     onBack: () -> Unit,
-    cameraProviderFuture: ListenableFuture<ProcessCameraProvider>,
+    cameraProviderFlow: Flow<ProcessCameraProvider>,
     lifecycleOwner: LifecycleOwner,
     snackbarHostState: SnackbarHostState
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    AndroidView(
-        factory = { factoryContext ->
-            val previewView = PreviewView(factoryContext).apply {
-                this.scaleType = PreviewView.ScaleType.FILL_CENTER
-                layoutParams = ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT
-                )
-            }
-            val preview = androidx.camera.core.Preview.Builder().build()
-            val selector = CameraSelector.Builder()
-                .requireLensFacing(CameraSelector.LENS_FACING_BACK)
-                .build()
-            preview.setSurfaceProvider(previewView.surfaceProvider)
-
-            runCatching {
-                // we must unbind the use-cases before rebinding them
-                val cameraProvider = cameraProviderFuture.get()
-                cameraProvider.unbindAll()
-                cameraProvider.bindToLifecycle(
-                    lifecycleOwner,
-                    selector,
-                    preview
-                )
-            }.onFailure {
-                scope.launch {
-                    val snackbarResult = snackbarHostState.showSnackbar(
-                        message = context.getString(R.string.scan_setup_failed),
-                        actionLabel = context.getString(R.string.scan_setup_back),
+    val cameraProvider = cameraProviderFlow.collectAsState(initial = null).value
+    if (null == cameraProvider) {
+        // Show loading indicator
+    } else {
+        AndroidView(
+            factory = { factoryContext ->
+                val previewView = PreviewView(factoryContext).apply {
+                    this.scaleType = PreviewView.ScaleType.FILL_CENTER
+                    layoutParams = ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT
                     )
-                    if (snackbarResult == SnackbarResult.ActionPerformed) {
-                        onBack()
+                }
+                val preview = androidx.camera.core.Preview.Builder().build()
+                val selector = CameraSelector.Builder()
+                    .requireLensFacing(CameraSelector.LENS_FACING_BACK)
+                    .build()
+                preview.setSurfaceProvider(previewView.surfaceProvider)
+
+                runCatching {
+                    // we must unbind the use-cases before rebinding them
+                    cameraProvider.unbindAll()
+                    cameraProvider.bindToLifecycle(
+                        lifecycleOwner,
+                        selector,
+                        preview
+                    )
+                }.onFailure {
+                    scope.launch {
+                        val snackbarResult = snackbarHostState.showSnackbar(
+                            message = context.getString(R.string.scan_setup_failed),
+                            actionLabel = context.getString(R.string.scan_setup_back),
+                        )
+                        if (snackbarResult == SnackbarResult.ActionPerformed) {
+                            onBack()
+                        }
                     }
                 }
-            }
 
-            previewView
-        },
-        Modifier
-            .fillMaxSize()
-            .testTag(ScanTag.CAMERA_VIEW),
-    )
+                previewView
+            },
+            Modifier
+                .fillMaxSize()
+                .testTag(ScanTag.CAMERA_VIEW),
+        )
+    }
 }

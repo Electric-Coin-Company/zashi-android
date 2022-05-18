@@ -69,6 +69,7 @@ dependencies {
     implementation(libs.kotlin.stdlib)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.guava)
     implementation(libs.kotlinx.datetime)
     implementation(libs.zcash.sdk)
     implementation(libs.zcash.bip39)

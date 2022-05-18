@@ -178,6 +178,7 @@ dependencyResolutionManagement {
             library("kotlin-test", "org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
             library("kotlinx-coroutines-android", "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlinxCoroutinesVersion")
             library("kotlinx-coroutines-core", "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
+            library("kotlinx-coroutines-guava", "org.jetbrains.kotlinx:kotlinx-coroutines-guava:$kotlinxCoroutinesVersion")
             library("kotlinx-datetime", "org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDateTimeVersion")
             library("play-core", "com.google.android.play:core:$playCoreVersion")
             library("play-core-ktx", "com.google.android.play:core-ktx:$playCoreKtxVersion")
