@@ -281,8 +281,9 @@ fun ScanCameraView(
 
             runCatching {
                 // we must unbind the use-cases before rebinding them
-                cameraProviderFuture.get().unbindAll()
-                cameraProviderFuture.get().bindToLifecycle(
+                val cameraProvider = cameraProviderFuture.get()
+                cameraProvider.unbindAll()
+                cameraProvider.bindToLifecycle(
                     lifecycleOwner,
                     selector,
                     preview
