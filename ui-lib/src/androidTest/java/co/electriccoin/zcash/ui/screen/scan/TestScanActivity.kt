@@ -26,7 +26,8 @@ class TestScanActivity : ComponentActivity() {
                 ) {
                     WrapScan(
                         this,
-                        goBack = {}
+                        goBack = {},
+                        onScanDone = {},
                     )
                 }
             }

@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraSelector
+import androidx.camera.core.ImageAnalysis
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.BorderStroke
@@ -35,7 +36,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
@@ -64,10 +64,10 @@ import co.electriccoin.zcash.ui.design.component.SecondaryButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.scan.ScanTag
 import co.electriccoin.zcash.ui.screen.scan.model.ScanState
+import co.electriccoin.zcash.ui.screen.scan.util.QrCodeAnalyzer
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.guava.await
-import kotlinx.coroutines.launch
 import java.util.UUID
 import kotlin.math.roundToInt
 
@@ -81,7 +81,7 @@ fun PreviewScan() {
             Scan(
                 snackbarHostState = SnackbarHostState(),
                 onBack = {},
-                onScan = {},
+                onScanDone = {},
                 onOpenSettings = {}
             )
         }
@@ -94,7 +94,7 @@ fun PreviewScan() {
 fun Scan(
     snackbarHostState: SnackbarHostState,
     onBack: () -> Unit,
-    onScan: (String) -> Unit,
+    onScanDone: (String) -> Unit,
     onOpenSettings: () -> Unit,
 ) {
     Scaffold(
@@ -102,7 +102,7 @@ fun Scan(
         snackbarHost = { SnackbarHost(snackbarHostState) },
     ) {
         ScanMainContent(
-            onScan,
+            onScanDone,
             onOpenSettings,
             onBack,
             snackbarHostState
@@ -174,7 +174,7 @@ private fun ScanTopAppBar(onBack: () -> Unit) {
 @Suppress("UNUSED_VARIABLE", "UNUSED_PARAMETER", "MagicNumber", "LongMethod")
 @Composable
 private fun ScanMainContent(
-    onScan: (String) -> Unit,
+    onScanDone: (String) -> Unit,
     onOpenSettings: () -> Unit,
     onBack: () -> Unit,
     snackbarHostState: SnackbarHostState
@@ -194,12 +194,13 @@ private fun ScanMainContent(
         )
     }
 
-    val (scanResult, setScanResult) = rememberSaveable { mutableStateOf("") }
-
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
         onResult = { granted ->
-            if (granted) {
+            // we don't want to change state in case of some of the final state
+            if (scanState == ScanState.Success || scanState == ScanState.Failed) {
+                return@rememberLauncherForActivityResult
+            } else if (granted) {
                 setScanState(ScanState.Scanning)
             } else {
                 setScanState(ScanState.Permission)
@@ -227,33 +228,56 @@ private fun ScanMainContent(
         (framePossibleSize.value.width * 0.7).roundToInt()
     }
 
-    ConstraintLayout(modifier = Modifier.fillMaxSize()) {
+    ConstraintLayout(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black)
+    ) {
         val (frame, bottomItems) = createRefs()
 
-        if (scanState == ScanState.Scanning) {
-            ScanCameraView(
-                onBack,
-                cameraProviderFlow,
-                lifecycleOwner,
-                snackbarHostState
-            )
-
-            Box(
-                modifier = Modifier
-                    .constrainAs(frame) {
-                        top.linkTo(parent.top)
-                        bottom.linkTo(bottomItems.top)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                        width = Dimension.fillToConstraints
-                        height = Dimension.fillToConstraints
-                    }.onSizeChanged { coordinates ->
-                        framePossibleSize.value = coordinates
+        when (scanState) {
+            ScanState.Scanning -> {
+                // TODO [#437]: https://github.com/zcash/secant-android-wallet/issues/437
+                ScanCameraView(
+                    onScanned = { scanResult ->
+                        // we need to validate scan result first
+                        onScanDone(scanResult)
                     },
-                contentAlignment = Alignment.Center
-            ) {
-                ScanFrame(frameActualSize)
+                    setScanState = setScanState,
+                    cameraProviderFlow = cameraProviderFlow,
+                    lifecycleOwner = lifecycleOwner
+                )
+
+                Box(
+                    modifier = Modifier
+                        .constrainAs(frame) {
+                            top.linkTo(parent.top)
+                            bottom.linkTo(bottomItems.top)
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                            width = Dimension.fillToConstraints
+                            height = Dimension.fillToConstraints
+                        }.onSizeChanged { coordinates ->
+                            framePossibleSize.value = coordinates
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+                    ScanFrame(frameActualSize)
+                }
             }
+            ScanState.Failed -> {
+                LaunchedEffect(key1 = true) {
+                    setScanState(ScanState.Failed)
+                    val snackbarResult = snackbarHostState.showSnackbar(
+                        message = context.getString(R.string.scan_setup_failed),
+                        actionLabel = context.getString(R.string.scan_setup_back),
+                    )
+                    if (snackbarResult == SnackbarResult.ActionPerformed) {
+                        onBack()
+                    }
+                }
+            }
+            else -> {}
         }
 
         Box(modifier = Modifier.constrainAs(bottomItems) { bottom.linkTo(parent.bottom) }) {
@@ -276,13 +300,12 @@ fun ScanFrame(frameSize: Int) {
 
 @Composable
 fun ScanCameraView(
-    onBack: () -> Unit,
+    onScanned: (result: String) -> Unit,
+    setScanState: (ScanState) -> Unit,
     cameraProviderFlow: Flow<ProcessCameraProvider>,
-    lifecycleOwner: LifecycleOwner,
-    snackbarHostState: SnackbarHostState
+    lifecycleOwner: LifecycleOwner
 ) {
     val context = LocalContext.current
-    val scope = rememberCoroutineScope()
 
     val cameraProvider = cameraProviderFlow.collectAsState(initial = null).value
     if (null == cameraProvider) {
@@ -303,24 +326,29 @@ fun ScanCameraView(
                     .build()
                 preview.setSurfaceProvider(previewView.surfaceProvider)
 
+                val imageAnalysis = ImageAnalysis.Builder()
+                    .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                    .build()
+
+                imageAnalysis.setAnalyzer(
+                    ContextCompat.getMainExecutor(context),
+                    QrCodeAnalyzer { result ->
+                        setScanState(ScanState.Success)
+                        onScanned(result)
+                    }
+                )
+
                 runCatching {
                     // we must unbind the use-cases before rebinding them
                     cameraProvider.unbindAll()
                     cameraProvider.bindToLifecycle(
                         lifecycleOwner,
                         selector,
-                        preview
+                        preview,
+                        imageAnalysis
                     )
                 }.onFailure {
-                    scope.launch {
-                        val snackbarResult = snackbarHostState.showSnackbar(
-                            message = context.getString(R.string.scan_setup_failed),
-                            actionLabel = context.getString(R.string.scan_setup_back),
-                        )
-                        if (snackbarResult == SnackbarResult.ActionPerformed) {
-                            onBack()
-                        }
-                    }
+                    setScanState(ScanState.Failed)
                 }
 
                 previewView

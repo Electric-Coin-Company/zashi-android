@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.SystemClock
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -309,7 +310,15 @@ class MainActivity : ComponentActivity() {
                 WrapAbout(goBack = { navController.popBackStack() })
             }
             composable(NAV_SCAN) {
-                WrapScan(goBack = { navController.popBackStack() })
+                WrapScan(
+                    onScanDone = {
+                        Log.i("QR Scan", "Scan result: $it")
+                        navController.navigate(NAV_SEND) {
+                            popUpTo(NAV_HOME) { inclusive = false }
+                        }
+                    },
+                    goBack = { navController.popBackStack() }
+                )
             }
         }
     }

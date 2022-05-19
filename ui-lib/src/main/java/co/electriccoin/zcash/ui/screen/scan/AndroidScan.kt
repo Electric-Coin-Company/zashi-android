@@ -13,14 +13,16 @@ import kotlinx.coroutines.launch
 
 @Composable
 internal fun MainActivity.WrapScan(
-    goBack: () -> Unit
+    goBack: () -> Unit,
+    onScanDone: (result: String) -> Unit
 ) {
-    WrapScan(this, goBack)
+    WrapScan(this, onScanDone, goBack)
 }
 
 @Composable
 fun WrapScan(
     activity: ComponentActivity,
+    onScanDone: (result: String) -> Unit,
     goBack: () -> Unit
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
@@ -29,7 +31,7 @@ fun WrapScan(
     Scan(
         snackbarHostState,
         onBack = goBack,
-        onScan = {},
+        onScanDone = onScanDone,
         onOpenSettings = {
             runCatching {
                 activity.startActivity(SettingsUtil.newSettingsIntent(activity.packageName))

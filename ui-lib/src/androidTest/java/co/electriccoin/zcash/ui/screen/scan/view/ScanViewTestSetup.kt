@@ -44,7 +44,7 @@ class ScanViewTestSetup(
             onBack = {
                 onBackCount.incrementAndGet()
             },
-            onScan = {
+            onScanDone = {
                 onScanCount.incrementAndGet()
             },
             onOpenSettings = {
