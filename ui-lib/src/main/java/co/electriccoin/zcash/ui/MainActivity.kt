@@ -47,6 +47,7 @@ import co.electriccoin.zcash.ui.screen.request.view.Request
 import co.electriccoin.zcash.ui.screen.restore.view.RestoreWallet
 import co.electriccoin.zcash.ui.screen.restore.viewmodel.CompleteWordSetState
 import co.electriccoin.zcash.ui.screen.restore.viewmodel.RestoreViewModel
+import co.electriccoin.zcash.ui.screen.scan.WrapScan
 import co.electriccoin.zcash.ui.screen.seed.view.Seed
 import co.electriccoin.zcash.ui.screen.send.view.Send
 import co.electriccoin.zcash.ui.screen.settings.view.Settings
@@ -253,7 +254,7 @@ class MainActivity : ComponentActivity() {
         NavHost(navController = navController, startDestination = NAV_HOME) {
             composable(NAV_HOME) {
                 WrapHome(
-                    goScan = {},
+                    goScan = { navController.navigate(NAV_SCAN) },
                     goProfile = { navController.navigate(NAV_PROFILE) },
                     goSend = { navController.navigate(NAV_SEND) },
                     goRequest = { navController.navigate(NAV_REQUEST) }
@@ -306,6 +307,9 @@ class MainActivity : ComponentActivity() {
             }
             composable(NAV_ABOUT) {
                 WrapAbout(goBack = { navController.popBackStack() })
+            }
+            composable(NAV_SCAN) {
+                WrapScan(goBack = { navController.popBackStack() })
             }
         }
     }
@@ -491,6 +495,9 @@ class MainActivity : ComponentActivity() {
 
         @VisibleForTesting
         const val NAV_ABOUT = "about"
+
+        @VisibleForTesting
+        const val NAV_SCAN = "scan"
     }
 }
 

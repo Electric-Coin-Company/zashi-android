@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.screen.support.model
 
+import android.annotation.SuppressLint
 import android.content.Context
 import cash.z.ecc.sdk.ext.ui.model.MonetarySeparators
 import co.electriccoin.zcash.spackle.AndroidApiVersion
@@ -22,6 +23,7 @@ class EnvironmentInfo(val locale: Locale, val monetarySeparators: MonetarySepara
             currentLocaleLegacy(context)
         }
 
+        @SuppressLint("NewApi")
         private fun currentLocaleNPlus(context: Context) = context.resources.configuration.locales[0]
 
         @Suppress("Deprecation")

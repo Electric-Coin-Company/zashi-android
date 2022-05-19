@@ -34,6 +34,7 @@ android {
                     "src/main/res/ui/home",
                     "src/main/res/ui/onboarding",
                     "src/main/res/ui/profile",
+                    "src/main/res/ui/scan",
                     "src/main/res/ui/restore",
                     "src/main/res/ui/request",
                     "src/main/res/ui/seed",
@@ -54,16 +55,19 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.annotation)
+    implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.core)
     implementation(libs.androidx.lifecycle.livedata)
     implementation(libs.androidx.splash)
     implementation(libs.androidx.workmanager)
+    implementation(libs.bundles.androidx.camera)
     implementation(libs.bundles.androidx.compose.core)
     implementation(libs.bundles.androidx.compose.extended)
     implementation(libs.bundles.play.core)
     implementation(libs.kotlin.stdlib)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.guava)
     implementation(libs.kotlinx.datetime)
     implementation(libs.zcash.sdk)
     implementation(libs.zcash.bip39)

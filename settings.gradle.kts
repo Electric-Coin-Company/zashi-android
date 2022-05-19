@@ -114,9 +114,11 @@ dependencyResolutionManagement {
             val androidxActivityVersion = extra["ANDROIDX_ACTIVITY_VERSION"].toString()
             val androidxAnnotationVersion = extra["ANDROIDX_ANNOTATION_VERSION"].toString()
             val androidxAppcompatVersion = extra["ANDROIDX_APPCOMPAT_VERSION"].toString()
+            val androidxCameraVersion = extra["ANDROIDX_CAMERA_VERSION"].toString()
             val androidxComposeCompilerVersion = extra["ANDROIDX_COMPOSE_COMPILER_VERSION"].toString()
             val androidxComposeMaterial3Version = extra["ANDROIDX_COMPOSE_MATERIAL3_VERSION"].toString()
             val androidxComposeVersion = extra["ANDROIDX_COMPOSE_VERSION"].toString()
+            val androidxConstraintlayoutVersion = extra["ANDROIDX_CONSTRAINTLAYOUT_VERSION"].toString()
             val androidxCoreVersion = extra["ANDROIDX_CORE_VERSION"].toString()
             val androidxEspressoVersion = extra["ANDROIDX_ESPRESSO_VERSION"].toString()
             val androidxLifecycleVersion = extra["ANDROIDX_LIFECYCLE_VERSION"].toString()
@@ -152,6 +154,9 @@ dependencyResolutionManagement {
             library("androidx-activity-compose", "androidx.activity:activity-compose:$androidxActivityVersion")
             library("androidx-annotation", "androidx.annotation:annotation:$androidxAnnotationVersion")
             library("androidx-appcompat", "androidx.appcompat:appcompat:$androidxAppcompatVersion")
+            library("androidx-camera", "androidx.camera:camera-camera2:$androidxCameraVersion")
+            library("androidx-camera-lifecycle", "androidx.camera:camera-lifecycle:$androidxCameraVersion")
+            library("androidx-camera-view", "androidx.camera:camera-view:$androidxCameraVersion")
             library("androidx-compose-foundation", "androidx.compose.foundation:foundation:$androidxComposeVersion")
             library("androidx-compose-material3", "androidx.compose.material3:material3:$androidxComposeMaterial3Version")
             library("androidx-compose-material-icons-core", "androidx.compose.material:material-icons-core:$androidxComposeVersion")
@@ -160,6 +165,7 @@ dependencyResolutionManagement {
             library("androidx-compose-ui", "androidx.compose.ui:ui:$androidxComposeVersion")
             library("androidx-compose-compiler", "androidx.compose.compiler:compiler:$androidxComposeCompilerVersion")
             library("androidx-core", "androidx.core:core-ktx:$androidxCoreVersion")
+            library("androidx-constraintlayout", "androidx.constraintlayout:constraintlayout-compose:$androidxConstraintlayoutVersion")
             library("androidx-lifecycle-livedata", "androidx.lifecycle:lifecycle-livedata-ktx:$androidxLifecycleVersion")
             library("androidx-navigation-compose", "androidx.navigation:navigation-compose:$androidxNavigationComposeVersion")
             library("androidx-security-crypto", "androidx.security:security-crypto-ktx:$androidxSecurityCryptoVersion")
@@ -172,6 +178,7 @@ dependencyResolutionManagement {
             library("kotlin-test", "org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
             library("kotlinx-coroutines-android", "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlinxCoroutinesVersion")
             library("kotlinx-coroutines-core", "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
+            library("kotlinx-coroutines-guava", "org.jetbrains.kotlinx:kotlinx-coroutines-guava:$kotlinxCoroutinesVersion")
             library("kotlinx-datetime", "org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDateTimeVersion")
             library("play-core", "com.google.android.play:core:$playCoreVersion")
             library("play-core-ktx", "com.google.android.play:core-ktx:$playCoreKtxVersion")
@@ -195,6 +202,14 @@ dependencyResolutionManagement {
             library("kotlinx-coroutines-test", "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinxCoroutinesVersion")
 
             // Bundles
+            bundle(
+                "androidx-camera",
+                listOf(
+                    "androidx-camera",
+                    "androidx-camera-lifecycle",
+                    "androidx-camera-view"
+                )
+            )
             bundle(
                 "androidx-compose-core",
                 listOf(
