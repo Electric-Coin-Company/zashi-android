@@ -45,6 +45,8 @@ class ScanPermissionGrantedViewTest : UiTestPrerequisites() {
     @Test
     @MediumTest
     fun check_all_ui_elements_displayed() {
+        composeTestRule.waitForIdle()
+
         composeTestRule.onNodeWithText(getStringResource(R.string.scan_header)).also {
             it.assertIsDisplayed()
         }

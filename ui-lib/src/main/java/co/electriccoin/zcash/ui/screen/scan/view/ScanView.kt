@@ -14,12 +14,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -43,16 +41,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import co.electriccoin.zcash.ui.R
@@ -66,6 +69,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.guava.await
 import kotlinx.coroutines.launch
 import java.util.UUID
+import kotlin.math.roundToInt
 
 // TODO [#423]: https://github.com/zcash/secant-android-wallet/issues/423
 // TODO [#313]: https://github.com/zcash/secant-android-wallet/issues/313
@@ -111,11 +115,7 @@ fun ScanBottomItems(
     scanState: ScanState,
     onOpenSettings: () -> Unit
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .wrapContentSize(align = Alignment.BottomStart)
-    ) {
+    Column(modifier = Modifier.fillMaxWidth()) {
         Text(
             text = stringResource(id = R.string.scan_hint),
             color = Color.White,
@@ -124,7 +124,7 @@ fun ScanBottomItems(
             modifier = Modifier
                 .fillMaxWidth()
                 .align(CenterHorizontally)
-                .padding(horizontal = 24.dp, vertical = 12.dp)
+                .padding(horizontal = 24.dp, vertical = 8.dp)
         )
 
         Text(
@@ -139,7 +139,7 @@ fun ScanBottomItems(
             modifier = Modifier
                 .fillMaxWidth()
                 .align(CenterHorizontally)
-                .padding(horizontal = 24.dp, vertical = 12.dp)
+                .padding(horizontal = 24.dp, vertical = 8.dp)
                 .testTag(ScanTag.TEXT_STATE)
         )
 
@@ -171,7 +171,7 @@ private fun ScanTopAppBar(onBack: () -> Unit) {
     )
 }
 
-@Suppress("UNUSED_VARIABLE", "UNUSED_PARAMETER")
+@Suppress("UNUSED_VARIABLE", "UNUSED_PARAMETER", "MagicNumber", "LongMethod")
 @Composable
 private fun ScanMainContent(
     onScan: (String) -> Unit,
@@ -217,7 +217,19 @@ private fun ScanMainContent(
         flow<ProcessCameraProvider> { emit(ProcessCameraProvider.getInstance(context).await()) }
     }
 
-    Box(contentAlignment = Alignment.Center) {
+    // we calculate the best frame size for the current device screen
+    val framePossibleSize = remember { mutableStateOf(IntSize.Zero) }
+
+    val configuration = LocalConfiguration.current
+    val frameActualSize = if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+        (framePossibleSize.value.height * 0.85).roundToInt()
+    } else {
+        (framePossibleSize.value.width * 0.7).roundToInt()
+    }
+
+    ConstraintLayout(modifier = Modifier.fillMaxSize()) {
+        val (frame, bottomItems) = createRefs()
+
         if (scanState == ScanState.Scanning) {
             ScanCameraView(
                 onBack,
@@ -226,35 +238,40 @@ private fun ScanMainContent(
                 snackbarHostState
             )
 
-            ScanFrame()
+            Box(
+                modifier = Modifier
+                    .constrainAs(frame) {
+                        top.linkTo(parent.top)
+                        bottom.linkTo(bottomItems.top)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                        width = Dimension.fillToConstraints
+                        height = Dimension.fillToConstraints
+                    }.onSizeChanged { coordinates ->
+                        framePossibleSize.value = coordinates
+                    },
+                contentAlignment = Alignment.Center
+            ) {
+                ScanFrame(frameActualSize)
+            }
         }
 
-        ScanBottomItems(scanState, onOpenSettings)
+        Box(modifier = Modifier.constrainAs(bottomItems) { bottom.linkTo(parent.bottom) }) {
+            ScanBottomItems(scanState, onOpenSettings)
+        }
     }
 }
 
 @Suppress("MagicNumber")
 @Composable
-fun ScanFrame() {
-    val frameModifier = when (LocalConfiguration.current.orientation) {
-        Configuration.ORIENTATION_LANDSCAPE -> {
-            Modifier
-                .fillMaxHeight(0.7f)
-                .aspectRatio(1f)
-                .background(Color.Transparent)
-                .border(BorderStroke(12.dp, Color.White), RoundedCornerShape(10))
-                .testTag(ScanTag.QR_FRAME)
-        }
-        else -> {
-            Modifier
-                .fillMaxWidth(0.7f)
-                .aspectRatio(1f)
-                .background(Color.Transparent)
-                .border(BorderStroke(12.dp, Color.White), RoundedCornerShape(10))
-                .testTag(ScanTag.QR_FRAME)
-        }
-    }
-    Box(modifier = frameModifier)
+fun ScanFrame(frameSize: Int) {
+    Box(
+        modifier = Modifier
+            .size(with(LocalDensity.current) { frameSize.toDp() })
+            .background(Color.Transparent)
+            .border(BorderStroke(10.dp, Color.White), RoundedCornerShape(10))
+            .testTag(ScanTag.QR_FRAME)
+    )
 }
 
 @Composable
