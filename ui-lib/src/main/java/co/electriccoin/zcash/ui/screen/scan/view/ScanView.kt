@@ -208,8 +208,8 @@ private fun ScanMainContent(
         }
     )
 
-    // We use a random value to show the permission popup after a user
-    // makes a change in app permissions via the system settings.
+    // We use a random value to show the permission popup after a user grants the CAMERA permission
+    // outside of the app (in Settings).
     LaunchedEffect(key1 = UUID.randomUUID()) {
         launcher.launch(Manifest.permission.CAMERA)
     }
