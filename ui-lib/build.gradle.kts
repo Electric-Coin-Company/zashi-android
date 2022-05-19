@@ -63,9 +63,6 @@ dependencies {
     implementation(libs.bundles.androidx.compose.core)
     implementation(libs.bundles.androidx.compose.extended)
     implementation(libs.bundles.play.core)
-    // To avoid Cannot access class 'com.google.common.util.concurrent.ListenableFuture'.
-    // Check your module classpath for missing or conflicting dependencies.
-    implementation(libs.guava)
     implementation(libs.kotlin.stdlib)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.core)
