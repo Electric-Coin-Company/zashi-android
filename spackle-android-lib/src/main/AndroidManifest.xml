@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="co.electriccoin.zcash.spackle">
+
+    <application>
+        <provider
+            android:name=".process.internal.DefaultProcessContentProvider"
+            android:authorities="${applicationId}.co.electriccoin.zcash.spackle"
+            android:exported="false" />
+    </application>
+
+</manifest>

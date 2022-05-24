@@ -1,0 +1,9 @@
+# Strip out log messages
+-assumenosideeffects public class co.electriccoin.zcash.spackle.Twig {
+    public static *** verbose(...);
+    public static *** debug(...);
+    public static *** info(...);
+    public static *** warn(...);
+    public static *** error(...);
+    public static *** assertLoggingStripped();
+}

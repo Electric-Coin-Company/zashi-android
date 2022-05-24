@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <bool name="co_electriccoin_zcash_crash_is_use_secondary_process">true</bool>
+</resources>

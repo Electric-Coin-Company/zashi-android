@@ -74,11 +74,12 @@ dependencies {
     implementation(libs.zxing)
 
     implementation(projects.buildInfoLib)
+    implementation(projects.crashAndroidLib)
     implementation(projects.preferenceApiLib)
     implementation(projects.preferenceImplAndroidLib)
     implementation(projects.sdkExtLib)
     implementation(projects.sdkExtUiLib)
-    implementation(projects.spackleLib)
+    implementation(projects.spackleAndroidLib)
     implementation(projects.uiDesignLib)
 
     androidTestImplementation(projects.testLib)
