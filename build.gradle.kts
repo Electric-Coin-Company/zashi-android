@@ -50,47 +50,60 @@ fun isNonStable(version: String): Boolean {
     return unstableKeywords.any { versionLowerCase.contains(it) }
 }
 
-// Firebase Test Lab has min and max values that might differ from our project's
-// These are determined by `gcloud firebase test android models list`
-@Suppress("MagicNumber", "PropertyName", "VariableNaming")
-val FIREBASE_TEST_LAB_MIN_SDK = 23
-@Suppress("MagicNumber", "PropertyName", "VariableNaming")
-val FIREBASE_TEST_LAB_MAX_SDK = 30
+fladle {
+    // Firebase Test Lab has min and max values that might differ from our project's
+    // These are determined by `gcloud firebase test android models list`
+    @Suppress("MagicNumber", "PropertyName", "VariableNaming")
+    val FIREBASE_TEST_LAB_MIN_SDK = 23
 
-val firebaseTestLabKeyPath = project.properties["ZCASH_FIREBASE_TEST_LAB_API_KEY_PATH"].toString()
-if (firebaseTestLabKeyPath.isNotBlank()) {
+    @Suppress("MagicNumber", "PropertyName", "VariableNaming")
+    val FIREBASE_TEST_LAB_MAX_SDK = 30
+
     val minSdkVersion = run {
-        val buildMinSdk = project.properties["ANDROID_LIB_MIN_SDK_VERSION"].toString().toInt()
+        // Fladle will use the app APK as the additional APK, so we have to
+        // use the app's minSdkVersion here.
+        val buildMinSdk = project.properties["ANDROID_APP_MIN_SDK_VERSION"].toString().toInt()
         buildMinSdk.coerceAtLeast(FIREBASE_TEST_LAB_MIN_SDK).toString()
     }
     val targetSdkVersion = run {
         val buildTargetSdk = project.properties["ANDROID_TARGET_SDK_VERSION"].toString().toInt()
         buildTargetSdk.coerceAtMost(FIREBASE_TEST_LAB_MAX_SDK).toString()
     }
-    fladle {
+
+    val firebaseTestLabKeyPath = project.properties["ZCASH_FIREBASE_TEST_LAB_API_KEY_PATH"].toString()
+    val firebaseProject = project.properties["ZCASH_FIREBASE_TEST_LAB_PROJECT"].toString()
+
+    if (firebaseTestLabKeyPath.isNotEmpty()) {
         serviceAccountCredentials.set(File(firebaseTestLabKeyPath))
-        // TODO [#282]: Replace this with NexusLowRes once tests pass on larger screen sizes
-        devices.addAll(
-            mapOf("model" to "Nexus6", "version" to minSdkVersion),
-            mapOf("model" to "Pixel2", "version" to targetSdkVersion)
-        )
-
-        @Suppress("MagicNumber")
-        flakyTestAttempts.set(2)
-
-        if (project.properties["IS_USE_TEST_ORCHESTRATOR"].toString().toBoolean()) {
-            useOrchestrator.set(true)
-            environmentVariables.set(mapOf("clearPackageData" to "true"))
-        } else {
-            useOrchestrator.set(false)
-        }
-
-        flankVersion.set(libs.versions.flank.get())
-
-        filesToDownload.set(listOf(
-            "*/matrix_*/*test_results_merged\\.xml"
-        ))
+    } else if (firebaseProject.isNotEmpty()) {
+        projectId.set(firebaseProject)
     }
+
+    devices.addAll(
+        mapOf("model" to "Pixel2", "version" to minSdkVersion),
+        mapOf("model" to "Pixel2", "version" to targetSdkVersion)
+    )
+
+    @Suppress("MagicNumber")
+    flakyTestAttempts.set(2)
+
+    // Always use orchestrator for Firebase Test Lab.
+    // Some submodules don't need it, but it is difficult to configure on a per-module basis from here
+    // since this configuration applies to all modules.
+    useOrchestrator.set(true)
+    environmentVariables.set(mapOf("clearPackageData" to "true"))
+
+    flankVersion.set(libs.versions.flank.get())
+
+    filesToDownload.set(listOf(
+        "*/matrix_*/*test_results_merged\\.xml",
+        "*/matrix_*/*/artifacts/sdcard/Pictures/zcash_screenshots/*\\.png"
+    ))
+
+    directoriesToPull.set(listOf(
+        // This path needs to be coordinated with the implementation in the app module's tests
+        "/sdcard/Pictures/zcash_screenshots"
+    ))
 }
 
 // All of this should be refactored to build-conventions

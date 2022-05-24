@@ -233,7 +233,7 @@ jobs:
       - name: Build
         timeout-minutes: 20
         run: |
-          ./gradlew assembleDebug assembleAndroidTest
+          ./gradlew assembleDebug assembleAndroidTest assembleZcashmainnetDebug assembleZcashtestnetDebug
       - name: Authenticate to Google Cloud for Firebase Test Lab
         id: auth_test_lab
         uses: google-github-actions/auth@50dbfd0907520dcccbd51e965728eb32e592b8fa
@@ -290,7 +290,7 @@ jobs:
         env:
           ORG_GRADLE_PROJECT_ZCASH_EMULATOR_WTF_API_KEY: ${{ secrets.EMULATOR_WTF_API_KEY }}
         run: |
-          ./gradlew testDebugWithEmulatorWtf
+          ./gradlew testDebugWithEmulatorWtf :app:testZcashmainnetDebugWithEmulatorWtf
       - name: Collect Artifacts
         if: ${{ always() }}
         timeout-minutes: 1
