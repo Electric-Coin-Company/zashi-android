@@ -99,7 +99,7 @@ This section is optional.
 For Continuous Integration, see [CI.md](CI.md).  The rest of this section is regarding local development.
 
 1. Set up a Firebase project, for the purpose of running Firebase Test Lab
-1. Set the Firebase Google Cloud project name as a global Gradle property `ZCASH_FIREBASE_TEST_LAB_PROJECT` under ``~/.gradle/gradle.properties`
+1. Set the Firebase Google Cloud project name as a global Gradle property `ZCASH_FIREBASE_TEST_LAB_PROJECT` under `~/.gradle/gradle.properties`
 1. Run the Gradle task `flankAuth` to generate a Firebase authentication token on your machine
 
 Tests can now be run on Firebase Test Lab from your local machine.
