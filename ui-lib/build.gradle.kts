@@ -52,6 +52,7 @@ android {
 dependencies {
     coreLibraryDesugaring(libs.desugaring)
 
+    implementation(libs.accompanist.permissions)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.annotation)

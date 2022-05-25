@@ -22,7 +22,7 @@ internal fun MainActivity.WrapScan(
 @Composable
 fun WrapScan(
     activity: ComponentActivity,
-    onScanDone: (result: String) -> Unit,
+    onScanned: (result: String) -> Unit,
     goBack: () -> Unit
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
@@ -31,7 +31,7 @@ fun WrapScan(
     Scan(
         snackbarHostState,
         onBack = goBack,
-        onScanDone = onScanDone,
+        onScanned = onScanned,
         onOpenSettings = {
             runCatching {
                 activity.startActivity(SettingsUtil.newSettingsIntent(activity.packageName))
@@ -44,6 +44,7 @@ fun WrapScan(
                     )
                 }
             }
-        }
+        },
+        onScanStateChanged = {}
     )
 }

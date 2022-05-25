@@ -1,14 +1,12 @@
 package co.electriccoin.zcash.ui.screen.scan.util
 
 import android.graphics.ImageFormat
-import android.util.Log
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.BinaryBitmap
 import com.google.zxing.DecodeHintType
 import com.google.zxing.MultiFormatReader
-import com.google.zxing.NotFoundException
 import com.google.zxing.PlanarYUVLuminanceSource
 import com.google.zxing.common.HybridBinarizer
 import java.nio.ByteBuffer
@@ -40,7 +38,7 @@ class QrCodeAnalyzer(
 
             val binaryBmp = BinaryBitmap(HybridBinarizer(source))
 
-            try {
+            runCatching {
                 val result = MultiFormatReader().apply {
                     setHints(
                         mapOf(
@@ -52,12 +50,11 @@ class QrCodeAnalyzer(
                 }.decode(binaryBmp)
 
                 onQrCodeScanned(result.text)
-            } catch (e: NotFoundException) {
+            }.onFailure {
                 // failed to found QR code in current frame
-                Log.i("QR Scan", "QR code not found in the current image: $e")
-            } finally {
-                image.close()
             }
+
+            image.close()
         }
     }
 

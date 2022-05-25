@@ -310,9 +310,9 @@ class MainActivity : ComponentActivity() {
                 WrapAbout(goBack = { navController.popBackStack() })
             }
             composable(NAV_SCAN) {
-                WrapScan(
-                    onScanDone = {
-                        Log.i("QR Scan", "Scan result: $it")
+                WrapScanValidator(
+                    onScanValid = { address ->
+                        Log.i("QR Scan", "Scan address: $address")
                         navController.navigate(NAV_SEND) {
                             popUpTo(NAV_HOME) { inclusive = false }
                         }
@@ -320,6 +320,31 @@ class MainActivity : ComponentActivity() {
                     goBack = { navController.popBackStack() }
                 )
             }
+        }
+    }
+
+    @Composable
+    private fun WrapScanValidator(
+        onScanValid: (address: String) -> Unit,
+        goBack: () -> Unit
+    ) {
+        val synchronizer = walletViewModel.synchronizer.collectAsState().value
+        if (synchronizer == null) {
+            // Display loading indicator
+        } else {
+            WrapScan(
+                onScanDone = { result ->
+                    Log.i("QR Scan", "Scan found: $result")
+
+                    lifecycleScope.launch {
+                        if (synchronizer.validateAddress(result).isNotValid) {
+                            return@launch
+                        }
+                        onScanValid(result)
+                    }
+                },
+                goBack = goBack
+            )
         }
     }
 
