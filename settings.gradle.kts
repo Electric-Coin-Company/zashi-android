@@ -264,6 +264,7 @@ include("sdk-ext-ui-lib")
 include("spackle-lib")
 include("test-lib")
 include("ui-design-lib")
+include("ui-integration-test-lib")
 include("ui-lib")
 
 if (extra["IS_SDK_INCLUDED_BUILD"].toString().toBoolean()) {
