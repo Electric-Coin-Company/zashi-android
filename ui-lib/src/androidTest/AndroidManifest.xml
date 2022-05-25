@@ -14,9 +14,6 @@
         <activity
             android:name="co.electriccoin.zcash.ui.screen.update.TestUpdateActivity"
             android:exported="false" />
-        <activity
-            android:name="co.electriccoin.zcash.ui.screen.scan.TestScanActivity"
-            android:exported="false" />
     </application>
 
 </manifest>

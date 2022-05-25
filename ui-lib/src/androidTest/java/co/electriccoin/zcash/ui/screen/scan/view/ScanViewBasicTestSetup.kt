@@ -8,24 +8,11 @@ import co.electriccoin.zcash.ui.screen.scan.model.ScanState
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicReference
 
-// TODO [#313]: https://github.com/zcash/secant-android-wallet/issues/313
-class ScanViewTestSetup(
+class ScanViewBasicTestSetup(
     private val composeTestRule: ComposeContentTestRule
 ) {
-    private val onScanCount = AtomicInteger(0)
-    private val onOpenSettingsCount = AtomicInteger(0)
     private val onBackCount = AtomicInteger(0)
     private val scanState = AtomicReference(ScanState.Permission)
-
-    fun getOnScanCount(): Int {
-        composeTestRule.waitForIdle()
-        return onScanCount.get()
-    }
-
-    fun getOnOpenSettingsCount(): Int {
-        composeTestRule.waitForIdle()
-        return onOpenSettingsCount.get()
-    }
 
     fun getOnBackCount(): Int {
         composeTestRule.waitForIdle()
@@ -44,11 +31,10 @@ class ScanViewTestSetup(
             onBack = {
                 onBackCount.incrementAndGet()
             },
-            onScanDone = {
-                onScanCount.incrementAndGet()
-            },
-            onOpenSettings = {
-                onOpenSettingsCount.incrementAndGet()
+            onScanned = {},
+            onOpenSettings = {},
+            onScanStateChanged = {
+                scanState.set(it)
             }
         )
     }
