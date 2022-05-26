@@ -10,7 +10,6 @@ import co.electriccoin.zcash.ui.integration.test.getPermissionPositiveButtonUiOb
 import co.electriccoin.zcash.ui.integration.test.screen.scan.TestScanActivity
 import co.electriccoin.zcash.ui.screen.scan.ScanTag
 import co.electriccoin.zcash.ui.screen.scan.model.ScanState
-import org.junit.After
 import org.junit.Assert
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -27,11 +26,6 @@ class ScanViewIntegrationTest : UiTestPrerequisites() {
     @Before
     fun prepare_test_setup() {
         testSetup = ScanViewTestSetup(composeTestRule)
-    }
-
-    @After
-    fun hide_system_permission_dialog() {
-        testSetup.denyPermission()
     }
 
     @Test
@@ -74,6 +68,8 @@ class ScanViewIntegrationTest : UiTestPrerequisites() {
         // permission dialog still exists
         Assert.assertNotNull(permissionPositiveButtonUiObject)
         Assert.assertTrue(permissionPositiveButtonUiObject.exists())
+
+        testSetup.denyPermission()
     }
 
     @Test

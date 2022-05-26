@@ -53,3 +53,18 @@ dependencies {
     }
   }
 }
+
+// This block exists to override the minimum SDK version for our integration tests from the property
+// ANDROID_LIB_MIN_SDK_VERSION to ANDROID_APP_MIN_SDK_VERSION, as by our integration tests we aim to
+// test the UI of the app.
+emulatorwtf {
+  val minSdkVersion = project.properties["ANDROID_APP_MIN_SDK_VERSION"].toString().toInt()
+  val maxSdkVersion = project.properties["ANDROID_TARGET_SDK_VERSION"].toString().toInt()
+
+  devices.set(
+      listOf(
+          mapOf("model" to "Pixel2", "version" to minSdkVersion),
+          mapOf("model" to "Pixel2", "version" to maxSdkVersion)
+      )
+  )
+}
