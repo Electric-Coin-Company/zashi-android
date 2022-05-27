@@ -317,11 +317,12 @@ fun ScanCameraView(
                     )
                 }
                 previewView.contentDescription = contentDescription
-                val preview = androidx.camera.core.Preview.Builder().build()
                 val selector = CameraSelector.Builder()
                     .requireLensFacing(CameraSelector.LENS_FACING_BACK)
                     .build()
-                preview.setSurfaceProvider(previewView.surfaceProvider)
+                val preview = androidx.camera.core.Preview.Builder().build().apply {
+                    setSurfaceProvider(previewView.surfaceProvider)
+                }
 
                 val imageAnalysis = ImageAnalysis.Builder()
                     .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
