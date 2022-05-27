@@ -1,6 +1,7 @@
 package co.electriccoin.zcash.ui.screen.scan.view
 
 import android.Manifest
+import android.content.Context
 import android.content.res.Configuration
 import android.view.ViewGroup
 import androidx.camera.core.CameraSelector
@@ -30,6 +31,7 @@ import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -62,6 +64,11 @@ import co.electriccoin.zcash.ui.screen.scan.model.ScanState
 import co.electriccoin.zcash.ui.screen.scan.util.QrCodeAnalyzer
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.guava.await
 import java.util.UUID
 import kotlin.math.roundToInt
 
@@ -291,22 +298,22 @@ fun ScanCameraView(
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
-    val executor = ContextCompat.getMainExecutor(context)
 
-    val cameraProvider = remember { mutableStateOf<ProcessCameraProvider?>(null) }
+    val cameraProviderFlow = remember {
+        flow<ProcessCameraProvider> { emit(ProcessCameraProvider.getInstance(context).await()) }
+    }
 
-    val cameraProviderFuture = remember { ProcessCameraProvider.getInstance(context) }
-    cameraProviderFuture.addListener(
-        {
-            cameraProvider.value = cameraProviderFuture.get()
-        },
-        executor
-    )
+    val collectedCameraProvider = cameraProviderFlow.collectAsState(initial = null).value
 
-    if (null == cameraProvider.value) {
+    if (null == collectedCameraProvider) {
         // Show loading indicator
     } else {
         val contentDescription = stringResource(id = R.string.scan_preview_content_description)
+
+        val imageAnalysis = ImageAnalysis.Builder()
+            .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+            .build()
+
         AndroidView(
             factory = { factoryContext ->
                 val previewView = PreviewView(factoryContext).apply {
@@ -324,22 +331,10 @@ fun ScanCameraView(
                     setSurfaceProvider(previewView.surfaceProvider)
                 }
 
-                val imageAnalysis = ImageAnalysis.Builder()
-                    .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-                    .build()
-
-                imageAnalysis.setAnalyzer(
-                    ContextCompat.getMainExecutor(context),
-                    QrCodeAnalyzer { result ->
-                        onScanned(result)
-                    }
-                )
-
                 runCatching {
-                    val camera = cameraProvider.value!!
                     // we must unbind the use-cases before rebinding them
-                    camera.unbindAll()
-                    camera.bindToLifecycle(
+                    collectedCameraProvider.unbindAll()
+                    collectedCameraProvider.bindToLifecycle(
                         lifecycleOwner,
                         selector,
                         preview,
@@ -355,5 +350,27 @@ fun ScanCameraView(
                 .fillMaxSize()
                 .testTag(ScanTag.CAMERA_VIEW)
         )
+
+        imageAnalysis.qrCodeFlow(context).collectAsState(initial = null).value?.let {
+            onScanned(it)
+        }
+    }
+}
+
+// Using callbackFlow because QrCodeAnalyzer has a non-suspending callback which makes
+// a basic flow builder not work here.
+fun ImageAnalysis.qrCodeFlow(context: Context): Flow<String> = callbackFlow {
+    setAnalyzer(
+        ContextCompat.getMainExecutor(context),
+        QrCodeAnalyzer { result ->
+            // Note that these callbacks aren't tied to the Compose lifecycle, so they could occur
+            // after the view goes away.  Collection needs to occur within the Compose lifecycle
+            // to make this not be a problem.
+            trySend(result)
+        }
+    )
+
+    awaitClose {
+        // Nothing to close
     }
 }
