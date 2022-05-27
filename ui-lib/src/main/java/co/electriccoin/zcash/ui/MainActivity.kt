@@ -312,8 +312,10 @@ class MainActivity : ComponentActivity() {
                 WrapScanValidator(
                     onScanValid = {
                         // TODO [#449] https://github.com/zcash/secant-android-wallet/issues/449
-                        navController.navigate(NAV_SEND) {
-                            popUpTo(NAV_HOME) { inclusive = false }
+                        if (navController.currentDestination?.route != NAV_SCAN) {
+                            navController.navigate(NAV_SEND) {
+                                popUpTo(NAV_HOME) { inclusive = false }
+                            }
                         }
                     },
                     goBack = { navController.popBackStack() }
