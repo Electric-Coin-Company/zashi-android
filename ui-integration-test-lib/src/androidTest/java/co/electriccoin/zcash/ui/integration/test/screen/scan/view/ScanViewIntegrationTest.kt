@@ -8,6 +8,7 @@ import androidx.test.filters.LargeTest
 import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.integration.test.getPermissionPositiveButtonUiObject
 import co.electriccoin.zcash.ui.integration.test.screen.scan.TestScanActivity
+import co.electriccoin.zcash.ui.integration.test.waitForDeviceIdle
 import co.electriccoin.zcash.ui.screen.scan.ScanTag
 import co.electriccoin.zcash.ui.screen.scan.model.ScanState
 import org.junit.Assert
@@ -15,6 +16,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import kotlin.time.Duration.Companion.milliseconds
 
 class ScanViewIntegrationTest : UiTestPrerequisites() {
 
@@ -89,12 +91,16 @@ class ScanViewIntegrationTest : UiTestPrerequisites() {
 
         restorationTester.emulateSavedInstanceStateRestore()
 
-        // scan frame is still displayed
+        // scan frame and camera view are still displayed
         composeTestRule.onNodeWithTag(ScanTag.QR_FRAME).also {
             it.assertIsDisplayed()
         }
 
-        // We don't run this test and its assertion on the camera view, as we'd need to wait for its
-        // layout as we already do in the ScanViewTest.grant_system_permission().
+        // we need to actively wait for the camera preview initialization
+        waitForDeviceIdle(timeoutMillis = 5000.milliseconds)
+
+        composeTestRule.onNodeWithTag(ScanTag.CAMERA_VIEW).also {
+            it.assertIsDisplayed()
+        }
     }
 }

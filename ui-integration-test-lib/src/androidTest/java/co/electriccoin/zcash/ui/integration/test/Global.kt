@@ -8,6 +8,8 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiObject
 import androidx.test.uiautomator.UiSelector
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 
 fun getStringResource(@StringRes resId: Int) = ApplicationProvider.getApplicationContext<Context>().getString(resId)
 
@@ -54,10 +56,10 @@ fun getPermissionPositiveButtonUiObject(): UiObject? {
     )
 }
 
-fun waitForDeviceIdle(timeout: Long = 1000) {
+fun waitForDeviceIdle(timeoutMillis: Duration = 1000.milliseconds) {
     val instrumentation = InstrumentationRegistry.getInstrumentation()
     UiDevice.getInstance(instrumentation).waitForWindowUpdate(
         ApplicationProvider.getApplicationContext<Context>().packageName,
-        timeout
+        timeoutMillis.inWholeMilliseconds
     )
 }

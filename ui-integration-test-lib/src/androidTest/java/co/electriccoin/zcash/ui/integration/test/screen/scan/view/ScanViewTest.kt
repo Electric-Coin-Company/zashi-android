@@ -23,6 +23,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import kotlin.time.Duration.Companion.milliseconds
 
 class ScanViewTest : UiTestPrerequisites() {
 
@@ -91,8 +92,8 @@ class ScanViewTest : UiTestPrerequisites() {
 
         assertEquals(ScanState.Scanning, testSetup.getScanState())
 
-        // we need to wait for camera preview initialized
-        waitForDeviceIdle(5000)
+        // we need to actively wait for the camera preview initialization
+        waitForDeviceIdle(timeoutMillis = 5000.milliseconds)
 
         composeTestRule.onNodeWithTag(ScanTag.CAMERA_VIEW).also {
             it.assertIsDisplayed()
