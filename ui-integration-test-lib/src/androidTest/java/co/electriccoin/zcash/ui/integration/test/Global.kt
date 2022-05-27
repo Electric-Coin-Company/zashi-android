@@ -18,9 +18,6 @@ fun getStringResourceWithArgs(@StringRes resId: Int, vararg formatArgs: String) 
 // We're using indexes to find the right button, as it seems to be the best available way to test a click
 // action on a permission button. These indexes remain the same for LTR as well as RTL layout direction.
 fun getPermissionNegativeButtonUiObject(): UiObject? {
-    if (Build.VERSION.SDK_INT < 23) {
-        return null
-    }
     val instrumentation = InstrumentationRegistry.getInstrumentation()
     return UiDevice.getInstance(instrumentation).findObject(
         UiSelector()
@@ -38,9 +35,6 @@ fun getPermissionNegativeButtonUiObject(): UiObject? {
 }
 
 fun getPermissionPositiveButtonUiObject(): UiObject? {
-    if (Build.VERSION.SDK_INT < 23) {
-        return null
-    }
     val instrumentation = InstrumentationRegistry.getInstrumentation()
     return UiDevice.getInstance(instrumentation).findObject(
         UiSelector()
