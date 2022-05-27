@@ -57,7 +57,7 @@ class ScanViewBasicTest : UiTestPrerequisites() {
             it.assertIsDisplayed()
         }
 
-        // We don't test camera view, as it's not guaranteed to be layouted already.
+        // We don't test camera view, as it's not guaranteed to be laid out already.
 
         composeTestRule.onNodeWithTag(ScanTag.QR_FRAME).also {
             it.assertIsDisplayed()
