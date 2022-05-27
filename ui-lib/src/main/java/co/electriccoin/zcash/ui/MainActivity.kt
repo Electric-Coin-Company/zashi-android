@@ -56,6 +56,7 @@ import co.electriccoin.zcash.ui.screen.update.AppUpdateCheckerImp
 import co.electriccoin.zcash.ui.screen.update.WrapUpdate
 import co.electriccoin.zcash.ui.screen.update.model.UpdateState
 import co.electriccoin.zcash.ui.screen.wallet_address.view.WalletAddresses
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlin.time.Duration
@@ -324,6 +325,8 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    private var validateJob: Job? = null
+
     @Composable
     private fun WrapScanValidator(
         onScanValid: (address: String) -> Unit,
@@ -335,11 +338,14 @@ class MainActivity : ComponentActivity() {
         } else {
             WrapScan(
                 onScanDone = { result ->
-                    lifecycleScope.launch {
-                        if (synchronizer.validateAddress(result).isNotValid) {
-                            return@launch
+                    if (null != validateJob) {
+                        validateJob = lifecycleScope.launch {
+                            if (synchronizer.validateAddress(result).isNotValid) {
+                                return@launch
+                            }
+                            onScanValid(result)
+                            validateJob = null
                         }
-                        onScanValid(result)
                     }
                 },
                 goBack = goBack
