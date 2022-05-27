@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.SystemClock
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -311,8 +310,8 @@ class MainActivity : ComponentActivity() {
             }
             composable(NAV_SCAN) {
                 WrapScanValidator(
-                    onScanValid = { address ->
-                        Log.i("QR Scan", "Scan address: $address")
+                    onScanValid = {
+                        // TODO [#449] https://github.com/zcash/secant-android-wallet/issues/449
                         navController.navigate(NAV_SEND) {
                             popUpTo(NAV_HOME) { inclusive = false }
                         }
@@ -334,8 +333,6 @@ class MainActivity : ComponentActivity() {
         } else {
             WrapScan(
                 onScanDone = { result ->
-                    Log.i("QR Scan", "Scan found: $result")
-
                     lifecycleScope.launch {
                         if (synchronizer.validateAddress(result).isNotValid) {
                             return@launch
