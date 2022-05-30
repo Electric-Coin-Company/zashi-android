@@ -63,6 +63,7 @@ import co.electriccoin.zcash.ui.screen.scan.ScanTag
 import co.electriccoin.zcash.ui.screen.scan.model.ScanState
 import co.electriccoin.zcash.ui.screen.scan.util.QrCodeAnalyzer
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.rememberPermissionState
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -236,7 +237,8 @@ private fun ScanMainContent(
                 onScanStateChanged(ScanState.Scanning)
                 ScanCameraView(
                     onScanned = onScanned,
-                    setScanState = setScanState
+                    setScanState = setScanState,
+                    permissionState = permissionState
                 )
 
                 Box(
@@ -291,19 +293,27 @@ fun ScanFrame(frameSize: Int) {
     )
 }
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun ScanCameraView(
     onScanned: (result: String) -> Unit,
-    setScanState: (ScanState) -> Unit
+    setScanState: (ScanState) -> Unit,
+    permissionState: PermissionState
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    val cameraProviderFlow = remember {
-        flow<ProcessCameraProvider> { emit(ProcessCameraProvider.getInstance(context).await()) }
+    // we check the permission first, as the ProcessCameraProvider's emit won't be called again after
+    // recomposition with the permission granted
+    val cameraProviderFlow = if (permissionState.hasPermission) {
+        remember {
+            flow<ProcessCameraProvider> { emit(ProcessCameraProvider.getInstance(context).await()) }
+        }
+    } else {
+        null
     }
 
-    val collectedCameraProvider = cameraProviderFlow.collectAsState(initial = null).value
+    val collectedCameraProvider = cameraProviderFlow?.collectAsState(initial = null)?.value
 
     if (null == collectedCameraProvider) {
         // Show loading indicator
