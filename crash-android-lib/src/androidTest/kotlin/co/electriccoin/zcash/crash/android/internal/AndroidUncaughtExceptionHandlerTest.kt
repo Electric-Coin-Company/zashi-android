@@ -1,6 +1,5 @@
 package co.electriccoin.zcash.crash.android.internal
 
-import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import androidx.test.core.app.ApplicationProvider
@@ -13,7 +12,7 @@ class AndroidUncaughtExceptionHandlerTest {
 
     @Test(expected = IllegalStateException::class)
     fun requires_main_thread() {
-        AndroidUncaughtExceptionHandler.register(ApplicationProvider.getApplicationContext<Context>())
+        AndroidUncaughtExceptionHandler.register(ApplicationProvider.getApplicationContext())
     }
 
     @Test
@@ -21,14 +20,14 @@ class AndroidUncaughtExceptionHandlerTest {
         val didFail = AtomicBoolean(true)
         val latch = CountDownLatch(1)
         Handler(Looper.getMainLooper()).post {
-            runCatching { AndroidUncaughtExceptionHandler.register(ApplicationProvider.getApplicationContext<Context>()) }
+            runCatching { AndroidUncaughtExceptionHandler.register(ApplicationProvider.getApplicationContext()) }
                 .onFailure {
                     throw AssertionError("Failed to register once")
                 }
 
             // Expected to fail on second registration
             try {
-                AndroidUncaughtExceptionHandler.register(ApplicationProvider.getApplicationContext<Context>())
+                AndroidUncaughtExceptionHandler.register(ApplicationProvider.getApplicationContext())
             } catch (e: IllegalStateException) {
                 // Expected exception
                 didFail.set(false)
