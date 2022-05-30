@@ -1,9 +1,23 @@
-Note: To fully test the QR Scan screen and its logic, it's necessary to test it on a real Android device
+Note: To be able to fully test the QR Scan screen and its logic, we recommend you to test it on real Android devices, which have hardware camera accessories. Although there is a way on how to test the scanning functionalities on an Android emulator too. See the next section on how to set up a QR code for the emulated camera scene.
 
 # Test Prerequisites
 - Check you have a wallet configured in the Zcash wallet app
 - Open Zcash wallet app in the system Settings app. Visit the permissions screen, then select Camera and make sure that you have the Camera permission denied.
 - Prepare at least two Zcash wallet addresses - one valid and one invalid. A valid address for Testnet can be `tmEjY6KfCryQhJ1hKSGiA7p8EeVggpvN78r`. The invalid one can be its modification.
+
+# Android emulator setup (optional)
+This section is optional and is required only if you'd like to test on an Android emulator device.
+1. Follow these [steps](https://developer.android.com/studio/install) to download and install Android studio
+2. And these [steps](https://developer.android.com/studio/run/managing-avds#createavd) help you set up an Android emulator
+3. Then you'll need to create a valid Zcash address QR code image. It can be done, for example, with the [QR Code Generator](https://www.qr-code-generator.com/) tool.
+4. Download the image
+5. Start the emulator 
+6. Click on More in the emulator panel to open the Extended controls window 
+7. Click on Camera 
+8. Click Add Image in the Wall section 
+9. Select your QR code image and close the window
+10. Once you're in the QR Scan screen with the virtual camera opened, see these [instructions](https://developers.google.com/ar/develop/java/emulator#control_the_virtual_scene) on how to move in virtual scene.
+11. The last step is to let the scanner read your QR code to be able to move to the smaller room (behind the dog), which will have the code displayed on the room wall. 
 
 # Check Camera permission allow functionality
 1. Open QR Scan screen by QR code icon from the Home screen
