@@ -72,7 +72,7 @@ jobs:
         uses: ./.github/actions/setup
       - name: Authenticate to Google Cloud for Google Play
         id: auth_google_play
-        uses: google-github-actions/auth@50dbfd0907520dcccbd51e965728eb32e592b8fa
+        uses: google-github-actions/auth@ceee102ec2387dd9e844e01b530ccd4ec87ce955
         with:
           create_credentials_file: true
           project_id: ${{ secrets.GOOGLE_PLAY_CLOUD_PROJECT }}
