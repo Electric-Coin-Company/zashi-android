@@ -56,7 +56,6 @@ import co.electriccoin.zcash.ui.screen.update.AppUpdateCheckerImp
 import co.electriccoin.zcash.ui.screen.update.WrapUpdate
 import co.electriccoin.zcash.ui.screen.update.model.UpdateState
 import co.electriccoin.zcash.ui.screen.wallet_address.view.WalletAddresses
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlin.time.Duration
@@ -313,7 +312,7 @@ class MainActivity : ComponentActivity() {
                 WrapScanValidator(
                     onScanValid = {
                         // TODO [#449] https://github.com/zcash/secant-android-wallet/issues/449
-                        if (navController.currentDestination?.route != NAV_SCAN) {
+                        if (navController.currentDestination?.route == NAV_SCAN) {
                             navController.navigate(NAV_SEND) {
                                 popUpTo(NAV_HOME) { inclusive = false }
                             }
@@ -324,8 +323,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
-    private var validateJob: Job? = null
 
     @Composable
     private fun WrapScanValidator(
@@ -338,13 +335,10 @@ class MainActivity : ComponentActivity() {
         } else {
             WrapScan(
                 onScanDone = { result ->
-                    if (null != validateJob) {
-                        validateJob = lifecycleScope.launch {
-                            if (synchronizer.validateAddress(result).isNotValid) {
-                                return@launch
-                            }
+                    lifecycleScope.launch {
+                        val isAddressValid = !synchronizer.validateAddress(result).isNotValid
+                        if (isAddressValid) {
                             onScanValid(result)
-                            validateJob = null
                         }
                     }
                 },

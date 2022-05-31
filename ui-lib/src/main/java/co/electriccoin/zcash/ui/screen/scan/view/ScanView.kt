@@ -34,6 +34,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
@@ -65,13 +66,17 @@ import co.electriccoin.zcash.ui.screen.scan.util.QrCodeAnalyzer
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.rememberPermissionState
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.sample
 import kotlinx.coroutines.guava.await
+import kotlinx.coroutines.launch
 import java.util.UUID
 import kotlin.math.roundToInt
+import kotlin.time.Duration.Companion.milliseconds
 
 // TODO [#423]: https://github.com/zcash/secant-android-wallet/issues/423
 @Preview("Scan")
@@ -207,7 +212,8 @@ private fun ScanMainContent(
     } else if (scanState == ScanState.Failed) {
         // keep current state
     } else if (permissionState.hasPermission) {
-        setScanState(ScanState.Scanning)
+        if (scanState != ScanState.Scanning)
+            setScanState(ScanState.Scanning)
     }
 
     // we calculate the best frame size for the current device screen
@@ -293,7 +299,8 @@ fun ScanFrame(frameSize: Int) {
     )
 }
 
-@OptIn(ExperimentalPermissionsApi::class)
+@OptIn(ExperimentalPermissionsApi::class, FlowPreview::class)
+@SuppressWarnings("LongMethod")
 @Composable
 fun ScanCameraView(
     onScanned: (result: String) -> Unit,
@@ -302,6 +309,7 @@ fun ScanCameraView(
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
+    val scope = rememberCoroutineScope()
 
     // we check the permission first, as the ProcessCameraProvider's emit won't be called again after
     // recomposition with the permission granted
@@ -361,8 +369,14 @@ fun ScanCameraView(
                 .testTag(ScanTag.CAMERA_VIEW)
         )
 
-        imageAnalysis.qrCodeFlow(context).collectAsState(initial = null).value?.let {
-            onScanned(it)
+        // we couldn't use collectAsState, as it's not triggered repeatedly, but just once
+        LaunchedEffect(key1 = true) {
+            scope.launch {
+                // we also use sample to get rid of multiple events at the same time
+                imageAnalysis.qrCodeFlow(context).sample(500.milliseconds).collect {
+                    onScanned(it)
+                }
+            }
         }
     }
 }

@@ -91,16 +91,13 @@ class ScanViewIntegrationTest : UiTestPrerequisites() {
 
         restorationTester.emulateSavedInstanceStateRestore()
 
-        // scan frame and camera view are still displayed
+        // scan frame is still displayed
         composeTestRule.onNodeWithTag(ScanTag.QR_FRAME).also {
             it.assertIsDisplayed()
         }
 
-        // we need to actively wait for the camera preview initialization
-        waitForDeviceIdle(timeoutMillis = 5000.milliseconds)
-
-        composeTestRule.onNodeWithTag(ScanTag.CAMERA_VIEW).also {
-            it.assertIsDisplayed()
-        }
+        // We don't run this test and its assertion on the camera view, as we'd need to wait for its
+        // layout as we already do in the ScanViewTest.grant_system_permission(). So we can speed up
+        // the test by omitting this assertion.
     }
 }
