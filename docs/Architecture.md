@@ -10,7 +10,7 @@ _Note: This document will continue to be updated as the app is implemented._
 
 # Multiplatform
 While this repository is for an Android application, efforts are made to give multiplatform flexibility in the future.  Specific adaptions that are being made:
- * Where possible, common code is extracted into multiplatform modules
+ * Where possible, common code is extracted into multiplatform modules.  This sometimes means that additional modules with an `-android` suffix exist to add Android-specific extensions.  In the future, we would like to move towards multiplatform modules with source directories along the lines of commonJvmMain, jvmMain, and androidMain.
  * In UI state management code, Kotlin Flow is often preferred over Android LiveData and Compose State to grant future flexibility
  * Saver is preferred over @Parcelize for objects in the SDK
 
@@ -26,6 +26,9 @@ The logical components of the app are implemented as a number of Gradle modules.
 
  * `app` — Compiles all of the modules together into the final application.  This module contains minimal actual code.  Note that the Java package structure for this module is under `co.electriccoin.zcash.app` while the Android package name is `co.electriccoin.zcash`.
  * `build-info-lib` — Collects information from the build environment (e.g. Git SHA, Git commit count) and compiles them into the application.  Can also be used for injection of API keys or other secrets.
+ * `crash` — For collecting and reporting exceptions and crashes
+     * `crash-lib` — Common crash collection logic for Kotlin and JVM.  This is not fully-featured by itself, but the long-term plan is multiplatform support.
+     * `crash-android-lib` — Android-specific crash collection logic, built on top of the common and JVM implementation in `crash-lib`
  * ui
      * `ui-design` — Contains UI theme elements only.  Besides offering modularization, this allows for hiding of some Material Design components behind our own custom components.
      * `ui-lib` — User interface that the user interacts with.  This contains 99% of the UI code, along with localizations, icons, and other assets.
@@ -34,7 +37,9 @@ The logical components of the app are implemented as a number of Gradle modules.
      * `preference-impl-android-lib` — Android-specific implementation for preference storage.
  * `sdk-ext-lib` — Contains extensions on top of the to the Zcash SDK.  Some of these extensions might be migrated into the SDK eventually, while others might represent Android-centric idioms.  Depending on how this module evolves, it could adopt another name such as `wallet-lib` or be split into two.
  * `sdk-ext-ui` — Place for Zcash SDK components (same as `sdk-ext-lib`), which are related to the UI (e.g. depend on user locale and thus need to be translated via `strings.xml`).
- * `spackle-lib` — Random utilities, to fill in the cracks in the Kotlin and Android frameworks.
+ * `spackle` — Random utilities, to fill in the cracks in the frameworks.
+     * `spackle-lib` — Multiplatform implementation for Kotlin and JVM
+     * `spackle-android-lib` — Android-specific additions.
 
 The following diagram shows a rough depiction of dependencies between the modules.  Two notes on this diagram:
  * `sdk-lib` is in a [different repository](https://github.com/zcash/zcash-android-wallet-sdk)
@@ -45,20 +50,31 @@ The following diagram shows a rough depiction of dependencies between the module
       subgraph sdk
           sdkLib[[sdk-lib]];
           sdkExtLib[[sdk-ext-lib]];
-          sdkExtUI[[sdk-ext-ui]];
+          sdkExtUi[[sdk-ext-ui]];
       end
-      sdkLib[[sdk-lib]] --> sdkExtLib[[sdk-ext-lib]] --> sdkExtUI[[sdk-ext-ui]];
+      sdkLib[[sdk-lib]] --> sdkExtLib[[sdk-ext-lib]] --> sdkExtUi[[sdk-ext-ui]];
       subgraph preference
-          preference-api-lib[[preference-api-lib]];
-          preference-impl-android-lib[[preference-impl-android-lib]];
+          preferenceApiLib[[preference-api-lib]];
+          preferenceImplAndroidLib[[preference-impl-android-lib]];
       end
-      preference-api-lib[[preference-api-lib]] --> preference-impl-android-lib[[preference-impl-android-lib]];
-      preference --> ui-lib[[ui-lib]];
-      sdk --> ui-lib[[ui-lib]];
-      spackle-lib[[spackle-lib]] --> ui-design-lib[[ui-design-lib]];
-      spackle-lib[[spackle-lib]] --> ui-lib[[ui-lib]];
-      ui-design-lib[[ui-design-lib]] --> ui-lib[[ui-lib]];
-      ui-lib[[ui-lib]] --> app{app};
+      preferenceApiLib[[preference-api-lib]] --> preferenceImplAndroidLib[[preference-impl-android-lib]];
+      subgraph crash
+          crashLib[[crash-lib]];
+          crashAndroidLib[[crash-android-lib]];
+      end
+      crashLib[[crash-lib]] --> crashAndroidLib[[crash-android-lib]];
+      subgraph spackle
+          spackleLib[[spackle-lib]];
+          spackleAndroidLib[[spackle-android-lib]];
+      end
+      spackleLib[[spackle-lib]] --> spackleAndroidLib[[spackle-android-lib]];
+      preference --> uiLib[[ui-lib]];
+      sdk --> uiLib[[ui-lib]];
+      spackle[[spackle]] --> uiDesignLib[[ui-design-lib]];
+      spackle[[spackle]] --> uiLib[[ui-lib]];
+      uiDesignLib[[ui-design-lib]] --> uiLib[[ui-lib]];
+      crash[[crash]] --> app{app};
+      uiLib[[ui-lib]] --> app{app};
 ```
 
 # Test Fixtures

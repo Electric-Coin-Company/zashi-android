@@ -6,10 +6,11 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.android.bip39.Mnemonics
 import cash.z.ecc.android.sdk.ext.collectWith
-import co.electriccoin.zcash.ui.common.ANDROID_STATE_FLOW_TIMEOUT_MILLIS
+import co.electriccoin.zcash.ui.common.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.screen.restore.state.WordList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
@@ -31,7 +32,7 @@ class RestoreViewModel(application: Application, savedStateHandle: SavedStateHan
         emit(CompleteWordSetState.Loaded(TreeSet(completeWordList)))
     }.stateIn(
         viewModelScope,
-        SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT_MILLIS),
+        SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
         CompleteWordSetState.Loading
     )
 

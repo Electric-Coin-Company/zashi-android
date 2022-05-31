@@ -138,6 +138,9 @@ dependencies {
     implementation(libs.kotlin.stdlib)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.zcash.sdk) // just to configure logging
+    implementation(projects.crashAndroidLib)
+    implementation(projects.spackleAndroidLib)
     implementation(projects.uiLib)
 
     androidTestImplementation(projects.testLib)

@@ -70,7 +70,7 @@ data class SupportInfo(
                 DeviceInfo.new(),
                 EnvironmentInfo.new(applicationContext),
                 PermissionInfo.all(applicationContext),
-                CrashInfo.all()
+                CrashInfo.all(context)
             )
         }
     }

@@ -16,6 +16,7 @@ import co.electriccoin.zcash.ui.screen.scan.ScanTag
 import co.electriccoin.zcash.ui.screen.scan.TestScanActivity
 import co.electriccoin.zcash.ui.test.getStringResource
 import org.junit.Assert.assertEquals
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 
@@ -44,6 +45,8 @@ class ScanPermissionGrantedViewTest : UiTestPrerequisites() {
 
     @Test
     @MediumTest
+    // https://github.com/zcash/secant-android-wallet/issues/447
+    @Ignore
     fun check_all_ui_elements_displayed() {
         composeTestRule.waitForIdle()
 
