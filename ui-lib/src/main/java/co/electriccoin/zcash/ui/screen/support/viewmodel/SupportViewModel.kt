@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
 
 class SupportViewModel(application: Application) : AndroidViewModel(application) {
     // Technically, some of the support info could be invalidated after a configuration change,
