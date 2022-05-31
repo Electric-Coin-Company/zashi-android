@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
+import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
 class SupportViewModel(application: Application) : AndroidViewModel(application) {
@@ -17,5 +18,5 @@ class SupportViewModel(application: Application) : AndroidViewModel(application)
     // such as the user's current locale. However it really doesn't matter here since all we
     // care about is capturing a snapshot of the app, OS, and device state.
     val supportInfo: StateFlow<SupportInfo?> = flow<SupportInfo?> { emit(SupportInfo.new(application)) }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT, 0.seconds), null)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT, Duration.ZERO), null)
 }
