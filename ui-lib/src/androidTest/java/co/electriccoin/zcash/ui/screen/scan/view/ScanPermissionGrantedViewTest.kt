@@ -8,6 +8,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.test.filters.FlakyTest
 import androidx.test.filters.MediumTest
 import androidx.test.rule.GrantPermissionRule
 import co.electriccoin.zcash.test.UiTestPrerequisites
@@ -44,6 +45,8 @@ class ScanPermissionGrantedViewTest : UiTestPrerequisites() {
 
     @Test
     @MediumTest
+    // https://github.com/zcash/secant-android-wallet/issues/447
+    @FlakyTest(bugId = 447)
     fun check_all_ui_elements_displayed() {
         composeTestRule.waitForIdle()
 
