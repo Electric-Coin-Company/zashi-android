@@ -8,7 +8,6 @@ import androidx.test.filters.LargeTest
 import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.integration.test.getPermissionPositiveButtonUiObject
 import co.electriccoin.zcash.ui.integration.test.screen.scan.TestScanActivity
-import co.electriccoin.zcash.ui.integration.test.waitForDeviceIdle
 import co.electriccoin.zcash.ui.screen.scan.ScanTag
 import co.electriccoin.zcash.ui.screen.scan.model.ScanState
 import org.junit.Assert
@@ -16,7 +15,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import kotlin.time.Duration.Companion.milliseconds
 
 class ScanViewIntegrationTest : UiTestPrerequisites() {
 
