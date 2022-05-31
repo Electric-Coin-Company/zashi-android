@@ -34,7 +34,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
@@ -66,17 +65,13 @@ import co.electriccoin.zcash.ui.screen.scan.util.QrCodeAnalyzer
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.rememberPermissionState
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.sample
 import kotlinx.coroutines.guava.await
-import kotlinx.coroutines.launch
 import java.util.UUID
 import kotlin.math.roundToInt
-import kotlin.time.Duration.Companion.milliseconds
 
 // TODO [#423]: https://github.com/zcash/secant-android-wallet/issues/423
 @Preview("Scan")
@@ -299,7 +294,7 @@ fun ScanFrame(frameSize: Int) {
     )
 }
 
-@OptIn(ExperimentalPermissionsApi::class, FlowPreview::class)
+@OptIn(ExperimentalPermissionsApi::class)
 @SuppressWarnings("LongMethod")
 @Composable
 fun ScanCameraView(
@@ -309,7 +304,6 @@ fun ScanCameraView(
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
-    val scope = rememberCoroutineScope()
 
     // we check the permission first, as the ProcessCameraProvider's emit won't be called again after
     // recomposition with the permission granted
@@ -369,32 +363,29 @@ fun ScanCameraView(
                 .testTag(ScanTag.CAMERA_VIEW)
         )
 
-        // we couldn't use collectAsState, as it's not triggered repeatedly, but just once
-        LaunchedEffect(key1 = true) {
-            scope.launch {
-                // we also use sample to get rid of multiple events at the same time
-                imageAnalysis.qrCodeFlow(context).sample(500.milliseconds).collect {
-                    onScanned(it)
-                }
-            }
+        imageAnalysis.qrCodeFlow(context).collectAsState(initial = null).value?.let {
+            onScanned(it)
         }
     }
 }
 
 // Using callbackFlow because QrCodeAnalyzer has a non-suspending callback which makes
 // a basic flow builder not work here.
-fun ImageAnalysis.qrCodeFlow(context: Context): Flow<String> = callbackFlow {
-    setAnalyzer(
-        ContextCompat.getMainExecutor(context),
-        QrCodeAnalyzer { result ->
-            // Note that these callbacks aren't tied to the Compose lifecycle, so they could occur
-            // after the view goes away.  Collection needs to occur within the Compose lifecycle
-            // to make this not be a problem.
-            trySend(result)
-        }
-    )
+@Composable
+fun ImageAnalysis.qrCodeFlow(context: Context): Flow<String> = remember {
+    callbackFlow {
+        setAnalyzer(
+            ContextCompat.getMainExecutor(context),
+            QrCodeAnalyzer { result ->
+                // Note that these callbacks aren't tied to the Compose lifecycle, so they could occur
+                // after the view goes away.  Collection needs to occur within the Compose lifecycle
+                // to make this not be a problem.
+                trySend(result)
+            }
+        )
 
-    awaitClose {
-        // Nothing to close
+        awaitClose {
+            // Nothing to close
+        }
     }
 }
