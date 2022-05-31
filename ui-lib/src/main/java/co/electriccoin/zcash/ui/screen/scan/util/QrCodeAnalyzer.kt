@@ -23,38 +23,38 @@ class QrCodeAnalyzer(
     )
 
     override fun analyze(image: ImageProxy) {
-        if (image.format in supportedImageFormats) {
-            val bytes = image.planes.first().buffer.toByteArray()
-            val source = PlanarYUVLuminanceSource(
-                bytes,
-                image.width,
-                image.height,
-                0,
-                0,
-                image.width,
-                image.height,
-                false
-            )
+        image.use {
+            if (image.format in supportedImageFormats) {
+                val bytes = image.planes.first().buffer.toByteArray()
+                val source = PlanarYUVLuminanceSource(
+                    bytes,
+                    image.width,
+                    image.height,
+                    0,
+                    0,
+                    image.width,
+                    image.height,
+                    false
+                )
 
-            val binaryBmp = BinaryBitmap(HybridBinarizer(source))
+                val binaryBmp = BinaryBitmap(HybridBinarizer(source))
 
-            runCatching {
-                val result = MultiFormatReader().apply {
-                    setHints(
-                        mapOf(
-                            DecodeHintType.POSSIBLE_FORMATS to arrayListOf(
-                                BarcodeFormat.QR_CODE
+                runCatching {
+                    val result = MultiFormatReader().apply {
+                        setHints(
+                            mapOf(
+                                DecodeHintType.POSSIBLE_FORMATS to arrayListOf(
+                                    BarcodeFormat.QR_CODE
+                                )
                             )
                         )
-                    )
-                }.decode(binaryBmp)
+                    }.decode(binaryBmp)
 
-                onQrCodeScanned(result.text)
-            }.onFailure {
-                // failed to found QR code in current frame
+                    onQrCodeScanned(result.text)
+                }.onFailure {
+                    // failed to found QR code in current frame
+                }
             }
-
-            image.close()
         }
     }
 
