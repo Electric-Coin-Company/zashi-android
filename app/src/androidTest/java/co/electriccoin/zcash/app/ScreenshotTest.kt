@@ -1,8 +1,5 @@
 package co.electriccoin.zcash.app
 
-import android.Manifest
-import android.content.pm.PackageManager
-import android.os.Build
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasTestTag
@@ -18,16 +15,15 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
 import androidx.test.core.app.ApplicationProvider
+import androidx.test.core.graphics.writeToTestStorage
+import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.matcher.ViewMatchers.isRoot
+import androidx.test.espresso.screenshot.captureToBitmap
 import androidx.test.ext.junit.rules.ActivityScenarioRule
-import androidx.test.filters.SdkSuppress
 import androidx.test.filters.SmallTest
-import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.rule.GrantPermissionRule
-import androidx.test.runner.screenshot.Screenshot
 import cash.z.ecc.sdk.ext.ui.model.MonetarySeparators
 import cash.z.ecc.sdk.fixture.SeedPhraseFixture
 import cash.z.ecc.sdk.fixture.WalletAddressFixture
-import co.electriccoin.zcash.app.test.EccScreenCaptureProcessor
 import co.electriccoin.zcash.app.test.getStringResource
 import co.electriccoin.zcash.spackle.FirebaseTestLabUtil
 import co.electriccoin.zcash.test.UiTestPrerequisites
@@ -39,44 +35,21 @@ import co.electriccoin.zcash.ui.screen.restore.RestoreTag
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
-import org.junit.BeforeClass
 import org.junit.Rule
 import org.junit.Test
-import org.junit.rules.RuleChain
 
-// TODO [#285]: Screenshot tests fail on older devices due to issue granting external storage permission
-@SdkSuppress(minSdkVersion = Build.VERSION_CODES.Q)
 class ScreenshotTest : UiTestPrerequisites() {
 
     companion object {
-        @BeforeClass
-        @JvmStatic
-        fun setupPPlus() {
-            if (Build.VERSION_CODES.P <= Build.VERSION.SDK_INT) {
-                val instrumentation = InstrumentationRegistry.getInstrumentation()
-                if (PackageManager.PERMISSION_DENIED == instrumentation.context.checkCallingOrSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                    instrumentation.uiAutomation.grantRuntimePermission(instrumentation.context.packageName, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                }
-            }
-        }
-
         fun takeScreenshot(screenshotName: String) {
-            val screenshot = Screenshot.capture().apply {
-                name = screenshotName
-            }
-            screenshot.process(setOf(EccScreenCaptureProcessor.new()))
+            onView(isRoot())
+                .captureToBitmap()
+                .writeToTestStorage(screenshotName)
         }
     }
-
-    private val composeTestRule = createAndroidComposeRule(MainActivity::class.java)
 
     @get:Rule
-    val ruleChain = if (Build.VERSION_CODES.P <= Build.VERSION.SDK_INT) {
-        composeTestRule
-    } else {
-        val runtimePermissionRule = GrantPermissionRule.grant(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        RuleChain.outerRule(runtimePermissionRule).around(composeTestRule)
-    }
+    val composeTestRule = createAndroidComposeRule(MainActivity::class.java)
 
     private fun navigateTo(route: String) = runBlocking {
         withContext(Dispatchers.Main) {

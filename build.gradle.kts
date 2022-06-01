@@ -97,12 +97,11 @@ fladle {
 
     filesToDownload.set(listOf(
         "*/matrix_*/*test_results_merged\\.xml",
-        "*/matrix_*/*/artifacts/sdcard/Pictures/zcash_screenshots/*\\.png"
+        "*/matrix_*/*/artifacts/sdcard/googletest/test_outputfiles/*\\.png"
     ))
 
     directoriesToPull.set(listOf(
-        // This path needs to be coordinated with the implementation in the app module's tests
-        "/sdcard/Pictures/zcash_screenshots"
+        "/sdcard/googletest/test_outputfiles"
     ))
 }
 

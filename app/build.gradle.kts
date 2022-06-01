@@ -101,6 +101,7 @@ android {
             listOf(
                 "**/*.kotlin_metadata",
                 ".readme",
+                "build-data.properties",
                 "META-INF/*.kotlin_module",
                 "META-INF/android.arch**",
                 "META-INF/androidx**",
@@ -110,7 +111,6 @@ android {
                 "META-INF/services/org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor",
                 "META-INF/services/org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar",
                 "META-INF/services/org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages\$Extension",
-                "build-data.properties",
                 "firebase-**.properties",
                 "kotlin/**",
                 "play-services-**.properties",
@@ -206,27 +206,6 @@ if (googlePlayServiceKeyFilePath.isNotEmpty()) {
     }
 }
 
-val reportsDirectory = "${buildDir}/reports/androidTests/connected"
-
-// This is coordinated with `EccScreenCaptureProcessor`
-val onDeviceScreenshotsDirectory = "/sdcard/Pictures/zcash_screenshots"
-
-val clearScreenshotsTask = tasks.create<Exec>("clearScreenshots") {
-    executable = project.android.adbExecutable.absolutePath
-    args = listOf("shell", "rm", "-r", onDeviceScreenshotsDirectory)
-}
-
-val fetchScreenshotsTask = tasks.create<Exec>("fetchScreenshots") {
-    executable = project.android.adbExecutable.absolutePath
-    args = listOf("pull", onDeviceScreenshotsDirectory, reportsDirectory)
-    finalizedBy(clearScreenshotsTask)
-}
-
-tasks.whenTaskAdded {
-    if (name == "connectedZcashmainnetDebugAndroidTest") {
-        finalizedBy(fetchScreenshotsTask)
-    }
-}
 
 fladle {
     // Firebase Test Lab has min and max values that might differ from our project's
@@ -265,7 +244,7 @@ fladle {
                 }
             )
 
-            testTimeout.set("5m")
+            testTimeout.set("3m")
 
             devices.addAll(
                 mapOf("model" to "Pixel2", "version" to minSdkVersion),
@@ -278,13 +257,19 @@ fladle {
 }
 
 emulatorwtf {
-    // This path needs to be coordinated with the implementation in the app module's tests
-    directoriesToPull.set(listOf("/sdcard/Pictures/zcash_screenshots"))
+    directoriesToPull.set(listOf("/sdcard/googletest/test_outputfiles"))
+
+    val appMinSdkVersion = run {
+        @Suppress("MagicNumber", "PropertyName", "VariableNaming")
+        val EMULATOR_WTF_MIN_SDK = 23
+
+        val buildMinSdk = project.properties["ANDROID_APP_MIN_SDK_VERSION"].toString().toInt()
+        buildMinSdk.coerceAtLeast(EMULATOR_WTF_MIN_SDK).toString()
+    }
 
     devices.set(
         listOf(
-            // TODO [#285]: Our screenshot tests don't work on older devices
-            // mapOf("model" to "Pixel2", "version" to minSdkVersion),
+            mapOf("model" to "Pixel2", "version" to appMinSdkVersion),
             // TODO [#430]: App won't run on API 31 Intel emulators
             @Suppress("MagicNumber")
             mapOf("model" to "Pixel2", "version" to 30)

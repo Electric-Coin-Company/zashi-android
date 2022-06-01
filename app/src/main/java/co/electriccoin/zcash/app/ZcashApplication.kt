@@ -1,7 +1,6 @@
 package co.electriccoin.zcash.app
 
 import android.app.Application
-import co.electriccoin.zcash.BuildConfig
 import co.electriccoin.zcash.crash.android.CrashReporter
 import co.electriccoin.zcash.spackle.StrictModeCompat
 import co.electriccoin.zcash.spackle.Twig
