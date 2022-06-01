@@ -36,8 +36,9 @@ The logical components of the app are implemented as a number of Gradle modules.
  * preference
      * `preference-api-lib` — Multiplatform interfaces for key-value storage of preferences.
      * `preference-impl-android-lib` — Android-specific implementation for preference storage.
- * `sdk-ext-lib` — Contains extensions on top of the to the Zcash SDK.  Some of these extensions might be migrated into the SDK eventually, while others might represent Android-centric idioms.  Depending on how this module evolves, it could adopt another name such as `wallet-lib` or be split into two.
- * `sdk-ext-ui` — Place for Zcash SDK components (same as `sdk-ext-lib`), which are related to the UI (e.g. depend on user locale and thus need to be translated via `strings.xml`).
+ * sdk
+     * `sdk-ext-lib` — Contains extensions on top of the to the Zcash SDK.  Some of these extensions might be migrated into the SDK eventually, while others might represent Android-centric idioms.  Depending on how this module evolves, it could adopt another name such as `wallet-lib` or be split into two.
+     * `sdk-ext-ui` — Place for Zcash SDK components (same as `sdk-ext-lib`), which are related to the UI (e.g. depend on user locale and thus need to be translated via `strings.xml`).
  * `spackle` — Random utilities, to fill in the cracks in the frameworks.
      * `spackle-lib` — Multiplatform implementation for Kotlin and JVM
      * `spackle-android-lib` — Android-specific additions.
