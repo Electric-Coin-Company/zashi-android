@@ -1,0 +1,36 @@
+plugins {
+    id("com.android.library")
+    kotlin("android")
+    id("kotlin-parcelize")
+    id("zcash.android-build-conventions")
+    id("wtf.emulator.gradle")
+    id("zcash.emulator-wtf-conventions")
+}
+
+android {
+    // Force orchestrator to be used for this module, because we need the process name to be purged between tests
+    defaultConfig {
+        testInstrumentationRunnerArguments["clearPackageData"] = "true"
+    }
+
+    testOptions {
+        execution = "ANDROIDX_TEST_ORCHESTRATOR"
+    }
+}
+
+dependencies {
+    api(projects.spackleLib)
+    implementation(libs.androidx.annotation)
+    implementation(libs.kotlin.stdlib)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.coroutines.core)
+
+    androidTestImplementation(libs.bundles.androidx.test)
+    androidTestImplementation(libs.kotlinx.coroutines.test)
+
+    androidTestUtil(libs.androidx.test.orchestrator) {
+        artifact {
+            type = "apk"
+        }
+    }
+}

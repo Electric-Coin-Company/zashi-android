@@ -7,8 +7,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.QrCodeScanner
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -16,12 +19,17 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallTopAppBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import cash.z.ecc.android.sdk.db.entity.Transaction
 import cash.z.ecc.sdk.ext.ui.model.toZecString
 import cash.z.ecc.sdk.model.total
+import co.electriccoin.zcash.crash.android.CrashReporter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.Body
@@ -33,6 +41,7 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 import co.electriccoin.zcash.ui.screen.home.model.WalletSnapshot
 import co.electriccoin.zcash.ui.screen.home.model.totalBalance
+import java.lang.RuntimeException
 
 @Preview
 @Composable
@@ -45,7 +54,8 @@ fun ComposablePreview() {
                 goScan = {},
                 goProfile = {},
                 goSend = {},
-                goRequest = {}
+                goRequest = {},
+                isDebugMenuEnabled = false
             )
         }
     }
@@ -60,10 +70,11 @@ fun Home(
     goScan: () -> Unit,
     goProfile: () -> Unit,
     goSend: () -> Unit,
-    goRequest: () -> Unit
+    goRequest: () -> Unit,
+    isDebugMenuEnabled: Boolean
 ) {
     Scaffold(topBar = {
-        HomeTopAppBar()
+        HomeTopAppBar(isDebugMenuEnabled)
     }) {
         HomeMainContent(
             walletSnapshot,
@@ -77,8 +88,46 @@ fun Home(
 }
 
 @Composable
-private fun HomeTopAppBar() {
-    SmallTopAppBar(title = { Text(text = stringResource(id = R.string.app_name)) })
+private fun HomeTopAppBar(isDebugMenuEnabled: Boolean) {
+    SmallTopAppBar(
+        title = { Text(text = stringResource(id = R.string.app_name)) },
+        actions = {
+            if (isDebugMenuEnabled) {
+                DebugMenu()
+            }
+        }
+    )
+}
+
+@Composable
+private fun DebugMenu() {
+    var expanded by rememberSaveable { mutableStateOf(false) }
+    IconButton(onClick = { expanded = true }) {
+        Icon(Icons.Default.MoreVert, contentDescription = null)
+    }
+
+    DropdownMenu(
+        expanded = expanded,
+        onDismissRequest = { expanded = false }
+    ) {
+        DropdownMenuItem(
+            text = { Text("Throw Uncaught Exception") },
+            onClick = {
+                // Supposed to be generic, for manual debugging only
+                @Suppress("TooGenericExceptionThrown")
+                throw RuntimeException("Manually crashed from debug menu")
+            }
+        )
+        DropdownMenuItem(
+            text = { Text("Report Caught Exception") },
+            onClick = {
+                // Eventually this shouldn't rely on the Android implementation, but rather an expect/actual
+                // should be used at the crash API level.
+                CrashReporter.reportCaughtException(RuntimeException("Manually caught exception from debug menu"))
+                expanded = false
+            }
+        )
+    }
 }
 
 @Suppress("LongParameterList")

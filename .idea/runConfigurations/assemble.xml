@@ -9,9 +9,11 @@
         <list />
       </option>
       <option name="taskNames">
-        <list />
+        <list>
+          <option value="assemble" />
+        </list>
       </option>
-      <option name="vmOptions" value="" />
+      <option name="vmOptions" />
     </ExternalSystemSettings>
     <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
     <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>

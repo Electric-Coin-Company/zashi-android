@@ -101,7 +101,6 @@ android {
             listOf(
                 "**/*.kotlin_metadata",
                 ".readme",
-                "build-data.properties",
                 "META-INF/*.kotlin_module",
                 "META-INF/android.arch**",
                 "META-INF/androidx**",
@@ -111,6 +110,7 @@ android {
                 "META-INF/services/org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor",
                 "META-INF/services/org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar",
                 "META-INF/services/org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages\$Extension",
+                "build-data.properties",
                 "firebase-**.properties",
                 "kotlin/**",
                 "play-services-**.properties",
@@ -138,6 +138,9 @@ dependencies {
     implementation(libs.kotlin.stdlib)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.zcash.sdk) // just to configure logging
+    implementation(projects.crashAndroidLib)
+    implementation(projects.spackleAndroidLib)
     implementation(projects.uiLib)
 
     androidTestImplementation(projects.testLib)
@@ -225,49 +228,66 @@ tasks.whenTaskAdded {
     }
 }
 
-// Firebase Test Lab has min and max values that might differ from our project's
-// These are determined by `gcloud firebase test android models list`
-@Suppress("MagicNumber", "PropertyName", "VariableNaming")
-val FIREBASE_TEST_LAB_MIN_SDK = 23
+fladle {
+    // Firebase Test Lab has min and max values that might differ from our project's
+    // These are determined by `gcloud firebase test android models list`
+    @Suppress("MagicNumber", "PropertyName", "VariableNaming")
+    val FIREBASE_TEST_LAB_MIN_SDK = 23
 
-@Suppress("MagicNumber", "PropertyName", "VariableNaming")
-val FIREBASE_TEST_LAB_MAX_SDK = 30
+    @Suppress("MagicNumber", "PropertyName", "VariableNaming")
+    val FIREBASE_TEST_LAB_MAX_SDK = 30
 
-val firebaseTestLabKeyPath = project.properties["ZCASH_FIREBASE_TEST_LAB_API_KEY_PATH"].toString()
-if (firebaseTestLabKeyPath.isNotBlank()) {
     val minSdkVersion = run {
-        val buildMinSdk =
-            project.properties["ANDROID_APP_MIN_SDK_VERSION"].toString().toInt()
+        val buildMinSdk = project.properties["ANDROID_APP_MIN_SDK_VERSION"].toString().toInt()
         buildMinSdk.coerceAtLeast(FIREBASE_TEST_LAB_MIN_SDK).toString()
     }
     val targetSdkVersion = run {
-        val buildTargetSdk =
-            project.properties["ANDROID_TARGET_SDK_VERSION"].toString().toInt()
+        val buildTargetSdk = project.properties["ANDROID_TARGET_SDK_VERSION"].toString().toInt()
         buildTargetSdk.coerceAtMost(FIREBASE_TEST_LAB_MAX_SDK).toString()
     }
 
-    fladle {
+    val firebaseTestLabKeyPath = project.properties["ZCASH_FIREBASE_TEST_LAB_API_KEY_PATH"].toString()
+    val firebaseProject = project.properties["ZCASH_FIREBASE_TEST_LAB_PROJECT"].toString()
+
+    if (firebaseTestLabKeyPath.isNotEmpty()) {
         serviceAccountCredentials.set(File(firebaseTestLabKeyPath))
+    } else if (firebaseProject.isNotEmpty()) {
+        projectId.set(firebaseProject)
+    }
 
-        configs {
-            create("sanityConfig") {
-                clearPropertiesForSanityRobo()
+    configs {
+        create("sanityConfig") {
+            clearPropertiesForSanityRobo()
 
-                debugApk.set(
-                    project.provider {
-                        "${buildDir}/outputs/universal_apk/zcashmainnetRelease/app-zcashmainnet-release-universal.apk"
-                    }
-                )
+            debugApk.set(
+                project.provider {
+                    "${buildDir}/outputs/universal_apk/zcashmainnetRelease/app-zcashmainnet-release-universal.apk"
+                }
+            )
 
-                testTimeout.set("5m")
-                
-                devices.addAll(
-                    mapOf("model" to "Nexus6P", "version" to minSdkVersion),
-                    mapOf("model" to "Pixel2", "version" to targetSdkVersion)
-                )
+            testTimeout.set("5m")
 
-                flankVersion.set(libs.versions.flank.get())
-            }
+            devices.addAll(
+                mapOf("model" to "Pixel2", "version" to minSdkVersion),
+                mapOf("model" to "Pixel2", "version" to targetSdkVersion)
+            )
+
+            flankVersion.set(libs.versions.flank.get())
         }
     }
+}
+
+emulatorwtf {
+    // This path needs to be coordinated with the implementation in the app module's tests
+    directoriesToPull.set(listOf("/sdcard/Pictures/zcash_screenshots"))
+
+    devices.set(
+        listOf(
+            // TODO [#285]: Our screenshot tests don't work on older devices
+            // mapOf("model" to "Pixel2", "version" to minSdkVersion),
+            // TODO [#430]: App won't run on API 31 Intel emulators
+            @Suppress("MagicNumber")
+            mapOf("model" to "Pixel2", "version" to 30)
+        )
+    )
 }

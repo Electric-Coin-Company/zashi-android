@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
@@ -28,6 +29,7 @@ import cash.z.ecc.sdk.model.SeedPhrase
 import cash.z.ecc.sdk.model.ZecRequest
 import cash.z.ecc.sdk.send
 import cash.z.ecc.sdk.type.fromResources
+import co.electriccoin.zcash.spackle.EmulatorWtfUtil
 import co.electriccoin.zcash.spackle.FirebaseTestLabUtil
 import co.electriccoin.zcash.ui.design.compat.FontCompat
 import co.electriccoin.zcash.ui.design.component.GradientSurface
@@ -358,13 +360,22 @@ class MainActivity : ComponentActivity() {
         if (null == walletSnapshot) {
             // Display loading indicator
         } else {
+            val context = LocalContext.current
+
+            // We might eventually want to check the debuggable property of the manifest instead
+            // of relying on BuildConfig.
+            val isDebugMenuEnabled = BuildConfig.DEBUG &&
+                !FirebaseTestLabUtil.isFirebaseTestLab(context) &&
+                !EmulatorWtfUtil.isEmulatorWtf(context)
+
             Home(
                 walletSnapshot,
                 walletViewModel.transactionSnapshot.collectAsState().value,
                 goScan = goScan,
                 goRequest = goRequest,
                 goSend = goSend,
-                goProfile = goProfile
+                goProfile = goProfile,
+                isDebugMenuEnabled = isDebugMenuEnabled
             )
 
             reportFullyDrawn()

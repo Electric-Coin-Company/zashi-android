@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="co.electriccoin.zcash">
 
     <application
-        android:name=".app.AppImpl"
+        android:name=".app.ZcashApplication"
         android:allowBackup="false"
         android:label="@string/app_name">
 
@@ -13,9 +12,9 @@
              clients. -->
         <activity-alias
             android:name=".LauncherActivity"
+            android:exported="true"
             android:label="@string/app_name"
-            android:targetActivity="co.electriccoin.zcash.ui.MainActivity"
-            android:exported="true">
+            android:targetActivity="co.electriccoin.zcash.ui.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

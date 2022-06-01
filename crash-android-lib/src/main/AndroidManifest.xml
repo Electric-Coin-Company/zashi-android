@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="co.electriccoin.zcash.crash.android">
+
+    <application>
+
+        <provider
+            android:authorities="${applicationId}.co.electriccoin.zcash.crash"
+            android:name="co.electriccoin.zcash.crash.android.internal.CrashProcessNameContentProvider"
+            android:exported="false"
+            android:enabled="@bool/co_electriccoin_zcash_crash_is_use_secondary_process"
+            android:process="@string/co_electriccoin_zcash_crash_process_name_suffix"/>
+
+        <receiver
+            android:name="co.electriccoin.zcash.crash.android.internal.ExceptionReceiver"
+            android:exported="false"
+            android:enabled="@bool/co_electriccoin_zcash_crash_is_use_secondary_process"
+            android:process="@string/co_electriccoin_zcash_crash_process_name_suffix" />
+    </application>
+
+</manifest>

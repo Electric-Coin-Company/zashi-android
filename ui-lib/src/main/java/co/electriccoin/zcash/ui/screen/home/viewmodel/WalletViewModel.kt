@@ -15,7 +15,7 @@ import cash.z.ecc.android.sdk.tool.DerivationTool
 import cash.z.ecc.android.sdk.type.WalletBalance
 import cash.z.ecc.sdk.model.PersistableWallet
 import cash.z.ecc.sdk.model.WalletAddresses
-import co.electriccoin.zcash.ui.common.ANDROID_STATE_FLOW_TIMEOUT_MILLIS
+import co.electriccoin.zcash.ui.common.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.preference.EncryptedPreferenceKeys
 import co.electriccoin.zcash.ui.preference.EncryptedPreferenceSingleton
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
@@ -26,6 +26,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emitAll
@@ -57,7 +58,7 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
      */
     val synchronizer = walletCoordinator.synchronizer.stateIn(
         viewModelScope,
-        SharingStarted.WhileSubscribed(stopTimeoutMillis = ANDROID_STATE_FLOW_TIMEOUT_MILLIS),
+        SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
         null
     )
 
@@ -80,7 +81,7 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
             }
         }.stateIn(
             viewModelScope,
-            SharingStarted.WhileSubscribed(stopTimeoutMillis = ANDROID_STATE_FLOW_TIMEOUT_MILLIS),
+            SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
             SecretState.Loading
         )
 
@@ -96,7 +97,7 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
             DerivationTool.deriveSpendingKeys(bip39Seed, it.network)[0]
         }.stateIn(
             viewModelScope,
-            SharingStarted.WhileSubscribed(stopTimeoutMillis = ANDROID_STATE_FLOW_TIMEOUT_MILLIS),
+            SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
             null
         )
 
@@ -106,7 +107,7 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
         .flatMapConcat { it.toWalletSnapshot() }
         .stateIn(
             viewModelScope,
-            SharingStarted.WhileSubscribed(stopTimeoutMillis = ANDROID_STATE_FLOW_TIMEOUT_MILLIS),
+            SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
             null
         )
 
@@ -116,7 +117,7 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
         .filterNotNull()
         .flatMapConcat { it.toTransactions() }
         .stateIn(
-            viewModelScope, SharingStarted.WhileSubscribed(stopTimeoutMillis = ANDROID_STATE_FLOW_TIMEOUT_MILLIS),
+            viewModelScope, SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
             emptyList()
         )
 
@@ -125,7 +126,7 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
         .filterIsInstance<SecretState.Ready>()
         .map { WalletAddresses.new(it.persistableWallet) }
         .stateIn(
-            viewModelScope, SharingStarted.WhileSubscribed(stopTimeoutMillis = ANDROID_STATE_FLOW_TIMEOUT_MILLIS),
+            viewModelScope, SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
             null
         )
 
