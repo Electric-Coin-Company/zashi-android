@@ -15,3 +15,8 @@
 -dontwarn javax.naming.directory.Attributes
 -dontwarn javax.naming.directory.DirContext
 -dontwarn javax.naming.directory.InitialDirContext
+
+# kotlinx.datetime supports kotlinx.serialization, but we don't use kotlinx.serialization elsewhere
+# in the projects, so the classes aren't present.  These warnings are safe to suppress.
+-dontwarn kotlinx.serialization.KSerializer
+-dontwarn kotlinx.serialization.Serializable
