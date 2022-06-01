@@ -32,7 +32,7 @@ The logical components of the app are implemented as a number of Gradle modules.
  * ui
      * `ui-design` — Contains UI theme elements only. Besides offering modularization, this allows for hiding of some Material Design components behind our own custom components.
      * `ui-lib` — User interface that the user interacts with.  This contains 99% of the UI code, along with localizations, icons, and other assets.
-     * `ui-integration-test-lib` — Is dedicated for integration tests only. It has Android Test Orchestrator turned on — it allows us to run each of our tests within its own invocation of Instrumentation, and thus brings us benefits for the testing environment (minimal shared state, crashes are isolated).
+     * `ui-integration-test-lib` — Is dedicated for integration tests only. It has Android Test Orchestrator turned on — it allows us to run each of our tests within its own invocation of Instrumentation, and thus brings us benefits for the testing environment (minimal shared state, crashes are isolated, permissions are reset).
  * preference
      * `preference-api-lib` — Multiplatform interfaces for key-value storage of preferences.
      * `preference-impl-android-lib` — Android-specific implementation for preference storage.
@@ -71,8 +71,8 @@ The following diagram shows a rough depiction of dependencies between the module
           uiIntegrationTestLib[[ui-integration-test-lib]];
       end
       uiDesignLib[[ui-design-lib]] --> uiLib[[ui-lib]];
-      uiIntegrationTestLib[[ui-integration-test-lib]] --> uiLib[[ui-lib]];
-      uiIntegrationTestLib[[ui-integration-test-lib]] --> uiDesignLib[[ui-design-lib]];
+      uiLib[[ui-lib]] --> uiIntegrationTestLib[[ui-integration-test-lib]];
+      uiDesignLib[[ui-design-lib]] -- > uiIntegrationTestLib[[ui-integration-test-lib]];
       subgraph spackle
           spackleLib[[spackle-lib]];
           spackleAndroidLib[[spackle-android-lib]];
