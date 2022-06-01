@@ -30,8 +30,9 @@ The logical components of the app are implemented as a number of Gradle modules.
      * `crash-lib` — Common crash collection logic for Kotlin and JVM.  This is not fully-featured by itself, but the long-term plan is multiplatform support.
      * `crash-android-lib` — Android-specific crash collection logic, built on top of the common and JVM implementation in `crash-lib`
  * ui
-     * `ui-design` — Contains UI theme elements only.  Besides offering modularization, this allows for hiding of some Material Design components behind our own custom components.
+     * `ui-design` — Contains UI theme elements only. Besides offering modularization, this allows for hiding of some Material Design components behind our own custom components.
      * `ui-lib` — User interface that the user interacts with.  This contains 99% of the UI code, along with localizations, icons, and other assets.
+     * `ui-integration-test-lib` — Is dedicated for integration tests only. It has Android Test Orchestrator turned on — it allows us to run each of our tests within its own invocation of Instrumentation, and thus brings us benefits for the testing environment (minimal shared state, crashes are isolated).
  * preference
      * `preference-api-lib` — Multiplatform interfaces for key-value storage of preferences.
      * `preference-impl-android-lib` — Android-specific implementation for preference storage.
@@ -63,18 +64,24 @@ The following diagram shows a rough depiction of dependencies between the module
           crashAndroidLib[[crash-android-lib]];
       end
       crashLib[[crash-lib]] --> crashAndroidLib[[crash-android-lib]];
+      subgraph ui
+          uiDesignLib[[ui-design-lib]];
+          uiLib[[ui-lib]];
+          uiIntegrationTestLib[[ui-integration-test-lib]];
+      end
+      uiDesignLib[[ui-design-lib]] --> uiLib[[ui-lib]];
+      uiIntegrationTestLib[[ui-integration-test-lib]] --> uiLib[[ui-lib]];
+      uiIntegrationTestLib[[ui-integration-test-lib]] --> uiDesignLib[[ui-design-lib]];
       subgraph spackle
           spackleLib[[spackle-lib]];
           spackleAndroidLib[[spackle-android-lib]];
       end
       spackleLib[[spackle-lib]] --> spackleAndroidLib[[spackle-android-lib]];
-      preference --> uiLib[[ui-lib]];
-      sdk --> uiLib[[ui-lib]];
-      spackle[[spackle]] --> uiDesignLib[[ui-design-lib]];
-      spackle[[spackle]] --> uiLib[[ui-lib]];
-      uiDesignLib[[ui-design-lib]] --> uiLib[[ui-lib]];
+      preference --> ui[[ui]];
+      sdk --> ui[[ui]];
+      spackle[[spackle]] --> ui[[ui]];
+      ui[[ui]] --> app{app};
       crash[[crash]] --> app{app};
-      uiLib[[ui-lib]] --> app{app};
 ```
 
 # Test Fixtures
