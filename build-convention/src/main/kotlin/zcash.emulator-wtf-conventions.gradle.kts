@@ -2,7 +2,7 @@
 // These are determined by `ew-cli --models`
 
 @Suppress("MagicNumber", "PropertyName", "VariableNaming")
-val EMULATOR_WTF_MIN_SDK = 23
+val EMULATOR_WTF_MIN_SDK = 24
 
 @Suppress("MagicNumber", "PropertyName", "VariableNaming")
 val EMULATOR_WTF_MAX_SDK = 31
