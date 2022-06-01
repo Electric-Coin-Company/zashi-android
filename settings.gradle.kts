@@ -93,6 +93,9 @@ dependencyResolutionManagement {
             }
         }
         maven("https://oss.sonatype.org/content/repositories/snapshots") {
+            mavenContent {
+                snapshotsOnly()
+            }
             if (isRepoRestrictionEnabled) {
                 content {
                     includeGroup("cash.z.ecc.android")
