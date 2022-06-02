@@ -14,7 +14,7 @@ While this repository is for an Android application, efforts are made to give mu
  * In UI state management code, Kotlin Flow is often preferred over Android LiveData and Compose State to grant future flexibility
  * Saver is preferred over @Parcelize for objects in the SDK
 
-Note: test coverage for multiplatform modules behaves differently than coverage for Android modules.  Coverage is only generated for a JVM target, and requires running two tasks in sequence: `./gradlew check -PIS_COVERAGE_ENABLED=true; ./gradlew jacocoTestReport -PIS_COVERAGE_ENABLED=true`
+Note: Test coverage for multiplatform modules behaves differently than coverage for Android modules.  Coverage is enabled by default for the JVM target when running `./gradlew check`.
 
 # App
 The main entrypoints of the application are:

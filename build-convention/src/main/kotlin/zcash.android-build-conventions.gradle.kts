@@ -66,7 +66,8 @@ fun com.android.build.gradle.BaseExtension.configureBaseExtension() {
 
     buildTypes {
         getByName("debug").apply {
-            isTestCoverageEnabled = project.property("IS_COVERAGE_ENABLED").toString().toBoolean()
+            isTestCoverageEnabled =
+                project.property("IS_ANDROID_INSTRUMENTATION_TEST_COVERAGE_ENABLED").toString().toBoolean()
         }
     }
 

@@ -1,7 +1,6 @@
 plugins {
     kotlin("multiplatform")
     id("zcash.kotlin-multiplatform-build-conventions")
-    id("zcash.kotlin-multiplatform-jacoco-conventions")
     id("zcash.dependency-conventions")
 }
 
