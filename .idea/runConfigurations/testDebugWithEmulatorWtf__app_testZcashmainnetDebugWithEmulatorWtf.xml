@@ -1,17 +1,15 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="testDebugWithEmulatorWtf" type="GradleRunConfiguration" factoryName="Gradle">
+  <configuration default="false" name="testDebugWithEmulatorWtf :app:testZcashmainnetDebugWithEmulatorWtf" type="GradleRunConfiguration" factoryName="Gradle">
     <ExternalSystemSettings>
       <option name="executionName" />
       <option name="externalProjectPath" value="$PROJECT_DIR$" />
       <option name="externalSystemIdString" value="GRADLE" />
-      <option name="scriptParameters" value="" />
+      <option name="scriptParameters" value="testDebugWithEmulatorWtf :app:testZcashmainnetDebugWithEmulatorWtf" />
       <option name="taskDescriptions">
         <list />
       </option>
       <option name="taskNames">
-        <list>
-          <option value="testDebugWithEmulatorWtf" />
-        </list>
+        <list />
       </option>
       <option name="vmOptions" />
     </ExternalSystemSettings>

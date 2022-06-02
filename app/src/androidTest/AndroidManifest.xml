@@ -1,10 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    package="co.electriccoin.zcash.test">
-
-    <!-- Required to write screenshots -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+<manifest package="co.electriccoin.zcash.app.test">
 
 </manifest>
