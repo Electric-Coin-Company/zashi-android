@@ -82,7 +82,6 @@ fun com.android.build.gradle.BaseExtension.configureBaseExtension() {
         }
     }
 
-    // TODO [#22]: This doesn't work, so there's a duplicate in build.gradle.kts
     testOptions {
         animationsDisabled = true
 
