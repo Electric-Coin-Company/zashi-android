@@ -311,8 +311,41 @@ class MainActivity : ComponentActivity() {
                 WrapAbout(goBack = { navController.popBackStack() })
             }
             composable(NAV_SCAN) {
-                WrapScan(goBack = { navController.popBackStack() })
+                WrapScanValidator(
+                    onScanValid = {
+                        // TODO [#449] https://github.com/zcash/secant-android-wallet/issues/449
+                        if (navController.currentDestination?.route == NAV_SCAN) {
+                            navController.navigate(NAV_SEND) {
+                                popUpTo(NAV_HOME) { inclusive = false }
+                            }
+                        }
+                    },
+                    goBack = { navController.popBackStack() }
+                )
             }
+        }
+    }
+
+    @Composable
+    private fun WrapScanValidator(
+        onScanValid: (address: String) -> Unit,
+        goBack: () -> Unit
+    ) {
+        val synchronizer = walletViewModel.synchronizer.collectAsState().value
+        if (synchronizer == null) {
+            // Display loading indicator
+        } else {
+            WrapScan(
+                onScanDone = { result ->
+                    lifecycleScope.launch {
+                        val isAddressValid = !synchronizer.validateAddress(result).isNotValid
+                        if (isAddressValid) {
+                            onScanValid(result)
+                        }
+                    }
+                },
+                goBack = goBack
+            )
         }
     }
 

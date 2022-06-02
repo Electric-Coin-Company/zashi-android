@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.scan
+package co.electriccoin.zcash.ui.integration.test.screen.scan
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.ui.Modifier
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.screen.scan.WrapScan
 
 class TestScanActivity : ComponentActivity() {
 
@@ -26,7 +27,8 @@ class TestScanActivity : ComponentActivity() {
                 ) {
                     WrapScan(
                         this,
-                        goBack = {}
+                        goBack = {},
+                        onScanned = {},
                     )
                 }
             }

@@ -1,12 +1,11 @@
 package co.electriccoin.zcash.ui.screen.scan.view
 
 import android.Manifest
-import android.content.pm.PackageManager
+import android.content.Context
 import android.content.res.Configuration
 import android.view.ViewGroup
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraSelector
+import androidx.camera.core.ImageAnalysis
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.BorderStroke
@@ -35,7 +34,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
@@ -57,22 +55,25 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.LifecycleOwner
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.SecondaryButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.scan.ScanTag
 import co.electriccoin.zcash.ui.screen.scan.model.ScanState
+import co.electriccoin.zcash.ui.screen.scan.util.QrCodeAnalyzer
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionState
+import com.google.accompanist.permissions.rememberPermissionState
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.guava.await
-import kotlinx.coroutines.launch
 import java.util.UUID
 import kotlin.math.roundToInt
 
 // TODO [#423]: https://github.com/zcash/secant-android-wallet/issues/423
-// TODO [#313]: https://github.com/zcash/secant-android-wallet/issues/313
 @Preview("Scan")
 @Composable
 fun PreviewScan() {
@@ -81,30 +82,32 @@ fun PreviewScan() {
             Scan(
                 snackbarHostState = SnackbarHostState(),
                 onBack = {},
-                onScan = {},
-                onOpenSettings = {}
+                onScanned = {},
+                onOpenSettings = {},
+                onScanStateChanged = {}
             )
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Suppress("UNUSED_VARIABLE")
 @Composable
 fun Scan(
     snackbarHostState: SnackbarHostState,
     onBack: () -> Unit,
-    onScan: (String) -> Unit,
+    onScanned: (String) -> Unit,
     onOpenSettings: () -> Unit,
+    onScanStateChanged: (ScanState) -> Unit,
 ) {
     Scaffold(
         topBar = { ScanTopAppBar(onBack = onBack) },
         snackbarHost = { SnackbarHost(snackbarHostState) },
     ) {
         ScanMainContent(
-            onScan,
+            onScanned,
             onOpenSettings,
             onBack,
+            onScanStateChanged,
             snackbarHostState
         )
     }
@@ -131,7 +134,6 @@ fun ScanBottomItems(
             text = when (scanState) {
                 ScanState.Permission -> stringResource(id = R.string.scan_state_permission)
                 ScanState.Scanning -> stringResource(id = R.string.scan_state_scanning)
-                ScanState.Success -> stringResource(id = R.string.scan_state_success)
                 ScanState.Failed -> stringResource(id = R.string.scan_state_failed)
             },
             color = Color.White,
@@ -171,22 +173,25 @@ private fun ScanTopAppBar(onBack: () -> Unit) {
     )
 }
 
-@Suppress("UNUSED_VARIABLE", "UNUSED_PARAMETER", "MagicNumber", "LongMethod")
+@OptIn(ExperimentalPermissionsApi::class)
+@Suppress("MagicNumber", "LongMethod")
 @Composable
 private fun ScanMainContent(
-    onScan: (String) -> Unit,
+    onScanned: (String) -> Unit,
     onOpenSettings: () -> Unit,
     onBack: () -> Unit,
+    onScanStateChanged: (ScanState) -> Unit,
     snackbarHostState: SnackbarHostState
 ) {
     val context = LocalContext.current
-    val lifecycleOwner = LocalLifecycleOwner.current
+
+    val permissionState = rememberPermissionState(
+        Manifest.permission.CAMERA
+    )
 
     val (scanState, setScanState) = rememberSaveable {
         mutableStateOf(
-            if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) ==
-                PackageManager.PERMISSION_GRANTED
-            ) {
+            if (permissionState.hasPermission) {
                 ScanState.Scanning
             } else {
                 ScanState.Permission
@@ -194,27 +199,16 @@ private fun ScanMainContent(
         )
     }
 
-    val (scanResult, setScanResult) = rememberSaveable { mutableStateOf("") }
-
-    val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission(),
-        onResult = { granted ->
-            if (granted) {
-                setScanState(ScanState.Scanning)
-            } else {
-                setScanState(ScanState.Permission)
-            }
+    if (!permissionState.hasPermission) {
+        setScanState(ScanState.Permission)
+        LaunchedEffect(key1 = UUID.randomUUID()) {
+            permissionState.launchPermissionRequest()
         }
-    )
-
-    // We use a random value to show the permission popup after a user grants the CAMERA permission
-    // outside of the app (in Settings).
-    LaunchedEffect(key1 = UUID.randomUUID()) {
-        launcher.launch(Manifest.permission.CAMERA)
-    }
-
-    val cameraProviderFlow = remember {
-        flow<ProcessCameraProvider> { emit(ProcessCameraProvider.getInstance(context).await()) }
+    } else if (scanState == ScanState.Failed) {
+        // keep current state
+    } else if (permissionState.hasPermission) {
+        if (scanState != ScanState.Scanning)
+            setScanState(ScanState.Scanning)
     }
 
     // we calculate the best frame size for the current device screen
@@ -227,32 +221,58 @@ private fun ScanMainContent(
         (framePossibleSize.value.width * 0.7).roundToInt()
     }
 
-    ConstraintLayout(modifier = Modifier.fillMaxSize()) {
+    ConstraintLayout(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black)
+    ) {
         val (frame, bottomItems) = createRefs()
 
-        if (scanState == ScanState.Scanning) {
-            ScanCameraView(
-                onBack,
-                cameraProviderFlow,
-                lifecycleOwner,
-                snackbarHostState
-            )
+        when (scanState) {
+            ScanState.Permission -> {
+                // keep initial ui state
+                onScanStateChanged(ScanState.Permission)
+            }
+            ScanState.Scanning -> {
+                // TODO [#437]: https://github.com/zcash/secant-android-wallet/issues/437
+                onScanStateChanged(ScanState.Scanning)
+                ScanCameraView(
+                    onScanned = onScanned,
+                    setScanState = setScanState,
+                    permissionState = permissionState
+                )
 
-            Box(
-                modifier = Modifier
-                    .constrainAs(frame) {
-                        top.linkTo(parent.top)
-                        bottom.linkTo(bottomItems.top)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                        width = Dimension.fillToConstraints
-                        height = Dimension.fillToConstraints
-                    }.onSizeChanged { coordinates ->
-                        framePossibleSize.value = coordinates
-                    },
-                contentAlignment = Alignment.Center
-            ) {
-                ScanFrame(frameActualSize)
+                Box(
+                    modifier = Modifier
+                        .constrainAs(frame) {
+                            top.linkTo(parent.top)
+                            bottom.linkTo(bottomItems.top)
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                            width = Dimension.fillToConstraints
+                            height = Dimension.fillToConstraints
+                        }
+                        .onSizeChanged { coordinates ->
+                            framePossibleSize.value = coordinates
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+                    ScanFrame(frameActualSize)
+                }
+            }
+            ScanState.Failed -> {
+                onScanStateChanged(ScanState.Failed)
+                LaunchedEffect(key1 = true) {
+                    setScanState(ScanState.Failed)
+                    onScanStateChanged(ScanState.Failed)
+                    val snackbarResult = snackbarHostState.showSnackbar(
+                        message = context.getString(R.string.scan_setup_failed),
+                        actionLabel = context.getString(R.string.scan_setup_back),
+                    )
+                    if (snackbarResult == SnackbarResult.ActionPerformed) {
+                        onBack()
+                    }
+                }
             }
         }
 
@@ -274,20 +294,38 @@ fun ScanFrame(frameSize: Int) {
     )
 }
 
+@OptIn(ExperimentalPermissionsApi::class)
+@SuppressWarnings("LongMethod")
 @Composable
 fun ScanCameraView(
-    onBack: () -> Unit,
-    cameraProviderFlow: Flow<ProcessCameraProvider>,
-    lifecycleOwner: LifecycleOwner,
-    snackbarHostState: SnackbarHostState
+    onScanned: (result: String) -> Unit,
+    setScanState: (ScanState) -> Unit,
+    permissionState: PermissionState
 ) {
     val context = LocalContext.current
-    val scope = rememberCoroutineScope()
+    val lifecycleOwner = LocalLifecycleOwner.current
 
-    val cameraProvider = cameraProviderFlow.collectAsState(initial = null).value
-    if (null == cameraProvider) {
+    // we check the permission first, as the ProcessCameraProvider's emit won't be called again after
+    // recomposition with the permission granted
+    val cameraProviderFlow = if (permissionState.hasPermission) {
+        remember {
+            flow<ProcessCameraProvider> { emit(ProcessCameraProvider.getInstance(context).await()) }
+        }
+    } else {
+        null
+    }
+
+    val collectedCameraProvider = cameraProviderFlow?.collectAsState(initial = null)?.value
+
+    if (null == collectedCameraProvider) {
         // Show loading indicator
     } else {
+        val contentDescription = stringResource(id = R.string.scan_preview_content_description)
+
+        val imageAnalysis = ImageAnalysis.Builder()
+            .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+            .build()
+
         AndroidView(
             factory = { factoryContext ->
                 val previewView = PreviewView(factoryContext).apply {
@@ -297,37 +335,57 @@ fun ScanCameraView(
                         ViewGroup.LayoutParams.MATCH_PARENT
                     )
                 }
-                val preview = androidx.camera.core.Preview.Builder().build()
+                previewView.contentDescription = contentDescription
                 val selector = CameraSelector.Builder()
                     .requireLensFacing(CameraSelector.LENS_FACING_BACK)
                     .build()
-                preview.setSurfaceProvider(previewView.surfaceProvider)
+                val preview = androidx.camera.core.Preview.Builder().build().apply {
+                    setSurfaceProvider(previewView.surfaceProvider)
+                }
 
                 runCatching {
                     // we must unbind the use-cases before rebinding them
-                    cameraProvider.unbindAll()
-                    cameraProvider.bindToLifecycle(
+                    collectedCameraProvider.unbindAll()
+                    collectedCameraProvider.bindToLifecycle(
                         lifecycleOwner,
                         selector,
-                        preview
+                        preview,
+                        imageAnalysis
                     )
                 }.onFailure {
-                    scope.launch {
-                        val snackbarResult = snackbarHostState.showSnackbar(
-                            message = context.getString(R.string.scan_setup_failed),
-                            actionLabel = context.getString(R.string.scan_setup_back),
-                        )
-                        if (snackbarResult == SnackbarResult.ActionPerformed) {
-                            onBack()
-                        }
-                    }
+                    setScanState(ScanState.Failed)
                 }
 
                 previewView
             },
             Modifier
                 .fillMaxSize()
-                .testTag(ScanTag.CAMERA_VIEW),
+                .testTag(ScanTag.CAMERA_VIEW)
         )
+
+        imageAnalysis.qrCodeFlow(context).collectAsState(initial = null).value?.let {
+            onScanned(it)
+        }
+    }
+}
+
+// Using callbackFlow because QrCodeAnalyzer has a non-suspending callback which makes
+// a basic flow builder not work here.
+@Composable
+fun ImageAnalysis.qrCodeFlow(context: Context): Flow<String> = remember {
+    callbackFlow {
+        setAnalyzer(
+            ContextCompat.getMainExecutor(context),
+            QrCodeAnalyzer { result ->
+                // Note that these callbacks aren't tied to the Compose lifecycle, so they could occur
+                // after the view goes away.  Collection needs to occur within the Compose lifecycle
+                // to make this not be a problem.
+                trySend(result)
+            }
+        )
+
+        awaitClose {
+            // Nothing to close
+        }
     }
 }

@@ -114,6 +114,7 @@ dependencyResolutionManagement {
     @Suppress("UnstableApiUsage", "MaxLineLength")
     versionCatalogs {
         create("libs") {
+            val accompanistPermissionsVersion = extra["ACCOMPANIST_PERMISSIONS_VERSION"].toString()
             val androidxActivityVersion = extra["ANDROIDX_ACTIVITY_VERSION"].toString()
             val androidxAnnotationVersion = extra["ANDROIDX_ANNOTATION_VERSION"].toString()
             val androidxAppcompatVersion = extra["ANDROIDX_APPCOMPAT_VERSION"].toString()
@@ -153,6 +154,7 @@ dependencyResolutionManagement {
             version("java", javaVersion)
 
             // Aliases
+            library("accompanist-permissions", "com.google.accompanist:accompanist-permissions:$accompanistPermissionsVersion")
             library("androidx-activity", "androidx.activity:activity-ktx:$androidxActivityVersion")
             library("androidx-activity-compose", "androidx.activity:activity-compose:$androidxActivityVersion")
             library("androidx-annotation", "androidx.annotation:annotation:$androidxAnnotationVersion")
@@ -270,6 +272,7 @@ include("spackle-lib")
 include("spackle-android-lib")
 include("test-lib")
 include("ui-design-lib")
+include("ui-integration-test-lib")
 include("ui-lib")
 
 if (extra["IS_SDK_INCLUDED_BUILD"].toString().toBoolean()) {
