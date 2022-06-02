@@ -124,15 +124,3 @@ kover {
         "ui-lib",
     )
 }
-
-// All of this should be refactored to build-conventions
-subprojects {
-    pluginManager.withPlugin("com.android.library") {
-        project.the<com.android.build.gradle.LibraryExtension>().apply {
-            // TODO [#5]: Figure out how to move this into the build-conventions
-            testCoverage {
-                jacocoVersion = libs.versions.jacoco.get()
-            }
-        }
-    }
-}
