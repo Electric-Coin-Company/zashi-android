@@ -81,7 +81,7 @@ dependencies {
     implementation(projects.sdkExtLib)
     implementation(projects.sdkExtUiLib)
     implementation(projects.spackleAndroidLib)
-    implementation(projects.uiDesignLib)
+    api(projects.uiDesignLib)
 
     androidTestImplementation(projects.testLib)
     androidTestImplementation(libs.bundles.androidx.test)
