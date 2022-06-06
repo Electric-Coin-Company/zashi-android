@@ -49,6 +49,8 @@ Start by making sure the command line with Gradle works first, because **all the
 A variety of Gradle tasks are set up within the project, and these tasks are also accessible in Android Studio as run configurations.
  * `assemble` - Compiles the application but does not deploy it
  * `assembleAndroidTest` - Compiles the application and tests, but does not deploy the application or run the tests.  The Android Studio run configuration actually runs all of these tasks because the debug APKs are necessary to run the tests: `assembleDebug assembleZcashmainnetDebug assembleZcashtestnetDebug assembleAndroidTest`
+ * `check` - Runs tests of Kotlin-only modules
+ * `connectedCheck` - Runs tests of Android-only modules on any running Android virtual device or connected physical Android device 
  * `detektAll` - Performs static analysis with Detekt
  * `ktlintFormat` - Performs code formatting checks with ktlint
  * `lint` - Performs static analysis with Android lint
@@ -80,17 +82,14 @@ This section is optional.
 
 To simplify implementation of SDK features in conjunction with changes to the app, a Gradle [Included Build](https://docs.gradle.org/current/userguide/composite_builds.html) can be configured.
 
-1. Check out the SDK to a directory path of `../zcash-android-sdk` relative to the root of this app's repo.  For example:
-
-        parent/
-            secant-android-wallet/
-            zcash-android-sdk/
-
-1. Verify that the `zcash-android-sdk` builds correctly on its own
-1. Build `secant-android-wallet`, setting the Gradle property `IS_SDK_INCLUDED_BUILD=true`
+1. Check out the SDK 
+1. Verify that the `zcash-android-sdk` builds correctly on its own (e.g. `./gradlew assemble`)
+1. In the `secant-android-wallet` repo, modify property `SDK_INCLUDED_BUILD_PATH` to be the absolute path to the `zcash-android-sdk` checkout.  (You can also use a relative path, but it will be relative to the root of `secant-android-wallet`) 
+1. In the `secant-android-wallet` repo, modify property `ZCASH_IS_TREAT_WARNINGS_AS_ERRORS` to be false due to [SDK Issue #367](https://github.com/zcash/zcash-android-wallet-sdk/issues/367)
+1. Build `secant-android-wallet`
 
 There are some limitations of included builds:
-1. Properties from `secant-android-wallet` will override those set in `zcash-android-sdk` with the same name
+1. If  `secant-android-wallet` is using a newer version of the Android Gradle plugin compared to `zcash-android-sdk`, the build will fail.  If this happens, you may need to modify the `zcash-android-sdk` gradle.properties so that the Android Gradle Plugin version matches that of `secant-android-wallet`.  After making this change, it will be necessary to run a build from the command line with the flag `--write-locks` e.g. `./gradlew assemble --write-locks` in order to update the dependency locks
 1. Modules in each project cannot share the same name.  For this reason, build-conventions have different names in each repo (`zcash-android-sdk/build-conventions` vs `secant-android-wallet/build-convention`)
 
 ### Firebase Test Lab
@@ -98,7 +97,9 @@ This section is optional.
 
 For Continuous Integration, see [CI.md](CI.md).  The rest of this section is regarding local development.
 
-1. Set up a Firebase project, for the purpose of running Firebase Test Lab
+1. Configure or request access to a Firebase Test Lab project
+    1. If you are an Electric Coin Co team member: Make an IT request to add your Google account to the existing Firebase Test Lab project 
+    2. If you are an open source contributor: set up your own Firebase project for the purpose of running Firebase Test Lab
 1. Set the Firebase Google Cloud project name as a global Gradle property `ZCASH_FIREBASE_TEST_LAB_PROJECT` under `~/.gradle/gradle.properties`
 1. Run the Gradle task `flankAuth` to generate a Firebase authentication token on your machine
 
@@ -108,3 +109,13 @@ The Firebase Test Lab tasks DO NOT build the app, so they rely on existing build
 1. Build the debug and test APKs: `./gradlew assembleDebug assembleZcashmainnetDebug assembleZcashtestnetDebug assembleAndroidTest`
 1. Run the tests: `./gradlew runFlank`
 
+### Emulator WTF
+This section is optional.  
+
+For Continuous Integration, see [CI.md](CI.md).  The rest of this section is regarding local development.
+
+1. Configure or request access to emulator.wtf
+    1. If you are an Electric Coin Co team member: We are still setting up a process for this, because emulator.wtf does not yet support individual API tokens
+    1. If you are an open source contributor: Visit http://emulator.wtf and request an API key
+1. Set the emulator.wtf API key as a global Gradle property `ZCASH_EMULATOR_WTF_API_KEY` under `~/.gradle/gradle.properties` 
+1. Run the Gradle task `./gradlew testDebugWithEmulatorWtf :app:testZcashmainnetDebugWithEmulatorWtf` (emulator.wtf tasks do build the app, so you don't need to build them beforehand)

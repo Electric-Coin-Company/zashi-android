@@ -271,11 +271,11 @@ include("ui-design-lib")
 include("ui-integration-test-lib")
 include("ui-lib")
 
-if (extra["IS_SDK_INCLUDED_BUILD"].toString().toBoolean()) {
-    // Currently assume the SDK is up one level with a hardcoded directory name
-    // If this becomes problematic, `IS_SDK_INCLUDED_BUILD` could be turned into a path
-    // instead.
-    includeBuild("../zcash-android-sdk") {
+val includedBuildPath = extra["SDK_INCLUDED_BUILD_PATH"].toString()
+
+if (includedBuildPath.isNotEmpty()) {
+    logger.lifecycle("Due to an included build, the SDK will be used from $includedBuildPath instead of Maven Central.")
+    includeBuild(includedBuildPath) {
         dependencySubstitution {
             substitute(module("cash.z.ecc.android:zcash-android-sdk")).using(project(":sdk-lib"))
         }
