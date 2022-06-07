@@ -29,24 +29,3 @@ dependencies {
     }
 }
 
-// This block can eventually go away; it exists to override the max SDK version to avoid a JNI
-// crash https://github.com/zcash/secant-android-wallet/issues/430
-emulatorwtf {
-    // Emulator WTF has min and max values that might differ from our project's
-    // These are determined by `ew-cli --models`
-    @Suppress("MagicNumber", "PropertyName", "VariableNaming")
-    val EMULATOR_WTF_MIN_API = 23
-
-    val minSdkVersion = run {
-        val buildMinSdk = project.properties["ANDROID_LIB_MIN_SDK_VERSION"].toString().toInt()
-        buildMinSdk.coerceAtLeast(EMULATOR_WTF_MIN_API).toString()
-    }
-
-    devices.set(
-        listOf(
-            mapOf("model" to "Pixel2", "version" to minSdkVersion),
-            @Suppress("MagicNumber")
-            mapOf("model" to "Pixel2", "version" to 30)
-        )
-    )
-}

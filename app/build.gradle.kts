@@ -267,12 +267,18 @@ emulatorwtf {
         buildMinSdk.coerceAtLeast(EMULATOR_WTF_MIN_SDK).toString()
     }
 
+    val targetSdkVersion = run {
+        @Suppress("MagicNumber", "PropertyName", "VariableNaming")
+        val EMULATOR_WTF_MAX_SDK = 31
+
+        val buildTargetSdk = project.properties["ANDROID_TARGET_SDK_VERSION"].toString().toInt()
+        buildTargetSdk.coerceAtMost(EMULATOR_WTF_MAX_SDK).toString()
+    }
+
     devices.set(
         listOf(
             mapOf("model" to "Pixel2", "version" to appMinSdkVersion),
-            // TODO [#430]: App won't run on API 31 Intel emulators
-            @Suppress("MagicNumber")
-            mapOf("model" to "Pixel2", "version" to 30)
+            mapOf("model" to "Pixel2", "version" to targetSdkVersion)
         )
     )
 }
