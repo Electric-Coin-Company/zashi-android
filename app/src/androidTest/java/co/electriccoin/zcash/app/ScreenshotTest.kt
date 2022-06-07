@@ -186,6 +186,14 @@ class ScreenshotTest : UiTestPrerequisites() {
 
     @Test
     @LargeTest
+    fun take_screenshots_for_new_wallet_and_rest_of_app_light_ar_XB() {
+        runWith(UiMode.Light, "ar-XB") { context, tag ->
+            take_screenshots_for_new_wallet_and_rest_of_app(context, tag)
+        }
+    }
+
+    @Test
+    @LargeTest
     fun take_screenshots_for_new_wallet_and_rest_of_app_light_en_US() {
         runWith(UiMode.Light, "en-US") { context, tag ->
             take_screenshots_for_new_wallet_and_rest_of_app(context, tag)
