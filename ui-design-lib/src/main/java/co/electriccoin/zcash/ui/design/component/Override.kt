@@ -2,6 +2,7 @@ package co.electriccoin.zcash.ui.design.component
 
 import android.content.res.Configuration
 import android.os.LocaleList
+import android.view.ContextThemeWrapper
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
@@ -13,18 +14,31 @@ import kotlinx.coroutines.flow.StateFlow
  * Wrap a Composable with a way to override the Android Configuration.  This is primarily useful
  * for automated tests.
  */
-@Suppress("DEPRECATION")
 @Composable
-fun Override(configurationOverrideFlow: StateFlow<ConfigurationOverride>, content: @Composable () -> Unit) {
-    val configuration = configurationOverrideFlow
-        .collectAsState().value
-        .newConfiguration(LocalConfiguration.current)
+fun Override(configurationOverrideFlow: StateFlow<ConfigurationOverride?>, content: @Composable () -> Unit) {
+    val configurationOverride = configurationOverrideFlow.collectAsState().value
 
-    CompositionLocalProvider(
-        LocalConfiguration provides configuration,
-        LocalContext provides LocalContext.current.createConfigurationContext(configuration)
-    ) {
+    if (null == configurationOverride) {
         content()
+    } else {
+        val configuration = configurationOverride.newConfiguration(LocalConfiguration.current)
+
+        val contextWrapper = run {
+            val context = LocalContext.current
+            object : ContextThemeWrapper() {
+                init {
+                    attachBaseContext(context)
+                    applyOverrideConfiguration(configuration)
+                }
+            }
+        }
+
+        CompositionLocalProvider(
+            LocalConfiguration provides configuration,
+            LocalContext provides contextWrapper
+        ) {
+            content()
+        }
     }
 }
 

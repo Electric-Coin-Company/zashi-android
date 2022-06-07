@@ -87,7 +87,7 @@ class MainActivity : ComponentActivity() {
     lateinit var navControllerForTesting: NavHostController
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    val configurationOverrideFlow = MutableStateFlow(ConfigurationOverride(null, null))
+    val configurationOverrideFlow = MutableStateFlow<ConfigurationOverride?>(null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
