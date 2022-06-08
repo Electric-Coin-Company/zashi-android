@@ -13,6 +13,7 @@ import androidx.annotation.VisibleForTesting
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -386,14 +387,18 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     private fun WrapCheckForUpdate() {
-        // and then check for an app update asynchronously
-        checkUpdateViewModel.checkForAppUpdate()
         val updateInfo = checkUpdateViewModel.updateInfo.collectAsState().value
 
         updateInfo?.let {
             if (it.appUpdateInfo != null && it.state == UpdateState.Prepared) {
                 WrapUpdate(updateInfo)
             }
+        }
+
+        // Check for an app update asynchronously. We create an effect that matches the activity
+        // lifecycle. If the wrapping compose recomposes, the check shouldn't run again.
+        LaunchedEffect(true) {
+            checkUpdateViewModel.checkForAppUpdate()
         }
     }
 
