@@ -43,8 +43,10 @@ class TestOnboardingActivity : ComponentActivity() {
         if (!onboardingViewModel.isImporting.collectAsState().value) {
             Onboarding(
                 onboardingState = onboardingViewModel.onboardingState,
+                isDebugMenuEnabled = false,
                 onImportWallet = { onboardingViewModel.isImporting.value = true },
-                onCreateWallet = {}
+                onCreateWallet = {},
+                onFixtureWallet = {}
             )
 
             reportFullyDrawn()

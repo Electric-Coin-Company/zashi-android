@@ -38,8 +38,11 @@ class OnboardingTestSetup(
         ZcashTheme {
             Onboarding(
                 onboardingState,
+                isDebugMenuEnabled = false,
                 onCreateWallet = { onCreateWalletCallbackCount.incrementAndGet() },
-                onImportWallet = { onImportWalletCallbackCount.incrementAndGet() }
+                onImportWallet = { onImportWalletCallbackCount.incrementAndGet() },
+                // We aren't testing this because it is for debug builds only.
+                onFixtureWallet = {}
             )
         }
     }
