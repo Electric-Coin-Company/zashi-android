@@ -83,6 +83,10 @@ android {
     }
 
     buildTypes {
+        getByName("debug").apply {
+            // Note that the build-conventions defines the res configs
+            isPseudoLocalesEnabled = true
+        }
         getByName("release").apply {
             isMinifyEnabled = project.property("IS_MINIFY_ENABLED").toString().toBoolean()
             isShrinkResources = project.property("IS_MINIFY_ENABLED").toString().toBoolean()
@@ -143,14 +147,14 @@ dependencies {
     implementation(projects.spackleAndroidLib)
     implementation(projects.uiLib)
 
-    androidTestImplementation(projects.testLib)
     androidTestImplementation(libs.androidx.compose.test.junit)
     androidTestImplementation(libs.androidx.navigation.compose)
     androidTestImplementation(libs.androidx.uiAutomator)
     androidTestImplementation(libs.bundles.androidx.test)
     androidTestImplementation(projects.sdkExtLib)
-    androidTestImplementation(projects.spackleLib)
     androidTestImplementation(projects.sdkExtUiLib)
+    androidTestImplementation(projects.spackleLib)
+    androidTestImplementation(projects.testLib)
 
     if (isOrchestratorEnabled) {
         androidTestUtil(libs.androidx.test.orchestrator) {

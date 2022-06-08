@@ -33,7 +33,9 @@ import cash.z.ecc.sdk.type.fromResources
 import co.electriccoin.zcash.spackle.EmulatorWtfUtil
 import co.electriccoin.zcash.spackle.FirebaseTestLabUtil
 import co.electriccoin.zcash.ui.design.compat.FontCompat
+import co.electriccoin.zcash.ui.design.component.ConfigurationOverride
 import co.electriccoin.zcash.ui.design.component.GradientSurface
+import co.electriccoin.zcash.ui.design.component.Override
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.about.WrapAbout
 import co.electriccoin.zcash.ui.screen.backup.WrapBackup
@@ -59,6 +61,7 @@ import co.electriccoin.zcash.ui.screen.update.AppUpdateCheckerImp
 import co.electriccoin.zcash.ui.screen.update.WrapUpdate
 import co.electriccoin.zcash.ui.screen.update.model.UpdateState
 import co.electriccoin.zcash.ui.screen.wallet_address.view.WalletAddresses
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlin.time.Duration
@@ -83,6 +86,9 @@ class MainActivity : ComponentActivity() {
 
     @VisibleForTesting(otherwise = VisibleForTesting.NONE)
     lateinit var navControllerForTesting: NavHostController
+
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    val configurationOverrideFlow = MutableStateFlow<ConfigurationOverride?>(null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -120,25 +126,27 @@ class MainActivity : ComponentActivity() {
 
     private fun setupUiContent() {
         setContent {
-            ZcashTheme {
-                GradientSurface(
-                    Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight()
-                ) {
-                    when (val secretState = walletViewModel.secretState.collectAsState().value) {
-                        SecretState.Loading -> {
-                            // For now, keep displaying splash screen using condition above.
-                            // In the future, we might consider displaying something different here.
+            Override(configurationOverrideFlow) {
+                ZcashTheme {
+                    GradientSurface(
+                        Modifier
+                            .fillMaxWidth()
+                            .fillMaxHeight()
+                    ) {
+                        when (val secretState = walletViewModel.secretState.collectAsState().value) {
+                            SecretState.Loading -> {
+                                // For now, keep displaying splash screen using condition above.
+                                // In the future, we might consider displaying something different here.
+                            }
+                            SecretState.None -> {
+                                WrapOnboarding()
+                            }
+                            is SecretState.NeedsBackup -> WrapBackup(
+                                secretState.persistableWallet,
+                                onBackupComplete = { walletViewModel.persistBackupComplete() }
+                            )
+                            is SecretState.Ready -> Navigation()
                         }
-                        SecretState.None -> {
-                            WrapOnboarding()
-                        }
-                        is SecretState.NeedsBackup -> WrapBackup(
-                            secretState.persistableWallet,
-                            onBackupComplete = { walletViewModel.persistBackupComplete() }
-                        )
-                        is SecretState.Ready -> Navigation()
                     }
                 }
             }
