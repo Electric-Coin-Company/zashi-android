@@ -11,12 +11,37 @@ To get set up for development, there are several steps that you need to go throu
 Start by making sure the command line with Gradle works first, because **all the Android Studio run configurations use Gradle internally.**  The run configurations are not magic—they map directly to command line invocations with different arguments.
 
 1. Install Java
-    1. Install JVM 11 or greater on your system.  Our setup has been tested with Java 11-17.  For Windows or Linux, be sure that the `JAVA_HOME` environment variable points to the right Java version.  Note: If you switch from a newer to an older JVM version, you may see an error like the following `> com.android.ide.common.signing.KeytoolException: Failed to read key AndroidDebugKey from store "~/.android/debug.keystore": Integrity check failed: java.security.NoSuchAlgorithmException: Algorithm HmacPBESHA256 not available`.  A solution is to delete the debug keystore and allow it to be re-generated.
+    1. Install JVM 11 or greater on your system.  Our setup has been tested with Java 11-17.  Although a variety of JVM distributions are available and should work, we have settled on recommending [Adoptium/Temurin](https://adoptium.net), because this is the default distribution used by Gradle toolchains.  For Windows or Linux, be sure that the `JAVA_HOME` environment variable points to the right Java version.  Note: If you switch from a newer to an older JVM version, you may see an error like the following `> com.android.ide.common.signing.KeytoolException: Failed to read key AndroidDebugKey from store "~/.android/debug.keystore": Integrity check failed: java.security.NoSuchAlgorithmException: Algorithm HmacPBESHA256 not available`.  A solution is to delete the debug keystore and allow it to be re-generated.
     1. Android Studio has an embedded JVM, although running Gradle tasks from the command line requires a separate JVM to be installed.  Our Gradle scripts are configured to use toolchains to automatically install the correct JVM version.
 1. Install Android Studio and the Android SDK
-    1. Download the [Android Studio](https://developer.android.com/studio/)
-    1. Note: Do not open the project in Android Studio yet.  That happens in a subsequent step below.  At this stage, we're just using Android Studio to install the Android SDK
-    1. TODO: Fill in step-by-step instructions for setting up a new environment and installing the Android SDK from within Android Studio
+    1. Download [Android Studio](https://developer.android.com/studio/).  We typically use the stable version of Android Studio, unless specifically noted due to short-term known issues.  For example, due to issue #420 Intel-based machines should avoid Android Studio Chipmunk and use Android Studio Dolphin instead.
+    1. During the Android Studio setup wizard, choose the "Standard" setup option
+    1. Note the file path where Android Studio will install the Android developer tools, as you will need this path later
+    1. Continue and let Android Studio download and install the rest of the Android developer tools
+    1. Do not open the project in Android Studio yet.  That happens in a subsequent step below.  At this stage, we're just using Android Studio to install the Android SDK.
+    1. Configure `ANDROID_HOME` environment variable using the path noted above.  This will allow easily running Android development commands, like `adb logcat` or `adb install myapp.apk`
+        1. macOS
+            1. Add the following to `~/.zprofile`
+
+                ```
+                export ANDROID_HOME=THE_PATH_NOTED_ABOVE
+                export PATH=${PATH}:${ANDROID_HOME}/tools
+                export PATH=${PATH}:${ANDROID_HOME}/tools/bin
+                export PATH=${PATH}:${ANDROID_HOME}/platform-tools
+                ```
+
+    1. Configure a device for development and testing
+        1. Android virtual device
+            1. Inside Android Studio, the small More Actions button has an option to open the Virtual Device Manager
+            1. When configuring an Android Virtual Device (AVD),  choose an Android version that is within the range of our min and target SDK versions, defined in [gradle.properties](../gradle.properties).
+        1. Physical Android device
+            1. Enable developer mode
+                1. Go into the Android settings
+                1. Go to About phone
+                1. Tap on the build number seven times (some devices hide this under "Software information")
+                1. Go back and navigate to the newly enabled Developer options.  This may be a top-level item or under System > Developer options
+                1. Enable USB debugging
+                1. Connect your device to your computer, granting permission to the USB MAC address
 1. Check out the code.  _Use the command line (instead of Android Studio) to check out the code. This will ensure that your command line environment is set up correctly and avoids a few pitfalls with trying to use Android Studio directly.  Android Studio's built-in git client is not as robust as standalone clients_
     1. To check out a git repo from GitHub, there are three authentication methods: SSH, HTTPS, and GitHub API.  We recommend SSH.
     1. Create a new SSH key, following [GitHub's instructions](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
@@ -29,7 +54,7 @@ Start by making sure the command line with Gradle works first, because **all the
     1. Open Android Studio
     1. From within Android Studio, choose to open an existing project and navigate to the root of the checked out repo.  Point Android Studio to the root of the git repo as (do not point it to the `app` module, as that is just a subset of the project and cannot be opened by itself)
         1. Note: When first opening the project, Android Studio will warn that Gradle checksums are not fully supported.  Choose the "Use checksum" option.  This is a security feature that we have explicitly enabled.
-        1. Shortly after opening the project, Android Studio may prompt about updating the Android Gradle Plugin.  DO NOT DO THIS.  If you do so, the build will fail because the project also has dependency locking enabled as a security feature.  To learn more, see [Build%20Integrity.md](Build integrity.md)
+        1. Shortly after opening the project, Android Studio may prompt about updating the Android Gradle Plugin.  DO NOT DO THIS.  If you do so, the build will fail because the project also has dependency locking enabled as a security feature.  To learn more, see [Build integrity.md](Build%20Integrity.md)
         1. Android Studio may prompt about updating the Kotlin plugin.  Do this.  Our application often uses a newer version of Kotlin than is bundled with Android Studio.
     1. After Android Studio finishes syncing with Gradle, look for the green "play" run button in the toolbar.  To the left of it, choose the "app" run configuration under the dropdown menu.  Then hit the run button
 
@@ -37,8 +62,9 @@ Start by making sure the command line with Gradle works first, because **all the
 1. Verify that the Git repo has not been modified.  Due to strict dependency locking (for security reasons), the build will fail unless the locks are also updated
 1. Try running from the command line instead of Android Studio, to rule out Android Studio issues.  If it works from the command line, try this step to reset Android Studio
    1. Quit Android Studio
-   2. Deleting the invisible `.idea` in the root directory of the project
-   3. Relaunch Android Studio
+   1. Delete the invisible `.idea` in the root directory of the project.  This directory is partially ignored by Git, so deleting it will remove the files that are untracked
+   1. Restore the missing files in `.idea` folder from Git
+   1. Relaunch Android Studio
 2. Clean the individual Gradle project by running `./gradlew clean` which will purge local build outputs.
 3. Run Gradle with the argument `--rerun-tasks` which will effectively disable the build cache by re-running tasks and repopulating the cache.  E.g. `./gradlew assemble --rerun-tasks`
 4. Reboot your computer, which will ensure that Gradle and Kotlin daemons are completely killed and relaunched
