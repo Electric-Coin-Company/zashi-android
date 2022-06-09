@@ -1,7 +1,6 @@
 package co.electriccoin.zcash.ui
 
 import android.annotation.SuppressLint
-import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -23,13 +22,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import cash.z.ecc.android.sdk.type.ZcashNetwork
-import cash.z.ecc.sdk.fixture.SeedPhraseFixture
-import cash.z.ecc.sdk.model.PersistableWallet
-import cash.z.ecc.sdk.model.SeedPhrase
 import cash.z.ecc.sdk.model.ZecRequest
 import cash.z.ecc.sdk.send
-import cash.z.ecc.sdk.type.fromResources
 import co.electriccoin.zcash.spackle.EmulatorWtfUtil
 import co.electriccoin.zcash.spackle.FirebaseTestLabUtil
 import co.electriccoin.zcash.ui.design.compat.FontCompat
@@ -45,13 +39,9 @@ import co.electriccoin.zcash.ui.screen.home.view.Home
 import co.electriccoin.zcash.ui.screen.home.viewmodel.CheckUpdateViewModel
 import co.electriccoin.zcash.ui.screen.home.viewmodel.SecretState
 import co.electriccoin.zcash.ui.screen.home.viewmodel.WalletViewModel
-import co.electriccoin.zcash.ui.screen.onboarding.view.Onboarding
-import co.electriccoin.zcash.ui.screen.onboarding.viewmodel.OnboardingViewModel
+import co.electriccoin.zcash.ui.screen.onboarding.WrapOnboarding
 import co.electriccoin.zcash.ui.screen.profile.WrapProfile
 import co.electriccoin.zcash.ui.screen.request.view.Request
-import co.electriccoin.zcash.ui.screen.restore.view.RestoreWallet
-import co.electriccoin.zcash.ui.screen.restore.viewmodel.CompleteWordSetState
-import co.electriccoin.zcash.ui.screen.restore.viewmodel.RestoreViewModel
 import co.electriccoin.zcash.ui.screen.scan.WrapScan
 import co.electriccoin.zcash.ui.screen.seed.view.Seed
 import co.electriccoin.zcash.ui.screen.send.view.Send
@@ -159,97 +149,6 @@ class MainActivity : ComponentActivity() {
             walletViewModel.synchronizer.collect {
             }
         }
-    }
-
-    @Composable
-    private fun WrapOnboarding() {
-        val onboardingViewModel by viewModels<OnboardingViewModel>()
-
-        // TODO [#383]: https://github.com/zcash/secant-android-wallet/issues/383
-        if (!onboardingViewModel.isImporting.collectAsState().value) {
-            Onboarding(
-                onboardingState = onboardingViewModel.onboardingState,
-                onImportWallet = {
-                    // In the case of the app currently being messed with by the robo test runner on
-                    // Firebase Test Lab or Google Play pre-launch report, we want to skip creating
-                    // a new or restoring an existing wallet screens by persisting an existing wallet
-                    // with a mock seed.
-                    if (FirebaseTestLabUtil.isFirebaseTestLab(applicationContext)) {
-                        persistExistingWalletWithSeedPhrase(SeedPhraseFixture.new())
-                        return@Onboarding
-                    }
-
-                    onboardingViewModel.isImporting.value = true
-                },
-                onCreateWallet = {
-                    if (FirebaseTestLabUtil.isFirebaseTestLab(applicationContext)) {
-                        persistExistingWalletWithSeedPhrase(SeedPhraseFixture.new())
-                        return@Onboarding
-                    }
-
-                    walletViewModel.persistNewWallet()
-                }
-            )
-
-            reportFullyDrawn()
-        } else {
-            WrapRestore()
-        }
-    }
-
-    @Composable
-    private fun WrapRestore() {
-        val onboardingViewModel by viewModels<OnboardingViewModel>()
-        val restoreViewModel by viewModels<RestoreViewModel>()
-
-        when (val completeWordList = restoreViewModel.completeWordList.collectAsState().value) {
-            CompleteWordSetState.Loading -> {
-                // Although it might perform IO, it should be relatively fast.
-                // Consider whether to display indeterminate progress here.
-                // Another option would be to go straight to the restore screen with autocomplete
-                // disabled for a few milliseconds.  Users would probably never notice due to the
-                // time it takes to re-orient on the new screen, unless users were doing this
-                // on a daily basis and become very proficient at our UI.  The Therac-25 has
-                // historical precedent on how that could cause problems.
-            }
-            is CompleteWordSetState.Loaded -> {
-                RestoreWallet(
-                    completeWordList.list,
-                    restoreViewModel.userWordList,
-                    onBack = { onboardingViewModel.isImporting.value = false },
-                    paste = {
-                        val clipboardManager = getSystemService(ClipboardManager::class.java)
-                        return@RestoreWallet clipboardManager?.primaryClip?.toString()
-                    },
-                    onFinished = {
-                        persistExistingWalletWithSeedPhrase(
-                            SeedPhrase(restoreViewModel.userWordList.current.value)
-                        )
-                    }
-                )
-            }
-        }
-    }
-
-    /**
-     * Persists existing wallet together with the backup complete flag to disk. Be aware of that, it
-     * triggers navigation changes, as we observe the WalletViewModel.secretState.
-     *
-     * Write the backup complete flag first, then the seed phrase. That avoids the UI flickering to
-     * the backup screen. Assume if a user is restoring from a backup, then the user has a valid backup.
-     *
-     * @param seedPhrase to be persisted along with the wallet object
-     */
-    private fun persistExistingWalletWithSeedPhrase(seedPhrase: SeedPhrase) {
-        walletViewModel.persistBackupComplete()
-
-        val network = ZcashNetwork.fromResources(application)
-        val restoredWallet = PersistableWallet(
-            network,
-            null,
-            seedPhrase
-        )
-        walletViewModel.persistExistingWallet(restoredWallet)
     }
 
     @Suppress("LongMethod")

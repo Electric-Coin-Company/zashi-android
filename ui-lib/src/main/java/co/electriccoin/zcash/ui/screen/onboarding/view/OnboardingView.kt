@@ -7,19 +7,30 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallTopAppBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -48,8 +59,10 @@ fun ComposablePreview() {
         GradientSurface {
             Onboarding(
                 OnboardingState(OnboardingStage.UnifiedAddresses),
+                false,
                 onImportWallet = {},
-                onCreateWallet = {}
+                onCreateWallet = {},
+                onFixtureWallet = {}
             )
         }
     }
@@ -63,20 +76,35 @@ private const val IS_NAVIGATION_IN_APP_BAR = false
  * @param onImportWallet Callback when the user decides to import an existing wallet.
  * @param onCreateWallet Callback when the user decides to create a new wallet.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Onboarding(
     onboardingState: OnboardingState,
+    isDebugMenuEnabled: Boolean,
     onImportWallet: () -> Unit,
-    onCreateWallet: () -> Unit
+    onCreateWallet: () -> Unit,
+    onFixtureWallet: () -> Unit,
 ) {
-    Column {
-        OnboardingTopAppBar(onboardingState)
-        OnboardingMainContent(onboardingState, onImportWallet = onImportWallet, onCreateWallet = onCreateWallet)
+    Scaffold(
+        topBar = {
+            OnboardingTopAppBar(onboardingState, isDebugMenuEnabled, onFixtureWallet)
+        }
+    ) { paddingValues ->
+        OnboardingMainContent(
+            paddingValues,
+            onboardingState,
+            onImportWallet = onImportWallet,
+            onCreateWallet = onCreateWallet
+        )
     }
 }
 
 @Composable
-private fun OnboardingTopAppBar(onboardingState: OnboardingState) {
+private fun OnboardingTopAppBar(
+    onboardingState: OnboardingState,
+    isDebugMenuEnabled: Boolean,
+    onFixtureWallet: () -> Unit
+) {
     val currentStage = onboardingState.current.collectAsState().value
 
     SmallTopAppBar(
@@ -98,8 +126,30 @@ private fun OnboardingTopAppBar(onboardingState: OnboardingState) {
             if (IS_NAVIGATION_IN_APP_BAR && currentStage.hasNext()) {
                 NavigationButton(onboardingState::goToEnd, stringResource(R.string.onboarding_skip))
             }
+
+            if (isDebugMenuEnabled) {
+                DebugMenu(onFixtureWallet)
+            }
         }
     )
+}
+
+@Composable
+private fun DebugMenu(onFixtureWallet: () -> Unit) {
+    var expanded by rememberSaveable { mutableStateOf(false) }
+    IconButton(onClick = { expanded = true }) {
+        Icon(Icons.Default.MoreVert, contentDescription = null)
+    }
+
+    DropdownMenu(
+        expanded = expanded,
+        onDismissRequest = { expanded = false }
+    ) {
+        DropdownMenuItem(
+            text = { Text("Import wallet with fixture seed phrase") },
+            onClick = onFixtureWallet
+        )
+    }
 }
 
 /**
@@ -108,11 +158,15 @@ private fun OnboardingTopAppBar(onboardingState: OnboardingState) {
  */
 @Composable
 fun OnboardingMainContent(
+    paddingValues: PaddingValues,
     onboardingState: OnboardingState,
     onImportWallet: () -> Unit,
     onCreateWallet: () -> Unit
 ) {
-    Column {
+    Column(
+        Modifier
+            .padding(top = paddingValues.calculateTopPadding())
+    ) {
         if (!IS_NAVIGATION_IN_APP_BAR) {
             TopNavButtons(onboardingState)
         }
