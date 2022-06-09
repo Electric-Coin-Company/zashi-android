@@ -13,6 +13,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -102,8 +103,9 @@ fun Scan(
     Scaffold(
         topBar = { ScanTopAppBar(onBack = onBack) },
         snackbarHost = { SnackbarHost(snackbarHostState) },
-    ) {
+    ) { paddingValues ->
         ScanMainContent(
+            paddingValues,
             onScanned,
             onOpenSettings,
             onBack,
@@ -174,9 +176,10 @@ private fun ScanTopAppBar(onBack: () -> Unit) {
 }
 
 @OptIn(ExperimentalPermissionsApi::class)
-@Suppress("MagicNumber", "LongMethod")
+@Suppress("MagicNumber", "LongMethod", "LongParameterList")
 @Composable
 private fun ScanMainContent(
+    paddingValues: PaddingValues,
     onScanned: (String) -> Unit,
     onOpenSettings: () -> Unit,
     onBack: () -> Unit,
@@ -225,6 +228,7 @@ private fun ScanMainContent(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.Black)
+            .padding(top = paddingValues.calculateTopPadding())
     ) {
         val (frame, bottomItems) = createRefs()
 

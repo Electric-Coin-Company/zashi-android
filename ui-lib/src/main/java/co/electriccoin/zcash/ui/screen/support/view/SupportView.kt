@@ -1,7 +1,9 @@
 package co.electriccoin.zcash.ui.screen.support.view
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Send
@@ -63,8 +65,12 @@ fun Support(
                 )
             }
         }
-    ) {
-        SupportMainContent(message, setMessage)
+    ) { paddingValues ->
+        SupportMainContent(
+            paddingValues,
+            message,
+            setMessage
+        )
 
         if (isShowingDialog) {
             SupportConfirmationDialog(
@@ -94,10 +100,14 @@ private fun SupportTopAppBar(onBack: () -> Unit) {
 
 @Composable
 private fun SupportMainContent(
+    paddingValues: PaddingValues,
     message: String,
     setMessage: (String) -> Unit
 ) {
-    Column {
+    Column(
+        Modifier
+            .padding(top = paddingValues.calculateTopPadding())
+    ) {
         TextField(
             value = message,
             onValueChange = setMessage,

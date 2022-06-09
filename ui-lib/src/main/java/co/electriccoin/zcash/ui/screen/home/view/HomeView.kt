@@ -1,9 +1,11 @@
 package co.electriccoin.zcash.ui.screen.home.view
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -75,8 +77,9 @@ fun Home(
 ) {
     Scaffold(topBar = {
         HomeTopAppBar(isDebugMenuEnabled)
-    }) {
+    }) { paddingValues ->
         HomeMainContent(
+            paddingValues,
             walletSnapshot,
             transactionHistory,
             goScan = goScan,
@@ -133,6 +136,7 @@ private fun DebugMenu() {
 @Suppress("LongParameterList")
 @Composable
 private fun HomeMainContent(
+    paddingValues: PaddingValues,
     walletSnapshot: WalletSnapshot,
     transactionHistory: List<Transaction>,
     goScan: () -> Unit,
@@ -141,7 +145,11 @@ private fun HomeMainContent(
     goRequest: () -> Unit
 ) {
     Column {
-        Row(Modifier.fillMaxWidth()) {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(top = paddingValues.calculateTopPadding())
+        ) {
             IconButton(goScan) {
                 Icon(
                     imageVector = Icons.Filled.QrCodeScanner,

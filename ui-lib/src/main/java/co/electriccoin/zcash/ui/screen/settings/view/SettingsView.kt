@@ -1,6 +1,8 @@
 package co.electriccoin.zcash.ui.screen.settings.view
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -10,6 +12,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallTopAppBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import co.electriccoin.zcash.ui.R
@@ -44,8 +47,9 @@ fun Settings(
 ) {
     Scaffold(topBar = {
         SettingsTopAppBar(onBack = onBack)
-    }) {
+    }) { paddingValues ->
         SettingsMainContent(
+            paddingValues,
             onBackupWallet = onBackupWallet,
             onWipeWallet = onWipeWallet,
             onRescanWallet = onRescanWallet
@@ -72,11 +76,15 @@ private fun SettingsTopAppBar(onBack: () -> Unit) {
 
 @Composable
 private fun SettingsMainContent(
+    paddingValues: PaddingValues,
     onBackupWallet: () -> Unit,
     onWipeWallet: () -> Unit,
     onRescanWallet: () -> Unit
 ) {
-    Column {
+    Column(
+        Modifier
+            .padding(top = paddingValues.calculateTopPadding())
+    ) {
         PrimaryButton(onClick = onBackupWallet, text = stringResource(id = R.string.settings_backup))
         DangerousButton(onClick = onWipeWallet, text = stringResource(id = R.string.settings_wipe))
         TertiaryButton(onClick = onRescanWallet, text = stringResource(id = R.string.settings_rescan))

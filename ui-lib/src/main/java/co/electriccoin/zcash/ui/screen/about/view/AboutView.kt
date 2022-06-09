@@ -1,8 +1,10 @@
 package co.electriccoin.zcash.ui.screen.about.view
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -46,8 +48,11 @@ fun About(
 ) {
     Scaffold(topBar = {
         AboutTopAppBar(onBack = goBack)
-    }) {
-        AboutMainContent(versionInfo)
+    }) { paddingValues ->
+        AboutMainContent(
+            paddingValues,
+            versionInfo
+        )
     }
 }
 
@@ -69,8 +74,12 @@ private fun AboutTopAppBar(onBack: () -> Unit) {
 }
 
 @Composable
-fun AboutMainContent(versionInfo: VersionInfo) {
-    Column(Modifier.verticalScroll(rememberScrollState())) {
+fun AboutMainContent(paddingValues: PaddingValues, versionInfo: VersionInfo) {
+    Column(
+        Modifier
+            .verticalScroll(rememberScrollState())
+            .padding(top = paddingValues.calculateTopPadding())
+    ) {
         Icon(painterResource(id = R.drawable.ic_launcher_adaptive_foreground), contentDescription = null)
         Text(stringResource(id = R.string.app_name))
 
