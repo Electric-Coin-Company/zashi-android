@@ -1,10 +1,12 @@
 package co.electriccoin.zcash.ui.screen.send.view
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -82,8 +84,9 @@ fun Send(
                 SendStage.Confirmation -> setSendStage(SendStage.Form)
             }
         })
-    }) {
+    }) { paddingValues ->
         SendMainContent(
+            paddingValues,
             mySpendableBalance,
             sendStage,
             setSendStage,
@@ -111,6 +114,7 @@ private fun SendTopAppBar(onBack: () -> Unit) {
 
 @Composable
 private fun SendMainContent(
+    paddingValues: PaddingValues,
     myBalance: Zatoshi,
     sendStage: SendStage,
     setSendStage: (SendStage) -> Unit,
@@ -120,15 +124,18 @@ private fun SendMainContent(
 
     if (sendStage == SendStage.Form || null == zecSend) {
         SendForm(
+            paddingValues,
             myBalance = myBalance,
-            previousZecSend = zecSend,
-            onCreateAndSend = {
-                setSendStage(SendStage.Confirmation)
-                setZecSend(it)
-            }
-        )
+            previousZecSend = zecSend
+        ) {
+            setSendStage(SendStage.Confirmation)
+            setZecSend(it)
+        }
     } else {
-        Confirmation(zecSend) {
+        Confirmation(
+            paddingValues,
+            zecSend
+        ) {
             onCreateAndSend(zecSend)
         }
     }
@@ -140,6 +147,7 @@ private fun SendMainContent(
 @Suppress("LongMethod")
 @Composable
 private fun SendForm(
+    paddingValues: PaddingValues,
     myBalance: Zatoshi,
     previousZecSend: ZecSend?,
     onCreateAndSend: (ZecSend) -> Unit
@@ -160,7 +168,11 @@ private fun SendForm(
         mutableStateOf<Set<ZecSendExt.ZecSendValidation.Invalid.ValidationError>>(emptySet())
     }
 
-    Column(Modifier.fillMaxHeight()) {
+    Column(
+        Modifier
+            .fillMaxHeight()
+            .padding(top = paddingValues.calculateTopPadding())
+    ) {
         Row(Modifier.fillMaxWidth()) {
             Text(text = myBalance.toZecString())
         }
@@ -228,8 +240,15 @@ private fun SendForm(
 }
 
 @Composable
-private fun Confirmation(zecSend: ZecSend, onConfirmation: () -> Unit) {
-    Column {
+private fun Confirmation(
+    paddingValues: PaddingValues,
+    zecSend: ZecSend,
+    onConfirmation: () -> Unit
+) {
+    Column(
+        Modifier
+            .padding(top = paddingValues.calculateTopPadding())
+    ) {
         Text(
             stringResource(
                 R.string.send_amount_and_address_format,

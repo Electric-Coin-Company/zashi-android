@@ -49,8 +49,6 @@ class ScanViewBasicTest : UiTestPrerequisites() {
 
     @Test
     @MediumTest
-    // https://github.com/zcash/secant-android-wallet/issues/447
-    @Ignore
     fun check_all_ui_elements_displayed() {
         newTestSetup()
 

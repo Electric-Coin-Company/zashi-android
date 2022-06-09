@@ -1,8 +1,10 @@
 package co.electriccoin.zcash.ui.screen.request.view
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -65,8 +67,9 @@ fun Request(
 ) {
     Scaffold(topBar = {
         RequestTopAppBar(onBack = goBack)
-    }) {
+    }) { paddingValues ->
         RequestMainContent(
+            paddingValues,
             myAddress,
             onCreateAndSend = onCreateAndSend
         )
@@ -95,6 +98,7 @@ private fun RequestTopAppBar(onBack: () -> Unit) {
 // TODO [#288]: TextField component can't do long-press backspace.
 @Composable
 private fun RequestMainContent(
+    paddingValues: PaddingValues,
     myAddress: WalletAddress.Unified,
     onCreateAndSend: (ZecRequest) -> Unit
 ) {
@@ -105,7 +109,11 @@ private fun RequestMainContent(
     var amountZecString by rememberSaveable { mutableStateOf("") }
     var message by rememberSaveable { mutableStateOf("") }
 
-    Column(Modifier.fillMaxHeight()) {
+    Column(
+        Modifier
+            .fillMaxHeight()
+            .padding(top = paddingValues.calculateTopPadding())
+    ) {
         // TODO [#289]: Crash occurs while typed more than some acceptable amount to this field.
         TextField(
             value = amountZecString,

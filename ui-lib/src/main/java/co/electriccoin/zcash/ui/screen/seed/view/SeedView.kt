@@ -1,6 +1,8 @@
 package co.electriccoin.zcash.ui.screen.seed.view
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -52,8 +54,12 @@ fun Seed(
 ) {
     Scaffold(topBar = {
         SeedTopAppBar(onBack = onBack)
-    }) {
-        SeedMainContent(persistableWallet = persistableWallet, onCopyToClipboard = onCopyToClipboard)
+    }) { paddingValues ->
+        SeedMainContent(
+            paddingValues,
+            persistableWallet = persistableWallet,
+            onCopyToClipboard = onCopyToClipboard
+        )
     }
 }
 
@@ -76,10 +82,15 @@ private fun SeedTopAppBar(onBack: () -> Unit) {
 
 @Composable
 private fun SeedMainContent(
+    paddingValues: PaddingValues,
     persistableWallet: PersistableWallet,
     onCopyToClipboard: () -> Unit
 ) {
-    Column(Modifier.verticalScroll(rememberScrollState())) {
+    Column(
+        Modifier
+            .verticalScroll(rememberScrollState())
+            .padding(top = paddingValues.calculateTopPadding())
+    ) {
         Header(stringResource(R.string.seed_header))
         Body(stringResource(R.string.seed_body))
 

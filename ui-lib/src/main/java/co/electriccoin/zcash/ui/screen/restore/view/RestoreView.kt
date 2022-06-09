@@ -5,11 +5,13 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -116,8 +118,13 @@ fun RestoreWallet(
         if (seedPhraseValidation !is SeedPhraseValidation.Valid) {
             Scaffold(topBar = {
                 RestoreTopAppBar(onBack = onBack, onClear = { userWordList.set(emptyList()) })
-            }) {
-                RestoreMainContent(completeWordList, userWordList, paste)
+            }) { paddingValues ->
+                RestoreMainContent(
+                    paddingValues,
+                    completeWordList,
+                    userWordList,
+                    paste
+                )
             }
         } else {
             // In some cases we need to hide the software keyboard manually, as it stays shown after
@@ -152,6 +159,7 @@ private fun RestoreTopAppBar(onBack: () -> Unit, onClear: () -> Unit) {
 @Suppress("UNUSED_PARAMETER")
 @Composable
 private fun RestoreMainContent(
+    paddingValues: PaddingValues,
     completeWordList: Set<String>,
     userWordList: WordList,
     paste: () -> String?
@@ -169,7 +177,10 @@ private fun RestoreMainContent(
 
     val focusRequester = remember { FocusRequester() }
 
-    Column {
+    Column(
+        Modifier
+            .padding(top = paddingValues.calculateTopPadding())
+    ) {
         Text(text = stringResource(id = R.string.restore_instructions))
 
         Box(

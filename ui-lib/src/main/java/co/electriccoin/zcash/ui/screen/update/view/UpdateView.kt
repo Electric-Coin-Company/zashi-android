@@ -5,9 +5,11 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -81,8 +83,11 @@ fun Update(
                 onLater
             )
         }
-    ) {
-        UpdateContentNormal(onReference)
+    ) { paddingValues ->
+        UpdateContentNormal(
+            paddingValues,
+            onReference
+        )
     }
     UpdateOverlayRunning(updateInfo)
 }
@@ -161,11 +166,14 @@ private fun UpdateBottomAppBar(
 
 @Composable
 private fun UpdateContentNormal(
+    paddingValues: PaddingValues,
     onReference: () -> Unit
 ) {
     Column(
-        Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally,
+        Modifier
+            .fillMaxWidth()
+            .padding(top = paddingValues.calculateTopPadding()),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // TODO [#17]: This suppression and magic number will get replaced once we have real assets
         @Suppress("MagicNumber")
