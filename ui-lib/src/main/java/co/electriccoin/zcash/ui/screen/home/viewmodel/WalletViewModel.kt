@@ -31,9 +31,9 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filterIsInstance
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -101,10 +101,15 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
             null
         )
 
-    @OptIn(FlowPreview::class)
+    @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
     val walletSnapshot: StateFlow<WalletSnapshot?> = synchronizer
-        .filterNotNull()
-        .flatMapConcat { it.toWalletSnapshot() }
+        .flatMapLatest {
+            if (null == it) {
+                flowOf(null)
+            } else {
+                it.toWalletSnapshot()
+            }
+        }
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
@@ -112,10 +117,15 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
         )
 
     // This is not the right API, because the transaction list could be very long and might need UI filtering
-    @OptIn(FlowPreview::class)
+    @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
     val transactionSnapshot: StateFlow<List<Transaction>> = synchronizer
-        .filterNotNull()
-        .flatMapConcat { it.toTransactions() }
+        .flatMapLatest {
+            if (null == it) {
+                flowOf(emptyList())
+            } else {
+                it.toTransactions()
+            }
+        }
         .stateIn(
             viewModelScope, SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
             emptyList()
@@ -195,14 +205,26 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     /**
-     * This asynchronously wipes the wallet state.
+     * This asynchronously resets the SDK state.  This is non-destructive, as SDK state can be rederived.
      *
-     * This method only has an effect if the synchronizer currently is loaded.
+     * This could be used as a troubleshooting step in debugging.
      */
-    fun wipeWallet() {
-        viewModelScope.launch {
-            walletCoordinator.wipeWallet()
-        }
+    fun resetSdk() {
+        walletCoordinator.resetSdk()
+    }
+
+    /**
+     * This asynchronously wipes the entire wallet state.
+     *
+     * This is destructive, as the seed phrase is deleted along with the SDK state.
+     *
+     * This could be used as part of testing, to quickly reset the app state.
+     *
+     * A more complete reset of app state can be performed in Android Settings, as this will not
+     * clear application state beyond the SDK and wallet secret.
+     */
+    fun wipeEntireWallet() {
+        walletCoordinator.wipeEntireWallet()
     }
 }
 

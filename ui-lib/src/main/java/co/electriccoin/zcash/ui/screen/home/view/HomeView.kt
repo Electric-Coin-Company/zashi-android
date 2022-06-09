@@ -57,7 +57,9 @@ fun ComposablePreview() {
                 goProfile = {},
                 goSend = {},
                 goRequest = {},
-                isDebugMenuEnabled = false
+                isDebugMenuEnabled = false,
+                resetSdk = {},
+                wipeEntireWallet = {}
             )
         }
     }
@@ -73,10 +75,12 @@ fun Home(
     goProfile: () -> Unit,
     goSend: () -> Unit,
     goRequest: () -> Unit,
+    resetSdk: () -> Unit,
+    wipeEntireWallet: () -> Unit,
     isDebugMenuEnabled: Boolean
 ) {
     Scaffold(topBar = {
-        HomeTopAppBar(isDebugMenuEnabled)
+        HomeTopAppBar(isDebugMenuEnabled, resetSdk, wipeEntireWallet)
     }) { paddingValues ->
         HomeMainContent(
             paddingValues,
@@ -91,19 +95,23 @@ fun Home(
 }
 
 @Composable
-private fun HomeTopAppBar(isDebugMenuEnabled: Boolean) {
+private fun HomeTopAppBar(
+    isDebugMenuEnabled: Boolean,
+    resetSdk: () -> Unit,
+    wipeEntireWallet: () -> Unit
+) {
     SmallTopAppBar(
         title = { Text(text = stringResource(id = R.string.app_name)) },
         actions = {
             if (isDebugMenuEnabled) {
-                DebugMenu()
+                DebugMenu(resetSdk, wipeEntireWallet)
             }
         }
     )
 }
 
 @Composable
-private fun DebugMenu() {
+private fun DebugMenu(resetSdk: () -> Unit, wipeEntireWallet: () -> Unit) {
     var expanded by rememberSaveable { mutableStateOf(false) }
     IconButton(onClick = { expanded = true }) {
         Icon(Icons.Default.MoreVert, contentDescription = null)
@@ -127,6 +135,20 @@ private fun DebugMenu() {
                 // Eventually this shouldn't rely on the Android implementation, but rather an expect/actual
                 // should be used at the crash API level.
                 CrashReporter.reportCaughtException(RuntimeException("Manually caught exception from debug menu"))
+                expanded = false
+            }
+        )
+        DropdownMenuItem(
+            text = { Text("Reset SDK") },
+            onClick = {
+                resetSdk()
+                expanded = false
+            }
+        )
+        DropdownMenuItem(
+            text = { Text("Wipe entire wallet") },
+            onClick = {
+                wipeEntireWallet()
                 expanded = false
             }
         )
