@@ -163,8 +163,9 @@ fun OnboardingMainContent(
     onImportWallet: () -> Unit,
     onCreateWallet: () -> Unit
 ) {
-    Column(Modifier
-        .padding(top = paddingValues.calculateTopPadding())
+    Column(
+        Modifier
+            .padding(top = paddingValues.calculateTopPadding())
     ) {
         if (!IS_NAVIGATION_IN_APP_BAR) {
             TopNavButtons(onboardingState)
