@@ -113,3 +113,29 @@ jobs:
         with:
           name: Binaries
           path: ~/artifacts
+
+# Due to how the Gradle publishing plugin works, this scan happens after the upload to Google Play.
+# Rather than being preventative, this is primarily an "early warning system" to verify that our
+# binaries aren't being misclassified as malware.
+  antivirus:
+    needs: [build]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        timeout-minutes: 1
+        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
+      - name: Download release artifact
+        uses: actions/download-artifact@fb598a63ae348fa914e94cd0ff38f362e927b741
+        with:
+          name: Binaries
+      - name: Unzip artifacts
+        timeout-minutes: 1
+        run: |
+          unzip binaries.zip
+      - name: Antivirus
+        timeout-minutes: 12
+        with:
+          path-to-scan: .
+        uses: ./.github/actions/antivirus

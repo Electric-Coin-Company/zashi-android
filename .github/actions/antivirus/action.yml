@@ -1,0 +1,9 @@
+name: 'Run antivirus scan'
+inputs:
+  path-to-scan:
+    required: true
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.path-to-scan }}

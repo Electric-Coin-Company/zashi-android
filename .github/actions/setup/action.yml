@@ -31,7 +31,7 @@ runs:
         path: ~/.gradle/caches/modules-2
         key: ${{ runner.os }}-gradle-deps-${{ hashFiles(format('{0}{1}', github.workspace, '/gradle.properties')) }}
         restore-keys: |
-          ${{ runner.os }}-gradle-deps
+          ${{ runner.os }}-gradle-deps-
     - name: Download Gradle
       if: steps.gradle-wrapper-cache.outputs.cache-hit != 'true'
       shell: bash
