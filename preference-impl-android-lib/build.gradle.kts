@@ -1,10 +1,9 @@
 plugins {
     id("com.android.library")
     kotlin("android")
-    id("kotlin-parcelize")
-    id("zcash.android-build-conventions")
+    id("secant.android-build-conventions")
     id("wtf.emulator.gradle")
-    id("zcash.emulator-wtf-conventions")
+    id("secant.emulator-wtf-conventions")
 }
 
 // Force orchestrator to be used for this module, because we need the preference files

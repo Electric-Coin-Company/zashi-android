@@ -1,8 +1,8 @@
 plugins {
     kotlin("multiplatform")
-    id("zcash.kotlin-multiplatform-build-conventions")
-    id("zcash.dependency-conventions")
-    id("zcash.android-build-conventions")
+    id("secant.kotlin-multiplatform-build-conventions")
+    id("secant.dependency-conventions")
+    id("secant.android-build-conventions")
 }
 
 kotlin {
