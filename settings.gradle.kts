@@ -254,7 +254,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "zcash-android-app"
 
-includeBuild("build-convention")
+includeBuild("build-conventions-secant")
 
 include("app")
 include("build-info-lib")

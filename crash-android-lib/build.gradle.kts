@@ -1,9 +1,9 @@
 plugins {
     id("com.android.library")
     kotlin("android")
-    id("zcash.android-build-conventions")
+    id("secant.android-build-conventions")
     id("wtf.emulator.gradle")
-    id("zcash.emulator-wtf-conventions")
+    id("secant.emulator-wtf-conventions")
 }
 
 // Note that we force enable test orchestrator for this module, because some of the test cases require it.

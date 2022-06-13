@@ -1,8 +1,7 @@
 plugins {
     id("com.android.library")
     kotlin("android")
-    id("kotlin-parcelize")
-    id("zcash.android-build-conventions")
+    id("secant.android-build-conventions")
 }
 
 android {

@@ -10,7 +10,7 @@ plugins {
     id("com.osacky.fulladle")
     id("io.gitlab.arturbosch.detekt")
     id("org.jetbrains.kotlinx.kover")
-    id("zcash.ktlint-conventions")
+    id("secant.ktlint-conventions")
 }
 
 tasks {
