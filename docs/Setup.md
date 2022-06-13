@@ -106,17 +106,18 @@ On a developer machine, these might be set under the user's global properties (e
 ### Included builds
 This section is optional.
 
-To simplify implementation of SDK features in conjunction with changes to the app, a Gradle [Included Build](https://docs.gradle.org/current/userguide/composite_builds.html) can be configured.
+To simplify implementation of Zcash SDK or BIP-39 features in conjunction with changes to the app, a Gradle [Included Build](https://docs.gradle.org/current/userguide/composite_builds.html) can be configured.
 
 1. Check out the SDK 
 1. Verify that the `zcash-android-sdk` builds correctly on its own (e.g. `./gradlew assemble`)
-1. In the `secant-android-wallet` repo, modify property `SDK_INCLUDED_BUILD_PATH` to be the absolute path to the `zcash-android-sdk` checkout.  (You can also use a relative path, but it will be relative to the root of `secant-android-wallet`) 
+1. In the `secant-android-wallet` repo, modify property `SDK_INCLUDED_BUILD_PATH` to be the absolute path to the `zcash-android-sdk` checkout.  (You can also use a relative path, but it will be relative to the root of `secant-android-wallet`).  A similar property also exists for BIP-39 `BIP_39_INCLUDED_BUILD_PATH`
 1. In the `secant-android-wallet` repo, modify property `ZCASH_IS_TREAT_WARNINGS_AS_ERRORS` to be false due to [SDK Issue #367](https://github.com/zcash/zcash-android-wallet-sdk/issues/367)
 1. Build `secant-android-wallet`
 
 There are some limitations of included builds:
-1. If  `secant-android-wallet` is using a newer version of the Android Gradle plugin compared to `zcash-android-sdk`, the build will fail.  If this happens, you may need to modify the `zcash-android-sdk` gradle.properties so that the Android Gradle Plugin version matches that of `secant-android-wallet`.  After making this change, it will be necessary to run a build from the command line with the flag `--write-locks` e.g. `./gradlew assemble --write-locks` in order to update the dependency locks
-1. Modules in each project cannot share the same name.  For this reason, build-conventions have different names in each repo (`zcash-android-sdk/build-conventions` vs `secant-android-wallet/build-convention`)
+1. If `secant-android-wallet` is using a newer version of the Android Gradle plugin compared to `zcash-android-sdk`, the build will fail.  If this happens, you may need to modify the `zcash-android-sdk` gradle.properties so that the Android Gradle Plugin version matches that of `secant-android-wallet`.  After making this change, it will be necessary to run a build from the command line with the flag `--write-locks` e.g. `./gradlew assemble --write-locks` in order to update the dependency locks.  Similar problems can occur if projects are using different versions of Kotlin or different versions of Gradle
+1. Modules in each project cannot share the same name.  For this reason, build-conventions have different names in each repo (`zcash-android-sdk/build-conventions` vs `secant-android-wallet/build-conventions-secant`)
+
 
 ### Firebase Test Lab
 This section is optional.

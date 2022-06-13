@@ -271,13 +271,24 @@ include("ui-design-lib")
 include("ui-integration-test-lib")
 include("ui-lib")
 
-val includedBuildPath = extra["SDK_INCLUDED_BUILD_PATH"].toString()
+val zcashSdkIncludedBuildPath = extra["SDK_INCLUDED_BUILD_PATH"].toString()
 
-if (includedBuildPath.isNotEmpty()) {
-    logger.lifecycle("Due to an included build, the SDK will be used from $includedBuildPath instead of Maven Central.")
-    includeBuild(includedBuildPath) {
+if (zcashSdkIncludedBuildPath.isNotEmpty()) {
+    logger.lifecycle("The SDK will be used from $zcashSdkIncludedBuildPath instead of Maven Central.")
+    includeBuild(zcashSdkIncludedBuildPath) {
         dependencySubstitution {
             substitute(module("cash.z.ecc.android:zcash-android-sdk")).using(project(":sdk-lib"))
+        }
+    }
+}
+
+val bip39IncludedBuildPath = extra["BIP_39_INCLUDED_BUILD_PATH"].toString()
+
+if (bip39IncludedBuildPath.isNotEmpty()) {
+    logger.lifecycle("BIP-39 will be used from $bip39IncludedBuildPath instead of Maven Central.")
+    includeBuild(bip39IncludedBuildPath) {
+        dependencySubstitution {
+            substitute(module("cash.z.ecc.android:kotlin-bip39")).using(project(":bip39-lib"))
         }
     }
 }
