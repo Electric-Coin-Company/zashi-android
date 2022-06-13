@@ -26,7 +26,6 @@ import cash.z.ecc.sdk.model.ZecRequest
 import cash.z.ecc.sdk.send
 import co.electriccoin.zcash.spackle.EmulatorWtfUtil
 import co.electriccoin.zcash.spackle.FirebaseTestLabUtil
-import co.electriccoin.zcash.ui.design.compat.FontCompat
 import co.electriccoin.zcash.ui.design.component.ConfigurationOverride
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.Override
@@ -85,15 +84,7 @@ class MainActivity : ComponentActivity() {
 
         setupSplashScreen()
 
-        if (FontCompat.isFontPrefetchNeeded()) {
-            lifecycleScope.launch {
-                FontCompat.prefetchFontsLegacy(applicationContext)
-
-                setupUiContent()
-            }
-        } else {
-            setupUiContent()
-        }
+        setupUiContent()
     }
 
     private fun setupSplashScreen() {
