@@ -27,10 +27,10 @@ val RubikFont = GoogleFont(name = "Rubik", bestEffort = true)
 
 @OptIn(ExperimentalTextApi::class)
 val RubikFontFamily = FontFamily(
-    Font(googleFont = RubikFont, fontProvider = provider, weight = FontWeight.Normal),      // W400
-    Font(googleFont = RubikFont, fontProvider = provider, weight = FontWeight.Medium),      // W500
-    Font(googleFont = RubikFont, fontProvider = provider, weight = FontWeight.SemiBold),    // W600
-    Font(googleFont = RubikFont, fontProvider = provider, weight = FontWeight.Bold)         // W700
+    Font(googleFont = RubikFont, fontProvider = provider, weight = FontWeight.Normal), // W400
+    Font(googleFont = RubikFont, fontProvider = provider, weight = FontWeight.Medium), // W500
+    Font(googleFont = RubikFont, fontProvider = provider, weight = FontWeight.SemiBold), // W600
+    Font(googleFont = RubikFont, fontProvider = provider, weight = FontWeight.Bold) // W700
 )
 
 // If you change this definition of our Typography, don't forget to check if you use only
