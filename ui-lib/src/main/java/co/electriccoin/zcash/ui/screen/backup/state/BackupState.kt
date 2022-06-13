@@ -25,6 +25,10 @@ class BackupState(initialState: BackupStage = BackupStage.values().first()) {
         mutableState.value = current.value.getPrevious()
     }
 
+    fun goToBeginning() {
+        mutableState.value = BackupStage.values().first()
+    }
+
     fun goToSeed() {
         mutableState.value = BackupStage.Seed
     }

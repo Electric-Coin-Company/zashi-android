@@ -16,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.design.component.DangerousButton
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.TertiaryButton
@@ -78,7 +77,7 @@ private fun SettingsTopAppBar(onBack: () -> Unit) {
 private fun SettingsMainContent(
     paddingValues: PaddingValues,
     onBackupWallet: () -> Unit,
-    onWipeWallet: () -> Unit,
+    @Suppress("UNUSED_PARAMETER") onWipeWallet: () -> Unit,
     onRescanWallet: () -> Unit
 ) {
     Column(
@@ -86,7 +85,8 @@ private fun SettingsMainContent(
             .padding(top = paddingValues.calculateTopPadding())
     ) {
         PrimaryButton(onClick = onBackupWallet, text = stringResource(id = R.string.settings_backup))
-        DangerousButton(onClick = onWipeWallet, text = stringResource(id = R.string.settings_wipe))
+        // We have decided to not include this in settings; see overflow debug menu instead
+        // DangerousButton(onClick = onWipeWallet, text = stringResource(id = R.string.settings_wipe))
         TertiaryButton(onClick = onRescanWallet, text = stringResource(id = R.string.settings_rescan))
     }
 }
