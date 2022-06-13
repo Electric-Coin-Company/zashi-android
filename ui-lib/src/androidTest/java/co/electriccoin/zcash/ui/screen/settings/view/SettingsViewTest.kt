@@ -13,6 +13,7 @@ import co.electriccoin.zcash.ui.test.getStringResource
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import java.util.concurrent.atomic.AtomicInteger
@@ -66,6 +67,7 @@ class SettingsViewTest : UiTestPrerequisites() {
 
     @Test
     @MediumTest
+    @Ignore("Wipe has been disabled in Settings and is now a debug-only option")
     fun wipe() = runTest {
         val testSetup = TestSetup(composeTestRule)
 

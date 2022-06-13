@@ -15,7 +15,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
@@ -24,8 +23,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import cash.z.ecc.sdk.model.ZecRequest
 import cash.z.ecc.sdk.send
-import co.electriccoin.zcash.spackle.EmulatorWtfUtil
-import co.electriccoin.zcash.spackle.FirebaseTestLabUtil
 import co.electriccoin.zcash.ui.design.component.ConfigurationOverride
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.Override
@@ -33,8 +30,8 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.about.WrapAbout
 import co.electriccoin.zcash.ui.screen.backup.WrapBackup
 import co.electriccoin.zcash.ui.screen.backup.copyToClipboard
+import co.electriccoin.zcash.ui.screen.home.WrapHome
 import co.electriccoin.zcash.ui.screen.home.model.spendableBalance
-import co.electriccoin.zcash.ui.screen.home.view.Home
 import co.electriccoin.zcash.ui.screen.home.viewmodel.CheckUpdateViewModel
 import co.electriccoin.zcash.ui.screen.home.viewmodel.SecretState
 import co.electriccoin.zcash.ui.screen.home.viewmodel.WalletViewModel
@@ -44,7 +41,7 @@ import co.electriccoin.zcash.ui.screen.request.view.Request
 import co.electriccoin.zcash.ui.screen.scan.WrapScan
 import co.electriccoin.zcash.ui.screen.seed.view.Seed
 import co.electriccoin.zcash.ui.screen.send.view.Send
-import co.electriccoin.zcash.ui.screen.settings.view.Settings
+import co.electriccoin.zcash.ui.screen.settings.WrapSettings
 import co.electriccoin.zcash.ui.screen.support.WrapSupport
 import co.electriccoin.zcash.ui.screen.update.AppUpdateCheckerImp
 import co.electriccoin.zcash.ui.screen.update.WrapUpdate
@@ -160,6 +157,8 @@ class MainActivity : ComponentActivity() {
                     goSend = { navController.navigate(NAV_SEND) },
                     goRequest = { navController.navigate(NAV_REQUEST) }
                 )
+
+                WrapCheckForUpdate()
             }
             composable(NAV_PROFILE) {
                 WrapProfile(
@@ -249,41 +248,6 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    private fun WrapHome(
-        goScan: () -> Unit,
-        goProfile: () -> Unit,
-        goSend: () -> Unit,
-        goRequest: () -> Unit
-    ) {
-        val walletSnapshot = walletViewModel.walletSnapshot.collectAsState().value
-        if (null == walletSnapshot) {
-            // Display loading indicator
-        } else {
-            val context = LocalContext.current
-
-            // We might eventually want to check the debuggable property of the manifest instead
-            // of relying on BuildConfig.
-            val isDebugMenuEnabled = BuildConfig.DEBUG &&
-                !FirebaseTestLabUtil.isFirebaseTestLab(context) &&
-                !EmulatorWtfUtil.isEmulatorWtf(context)
-
-            Home(
-                walletSnapshot,
-                walletViewModel.transactionSnapshot.collectAsState().value,
-                goScan = goScan,
-                goRequest = goRequest,
-                goSend = goSend,
-                goProfile = goProfile,
-                isDebugMenuEnabled = isDebugMenuEnabled
-            )
-
-            reportFullyDrawn()
-
-            WrapCheckForUpdate()
-        }
-    }
-
-    @Composable
     private fun WrapCheckForUpdate() {
         val updateInfo = checkUpdateViewModel.updateInfo.collectAsState().value
 
@@ -311,33 +275,6 @@ class MainActivity : ComponentActivity() {
             WalletAddresses(
                 walletAddresses,
                 goBack
-            )
-        }
-    }
-
-    @Composable
-    private fun WrapSettings(
-        goBack: () -> Unit,
-        goWalletBackup: () -> Unit
-    ) {
-        val synchronizer = walletViewModel.synchronizer.collectAsState().value
-        if (null == synchronizer) {
-            // Display loading indicator
-        } else {
-            Settings(
-                onBack = goBack,
-                onBackupWallet = goWalletBackup,
-                onRescanWallet = {
-                    walletViewModel.rescanBlockchain()
-                }, onWipeWallet = {
-                    walletViewModel.wipeWallet()
-
-                    // If wipe ever becomes an operation to also delete the seed, then we'll also need
-                    // to do the following to clear any retained state from onboarding (only happens if
-                    // occurring during same session as onboarding)
-                    // onboardingViewModel.onboardingState.goToBeginning()
-                    // onboardingViewModel.isImporting.value = false
-                }
             )
         }
     }

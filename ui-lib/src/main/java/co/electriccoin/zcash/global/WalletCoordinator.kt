@@ -5,14 +5,18 @@ import cash.z.ecc.android.bip39.Mnemonics
 import cash.z.ecc.android.bip39.toSeed
 import cash.z.ecc.android.sdk.Initializer
 import cash.z.ecc.android.sdk.Synchronizer
+import cash.z.ecc.android.sdk.ext.onFirst
 import cash.z.ecc.android.sdk.tool.DerivationTool
 import cash.z.ecc.android.sdk.type.UnifiedViewingKey
 import cash.z.ecc.android.sdk.type.ZcashNetwork
 import cash.z.ecc.sdk.model.PersistableWallet
 import cash.z.ecc.sdk.type.fromResources
 import co.electriccoin.zcash.spackle.LazyWithArgument
+import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.preference.EncryptedPreferenceKeys
 import co.electriccoin.zcash.ui.preference.EncryptedPreferenceSingleton
+import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
+import co.electriccoin.zcash.ui.preference.StandardPreferenceSingleton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -20,17 +24,26 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emitAll
-import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import java.util.UUID
 
 class WalletCoordinator(context: Context) {
     companion object {
@@ -61,29 +74,57 @@ class WalletCoordinator(context: Context) {
         emitAll(EncryptedPreferenceKeys.PERSISTABLE_WALLET.observe(encryptedPreferenceProvider))
     }
 
+    private val lockoutMutex = Mutex()
+    private val synchronizerLockoutId = MutableStateFlow<UUID?>(null)
+
+    private sealed class InternalSynchronizerStatus {
+        object NoWallet : InternalSynchronizerStatus()
+        class Available(val synchronizer: cash.z.ecc.android.sdk.Synchronizer) : InternalSynchronizerStatus()
+        class Lockout(val id: UUID) : InternalSynchronizerStatus()
+    }
+
+    private val synchronizerOrLockoutId: Flow<Flow<InternalSynchronizerStatus>> = persistableWallet
+        .combine(synchronizerLockoutId) { persistableWallet: PersistableWallet?, lockoutId: UUID? ->
+            if (null != lockoutId) { // this one needs to come first
+                flowOf(InternalSynchronizerStatus.Lockout(lockoutId))
+            } else if (null == persistableWallet) {
+                flowOf(InternalSynchronizerStatus.NoWallet)
+            } else {
+                callbackFlow<InternalSynchronizerStatus.Available> {
+                    val initializer = Initializer.new(context, persistableWallet.toConfig())
+                    val synchronizer = synchronizerMutex.withLock {
+                        val synchronizer = Synchronizer.new(initializer)
+                        synchronizer.start(walletScope)
+                    }
+
+                    trySend(InternalSynchronizerStatus.Available(synchronizer))
+                    awaitClose {
+                        Twig.info { "Closing flow and stopping synchronizer" }
+                        synchronizer.stop()
+                    }
+                }
+            }
+        }
+
     /**
      * Synchronizer for the Zcash SDK. Emits null until a wallet secret is persisted.
      *
      * Note that this synchronizer is closed as soon as it stops being collected.  For UI use
      * cases, see [WalletViewModel].
      */
-    @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
-    val synchronizer: StateFlow<Synchronizer?> = persistableWallet
-        .filterNotNull()
-        .flatMapConcat {
-            callbackFlow {
-                val initializer = Initializer.new(context, it.toConfig())
-                val synchronizer = synchronizerMutex.withLock {
-                    val synchronizer = Synchronizer.new(initializer)
-                    synchronizer.start(walletScope)
-                }
-
-                trySend(synchronizer)
-                awaitClose {
-                    synchronizer.stop()
-                }
+    @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
+    val synchronizer: StateFlow<Synchronizer?> = synchronizerOrLockoutId
+        .flatMapLatest {
+            it
+        }
+        .map {
+            when (it) {
+                is InternalSynchronizerStatus.Available -> it.synchronizer
+                is InternalSynchronizerStatus.Lockout -> null
+                InternalSynchronizerStatus.NoWallet -> null
             }
-        }.stateIn(
+        }
+        .stateIn(
             walletScope, SharingStarted.WhileSubscribed(),
             null
         )
@@ -108,54 +149,73 @@ class WalletCoordinator(context: Context) {
     }
 
     /**
-     * Wipes the wallet.
-     *
-     * In order for a wipe to occur, the synchronizer must be loaded already
-     * which would happen if the UI is collecting it.
-     *
-     * @return True if the wipe was performed and false if the wipe was not performed.
+     * Resets persisted data in the SDK, but preserves the wallet secret.  This will cause the
+     * synchronizer to emit a new instance.
      */
-    suspend fun wipeWallet(): Boolean {
-        /*
-         * This implementation could perhaps be a little brittle due to needing to stop and start the
-         * synchronizer.  If another client is interacting with the synchronizer at the same time,
-         * it isn't well defined exactly what the behavior should be.
-         *
-         * Possible enhancements to improve this:
-         *  - Hide the synchronizer from clients; prefer to add additional APIs to WalletViewModel
-         *    which delegate to the synchronizer
-         *  - Add a private StateFlow to WalletCoordinator to signal internal operations which should
-         *    cancel the synchronizer for other observers. Modify synchronizer flow to use a combine
-         *    operator to check the private stateflow.  When initiating a wipe, set that private
-         *    StateFlow to cancel other observers of the synchronizer.
-         */
+    @OptIn(FlowPreview::class)
+    fun resetSdk() {
+        walletScope.launch {
+            lockoutMutex.withLock {
+                val lockoutId = UUID.randomUUID()
+                synchronizerLockoutId.value = lockoutId
 
-        synchronizerMutex.withLock {
-            synchronizer.value?.let {
-                // There is a minor race condition here.  With the right timing, it is possible
-                // that the collection of the Synchronizer flow is canceled during an erase.
-                // In such a situation, the Synchronizer would be restarted at the end of
-                // this method even though it shouldn't.  By checking for referential equality at
-                // the end, we can reduce that timing gap.
-                val wasStarted = it.isStarted
-                if (wasStarted) {
-                    it.stop()
-                }
+                synchronizerOrLockoutId
+                    .flatMapConcat { it }
+                    .filterIsInstance<InternalSynchronizerStatus.Lockout>()
+                    .filter { it.id == lockoutId }
+                    .onFirst {
+                        synchronizerMutex.withLock {
+                            val didDelete = Initializer.erase(
+                                applicationContext,
+                                ZcashNetwork.fromResources(applicationContext)
+                            )
 
-                Initializer.erase(
-                    applicationContext,
-                    ZcashNetwork.fromResources(applicationContext)
-                )
+                            Twig.info { "SDK erase result: $didDelete" }
+                        }
+                    }
 
-                if (wasStarted && synchronizer.value === it) {
-                    it.start(walletScope)
-                }
-
-                return true
+                synchronizerLockoutId.value = null
             }
         }
+    }
 
-        return false
+    /**
+     * Wipes the wallet.  Will cause the app-wide synchronizer to be reset with a new instance.
+     */
+    @OptIn(FlowPreview::class)
+    fun wipeEntireWallet() {
+        walletScope.launch {
+            lockoutMutex.withLock {
+                val lockoutId = UUID.randomUUID()
+                synchronizerLockoutId.value = lockoutId
+
+                synchronizerOrLockoutId
+                    .flatMapConcat { it }
+                    .filterIsInstance<InternalSynchronizerStatus.Lockout>()
+                    .filter { it.id == lockoutId }
+                    .onFirst {
+                        // Note that clearing the data here is non-atomic since multiple files must be modified
+
+                        EncryptedPreferenceSingleton.getInstance(applicationContext).also { provider ->
+                            EncryptedPreferenceKeys.PERSISTABLE_WALLET.putValue(provider, null)
+                        }
+
+                        StandardPreferenceSingleton.getInstance(applicationContext).also { provider ->
+                            StandardPreferenceKeys.IS_USER_BACKUP_COMPLETE.putValue(provider, false)
+                        }
+
+                        synchronizerMutex.withLock {
+                            val didDelete = Initializer.erase(
+                                applicationContext,
+                                ZcashNetwork.fromResources(applicationContext)
+                            )
+                            Twig.info { "SDK erase result: $didDelete" }
+                        }
+
+                        synchronizerLockoutId.value = null
+                    }
+            }
+        }
     }
 }
 
