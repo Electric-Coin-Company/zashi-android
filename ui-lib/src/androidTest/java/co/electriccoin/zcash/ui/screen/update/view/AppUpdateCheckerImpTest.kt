@@ -2,12 +2,12 @@ package co.electriccoin.zcash.ui.screen.update.view
 
 import android.app.Activity
 import android.content.Context
+import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.filters.MediumTest
 import cash.z.ecc.android.sdk.ext.onFirst
 import co.electriccoin.zcash.ui.screen.update.AppUpdateCheckerImp
-import co.electriccoin.zcash.ui.screen.update.TestUpdateActivity
 import co.electriccoin.zcash.ui.screen.update.model.UpdateInfo
 import co.electriccoin.zcash.ui.screen.update.model.UpdateState
 import com.google.android.play.core.install.model.ActivityResult
@@ -15,7 +15,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
-import kotlin.test.Test
+import org.junit.Test
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
@@ -23,7 +23,7 @@ import kotlin.test.assertTrue
 class AppUpdateCheckerImpTest {
 
     @get:Rule
-    val composeTestRule = createAndroidComposeRule<TestUpdateActivity>()
+    val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
     companion object {
         val context: Context = ApplicationProvider.getApplicationContext()

@@ -3,8 +3,8 @@ package co.electriccoin.zcash.ui.screen.update.integration
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.lifecycle.viewModelScope
 import androidx.test.filters.MediumTest
+import co.electriccoin.zcash.ui.common.UiTestingActivity
 import co.electriccoin.zcash.ui.screen.update.AppUpdateChecker
-import co.electriccoin.zcash.ui.screen.update.TestUpdateActivity
 import co.electriccoin.zcash.ui.screen.update.fixture.UpdateInfoFixture
 import co.electriccoin.zcash.ui.screen.update.model.UpdateInfo
 import co.electriccoin.zcash.ui.screen.update.model.UpdateState
@@ -26,7 +26,7 @@ import kotlin.test.assertNull
 @ExperimentalCoroutinesApi
 class UpdateViewModelTest {
     @get:Rule
-    val composeTestRule = createAndroidComposeRule<TestUpdateActivity>()
+    val composeTestRule = createAndroidComposeRule<UiTestingActivity>()
 
     private lateinit var viewModel: UpdateViewModel
     private lateinit var checker: AppUpdateCheckerMock

@@ -6,13 +6,7 @@
     <application
         android:label="zcash-ui-test" >
         <activity
-            android:name="co.electriccoin.zcash.ui.screen.onboarding.TestOnboardingActivity"
-            android:exported="false" />
-        <activity
-            android:name="co.electriccoin.zcash.ui.screen.backup.TestBackupActivity"
-            android:exported="false" />
-        <activity
-            android:name="co.electriccoin.zcash.ui.screen.update.TestUpdateActivity"
+            android:name="co.electriccoin.zcash.ui.common.UiTestingActivity"
             android:exported="false" />
     </application>
 

@@ -6,7 +6,7 @@
     <application
         android:label="zcash-ui-integration-test">
         <activity
-            android:name="co.electriccoin.zcash.ui.integration.test.screen.scan.TestScanActivity"
+            android:name="co.electriccoin.zcash.ui.integration.test.common.IntegrationTestingActivity"
             android:exported="false" />
     </application>
 

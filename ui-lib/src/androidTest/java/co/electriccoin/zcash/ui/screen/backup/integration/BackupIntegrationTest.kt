@@ -1,8 +1,8 @@
-package co.electriccoin.zcash.ui.screen.backup.view
+package co.electriccoin.zcash.ui.screen.backup.integration
 
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.StateRestorationTester
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onChildren
 import androidx.compose.ui.test.onNodeWithText
@@ -12,16 +12,17 @@ import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.fixture.TestChoicesFixture
 import co.electriccoin.zcash.ui.screen.backup.BackupTag
-import co.electriccoin.zcash.ui.screen.backup.TestBackupActivity
 import co.electriccoin.zcash.ui.screen.backup.model.BackupStage
+import co.electriccoin.zcash.ui.screen.backup.view.BackupTestSetup
 import co.electriccoin.zcash.ui.test.getStringResource
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 
 class BackupIntegrationTest : UiTestPrerequisites() {
+
     @get:Rule
-    val composeTestRule = createAndroidComposeRule<TestBackupActivity>()
+    val composeTestRule = createComposeRule()
 
     private fun newTestSetup(initialStage: BackupStage): BackupTestSetup {
         return BackupTestSetup(
@@ -91,26 +92,5 @@ class BackupIntegrationTest : UiTestPrerequisites() {
         assertEquals(BackupStage.Test, testSetup.getStage())
         assertEquals(2, testSetup.getOnChoicesCallbackCount())
         assertEquals(4, testSetup.getSelectedChoicesCount())
-    }
-
-    @Test
-    @MediumTest
-    fun current_stage_restoration_activity() {
-        val testSetup = newTestSetup(BackupStage.EducationOverview)
-        testSetup.setDefaultContent()
-
-        assertEquals(BackupStage.EducationOverview, testSetup.getStage())
-
-        composeTestRule.onNodeWithText(getStringResource(R.string.new_wallet_1_button)).also {
-            it.performClick()
-        }
-
-        assertEquals(BackupStage.EducationRecoveryPhrase, testSetup.getStage())
-
-        composeTestRule.activityRule.scenario.onActivity {
-            it.recreate()
-        }
-
-        assertEquals(BackupStage.EducationRecoveryPhrase, testSetup.getStage())
     }
 }

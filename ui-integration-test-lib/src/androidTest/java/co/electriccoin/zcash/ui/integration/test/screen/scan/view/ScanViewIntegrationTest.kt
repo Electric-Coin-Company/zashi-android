@@ -6,8 +6,8 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.test.filters.LargeTest
 import co.electriccoin.zcash.test.UiTestPrerequisites
+import co.electriccoin.zcash.ui.integration.test.common.IntegrationTestingActivity
 import co.electriccoin.zcash.ui.integration.test.getPermissionPositiveButtonUiObject
-import co.electriccoin.zcash.ui.integration.test.screen.scan.TestScanActivity
 import co.electriccoin.zcash.ui.screen.scan.ScanTag
 import co.electriccoin.zcash.ui.screen.scan.model.ScanState
 import org.junit.Assert
@@ -19,7 +19,7 @@ import org.junit.Test
 class ScanViewIntegrationTest : UiTestPrerequisites() {
 
     @get:Rule
-    val composeTestRule = createAndroidComposeRule<TestScanActivity>()
+    val composeTestRule = createAndroidComposeRule<IntegrationTestingActivity>()
 
     private lateinit var testSetup: ScanViewTestSetup
 
