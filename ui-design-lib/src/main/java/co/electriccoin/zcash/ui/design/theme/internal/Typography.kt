@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.sp
 import co.electriccoin.zcash.ui.design.R
 
 @OptIn(ExperimentalTextApi::class)
-val provider = GoogleFont.Provider(
+private val provider = GoogleFont.Provider(
     providerAuthority = "com.google.android.gms.fonts",
     providerPackage = "com.google.android.gms",
     certificates = R.array.com_google_android_gms_fonts_certs
@@ -23,10 +23,10 @@ val provider = GoogleFont.Provider(
 // We use bestEffort here to be able to get the closest font weight, if accidentally use
 // an unspecified font weight and not the default one.
 @OptIn(ExperimentalTextApi::class)
-val RubikFont = GoogleFont(name = "Rubik", bestEffort = true)
+private val RubikFont = GoogleFont(name = "Rubik", bestEffort = true)
 
 @OptIn(ExperimentalTextApi::class)
-val RubikFontFamily = FontFamily(
+private val RubikFontFamily = FontFamily(
     Font(googleFont = RubikFont, fontProvider = provider, weight = FontWeight.Normal), // W400
     Font(googleFont = RubikFont, fontProvider = provider, weight = FontWeight.Medium), // W500
     Font(googleFont = RubikFont, fontProvider = provider, weight = FontWeight.SemiBold), // W600
