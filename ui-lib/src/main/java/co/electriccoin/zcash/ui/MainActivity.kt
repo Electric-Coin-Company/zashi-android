@@ -163,7 +163,7 @@ class MainActivity : ComponentActivity() {
             }
             composable(NAV_PROFILE) {
                 WrapProfile(
-                    onBack = { navController.popBackStack() },
+                    onBack = { navController.popBackStackJustOnce(NAV_PROFILE) },
                     onAddressDetails = { navController.navigateJustOnce(NAV_WALLET_ADDRESS_DETAILS) },
                     onAddressBook = { },
                     onSettings = { navController.navigateJustOnce(NAV_SETTINGS) },
@@ -175,14 +175,14 @@ class MainActivity : ComponentActivity() {
             composable(NAV_WALLET_ADDRESS_DETAILS) {
                 WrapWalletAddresses(
                     goBack = {
-                        navController.popBackStack()
+                        navController.popBackStackJustOnce(NAV_WALLET_ADDRESS_DETAILS)
                     }
                 )
             }
             composable(NAV_SETTINGS) {
                 WrapSettings(
                     goBack = {
-                        navController.popBackStack()
+                        navController.popBackStackJustOnce(NAV_SETTINGS)
                     },
                     goWalletBackup = {
                         navController.navigateJustOnce(NAV_SEED)
@@ -192,22 +192,22 @@ class MainActivity : ComponentActivity() {
             composable(NAV_SEED) {
                 WrapSeed(
                     goBack = {
-                        navController.popBackStack()
+                        navController.popBackStackJustOnce(NAV_SEED)
                     }
                 )
             }
             composable(NAV_REQUEST) {
-                WrapRequest(goBack = { navController.popBackStack() })
+                WrapRequest(goBack = { navController.popBackStackJustOnce(NAV_REQUEST) })
             }
             composable(NAV_SEND) {
-                WrapSend(goBack = { navController.popBackStack() })
+                WrapSend(goBack = { navController.popBackStackJustOnce(NAV_SEND) })
             }
             composable(NAV_SUPPORT) {
                 // Pop back stack won't be right if we deep link into support
-                WrapSupport(goBack = { navController.popBackStack() })
+                WrapSupport(goBack = { navController.popBackStackJustOnce(NAV_SUPPORT) })
             }
             composable(NAV_ABOUT) {
-                WrapAbout(goBack = { navController.popBackStack() })
+                WrapAbout(goBack = { navController.popBackStackJustOnce(NAV_ABOUT) })
             }
             composable(NAV_SCAN) {
                 WrapScanValidator(
@@ -217,7 +217,7 @@ class MainActivity : ComponentActivity() {
                             popUpTo(NAV_HOME) { inclusive = false }
                         }
                     },
-                    goBack = { navController.popBackStack() }
+                    goBack = { navController.popBackStackJustOnce(NAV_SCAN) }
                 )
             }
         }
@@ -405,4 +405,17 @@ private fun NavHostController.navigateJustOnce(
     } else {
         navigate(route)
     }
+}
+
+/**
+ * Pops up the current screen from the back stack. Parameter currentRouteToBePopped is meant to be
+ * set only to the current screen so we can easily debounce multiple screen popping from the back stack.
+ *
+ * @param currentRouteToBePopped current screen which should be popped up.
+ */
+private fun NavHostController.popBackStackJustOnce(currentRouteToBePopped: String) {
+    if (currentDestination?.route != currentRouteToBePopped) {
+        return
+    }
+    popBackStack()
 }
