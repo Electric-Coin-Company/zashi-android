@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
+import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -152,10 +153,10 @@ class MainActivity : ComponentActivity() {
         NavHost(navController = navController, startDestination = NAV_HOME) {
             composable(NAV_HOME) {
                 WrapHome(
-                    goScan = { navController.navigate(NAV_SCAN) },
-                    goProfile = { navController.navigate(NAV_PROFILE) },
-                    goSend = { navController.navigate(NAV_SEND) },
-                    goRequest = { navController.navigate(NAV_REQUEST) }
+                    goScan = { navController.navigateJustOnce(NAV_SCAN) },
+                    goProfile = { navController.navigateJustOnce(NAV_PROFILE) },
+                    goSend = { navController.navigateJustOnce(NAV_SEND) },
+                    goRequest = { navController.navigateJustOnce(NAV_REQUEST) }
                 )
 
                 WrapCheckForUpdate()
@@ -163,12 +164,12 @@ class MainActivity : ComponentActivity() {
             composable(NAV_PROFILE) {
                 WrapProfile(
                     onBack = { navController.popBackStack() },
-                    onAddressDetails = { navController.navigate(NAV_WALLET_ADDRESS_DETAILS) },
+                    onAddressDetails = { navController.navigateJustOnce(NAV_WALLET_ADDRESS_DETAILS) },
                     onAddressBook = { },
-                    onSettings = { navController.navigate(NAV_SETTINGS) },
+                    onSettings = { navController.navigateJustOnce(NAV_SETTINGS) },
                     onCoinholderVote = { },
-                    onSupport = { navController.navigate(NAV_SUPPORT) },
-                    onAbout = { navController.navigate(NAV_ABOUT) }
+                    onSupport = { navController.navigateJustOnce(NAV_SUPPORT) },
+                    onAbout = { navController.navigateJustOnce(NAV_ABOUT) }
                 )
             }
             composable(NAV_WALLET_ADDRESS_DETAILS) {
@@ -184,7 +185,7 @@ class MainActivity : ComponentActivity() {
                         navController.popBackStack()
                     },
                     goWalletBackup = {
-                        navController.navigate(NAV_SEED)
+                        navController.navigateJustOnce(NAV_SEED)
                     }
                 )
             }
@@ -212,10 +213,8 @@ class MainActivity : ComponentActivity() {
                 WrapScanValidator(
                     onScanValid = {
                         // TODO [#449] https://github.com/zcash/secant-android-wallet/issues/449
-                        if (navController.currentDestination?.route == NAV_SCAN) {
-                            navController.navigate(NAV_SEND) {
-                                popUpTo(NAV_HOME) { inclusive = false }
-                            }
+                        navController.navigateJustOnce(NAV_SEND) {
+                            popUpTo(NAV_HOME) { inclusive = false }
                         }
                     },
                     goBack = { navController.popBackStack() }
@@ -390,5 +389,20 @@ private fun ZecRequest.newShareIntent(context: Context) = runBlocking {
         action = Intent.ACTION_SEND
         putExtra(Intent.EXTRA_TEXT, context.getString(R.string.request_template_format, toUri()))
         type = "text/plain"
+    }
+}
+
+private fun NavHostController.navigateJustOnce(
+    route: String,
+    navOptionsBuilder: (NavOptionsBuilder.() -> Unit)? = null
+) {
+    if (currentDestination?.route == route) {
+        return
+    }
+
+    if (navOptionsBuilder != null) {
+        navigate(route, navOptionsBuilder)
+    } else {
+        navigate(route)
     }
 }
