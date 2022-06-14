@@ -1,7 +1,7 @@
 package co.electriccoin.zcash.ui.screen.update.view
 
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
@@ -10,7 +10,6 @@ import androidx.test.filters.MediumTest
 import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.screen.update.AppUpdateChecker
-import co.electriccoin.zcash.ui.screen.update.TestUpdateActivity
 import co.electriccoin.zcash.ui.screen.update.UpdateTag
 import co.electriccoin.zcash.ui.screen.update.fixture.UpdateInfoFixture
 import co.electriccoin.zcash.ui.screen.update.model.UpdateInfo
@@ -24,29 +23,7 @@ import org.junit.Test
 class UpdateViewTest : UiTestPrerequisites() {
 
     @get:Rule
-    val composeTestRule = createAndroidComposeRule<TestUpdateActivity>()
-
-    @Test
-    @MediumTest
-    fun later_btn_force_update_test() {
-        val updateInfo = UpdateInfoFixture.new(
-            priority = AppUpdateChecker.Priority.HIGH,
-            force = true,
-            appUpdateInfo = null,
-            state = UpdateState.Prepared,
-        )
-        val testSetup = newTestSetup(updateInfo)
-
-        assertEquals(0, testSetup.getOnLaterCount())
-
-        composeTestRule.clickLater()
-
-        assertEquals(0, testSetup.getOnLaterCount())
-
-        composeTestRule.activity.onBackPressed()
-
-        assertEquals(0, testSetup.getOnLaterCount())
-    }
+    val composeTestRule = createComposeRule()
 
     @Test
     @MediumTest
