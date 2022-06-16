@@ -11,6 +11,7 @@ plugins {
     id("io.gitlab.arturbosch.detekt")
     id("org.jetbrains.kotlinx.kover")
     id("secant.ktlint-conventions")
+    id("secant.rosetta-conventions")
 }
 
 tasks {
