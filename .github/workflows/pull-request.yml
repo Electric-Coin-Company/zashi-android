@@ -337,7 +337,7 @@ jobs:
           ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEY_ALIAS: androiddebugkey
           ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEY_ALIAS_PASSWORD: android
         run: |
-          ./gradlew :app:bundleRelease :app:packageZcashmainnetReleaseUniversalApk
+          ./gradlew :app:assembleDebug :app:bundleRelease :app:packageZcashmainnetReleaseUniversalApk
       - name: Collect Artifacts
         timeout-minutes: 1
         env:
@@ -352,7 +352,7 @@ jobs:
         uses: actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535
         timeout-minutes: 1
         with:
-          name: Release binaries
+          name: Binaries
           path: ~/artifacts
 
   # Performs a button mash test on the release build of the app
@@ -385,7 +385,7 @@ jobs:
       - name: Download a single artifact
         uses: actions/download-artifact@fb598a63ae348fa914e94cd0ff38f362e927b741
         with:
-          name: Release binaries
+          name: Binaries
       - name: Robo test
         timeout-minutes: 20
         env:
