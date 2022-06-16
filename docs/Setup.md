@@ -146,3 +146,26 @@ For Continuous Integration, see [CI.md](CI.md).  The rest of this section is reg
     1. If you are an open source contributor: Visit http://emulator.wtf and request an API key
 1. Set the emulator.wtf API key as a global Gradle property `ZCASH_EMULATOR_WTF_API_KEY` under `~/.gradle/gradle.properties` 
 1. Run the Gradle task `./gradlew testDebugWithEmulatorWtf :app:testZcashmainnetDebugWithEmulatorWtf` (emulator.wtf tasks do build the app, so you don't need to build them beforehand)
+
+# Sideloading
+Although the goal of this document is to enable readers to build the app from source, it is also possible to sideload debug builds created by Continuous Integration.
+
+1. Go through the first two setup steps above, "Install Java" and "Install Android Studio and the Android SDK"
+1. Obtain binary
+    1. Look under the [GitHub Actions tab](https://github.com/zcash/secant-android-wallet/actions).  Every pull request and merge to the main branch will trigger a workflow that generates builds of the app.  The workflows are called Pull Request and Deploy.
+    1. Click on a successful workflow
+    1. Scroll down the workflow results page to find an attached build output called Binaries
+    1. Download the Binaries file
+    1. Look for either the universal or debug APK in the flavor that you'd like to install.  It should be under `app/build/outputs/`
+1. Install binary
+    1. If using a virtual device, you can drag-and-drop the APK file onto the virtual device screen
+    1. If using a physical device, run the terminal command `adb install -r $PATH_TO_APK`
+    
+Notes:
+ - Android apps can have build variants (debug, release) and build flavors (mainnet, testnet).  Debug builds are up to 10x slower due to JIT being disabled by Android's runtime, so they should not be used for benchmarks.  Debug builds also have logging enabled.
+ - Apps can be distributed in two different formats: Application Package (APK) and Android App Bundle (AAB).  AAB is uploaded to Google Play, and allows the store to deliver device-specific slices (e.g. CPU architecture, screen size, etc) for smaller downloads.  APK is the format for sideloading.  APK files are the original format from Android 1.0, and can be generated directly from a Gradle build.  AAB files are a newer format, and APK files can also be derived from AAB.  A "universal" APK is one that was derived from an AAB without any slicing.  We use "universal" APKs for testing of release builds, as they are processed through bundletool (which has introduced bugs in the past) and therefore somewhat closer to what would be delivered to end user devices.
+ - Android apps must be digitally signed.  The signing key is critical to app sandbox security (preventing other apps from reading our app's data).  We have multiple signing configurations:
+   - If you build from source, your computer will generate a random debug signing key.  This key will be consistent for multiple builds, allowing you to keep re-deploying changes of the app.  But if you connect your physical Android device to a different computer, the debug key will be different and therefore the app will need to be uninstalled/reinstalled to update it.
+   - Debug builds on the CI server always have a new randomly generated signing key for each build.  This means each time you sideload a CI generated debug build, uninstall/reinstall will be necessary.
+   - Release builds from a Pull Request workflow always have a new randomly generated signing key for each build.  This means each time you sideload a CI generated debug build, uninstall/reinstall will be necessary.
+   - Release builds from a Deploy workflow always are signed with the "upload" keystore.  The upload keystore is consistent and is the signing key for uploading to Google Play.  Google Play will then re-sign the app with the signing keystore when delivering the app to end users.  Therefore, moving between a release build downloaded from Google Play versus one sideloaded from a Deploy workflow will require uninstall/reinstall.

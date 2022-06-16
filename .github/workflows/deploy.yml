@@ -96,7 +96,7 @@ jobs:
           ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEY_ALIAS_PASSWORD: ${{ secrets.UPLOAD_KEY_ALIAS_PASSWORD }}
           ORG_GRADLE_PROJECT_ZCASH_GOOGLE_PLAY_DEPLOY_MODE: deploy
         run: |
-          ./gradlew :app:publishBundle :app:packageZcashmainnetReleaseUniversalApk
+          ./gradlew :app:assembleDebug :app:publishBundle :app:packageZcashmainnetReleaseUniversalApk
       - name: Collect Artifacts
         timeout-minutes: 1
         env:
@@ -111,5 +111,5 @@ jobs:
         uses: actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535
         timeout-minutes: 1
         with:
-          name: Release binaries
+          name: Binaries
           path: ~/artifacts
