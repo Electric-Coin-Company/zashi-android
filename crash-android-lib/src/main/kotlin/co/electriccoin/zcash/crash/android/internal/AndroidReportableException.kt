@@ -3,6 +3,7 @@ package co.electriccoin.zcash.crash.android.internal
 import android.content.Context
 import android.os.Bundle
 import co.electriccoin.zcash.crash.ReportableException
+import co.electriccoin.zcash.spackle.getPackageInfoCompat
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 
@@ -12,7 +13,7 @@ fun ReportableException.Companion.new(
     isUncaught: Boolean,
     clock: Clock = Clock.System
 ): ReportableException {
-    val versionName = context.packageManager.getPackageInfo(context.packageName, 0).versionName
+    val versionName = context.packageManager.getPackageInfoCompat(context.packageName, 0L).versionName
         ?: "null"
 
     return ReportableException(

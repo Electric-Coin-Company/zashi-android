@@ -4,7 +4,7 @@ import android.Manifest
 import android.content.Context
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
-import co.electriccoin.zcash.util.myPackageInfo
+import co.electriccoin.zcash.spackle.getPackageInfoCompatSuspend
 
 class PermissionInfo(val permissionName: String, val permissionStatus: PermissionStatus) {
     fun toSupportString() = buildString {
@@ -15,7 +15,8 @@ class PermissionInfo(val permissionName: String, val permissionStatus: Permissio
         private val permissionsOfInterest = listOf(Manifest.permission.CAMERA)
 
         suspend fun all(context: Context): List<PermissionInfo> {
-            val myPackageInfo: PackageInfo = context.myPackageInfo(PackageManager.GET_PERMISSIONS)
+            val myPackageInfo: PackageInfo = context.packageManager
+                .getPackageInfoCompatSuspend(context.packageName, PackageManager.GET_PERMISSIONS.toLong())
 
             return permissionsOfInterest.map { new(context, myPackageInfo, it) }
         }

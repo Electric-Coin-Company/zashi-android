@@ -1,7 +1,7 @@
 package co.electriccoin.zcash.ui.screen.support.model
 
 import android.content.Context
-import co.electriccoin.zcash.util.myPackageInfo
+import co.electriccoin.zcash.spackle.getPackageInfoCompatSuspend
 
 enum class SupportInfoType {
     Time,
@@ -61,7 +61,7 @@ data class SupportInfo(
         // in the future.
         suspend fun new(context: Context): SupportInfo {
             val applicationContext = context.applicationContext
-            val packageInfo = applicationContext.myPackageInfo(0)
+            val packageInfo = applicationContext.packageManager.getPackageInfoCompatSuspend(context.packageName, 0L)
 
             return SupportInfo(
                 TimeInfo.new(packageInfo),

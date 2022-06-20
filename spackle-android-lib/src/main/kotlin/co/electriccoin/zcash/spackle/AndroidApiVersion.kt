@@ -33,5 +33,8 @@ object AndroidApiVersion {
     @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.S)
     val isAtLeastS = isAtLeast(Build.VERSION_CODES.S)
 
+    @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.TIRAMISU)
+    val isAtLeastT = isAtLeast(Build.VERSION_CODES.TIRAMISU)
+
     val isPreview = 0 != Build.VERSION.PREVIEW_SDK_INT
 }

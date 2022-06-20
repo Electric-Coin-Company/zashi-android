@@ -4,6 +4,7 @@ import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import androidx.test.espresso.Espresso
 import androidx.test.filters.MediumTest
 import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.common.UiTestingActivity
@@ -39,7 +40,7 @@ class UpdateActivityViewTest : UiTestPrerequisites() {
 
         assertEquals(0, testSetup.getOnLaterCount())
 
-        composeTestRule.activity.onBackPressed()
+        Espresso.pressBack()
 
         assertEquals(0, testSetup.getOnLaterCount())
     }
