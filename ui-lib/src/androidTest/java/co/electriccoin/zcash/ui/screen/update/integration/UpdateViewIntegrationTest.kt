@@ -1,22 +1,17 @@
 package co.electriccoin.zcash.ui.screen.update.integration
 
-import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import androidx.test.espresso.Espresso
 import androidx.test.filters.MediumTest
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.screen.update.AppUpdateChecker
-import co.electriccoin.zcash.ui.screen.update.UpdateTag
 import co.electriccoin.zcash.ui.screen.update.fixture.UpdateInfoFixture
 import co.electriccoin.zcash.ui.screen.update.model.UpdateInfo
 import co.electriccoin.zcash.ui.screen.update.model.UpdateState
 import co.electriccoin.zcash.ui.screen.update.view.UpdateViewTestSetup
 import co.electriccoin.zcash.ui.test.getStringResource
-import org.junit.Assert
 import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertEquals
