@@ -2,7 +2,7 @@ package co.electriccoin.zcash.ui.screen.support.model
 
 import android.content.pm.PackageInfo
 import co.electriccoin.zcash.build.gitSha
-import co.electriccoin.zcash.util.VersionCodeCompat
+import co.electriccoin.zcash.spackle.versionCodeCompat
 
 class AppInfo(val versionName: String, val versionCode: Long, val gitSha: String) {
 
@@ -13,7 +13,7 @@ class AppInfo(val versionName: String, val versionCode: Long, val gitSha: String
     companion object {
         fun new(packageInfo: PackageInfo) = AppInfo(
             packageInfo.versionName ?: "null", // Should only be null during tests
-            VersionCodeCompat.getVersionCode(packageInfo),
+            packageInfo.versionCodeCompat,
             gitSha
         )
     }
