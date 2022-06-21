@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -25,25 +26,29 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import cash.z.ecc.android.sdk.db.entity.Transaction
 import cash.z.ecc.sdk.ext.ui.model.toZecString
+import cash.z.ecc.sdk.model.toUsdString
 import cash.z.ecc.sdk.model.total
 import co.electriccoin.zcash.crash.android.CrashReporter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.Body
+import co.electriccoin.zcash.ui.design.component.BodyWithDollarIcon
 import co.electriccoin.zcash.ui.design.component.GradientSurface
-import co.electriccoin.zcash.ui.design.component.Header
+import co.electriccoin.zcash.ui.design.component.HeaderWithZecIcon
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.TertiaryButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 import co.electriccoin.zcash.ui.screen.home.model.WalletSnapshot
+import co.electriccoin.zcash.ui.screen.home.model.spendableBalance
 import co.electriccoin.zcash.ui.screen.home.model.totalBalance
-import java.lang.RuntimeException
 
 @Preview
 @Composable
@@ -199,14 +204,28 @@ private fun HomeMainContent(
 
 @Composable
 private fun Status(walletSnapshot: WalletSnapshot) {
-    Column(Modifier.fillMaxWidth()) {
-        Header(text = walletSnapshot.totalBalance().toZecString())
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Spacer(modifier = Modifier.height(24.dp))
+
+        HeaderWithZecIcon(text = walletSnapshot.totalBalance().toZecString())
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        BodyWithDollarIcon(text = walletSnapshot.spendableBalance().toUsdString())
+
+        Spacer(modifier = Modifier.height(24.dp))
+
         Body(
             text = stringResource(
                 id = R.string.home_status_shielding_format,
                 walletSnapshot.saplingBalance.total.toZecString()
             )
         )
+
+        Spacer(modifier = Modifier.height(24.dp))
     }
 }
 
