@@ -1,3 +1,5 @@
+@file:Suppress("ktlint:filename")
+
 package co.electriccoin.zcash.ui.design.component
 
 import androidx.compose.material3.LinearProgressIndicator
@@ -11,8 +13,10 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 fun PinkProgress(progress: Progress, modifier: Modifier = Modifier) {
     // Needs custom implementation to apply gradient
     LinearProgressIndicator(
-        progress = progress.percent(), modifier,
-        ZcashTheme.colors.progressStart, ZcashTheme.colors.progressBackground
+        progress = progress.percent(),
+        modifier,
+        ZcashTheme.colors.progressStart,
+        ZcashTheme.colors.progressBackground
     )
 }
 

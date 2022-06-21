@@ -127,7 +127,8 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
             }
         }
         .stateIn(
-            viewModelScope, SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+            viewModelScope,
+            SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
             emptyList()
         )
 
@@ -136,7 +137,8 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
         .filterIsInstance<SecretState.Ready>()
         .map { WalletAddresses.new(it.persistableWallet) }
         .stateIn(
-            viewModelScope, SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+            viewModelScope,
+            SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
             null
         )
 
@@ -269,7 +271,7 @@ private fun Synchronizer.toTransactions() =
         clearedTransactions.distinctUntilChanged(),
         pendingTransactions.distinctUntilChanged(),
         sentTransactions.distinctUntilChanged(),
-        receivedTransactions.distinctUntilChanged(),
+        receivedTransactions.distinctUntilChanged()
     ) { cleared, pending, sent, received ->
         // TODO [#157]: Sort the transactions to show the most recent
         buildList<Transaction> {

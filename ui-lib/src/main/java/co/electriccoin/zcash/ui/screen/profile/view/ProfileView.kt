@@ -92,7 +92,7 @@ private fun ProfileTopAppBar(onBack: () -> Unit) {
             ) {
                 Icon(
                     imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = stringResource(R.string.profile_back_content_description),
+                    contentDescription = stringResource(R.string.profile_back_content_description)
                 )
             }
         }

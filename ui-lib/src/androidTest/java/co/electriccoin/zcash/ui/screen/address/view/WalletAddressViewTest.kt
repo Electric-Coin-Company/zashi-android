@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.wallet_address.view
+package co.electriccoin.zcash.ui.screen.address.view
 
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.createComposeRule

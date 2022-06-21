@@ -11,6 +11,7 @@ object Zip321UriParseFixture {
         "for%20your%20purchase"
 
     const val ADDRESS: String = WalletAddressFixture.UNIFIED_ADDRESS_STRING
+
     @Suppress("MagicNumber")
     val AMOUNT = Zatoshi(123)
     val MESSAGE = ZecRequestMessage("Thank you for your purchase")
@@ -19,6 +20,6 @@ object Zip321UriParseFixture {
     // Should return ZecRequest.fromUri(toParse) ideally, but it'd end up with an infinite loop for now.
     @Suppress("UNUSED_PARAMETER")
     suspend fun new(
-        toParse: String = URI,
+        toParse: String = URI
     ) = ZecRequest(WalletAddress.Unified.new(ADDRESS), AMOUNT, MESSAGE)
 }

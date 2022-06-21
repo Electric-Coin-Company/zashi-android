@@ -45,7 +45,7 @@ interface AppUpdateChecker {
     }
 
     fun newCheckForUpdateAvailabilityFlow(
-        context: Context,
+        context: Context
     ): Flow<UpdateInfo>
 
     fun newStartUpdateFlow(

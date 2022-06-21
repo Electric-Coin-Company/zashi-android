@@ -1,3 +1,5 @@
+@file:Suppress("ktlint:filename")
+
 package cash.z.ecc.sdk.test
 
 fun <T> Iterator<T>.count(): Int {

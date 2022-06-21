@@ -14,6 +14,7 @@ class ZcashUiTestRunner : AndroidJUnitRunner() {
 
         val powerManager = ApplicationProvider.getApplicationContext<Context>()
             .getSystemService(Context.POWER_SERVICE) as PowerManager
+
         // There is no alternative to this deprecated API.  The suggestion of a view to keep the screen
         // on won't work well for our tests.
         @Suppress("DEPRECATION")

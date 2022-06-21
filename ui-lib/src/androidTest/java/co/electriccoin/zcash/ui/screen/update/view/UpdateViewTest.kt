@@ -33,7 +33,7 @@ class UpdateViewTest : UiTestPrerequisites() {
             priority = AppUpdateChecker.Priority.HIGH,
             force = true,
             appUpdateInfo = null,
-            state = UpdateState.Prepared,
+            state = UpdateState.Prepared
         )
 
         newTestSetup(updateInfo)
@@ -58,7 +58,7 @@ class UpdateViewTest : UiTestPrerequisites() {
             priority = AppUpdateChecker.Priority.LOW,
             force = false,
             appUpdateInfo = null,
-            state = UpdateState.Prepared,
+            state = UpdateState.Prepared
         )
         val testSetup = newTestSetup(updateInfo)
 
@@ -76,7 +76,7 @@ class UpdateViewTest : UiTestPrerequisites() {
             priority = AppUpdateChecker.Priority.MEDIUM,
             force = false,
             appUpdateInfo = null,
-            state = UpdateState.Prepared,
+            state = UpdateState.Prepared
         )
 
         newTestSetup(updateInfo)
@@ -99,7 +99,7 @@ class UpdateViewTest : UiTestPrerequisites() {
             priority = AppUpdateChecker.Priority.HIGH,
             force = true,
             appUpdateInfo = null,
-            state = UpdateState.Prepared,
+            state = UpdateState.Prepared
         )
         val testSetup = newTestSetup(updateInfo)
 

@@ -44,7 +44,7 @@ fun AboutPreview() {
 @Composable
 fun About(
     versionInfo: VersionInfo,
-    goBack: () -> Unit,
+    goBack: () -> Unit
 ) {
     Scaffold(topBar = {
         AboutTopAppBar(onBack = goBack)

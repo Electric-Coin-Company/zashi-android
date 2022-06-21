@@ -1,3 +1,5 @@
+@file:Suppress("ktlint:filename")
+
 package cash.z.ecc.sdk.ext
 
 import java.nio.charset.Charset

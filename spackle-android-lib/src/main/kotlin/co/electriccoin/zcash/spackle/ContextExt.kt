@@ -1,3 +1,5 @@
+@file:Suppress("ktlint:filename")
+
 package co.electriccoin.zcash.spackle
 
 import android.content.Context

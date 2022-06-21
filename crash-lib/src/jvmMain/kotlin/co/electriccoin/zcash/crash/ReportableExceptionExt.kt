@@ -1,3 +1,5 @@
+@file:Suppress("ktlint:filename")
+
 package co.electriccoin.zcash.crash
 
 import co.electriccoin.zcash.spackle.io.writeAtomically

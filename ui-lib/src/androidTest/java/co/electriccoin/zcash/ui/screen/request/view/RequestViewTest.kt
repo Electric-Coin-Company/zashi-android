@@ -206,6 +206,7 @@ class RequestViewTest : UiTestPrerequisites() {
 
         private val onBackCount = AtomicInteger(0)
         private val onCreateCount = AtomicInteger(0)
+
         @Volatile
         private var onCreateZecRequest: ZecRequest? = null
 

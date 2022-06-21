@@ -48,7 +48,7 @@ fun PreviewSupport() {
 fun Support(
     snackbarHostState: SnackbarHostState,
     onBack: () -> Unit,
-    onSend: (String) -> Unit,
+    onSend: (String) -> Unit
 ) {
     val (message, setMessage) = rememberSaveable { mutableStateOf("") }
     val (isShowingDialog, setShowDialog) = rememberSaveable { mutableStateOf(false) }
@@ -56,7 +56,8 @@ fun Support(
     Scaffold(
         topBar = {
             SupportTopAppBar(onBack = onBack)
-        }, snackbarHost = { SnackbarHost(snackbarHostState) },
+        },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         floatingActionButton = {
             FloatingActionButton(onClick = { setShowDialog(true) }) {
                 Icon(
@@ -131,20 +132,20 @@ private fun SupportConfirmationDialog(
         },
         confirmButton = {
             Button(
-                onClick = onConfirm,
+                onClick = onConfirm
             ) {
                 Text(stringResource(id = R.string.support_confirmation_dialog_ok))
             }
         },
         dismissButton = {
             Button(
-                onClick = onDismiss,
+                onClick = onDismiss
             ) {
                 Text(stringResource(id = R.string.support_confirmation_dialog_cancel))
             }
         },
         text = {
             Text(stringResource(id = R.string.support_confirmation_explanation, stringResource(id = R.string.app_name)))
-        },
+        }
     )
 }

@@ -42,7 +42,7 @@ fun Settings(
     onBack: () -> Unit,
     onBackupWallet: () -> Unit,
     onWipeWallet: () -> Unit,
-    onRescanWallet: () -> Unit,
+    onRescanWallet: () -> Unit
 ) {
     Scaffold(topBar = {
         SettingsTopAppBar(onBack = onBack)

@@ -58,7 +58,6 @@ class AppUpdateCheckerImpTest {
     @MediumTest
     @OptIn(ExperimentalCoroutinesApi::class)
     fun start_update_availability_test() = runTest {
-
         getAppUpdateInfoFlow().onFirst { updateInfo ->
             // In case we get result with FAILED state, e.g. app is still not released in the Google
             // Play store, there is no way to continue with the test.

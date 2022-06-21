@@ -1,3 +1,5 @@
+@file:Suppress("ktlint:filename")
+
 package co.electriccoin.zcash.ui.screen.settings
 
 import androidx.activity.ComponentActivity
@@ -39,7 +41,8 @@ private fun WrapSettings(
             onBackupWallet = goWalletBackup,
             onRescanWallet = {
                 walletViewModel.rescanBlockchain()
-            }, onWipeWallet = {
+            },
+            onWipeWallet = {
                 walletViewModel.wipeEntireWallet()
 
                 val onboardingViewModel by activity.viewModels<OnboardingViewModel>()

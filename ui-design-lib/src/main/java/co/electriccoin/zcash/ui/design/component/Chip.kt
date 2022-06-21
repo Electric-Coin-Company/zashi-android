@@ -27,13 +27,13 @@ fun ComposablePreview() {
 fun Chip(
     index: Index,
     text: String,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Surface(
         modifier = modifier.then(Modifier.padding(4.dp)),
         shape = RoundedCornerShape(8.dp),
         color = MaterialTheme.colorScheme.secondary,
-        shadowElevation = 8.dp,
+        shadowElevation = 8.dp
     ) {
         Row(
             modifier = Modifier
@@ -42,7 +42,7 @@ fun Chip(
             Text(
                 text = (index.value + 1).toString(),
                 style = ZcashTheme.typography.chipIndex,
-                color = ZcashTheme.colors.chipIndex,
+                color = ZcashTheme.colors.chipIndex
             )
             Spacer(modifier = Modifier.padding(horizontal = 2.dp, vertical = 0.dp))
             Text(

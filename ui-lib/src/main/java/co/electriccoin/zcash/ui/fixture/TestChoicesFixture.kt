@@ -8,7 +8,7 @@ object TestChoicesFixture {
     val INITIAL_CHOICES =
         mapOf(
             Pair(Index(0), "baz"),
-            Pair(Index(1), "foo"),
+            Pair(Index(1), "foo")
         )
 
     fun new(initial: Map<Index, String?> = INITIAL_CHOICES) = TestChoices(initial)

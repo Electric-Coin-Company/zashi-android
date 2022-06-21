@@ -88,7 +88,7 @@ internal fun WrapUpdate(
 fun openPlayStoreAppPage(
     context: Context,
     snackbarHostState: SnackbarHostState,
-    scope: CoroutineScope,
+    scope: CoroutineScope
 ) {
     val storeIntent = PlayStoreUtil.newActivityIntent(context)
     runCatching {
