@@ -5,7 +5,7 @@ import android.content.res.Configuration
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.filters.SmallTest
 import cash.z.ecc.android.sdk.ext.Conversions
-import cash.z.ecc.sdk.model.Zatoshi
+import cash.z.ecc.android.sdk.model.Zatoshi
 import org.junit.Assert.assertEquals
 import org.junit.Ignore
 import org.junit.Test
@@ -99,8 +99,7 @@ class ZecStringTest {
     fun overflow_number_test() {
         assertNotNull(Zatoshi.fromZecString(context, "1", EN_US_MONETARY_SEPARATORS))
         assertNotNull(Zatoshi.fromZecString(context, "1,000", EN_US_MONETARY_SEPARATORS))
-        assertNotNull(Zatoshi.fromZecString(context, "10,000,000,000", EN_US_MONETARY_SEPARATORS))
-        assertNull(Zatoshi.fromZecString(context, "100,000,000,000", EN_US_MONETARY_SEPARATORS))
+        assertNotNull(Zatoshi.fromZecString(context, "21,000,000", EN_US_MONETARY_SEPARATORS))
 
         val overflowCausingNumber = 100000000000L
         assertTrue(BigDecimal(overflowCausingNumber).times(Conversions.ONE_ZEC_IN_ZATOSHI) > BigDecimal(Long.MAX_VALUE))

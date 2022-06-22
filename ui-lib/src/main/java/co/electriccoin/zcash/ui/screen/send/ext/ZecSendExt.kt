@@ -1,9 +1,9 @@
 package co.electriccoin.zcash.ui.screen.send.ext
 
 import androidx.compose.runtime.saveable.mapSaver
+import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.sdk.model.Memo
 import cash.z.ecc.sdk.model.WalletAddress
-import cash.z.ecc.sdk.model.Zatoshi
 import cash.z.ecc.sdk.model.ZecSend
 import kotlinx.coroutines.runBlocking
 

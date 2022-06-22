@@ -1,6 +1,6 @@
 package cash.z.ecc.sdk.fixture
 
-import cash.z.ecc.sdk.model.Zatoshi
+import cash.z.ecc.android.sdk.model.Zatoshi
 
 object ZatoshiFixture {
     @Suppress("MagicNumber")
