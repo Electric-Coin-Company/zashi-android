@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
@@ -38,6 +39,21 @@ fun Body(
         style = MaterialTheme.typography.bodyLarge,
         color = MaterialTheme.colorScheme.onBackground,
         modifier = modifier
+    )
+}
+
+@Composable
+fun Small(
+    text: String,
+    modifier: Modifier = Modifier,
+    textAlign: TextAlign
+) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.bodyMedium,
+        color = MaterialTheme.colorScheme.onBackground,
+        modifier = modifier,
+        textAlign = textAlign
     )
 }
 
@@ -90,7 +106,7 @@ fun HeaderWithZecIcon(
     modifier: Modifier = Modifier
 ) {
     // needs to be done differently - to have the icon aligned exact top of the text
-    Row {
+    Row (modifier = modifier) {
         Icon(
             painter = painterResource(R.drawable.ic_zcash_currency_symbol),
             contentDescription = null,
@@ -100,8 +116,7 @@ fun HeaderWithZecIcon(
         Text(
             text = text,
             style = MaterialTheme.typography.headlineLarge,
-            color = MaterialTheme.colorScheme.onBackground,
-            modifier = modifier
+            color = MaterialTheme.colorScheme.onBackground
         )
     }
 }
