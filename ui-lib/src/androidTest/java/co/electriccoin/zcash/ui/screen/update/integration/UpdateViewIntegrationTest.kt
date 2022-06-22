@@ -31,7 +31,7 @@ class UpdateViewIntegrationTest {
                 priority = AppUpdateChecker.Priority.HIGH,
                 force = true,
                 appUpdateInfo = null,
-                state = UpdateState.Prepared,
+                state = UpdateState.Prepared
             )
         )
 

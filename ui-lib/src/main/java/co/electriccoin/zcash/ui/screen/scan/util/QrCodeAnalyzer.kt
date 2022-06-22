@@ -13,13 +13,13 @@ import java.nio.ByteBuffer
 
 // TODO [#437]: https://github.com/zcash/secant-android-wallet/issues/437
 class QrCodeAnalyzer(
-    private val onQrCodeScanned: (String) -> Unit,
+    private val onQrCodeScanned: (String) -> Unit
 ) : ImageAnalysis.Analyzer {
 
     private val supportedImageFormats = listOf(
         ImageFormat.YUV_420_888,
         ImageFormat.YUV_422_888,
-        ImageFormat.YUV_444_888,
+        ImageFormat.YUV_444_888
     )
 
     override fun analyze(image: ImageProxy) {

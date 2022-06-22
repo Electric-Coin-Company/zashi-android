@@ -7,6 +7,7 @@ import cash.z.ecc.sdk.model.ZecRequestMessage
 
 object ZecRequestFixture {
     const val ADDRESS: String = WalletAddressFixture.UNIFIED_ADDRESS_STRING
+
     @Suppress("MagicNumber")
     val AMOUNT = Zatoshi(123)
     val MESSAGE = ZecRequestMessage("Thanks for lunch")

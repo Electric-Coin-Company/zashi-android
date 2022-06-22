@@ -36,7 +36,7 @@ class TimeInfo(
                 currentTime = currentTime,
                 rebootTime = currentTime - elapsedRealtime,
                 installTime = Instant.fromEpochMilliseconds(packageInfo.firstInstallTime),
-                updateTime = Instant.fromEpochMilliseconds(packageInfo.lastUpdateTime),
+                updateTime = Instant.fromEpochMilliseconds(packageInfo.lastUpdateTime)
             )
         }
     }

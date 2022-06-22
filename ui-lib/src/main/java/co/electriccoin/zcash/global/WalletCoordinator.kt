@@ -125,7 +125,8 @@ class WalletCoordinator(context: Context) {
             }
         }
         .stateIn(
-            walletScope, SharingStarted.WhileSubscribed(),
+            walletScope,
+            SharingStarted.WhileSubscribed(),
             null
         )
 

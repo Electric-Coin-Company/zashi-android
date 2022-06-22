@@ -20,7 +20,8 @@ class AbstractProcessNameContentProviderTest {
         }
 
         val actualProcessName = AbstractProcessNameContentProvider.getProcessNameLegacy(
-            ctx, ProviderInfo()
+            ctx,
+            ProviderInfo()
         )
 
         assertEquals(expectedApplicationProcessName, actualProcessName)

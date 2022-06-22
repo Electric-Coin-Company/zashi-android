@@ -98,11 +98,11 @@ fun Scan(
     onBack: () -> Unit,
     onScanned: (String) -> Unit,
     onOpenSettings: () -> Unit,
-    onScanStateChanged: (ScanState) -> Unit,
+    onScanStateChanged: (ScanState) -> Unit
 ) {
     Scaffold(
         topBar = { ScanTopAppBar(onBack = onBack) },
-        snackbarHost = { SnackbarHost(snackbarHostState) },
+        snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
         ScanMainContent(
             paddingValues,
@@ -210,8 +210,9 @@ private fun ScanMainContent(
     } else if (scanState == ScanState.Failed) {
         // keep current state
     } else if (permissionState.hasPermission) {
-        if (scanState != ScanState.Scanning)
+        if (scanState != ScanState.Scanning) {
             setScanState(ScanState.Scanning)
+        }
     }
 
     // we calculate the best frame size for the current device screen
@@ -271,7 +272,7 @@ private fun ScanMainContent(
                     onScanStateChanged(ScanState.Failed)
                     val snackbarResult = snackbarHostState.showSnackbar(
                         message = context.getString(R.string.scan_setup_failed),
-                        actionLabel = context.getString(R.string.scan_setup_back),
+                        actionLabel = context.getString(R.string.scan_setup_back)
                     )
                     if (snackbarResult == SnackbarResult.ActionPerformed) {
                         onBack()

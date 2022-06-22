@@ -117,7 +117,7 @@ internal val DarkColorPalette = darkColorScheme(
     surface = Dark.backgroundStart,
     onSurface = Dark.textBodyOnBackground,
     background = Dark.backgroundStart,
-    onBackground = Dark.textBodyOnBackground,
+    onBackground = Dark.textBodyOnBackground
 )
 
 internal val LightColorPalette = lightColorScheme(
@@ -128,7 +128,7 @@ internal val LightColorPalette = lightColorScheme(
     surface = Light.backgroundStart,
     onSurface = Light.textBodyOnBackground,
     background = Light.backgroundStart,
-    onBackground = Light.textBodyOnBackground,
+    onBackground = Light.textBodyOnBackground
 )
 
 internal val DarkExtendedColorPalette = ExtendedColors(

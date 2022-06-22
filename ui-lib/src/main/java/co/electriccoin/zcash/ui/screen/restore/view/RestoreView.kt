@@ -254,7 +254,8 @@ private fun ChipGridWithText(
                         Modifier
                             .focusRequester(focusRequester)
                             .weight((CHIP_GRID_ROW_SIZE - chunk.size) * singleItemWeight),
-                        text, setText
+                        text,
+                        setText
                     )
                 }
             }
@@ -273,7 +274,8 @@ private fun NextWordTextField(modifier: Modifier = Modifier, text: String, setTe
      * Treat the user input as a password, but disable the transformation to obscure input.
      */
     TextField(
-        value = text, onValueChange = setText,
+        value = text,
+        onValueChange = setText,
         modifier = modifier
             .fillMaxWidth()
             .height(IntrinsicSize.Max)
@@ -281,7 +283,9 @@ private fun NextWordTextField(modifier: Modifier = Modifier, text: String, setTe
         visualTransformation = VisualTransformation.None,
         keyboardOptions = KeyboardOptions(
             KeyboardCapitalization.None,
-            autoCorrect = false, imeAction = ImeAction.Done, keyboardType = KeyboardType.Password
+            autoCorrect = false,
+            imeAction = ImeAction.Done,
+            keyboardType = KeyboardType.Password
         ),
         keyboardActions = KeyboardActions(onAny = {})
     )

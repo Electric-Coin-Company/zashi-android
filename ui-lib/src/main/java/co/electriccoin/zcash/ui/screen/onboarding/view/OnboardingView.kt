@@ -83,7 +83,7 @@ fun Onboarding(
     isDebugMenuEnabled: Boolean,
     onImportWallet: () -> Unit,
     onCreateWallet: () -> Unit,
-    onFixtureWallet: () -> Unit,
+    onFixtureWallet: () -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -270,7 +270,8 @@ private fun Wallet(onCreateWallet: () -> Unit, onImportWallet: () -> Unit) {
         Body(stringResource(R.string.onboarding_4_body))
         PrimaryButton(onCreateWallet, stringResource(R.string.onboarding_4_create_new_wallet), Modifier.fillMaxWidth())
         TertiaryButton(
-            onImportWallet, stringResource(R.string.onboarding_4_import_existing_wallet),
+            onImportWallet,
+            stringResource(R.string.onboarding_4_import_existing_wallet),
             Modifier.fillMaxWidth()
         )
     }

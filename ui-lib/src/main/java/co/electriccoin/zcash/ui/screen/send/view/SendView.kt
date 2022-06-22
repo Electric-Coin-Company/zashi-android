@@ -68,7 +68,7 @@ fun PreviewSend() {
 fun Send(
     mySpendableBalance: Zatoshi,
     goBack: () -> Unit,
-    onCreateAndSend: (ZecSend) -> Unit,
+    onCreateAndSend: (ZecSend) -> Unit
 ) {
     // For now, we're avoiding sub-navigation to keep the navigation logic simple.  But this might
     // change once deep-linking support  is added.  It depends on whether deep linking should do one of:

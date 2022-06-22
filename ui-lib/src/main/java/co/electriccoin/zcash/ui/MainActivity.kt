@@ -29,6 +29,7 @@ import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.Override
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.about.WrapAbout
+import co.electriccoin.zcash.ui.screen.address.view.WalletAddresses
 import co.electriccoin.zcash.ui.screen.backup.WrapBackup
 import co.electriccoin.zcash.ui.screen.backup.copyToClipboard
 import co.electriccoin.zcash.ui.screen.home.WrapHome
@@ -47,7 +48,6 @@ import co.electriccoin.zcash.ui.screen.support.WrapSupport
 import co.electriccoin.zcash.ui.screen.update.AppUpdateCheckerImp
 import co.electriccoin.zcash.ui.screen.update.WrapUpdate
 import co.electriccoin.zcash.ui.screen.update.model.UpdateState
-import co.electriccoin.zcash.ui.screen.wallet_address.view.WalletAddresses
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -265,7 +265,7 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     private fun WrapWalletAddresses(
-        goBack: () -> Unit,
+        goBack: () -> Unit
     ) {
         val walletAddresses = walletViewModel.addresses.collectAsState().value
         if (null == walletAddresses) {
@@ -321,7 +321,7 @@ class MainActivity : ComponentActivity() {
                     startActivity(chooserIntent)
 
                     goBack()
-                },
+                }
             )
         }
     }
@@ -343,7 +343,7 @@ class MainActivity : ComponentActivity() {
                     synchronizer.send(spendingKey, it)
 
                     goBack()
-                },
+                }
             )
         }
     }

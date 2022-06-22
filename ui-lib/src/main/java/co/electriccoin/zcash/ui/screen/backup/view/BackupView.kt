@@ -67,7 +67,7 @@ fun BackupWallet(
     choices: TestChoices,
     onCopyToClipboard: () -> Unit,
     onComplete: () -> Unit,
-    onChoicesChanged: ((choicesCount: Int) -> Unit)?,
+    onChoicesChanged: ((choicesCount: Int) -> Unit)?
 ) {
     Column {
         when (backupState.current.collectAsState().value) {
@@ -185,7 +185,7 @@ private fun TestInProgress(
     splitSeedPhrase: List<String>,
     selectedTestChoices: TestChoices,
     onBack: () -> Unit,
-    onChoicesChanged: ((choicesCount: Int) -> Unit)?,
+    onChoicesChanged: ((choicesCount: Int) -> Unit)?
 ) {
     val testChoices = splitSeedPhrase
         .mapIndexed { index, word -> TestChoice(Index(index), word) }
@@ -224,8 +224,9 @@ private fun TestInProgress(
                                         this[currentIndex] = testChoices[it.value].word
                                     }
                                 )
-                                if (onChoicesChanged != null)
+                                if (onChoicesChanged != null) {
                                     onChoicesChanged(selectedTestChoices.current.value.size)
+                                }
                             }
                         } else {
                             Chip(

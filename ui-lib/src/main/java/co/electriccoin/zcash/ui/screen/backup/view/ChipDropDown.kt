@@ -1,3 +1,5 @@
+@file:Suppress("ktlint:filename")
+
 package co.electriccoin.zcash.ui.screen.backup.view
 
 import androidx.compose.foundation.clickable
@@ -55,13 +57,13 @@ fun ChipDropDown(
         color = MaterialTheme.colorScheme.secondary,
         contentColor = MaterialTheme.colorScheme.secondary,
         tonalElevation = 8.dp,
-        shadowElevation = 8.dp,
+        shadowElevation = 8.dp
     ) {
         Row(modifier = Modifier.padding(8.dp)) {
             Text(
                 text = (chipIndex.value + 1).toString(),
                 style = ZcashTheme.typography.chipIndex,
-                color = ZcashTheme.colors.chipIndex,
+                color = ZcashTheme.colors.chipIndex
             )
             Spacer(modifier = Modifier.padding(horizontal = 2.dp, vertical = 0.dp))
             Text(

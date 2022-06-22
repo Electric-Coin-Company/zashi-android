@@ -34,7 +34,7 @@ fun PrimaryButton(
     onClick: () -> Unit,
     text: String,
     modifier: Modifier = Modifier,
-    enabled: Boolean = true,
+    enabled: Boolean = true
 ) {
     Button(
         onClick = onClick,

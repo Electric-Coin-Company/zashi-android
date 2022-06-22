@@ -1,3 +1,5 @@
+@file:Suppress("ktlint:filename")
+
 package co.electriccoin.zcash.ui.screen.onboarding
 
 import android.content.ClipboardManager

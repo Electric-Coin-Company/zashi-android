@@ -125,7 +125,7 @@ private fun UpdateTopAppBar(updateInfo: UpdateInfo) {
                     }
                 )
             )
-        },
+        }
     )
 }
 

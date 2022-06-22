@@ -39,7 +39,7 @@ internal val Typography = Typography(
     headlineLarge = TextStyle(
         fontFamily = RubikFontFamily,
         fontWeight = FontWeight.SemiBold,
-        fontSize = 30.sp,
+        fontSize = 30.sp
     ),
     bodyLarge = TextStyle(
         fontFamily = RubikFontFamily,
@@ -55,13 +55,13 @@ internal val Typography = Typography(
         fontFamily = RubikFontFamily,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp
-    ),
+    )
 )
 
 @Immutable
 data class ExtendedTypography(
     val chipIndex: TextStyle,
-    val listItem: TextStyle,
+    val listItem: TextStyle
 )
 
 val LocalExtendedTypography = staticCompositionLocalOf {

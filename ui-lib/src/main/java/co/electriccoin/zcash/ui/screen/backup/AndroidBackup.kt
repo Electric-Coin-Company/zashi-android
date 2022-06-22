@@ -36,7 +36,8 @@ internal fun WrapBackup(
     val backupViewModel by activity.viewModels<BackupViewModel>()
 
     WrapBackup(
-        persistableWallet, backupViewModel.backupState,
+        persistableWallet,
+        backupViewModel.backupState,
         onCopyToClipboard = { copyToClipboard(activity.applicationContext, persistableWallet) },
         onBackupComplete = onBackupComplete
     )

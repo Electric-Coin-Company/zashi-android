@@ -1,3 +1,5 @@
+@file:Suppress("ktlint:filename")
+
 package cash.z.ecc.sdk
 
 import cash.z.ecc.android.sdk.Synchronizer

@@ -1,6 +1,6 @@
-@file:Suppress("TooManyFunctions", "PackageNaming")
+@file:Suppress("TooManyFunctions")
 
-package co.electriccoin.zcash.ui.screen.wallet_address.view
+package co.electriccoin.zcash.ui.screen.address.view
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border

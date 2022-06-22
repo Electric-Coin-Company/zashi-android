@@ -63,7 +63,7 @@ fun PreviewRequest() {
 fun Request(
     myAddress: WalletAddress.Unified,
     goBack: () -> Unit,
-    onCreateAndSend: (ZecRequest) -> Unit,
+    onCreateAndSend: (ZecRequest) -> Unit
 ) {
     Scaffold(topBar = {
         RequestTopAppBar(onBack = goBack)
