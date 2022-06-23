@@ -1,5 +1,6 @@
 package cash.z.ecc.sdk.model
 
+import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.sdk.fixture.Zip321UriBuildFixture
 import cash.z.ecc.sdk.fixture.Zip321UriParseFixture
 

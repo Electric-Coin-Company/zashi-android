@@ -30,6 +30,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.sdk.ext.ui.ZecSendExt
 import cash.z.ecc.sdk.ext.ui.ZecStringExt
 import cash.z.ecc.sdk.ext.ui.model.MonetarySeparators
@@ -37,7 +38,6 @@ import cash.z.ecc.sdk.ext.ui.model.ZecString
 import cash.z.ecc.sdk.ext.ui.model.toZecString
 import cash.z.ecc.sdk.fixture.ZatoshiFixture
 import cash.z.ecc.sdk.model.Memo
-import cash.z.ecc.sdk.model.Zatoshi
 import cash.z.ecc.sdk.model.ZecSend
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
