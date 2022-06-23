@@ -1,25 +1,14 @@
-package cash.z.ecc.sdk.model
+package cash.z.ecc.sdk.ext
 
 import cash.z.ecc.android.sdk.ext.convertZatoshiToZec
 import cash.z.ecc.android.sdk.ext.convertZecToUsd
 import cash.z.ecc.android.sdk.ext.toUsdString
+import cash.z.ecc.android.sdk.model.Zatoshi
 import java.math.BigDecimal
-
-/**
- *
- */
-@JvmInline
-value class Zatoshi(val value: Long) {
-    init {
-        require(value >= 0)
-    }
-
-    companion object
-}
 
 // TODO [#578] https://github.com/zcash/zcash-android-wallet-sdk/issues/578
 @Suppress("MagicNumber")
-fun Zatoshi.toUsdString() = value
-    .convertZatoshiToZec()
+fun Zatoshi.toUsdString() =
+    this.convertZatoshiToZec()
     .convertZecToUsd(BigDecimal(100))
     .toUsdString()

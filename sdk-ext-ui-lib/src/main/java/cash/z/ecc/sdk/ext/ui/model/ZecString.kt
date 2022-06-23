@@ -1,11 +1,10 @@
 package cash.z.ecc.sdk.ext.ui.model
 
 import android.content.Context
-import cash.z.ecc.android.sdk.ext.Conversions
 import cash.z.ecc.android.sdk.ext.convertZatoshiToZecString
 import cash.z.ecc.android.sdk.ext.convertZecToZatoshi
+import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.sdk.ext.ui.ZecStringExt
-import cash.z.ecc.sdk.model.Zatoshi
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.text.DecimalFormat
@@ -56,7 +55,7 @@ private const val DECIMALS = 8
 
 // TODO [#412]: https://github.com/zcash/zcash-android-wallet-sdk/issues/412
 // The SDK needs to fix the API for currency conversion
-fun Zatoshi.toZecString() = value.convertZatoshiToZecString(DECIMALS, DECIMALS)
+fun Zatoshi.toZecString() = convertZatoshiToZecString(DECIMALS, DECIMALS)
 
 /*
  * ZEC is our own currency, so there's not going to be an existing localization that matches it perfectly.
@@ -99,11 +98,10 @@ fun Zatoshi.Companion.fromZecString(
         null
     }
 
-    // TODO [472]: https://github.com/zcash/zcash-android-wallet-sdk/issues/472
-    // temporary workaround to prevent SDK to returns us negative result
-    if (bigDecimal?.times(Conversions.ONE_ZEC_IN_ZATOSHI)?.compareTo(BigDecimal(Long.MAX_VALUE)) ?: 0 > 0) {
-        return null
+    @Suppress("SwallowedException")
+    return try {
+        bigDecimal.convertZecToZatoshi()
+    } catch (e: IllegalArgumentException) {
+        null
     }
-
-    return Zatoshi(bigDecimal.convertZecToZatoshi())
 }

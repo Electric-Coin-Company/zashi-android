@@ -1,11 +1,11 @@
 package cash.z.ecc.sdk.ext.ui
 
 import android.content.Context
+import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.sdk.ext.ui.model.MonetarySeparators
 import cash.z.ecc.sdk.ext.ui.model.fromZecString
 import cash.z.ecc.sdk.model.Memo
 import cash.z.ecc.sdk.model.WalletAddress
-import cash.z.ecc.sdk.model.Zatoshi
 import cash.z.ecc.sdk.model.ZecSend
 import kotlinx.coroutines.runBlocking
 

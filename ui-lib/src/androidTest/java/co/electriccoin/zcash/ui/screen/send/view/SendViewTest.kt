@@ -10,13 +10,13 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import androidx.test.filters.MediumTest
+import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.sdk.ext.ui.model.MonetarySeparators
 import cash.z.ecc.sdk.fixture.MemoFixture
 import cash.z.ecc.sdk.fixture.WalletAddressFixture
 import cash.z.ecc.sdk.fixture.ZatoshiFixture
 import cash.z.ecc.sdk.fixture.ZecRequestFixture
 import cash.z.ecc.sdk.model.Memo
-import cash.z.ecc.sdk.model.Zatoshi
 import cash.z.ecc.sdk.model.ZecSend
 import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.R

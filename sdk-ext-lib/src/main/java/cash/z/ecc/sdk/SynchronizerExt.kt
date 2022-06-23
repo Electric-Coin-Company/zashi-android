@@ -7,7 +7,7 @@ import cash.z.ecc.sdk.model.ZecSend
 
 fun Synchronizer.send(spendingKey: String, send: ZecSend) = sendToAddress(
     spendingKey,
-    send.amount.value,
+    send.amount,
     send.destination.address,
     send.memo.value
 )

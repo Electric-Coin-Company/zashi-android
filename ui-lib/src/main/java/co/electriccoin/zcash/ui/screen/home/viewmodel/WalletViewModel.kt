@@ -11,6 +11,7 @@ import cash.z.ecc.android.sdk.db.entity.PendingTransaction
 import cash.z.ecc.android.sdk.db.entity.Transaction
 import cash.z.ecc.android.sdk.db.entity.isMined
 import cash.z.ecc.android.sdk.db.entity.isSubmitSuccess
+import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.tool.DerivationTool
 import cash.z.ecc.android.sdk.type.WalletBalance
 import cash.z.ecc.sdk.model.PersistableWallet
@@ -256,13 +257,17 @@ private fun Synchronizer.toWalletSnapshot() =
             .count {
                 it.isSubmitSuccess() && !it.isMined()
             }
+        val orchardBalance = flows[2] as WalletBalance?
+        val saplingBalance = flows[3] as WalletBalance?
+        val transparentBalance = flows[4] as WalletBalance?
+
         WalletSnapshot(
-            status = flows[0] as Synchronizer.Status,
-            processorInfo = flows[1] as CompactBlockProcessor.ProcessorInfo,
-            orchardBalance = flows[2] as WalletBalance,
-            saplingBalance = flows[3] as WalletBalance,
-            transparentBalance = flows[4] as WalletBalance,
-            pendingCount = pendingCount
+            flows[0] as Synchronizer.Status,
+            flows[1] as CompactBlockProcessor.ProcessorInfo,
+            orchardBalance ?: WalletBalance(Zatoshi(0), Zatoshi(0)),
+            saplingBalance ?: WalletBalance(Zatoshi(0), Zatoshi(0)),
+            transparentBalance ?: WalletBalance(Zatoshi(0), Zatoshi(0)),
+            pendingCount
         )
     }
 

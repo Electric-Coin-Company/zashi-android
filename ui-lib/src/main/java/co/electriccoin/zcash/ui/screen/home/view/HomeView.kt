@@ -44,7 +44,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cash.z.ecc.android.sdk.db.entity.Transaction
 import cash.z.ecc.sdk.ext.ui.model.toZecString
-import cash.z.ecc.sdk.model.toUsdString
+import cash.z.ecc.sdk.ext.toUsdString
 import co.electriccoin.zcash.crash.android.CrashReporter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
