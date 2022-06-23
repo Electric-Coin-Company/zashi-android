@@ -16,6 +16,15 @@ object WalletSnapshotFixture {
         orchardBalance: WalletBalance = WalletBalance(Zatoshi(5), Zatoshi(2)),
         saplingBalance: WalletBalance = WalletBalance(Zatoshi(4), Zatoshi(4)),
         transparentBalance: WalletBalance = WalletBalance(Zatoshi(8), Zatoshi(1)),
-        pendingCount: Int = 0
-    ) = WalletSnapshot(status, processorInfo, orchardBalance, saplingBalance, transparentBalance, pendingCount)
+        pendingCount: Int = 0,
+        progress: Int = 0
+    ) = WalletSnapshot(
+        status,
+        processorInfo,
+        orchardBalance,
+        saplingBalance,
+        transparentBalance,
+        pendingCount,
+        progress
+    )
 }

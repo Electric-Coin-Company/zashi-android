@@ -106,7 +106,7 @@ fun HeaderWithZecIcon(
     modifier: Modifier = Modifier
 ) {
     // needs to be done differently - to have the icon aligned exact top of the text
-    Row (modifier = modifier) {
+    Row(modifier = modifier) {
         Icon(
             painter = painterResource(R.drawable.ic_zcash_currency_symbol),
             contentDescription = null,

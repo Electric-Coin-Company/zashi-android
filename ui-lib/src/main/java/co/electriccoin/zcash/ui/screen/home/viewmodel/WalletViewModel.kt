@@ -250,7 +250,8 @@ private fun Synchronizer.toWalletSnapshot() =
         orchardBalances, // 2
         saplingBalances, // 3
         transparentBalances, // 4
-        pendingTransactions.distinctUntilChanged() // 5
+        pendingTransactions.distinctUntilChanged(), // 5
+        progress // 6
     ) { flows ->
         val pendingCount = (flows[5] as List<*>)
             .filterIsInstance(PendingTransaction::class.java)
@@ -267,7 +268,8 @@ private fun Synchronizer.toWalletSnapshot() =
             orchardBalance ?: WalletBalance(Zatoshi(0), Zatoshi(0)),
             saplingBalance ?: WalletBalance(Zatoshi(0), Zatoshi(0)),
             transparentBalance ?: WalletBalance(Zatoshi(0), Zatoshi(0)),
-            pendingCount
+            pendingCount,
+            flows[6] as Int
         )
     }
 

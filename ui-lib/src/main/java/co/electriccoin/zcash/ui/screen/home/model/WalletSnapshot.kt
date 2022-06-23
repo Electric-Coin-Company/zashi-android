@@ -13,7 +13,8 @@ data class WalletSnapshot(
     val orchardBalance: WalletBalance,
     val saplingBalance: WalletBalance,
     val transparentBalance: WalletBalance,
-    val pendingCount: Int
+    val pendingCount: Int,
+    val progress: Int
 ) {
     // Note: the wallet is effectively empty if it cannot cover the miner's fee
     val hasFunds = saplingBalance.available.value >
@@ -21,6 +22,20 @@ data class WalletSnapshot(
     val hasSaplingBalance = saplingBalance.total.value > 0
 
     val isSendEnabled: Boolean get() = status == Synchronizer.Status.SYNCED && hasFunds
+
+    // TODO will go away
+    override fun toString(): String {
+        return "WalletSnapshot(" +
+            "status=$status," +
+            " processorInfo=$processorInfo," +
+            " orchardBalance=$orchardBalance," +
+            " saplingBalance=$saplingBalance," +
+            " transparentBalance=$transparentBalance," +
+            " pendingCount=$pendingCount," +
+            " hasFunds=$hasFunds," +
+            " hasSaplingBalance=$hasSaplingBalance," +
+            " isSendEnabled=$isSendEnabled)"
+    }
 }
 
 fun WalletSnapshot.totalBalance() = orchardBalance.total + saplingBalance.total + transparentBalance.total

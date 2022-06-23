@@ -37,15 +37,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.db.entity.Transaction
-import cash.z.ecc.sdk.ext.ui.model.toZecString
 import cash.z.ecc.sdk.ext.toUsdString
+import cash.z.ecc.sdk.ext.ui.model.toZecString
 import co.electriccoin.zcash.crash.android.CrashReporter
+import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.Body
@@ -73,9 +74,10 @@ fun ComposablePreview() {
                 goProfile = {},
                 goSend = {},
                 goRequest = {},
-                isDebugMenuEnabled = false,
                 resetSdk = {},
-                wipeEntireWallet = {}
+                wipeEntireWallet = {},
+                isDebugMenuEnabled = false,
+                updateAvailable = false
             )
         }
     }
@@ -93,7 +95,8 @@ fun Home(
     goRequest: () -> Unit,
     resetSdk: () -> Unit,
     wipeEntireWallet: () -> Unit,
-    isDebugMenuEnabled: Boolean
+    isDebugMenuEnabled: Boolean,
+    updateAvailable: Boolean
 ) {
     Scaffold(topBar = {
         HomeTopAppBar(isDebugMenuEnabled, resetSdk, wipeEntireWallet)
@@ -105,7 +108,8 @@ fun Home(
             goScan = goScan,
             goProfile = goProfile,
             goSend = goSend,
-            goRequest = goRequest
+            goRequest = goRequest,
+            updateAvailable = updateAvailable
         )
     }
 }
@@ -180,7 +184,8 @@ private fun HomeMainContent(
     goScan: () -> Unit,
     goProfile: () -> Unit,
     goSend: () -> Unit,
-    goRequest: () -> Unit
+    goRequest: () -> Unit,
+    updateAvailable: Boolean
 ) {
     Column(Modifier.verticalScroll(rememberScrollState())) {
         Row(
@@ -207,7 +212,7 @@ private fun HomeMainContent(
             }
         }
 
-        Status(walletSnapshot)
+        Status(walletSnapshot, updateAvailable)
 
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -221,7 +226,10 @@ private fun HomeMainContent(
 
 @Composable
 @Suppress("LongParameterList")
-private fun Status(walletSnapshot: WalletSnapshot) {
+private fun Status(walletSnapshot: WalletSnapshot, updateAvailable: Boolean) {
+    // TODO will go away
+    Twig.info { "WALLET SNAPSHOT: $walletSnapshot" }
+
     val configuration = LocalConfiguration.current
     val contentSizeRatioRatio = if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
         0.45f
@@ -235,36 +243,76 @@ private fun Status(walletSnapshot: WalletSnapshot) {
     val innerCirclePadding = outerCircleStroke + 6.dp
     val contentPadding = outerCircleStroke + innerCircleStroke + innerCirclePadding + 10.dp
 
+    // parts values
+    var outerCirclePercentage = 0
+    var innerCirclePercentage = 0
+    var zecAmountText = ""
+    var usdAmountText = ""
+    var statusText = ""
+    var additionalText = ""
+
+    // Note: these reactions on the STATUS need to be enhanced, we provide just an elementary reactions for now.
+    when (walletSnapshot.status) {
+        Synchronizer.Status.PREPARING,
+        Synchronizer.Status.DOWNLOADING,
+        Synchronizer.Status.SCANNING,
+        Synchronizer.Status.VALIDATING -> {
+            innerCirclePercentage = walletSnapshot.progress
+            zecAmountText = walletSnapshot.totalBalance().toZecString()
+            usdAmountText = stringResource(R.string.home_status_syncing_amount_suffix, walletSnapshot.spendableBalance().toUsdString())
+            statusText = stringResource(R.string.home_status_syncing_format, walletSnapshot.progress)
+        }
+        Synchronizer.Status.SYNCED -> {
+            zecAmountText = walletSnapshot.totalBalance().toZecString()
+            usdAmountText = walletSnapshot.spendableBalance().toUsdString()
+            statusText = if (updateAvailable) {
+                stringResource(R.string.home_status_update)
+            } else {
+                stringResource(R.string.home_status_up_to_date)
+            }
+        }
+        Synchronizer.Status.DISCONNECTED -> {
+            statusText = "ERROR"
+        }
+        else -> {
+            // keep default values
+        }
+    }
+
     // wrapper box
-    Box(Modifier
-        .fillMaxWidth(),
+    Box(
+        Modifier
+            .fillMaxWidth(),
         contentAlignment = Alignment.Center
     ) {
-
         // relatively sized box
-        Box(modifier = Modifier
-            .fillMaxWidth(contentSizeRatioRatio)
-            .aspectRatio(1f),
-            contentAlignment = Alignment.Center,
+        Box(
+            modifier = Modifier
+                .fillMaxWidth(contentSizeRatioRatio)
+                .aspectRatio(1f),
+            contentAlignment = Alignment.Center
         ) {
-
             // outer circle
-            CircularProgressIndicator(
-                progress = 0.95f,
-                color = Color.DarkGray,
-                strokeWidth = outerCircleStroke,
-                modifier = Modifier.matchParentSize()
-            )
+            if (outerCirclePercentage > 0) {
+                CircularProgressIndicator(
+                    progress = 0.95f,
+                    color = Color.DarkGray,
+                    strokeWidth = outerCircleStroke,
+                    modifier = Modifier.matchParentSize()
+                )
+            }
 
             // inner circle
-            CircularProgressIndicator(
-                progress = 0.85f,
-                color = Color.Gray,
-                strokeWidth = innerCircleStroke,
-                modifier = Modifier
-                    .matchParentSize()
-                    .padding(innerCirclePadding)
-            )
+            if (innerCirclePercentage > 0) {
+                CircularProgressIndicator(
+                    progress = innerCirclePercentage / 100f,
+                    color = Color.Gray,
+                    strokeWidth = innerCircleStroke,
+                    modifier = Modifier
+                        .matchParentSize()
+                        .padding(innerCirclePadding)
+                )
+            }
 
             // texts
             Column(
@@ -275,30 +323,31 @@ private fun Status(walletSnapshot: WalletSnapshot) {
             ) {
                 Spacer(modifier = Modifier.height(24.dp))
 
-                HeaderWithZecIcon(text = walletSnapshot.totalBalance().toZecString())
+                if (zecAmountText.isNotEmpty()) {
+                    HeaderWithZecIcon(text = zecAmountText)
+                }
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                BodyWithDollarIcon(text = walletSnapshot.spendableBalance().toUsdString())
+                if (zecAmountText.isNotEmpty()) {
+                    BodyWithDollarIcon(text = usdAmountText)
+                }
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                val resources = LocalContext.current.resources
-                val minutes = resources.getQuantityString(
-                    R.plurals.minutes_format,
-                    2,
-                    2
-                )
-
-                Body(text = stringResource(R.string.home_status_spendable, minutes))
+                if (statusText.isNotEmpty()) {
+                    Body(text = statusText)
+                }
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                Small(
-                    modifier = Modifier.padding(horizontal = 14.dp),
-                    text = stringResource(R.string.home_status_syncing_additional_information),
-                    textAlign = TextAlign.Center
-                )
+                if (additionalText.isNotEmpty()) {
+                    Small(
+                        modifier = Modifier.padding(horizontal = 14.dp),
+                        text = additionalText,
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
         }
     }
@@ -306,16 +355,18 @@ private fun Status(walletSnapshot: WalletSnapshot) {
 
 @Composable
 private fun History(transactionHistory: List<Transaction>) {
-    if (transactionHistory.isEmpty())
+    if (transactionHistory.isEmpty()) {
         return
+    }
 
     // here we need to use a fixed height to avoid nested columns vertical scrolling problem
     // we'll refactor this part to a dedicated bottom sheet later
     val historyPart = LocalConfiguration.current.screenHeightDp / 3
 
-    LazyColumn(Modifier
-        .fillMaxWidth()
-        .height(historyPart.dp)
+    LazyColumn(
+        Modifier
+            .fillMaxWidth()
+            .height(historyPart.dp)
     ) {
         items(transactionHistory) {
             Text(it.toString())

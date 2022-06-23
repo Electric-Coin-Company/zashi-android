@@ -10,5 +10,5 @@ import java.math.BigDecimal
 @Suppress("MagicNumber")
 fun Zatoshi.toUsdString() =
     this.convertZatoshiToZec()
-    .convertZecToUsd(BigDecimal(100))
-    .toUsdString()
+        .convertZecToUsd(BigDecimal(100))
+        .toUsdString()
