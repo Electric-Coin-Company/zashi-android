@@ -38,7 +38,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cash.z.ecc.android.sdk.Synchronizer
@@ -54,7 +53,6 @@ import co.electriccoin.zcash.ui.design.component.BodyWithDollarIcon
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.HeaderWithZecIcon
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
-import co.electriccoin.zcash.ui.design.component.Small
 import co.electriccoin.zcash.ui.design.component.TertiaryButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
@@ -225,10 +223,10 @@ private fun HomeMainContent(
 }
 
 @Composable
-@Suppress("LongParameterList")
+@Suppress("LongMethod", "MagicNumber")
 private fun Status(walletSnapshot: WalletSnapshot, updateAvailable: Boolean) {
-    // TODO will go away
-    Twig.info { "WALLET SNAPSHOT: $walletSnapshot" }
+    // TODO this will go away before PR merged
+    Twig.info { "WALLET: $walletSnapshot" }
 
     val configuration = LocalConfiguration.current
     val contentSizeRatioRatio = if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -238,31 +236,38 @@ private fun Status(walletSnapshot: WalletSnapshot, updateAvailable: Boolean) {
     }
 
     // parts sizes
-    val outerCircleStroke = 10.dp
-    val innerCircleStroke = 22.dp
-    val innerCirclePadding = outerCircleStroke + 6.dp
-    val contentPadding = outerCircleStroke + innerCircleStroke + innerCirclePadding + 10.dp
+    val progressCircleStroke = 12.dp
+    val progressCirclePadding = progressCircleStroke + 6.dp
+    val contentPadding = progressCircleStroke + progressCirclePadding + 10.dp
 
     // parts values
-    var outerCirclePercentage = 0
-    var innerCirclePercentage = 0
+    var progressCirclePercentage = 0
     var zecAmountText = ""
     var usdAmountText = ""
     var statusText = ""
-    var additionalText = ""
 
     // Note: these reactions on the STATUS need to be enhanced, we provide just an elementary reactions for now.
     when (walletSnapshot.status) {
         Synchronizer.Status.PREPARING,
         Synchronizer.Status.DOWNLOADING,
-        Synchronizer.Status.SCANNING,
         Synchronizer.Status.VALIDATING -> {
-            innerCirclePercentage = walletSnapshot.progress
+            progressCirclePercentage = walletSnapshot.progress
             zecAmountText = walletSnapshot.totalBalance().toZecString()
-            usdAmountText = stringResource(R.string.home_status_syncing_amount_suffix, walletSnapshot.spendableBalance().toUsdString())
+            usdAmountText = stringResource(
+                R.string.home_status_syncing_amount_suffix,
+                walletSnapshot.spendableBalance().toUsdString()
+            )
             statusText = stringResource(R.string.home_status_syncing_format, walletSnapshot.progress)
         }
-        Synchronizer.Status.SYNCED -> {
+        Synchronizer.Status.SCANNING -> {
+            // SDK provides us only one progress, which keeps on 100 in the scanning state
+            progressCirclePercentage = 100
+            zecAmountText = walletSnapshot.totalBalance().toZecString()
+            usdAmountText = walletSnapshot.spendableBalance().toUsdString()
+            statusText = stringResource(R.string.home_status_syncing_catchup)
+        }
+        Synchronizer.Status.SYNCED,
+        Synchronizer.Status.ENHANCING -> {
             zecAmountText = walletSnapshot.totalBalance().toZecString()
             usdAmountText = walletSnapshot.spendableBalance().toUsdString()
             statusText = if (updateAvailable) {
@@ -272,11 +277,27 @@ private fun Status(walletSnapshot: WalletSnapshot, updateAvailable: Boolean) {
             }
         }
         Synchronizer.Status.DISCONNECTED -> {
-            statusText = "ERROR"
+            zecAmountText = walletSnapshot.totalBalance().toZecString()
+            usdAmountText = walletSnapshot.spendableBalance().toUsdString()
+            statusText = stringResource(
+                R.string.home_status_error,
+                stringResource(R.string.home_status_error_connection)
+            )
         }
-        else -> {
-            // keep default values
+        Synchronizer.Status.STOPPED -> {
+            zecAmountText = walletSnapshot.totalBalance().toZecString()
+            usdAmountText = walletSnapshot.spendableBalance().toUsdString()
+            statusText = stringResource(R.string.home_status_stopped)
         }
+    }
+
+    // more detailed error message
+    if (walletSnapshot.hasSynchronizerError) {
+        statusText = stringResource(
+            R.string.home_status_error,
+            walletSnapshot.synchronizerError!!.getCauseMessage()
+                ?: stringResource(id = R.string.home_status_error_unknown)
+        )
     }
 
     // wrapper box
@@ -292,25 +313,15 @@ private fun Status(walletSnapshot: WalletSnapshot, updateAvailable: Boolean) {
                 .aspectRatio(1f),
             contentAlignment = Alignment.Center
         ) {
-            // outer circle
-            if (outerCirclePercentage > 0) {
+            // progress circle
+            if (progressCirclePercentage > 0) {
                 CircularProgressIndicator(
-                    progress = 0.95f,
-                    color = Color.DarkGray,
-                    strokeWidth = outerCircleStroke,
-                    modifier = Modifier.matchParentSize()
-                )
-            }
-
-            // inner circle
-            if (innerCirclePercentage > 0) {
-                CircularProgressIndicator(
-                    progress = innerCirclePercentage / 100f,
+                    progress = progressCirclePercentage / 100f,
                     color = Color.Gray,
-                    strokeWidth = innerCircleStroke,
+                    strokeWidth = progressCircleStroke,
                     modifier = Modifier
                         .matchParentSize()
-                        .padding(innerCirclePadding)
+                        .padding(progressCirclePadding)
                 )
             }
 
@@ -338,22 +349,13 @@ private fun Status(walletSnapshot: WalletSnapshot, updateAvailable: Boolean) {
                 if (statusText.isNotEmpty()) {
                     Body(text = statusText)
                 }
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-                if (additionalText.isNotEmpty()) {
-                    Small(
-                        modifier = Modifier.padding(horizontal = 14.dp),
-                        text = additionalText,
-                        textAlign = TextAlign.Center
-                    )
-                }
             }
         }
     }
 }
 
 @Composable
+@Suppress("MagicNumber")
 private fun History(transactionHistory: List<Transaction>) {
     if (transactionHistory.isEmpty()) {
         return

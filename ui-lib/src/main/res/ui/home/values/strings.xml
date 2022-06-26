@@ -5,7 +5,7 @@
     <string name="home_button_request">Request ZEC</string>
 
     <string name="home_status_syncing_format" formatted="true">Syncing - <xliff:g id="synced_percent" example="50">%1$s</xliff:g>%%</string> <!-- double %% for escaping -->
-    <string name="home_status_syncing_catchup">syncing</string>
+    <string name="home_status_syncing_catchup">Syncing</string>
     <string name="home_status_syncing_amount_suffix" formatted="true"><xliff:g id="amount_prefix" example="123$">%1$s</xliff:g> so far</string>
     <string name="home_status_syncing_additional_information">We will show you funds as we discover them.</string>
     <string name="home_status_up_to_date">Up-to-date</string>
@@ -14,7 +14,10 @@
     <string name="home_status_shielding_format" formatted="true">Shielding <xliff:g id="shielding_amount" example=".023">%1$s</xliff:g> ZEC</string>
     <string name="home_status_update">Please Update</string>
     <string name="home_status_error" formatted="true">Error: <xliff:g id="error_type" example="Lost connection">%1$s</xliff:g></string>
-    <string name="home_status_updating_blockheight">updating blockheight</string>
+    <string name="home_status_error_connection">Disconnected</string>
+    <string name="home_status_error_unknown">Unknown cause</string>
+    <string name="home_status_stopped">Synchronizer stopped</string>
+    <string name="home_status_updating_blockheight">Updating blockheight</string>
     <string name="home_status_usd_price_out_of_date">USD price out-of-date</string>
     <string name="home_status_spendable" formatted="true">Fully spendable in <xliff:g id="spendable_time" example="2 minutes">%1$s</xliff:g></string>
 </resources>

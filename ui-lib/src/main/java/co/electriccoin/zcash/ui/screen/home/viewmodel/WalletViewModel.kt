@@ -16,6 +16,7 @@ import cash.z.ecc.android.sdk.tool.DerivationTool
 import cash.z.ecc.android.sdk.type.WalletBalance
 import cash.z.ecc.sdk.model.PersistableWallet
 import cash.z.ecc.sdk.model.WalletAddresses
+import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.preference.EncryptedPreferenceKeys
 import co.electriccoin.zcash.ui.preference.EncryptedPreferenceSingleton
@@ -25,9 +26,12 @@ import co.electriccoin.zcash.ui.screen.home.model.WalletSnapshot
 import co.electriccoin.zcash.work.WorkIds
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emitAll
@@ -241,6 +245,63 @@ sealed class SecretState {
     class Ready(val persistableWallet: PersistableWallet) : SecretState()
 }
 
+/**
+ * Represents all kind of Synchronizer errors
+ */
+sealed class SynchronizerError {
+    abstract fun getCauseMessage(): String?
+
+    class Critical(val error: Throwable?) : SynchronizerError() {
+        override fun getCauseMessage(): String? = error?.localizedMessage
+    }
+    class Processor(val error: Throwable?) : SynchronizerError() {
+        override fun getCauseMessage(): String? = error?.localizedMessage
+    }
+    class Submission(val error: Throwable?) : SynchronizerError() {
+        override fun getCauseMessage(): String? = error?.localizedMessage
+    }
+    class Setup(val error: Throwable?) : SynchronizerError() {
+        override fun getCauseMessage(): String? = error?.localizedMessage
+    }
+    class Chain(val x: Int, val y: Int) : SynchronizerError() {
+        override fun getCauseMessage(): String = "$x, $y"
+    }
+}
+
+private fun Synchronizer.toCommonError(): Flow<SynchronizerError?> = callbackFlow {
+    // just for initial default value emit
+    trySend(null)
+
+    onCriticalErrorHandler = {
+        Twig.error { "WALLET - Error Critical: $it" }
+        trySend(SynchronizerError.Critical(it))
+        false
+    }
+    onProcessorErrorHandler = {
+        Twig.error { "WALLET - Error Processor: $it" }
+        trySend(SynchronizerError.Processor(it))
+        false
+    }
+    onSubmissionErrorHandler = {
+        Twig.error { "WALLET - Error Submission: $it" }
+        trySend(SynchronizerError.Submission(it))
+        false
+    }
+    onSetupErrorHandler = {
+        Twig.error { "WALLET - Error Setup: $it" }
+        trySend(SynchronizerError.Setup(it))
+        false
+    }
+    onChainErrorHandler = { x, y ->
+        Twig.error { "WALLET - Error Chain: $x, $y" }
+        trySend(SynchronizerError.Chain(x, y))
+    }
+
+    awaitClose {
+        // nothing to close here
+    }
+}
+
 // No good way around needing magic numbers for the indices
 @Suppress("MagicNumber")
 private fun Synchronizer.toWalletSnapshot() =
@@ -251,7 +312,8 @@ private fun Synchronizer.toWalletSnapshot() =
         saplingBalances, // 3
         transparentBalances, // 4
         pendingTransactions.distinctUntilChanged(), // 5
-        progress // 6
+        progress, // 6
+        toCommonError() // 7
     ) { flows ->
         val pendingCount = (flows[5] as List<*>)
             .filterIsInstance(PendingTransaction::class.java)
@@ -269,7 +331,8 @@ private fun Synchronizer.toWalletSnapshot() =
             saplingBalance ?: WalletBalance(Zatoshi(0), Zatoshi(0)),
             transparentBalance ?: WalletBalance(Zatoshi(0), Zatoshi(0)),
             pendingCount,
-            flows[6] as Int
+            flows[6] as Int,
+            flows[7] as SynchronizerError?
         )
     }
 
