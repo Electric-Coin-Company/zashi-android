@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Zcash</string>
+    <string name="app_name_dev">Zcash Dev</string>
 </resources>

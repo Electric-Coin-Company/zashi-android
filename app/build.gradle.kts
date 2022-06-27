@@ -97,6 +97,19 @@ android {
                 signingConfig = signingConfigs.getByName("release")
             }
         }
+
+        // This part enables modifying APPLICATION ID SUFFIX, MANIFEST LABEL NAME and VERSION NAME with DEV suffix
+        all { buildType ->
+            buildType.apply {
+                manifestPlaceholders["app_name_path"] = "@string/app_name"
+                if (project.property("ZCASH_IS_DEV_BUILD_ENABLED").toString().toBoolean()) {
+                    manifestPlaceholders["app_name_path"] = "@string/app_name_dev"
+                    versionNameSuffix = "-dev"
+                    applicationIdSuffix = ".dev"
+                }
+            }
+            true
+        }
     }
 
     packagingOptions {
