@@ -8,14 +8,11 @@ plugins {
     id("secant.emulator-wtf-conventions")
 }
 
-val packageName = "co.electriccoin.zcash"
+val packageName = project.property("ZCASH_RELEASE_PACKAGE_NAME").toString()
 
 // Force orchestrator to be used for this module, because we need cleared state to generate screenshots
 val isOrchestratorEnabled = true
 
-// Commonly used application name, which can be overridden in release build via ZCASH_RELEASE_APP_NAME
-// from gradle.properties
-var defaultAppName = "Zcash"
 val debugNameSuffix = "Debug"
 val testnetNetworkName = "Testnet"
 
@@ -107,22 +104,12 @@ android {
             if (isReleaseSigningConfigured) {
                 signingConfig = signingConfigs.getByName("release")
             }
-
-            // Following section enables modifying APPLICATION ID SUFFIX, APP NAME and VERSION NAME
-            val releaseAppName = project.property("ZCASH_RELEASE_APP_NAME").toString()
-            val releasePackageName = project.property("ZCASH_RELEASE_PACKAGE_NAME").toString()
-            if (releaseAppName.isNotEmpty()) {
-                defaultAppName = releaseAppName
-            }
-            if (releasePackageName.isNotEmpty()) {
-                versionNameSuffix = "-$releasePackageName"
-                applicationIdSuffix = ".$releasePackageName"
-            }
         }
     }
 
     // Resolve final app name
     applicationVariants.all {
+        val defaultAppName = project.property("ZCASH_RELEASE_APP_NAME").toString()
         when (this.name) {
             "zcashtestnetDebug" -> {
                 resValue( "string", "app_name", "$defaultAppName ($testnetNetworkName) $debugNameSuffix")
