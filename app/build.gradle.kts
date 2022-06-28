@@ -13,6 +13,12 @@ val packageName = "co.electriccoin.zcash"
 // Force orchestrator to be used for this module, because we need cleared state to generate screenshots
 val isOrchestratorEnabled = true
 
+// Commonly used application name, which can be overridden in release build via ZCASH_RELEASE_APP_NAME
+// from gradle.properties
+var defaultAppName = "Zcash"
+val debugNameSuffix = "Debug"
+val testnetNetworkName = "Testnet"
+
 android {
     defaultConfig {
         applicationId = packageName
@@ -85,6 +91,10 @@ android {
         getByName("debug").apply {
             // Note that the build-conventions defines the res configs
             isPseudoLocalesEnabled = true
+
+            // Suffixing app package name and version to avoid collisions with other installed Zcash apps (e.g. from Google Play)
+            versionNameSuffix = "-debug"
+            applicationIdSuffix = ".debug"
         }
         getByName("release").apply {
             isMinifyEnabled = project.property("IS_MINIFY_ENABLED").toString().toBoolean()
@@ -96,19 +106,35 @@ android {
             if (isReleaseSigningConfigured) {
                 signingConfig = signingConfigs.getByName("release")
             }
-        }
 
-        // This part enables modifying APPLICATION ID SUFFIX, MANIFEST LABEL NAME and VERSION NAME with DEV suffix
-        all { buildType ->
-            buildType.apply {
-                manifestPlaceholders["app_name_path"] = "@string/app_name"
-                if (project.property("ZCASH_IS_DEV_BUILD_ENABLED").toString().toBoolean()) {
-                    manifestPlaceholders["app_name_path"] = "@string/app_name_dev"
-                    versionNameSuffix = "-dev"
-                    applicationIdSuffix = ".dev"
-                }
+            // Following section enables modifying APPLICATION ID SUFFIX, APP NAME and VERSION NAME
+            val releaseAppName = project.property("ZCASH_RELEASE_APP_NAME").toString()
+            val releasePackageName = project.property("ZCASH_RELEASE_PACKAGE_NAME").toString()
+            if (releaseAppName.isNotEmpty()) {
+                defaultAppName = releaseAppName
             }
-            true
+            if (releasePackageName.isNotEmpty()) {
+                versionNameSuffix = "-$releasePackageName"
+                applicationIdSuffix = ".$releasePackageName"
+            }
+        }
+    }
+
+    // Resolve final app name
+    applicationVariants.all {
+        when (this.name) {
+            "zcashtestnetDebug" -> {
+                resValue( "string", "app_name", "$defaultAppName ($testnetNetworkName) $debugNameSuffix")
+            }
+            "zcashmainnetDebug" -> {
+                resValue( "string", "app_name", "$defaultAppName $debugNameSuffix")
+            }
+            "zcashtestnetRelease" -> {
+                resValue( "string", "app_name", "$defaultAppName ($testnetNetworkName)")
+            }
+            "zcashmainnetRelease" -> {
+                resValue( "string", "app_name", defaultAppName)
+            }
         }
     }
 
