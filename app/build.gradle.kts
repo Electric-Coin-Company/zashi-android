@@ -13,7 +13,6 @@ val packageName = project.property("ZCASH_RELEASE_PACKAGE_NAME").toString()
 // Force orchestrator to be used for this module, because we need cleared state to generate screenshots
 val isOrchestratorEnabled = true
 
-val debugNameSuffix = "Debug"
 val testnetNetworkName = "Testnet"
 
 android {
@@ -110,12 +109,13 @@ android {
     // Resolve final app name
     applicationVariants.all {
         val defaultAppName = project.property("ZCASH_RELEASE_APP_NAME").toString()
+        val debugAppNameSuffix = project.property("ZCASH_DEBUG_APP_NAME_SUFFIX").toString()
         when (this.name) {
             "zcashtestnetDebug" -> {
-                resValue( "string", "app_name", "$defaultAppName ($testnetNetworkName) $debugNameSuffix")
+                resValue( "string", "app_name", "$defaultAppName ($testnetNetworkName)$debugAppNameSuffix")
             }
             "zcashmainnetDebug" -> {
-                resValue( "string", "app_name", "$defaultAppName $debugNameSuffix")
+                resValue( "string", "app_name", "$defaultAppName$debugAppNameSuffix")
             }
             "zcashtestnetRelease" -> {
                 resValue( "string", "app_name", "$defaultAppName ($testnetNetworkName)")
