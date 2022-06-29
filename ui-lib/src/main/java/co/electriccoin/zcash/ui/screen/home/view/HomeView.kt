@@ -242,8 +242,8 @@ private fun Status(walletSnapshot: WalletSnapshot, updateAvailable: Boolean) {
 
     // parts values
     var progressCirclePercentage = 0
-    var zecAmountText = ""
-    var usdAmountText = ""
+    val zecAmountText = walletSnapshot.totalBalance().toZecString()
+    var usdAmountText = walletSnapshot.spendableBalance().toUsdString()
     var statusText = ""
 
     // Note: these reactions on the STATUS need to be enhanced, we provide just an elementary reactions for now.
@@ -252,7 +252,6 @@ private fun Status(walletSnapshot: WalletSnapshot, updateAvailable: Boolean) {
         Synchronizer.Status.DOWNLOADING,
         Synchronizer.Status.VALIDATING -> {
             progressCirclePercentage = walletSnapshot.progress
-            zecAmountText = walletSnapshot.totalBalance().toZecString()
             usdAmountText = stringResource(
                 R.string.home_status_syncing_amount_suffix,
                 walletSnapshot.spendableBalance().toUsdString()
@@ -262,14 +261,10 @@ private fun Status(walletSnapshot: WalletSnapshot, updateAvailable: Boolean) {
         Synchronizer.Status.SCANNING -> {
             // SDK provides us only one progress, which keeps on 100 in the scanning state
             progressCirclePercentage = 100
-            zecAmountText = walletSnapshot.totalBalance().toZecString()
-            usdAmountText = walletSnapshot.spendableBalance().toUsdString()
             statusText = stringResource(R.string.home_status_syncing_catchup)
         }
         Synchronizer.Status.SYNCED,
         Synchronizer.Status.ENHANCING -> {
-            zecAmountText = walletSnapshot.totalBalance().toZecString()
-            usdAmountText = walletSnapshot.spendableBalance().toUsdString()
             statusText = if (updateAvailable) {
                 stringResource(R.string.home_status_update)
             } else {
@@ -277,16 +272,12 @@ private fun Status(walletSnapshot: WalletSnapshot, updateAvailable: Boolean) {
             }
         }
         Synchronizer.Status.DISCONNECTED -> {
-            zecAmountText = walletSnapshot.totalBalance().toZecString()
-            usdAmountText = walletSnapshot.spendableBalance().toUsdString()
             statusText = stringResource(
                 R.string.home_status_error,
                 stringResource(R.string.home_status_error_connection)
             )
         }
         Synchronizer.Status.STOPPED -> {
-            zecAmountText = walletSnapshot.totalBalance().toZecString()
-            usdAmountText = walletSnapshot.spendableBalance().toUsdString()
             statusText = stringResource(R.string.home_status_stopped)
         }
     }
