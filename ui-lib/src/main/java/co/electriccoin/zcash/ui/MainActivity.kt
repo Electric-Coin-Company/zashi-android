@@ -24,6 +24,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import cash.z.ecc.sdk.model.ZecRequest
 import cash.z.ecc.sdk.send
+import co.electriccoin.zcash.ui.design.compat.FontCompat
 import co.electriccoin.zcash.ui.design.component.ConfigurationOverride
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.Override
@@ -82,7 +83,14 @@ class MainActivity : ComponentActivity() {
 
         setupSplashScreen()
 
-        setupUiContent()
+        if (FontCompat.isFontPrefetchNeeded()) {
+            lifecycleScope.launch {
+                FontCompat.prefetchFontsLegacy(applicationContext)
+                setupUiContent()
+            }
+        } else {
+            setupUiContent()
+        }
     }
 
     private fun setupSplashScreen() {
