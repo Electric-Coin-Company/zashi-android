@@ -1,19 +1,13 @@
 package co.electriccoin.zcash.ui.design.component
 
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.ClickableText
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 
 @Composable
@@ -105,20 +99,12 @@ fun HeaderWithZecIcon(
     text: String,
     modifier: Modifier = Modifier
 ) {
-    // needs to be done differently - to have the icon aligned exact top of the text
-    Row(modifier = modifier) {
-        Icon(
-            painter = painterResource(R.drawable.ic_zcash_currency_symbol),
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onBackground,
-            modifier = Modifier.size(14.dp)
-        )
-        Text(
-            text = text,
-            style = MaterialTheme.typography.headlineLarge,
-            color = MaterialTheme.colorScheme.onBackground
-        )
-    }
+    Text(
+        text = "$$text",
+        style = ZcashTheme.typography.zecBalance,
+        color = MaterialTheme.colorScheme.onBackground,
+        modifier = modifier
+    )
 }
 
 @Composable
@@ -126,19 +112,10 @@ fun BodyWithDollarIcon(
     text: String,
     modifier: Modifier = Modifier
 ) {
-    Row {
-        // needs a new dollar icon
-        Icon(
-            painter = painterResource(R.drawable.ic_dollar_currency_symbol),
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onBackground,
-            modifier = Modifier.size(18.dp)
-        )
-        Text(
-            text = text,
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onBackground,
-            modifier = modifier
-        )
-    }
+    Text(
+        text = "$$text",
+        style = MaterialTheme.typography.bodyLarge,
+        color = MaterialTheme.colorScheme.onBackground,
+        modifier = modifier
+    )
 }

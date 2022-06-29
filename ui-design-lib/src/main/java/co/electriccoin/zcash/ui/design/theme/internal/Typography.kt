@@ -83,7 +83,7 @@ val LocalExtendedTypography = staticCompositionLocalOf {
         zecBalance = TextStyle(
             fontFamily = Zboto,
             fontWeight = FontWeight.Normal,
-            fontSize = 16.sp
+            fontSize = 30.sp
         )
     )
 }
