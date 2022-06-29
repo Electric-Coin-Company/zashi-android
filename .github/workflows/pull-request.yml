@@ -246,7 +246,9 @@ jobs:
       - name: Test
         timeout-minutes: 30
         env:
-          # This first environment variable is used by Flank, since the temporary token is missing the project name
+          # Force blank suffix for screenshot tests
+          ORG_GRADLE_PROJECT_ZCASH_DEBUG_APP_NAME_SUFFIX: ""
+          # Used by Flank, since the temporary token is missing the project name
           GOOGLE_CLOUD_PROJECT: ${{ secrets.FIREBASE_TEST_LAB_PROJECT }}
           ORG_GRADLE_PROJECT_ZCASH_FIREBASE_TEST_LAB_API_KEY_PATH: ${{ steps.auth_test_lab.outputs.credentials_file_path }}
           # Because Fulladle doesn't allow Test Orchestrator to be enabled/disabled for a specific submodule, it must be enabled for all modules
@@ -288,6 +290,8 @@ jobs:
       - name: Build and test
         timeout-minutes: 25
         env:
+          # Force blank suffix for screenshot tests
+          ORG_GRADLE_PROJECT_ZCASH_DEBUG_APP_NAME_SUFFIX: ""
           ORG_GRADLE_PROJECT_ZCASH_EMULATOR_WTF_API_KEY: ${{ secrets.EMULATOR_WTF_API_KEY }}
         run: |
           ./gradlew testDebugWithEmulatorWtf :app:testZcashmainnetDebugWithEmulatorWtf
