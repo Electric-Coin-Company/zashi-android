@@ -37,9 +37,11 @@ dependencies {
     androidTestImplementation(projects.uiLib)
     androidTestImplementation(projects.uiDesignLib)
     androidTestImplementation(projects.testLib)
+    androidTestImplementation(projects.spackleAndroidLib)
 
     androidTestImplementation(libs.bundles.androidx.test)
     androidTestImplementation(libs.bundles.androidx.compose.core)
+    androidTestImplementation(libs.bundles.play.core)
 
     androidTestImplementation(libs.androidx.compose.test.junit)
     androidTestImplementation(libs.androidx.navigation.compose)
