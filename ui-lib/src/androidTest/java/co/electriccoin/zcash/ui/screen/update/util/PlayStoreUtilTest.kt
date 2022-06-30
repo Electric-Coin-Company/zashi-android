@@ -4,10 +4,10 @@ import android.content.Context
 import android.content.Intent
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.filters.SmallTest
-import kotlin.test.Test
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
+import org.junit.Test
 import kotlin.test.assertContains
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 
 class PlayStoreUtilTest {
 

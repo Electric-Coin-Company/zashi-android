@@ -1,14 +1,14 @@
-package co.electriccoin.zcash.ui.screen.update.integration
+package co.electriccoin.zcash.ui.integration.test.screen.update.viewmodel
 
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.lifecycle.viewModelScope
 import androidx.test.filters.MediumTest
-import co.electriccoin.zcash.ui.common.UiTestingActivity
+import co.electriccoin.zcash.test.UiTestPrerequisites
+import co.electriccoin.zcash.ui.integration.test.common.IntegrationTestingActivity
 import co.electriccoin.zcash.ui.screen.update.AppUpdateChecker
 import co.electriccoin.zcash.ui.screen.update.fixture.UpdateInfoFixture
 import co.electriccoin.zcash.ui.screen.update.model.UpdateInfo
 import co.electriccoin.zcash.ui.screen.update.model.UpdateState
-import co.electriccoin.zcash.ui.screen.update.view.AppUpdateCheckerMock
 import co.electriccoin.zcash.ui.screen.update.viewmodel.UpdateViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
@@ -16,17 +16,17 @@ import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.test.runTest
 import org.junit.After
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
-import kotlin.test.assertNull
 
 @ExperimentalCoroutinesApi
-class UpdateViewModelTest {
+class UpdateViewModelTest : UiTestPrerequisites() {
     @get:Rule
-    val composeTestRule = createAndroidComposeRule<UiTestingActivity>()
+    val composeTestRule = createAndroidComposeRule<IntegrationTestingActivity>()
 
     private lateinit var viewModel: UpdateViewModel
     private lateinit var checker: AppUpdateCheckerMock
