@@ -245,7 +245,7 @@ private fun Status(walletSnapshot: WalletSnapshot, updateAvailable: Boolean) {
     // parts values
     var progress = PercentDecimal.ZERO_PERCENT
     val zecAmountText = walletSnapshot.totalBalance().toZecString()
-    var usdAmountText = walletSnapshot.spendableBalance().toUsdString()
+    var fiatCurrencyAmountText = walletSnapshot.spendableBalance().toUsdString()
     var statusText = ""
 
     // Note: these reactions on the STATUS need to be enhanced, we provide just an elementary reactions for now.
@@ -255,7 +255,7 @@ private fun Status(walletSnapshot: WalletSnapshot, updateAvailable: Boolean) {
         Synchronizer.Status.VALIDATING -> {
             progress = walletSnapshot.progress
             val progressPercent = (progress.decimal * 100).roundToInt()
-            usdAmountText = stringResource(
+            fiatCurrencyAmountText = stringResource(
                 R.string.home_status_syncing_amount_suffix,
                 walletSnapshot.spendableBalance().toUsdString()
             )
@@ -334,9 +334,9 @@ private fun Status(walletSnapshot: WalletSnapshot, updateAvailable: Boolean) {
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                if (zecAmountText.isNotEmpty()) {
+                if (fiatCurrencyAmountText.isNotEmpty()) {
                     BodyWithFiatCurrencySymbol(
-                        amount = usdAmountText,
+                        amount = fiatCurrencyAmountText,
                         fiatCurrencySymbol = stringResource(id = R.string.fiat_currency_symbol)
                     )
                 }
