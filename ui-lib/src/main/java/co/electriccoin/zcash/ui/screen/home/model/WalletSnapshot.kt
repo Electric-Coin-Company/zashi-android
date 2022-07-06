@@ -5,6 +5,7 @@ import cash.z.ecc.android.sdk.block.CompactBlockProcessor
 import cash.z.ecc.android.sdk.ext.ZcashSdk
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.type.WalletBalance
+import cash.z.ecc.sdk.model.PercentDecimal
 import co.electriccoin.zcash.ui.screen.home.viewmodel.SynchronizerError
 
 // TODO [#292]: Should be moved to SDK-EXT-UI module.
@@ -15,7 +16,7 @@ data class WalletSnapshot(
     val saplingBalance: WalletBalance,
     val transparentBalance: WalletBalance,
     val pendingCount: Int,
-    val progress: Int,
+    val progress: PercentDecimal,
     val synchronizerError: SynchronizerError?
 ) {
     // Note: the wallet is effectively empty if it cannot cover the miner's fee
@@ -39,7 +40,8 @@ data class WalletSnapshot(
             " hasFunds=$hasFunds," +
             " hasSaplingBalance=$hasSaplingBalance," +
             " isSendEnabled=$isSendEnabled," +
-            " synchronizerError=$synchronizerError)"
+            " synchronizerError=$synchronizerError," +
+            " progress=${progress.decimal})"
     }
 }
 

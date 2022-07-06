@@ -4,6 +4,7 @@ import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.block.CompactBlockProcessor
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.type.WalletBalance
+import cash.z.ecc.sdk.model.PercentDecimal
 import co.electriccoin.zcash.ui.screen.home.model.WalletSnapshot
 import co.electriccoin.zcash.ui.screen.home.viewmodel.SynchronizerError
 
@@ -18,7 +19,7 @@ object WalletSnapshotFixture {
         saplingBalance: WalletBalance = WalletBalance(Zatoshi(4), Zatoshi(4)),
         transparentBalance: WalletBalance = WalletBalance(Zatoshi(8), Zatoshi(1)),
         pendingCount: Int = 0,
-        progress: Int = 0,
+        progress: PercentDecimal = PercentDecimal.ZERO_PERCENT,
         synchronizerError: SynchronizerError? = null
     ) = WalletSnapshot(
         status,

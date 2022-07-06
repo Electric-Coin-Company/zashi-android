@@ -44,6 +44,7 @@ import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.db.entity.Transaction
 import cash.z.ecc.sdk.ext.toUsdString
 import cash.z.ecc.sdk.ext.ui.model.toZecString
+import cash.z.ecc.sdk.model.PercentDecimal
 import co.electriccoin.zcash.crash.android.CrashReporter
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.R
@@ -59,6 +60,7 @@ import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 import co.electriccoin.zcash.ui.screen.home.model.WalletSnapshot
 import co.electriccoin.zcash.ui.screen.home.model.spendableBalance
 import co.electriccoin.zcash.ui.screen.home.model.totalBalance
+import kotlin.math.roundToInt
 
 @Preview
 @Composable
@@ -241,7 +243,7 @@ private fun Status(walletSnapshot: WalletSnapshot, updateAvailable: Boolean) {
     val contentPadding = progressCircleStroke + progressCirclePadding + 10.dp
 
     // parts values
-    var progressCirclePercentage = 0
+    var progress = PercentDecimal.ZERO_PERCENT
     val zecAmountText = walletSnapshot.totalBalance().toZecString()
     var usdAmountText = walletSnapshot.spendableBalance().toUsdString()
     var statusText = ""
@@ -251,16 +253,17 @@ private fun Status(walletSnapshot: WalletSnapshot, updateAvailable: Boolean) {
         Synchronizer.Status.PREPARING,
         Synchronizer.Status.DOWNLOADING,
         Synchronizer.Status.VALIDATING -> {
-            progressCirclePercentage = walletSnapshot.progress
+            progress = walletSnapshot.progress
+            val progressPercent = (progress.decimal * 100).roundToInt()
             usdAmountText = stringResource(
                 R.string.home_status_syncing_amount_suffix,
                 walletSnapshot.spendableBalance().toUsdString()
             )
-            statusText = stringResource(R.string.home_status_syncing_format, walletSnapshot.progress)
+            statusText = stringResource(R.string.home_status_syncing_format, progressPercent)
         }
         Synchronizer.Status.SCANNING -> {
             // SDK provides us only one progress, which keeps on 100 in the scanning state
-            progressCirclePercentage = 100
+            progress = PercentDecimal.ONE_HUNDRED_PERCENT
             statusText = stringResource(R.string.home_status_syncing_catchup)
         }
         Synchronizer.Status.SYNCED,
@@ -305,9 +308,9 @@ private fun Status(walletSnapshot: WalletSnapshot, updateAvailable: Boolean) {
             contentAlignment = Alignment.Center
         ) {
             // progress circle
-            if (progressCirclePercentage > 0) {
+            if (progress.decimal > PercentDecimal.ZERO_PERCENT.decimal) {
                 CircularProgressIndicator(
-                    progress = progressCirclePercentage / 100f,
+                    progress = progress.decimal,
                     color = Color.Gray,
                     strokeWidth = progressCircleStroke,
                     modifier = Modifier

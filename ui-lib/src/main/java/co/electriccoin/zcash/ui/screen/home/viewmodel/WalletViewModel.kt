@@ -14,6 +14,7 @@ import cash.z.ecc.android.sdk.db.entity.isSubmitSuccess
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.tool.DerivationTool
 import cash.z.ecc.android.sdk.type.WalletBalance
+import cash.z.ecc.sdk.model.PercentDecimal
 import cash.z.ecc.sdk.model.PersistableWallet
 import cash.z.ecc.sdk.model.WalletAddresses
 import co.electriccoin.zcash.spackle.Twig
@@ -324,6 +325,13 @@ private fun Synchronizer.toWalletSnapshot() =
         val saplingBalance = flows[3] as WalletBalance?
         val transparentBalance = flows[4] as WalletBalance?
 
+        val progressPercentDecimal = (flows[6] as Int).let { value ->
+            if (value > PercentDecimal.MAX || value < PercentDecimal.MIN) {
+                PercentDecimal.ZERO_PERCENT
+            }
+            PercentDecimal((flows[6] as Int) / 100f)
+        }
+
         WalletSnapshot(
             flows[0] as Synchronizer.Status,
             flows[1] as CompactBlockProcessor.ProcessorInfo,
@@ -331,7 +339,7 @@ private fun Synchronizer.toWalletSnapshot() =
             saplingBalance ?: WalletBalance(Zatoshi(0), Zatoshi(0)),
             transparentBalance ?: WalletBalance(Zatoshi(0), Zatoshi(0)),
             pendingCount,
-            flows[6] as Int,
+            progressPercentDecimal,
             flows[7] as SynchronizerError?
         )
     }
