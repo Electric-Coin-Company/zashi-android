@@ -56,7 +56,7 @@ Start by making sure the command line with Gradle works first, because **all the
         1. Note: When first opening the project, Android Studio will warn that Gradle checksums are not fully supported.  Choose the "Use checksum" option.  This is a security feature that we have explicitly enabled.
         1. Shortly after opening the project, Android Studio may prompt about updating the Android Gradle Plugin.  DO NOT DO THIS.  If you do so, the build will fail because the project also has dependency locking enabled as a security feature.  To learn more, see [Build integrity.md](Build%20Integrity.md)
         1. Android Studio may prompt about updating the Kotlin plugin.  Do this.  Our application often uses a newer version of Kotlin than is bundled with Android Studio.
-    1. After Android Studio finishes syncing with Gradle, look for the green "play" run button in the toolbar.  To the left of it, choose the "app" run configuration under the dropdown menu.  Then hit the run button
+    1. After Android Studio finishes syncing with Gradle, select which build variant you'd like your built app to have. From the top menu bar, select Build -> Select Built Variant and then choose from variants of Mainnet or Testnet (for more information see section [Build variants](Setup.md#build-variants) below). After build variant selection, look for the green "play" run button in the toolbar. To the left of it, choose the "app" run configuration under the dropdown menu. Then hit the run button
 
 ## Troubleshooting
 1. Verify that the Git repo has not been modified.  Due to strict dependency locking (for security reasons), the build will fail unless the locks are also updated
@@ -103,6 +103,19 @@ To enable release signing, a release keystore needs to be provided during the bu
 
 On a developer machine, these might be set under the user's global properties (e.g. `~/.gradle/gradle.properties` on macOS and Linux).  On a continuous integration machine, these can also be set using environment variables with the prefix `ORG_GRADLE_PROJECT_` (e.g. `ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEYSTORE_PATH`).  DO NOT set these in the gradle.properties inside the Git repository, as this will leak your keystore password.
 
+### Build variants
+Android apps can have build types (`debug`, `release`), build flavors (`mainnet`, `testnet`), and their combination gives us build variants.  
+
+Debug builds are up to 10x slower due to JIT being disabled by Android's runtime, so they should not be used for benchmarks.  Debug builds also have logging enabled.  By convention, debug builds have a different package name, which means that both a release build from Google Play and a debug build for development can be installed simultaneously.  Another difference is that release builds are processed with R8, which performs "tree shaking" to reduce the size of the final app by stripping unused code and performing code-level optimizations.  This tree shaking process means that release builds have a mapping.txt file that helps reconstruct stacktraces (e.g. crashes).
+
+"mainnet" (main network) and "testnet" (test network) are terms used in the blockchain ecosystem to describe different blockchain networks.  Mainnet is responsible for executing actual transactions within the network and storing them on the blockchain. In contrast, the testnet provides an alternative environment that mimics the mainnet's functionality to allow developers to build and test projects without needing to facilitate live transactions or the use of cryptocurrencies, for example.
+
+Currently, we support 4 build variants for the `app` module: `zcashmainnetDebug`, `zcashtestnetDebug`, `zcashmainnetRelease`, `zcashtestnetRelease`. Library modules like `ui-lib`, `test-lib`, etc. support only `debug` and `release` variants.
+
+- `zcashtestnetDebug` - build variant is built upon testnet network and with debug build type. You usually use this variant for development
+- `zcashmainnetDebug` - same as previous, but is built upon mainnet network
+- `zcashmainnetRelease` and `zcashtestnetRelease` - are usually used by our CI jobs to prepare binaries for testing and releasing to the Google Play store
+
 ### Included builds
 This section is optional.
 
@@ -147,6 +160,10 @@ For Continuous Integration, see [CI.md](CI.md).  The rest of this section is reg
 1. Set the emulator.wtf API key as a global Gradle property `ZCASH_EMULATOR_WTF_API_KEY` under `~/.gradle/gradle.properties` 
 1. Run the Gradle task `./gradlew testDebugWithEmulatorWtf :app:testZcashmainnetDebugWithEmulatorWtf` (emulator.wtf tasks do build the app, so you don't need to build them beforehand)
 
+## Testnet funds
+
+The Zcash testnet is an alternative blockchain that attempts to mimic the mainnet (main Zcash network) for testing purposes. Testnet coins are distinct from actual ZEC and do not have value. Developers and users can experiment with the testnet without having to use valuable currency. The testnet is also used to test network upgrades and their activation before committing to the upgrade on the main Zcash network. For more information on how to add testnet funds visit [Testnet Guide](https://zcash.readthedocs.io/en/latest/rtd_pages/testnet_guide.html) or go right to the [Testnet Faucet](https://faucet.zecpages.com/).
+
 # Sideloading
 Although the goal of this document is to enable readers to build the app from source, it is also possible to sideload debug builds created by Continuous Integration.
 
@@ -162,7 +179,6 @@ Although the goal of this document is to enable readers to build the app from so
     1. If using a physical device, run the terminal command `adb install -r $PATH_TO_APK`
     
 Notes:
- - Android apps can have build variants (debug, release) and build flavors (mainnet, testnet).  Debug builds are up to 10x slower due to JIT being disabled by Android's runtime, so they should not be used for benchmarks.  Debug builds also have logging enabled.
  - Apps can be distributed in two different formats: Application Package (APK) and Android App Bundle (AAB).  AAB is uploaded to Google Play, and allows the store to deliver device-specific slices (e.g. CPU architecture, screen size, etc) for smaller downloads.  APK is the format for sideloading.  APK files are the original format from Android 1.0, and can be generated directly from a Gradle build.  AAB files are a newer format, and APK files can also be derived from AAB.  A "universal" APK is one that was derived from an AAB without any slicing.  We use "universal" APKs for testing of release builds, as they are processed through bundletool (which has introduced bugs in the past) and therefore somewhat closer to what would be delivered to end user devices.
  - Android apps must be digitally signed.  The signing key is critical to app sandbox security (preventing other apps from reading our app's data).  We have multiple signing configurations:
    - If you build from source, your computer will generate a random debug signing key.  This key will be consistent for multiple builds, allowing you to keep re-deploying changes of the app.  But if you connect your physical Android device to a different computer, the debug key will be different and therefore the app will need to be uninstalled/reinstalled to update it.

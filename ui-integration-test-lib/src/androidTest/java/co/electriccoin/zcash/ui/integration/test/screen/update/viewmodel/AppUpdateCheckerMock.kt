@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.update.view
+package co.electriccoin.zcash.ui.integration.test.screen.update.viewmodel
 
 import android.app.Activity
 import android.content.Context

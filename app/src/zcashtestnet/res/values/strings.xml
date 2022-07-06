@@ -1,6 +1,4 @@
 <resources>
-    <string name="app_name">Zcash (Testnet)</string>
-
     <!-- Important; this is the resource overlay that sets the Zcash network -->
     <string name="network_name">Testnet</string>
 </resources>

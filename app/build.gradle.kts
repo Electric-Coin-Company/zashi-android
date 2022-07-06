@@ -8,10 +8,12 @@ plugins {
     id("secant.emulator-wtf-conventions")
 }
 
-val packageName = "co.electriccoin.zcash"
+val packageName = project.property("ZCASH_RELEASE_PACKAGE_NAME").toString()
 
 // Force orchestrator to be used for this module, because we need cleared state to generate screenshots
 val isOrchestratorEnabled = true
+
+val testnetNetworkName = "Testnet"
 
 android {
     defaultConfig {
@@ -85,6 +87,11 @@ android {
         getByName("debug").apply {
             // Note that the build-conventions defines the res configs
             isPseudoLocalesEnabled = true
+
+            // Suffixing app package name and version to avoid collisions with other installed Zcash
+            // apps (e.g. from Google Play)
+            versionNameSuffix = "-debug"
+            applicationIdSuffix = ".debug"
         }
         getByName("release").apply {
             isMinifyEnabled = project.property("IS_MINIFY_ENABLED").toString().toBoolean()
@@ -95,6 +102,26 @@ android {
             )
             if (isReleaseSigningConfigured) {
                 signingConfig = signingConfigs.getByName("release")
+            }
+        }
+    }
+
+    // Resolve final app name
+    applicationVariants.all {
+        val defaultAppName = project.property("ZCASH_RELEASE_APP_NAME").toString()
+        val debugAppNameSuffix = project.property("ZCASH_DEBUG_APP_NAME_SUFFIX").toString()
+        when (this.name) {
+            "zcashtestnetDebug" -> {
+                resValue( "string", "app_name", "$defaultAppName ($testnetNetworkName)$debugAppNameSuffix")
+            }
+            "zcashmainnetDebug" -> {
+                resValue( "string", "app_name", "$defaultAppName$debugAppNameSuffix")
+            }
+            "zcashtestnetRelease" -> {
+                resValue( "string", "app_name", "$defaultAppName ($testnetNetworkName)")
+            }
+            "zcashmainnetRelease" -> {
+                resValue( "string", "app_name", defaultAppName)
             }
         }
     }
