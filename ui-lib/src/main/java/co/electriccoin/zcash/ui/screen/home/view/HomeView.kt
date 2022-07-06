@@ -50,7 +50,7 @@ import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.Body
-import co.electriccoin.zcash.ui.design.component.BodyWithDollarIcon
+import co.electriccoin.zcash.ui.design.component.BodyWithFiatCurrencySymbol
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.HeaderWithZecIcon
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
@@ -329,13 +329,16 @@ private fun Status(walletSnapshot: WalletSnapshot, updateAvailable: Boolean) {
                 Spacer(modifier = Modifier.height(24.dp))
 
                 if (zecAmountText.isNotEmpty()) {
-                    HeaderWithZecIcon(text = zecAmountText)
+                    HeaderWithZecIcon(amount = zecAmountText)
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))
 
                 if (zecAmountText.isNotEmpty()) {
-                    BodyWithDollarIcon(text = usdAmountText)
+                    BodyWithFiatCurrencySymbol(
+                        amount = usdAmountText,
+                        fiatCurrencySymbol = stringResource(id = R.string.fiat_currency_symbol)
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))

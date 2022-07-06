@@ -5,9 +5,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
+import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 
 @Composable
@@ -94,13 +96,20 @@ fun Reference(
     )
 }
 
+/**
+ * Pass amount of ZECs you want to display and the component appends ZEC symbol to it. We're using
+ * a custom font here, which is Roboto modified to replace the dollar symbol with the ZEC symbol internally.
+ *
+ * @param amount of ZECs to be displayed
+ * @param modifier to modify the Text UI element as needed
+ */
 @Composable
 fun HeaderWithZecIcon(
-    text: String,
+    amount: String,
     modifier: Modifier = Modifier
 ) {
     Text(
-        text = "$$text",
+        text = stringResource(R.string.amount_with_zec_currency_symbol, amount),
         style = ZcashTheme.typography.zecBalance,
         color = MaterialTheme.colorScheme.onBackground,
         modifier = modifier
@@ -108,12 +117,13 @@ fun HeaderWithZecIcon(
 }
 
 @Composable
-fun BodyWithDollarIcon(
-    text: String,
+fun BodyWithFiatCurrencySymbol(
+    amount: String,
+    fiatCurrencySymbol: String,
     modifier: Modifier = Modifier
 ) {
     Text(
-        text = "$$text",
+        text = stringResource(R.string.amount_with_fiat_currency_symbol, fiatCurrencySymbol, amount),
         style = MaterialTheme.typography.bodyLarge,
         color = MaterialTheme.colorScheme.onBackground,
         modifier = modifier
