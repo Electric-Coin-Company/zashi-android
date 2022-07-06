@@ -42,8 +42,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.db.entity.Transaction
-import cash.z.ecc.sdk.ext.toUsdString
+import cash.z.ecc.sdk.ext.toFiatCurrencyState
 import cash.z.ecc.sdk.ext.ui.model.toZecString
+import cash.z.ecc.sdk.model.FiatCurrencyConversionRateState
 import cash.z.ecc.sdk.model.PercentDecimal
 import co.electriccoin.zcash.crash.android.CrashReporter
 import co.electriccoin.zcash.spackle.Twig
@@ -245,8 +246,17 @@ private fun Status(walletSnapshot: WalletSnapshot, updateAvailable: Boolean) {
     // parts values
     var progress = PercentDecimal.ZERO_PERCENT
     val zecAmountText = walletSnapshot.totalBalance().toZecString()
-    var fiatCurrencyAmountText = walletSnapshot.spendableBalance().toUsdString()
     var statusText = ""
+    val fiatCurrencyAmountState = walletSnapshot.spendableBalance().toFiatCurrencyState()
+    var fiatCurrencyAmountText = fiatCurrencyAmountState.let { state ->
+        when (state) {
+            is FiatCurrencyConversionRateState.Current -> state.value
+            is FiatCurrencyConversionRateState.Stale -> state.value
+            is FiatCurrencyConversionRateState.Unavailable -> {
+                stringResource(id = R.string.fiat_currency_conversion_rate_unavailable)
+            }
+        }
+    }
 
     // Note: these reactions on the STATUS need to be enhanced, we provide just an elementary reactions for now.
     when (walletSnapshot.status) {
@@ -255,10 +265,13 @@ private fun Status(walletSnapshot: WalletSnapshot, updateAvailable: Boolean) {
         Synchronizer.Status.VALIDATING -> {
             progress = walletSnapshot.progress
             val progressPercent = (progress.decimal * 100).roundToInt()
-            fiatCurrencyAmountText = stringResource(
-                R.string.home_status_syncing_amount_suffix,
-                walletSnapshot.spendableBalance().toUsdString()
-            )
+            // we add "so far" to the amount
+            if (fiatCurrencyAmountState != FiatCurrencyConversionRateState.Unavailable) {
+                fiatCurrencyAmountText = stringResource(
+                    R.string.home_status_syncing_amount_suffix,
+                    fiatCurrencyAmountText
+                )
+            }
             statusText = stringResource(R.string.home_status_syncing_format, progressPercent)
         }
         Synchronizer.Status.SCANNING -> {
@@ -334,7 +347,9 @@ private fun Status(walletSnapshot: WalletSnapshot, updateAvailable: Boolean) {
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                if (fiatCurrencyAmountText.isNotEmpty()) {
+                if (fiatCurrencyAmountState == FiatCurrencyConversionRateState.Unavailable) {
+                    Body(text = fiatCurrencyAmountText)
+                } else {
                     BodyWithFiatCurrencySymbol(
                         amount = fiatCurrencyAmountText,
                         fiatCurrencySymbol = stringResource(id = R.string.fiat_currency_symbol)
