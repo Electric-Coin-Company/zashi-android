@@ -26,8 +26,6 @@ data class WalletSnapshot(
 
     val isSendEnabled: Boolean get() = status == Synchronizer.Status.SYNCED && hasFunds
 
-    val hasSynchronizerError: Boolean = synchronizerError != null
-
     // TODO this will go away before PR merged
     override fun toString(): String {
         return "WalletSnapshot(" +

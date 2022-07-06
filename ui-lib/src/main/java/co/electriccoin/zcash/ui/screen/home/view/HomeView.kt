@@ -299,10 +299,10 @@ private fun Status(walletSnapshot: WalletSnapshot, updateAvailable: Boolean) {
     }
 
     // more detailed error message
-    if (walletSnapshot.hasSynchronizerError) {
+    walletSnapshot.synchronizerError?.let {
         statusText = stringResource(
             R.string.home_status_error,
-            walletSnapshot.synchronizerError!!.getCauseMessage()
+            walletSnapshot.synchronizerError.getCauseMessage()
                 ?: stringResource(id = R.string.home_status_error_unknown)
         )
     }
