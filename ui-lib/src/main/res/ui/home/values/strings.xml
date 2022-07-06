@@ -18,6 +18,6 @@
     <string name="home_status_error_unknown">Unknown cause</string>
     <string name="home_status_stopped">Synchronizer stopped</string>
     <string name="home_status_updating_blockheight">Updating blockheight</string>
-    <string name="home_status_usd_price_out_of_date">USD price out-of-date</string>
+    <string name="home_status_fiat_currency_price_out_of_date" formatted="true"><xliff:g id="fiat_currency" example="USD">%1$s</xliff:g> price out-of-date</string>
     <string name="home_status_spendable" formatted="true">Fully spendable in <xliff:g id="spendable_time" example="2 minutes">%1$s</xliff:g></string>
 </resources>
