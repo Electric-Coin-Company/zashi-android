@@ -45,7 +45,6 @@ import cash.z.ecc.android.sdk.db.entity.Transaction
 import cash.z.ecc.sdk.model.FiatCurrencyConversionRateState
 import cash.z.ecc.sdk.model.PercentDecimal
 import co.electriccoin.zcash.crash.android.CrashReporter
-import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.Body
@@ -224,9 +223,6 @@ private fun HomeMainContent(
 @Composable
 @Suppress("LongMethod", "MagicNumber")
 private fun Status(walletSnapshot: WalletSnapshot, updateAvailable: Boolean) {
-    // TODO this will go away before PR merged
-    Twig.info { "WALLET: $walletSnapshot" }
-
     val configuration = LocalConfiguration.current
     val contentSizeRatioRatio = if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
         0.45f
@@ -285,13 +281,23 @@ private fun Status(walletSnapshot: WalletSnapshot, updateAvailable: Boolean) {
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                if (walletDisplayValues.fiatCurrencyAmountState == FiatCurrencyConversionRateState.Unavailable) {
-                    Body(text = walletDisplayValues.fiatCurrencyAmountText)
-                } else {
-                    BodyWithFiatCurrencySymbol(
-                        amount = walletDisplayValues.fiatCurrencyAmountText,
-                        fiatCurrencySymbol = stringResource(id = R.string.fiat_currency_symbol)
-                    )
+                when (walletDisplayValues.fiatCurrencyAmountState) {
+                    is FiatCurrencyConversionRateState.Current -> {
+                        BodyWithFiatCurrencySymbol(
+                            amount = walletDisplayValues.fiatCurrencyAmountText,
+                            fiatCurrencySymbol = stringResource(id = R.string.fiat_currency_symbol)
+                        )
+                    }
+                    is FiatCurrencyConversionRateState.Stale -> {
+                        // Note: we should show information about staleness too
+                        BodyWithFiatCurrencySymbol(
+                            amount = walletDisplayValues.fiatCurrencyAmountText,
+                            fiatCurrencySymbol = stringResource(id = R.string.fiat_currency_symbol)
+                        )
+                    }
+                    is FiatCurrencyConversionRateState.Unavailable -> {
+                        Body(text = walletDisplayValues.fiatCurrencyAmountText)
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))

@@ -14,6 +14,7 @@ dependencies {
     implementation(projects.sdkExtLib)
 
     implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.datetime)
 
     androidTestImplementation(libs.bundles.androidx.test)
     androidTestImplementation(libs.kotlin.test)

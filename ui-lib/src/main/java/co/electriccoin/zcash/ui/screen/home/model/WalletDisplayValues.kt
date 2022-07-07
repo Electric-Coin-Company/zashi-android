@@ -2,8 +2,9 @@ package co.electriccoin.zcash.ui.screen.home.model
 
 import android.content.Context
 import cash.z.ecc.android.sdk.Synchronizer
-import cash.z.ecc.sdk.ext.toFiatCurrencyState
+import cash.z.ecc.sdk.ext.ui.model.MonetarySeparators
 import cash.z.ecc.sdk.ext.ui.model.toZecString
+import cash.z.ecc.sdk.ext.ui.toFiatCurrencyState
 import cash.z.ecc.sdk.model.FiatCurrencyConversionRateState
 import cash.z.ecc.sdk.model.PercentDecimal
 import co.electriccoin.zcash.ui.R
@@ -17,7 +18,7 @@ internal class WalletDisplayValues(
     val fiatCurrencyAmountText: String
 ) {
     companion object {
-        @Suppress("MagicNumber")
+        @Suppress("MagicNumber", "LongMethod")
         internal fun getNextValues(
             context: Context,
             walletSnapshot: WalletSnapshot,
@@ -26,7 +27,12 @@ internal class WalletDisplayValues(
             var progress = PercentDecimal.ZERO_PERCENT
             val zecAmountText = walletSnapshot.totalBalance().toZecString()
             var statusText = ""
-            val fiatCurrencyAmountState = walletSnapshot.spendableBalance().toFiatCurrencyState()
+            // TODO [#578] https://github.com/zcash/zcash-android-wallet-sdk/issues/578
+            // We'll ideally provide a "fresh" currencyConversion object here
+            val fiatCurrencyAmountState = walletSnapshot.spendableBalance().toFiatCurrencyState(
+                null,
+                MonetarySeparators.current()
+            )
             var fiatCurrencyAmountText = getFiatCurrencyRateValue(context, fiatCurrencyAmountState)
 
             when (walletSnapshot.status) {

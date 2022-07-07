@@ -25,22 +25,6 @@ data class WalletSnapshot(
     val hasSaplingBalance = saplingBalance.total.value > 0
 
     val isSendEnabled: Boolean get() = status == Synchronizer.Status.SYNCED && hasFunds
-
-    // TODO this will go away before PR merged
-    override fun toString(): String {
-        return "WalletSnapshot(" +
-            "status=$status," +
-            " processorInfo=$processorInfo," +
-            " orchardBalance=$orchardBalance," +
-            " saplingBalance=$saplingBalance," +
-            " transparentBalance=$transparentBalance," +
-            " pendingCount=$pendingCount," +
-            " hasFunds=$hasFunds," +
-            " hasSaplingBalance=$hasSaplingBalance," +
-            " isSendEnabled=$isSendEnabled," +
-            " synchronizerError=$synchronizerError," +
-            " progress=${progress.decimal})"
-    }
 }
 
 fun WalletSnapshot.totalBalance() = orchardBalance.total + saplingBalance.total + transparentBalance.total
