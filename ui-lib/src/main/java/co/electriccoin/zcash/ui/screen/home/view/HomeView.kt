@@ -37,13 +37,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.db.entity.Transaction
-import cash.z.ecc.sdk.ext.toFiatCurrencyState
-import cash.z.ecc.sdk.ext.ui.model.toZecString
 import cash.z.ecc.sdk.model.FiatCurrencyConversionRateState
 import cash.z.ecc.sdk.model.PercentDecimal
 import co.electriccoin.zcash.crash.android.CrashReporter
@@ -58,10 +56,8 @@ import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.TertiaryButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
+import co.electriccoin.zcash.ui.screen.home.model.WalletDisplayValues
 import co.electriccoin.zcash.ui.screen.home.model.WalletSnapshot
-import co.electriccoin.zcash.ui.screen.home.model.spendableBalance
-import co.electriccoin.zcash.ui.screen.home.model.totalBalance
-import kotlin.math.roundToInt
 
 @Preview
 @Composable
@@ -238,74 +234,16 @@ private fun Status(walletSnapshot: WalletSnapshot, updateAvailable: Boolean) {
         0.9f
     }
 
-    // parts sizes
+    // UI parts sizes
     val progressCircleStroke = 12.dp
     val progressCirclePadding = progressCircleStroke + 6.dp
     val contentPadding = progressCircleStroke + progressCirclePadding + 10.dp
 
-    // parts values
-    var progress = PercentDecimal.ZERO_PERCENT
-    val zecAmountText = walletSnapshot.totalBalance().toZecString()
-    var statusText = ""
-    val fiatCurrencyAmountState = walletSnapshot.spendableBalance().toFiatCurrencyState()
-    var fiatCurrencyAmountText = fiatCurrencyAmountState.let { state ->
-        when (state) {
-            is FiatCurrencyConversionRateState.Current -> state.value
-            is FiatCurrencyConversionRateState.Stale -> state.value
-            is FiatCurrencyConversionRateState.Unavailable -> {
-                stringResource(id = R.string.fiat_currency_conversion_rate_unavailable)
-            }
-        }
-    }
-
-    // Note: these reactions on the STATUS need to be enhanced, we provide just an elementary reactions for now.
-    when (walletSnapshot.status) {
-        Synchronizer.Status.PREPARING,
-        Synchronizer.Status.DOWNLOADING,
-        Synchronizer.Status.VALIDATING -> {
-            progress = walletSnapshot.progress
-            val progressPercent = (progress.decimal * 100).roundToInt()
-            // we add "so far" to the amount
-            if (fiatCurrencyAmountState != FiatCurrencyConversionRateState.Unavailable) {
-                fiatCurrencyAmountText = stringResource(
-                    R.string.home_status_syncing_amount_suffix,
-                    fiatCurrencyAmountText
-                )
-            }
-            statusText = stringResource(R.string.home_status_syncing_format, progressPercent)
-        }
-        Synchronizer.Status.SCANNING -> {
-            // SDK provides us only one progress, which keeps on 100 in the scanning state
-            progress = PercentDecimal.ONE_HUNDRED_PERCENT
-            statusText = stringResource(R.string.home_status_syncing_catchup)
-        }
-        Synchronizer.Status.SYNCED,
-        Synchronizer.Status.ENHANCING -> {
-            statusText = if (updateAvailable) {
-                stringResource(R.string.home_status_update)
-            } else {
-                stringResource(R.string.home_status_up_to_date)
-            }
-        }
-        Synchronizer.Status.DISCONNECTED -> {
-            statusText = stringResource(
-                R.string.home_status_error,
-                stringResource(R.string.home_status_error_connection)
-            )
-        }
-        Synchronizer.Status.STOPPED -> {
-            statusText = stringResource(R.string.home_status_stopped)
-        }
-    }
-
-    // more detailed error message
-    walletSnapshot.synchronizerError?.let {
-        statusText = stringResource(
-            R.string.home_status_error,
-            walletSnapshot.synchronizerError.getCauseMessage()
-                ?: stringResource(id = R.string.home_status_error_unknown)
-        )
-    }
+    val walletDisplayValues = WalletDisplayValues.getNextValues(
+        LocalContext.current,
+        walletSnapshot,
+        updateAvailable
+    )
 
     // wrapper box
     Box(
@@ -321,9 +259,9 @@ private fun Status(walletSnapshot: WalletSnapshot, updateAvailable: Boolean) {
             contentAlignment = Alignment.Center
         ) {
             // progress circle
-            if (progress.decimal > PercentDecimal.ZERO_PERCENT.decimal) {
+            if (walletDisplayValues.progress.decimal > PercentDecimal.ZERO_PERCENT.decimal) {
                 CircularProgressIndicator(
-                    progress = progress.decimal,
+                    progress = walletDisplayValues.progress.decimal,
                     color = Color.Gray,
                     strokeWidth = progressCircleStroke,
                     modifier = Modifier
@@ -341,25 +279,25 @@ private fun Status(walletSnapshot: WalletSnapshot, updateAvailable: Boolean) {
             ) {
                 Spacer(modifier = Modifier.height(24.dp))
 
-                if (zecAmountText.isNotEmpty()) {
-                    HeaderWithZecIcon(amount = zecAmountText)
+                if (walletDisplayValues.zecAmountText.isNotEmpty()) {
+                    HeaderWithZecIcon(amount = walletDisplayValues.zecAmountText)
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                if (fiatCurrencyAmountState == FiatCurrencyConversionRateState.Unavailable) {
-                    Body(text = fiatCurrencyAmountText)
+                if (walletDisplayValues.fiatCurrencyAmountState == FiatCurrencyConversionRateState.Unavailable) {
+                    Body(text = walletDisplayValues.fiatCurrencyAmountText)
                 } else {
                     BodyWithFiatCurrencySymbol(
-                        amount = fiatCurrencyAmountText,
+                        amount = walletDisplayValues.fiatCurrencyAmountText,
                         fiatCurrencySymbol = stringResource(id = R.string.fiat_currency_symbol)
                     )
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                if (statusText.isNotEmpty()) {
-                    Body(text = statusText)
+                if (walletDisplayValues.statusText.isNotEmpty()) {
+                    Body(text = walletDisplayValues.statusText)
                 }
             }
         }
