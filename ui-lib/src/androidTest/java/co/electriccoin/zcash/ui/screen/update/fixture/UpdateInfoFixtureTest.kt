@@ -1,7 +1,8 @@
 package co.electriccoin.zcash.ui.screen.update.fixture
 
 import androidx.test.filters.SmallTest
-import kotlin.test.Test
+import co.electriccoin.zcash.ui.fixture.UpdateInfoFixture
+import org.junit.Test
 import kotlin.test.assertEquals
 
 class UpdateInfoFixtureTest {

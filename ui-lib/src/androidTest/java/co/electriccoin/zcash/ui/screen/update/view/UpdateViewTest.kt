@@ -10,9 +10,9 @@ import androidx.test.espresso.Espresso
 import androidx.test.filters.MediumTest
 import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.fixture.UpdateInfoFixture
 import co.electriccoin.zcash.ui.screen.update.AppUpdateChecker
 import co.electriccoin.zcash.ui.screen.update.UpdateTag
-import co.electriccoin.zcash.ui.screen.update.fixture.UpdateInfoFixture
 import co.electriccoin.zcash.ui.screen.update.model.UpdateInfo
 import co.electriccoin.zcash.ui.screen.update.model.UpdateState
 import co.electriccoin.zcash.ui.test.getStringResource

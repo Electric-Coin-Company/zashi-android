@@ -13,13 +13,11 @@ import co.electriccoin.zcash.ui.fixture.VersionInfoFixture
 import co.electriccoin.zcash.ui.screen.about.model.VersionInfo
 import co.electriccoin.zcash.ui.screen.about.view.About
 import co.electriccoin.zcash.ui.test.getStringResource
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import java.util.concurrent.atomic.AtomicInteger
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class AboutViewTest {
     @get:Rule
     val composeTestRule = createComposeRule()
