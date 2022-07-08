@@ -10,7 +10,7 @@ import cash.z.ecc.sdk.model.PercentDecimal
 import co.electriccoin.zcash.ui.R
 import kotlin.math.roundToInt
 
-internal class WalletDisplayValues(
+class WalletDisplayValues(
     val progress: PercentDecimal,
     val zecAmountText: String,
     val statusText: String,
