@@ -247,7 +247,7 @@ private fun Status(walletSnapshot: WalletSnapshot, updateAvailable: Boolean) {
     Box(
         Modifier
             .fillMaxWidth()
-            .testTag(HomeTag.STATUS),
+            .testTag(HomeTag.STATUS_VIEWS),
         contentAlignment = Alignment.Center
     ) {
         // relatively sized box
@@ -266,6 +266,7 @@ private fun Status(walletSnapshot: WalletSnapshot, updateAvailable: Boolean) {
                     modifier = Modifier
                         .matchParentSize()
                         .padding(progressCirclePadding)
+                        .testTag(HomeTag.PROGRESS)
                 )
             }
 
@@ -306,7 +307,10 @@ private fun Status(walletSnapshot: WalletSnapshot, updateAvailable: Boolean) {
                 Spacer(modifier = Modifier.height(24.dp))
 
                 if (walletDisplayValues.statusText.isNotEmpty()) {
-                    Body(text = walletDisplayValues.statusText)
+                    Body(
+                        text = walletDisplayValues.statusText,
+                        modifier = Modifier.testTag(HomeTag.SINGLE_LINE_TEXT)
+                    )
                 }
             }
         }

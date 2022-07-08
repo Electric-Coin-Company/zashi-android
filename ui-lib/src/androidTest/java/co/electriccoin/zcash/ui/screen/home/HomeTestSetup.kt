@@ -1,13 +1,15 @@
-package co.electriccoin.zcash.ui.screen.home.view
+package co.electriccoin.zcash.ui.screen.home
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
-import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
+import co.electriccoin.zcash.ui.screen.home.model.WalletSnapshot
+import co.electriccoin.zcash.ui.screen.home.view.Home
 import java.util.concurrent.atomic.AtomicInteger
 
 class HomeTestSetup(
-    private val composeTestRule: ComposeContentTestRule
+    private val composeTestRule: ComposeContentTestRule,
+    private val walletSnapshot: WalletSnapshot
 ) {
     private val onScanCount = AtomicInteger(0)
     private val onProfileCount = AtomicInteger(0)
@@ -34,10 +36,15 @@ class HomeTestSetup(
         return onRequestCount.get()
     }
 
+    fun getWalletSnapshot(): WalletSnapshot {
+        composeTestRule.waitForIdle()
+        return walletSnapshot
+    }
+
     @Composable
     fun getDefaultContent() {
         Home(
-            WalletSnapshotFixture.new(),
+            walletSnapshot,
             emptyList(),
             goScan = {
                 onScanCount.incrementAndGet()

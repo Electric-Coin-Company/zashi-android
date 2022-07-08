@@ -11,7 +11,9 @@ import androidx.compose.ui.test.performScrollTo
 import androidx.test.filters.MediumTest
 import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 import co.electriccoin.zcash.ui.screen.home.HomeTag
+import co.electriccoin.zcash.ui.screen.home.HomeTestSetup
 import co.electriccoin.zcash.ui.test.getStringResource
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -34,7 +36,7 @@ class HomeViewTest : UiTestPrerequisites() {
             it.assertIsDisplayed()
         }
 
-        composeTestRule.onNodeWithTag(HomeTag.STATUS).also {
+        composeTestRule.onNodeWithTag(HomeTag.STATUS_VIEWS).also {
             it.assertIsDisplayed()
         }
 
@@ -95,7 +97,10 @@ class HomeViewTest : UiTestPrerequisites() {
         assertEquals(1, testSetup.getOnRequestCount())
     }
 
-    private fun newTestSetup() = HomeTestSetup(composeTestRule).apply {
+    private fun newTestSetup() = HomeTestSetup(
+        composeTestRule,
+        WalletSnapshotFixture.new()
+    ).apply {
         setDefaultContent()
     }
 }
