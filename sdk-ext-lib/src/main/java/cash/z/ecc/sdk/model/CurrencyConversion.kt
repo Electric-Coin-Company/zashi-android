@@ -3,15 +3,6 @@ package cash.z.ecc.sdk.model
 import kotlinx.datetime.Instant
 
 /**
- * Represents a state of current fiat currency conversion to ZECs.
- */
-sealed class FiatCurrencyConversionRateState {
-    class Current(val value: String) : FiatCurrencyConversionRateState()
-    class Stale(val value: String) : FiatCurrencyConversionRateState()
-    object Unavailable : FiatCurrencyConversionRateState()
-}
-
-/**
  * Represents a snapshot in time of a currency conversion rate.
  *
  * @param fiatCurrency The fiat currency for this conversion.
@@ -27,10 +18,6 @@ data class CurrencyConversion(
     init {
         require(priceOfZec > 0) { "priceOfZec must be greater than 0" }
         require(priceOfZec.isFinite()) { "priceOfZec must be finite" }
-    }
-
-    companion object {
-        const val STALENESS_PERIOD = 3600000 // 1 hours
     }
 }
 

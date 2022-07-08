@@ -4,19 +4,22 @@ package cash.z.ecc.sdk.ext.ui
 
 import cash.z.ecc.android.sdk.ext.Conversions
 import cash.z.ecc.android.sdk.model.Zatoshi
+import cash.z.ecc.sdk.ext.ui.model.FiatCurrencyConversionRateState
 import cash.z.ecc.sdk.ext.ui.model.MonetarySeparators
 import cash.z.ecc.sdk.model.CurrencyConversion
-import cash.z.ecc.sdk.model.FiatCurrencyConversionRateState
+import kotlinx.datetime.Clock
 import java.math.BigDecimal
 import java.math.MathContext
 import java.math.RoundingMode
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.Locale
+import kotlin.time.Duration
 
 fun Zatoshi.toFiatCurrencyState(
     currencyConversion: CurrencyConversion?,
-    monetarySeparators: MonetarySeparators
+    monetarySeparators: MonetarySeparators,
+    clock: Clock = Clock.System
 ): FiatCurrencyConversionRateState {
     if (currencyConversion == null) {
         return FiatCurrencyConversionRateState.Unavailable
@@ -24,10 +27,20 @@ fun Zatoshi.toFiatCurrencyState(
 
     val fiatCurrencyConversionRate = toFiatString(currencyConversion, monetarySeparators)
 
-    return if (currencyConversion.timestamp.toEpochMilliseconds() <= CurrencyConversion.STALENESS_PERIOD) {
+    val currentSystemTime = clock.now()
+
+    val age = currentSystemTime - currencyConversion.timestamp
+
+    return if (age < Duration.ZERO && age.absoluteValue > FiatCurrencyConversionRateState.FUTURE_CUTOFF_AGE_INCLUSIVE) {
+        // Special case if the device's clock is set to the future.
+        // TODO [#535]: Consider using NTP requests to get the correct time instead of relying on the device's clock.
+        FiatCurrencyConversionRateState.Unavailable
+    } else if (age <= FiatCurrencyConversionRateState.CURRENT_CUTOFF_AGE_INCLUSIVE) {
         FiatCurrencyConversionRateState.Current(fiatCurrencyConversionRate)
-    } else {
+    } else if (age <= FiatCurrencyConversionRateState.STALE_CUTOFF_AGE_INCLUSIVE) {
         FiatCurrencyConversionRateState.Stale(fiatCurrencyConversionRate)
+    } else {
+        FiatCurrencyConversionRateState.Unavailable
     }
 }
 
