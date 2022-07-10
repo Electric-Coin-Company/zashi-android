@@ -43,7 +43,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cash.z.ecc.android.sdk.db.entity.Transaction
-import cash.z.ecc.sdk.model.FiatCurrencyConversionRateState
+import cash.z.ecc.sdk.ext.ui.model.FiatCurrencyConversionRateState
 import cash.z.ecc.sdk.model.PercentDecimal
 import co.electriccoin.zcash.crash.android.CrashReporter
 import co.electriccoin.zcash.ui.R

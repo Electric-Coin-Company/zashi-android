@@ -2,10 +2,10 @@ package co.electriccoin.zcash.ui.screen.home.model
 
 import android.content.Context
 import cash.z.ecc.android.sdk.Synchronizer
+import cash.z.ecc.sdk.ext.ui.model.FiatCurrencyConversionRateState
 import cash.z.ecc.sdk.ext.ui.model.MonetarySeparators
 import cash.z.ecc.sdk.ext.ui.model.toZecString
 import cash.z.ecc.sdk.ext.ui.toFiatCurrencyState
-import cash.z.ecc.sdk.model.FiatCurrencyConversionRateState
 import cash.z.ecc.sdk.model.PercentDecimal
 import co.electriccoin.zcash.ui.R
 import kotlin.math.roundToInt
@@ -100,8 +100,8 @@ private fun getFiatCurrencyRateValue(
 ): String {
     return fiatCurrencyAmountState.let { state ->
         when (state) {
-            is FiatCurrencyConversionRateState.Current -> state.value
-            is FiatCurrencyConversionRateState.Stale -> state.value
+            is FiatCurrencyConversionRateState.Current -> state.formattedFiatValue
+            is FiatCurrencyConversionRateState.Stale -> state.formattedFiatValue
             is FiatCurrencyConversionRateState.Unavailable -> {
                 context.getString(R.string.fiat_currency_conversion_rate_unavailable)
             }
