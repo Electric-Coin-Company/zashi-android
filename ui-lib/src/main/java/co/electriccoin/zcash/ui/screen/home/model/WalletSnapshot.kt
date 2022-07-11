@@ -3,8 +3,8 @@ package co.electriccoin.zcash.ui.screen.home.model
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.block.CompactBlockProcessor
 import cash.z.ecc.android.sdk.ext.ZcashSdk
+import cash.z.ecc.android.sdk.model.WalletBalance
 import cash.z.ecc.android.sdk.model.Zatoshi
-import cash.z.ecc.android.sdk.type.WalletBalance
 import cash.z.ecc.sdk.model.PercentDecimal
 import co.electriccoin.zcash.ui.screen.home.viewmodel.SynchronizerError
 
