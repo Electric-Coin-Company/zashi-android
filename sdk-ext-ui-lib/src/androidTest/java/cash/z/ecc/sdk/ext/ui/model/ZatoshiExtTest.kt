@@ -1,7 +1,5 @@
 package cash.z.ecc.sdk.ext.ui.model
 
-import android.os.Build
-import androidx.test.filters.SdkSuppress
 import androidx.test.filters.SmallTest
 import cash.z.ecc.sdk.ext.ui.fixture.MonetarySeparatorsFixture
 import cash.z.ecc.sdk.ext.ui.toFiatString
@@ -19,7 +17,6 @@ class ZatoshiExtTest {
 
     @Test
     @SmallTest
-    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.O)
     fun zero_zatoshi_to_fiat_conversion_test() {
         val zatoshi = ZatoshiFixture.new(0L)
         val fiatString = zatoshi.toFiatString(CURRENCY_CONVERSION, EN_US_SEPARATORS)
@@ -34,7 +31,6 @@ class ZatoshiExtTest {
 
     @Test
     @SmallTest
-    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.O)
     fun regular_zatoshi_to_fiat_conversion_test() {
         val zatoshi = ZatoshiFixture.new(123_456_789L)
         val fiatString = zatoshi.toFiatString(CURRENCY_CONVERSION, EN_US_SEPARATORS)
@@ -48,7 +44,6 @@ class ZatoshiExtTest {
 
     @Test
     @SmallTest
-    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.O)
     fun rounded_zatoshi_to_fiat_conversion_test() {
         val roundedZatoshi = ZatoshiFixture.new(100_000_000L)
         val roundedCurrencyConversion = CurrencyConversionFixture.new(

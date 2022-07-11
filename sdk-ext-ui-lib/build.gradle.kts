@@ -8,9 +8,14 @@ plugins {
 
 android {
     resourcePrefix = "co_electriccoin_zcash_"
+
+    compileOptions {
+        isCoreLibraryDesugaringEnabled = true
+    }
 }
 
 dependencies {
+    coreLibraryDesugaring(libs.desugaring)
     implementation(projects.sdkExtLib)
 
     implementation(libs.kotlinx.coroutines.core)
