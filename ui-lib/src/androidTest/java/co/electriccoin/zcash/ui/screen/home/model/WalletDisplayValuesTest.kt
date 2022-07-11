@@ -2,8 +2,8 @@ package co.electriccoin.zcash.ui.screen.home.model
 
 import androidx.test.filters.SmallTest
 import cash.z.ecc.android.sdk.Synchronizer
+import cash.z.ecc.sdk.ext.ui.model.FiatCurrencyConversionRateState
 import cash.z.ecc.sdk.ext.ui.model.toZecString
-import cash.z.ecc.sdk.model.FiatCurrencyConversionRateState
 import cash.z.ecc.sdk.model.PercentDecimal
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
