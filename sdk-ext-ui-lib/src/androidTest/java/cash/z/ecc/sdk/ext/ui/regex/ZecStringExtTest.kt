@@ -3,7 +3,7 @@ package cash.z.ecc.sdk.ext.ui.regex
 import androidx.test.filters.SmallTest
 import cash.z.ecc.sdk.ext.ui.R
 import cash.z.ecc.sdk.ext.ui.ZecStringExt
-import cash.z.ecc.sdk.ext.ui.model.MonetarySeparators
+import cash.z.ecc.sdk.ext.ui.fixture.MonetarySeparatorsFixture
 import cash.z.ecc.sdk.ext.ui.test.getStringResourceWithArgs
 import org.junit.Test
 import kotlin.test.assertFalse
@@ -13,7 +13,7 @@ import kotlin.test.assertTrue
 class ZecStringExtTest {
 
     companion object {
-        private val EN_US_SEPARATORS = MonetarySeparators(',', '.')
+        private val EN_US_SEPARATORS = MonetarySeparatorsFixture.new()
     }
 
     private fun getContinuousRegex(): Regex {
