@@ -14,6 +14,7 @@ import cash.z.ecc.android.sdk.db.entity.isSubmitSuccess
 import cash.z.ecc.android.sdk.model.WalletBalance
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.tool.DerivationTool
+import cash.z.ecc.sdk.model.FiatCurrency
 import cash.z.ecc.sdk.model.PercentDecimal
 import cash.z.ecc.sdk.model.PersistableWallet
 import cash.z.ecc.sdk.model.WalletAddresses
@@ -63,6 +64,18 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
      * Synchronizer that is retained long enough to survive configuration changes.
      */
     val synchronizer = walletCoordinator.synchronizer.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+        null
+    )
+
+    /**
+     * A flow of the user's preferred fiat currency.
+     */
+    val preferredFiatCurrency: StateFlow<FiatCurrency?> = flow<FiatCurrency?> {
+        val preferenceProvider = StandardPreferenceSingleton.getInstance(application)
+        emitAll(StandardPreferenceKeys.PREFERRED_FIAT_CURRENCY.observe(preferenceProvider))
+    }.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
         null
@@ -256,15 +269,19 @@ sealed class SynchronizerError {
     class Critical(val error: Throwable?) : SynchronizerError() {
         override fun getCauseMessage(): String? = error?.localizedMessage
     }
+
     class Processor(val error: Throwable?) : SynchronizerError() {
         override fun getCauseMessage(): String? = error?.localizedMessage
     }
+
     class Submission(val error: Throwable?) : SynchronizerError() {
         override fun getCauseMessage(): String? = error?.localizedMessage
     }
+
     class Setup(val error: Throwable?) : SynchronizerError() {
         override fun getCauseMessage(): String? = error?.localizedMessage
     }
+
     class Chain(val x: Int, val y: Int) : SynchronizerError() {
         override fun getCauseMessage(): String = "$x, $y"
     }
