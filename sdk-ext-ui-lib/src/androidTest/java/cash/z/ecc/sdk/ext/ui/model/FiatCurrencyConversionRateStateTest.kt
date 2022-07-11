@@ -1,5 +1,7 @@
 package cash.z.ecc.sdk.ext.ui.model
 
+import android.os.Build
+import androidx.test.filters.SdkSuppress
 import androidx.test.filters.SmallTest
 import cash.z.ecc.sdk.ext.ui.fixture.MonetarySeparatorsFixture
 import cash.z.ecc.sdk.ext.ui.toFiatCurrencyState
@@ -14,6 +16,7 @@ import kotlin.time.Duration.Companion.seconds
 class FiatCurrencyConversionRateStateTest {
     @Test
     @SmallTest
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.O)
     fun future_near() {
         val zatoshi = ZatoshiFixture.new()
 
@@ -30,6 +33,7 @@ class FiatCurrencyConversionRateStateTest {
 
     @Test
     @SmallTest
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.O)
     fun future_far() {
         val zatoshi = ZatoshiFixture.new()
 
@@ -46,6 +50,7 @@ class FiatCurrencyConversionRateStateTest {
 
     @Test
     @SmallTest
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.O)
     fun current() {
         val zatoshi = ZatoshiFixture.new()
 
@@ -62,6 +67,7 @@ class FiatCurrencyConversionRateStateTest {
 
     @Test
     @SmallTest
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.O)
     fun stale() {
         val zatoshi = ZatoshiFixture.new()
 
@@ -78,6 +84,7 @@ class FiatCurrencyConversionRateStateTest {
 
     @Test
     @SmallTest
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.O)
     fun too_stale() {
         val zatoshi = ZatoshiFixture.new()
 
