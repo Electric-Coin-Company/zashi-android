@@ -5,19 +5,22 @@ package cash.z.ecc.sdk.ext.ui
 import cash.z.ecc.android.sdk.ext.Conversions
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.sdk.ext.ui.model.FiatCurrencyConversionRateState
+import cash.z.ecc.sdk.ext.ui.model.Locale
 import cash.z.ecc.sdk.ext.ui.model.MonetarySeparators
+import cash.z.ecc.sdk.ext.ui.model.toJavaLocale
 import cash.z.ecc.sdk.model.CurrencyConversion
 import kotlinx.datetime.Clock
 import java.math.BigDecimal
 import java.math.MathContext
 import java.math.RoundingMode
 import java.text.DecimalFormat
-import java.text.DecimalFormatSymbols
-import java.util.Locale
+import java.text.NumberFormat
+import java.util.Currency
 import kotlin.time.Duration
 
 fun Zatoshi.toFiatCurrencyState(
     currencyConversion: CurrencyConversion?,
+    locale: Locale,
     monetarySeparators: MonetarySeparators,
     clock: Clock = Clock.System
 ): FiatCurrencyConversionRateState {
@@ -25,7 +28,7 @@ fun Zatoshi.toFiatCurrencyState(
         return FiatCurrencyConversionRateState.Unavailable
     }
 
-    val fiatCurrencyConversionRate = toFiatString(currencyConversion, monetarySeparators)
+    val fiatCurrencyConversionRate = toFiatString(currencyConversion, locale, monetarySeparators)
 
     val currentSystemTime = clock.now()
 
@@ -45,10 +48,18 @@ fun Zatoshi.toFiatCurrencyState(
 }
 
 @Suppress("MagicNumber")
-fun Zatoshi.toFiatString(currencyConversion: CurrencyConversion, monetarySeparators: MonetarySeparators) =
+fun Zatoshi.toFiatString(
+    currencyConversion: CurrencyConversion,
+    locale: Locale,
+    monetarySeparators: MonetarySeparators
+) =
     convertZatoshiToZecDecimal()
         .convertZecDecimalToFiatDecimal(BigDecimal(currencyConversion.priceOfZec))
-        .convertFiatDecimalToFiatString(monetarySeparators)
+        .convertFiatDecimalToFiatString(
+            Currency.getInstance(currencyConversion.fiatCurrency.code),
+            locale.toJavaLocale(),
+            monetarySeparators
+        )
 
 private fun Zatoshi.convertZatoshiToZecDecimal(): BigDecimal {
     return BigDecimal(value, MathContext.DECIMAL128).divide(
@@ -61,17 +72,20 @@ private fun BigDecimal.convertZecDecimalToFiatDecimal(zecPrice: BigDecimal): Big
     return multiply(zecPrice, MathContext.DECIMAL128)
 }
 
-private fun BigDecimal?.convertFiatDecimalToFiatString(monetarySeparators: MonetarySeparators): String {
-    val decimalFormat = DecimalFormat().apply {
-        isParseBigDecimal = true
+private fun BigDecimal.convertFiatDecimalToFiatString(
+    fiatCurrency: Currency,
+    locale: java.util.Locale,
+    monetarySeparators: MonetarySeparators
+): String {
+    return NumberFormat.getCurrencyInstance(locale).apply {
+        currency = fiatCurrency
         roundingMode = RoundingMode.HALF_EVEN
-        maximumFractionDigits = Conversions.USD_FORMATTER.maximumFractionDigits
-        minimumFractionDigits = Conversions.USD_FORMATTER.minimumFractionDigits
-        decimalFormatSymbols = DecimalFormatSymbols.getInstance(Locale.US).apply {
-            this.groupingSeparator = monetarySeparators.grouping
-            this.decimalSeparator = monetarySeparators.decimal
+        if (this is DecimalFormat) {
+            decimalFormatSymbols.apply {
+                decimalSeparator = monetarySeparators.decimal
+                monetaryDecimalSeparator = monetarySeparators.decimal
+                groupingSeparator = monetarySeparators.grouping
+            }
         }
-    }
-
-    return decimalFormat.format(this)
+    }.format(this)
 }

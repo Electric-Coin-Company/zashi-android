@@ -1,6 +1,7 @@
 package co.electriccoin.zcash.ui.screen.home.model
 
 import android.content.Context
+import androidx.compose.ui.text.intl.Locale
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.sdk.ext.ui.model.FiatCurrencyConversionRateState
 import cash.z.ecc.sdk.ext.ui.model.MonetarySeparators
@@ -8,6 +9,7 @@ import cash.z.ecc.sdk.ext.ui.model.toZecString
 import cash.z.ecc.sdk.ext.ui.toFiatCurrencyState
 import cash.z.ecc.sdk.model.PercentDecimal
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.toKotlinLocale
 import kotlin.math.roundToInt
 
 data class WalletDisplayValues(
@@ -31,6 +33,7 @@ data class WalletDisplayValues(
             // We'll ideally provide a "fresh" currencyConversion object here
             val fiatCurrencyAmountState = walletSnapshot.spendableBalance().toFiatCurrencyState(
                 null,
+                Locale.current.toKotlinLocale(),
                 MonetarySeparators.current()
             )
             var fiatCurrencyAmountText = getFiatCurrencyRateValue(context, fiatCurrencyAmountState)

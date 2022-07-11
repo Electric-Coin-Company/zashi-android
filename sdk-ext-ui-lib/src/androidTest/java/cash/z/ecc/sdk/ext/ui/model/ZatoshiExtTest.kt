@@ -1,6 +1,7 @@
 package cash.z.ecc.sdk.ext.ui.model
 
 import androidx.test.filters.SmallTest
+import cash.z.ecc.sdk.ext.ui.fixture.LocaleFixture
 import cash.z.ecc.sdk.ext.ui.fixture.MonetarySeparatorsFixture
 import cash.z.ecc.sdk.ext.ui.toFiatString
 import cash.z.ecc.sdk.fixture.CurrencyConversionFixture
@@ -19,7 +20,7 @@ class ZatoshiExtTest {
     @SmallTest
     fun zero_zatoshi_to_fiat_conversion_test() {
         val zatoshi = ZatoshiFixture.new(0L)
-        val fiatString = zatoshi.toFiatString(CURRENCY_CONVERSION, EN_US_SEPARATORS)
+        val fiatString = zatoshi.toFiatString(CURRENCY_CONVERSION, LocaleFixture.new(), EN_US_SEPARATORS)
 
         fiatString.also {
             assertNotNull(it)
@@ -33,7 +34,7 @@ class ZatoshiExtTest {
     @SmallTest
     fun regular_zatoshi_to_fiat_conversion_test() {
         val zatoshi = ZatoshiFixture.new(123_456_789L)
-        val fiatString = zatoshi.toFiatString(CURRENCY_CONVERSION, EN_US_SEPARATORS)
+        val fiatString = zatoshi.toFiatString(CURRENCY_CONVERSION, LocaleFixture.new(), EN_US_SEPARATORS)
 
         fiatString.also {
             assertNotNull(it)
@@ -52,6 +53,7 @@ class ZatoshiExtTest {
 
         val fiatString = roundedZatoshi.toFiatString(
             roundedCurrencyConversion,
+            LocaleFixture.new(),
             EN_US_SEPARATORS
         )
 
@@ -59,7 +61,7 @@ class ZatoshiExtTest {
             assertNotNull(it)
             assertTrue(it.isNotEmpty())
             assertTrue(it.isValidNumber(EN_US_SEPARATORS))
-            assertTrue("100${EN_US_SEPARATORS.decimal}00" == it)
+            assertTrue("$100${EN_US_SEPARATORS.decimal}00" == it)
         }
     }
 }
@@ -69,5 +71,7 @@ private fun Char.isDigitOrSeparator(separators: MonetarySeparators): Boolean {
 }
 
 private fun String.isValidNumber(separators: MonetarySeparators): Boolean {
-    return this.all { return it.isDigitOrSeparator(separators) }
+    return this
+        .drop(1) // remove currency symbol
+        .all { return it.isDigitOrSeparator(separators) }
 }

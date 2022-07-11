@@ -119,11 +119,10 @@ fun HeaderWithZecIcon(
 @Composable
 fun BodyWithFiatCurrencySymbol(
     amount: String,
-    fiatCurrencySymbol: String,
     modifier: Modifier = Modifier
 ) {
     Text(
-        text = stringResource(R.string.amount_with_fiat_currency_symbol, fiatCurrencySymbol, amount),
+        text = amount,
         style = MaterialTheme.typography.bodyLarge,
         color = MaterialTheme.colorScheme.onBackground,
         modifier = modifier

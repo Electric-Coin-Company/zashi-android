@@ -224,7 +224,10 @@ private fun HomeMainContent(
 
 @Composable
 @Suppress("LongMethod", "MagicNumber")
-private fun Status(walletSnapshot: WalletSnapshot, updateAvailable: Boolean) {
+private fun Status(
+    walletSnapshot: WalletSnapshot,
+    updateAvailable: Boolean
+) {
     val configuration = LocalConfiguration.current
     val contentSizeRatioRatio = if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
         0.45f
@@ -288,15 +291,13 @@ private fun Status(walletSnapshot: WalletSnapshot, updateAvailable: Boolean) {
                 when (walletDisplayValues.fiatCurrencyAmountState) {
                     is FiatCurrencyConversionRateState.Current -> {
                         BodyWithFiatCurrencySymbol(
-                            amount = walletDisplayValues.fiatCurrencyAmountText,
-                            fiatCurrencySymbol = stringResource(id = R.string.fiat_currency_symbol)
+                            amount = walletDisplayValues.fiatCurrencyAmountText
                         )
                     }
                     is FiatCurrencyConversionRateState.Stale -> {
                         // Note: we should show information about staleness too
                         BodyWithFiatCurrencySymbol(
-                            amount = walletDisplayValues.fiatCurrencyAmountText,
-                            fiatCurrencySymbol = stringResource(id = R.string.fiat_currency_symbol)
+                            amount = walletDisplayValues.fiatCurrencyAmountText
                         )
                     }
                     is FiatCurrencyConversionRateState.Unavailable -> {
