@@ -47,7 +47,6 @@ fun Zatoshi.toFiatCurrencyState(
     }
 }
 
-@Suppress("MagicNumber")
 fun Zatoshi.toFiatString(
     currencyConversion: CurrencyConversion,
     locale: Locale,
