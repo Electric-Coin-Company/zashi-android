@@ -5,9 +5,9 @@ data class Locale(val language: String, val region: String?, val variant: String
 }
 
 fun Locale.toJavaLocale(): java.util.Locale {
-    return if (region != null && variant != null) {
+    return if (!region.isNullOrEmpty() && !variant.isNullOrEmpty()) {
         java.util.Locale(language, region, variant)
-    } else if (region != null && variant == null) {
+    } else if (!region.isNullOrEmpty() && variant.isNullOrEmpty()) {
         java.util.Locale(language, region)
     } else {
         java.util.Locale(language)
@@ -15,5 +15,17 @@ fun Locale.toJavaLocale(): java.util.Locale {
 }
 
 fun java.util.Locale.toKotlinLocale(): Locale {
-    return Locale(language, country, variant)
+    val resultCountry = if (country.isNullOrEmpty()) {
+        null
+    } else {
+        country
+    }
+
+    val resultVariant = if (variant.isNullOrEmpty()) {
+        null
+    } else {
+        variant
+    }
+
+    return Locale(language, resultCountry, resultVariant)
 }
