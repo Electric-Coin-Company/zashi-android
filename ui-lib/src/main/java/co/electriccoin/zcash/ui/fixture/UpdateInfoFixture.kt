@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.update.fixture
+package co.electriccoin.zcash.ui.fixture
 
 import co.electriccoin.zcash.ui.screen.update.AppUpdateChecker
 import co.electriccoin.zcash.ui.screen.update.model.UpdateInfo

@@ -5,6 +5,7 @@ import android.content.res.Configuration
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.filters.SmallTest
 import cash.z.ecc.android.sdk.model.Zatoshi
+import cash.z.ecc.sdk.ext.ui.fixture.MonetarySeparatorsFixture
 import org.junit.Assert.assertEquals
 import org.junit.Ignore
 import org.junit.Test
@@ -15,7 +16,7 @@ import kotlin.test.assertNull
 class ZecStringTest {
 
     companion object {
-        private val EN_US_MONETARY_SEPARATORS = MonetarySeparators(',', '.')
+        private val EN_US_MONETARY_SEPARATORS = MonetarySeparatorsFixture.new()
         private val context = run {
             val applicationContext = ApplicationProvider.getApplicationContext<Context>()
             val enUsConfiguration = Configuration(applicationContext.resources.configuration).apply {

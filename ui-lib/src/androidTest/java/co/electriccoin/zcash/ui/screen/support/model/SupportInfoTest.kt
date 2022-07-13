@@ -1,9 +1,9 @@
 package co.electriccoin.zcash.ui.screen.support.model
 
-import androidx.test.core.app.ApplicationProvider
+import co.electriccoin.zcash.ui.test.getAppContext
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
-import kotlin.test.Test
+import org.junit.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -11,7 +11,7 @@ class SupportInfoTest {
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun filter_time() = runTest {
-        val supportInfo = SupportInfo.new(ApplicationProvider.getApplicationContext())
+        val supportInfo = SupportInfo.new(getAppContext())
 
         val individualExpected = supportInfo.timeInfo.toSupportString()
 
@@ -25,7 +25,7 @@ class SupportInfoTest {
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun filter_app() = runTest {
-        val supportInfo = SupportInfo.new(ApplicationProvider.getApplicationContext())
+        val supportInfo = SupportInfo.new(getAppContext())
 
         val individualExpected = supportInfo.appInfo.toSupportString()
 
@@ -39,7 +39,7 @@ class SupportInfoTest {
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun filter_os() = runTest {
-        val supportInfo = SupportInfo.new(ApplicationProvider.getApplicationContext())
+        val supportInfo = SupportInfo.new(getAppContext())
 
         val individualExpected = supportInfo.operatingSystemInfo.toSupportString()
 
@@ -53,7 +53,7 @@ class SupportInfoTest {
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun filter_device() = runTest {
-        val supportInfo = SupportInfo.new(ApplicationProvider.getApplicationContext())
+        val supportInfo = SupportInfo.new(getAppContext())
 
         val individualExpected = supportInfo.deviceInfo.toSupportString()
 
@@ -67,7 +67,7 @@ class SupportInfoTest {
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun filter_crash() = runTest {
-        val supportInfo = SupportInfo.new(ApplicationProvider.getApplicationContext())
+        val supportInfo = SupportInfo.new(getAppContext())
 
         val individualExpected = supportInfo.crashInfo.toCrashSupportString()
 
@@ -81,7 +81,7 @@ class SupportInfoTest {
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun filter_environment() = runTest {
-        val supportInfo = SupportInfo.new(ApplicationProvider.getApplicationContext())
+        val supportInfo = SupportInfo.new(getAppContext())
 
         val individualExpected = supportInfo.environmentInfo.toSupportString()
 
@@ -95,7 +95,7 @@ class SupportInfoTest {
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun filter_permission() = runTest {
-        val supportInfo = SupportInfo.new(ApplicationProvider.getApplicationContext())
+        val supportInfo = SupportInfo.new(getAppContext())
 
         val individualExpected = supportInfo.permissionInfo.toPermissionSupportString()
 

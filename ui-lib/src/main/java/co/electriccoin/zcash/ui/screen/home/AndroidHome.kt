@@ -13,8 +13,11 @@ import co.electriccoin.zcash.ui.BuildConfig
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.screen.backup.viewmodel.BackupViewModel
 import co.electriccoin.zcash.ui.screen.home.view.Home
+import co.electriccoin.zcash.ui.screen.home.viewmodel.CheckUpdateViewModel
 import co.electriccoin.zcash.ui.screen.home.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.onboarding.viewmodel.OnboardingViewModel
+import co.electriccoin.zcash.ui.screen.update.AppUpdateCheckerImp
+import co.electriccoin.zcash.ui.screen.update.model.UpdateState
 
 @Composable
 internal fun MainActivity.WrapHome(
@@ -40,6 +43,17 @@ internal fun WrapHome(
     goSend: () -> Unit,
     goRequest: () -> Unit
 ) {
+    // we want to show information about app update, if available
+    val checkUpdateViewModel by activity.viewModels<CheckUpdateViewModel> {
+        CheckUpdateViewModel.CheckUpdateViewModelFactory(
+            activity.application,
+            AppUpdateCheckerImp.new()
+        )
+    }
+    val updateAvailable = checkUpdateViewModel.updateInfo.collectAsState().value.let {
+        it?.appUpdateInfo != null && it.state == UpdateState.Prepared
+    }
+
     val walletViewModel by activity.viewModels<WalletViewModel>()
 
     val walletSnapshot = walletViewModel.walletSnapshot.collectAsState().value
@@ -76,7 +90,8 @@ internal fun WrapHome(
 
                 val backupViewModel by activity.viewModels<BackupViewModel>()
                 backupViewModel.backupState.goToBeginning()
-            }
+            },
+            updateAvailable = updateAvailable
         )
 
         activity.reportFullyDrawn()

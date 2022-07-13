@@ -14,7 +14,6 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
-import androidx.test.core.app.ApplicationProvider
 import androidx.test.filters.MediumTest
 import cash.z.ecc.android.bip39.Mnemonics
 import cash.z.ecc.sdk.fixture.SeedPhraseFixture
@@ -25,6 +24,7 @@ import co.electriccoin.zcash.ui.design.component.CommonTag
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.restore.RestoreTag
 import co.electriccoin.zcash.ui.screen.restore.state.WordList
+import co.electriccoin.zcash.ui.test.getAppContext
 import co.electriccoin.zcash.ui.test.getStringResource
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -48,7 +48,7 @@ class RestoreViewTest : UiTestPrerequisites() {
             it.assertIsFocused()
         }
 
-        val inputMethodManager = ApplicationProvider.getApplicationContext<Context>().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val inputMethodManager = getAppContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         assertTrue(inputMethodManager.isAcceptingText)
     }
 

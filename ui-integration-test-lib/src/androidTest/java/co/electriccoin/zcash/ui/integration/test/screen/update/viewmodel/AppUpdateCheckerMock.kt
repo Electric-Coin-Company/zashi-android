@@ -5,8 +5,8 @@ import android.content.Context
 import androidx.activity.ComponentActivity
 import co.electriccoin.zcash.spackle.getPackageInfoCompat
 import co.electriccoin.zcash.spackle.versionCodeCompat
+import co.electriccoin.zcash.ui.fixture.UpdateInfoFixture
 import co.electriccoin.zcash.ui.screen.update.AppUpdateChecker
-import co.electriccoin.zcash.ui.screen.update.fixture.UpdateInfoFixture
 import co.electriccoin.zcash.ui.screen.update.model.UpdateInfo
 import co.electriccoin.zcash.ui.screen.update.model.UpdateState
 import com.google.android.play.core.appupdate.AppUpdateInfo

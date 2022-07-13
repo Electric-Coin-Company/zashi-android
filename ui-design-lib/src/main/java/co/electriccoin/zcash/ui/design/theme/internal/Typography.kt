@@ -5,6 +5,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.googlefonts.Font
@@ -31,6 +32,10 @@ private val RubikFontFamily = FontFamily(
     Font(googleFont = RubikFont, fontProvider = provider, weight = FontWeight.Medium), // W500
     Font(googleFont = RubikFont, fontProvider = provider, weight = FontWeight.SemiBold), // W600
     Font(googleFont = RubikFont, fontProvider = provider, weight = FontWeight.Bold) // W700
+)
+
+private val Zboto = FontFamily(
+    Font(R.font.zboto, FontWeight.Normal)
 )
 
 // If you change this definition of our Typography, don't forget to check if you use only
@@ -61,7 +66,8 @@ internal val Typography = Typography(
 @Immutable
 data class ExtendedTypography(
     val chipIndex: TextStyle,
-    val listItem: TextStyle
+    val listItem: TextStyle,
+    val zecBalance: TextStyle
 )
 
 val LocalExtendedTypography = staticCompositionLocalOf {
@@ -73,6 +79,11 @@ val LocalExtendedTypography = staticCompositionLocalOf {
         ),
         listItem = Typography.bodyLarge.copy(
             fontSize = 24.sp
+        ),
+        zecBalance = TextStyle(
+            fontFamily = Zboto,
+            fontWeight = FontWeight.Normal,
+            fontSize = 30.sp
         )
     )
 }

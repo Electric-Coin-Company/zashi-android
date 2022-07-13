@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.onboarding.view
+package co.electriccoin.zcash.ui.screen.onboarding
 
 import android.annotation.SuppressLint
 import androidx.compose.runtime.Composable
@@ -6,6 +6,7 @@ import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.onboarding.model.OnboardingStage
 import co.electriccoin.zcash.ui.screen.onboarding.state.OnboardingState
+import co.electriccoin.zcash.ui.screen.onboarding.view.Onboarding
 import java.util.concurrent.atomic.AtomicInteger
 
 class OnboardingTestSetup(
