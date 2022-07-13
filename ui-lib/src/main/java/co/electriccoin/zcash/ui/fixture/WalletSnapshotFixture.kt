@@ -21,7 +21,13 @@ object WalletSnapshotFixture {
     @Suppress("LongParameterList")
     fun new(
         status: Synchronizer.Status = STATUS,
-        processorInfo: CompactBlockProcessor.ProcessorInfo = CompactBlockProcessor.ProcessorInfo(),
+        processorInfo: CompactBlockProcessor.ProcessorInfo = CompactBlockProcessor.ProcessorInfo(
+            null,
+            null,
+            null,
+            null,
+            null
+        ),
         orchardBalance: WalletBalance = ORCHARD_BALANCE,
         saplingBalance: WalletBalance = SAPLING_BALANCE,
         transparentBalance: WalletBalance = TRANSPARENT_BALANCE,

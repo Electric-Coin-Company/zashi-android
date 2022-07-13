@@ -11,6 +11,7 @@ import cash.z.ecc.android.sdk.db.entity.PendingTransaction
 import cash.z.ecc.android.sdk.db.entity.Transaction
 import cash.z.ecc.android.sdk.db.entity.isMined
 import cash.z.ecc.android.sdk.db.entity.isSubmitSuccess
+import cash.z.ecc.android.sdk.model.BlockHeight
 import cash.z.ecc.android.sdk.model.WalletBalance
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.tool.DerivationTool
@@ -282,7 +283,7 @@ sealed class SynchronizerError {
         override fun getCauseMessage(): String? = error?.localizedMessage
     }
 
-    class Chain(val x: Int, val y: Int) : SynchronizerError() {
+    class Chain(val x: BlockHeight, val y: BlockHeight) : SynchronizerError() {
         override fun getCauseMessage(): String = "$x, $y"
     }
 }
