@@ -118,7 +118,7 @@ jobs:
 # Rather than being preventative, this is primarily an "early warning system" to verify that our
 # binaries aren't being misclassified as malware.
   antivirus:
-    needs: [build]
+    needs: [build_and_deploy]
     runs-on: ubuntu-latest
     permissions:
       contents: read
