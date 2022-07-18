@@ -25,6 +25,7 @@ tasks {
         exclude("**/commonTest/**")
         exclude("**/jvmTest/**")
         exclude("**/androidTest/**")
+        // To regenerate the config, run the task `detektGenerateConfig`
         config.setFrom(files("${rootProject.projectDir}/tools/detekt.yml"))
         buildUponDefaultConfig = true
     }

@@ -35,7 +35,7 @@ object ProcessNameCompat {
             val foundProcessName = searchForProcessName(context)
             if (null == foundProcessName) {
                 // This should be exceedingly rare
-                throw IllegalStateException("Unable to determine process name")
+                error("Unable to determine process name")
             } else {
                 processName = foundProcessName
                 return foundProcessName
