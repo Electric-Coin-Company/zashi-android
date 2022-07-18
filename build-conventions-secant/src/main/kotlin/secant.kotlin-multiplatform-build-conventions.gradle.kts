@@ -1,5 +1,3 @@
-import org.gradle.jvm.toolchain.JavaToolchainSpec
-
 pluginManager.withPlugin("org.jetbrains.kotlin.multiplatform") {
     extensions.findByType<org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension>()?.apply {
         jvmToolchain {
