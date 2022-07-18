@@ -1,11 +1,9 @@
-import org.gradle.jvm.toolchain.JavaToolchainSpec
-
 pluginManager.withPlugin("org.jetbrains.kotlin.multiplatform") {
     extensions.findByType<org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension>()?.apply {
         jvmToolchain {
             val javaVersion = JavaVersion.toVersion(project.property("JVM_TOOLCHAIN").toString())
             val javaLanguageVersion = JavaLanguageVersion.of(javaVersion.majorVersion)
-            (this as JavaToolchainSpec).languageVersion.set(javaLanguageVersion)
+            languageVersion.set(javaLanguageVersion)
         }
 
         targets.matching { it.platformType.name == "jvm" }.all {
