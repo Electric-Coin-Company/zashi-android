@@ -1,5 +1,13 @@
 dependencyLocking {
-    lockAllConfigurations()
+    val isDependencyLockingEnabled = if (project.hasProperty("ZCASH_IS_DEPENDENCY_LOCKING_ENABLED")) {
+        project.property("ZCASH_IS_DEPENDENCY_LOCKING_ENABLED").toString().toBoolean()
+    } else {
+        true
+    }
+
+    if (isDependencyLockingEnabled) {
+        lockAllConfigurations()
+    }
 }
 
 tasks {
