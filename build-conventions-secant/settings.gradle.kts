@@ -3,7 +3,7 @@ dependencyResolutionManagement {
     repositories {
         val isRepoRestrictionEnabled = true
 
-        maven("https://dl.google.com/dl/android/maven2/") { //google()
+        google {
             if (isRepoRestrictionEnabled) {
                 content {
                     includeGroup("androidx.navigation")
@@ -15,7 +15,7 @@ dependencyResolutionManagement {
                 }
             }
         }
-        maven("https://repo.maven.apache.org/maven2/") { // mavenCentral()
+        mavenCentral {
             if (isRepoRestrictionEnabled) {
                 content {
                     excludeGroup("androidx.navigation")
