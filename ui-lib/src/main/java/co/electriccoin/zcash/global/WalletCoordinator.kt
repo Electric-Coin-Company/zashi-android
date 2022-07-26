@@ -136,13 +136,15 @@ class WalletCoordinator(context: Context) {
      * In order for a rescan to occur, the synchronizer must be loaded already
      * which would happen if the UI is collecting it.
      *
-     * @return True if the rewind was performed and false if the wipe was not performed.
+     * @return True if the rescan was performed and false if the rescan was not performed.
      */
     suspend fun rescanBlockchain(): Boolean {
         synchronizerMutex.withLock {
             synchronizer.value?.let {
-                it.rewindToNearestHeight(it.latestBirthdayHeight, true)
-                return true
+                it.latestBirthdayHeight?.let { height ->
+                    it.rewindToNearestHeight(height, true)
+                    return true
+                }
             }
         }
 
@@ -235,6 +237,6 @@ private suspend fun PersistableWallet.toConfig(): Initializer.Config {
     val vk = deriveViewingKey()
 
     return Initializer.Config {
-        it.importWallet(vk, birthday?.height, network, network.defaultHost, network.defaultPort)
+        it.importWallet(vk, birthday, network, network.defaultHost, network.defaultPort)
     }
 }

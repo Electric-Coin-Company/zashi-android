@@ -3,8 +3,7 @@ package cash.z.ecc.sdk.model
 import android.app.Application
 import cash.z.ecc.android.bip39.Mnemonics
 import cash.z.ecc.android.bip39.toEntropy
-import cash.z.ecc.android.sdk.tool.WalletBirthdayTool
-import cash.z.ecc.android.sdk.type.WalletBirthday
+import cash.z.ecc.android.sdk.model.BlockHeight
 import cash.z.ecc.android.sdk.type.ZcashNetwork
 import cash.z.ecc.sdk.type.fromResources
 import kotlinx.coroutines.Dispatchers
@@ -16,7 +15,7 @@ import org.json.JSONObject
  */
 data class PersistableWallet(
     val network: ZcashNetwork,
-    val birthday: WalletBirthday?,
+    val birthday: BlockHeight?,
     val seedPhrase: SeedPhrase
 ) {
 
@@ -29,7 +28,7 @@ data class PersistableWallet(
         put(KEY_VERSION, VERSION_1)
         put(KEY_NETWORK_ID, network.id)
         birthday?.let {
-            put(KEY_BIRTHDAY, it.toJson())
+            put(KEY_BIRTHDAY, it.value)
         }
         put(KEY_SEED_PHRASE, seedPhrase.joinToString())
     }
@@ -48,15 +47,19 @@ data class PersistableWallet(
         fun from(jsonObject: JSONObject): PersistableWallet {
             when (val version = jsonObject.getInt(KEY_VERSION)) {
                 VERSION_1 -> {
-                    val networkId = jsonObject.getInt(KEY_NETWORK_ID)
+                    val network = run {
+                        val networkId = jsonObject.getInt(KEY_NETWORK_ID)
+                        ZcashNetwork.from(networkId)
+                    }
                     val birthday = if (jsonObject.has(KEY_BIRTHDAY)) {
-                        WalletBirthday.from(jsonObject.getJSONObject(KEY_BIRTHDAY))
+                        val birthdayBlockHeightLong = jsonObject.getLong(KEY_BIRTHDAY)
+                        BlockHeight.new(network, birthdayBlockHeightLong)
                     } else {
                         null
                     }
                     val seedPhrase = jsonObject.getString(KEY_SEED_PHRASE)
 
-                    return PersistableWallet(ZcashNetwork.from(networkId), birthday, SeedPhrase.new(seedPhrase))
+                    return PersistableWallet(network, birthday, SeedPhrase.new(seedPhrase))
                 }
                 else -> {
                     throw IllegalArgumentException("Unsupported version $version")
@@ -69,11 +72,11 @@ data class PersistableWallet(
          */
         suspend fun new(application: Application): PersistableWallet {
             val zcashNetwork = ZcashNetwork.fromResources(application)
-            val walletBirthday = WalletBirthdayTool.loadNearest(application, zcashNetwork)
+            val birthday = BlockHeight.ofLatestCheckpoint(application, zcashNetwork)
 
             val seedPhrase = newSeedPhrase()
 
-            return PersistableWallet(zcashNetwork, walletBirthday, seedPhrase)
+            return PersistableWallet(zcashNetwork, birthday, seedPhrase)
         }
     }
 }

@@ -2,28 +2,42 @@ package cash.z.ecc.sdk.model
 
 import cash.z.ecc.android.sdk.block.CompactBlockProcessor
 
-fun CompactBlockProcessor.ProcessorInfo.downloadProgress() = if (lastDownloadRange.isEmpty()) {
-    PercentDecimal.ONE_HUNDRED_PERCENT
-} else {
-    val numerator = (lastDownloadedHeight - lastDownloadRange.first + 1)
-        .toFloat()
-        .coerceAtLeast(PercentDecimal.MIN)
-    val denominator = (lastDownloadRange.last - lastDownloadRange.first + 1).toFloat()
+fun CompactBlockProcessor.ProcessorInfo.downloadProgress(): PercentDecimal {
+    val lastDownloadRangeSnapshot = lastDownloadRange
+    val lastDownloadedHeightSnapshot = lastDownloadedHeight
 
-    val progress = (numerator / denominator).coerceAtMost(PercentDecimal.MAX)
+    return if (lastDownloadRangeSnapshot?.isEmpty() != false || lastDownloadedHeightSnapshot == null) {
+        PercentDecimal.ONE_HUNDRED_PERCENT
+    } else {
+        val numerator = (lastDownloadedHeightSnapshot.value - lastDownloadRangeSnapshot.start.value + 1)
+            .toFloat()
+            .coerceAtLeast(PercentDecimal.MIN)
+        val denominator = (lastDownloadRangeSnapshot.endInclusive.value - lastDownloadRangeSnapshot.start.value + 1)
+            .toFloat()
 
-    PercentDecimal(progress)
+        val progress = (numerator / denominator).coerceAtMost(PercentDecimal.MAX)
+
+        PercentDecimal(progress)
+    }
 }
 
-fun CompactBlockProcessor.ProcessorInfo.scanProgress() = if (lastScanRange.isEmpty()) {
-    PercentDecimal.ONE_HUNDRED_PERCENT
-} else {
-    val numerator = (lastScannedHeight - lastScanRange.first + 1).toFloat().coerceAtLeast(PercentDecimal.MIN)
-    val demonimator = (lastScanRange.last - lastScanRange.first + 1).toFloat()
+fun CompactBlockProcessor.ProcessorInfo.scanProgress(): PercentDecimal {
+    val lastScanRangeSnapshot = lastScanRange
+    val lastScannedHeightSnapshot = lastScannedHeight
 
-    val progress = (numerator / demonimator).coerceAtMost(PercentDecimal.MAX)
+    return if (lastScanRangeSnapshot?.isEmpty() != false || lastScannedHeightSnapshot == null) {
+        PercentDecimal.ONE_HUNDRED_PERCENT
+    } else {
+        val numerator = (lastScannedHeightSnapshot.value - lastScanRangeSnapshot.start.value + 1)
+            .toFloat()
+            .coerceAtLeast(PercentDecimal.MIN)
+        val demonimator = (lastScanRangeSnapshot.endInclusive.value - lastScanRangeSnapshot.start.value + 1)
+            .toFloat()
 
-    PercentDecimal(progress)
+        val progress = (numerator / demonimator).coerceAtMost(PercentDecimal.MAX)
+
+        PercentDecimal(progress)
+    }
 }
 
 // These are estimates
