@@ -159,6 +159,7 @@ fun ScanBottomItems(
 }
 
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
 private fun ScanTopAppBar(onBack: () -> Unit) {
     SmallTopAppBar(
         title = { Text(text = stringResource(id = R.string.scan_header)) },

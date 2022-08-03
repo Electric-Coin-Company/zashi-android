@@ -57,6 +57,7 @@ fun About(
 }
 
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
 private fun AboutTopAppBar(onBack: () -> Unit) {
     SmallTopAppBar(
         title = { Text(text = stringResource(id = R.string.about_title)) },

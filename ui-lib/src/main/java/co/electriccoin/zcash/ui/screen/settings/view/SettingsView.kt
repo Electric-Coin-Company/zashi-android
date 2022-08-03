@@ -57,6 +57,7 @@ fun Settings(
 }
 
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
 private fun SettingsTopAppBar(onBack: () -> Unit) {
     SmallTopAppBar(
         title = { Text(text = stringResource(id = R.string.settings_header)) },

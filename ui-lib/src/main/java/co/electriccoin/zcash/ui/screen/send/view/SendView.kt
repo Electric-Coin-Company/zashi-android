@@ -96,6 +96,7 @@ fun Send(
 }
 
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
 private fun SendTopAppBar(onBack: () -> Unit) {
     SmallTopAppBar(
         title = { Text(text = stringResource(id = R.string.send_title)) },
@@ -146,6 +147,7 @@ private fun SendMainContent(
 // TODO [#294]: DetektAll failed LongMethod
 @Suppress("LongMethod")
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
 private fun SendForm(
     paddingValues: PaddingValues,
     myBalance: Zatoshi,
