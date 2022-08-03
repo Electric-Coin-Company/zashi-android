@@ -111,6 +111,7 @@ fun UpdateOverlayRunning(updateInfo: UpdateInfo) {
 }
 
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
 private fun UpdateTopAppBar(updateInfo: UpdateInfo) {
     SmallTopAppBar(
         title = {

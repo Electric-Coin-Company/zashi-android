@@ -77,6 +77,7 @@ fun Request(
 }
 
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
 private fun RequestTopAppBar(onBack: () -> Unit) {
     SmallTopAppBar(
         title = { Text(text = stringResource(id = R.string.request_title)) },
@@ -97,6 +98,7 @@ private fun RequestTopAppBar(onBack: () -> Unit) {
 // TODO [#217]: Need to handle changing of Locale after user input, but before submitting the button.
 // TODO [#288]: TextField component can't do long-press backspace.
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
 private fun RequestMainContent(
     paddingValues: PaddingValues,
     myAddress: WalletAddress.Unified,

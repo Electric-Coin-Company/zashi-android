@@ -83,6 +83,7 @@ fun Support(
 }
 
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
 private fun SupportTopAppBar(onBack: () -> Unit) {
     SmallTopAppBar(
         title = { Text(text = stringResource(id = R.string.support_header)) },
@@ -100,6 +101,7 @@ private fun SupportTopAppBar(onBack: () -> Unit) {
 }
 
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
 private fun SupportMainContent(
     paddingValues: PaddingValues,
     message: String,

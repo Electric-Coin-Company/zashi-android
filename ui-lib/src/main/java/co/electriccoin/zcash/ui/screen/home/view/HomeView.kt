@@ -113,6 +113,7 @@ fun Home(
 }
 
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
 private fun HomeTopAppBar(
     isDebugMenuEnabled: Boolean,
     resetSdk: () -> Unit,

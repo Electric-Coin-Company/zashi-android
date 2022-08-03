@@ -7,7 +7,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.test.filters.LargeTest
 import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.integration.test.common.IntegrationTestingActivity
-import co.electriccoin.zcash.ui.integration.test.getPermissionPositiveButtonUiObject
+import co.electriccoin.zcash.ui.integration.test.common.getPermissionPositiveButtonUiObject
 import co.electriccoin.zcash.ui.screen.scan.ScanTag
 import co.electriccoin.zcash.ui.screen.scan.model.ScanState
 import org.junit.Assert

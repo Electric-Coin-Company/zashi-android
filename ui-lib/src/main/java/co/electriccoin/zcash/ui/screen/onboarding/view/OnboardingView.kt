@@ -100,6 +100,7 @@ fun Onboarding(
 }
 
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
 private fun OnboardingTopAppBar(
     onboardingState: OnboardingState,
     isDebugMenuEnabled: Boolean,

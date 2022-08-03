@@ -137,6 +137,7 @@ fun RestoreWallet(
 }
 
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
 private fun RestoreTopAppBar(onBack: () -> Unit, onClear: () -> Unit) {
     SmallTopAppBar(
         title = { Text(text = stringResource(id = R.string.restore_header)) },
@@ -269,6 +270,7 @@ private fun ChipGridWithText(
 
 // TODO [#288]: TextField component can't do long-press backspace.
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
 private fun NextWordTextField(modifier: Modifier = Modifier, text: String, setText: (String) -> Unit) {
     /*
      * Treat the user input as a password, but disable the transformation to obscure input.

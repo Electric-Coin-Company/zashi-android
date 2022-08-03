@@ -12,9 +12,9 @@ import androidx.test.filters.LargeTest
 import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.integration.test.common.IntegrationTestingActivity
-import co.electriccoin.zcash.ui.integration.test.getPermissionPositiveButtonUiObject
-import co.electriccoin.zcash.ui.integration.test.getStringResource
-import co.electriccoin.zcash.ui.integration.test.waitForDeviceIdle
+import co.electriccoin.zcash.ui.integration.test.common.getPermissionPositiveButtonUiObject
+import co.electriccoin.zcash.ui.integration.test.common.getStringResource
+import co.electriccoin.zcash.ui.integration.test.common.waitForDeviceIdle
 import co.electriccoin.zcash.ui.screen.scan.ScanTag
 import co.electriccoin.zcash.ui.screen.scan.model.ScanState
 import org.junit.Assert.assertEquals
@@ -93,7 +93,7 @@ class ScanViewTest : UiTestPrerequisites() {
         assertEquals(ScanState.Scanning, testSetup.getScanState())
 
         // we need to actively wait for the camera preview initialization
-        waitForDeviceIdle(timeoutMillis = 5000.milliseconds)
+        waitForDeviceIdle(timeout = 5000.milliseconds)
 
         composeTestRule.onNodeWithTag(ScanTag.CAMERA_VIEW).also {
             it.assertIsDisplayed()

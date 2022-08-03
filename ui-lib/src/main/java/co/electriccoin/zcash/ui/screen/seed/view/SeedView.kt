@@ -64,6 +64,7 @@ fun Seed(
 }
 
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
 private fun SeedTopAppBar(onBack: () -> Unit) {
     SmallTopAppBar(
         title = { Text(text = stringResource(id = R.string.seed_title)) },
