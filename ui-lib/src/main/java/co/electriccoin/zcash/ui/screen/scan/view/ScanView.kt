@@ -65,6 +65,7 @@ import co.electriccoin.zcash.ui.screen.scan.model.ScanState
 import co.electriccoin.zcash.ui.screen.scan.util.QrCodeAnalyzer
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
+import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -195,7 +196,7 @@ private fun ScanMainContent(
 
     val (scanState, setScanState) = rememberSaveable {
         mutableStateOf(
-            if (permissionState.hasPermission) {
+            if (permissionState.status.isGranted) {
                 ScanState.Scanning
             } else {
                 ScanState.Permission
@@ -203,14 +204,14 @@ private fun ScanMainContent(
         )
     }
 
-    if (!permissionState.hasPermission) {
+    if (!permissionState.status.isGranted) {
         setScanState(ScanState.Permission)
         LaunchedEffect(key1 = UUID.randomUUID()) {
             permissionState.launchPermissionRequest()
         }
     } else if (scanState == ScanState.Failed) {
         // keep current state
-    } else if (permissionState.hasPermission) {
+    } else if (permissionState.status.isGranted) {
         if (scanState != ScanState.Scanning) {
             setScanState(ScanState.Scanning)
         }
@@ -313,7 +314,7 @@ fun ScanCameraView(
 
     // we check the permission first, as the ProcessCameraProvider's emit won't be called again after
     // recomposition with the permission granted
-    val cameraProviderFlow = if (permissionState.hasPermission) {
+    val cameraProviderFlow = if (permissionState.status.isGranted) {
         remember {
             flow<ProcessCameraProvider> { emit(ProcessCameraProvider.getInstance(context).await()) }
         }
