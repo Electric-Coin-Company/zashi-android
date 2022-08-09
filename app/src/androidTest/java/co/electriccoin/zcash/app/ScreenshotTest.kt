@@ -32,6 +32,7 @@ import cash.z.ecc.sdk.fixture.WalletAddressFixture
 import co.electriccoin.zcash.spackle.FirebaseTestLabUtil
 import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.MainActivity
+import co.electriccoin.zcash.ui.NavigationTargets
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.ConfigurationOverride
 import co.electriccoin.zcash.ui.design.component.UiMode
@@ -301,7 +302,7 @@ class ScreenshotTest : UiTestPrerequisites() {
         composeTestRule.waitUntil { composeTestRule.activity.walletViewModel.walletSnapshot.value != null }
         requestZecScreenshots(resContext, tag, composeTestRule)
 
-        navigateTo(MainActivity.NAV_HOME)
+        navigateTo(NavigationTargets.HOME)
         composeTestRule.waitUntil { composeTestRule.activity.walletViewModel.secretState.value is SecretState.Ready }
 
         composeTestRule.onNode(hasText(resContext.getString(R.string.home_button_send))).also {
@@ -313,7 +314,7 @@ class ScreenshotTest : UiTestPrerequisites() {
         composeTestRule.waitUntil { composeTestRule.activity.walletViewModel.walletSnapshot.value != null }
         sendZecScreenshots(resContext, tag, composeTestRule)
 
-        navigateTo(MainActivity.NAV_HOME)
+        navigateTo(NavigationTargets.HOME)
     }
 }
 
