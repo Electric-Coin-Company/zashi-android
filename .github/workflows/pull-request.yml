@@ -313,7 +313,49 @@ jobs:
           name: Test Android modules with WTF results
           path: ~/artifacts
 
-  release_build:
+
+  # Performs a button mash test on the debug build of the app with strict mode enabled
+  test_robo_debug:
+    if: needs.check_firebase_secrets.outputs.has-secrets == 'true'
+    needs: [check_firebase_secrets]
+    runs-on: ubuntu-latest
+    permissions:
+      packages: read
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout
+        timeout-minutes: 1
+        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
+      - name: Setup
+        id: setup
+        timeout-minutes: 5
+        uses: ./.github/actions/setup
+      - name: Build
+        timeout-minutes: 20
+        env:
+          ORG_GRADLE_PROJECT_IS_CRASH_ON_STRICT_MODE_VIOLATION: true
+        run: |
+          ./gradlew :app:assembleDebug
+      - name: Authenticate to Google Cloud for Firebase Test Lab
+        id: auth_test_lab
+        uses: google-github-actions/auth@ceee102ec2387dd9e844e01b530ccd4ec87ce955
+        with:
+          create_credentials_file: true
+          project_id: ${{ secrets.FIREBASE_TEST_LAB_PROJECT }}
+          service_account: ${{ secrets.FIREBASE_TEST_LAB_SERVICE_ACCOUNT }}
+          workload_identity_provider: ${{ secrets.FIREBASE_TEST_LAB_WORKLOAD_IDENTITY_PROVIDER }}
+          access_token_lifetime: '900s'
+      - name: Robo test
+        timeout-minutes: 20
+        env:
+          # This first environment variable is used by Flank, since the temporary token is missing the project name
+          GOOGLE_CLOUD_PROJECT: ${{ secrets.FIREBASE_TEST_LAB_PROJECT }}
+          ORG_GRADLE_PROJECT_ZCASH_FIREBASE_TEST_LAB_API_KEY_PATH: ${{ steps.auth_test_lab.outputs.credentials_file_path }}
+        run: |
+          ./gradlew :app:runFlankSanityConfigDebug
+
+  build:
     needs: prime_cache
     runs-on: ubuntu-latest
     permissions:
@@ -360,10 +402,9 @@ jobs:
           path: ~/artifacts
 
   # Performs a button mash test on the release build of the app
-  # Note that we might need to help it get past the onboarding test with a script
-  test_robo:
+  test_robo_release:
     if: needs.check_firebase_secrets.outputs.has-secrets == 'true'
-    needs: [release_build, check_firebase_secrets]
+    needs: [build, check_firebase_secrets]
     runs-on: ubuntu-latest
     permissions:
       packages: read
@@ -400,4 +441,4 @@ jobs:
           ORG_GRADLE_PROJECT_ZCASH_FIREBASE_TEST_LAB_API_KEY_PATH: ${{ steps.auth_test_lab.outputs.credentials_file_path }}
         run: |
           unzip ${BINARIES_ZIP_PATH}
-          ./gradlew :app:runFlankSanityConfig
+          ./gradlew :app:runFlankSanityConfigRelease

@@ -104,6 +104,13 @@ android {
                 signingConfig = signingConfigs.getByName("release")
             }
         }
+        all {
+            buildConfigField(
+                "boolean",
+                "IS_STRICT_MODE_CRASH_ENABLED",
+                project.property("IS_CRASH_ON_STRICT_MODE_VIOLATION").toString()
+            )
+        }
     }
 
     // Resolve final app name
@@ -112,16 +119,16 @@ android {
         val debugAppNameSuffix = project.property("ZCASH_DEBUG_APP_NAME_SUFFIX").toString()
         when (this.name) {
             "zcashtestnetDebug" -> {
-                resValue( "string", "app_name", "$defaultAppName ($testnetNetworkName)$debugAppNameSuffix")
+                resValue("string", "app_name", "$defaultAppName ($testnetNetworkName)$debugAppNameSuffix")
             }
             "zcashmainnetDebug" -> {
-                resValue( "string", "app_name", "$defaultAppName$debugAppNameSuffix")
+                resValue("string", "app_name", "$defaultAppName$debugAppNameSuffix")
             }
             "zcashtestnetRelease" -> {
-                resValue( "string", "app_name", "$defaultAppName ($testnetNetworkName)")
+                resValue("string", "app_name", "$defaultAppName ($testnetNetworkName)")
             }
             "zcashmainnetRelease" -> {
-                resValue( "string", "app_name", defaultAppName)
+                resValue("string", "app_name", defaultAppName)
             }
         }
     }
@@ -265,7 +272,25 @@ fladle {
     }
 
     configs {
-        create("sanityConfig") {
+        create("sanityConfigDebug") {
+            clearPropertiesForSanityRobo()
+
+            debugApk.set(
+                project.provider {
+                    "${buildDir}/outputs/apk/zcashmainnet/debug/app-zcashmainnet-debug.apk"
+                }
+            )
+
+            testTimeout.set("3m")
+
+            devices.addAll(
+                mapOf("model" to "Pixel2", "version" to minSdkVersion),
+                mapOf("model" to "Pixel2", "version" to targetSdkVersion)
+            )
+
+            flankVersion.set(libs.versions.flank.get())
+        }
+        create("sanityConfigRelease") {
             clearPropertiesForSanityRobo()
 
             debugApk.set(
