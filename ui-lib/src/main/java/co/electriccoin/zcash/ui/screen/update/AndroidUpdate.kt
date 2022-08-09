@@ -3,13 +3,16 @@ package co.electriccoin.zcash.ui.screen.update
 import android.content.Context
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
+import androidx.annotation.VisibleForTesting
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.screen.home.viewmodel.CheckUpdateViewModel
 import co.electriccoin.zcash.ui.screen.update.model.UpdateInfo
 import co.electriccoin.zcash.ui.screen.update.model.UpdateState
 import co.electriccoin.zcash.ui.screen.update.util.PlayStoreUtil
@@ -19,17 +22,39 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
-internal fun MainActivity.WrapUpdate(
-    updateInfo: UpdateInfo
-) {
-    WrapUpdate(
-        activity = this,
-        inputUpdateInfo = updateInfo
-    )
+internal fun MainActivity.WrapCheckForUpdate() {
+    WrapCheckForUpdate(this)
 }
 
 @Composable
-internal fun WrapUpdate(
+private fun WrapCheckForUpdate(activity: ComponentActivity) {
+    // TODO [#382]: https://github.com/zcash/secant-android-wallet/issues/382
+    // TODO [#403]: https://github.com/zcash/secant-android-wallet/issues/403
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    val checkUpdateViewModel by activity.viewModels<CheckUpdateViewModel> {
+        CheckUpdateViewModel.CheckUpdateViewModelFactory(
+            activity.application,
+            AppUpdateCheckerImp.new()
+        )
+    }
+
+    val updateInfo = checkUpdateViewModel.updateInfo.collectAsState().value
+
+    updateInfo?.let {
+        if (it.appUpdateInfo != null && it.state == UpdateState.Prepared) {
+            WrapUpdate(activity, updateInfo)
+        }
+    }
+
+    // Check for an app update asynchronously. We create an effect that matches the activity
+    // lifecycle. If the wrapping compose recomposes, the check shouldn't run again.
+    LaunchedEffect(true) {
+        checkUpdateViewModel.checkForAppUpdate()
+    }
+}
+
+@Composable
+private fun WrapUpdate(
     activity: ComponentActivity,
     inputUpdateInfo: UpdateInfo
 ) {
