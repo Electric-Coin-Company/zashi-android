@@ -70,7 +70,7 @@ fladle {
     val FIREBASE_TEST_LAB_MIN_SDK = 23
 
     @Suppress("MagicNumber", "PropertyName", "VariableNaming")
-    val FIREBASE_TEST_LAB_MAX_SDK = 30
+    val FIREBASE_TEST_LAB_MAX_SDK = 33
 
     val minSdkVersion = run {
         // Fladle will use the app APK as the additional APK, so we have to
@@ -94,7 +94,7 @@ fladle {
 
     devices.addAll(
         mapOf("model" to "Pixel2", "version" to minSdkVersion),
-        mapOf("model" to "Pixel2", "version" to targetSdkVersion)
+        mapOf("model" to "Pixel2.arm", "version" to targetSdkVersion)
     )
 
     @Suppress("MagicNumber")
