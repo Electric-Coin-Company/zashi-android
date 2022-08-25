@@ -18,7 +18,7 @@ class TargetApiTest {
         // target the new API level.
         assertThat(
             ApplicationProvider.getApplicationContext<Application>().applicationInfo.targetSdkVersion,
-            lessThanOrEqualTo(Build.VERSION_CODES.S_V2)
+            lessThanOrEqualTo(Build.VERSION_CODES.TIRAMISU)
         )
     }
 }
