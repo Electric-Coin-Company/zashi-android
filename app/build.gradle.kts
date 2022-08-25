@@ -251,7 +251,7 @@ fladle {
     val FIREBASE_TEST_LAB_MIN_SDK = 23
 
     @Suppress("MagicNumber", "PropertyName", "VariableNaming")
-    val FIREBASE_TEST_LAB_MAX_SDK = 30
+    val FIREBASE_TEST_LAB_MAX_SDK = 33
 
     val minSdkVersion = run {
         val buildMinSdk = project.properties["ANDROID_APP_MIN_SDK_VERSION"].toString().toInt()
@@ -285,7 +285,7 @@ fladle {
 
             devices.addAll(
                 mapOf("model" to "Pixel2", "version" to minSdkVersion),
-                mapOf("model" to "Pixel2", "version" to targetSdkVersion)
+                mapOf("model" to "Pixel2.arm", "version" to targetSdkVersion)
             )
 
             flankVersion.set(libs.versions.flank.get())
@@ -303,7 +303,7 @@ fladle {
 
             devices.addAll(
                 mapOf("model" to "Pixel2", "version" to minSdkVersion),
-                mapOf("model" to "Pixel2", "version" to targetSdkVersion)
+                mapOf("model" to "Pixel2.arm", "version" to targetSdkVersion)
             )
 
             flankVersion.set(libs.versions.flank.get())
