@@ -1,5 +1,5 @@
 # secant-android-wallet
-_Note: As of September 2021, this is a brand new project.  Since it is being developed in the open from the beginning, initially this project will not be fully functional.  Some of the documentation below will be aspirational until the implementation is further along.  During this initial stage of development, the older [Zcash Android Wallet](https://github.com/zcash/zcash-android-wallet) may be a more helpful sample._
+_Note: This is a new and unreleased project.  Since it is being developed in the open from the beginning, initially this project will not be fully functional.  Some of the documentation below will be aspirational until the implementation is further along.  During this initial stage of development, the older [Zcash Android Wallet](https://github.com/zcash/zcash-android-wallet) may be a more helpful sample._
 
 This is a sample implementation of a Zcash wallet for Android leveraging the [Zcash Android SDK](https://github.com/zcash/zcash-android-wallet-sdk).  The goal is to exercise the SDK and related Zcash libraries, as well as demonstrate how the SDK works.
 
