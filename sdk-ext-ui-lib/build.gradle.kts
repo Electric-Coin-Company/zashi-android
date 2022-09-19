@@ -7,6 +7,8 @@ plugins {
 }
 
 android {
+    namespace = "cash.z.ecc.sdk.ext.ui"
+    testNamespace = "cash.z.ecc.sdk.ext.ui.test"
     resourcePrefix = "co_electriccoin_zcash_"
 
     compileOptions {

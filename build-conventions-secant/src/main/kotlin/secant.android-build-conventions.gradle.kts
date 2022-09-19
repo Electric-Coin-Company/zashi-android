@@ -1,9 +1,10 @@
 import com.android.build.api.dsl.CommonExtension
+import com.android.build.api.dsl.ManagedVirtualDevice
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 
 pluginManager.withPlugin("com.android.application") {
     project.the<com.android.build.gradle.AppExtension>().apply {
-        configureBaseExtension()
+        configureBaseExtension(isLibrary = false)
 
         defaultConfig {
             minSdk = project.property("ANDROID_APP_MIN_SDK_VERSION").toString().toInt()
@@ -26,7 +27,7 @@ pluginManager.withPlugin("com.android.application") {
 
 pluginManager.withPlugin("com.android.library") {
     project.the<com.android.build.gradle.LibraryExtension>().apply {
-        configureBaseExtension()
+        configureBaseExtension(isLibrary = true)
 
         defaultConfig {
             minSdk = project.property("ANDROID_LIB_MIN_SDK_VERSION").toString().toInt()
@@ -51,7 +52,8 @@ pluginManager.withPlugin("com.android.library") {
     }
 }
 
-fun com.android.build.gradle.BaseExtension.configureBaseExtension() {
+@Suppress("LongMethod")
+fun com.android.build.gradle.BaseExtension.configureBaseExtension(isLibrary: Boolean) {
     compileSdkVersion(project.property("ANDROID_COMPILE_SDK_VERSION").toString().toInt())
     ndkVersion = project.property("ANDROID_NDK_VERSION").toString()
 
@@ -84,6 +86,41 @@ fun com.android.build.gradle.BaseExtension.configureBaseExtension() {
 
         if (project.property("IS_USE_TEST_ORCHESTRATOR").toString().toBoolean()) {
             execution = "ANDROIDX_TEST_ORCHESTRATOR"
+        }
+
+        @Suppress("UnstableApiUsage")
+        managedDevices {
+            @Suppress("MagicNumber", "PropertyName", "VariableNaming")
+            val MANAGED_DEVICES_MIN_SDK = 27
+
+            val testDeviceMinSdkVersion = run {
+                val buildMinSdk = if (isLibrary) {
+                    project.properties["ANDROID_LIB_MIN_SDK_VERSION"].toString().toInt()
+                } else {
+                    project.properties["ANDROID_APP_MIN_SDK_VERSION"].toString().toInt()
+                }
+                buildMinSdk.coerceAtLeast(MANAGED_DEVICES_MIN_SDK)
+            }
+            val testDeviceMaxSdkVersion = project.properties["ANDROID_TARGET_SDK_VERSION"].toString().toInt()
+
+            devices {
+                create<ManagedVirtualDevice>("pixel2Min") {
+                    device = "Pixel 2"
+                    apiLevel = testDeviceMinSdkVersion
+                    systemImageSource = "google"
+                }
+                create<ManagedVirtualDevice>("pixel2Target") {
+                    device = "Pixel 2"
+                    apiLevel = testDeviceMaxSdkVersion
+                    systemImageSource = "google"
+                }
+            }
+
+            groups {
+                create("defaultDevices") {
+                    targetDevices.addAll(devices.toList())
+                }
+            }
         }
     }
 

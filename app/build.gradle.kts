@@ -16,6 +16,8 @@ val isOrchestratorEnabled = true
 val testnetNetworkName = "Testnet"
 
 android {
+    namespace = "co.electriccoin.zcash.app"
+
     defaultConfig {
         applicationId = packageName
 

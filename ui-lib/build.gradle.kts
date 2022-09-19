@@ -7,6 +7,8 @@ plugins {
 }
 
 android {
+    namespace = "co.electriccoin.zcash.ui"
+
     defaultConfig {
         testInstrumentationRunner = "co.electriccoin.zcash.test.ZcashUiTestRunner"
     }

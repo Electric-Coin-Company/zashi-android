@@ -7,6 +7,7 @@ plugins {
 }
 
 android {
+    namespace = "cash.z.ecc.sdk.ext"
 }
 
 dependencies {

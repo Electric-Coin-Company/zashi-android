@@ -10,6 +10,9 @@ plugins {
 // Specifically this is needed due to checks on the UncaughtExceptionHandler tests
 
 android {
+    namespace = "co.electriccoin.zcash.crash.android"
+    testNamespace = "co.electriccoin.zcash.crash.test"
+
     defaultConfig {
         testInstrumentationRunnerArguments["clearPackageData"] = "true"
     }
