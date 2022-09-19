@@ -7,6 +7,8 @@ plugins {
 }
 
 android {
+    namespace = "co.electriccoin.zcash.spackle"
+    testNamespace = "co.electriccoin.zcash.spackle.test"
     // Force orchestrator to be used for this module, because we need the process name to be purged between tests
     defaultConfig {
         testInstrumentationRunnerArguments["clearPackageData"] = "true"

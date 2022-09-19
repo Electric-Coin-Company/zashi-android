@@ -11,6 +11,8 @@ plugins {
 val isOrchestratorEnabled = true
 
 android {
+    namespace = "co.electriccoin.zcash.preference"
+
     if (isOrchestratorEnabled) {
         defaultConfig {
             testInstrumentationRunnerArguments["clearPackageData"] = "true"

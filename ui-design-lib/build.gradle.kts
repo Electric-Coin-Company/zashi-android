@@ -5,6 +5,8 @@ plugins {
 }
 
 android {
+    namespace = "co.electriccoin.zcash.ui.design"
+
     buildFeatures {
         compose = true
     }

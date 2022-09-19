@@ -86,6 +86,8 @@ A few notes on running instrumentation tests on the app module:
  - Screenshots are generated automatically and copied to (/app/build/reports/androidTests/connected/zcash_screenshots)[../app/build/reports/androidTests/connected/zcash_screenshots]
  - Running the Android tests on the app module will erase the data stored by the app.  This is because Test Orchestrator is required to reset app state to successfully perform integration tests.
 
+Gradle Managed Devices are also configured with our build scripts.  We have found best results running tests one module at a time, rather than trying to run them all at once.  For example: `./gradlew :ui-lib:pixel2TargetDebugAndroidTest` will run the UI tests on a Pixel 2 sized device using our target API version.
+
 ## Gradle Properties
 A variety of Gradle properties can be used to configure the build.  Most of these properties are optional and help with advanced configuration.  If you're just doing local development or making a small pull request contribution, you likely do not need to worry about these.
 

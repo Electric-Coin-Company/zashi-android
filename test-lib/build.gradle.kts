@@ -5,6 +5,7 @@ plugins {
 }
 
 android {
+    namespace = "co.electriccoin.zcash.test"
     resourcePrefix = "co_electriccoin_zcash_"
 }
 
