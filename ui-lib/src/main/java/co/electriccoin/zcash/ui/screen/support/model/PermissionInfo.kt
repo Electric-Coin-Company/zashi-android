@@ -55,5 +55,5 @@ fun List<PermissionInfo>.toPermissionSupportString() = buildString {
 enum class PermissionStatus {
     NotGrantedByManifest,
     NotGrantedByUser,
-    Granted,
+    Granted
 }
