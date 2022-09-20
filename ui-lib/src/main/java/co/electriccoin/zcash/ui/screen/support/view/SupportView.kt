@@ -14,11 +14,11 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SmallTopAppBar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -85,7 +85,7 @@ fun Support(
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 private fun SupportTopAppBar(onBack: () -> Unit) {
-    SmallTopAppBar(
+    TopAppBar(
         title = { Text(text = stringResource(id = R.string.support_header)) },
         navigationIcon = {
             IconButton(
