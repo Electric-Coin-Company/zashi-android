@@ -1,5 +1,7 @@
 package co.electriccoin.zcash.ui
 
+import android.content.Context
+import android.content.pm.ApplicationInfo
 import android.os.Bundle
 import android.os.SystemClock
 import android.view.WindowManager
@@ -15,6 +17,9 @@ import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
+import co.electriccoin.zcash.spackle.EmulatorWtfUtil
+import co.electriccoin.zcash.spackle.FirebaseTestLabUtil
+import co.electriccoin.zcash.spackle.getPackageInfoCompat
 import co.electriccoin.zcash.ui.common.LocalScreenSecurity
 import co.electriccoin.zcash.ui.common.ScreenSecurity
 import co.electriccoin.zcash.ui.design.compat.FontCompat
@@ -81,7 +86,11 @@ class MainActivity : ComponentActivity() {
         val screenSecurity = ScreenSecurity()
         lifecycleScope.launch {
             screenSecurity.referenceCount.map { it > 0 }.collect { isSecure ->
-                if (isSecure) {
+                val isTest = FirebaseTestLabUtil.isFirebaseTestLab(applicationContext)
+                    || EmulatorWtfUtil.isEmulatorWtf(applicationContext)
+                val isDebuggable = BuildConfig.DEBUG || isDebuggable(applicationContext)
+                
+                if (isSecure && !isTest && !isDebuggable) {
                     window.setFlags(
                         WindowManager.LayoutParams.FLAG_SECURE,
                         WindowManager.LayoutParams.FLAG_SECURE
@@ -138,4 +147,10 @@ class MainActivity : ComponentActivity() {
         @VisibleForTesting
         internal val SPLASH_SCREEN_DELAY = 0.seconds
     }
+}
+
+private fun isDebuggable(context: Context): Boolean {
+    val myPackageInfo = context.packageManager.getPackageInfoCompat(context.packageName, 0)
+
+    return 0 != myPackageInfo.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE
 }
