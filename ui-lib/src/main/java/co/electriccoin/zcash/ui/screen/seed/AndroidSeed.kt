@@ -28,8 +28,8 @@ private fun WrapSeed(
 ) {
     val screenSecurity = LocalScreenSecurity.current
     DisposableEffect(screenSecurity) {
-        screenSecurity.accessSecure()
-        onDispose { screenSecurity.releaseSecure() }
+        screenSecurity.acquire()
+        onDispose { screenSecurity.release() }
     }
 
     val walletViewModel by activity.viewModels<WalletViewModel>()

@@ -1,22 +1,27 @@
 package co.electriccoin.zcash.ui.common
 
 import androidx.compose.runtime.compositionLocalOf
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.updateAndGet
 
-data class ScreenSecurity(var secureCounter: MutableStateFlow<Int>) {
-    fun accessSecure() {
-        secureCounter.update { it + 1 }
+class ScreenSecurity {
+    private val mutableReferenceCount: MutableStateFlow<Int> = MutableStateFlow(0)
+
+    val referenceCount = mutableReferenceCount.asStateFlow()
+
+    fun acquire() {
+        mutableReferenceCount.update { it + 1 }
     }
 
-    fun releaseSecure() {
-        secureCounter.update { it - 1 }
-    }
+    fun release() {
+        val after = mutableReferenceCount.updateAndGet { it - 1 }
 
-    suspend fun isSecure(scope: CoroutineScope) = secureCounter.map { it > 0 }.stateIn(scope)
+        if (after < 0) {
+            error("Released security reference count too many times")
+        }
+    }
 }
 
-val LocalScreenSecurity = compositionLocalOf { ScreenSecurity(MutableStateFlow(0)) }
+val LocalScreenSecurity = compositionLocalOf { ScreenSecurity() }

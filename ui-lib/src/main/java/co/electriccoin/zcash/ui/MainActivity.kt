@@ -27,6 +27,7 @@ import co.electriccoin.zcash.ui.screen.home.viewmodel.SecretState
 import co.electriccoin.zcash.ui.screen.home.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.onboarding.WrapOnboarding
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
@@ -77,11 +78,14 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun setupUiContent() {
-        val screenSecurity = ScreenSecurity(MutableStateFlow(0))
+        val screenSecurity = ScreenSecurity()
         lifecycleScope.launch {
-            screenSecurity.isSecure(this).collect {
-                if (it) {
-                    window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
+            screenSecurity.referenceCount.map { it > 0 }.collect { isSecure ->
+                if (isSecure) {
+                    window.setFlags(
+                        WindowManager.LayoutParams.FLAG_SECURE,
+                        WindowManager.LayoutParams.FLAG_SECURE
+                    )
                 } else {
                     window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
                 }
