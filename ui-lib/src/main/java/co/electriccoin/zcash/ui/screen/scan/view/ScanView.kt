@@ -67,12 +67,12 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
+import com.google.accompanist.permissions.shouldShowRationale
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.guava.await
-import java.util.UUID
 import kotlin.math.roundToInt
 
 // TODO [#423]: https://github.com/zcash/secant-android-wallet/issues/423
@@ -206,8 +206,13 @@ private fun ScanMainContent(
 
     if (!permissionState.status.isGranted) {
         setScanState(ScanState.Permission)
-        LaunchedEffect(key1 = UUID.randomUUID()) {
-            permissionState.launchPermissionRequest()
+        if (permissionState.status.shouldShowRationale) {
+            // keep blank screen with a link to the app settings
+            // user denied the permission previously
+        } else {
+            LaunchedEffect(key1 = true) {
+                permissionState.launchPermissionRequest()
+            }
         }
     } else if (scanState == ScanState.Failed) {
         // keep current state
