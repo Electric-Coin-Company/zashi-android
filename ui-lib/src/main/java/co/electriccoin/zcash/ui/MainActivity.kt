@@ -2,17 +2,21 @@ package co.electriccoin.zcash.ui
 
 import android.os.Bundle
 import android.os.SystemClock
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.annotation.VisibleForTesting
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
+import co.electriccoin.zcash.ui.common.LocalScreenSecurity
+import co.electriccoin.zcash.ui.common.ScreenSecurity
 import co.electriccoin.zcash.ui.design.compat.FontCompat
 import co.electriccoin.zcash.ui.design.component.ConfigurationOverride
 import co.electriccoin.zcash.ui.design.component.GradientSurface
@@ -73,6 +77,17 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun setupUiContent() {
+        val screenSecurity = ScreenSecurity(MutableStateFlow(0))
+        lifecycleScope.launch {
+            screenSecurity.isSecure(this).collect {
+                if (it) {
+                    window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
+                } else {
+                    window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
+                }
+            }
+        }
+
         setContent {
             Override(configurationOverrideFlow) {
                 ZcashTheme {
@@ -81,22 +96,24 @@ class MainActivity : ComponentActivity() {
                             .fillMaxWidth()
                             .fillMaxHeight()
                     ) {
-                        when (val secretState = walletViewModel.secretState.collectAsState().value) {
-                            SecretState.Loading -> {
-                                // For now, keep displaying splash screen using condition above.
-                                // In the future, we might consider displaying something different here.
-                            }
-                            SecretState.None -> {
-                                WrapOnboarding()
-                            }
-                            is SecretState.NeedsBackup -> {
-                                WrapBackup(
-                                    secretState.persistableWallet,
-                                    onBackupComplete = { walletViewModel.persistBackupComplete() }
-                                )
-                            }
-                            is SecretState.Ready -> {
-                                Navigation()
+                        CompositionLocalProvider(LocalScreenSecurity provides screenSecurity) {
+                            when (val secretState = walletViewModel.secretState.collectAsState().value) {
+                                SecretState.Loading -> {
+                                    // For now, keep displaying splash screen using condition above.
+                                    // In the future, we might consider displaying something different here.
+                                }
+                                SecretState.None -> {
+                                    WrapOnboarding()
+                                }
+                                is SecretState.NeedsBackup -> {
+                                    WrapBackup(
+                                        secretState.persistableWallet,
+                                        onBackupComplete = { walletViewModel.persistBackupComplete() }
+                                    )
+                                }
+                                is SecretState.Ready -> {
+                                    Navigation()
+                                }
                             }
                         }
                     }

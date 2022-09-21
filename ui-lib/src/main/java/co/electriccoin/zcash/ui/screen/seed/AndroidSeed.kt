@@ -5,8 +5,10 @@ package co.electriccoin.zcash.ui.screen.seed
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import co.electriccoin.zcash.ui.MainActivity
+import co.electriccoin.zcash.ui.common.LocalScreenSecurity
 import co.electriccoin.zcash.ui.screen.backup.copyToClipboard
 import co.electriccoin.zcash.ui.screen.home.viewmodel.SecretState
 import co.electriccoin.zcash.ui.screen.home.viewmodel.WalletViewModel
@@ -24,6 +26,12 @@ private fun WrapSeed(
     activity: ComponentActivity,
     goBack: () -> Unit
 ) {
+    val screenSecurity = LocalScreenSecurity.current
+    DisposableEffect(screenSecurity) {
+        screenSecurity.accessSecure()
+        onDispose { screenSecurity.releaseSecure() }
+    }
+
     val walletViewModel by activity.viewModels<WalletViewModel>()
 
     val persistableWallet = run {
