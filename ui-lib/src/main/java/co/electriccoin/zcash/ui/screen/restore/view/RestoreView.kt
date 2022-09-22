@@ -25,9 +25,9 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SmallTopAppBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
@@ -137,8 +137,9 @@ fun RestoreWallet(
 }
 
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
 private fun RestoreTopAppBar(onBack: () -> Unit, onClear: () -> Unit) {
-    SmallTopAppBar(
+    TopAppBar(
         title = { Text(text = stringResource(id = R.string.restore_header)) },
         navigationIcon = {
             IconButton(
@@ -269,6 +270,7 @@ private fun ChipGridWithText(
 
 // TODO [#288]: TextField component can't do long-press backspace.
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
 private fun NextWordTextField(modifier: Modifier = Modifier, text: String, setText: (String) -> Unit) {
     /*
      * Treat the user input as a password, but disable the transformation to obscure input.

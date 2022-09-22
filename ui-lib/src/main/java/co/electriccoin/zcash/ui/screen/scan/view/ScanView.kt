@@ -25,11 +25,11 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SmallTopAppBar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -65,16 +65,18 @@ import co.electriccoin.zcash.ui.screen.scan.model.ScanState
 import co.electriccoin.zcash.ui.screen.scan.util.QrCodeAnalyzer
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
+import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
+import com.google.accompanist.permissions.shouldShowRationale
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.guava.await
-import java.util.UUID
 import kotlin.math.roundToInt
 
 // TODO [#423]: https://github.com/zcash/secant-android-wallet/issues/423
+// TODO QR scan screen elements transparency
 @Preview("Scan")
 @Composable
 fun PreviewScan() {
@@ -159,8 +161,9 @@ fun ScanBottomItems(
 }
 
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
 private fun ScanTopAppBar(onBack: () -> Unit) {
-    SmallTopAppBar(
+    TopAppBar(
         title = { Text(text = stringResource(id = R.string.scan_header)) },
         navigationIcon = {
             IconButton(
@@ -194,7 +197,7 @@ private fun ScanMainContent(
 
     val (scanState, setScanState) = rememberSaveable {
         mutableStateOf(
-            if (permissionState.hasPermission) {
+            if (permissionState.status.isGranted) {
                 ScanState.Scanning
             } else {
                 ScanState.Permission
@@ -202,14 +205,19 @@ private fun ScanMainContent(
         )
     }
 
-    if (!permissionState.hasPermission) {
+    if (!permissionState.status.isGranted) {
         setScanState(ScanState.Permission)
-        LaunchedEffect(key1 = UUID.randomUUID()) {
-            permissionState.launchPermissionRequest()
+        if (permissionState.status.shouldShowRationale) {
+            // keep blank screen with a link to the app settings
+            // user denied the permission previously
+        } else {
+            LaunchedEffect(key1 = true) {
+                permissionState.launchPermissionRequest()
+            }
         }
     } else if (scanState == ScanState.Failed) {
         // keep current state
-    } else if (permissionState.hasPermission) {
+    } else if (permissionState.status.isGranted) {
         if (scanState != ScanState.Scanning) {
             setScanState(ScanState.Scanning)
         }
@@ -240,6 +248,7 @@ private fun ScanMainContent(
             }
             ScanState.Scanning -> {
                 // TODO [#437]: https://github.com/zcash/secant-android-wallet/issues/437
+                // TODO Scan QR Screen Frame Analysing
                 onScanStateChanged(ScanState.Scanning)
                 ScanCameraView(
                     onScanned = onScanned,
@@ -312,7 +321,7 @@ fun ScanCameraView(
 
     // we check the permission first, as the ProcessCameraProvider's emit won't be called again after
     // recomposition with the permission granted
-    val cameraProviderFlow = if (permissionState.hasPermission) {
+    val cameraProviderFlow = if (permissionState.status.isGranted) {
         remember {
             flow<ProcessCameraProvider> { emit(ProcessCameraProvider.getInstance(context).await()) }
         }

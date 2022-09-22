@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.integration.test
+package co.electriccoin.zcash.ui.integration.test.common
 
 import android.content.Context
 import android.os.Build
@@ -50,10 +50,10 @@ fun getPermissionPositiveButtonUiObject(): UiObject? {
     )
 }
 
-fun waitForDeviceIdle(timeoutMillis: Duration = 1000.milliseconds) {
+fun waitForDeviceIdle(timeout: Duration = 1000.milliseconds) {
     val instrumentation = InstrumentationRegistry.getInstrumentation()
     UiDevice.getInstance(instrumentation).waitForWindowUpdate(
         ApplicationProvider.getApplicationContext<Context>().packageName,
-        timeoutMillis.inWholeMilliseconds
+        timeout.inWholeMilliseconds
     )
 }

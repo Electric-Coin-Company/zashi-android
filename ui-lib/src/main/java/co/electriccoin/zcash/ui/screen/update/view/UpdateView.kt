@@ -14,10 +14,10 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SmallTopAppBar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -111,8 +111,9 @@ fun UpdateOverlayRunning(updateInfo: UpdateInfo) {
 }
 
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
 private fun UpdateTopAppBar(updateInfo: UpdateInfo) {
-    SmallTopAppBar(
+    TopAppBar(
         title = {
             Text(
                 text = stringResource(
