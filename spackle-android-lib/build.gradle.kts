@@ -29,6 +29,7 @@ dependencies {
     androidTestImplementation(libs.bundles.androidx.test)
     androidTestImplementation(libs.kotlinx.coroutines.test)
 
+    androidTestUtil(libs.androidx.test.services)
     androidTestUtil(libs.androidx.test.orchestrator) {
         artifact {
             type = "apk"

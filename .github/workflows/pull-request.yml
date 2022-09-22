@@ -275,7 +275,7 @@ jobs:
           name: Test Android modules with FTL results
           path: ~/artifacts
 
-  test_android_modules_wtf:
+  test_android_modules_wtf_coverage:
     if: needs.check_emulator_wtf_secrets.outputs.has-secrets == 'true'
     needs: [ prime_cache, check_emulator_wtf_secrets ]
     runs-on: ubuntu-latest
@@ -284,19 +284,20 @@ jobs:
     steps:
       - name: Checkout
         timeout-minutes: 1
-        uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8
       - name: Setup
         id: setup
         timeout-minutes: 5
         uses: ./.github/actions/setup
       - name: Build and test
-        timeout-minutes: 25
+        timeout-minutes: 30
         env:
           # Force blank suffix for screenshot tests
           ORG_GRADLE_PROJECT_ZCASH_DEBUG_APP_NAME_SUFFIX: ""
           ORG_GRADLE_PROJECT_ZCASH_EMULATOR_WTF_API_KEY: ${{ secrets.EMULATOR_WTF_API_KEY }}
+          ORG_GRADLE_PROJECT_IS_ANDROID_INSTRUMENTATION_TEST_COVERAGE_ENABLED: true
         run: |
-          ./gradlew testDebugWithEmulatorWtf :app:testZcashmainnetDebugWithEmulatorWtf :ui-integration-test:testZcashmainnetDebugWithEmulatorWtf :ui-screenshot-test:testZcashmainnetDebugWithEmulatorWtf
+          ./gradlew testDebugWithEmulatorWtf :ui-integration-test:testZcashmainnetDebugWithEmulatorWtf
       - name: Collect Artifacts
         if: ${{ always() }}
         timeout-minutes: 1
@@ -312,9 +313,48 @@ jobs:
         uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce
         timeout-minutes: 1
         with:
-          name: Test Android modules with WTF results
+          name: Test Android libs with WTF results
           path: ~/artifacts
 
+  test_android_modules_wtf_no_coverage:
+    if: needs.check_emulator_wtf_secrets.outputs.has-secrets == 'true'
+    needs: [ prime_cache, check_emulator_wtf_secrets ]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        timeout-minutes: 1
+        uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c
+      - name: Setup
+        id: setup
+        timeout-minutes: 5
+        uses: ./.github/actions/setup
+      - name: Build and test
+        timeout-minutes: 30
+        env:
+          # Force blank suffix for screenshot tests
+          ORG_GRADLE_PROJECT_ZCASH_DEBUG_APP_NAME_SUFFIX: ""
+          ORG_GRADLE_PROJECT_ZCASH_EMULATOR_WTF_API_KEY: ${{ secrets.EMULATOR_WTF_API_KEY }}
+        run: |
+          ./gradlew :app:testZcashmainnetDebugWithEmulatorWtf :ui-screenshot-test:testZcashmainnetDebugWithEmulatorWtf
+      - name: Collect Artifacts
+        if: ${{ always() }}
+        timeout-minutes: 1
+        env:
+          ARTIFACTS_DIR_PATH: ${{ format('{0}/artifacts', env.home) }}
+          TEST_RESULTS_ZIP_PATH: ${{ format('{0}/artifacts/test_results.zip', env.home) }}
+        run: |
+          mkdir ${ARTIFACTS_DIR_PATH}
+
+          zip -r ${TEST_RESULTS_ZIP_PATH} . -i \*/build/test-results/\*
+      - name: Upload Artifacts
+        if: ${{ always() }}
+        uses: actions/upload-artifact@83fd05a356d7e2593de66fc9913b3002723633cb
+        timeout-minutes: 1
+        with:
+          name: Test Android app with WTF results
+          path: ~/artifacts
 
   # Performs a button mash test on the debug build of the app with strict mode enabled
   test_robo_debug:

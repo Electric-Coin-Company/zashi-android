@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- For test coverage -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="29"/>
+
+    <!-- For test coverage on API 29 only -->
     <application
-        android:label="sdk-ext-test"/>
+        android:label="sdk-ext-test"
+        android:requestLegacyExternalStorage="true" />
 
 </manifest>

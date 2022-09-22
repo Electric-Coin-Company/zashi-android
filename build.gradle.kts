@@ -1,3 +1,5 @@
+import kotlinx.kover.api.KoverMergedConfig
+
 buildscript {
     dependencyLocking {
         // This property is treated specially, as it is not defined by default in the root gradle.properties
@@ -124,21 +126,29 @@ fladle {
 }
 
 kover {
-    isDisabled = !project.property("IS_KOTLIN_TEST_COVERAGE_ENABLED").toString().toBoolean()
+    isDisabled.set(!project.property("IS_KOTLIN_TEST_COVERAGE_ENABLED").toString().toBoolean())
+    engine.set(kotlinx.kover.api.JacocoEngine(project.property("JACOCO_VERSION").toString()))
 
     // Don't run on the Android projects, as they have coverage generated in a different way
     // through Android's instrumented tests
-    disabledProjects = setOf(
-        "app",
-        "crash-android-lib",
-        "preference-impl-android-lib",
-        "sdk-ext-lib",
-        "sdk-ext-ui-lib",
-        "spackle-android-lib",
-        "test-lib",
-        "ui-design-lib",
-        "ui-integration-test",
-        "ui-lib",
-        "ui-screenshot-test",
-    )
+    extensions.configure<KoverMergedConfig> {
+        enable()
+        filters {
+            projects {
+                excludes.addAll(setOf(
+                    "app",
+                    "crash-android-lib",
+                    "preference-impl-android-lib",
+                    "sdk-ext-lib",
+                    "sdk-ext-ui-lib",
+                    "spackle-android-lib",
+                    "test-lib",
+                    "ui-design-lib",
+                    "ui-integration-test",
+                    "ui-lib",
+                    "ui-screenshot-test",
+                ))
+            }
+        }
+    }
 }

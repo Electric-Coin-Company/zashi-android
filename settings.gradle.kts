@@ -163,6 +163,7 @@ dependencyResolutionManagement {
             val androidxTestJunitVersion = extra["ANDROIDX_TEST_JUNIT_VERSION"].toString()
             val androidxTestMacrobenchmarkVersion = extra["ANDROIDX_TEST_MACROBENCHMARK_VERSION"].toString()
             val androidxTestOrchestratorVersion = extra["ANDROIDX_TEST_ORCHESTRATOR_VERSION"].toString()
+            val androidxTestServices = extra["ANDROIDX_TEST_SERVICE_VERSION"].toString()
             val androidxTestRunnerVersion = extra["ANDROIDX_TEST_RUNNER_VERSION"].toString()
             val androidxUiAutomatorVersion = extra["ANDROIDX_UI_AUTOMATOR_VERSION"].toString()
             val androidxWorkManagerVersion = extra["ANDROIDX_WORK_MANAGER_VERSION"].toString()
@@ -239,9 +240,9 @@ dependencyResolutionManagement {
             library("androidx-test-macrobenchmark", "androidx.benchmark:benchmark-macro-junit4:$androidxTestMacrobenchmarkVersion")
             library("androidx-test-orchestrator", "androidx.test:orchestrator:$androidxTestOrchestratorVersion")
             library("androidx-test-runner", "androidx.test:runner:$androidxTestRunnerVersion")
+            library("androidx-test-services","androidx.test.services:test-services:$androidxTestServices")
             library("androidx-uiAutomator", "androidx.test.uiautomator:uiautomator-v18:$androidxUiAutomatorVersion")
             library("kotlinx-coroutines-test", "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinxCoroutinesVersion")
-
             // Bundles
             bundle(
                 "androidx-camera",
@@ -287,7 +288,8 @@ dependencyResolutionManagement {
                     "androidx-espresso-intents",
                     "androidx-test-core",
                     "androidx-test-junit",
-                    "androidx-test-runner"
+                    "androidx-test-runner",
+                    "androidx-test-orchestrator"
                 )
             )
         }

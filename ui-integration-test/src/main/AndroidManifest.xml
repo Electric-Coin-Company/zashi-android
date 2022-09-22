@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- For test coverage -->
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="29" />
+
     <application
         android:label="zcash-ui-integration-test"
         android:icon="@mipmap/ic_launcher_square"
-        android:roundIcon="@mipmap/ic_launcher_round">
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:requestLegacyExternalStorage="true">
         <activity
             android:name="co.electriccoin.zcash.ui.integration.test.common.IntegrationTestingActivity"
             android:exported="false" />

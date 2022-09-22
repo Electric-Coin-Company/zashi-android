@@ -1,3 +1,6 @@
+import com.android.build.gradle.internal.cxx.configure.buildTypeOf
+import com.android.build.gradle.internal.dsl.decorator.androidPluginDslDecorator
+
 // Emulator WTF has min and max values that might differ from our project's
 // These are determined by `ew-cli --models`
 
@@ -14,6 +17,11 @@ pluginManager.withPlugin("wtf.emulator.gradle") {
         val tokenString = project.properties["ZCASH_EMULATOR_WTF_API_KEY"].toString()
         if (tokenString.isNotEmpty()) {
             token.set(tokenString)
+        }
+
+        if (project.properties["IS_ANDROID_INSTRUMENTATION_TEST_COVERAGE_ENABLED"].toString().toBoolean()) {
+            withCoverage.set(true)
+            environmentVariables.set(mapOf("useTestStorageService" to "false"))
         }
 
         val buildMinSdk = if (pluginManager.hasPlugin("com.android.application")) {
