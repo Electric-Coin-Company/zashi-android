@@ -1,5 +1,7 @@
 package co.electriccoin.zcash.ui.common
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.compositionLocalOf
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -25,3 +27,12 @@ class ScreenSecurity {
 }
 
 val LocalScreenSecurity = compositionLocalOf { ScreenSecurity() }
+
+@Composable
+fun SecureScreen() {
+    val screenSecurity = LocalScreenSecurity.current
+    DisposableEffect(screenSecurity) {
+        screenSecurity.acquire()
+        onDispose { screenSecurity.release() }
+    }
+}

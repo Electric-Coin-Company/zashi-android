@@ -18,6 +18,7 @@ import co.electriccoin.zcash.spackle.EmulatorWtfUtil
 import co.electriccoin.zcash.spackle.FirebaseTestLabUtil
 import co.electriccoin.zcash.ui.BuildConfig
 import co.electriccoin.zcash.ui.MainActivity
+import co.electriccoin.zcash.ui.common.SecureScreen
 import co.electriccoin.zcash.ui.screen.home.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.onboarding.view.Onboarding
 import co.electriccoin.zcash.ui.screen.onboarding.viewmodel.OnboardingViewModel
@@ -112,6 +113,7 @@ private fun WrapRestore(activity: ComponentActivity) {
             // historical precedent on how that could cause problems.
         }
         is CompleteWordSetState.Loaded -> {
+            SecureScreen()
             RestoreWallet(
                 completeWordList.list,
                 restoreViewModel.userWordList,

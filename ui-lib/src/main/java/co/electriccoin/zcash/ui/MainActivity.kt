@@ -86,10 +86,10 @@ class MainActivity : ComponentActivity() {
         val screenSecurity = ScreenSecurity()
         lifecycleScope.launch {
             screenSecurity.referenceCount.map { it > 0 }.collect { isSecure ->
-                val isTest = FirebaseTestLabUtil.isFirebaseTestLab(applicationContext)
-                    || EmulatorWtfUtil.isEmulatorWtf(applicationContext)
+                val isTest = FirebaseTestLabUtil.isFirebaseTestLab(applicationContext) ||
+                    EmulatorWtfUtil.isEmulatorWtf(applicationContext)
                 val isDebuggable = BuildConfig.DEBUG || isDebuggable(applicationContext)
-                
+
                 if (isSecure && !isTest && !isDebuggable) {
                     window.setFlags(
                         WindowManager.LayoutParams.FLAG_SECURE,
