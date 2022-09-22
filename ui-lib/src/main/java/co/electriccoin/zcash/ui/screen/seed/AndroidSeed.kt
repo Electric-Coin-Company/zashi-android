@@ -25,7 +25,6 @@ private fun WrapSeed(
     activity: ComponentActivity,
     goBack: () -> Unit
 ) {
-    SecureScreen()
     val walletViewModel by activity.viewModels<WalletViewModel>()
 
     val persistableWallet = run {
