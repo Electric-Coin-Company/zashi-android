@@ -16,7 +16,7 @@ import org.junit.Test
 import kotlin.test.assertEquals
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class SeedViewScreenshotTest : UiTestPrerequisites() {
+class SeedViewSecuredScreenTest : UiTestPrerequisites() {
     @get:Rule
     val composeTestRule = createComposeRule()
 
