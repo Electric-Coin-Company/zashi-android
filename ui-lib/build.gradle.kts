@@ -11,6 +11,10 @@ android {
 
     defaultConfig {
         testInstrumentationRunner = "co.electriccoin.zcash.test.ZcashUiTestRunner"
+        testInstrumentationRunnerArguments["useTestStorageService"] = "true"
+    }
+    testOptions {
+        execution = "ANDROIDX_TEST_ORCHESTRATOR"
     }
 
     buildFeatures {
@@ -93,6 +97,7 @@ dependencies {
     }
 
     if (project.property("IS_USE_TEST_ORCHESTRATOR").toString().toBoolean()) {
+        androidTestUtil(libs.androidx.test.services)
         androidTestUtil(libs.androidx.test.orchestrator) {
             artifact {
                 type = "apk"

@@ -16,6 +16,7 @@ android {
     if (isOrchestratorEnabled) {
         defaultConfig {
             testInstrumentationRunnerArguments["clearPackageData"] = "true"
+            testInstrumentationRunnerArguments["useTestStorageService"] = "true"
         }
 
         testOptions {
@@ -41,6 +42,7 @@ dependencies {
     }
 
     if (isOrchestratorEnabled) {
+        androidTestUtil(libs.androidx.test.services)
         androidTestUtil(libs.androidx.test.orchestrator) {
             artifact {
                 type = "apk"
