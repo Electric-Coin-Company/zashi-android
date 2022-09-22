@@ -53,7 +53,6 @@ internal fun WrapBackup(
     onCopyToClipboard: () -> Unit,
     onBackupComplete: () -> Unit
 ) {
-    SecureScreen()
     val testChoices by rememberSaveable(stateSaver = TestChoices.Saver) { mutableStateOf(TestChoices()) }
 
     BackupWallet(
