@@ -12,7 +12,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import cash.z.ecc.sdk.model.PersistableWallet
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.SecureScreen
 import co.electriccoin.zcash.ui.screen.backup.ext.Saver
 import co.electriccoin.zcash.ui.screen.backup.state.BackupState
 import co.electriccoin.zcash.ui.screen.backup.state.TestChoices
