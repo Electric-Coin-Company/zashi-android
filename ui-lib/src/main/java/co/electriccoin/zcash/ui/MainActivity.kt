@@ -1,7 +1,5 @@
 package co.electriccoin.zcash.ui
 
-import android.content.Context
-import android.content.pm.ApplicationInfo
 import android.os.Bundle
 import android.os.SystemClock
 import android.view.WindowManager
@@ -19,7 +17,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
 import co.electriccoin.zcash.spackle.EmulatorWtfUtil
 import co.electriccoin.zcash.spackle.FirebaseTestLabUtil
-import co.electriccoin.zcash.spackle.getPackageInfoCompat
 import co.electriccoin.zcash.ui.common.LocalScreenSecurity
 import co.electriccoin.zcash.ui.common.ScreenSecurity
 import co.electriccoin.zcash.ui.design.compat.FontCompat
