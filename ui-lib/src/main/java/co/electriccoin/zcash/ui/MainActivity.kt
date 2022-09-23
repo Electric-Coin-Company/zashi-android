@@ -88,9 +88,8 @@ class MainActivity : ComponentActivity() {
             screenSecurity.referenceCount.map { it > 0 }.collect { isSecure ->
                 val isTest = FirebaseTestLabUtil.isFirebaseTestLab(applicationContext) ||
                     EmulatorWtfUtil.isEmulatorWtf(applicationContext)
-                val isDebuggable = BuildConfig.DEBUG || isDebuggable(applicationContext)
 
-                if (isSecure && !isTest && !isDebuggable) {
+                if (isSecure && !isTest) {
                     window.setFlags(
                         WindowManager.LayoutParams.FLAG_SECURE,
                         WindowManager.LayoutParams.FLAG_SECURE
@@ -147,10 +146,4 @@ class MainActivity : ComponentActivity() {
         @VisibleForTesting
         internal val SPLASH_SCREEN_DELAY = 0.seconds
     }
-}
-
-private fun isDebuggable(context: Context): Boolean {
-    val myPackageInfo = context.packageManager.getPackageInfoCompat(context.packageName, 0)
-
-    return 0 != myPackageInfo.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE
 }
