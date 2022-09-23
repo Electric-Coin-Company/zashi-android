@@ -37,9 +37,11 @@ class SeedViewSecuredScreenTest : UiTestPrerequisites() {
             composeTestRule.setContent {
                 CompositionLocalProvider(LocalScreenSecurity provides screenSecurity) {
                     ZcashTheme {
-                        Seed(persistableWallet = PersistableWalletFixture.new(),
+                        Seed(
+                            persistableWallet = PersistableWalletFixture.new(),
                             onBack = {},
-                            onCopyToClipboard = {})
+                            onCopyToClipboard = {}
+                        )
                     }
                 }
             }
