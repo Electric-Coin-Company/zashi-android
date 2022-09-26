@@ -1,6 +1,5 @@
 package co.electriccoin.zcash.ui.common
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
