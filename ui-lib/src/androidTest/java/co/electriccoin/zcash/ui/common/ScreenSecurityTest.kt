@@ -61,8 +61,6 @@ class ScreenSecurityTest : UiTestPrerequisites() {
         private fun TestView(secureScreen: Boolean) {
             if (secureScreen) {
                 SecureScreen()
-            } else {
-                Log.e("detached", "")
             }
         }
     }
