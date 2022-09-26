@@ -53,6 +53,7 @@ import androidx.compose.ui.unit.dp
 import cash.z.ecc.sdk.model.SeedPhraseValidation
 import co.electriccoin.zcash.spackle.model.Index
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.SecureScreen
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.CHIP_GRID_ROW_SIZE
@@ -114,6 +115,7 @@ fun RestoreWallet(
     paste: () -> String?,
     onFinished: () -> Unit
 ) {
+    SecureScreen()
     userWordList.wordValidation().collectAsState(null).value?.let { seedPhraseValidation ->
         if (seedPhraseValidation !is SeedPhraseValidation.Valid) {
             Scaffold(topBar = {

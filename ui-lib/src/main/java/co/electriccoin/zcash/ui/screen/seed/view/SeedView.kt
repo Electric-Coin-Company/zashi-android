@@ -20,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import cash.z.ecc.sdk.fixture.PersistableWalletFixture
 import cash.z.ecc.sdk.model.PersistableWallet
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.SecureScreen
 import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.ChipGrid
 import co.electriccoin.zcash.ui.design.component.GradientSurface
@@ -52,6 +53,7 @@ fun Seed(
     onBack: () -> Unit,
     onCopyToClipboard: () -> Unit
 ) {
+    SecureScreen()
     Scaffold(topBar = {
         SeedTopAppBar(onBack = onBack)
     }) { paddingValues ->

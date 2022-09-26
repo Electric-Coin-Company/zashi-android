@@ -22,6 +22,7 @@ import cash.z.ecc.sdk.fixture.PersistableWalletFixture
 import cash.z.ecc.sdk.model.PersistableWallet
 import co.electriccoin.zcash.spackle.model.Index
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.SecureScreen
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.CHIP_GRID_ROW_SIZE
@@ -129,6 +130,7 @@ private fun EducationRecoveryPhrase(onNext: () -> Unit) {
 
 @Composable
 private fun SeedPhrase(persistableWallet: PersistableWallet, onNext: () -> Unit, onCopyToClipboard: () -> Unit) {
+    SecureScreen()
     Column(Modifier.verticalScroll(rememberScrollState())) {
         Header(stringResource(R.string.new_wallet_3_header))
         Body(stringResource(R.string.new_wallet_3_body_1))
@@ -153,6 +155,7 @@ private fun Test(
     onNext: () -> Unit,
     onChoicesChanged: ((choicesCount: Int) -> Unit)?
 ) {
+    SecureScreen()
     val splitSeedPhrase = wallet.seedPhrase.split
 
     val currentSelectedTestChoice = selectedTestChoices.current.collectAsState().value
