@@ -9,8 +9,10 @@ import androidx.activity.viewModels
 import androidx.annotation.VisibleForTesting
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
@@ -28,6 +30,7 @@ import co.electriccoin.zcash.ui.screen.backup.WrapBackup
 import co.electriccoin.zcash.ui.screen.home.viewmodel.SecretState
 import co.electriccoin.zcash.ui.screen.home.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.onboarding.WrapOnboarding
+import co.electriccoin.zcash.ui.screen.warning.NotEnoughSpaceView
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -50,7 +53,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setupSplashScreen()
-
         if (FontCompat.isFontPrefetchNeeded()) {
             lifecycleScope.launch {
                 FontCompat.prefetchFontsLegacy(applicationContext)
@@ -106,23 +108,11 @@ class MainActivity : ComponentActivity() {
                             .fillMaxHeight()
                     ) {
                         CompositionLocalProvider(LocalScreenSecurity provides screenSecurity) {
-                            when (val secretState = walletViewModel.secretState.collectAsState().value) {
-                                SecretState.Loading -> {
-                                    // For now, keep displaying splash screen using condition above.
-                                    // In the future, we might consider displaying something different here.
-                                }
-                                SecretState.None -> {
-                                    WrapOnboarding()
-                                }
-                                is SecretState.NeedsBackup -> {
-                                    WrapBackup(
-                                        secretState.persistableWallet,
-                                        onBackupComplete = { walletViewModel.persistBackupComplete() }
-                                    )
-                                }
-                                is SecretState.Ready -> {
-                                    Navigation()
-                                }
+                            val isEnoughSpace by walletViewModel.isEnoughSpace.collectAsState()
+                            if (isEnoughSpace == false) {
+                                NotEnoughSpaceView()
+                            } else {
+                                MainContent()
                             }
                         }
                     }
@@ -135,6 +125,28 @@ class MainActivity : ComponentActivity() {
         // so that the collection is still tied to UI lifecycle.
         lifecycleScope.launch {
             walletViewModel.synchronizer.collect {
+            }
+        }
+    }
+
+    @Composable
+    private fun MainContent() {
+        when (val secretState = walletViewModel.secretState.collectAsState().value) {
+            SecretState.Loading -> {
+                // For now, keep displaying splash screen using condition above.
+                // In the future, we might consider displaying something different here.
+            }
+            SecretState.None -> {
+                WrapOnboarding()
+            }
+            is SecretState.NeedsBackup -> {
+                WrapBackup(
+                    secretState.persistableWallet,
+                    onBackupComplete = { walletViewModel.persistBackupComplete() }
+                )
+            }
+            is SecretState.Ready -> {
+                Navigation()
             }
         }
     }

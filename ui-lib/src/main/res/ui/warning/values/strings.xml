@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="not_enough_space_title">Not enough space</string>
+    <string name="not_enough_space_description">Lorem ipsum</string>
+
+</resources>
