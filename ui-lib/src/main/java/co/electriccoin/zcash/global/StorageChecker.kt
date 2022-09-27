@@ -6,15 +6,17 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 object StorageChecker {
-    private const val REQUIRED_FREE_SPACE = 1000
+    const val REQUIRED_FREE_SPACE_MEGABYTES = 1000
 
-    suspend fun isEnoughSpace() = checkAvailableStorage() > REQUIRED_FREE_SPACE
+    suspend fun isEnoughSpace() = checkAvailableStorage() > REQUIRED_FREE_SPACE_MEGABYTES
 
     @SuppressLint("UsableSpace")
-    private suspend fun checkAvailableStorage() = withContext(Dispatchers.IO) {
+    @Suppress("MagicNumber")
+    suspend fun checkAvailableStorage() = withContext(Dispatchers.IO) {
         return@withContext Environment.getDataDirectory().usableSpace / (1024 * 1024)
     }
+
+    suspend fun spaceRequiredToContinue() = withContext(Dispatchers.IO) {
+        return@withContext REQUIRED_FREE_SPACE_MEGABYTES - checkAvailableStorage()
+    }
 }
-
-
-

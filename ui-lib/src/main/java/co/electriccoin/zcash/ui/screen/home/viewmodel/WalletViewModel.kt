@@ -19,7 +19,6 @@ import cash.z.ecc.sdk.model.FiatCurrency
 import cash.z.ecc.sdk.model.PercentDecimal
 import cash.z.ecc.sdk.model.PersistableWallet
 import cash.z.ecc.sdk.model.WalletAddresses
-import co.electriccoin.zcash.global.StorageChecker
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.preference.EncryptedPreferenceKeys
@@ -90,13 +89,6 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
         val preferenceProvider = StandardPreferenceSingleton.getInstance(application)
         emitAll(StandardPreferenceKeys.IS_USER_BACKUP_COMPLETE.observe(preferenceProvider))
     }
-
-    val isEnoughSpace = flow { emit(StorageChecker.isEnoughSpace()) }
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            null
-        )
 
     val secretState: StateFlow<SecretState> = walletCoordinator.persistableWallet
         .combine(isBackupComplete) { persistableWallet: PersistableWallet?, isBackupComplete: Boolean ->

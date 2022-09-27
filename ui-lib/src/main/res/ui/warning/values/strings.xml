@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="not_enough_space_title">Not enough space</string>
-    <string name="not_enough_space_description">Lorem ipsum</string>
-
+    <string name="not_enough_space_title">Not enough space!</string>
+    <string name="not_enough_space_description">You need approximately %1$s gig of space while synchronizing the Zcash blockchain, but only 300 megs once done. Syncing will stay paused until more space is available.</string>
+    <string name="space_required_to_continue">~%1$s megs required to continue </string>
+    <string name="unknown">Unknown</string>
 </resources>

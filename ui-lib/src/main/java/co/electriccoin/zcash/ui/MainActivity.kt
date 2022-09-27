@@ -30,7 +30,8 @@ import co.electriccoin.zcash.ui.screen.backup.WrapBackup
 import co.electriccoin.zcash.ui.screen.home.viewmodel.SecretState
 import co.electriccoin.zcash.ui.screen.home.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.onboarding.WrapOnboarding
-import co.electriccoin.zcash.ui.screen.warning.NotEnoughSpaceView
+import co.electriccoin.zcash.ui.screen.warning.WrapNotEnoughSpace
+import co.electriccoin.zcash.ui.screen.warning.viewmodel.StorageCheckViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -42,6 +43,9 @@ class MainActivity : ComponentActivity() {
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     val walletViewModel by viewModels<WalletViewModel>()
+
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    val storageCheckViewModel by viewModels<StorageCheckViewModel>()
 
     @VisibleForTesting(otherwise = VisibleForTesting.NONE)
     lateinit var navControllerForTesting: NavHostController
@@ -108,9 +112,9 @@ class MainActivity : ComponentActivity() {
                             .fillMaxHeight()
                     ) {
                         CompositionLocalProvider(LocalScreenSecurity provides screenSecurity) {
-                            val isEnoughSpace by walletViewModel.isEnoughSpace.collectAsState()
+                            val isEnoughSpace by storageCheckViewModel.isEnoughSpace.collectAsState()
                             if (isEnoughSpace == false) {
-                                NotEnoughSpaceView()
+                                WrapNotEnoughSpace()
                             } else {
                                 MainContent()
                             }

@@ -28,10 +28,13 @@ fun Header(
 @Composable
 fun Body(
     text: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    textAlign: TextAlign = TextAlign.Start
+
 ) {
     Text(
         text = text,
+        textAlign = textAlign,
         style = MaterialTheme.typography.bodyLarge,
         color = MaterialTheme.colorScheme.onBackground,
         modifier = modifier
