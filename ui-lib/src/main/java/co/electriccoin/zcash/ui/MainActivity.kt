@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
+import cash.z.ecc.android.sdk.ext.collectWith
 import co.electriccoin.zcash.spackle.EmulatorWtfUtil
 import co.electriccoin.zcash.spackle.FirebaseTestLabUtil
 import co.electriccoin.zcash.ui.common.LocalScreenBrightness
@@ -84,12 +85,8 @@ class MainActivity : ComponentActivity() {
     private fun setupUiContent() {
         val screenSecurity = ScreenSecurity()
         val screenBrightness = ScreenBrightness()
-        lifecycleScope.launch {
-            observeScreenSecurityFlag(screenSecurity)
-        }
-        lifecycleScope.launch {
-            observeScreenBrightnessFlag(screenBrightness)
-        }
+        observeScreenSecurityFlag(screenSecurity)
+        observeScreenBrightnessFlag(screenBrightness)
 
         setContent {
             Override(configurationOverrideFlow) {
@@ -130,14 +127,12 @@ class MainActivity : ComponentActivity() {
         // Force collection to improve performance; sync can start happening while
         // the user is going through the backup flow. Don't use eager collection in the view model,
         // so that the collection is still tied to UI lifecycle.
-        lifecycleScope.launch {
-            walletViewModel.synchronizer.collect {
-            }
+        walletViewModel.synchronizer.collectWith(lifecycleScope) {
         }
     }
 
-    private suspend fun observeScreenSecurityFlag(screenSecurity: ScreenSecurity) {
-        screenSecurity.referenceCount.map { it > 0 }.collect { isSecure ->
+    private fun observeScreenSecurityFlag(screenSecurity: ScreenSecurity) {
+        screenSecurity.referenceCount.map { it > 0 }.collectWith(lifecycleScope) { isSecure ->
             val isTest = FirebaseTestLabUtil.isFirebaseTestLab(applicationContext) ||
                 EmulatorWtfUtil.isEmulatorWtf(applicationContext)
 
@@ -152,8 +147,8 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private suspend fun observeScreenBrightnessFlag(screenBrightness: ScreenBrightness) {
-        screenBrightness.referenceCount.map { it > 0 }.collect { maxBrightness ->
+    private fun observeScreenBrightnessFlag(screenBrightness: ScreenBrightness) {
+        screenBrightness.referenceCount.map { it > 0 }.collectWith(lifecycleScope) { maxBrightness ->
             if (maxBrightness) {
                 window.attributes = window.attributes.apply {
                     this.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_FULL
