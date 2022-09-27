@@ -24,7 +24,7 @@ class ScreenBrightnessTest : UiTestPrerequisites() {
 
     @Test
     @MediumTest
-    fun acquireAndReleaseScreenSecurity() = runTest {
+    fun acquireAndReleaseScreenBrightness() = runTest {
         val testSetup = TestSetup(composeTestRule)
 
         assertEquals(1, testSetup.getSecureBrightnessCount())

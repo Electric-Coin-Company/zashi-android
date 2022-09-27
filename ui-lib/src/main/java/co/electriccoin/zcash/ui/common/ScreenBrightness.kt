@@ -21,7 +21,7 @@ class ScreenBrightness {
         val after = mutableReferenceCount.updateAndGet { it - 1 }
 
         if (after < 0) {
-            error("Released security reference count too many times")
+            error("Released brightness reference count too many times")
         }
     }
 }
