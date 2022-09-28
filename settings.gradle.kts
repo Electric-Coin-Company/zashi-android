@@ -43,6 +43,7 @@ pluginManagement {
 
         id("com.android.application") version (androidGradlePluginVersion) apply (false)
         id("com.android.library") version (androidGradlePluginVersion) apply (false)
+        id("com.android.test") version (androidGradlePluginVersion) apply (false)
         id("com.github.ben-manes.versions") version (extra["GRADLE_VERSIONS_PLUGIN_VERSION"].toString()) apply (false)
         id("com.github.triplet.play") version (extra["PLAY_PUBLISHER_PLUGIN_VERSION"].toString()) apply (false)
         id("com.osacky.fulladle") version (extra["FULLADLE_VERSION"].toString()) apply (false)
@@ -270,7 +271,7 @@ include("spackle-lib")
 include("spackle-android-lib")
 include("test-lib")
 include("ui-design-lib")
-include("ui-integration-test-lib")
+include("ui-integration-test")
 include("ui-lib")
 
 val zcashSdkIncludedBuildPath = extra["SDK_INCLUDED_BUILD_PATH"].toString()

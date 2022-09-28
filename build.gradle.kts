@@ -132,7 +132,7 @@ kover {
         "spackle-android-lib",
         "test-lib",
         "ui-design-lib",
-        "ui-integration-test-lib",
+        "ui-integration-test",
         "ui-lib",
     )
 }

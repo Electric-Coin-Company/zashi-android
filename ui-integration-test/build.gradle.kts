@@ -1,9 +1,7 @@
 plugins {
-    id("com.android.library")
+    id("com.android.test")
     kotlin("android")
     id("secant.android-build-conventions")
-    id("wtf.emulator.gradle")
-    id("secant.emulator-wtf-conventions")
 }
 
 // Force orchestrator to be used for this module, because we need cleared state to generate screenshots
@@ -11,6 +9,10 @@ val isOrchestratorEnabled = true
 
 android {
     namespace = "co.electriccoin.zcash.ui.integration"
+    // Target needs to be set to com.android.application type module
+    targetProjectPath = ":${projects.app.name}"
+    // Run tests in this module
+    experimentalProperties["android.experimental.self-instrumenting"] = true
 
     defaultConfig {
         if (isOrchestratorEnabled) {
@@ -18,6 +20,17 @@ android {
         }
 
         testInstrumentationRunner = "co.electriccoin.zcash.test.ZcashUiTestRunner"
+    }
+
+    // Define the same flavors as in app module
+    flavorDimensions.add("network")
+    productFlavors {
+        create("zcashtestnet") {
+            dimension = "network"
+        }
+        create("zcashmainnet") {
+            dimension = "network"
+        }
     }
 
     if (isOrchestratorEnabled) {
@@ -36,18 +49,18 @@ android {
 }
 
 dependencies {
-    androidTestImplementation(projects.uiLib)
-    androidTestImplementation(projects.uiDesignLib)
-    androidTestImplementation(projects.testLib)
-    androidTestImplementation(projects.spackleAndroidLib)
+    implementation(projects.uiLib)
+    implementation(projects.uiDesignLib)
+    implementation(projects.testLib)
+    implementation(projects.spackleAndroidLib)
 
-    androidTestImplementation(libs.bundles.androidx.test)
-    androidTestImplementation(libs.bundles.androidx.compose.core)
-    androidTestImplementation(libs.bundles.play.core)
+    implementation(libs.bundles.androidx.test)
+    implementation(libs.bundles.androidx.compose.core)
+    implementation(libs.bundles.play.core)
 
-    androidTestImplementation(libs.androidx.compose.test.junit)
-    androidTestImplementation(libs.androidx.navigation.compose)
-    androidTestImplementation(libs.androidx.uiAutomator)
+    implementation(libs.androidx.compose.test.junit)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.uiAutomator)
 
     if (isOrchestratorEnabled) {
         androidTestUtil(libs.androidx.test.orchestrator) {
