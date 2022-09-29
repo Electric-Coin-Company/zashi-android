@@ -15,9 +15,12 @@ import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
+import cash.z.ecc.android.sdk.ext.collectWith
 import co.electriccoin.zcash.spackle.EmulatorWtfUtil
 import co.electriccoin.zcash.spackle.FirebaseTestLabUtil
+import co.electriccoin.zcash.ui.common.LocalScreenBrightness
 import co.electriccoin.zcash.ui.common.LocalScreenSecurity
+import co.electriccoin.zcash.ui.common.ScreenBrightness
 import co.electriccoin.zcash.ui.common.ScreenSecurity
 import co.electriccoin.zcash.ui.design.compat.FontCompat
 import co.electriccoin.zcash.ui.design.component.ConfigurationOverride
@@ -81,21 +84,9 @@ class MainActivity : ComponentActivity() {
 
     private fun setupUiContent() {
         val screenSecurity = ScreenSecurity()
-        lifecycleScope.launch {
-            screenSecurity.referenceCount.map { it > 0 }.collect { isSecure ->
-                val isTest = FirebaseTestLabUtil.isFirebaseTestLab(applicationContext) ||
-                    EmulatorWtfUtil.isEmulatorWtf(applicationContext)
-
-                if (isSecure && !isTest) {
-                    window.setFlags(
-                        WindowManager.LayoutParams.FLAG_SECURE,
-                        WindowManager.LayoutParams.FLAG_SECURE
-                    )
-                } else {
-                    window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
-                }
-            }
-        }
+        val screenBrightness = ScreenBrightness()
+        observeScreenSecurityFlag(screenSecurity)
+        observeScreenBrightnessFlag(screenBrightness)
 
         setContent {
             Override(configurationOverrideFlow) {
@@ -105,7 +96,10 @@ class MainActivity : ComponentActivity() {
                             .fillMaxWidth()
                             .fillMaxHeight()
                     ) {
-                        CompositionLocalProvider(LocalScreenSecurity provides screenSecurity) {
+                        CompositionLocalProvider(
+                            LocalScreenSecurity provides screenSecurity,
+                            LocalScreenBrightness provides screenBrightness
+                        ) {
                             when (val secretState = walletViewModel.secretState.collectAsState().value) {
                                 SecretState.Loading -> {
                                     // For now, keep displaying splash screen using condition above.
@@ -133,8 +127,36 @@ class MainActivity : ComponentActivity() {
         // Force collection to improve performance; sync can start happening while
         // the user is going through the backup flow. Don't use eager collection in the view model,
         // so that the collection is still tied to UI lifecycle.
-        lifecycleScope.launch {
-            walletViewModel.synchronizer.collect {
+        walletViewModel.synchronizer.collectWith(lifecycleScope) {
+        }
+    }
+
+    private fun observeScreenSecurityFlag(screenSecurity: ScreenSecurity) {
+        screenSecurity.referenceCount.map { it > 0 }.collectWith(lifecycleScope) { isSecure ->
+            val isTest = FirebaseTestLabUtil.isFirebaseTestLab(applicationContext) ||
+                EmulatorWtfUtil.isEmulatorWtf(applicationContext)
+
+            if (isSecure && !isTest) {
+                window.setFlags(
+                    WindowManager.LayoutParams.FLAG_SECURE,
+                    WindowManager.LayoutParams.FLAG_SECURE
+                )
+            } else {
+                window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
+            }
+        }
+    }
+
+    private fun observeScreenBrightnessFlag(screenBrightness: ScreenBrightness) {
+        screenBrightness.referenceCount.map { it > 0 }.collectWith(lifecycleScope) { maxBrightness ->
+            if (maxBrightness) {
+                window.attributes = window.attributes.apply {
+                    this.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_FULL
+                }
+            } else {
+                window.attributes = window.attributes.apply {
+                    this.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
+                }
             }
         }
     }
