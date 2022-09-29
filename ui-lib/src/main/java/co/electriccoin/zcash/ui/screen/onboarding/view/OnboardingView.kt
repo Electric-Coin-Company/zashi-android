@@ -9,11 +9,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
@@ -37,9 +36,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import co.electriccoin.zcash.spackle.model.Progress
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.Header
@@ -58,7 +55,7 @@ fun ComposablePreview() {
     ZcashTheme(darkTheme = true) {
         GradientSurface {
             Onboarding(
-                OnboardingState(OnboardingStage.UnifiedAddresses),
+                OnboardingState(OnboardingStage.Wallet),
                 false,
                 onImportWallet = {},
                 onCreateWallet = {},
@@ -85,16 +82,18 @@ fun Onboarding(
     onCreateWallet: () -> Unit,
     onFixtureWallet: () -> Unit
 ) {
+    val currentStage = onboardingState.current.collectAsState().value
     Scaffold(
         topBar = {
             OnboardingTopAppBar(onboardingState, isDebugMenuEnabled, onFixtureWallet)
+        },
+        bottomBar = {
+            BottomNav(currentStage, onboardingState::goNext, onCreateWallet, onImportWallet)
         }
     ) { paddingValues ->
         OnboardingMainContent(
             paddingValues,
-            onboardingState,
-            onImportWallet = onImportWallet,
-            onCreateWallet = onCreateWallet
+            onboardingState
         )
     }
 }
@@ -160,13 +159,10 @@ private fun DebugMenu(onFixtureWallet: () -> Unit) {
 @Composable
 fun OnboardingMainContent(
     paddingValues: PaddingValues,
-    onboardingState: OnboardingState,
-    onImportWallet: () -> Unit,
-    onCreateWallet: () -> Unit
+    onboardingState: OnboardingState
 ) {
     Column(
-        Modifier
-            .padding(top = paddingValues.calculateTopPadding())
+        Modifier.padding(top = paddingValues.calculateTopPadding())
     ) {
         if (!IS_NAVIGATION_IN_APP_BAR) {
             TopNavButtons(onboardingState)
@@ -175,33 +171,22 @@ fun OnboardingMainContent(
         val onboardingStage = onboardingState.current.collectAsState().value
 
         when (onboardingStage) {
-            OnboardingStage.ShieldedByDefault -> ShieldedByDefault()
-            OnboardingStage.UnifiedAddresses -> UnifiedAddresses()
-            OnboardingStage.More -> More()
-            OnboardingStage.Wallet -> Wallet(
-                onCreateWallet = onCreateWallet,
-                onImportWallet = onImportWallet
-            )
+            OnboardingStage.ShieldedByDefault -> ShieldedByDefault(paddingValues)
+            OnboardingStage.UnifiedAddresses -> UnifiedAddresses(paddingValues)
+            OnboardingStage.More -> More(paddingValues)
+            OnboardingStage.Wallet -> Wallet(paddingValues)
         }
-
-        BottomNav(onboardingStage.getProgress(), onboardingState::goNext)
     }
 }
 
 @Composable
 private fun TopNavButtons(onboardingState: OnboardingState) {
-    Row {
-        val currentStage = onboardingState.current.collectAsState().value
+    val currentStage = onboardingState.current.collectAsState().value
+    if (currentStage == OnboardingStage.ShieldedByDefault) return
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
         if (currentStage.hasPrevious()) {
             NavigationButton(onboardingState::goPrevious, stringResource(R.string.onboarding_back))
         }
-
-        Spacer(
-            Modifier
-                .fillMaxWidth()
-                .weight(MINIMAL_WEIGHT, true)
-        )
-
         if (currentStage.hasNext()) {
             NavigationButton(onboardingState::goToEnd, stringResource(R.string.onboarding_skip))
         }
@@ -209,72 +194,98 @@ private fun TopNavButtons(onboardingState: OnboardingState) {
 }
 
 @Composable
-private fun BottomNav(progress: Progress, onNext: () -> Unit) {
-    if (progress.current != progress.last) {
-        Column {
-            Spacer(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .weight(MINIMAL_WEIGHT, true)
-            )
-
-            SecondaryButton(onNext, stringResource(R.string.onboarding_next), Modifier.fillMaxWidth())
-
-            // Converts from index to human numbering
-            Body((progress.current.value + 1).toString())
-
-            PinkProgress(progress, Modifier.fillMaxWidth())
+private fun BottomNav(
+    currentStage: OnboardingStage,
+    onNext: () -> Unit,
+    onCreateWallet: () -> Unit,
+    onImportWallet: () -> Unit
+) {
+    Column {
+        if (currentStage == OnboardingStage.Wallet) {
+            WalletStageBottomNav(onCreateWallet = onCreateWallet, onImportWallet)
+        } else {
+            OnboardingBottomNav(currentStage = currentStage, onNext = onNext)
         }
     }
 }
 
 @Composable
-private fun ShieldedByDefault() {
-    Column {
-        Content(
-            image = painterResource(id = R.drawable.onboarding_1_shielded),
-            imageContentDescription = stringResource(R.string.onboarding_1_image_content_description),
-            headline = stringResource(R.string.onboarding_1_header),
-            body = stringResource(R.string.onboarding_1_body)
-        )
-    }
+private fun WalletStageBottomNav(
+    onCreateWallet: () -> Unit,
+    onImportWallet: () -> Unit
+) {
+    PrimaryButton(onCreateWallet, stringResource(R.string.onboarding_4_create_new_wallet), Modifier.fillMaxWidth())
+    TertiaryButton(
+        onImportWallet,
+        stringResource(R.string.onboarding_4_import_existing_wallet),
+        Modifier.fillMaxWidth()
+    )
 }
 
 @Composable
-private fun UnifiedAddresses() {
-    Column {
-        Content(
-            image = painterResource(id = R.drawable.onboarding_2_unified),
-            imageContentDescription = stringResource(R.string.onboarding_2_image_content_description),
-            headline = stringResource(R.string.onboarding_2_header),
-            body = stringResource(R.string.onboarding_2_body)
-        )
-    }
+private fun OnboardingBottomNav(
+    currentStage: OnboardingStage,
+    onNext: () -> Unit
+) {
+    SecondaryButton(onNext, stringResource(R.string.onboarding_next), Modifier.fillMaxWidth())
+    // Converts from index to human numbering
+    Body((currentStage.getProgress().current.value + 1).toString())
+    PinkProgress(currentStage.getProgress(), Modifier.fillMaxWidth())
 }
 
 @Composable
-private fun More() {
-    Column {
-        Content(
-            image = painterResource(id = R.drawable.onboarding_3_more),
-            imageContentDescription = stringResource(R.string.onboarding_3_image_content_description),
-            headline = stringResource(R.string.onboarding_3_header),
-            body = stringResource(R.string.onboarding_3_body)
-        )
-    }
+private fun ShieldedByDefault(paddingValues: PaddingValues) {
+    Content(
+        paddingValues = paddingValues,
+        image = painterResource(id = R.drawable.onboarding_1),
+        imageContentDescription = stringResource(R.string.onboarding_1_image_content_description),
+        headline = stringResource(R.string.onboarding_1_header),
+        body = stringResource(R.string.onboarding_1_body)
+    )
 }
 
 @Composable
-private fun Wallet(onCreateWallet: () -> Unit, onImportWallet: () -> Unit) {
-    Column {
-        Header(stringResource(R.string.onboarding_4_header))
+private fun UnifiedAddresses(paddingValues: PaddingValues) {
+    Content(
+        paddingValues = paddingValues,
+        image = painterResource(id = R.drawable.onboarding_2),
+        imageContentDescription = stringResource(R.string.onboarding_2_image_content_description),
+        headline = stringResource(R.string.onboarding_2_header),
+        body = stringResource(R.string.onboarding_2_body)
+    )
+}
+
+@Composable
+private fun More(paddingValues: PaddingValues) {
+    Content(
+        paddingValues = paddingValues,
+        image = painterResource(id = R.drawable.onboarding_3),
+        imageContentDescription = stringResource(R.string.onboarding_3_image_content_description),
+        headline = stringResource(R.string.onboarding_3_header),
+        body = stringResource(R.string.onboarding_3_body)
+    )
+}
+
+@Composable
+private fun Wallet(paddingValues: PaddingValues) {
+    Column(
+        Modifier
+            .padding(
+                start = ZcashTheme.paddings.padding,
+                end = ZcashTheme.paddings.padding,
+                bottom = paddingValues.calculateBottomPadding()
+            )
+            .fillMaxWidth()
+    ) {
+        Header(
+            modifier = Modifier.padding(
+                top = ZcashTheme.paddings.padding,
+                bottom = ZcashTheme.paddings.paddingHalf
+            ),
+            text = stringResource(R.string.onboarding_4_header)
+        )
         Body(stringResource(R.string.onboarding_4_body))
-        PrimaryButton(onCreateWallet, stringResource(R.string.onboarding_4_create_new_wallet), Modifier.fillMaxWidth())
-        TertiaryButton(
-            onImportWallet,
-            stringResource(R.string.onboarding_4_import_existing_wallet),
-            Modifier.fillMaxWidth()
-        )
+        Image(painterResource(id = R.drawable.onboarding_4), "")
     }
 }
 
@@ -283,16 +294,21 @@ private fun Content(
     image: Painter,
     imageContentDescription: String?,
     headline: String,
-    body: String
+    body: String,
+    paddingValues: PaddingValues
 ) {
-    Column(Modifier.fillMaxWidth()) {
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-            // TODO [#17]: This suppression and magic number will get replaced once we have real assets
-            @Suppress("MagicNumber")
-            Image(image, imageContentDescription, Modifier.fillMaxSize(0.50f))
+    val scrollState = rememberScrollState()
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .padding(ZcashTheme.paddings.padding)
+            .verticalScroll(scrollState)
+    ) {
+        Column(Modifier.padding(bottom = paddingValues.calculateBottomPadding())) {
+            Image(image, imageContentDescription)
+            Header(headline)
+            Body(body)
         }
-        Header(headline)
-        Body(body)
     }
 }
 
