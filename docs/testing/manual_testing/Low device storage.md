@@ -1,4 +1,4 @@
-# Testing handling of low device storage
+# Test handling of low device storage
 1. Open StorageChecker.kt file
 1. Change REQUIRED_FREE_SPACE_MEGABYTES parameter to 100000
 1. Build the app
