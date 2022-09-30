@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import cash.z.ecc.sdk.fixture.WalletAddressFixture
 import cash.z.ecc.sdk.model.WalletAddress
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.BrightenScreen
 import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
@@ -143,6 +144,7 @@ private fun ProfileContents(
 
 @Composable
 private fun QrCode(data: String, size: Dp, modifier: Modifier) {
+    BrightenScreen()
     val sizePixels = with(LocalDensity.current) { size.toPx() }.roundToInt()
 
     // In the future, use actual/expect to switch QR code generator implementations for multiplatform
