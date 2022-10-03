@@ -18,7 +18,7 @@ class SupportViewModel(application: Application) : AndroidViewModel(application)
     // such as the user's current locale. However it really doesn't matter here since all we
     // care about is capturing a snapshot of the app, OS, and device state.
     val supportInfo: StateFlow<SupportInfo?> = flow<SupportInfo?> {
-    val usableStorage = "${StorageChecker.checkAvailableStorage()} MB"
+        val usableStorage = "${StorageChecker.checkAvailableStorage()} MB"
         emit(SupportInfo.new(application, usableStorage))
     }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT, Duration.ZERO), null)
