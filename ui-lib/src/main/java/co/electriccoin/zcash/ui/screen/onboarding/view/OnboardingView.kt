@@ -182,7 +182,9 @@ fun OnboardingMainContent(
 @Composable
 private fun TopNavButtons(onboardingState: OnboardingState) {
     val currentStage = onboardingState.current.collectAsState().value
-    if (currentStage == OnboardingStage.ShieldedByDefault) return
+    if (currentStage == OnboardingStage.ShieldedByDefault) {
+        return
+    }
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
         if (currentStage.hasPrevious()) {
             NavigationButton(onboardingState::goPrevious, stringResource(R.string.onboarding_back))
