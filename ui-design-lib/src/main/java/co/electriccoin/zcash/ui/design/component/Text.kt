@@ -5,6 +5,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
@@ -15,12 +16,13 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 @Composable
 fun Header(
     text: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    color: Color = ZcashTheme.colors.onBackgroundHeader
 ) {
     Text(
         text = text,
         style = MaterialTheme.typography.headlineLarge,
-        color = ZcashTheme.colors.onBackgroundHeader,
+        color = color,
         modifier = modifier
     )
 }
@@ -29,14 +31,15 @@ fun Header(
 fun Body(
     text: String,
     modifier: Modifier = Modifier,
-    textAlign: TextAlign = TextAlign.Start
+    textAlign: TextAlign = TextAlign.Start,
+    color: Color = MaterialTheme.colorScheme.onBackground
 
 ) {
     Text(
         text = text,
         textAlign = textAlign,
         style = MaterialTheme.typography.bodyLarge,
-        color = MaterialTheme.colorScheme.onBackground,
+        color = color,
         modifier = modifier
     )
 }

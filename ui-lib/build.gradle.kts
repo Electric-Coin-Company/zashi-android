@@ -45,6 +45,7 @@ android {
                     "src/main/res/ui/update",
                     "src/main/res/ui/wallet_address",
                     "src/main/res/ui/warning",
+                    "src/main/res/ui/not_enough_space",
                 )
             )
         }
