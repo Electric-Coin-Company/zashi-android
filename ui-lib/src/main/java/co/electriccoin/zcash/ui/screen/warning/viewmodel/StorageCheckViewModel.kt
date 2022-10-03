@@ -21,8 +21,8 @@ class StorageCheckViewModel : ViewModel() {
             null
         )
 
-    val spaceRequiredToContinue =
-        flow { emit(StorageChecker.spaceRequiredToContinue()) }
+    val spaceRequiredToContinueMegabytes =
+        flow { emit(StorageChecker.spaceRequiredToContinueMegabytes()) }
             .stateIn(
                 viewModelScope,
                 SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),

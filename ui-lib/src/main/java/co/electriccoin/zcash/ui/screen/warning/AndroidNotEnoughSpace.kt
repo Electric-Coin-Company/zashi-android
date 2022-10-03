@@ -19,7 +19,7 @@ fun MainActivity.WrapNotEnoughSpace() {
 @Composable
 private fun WrapNotEnoughSpace(activity: ComponentActivity) {
     val storageCheckViewModel by activity.viewModels<StorageCheckViewModel>()
-    val spaceRequiredToContinue by storageCheckViewModel.spaceRequiredToContinue.collectAsState()
+    val spaceRequiredToContinue by storageCheckViewModel.spaceRequiredToContinueMegabytes.collectAsState()
 
     NotEnoughSpaceView(
         storageSpaceRequiredGigabytes = storageCheckViewModel.requiredStorageSpaceGigabytes,
