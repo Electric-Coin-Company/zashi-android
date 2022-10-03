@@ -1,6 +1,7 @@
 package co.electriccoin.zcash.ui.screen.warning.view
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -24,26 +26,30 @@ import co.electriccoin.zcash.ui.design.component.Small
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 
 @Composable
-fun NotEnoughSpaceView(storageSpaceRequiredGigabytes: String, spaceRequiredToContinue: String) {
+fun NotEnoughSpaceView(storageSpaceRequiredGigabytes: Int, spaceRequiredToContinueMegabytes: Int) {
+    @Suppress("MagicNumber")
+    val backgroundColor = Color(0xFF1A233A) // TODO should be replaced, once we define colors
     Column(
         Modifier
+            .background(backgroundColor)
             .fillMaxSize()
             .padding(32.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Image(painterResource(id = R.drawable.onboarding_1_shielded), "", Modifier.fillMaxWidth())
-        Spacer(Modifier.height(16.dp))
-        Header(stringResource(id = R.string.not_enough_space_title))
-        Spacer(Modifier.height(16.dp))
+        Image(painterResource(id = R.drawable.not_enough_space), "", Modifier.fillMaxWidth())
+        Spacer(Modifier.height(32.dp))
+        Header(text = stringResource(id = R.string.not_enough_space_title), color = Color.White)
+        Spacer(Modifier.height(32.dp))
         Body(
             text = stringResource(id = R.string.not_enough_space_description, storageSpaceRequiredGigabytes),
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            color = Color.White
         )
         Spacer(Modifier.height(64.dp))
         Small(
             modifier = Modifier.fillMaxWidth(),
-            text = stringResource(id = R.string.space_required_to_continue, spaceRequiredToContinue),
+            text = stringResource(id = R.string.space_required_to_continue, spaceRequiredToContinueMegabytes),
             textAlign = TextAlign.Center
         )
     }
@@ -55,8 +61,8 @@ fun NotEnoughSpacePreview() {
     ZcashTheme {
         GradientSurface {
             NotEnoughSpaceView(
-                storageSpaceRequiredGigabytes = "1",
-                spaceRequiredToContinue = "300"
+                storageSpaceRequiredGigabytes = 1,
+                spaceRequiredToContinueMegabytes = 300
             )
         }
     }
