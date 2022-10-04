@@ -56,6 +56,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.core.content.ContextCompat
+import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.SecondaryButton
@@ -367,6 +368,7 @@ fun ScanCameraView(
                         imageAnalysis
                     )
                 }.onFailure {
+                    Twig.error { "Scan QR failed in bind phase with: ${it.message}" }
                     setScanState(ScanState.Failed)
                 }
 
