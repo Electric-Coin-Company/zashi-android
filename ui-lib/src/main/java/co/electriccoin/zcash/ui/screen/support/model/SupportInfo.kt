@@ -59,7 +59,7 @@ data class SupportInfo(
     companion object {
         // Although most of our calls now are non-blocking, we expect more of them to be blocking
         // in the future.
-        suspend fun new(context: Context, usableStorage: String): SupportInfo {
+        suspend fun new(context: Context): SupportInfo {
             val applicationContext = context.applicationContext
             val packageInfo = applicationContext.packageManager.getPackageInfoCompatSuspend(context.packageName, 0L)
 
@@ -67,7 +67,7 @@ data class SupportInfo(
                 TimeInfo.new(packageInfo),
                 AppInfo.new(packageInfo),
                 OperatingSystemInfo.new(),
-                DeviceInfo.new(usableStorage),
+                DeviceInfo.new(),
                 EnvironmentInfo.new(applicationContext),
                 PermissionInfo.all(applicationContext),
                 CrashInfo.all(context)
