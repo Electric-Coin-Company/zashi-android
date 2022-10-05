@@ -147,23 +147,5 @@ fladle {
 
             flankVersion.set(libs.versions.flank.get())
         }
-        create("sanityConfigRelease") {
-            clearPropertiesForSanityRobo()
-
-            debugApk.set(
-                project.provider {
-                    "${buildDir}/outputs/universal_apk/zcashmainnetRelease/ui-integration-test-zcashmainnet-release-universal.apk"
-                }
-            )
-
-            testTimeout.set("3m")
-
-            devices.addAll(
-                mapOf("model" to "Pixel2", "version" to minSdkVersion),
-                mapOf("model" to "Pixel2.arm", "version" to targetSdkVersion)
-            )
-
-            flankVersion.set(libs.versions.flank.get())
-        }
     }
 }
