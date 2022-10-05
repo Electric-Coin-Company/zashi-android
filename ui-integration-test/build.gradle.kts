@@ -129,7 +129,7 @@ fladle {
     }
 
     configs {
-        create("sanityConfigDebug") {
+        create("testConfigDebug") {
             clearPropertiesForSanityRobo()
 
             debugApk.set(
