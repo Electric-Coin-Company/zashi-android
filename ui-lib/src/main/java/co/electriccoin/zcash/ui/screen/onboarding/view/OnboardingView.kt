@@ -4,11 +4,11 @@ package co.electriccoin.zcash.ui.screen.onboarding.view
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -37,6 +37,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.Header
@@ -182,13 +183,16 @@ fun OnboardingMainContent(
 @Composable
 private fun TopNavButtons(onboardingState: OnboardingState) {
     val currentStage = onboardingState.current.collectAsState().value
-    if (currentStage == OnboardingStage.ShieldedByDefault) {
-        return
-    }
-    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+
+    Row(modifier = Modifier.fillMaxWidth()) {
         if (currentStage.hasPrevious()) {
             NavigationButton(onboardingState::goPrevious, stringResource(R.string.onboarding_back))
         }
+        Spacer(
+            Modifier
+                .fillMaxWidth()
+                .weight(MINIMAL_WEIGHT, true)
+        )
         if (currentStage.hasNext()) {
             NavigationButton(onboardingState::goToEnd, stringResource(R.string.onboarding_skip))
         }
