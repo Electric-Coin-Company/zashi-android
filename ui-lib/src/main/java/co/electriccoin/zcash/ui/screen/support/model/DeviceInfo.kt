@@ -5,7 +5,7 @@ import android.os.Build
 class DeviceInfo(val manufacturer: String, val device: String, val model: String) {
 
     fun toSupportString() = buildString {
-        appendLine("Device: $manufacturer $device $model,")
+        appendLine("Device: $manufacturer $device $model")
     }
 
     companion object {
