@@ -184,10 +184,6 @@ class OnboardingViewTest : UiTestPrerequisites() {
     fun stage_1_skip() {
         val testSetup = newTestSetup(OnboardingStage.ShieldedByDefault)
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_next)).also {
-            it.performClick()
-        }
-
         composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_skip)).also {
             it.performClick()
         }
