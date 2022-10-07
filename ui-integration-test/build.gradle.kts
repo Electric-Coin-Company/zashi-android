@@ -2,7 +2,6 @@ plugins {
     id("com.android.test")
     kotlin("android")
     id("secant.android-build-conventions")
-    id("com.osacky.fladle")
     id("wtf.emulator.gradle")
     id("secant.emulator-wtf-conventions")
 }
@@ -101,51 +100,4 @@ emulatorwtf {
     )
 }
 
-fladle {
-    // Firebase Test Lab has min and max values that might differ from our project's
-    // These are determined by `gcloud firebase test android models list`
-    @Suppress("MagicNumber", "PropertyName", "VariableNaming")
-    val FIREBASE_TEST_LAB_MIN_SDK = 23
-
-    @Suppress("MagicNumber", "PropertyName", "VariableNaming")
-    val FIREBASE_TEST_LAB_MAX_SDK = 33
-
-    val minSdkVersion = run {
-        val buildMinSdk = project.properties["ANDROID_APP_MIN_SDK_VERSION"].toString().toInt()
-        buildMinSdk.coerceAtLeast(FIREBASE_TEST_LAB_MIN_SDK).toString()
-    }
-    val targetSdkVersion = run {
-        val buildTargetSdk = project.properties["ANDROID_TARGET_SDK_VERSION"].toString().toInt()
-        buildTargetSdk.coerceAtMost(FIREBASE_TEST_LAB_MAX_SDK).toString()
-    }
-
-    val firebaseTestLabKeyPath = project.properties["ZCASH_FIREBASE_TEST_LAB_API_KEY_PATH"].toString()
-    val firebaseProject = project.properties["ZCASH_FIREBASE_TEST_LAB_PROJECT"].toString()
-
-    if (firebaseTestLabKeyPath.isNotEmpty()) {
-        serviceAccountCredentials.set(File(firebaseTestLabKeyPath))
-    } else if (firebaseProject.isNotEmpty()) {
-        projectId.set(firebaseProject)
-    }
-
-    configs {
-        create("testConfigDebug") {
-            clearPropertiesForSanityRobo()
-
-            debugApk.set(
-                project.provider {
-                    "${buildDir}/outputs/apk/zcashmainnet/debug/ui-integration-test-zcashmainnet-debug.apk"
-                }
-            )
-
-            testTimeout.set("3m")
-
-            devices.addAll(
-                mapOf("model" to "Pixel2", "version" to minSdkVersion),
-                mapOf("model" to "Pixel2.arm", "version" to targetSdkVersion)
-            )
-
-            flankVersion.set(libs.versions.flank.get())
-        }
-    }
 }
