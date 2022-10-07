@@ -216,7 +216,7 @@ jobs:
 
 # Emulator.wtf is preferred if it has an API key.
   test_android_modules_ftl:
-    if: needs.check_firebase_secrets.outputs.has-secrets == 'true'
+    if: needs.check_firebase_secrets.outputs.has-secrets == 'true' && needs.check_emulator_wtf_secrets.outputs.has-secrets == 'false'
     needs: [prime_cache, check_firebase_secrets, check_emulator_wtf_secrets]
     runs-on: ubuntu-latest
     permissions:
