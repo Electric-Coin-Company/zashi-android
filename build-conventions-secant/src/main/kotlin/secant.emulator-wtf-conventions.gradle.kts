@@ -7,6 +7,8 @@ val EMULATOR_WTF_MIN_SDK = 23
 @Suppress("MagicNumber", "PropertyName", "VariableNaming")
 val EMULATOR_WTF_MAX_SDK = 31
 
+internal val className = this::class.simpleName
+
 pluginManager.withPlugin("wtf.emulator.gradle") {
     project.the<wtf.emulator.EwExtension>().apply {
         val tokenString = project.properties["ZCASH_EMULATOR_WTF_API_KEY"].toString()
@@ -14,8 +16,18 @@ pluginManager.withPlugin("wtf.emulator.gradle") {
             token.set(tokenString)
         }
 
-        val libraryMinSdkVersion = run {
-            val buildMinSdk = project.properties["ANDROID_LIB_MIN_SDK_VERSION"].toString().toInt()
+        val buildMinSdk = if (pluginManager.hasPlugin("com.android.application")) {
+            project.properties["ANDROID_APP_MIN_SDK_VERSION"].toString().toInt()
+        } else if (pluginManager.hasPlugin("com.android.test")) {
+            project.properties["ANDROID_APP_MIN_SDK_VERSION"].toString().toInt()
+        } else if (pluginManager.hasPlugin("com.android.library")) {
+            project.properties["ANDROID_LIB_MIN_SDK_VERSION"].toString().toInt()
+        } else {
+            throw IllegalArgumentException("Unsupported plugin type. Make sure that the plugin type you've added is" +
+                " supported by ${this.javaClass.name}.")
+        }
+
+        val moduleMinSdkVersion = run {
             buildMinSdk.coerceAtLeast(EMULATOR_WTF_MIN_SDK).toString()
         }
         val targetSdkVersion = run {
@@ -25,7 +37,7 @@ pluginManager.withPlugin("wtf.emulator.gradle") {
 
         devices.set(
             listOf(
-                mapOf("model" to "Pixel2", "version" to libraryMinSdkVersion),
+                mapOf("model" to "Pixel2", "version" to moduleMinSdkVersion),
                 mapOf("model" to "Pixel2", "version" to targetSdkVersion)
             )
         )
