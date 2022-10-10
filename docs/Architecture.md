@@ -72,7 +72,7 @@ The following diagram shows a rough depiction of dependencies between the module
       end
       uiDesignLib[[ui-design-lib]] --> uiLib[[ui-lib]];
       uiLib[[ui-lib]] --> uiIntegrationTest[[ui-integration-test]];
-      uiDesignLib[[ui-design-lib]] -- > uiIntegrationTest[[ui-integration-test]];
+      uiDesignLib[[ui-design-lib]] --> uiIntegrationTest[[ui-integration-test]];
       subgraph spackle
           spackleLib[[spackle-lib]];
           spackleAndroidLib[[spackle-android-lib]];
