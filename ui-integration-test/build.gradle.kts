@@ -6,7 +6,7 @@ plugins {
     id("secant.emulator-wtf-conventions")
 }
 
-// Force orchestrator to be used for this module, because we need cleared state to generate screenshots
+// Force orchestrator to be used for this module, because we need cleared state before each test
 val isOrchestratorEnabled = true
 
 android {
