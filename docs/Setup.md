@@ -65,11 +65,11 @@ Start by making sure the command line with Gradle works first, because **all the
    1. Delete the invisible `.idea` in the root directory of the project.  This directory is partially ignored by Git, so deleting it will remove the files that are untracked
    1. Restore the missing files in `.idea` folder from Git
    1. Relaunch Android Studio
-2. Clean the individual Gradle project by running `./gradlew clean` which will purge local build outputs.
-3. Run Gradle with the argument `--rerun-tasks` which will effectively disable the build cache by re-running tasks and repopulating the cache.  E.g. `./gradlew assemble --rerun-tasks`
-4. Reboot your computer, which will ensure that Gradle and Kotlin daemons are completely killed and relaunched
-5. Delete the global Gradle cache under `~/.gradle/caches`
-6. If adding a new dependency or updating a dependency, a warning that a dependency cannot be found may indicate the Maven repository restrictions need adjusting
+1. Clean the individual Gradle project by running `./gradlew clean` which will purge local build outputs.
+1. Run Gradle with the argument `--rerun-tasks` which will effectively disable the build cache by re-running tasks and repopulating the cache.  E.g. `./gradlew assemble --rerun-tasks`
+1. Reboot your computer, which will ensure that Gradle and Kotlin daemons are completely killed and relaunched
+1. Delete the global Gradle cache under `~/.gradle/caches`
+1. If adding a new dependency or updating a dependency, a warning that a dependency cannot be found may indicate the Maven repository restrictions need adjusting
 
 ## Gradle Tasks
 A variety of Gradle tasks are set up within the project, and these tasks are also accessible in Android Studio as run configurations.
@@ -82,9 +82,9 @@ A variety of Gradle tasks are set up within the project, and these tasks are als
  * `lint` - Performs static analysis with Android lint
  * `dependencyUpdates` - Checks for available dependency updates.  It will only suggest final releases, unless a particular dependency is already using a non-final release (e.g. alpha, beta, RC).
 
-A few notes on running instrumentation tests on the app module:
- - Screenshots are generated automatically and copied to (/app/build/reports/androidTests/connected/zcash_screenshots)[../app/build/reports/androidTests/connected/zcash_screenshots]
- - Running the Android tests on the app module will erase the data stored by the app.  This is because Test Orchestrator is required to reset app state to successfully perform integration tests.
+A few notes on running instrumentation tests on the `ui-screenshot-test` module:
+ - Screenshots are generated automatically and copied to [/ui-screenshot-test/build/output](../ui-screenshot-test/build/outputs)
+ - Running the Android tests on the `ui-screenshot-test` module will erase the data stored by the app. This is because Test Orchestrator is required to reset app state to successfully perform integration tests.
 
 Gradle Managed Devices are also configured with our build scripts.  We have found best results running tests one module at a time, rather than trying to run them all at once.  For example: `./gradlew :ui-lib:pixel2TargetDebugAndroidTest` will run the UI tests on a Pixel 2 sized device using our target API version.
 

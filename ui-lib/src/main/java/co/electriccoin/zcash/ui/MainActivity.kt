@@ -36,16 +36,13 @@ import kotlin.time.Duration.Companion.seconds
 
 class MainActivity : ComponentActivity() {
 
-    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     val walletViewModel by viewModels<WalletViewModel>()
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     val storageCheckViewModel by viewModels<StorageCheckViewModel>()
 
-    @VisibleForTesting(otherwise = VisibleForTesting.NONE)
     lateinit var navControllerForTesting: NavHostController
 
-    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     val configurationOverrideFlow = MutableStateFlow<ConfigurationOverride?>(null)
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -10,9 +10,6 @@ plugins {
 
 val packageName = project.property("ZCASH_RELEASE_PACKAGE_NAME").toString()
 
-// Force orchestrator to be used for this module, because we need cleared state to generate screenshots
-val isOrchestratorEnabled = true
-
 val testnetNetworkName = "Testnet"
 
 android {
@@ -26,17 +23,7 @@ android {
         versionCode = project.property("ZCASH_VERSION_CODE").toString().toInt()
         versionName = project.property("ZCASH_VERSION_NAME").toString()
 
-        if (isOrchestratorEnabled) {
-            testInstrumentationRunnerArguments["clearPackageData"] = "true"
-        }
-
         testInstrumentationRunner = "co.electriccoin.zcash.test.ZcashUiTestRunner"
-    }
-
-    if (isOrchestratorEnabled) {
-        testOptions {
-            execution = "ANDROIDX_TEST_ORCHESTRATOR"
-        }
     }
 
     compileOptions {
@@ -182,16 +169,9 @@ dependencies {
     implementation(projects.spackleAndroidLib)
     implementation(projects.uiLib)
 
-    androidTestImplementation(libs.androidx.compose.test.junit)
-    androidTestImplementation(libs.androidx.navigation.compose)
-    androidTestImplementation(libs.androidx.uiAutomator)
-    androidTestImplementation(libs.bundles.androidx.test)
-    androidTestImplementation(projects.sdkExtLib)
-    androidTestImplementation(projects.sdkExtUiLib)
-    androidTestImplementation(projects.spackleLib)
     androidTestImplementation(projects.testLib)
 
-    if (isOrchestratorEnabled) {
+    if (project.property("IS_USE_TEST_ORCHESTRATOR").toString().toBoolean()) {
         androidTestUtil(libs.androidx.test.orchestrator) {
             artifact {
                 type = "apk"
@@ -311,8 +291,4 @@ fladle {
             flankVersion.set(libs.versions.flank.get())
         }
     }
-}
-
-emulatorwtf {
-    directoriesToPull.set(listOf("/sdcard/googletest/test_outputfiles"))
 }
