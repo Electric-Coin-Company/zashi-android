@@ -142,11 +142,6 @@ class ScreenshotTest : UiTestPrerequisites() {
             it.assertExists()
         }
 
-        composeTestRule.onNodeWithText(resContext.getString(R.string.onboarding_next)).also {
-            it.assertExists()
-            it.performClick()
-        }
-
         composeTestRule.onNodeWithText(resContext.getString(R.string.onboarding_skip)).also {
             it.assertExists()
             it.performClick()
