@@ -141,7 +141,7 @@ private fun NavHostController.popBackStackJustOnce(currentRouteToBePopped: Strin
 
 object NavigationTargets {
     const val HOME = "home"
-    
+
     const val PROFILE = "profile"
 
     const val WALLET_ADDRESS_DETAILS = "wallet_address_details"
