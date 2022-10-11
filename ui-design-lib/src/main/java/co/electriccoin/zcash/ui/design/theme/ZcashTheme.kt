@@ -11,6 +11,7 @@ import co.electriccoin.zcash.ui.design.theme.internal.LightColorPalette
 import co.electriccoin.zcash.ui.design.theme.internal.LightExtendedColorPalette
 import co.electriccoin.zcash.ui.design.theme.internal.LocalExtendedColors
 import co.electriccoin.zcash.ui.design.theme.internal.LocalExtendedTypography
+import co.electriccoin.zcash.ui.design.theme.internal.Paddings
 import co.electriccoin.zcash.ui.design.theme.internal.Typography
 
 @Composable
@@ -48,4 +49,8 @@ object ZcashTheme {
     val typography: ExtendedTypography
         @Composable
         get() = LocalExtendedTypography.current
+
+    val paddings: Paddings
+        @Composable
+        get() = Paddings()
 }

@@ -51,18 +51,9 @@ class OnboardingViewTest : UiTestPrerequisites() {
     fun stage_1_layout() {
         newTestSetup(OnboardingStage.ShieldedByDefault)
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_skip)).also {
-            it.assertExists()
-            it.assertHasClickAction()
-        }
-
         composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_next)).also {
             it.assertExists()
             it.assertHasClickAction()
-        }
-
-        composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_back)).also {
-            it.assertDoesNotExist()
         }
 
         composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_1_header)).also {
@@ -193,8 +184,9 @@ class OnboardingViewTest : UiTestPrerequisites() {
     fun stage_1_skip() {
         val testSetup = newTestSetup(OnboardingStage.ShieldedByDefault)
 
-        val skipButton = composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_skip))
-        skipButton.performClick()
+        composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_skip)).also {
+            it.performClick()
+        }
 
         assertEquals(OnboardingStage.Wallet, testSetup.getOnboardingStage())
     }
