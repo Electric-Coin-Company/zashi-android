@@ -130,7 +130,7 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
             } else {
                 it.toWalletSnapshot()
             }
-        .stateIn(
+        }.stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
             null
