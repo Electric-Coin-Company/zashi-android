@@ -7,13 +7,10 @@ import androidx.test.filters.MediumTest
 import cash.z.ecc.sdk.fixture.WalletAddressFixture
 import cash.z.ecc.sdk.model.WalletAddress
 import co.electriccoin.zcash.test.UiTestPrerequisites
-import co.electriccoin.zcash.ui.common.LocalScreenBrightness
 import co.electriccoin.zcash.ui.common.LocalScreenTimeout
-import co.electriccoin.zcash.ui.common.ScreenBrightness
 import co.electriccoin.zcash.ui.common.ScreenTimeout
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
