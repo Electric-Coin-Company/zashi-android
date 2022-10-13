@@ -43,14 +43,12 @@ class ScreenTimeoutTest : UiTestPrerequisites() {
         fun getScreenTimeoutCount() = screenTimeout.referenceCount.value
 
         init {
-            runTest {
-                composeTestRule.setContent {
-                    CompositionLocalProvider(LocalScreenTimeout provides screenTimeout) {
-                        ZcashTheme {
-                            val disableScreenTimeout by mutableScreenTimeoutFlag.collectAsState()
+            composeTestRule.setContent {
+                CompositionLocalProvider(LocalScreenTimeout provides screenTimeout) {
+                    ZcashTheme {
+                        val disableScreenTimeout by mutableScreenTimeoutFlag.collectAsState()
 
-                            TestView(disableScreenTimeout)
-                        }
+                        TestView(disableScreenTimeout)
                     }
                 }
             }
