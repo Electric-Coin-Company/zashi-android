@@ -21,6 +21,7 @@ import cash.z.ecc.sdk.model.PersistableWallet
 import cash.z.ecc.sdk.model.WalletAddresses
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.ANDROID_STATE_FLOW_TIMEOUT
+import co.electriccoin.zcash.ui.common.throttle
 import co.electriccoin.zcash.ui.preference.EncryptedPreferenceKeys
 import co.electriccoin.zcash.ui.preference.EncryptedPreferenceSingleton
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
@@ -121,6 +122,7 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
             null
         )
 
+    @Suppress("MagicNumber")
     @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
     val walletSnapshot: StateFlow<WalletSnapshot?> = synchronizer
         .flatMapLatest {
@@ -130,6 +132,7 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
                 it.toWalletSnapshot()
             }
         }
+        .throttle(1000)
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
