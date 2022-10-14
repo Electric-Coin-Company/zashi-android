@@ -52,6 +52,28 @@ pluginManager.withPlugin("com.android.library") {
     }
 }
 
+pluginManager.withPlugin("com.android.test") {
+    project.the<com.android.build.gradle.TestExtension>().apply {
+        configureBaseExtension(isLibrary = true)
+
+        defaultConfig {
+            minSdk = project.property("ANDROID_LIB_MIN_SDK_VERSION").toString().toInt()
+            targetSdk = project.property("ANDROID_TARGET_SDK_VERSION").toString().toInt()
+
+            // The last two are for support of pseudolocales in debug builds.
+            // If we add other localizations, they should be included in this list.
+            // By explicitly setting supported locales, we strip out unused localizations from third party
+            // libraries (e.g. play services)
+            resourceConfigurations.addAll(listOf("en", "en-rUS", "en-rGB", "en-rAU", "en_XA", "ar_XB"))
+
+            testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        }
+        testCoverage {
+            jacocoVersion = project.property("JACOCO_VERSION").toString()
+        }
+    }
+}
+
 @Suppress("LongMethod")
 fun com.android.build.gradle.BaseExtension.configureBaseExtension(isLibrary: Boolean) {
     compileSdkVersion(project.property("ANDROID_COMPILE_SDK_VERSION").toString().toInt())

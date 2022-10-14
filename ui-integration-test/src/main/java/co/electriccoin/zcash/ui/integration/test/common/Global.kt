@@ -11,9 +11,11 @@ import androidx.test.uiautomator.UiSelector
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 
-fun getStringResource(@StringRes resId: Int) = ApplicationProvider.getApplicationContext<Context>().getString(resId)
+fun getStringResource(@StringRes resId: Int) =
+    ApplicationProvider.getApplicationContext<Context>().getString(resId)
 
-fun getStringResourceWithArgs(@StringRes resId: Int, vararg formatArgs: String) = ApplicationProvider.getApplicationContext<Context>().getString(resId, *formatArgs)
+fun getStringResourceWithArgs(@StringRes resId: Int, vararg formatArgs: String) =
+    ApplicationProvider.getApplicationContext<Context>().getString(resId, *formatArgs)
 
 // We're using indexes to find the right button, as it seems to be the best available way to test a click
 // action on a permission button. These indexes remain the same for LTR as well as RTL layout direction.

@@ -315,27 +315,4 @@ fladle {
 
 emulatorwtf {
     directoriesToPull.set(listOf("/sdcard/googletest/test_outputfiles"))
-
-    val appMinSdkVersion = run {
-        @Suppress("MagicNumber", "PropertyName", "VariableNaming")
-        val EMULATOR_WTF_MIN_SDK = 23
-
-        val buildMinSdk = project.properties["ANDROID_APP_MIN_SDK_VERSION"].toString().toInt()
-        buildMinSdk.coerceAtLeast(EMULATOR_WTF_MIN_SDK).toString()
-    }
-
-    val targetSdkVersion = run {
-        @Suppress("MagicNumber", "PropertyName", "VariableNaming")
-        val EMULATOR_WTF_MAX_SDK = 31
-
-        val buildTargetSdk = project.properties["ANDROID_TARGET_SDK_VERSION"].toString().toInt()
-        buildTargetSdk.coerceAtMost(EMULATOR_WTF_MAX_SDK).toString()
-    }
-
-    devices.set(
-        listOf(
-            mapOf("model" to "Pixel2", "version" to appMinSdkVersion),
-            mapOf("model" to "Pixel2", "version" to targetSdkVersion)
-        )
-    )
 }
