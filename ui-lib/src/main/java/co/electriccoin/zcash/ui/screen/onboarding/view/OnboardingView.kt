@@ -7,8 +7,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -37,7 +35,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.Header
@@ -65,10 +62,6 @@ fun ComposablePreview() {
         }
     }
 }
-
-// Pending internal discussion on where the navigation should live.
-// This toggles between the app bar or custom buttons below the app bar
-private const val IS_NAVIGATION_IN_APP_BAR = false
 
 /**
  * @param onImportWallet Callback when the user decides to import an existing wallet.
@@ -110,9 +103,8 @@ private fun OnboardingTopAppBar(
 
     TopAppBar(
         title = { Text(text = stringResource(id = R.string.app_name)) },
-        navigationIcon =
-        if (IS_NAVIGATION_IN_APP_BAR && currentStage.hasPrevious()) {
-            {
+        navigationIcon = {
+            if (currentStage.hasPrevious()) {
                 IconButton(onboardingState::goPrevious) {
                     Icon(
                         imageVector = Icons.Filled.ArrowBack,
@@ -120,11 +112,9 @@ private fun OnboardingTopAppBar(
                     )
                 }
             }
-        } else {
-            { Unit }
         },
         actions = {
-            if (IS_NAVIGATION_IN_APP_BAR && currentStage.hasNext()) {
+            if (currentStage.hasNext()) {
                 NavigationButton(onboardingState::goToEnd, stringResource(R.string.onboarding_skip))
             }
 
@@ -165,10 +155,6 @@ fun OnboardingMainContent(
     Column(
         Modifier.padding(top = paddingValues.calculateTopPadding())
     ) {
-        if (!IS_NAVIGATION_IN_APP_BAR) {
-            TopNavButtons(onboardingState)
-        }
-
         val onboardingStage = onboardingState.current.collectAsState().value
 
         when (onboardingStage) {
@@ -176,25 +162,6 @@ fun OnboardingMainContent(
             OnboardingStage.UnifiedAddresses -> UnifiedAddresses(paddingValues)
             OnboardingStage.More -> More(paddingValues)
             OnboardingStage.Wallet -> Wallet(paddingValues)
-        }
-    }
-}
-
-@Composable
-private fun TopNavButtons(onboardingState: OnboardingState) {
-    val currentStage = onboardingState.current.collectAsState().value
-
-    Row(modifier = Modifier.fillMaxWidth()) {
-        if (currentStage.hasPrevious()) {
-            NavigationButton(onboardingState::goPrevious, stringResource(R.string.onboarding_back))
-        }
-        Spacer(
-            Modifier
-                .fillMaxWidth()
-                .weight(MINIMAL_WEIGHT, true)
-        )
-        if (currentStage.hasNext()) {
-            NavigationButton(onboardingState::goToEnd, stringResource(R.string.onboarding_skip))
         }
     }
 }
