@@ -93,6 +93,17 @@ android {
                 signingConfig = signingConfigs.getByName("release")
             }
         }
+        create("benchmark") {
+            initWith(getByName("release"))
+            signingConfig = signingConfigs.getByName("debug")
+            matchingFallbacks += listOf("release")
+            applicationIdSuffix = ".benchmark"
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-project.txt",
+                "benchmark-rules.txt"
+            )
+        }
         all {
             buildConfigField(
                 "boolean",

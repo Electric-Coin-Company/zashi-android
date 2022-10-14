@@ -34,6 +34,11 @@ android {
             dimension = "network"
         }
     }
+    buildTypes {
+        create("release") {
+            // to align with the benchmark module requirement - run against minified application
+        }
+    }
 
     if (isOrchestratorEnabled) {
         testOptions {
