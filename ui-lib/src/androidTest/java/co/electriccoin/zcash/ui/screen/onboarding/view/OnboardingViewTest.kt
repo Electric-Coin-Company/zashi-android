@@ -3,6 +3,7 @@ package co.electriccoin.zcash.ui.screen.onboarding.view
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.filters.MediumTest
@@ -88,7 +89,7 @@ class OnboardingViewTest : UiTestPrerequisites() {
             it.assertHasClickAction()
         }
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_back)).also {
+        composeTestRule.onNodeWithContentDescription(getStringResource(R.string.onboarding_back)).also {
             it.assertExists()
             it.assertHasClickAction()
         }
@@ -125,7 +126,7 @@ class OnboardingViewTest : UiTestPrerequisites() {
             it.assertHasClickAction()
         }
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_back)).also {
+        composeTestRule.onNodeWithContentDescription(getStringResource(R.string.onboarding_back)).also {
             it.assertExists()
             it.assertHasClickAction()
         }
@@ -160,7 +161,7 @@ class OnboardingViewTest : UiTestPrerequisites() {
             it.assertDoesNotExist()
         }
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_back)).also {
+        composeTestRule.onNodeWithContentDescription(getStringResource(R.string.onboarding_back)).also {
             it.assertExists()
             it.assertIsEnabled()
             it.assertHasClickAction()
