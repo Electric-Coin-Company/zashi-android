@@ -11,7 +11,6 @@ import androidx.work.WorkerParameters
 import cash.z.ecc.android.sdk.Synchronizer
 import co.electriccoin.zcash.global.WalletCoordinator
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flatMapLatest
@@ -36,7 +35,7 @@ class SyncWorker(context: Context, workerParameters: WorkerParameters) : Corouti
             .takeWhile {
                 it.status != Synchronizer.Status.DISCONNECTED && it.progress < ONE_HUNDRED_PERCENT
             }
-            .collect()
+        // .collect()
 
         return Result.success()
     }

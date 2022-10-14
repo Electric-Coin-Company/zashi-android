@@ -1,6 +1,5 @@
 package co.electriccoin.zcash.ui.common
 
-import android.os.SystemClock
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -9,38 +8,43 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
+import kotlin.time.Duration
+import kotlin.time.ExperimentalTime
+import kotlin.time.TimeSource
 
-fun <T> Flow<T>.throttle(waitMillis: Int): Flow<T> = flow {
+@OptIn(ExperimentalTime::class)
+fun <T> Flow<T>.throttle(
+    waitMillis: Duration,
+    timeSource: TimeSource = TimeSource.Monotonic
+): Flow<T> = flow {
     coroutineScope {
         val context = coroutineContext
-        var nextEmitMillis = 0L
+        var timeMark = timeSource.markNow()
         var delayEmit: Deferred<Unit>? = null
         var lastEmittedValue: T? = null
 
-        collect {
-            val current = SystemClock.uptimeMillis()
-            val value = it
-
+        collect { value ->
             if (lastEmittedValue == null) {
-                nextEmitMillis = current + waitMillis
                 emit(value)
                 lastEmittedValue = value
+                timeMark = timeSource.markNow()
                 return@collect
             }
 
-            if (nextEmitMillis < current) {
-                nextEmitMillis = current + waitMillis
+            if (timeMark.elapsedNow() >= waitMillis) {
                 emit(value)
                 lastEmittedValue = value
                 delayEmit?.cancel()
+                timeMark = timeSource.markNow()
             } else {
                 delayEmit?.cancel()
                 delayEmit = async(Dispatchers.IO) {
-                    delay(waitMillis.toLong())
+                    delay(waitMillis)
                     lastEmittedValue = value
                     withContext(context) {
                         emit(value)
                     }
+                    timeMark = timeSource.markNow()
                 }
             }
         }
