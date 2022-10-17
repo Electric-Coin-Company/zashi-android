@@ -7,5 +7,6 @@
     <string name="about_build_header">Build</string>
     <string name="about_legal_header">Legal</string>
     <!-- TODO [#392] Update with real legal info. -->
+    <!-- TODO [#392] https://github.com/zcash/secant-android-wallet/issues/392 -->
     <string name="about_legal_info">GitHub Issue #392</string>
 </resources>
