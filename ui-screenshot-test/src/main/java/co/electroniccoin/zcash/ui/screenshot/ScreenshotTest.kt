@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.app
+package co.electroniccoin.zcash.ui.screenshot
 
 import android.content.Context
 import android.os.Build
@@ -132,6 +132,7 @@ class ScreenshotTest : UiTestPrerequisites() {
 
     private fun take_screenshots_for_restore_wallet(resContext: Context, tag: String) {
         // TODO [#286]: Screenshot tests fail on Firebase Test Lab
+        // TODO [#286]: https://github.com/zcash/secant-android-wallet/issues/286
         if (FirebaseTestLabUtil.isFirebaseTestLab(ApplicationProvider.getApplicationContext())) {
             return
         }
@@ -213,6 +214,7 @@ class ScreenshotTest : UiTestPrerequisites() {
 
     private fun take_screenshots_for_new_wallet_and_rest_of_app(resContext: Context, tag: String) {
         // TODO [#286]: Screenshot tests fail on Firebase Test Lab
+        // TODO [#286]: https://github.com/zcash/secant-android-wallet/issues/286
         if (FirebaseTestLabUtil.isFirebaseTestLab(ApplicationProvider.getApplicationContext())) {
             return
         }

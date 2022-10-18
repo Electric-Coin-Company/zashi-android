@@ -24,6 +24,9 @@ plugins {
     id("secant.rosetta-conventions")
 }
 
+val uiIntegrationModuleName: String = projects.uiIntegrationTest.name
+val uiScreenshotModuleName: String = projects.uiScreenshotTest.name
+
 tasks {
     register("detektAll", io.gitlab.arturbosch.detekt.Detekt::class) {
         parallel = true
@@ -35,6 +38,8 @@ tasks {
         exclude("**/commonTest/**")
         exclude("**/jvmTest/**")
         exclude("**/androidTest/**")
+        // To exclude the whole pure test modules
+        exclude(uiIntegrationModuleName, uiScreenshotModuleName)
         // To regenerate the config, run the task `detektGenerateConfig`
         config.setFrom(files("${rootProject.projectDir}/tools/detekt.yml"))
         buildUponDefaultConfig = true
@@ -134,5 +139,6 @@ kover {
         "ui-design-lib",
         "ui-integration-test",
         "ui-lib",
+        "ui-screenshot-test",
     )
 }

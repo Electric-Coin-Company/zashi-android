@@ -1,7 +1,6 @@
 package co.electriccoin.zcash.ui
 
 import android.annotation.SuppressLint
-import androidx.annotation.VisibleForTesting
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
@@ -141,33 +140,23 @@ private fun NavHostController.popBackStackJustOnce(currentRouteToBePopped: Strin
 }
 
 object NavigationTargets {
-    @VisibleForTesting
     const val HOME = "home"
 
-    @VisibleForTesting
     const val PROFILE = "profile"
 
-    @VisibleForTesting
     const val WALLET_ADDRESS_DETAILS = "wallet_address_details"
 
-    @VisibleForTesting
     const val SETTINGS = "settings"
 
-    @VisibleForTesting
     const val SEED = "seed"
 
-    @VisibleForTesting
     const val REQUEST = "request"
 
-    @VisibleForTesting
     const val SEND = "send"
 
-    @VisibleForTesting
     const val SUPPORT = "support"
 
-    @VisibleForTesting
     const val ABOUT = "about"
 
-    @VisibleForTesting
     const val SCAN = "scan"
 }

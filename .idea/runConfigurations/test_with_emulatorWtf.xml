@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="testOnEmulatorWtf" type="GradleRunConfiguration" factoryName="Gradle">
+  <configuration default="false" name="test_with_emulatorWtf" type="GradleRunConfiguration" factoryName="Gradle">
     <ExternalSystemSettings>
       <option name="executionName" />
       <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -13,6 +13,7 @@
           <option value="testDebugWithEmulatorWtf" />
           <option value=":app:testZcashmainnetDebugWithEmulatorWtf" />
           <option value=":ui-integration-test:testZcashmainnetDebugWithEmulatorWtf" />
+          <option value=":ui-screenshot-test:testZcashmainnetDebugWithEmulatorWtf" />
         </list>
       </option>
       <option name="vmOptions" />

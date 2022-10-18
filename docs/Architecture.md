@@ -26,20 +26,22 @@ The logical components of the app are implemented as a number of Gradle modules.
 
  * `app` — Compiles all of the modules together into the final application.  This module contains minimal actual code.  Note that the Java package structure for this module is under `co.electriccoin.zcash.app` while the Android package name is `co.electriccoin.zcash`.
  * `build-info-lib` — Collects information from the build environment (e.g. Git SHA, Git commit count) and compiles them into the application.  Can also be used for injection of API keys or other secrets.
- * `crash` — For collecting and reporting exceptions and crashes
+ * crash — For collecting and reporting exceptions and crashes
      * `crash-lib` — Common crash collection logic for Kotlin and JVM.  This is not fully-featured by itself, but the long-term plan is multiplatform support.
      * `crash-android-lib` — Android-specific crash collection logic, built on top of the common and JVM implementation in `crash-lib`
  * ui
      * `ui-design` — Contains UI theme elements only. Besides offering modularization, this allows for hiding of some Material Design components behind our own custom components.
      * `ui-lib` — User interface that the user interacts with.  This contains 99% of the UI code, along with localizations, icons, and other assets.
-     * `ui-integration-test` — Is a pure test module dedicated for integration tests only. It has Android Test Orchestrator turned on — it allows us to run each of our tests within its own invocation of Instrumentation, and thus brings us benefits for the testing environment (minimal shared state, crashes are isolated, permissions are reset).
+* ui-test
+    * `ui-integration-test` — Is a pure test module dedicated for integration tests only. It has Android Test Orchestrator turned on — it allows us to run each of our tests within its own invocation of Instrumentation, and thus brings us benefits for the testing environment (minimal shared state, crashes are isolated, permissions are reset).
+    * `ui-screenshot-test` — Is also a pure test module, whose purpose is to provide a wrapper for the ui screenshot tests. It has the Android Test Orchestrator turned on too.
  * preference
      * `preference-api-lib` — Multiplatform interfaces for key-value storage of preferences.
      * `preference-impl-android-lib` — Android-specific implementation for preference storage.
  * sdk
      * `sdk-ext-lib` — Contains extensions on top of the to the Zcash SDK.  Some of these extensions might be migrated into the SDK eventually, while others might represent Android-centric idioms.  Depending on how this module evolves, it could adopt another name such as `wallet-lib` or be split into two.
      * `sdk-ext-ui` — Place for Zcash SDK components (same as `sdk-ext-lib`), which are related to the UI (e.g. depend on user locale and thus need to be translated via `strings.xml`).
- * `spackle` — Random utilities, to fill in the cracks in the frameworks.
+ * spackle — Random utilities, to fill in the cracks in the frameworks.
      * `spackle-lib` — Multiplatform implementation for Kotlin and JVM
      * `spackle-android-lib` — Android-specific additions.
 
@@ -68,11 +70,12 @@ The following diagram shows a rough depiction of dependencies between the module
       subgraph ui
           uiDesignLib[[ui-design-lib]];
           uiLib[[ui-lib]];
-          uiIntegrationTest[[ui-integration-test]];
       end
       uiDesignLib[[ui-design-lib]] --> uiLib[[ui-lib]];
-      uiLib[[ui-lib]] --> uiIntegrationTest[[ui-integration-test]];
-      uiDesignLib[[ui-design-lib]] --> uiIntegrationTest[[ui-integration-test]];
+      subgraph ui-test
+          uiIntegrationTest[[ui-integration-test]];
+          uiScreenshotTest[[ui-screenshot-test]];
+      end
       subgraph spackle
           spackleLib[[spackle-lib]];
           spackleAndroidLib[[spackle-android-lib]];
@@ -81,6 +84,7 @@ The following diagram shows a rough depiction of dependencies between the module
       preference --> ui[[ui]];
       sdk --> ui[[ui]];
       spackle[[spackle]] --> ui[[ui]];
+      ui[[ui]] --> ui-test[[ui-test]]; 
       ui[[ui]] --> app{app};
       crash[[crash]] --> app{app};
 ```
