@@ -91,18 +91,10 @@ android {
             )
             if (isReleaseSigningConfigured) {
                 signingConfig = signingConfigs.getByName("release")
+            } else {
+                // Warning: in this case is the release build signed with debug configs
+                signingConfig = signingConfigs.getByName("debug")
             }
-        }
-        create("benchmark") {
-            initWith(getByName("release"))
-            signingConfig = signingConfigs.getByName("debug")
-            matchingFallbacks += listOf("release")
-            applicationIdSuffix = ".benchmark"
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-project.txt",
-                "benchmark-rules.txt"
-            )
         }
         all {
             buildConfigField(
