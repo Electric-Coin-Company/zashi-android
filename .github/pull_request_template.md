@@ -22,12 +22,12 @@ This code review checklist is intended to serve as a starting point for the auth
 # Reviewer
 
 - [ ] Check the code with the [Code Review Guidelines](../blob/main/docs/CODE_REVIEW_GUIDELINES.md) **checklist**
-- [ ] Perform an **ad hoc review**[^adHoc]
+- [ ] Perform an **ad hoc review**
 <!-- In addition to a first pass using the code review guidelines, do a second pass using your best judgement and experience which may identify additional questions or comments. Research shows that code review is most effective when done in multiple passes, where reviewers look for different things through each pass. -->
 - [ ] Review the the **automated tests**
 - [ ] Review the **manual tests**
 - [ ] Review the **documentation**, [**README.md**](../blob/main/README.md), and [**Architecture.md**](../blob/main/docs/Architecture.md) as appropriate
-- [ ] Run the app and try the changes[^runTheApp]
+- [ ] Run the app and try the changes
 <!-- While the CI server runs the app to look for build failures or crashes, humans running the app are more likely to notice unexpected log messages, UI inconsistencies, or bad output data. Perform this step last, after verifying the code changes are safe to run locally. -->
 
 > **Note**
