@@ -24,7 +24,13 @@ android {
     }
 
     buildTypes {
+        create("release") {
+            // To provide compatibility with other modules
+        }
         create("benchmark") {
+            // We provide the extra benchmark build variants for benchmarking. We still need to support debug
+            // variants to be compatible with debug variants in other modules, although benchmarking does not allow
+            // not minified build variants - benchmarking with the debug build variants will fail.
             isDebuggable = true
             signingConfig = signingConfigs.getByName("debug")
             matchingFallbacks += listOf("release")
@@ -45,15 +51,4 @@ dependencies {
             }
         }
     }
-}
-
-// We provide this gradle task with benchmark tests only (debug-related tasks excluded). We still need to support debug
-// variants to be compatible with debug variants in other modules, although benchmarking does not allow not minified
-// build variants.
-tasks.register("connectedBenchmarkTest") {
-    group = "verification"
-    dependsOn(
-        "connectedZcashmainnetBenchmarkAndroidTest",
-        "connectedZcashtestnetBenchmarkAndroidTest"
-    )
 }
