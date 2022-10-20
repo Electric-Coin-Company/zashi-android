@@ -1,5 +1,8 @@
 package co.electriccoin.zcash.ui.screen.send.view
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.PressInteraction
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
@@ -10,6 +13,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import androidx.test.filters.MediumTest
+import cash.z.ecc.android.sdk.ext.collectWith
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.sdk.ext.ui.model.MonetarySeparators
 import cash.z.ecc.sdk.fixture.MemoFixture
@@ -22,7 +26,13 @@ import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.test.getStringResource
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
@@ -60,15 +70,24 @@ class SendViewTest : UiTestPrerequisites() {
         composeTestRule.setValidAddress()
         composeTestRule.clickCreateAndSend()
         composeTestRule.assertOnConfirmation()
-        composeTestRule.clickConfirmation()
+        clickConfirmation(testSetup.interactionSource)
 
-        assertEquals(1, testSetup.getOnCreateCount())
+        launch {
+            testSetup.mutableActionExecuted.collectWith(this) {
+                if (!it) return@collectWith
 
-        testSetup.getLastSend().also {
-            assertNotNull(it)
-            assertEquals(WalletAddressFixture.unified(), it.destination)
-            assertEquals(Zatoshi(12345600000), it.amount)
-            assertTrue(it.memo.value.isEmpty())
+                assertEquals(1, testSetup.getOnCreateCount())
+
+                launch {
+                    testSetup.getLastSend().also {
+                        assertNotNull(it)
+                        assertEquals(WalletAddressFixture.unified(), it.destination)
+                        assertEquals(Zatoshi(12345678900000), it.amount)
+                        assertEquals(ZecRequestFixture.MESSAGE.value, it.memo.value)
+                    }
+                }
+                this.cancel()
+            }
         }
     }
 
@@ -87,15 +106,24 @@ class SendViewTest : UiTestPrerequisites() {
 
         composeTestRule.clickCreateAndSend()
         composeTestRule.assertOnConfirmation()
-        composeTestRule.clickConfirmation()
+        clickConfirmation(testSetup.interactionSource)
 
-        assertEquals(1, testSetup.getOnCreateCount())
+        launch {
+            testSetup.mutableActionExecuted.collectWith(this) {
+                if (!it) return@collectWith
 
-        testSetup.getLastSend().also {
-            assertNotNull(it)
-            assertEquals(WalletAddressFixture.unified(), it.destination)
-            assertEquals(Zatoshi(12345600000), it.amount)
-            assertEquals(ZecRequestFixture.MESSAGE.value, it.memo.value)
+                assertEquals(1, testSetup.getOnCreateCount())
+
+                launch {
+                    testSetup.getLastSend().also {
+                        assertNotNull(it)
+                        assertEquals(WalletAddressFixture.unified(), it.destination)
+                        assertEquals(Zatoshi(12345678900000), it.amount)
+                        assertEquals(ZecRequestFixture.MESSAGE.value, it.memo.value)
+                    }
+                }
+                this.cancel()
+            }
         }
     }
 
@@ -136,15 +164,24 @@ class SendViewTest : UiTestPrerequisites() {
 
         composeTestRule.clickCreateAndSend()
         composeTestRule.assertOnConfirmation()
-        composeTestRule.clickConfirmation()
+        clickConfirmation(testSetup.interactionSource)
 
-        assertEquals(1, testSetup.getOnCreateCount())
+        launch {
+            testSetup.mutableActionExecuted.collectWith(this) {
+                if (!it) return@collectWith
 
-        testSetup.getLastSend().also {
-            assertNotNull(it)
-            assertEquals(WalletAddressFixture.unified(), it.destination)
-            assertEquals(Zatoshi(12345678900000), it.amount)
-            assertEquals(ZecRequestFixture.MESSAGE.value, it.memo.value)
+                assertEquals(1, testSetup.getOnCreateCount())
+
+                launch {
+                    testSetup.getLastSend().also {
+                        assertNotNull(it)
+                        assertEquals(WalletAddressFixture.unified(), it.destination)
+                        assertEquals(Zatoshi(12345678900000), it.amount)
+                        assertEquals(ZecRequestFixture.MESSAGE.value, it.memo.value)
+                    }
+                }
+                this.cancel()
+            }
         }
     }
 
@@ -205,15 +242,24 @@ class SendViewTest : UiTestPrerequisites() {
 
         composeTestRule.clickCreateAndSend()
         composeTestRule.assertOnConfirmation()
-        composeTestRule.clickConfirmation()
+        clickConfirmation(testSetup.interactionSource)
 
-        assertEquals(1, testSetup.getOnCreateCount())
+        launch {
+            testSetup.mutableActionExecuted.collectWith(this) {
+                if (!it) return@collectWith
 
-        testSetup.getLastSend().also {
-            assertNotNull(it)
-            assertEquals(WalletAddressFixture.unified(), it.destination)
-            assertEquals(Zatoshi(12345600000), it.amount)
-            assertTrue(it.memo.value.isEmpty())
+                assertEquals(1, testSetup.getOnCreateCount())
+
+                launch {
+                    testSetup.getLastSend().also {
+                        assertNotNull(it)
+                        assertEquals(WalletAddressFixture.unified(), it.destination)
+                        assertEquals(Zatoshi(12345600000), it.amount)
+                        assertTrue(it.memo.value.isEmpty())
+                    }
+                }
+                this.cancel()
+            }
         }
     }
 
@@ -250,6 +296,8 @@ class SendViewTest : UiTestPrerequisites() {
 
         private val onBackCount = AtomicInteger(0)
         private val onCreateCount = AtomicInteger(0)
+        val interactionSource = MutableInteractionSource()
+        val mutableActionExecuted = MutableStateFlow(false)
 
         @Volatile
         private var onSendZecRequest: ZecSend? = null
@@ -274,12 +322,14 @@ class SendViewTest : UiTestPrerequisites() {
                 ZcashTheme {
                     Send(
                         mySpendableBalance = ZatoshiFixture.new(),
+                        interactionSource = interactionSource,
                         goBack = {
                             onBackCount.incrementAndGet()
                         },
                         onCreateAndSend = {
                             onCreateCount.incrementAndGet()
                             onSendZecRequest = it
+                            mutableActionExecuted.update { true }
                         }
                     )
                 }
@@ -336,9 +386,10 @@ private fun ComposeContentTestRule.clickCreateAndSend() {
     }
 }
 
-private fun ComposeContentTestRule.clickConfirmation() {
-    onNodeWithText(getStringResource(R.string.send_confirm)).also {
-        it.performClick()
+@OptIn(ExperimentalCoroutinesApi::class)
+private fun TestScope.clickConfirmation(interactionSource: MutableInteractionSource) {
+    launch(Dispatchers.Main) {
+        interactionSource.emit(PressInteraction.Press(Offset.Zero))
     }
 }
 
