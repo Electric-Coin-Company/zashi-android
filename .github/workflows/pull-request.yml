@@ -428,7 +428,7 @@ jobs:
           workload_identity_provider: ${{ secrets.FIREBASE_TEST_LAB_WORKLOAD_IDENTITY_PROVIDER }}
           access_token_lifetime: '900s'
       - name: Download a single artifact
-        uses: actions/download-artifact@fb598a63ae348fa914e94cd0ff38f362e927b741
+        uses: actions/download-artifact@9782bd6a9848b53b110e712e20e42d89988822b7
         with:
           name: Binaries
       - name: Robo test
