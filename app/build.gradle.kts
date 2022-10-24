@@ -253,6 +253,9 @@ fladle {
         projectId.set(firebaseProject)
     }
 
+    @Suppress("MagicNumber")
+    flakyTestAttempts.set(1)
+
     configs {
         create("sanityConfigDebug") {
             clearPropertiesForSanityRobo()
