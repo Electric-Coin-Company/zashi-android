@@ -89,10 +89,14 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-project.txt"
             )
+
+            val isSignReleaseBuildWithDebugKey = project.property("IS_SIGN_RELEASE_BUILD_WITH_DEBUG_KEY")
+                .toString().toBoolean()
+
             if (isReleaseSigningConfigured) {
                 signingConfig = signingConfigs.getByName("release")
-            } else {
-                // Warning: in this case is the release build signed with debug configs
+            } else if (isSignReleaseBuildWithDebugKey) {
+                // Warning: in this case is the release build signed with the debug key
                 signingConfig = signingConfigs.getByName("debug")
             }
         }
