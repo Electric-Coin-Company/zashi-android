@@ -126,7 +126,6 @@ To simplify implementation of Zcash SDK or BIP-39 features in conjunction with c
 1. Check out the SDK 
 1. Verify that the `zcash-android-wallet-sdk` builds correctly on its own (e.g. `./gradlew assemble`)
 1. In the `secant-android-wallet` repo, modify property `SDK_INCLUDED_BUILD_PATH` to be the absolute path to the `zcash-android-wallet-sdk` checkout.  (You can also use a relative path, but it will be relative to the root of `secant-android-wallet`).  A similar property also exists for BIP-39 `BIP_39_INCLUDED_BUILD_PATH`
-1. In the `secant-android-wallet` repo, modify property `ZCASH_IS_TREAT_WARNINGS_AS_ERRORS` to be false due to [SDK Issue #367](https://github.com/zcash/zcash-android-wallet-sdk/issues/367)
 1. Build `secant-android-wallet`
 
 There are some limitations of included builds:
