@@ -11,6 +11,8 @@ android {
 
     defaultConfig {
         testInstrumentationRunner = "co.electriccoin.zcash.test.ZcashUiTestRunner"
+        // to enable benchmarking for emulators, although only a physical device gives real results
+        testInstrumentationRunnerArguments["androidx.benchmark.suppressErrors"] = "EMULATOR"
     }
 
     flavorDimensions.add("network")
