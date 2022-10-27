@@ -168,6 +168,8 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.annotation)
     implementation(libs.androidx.core)
+    // just to support baseline profile installation needed by benchmark tests
+    implementation(libs.androidx.profileinstaller)
     implementation(libs.kotlin.stdlib)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.core)
