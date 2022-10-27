@@ -112,8 +112,9 @@ Debug builds are up to 10x slower due to JIT being disabled by Android's runtime
 
 "mainnet" (main network) and "testnet" (test network) are terms used in the blockchain ecosystem to describe different blockchain networks.  Mainnet is responsible for executing actual transactions within the network and storing them on the blockchain. In contrast, the testnet provides an alternative environment that mimics the mainnet's functionality to allow developers to build and test projects without needing to facilitate live transactions or the use of cryptocurrencies, for example.
 
-Currently, we support 4 build variants for the `app` module: `zcashmainnetDebug`, `zcashtestnetDebug`, `zcashmainnetRelease`, `zcashtestnetRelease`. Library modules like `ui-lib`, `test-lib`, etc. support only `debug` and `release` variants.
+Currently, we support 4 build variants for the `app` module: `zcashmainnetDebug`, `zcashtestnetDebug`, `zcashmainnetRelease`, `zcashtestnetRelease`. Library modules like `ui-lib`, `test-lib`, etc. support only `debug` and `release` variants. UI test modules like `ui-integration-test`, `ui-screenshot-test` and `ui-benchmark-test` provide variants extended by the network dimension similarly as app module does. Moreover, the `ui-benchmark-test` introduces a `benchmark` build type which results in 2 extra variants (`zcashmainnetBenchmark`, `zcashtestnetBenchmark`), which are supposed to be used only for benchmarking. 
 
+App module build variants:
 - `zcashtestnetDebug` - build variant is built upon testnet network and with debug build type. You usually use this variant for development
 - `zcashmainnetDebug` - same as previous, but is built upon mainnet network
 - `zcashmainnetRelease` and `zcashtestnetRelease` - are usually used by our CI jobs to prepare binaries for testing and releasing to the Google Play store
@@ -132,6 +133,12 @@ There are some limitations of included builds:
 1. If `secant-android-wallet` is using a newer version of the Android Gradle plugin compared to `zcash-android-wallet-sdk`, the build will fail.  If this happens, you may need to modify the `zcash-android-wallet-sdk` gradle.properties so that the Android Gradle Plugin version matches that of `secant-android-wallet`.  After making this change, it will be necessary to run a build from the command line with the flag `--write-locks` e.g. `./gradlew assemble --write-locks` in order to update the dependency locks.  Similar problems can occur if projects are using different versions of Kotlin or different versions of Gradle
 1. Modules in each project cannot share the same name.  For this reason, build-conventions have different names in each repo (`zcash-android-wallet-sdk/build-conventions` vs `secant-android-wallet/build-conventions-secant`)
 
+### Benchmarking
+This section provides information about available benchmark tests integrated in this project as well as how to use them. Currently, we support macrobenchmark tests run locally as described in the Android [documentation](https://developer.android.com/topic/performance/benchmarking/benchmarking-overview).
+
+We provide dedicated benchmark test module `ui-benchamark-test` for this. If you want to run these benchmark tests against our application, make sure you have a physical device connected with Android SDK level 29, at least. Select `zcashmainnetBenchmark` or `zcashtestnetBenchmark` build variant for this module. Make sure that other modules are set to release variants of their available build variants too, as benchmarking is only allowed against minified build variants. The benchmark tests can be run with Android Studio run configuration `ui-benchmark-test:connectedZcashmainnetBenchmarkAndroidTest` with having the Gradle property `IS_SIGN_RELEASE_BUILD_WITH_DEBUG_KEY` set to true. Running the benchmark test this way automatically provides benchmarking results in Run panel. Or you can run the tests manually from the terminal with `./gradlew connectedZcashmainnetBenchmarkAndroidTest -PIS_SIGN_RELEASE_BUILD_WITH_DEBUG_KEY=true` or `./gradlew connectedZcashtestnetBenchmarkAndroidTest -PIS_SIGN_RELEASE_BUILD_WITH_DEBUG_KEY=true` and analyze results with Android Studio's Profiler or [Perfetto](https://ui.perfetto.dev/) tool, as described in this Android [documentation](https://developer.android.com/topic/performance/benchmarking/macrobenchmark-overview#access-trace).
+
+**Note**: We've enabled benchmarking also for emulators, although it's always better to run the tests on a real physical device. Emulator benchmark improvements might not carry over to a real user's experience (or even regress real device performance).
 
 ### Firebase Test Lab
 This section is optional.
@@ -158,7 +165,7 @@ For Continuous Integration, see [CI.md](CI.md).  The rest of this section is reg
 1. Configure or request access to emulator.wtf
     1. If you are an Electric Coin Co team member: We are still setting up a process for this, because emulator.wtf does not yet support individual API tokens
     1. If you are an open source contributor: Visit http://emulator.wtf and request an API key
-1. Set the emulator.wtf API key as a global Gradle property `ZCASH_EMULATOR_WTF_API_KEY` under `~/.gradle/gradle.properties` 
+1. Set the emulator.wtf API key as a global Gradle property `ZCASH_EMULATOR_WTF_API_KEY` under `~/.gradle/gradle.properties`
 1. Run the Gradle task `./gradlew testDebugWithEmulatorWtf :app:testZcashmainnetDebugWithEmulatorWtf :ui-integration-test:testZcashmainnetDebugWithEmulatorWtf :ui-screenshot-test:testZcashmainnetDebugWithEmulatorWtf` (emulator.wtf tasks do build the app, so you don't need to build them beforehand)
 
 ## Testnet funds

@@ -18,8 +18,8 @@ Note: Test coverage for multiplatform modules behaves differently than coverage 
 
 # App
 The main entrypoints of the application are:
- * [AppImpl.kt](../app/src/main/java/cash/z/ecc/app/AppImpl.kt) - The root Application object defined in the app module
- * [MainActivity.kt](../ui-lib/src/main/java/cash/z/ecc/ui/MainActivity.kt) - The main Activity, defined in ui-lib.  Note that the Activity is NOT exported.  Instead, the app module defines an activity-alias in the AndroidManifest which is what presents the actual icon on the Android home screen.
+ * [ZcashApplication.kt](../app/src/main/java/co/electriccoin/zcash/app/ZcashApplication.kt) - The root Application object defined in the app module
+ * [MainActivity.kt](../ui-lib/src/main/java/co/electriccoin/zcash/ui/MainActivity.kt) - The main Activity, defined in ui-lib.  Note that the Activity is NOT exported.  Instead, the app module defines an activity-alias in the AndroidManifest which is what presents the actual icon on the Android home screen.
 
 # Modules
 The logical components of the app are implemented as a number of Gradle modules.
@@ -35,6 +35,7 @@ The logical components of the app are implemented as a number of Gradle modules.
 * ui-test
     * `ui-integration-test` — Is a pure test module dedicated for integration tests only. It has Android Test Orchestrator turned on — it allows us to run each of our tests within its own invocation of Instrumentation, and thus brings us benefits for the testing environment (minimal shared state, crashes are isolated, permissions are reset).
     * `ui-screenshot-test` — Is also a pure test module, whose purpose is to provide a wrapper for the ui screenshot tests. It has the Android Test Orchestrator turned on too.
+    * `ui-benchmark-test` — Test module, which we use to run macrobenchmark tests against the `app` module. Benchmarking is a way to inspect and monitor the performance of our application. We regularly run benchmarks to help analyze and debug performance problems and ensure that we don't introduce regressions in recent changes.
  * preference
      * `preference-api-lib` — Multiplatform interfaces for key-value storage of preferences.
      * `preference-impl-android-lib` — Android-specific implementation for preference storage.
@@ -75,6 +76,7 @@ The following diagram shows a rough depiction of dependencies between the module
       subgraph ui-test
           uiIntegrationTest[[ui-integration-test]];
           uiScreenshotTest[[ui-screenshot-test]];
+          uiBenchmarkTest[[ui-benchmark-test]];
       end
       subgraph spackle
           spackleLib[[spackle-lib]];
