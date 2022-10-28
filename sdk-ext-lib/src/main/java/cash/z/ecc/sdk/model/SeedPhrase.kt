@@ -13,6 +13,8 @@ data class SeedPhrase(val split: List<String>) {
 
     fun joinToString() = split.joinToString(DEFAULT_DELIMITER)
 
+    fun toByteArray() = joinToString().encodeToByteArray()
+
     companion object {
         const val SEED_PHRASE_SIZE = 24
 

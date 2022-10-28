@@ -38,6 +38,7 @@ import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import cash.z.ecc.android.sdk.type.UnifiedFullViewingKey
 import cash.z.ecc.sdk.fixture.WalletAddressesFixture
 import cash.z.ecc.sdk.model.WalletAddresses
 import co.electriccoin.zcash.ui.R
@@ -172,7 +173,7 @@ private fun TransparentAddress(transparentAddress: String) {
 }
 
 @Composable
-private fun ViewingKey(viewingKey: String) {
+private fun ViewingKey(viewingKey: UnifiedFullViewingKey) {
     Row(
         Modifier
             .fillMaxWidth()
@@ -186,7 +187,7 @@ private fun ViewingKey(viewingKey: String) {
         )
         ExpandableRow(
             title = stringResource(R.string.wallet_address_viewing_key),
-            content = viewingKey,
+            content = viewingKey.encoding,
             isInitiallyExpanded = false
         )
     }

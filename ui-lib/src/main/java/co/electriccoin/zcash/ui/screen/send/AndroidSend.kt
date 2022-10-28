@@ -6,11 +6,13 @@ import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import cash.z.ecc.sdk.send
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.screen.home.model.spendableBalance
 import co.electriccoin.zcash.ui.screen.home.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.send.view.Send
+import kotlinx.coroutines.launch
 
 @Composable
 internal fun MainActivity.WrapSend(
@@ -25,6 +27,7 @@ private fun WrapSend(
     goBack: () -> Unit
 ) {
     val walletViewModel by activity.viewModels<WalletViewModel>()
+    val scope = rememberCoroutineScope()
 
     val synchronizer = walletViewModel.synchronizer.collectAsState().value
     val spendableBalance = walletViewModel.walletSnapshot.collectAsState().value?.spendableBalance()
@@ -36,9 +39,10 @@ private fun WrapSend(
             mySpendableBalance = spendableBalance,
             goBack = goBack,
             onCreateAndSend = {
-                synchronizer.send(spendingKey, it)
-
-                goBack()
+                scope.launch {
+                    synchronizer.send(spendingKey, it)
+                    goBack()
+                }
             }
         )
     }

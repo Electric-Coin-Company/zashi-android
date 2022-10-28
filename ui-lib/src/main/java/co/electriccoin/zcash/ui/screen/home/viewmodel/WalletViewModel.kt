@@ -7,13 +7,14 @@ import cash.z.ecc.android.bip39.Mnemonics
 import cash.z.ecc.android.bip39.toSeed
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.block.CompactBlockProcessor
-import cash.z.ecc.android.sdk.db.entity.PendingTransaction
-import cash.z.ecc.android.sdk.db.entity.Transaction
-import cash.z.ecc.android.sdk.db.entity.isMined
-import cash.z.ecc.android.sdk.db.entity.isSubmitSuccess
+import cash.z.ecc.android.sdk.model.Account
 import cash.z.ecc.android.sdk.model.BlockHeight
+import cash.z.ecc.android.sdk.model.PendingTransaction
+import cash.z.ecc.android.sdk.model.Transaction
 import cash.z.ecc.android.sdk.model.WalletBalance
 import cash.z.ecc.android.sdk.model.Zatoshi
+import cash.z.ecc.android.sdk.model.isMined
+import cash.z.ecc.android.sdk.model.isSubmitSuccess
 import cash.z.ecc.android.sdk.tool.DerivationTool
 import cash.z.ecc.sdk.model.FiatCurrency
 import cash.z.ecc.sdk.model.PercentDecimal
@@ -41,6 +42,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
@@ -117,8 +119,11 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
             val bip39Seed = withContext(Dispatchers.IO) {
                 Mnemonics.MnemonicCode(it.seedPhrase.joinToString()).toSeed()
             }
-
-            DerivationTool.deriveSpendingKeys(bip39Seed, it.network)[0]
+            DerivationTool.deriveUnifiedSpendingKey(
+                seed = bip39Seed,
+                network = it.network,
+                account = Account.DEFAULT
+            )
         }.stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
@@ -157,11 +162,12 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
             emptyList()
         )
 
-    @OptIn(FlowPreview::class)
     val addresses: StateFlow<WalletAddresses?> = secretState
         .filterIsInstance<SecretState.Ready>()
-        .map { WalletAddresses.new(it.persistableWallet) }
-        .stateIn(
+        .combine(synchronizer.filterNotNull()) {
+                secretState: SecretState.Ready, synchronizer: Synchronizer ->
+            WalletAddresses.new(secretState.persistableWallet, synchronizer)
+        }.stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
             null
@@ -376,9 +382,14 @@ private fun Synchronizer.toTransactions() =
         receivedTransactions.distinctUntilChanged()
     ) { cleared, pending, sent, received ->
         // TODO [#157]: Sort the transactions to show the most recent
+        // TODO [#157]: https://github.com/zcash/secant-android-wallet/issues/157
+
+        Twig.debug { "Test: $cleared, $pending" }
+        // Fixme: How to combine these lists of unrelated model classes?
+        // Fixme: TransactionOverview x PendingTransaction x Transaction
         buildList<Transaction> {
-            addAll(cleared)
-            addAll(pending)
+            // addAll(cleared)
+            // addAll(pending)
             addAll(sent)
             addAll(received)
         }

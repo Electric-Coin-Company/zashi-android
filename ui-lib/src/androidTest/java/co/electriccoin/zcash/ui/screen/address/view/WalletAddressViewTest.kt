@@ -53,7 +53,7 @@ class WalletAddressViewTest : UiTestPrerequisites() {
         composeTestRule.onNodeWithText(walletAddresses.transparent.address).also {
             it.assertDoesNotExist()
         }
-        composeTestRule.onNodeWithText(walletAddresses.viewingKey).also {
+        composeTestRule.onNodeWithText(walletAddresses.viewingKey.encoding).also {
             it.assertDoesNotExist()
         }
     }
@@ -124,7 +124,7 @@ class WalletAddressViewTest : UiTestPrerequisites() {
         val walletAddresses = WalletAddressesFixture.new()
         newTestSetup(walletAddresses)
 
-        composeTestRule.onNodeWithText(walletAddresses.viewingKey).also {
+        composeTestRule.onNodeWithText(walletAddresses.viewingKey.encoding).also {
             it.assertDoesNotExist()
         }
 
@@ -133,7 +133,7 @@ class WalletAddressViewTest : UiTestPrerequisites() {
             it.performClick()
         }
 
-        composeTestRule.onNodeWithText(walletAddresses.viewingKey).also {
+        composeTestRule.onNodeWithText(walletAddresses.viewingKey.encoding).also {
             it.assertExists()
         }
     }
