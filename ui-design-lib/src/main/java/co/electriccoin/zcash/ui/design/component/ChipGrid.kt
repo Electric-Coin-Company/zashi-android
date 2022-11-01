@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.design.component
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,8 +14,12 @@ import co.electriccoin.zcash.spackle.model.Index
 const val CHIP_GRID_ROW_SIZE = 3
 
 @Composable
-fun ChipGrid(wordList: List<String>) {
-    Column(Modifier.testTag(CommonTag.CHIP_LAYOUT)) {
+fun ChipGrid(wordList: List<String>, onPanelClick: (() -> Unit)?) {
+    Column(
+        Modifier
+            .testTag(CommonTag.CHIP_LAYOUT)
+            .clickable(enabled = onPanelClick != null) { onPanelClick?.invoke() }
+    ) {
         wordList.chunked(CHIP_GRID_ROW_SIZE).forEachIndexed { chunkIndex, chunk ->
             Row(Modifier.fillMaxWidth()) {
                 val remainder = (chunk.size % CHIP_GRID_ROW_SIZE)

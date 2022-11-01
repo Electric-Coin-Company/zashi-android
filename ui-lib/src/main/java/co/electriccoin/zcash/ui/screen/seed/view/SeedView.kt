@@ -97,7 +97,7 @@ private fun SeedMainContent(
         Header(stringResource(R.string.seed_header))
         Body(stringResource(R.string.seed_body))
 
-        ChipGrid(persistableWallet.seedPhrase.split)
+        ChipGrid(persistableWallet.seedPhrase.split, null)
 
         TertiaryButton(onClick = onCopyToClipboard, text = stringResource(R.string.seed_copy))
     }

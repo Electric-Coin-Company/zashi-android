@@ -9,11 +9,17 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -138,11 +144,57 @@ private fun SeedPhrase(persistableWallet: PersistableWallet, onNext: () -> Unit,
         Header(stringResource(R.string.new_wallet_3_header))
         Body(stringResource(R.string.new_wallet_3_body_1))
 
-        ChipGrid(persistableWallet.seedPhrase.split)
+        var showCopyToBufferPopup by rememberSaveable { mutableStateOf(false) }
+        ChipGrid(
+            persistableWallet.seedPhrase.split,
+            onPanelClick = {
+                showCopyToBufferPopup = !showCopyToBufferPopup
+            }
+        )
+        if (showCopyToBufferPopup) {
+            CopyToBufferConfirmationDialog(
+                onConfirm = {
+                    showCopyToBufferPopup = false
+                    onCopyToClipboard()
+                },
+                onDismiss = {
+                    showCopyToBufferPopup = false
+                }
+            )
+        }
 
         PrimaryButton(onClick = onNext, text = stringResource(R.string.new_wallet_3_button_finished))
-        TertiaryButton(onClick = onCopyToClipboard, text = stringResource(R.string.new_wallet_3_button_copy))
     }
+}
+
+@Composable
+private fun CopyToBufferConfirmationDialog(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(stringResource(id = R.string.new_wallet_3_copy_confirmation_dialog_title))
+        },
+        confirmButton = {
+            Button(
+                onClick = onConfirm
+            ) {
+                Text(stringResource(id = R.string.new_wallet_3_copy_confirmation_dialog_button_copy))
+            }
+        },
+        dismissButton = {
+            Button(
+                onClick = onDismiss
+            ) {
+                Text(stringResource(id = R.string.new_wallet_3_copy_confirmation_dialog_button_cancel))
+            }
+        },
+        text = {
+            Text(stringResource(id = R.string.new_wallet_3_copy_confirmation_dialog_explanation))
+        }
+    )
 }
 
 @Suppress("MagicNumber")
