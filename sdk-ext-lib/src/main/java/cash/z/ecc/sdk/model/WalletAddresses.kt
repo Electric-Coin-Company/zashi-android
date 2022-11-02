@@ -11,7 +11,7 @@ import kotlinx.coroutines.withContext
 
 data class WalletAddresses(
     val unified: WalletAddress.Unified,
-    val shieldedSapling: WalletAddress.ShieldedSapling,
+    val legacySapling: WalletAddress.LegacySapling,
     val transparent: WalletAddress.Transparent,
     val viewingKey: UnifiedFullViewingKey
 ) {
@@ -28,7 +28,7 @@ data class WalletAddresses(
 
             val viewingKey = DerivationTool.deriveUnifiedFullViewingKeys(bip39Seed, persistableWallet.network, 1)[0]
 
-            val shieldedSaplingAddress = WalletAddress.ShieldedSapling.new(
+            val legacySaplingAddress = WalletAddress.LegacySapling.new(
                 synchronizer.getLegacySaplingAddress(Account.DEFAULT)
             )
 
@@ -45,7 +45,7 @@ data class WalletAddresses(
             // TODO [#161]: https://github.com/zcash/secant-android-wallet/issues/161
             return WalletAddresses(
                 unified = WalletAddress.Unified.new("Unified GitHub Issue #161"),
-                shieldedSapling = shieldedSaplingAddress,
+                legacySapling = legacySaplingAddress,
                 transparent = transparentAddress,
                 viewingKey = viewingKey
             )

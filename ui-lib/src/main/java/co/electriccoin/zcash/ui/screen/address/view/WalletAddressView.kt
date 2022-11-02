@@ -124,7 +124,7 @@ private fun WalletDetailAddresses(walletAddresses: WalletAddresses) {
                     ListHeader(text = stringResource(R.string.wallet_address_header_includes))
                 }
 
-                SaplingAddress(walletAddresses.shieldedSapling.address)
+                SaplingAddress(walletAddresses.legacySapling.address)
                 TransparentAddress(walletAddresses.transparent.address)
             }
         }
@@ -149,7 +149,7 @@ private fun SaplingAddress(saplingAddress: String) {
         SmallIndicator(ZcashTheme.colors.addressHighlightSapling)
 
         ExpandableRow(
-            title = stringResource(R.string.wallet_address_shielded_sapling),
+            title = stringResource(R.string.wallet_address_legacy_sapling),
             content = saplingAddress,
             isInitiallyExpanded = false
         )

@@ -14,7 +14,7 @@ class WalletAddressExtTest {
     @SmallTest
     @OptIn(ExperimentalCoroutinesApi::class)
     fun testAbbreviated() = runTest {
-        val actual = WalletAddressFixture.shieldedSapling().abbreviated(getAppContext())
+        val actual = WalletAddressFixture.legacySapling().abbreviated(getAppContext())
 
         // TODO [#248]: The expected value should probably be reversed if the locale is RTL
         val expected = "ztest…rxnwg"
