@@ -367,6 +367,7 @@ private fun backupScreenshots(resContext: Context, tag: String, composeTestRule:
     ScreenshotTest.takeScreenshot(tag, "Backup 1")
 
     composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_1_button)).also {
+        it.performScrollTo()
         it.performClick()
     }
 
@@ -376,6 +377,7 @@ private fun backupScreenshots(resContext: Context, tag: String, composeTestRule:
     ScreenshotTest.takeScreenshot(tag, "Backup 2")
 
     composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_2_button)).also {
+        it.performScrollTo()
         it.performClick()
     }
 
@@ -385,6 +387,7 @@ private fun backupScreenshots(resContext: Context, tag: String, composeTestRule:
     ScreenshotTest.takeScreenshot(tag, "Backup 3")
 
     composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_3_button_finished)).also {
+        it.performScrollTo()
         it.performClick()
     }
 
@@ -412,12 +415,16 @@ private fun backupScreenshots(resContext: Context, tag: String, composeTestRule:
         ScreenshotTest.takeScreenshot(tag, "Backup Fail")
     }
 
-    composeTestRule.onNode(hasText(resContext.getString(R.string.new_wallet_4_button_retry))).performClick()
+    composeTestRule.onNode(hasText(resContext.getString(R.string.new_wallet_4_button_retry))).also {
+        it.performScrollTo()
+        it.performClick()
+    }
 
     composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_3_header)).also {
         it.assertExists()
     }
     composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_3_button_finished)).also {
+        it.performScrollTo()
         it.performClick()
     }
 

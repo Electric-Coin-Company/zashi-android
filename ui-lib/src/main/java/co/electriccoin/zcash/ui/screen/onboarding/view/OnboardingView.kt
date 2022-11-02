@@ -260,7 +260,6 @@ private fun Wallet(paddingValues: PaddingValues) {
             text = stringResource(R.string.onboarding_4_header)
         )
         Body(stringResource(R.string.onboarding_4_body))
-        Image(painterResource(id = R.drawable.onboarding_4), "")
     }
 }
 
