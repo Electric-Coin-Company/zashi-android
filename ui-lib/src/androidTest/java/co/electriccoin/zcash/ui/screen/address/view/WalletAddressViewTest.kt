@@ -36,7 +36,7 @@ class WalletAddressViewTest : UiTestPrerequisites() {
         composeTestRule.onNodeWithText(getStringResource(R.string.wallet_address_legacy_sapling)).also {
             it.assertExists()
         }
-        composeTestRule.onNodeWithText(getStringResource(R.string.wallet_address_transparent)).also {
+        composeTestRule.onNodeWithText(getStringResource(R.string.wallet_address_legacy_transparent)).also {
             it.assertExists()
         }
         composeTestRule.onNodeWithText(getStringResource(R.string.wallet_address_viewing_key)).also {
@@ -50,7 +50,7 @@ class WalletAddressViewTest : UiTestPrerequisites() {
         composeTestRule.onNodeWithText(walletAddresses.legacySapling.address).also {
             it.assertDoesNotExist()
         }
-        composeTestRule.onNodeWithText(walletAddresses.transparent.address).also {
+        composeTestRule.onNodeWithText(walletAddresses.legacyTransparent.address).also {
             it.assertDoesNotExist()
         }
         composeTestRule.onNodeWithText(walletAddresses.viewingKey.encoding).also {
@@ -100,20 +100,20 @@ class WalletAddressViewTest : UiTestPrerequisites() {
 
     @Test
     @MediumTest
-    fun transparent_expands() = runTest {
+    fun legacy_transparent_expands() = runTest {
         val walletAddresses = WalletAddressesFixture.new()
         newTestSetup(walletAddresses)
 
-        composeTestRule.onNodeWithText(walletAddresses.transparent.address).also {
+        composeTestRule.onNodeWithText(walletAddresses.legacyTransparent.address).also {
             it.assertDoesNotExist()
         }
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.wallet_address_transparent)).also {
+        composeTestRule.onNodeWithText(getStringResource(R.string.wallet_address_legacy_transparent)).also {
             it.assertExists()
             it.performClick()
         }
 
-        composeTestRule.onNodeWithText(walletAddresses.transparent.address).also {
+        composeTestRule.onNodeWithText(walletAddresses.legacyTransparent.address).also {
             it.assertExists()
         }
     }

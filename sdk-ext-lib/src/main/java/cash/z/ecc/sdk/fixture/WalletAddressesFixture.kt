@@ -11,12 +11,12 @@ object WalletAddressesFixture {
     suspend fun new(
         unified: String = WalletAddressFixture.UNIFIED_ADDRESS_STRING,
         legacySapling: String = WalletAddressFixture.LEGACY_SAPLING_ADDRESS_STRING,
-        transparent: String = WalletAddressFixture.TRANSPARENT_ADDRESS_STRING,
+        legacyTransparent: String = WalletAddressFixture.LEGACY_TRANSPARENT_ADDRESS_STRING,
         viewingKey: UnifiedFullViewingKey = VIEWING_KEY
     ) = WalletAddresses(
         WalletAddress.Unified.new(unified),
         WalletAddress.LegacySapling.new(legacySapling),
-        WalletAddress.Transparent.new(transparent),
+        WalletAddress.LegacyTransparent.new(legacyTransparent),
         viewingKey
     )
 }
