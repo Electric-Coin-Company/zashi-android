@@ -10,7 +10,6 @@ import cash.z.ecc.android.sdk.block.CompactBlockProcessor
 import cash.z.ecc.android.sdk.model.Account
 import cash.z.ecc.android.sdk.model.BlockHeight
 import cash.z.ecc.android.sdk.model.PendingTransaction
-import cash.z.ecc.android.sdk.model.Transaction
 import cash.z.ecc.android.sdk.model.WalletBalance
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.isMined
@@ -27,6 +26,7 @@ import co.electriccoin.zcash.ui.preference.EncryptedPreferenceKeys
 import co.electriccoin.zcash.ui.preference.EncryptedPreferenceSingleton
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
 import co.electriccoin.zcash.ui.preference.StandardPreferenceSingleton
+import co.electriccoin.zcash.ui.screen.home.model.CommonTransaction
 import co.electriccoin.zcash.ui.screen.home.model.WalletSnapshot
 import co.electriccoin.zcash.work.WorkIds
 import kotlinx.coroutines.Dispatchers
@@ -148,7 +148,7 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
 
     // This is not the right API, because the transaction list could be very long and might need UI filtering
     @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
-    val transactionSnapshot: StateFlow<List<Transaction>> = synchronizer
+    val transactionSnapshot: StateFlow<List<CommonTransaction>> = synchronizer
         .flatMapLatest {
             if (null == it) {
                 flowOf(emptyList())
@@ -377,20 +377,13 @@ private fun Synchronizer.toWalletSnapshot() =
 private fun Synchronizer.toTransactions() =
     combine(
         clearedTransactions.distinctUntilChanged(),
-        pendingTransactions.distinctUntilChanged(),
-        sentTransactions.distinctUntilChanged(),
-        receivedTransactions.distinctUntilChanged()
-    ) { cleared, pending, sent, received ->
+        pendingTransactions.distinctUntilChanged()
+    ) { cleared, pending ->
         // TODO [#157]: Sort the transactions to show the most recent
         // TODO [#157]: https://github.com/zcash/secant-android-wallet/issues/157
 
-        Twig.debug { "Test: $cleared, $pending" }
-        // Fixme: How to combine these lists of unrelated model classes?
-        // Fixme: TransactionOverview x PendingTransaction x Transaction
-        buildList<Transaction> {
-            // addAll(cleared)
-            // addAll(pending)
-            addAll(sent)
-            addAll(received)
+        buildList {
+            addAll(cleared.map { CommonTransaction(it) })
+            addAll(pending.map { CommonTransaction(it) })
         }
     }
