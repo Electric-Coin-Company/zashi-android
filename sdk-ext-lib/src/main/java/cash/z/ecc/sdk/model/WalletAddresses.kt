@@ -1,33 +1,18 @@
 package cash.z.ecc.sdk.model
 
-import cash.z.ecc.android.bip39.Mnemonics
-import cash.z.ecc.android.bip39.toSeed
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.model.Account
-import cash.z.ecc.android.sdk.tool.DerivationTool
-import cash.z.ecc.android.sdk.type.UnifiedFullViewingKey
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 data class WalletAddresses(
     val unified: WalletAddress.Unified,
     val legacySapling: WalletAddress.LegacySapling,
-    val legacyTransparent: WalletAddress.LegacyTransparent,
-    val viewingKey: UnifiedFullViewingKey
+    val legacyTransparent: WalletAddress.LegacyTransparent
 ) {
     // Override to prevent leaking details in logs
     override fun toString() = "WalletAddresses"
 
     companion object {
-        suspend fun new(persistableWallet: PersistableWallet, synchronizer: Synchronizer): WalletAddresses {
-            // Dispatcher needed because SecureRandom is loaded, which is slow and performs IO
-            // https://github.com/zcash/kotlin-bip39/issues/13
-            val bip39Seed = withContext(Dispatchers.IO) {
-                Mnemonics.MnemonicCode(persistableWallet.seedPhrase.joinToString()).toSeed()
-            }
-
-            val viewingKey = DerivationTool.deriveUnifiedFullViewingKeys(bip39Seed, persistableWallet.network, 1)[0]
-
+        suspend fun new(synchronizer: Synchronizer): WalletAddresses {
             val legacySaplingAddress = WalletAddress.LegacySapling.new(
                 synchronizer.getLegacySaplingAddress(Account.DEFAULT)
             )
@@ -41,8 +26,7 @@ data class WalletAddresses(
             return WalletAddresses(
                 unified = WalletAddress.Unified.new("Unified GitHub Issue #161"),
                 legacySapling = legacySaplingAddress,
-                legacyTransparent = legacyTransparentAddress,
-                viewingKey = viewingKey
+                legacyTransparent = legacyTransparentAddress
             )
         }
     }

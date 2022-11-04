@@ -162,11 +162,10 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
             emptyList()
         )
 
-    val addresses: StateFlow<WalletAddresses?> = secretState
-        .filterIsInstance<SecretState.Ready>()
-        .combine(synchronizer.filterNotNull()) {
-                secretState: SecretState.Ready, synchronizer: Synchronizer ->
-            WalletAddresses.new(secretState.persistableWallet, synchronizer)
+    val addresses: StateFlow<WalletAddresses?> = synchronizer
+        .filterNotNull()
+        .map {
+            WalletAddresses.new(it)
         }.stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),

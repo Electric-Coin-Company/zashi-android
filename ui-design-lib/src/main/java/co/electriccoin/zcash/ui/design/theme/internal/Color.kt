@@ -50,7 +50,6 @@ internal object Dark {
     val addressHighlightUnified = Color(0xFFFFD800)
     val addressHighlightSapling = Color(0xFF1BBFF6)
     val addressHighlightTransparent = Color(0xFF97999A)
-    val addressHighlightViewing = Color(0xFF504062)
 
     val dangerous = Color(0xFFEC0008)
     val onDangerous = Color(0xFFFFFFFF)
@@ -101,7 +100,6 @@ internal object Light {
     val addressHighlightUnified = Color(0xFFFFD800)
     val addressHighlightSapling = Color(0xFF1BBFF6)
     val addressHighlightTransparent = Color(0xFF97999A)
-    val addressHighlightViewing = Color(0xFF504062)
 
     val dangerous = Color(0xFFEC0008)
     val onDangerous = Color(0xFFFFFFFF)
@@ -148,7 +146,6 @@ internal val DarkExtendedColorPalette = ExtendedColors(
     addressHighlightUnified = Dark.addressHighlightUnified,
     addressHighlightSapling = Dark.addressHighlightSapling,
     addressHighlightTransparent = Dark.addressHighlightTransparent,
-    addressHighlightViewing = Dark.addressHighlightViewing,
     dangerous = Dark.dangerous,
     onDangerous = Dark.onDangerous,
     reference = Dark.reference
@@ -171,7 +168,6 @@ internal val LightExtendedColorPalette = ExtendedColors(
     addressHighlightUnified = Light.addressHighlightUnified,
     addressHighlightSapling = Light.addressHighlightSapling,
     addressHighlightTransparent = Light.addressHighlightTransparent,
-    addressHighlightViewing = Light.addressHighlightViewing,
     dangerous = Light.dangerous,
     onDangerous = Light.onDangerous,
     reference = Light.reference
@@ -195,7 +191,6 @@ internal val LocalExtendedColors = staticCompositionLocalOf {
         addressHighlightUnified = Color.Unspecified,
         addressHighlightSapling = Color.Unspecified,
         addressHighlightTransparent = Color.Unspecified,
-        addressHighlightViewing = Color.Unspecified,
         dangerous = Color.Unspecified,
         onDangerous = Color.Unspecified,
         reference = Color.Unspecified

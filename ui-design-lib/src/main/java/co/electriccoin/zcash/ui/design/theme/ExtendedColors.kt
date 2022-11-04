@@ -24,7 +24,6 @@ data class ExtendedColors(
     val addressHighlightUnified: Color,
     val addressHighlightSapling: Color,
     val addressHighlightTransparent: Color,
-    val addressHighlightViewing: Color,
     val dangerous: Color,
     val onDangerous: Color,
     val reference: Color

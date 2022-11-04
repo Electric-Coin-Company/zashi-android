@@ -38,7 +38,6 @@ import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import cash.z.ecc.android.sdk.type.UnifiedFullViewingKey
 import cash.z.ecc.sdk.fixture.WalletAddressesFixture
 import cash.z.ecc.sdk.model.WalletAddresses
 import co.electriccoin.zcash.ui.R
@@ -129,10 +128,6 @@ private fun WalletDetailAddresses(walletAddresses: WalletAddresses) {
             }
         }
     }
-
-    Divider(thickness = 8.dp)
-
-    ViewingKey(walletAddresses.viewingKey)
 }
 
 // Note: The addresses code below has opportunities to be made more DRY.
@@ -167,27 +162,6 @@ private fun TransparentAddress(transparentAddress: String) {
         ExpandableRow(
             title = stringResource(R.string.wallet_address_legacy_transparent),
             content = transparentAddress,
-            isInitiallyExpanded = false
-        )
-    }
-}
-
-@Composable
-private fun ViewingKey(viewingKey: UnifiedFullViewingKey) {
-    Row(
-        Modifier
-            .fillMaxWidth()
-            .height(IntrinsicSize.Min)
-    ) {
-        Image(
-            painter = ColorPainter(ZcashTheme.colors.addressHighlightViewing),
-            contentDescription = "",
-            modifier = Modifier
-                .width(SMALL_INDICATOR_WIDTH)
-        )
-        ExpandableRow(
-            title = stringResource(R.string.wallet_address_viewing_key),
-            content = viewingKey.encoding,
             isInitiallyExpanded = false
         )
     }

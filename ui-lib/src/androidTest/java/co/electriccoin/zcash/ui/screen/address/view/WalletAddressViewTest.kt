@@ -39,9 +39,6 @@ class WalletAddressViewTest : UiTestPrerequisites() {
         composeTestRule.onNodeWithText(getStringResource(R.string.wallet_address_legacy_transparent)).also {
             it.assertExists()
         }
-        composeTestRule.onNodeWithText(getStringResource(R.string.wallet_address_viewing_key)).also {
-            it.assertExists()
-        }
 
         composeTestRule.onNodeWithText(walletAddresses.unified.address).also {
             it.assertExists()
@@ -51,9 +48,6 @@ class WalletAddressViewTest : UiTestPrerequisites() {
             it.assertDoesNotExist()
         }
         composeTestRule.onNodeWithText(walletAddresses.legacyTransparent.address).also {
-            it.assertDoesNotExist()
-        }
-        composeTestRule.onNodeWithText(walletAddresses.viewingKey.encoding).also {
             it.assertDoesNotExist()
         }
     }
@@ -114,26 +108,6 @@ class WalletAddressViewTest : UiTestPrerequisites() {
         }
 
         composeTestRule.onNodeWithText(walletAddresses.legacyTransparent.address).also {
-            it.assertExists()
-        }
-    }
-
-    @Test
-    @MediumTest
-    fun viewing_expands() = runTest {
-        val walletAddresses = WalletAddressesFixture.new()
-        newTestSetup(walletAddresses)
-
-        composeTestRule.onNodeWithText(walletAddresses.viewingKey.encoding).also {
-            it.assertDoesNotExist()
-        }
-
-        composeTestRule.onNodeWithText(getStringResource(R.string.wallet_address_viewing_key)).also {
-            it.assertExists()
-            it.performClick()
-        }
-
-        composeTestRule.onNodeWithText(walletAddresses.viewingKey.encoding).also {
             it.assertExists()
         }
     }
