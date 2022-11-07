@@ -15,10 +15,7 @@
     <string name="new_wallet_3_header">Your Secret Recovery Phrase</string>
     <string name="new_wallet_3_body_1">These words represent your funds and the security used to protect them.\n\nBack them up now! There will be a test.</string>
     <string name="new_wallet_3_button_finished">Finished!</string>
-    <string name="new_wallet_3_copy_confirmation_dialog_title">Copy Secret Recovery Phrase To Buffer</string>
-    <string name="new_wallet_3_copy_confirmation_dialog_explanation">Would you like to copy your new secret recovery phrase to the buffer, so you can paste it in a secured place?</string>
-    <string name="new_wallet_3_copy_confirmation_dialog_button_copy">Copy to buffer</string>
-    <string name="new_wallet_3_copy_confirmation_dialog_button_cancel">Cancel</string>
+    <string name="new_wallet_3_button_copy">Copy to buffer</string>
 
     <string name="new_wallet_4_header_verify">Verify Your Backup</string>
     <string name="new_wallet_4_header_ouch">Ouch, sorry, no.</string>

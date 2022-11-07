@@ -5,13 +5,11 @@ import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onChildren
-import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.filters.MediumTest
 import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.design.component.CommonTag
 import co.electriccoin.zcash.ui.fixture.TestChoicesFixture
 import co.electriccoin.zcash.ui.screen.backup.BackupTag
 import co.electriccoin.zcash.ui.screen.backup.model.BackupStage
@@ -94,35 +92,5 @@ class BackupIntegrationTest : UiTestPrerequisites() {
         assertEquals(BackupStage.Test, testSetup.getStage())
         assertEquals(2, testSetup.getOnChoicesCallbackCount())
         assertEquals(4, testSetup.getSelectedChoicesCount())
-    }
-
-    @Test
-    @MediumTest
-    fun dialog_state_restoration() {
-        val restorationTester = StateRestorationTester(composeTestRule)
-        val testSetup = newTestSetup(BackupStage.Seed)
-
-        restorationTester.setContent {
-            testSetup.getDefaultContent()
-        }
-
-        composeTestRule.onNodeWithText(getStringResource(R.string.new_wallet_3_copy_confirmation_dialog_title)).also {
-            it.assertDoesNotExist()
-        }
-
-        composeTestRule.onNodeWithTag(CommonTag.CHIP_LAYOUT).also {
-            it.assertExists()
-            it.performClick()
-        }
-
-        composeTestRule.onNodeWithText(getStringResource(R.string.new_wallet_3_copy_confirmation_dialog_title)).also {
-            it.assertExists()
-        }
-
-        restorationTester.emulateSavedInstanceStateRestore()
-
-        composeTestRule.onNodeWithText(getStringResource(R.string.new_wallet_3_copy_confirmation_dialog_title)).also {
-            it.assertExists()
-        }
     }
 }

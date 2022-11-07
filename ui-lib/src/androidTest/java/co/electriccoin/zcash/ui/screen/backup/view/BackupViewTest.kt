@@ -6,14 +6,12 @@ import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onChildren
-import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.test.filters.MediumTest
 import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.design.component.CommonTag
 import co.electriccoin.zcash.ui.fixture.TestChoicesFixture
 import co.electriccoin.zcash.ui.screen.backup.BackupTag
 import co.electriccoin.zcash.ui.screen.backup.model.BackupStage
@@ -55,83 +53,11 @@ class BackupViewTest : UiTestPrerequisites() {
 
     @Test
     @MediumTest
-    fun copy_to_clipboard_dialog_show_test() {
+    fun copy_to_clipboard() {
         val testSetup = newTestSetup(BackupStage.Seed)
 
-        assertEquals(0, testSetup.getOnCopyToClipboardCount())
-
-        composeTestRule.onNodeWithText(getStringResource(R.string.new_wallet_3_copy_confirmation_dialog_title)).also {
-            it.assertDoesNotExist()
-        }
-
-        composeTestRule.onNodeWithTag(CommonTag.CHIP_LAYOUT).also {
-            it.assertExists()
-            it.performClick()
-        }
-
-        composeTestRule.onNodeWithText(getStringResource(R.string.new_wallet_3_copy_confirmation_dialog_title)).also {
-            it.assertExists()
-        }
-
-        composeTestRule.onNodeWithText(getStringResource(R.string.new_wallet_3_copy_confirmation_dialog_explanation)).also {
-            it.assertExists()
-        }
-
-        composeTestRule.onNodeWithText(getStringResource(R.string.new_wallet_3_copy_confirmation_dialog_button_copy)).also {
-            it.assertExists()
-        }
-
-        composeTestRule.onNodeWithText(getStringResource(R.string.new_wallet_3_copy_confirmation_dialog_button_cancel)).also {
-            it.assertExists()
-        }
-
-        assertEquals(0, testSetup.getOnCopyToClipboardCount())
-    }
-
-    @Test
-    @MediumTest
-    fun copy_to_clipboard_dialog_dismiss_test() {
-        val testSetup = newTestSetup(BackupStage.Seed)
-
-        assertEquals(0, testSetup.getOnCopyToClipboardCount())
-
-        composeTestRule.onNodeWithText(getStringResource(R.string.new_wallet_3_copy_confirmation_dialog_title)).also {
-            it.assertDoesNotExist()
-        }
-
-        composeTestRule.onNodeWithTag(CommonTag.CHIP_LAYOUT).also {
-            it.assertExists()
-            it.performClick()
-        }
-
-        composeTestRule.onNodeWithText(getStringResource(R.string.new_wallet_3_copy_confirmation_dialog_title)).also {
-            it.assertExists()
-        }
-
-        composeTestRule.onNodeWithText(getStringResource(R.string.new_wallet_3_copy_confirmation_dialog_button_cancel)).also {
-            it.assertExists()
-            it.performClick()
-        }
-
-        composeTestRule.onNodeWithText(getStringResource(R.string.new_wallet_3_copy_confirmation_dialog_title)).also {
-            it.assertDoesNotExist()
-        }
-
-        assertEquals(0, testSetup.getOnCopyToClipboardCount())
-    }
-
-    @Test
-    @MediumTest
-    fun copy_to_clipboard_functionality_test() {
-        val testSetup = newTestSetup(BackupStage.Seed)
-
-        composeTestRule.onNodeWithTag(CommonTag.CHIP_LAYOUT).also {
-            it.assertExists()
-            it.performClick()
-        }
-
-        composeTestRule.onNodeWithText(getStringResource(R.string.new_wallet_3_copy_confirmation_dialog_button_copy)).also {
-            it.assertExists()
+        composeTestRule.onNodeWithText(getStringResource(R.string.new_wallet_3_button_copy)).also {
+            it.performScrollTo()
             it.performClick()
         }
 
@@ -259,11 +185,8 @@ class BackupViewTest : UiTestPrerequisites() {
 
         assertEquals(BackupStage.Seed, testSetup.getStage())
 
-        composeTestRule.onNodeWithTag(CommonTag.CHIP_LAYOUT).also {
-            it.performClick()
-        }
-
-        composeTestRule.onNodeWithText(getStringResource(R.string.new_wallet_3_copy_confirmation_dialog_button_copy)).also {
+        composeTestRule.onNodeWithText(getStringResource(R.string.new_wallet_3_button_copy)).also {
+            it.performScrollTo()
             it.performClick()
         }
 
