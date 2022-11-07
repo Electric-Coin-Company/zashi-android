@@ -382,7 +382,7 @@ private fun Synchronizer.toTransactions() =
         // TODO [#157]: https://github.com/zcash/secant-android-wallet/issues/157
 
         buildList {
-            addAll(cleared.map { CommonTransaction(it) })
-            addAll(pending.map { CommonTransaction(it) })
+            addAll(cleared.map { CommonTransaction.Overview(it) })
+            addAll(pending.map { CommonTransaction.Pending(it) })
         }
     }
