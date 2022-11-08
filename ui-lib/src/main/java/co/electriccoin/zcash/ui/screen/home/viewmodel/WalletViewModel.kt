@@ -58,6 +58,7 @@ import kotlin.time.ExperimentalTime
 // To make this more multiplatform compatible, we need to remove the dependency on Context
 // for loading the preferences.
 // TODO [#292]: Should be moved to SDK-EXT-UI module.
+// TODO [#292]: https://github.com/zcash/secant-android-wallet/issues/292
 class WalletViewModel(application: Application) : AndroidViewModel(application) {
     private val walletCoordinator = co.electriccoin.zcash.global.WalletCoordinator.getInstance(application)
 
@@ -381,6 +382,7 @@ private fun Synchronizer.toTransactions() =
         // TODO [#157]: Sort the transactions to show the most recent
         // TODO [#157]: https://github.com/zcash/secant-android-wallet/issues/157
 
+        // Note that the list of transactions will not be sorted.
         buildList {
             addAll(cleared.map { CommonTransaction.Overview(it) })
             addAll(pending.map { CommonTransaction.Pending(it) })
