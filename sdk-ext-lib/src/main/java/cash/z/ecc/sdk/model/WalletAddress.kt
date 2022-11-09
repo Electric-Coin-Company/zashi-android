@@ -11,22 +11,22 @@ sealed class WalletAddress(val address: String) {
         }
     }
 
-    class LegacySapling private constructor(address: String) : WalletAddress(address) {
+    class Sapling private constructor(address: String) : WalletAddress(address) {
         companion object {
-            suspend fun new(address: String): LegacySapling {
+            suspend fun new(address: String): Sapling {
                 // TODO [#342]: https://github.com/zcash/zcash-android-wallet-sdk/issues/342
                 // TODO [#342]: refactor SDK to enable direct calls for address verification
-                return LegacySapling(address)
+                return Sapling(address)
             }
         }
     }
 
-    class LegacyTransparent private constructor(address: String) : WalletAddress(address) {
+    class Transparent private constructor(address: String) : WalletAddress(address) {
         companion object {
-            suspend fun new(address: String): LegacyTransparent {
+            suspend fun new(address: String): Transparent {
                 // TODO [#342]: https://github.com/zcash/zcash-android-wallet-sdk/issues/342
                 // TODO [#342]: refactor SDK to enable direct calls for address verification
-                return LegacyTransparent(address)
+                return Transparent(address)
             }
         }
     }

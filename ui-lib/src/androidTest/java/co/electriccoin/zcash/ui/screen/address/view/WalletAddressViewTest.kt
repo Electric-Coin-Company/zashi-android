@@ -33,10 +33,10 @@ class WalletAddressViewTest : UiTestPrerequisites() {
         composeTestRule.onNodeWithText(getStringResource(R.string.wallet_address_unified)).also {
             it.assertExists()
         }
-        composeTestRule.onNodeWithText(getStringResource(R.string.wallet_address_legacy_sapling)).also {
+        composeTestRule.onNodeWithText(getStringResource(R.string.wallet_address_sapling)).also {
             it.assertExists()
         }
-        composeTestRule.onNodeWithText(getStringResource(R.string.wallet_address_legacy_transparent)).also {
+        composeTestRule.onNodeWithText(getStringResource(R.string.wallet_address_transparent)).also {
             it.assertExists()
         }
 
@@ -44,10 +44,10 @@ class WalletAddressViewTest : UiTestPrerequisites() {
             it.assertExists()
         }
 
-        composeTestRule.onNodeWithText(walletAddresses.legacySapling.address).also {
+        composeTestRule.onNodeWithText(walletAddresses.sapling.address).also {
             it.assertDoesNotExist()
         }
-        composeTestRule.onNodeWithText(walletAddresses.legacyTransparent.address).also {
+        composeTestRule.onNodeWithText(walletAddresses.transparent.address).also {
             it.assertDoesNotExist()
         }
     }
@@ -74,40 +74,40 @@ class WalletAddressViewTest : UiTestPrerequisites() {
 
     @Test
     @MediumTest
-    fun legacy_sapling_expands() = runTest {
+    fun sapling_expands() = runTest {
         val walletAddresses = WalletAddressesFixture.new()
         newTestSetup(walletAddresses)
 
-        composeTestRule.onNodeWithText(walletAddresses.legacySapling.address).also {
+        composeTestRule.onNodeWithText(walletAddresses.sapling.address).also {
             it.assertDoesNotExist()
         }
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.wallet_address_legacy_sapling)).also {
+        composeTestRule.onNodeWithText(getStringResource(R.string.wallet_address_sapling)).also {
             it.assertExists()
             it.performClick()
         }
 
-        composeTestRule.onNodeWithText(walletAddresses.legacySapling.address).also {
+        composeTestRule.onNodeWithText(walletAddresses.sapling.address).also {
             it.assertExists()
         }
     }
 
     @Test
     @MediumTest
-    fun legacy_transparent_expands() = runTest {
+    fun transparent_expands() = runTest {
         val walletAddresses = WalletAddressesFixture.new()
         newTestSetup(walletAddresses)
 
-        composeTestRule.onNodeWithText(walletAddresses.legacyTransparent.address).also {
+        composeTestRule.onNodeWithText(walletAddresses.transparent.address).also {
             it.assertDoesNotExist()
         }
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.wallet_address_legacy_transparent)).also {
+        composeTestRule.onNodeWithText(getStringResource(R.string.wallet_address_transparent)).also {
             it.assertExists()
             it.performClick()
         }
 
-        composeTestRule.onNodeWithText(walletAddresses.legacyTransparent.address).also {
+        composeTestRule.onNodeWithText(walletAddresses.transparent.address).also {
             it.assertExists()
         }
     }

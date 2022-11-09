@@ -14,8 +14,8 @@ class WalletAddressesTest {
     fun security() = runTest {
         val walletAddresses = WalletAddressesFixture.new()
         val actual = WalletAddressesFixture.new().toString()
-        assertFalse(actual.contains(walletAddresses.legacySapling.address))
-        assertFalse(actual.contains(walletAddresses.legacyTransparent.address))
+        assertFalse(actual.contains(walletAddresses.sapling.address))
+        assertFalse(actual.contains(walletAddresses.transparent.address))
         assertFalse(actual.contains(walletAddresses.unified.address))
     }
 }

@@ -7,11 +7,11 @@ object WalletAddressesFixture {
 
     suspend fun new(
         unified: String = WalletAddressFixture.UNIFIED_ADDRESS_STRING,
-        legacySapling: String = WalletAddressFixture.LEGACY_SAPLING_ADDRESS_STRING,
-        legacyTransparent: String = WalletAddressFixture.LEGACY_TRANSPARENT_ADDRESS_STRING
+        sapling: String = WalletAddressFixture.SAPLING_ADDRESS_STRING,
+        transparent: String = WalletAddressFixture.TRANSPARENT_ADDRESS_STRING
     ) = WalletAddresses(
         WalletAddress.Unified.new(unified),
-        WalletAddress.LegacySapling.new(legacySapling),
-        WalletAddress.LegacyTransparent.new(legacyTransparent)
+        WalletAddress.Sapling.new(sapling),
+        WalletAddress.Transparent.new(transparent)
     )
 }

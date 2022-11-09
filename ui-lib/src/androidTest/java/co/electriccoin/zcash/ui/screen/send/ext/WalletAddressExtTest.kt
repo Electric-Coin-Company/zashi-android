@@ -14,7 +14,7 @@ class WalletAddressExtTest {
     @SmallTest
     @OptIn(ExperimentalCoroutinesApi::class)
     fun testAbbreviatedSaplingAddress() = runTest {
-        val actual = WalletAddressFixture.legacySapling().abbreviated(getAppContext())
+        val actual = WalletAddressFixture.sapling().abbreviated(getAppContext())
 
         // TODO [#248]: The expected value should probably be reversed if the locale is RTL
         // TODO [#248]: https://github.com/zcash/secant-android-wallet/issues/248
@@ -27,7 +27,7 @@ class WalletAddressExtTest {
     @SmallTest
     @OptIn(ExperimentalCoroutinesApi::class)
     fun testAbbreviatedTransparentAddress() = runTest {
-        val actual = WalletAddressFixture.legacyTransparent().abbreviated(getAppContext())
+        val actual = WalletAddressFixture.transparent().abbreviated(getAppContext())
 
         // TODO [#248]: The expected value should probably be reversed if the locale is RTL
         // TODO [#248]: https://github.com/zcash/secant-android-wallet/issues/248
