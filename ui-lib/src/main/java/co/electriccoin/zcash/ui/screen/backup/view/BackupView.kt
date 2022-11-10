@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.screen.backup.view
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,6 +16,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
@@ -70,35 +72,37 @@ fun BackupWallet(
     onComplete: () -> Unit,
     onChoicesChanged: ((choicesCount: Int) -> Unit)?
 ) {
-    Column {
-        when (backupState.current.collectAsState().value) {
-            BackupStage.EducationOverview -> EducationOverview(onNext = backupState::goNext)
-            BackupStage.EducationRecoveryPhrase -> EducationRecoveryPhrase(onNext = backupState::goNext)
-            BackupStage.Seed -> SeedPhrase(
-                wallet,
-                onNext = backupState::goNext,
-                onCopyToClipboard = onCopyToClipboard
-            )
-            BackupStage.Test -> Test(
-                wallet,
-                choices,
-                onBack = backupState::goPrevious,
-                onNext = backupState::goNext,
-                onChoicesChanged = onChoicesChanged
-            )
-            BackupStage.Complete -> Complete(
-                onComplete = onComplete,
-                onBackToSeedPhrase = backupState::goToSeed
-            )
-        }
+    when (backupState.current.collectAsState().value) {
+        BackupStage.EducationOverview -> EducationOverview(onNext = backupState::goNext)
+        BackupStage.EducationRecoveryPhrase -> EducationRecoveryPhrase(onNext = backupState::goNext)
+        BackupStage.Seed -> SeedPhrase(
+            wallet,
+            onNext = backupState::goNext,
+            onCopyToClipboard = onCopyToClipboard
+        )
+        BackupStage.Test -> Test(
+            wallet,
+            choices,
+            onBack = backupState::goPrevious,
+            onNext = backupState::goNext,
+            onChoicesChanged = onChoicesChanged
+        )
+        BackupStage.Complete -> Complete(
+            onComplete = onComplete,
+            onBackToSeedPhrase = backupState::goToSeed
+        )
     }
 }
 
 @Composable
 private fun EducationOverview(onNext: () -> Unit) {
-    Column {
+    Column(modifier = Modifier.verticalScroll(state = rememberScrollState())) {
         Header(stringResource(R.string.new_wallet_1_header))
         Body(stringResource(R.string.new_wallet_1_body_1))
+        Image(
+            painter = painterResource(id = R.drawable.backup_1),
+            contentDescription = stringResource(id = R.string.backup_1_content_description)
+        )
         Spacer(
             Modifier
                 .fillMaxWidth()
@@ -112,13 +116,12 @@ private fun EducationOverview(onNext: () -> Unit) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun EducationRecoveryPhrase(onNext: () -> Unit) {
-    Column {
+    Column(modifier = Modifier.verticalScroll(state = rememberScrollState())) {
         Header(stringResource(R.string.new_wallet_2_header))
         Body(stringResource(R.string.new_wallet_2_body_1))
-        Spacer(
-            Modifier
-                .fillMaxWidth()
-                .weight(MINIMAL_WEIGHT, true)
+        Image(
+            painter = painterResource(id = R.drawable.backup_2),
+            contentDescription = stringResource(id = R.string.backup_2_content_description)
         )
         Body(stringResource(R.string.new_wallet_2_body_2))
         Card {
@@ -247,11 +250,15 @@ private fun TestInProgress(
 
 @Composable
 private fun TestFailure(onBackToSeedPhrase: () -> Unit) {
-    Column {
+    Column(modifier = Modifier.verticalScroll(state = rememberScrollState())) {
         // This button doesn't match the design; just providing the navigation hook for now
         NavigationButton(onClick = onBackToSeedPhrase, text = stringResource(R.string.new_wallet_4_button_back))
 
         Header(stringResource(R.string.new_wallet_4_header_ouch))
+        Image(
+            painter = painterResource(id = R.drawable.backup_failure),
+            contentDescription = stringResource(id = R.string.backup_failure_content_description)
+        )
 
         Box(Modifier.fillMaxHeight(MINIMAL_WEIGHT))
 
@@ -263,9 +270,14 @@ private fun TestFailure(onBackToSeedPhrase: () -> Unit) {
 
 @Composable
 private fun Complete(onComplete: () -> Unit, onBackToSeedPhrase: () -> Unit) {
-    Column {
+    Column(modifier = Modifier.verticalScroll(state = rememberScrollState())) {
         Header(stringResource(R.string.new_wallet_5_header))
         Body(stringResource(R.string.new_wallet_5_body))
+        Image(
+            painter = painterResource(id = R.drawable.backup_success),
+            contentDescription = stringResource(id = R.string.backup_success_content_description)
+        )
+
         Spacer(
             Modifier
                 .fillMaxWidth()
