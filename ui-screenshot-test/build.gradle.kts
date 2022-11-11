@@ -67,6 +67,7 @@ dependencies {
 
     implementation(libs.androidx.compose.test.junit)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.startup)
     implementation(libs.androidx.uiAutomator)
 
     if (isOrchestratorEnabled) {
