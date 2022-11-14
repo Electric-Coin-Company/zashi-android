@@ -51,7 +51,7 @@ class AppUpdateCheckerMock private constructor() : AppUpdateChecker {
 
         val appUpdateInfoTask = fakeAppUpdateManager.appUpdateInfo
 
-        // to simulate a real-word situation
+        // to simulate a real-world situation
         delay(100)
 
         appUpdateInfoTask.addOnCompleteListener { infoTask ->
@@ -78,7 +78,7 @@ class AppUpdateCheckerMock private constructor() : AppUpdateChecker {
         activity: ComponentActivity,
         appUpdateInfo: AppUpdateInfo
     ): Flow<Int> = flow {
-        // to simulate a real-word situation
+        // to simulate a real-world situation
         delay(100)
         emit(Activity.RESULT_OK)
     }
