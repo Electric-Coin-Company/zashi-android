@@ -14,6 +14,7 @@ import com.google.android.play.core.appupdate.testing.FakeAppUpdateManager
 import com.google.android.play.core.install.model.AppUpdateType
 import kotlinx.coroutines.channels.ProducerScope
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
@@ -50,6 +51,9 @@ class AppUpdateCheckerMock private constructor() : AppUpdateChecker {
 
         val appUpdateInfoTask = fakeAppUpdateManager.appUpdateInfo
 
+        // to simulate a real-word situation
+        delay(100)
+
         appUpdateInfoTask.addOnCompleteListener { infoTask ->
             emitResult(this, infoTask.result)
         }
@@ -74,6 +78,8 @@ class AppUpdateCheckerMock private constructor() : AppUpdateChecker {
         activity: ComponentActivity,
         appUpdateInfo: AppUpdateInfo
     ): Flow<Int> = flow {
+        // to simulate a real-word situation
+        delay(100)
         emit(Activity.RESULT_OK)
     }
 }
