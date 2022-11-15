@@ -1,6 +1,9 @@
 <resources>
     <string name="new_wallet_clipboard_tag">Zcash Seed Phrase</string>
 
+    <string name="new_wallet_navigation_back_button_content_description">Back</string>
+    <string name="new_wallet_toolbar_more_button_content_description">More</string>
+
     <string name="new_wallet_1_header">First things first</string>
     <string name="new_wallet_1_body_1">It is important to understand that you are in charge here. Great, right? YOU get to be the bank!</string>
     <string name="new_wallet_1_body_2">But it also means that YOU are the customer, and you need to be self-reliant.\n\nSo how do you recover funds that you‘ve hidden on a complete decentralized and private block-chain?</string>
@@ -17,13 +20,12 @@
     <string name="new_wallet_3_button_finished">Finished!</string>
     <string name="new_wallet_3_button_copy">Copy to buffer</string>
 
-    <string name="new_wallet_4_header_verify">Verify Your Backup</string>
+    <string name="new_wallet_4_header">Verify Your Backup</string>
     <string name="new_wallet_4_header_ouch">Ouch, sorry, no.</string>
     <string name="new_wallet_4_body_verify">Drag the words below to match your backed-up copy.</string>
     <string name="new_wallet_4_body_ouch">Your placed words did not match your secret recovery phrase.</string>
     <string name="new_wallet_4_body_ouch_retry">Your placed words did not match your secret recovery phrase.\n\nRemember, you can‘t recover your funds if you lose (or incorrectly save) these 24 words.</string>
     <string name="new_wallet_4_button_retry">I‘m ready to try again</string>
-    <string name="new_wallet_4_button_back">Back</string>
 
     <string name="new_wallet_5_header">Success!</string>
     <string name="new_wallet_5_body">Place that backup somewhere safe and venture forth in security.</string>

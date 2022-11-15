@@ -4,7 +4,7 @@ import androidx.compose.runtime.saveable.mapSaver
 import co.electriccoin.zcash.spackle.model.Index
 import co.electriccoin.zcash.ui.screen.backup.state.TestChoices
 
-private const val KEY_TEST_CHOICES = "test_choices"
+private const val KEY_TEST_CHOICES = "test_choices" // $NON-NLS
 
 // Using a custom saver instead of Parcelize, to avoid adding an Android-specific API to
 // the TestChoices and Index class

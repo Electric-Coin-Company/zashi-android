@@ -391,7 +391,7 @@ private fun backupScreenshots(resContext: Context, tag: String, composeTestRule:
         it.performClick()
     }
 
-    composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_4_header_verify)).also {
+    composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_4_header)).also {
         it.assertExists()
     }
     ScreenshotTest.takeScreenshot(tag, "Backup 4")
@@ -428,7 +428,7 @@ private fun backupScreenshots(resContext: Context, tag: String, composeTestRule:
         it.performClick()
     }
 
-    composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_4_header_verify)).also {
+    composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_4_header)).also {
         it.assertExists()
     }
 

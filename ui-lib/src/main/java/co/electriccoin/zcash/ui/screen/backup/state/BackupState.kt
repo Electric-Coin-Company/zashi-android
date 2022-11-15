@@ -32,4 +32,16 @@ class BackupState(initialState: BackupStage = BackupStage.values().first()) {
     fun goToSeed() {
         mutableState.value = BackupStage.Seed
     }
+
+    fun setTestStage(newTestStage: BackupStage.Test.TestStage) {
+        if (current.value !is BackupStage.Test) {
+            return
+        }
+        if ((mutableState.value as BackupStage.Test).testStage == newTestStage) {
+            return
+        }
+        mutableState.value = BackupStage.Test(newTestStage)
+    }
+
+    companion object
 }

@@ -7,7 +7,6 @@ import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import co.electriccoin.zcash.ui.MainActivity
-import co.electriccoin.zcash.ui.screen.backup.viewmodel.BackupViewModel
 import co.electriccoin.zcash.ui.screen.home.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.onboarding.viewmodel.OnboardingViewModel
 import co.electriccoin.zcash.ui.screen.settings.view.Settings
@@ -48,9 +47,6 @@ private fun WrapSettings(
                 val onboardingViewModel by activity.viewModels<OnboardingViewModel>()
                 onboardingViewModel.onboardingState.goToBeginning()
                 onboardingViewModel.isImporting.value = false
-
-                val backupViewModel by activity.viewModels<BackupViewModel>()
-                backupViewModel.backupState.goToBeginning()
             }
         )
     }

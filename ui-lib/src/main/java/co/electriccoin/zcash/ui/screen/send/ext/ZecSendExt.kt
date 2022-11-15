@@ -7,9 +7,9 @@ import cash.z.ecc.sdk.model.WalletAddress
 import cash.z.ecc.sdk.model.ZecSend
 import kotlinx.coroutines.runBlocking
 
-private const val KEY_ADDRESS = "address"
-private const val KEY_AMOUNT = "amount"
-private const val KEY_MEMO = "memo"
+private const val KEY_ADDRESS = "address" // $NON-NLS
+private const val KEY_AMOUNT = "amount" // $NON-NLS
+private const val KEY_MEMO = "memo" // $NON-NLS
 
 // Using a custom saver instead of Parcelize, to avoid adding an Android-specific API to
 // the ZecSend class
