@@ -233,6 +233,7 @@ class ScreenshotTest : UiTestPrerequisites() {
 
         // Settings is a subscreen of profile
         composeTestRule.onNode(hasText(resContext.getString(R.string.profile_settings))).also {
+            it.performScrollTo()
             it.assertExists()
             it.performClick()
         }
@@ -246,6 +247,7 @@ class ScreenshotTest : UiTestPrerequisites() {
 
         // Address Details is a subscreen of profile
         composeTestRule.onNode(hasText(resContext.getString(R.string.profile_see_address_details))).also {
+            it.performScrollTo()
             it.assertExists()
             it.performClick()
         }
