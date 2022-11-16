@@ -255,7 +255,11 @@ private fun TestInProgress(
             listOf(it[1], it[0], it[3], it[2])
         }
     val currentSelectedTestChoice = selectedTestChoices.current.collectAsState().value
-    Column {
+    Column(
+        Modifier
+            .verticalScroll(rememberScrollState())
+            .padding(vertical = ZcashTheme.paddings.padding)
+    ) {
         splitSeedPhrase.chunked(CHIP_GRID_ROW_SIZE).forEachIndexed { chunkIndex, chunk ->
             Row(Modifier.fillMaxWidth()) {
                 chunk.forEachIndexed { subIndex, word ->
