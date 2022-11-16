@@ -310,6 +310,7 @@ class ScreenshotTest : UiTestPrerequisites() {
 
         composeTestRule.onNode(hasText(resContext.getString(R.string.home_button_send))).also {
             it.assertExists()
+            it.performScrollTo()
             it.performClick()
         }
         composeTestRule.waitUntil { composeTestRule.activity.walletViewModel.synchronizer.value != null }
@@ -396,15 +397,19 @@ private fun backupScreenshots(resContext: Context, tag: String, composeTestRule:
 
     // Fail test first
     composeTestRule.onAllNodesWithTag(BackupTag.DROPDOWN_CHIP).also {
+        it[0].performScrollTo()
         it[0].performClick()
         composeTestRule.onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[0].performClick()
 
+        it[1].performScrollTo()
         it[1].performClick()
         composeTestRule.onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[1].performClick()
 
+        it[2].performScrollTo()
         it[2].performClick()
         composeTestRule.onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[2].performClick()
 
+        it[3].performScrollTo()
         it[3].performClick()
         composeTestRule.onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[3].performClick()
     }
@@ -431,15 +436,19 @@ private fun backupScreenshots(resContext: Context, tag: String, composeTestRule:
     composeTestRule.onAllNodesWithTag(BackupTag.DROPDOWN_CHIP).also {
         it.assertCountEquals(4)
 
+        it[0].performScrollTo()
         it[0].performClick()
         composeTestRule.onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[1].performClick()
 
+        it[1].performScrollTo()
         it[1].performClick()
         composeTestRule.onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[0].performClick()
 
+        it[2].performScrollTo()
         it[2].performClick()
         composeTestRule.onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[3].performClick()
 
+        it[3].performScrollTo()
         it[3].performClick()
         composeTestRule.onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[2].performClick()
     }
