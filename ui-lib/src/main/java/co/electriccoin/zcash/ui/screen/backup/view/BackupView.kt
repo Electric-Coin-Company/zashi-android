@@ -2,6 +2,7 @@
 
 package co.electriccoin.zcash.ui.screen.backup.view
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -335,21 +336,20 @@ private fun BackupTopAppBar(
     onBack: () -> Unit,
     selectedTestChoices: TestChoices
 ) {
-    val screenTitleResId: Int
     var showCopySeedMenu = false
-    when (backupStage) {
+    val screenTitleResId = when (backupStage) {
         is BackupStage.EducationOverview -> {
-            screenTitleResId = R.string.new_wallet_1_header
+            R.string.new_wallet_1_header
         }
         is BackupStage.EducationRecoveryPhrase -> {
-            screenTitleResId = R.string.new_wallet_2_header
+            R.string.new_wallet_2_header
         }
         is BackupStage.Seed -> {
-            screenTitleResId = R.string.new_wallet_3_header
             showCopySeedMenu = true
+            R.string.new_wallet_3_header
         }
         is BackupStage.Test -> {
-            screenTitleResId = when (backupStage.testStage) {
+            when (backupStage.testStage) {
                 BackupStage.Test.TestStage.InProgress -> {
                     R.string.new_wallet_4_header
                 }
@@ -359,7 +359,7 @@ private fun BackupTopAppBar(
             }
         }
         is BackupStage.Complete -> {
-            screenTitleResId = R.string.new_wallet_5_header
+            R.string.new_wallet_5_header
         }
     }
 
@@ -368,7 +368,7 @@ private fun BackupTopAppBar(
         navigationIcon = {
             // hide back navigation button for the first and last page
             if (backupStage.hasPrevious() && backupStage.hasNext()) {
-                IconButton(onClick = {
+                val onBackClickListener = {
                     if (backupStage is BackupStage.Test &&
                         backupStage.testStage == BackupStage.Test.TestStage.Failure
                     ) {
@@ -376,7 +376,9 @@ private fun BackupTopAppBar(
                         selectedTestChoices.set(emptyMap())
                     }
                     onBack()
-                }) {
+                }
+                BackHandler(enabled = true) { onBackClickListener() }
+                IconButton(onBackClickListener) {
                     Icon(
                         imageVector = Icons.Filled.ArrowBack,
                         contentDescription = stringResource(
