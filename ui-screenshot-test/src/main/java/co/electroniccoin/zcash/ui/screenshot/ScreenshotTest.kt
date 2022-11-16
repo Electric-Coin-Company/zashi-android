@@ -275,7 +275,6 @@ class ScreenshotTest : UiTestPrerequisites() {
 
         composeTestRule.onNode(hasText(resContext.getString(R.string.profile_title))).also {
             it.assertExists()
-            it.performClick()
         }
 
         // About is a subscreen of profile
