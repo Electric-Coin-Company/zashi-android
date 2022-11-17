@@ -58,10 +58,6 @@ class BackupStageTest {
         val last = BackupStage.values().last()
 
         assertEquals(last.order, last.getNext().order)
-        assertEquals(last.order, last.getNext().order)
-        assertEquals(last.order, last.getNext().order)
-        assertEquals(last.order, last.getNext().order)
-        assertEquals(last.order, last.getNext().order)
     }
 
     @Test
