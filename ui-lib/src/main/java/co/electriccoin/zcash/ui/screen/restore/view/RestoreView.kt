@@ -1,32 +1,32 @@
 package co.electriccoin.zcash.ui.screen.restore.view
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -34,20 +34,22 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cash.z.ecc.sdk.model.SeedPhraseValidation
@@ -67,6 +69,7 @@ import co.electriccoin.zcash.ui.screen.restore.RestoreTag
 import co.electriccoin.zcash.ui.screen.restore.model.ParseResult
 import co.electriccoin.zcash.ui.screen.restore.state.WordList
 import co.electriccoin.zcash.ui.screen.restore.state.wordValidation
+import kotlinx.coroutines.launch
 
 @Preview("Restore Wallet")
 @Composable
@@ -115,17 +118,38 @@ fun RestoreWallet(
     paste: () -> String?,
     onFinished: () -> Unit
 ) {
+    var textState by rememberSaveable { mutableStateOf("") }
+    val focusRequester = remember { FocusRequester() }
+    val parseResult = ParseResult.new(completeWordList, textState)
+
     SecureScreen()
     userWordList.wordValidation().collectAsState(null).value?.let { seedPhraseValidation ->
         if (seedPhraseValidation !is SeedPhraseValidation.Valid) {
             Scaffold(topBar = {
                 RestoreTopAppBar(onBack = onBack, onClear = { userWordList.set(emptyList()) })
-            }) { paddingValues ->
+            }, bottomBar = {
+                    Column(Modifier.verticalScroll(rememberScrollState())) {
+                        Warn(parseResult)
+                        Autocomplete(parseResult = parseResult) {
+                            textState = ""
+                            userWordList.append(listOf(it))
+                            focusRequester.requestFocus()
+                        }
+                        NextWordTextField(
+                            modifier = Modifier.focusRequester(focusRequester),
+                            parseResult = parseResult,
+                            text = textState,
+                            setText = { textState = it }
+                        )
+                    }
+                }) { paddingValues ->
                 RestoreMainContent(
-                    paddingValues,
-                    completeWordList,
-                    userWordList,
-                    paste
+                    paddingValues = paddingValues,
+                    userWordList = userWordList,
+                    onTextStateChange = { textState = it },
+                    focusRequester = focusRequester,
+                    parseResult = parseResult,
+                    paste = paste
                 )
             }
         } else {
@@ -159,88 +183,70 @@ private fun RestoreTopAppBar(onBack: () -> Unit, onClear: () -> Unit) {
     )
 }
 
-@Suppress("UNUSED_PARAMETER")
+// TODO [#672] Implement custom seed phrase pasting for wallet import
+// TODO [#672] https://github.com/zcash/secant-android-wallet/issues/672
+@Suppress("UNUSED_PARAMETER", "LongParameterList")
 @Composable
 private fun RestoreMainContent(
     paddingValues: PaddingValues,
-    completeWordList: Set<String>,
     userWordList: WordList,
+    onTextStateChange: (String) -> Unit,
+    focusRequester: FocusRequester,
+    parseResult: ParseResult,
     paste: () -> String?
 ) {
-    var textState by rememberSaveable { mutableStateOf("") }
-
     val currentUserWordList = userWordList.current.collectAsState().value
-
-    val parseResult = ParseResult.new(completeWordList, textState)
+    val scrollState = rememberScrollState()
+    val scope = rememberCoroutineScope()
 
     if (parseResult is ParseResult.Add) {
-        textState = ""
+        onTextStateChange("")
         userWordList.append(parseResult.words)
     }
 
-    val focusRequester = remember { FocusRequester() }
-
     Column(
         Modifier
-            .padding(top = paddingValues.calculateTopPadding())
+            .fillMaxWidth()
+            .fillMaxHeight()
+            .verticalScroll(scrollState)
+            .padding(
+                top = paddingValues.calculateTopPadding(),
+                bottom = paddingValues.calculateBottomPadding()
+            )
     ) {
-        Text(text = stringResource(id = R.string.restore_instructions))
+        Header(
+            modifier = Modifier.padding(16.dp),
+            text = stringResource(id = R.string.restore_title)
+        )
+        Body(
+            modifier = Modifier.padding(16.dp),
+            text = stringResource(id = R.string.restore_instructions)
+        )
 
-        Box(
-            Modifier
-                .fillMaxHeight()
-                .fillMaxWidth()
-                .weight(MINIMAL_WEIGHT)
-        ) {
-            Column(
-                Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight()
-            ) {
-                ChipGridWithText(currentUserWordList, textState, { textState = it }, focusRequester)
-                Spacer(
-                    Modifier
-                        .fillMaxHeight()
-                        .weight(MINIMAL_WEIGHT)
-                )
-            }
-
-            // Must come after the grid in order for its Z ordering to be on top
-            Warn(parseResult)
-
-            Autocomplete(Modifier.align(Alignment.BottomStart), parseResult) {
-                textState = ""
-                userWordList.append(listOf(it))
-                focusRequester.requestFocus()
-            }
-        }
+        ChipGridWithText(currentUserWordList)
     }
 
-    // Cause text field to refocus
+// Cause text field to refocus
     DisposableEffect(parseResult) {
         focusRequester.requestFocus()
+        scope.launch {
+            scrollState.scrollTo(scrollState.maxValue)
+        }
         onDispose { }
     }
 }
 
 @Composable
 private fun ChipGridWithText(
-    userWordList: List<String>,
-    text: String,
-    setText: (String) -> Unit,
-    focusRequester: FocusRequester
+    userWordList: List<String>
 ) {
-    val isTextFieldOnNewLine = userWordList.size % CHIP_GRID_ROW_SIZE == 0
-
-    val scrollState = rememberScrollState()
-
     Column(
         Modifier
-            .verticalScroll(scrollState)
+            .padding(start = 12.dp, end = 12.dp)
             .testTag(RestoreTag.CHIP_LAYOUT)
     ) {
         userWordList.chunked(CHIP_GRID_ROW_SIZE).forEachIndexed { chunkIndex, chunk ->
-            Row(Modifier.fillMaxWidth()) {
+            Row(Modifier.fillMaxWidth(), verticalAlignment = CenterVertically) {
                 val remainder = (chunk.size % CHIP_GRID_ROW_SIZE)
 
                 val singleItemWeight = 1f / CHIP_GRID_ROW_SIZE
@@ -253,19 +259,9 @@ private fun ChipGridWithText(
                 }
 
                 if (0 != remainder) {
-                    NextWordTextField(
-                        Modifier
-                            .focusRequester(focusRequester)
-                            .weight((CHIP_GRID_ROW_SIZE - chunk.size) * singleItemWeight),
-                        text,
-                        setText
-                    )
+                    Spacer(modifier = Modifier.weight((CHIP_GRID_ROW_SIZE - chunk.size) * singleItemWeight))
                 }
             }
-        }
-
-        if (isTextFieldOnNewLine) {
-            NextWordTextField(Modifier.focusRequester(focusRequester), text = text, setText = setText)
         }
     }
 }
@@ -273,26 +269,47 @@ private fun ChipGridWithText(
 // TODO [#288]: TextField component can't do long-press backspace.
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-private fun NextWordTextField(modifier: Modifier = Modifier, text: String, setText: (String) -> Unit) {
+private fun NextWordTextField(
+    modifier: Modifier = Modifier,
+    parseResult: ParseResult,
+    text: String,
+    setText: (String) -> Unit
+) {
     /*
      * Treat the user input as a password, but disable the transformation to obscure input.
      */
-    TextField(
-        value = text,
-        onValueChange = setText,
+    Surface(
         modifier = modifier
             .fillMaxWidth()
-            .height(IntrinsicSize.Max)
-            .testTag(RestoreTag.SEED_WORD_TEXT_FIELD),
-        visualTransformation = VisualTransformation.None,
-        keyboardOptions = KeyboardOptions(
-            KeyboardCapitalization.None,
-            autoCorrect = false,
-            imeAction = ImeAction.Done,
-            keyboardType = KeyboardType.Password
-        ),
-        keyboardActions = KeyboardActions(onAny = {})
-    )
+            .padding(4.dp),
+        shape = RoundedCornerShape(8.dp),
+        color = MaterialTheme.colorScheme.secondary,
+        shadowElevation = 8.dp
+    ) {
+        TextField(
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(4.dp)
+                .testTag(RestoreTag.SEED_WORD_TEXT_FIELD),
+            value = text,
+            onValueChange = setText,
+            keyboardOptions = KeyboardOptions(
+                KeyboardCapitalization.None,
+                autoCorrect = false,
+                imeAction = ImeAction.Done,
+                keyboardType = KeyboardType.Password
+            ),
+            keyboardActions = KeyboardActions(onAny = {}),
+            shape = RoundedCornerShape(8.dp),
+            isError = parseResult is ParseResult.Warn,
+            colors = TextFieldDefaults.textFieldColors(
+                containerColor = Color.Transparent,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                disabledIndicatorColor = Color.Transparent
+            )
+        )
+    }
 }
 
 @Composable
@@ -305,9 +322,11 @@ private fun Autocomplete(
         is ParseResult.Autocomplete -> {
             Pair(false, parseResult.suggestions)
         }
+
         is ParseResult.Warn -> {
             Pair(true, parseResult.suggestions)
         }
+
         else -> {
             Pair(false, null)
         }
@@ -321,12 +340,12 @@ private fun Autocomplete(
 
         LazyRow(highlightModifier.testTag(RestoreTag.AUTOCOMPLETE_LAYOUT)) {
             items(it) {
-                Button(
-                    modifier = Modifier.testTag(RestoreTag.AUTOCOMPLETE_ITEM),
-                    onClick = { onSuggestionSelected(it) }
-                ) {
-                    Text(it)
-                }
+                Chip(
+                    text = it,
+                    modifier = modifier
+                        .testTag(RestoreTag.AUTOCOMPLETE_ITEM)
+                        .clickable { onSuggestionSelected(it) }
+                )
             }
         }
     }
@@ -335,23 +354,25 @@ private fun Autocomplete(
 @Composable
 private fun Warn(parseResult: ParseResult) {
     if (parseResult is ParseResult.Warn) {
-        Box(
+        Surface(
             modifier = Modifier
-                .fillMaxHeight()
-                .fillMaxWidth(),
-            contentAlignment = Alignment.Center
+                .fillMaxWidth()
+                .padding(4.dp),
+            shape = RoundedCornerShape(8.dp),
+            color = MaterialTheme.colorScheme.secondary,
+            shadowElevation = 4.dp
         ) {
-            Spacer(
-                Modifier
-                    .matchParentSize()
-                    .background(ZcashTheme.colors.overlay)
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(4.dp),
+                textAlign = TextAlign.Center,
+                text = if (parseResult.suggestions.isEmpty()) {
+                    stringResource(id = R.string.restore_warning_no_suggestions)
+                } else {
+                    stringResource(id = R.string.restore_warning_suggestions)
+                }
             )
-
-            if (parseResult.suggestions.isEmpty()) {
-                Text(stringResource(id = R.string.restore_warning_no_suggestions))
-            } else {
-                Text(stringResource(id = R.string.restore_warning_suggestions))
-            }
         }
     }
 }
