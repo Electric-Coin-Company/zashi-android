@@ -34,18 +34,18 @@ class BackupActivityTest : UiTestPrerequisites() {
         val testSetup = newTestSetup()
         testSetup.setDefaultContent()
 
-        assertEquals(BackupStage.EducationOverview.order, testSetup.getStage().order)
+        assertEquals(BackupStage.EducationOverview, testSetup.getStage())
 
         composeTestRule.onNodeWithText(getStringResource(R.string.new_wallet_1_button)).also {
             it.performClick()
         }
 
-        assertEquals(BackupStage.EducationRecoveryPhrase.order, testSetup.getStage().order)
+        assertEquals(BackupStage.EducationRecoveryPhrase, testSetup.getStage())
 
         composeTestRule.activityRule.scenario.onActivity {
             it.recreate()
         }
 
-        assertEquals(BackupStage.EducationRecoveryPhrase.order, testSetup.getStage().order)
+        assertEquals(BackupStage.EducationRecoveryPhrase, testSetup.getStage())
     }
 }

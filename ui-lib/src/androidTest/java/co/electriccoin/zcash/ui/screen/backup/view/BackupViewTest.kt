@@ -37,7 +37,7 @@ class BackupViewTest : UiTestPrerequisites() {
     fun verify_test_setup_stage_1() {
         val testSetup = newTestSetup(BackupStage.EducationOverview)
 
-        assertEquals(BackupStage.EducationOverview.order, testSetup.getStage().order)
+        assertEquals(BackupStage.EducationOverview, testSetup.getStage())
         assertEquals(0, testSetup.getOnCompleteCallbackCount())
         assertEquals(0, testSetup.getOnCopyToClipboardCount())
     }
@@ -47,7 +47,7 @@ class BackupViewTest : UiTestPrerequisites() {
     fun verify_test_setup_stage_5() {
         val testSetup = newTestSetup(BackupStage.Complete)
 
-        assertEquals(BackupStage.Complete.order, testSetup.getStage().order)
+        assertEquals(BackupStage.Complete, testSetup.getStage())
         assertEquals(0, testSetup.getOnCompleteCallbackCount())
         assertEquals(0, testSetup.getOnCopyToClipboardCount())
     }
@@ -65,7 +65,7 @@ class BackupViewTest : UiTestPrerequisites() {
     @Test
     @MediumTest
     fun test_pass() {
-        val testSetup = newTestSetup(BackupStage.Test(BackupStage.Test.TestStage.InProgress))
+        val testSetup = newTestSetup(BackupStage.Test)
 
         composeTestRule.onAllNodesWithTag(BackupTag.DROPDOWN_CHIP).also {
             it.assertCountEquals(4)
@@ -83,13 +83,13 @@ class BackupViewTest : UiTestPrerequisites() {
             composeTestRule.onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[2].performClick()
         }
 
-        assertEquals(BackupStage.Complete.order, testSetup.getStage().order)
+        assertEquals(BackupStage.Complete, testSetup.getStage())
     }
 
     @Test
     @MediumTest
     fun test_fail() {
-        val testSetup = newTestSetup(BackupStage.Test(BackupStage.Test.TestStage.InProgress))
+        val testSetup = newTestSetup(BackupStage.Test)
 
         composeTestRule.onAllNodesWithTag(BackupTag.DROPDOWN_CHIP).also {
             it.assertCountEquals(4)
@@ -107,10 +107,7 @@ class BackupViewTest : UiTestPrerequisites() {
             composeTestRule.onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[3].performClick()
         }
 
-        assertEquals(
-            BackupStage.Test(BackupStage.Test.TestStage.InProgress).order,
-            testSetup.getStage().order
-        )
+        assertEquals(BackupStage.Failure, testSetup.getStage())
 
         composeTestRule.onNode(hasText(getStringResource(R.string.new_wallet_4_header_ouch)))
 
@@ -118,16 +115,13 @@ class BackupViewTest : UiTestPrerequisites() {
             it.performClick()
         }
 
-        assertEquals(BackupStage.Seed.order, testSetup.getStage().order)
+        assertEquals(BackupStage.Seed, testSetup.getStage())
 
         composeTestRule.onNode(hasText(getStringResource(R.string.new_wallet_3_button_finished))).also {
             it.performClick()
         }
 
-        assertEquals(
-            BackupStage.Test(BackupStage.Test.TestStage.InProgress).order,
-            testSetup.getStage().order
-        )
+        assertEquals(BackupStage.Test, testSetup.getStage())
 
         // These verify that the test itself is re-displayed
 
@@ -154,7 +148,7 @@ class BackupViewTest : UiTestPrerequisites() {
 
     @Test
     @MediumTest
-    fun last_stage_click_back_to_seed() {
+    fun complete_stage_click_back_to_seed() {
         val testSetup = newTestSetup(BackupStage.Complete)
 
         val newWalletButton = composeTestRule.onNodeWithText(getStringResource(R.string.new_wallet_5_button_back))
@@ -164,7 +158,7 @@ class BackupViewTest : UiTestPrerequisites() {
 
         assertEquals(0, testSetup.getOnCopyToClipboardCount())
         assertEquals(0, testSetup.getOnCompleteCallbackCount())
-        assertEquals(BackupStage.Seed.order, testSetup.getStage().order)
+        assertEquals(BackupStage.CheckSeed, testSetup.getStage())
     }
 
     @Test
@@ -176,13 +170,13 @@ class BackupViewTest : UiTestPrerequisites() {
             it.performClick()
         }
 
-        assertEquals(BackupStage.EducationRecoveryPhrase.order, testSetup.getStage().order)
+        assertEquals(BackupStage.EducationRecoveryPhrase, testSetup.getStage())
 
         composeTestRule.onNodeWithText(getStringResource(R.string.new_wallet_2_button)).also {
             it.performClick()
         }
 
-        assertEquals(BackupStage.Seed.order, testSetup.getStage().order)
+        assertEquals(BackupStage.Seed, testSetup.getStage())
 
         composeTestRule.clickCopyToBuffer()
 
@@ -192,10 +186,7 @@ class BackupViewTest : UiTestPrerequisites() {
             it.performClick()
         }
 
-        assertEquals(
-            BackupStage.Test(BackupStage.Test.TestStage.InProgress).order,
-            testSetup.getStage().order
-        )
+        assertEquals(BackupStage.Test, testSetup.getStage())
 
         composeTestRule.onAllNodesWithTag(BackupTag.DROPDOWN_CHIP).also {
             it.assertCountEquals(4)
@@ -213,7 +204,7 @@ class BackupViewTest : UiTestPrerequisites() {
             composeTestRule.onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[2].performClick()
         }
 
-        assertEquals(BackupStage.Complete.order, testSetup.getStage().order)
+        assertEquals(BackupStage.Complete, testSetup.getStage())
 
         composeTestRule.onNode(hasText(getStringResource(R.string.new_wallet_5_button_finished))).performClick()
 

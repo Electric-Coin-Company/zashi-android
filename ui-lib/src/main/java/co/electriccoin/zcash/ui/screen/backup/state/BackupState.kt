@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.StateFlow
  * primarily useful on Android, for automated tests, and for iterative debugging with the Compose
  * layout preview. The default constructor argument is generally fine for other platforms.
  */
-class BackupState(initialState: BackupStage = BackupStage.values().first()) {
+class BackupState(initialState: BackupStage = BackupStage.values.first()) {
 
     private val mutableState = MutableStateFlow(initialState)
 
@@ -25,22 +25,8 @@ class BackupState(initialState: BackupStage = BackupStage.values().first()) {
         mutableState.value = current.value.getPrevious()
     }
 
-    fun goToBeginning() {
-        mutableState.value = BackupStage.values().first()
-    }
-
-    fun goToSeed() {
-        mutableState.value = BackupStage.Seed
-    }
-
-    fun setTestStage(newTestStage: BackupStage.Test.TestStage) {
-        if (current.value !is BackupStage.Test) {
-            return
-        }
-        if ((mutableState.value as BackupStage.Test).testStage == newTestStage) {
-            return
-        }
-        mutableState.value = BackupStage.Test(newTestStage)
+    fun goToStage(newStage: BackupStage) {
+        mutableState.value = newStage
     }
 
     companion object

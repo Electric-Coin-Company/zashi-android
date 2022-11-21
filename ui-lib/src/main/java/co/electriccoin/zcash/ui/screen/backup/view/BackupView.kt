@@ -107,7 +107,9 @@ fun BackupWallet(
                 onBack = backupState::goPrevious,
                 selectedTestChoices = choices,
                 onComplete = onComplete,
-                onBackToSeedPhrase = backupState::goToSeed
+                onBackToSeedPhrase = {
+                    backupState.goToStage(BackupStage.CheckSeed)
+                }
             )
         }
     ) { paddingValues ->
@@ -140,13 +142,15 @@ fun BackupMainContent(
             is BackupStage.EducationOverview -> EducationOverview()
             is BackupStage.EducationRecoveryPhrase -> EducationRecoveryPhrase()
             is BackupStage.Seed -> SeedPhrase(wallet)
-            is BackupStage.Test -> Test(
-                wallet = wallet,
+            is BackupStage.Test -> TestInProgress(
                 selectedTestChoices = choices,
                 onChoicesChanged = onChoicesChanged,
-                state = backupState
+                splitSeedPhrase = wallet.seedPhrase.split,
+                backupState = backupState
             )
+            is BackupStage.Failure -> TestFailure()
             is BackupStage.Complete -> TestComplete()
+            is BackupStage.CheckSeed -> SeedPhrase(wallet)
         }
     }
 }
@@ -207,34 +211,6 @@ private val testIndices = listOf(Index(4), Index(9), Index(16), Index(20))
 
 private data class TestChoice(val originalIndex: Index, val word: String)
 
-@Composable
-private fun Test(
-    wallet: PersistableWallet,
-    selectedTestChoices: TestChoices,
-    onChoicesChanged: ((choicesCount: Int) -> Unit)?,
-    state: BackupState
-) {
-    SecureScreen()
-    val splitSeedPhrase = wallet.seedPhrase.split
-
-    val currentSelectedTestChoice = selectedTestChoices.current.collectAsState().value
-
-    when {
-        currentSelectedTestChoice.size != testIndices.size -> {
-            TestInProgress(splitSeedPhrase, selectedTestChoices, onChoicesChanged)
-            state.setTestStage(BackupStage.Test.TestStage.InProgress)
-        }
-        currentSelectedTestChoice.all { splitSeedPhrase[it.key.value] == it.value } -> {
-            // The user got the test correct
-            state.goNext()
-        }
-        currentSelectedTestChoice.none { null == it.value } -> {
-            TestFailure()
-            state.setTestStage(BackupStage.Test.TestStage.Failure)
-        }
-    }
-}
-
 /*
  * A few implementation notes on the test:
  *  - It is possible for the same word to appear twice in the word choices
@@ -244,8 +220,11 @@ private fun Test(
 private fun TestInProgress(
     splitSeedPhrase: List<String>,
     selectedTestChoices: TestChoices,
-    onChoicesChanged: ((choicesCount: Int) -> Unit)?
+    onChoicesChanged: ((choicesCount: Int) -> Unit)?,
+    backupState: BackupState
 ) {
+    SecureScreen()
+
     val testChoices = splitSeedPhrase
         .mapIndexed { index, word -> TestChoice(Index(index), word) }
         .filter { testIndices.contains(it.originalIndex) }
@@ -255,6 +234,14 @@ private fun TestInProgress(
             listOf(it[1], it[0], it[3], it[2])
         }
     val currentSelectedTestChoice = selectedTestChoices.current.collectAsState().value
+    if (currentSelectedTestChoice.size == testIndices.size) {
+        if (currentSelectedTestChoice.all { splitSeedPhrase[it.key.value] == it.value }) {
+            // the user got the test correct
+            backupState.goNext()
+        } else {
+            backupState.goToStage(BackupStage.Failure)
+        }
+    }
     Column(
         Modifier
             .verticalScroll(rememberScrollState())
@@ -353,29 +340,27 @@ private fun BackupTopAppBar(
             R.string.new_wallet_3_header
         }
         is BackupStage.Test -> {
-            when (backupStage.testStage) {
-                BackupStage.Test.TestStage.InProgress -> {
-                    R.string.new_wallet_4_header
-                }
-                BackupStage.Test.TestStage.Failure -> {
-                    R.string.new_wallet_4_header_ouch
-                }
-            }
+            R.string.new_wallet_4_header
+        }
+        is BackupStage.Failure -> {
+            R.string.new_wallet_4_header_ouch
         }
         is BackupStage.Complete -> {
             R.string.new_wallet_5_header
+        }
+        is BackupStage.CheckSeed -> {
+            showCopySeedMenu = true
+            R.string.new_wallet_3_header
         }
     }
 
     TopAppBar(
         title = { Text(text = stringResource(id = screenTitleResId)) },
         navigationIcon = {
-            // hide back navigation button for the first and last page
-            if (backupStage.hasPrevious() && backupStage.hasNext()) {
+            // hide back navigation button for the first and Complete stages
+            if (backupStage.hasPrevious() && backupStage != BackupStage.Complete) {
                 val onBackClickListener = {
-                    if (backupStage is BackupStage.Test &&
-                        backupStage.testStage == BackupStage.Test.TestStage.Failure
-                    ) {
+                    if (backupStage is BackupStage.Failure) {
                         // Clear the user's prior test inputs for the retest
                         selectedTestChoices.set(emptyMap())
                     }
@@ -446,25 +431,24 @@ private fun BackupBottomNav(
                 PrimaryButton(onClick = onNext, text = stringResource(R.string.new_wallet_3_button_finished))
             }
             is BackupStage.Test -> {
-                when (backupStage.testStage) {
-                    BackupStage.Test.TestStage.InProgress -> {
-                        // no bottom navigation button placed
-                    }
-                    BackupStage.Test.TestStage.Failure -> {
-                        PrimaryButton(
-                            onClick = {
-                                // Clear the user's prior test inputs for the retest
-                                selectedTestChoices.set(emptyMap())
-                                onBack()
-                            },
-                            text = stringResource(R.string.new_wallet_4_button_retry)
-                        )
-                    }
-                }
+                // no bottom navigation button placed
+            }
+            is BackupStage.Failure -> {
+                PrimaryButton(
+                    onClick = {
+                        // Clear the user's prior test inputs for the retest
+                        selectedTestChoices.set(emptyMap())
+                        onBack()
+                    },
+                    text = stringResource(R.string.new_wallet_4_button_retry)
+                )
             }
             is BackupStage.Complete -> {
                 PrimaryButton(onClick = onComplete, text = stringResource(R.string.new_wallet_5_button_finished))
                 TertiaryButton(onClick = onBackToSeedPhrase, text = stringResource(R.string.new_wallet_5_button_back))
+            }
+            is BackupStage.CheckSeed -> {
+                PrimaryButton(onClick = onBack, text = stringResource(R.string.new_wallet_3_button_finished))
             }
         }
     }

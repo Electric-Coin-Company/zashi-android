@@ -32,7 +32,7 @@ enum class OnboardingStage {
     fun getNext() = values()[minOf(values().size - 1, ordinal + 1)]
 
     /**
-     * @return Last item in ordinal order.  Returns the last item when it cannot go further forward.
+     * @return Returns current progression through stages.
      */
     fun getProgress() = Progress(Index(ordinal), Index(values().size - 1))
 }

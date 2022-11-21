@@ -27,7 +27,7 @@ import kotlin.test.assertNotNull
 class BackupIntegrationTest : UiTestPrerequisites() {
 
     @get:Rule
-    var composeTestRule = createComposeRule()
+    val composeTestRule = createComposeRule()
 
     private fun newTestSetup(initialStage: BackupStage): BackupTestSetup {
         return BackupTestSetup(
@@ -53,50 +53,41 @@ class BackupIntegrationTest : UiTestPrerequisites() {
             testSetup.getDefaultContent()
         }
 
-        assertEquals(BackupStage.EducationOverview.order, testSetup.getStage().order)
+        assertEquals(BackupStage.EducationOverview, testSetup.getStage())
 
         composeTestRule.onNodeWithText(getStringResource(R.string.new_wallet_1_button)).also {
             it.performClick()
         }
 
-        assertEquals(BackupStage.EducationRecoveryPhrase.order, testSetup.getStage().order)
+        assertEquals(BackupStage.EducationRecoveryPhrase, testSetup.getStage())
 
         restorationTester.emulateSavedInstanceStateRestore()
 
-        assertEquals(BackupStage.EducationRecoveryPhrase.order, testSetup.getStage().order)
+        assertEquals(BackupStage.EducationRecoveryPhrase, testSetup.getStage())
     }
 
     @Test
     @MediumTest
     fun backup_state_test_running_restoration() {
         val restorationTester = StateRestorationTester(composeTestRule)
-        val testSetup = newTestSetup(BackupStage.Test(BackupStage.Test.TestStage.InProgress))
+        val testSetup = newTestSetup(BackupStage.Test)
 
         restorationTester.setContent {
             testSetup.getDefaultContent()
         }
 
-        assertEquals(
-            BackupStage.Test(BackupStage.Test.TestStage.InProgress).order,
-            testSetup.getStage().order
-        )
+        assertEquals(BackupStage.Test, testSetup.getStage())
 
         val chipText = composeTestRule.getDropdownChipSelectedText(0, 0)
 
         assertNotNull(chipText)
         assertNotEquals("Chip text shouldn't be empty.", chipText, "")
 
-        assertEquals(
-            BackupStage.Test(BackupStage.Test.TestStage.InProgress).order,
-            testSetup.getStage().order
-        )
+        assertEquals(BackupStage.Test, testSetup.getStage())
 
         restorationTester.emulateSavedInstanceStateRestore()
 
-        assertEquals(
-            BackupStage.Test(BackupStage.Test.TestStage.InProgress).order,
-            testSetup.getStage().order
-        )
+        assertEquals(BackupStage.Test, testSetup.getStage())
 
         composeTestRule.onNodeWithText(chipText).also {
             it.assertExists()
@@ -108,7 +99,7 @@ class BackupIntegrationTest : UiTestPrerequisites() {
     @MediumTest
     fun selected_choices_restoration() {
         val restorationTester = StateRestorationTester(composeTestRule)
-        val testSetup = newTestSetup(BackupStage.Test(BackupStage.Test.TestStage.InProgress))
+        val testSetup = newTestSetup(BackupStage.Test)
 
         restorationTester.setContent {
             testSetup.getDefaultContent()

@@ -39,7 +39,7 @@ class BackupViewsSecuredScreenTest : UiTestPrerequisites() {
     @Test
     @MediumTest
     fun acquireScreenSecurityTestStage() = runTest {
-        val testSetup = newTestSetup(BackupStage.Test(BackupStage.Test.TestStage.InProgress))
+        val testSetup = newTestSetup(BackupStage.Test)
 
         assertEquals(1, testSetup.getSecureScreenCount())
     }
