@@ -158,7 +158,7 @@ class BackupViewTest : UiTestPrerequisites() {
 
         assertEquals(0, testSetup.getOnCopyToClipboardCount())
         assertEquals(0, testSetup.getOnCompleteCallbackCount())
-        assertEquals(BackupStage.CheckSeed, testSetup.getStage())
+        assertEquals(BackupStage.ReviewSeed, testSetup.getStage())
     }
 
     @Test

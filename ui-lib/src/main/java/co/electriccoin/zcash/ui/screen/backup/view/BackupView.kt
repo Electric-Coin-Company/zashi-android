@@ -108,7 +108,7 @@ fun BackupWallet(
                 selectedTestChoices = choices,
                 onComplete = onComplete,
                 onBackToSeedPhrase = {
-                    backupState.goToStage(BackupStage.CheckSeed)
+                    backupState.goToStage(BackupStage.ReviewSeed)
                 }
             )
         }
@@ -150,7 +150,7 @@ fun BackupMainContent(
             )
             is BackupStage.Failure -> TestFailure()
             is BackupStage.Complete -> TestComplete()
-            is BackupStage.CheckSeed -> SeedPhrase(wallet)
+            is BackupStage.ReviewSeed -> SeedPhrase(wallet)
         }
     }
 }
@@ -348,7 +348,7 @@ private fun BackupTopAppBar(
         is BackupStage.Complete -> {
             R.string.new_wallet_5_header
         }
-        is BackupStage.CheckSeed -> {
+        is BackupStage.ReviewSeed -> {
             showCopySeedMenu = true
             R.string.new_wallet_3_header
         }
@@ -447,7 +447,7 @@ private fun BackupBottomNav(
                 PrimaryButton(onClick = onComplete, text = stringResource(R.string.new_wallet_5_button_finished))
                 TertiaryButton(onClick = onBackToSeedPhrase, text = stringResource(R.string.new_wallet_5_button_back))
             }
-            is BackupStage.CheckSeed -> {
+            is BackupStage.ReviewSeed -> {
                 PrimaryButton(onClick = onBack, text = stringResource(R.string.new_wallet_3_button_finished))
             }
         }

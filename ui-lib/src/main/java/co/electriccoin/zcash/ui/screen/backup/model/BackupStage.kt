@@ -14,7 +14,7 @@ sealed class BackupStage(internal val order: Int) {
         private const val TEST_ORDER = 3
         private const val FAILURE_ORDER = 4
         private const val COMPLETE_ORDER = 5
-        private const val CHECK_SEED_ORDER = 6
+        private const val REVIEW_SEED_ORDER = 6
 
         val values: List<BackupStage> by lazy {
             arrayListOf<BackupStage>().apply {
@@ -24,7 +24,7 @@ sealed class BackupStage(internal val order: Int) {
                 add(TEST_ORDER, Test)
                 add(FAILURE_ORDER, Failure)
                 add(COMPLETE_ORDER, Complete)
-                add(CHECK_SEED_ORDER, CheckSeed)
+                add(REVIEW_SEED_ORDER, ReviewSeed)
             }
         }
     }
@@ -50,7 +50,7 @@ sealed class BackupStage(internal val order: Int) {
             return false
         }
     }
-    object CheckSeed : BackupStage(CHECK_SEED_ORDER)
+    object ReviewSeed : BackupStage(REVIEW_SEED_ORDER)
 
     /**
      * @see getPrevious
