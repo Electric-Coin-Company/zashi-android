@@ -18,27 +18,7 @@ sealed class BackupStage(internal val order: Int) {
      * risk of bugs being introduced.
      */
 
-    companion object {
-        // Note: the indexes are used to manage progression through each stage
-        // so be careful if changing these
-        private const val EDUCATION_OVERVIEW_ORDER = 0
-        private const val EDUCATION_RECOVERY_PHRASE_ORDER = 1
-        private const val SEED_ORDER = 2
-        private const val TEST_ORDER = 3
-        private const val FAILURE_ORDER = 4
-        private const val COMPLETE_ORDER = 5
-        private const val REVIEW_SEED_ORDER = 6
-
-        val values: List<BackupStage> = buildList<BackupStage>() {
-            add(EDUCATION_OVERVIEW_ORDER, EducationOverview)
-            add(EDUCATION_RECOVERY_PHRASE_ORDER, EducationRecoveryPhrase)
-            add(SEED_ORDER, Seed)
-            add(TEST_ORDER, Test)
-            add(FAILURE_ORDER, Failure)
-            add(COMPLETE_ORDER, Complete)
-            add(REVIEW_SEED_ORDER, ReviewSeed)
-        }
-    }
+    companion object
 
     object EducationOverview : BackupStage(EDUCATION_OVERVIEW_ORDER)
     object EducationRecoveryPhrase : BackupStage(EDUCATION_RECOVERY_PHRASE_ORDER)
@@ -95,3 +75,27 @@ sealed class BackupStage(internal val order: Int) {
      */
     fun getProgress() = Progress(Index(order), Index(values.size - 1))
 }
+
+// Note: the indexes are used to manage progression through each stage
+// so be careful if changing these
+private const val EDUCATION_OVERVIEW_ORDER = 0
+private const val EDUCATION_RECOVERY_PHRASE_ORDER = 1
+private const val SEED_ORDER = 2
+private const val TEST_ORDER = 3
+private const val FAILURE_ORDER = 4
+private const val COMPLETE_ORDER = 5
+private const val REVIEW_SEED_ORDER = 6
+
+private val sealedClassValues: List<BackupStage> = buildList<BackupStage>() {
+    add(EDUCATION_OVERVIEW_ORDER, BackupStage.EducationOverview)
+    add(EDUCATION_RECOVERY_PHRASE_ORDER, BackupStage.EducationRecoveryPhrase)
+    add(SEED_ORDER, BackupStage.Seed)
+    add(TEST_ORDER, BackupStage.Test)
+    add(FAILURE_ORDER, BackupStage.Failure)
+    add(COMPLETE_ORDER, BackupStage.Complete)
+    add(REVIEW_SEED_ORDER, BackupStage.ReviewSeed)
+}
+
+// https://youtrack.jetbrains.com/issue/KT-8970/Object-is-uninitialized-null-when-accessed-from-static-context-ex.-companion-object-with-initialization-loop
+val BackupStage.Companion.values: List<BackupStage>
+    get() = sealedClassValues
