@@ -5,6 +5,19 @@ import co.electriccoin.zcash.spackle.model.Progress
 
 sealed class BackupStage(internal val order: Int) {
 
+    /*
+     * While the backup/restore UX is mostly linear, there are a few branches such as during the
+     * test and at the very end.
+     *
+     * We do not allow the user to back after completing the onboarding, because we don't want to
+     * give users the option to delete their seed from Google Credential Manager (once that feature
+     * is added).  Instead, users should go into the app settings to delete a vaulted credential.
+     *
+     * We made the final seed review screen separate from the original seed screen. Although some
+     * code is duplicated, it makes each screen much easier to individually build/test and reduces
+     * risk of bugs being introduced.
+     */
+
     companion object {
         // Note: the indexes are used to manage progression through each stage
         // so be careful if changing these
