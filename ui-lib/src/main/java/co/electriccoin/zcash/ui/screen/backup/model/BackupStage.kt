@@ -16,16 +16,14 @@ sealed class BackupStage(internal val order: Int) {
         private const val COMPLETE_ORDER = 5
         private const val REVIEW_SEED_ORDER = 6
 
-        val values: List<BackupStage> by lazy {
-            arrayListOf<BackupStage>().apply {
-                add(EDUCATION_OVERVIEW_ORDER, EducationOverview)
-                add(EDUCATION_RECOVERY_PHRASE_ORDER, EducationRecoveryPhrase)
-                add(SEED_ORDER, Seed)
-                add(TEST_ORDER, Test)
-                add(FAILURE_ORDER, Failure)
-                add(COMPLETE_ORDER, Complete)
-                add(REVIEW_SEED_ORDER, ReviewSeed)
-            }
+        val values: List<BackupStage> = buildList<BackupStage>() {
+            add(EDUCATION_OVERVIEW_ORDER, EducationOverview)
+            add(EDUCATION_RECOVERY_PHRASE_ORDER, EducationRecoveryPhrase)
+            add(SEED_ORDER, Seed)
+            add(TEST_ORDER, Test)
+            add(FAILURE_ORDER, Failure)
+            add(COMPLETE_ORDER, Complete)
+            add(REVIEW_SEED_ORDER, ReviewSeed)
         }
     }
 
@@ -38,18 +36,21 @@ sealed class BackupStage(internal val order: Int) {
             return values[COMPLETE_ORDER]
         }
     }
+
     object Failure : BackupStage(FAILURE_ORDER) {
         // To let user preview the seed again after test failure
         override fun getPrevious(): BackupStage {
             return values[SEED_ORDER]
         }
     }
+
     object Complete : BackupStage(COMPLETE_ORDER) {
         // To disable back navigation after successful test
         override fun hasPrevious(): Boolean {
             return false
         }
     }
+
     object ReviewSeed : BackupStage(REVIEW_SEED_ORDER)
 
     /**
