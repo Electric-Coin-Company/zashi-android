@@ -49,6 +49,10 @@ sealed class BackupStage(internal val order: Int) {
         override fun hasPrevious(): Boolean {
             return false
         }
+
+        override fun getPrevious(): BackupStage {
+            error("Cannot go back once the onboarding is complete")
+        }
     }
 
     object ReviewSeed : BackupStage(REVIEW_SEED_ORDER)
