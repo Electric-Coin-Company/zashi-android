@@ -44,7 +44,7 @@ sealed class BackupStage(internal val order: Int) {
         }
 
         override fun getPrevious(): BackupStage {
-            error("Cannot go back once the onboarding is complete")
+            error("Cannot go back once the onboarding is complete") // $NON-NLS-1$
         }
     }
 
