@@ -1,19 +1,37 @@
+@file:Suppress("TooManyFunctions")
+
 package co.electriccoin.zcash.ui.screen.backup.view
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Card
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -31,8 +49,6 @@ import co.electriccoin.zcash.ui.design.component.CHIP_GRID_ROW_SIZE
 import co.electriccoin.zcash.ui.design.component.Chip
 import co.electriccoin.zcash.ui.design.component.ChipGrid
 import co.electriccoin.zcash.ui.design.component.GradientSurface
-import co.electriccoin.zcash.ui.design.component.Header
-import co.electriccoin.zcash.ui.design.component.NavigationButton
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.TertiaryButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
@@ -62,6 +78,7 @@ fun ComposablePreview() {
 /**
  * @param onComplete Callback when the user has completed the backup test.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @Suppress("LongParameterList")
 fun BackupWallet(
@@ -72,32 +89,78 @@ fun BackupWallet(
     onComplete: () -> Unit,
     onChoicesChanged: ((choicesCount: Int) -> Unit)?
 ) {
-    when (backupState.current.collectAsState().value) {
-        BackupStage.EducationOverview -> EducationOverview(onNext = backupState::goNext)
-        BackupStage.EducationRecoveryPhrase -> EducationRecoveryPhrase(onNext = backupState::goNext)
-        BackupStage.Seed -> SeedPhrase(
-            wallet,
-            onNext = backupState::goNext,
-            onCopyToClipboard = onCopyToClipboard
-        )
-        BackupStage.Test -> Test(
-            wallet,
-            choices,
-            onBack = backupState::goPrevious,
-            onNext = backupState::goNext,
+    val currentBackupStage = backupState.current.collectAsState().value
+
+    Scaffold(
+        topBar = {
+            BackupTopAppBar(
+                backupStage = currentBackupStage,
+                onCopyToClipboard = onCopyToClipboard,
+                onBack = backupState::goPrevious,
+                selectedTestChoices = choices
+            )
+        },
+        bottomBar = {
+            BackupBottomNav(
+                backupStage = currentBackupStage,
+                onNext = backupState::goNext,
+                onBack = backupState::goPrevious,
+                selectedTestChoices = choices,
+                onComplete = onComplete,
+                onBackToSeedPhrase = {
+                    backupState.goToStage(BackupStage.ReviewSeed)
+                }
+            )
+        }
+    ) { paddingValues ->
+        BackupMainContent(
+            paddingValues = paddingValues,
+            backupState = backupState,
+            wallet = wallet,
+            choices = choices,
             onChoicesChanged = onChoicesChanged
-        )
-        BackupStage.Complete -> Complete(
-            onComplete = onComplete,
-            onBackToSeedPhrase = backupState::goToSeed
         )
     }
 }
 
 @Composable
-private fun EducationOverview(onNext: () -> Unit) {
-    Column(modifier = Modifier.verticalScroll(state = rememberScrollState())) {
-        Header(stringResource(R.string.new_wallet_1_header))
+fun BackupMainContent(
+    paddingValues: PaddingValues,
+    backupState: BackupState,
+    wallet: PersistableWallet,
+    choices: TestChoices,
+    onChoicesChanged: ((choicesCount: Int) -> Unit)?
+) {
+    Column(
+        Modifier
+            .padding(
+                top = paddingValues.calculateTopPadding(),
+                bottom = paddingValues.calculateBottomPadding()
+            )
+    ) {
+        when (backupState.current.collectAsState().value) {
+            is BackupStage.EducationOverview -> EducationOverview()
+            is BackupStage.EducationRecoveryPhrase -> EducationRecoveryPhrase()
+            is BackupStage.Seed -> SeedPhrase(wallet)
+            is BackupStage.Test -> TestInProgress(
+                selectedTestChoices = choices,
+                onChoicesChanged = onChoicesChanged,
+                splitSeedPhrase = wallet.seedPhrase.split,
+                backupState = backupState
+            )
+            is BackupStage.Failure -> TestFailure()
+            is BackupStage.Complete -> TestComplete()
+            is BackupStage.ReviewSeed -> SeedPhrase(wallet)
+        }
+    }
+}
+
+@Composable
+private fun EducationOverview() {
+    Column(
+        Modifier
+            .verticalScroll(rememberScrollState())
+    ) {
         Body(stringResource(R.string.new_wallet_1_body_1))
         Image(
             painter = painterResource(id = R.drawable.backup_1),
@@ -109,15 +172,15 @@ private fun EducationOverview(onNext: () -> Unit) {
                 .weight(MINIMAL_WEIGHT, true)
         )
         Body(stringResource(R.string.new_wallet_1_body_2))
-        PrimaryButton(onClick = onNext, text = stringResource(R.string.new_wallet_1_button))
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun EducationRecoveryPhrase(onNext: () -> Unit) {
-    Column(modifier = Modifier.verticalScroll(state = rememberScrollState())) {
-        Header(stringResource(R.string.new_wallet_2_header))
+private fun EducationRecoveryPhrase() {
+    Column(
+        Modifier
+            .verticalScroll(rememberScrollState())
+    ) {
         Body(stringResource(R.string.new_wallet_2_body_1))
         Image(
             painter = painterResource(id = R.drawable.backup_2),
@@ -127,21 +190,19 @@ private fun EducationRecoveryPhrase(onNext: () -> Unit) {
         Card {
             Body(stringResource(R.string.new_wallet_2_body_3))
         }
-        PrimaryButton(onClick = onNext, text = stringResource(R.string.new_wallet_2_button))
     }
 }
 
 @Composable
-private fun SeedPhrase(persistableWallet: PersistableWallet, onNext: () -> Unit, onCopyToClipboard: () -> Unit) {
+private fun SeedPhrase(persistableWallet: PersistableWallet) {
     SecureScreen()
-    Column(Modifier.verticalScroll(rememberScrollState())) {
-        Header(stringResource(R.string.new_wallet_3_header))
+    Column(
+        Modifier
+            .verticalScroll(rememberScrollState())
+            .padding(vertical = ZcashTheme.paddings.padding)
+    ) {
         Body(stringResource(R.string.new_wallet_3_body_1))
-
         ChipGrid(persistableWallet.seedPhrase.split)
-
-        PrimaryButton(onClick = onNext, text = stringResource(R.string.new_wallet_3_button_finished))
-        TertiaryButton(onClick = onCopyToClipboard, text = stringResource(R.string.new_wallet_3_button_copy))
     }
 }
 
@@ -149,37 +210,6 @@ private fun SeedPhrase(persistableWallet: PersistableWallet, onNext: () -> Unit,
 private val testIndices = listOf(Index(4), Index(9), Index(16), Index(20))
 
 private data class TestChoice(val originalIndex: Index, val word: String)
-
-@Composable
-private fun Test(
-    wallet: PersistableWallet,
-    selectedTestChoices: TestChoices,
-    onBack: () -> Unit,
-    onNext: () -> Unit,
-    onChoicesChanged: ((choicesCount: Int) -> Unit)?
-) {
-    SecureScreen()
-    val splitSeedPhrase = wallet.seedPhrase.split
-
-    val currentSelectedTestChoice = selectedTestChoices.current.collectAsState().value
-
-    when {
-        currentSelectedTestChoice.size != testIndices.size -> {
-            TestInProgress(splitSeedPhrase, selectedTestChoices, onBack, onChoicesChanged)
-        }
-        currentSelectedTestChoice.all { splitSeedPhrase[it.key.value] == it.value } -> {
-            // The user got the test correct
-            onNext()
-        }
-        currentSelectedTestChoice.none { null == it.value } -> {
-            TestFailure {
-                // Clear the user's prior test inputs for the retest
-                selectedTestChoices.set(emptyMap())
-                onBack()
-            }
-        }
-    }
-}
 
 /*
  * A few implementation notes on the test:
@@ -190,9 +220,11 @@ private fun Test(
 private fun TestInProgress(
     splitSeedPhrase: List<String>,
     selectedTestChoices: TestChoices,
-    onBack: () -> Unit,
-    onChoicesChanged: ((choicesCount: Int) -> Unit)?
+    onChoicesChanged: ((choicesCount: Int) -> Unit)?,
+    backupState: BackupState
 ) {
+    SecureScreen()
+
     val testChoices = splitSeedPhrase
         .mapIndexed { index, word -> TestChoice(Index(index), word) }
         .filter { testIndices.contains(it.originalIndex) }
@@ -202,45 +234,49 @@ private fun TestInProgress(
             listOf(it[1], it[0], it[3], it[2])
         }
     val currentSelectedTestChoice = selectedTestChoices.current.collectAsState().value
-    Column {
-        // This button doesn't match the design; just providing the navigation hook for now
-        NavigationButton(onClick = onBack, text = stringResource(R.string.new_wallet_4_button_back))
+    if (currentSelectedTestChoice.size == testIndices.size) {
+        if (currentSelectedTestChoice.all { splitSeedPhrase[it.key.value] == it.value }) {
+            // the user got the test correct
+            backupState.goNext()
+        } else {
+            backupState.goToStage(BackupStage.Failure)
+        }
+    }
+    Column(
+        Modifier
+            .verticalScroll(rememberScrollState())
+            .padding(vertical = ZcashTheme.paddings.padding)
+    ) {
+        splitSeedPhrase.chunked(CHIP_GRID_ROW_SIZE).forEachIndexed { chunkIndex, chunk ->
+            Row(Modifier.fillMaxWidth()) {
+                chunk.forEachIndexed { subIndex, word ->
+                    val currentIndex = Index(chunkIndex * CHIP_GRID_ROW_SIZE + subIndex)
 
-        Header(stringResource(R.string.new_wallet_4_header_verify))
-        // Body(stringResource(R.string.new_wallet_4_body_verify))
-
-        Column {
-            splitSeedPhrase.chunked(CHIP_GRID_ROW_SIZE).forEachIndexed { chunkIndex, chunk ->
-                Row(Modifier.fillMaxWidth()) {
-                    chunk.forEachIndexed { subIndex, word ->
-                        val currentIndex = Index(chunkIndex * CHIP_GRID_ROW_SIZE + subIndex)
-
-                        if (testIndices.contains(currentIndex)) {
-                            ChipDropDown(
-                                currentIndex,
-                                dropdownText = currentSelectedTestChoice[currentIndex]
-                                    ?: "",
-                                choices = testChoices.map { it.word },
-                                modifier = Modifier
-                                    .weight(MINIMAL_WEIGHT)
-                                    .testTag(BackupTag.DROPDOWN_CHIP)
-                            ) {
-                                selectedTestChoices.set(
-                                    HashMap(currentSelectedTestChoice).apply {
-                                        this[currentIndex] = testChoices[it.value].word
-                                    }
-                                )
-                                if (onChoicesChanged != null) {
-                                    onChoicesChanged(selectedTestChoices.current.value.size)
+                    if (testIndices.contains(currentIndex)) {
+                        ChipDropDown(
+                            currentIndex,
+                            dropdownText = currentSelectedTestChoice[currentIndex]
+                                ?: "",
+                            choices = testChoices.map { it.word },
+                            modifier = Modifier
+                                .weight(MINIMAL_WEIGHT)
+                                .testTag(BackupTag.DROPDOWN_CHIP)
+                        ) {
+                            selectedTestChoices.set(
+                                HashMap(currentSelectedTestChoice).apply {
+                                    this[currentIndex] = testChoices[it.value].word
                                 }
-                            }
-                        } else {
-                            Chip(
-                                index = Index(chunkIndex * CHIP_GRID_ROW_SIZE + subIndex),
-                                text = word,
-                                modifier = Modifier.weight(MINIMAL_WEIGHT)
                             )
+                            if (onChoicesChanged != null) {
+                                onChoicesChanged(selectedTestChoices.current.value.size)
+                            }
                         }
+                    } else {
+                        Chip(
+                            index = Index(chunkIndex * CHIP_GRID_ROW_SIZE + subIndex),
+                            text = word,
+                            modifier = Modifier.weight(MINIMAL_WEIGHT)
+                        )
                     }
                 }
             }
@@ -249,29 +285,26 @@ private fun TestInProgress(
 }
 
 @Composable
-private fun TestFailure(onBackToSeedPhrase: () -> Unit) {
-    Column(modifier = Modifier.verticalScroll(state = rememberScrollState())) {
-        // This button doesn't match the design; just providing the navigation hook for now
-        NavigationButton(onClick = onBackToSeedPhrase, text = stringResource(R.string.new_wallet_4_button_back))
-
-        Header(stringResource(R.string.new_wallet_4_header_ouch))
+private fun TestFailure() {
+    Column(
+        Modifier
+            .verticalScroll(rememberScrollState())
+    ) {
         Image(
             painter = painterResource(id = R.drawable.backup_failure),
             contentDescription = stringResource(id = R.string.backup_failure_content_description)
         )
-
         Box(Modifier.fillMaxHeight(MINIMAL_WEIGHT))
-
         Body(stringResource(R.string.new_wallet_4_body_ouch_retry))
-
-        PrimaryButton(onClick = onBackToSeedPhrase, text = stringResource(R.string.new_wallet_4_button_retry))
     }
 }
 
 @Composable
-private fun Complete(onComplete: () -> Unit, onBackToSeedPhrase: () -> Unit) {
-    Column(modifier = Modifier.verticalScroll(state = rememberScrollState())) {
-        Header(stringResource(R.string.new_wallet_5_header))
+private fun TestComplete() {
+    Column(
+        Modifier
+            .verticalScroll(rememberScrollState())
+    ) {
         Body(stringResource(R.string.new_wallet_5_body))
         Image(
             painter = painterResource(id = R.drawable.backup_success),
@@ -283,7 +316,140 @@ private fun Complete(onComplete: () -> Unit, onBackToSeedPhrase: () -> Unit) {
                 .fillMaxWidth()
                 .weight(MINIMAL_WEIGHT, true)
         )
-        PrimaryButton(onClick = onComplete, text = stringResource(R.string.new_wallet_5_button_finished))
-        TertiaryButton(onClick = onBackToSeedPhrase, text = stringResource(R.string.new_wallet_5_button_back))
+    }
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+private fun BackupTopAppBar(
+    backupStage: BackupStage,
+    onCopyToClipboard: () -> Unit,
+    onBack: () -> Unit,
+    selectedTestChoices: TestChoices
+) {
+    var showCopySeedMenu = false
+    val screenTitleResId = when (backupStage) {
+        is BackupStage.EducationOverview -> {
+            R.string.new_wallet_1_header
+        }
+        is BackupStage.EducationRecoveryPhrase -> {
+            R.string.new_wallet_2_header
+        }
+        is BackupStage.Seed -> {
+            showCopySeedMenu = true
+            R.string.new_wallet_3_header
+        }
+        is BackupStage.Test -> {
+            R.string.new_wallet_4_header
+        }
+        is BackupStage.Failure -> {
+            R.string.new_wallet_4_header_ouch
+        }
+        is BackupStage.Complete -> {
+            R.string.new_wallet_5_header
+        }
+        is BackupStage.ReviewSeed -> {
+            showCopySeedMenu = true
+            R.string.new_wallet_3_header
+        }
+    }
+
+    TopAppBar(
+        title = { Text(text = stringResource(id = screenTitleResId)) },
+        navigationIcon = {
+            // hide back navigation button for the first and Complete stages
+            if (backupStage.hasPrevious() && backupStage != BackupStage.Complete) {
+                val onBackClickListener = {
+                    if (backupStage is BackupStage.Failure) {
+                        // Clear the user's prior test inputs for the retest
+                        selectedTestChoices.set(emptyMap())
+                    }
+                    onBack()
+                }
+                BackHandler(enabled = true) { onBackClickListener() }
+                IconButton(onBackClickListener) {
+                    Icon(
+                        imageVector = Icons.Filled.ArrowBack,
+                        contentDescription = stringResource(
+                            R.string.new_wallet_navigation_back_button_content_description
+                        )
+                    )
+                }
+            }
+        },
+        actions = {
+            if (showCopySeedMenu) {
+                CopySeedMenu(onCopyToClipboard)
+            }
+        }
+    )
+}
+
+@Composable
+private fun CopySeedMenu(onCopyToClipboard: () -> Unit) {
+    var expanded by rememberSaveable { mutableStateOf(false) }
+    IconButton(onClick = { expanded = true }) {
+        Icon(
+            Icons.Default.MoreVert,
+            contentDescription = stringResource(R.string.new_wallet_toolbar_more_button_content_description)
+        )
+    }
+
+    DropdownMenu(
+        expanded = expanded,
+        onDismissRequest = { expanded = false }
+    ) {
+        DropdownMenuItem(
+            text = { Text(stringResource(R.string.new_wallet_3_button_copy)) },
+            onClick = {
+                expanded = false
+                onCopyToClipboard()
+            }
+        )
+    }
+}
+
+@Suppress("LongParameterList")
+@Composable
+private fun BackupBottomNav(
+    backupStage: BackupStage,
+    onNext: () -> Unit,
+    onBack: () -> Unit,
+    selectedTestChoices: TestChoices,
+    onComplete: () -> Unit,
+    onBackToSeedPhrase: () -> Unit
+) {
+    Column {
+        when (backupStage) {
+            is BackupStage.EducationOverview -> {
+                PrimaryButton(onClick = onNext, text = stringResource(R.string.new_wallet_1_button))
+            }
+            is BackupStage.EducationRecoveryPhrase -> {
+                PrimaryButton(onClick = onNext, text = stringResource(R.string.new_wallet_2_button))
+            }
+            is BackupStage.Seed -> {
+                PrimaryButton(onClick = onNext, text = stringResource(R.string.new_wallet_3_button_finished))
+            }
+            is BackupStage.Test -> {
+                // no bottom navigation button placed
+            }
+            is BackupStage.Failure -> {
+                PrimaryButton(
+                    onClick = {
+                        // Clear the user's prior test inputs for the retest
+                        selectedTestChoices.set(emptyMap())
+                        onBack()
+                    },
+                    text = stringResource(R.string.new_wallet_4_button_retry)
+                )
+            }
+            is BackupStage.Complete -> {
+                PrimaryButton(onClick = onComplete, text = stringResource(R.string.new_wallet_5_button_finished))
+                TertiaryButton(onClick = onBackToSeedPhrase, text = stringResource(R.string.new_wallet_5_button_back))
+            }
+            is BackupStage.ReviewSeed -> {
+                PrimaryButton(onClick = onBack, text = stringResource(R.string.new_wallet_3_button_finished))
+            }
+        }
     }
 }

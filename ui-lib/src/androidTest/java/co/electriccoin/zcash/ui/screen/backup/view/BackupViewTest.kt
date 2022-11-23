@@ -3,12 +3,13 @@ package co.electriccoin.zcash.ui.screen.backup.view
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onChildren
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performScrollTo
 import androidx.test.filters.MediumTest
 import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.R
@@ -56,10 +57,7 @@ class BackupViewTest : UiTestPrerequisites() {
     fun copy_to_clipboard() {
         val testSetup = newTestSetup(BackupStage.Seed)
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.new_wallet_3_button_copy)).also {
-            it.performScrollTo()
-            it.performClick()
-        }
+        composeTestRule.clickCopyToBuffer()
 
         assertEquals(1, testSetup.getOnCopyToClipboardCount())
     }
@@ -109,19 +107,17 @@ class BackupViewTest : UiTestPrerequisites() {
             composeTestRule.onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[3].performClick()
         }
 
-        assertEquals(BackupStage.Test, testSetup.getStage())
+        assertEquals(BackupStage.Failure, testSetup.getStage())
 
         composeTestRule.onNode(hasText(getStringResource(R.string.new_wallet_4_header_ouch)))
 
         composeTestRule.onNode(hasText(getStringResource(R.string.new_wallet_4_button_retry))).also {
-            it.performScrollTo()
             it.performClick()
         }
 
         assertEquals(BackupStage.Seed, testSetup.getStage())
 
         composeTestRule.onNode(hasText(getStringResource(R.string.new_wallet_3_button_finished))).also {
-            it.performScrollTo()
             it.performClick()
         }
 
@@ -129,7 +125,7 @@ class BackupViewTest : UiTestPrerequisites() {
 
         // These verify that the test itself is re-displayed
 
-        composeTestRule.onNode(hasText(getStringResource(R.string.new_wallet_4_header_verify))).also {
+        composeTestRule.onNode(hasText(getStringResource(R.string.new_wallet_4_header))).also {
             it.assertExists()
         }
 
@@ -152,18 +148,17 @@ class BackupViewTest : UiTestPrerequisites() {
 
     @Test
     @MediumTest
-    fun last_stage_click_back_to_seed() {
+    fun complete_stage_click_back_to_seed() {
         val testSetup = newTestSetup(BackupStage.Complete)
 
         val newWalletButton = composeTestRule.onNodeWithText(getStringResource(R.string.new_wallet_5_button_back))
         newWalletButton.also {
-            it.performScrollTo()
             it.performClick()
         }
 
         assertEquals(0, testSetup.getOnCopyToClipboardCount())
         assertEquals(0, testSetup.getOnCompleteCallbackCount())
-        assertEquals(BackupStage.Seed, testSetup.getStage())
+        assertEquals(BackupStage.ReviewSeed, testSetup.getStage())
     }
 
     @Test
@@ -172,28 +167,22 @@ class BackupViewTest : UiTestPrerequisites() {
         val testSetup = newTestSetup(BackupStage.EducationOverview)
 
         composeTestRule.onNodeWithText(getStringResource(R.string.new_wallet_1_button)).also {
-            it.performScrollTo()
             it.performClick()
         }
 
         assertEquals(BackupStage.EducationRecoveryPhrase, testSetup.getStage())
 
         composeTestRule.onNodeWithText(getStringResource(R.string.new_wallet_2_button)).also {
-            it.performScrollTo()
             it.performClick()
         }
 
         assertEquals(BackupStage.Seed, testSetup.getStage())
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.new_wallet_3_button_copy)).also {
-            it.performScrollTo()
-            it.performClick()
-        }
+        composeTestRule.clickCopyToBuffer()
 
         assertEquals(1, testSetup.getOnCopyToClipboardCount())
 
         composeTestRule.onNodeWithText(getStringResource(R.string.new_wallet_3_button_finished)).also {
-            it.performScrollTo()
             it.performClick()
         }
 
@@ -220,5 +209,20 @@ class BackupViewTest : UiTestPrerequisites() {
         composeTestRule.onNode(hasText(getStringResource(R.string.new_wallet_5_button_finished))).performClick()
 
         assertEquals(1, testSetup.getOnCompleteCallbackCount())
+    }
+}
+
+fun ComposeContentTestRule.clickCopyToBuffer() {
+    // open menu
+    onNodeWithContentDescription(
+        getStringResource(R.string.new_wallet_toolbar_more_button_content_description)
+    ).also { moreMenu ->
+        moreMenu.performClick()
+        // click menu button
+        onNodeWithText(
+            getStringResource(R.string.new_wallet_3_button_copy)
+        ).also { menuButton ->
+            menuButton.performClick()
+        }
     }
 }

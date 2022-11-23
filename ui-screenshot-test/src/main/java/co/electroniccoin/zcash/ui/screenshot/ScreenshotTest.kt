@@ -233,6 +233,7 @@ class ScreenshotTest : UiTestPrerequisites() {
 
         // Settings is a subscreen of profile
         composeTestRule.onNode(hasText(resContext.getString(R.string.profile_settings))).also {
+            it.performScrollTo()
             it.assertExists()
             it.performClick()
         }
@@ -246,6 +247,7 @@ class ScreenshotTest : UiTestPrerequisites() {
 
         // Address Details is a subscreen of profile
         composeTestRule.onNode(hasText(resContext.getString(R.string.profile_see_address_details))).also {
+            it.performScrollTo()
             it.assertExists()
             it.performClick()
         }
@@ -273,7 +275,6 @@ class ScreenshotTest : UiTestPrerequisites() {
 
         composeTestRule.onNode(hasText(resContext.getString(R.string.profile_title))).also {
             it.assertExists()
-            it.performClick()
         }
 
         // About is a subscreen of profile
@@ -309,6 +310,7 @@ class ScreenshotTest : UiTestPrerequisites() {
 
         composeTestRule.onNode(hasText(resContext.getString(R.string.home_button_send))).also {
             it.assertExists()
+            it.performScrollTo()
             it.performClick()
         }
         composeTestRule.waitUntil { composeTestRule.activity.walletViewModel.synchronizer.value != null }
@@ -367,7 +369,6 @@ private fun backupScreenshots(resContext: Context, tag: String, composeTestRule:
     ScreenshotTest.takeScreenshot(tag, "Backup 1")
 
     composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_1_button)).also {
-        it.performScrollTo()
         it.performClick()
     }
 
@@ -377,7 +378,6 @@ private fun backupScreenshots(resContext: Context, tag: String, composeTestRule:
     ScreenshotTest.takeScreenshot(tag, "Backup 2")
 
     composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_2_button)).also {
-        it.performScrollTo()
         it.performClick()
     }
 
@@ -387,26 +387,29 @@ private fun backupScreenshots(resContext: Context, tag: String, composeTestRule:
     ScreenshotTest.takeScreenshot(tag, "Backup 3")
 
     composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_3_button_finished)).also {
-        it.performScrollTo()
         it.performClick()
     }
 
-    composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_4_header_verify)).also {
+    composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_4_header)).also {
         it.assertExists()
     }
     ScreenshotTest.takeScreenshot(tag, "Backup 4")
 
     // Fail test first
     composeTestRule.onAllNodesWithTag(BackupTag.DROPDOWN_CHIP).also {
+        it[0].performScrollTo()
         it[0].performClick()
         composeTestRule.onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[0].performClick()
 
+        it[1].performScrollTo()
         it[1].performClick()
         composeTestRule.onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[1].performClick()
 
+        it[2].performScrollTo()
         it[2].performClick()
         composeTestRule.onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[2].performClick()
 
+        it[3].performScrollTo()
         it[3].performClick()
         composeTestRule.onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[3].performClick()
     }
@@ -416,7 +419,6 @@ private fun backupScreenshots(resContext: Context, tag: String, composeTestRule:
     }
 
     composeTestRule.onNode(hasText(resContext.getString(R.string.new_wallet_4_button_retry))).also {
-        it.performScrollTo()
         it.performClick()
     }
 
@@ -424,26 +426,29 @@ private fun backupScreenshots(resContext: Context, tag: String, composeTestRule:
         it.assertExists()
     }
     composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_3_button_finished)).also {
-        it.performScrollTo()
         it.performClick()
     }
 
-    composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_4_header_verify)).also {
+    composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_4_header)).also {
         it.assertExists()
     }
 
     composeTestRule.onAllNodesWithTag(BackupTag.DROPDOWN_CHIP).also {
         it.assertCountEquals(4)
 
+        it[0].performScrollTo()
         it[0].performClick()
         composeTestRule.onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[1].performClick()
 
+        it[1].performScrollTo()
         it[1].performClick()
         composeTestRule.onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[0].performClick()
 
+        it[2].performScrollTo()
         it[2].performClick()
         composeTestRule.onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[3].performClick()
 
+        it[3].performScrollTo()
         it[3].performClick()
         composeTestRule.onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[2].performClick()
     }

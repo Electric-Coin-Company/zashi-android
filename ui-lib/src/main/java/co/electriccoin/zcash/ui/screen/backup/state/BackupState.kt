@@ -1,6 +1,7 @@
 package co.electriccoin.zcash.ui.screen.backup.state
 
 import co.electriccoin.zcash.ui.screen.backup.model.BackupStage
+import co.electriccoin.zcash.ui.screen.backup.model.values
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -9,7 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
  * primarily useful on Android, for automated tests, and for iterative debugging with the Compose
  * layout preview. The default constructor argument is generally fine for other platforms.
  */
-class BackupState(initialState: BackupStage = BackupStage.values().first()) {
+class BackupState(initialState: BackupStage = BackupStage.values.first()) {
 
     private val mutableState = MutableStateFlow(initialState)
 
@@ -25,11 +26,9 @@ class BackupState(initialState: BackupStage = BackupStage.values().first()) {
         mutableState.value = current.value.getPrevious()
     }
 
-    fun goToBeginning() {
-        mutableState.value = BackupStage.values().first()
+    fun goToStage(newStage: BackupStage) {
+        mutableState.value = newStage
     }
 
-    fun goToSeed() {
-        mutableState.value = BackupStage.Seed
-    }
+    companion object
 }

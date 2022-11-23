@@ -2,7 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <application
-        android:label="zcash-ui-integration-test">
+        android:label="zcash-ui-integration-test"
+        android:icon="@mipmap/ic_launcher_square"
+        android:roundIcon="@mipmap/ic_launcher_round">
         <activity
             android:name="co.electriccoin.zcash.ui.integration.test.common.IntegrationTestingActivity"
             android:exported="false" />

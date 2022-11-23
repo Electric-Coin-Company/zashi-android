@@ -1,6 +1,9 @@
 package co.electriccoin.zcash.ui.screen.backup.integration
 
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasTestTag
+import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
@@ -15,9 +18,11 @@ import co.electriccoin.zcash.ui.screen.backup.BackupTag
 import co.electriccoin.zcash.ui.screen.backup.model.BackupStage
 import co.electriccoin.zcash.ui.screen.backup.view.BackupTestSetup
 import co.electriccoin.zcash.ui.test.getStringResource
-import org.junit.Assert.assertEquals
 import org.junit.Rule
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
+import kotlin.test.assertNotNull
 
 class BackupIntegrationTest : UiTestPrerequisites() {
 
@@ -40,7 +45,7 @@ class BackupIntegrationTest : UiTestPrerequisites() {
      */
     @Test
     @MediumTest
-    fun current_stage_restoration() {
+    fun backup_state_education_restoration() {
         val restorationTester = StateRestorationTester(composeTestRule)
         val testSetup = newTestSetup(BackupStage.EducationOverview)
 
@@ -63,7 +68,7 @@ class BackupIntegrationTest : UiTestPrerequisites() {
 
     @Test
     @MediumTest
-    fun selected_choices_restoration() {
+    fun backup_state_test_running_restoration() {
         val restorationTester = StateRestorationTester(composeTestRule)
         val testSetup = newTestSetup(BackupStage.Test)
 
@@ -72,6 +77,34 @@ class BackupIntegrationTest : UiTestPrerequisites() {
         }
 
         assertEquals(BackupStage.Test, testSetup.getStage())
+
+        val chipText = composeTestRule.getDropdownChipSelectedText(0, 0)
+
+        assertNotNull(chipText)
+        assertNotEquals("Chip text shouldn't be empty.", chipText, "")
+
+        assertEquals(BackupStage.Test, testSetup.getStage())
+
+        restorationTester.emulateSavedInstanceStateRestore()
+
+        assertEquals(BackupStage.Test, testSetup.getStage())
+
+        composeTestRule.onNodeWithText(chipText).also {
+            it.assertExists()
+            it.assertIsDisplayed()
+        }
+    }
+
+    @Test
+    @MediumTest
+    fun selected_choices_restoration() {
+        val restorationTester = StateRestorationTester(composeTestRule)
+        val testSetup = newTestSetup(BackupStage.Test)
+
+        restorationTester.setContent {
+            testSetup.getDefaultContent()
+        }
+
         assertEquals(0, testSetup.getOnChoicesCallbackCount())
         assertEquals(TestChoicesFixture.INITIAL_CHOICES.size, testSetup.getSelectedChoicesCount())
 
@@ -82,15 +115,20 @@ class BackupIntegrationTest : UiTestPrerequisites() {
             composeTestRule.onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[1].performClick()
         }
 
-        assertEquals(BackupStage.Test, testSetup.getStage())
         assertEquals(2, testSetup.getOnChoicesCallbackCount())
         assertEquals(4, testSetup.getSelectedChoicesCount())
 
         restorationTester.emulateSavedInstanceStateRestore()
 
-        // we test here that the stage and the selected choices count remained unchanged after restore
-        assertEquals(BackupStage.Test, testSetup.getStage())
         assertEquals(2, testSetup.getOnChoicesCallbackCount())
         assertEquals(4, testSetup.getSelectedChoicesCount())
+    }
+}
+
+fun ComposeContentTestRule.getDropdownChipSelectedText(chipIndex: Int, selectionIndex: Int): String {
+    return onAllNodesWithTag(BackupTag.DROPDOWN_CHIP)[chipIndex].let { chip ->
+        chip.performClick()
+        onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[selectionIndex].performClick()
+        chip.fetchSemanticsNode().config[SemanticsProperties.Text][selectionIndex].text
     }
 }

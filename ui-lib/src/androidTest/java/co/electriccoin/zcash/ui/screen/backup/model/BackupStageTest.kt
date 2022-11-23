@@ -11,25 +11,25 @@ class BackupStageTest {
     @Test
     @SmallTest
     fun getProgress_first() {
-        val progress = BackupStage.values().first().getProgress()
+        val progress = BackupStage.values.first().getProgress()
 
         assertEquals(0, progress.current.value)
-        assertEquals(4, progress.last.value)
+        assertEquals(6, progress.last.value)
     }
 
     @Test
     @SmallTest
     fun getProgress_last() {
-        val progress = BackupStage.values().last().getProgress()
+        val progress = BackupStage.values.last().getProgress()
 
-        assertEquals(4, progress.current.value)
-        assertEquals(4, progress.last.value)
+        assertEquals(6, progress.current.value)
+        assertEquals(6, progress.last.value)
     }
 
     @Test
     @SmallTest
     fun hasNext_boundary() {
-        val last = BackupStage.values().last()
+        val last = BackupStage.values.last()
 
         assertFalse(last.hasNext())
     }
@@ -37,7 +37,7 @@ class BackupStageTest {
     @Test
     @SmallTest
     fun hasPrevious_boundary() {
-        val last = BackupStage.values().first()
+        val last = BackupStage.values.first()
 
         assertFalse(last.hasPrevious())
     }
@@ -45,7 +45,7 @@ class BackupStageTest {
     @Test
     @SmallTest
     fun getNext_from_first() {
-        val first = BackupStage.values().first()
+        val first = BackupStage.values.first()
         val next = first.getNext()
 
         assertNotEquals(first, next)
@@ -55,7 +55,7 @@ class BackupStageTest {
     @Test
     @SmallTest
     fun getNext_boundary() {
-        val last = BackupStage.values().last()
+        val last = BackupStage.values.last()
 
         assertEquals(last, last.getNext())
     }
@@ -63,17 +63,17 @@ class BackupStageTest {
     @Test
     @SmallTest
     fun getPrevious_from_last() {
-        val last = BackupStage.values().last()
+        val last = BackupStage.values.last()
         val previous = last.getPrevious()
 
         assertNotEquals(last, previous)
-        assertEquals(BackupStage.Test, previous)
+        assertEquals(BackupStage.Complete, previous)
     }
 
     @Test
     @SmallTest
     fun getPrevious_boundary() {
-        val first = BackupStage.values().first()
+        val first = BackupStage.values.first()
 
         assertEquals(first, first.getPrevious())
     }
