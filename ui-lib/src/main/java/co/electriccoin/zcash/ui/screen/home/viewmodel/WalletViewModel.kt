@@ -7,13 +7,13 @@ import cash.z.ecc.android.bip39.Mnemonics
 import cash.z.ecc.android.bip39.toSeed
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.block.CompactBlockProcessor
-import cash.z.ecc.android.sdk.db.entity.PendingTransaction
-import cash.z.ecc.android.sdk.db.entity.Transaction
-import cash.z.ecc.android.sdk.db.entity.isMined
-import cash.z.ecc.android.sdk.db.entity.isSubmitSuccess
+import cash.z.ecc.android.sdk.model.Account
 import cash.z.ecc.android.sdk.model.BlockHeight
+import cash.z.ecc.android.sdk.model.PendingTransaction
 import cash.z.ecc.android.sdk.model.WalletBalance
 import cash.z.ecc.android.sdk.model.Zatoshi
+import cash.z.ecc.android.sdk.model.isMined
+import cash.z.ecc.android.sdk.model.isSubmitSuccess
 import cash.z.ecc.android.sdk.tool.DerivationTool
 import cash.z.ecc.sdk.model.FiatCurrency
 import cash.z.ecc.sdk.model.PercentDecimal
@@ -26,11 +26,11 @@ import co.electriccoin.zcash.ui.preference.EncryptedPreferenceKeys
 import co.electriccoin.zcash.ui.preference.EncryptedPreferenceSingleton
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
 import co.electriccoin.zcash.ui.preference.StandardPreferenceSingleton
+import co.electriccoin.zcash.ui.screen.home.model.CommonTransaction
 import co.electriccoin.zcash.ui.screen.home.model.WalletSnapshot
 import co.electriccoin.zcash.work.WorkIds
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
@@ -41,6 +41,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
@@ -56,6 +57,7 @@ import kotlin.time.ExperimentalTime
 // To make this more multiplatform compatible, we need to remove the dependency on Context
 // for loading the preferences.
 // TODO [#292]: Should be moved to SDK-EXT-UI module.
+// TODO [#292]: https://github.com/zcash/secant-android-wallet/issues/292
 class WalletViewModel(application: Application) : AndroidViewModel(application) {
     private val walletCoordinator = co.electriccoin.zcash.global.WalletCoordinator.getInstance(application)
 
@@ -117,8 +119,11 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
             val bip39Seed = withContext(Dispatchers.IO) {
                 Mnemonics.MnemonicCode(it.seedPhrase.joinToString()).toSeed()
             }
-
-            DerivationTool.deriveSpendingKeys(bip39Seed, it.network)[0]
+            DerivationTool.deriveUnifiedSpendingKey(
+                seed = bip39Seed,
+                network = it.network,
+                account = Account.DEFAULT
+            )
         }.stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
@@ -143,7 +148,7 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
 
     // This is not the right API, because the transaction list could be very long and might need UI filtering
     @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
-    val transactionSnapshot: StateFlow<List<Transaction>> = synchronizer
+    val transactionSnapshot: StateFlow<List<CommonTransaction>> = synchronizer
         .flatMapLatest {
             if (null == it) {
                 flowOf(emptyList())
@@ -157,11 +162,11 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
             emptyList()
         )
 
-    @OptIn(FlowPreview::class)
-    val addresses: StateFlow<WalletAddresses?> = secretState
-        .filterIsInstance<SecretState.Ready>()
-        .map { WalletAddresses.new(it.persistableWallet) }
-        .stateIn(
+    val addresses: StateFlow<WalletAddresses?> = synchronizer
+        .filterNotNull()
+        .map {
+            WalletAddresses.new(it)
+        }.stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
             null
@@ -371,15 +376,14 @@ private fun Synchronizer.toWalletSnapshot() =
 private fun Synchronizer.toTransactions() =
     combine(
         clearedTransactions.distinctUntilChanged(),
-        pendingTransactions.distinctUntilChanged(),
-        sentTransactions.distinctUntilChanged(),
-        receivedTransactions.distinctUntilChanged()
-    ) { cleared, pending, sent, received ->
+        pendingTransactions.distinctUntilChanged()
+    ) { cleared, pending ->
         // TODO [#157]: Sort the transactions to show the most recent
-        buildList<Transaction> {
-            addAll(cleared)
-            addAll(pending)
-            addAll(sent)
-            addAll(received)
+        // TODO [#157]: https://github.com/zcash/secant-android-wallet/issues/157
+
+        // Note that the list of transactions will not be sorted.
+        buildList {
+            addAll(cleared.map { CommonTransaction.Overview(it) })
+            addAll(pending.map { CommonTransaction.Pending(it) })
         }
     }

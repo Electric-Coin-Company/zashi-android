@@ -1,16 +1,11 @@
 package co.electriccoin.zcash.global
 
 import android.content.Context
-import cash.z.ecc.android.bip39.Mnemonics
-import cash.z.ecc.android.bip39.toSeed
-import cash.z.ecc.android.sdk.Initializer
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.ext.onFirst
 import cash.z.ecc.android.sdk.model.LightWalletEndpoint
 import cash.z.ecc.android.sdk.model.ZcashNetwork
 import cash.z.ecc.android.sdk.model.defaultForNetwork
-import cash.z.ecc.android.sdk.tool.DerivationTool
-import cash.z.ecc.android.sdk.type.UnifiedViewingKey
 import cash.z.ecc.sdk.model.PersistableWallet
 import cash.z.ecc.sdk.type.fromResources
 import co.electriccoin.zcash.spackle.LazyWithArgument
@@ -22,7 +17,6 @@ import co.electriccoin.zcash.ui.preference.StandardPreferenceSingleton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.awaitClose
@@ -44,7 +38,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlinx.coroutines.withContext
 import java.util.UUID
 
 class WalletCoordinator(context: Context) {
@@ -81,7 +74,7 @@ class WalletCoordinator(context: Context) {
 
     private sealed class InternalSynchronizerStatus {
         object NoWallet : InternalSynchronizerStatus()
-        class Available(val synchronizer: cash.z.ecc.android.sdk.Synchronizer) : InternalSynchronizerStatus()
+        class Available(val synchronizer: Synchronizer) : InternalSynchronizerStatus()
         class Lockout(val id: UUID) : InternalSynchronizerStatus()
     }
 
@@ -93,9 +86,14 @@ class WalletCoordinator(context: Context) {
                 flowOf(InternalSynchronizerStatus.NoWallet)
             } else {
                 callbackFlow<InternalSynchronizerStatus.Available> {
-                    val initializer = Initializer.new(context, persistableWallet.toConfig())
                     val synchronizer = synchronizerMutex.withLock {
-                        val synchronizer = Synchronizer.new(initializer)
+                        val synchronizer = Synchronizer.new(
+                            context = context,
+                            zcashNetwork = persistableWallet.network,
+                            lightWalletEndpoint = LightWalletEndpoint.defaultForNetwork(persistableWallet.network),
+                            birthday = persistableWallet.birthday,
+                            seed = persistableWallet.seedPhrase.toByteArray()
+                        )
                         synchronizer.start(walletScope)
                     }
 
@@ -170,11 +168,10 @@ class WalletCoordinator(context: Context) {
                     .filter { it.id == lockoutId }
                     .onFirst {
                         synchronizerMutex.withLock {
-                            val didDelete = Initializer.erase(
-                                applicationContext,
-                                ZcashNetwork.fromResources(applicationContext)
+                            val didDelete = Synchronizer.erase(
+                                appContext = applicationContext,
+                                network = ZcashNetwork.fromResources(applicationContext)
                             )
-
                             Twig.info { "SDK erase result: $didDelete" }
                         }
                     }
@@ -210,9 +207,9 @@ class WalletCoordinator(context: Context) {
                         }
 
                         synchronizerMutex.withLock {
-                            val didDelete = Initializer.erase(
-                                applicationContext,
-                                ZcashNetwork.fromResources(applicationContext)
+                            val didDelete = Synchronizer.erase(
+                                appContext = applicationContext,
+                                network = ZcashNetwork.fromResources(applicationContext)
                             )
                             Twig.info { "SDK erase result: $didDelete" }
                         }
@@ -221,24 +218,5 @@ class WalletCoordinator(context: Context) {
                     }
             }
         }
-    }
-}
-
-private suspend fun PersistableWallet.deriveViewingKey(): UnifiedViewingKey {
-    // Dispatcher needed because SecureRandom is loaded, which is slow and performs IO
-    // https://github.com/zcash/kotlin-bip39/issues/13
-    val bip39Seed = withContext(Dispatchers.IO) {
-        Mnemonics.MnemonicCode(seedPhrase.joinToString()).toSeed()
-    }
-
-    return DerivationTool.deriveUnifiedViewingKeys(bip39Seed, network)[0]
-}
-
-private suspend fun PersistableWallet.toConfig(): Initializer.Config {
-    val network = network
-    val vk = deriveViewingKey()
-
-    return Initializer.Config {
-        it.importWallet(vk, birthday, network, LightWalletEndpoint.defaultForNetwork(network))
     }
 }

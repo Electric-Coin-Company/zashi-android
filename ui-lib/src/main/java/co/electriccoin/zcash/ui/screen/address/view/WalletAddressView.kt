@@ -123,15 +123,11 @@ private fun WalletDetailAddresses(walletAddresses: WalletAddresses) {
                     ListHeader(text = stringResource(R.string.wallet_address_header_includes))
                 }
 
-                SaplingAddress(walletAddresses.shieldedSapling.address)
+                SaplingAddress(walletAddresses.sapling.address)
                 TransparentAddress(walletAddresses.transparent.address)
             }
         }
     }
-
-    Divider(thickness = 8.dp)
-
-    ViewingKey(walletAddresses.viewingKey)
 }
 
 // Note: The addresses code below has opportunities to be made more DRY.
@@ -148,7 +144,7 @@ private fun SaplingAddress(saplingAddress: String) {
         SmallIndicator(ZcashTheme.colors.addressHighlightSapling)
 
         ExpandableRow(
-            title = stringResource(R.string.wallet_address_shielded_sapling),
+            title = stringResource(R.string.wallet_address_sapling),
             content = saplingAddress,
             isInitiallyExpanded = false
         )
@@ -166,27 +162,6 @@ private fun TransparentAddress(transparentAddress: String) {
         ExpandableRow(
             title = stringResource(R.string.wallet_address_transparent),
             content = transparentAddress,
-            isInitiallyExpanded = false
-        )
-    }
-}
-
-@Composable
-private fun ViewingKey(viewingKey: String) {
-    Row(
-        Modifier
-            .fillMaxWidth()
-            .height(IntrinsicSize.Min)
-    ) {
-        Image(
-            painter = ColorPainter(ZcashTheme.colors.addressHighlightViewing),
-            contentDescription = "",
-            modifier = Modifier
-                .width(SMALL_INDICATOR_WIDTH)
-        )
-        ExpandableRow(
-            title = stringResource(R.string.wallet_address_viewing_key),
-            content = viewingKey,
             isInitiallyExpanded = false
         )
     }

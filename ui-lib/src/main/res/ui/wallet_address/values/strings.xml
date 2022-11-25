@@ -4,10 +4,8 @@
     <string name="wallet_address_back_content_description">Back</string>
     <string name="wallet_address_unified">Your Unified Address</string>
     <string name="wallet_address_header_includes">which includes</string>
-    <string name="wallet_address_shielded_sapling">Shielded Sapling (NU1)</string>
+    <string name="wallet_address_sapling">Shielded Sapling (NU1)</string>
     <string name="wallet_address_transparent">Transparent</string>
-    <string name="wallet_address_viewing_key">Viewing Key Only (Sapling)</string>
     <string name="wallet_address_show">Show address</string>
     <string name="wallet_address_hide">Hide address</string>
-
 </resources>
