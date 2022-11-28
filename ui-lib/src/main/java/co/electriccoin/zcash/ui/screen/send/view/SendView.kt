@@ -252,7 +252,7 @@ private fun SendForm(
 private fun Confirmation(
     paddingValues: PaddingValues,
     zecSend: ZecSend,
-    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    interactionSource: MutableInteractionSource,
     onConfirmation: () -> Unit
 ) {
     Column(
