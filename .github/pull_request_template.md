@@ -1,4 +1,4 @@
-<!-- NOTE: write any additional comments here -->
+<!-- Write any additional comments here when opening the pull request -->
 
 > **Note**
 >This code review checklist is intended to serve as a starting point for the author and reviewer, although it may not be appropriate for all types of changes (e.g. fixing a spelling typo in documentation).  For more in-depth discussion of how we think about code review, please see [Code Review Guidelines](../blob/main/docs/CODE_REVIEW_GUIDELINES.md).
