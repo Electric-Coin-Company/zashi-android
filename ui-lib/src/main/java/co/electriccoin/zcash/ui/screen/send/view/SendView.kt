@@ -65,11 +65,14 @@ fun PreviewSend() {
     }
 }
 
+/**
+ * @param pressAndHoldInteractionSource This is an argument that can be injected for automated testing.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Send(
     mySpendableBalance: Zatoshi,
-    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    pressAndHoldInteractionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     goBack: () -> Unit,
     onCreateAndSend: (ZecSend) -> Unit
 ) {
@@ -92,7 +95,7 @@ fun Send(
             paddingValues,
             mySpendableBalance,
             sendStage,
-            interactionSource,
+            pressAndHoldInteractionSource,
             setSendStage,
             onCreateAndSend = onCreateAndSend
         )
@@ -123,7 +126,7 @@ private fun SendMainContent(
     paddingValues: PaddingValues,
     myBalance: Zatoshi,
     sendStage: SendStage,
-    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    pressAndHoldInteractionSource: MutableInteractionSource,
     setSendStage: (SendStage) -> Unit,
     onCreateAndSend: (ZecSend) -> Unit
 ) {
@@ -142,7 +145,7 @@ private fun SendMainContent(
         Confirmation(
             paddingValues,
             zecSend,
-            interactionSource
+            pressAndHoldInteractionSource
         ) {
             onCreateAndSend(zecSend)
         }
@@ -252,7 +255,7 @@ private fun SendForm(
 private fun Confirmation(
     paddingValues: PaddingValues,
     zecSend: ZecSend,
-    interactionSource: MutableInteractionSource,
+    pressAndHoldInteractionSource: MutableInteractionSource,
     onConfirmation: () -> Unit
 ) {
     Column(
@@ -269,7 +272,7 @@ private fun Confirmation(
 
         TimedButton(
             onClick = onConfirmation,
-            interactionSource = interactionSource
+            interactionSource = pressAndHoldInteractionSource
         ) {
             Text(text = stringResource(id = R.string.send_confirm))
         }

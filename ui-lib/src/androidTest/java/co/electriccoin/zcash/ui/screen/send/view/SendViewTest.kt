@@ -322,7 +322,7 @@ class SendViewTest : UiTestPrerequisites() {
                 ZcashTheme {
                     Send(
                         mySpendableBalance = ZatoshiFixture.new(),
-                        interactionSource = interactionSource,
+                        pressAndHoldInteractionSource = interactionSource,
                         goBack = {
                             onBackCount.incrementAndGet()
                         },
