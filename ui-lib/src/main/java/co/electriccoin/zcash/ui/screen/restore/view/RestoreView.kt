@@ -166,7 +166,7 @@ fun RestoreWallet(
 @OptIn(ExperimentalMaterial3Api::class)
 private fun RestoreTopAppBar(onBack: () -> Unit, onClear: () -> Unit) {
     TopAppBar(
-        title = { Text(text = stringResource(id = R.string.restore_header)) },
+        title = { Text(text = stringResource(id = R.string.restore_title)) },
         navigationIcon = {
             IconButton(
                 onClick = onBack
@@ -214,10 +214,6 @@ private fun RestoreMainContent(
                 bottom = paddingValues.calculateBottomPadding()
             )
     ) {
-        Header(
-            modifier = Modifier.padding(16.dp),
-            text = stringResource(id = R.string.restore_title)
-        )
         Body(
             modifier = Modifier.padding(16.dp),
             text = stringResource(id = R.string.restore_instructions)
@@ -324,7 +320,7 @@ private fun Autocomplete(
         }
 
         is ParseResult.Warn -> {
-            Pair(true, parseResult.suggestions)
+            return
         }
 
         else -> {

@@ -41,20 +41,20 @@ fun Chip(
             modifier = Modifier
                 .padding(8.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
                 text = (index.value + 1).toString(),
                 style = ZcashTheme.typography.chipIndex,
                 color = ZcashTheme.colors.chipIndex
             )
-            Spacer(modifier = Modifier.padding(horizontal = 2.dp, vertical = 0.dp))
             Text(
                 text = text,
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSecondary,
                 modifier = Modifier.testTag(CommonTag.CHIP)
             )
+            Spacer(modifier = Modifier.padding(horizontal = 2.dp, vertical = 0.dp))
         }
     }
 }
