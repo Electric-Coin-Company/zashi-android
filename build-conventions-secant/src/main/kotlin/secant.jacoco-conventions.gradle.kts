@@ -13,7 +13,8 @@ tasks {
         }
 
         sourceDirectories.setFrom("${project.projectDir}/src/main/kotlin")
-        val fileFilter = listOf("**/R.class", "**/R$*.class", "**/BuildConfig.*", "**/Manifest*.*", "**/*Test*.*", "android/**/*.*")
+        val fileFilter =
+            listOf("**/R.class", "**/R$*.class", "**/BuildConfig.*", "**/Manifest*.*", "**/*Test*.*", "android/**/*.*")
 
         classDirectories.setFrom(
             files("${buildDir}/intermediates/javac/debug").map {
