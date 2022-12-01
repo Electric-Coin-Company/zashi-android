@@ -9,7 +9,6 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.filters.MediumTest
-import cash.z.ecc.android.sdk.ext.collectWith
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -48,8 +47,8 @@ class ButtonTest {
         }
 
         launch {
-            testSetup.mutableActionExecuted.collectWith(this) {
-                if (!it) return@collectWith
+            testSetup.mutableActionExecuted.collect {
+                if (!it) return@collect
 
                 assertTrue { mark.elapsedNow() >= 2.seconds }
                 this.cancel()
