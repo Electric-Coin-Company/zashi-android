@@ -153,7 +153,7 @@ class ScreenshotTest : UiTestPrerequisites() {
             it.performClick()
         }
 
-        composeTestRule.onNodeWithText(resContext.getString(R.string.restore_header)).also {
+        composeTestRule.onNodeWithText(resContext.getString(R.string.restore_title)).also {
             it.assertExists()
         }
 

@@ -1,8 +1,9 @@
 <resources>
-    <string name="restore_header">Restore Wallet</string>
+    <string name="restore_header">Create a wallet</string>
+    <string name="restore_title">Wallet import</string>
     <string name="restore_back_content_description">Back</string>
     <string name="restore_button_clear">Clear</string>
-    <string name="restore_instructions">You will need to enter all 24 seed words. Don’t worry, we’ll autocomplete them as you type.</string>
+    <string name="restore_instructions">You can import your backed up wallet by entering your backup recovery phrase (aka seed phrase) now.</string>
 
     <string name="restore_warning_suggestions">This word is not in the seed phrase dictionary.  Please select the correct one from the suggestions.</string>
     <string name="restore_warning_no_suggestions">This word is not in the seed phrase dictionary.</string>
