@@ -18,7 +18,7 @@ To enhance security, [OpenID Connect](https://docs.github.com/en/actions/deploym
 * `FIREBASE_TEST_LAB_SERVICE_ACCOUNT` - Email address of Firebase Test Lab service account.
 * `FIREBASE_TEST_LAB_WORKLOAD_IDENTITY_PROVIDER` - Workload identity provider to generate temporary service account key.
 
-The Pull Request workflow supports testing of the app and libraries with both Emulator.wtf and Firebase Test Lab.  By default Emulator.wtf is used for library instrumentation tests, while Firebase Test Lab is used for a robo test.
+The Pull Request workflow supports testing of the app and libraries with both Emulator.wtf and Firebase Test Lab.  By default, Emulator.wtf is used for library instrumentation tests, while Firebase Test Lab is used for a robo test.
 
 To configure Firebase Test Lab, you'll need to enable the necessary Google Cloud APIs to enable automated access to Firebase Test Lab.
 * Configure Firebase Test Lab.  Google has [documentation for Jenkins](https://firebase.google.com/docs/test-lab/android/continuous).  Although we're using GitHub Actions, the initial requirements are the same.
