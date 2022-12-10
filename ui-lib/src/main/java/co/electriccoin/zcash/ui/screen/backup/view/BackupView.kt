@@ -27,7 +27,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -38,6 +37,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cash.z.ecc.sdk.fixture.PersistableWalletFixture
 import cash.z.ecc.sdk.model.PersistableWallet
 import co.electriccoin.zcash.spackle.model.Index
@@ -78,7 +79,7 @@ fun ComposablePreview() {
 /**
  * @param onComplete Callback when the user has completed the backup test.
  */
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLifecycleComposeApi::class)
 @Composable
 @Suppress("LongParameterList")
 fun BackupWallet(
@@ -89,7 +90,7 @@ fun BackupWallet(
     onComplete: () -> Unit,
     onChoicesChanged: ((choicesCount: Int) -> Unit)?
 ) {
-    val currentBackupStage = backupState.current.collectAsState().value
+    val currentBackupStage = backupState.current.collectAsStateWithLifecycle().value
 
     Scaffold(
         topBar = {
@@ -123,6 +124,7 @@ fun BackupWallet(
     }
 }
 
+@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 fun BackupMainContent(
     paddingValues: PaddingValues,
@@ -138,7 +140,7 @@ fun BackupMainContent(
                 bottom = paddingValues.calculateBottomPadding()
             )
     ) {
-        when (backupState.current.collectAsState().value) {
+        when (backupState.current.collectAsStateWithLifecycle().value) {
             is BackupStage.EducationOverview -> EducationOverview()
             is BackupStage.EducationRecoveryPhrase -> EducationRecoveryPhrase()
             is BackupStage.Seed -> SeedPhrase(wallet)
@@ -216,6 +218,7 @@ private data class TestChoice(val originalIndex: Index, val word: String)
  *  - It is possible for the same word to appear twice in the word choices
  *  - The test answer ordering is not randomized, to ensure it can never be in the correct order to start with
  */
+@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 private fun TestInProgress(
     splitSeedPhrase: List<String>,
@@ -233,7 +236,7 @@ private fun TestInProgress(
             @Suppress("MagicNumber")
             listOf(it[1], it[0], it[3], it[2])
         }
-    val currentSelectedTestChoice = selectedTestChoices.current.collectAsState().value
+    val currentSelectedTestChoice = selectedTestChoices.current.collectAsStateWithLifecycle().value
     if (currentSelectedTestChoice.size == testIndices.size) {
         if (currentSelectedTestChoice.all { splitSeedPhrase[it.key.value] == it.value }) {
             // the user got the test correct

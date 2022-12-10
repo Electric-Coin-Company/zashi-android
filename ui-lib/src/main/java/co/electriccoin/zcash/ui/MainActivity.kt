@@ -9,13 +9,13 @@ import androidx.annotation.VisibleForTesting
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
-import cash.z.ecc.android.sdk.ext.collectWith
 import co.electriccoin.zcash.ui.common.BindCompLocalProvider
 import co.electriccoin.zcash.ui.design.compat.FontCompat
 import co.electriccoin.zcash.ui.design.component.ConfigurationOverride
@@ -78,6 +78,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    @OptIn(ExperimentalLifecycleComposeApi::class)
     private fun setupUiContent() {
         setContent {
             Override(configurationOverrideFlow) {
@@ -88,7 +89,7 @@ class MainActivity : ComponentActivity() {
                             .fillMaxHeight()
                     ) {
                         BindCompLocalProvider {
-                            val isEnoughSpace by storageCheckViewModel.isEnoughSpace.collectAsState()
+                            val isEnoughSpace by storageCheckViewModel.isEnoughSpace.collectAsStateWithLifecycle()
                             if (isEnoughSpace == false) {
                                 WrapNotEnoughSpace()
                             } else {
@@ -98,18 +99,17 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             }
-        }
 
-        // Force collection to improve performance; sync can start happening while
-        // the user is going through the backup flow. Don't use eager collection in the view model,
-        // so that the collection is still tied to UI lifecycle.
-        walletViewModel.synchronizer.collectWith(lifecycleScope) {
+            // Force collection to improve performance; sync can start happening while
+            // the user is going through the backup flow.
+            walletViewModel.synchronizer.collectAsStateWithLifecycle()
         }
     }
 
+    @OptIn(ExperimentalLifecycleComposeApi::class)
     @Composable
     private fun MainContent() {
-        when (val secretState = walletViewModel.secretState.collectAsState().value) {
+        when (val secretState = walletViewModel.secretState.collectAsStateWithLifecycle().value) {
             SecretState.Loading -> {
                 // For now, keep displaying splash screen using condition above.
                 // In the future, we might consider displaying something different here.

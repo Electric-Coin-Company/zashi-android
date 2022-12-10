@@ -5,8 +5,9 @@ package co.electriccoin.zcash.ui.screen.home
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.spackle.EmulatorWtfUtil
 import co.electriccoin.zcash.spackle.FirebaseTestLabUtil
 import co.electriccoin.zcash.ui.BuildConfig
@@ -34,6 +35,7 @@ internal fun MainActivity.WrapHome(
     )
 }
 
+@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 internal fun WrapHome(
     activity: ComponentActivity,
@@ -49,13 +51,14 @@ internal fun WrapHome(
             AppUpdateCheckerImp.new()
         )
     }
-    val updateAvailable = checkUpdateViewModel.updateInfo.collectAsState().value.let {
+    val updateAvailable = checkUpdateViewModel.updateInfo.collectAsStateWithLifecycle().value.let {
         it?.appUpdateInfo != null && it.state == UpdateState.Prepared
     }
 
     val walletViewModel by activity.viewModels<WalletViewModel>()
 
-    val walletSnapshot = walletViewModel.walletSnapshot.collectAsState().value
+    val walletSnapshot = walletViewModel.walletSnapshot.collectAsStateWithLifecycle().value
+
     if (null == walletSnapshot) {
         // Display loading indicator
     } else {
@@ -67,9 +70,11 @@ internal fun WrapHome(
             !FirebaseTestLabUtil.isFirebaseTestLab(context) &&
             !EmulatorWtfUtil.isEmulatorWtf(context)
 
+        val transactionSnapshot = walletViewModel.transactionSnapshot.collectAsStateWithLifecycle().value
+
         Home(
             walletSnapshot,
-            walletViewModel.transactionSnapshot.collectAsState().value,
+            transactionSnapshot,
             goScan = goScan,
             goRequest = goRequest,
             goSend = goSend,

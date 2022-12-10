@@ -5,8 +5,9 @@ package co.electriccoin.zcash.ui.screen.warning
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.screen.warning.view.NotEnoughSpaceView
 import co.electriccoin.zcash.ui.screen.warning.viewmodel.StorageCheckViewModel
@@ -16,10 +17,11 @@ fun MainActivity.WrapNotEnoughSpace() {
     WrapNotEnoughSpace(this)
 }
 
+@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 private fun WrapNotEnoughSpace(activity: ComponentActivity) {
     val storageCheckViewModel by activity.viewModels<StorageCheckViewModel>()
-    val spaceRequiredToContinue by storageCheckViewModel.spaceRequiredToContinueMegabytes.collectAsState()
+    val spaceRequiredToContinue by storageCheckViewModel.spaceRequiredToContinueMegabytes.collectAsStateWithLifecycle()
 
     NotEnoughSpaceView(
         storageSpaceRequiredGigabytes = storageCheckViewModel.requiredStorageSpaceGigabytes,

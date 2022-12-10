@@ -7,7 +7,8 @@ import android.content.Intent
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cash.z.ecc.sdk.model.ZecRequest
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
@@ -22,13 +23,14 @@ internal fun MainActivity.WrapRequest(
     WrapRequest(this, goBack)
 }
 
+@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 private fun WrapRequest(
     activity: ComponentActivity,
     goBack: () -> Unit
 ) {
     val walletViewModel by activity.viewModels<WalletViewModel>()
-    val walletAddresses = walletViewModel.addresses.collectAsState().value
+    val walletAddresses = walletViewModel.addresses.collectAsStateWithLifecycle().value
 
     if (null == walletAddresses) {
         // Display loading indicator

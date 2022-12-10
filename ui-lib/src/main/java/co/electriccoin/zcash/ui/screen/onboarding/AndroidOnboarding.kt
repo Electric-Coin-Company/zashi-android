@@ -7,8 +7,9 @@ import android.content.Context
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cash.z.ecc.android.sdk.model.ZcashNetwork
 import cash.z.ecc.sdk.fixture.SeedPhraseFixture
 import cash.z.ecc.sdk.model.PersistableWallet
@@ -30,6 +31,7 @@ internal fun MainActivity.WrapOnboarding() {
     WrapOnboarding(this)
 }
 
+@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 internal fun WrapOnboarding(
     activity: ComponentActivity
@@ -46,7 +48,7 @@ internal fun WrapOnboarding(
         !EmulatorWtfUtil.isEmulatorWtf(applicationContext)
 
     // TODO [#383]: https://github.com/zcash/secant-android-wallet/issues/383
-    if (!onboardingViewModel.isImporting.collectAsState().value) {
+    if (!onboardingViewModel.isImporting.collectAsStateWithLifecycle().value) {
         Onboarding(
             onboardingState = onboardingViewModel.onboardingState,
             isDebugMenuEnabled = isDebugMenuEnabled,
@@ -93,6 +95,7 @@ internal fun WrapOnboarding(
     }
 }
 
+@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 private fun WrapRestore(activity: ComponentActivity) {
     val walletViewModel by activity.viewModels<WalletViewModel>()
@@ -101,7 +104,7 @@ private fun WrapRestore(activity: ComponentActivity) {
 
     val applicationContext = LocalContext.current.applicationContext
 
-    when (val completeWordList = restoreViewModel.completeWordList.collectAsState().value) {
+    when (val completeWordList = restoreViewModel.completeWordList.collectAsStateWithLifecycle().value) {
         CompleteWordSetState.Loading -> {
             // Although it might perform IO, it should be relatively fast.
             // Consider whether to display indeterminate progress here.

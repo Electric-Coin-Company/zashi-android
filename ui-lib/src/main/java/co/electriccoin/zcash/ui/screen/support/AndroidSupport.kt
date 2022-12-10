@@ -7,9 +7,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.screen.support.model.SupportInfo
@@ -26,13 +27,14 @@ internal fun MainActivity.WrapSupport(
     WrapSupport(this, goBack)
 }
 
+@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 internal fun WrapSupport(
     activity: ComponentActivity,
     goBack: () -> Unit
 ) {
     val viewModel by activity.viewModels<SupportViewModel>()
-    val supportMessage = viewModel.supportInfo.collectAsState().value
+    val supportMessage = viewModel.supportInfo.collectAsStateWithLifecycle().value
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 

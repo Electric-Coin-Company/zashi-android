@@ -24,7 +24,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -36,6 +35,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.GradientSurface
@@ -69,7 +70,7 @@ fun ComposablePreview() {
  * @param onImportWallet Callback when the user decides to import an existing wallet.
  * @param onCreateWallet Callback when the user decides to create a new wallet.
  */
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLifecycleComposeApi::class)
 @Composable
 fun Onboarding(
     onboardingState: OnboardingState,
@@ -78,7 +79,7 @@ fun Onboarding(
     onCreateWallet: () -> Unit,
     onFixtureWallet: () -> Unit
 ) {
-    val currentStage = onboardingState.current.collectAsState().value
+    val currentStage = onboardingState.current.collectAsStateWithLifecycle().value
     Scaffold(
         topBar = {
             OnboardingTopAppBar(onboardingState, isDebugMenuEnabled, onFixtureWallet)
@@ -95,13 +96,13 @@ fun Onboarding(
 }
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLifecycleComposeApi::class)
 private fun OnboardingTopAppBar(
     onboardingState: OnboardingState,
     isDebugMenuEnabled: Boolean,
     onFixtureWallet: () -> Unit
 ) {
-    val currentStage = onboardingState.current.collectAsState().value
+    val currentStage = onboardingState.current.collectAsStateWithLifecycle().value
 
     TopAppBar(
         title = { Text(text = stringResource(id = R.string.app_name)) },
@@ -149,6 +150,7 @@ private fun DebugMenu(onFixtureWallet: () -> Unit) {
  * @param onImportWallet Callback when the user decides to import an existing wallet.
  * @param onCreateWallet Callback when the user decides to create a new wallet.
  */
+@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 fun OnboardingMainContent(
     paddingValues: PaddingValues,
@@ -157,7 +159,7 @@ fun OnboardingMainContent(
     Column(
         Modifier.padding(top = paddingValues.calculateTopPadding())
     ) {
-        val onboardingStage = onboardingState.current.collectAsState().value
+        val onboardingStage = onboardingState.current.collectAsStateWithLifecycle().value
 
         when (onboardingStage) {
             OnboardingStage.ShieldedByDefault -> ShieldedByDefault(paddingValues)

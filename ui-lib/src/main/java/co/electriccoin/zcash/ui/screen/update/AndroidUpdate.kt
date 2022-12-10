@@ -7,9 +7,10 @@ import androidx.annotation.VisibleForTesting
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.screen.home.viewmodel.CheckUpdateViewModel
@@ -26,6 +27,7 @@ internal fun MainActivity.WrapCheckForUpdate() {
     WrapCheckForUpdate(this)
 }
 
+@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 private fun WrapCheckForUpdate(activity: ComponentActivity) {
     // TODO [#382]: https://github.com/zcash/secant-android-wallet/issues/382
@@ -38,7 +40,7 @@ private fun WrapCheckForUpdate(activity: ComponentActivity) {
         )
     }
 
-    val updateInfo = checkUpdateViewModel.updateInfo.collectAsState().value
+    val updateInfo = checkUpdateViewModel.updateInfo.collectAsStateWithLifecycle().value
 
     updateInfo?.let {
         if (it.appUpdateInfo != null && it.state == UpdateState.Prepared) {
@@ -53,6 +55,7 @@ private fun WrapCheckForUpdate(activity: ComponentActivity) {
     }
 }
 
+@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 private fun WrapUpdate(
     activity: ComponentActivity,
@@ -69,7 +72,7 @@ private fun WrapUpdate(
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
-    val updateInfo = viewModel.updateInfo.collectAsState().value
+    val updateInfo = viewModel.updateInfo.collectAsStateWithLifecycle().value
 
     when (updateInfo.state) {
         UpdateState.Done, UpdateState.Canceled -> {
