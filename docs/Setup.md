@@ -112,12 +112,12 @@ Debug builds are up to 10x slower due to JIT being disabled by Android's runtime
 
 "mainnet" (main network) and "testnet" (test network) are terms used in the blockchain ecosystem to describe different blockchain networks.  Mainnet is responsible for executing actual transactions within the network and storing them on the blockchain. In contrast, the testnet provides an alternative environment that mimics the mainnet's functionality to allow developers to build and test projects without needing to facilitate live transactions or the use of cryptocurrencies, for example.
 
-Currently, we support 4 build variants for the `app` module: `zcashmainnetDebug`, `zcashtestnetDebug`, `zcashmainnetRelease`, `zcashtestnetRelease`. Library modules like `ui-lib`, `test-lib`, etc. support only `debug` and `release` variants. UI test modules like `ui-integration-test`, `ui-screenshot-test` and `ui-benchmark-test` provide variants extended by the network dimension similarly as app module does. Moreover, the `ui-benchmark-test` introduces a `benchmark` build type which results in 2 extra variants (`zcashmainnetBenchmark`, `zcashtestnetBenchmark`), which are supposed to be used only for benchmarking. 
+Currently, we support 4 build variants for the `app` module: `zcashmainnetDebug`, `zcashtestnetDebug`, `zcashmainnetRelease`, `zcashtestnetRelease`. Library modules like `ui-lib`, `test-lib`, etc. support only `debug` and `release` variants. UI test modules like `ui-integration-test`, `ui-screenshot-test` provide variants extended by the network dimension similarly as app module does. Moreover, the `ui-benchmark-test` introduces a `benchmark` build type, which is supposed to be used only for benchmarking. 
 
 App module build variants:
 - `zcashtestnetDebug` - build variant is built upon testnet network and with debug build type. You usually use this variant for development
 - `zcashmainnetDebug` - same as previous, but is built upon mainnet network
-- `zcashmainnetRelease` and `zcashtestnetRelease` - are usually used by our CI jobs to prepare binaries for testing and releasing to the Google Play store
+- `zcashmainnetRelease` and `zcashtestnetRelease` - are usually used by our CI jobs to prepare binaries for testing and releasing to the Google Play Store
 
 ### Included builds
 This section is optional.
@@ -159,7 +159,7 @@ For Continuous Integration, see [CI.md](CI.md).  The rest of this section is reg
     1. If you are an Electric Coin Co team member: We are still setting up a process for this, because emulator.wtf does not yet support individual API tokens
     1. If you are an open source contributor: Visit http://emulator.wtf and request an API key
 1. Set the emulator.wtf API key as a global Gradle property `ZCASH_EMULATOR_WTF_API_KEY` under `~/.gradle/gradle.properties`
-1. Run the Gradle task `./gradlew testDebugWithEmulatorWtf :app:testZcashmainnetDebugWithEmulatorWtf :ui-integration-test:testZcashmainnetDebugWithEmulatorWtf :ui-screenshot-test:testZcashmainnetDebugWithEmulatorWtf` (emulator.wtf tasks do build the app, so you don't need to build them beforehand)
+1. Run the Gradle task `./gradlew testDebugWithEmulatorWtf :app:testZcashmainnetDebugWithEmulatorWtf :ui-integration-test:testDebugWithEmulatorWtf :ui-screenshot-test:testDebugWithEmulatorWtf` (emulator.wtf tasks do build the app, so you don't need to build them beforehand)
 
 ## Testnet funds
 

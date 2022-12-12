@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="ui-benchmark-test:connectedZcashmainnetBenchmarkAndroidTest" type="AndroidTestRunConfigurationType" factoryName="Android Instrumented Tests">
+  <configuration default="false" name="ui-benchmark-test:connectedBenchmarkAndroidTest" type="AndroidTestRunConfigurationType" factoryName="Android Instrumented Tests">
     <module name="zcash-android-app.ui-benchmark-test" />
     <option name="TESTING_TYPE" value="0" />
     <option name="METHOD_NAME" value="" />
