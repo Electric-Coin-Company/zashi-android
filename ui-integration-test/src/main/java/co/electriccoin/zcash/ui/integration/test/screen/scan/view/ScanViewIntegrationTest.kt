@@ -6,10 +6,8 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.test.filters.LargeTest
 import co.electriccoin.zcash.test.UiTestPrerequisites
-import co.electriccoin.zcash.ui.integration.R
 import co.electriccoin.zcash.ui.integration.test.common.IntegrationTestingActivity
 import co.electriccoin.zcash.ui.integration.test.common.getPermissionPositiveButtonUiObject
-import co.electriccoin.zcash.ui.integration.test.common.getStringResource
 import co.electriccoin.zcash.ui.screen.scan.ScanTag
 import co.electriccoin.zcash.ui.screen.scan.model.ScanState
 import org.junit.Assert
@@ -38,7 +36,7 @@ class ScanViewIntegrationTest : UiTestPrerequisites() {
         restorationTester.setContent {
             testSetup.getDefaultContent()
         }
-getStringResource(co.electriccoin.zcash.ui.R.string.about_title)
+
         assertEquals(testSetup.getScanState(), ScanState.Permission)
 
         testSetup.grantPermission()
