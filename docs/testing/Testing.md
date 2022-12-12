@@ -30,3 +30,41 @@ This section provides information about available benchmark tests integrated in 
 We provide dedicated benchmark test module `ui-benchamark-test` for this. If you want to run these benchmark tests against our application, make sure you have a physical device connected with Android SDK level 29, at least. Select `benchmark` build variant for this module. Make sure that other modules are set to release variants of their available build variants too, as benchmarking is only allowed against minified build variants. The benchmark tests can be run with Android Studio run configuration `ui-benchmark-test:connectedBenchmarkAndroidTest` with having the Gradle property `IS_SIGN_RELEASE_BUILD_WITH_DEBUG_KEY` set to true. Running the benchmark test this way automatically provides benchmarking results in Run panel. Or you can run the tests manually from the terminal with `./gradlew connectedBenchmarkAndroidTest -PIS_SIGN_RELEASE_BUILD_WITH_DEBUG_KEY=true` and analyze results with Android Studio's Profiler or [Perfetto](https://ui.perfetto.dev/) tool, as described in this Android [documentation](https://developer.android.com/topic/performance/benchmarking/macrobenchmark-overview#access-trace).
 
 **Note**: We've enabled benchmarking also for emulators, although it's always better to run the tests on a real physical device. Emulator benchmark improvements might not carry over to a real user's experience (or even regress real device performance).
+
+### Referential benchmark tests results
+Every few months, or before a major app release, we run and compare benchmark test results to avoid making the app's mechanisms significantly slower.
+
+**Note**: If possible, run the benchmark tests on a physical device with sufficient empty disk space, connected to the
+internet and charged or plugged-in to a charger. It's always better to restart the device before approaching to
+running the benchmark tests. Also, please, ensure you're running it on the latest main branch
+commits of that date. Generate tests results with the Android Studio run configuration
+`ui-benchmark-test:connectedBenchmarkAndroidTest` and gather results from the Run panel.
+
+#### Dec 7, 2022:
+
+- APP version: `0.1 (1)`
+- SDK version: `1.10.0-beta01-SNAPSHOT`
+- Git branch: `682-testing-doc-update`
+- Device:
+    - Pixel 6 - Android 13:
+      ```
+      Starting 1 tests on Pixel 6 - 13
+
+      BasicStartupBenchmark_startup
+      timeToFullDisplayMs   min 288,1,   median 305,6,   max 339,1
+      timeToInitialDisplayMs   min 288,1,   median 305,6,   max 339,1
+      Traces: Iteration 0 1 2 3 4
+      
+      BUILD SUCCESSFUL in 32s
+      ```
+    - Pixel 3a - Android 12:
+      ```
+      Starting 1 tests on Pixel 3a - 12
+
+      BasicStartupBenchmark_startup
+      timeToFullDisplayMs   min 708.3,   median 763.1,   max 770.9
+      timeToInitialDisplayMs   min 708.3,   median 763.1,   max 770.9
+      Traces: Iteration 0 1 2 3 4
+      
+      BUILD SUCCESSFUL in 41s
+      ```
