@@ -18,6 +18,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -29,6 +30,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
@@ -77,8 +79,7 @@ class WalletCoordinator(context: Context) {
         class Lockout(val id: UUID) : InternalSynchronizerStatus()
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    private val synchronizerOrLockoutId: Flow<InternalSynchronizerStatus> = persistableWallet
+    private val synchronizerOrLockoutId: Flow<Flow<InternalSynchronizerStatus>> = persistableWallet
         .combine(synchronizerLockoutId) { persistableWallet: PersistableWallet?, lockoutId: UUID? ->
             if (null != lockoutId) { // this one needs to come first
                 flowOf(InternalSynchronizerStatus.Lockout(lockoutId))
@@ -86,25 +87,24 @@ class WalletCoordinator(context: Context) {
                 flowOf(InternalSynchronizerStatus.NoWallet)
             } else {
                 callbackFlow<InternalSynchronizerStatus.Available> {
-                    val synchronizer = synchronizerMutex.withLock {
-                        val synchronizer = Synchronizer.new(
+                    val closeableSynchronizer = synchronizerMutex.withLock {
+                        Synchronizer.new(
                             context = context,
                             zcashNetwork = persistableWallet.network,
                             lightWalletEndpoint = LightWalletEndpoint.defaultForNetwork(persistableWallet.network),
                             birthday = persistableWallet.birthday,
                             seed = persistableWallet.seedPhrase.toByteArray()
                         )
-                        synchronizer.start(walletScope)
                     }
 
-                    trySend(InternalSynchronizerStatus.Available(synchronizer))
+                    trySend(InternalSynchronizerStatus.Available(closeableSynchronizer))
                     awaitClose {
-                        Twig.info { "Closing flow and stopping synchronizer" }
-                        synchronizer.stop()
+                        Twig.info { "Closing flow and synchronizer" }
+                        closeableSynchronizer.close()
                     }
                 }
             }
-        }.flatMapLatest { it }
+        }
 
     /**
      * Synchronizer for the Zcash SDK. Emits null until a wallet secret is persisted.
@@ -114,6 +114,7 @@ class WalletCoordinator(context: Context) {
      */
     @OptIn(ExperimentalCoroutinesApi::class)
     val synchronizer: StateFlow<Synchronizer?> = synchronizerOrLockoutId
+        .flatMapLatest { it }
         .map {
             when (it) {
                 is InternalSynchronizerStatus.Available -> it.synchronizer
@@ -152,6 +153,7 @@ class WalletCoordinator(context: Context) {
      * Resets persisted data in the SDK, but preserves the wallet secret.  This will cause the
      * synchronizer to emit a new instance.
      */
+    @OptIn(FlowPreview::class)
     fun resetSdk() {
         walletScope.launch {
             lockoutMutex.withLock {
@@ -159,6 +161,7 @@ class WalletCoordinator(context: Context) {
                 synchronizerLockoutId.value = lockoutId
 
                 synchronizerOrLockoutId
+                    .flatMapConcat { it }
                     .filterIsInstance<InternalSynchronizerStatus.Lockout>()
                     .filter { it.id == lockoutId }
                     .onFirst {
@@ -179,6 +182,7 @@ class WalletCoordinator(context: Context) {
     /**
      * Wipes the wallet.  Will cause the app-wide synchronizer to be reset with a new instance.
      */
+    @OptIn(FlowPreview::class)
     fun wipeEntireWallet() {
         walletScope.launch {
             lockoutMutex.withLock {
@@ -186,6 +190,7 @@ class WalletCoordinator(context: Context) {
                 synchronizerLockoutId.value = lockoutId
 
                 synchronizerOrLockoutId
+                    .flatMapConcat { it }
                     .filterIsInstance<InternalSynchronizerStatus.Lockout>()
                     .filter { it.id == lockoutId }
                     .onFirst {
