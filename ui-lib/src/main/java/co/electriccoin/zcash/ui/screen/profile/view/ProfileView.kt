@@ -127,7 +127,8 @@ private fun ProfileContents(
             style = MaterialTheme.typography.headlineLarge,
             color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier.align(Alignment.CenterHorizontally),
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 1
         )
         PrimaryButton(onClick = onAddressDetails, text = stringResource(id = R.string.profile_see_address_details))
         if (isAddressBookEnabled) {
