@@ -13,7 +13,7 @@ dependencies {
 }
 
 tasks {
-    val editorConfigFile = rootProject.file(".editorconfig")
+    val editorConfigFile = rootProject.file("tools/.editorconfig")
     val ktlintArgs = listOf("**/src/**/*.kt", "!**/build/**.kt", "--editorconfig=$editorConfigFile")
 
     register("ktlint", org.gradle.api.tasks.JavaExec::class) {

@@ -1,0 +1,5 @@
+# Opt-out from missing-trailing-comma rule enabled by default
+root = true
+[*.{kt,kts}]
+ktlint_standard_trailing-comma-on-call-site = disabled
+ktlint_standard_trailing-comma-on-declaration-site = disabled
