@@ -128,21 +128,21 @@ fun RestoreWallet(
             Scaffold(topBar = {
                 RestoreTopAppBar(onBack = onBack, onClear = { userWordList.set(emptyList()) })
             }, bottomBar = {
-                    Column(Modifier.verticalScroll(rememberScrollState())) {
-                        Warn(parseResult)
-                        Autocomplete(parseResult = parseResult) {
-                            textState = ""
-                            userWordList.append(listOf(it))
-                            focusRequester.requestFocus()
-                        }
-                        NextWordTextField(
-                            modifier = Modifier.focusRequester(focusRequester),
-                            parseResult = parseResult,
-                            text = textState,
-                            setText = { textState = it }
-                        )
+                Column(Modifier.verticalScroll(rememberScrollState())) {
+                    Warn(parseResult)
+                    Autocomplete(parseResult = parseResult) {
+                        textState = ""
+                        userWordList.append(listOf(it))
+                        focusRequester.requestFocus()
                     }
-                }) { paddingValues ->
+                    NextWordTextField(
+                        modifier = Modifier.focusRequester(focusRequester),
+                        parseResult = parseResult,
+                        text = textState,
+                        setText = { textState = it }
+                    )
+                }
+            }) { paddingValues ->
                 RestoreMainContent(
                     paddingValues = paddingValues,
                     userWordList = userWordList,
