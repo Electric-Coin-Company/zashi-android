@@ -23,8 +23,6 @@ data class WalletAddresses(
                 synchronizer.getTransparentAddress(Account.DEFAULT)
             )
 
-            // TODO [#161]: Pending SDK support, fix providing correct values for the unified
-            // TODO [#161]: https://github.com/zcash/secant-android-wallet/issues/161
             return WalletAddresses(
                 unified = unifiedAddress,
                 sapling = saplingAddress,
