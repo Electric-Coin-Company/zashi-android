@@ -476,7 +476,7 @@ private fun homeScreenshots(resContext: Context, tag: String, composeTestRule: A
 
 private fun profileScreenshots(resContext: Context, tag: String, composeTestRule: AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>) {
     // Note: increased timeout limit to satisfy time needed for SDK initialization
-    composeTestRule.waitUntil(2_000) { composeTestRule.activity.walletViewModel.addresses.value != null }
+    composeTestRule.waitUntil(3_000) { composeTestRule.activity.walletViewModel.addresses.value != null }
 
     composeTestRule.onNode(hasText(resContext.getString(R.string.profile_title))).also {
         it.assertExists()
