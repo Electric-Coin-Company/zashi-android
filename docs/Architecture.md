@@ -24,13 +24,13 @@ The main entrypoints of the application are:
 # Modules
 The logical components of the app are implemented as a number of Gradle modules.
 
- * `app` — Compiles all of the modules together into the final application.  This module contains minimal actual code.  Note that the Java package structure for this module is under `co.electriccoin.zcash.app` while the Android package name is `co.electriccoin.zcash`.
+ * `app` — Compiles all the modules together into the final application.  This module contains minimal actual code.  Note that the Java package structure for this module is under `co.electriccoin.zcash.app` while the Android package name is `co.electriccoin.zcash`.
  * `build-info-lib` — Collects information from the build environment (e.g. Git SHA, Git commit count) and compiles them into the application.  Can also be used for injection of API keys or other secrets.
  * crash — For collecting and reporting exceptions and crashes
      * `crash-lib` — Common crash collection logic for Kotlin and JVM.  This is not fully-featured by itself, but the long-term plan is multiplatform support.
      * `crash-android-lib` — Android-specific crash collection logic, built on top of the common and JVM implementation in `crash-lib`
  * ui
-     * `ui-design` — Contains UI theme elements only. Besides offering modularization, this allows for hiding of some Material Design components behind our own custom components.
+     * `ui-design` — Contains UI theme elements only. Besides offering modularization, this allows for hide of some Material Design components behind our own custom components.
      * `ui-lib` — User interface that the user interacts with.  This contains 99% of the UI code, along with localizations, icons, and other assets.
 * ui-test
     * `ui-integration-test` — Is a pure test module dedicated for integration tests only. It has Android Test Orchestrator turned on — it allows us to run each of our tests within its own invocation of Instrumentation, and thus brings us benefits for the testing environment (minimal shared state, crashes are isolated, permissions are reset).

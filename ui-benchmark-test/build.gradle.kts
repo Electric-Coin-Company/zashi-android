@@ -13,16 +13,8 @@ android {
         testInstrumentationRunner = "co.electriccoin.zcash.test.ZcashUiTestRunner"
         // to enable benchmarking for emulators, although only a physical device gives real results
         testInstrumentationRunnerArguments["androidx.benchmark.suppressErrors"] = "EMULATOR"
-    }
-
-    flavorDimensions.add("network")
-    productFlavors {
-        create("zcashtestnet") {
-            dimension = "network"
-        }
-        create("zcashmainnet") {
-            dimension = "network"
-        }
+        // To simplify module variants, we assume to run benchmarking against mainnet only
+        missingDimensionStrategy("network", "zcashmainnet")
     }
 
     buildTypes {
