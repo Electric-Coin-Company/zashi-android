@@ -17,6 +17,7 @@ import co.electriccoin.zcash.ui.preference.StandardPreferenceSingleton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.awaitClose
@@ -86,21 +87,20 @@ class WalletCoordinator(context: Context) {
                 flowOf(InternalSynchronizerStatus.NoWallet)
             } else {
                 callbackFlow<InternalSynchronizerStatus.Available> {
-                    val synchronizer = synchronizerMutex.withLock {
-                        val synchronizer = Synchronizer.new(
+                    val closeableSynchronizer = synchronizerMutex.withLock {
+                        Synchronizer.new(
                             context = context,
                             zcashNetwork = persistableWallet.network,
                             lightWalletEndpoint = LightWalletEndpoint.defaultForNetwork(persistableWallet.network),
                             birthday = persistableWallet.birthday,
                             seed = persistableWallet.seedPhrase.toByteArray()
                         )
-                        synchronizer.start(walletScope)
                     }
 
-                    trySend(InternalSynchronizerStatus.Available(synchronizer))
+                    trySend(InternalSynchronizerStatus.Available(closeableSynchronizer))
                     awaitClose {
-                        Twig.info { "Closing flow and stopping synchronizer" }
-                        synchronizer.stop()
+                        Twig.info { "Closing flow and synchronizer" }
+                        closeableSynchronizer.close()
                     }
                 }
             }
@@ -112,11 +112,9 @@ class WalletCoordinator(context: Context) {
      * Note that this synchronizer is closed as soon as it stops being collected.  For UI use
      * cases, see [WalletViewModel].
      */
-    @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
+    @OptIn(ExperimentalCoroutinesApi::class)
     val synchronizer: StateFlow<Synchronizer?> = synchronizerOrLockoutId
-        .flatMapLatest {
-            it
-        }
+        .flatMapLatest { it }
         .map {
             when (it) {
                 is InternalSynchronizerStatus.Available -> it.synchronizer

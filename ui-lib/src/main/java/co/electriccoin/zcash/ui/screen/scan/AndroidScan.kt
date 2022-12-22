@@ -6,9 +6,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
@@ -29,6 +30,7 @@ internal fun MainActivity.WrapScanValidator(
     )
 }
 
+@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 private fun WrapScanValidator(
     activity: ComponentActivity,
@@ -37,7 +39,8 @@ private fun WrapScanValidator(
 ) {
     val walletViewModel by activity.viewModels<WalletViewModel>()
 
-    val synchronizer = walletViewModel.synchronizer.collectAsState().value
+    val synchronizer = walletViewModel.synchronizer.collectAsStateWithLifecycle().value
+
     if (synchronizer == null) {
         // Display loading indicator
     } else {

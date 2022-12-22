@@ -5,7 +5,8 @@ package co.electriccoin.zcash.ui.screen.seed
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.screen.backup.copyToClipboard
 import co.electriccoin.zcash.ui.screen.home.viewmodel.SecretState
@@ -19,6 +20,7 @@ internal fun MainActivity.WrapSeed(
     WrapSeed(this, goBack)
 }
 
+@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 private fun WrapSeed(
     activity: ComponentActivity,
@@ -27,14 +29,15 @@ private fun WrapSeed(
     val walletViewModel by activity.viewModels<WalletViewModel>()
 
     val persistableWallet = run {
-        val secretState = walletViewModel.secretState.collectAsState().value
+        val secretState = walletViewModel.secretState.collectAsStateWithLifecycle().value
         if (secretState is SecretState.Ready) {
             secretState.persistableWallet
         } else {
             null
         }
     }
-    val synchronizer = walletViewModel.synchronizer.collectAsState().value
+    val synchronizer = walletViewModel.synchronizer.collectAsStateWithLifecycle().value
+
     if (null == synchronizer || null == persistableWallet) {
         // Display loading indicator
     } else {
