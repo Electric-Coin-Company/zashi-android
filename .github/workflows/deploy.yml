@@ -52,7 +52,7 @@ jobs:
           GOOGLE_PLAY_SERVICE_ACCOUNT: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT }}
           GOOGLE_PLAY_WORKLOAD_IDENTITY_PROVIDER: ${{ secrets.GOOGLE_PLAY_WORKLOAD_IDENTITY_PROVIDER }}
         if: "${{ env.GOOGLE_PLAY_CLOUD_PROJECT != '' && env.GOOGLE_PLAY_SERVICE_ACCOUNT != '' && env.GOOGLE_PLAY_WORKLOAD_IDENTITY_PROVIDER != '' }}"
-        run: echo "::set-output name=defined::true"
+        run: echo "defined=true" >> $GITHUB_OUTPUT
 
   build_and_deploy:
     if: needs.check_secrets.outputs.has-secrets == 'true'

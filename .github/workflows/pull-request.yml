@@ -59,7 +59,7 @@ jobs:
           FIREBASE_TEST_LAB_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_TEST_LAB_SERVICE_ACCOUNT }}
           FIREBASE_TEST_LAB_WORKLOAD_IDENTITY_PROVIDER: ${{ secrets.FIREBASE_TEST_LAB_WORKLOAD_IDENTITY_PROVIDER }}
         if: "${{ env.FIREBASE_TEST_LAB_PROJECT != '' && env.FIREBASE_TEST_LAB_SERVICE_ACCOUNT != '' && env.FIREBASE_TEST_LAB_WORKLOAD_IDENTITY_PROVIDER != '' }}"
-        run: echo "::set-output name=defined::true"
+        run: echo "defined=true" >> $GITHUB_OUTPUT
 
   check_emulator_wtf_secrets:
     runs-on: ubuntu-latest
@@ -70,7 +70,7 @@ jobs:
         env:
           EMULATOR_WTF_API_KEY: ${{ secrets.EMULATOR_WTF_API_KEY }}
         if: "${{ env.EMULATOR_WTF_API_KEY != '' }}"
-        run: echo "::set-output name=defined::true"
+        run: echo "defined=true" >> $GITHUB_OUTPUT
 
   static_analysis_detekt:
     needs: prime_cache
@@ -396,7 +396,7 @@ jobs:
           zip -r ${MAPPINGS_ZIP_PATH} . -i *app/build/outputs/mapping/*/mapping.txt
       - name: Upload Artifacts
         uses: actions/upload-artifact@83fd05a356d7e2593de66fc9913b3002723633cb
-        timeout-minutes: 1
+        timeout-minutes: 2
         with:
           name: Binaries
           path: ~/artifacts
