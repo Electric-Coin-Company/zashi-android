@@ -20,13 +20,13 @@ runs:
         echo "org.gradle.daemon=false" >> ~/.gradle/gradle.properties
     - name: Gradle Wrapper Cache
       id: gradle-wrapper-cache
-      uses: actions/cache@c17f4bf4666a8001b1a45c09eb7a485c41aa64c3
+      uses: actions/cache@4723a57e26efda3a62cbde1812113b730952852d
       with:
         path: ~/.gradle/wrapper
         key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles(format('{0}{1}', github.workspace, '/gradle/wrapper/gradle-wrapper.properties')) }}
     - name: Gradle Dependency Cache
       id: gradle-dependency-cache
-      uses: actions/cache@c17f4bf4666a8001b1a45c09eb7a485c41aa64c3
+      uses: actions/cache@4723a57e26efda3a62cbde1812113b730952852d
       with:
         path: ~/.gradle/caches/modules-2
         key: ${{ runner.os }}-gradle-deps-${{ hashFiles(format('{0}{1}', github.workspace, '/gradle.properties')) }}
