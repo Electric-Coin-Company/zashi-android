@@ -122,6 +122,7 @@ private fun ProfileContents(
         QrCode(data = walletAddress.address, DEFAULT_QR_CODE_SIZE, Modifier.align(Alignment.CenterHorizontally))
         Body(text = stringResource(id = R.string.wallet_address_unified), Modifier.align(Alignment.CenterHorizontally))
         // TODO [#163]: Ellipsize center of the string
+        // TODO [#163]: https://github.com/zcash/secant-android-wallet/issues/163
         Text(
             text = walletAddress.address,
             style = MaterialTheme.typography.headlineLarge,
