@@ -20,6 +20,7 @@ class HomeTestSetup(
     private val onSupportCount = AtomicInteger(0)
     private val onReceiveCount = AtomicInteger(0)
     private val onSendCount = AtomicInteger(0)
+    private val onHistoryCount = AtomicInteger(0)
 
     fun getOnAboutCount(): Int {
         composeTestRule.waitForIdle()
@@ -49,6 +50,11 @@ class HomeTestSetup(
     fun getOnSendCount(): Int {
         composeTestRule.waitForIdle()
         return onSendCount.get()
+    }
+
+    fun getOnHistoryCount(): Int {
+        composeTestRule.waitForIdle()
+        return onHistoryCount.get()
     }
 
     fun getWalletSnapshot(): WalletSnapshot {
@@ -85,6 +91,9 @@ class HomeTestSetup(
             },
             goSend = {
                 onSendCount.incrementAndGet()
+            },
+            goHistory = {
+                onHistoryCount.incrementAndGet()
             },
             resetSdk = {},
             drawerState = drawerValues.drawerState,

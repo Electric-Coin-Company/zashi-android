@@ -12,6 +12,7 @@ import co.electriccoin.zcash.ui.NavigationArguments.SEND_AMOUNT
 import co.electriccoin.zcash.ui.NavigationArguments.SEND_MEMO
 import co.electriccoin.zcash.ui.NavigationArguments.SEND_RECIPIENT_ADDRESS
 import co.electriccoin.zcash.ui.NavigationTargets.ABOUT
+import co.electriccoin.zcash.ui.NavigationTargets.HISTORY
 import co.electriccoin.zcash.ui.NavigationTargets.HOME
 import co.electriccoin.zcash.ui.NavigationTargets.RECEIVE
 import co.electriccoin.zcash.ui.NavigationTargets.REQUEST
@@ -23,6 +24,7 @@ import co.electriccoin.zcash.ui.NavigationTargets.SUPPORT
 import co.electriccoin.zcash.ui.NavigationTargets.WALLET_ADDRESS_DETAILS
 import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
 import co.electriccoin.zcash.ui.configuration.RemoteConfig
+import co.electriccoin.zcash.ui.history.WrapHistory
 import co.electriccoin.zcash.ui.screen.about.WrapAbout
 import co.electriccoin.zcash.ui.screen.address.WrapWalletAddresses
 import co.electriccoin.zcash.ui.screen.home.WrapHome
@@ -54,6 +56,7 @@ internal fun MainActivity.Navigation() {
                 goAbout = { navController.navigateJustOnce(ABOUT) },
                 goReceive = { navController.navigateJustOnce(RECEIVE) },
                 goSend = { navController.navigateJustOnce(SEND) },
+                goHistory = { navController.navigateJustOnce(HISTORY) }
             )
 
             if (ConfigurationEntries.IS_APP_UPDATE_CHECK_ENABLED.getValue(RemoteConfig.current)) {
@@ -128,6 +131,10 @@ internal fun MainActivity.Navigation() {
                 goBack = { navController.popBackStackJustOnce(SCAN) }
             )
         }
+
+        composable(HISTORY) {
+            WrapHistory(goBack = { navController.navigateUp() })
+        }
     }
 }
 
@@ -177,6 +184,8 @@ object NavigationTargets {
     const val RECEIVE = "receive"
 
     const val REQUEST = "request"
+
+    const val HISTORY = "history"
 
     const val SEND = "send"
 

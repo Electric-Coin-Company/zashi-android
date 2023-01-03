@@ -41,6 +41,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.filterNotNull
@@ -172,6 +173,20 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
             viewModelScope,
             SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
             null
+        )
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val transactionHistory = synchronizer
+        .flatMapLatest {
+            if (null == it) {
+                flowOf(emptyList())
+            } else {
+                it.toTransactionHistory()
+            }
+        }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+            emptyList()
         )
 
     /**
@@ -347,3 +362,4 @@ private fun Synchronizer.toWalletSnapshot() =
             flows[6] as SynchronizerError?
         )
     }
+private fun Synchronizer.toTransactionHistory() = transactions.distinctUntilChanged()

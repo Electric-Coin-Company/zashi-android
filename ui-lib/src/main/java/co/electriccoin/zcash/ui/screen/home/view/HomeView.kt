@@ -13,8 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -69,6 +67,7 @@ import co.electriccoin.zcash.ui.design.component.BodyWithFiatCurrencySymbol
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.HeaderWithZecIcon
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
+import co.electriccoin.zcash.ui.design.component.TertiaryButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 import co.electriccoin.zcash.ui.screen.home.HomeTag
@@ -97,6 +96,7 @@ private fun ComposablePreview() {
                 goAbout = {},
                 goReceive = {},
                 goSend = {},
+                goHistory = {},
                 resetSdk = {},
                 drawerState = rememberDrawerState(DrawerValue.Closed),
                 scope = rememberCoroutineScope()
@@ -121,6 +121,7 @@ fun Home(
     goAbout: () -> Unit,
     goReceive: () -> Unit,
     goSend: () -> Unit,
+    goHistory: () -> Unit,
     resetSdk: () -> Unit,
     drawerState: DrawerState,
     scope: CoroutineScope
@@ -153,6 +154,7 @@ fun Home(
                     isCircularProgressBarEnabled = isCircularProgressBarEnabled,
                     goReceive = goReceive,
                     goSend = goSend,
+                    goHistory = goHistory,
                     modifier = Modifier.padding(
                         top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
                         bottom = paddingValues.calculateBottomPadding() + ZcashTheme.dimens.spacingDefault,
@@ -292,7 +294,7 @@ private fun HomeDrawer(
     }
 }
 
-@Suppress("LongParameterList")
+@Suppress("LongParameterList", "UNUSED_PARAMETER")
 @Composable
 private fun HomeMainContent(
     walletSnapshot: WalletSnapshot,
@@ -303,6 +305,7 @@ private fun HomeMainContent(
     isCircularProgressBarEnabled: Boolean,
     goReceive: () -> Unit,
     goSend: () -> Unit,
+    goHistory: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -339,7 +342,7 @@ private fun HomeMainContent(
             )
         )
 
-        History(transactionHistory)
+        TertiaryButton(onClick = goHistory, text = stringResource(R.string.home_button_history))
 
         if (isKeepScreenOnDuringSync == true && walletSnapshot.status == Synchronizer.Status.SYNCING) {
             DisableScreenTimeout()
@@ -446,28 +449,6 @@ private fun Status(
                     )
                 }
             }
-        }
-    }
-}
-
-@Composable
-@Suppress("MagicNumber")
-private fun History(transactionHistory: ImmutableList<TransactionOverview>) {
-    if (transactionHistory.isEmpty()) {
-        return
-    }
-
-    // here we need to use a fixed height to avoid nested columns vertical scrolling problem
-    // we'll refactor this part to a dedicated bottom sheet later
-    val historyPart = LocalConfiguration.current.screenHeightDp / 3
-
-    LazyColumn(
-        Modifier
-            .fillMaxWidth()
-            .height(historyPart.dp)
-    ) {
-        items(transactionHistory) {
-            Text(it.toString())
         }
     }
 }
