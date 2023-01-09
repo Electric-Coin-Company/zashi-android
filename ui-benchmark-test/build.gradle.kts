@@ -38,6 +38,12 @@ dependencies {
     implementation(libs.bundles.androidx.test)
     implementation(libs.androidx.test.macrobenchmark)
 
+    androidTestUtil(libs.androidx.test.services) {
+        artifact {
+            type = "apk"
+        }
+    }
+
     if (project.property("IS_USE_TEST_ORCHESTRATOR").toString().toBoolean()) {
         androidTestUtil(libs.androidx.test.orchestrator) {
             artifact {

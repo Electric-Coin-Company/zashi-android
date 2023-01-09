@@ -70,6 +70,12 @@ dependencies {
     implementation(libs.androidx.startup)
     implementation(libs.androidx.uiAutomator)
 
+    androidTestUtil(libs.androidx.test.services) {
+        artifact {
+            type = "apk"
+        }
+    }
+
     if (isOrchestratorEnabled) {
         androidTestUtil(libs.androidx.test.orchestrator) {
             artifact {
