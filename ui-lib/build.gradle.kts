@@ -12,9 +12,6 @@ android {
     defaultConfig {
         testInstrumentationRunner = "co.electriccoin.zcash.test.ZcashUiTestRunner"
     }
-    testOptions {
-        execution = "ANDROIDX_TEST_ORCHESTRATOR"
-    }
 
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
