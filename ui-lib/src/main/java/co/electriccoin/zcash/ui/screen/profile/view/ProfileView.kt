@@ -122,12 +122,14 @@ private fun ProfileContents(
         QrCode(data = walletAddress.address, DEFAULT_QR_CODE_SIZE, Modifier.align(Alignment.CenterHorizontally))
         Body(text = stringResource(id = R.string.wallet_address_unified), Modifier.align(Alignment.CenterHorizontally))
         // TODO [#163]: Ellipsize center of the string
+        // TODO [#163]: https://github.com/zcash/secant-android-wallet/issues/163
         Text(
             text = walletAddress.address,
             style = MaterialTheme.typography.headlineLarge,
             color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier.align(Alignment.CenterHorizontally),
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 1
         )
         PrimaryButton(onClick = onAddressDetails, text = stringResource(id = R.string.profile_see_address_details))
         if (isAddressBookEnabled) {
