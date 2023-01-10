@@ -1,8 +1,10 @@
 # Expected secrets
 # EMULATOR_WTF_API_KEY - Optional API key for emulator.wtf
-# FIREBASE_TEST_LAB_PROJECT - Firebase Test Lab project name
 # FIREBASE_TEST_LAB_SERVICE_ACCOUNT - Email address of Firebase Test Lab service account
 # FIREBASE_TEST_LAB_WORKLOAD_IDENTITY_PROVIDER - Workload identity provider to generate temporary service account key
+
+# Expected variables
+# FIREBASE_TEST_LAB_PROJECT - Firebase Test Lab project name
 
 name: Pull Request
 
@@ -55,7 +57,7 @@ jobs:
     steps:
       - id: check_firebase_secrets
         env:
-          FIREBASE_TEST_LAB_PROJECT: ${{ secrets.FIREBASE_TEST_LAB_PROJECT }}
+          FIREBASE_TEST_LAB_PROJECT: ${{ vars.FIREBASE_TEST_LAB_PROJECT }}
           FIREBASE_TEST_LAB_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_TEST_LAB_SERVICE_ACCOUNT }}
           FIREBASE_TEST_LAB_WORKLOAD_IDENTITY_PROVIDER: ${{ secrets.FIREBASE_TEST_LAB_WORKLOAD_IDENTITY_PROVIDER }}
         if: "${{ env.FIREBASE_TEST_LAB_PROJECT != '' && env.FIREBASE_TEST_LAB_SERVICE_ACCOUNT != '' && env.FIREBASE_TEST_LAB_WORKLOAD_IDENTITY_PROVIDER != '' }}"
@@ -239,7 +241,7 @@ jobs:
         uses: google-github-actions/auth@ef5d53e30bbcd8d0836f4288f5e50ff3e086997d
         with:
           create_credentials_file: true
-          project_id: ${{ secrets.FIREBASE_TEST_LAB_PROJECT }}
+          project_id: ${{ vars.FIREBASE_TEST_LAB_PROJECT }}
           service_account: ${{ secrets.FIREBASE_TEST_LAB_SERVICE_ACCOUNT }}
           workload_identity_provider: ${{ secrets.FIREBASE_TEST_LAB_WORKLOAD_IDENTITY_PROVIDER }}
           access_token_lifetime: '1200s'
@@ -249,7 +251,7 @@ jobs:
           # Force blank suffix for screenshot tests
           ORG_GRADLE_PROJECT_ZCASH_DEBUG_APP_NAME_SUFFIX: ""
           # Used by Flank, since the temporary token is missing the project name
-          GOOGLE_CLOUD_PROJECT: ${{ secrets.FIREBASE_TEST_LAB_PROJECT }}
+          GOOGLE_CLOUD_PROJECT: ${{ vars.FIREBASE_TEST_LAB_PROJECT }}
           ORG_GRADLE_PROJECT_ZCASH_FIREBASE_TEST_LAB_API_KEY_PATH: ${{ steps.auth_test_lab.outputs.credentials_file_path }}
           # Because Fulladle doesn't allow Test Orchestrator to be enabled/disabled for a specific submodule, it must be enabled for all modules
           ORG_GRADLE_PROJECT_IS_USE_TEST_ORCHESTRATOR: true
@@ -342,7 +344,7 @@ jobs:
         uses: google-github-actions/auth@ef5d53e30bbcd8d0836f4288f5e50ff3e086997d
         with:
           create_credentials_file: true
-          project_id: ${{ secrets.FIREBASE_TEST_LAB_PROJECT }}
+          project_id: ${{ vars.FIREBASE_TEST_LAB_PROJECT }}
           service_account: ${{ secrets.FIREBASE_TEST_LAB_SERVICE_ACCOUNT }}
           workload_identity_provider: ${{ secrets.FIREBASE_TEST_LAB_WORKLOAD_IDENTITY_PROVIDER }}
           access_token_lifetime: '900s'
@@ -350,7 +352,7 @@ jobs:
         timeout-minutes: 20
         env:
           # This first environment variable is used by Flank, since the temporary token is missing the project name
-          GOOGLE_CLOUD_PROJECT: ${{ secrets.FIREBASE_TEST_LAB_PROJECT }}
+          GOOGLE_CLOUD_PROJECT: ${{ vars.FIREBASE_TEST_LAB_PROJECT }}
           ORG_GRADLE_PROJECT_ZCASH_FIREBASE_TEST_LAB_API_KEY_PATH: ${{ steps.auth_test_lab.outputs.credentials_file_path }}
         run: |
           ./gradlew :app:runFlankSanityConfigDebug
@@ -423,7 +425,7 @@ jobs:
         uses: google-github-actions/auth@ef5d53e30bbcd8d0836f4288f5e50ff3e086997d
         with:
           create_credentials_file: true
-          project_id: ${{ secrets.FIREBASE_TEST_LAB_PROJECT }}
+          project_id: ${{ vars.FIREBASE_TEST_LAB_PROJECT }}
           service_account: ${{ secrets.FIREBASE_TEST_LAB_SERVICE_ACCOUNT }}
           workload_identity_provider: ${{ secrets.FIREBASE_TEST_LAB_WORKLOAD_IDENTITY_PROVIDER }}
           access_token_lifetime: '900s'
@@ -437,7 +439,7 @@ jobs:
           # Path depends on `release_build` job, plus path of `Download a single artifact` step
           BINARIES_ZIP_PATH: binaries.zip
           # This first environment variable is used by Flank, since the temporary token is missing the project name
-          GOOGLE_CLOUD_PROJECT: ${{ secrets.FIREBASE_TEST_LAB_PROJECT }}
+          GOOGLE_CLOUD_PROJECT: ${{ vars.FIREBASE_TEST_LAB_PROJECT }}
           ORG_GRADLE_PROJECT_ZCASH_FIREBASE_TEST_LAB_API_KEY_PATH: ${{ steps.auth_test_lab.outputs.credentials_file_path }}
         run: |
           unzip ${BINARIES_ZIP_PATH}
