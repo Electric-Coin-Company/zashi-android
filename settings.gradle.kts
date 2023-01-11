@@ -4,34 +4,48 @@ pluginManagement {
     repositories {
         val isRepoRestrictionEnabled = true
 
+        val googleGroups = listOf(
+            "androidx.navigation",
+            "com.android.tools",
+            "com.google.testing.platform"
+        )
+        val googleRegexes = listOf(
+            "androidx.*",
+            "com\\.android.*",
+            "com\\.android\\.tools.*"
+        )
+        val wtfGroups = listOf("wtf.emulator")
+
         mavenCentral {
             if (isRepoRestrictionEnabled) {
                 content {
-                    includeGroup("wtf.emulator")
+                    wtfGroups.forEach {
+                        includeGroup("wtf.emulator")
+                    }
                 }
             }
         }
         google {
             if (isRepoRestrictionEnabled) {
                 content {
-                    includeGroup("androidx.navigation")
-                    includeGroup("com.android.tools")
-                    includeGroup("com.google.testing.platform")
-                    includeGroupByRegex("androidx.*")
-                    includeGroupByRegex("com\\.android.*")
-                    includeGroupByRegex("com\\.android\\.tools.*")
+                    googleGroups.forEach {
+                        includeGroup(it)
+                    }
+                    googleRegexes.forEach {
+                        includeGroupByRegex(it)
+                    }
                 }
             }
         }
         gradlePluginPortal {
             if (isRepoRestrictionEnabled) {
                 content {
-                    excludeGroup("androidx.navigation")
-                    excludeGroup("com.android.tools")
-                    excludeGroup("com.google.testing.platform")
-                    excludeGroupByRegex("androidx.*")
-                    excludeGroupByRegex("com\\.android.*")
-                    excludeGroupByRegex("com\\.android\\.tools.*")
+                    wtfGroups + googleGroups.forEach {
+                        excludeGroup(it)
+                    }
+                    googleRegexes.forEach {
+                        excludeGroupByRegex(it)
+                    }
                 }
             }
         }
@@ -63,29 +77,46 @@ dependencyResolutionManagement {
     repositories {
         val isRepoRestrictionEnabled = true
 
+        val googleGroups = listOf(
+            "androidx.benchmark",
+            "androidx.navigation",
+            "com.android.tools",
+            "com.google.android.datatransport",
+            "com.google.android.gms",
+            "com.google.android.material",
+            "com.google.android.play",
+            "com.google.firebase",
+            "com.google.testing.platform",
+            "com.google.android.apps.common.testing.accessibility.framework"
+        )
+        val googleRegexes = listOf(
+            "androidx.*",
+            "com\\.android.*",
+            "com\\.android\\.tools.*"
+        )
+        val wtfGroups = listOf("wtf.emulator")
+
         google {
             if (isRepoRestrictionEnabled) {
                 content {
-                    includeGroup("android.arch.core")
-                    includeGroup("android.arch.lifecycle")
-                    includeGroup("com.google.android.material")
-                    includeGroup("com.google.testing.platform")
-                    includeGroup("com.google.android.play")
-                    includeGroupByRegex("androidx.*")
-                    includeGroupByRegex("com\\.android.*")
+                    googleGroups.forEach {
+                        includeGroup(it)
+                    }
+                    googleRegexes.forEach {
+                        includeGroupByRegex(it)
+                    }
                 }
             }
         }
         mavenCentral {
             if (isRepoRestrictionEnabled) {
                 content {
-                    excludeGroup("android.arch.lifecycle")
-                    excludeGroup("android.arch.core")
-                    excludeGroup("wtf.emulator")
-                    excludeGroup("com.google.android.material")
-                    excludeGroup("com.google.android.play")
-                    excludeGroupByRegex("androidx.*")
-                    excludeGroupByRegex("com\\.android.*")
+                    wtfGroups + googleGroups.forEach {
+                        excludeGroup(it)
+                    }
+                    googleRegexes.forEach {
+                        excludeGroupByRegex(it)
+                    }
                 }
             }
         }
