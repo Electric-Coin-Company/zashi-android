@@ -20,7 +20,7 @@ pluginManagement {
             if (isRepoRestrictionEnabled) {
                 content {
                     wtfGroups.forEach {
-                        includeGroup("wtf.emulator")
+                        includeGroup(it)
                     }
                 }
             }
@@ -40,7 +40,7 @@ pluginManagement {
         gradlePluginPortal {
             if (isRepoRestrictionEnabled) {
                 content {
-                    wtfGroups + googleGroups.forEach {
+                    (wtfGroups + googleGroups).forEach {
                         excludeGroup(it)
                     }
                     googleRegexes.forEach {
@@ -111,7 +111,7 @@ dependencyResolutionManagement {
         mavenCentral {
             if (isRepoRestrictionEnabled) {
                 content {
-                    wtfGroups + googleGroups.forEach {
+                    (wtfGroups + googleGroups).forEach {
                         excludeGroup(it)
                     }
                     googleRegexes.forEach {
