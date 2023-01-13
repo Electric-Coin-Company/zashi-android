@@ -147,6 +147,7 @@ kover {
                     "ui-integration-test",
                     "ui-lib",
                     "ui-screenshot-test",
+                    "ui-benchmark-test",
                 ))
             }
         }
