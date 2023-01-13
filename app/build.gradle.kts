@@ -318,7 +318,7 @@ fladle {
 
             debugApk.set(
                 project.provider {
-                    "${buildDir}/outputs/universal_apk/zcashmainnetRelease/app-zcashmainnet-release-universal.apk"
+                    "${buildDir}/outputs/apk_from_bundle/zcashmainnetRelease/app-zcashmainnet-release-universal.apk"
                 }
             )
 
