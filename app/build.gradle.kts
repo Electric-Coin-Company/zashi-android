@@ -1,3 +1,5 @@
+import java.util.Locale
+
 plugins {
     id("com.android.application")
     kotlin("android")
@@ -139,32 +141,6 @@ android {
         }
     }
 
-    packagingOptions {
-        resources.excludes.addAll(
-            listOf(
-                "**/*.kotlin_metadata",
-                ".readme",
-                "build-data.properties",
-                "META-INF/*.kotlin_module",
-                "META-INF/android.arch**",
-                "META-INF/androidx**",
-                "META-INF/com.android**",
-                "META-INF/com.google.android.material_material.version",
-                "META-INF/com.google.dagger_dagger.version",
-                "META-INF/services/org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor",
-                "META-INF/services/org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar",
-                "META-INF/services/org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages\$Extension",
-                "firebase-**.properties",
-                "kotlin/**",
-                "play-services-**.properties",
-                "protolite-well-known-types.properties",
-                "transport-api.properties",
-                "transport-backend-cct.properties",
-                "transport-runtime.properties"
-            )
-        )
-    }
-
     playConfigs {
         register(testNetFlavorName) {
             enabled.set(false)
@@ -210,12 +186,15 @@ dependencies {
 }
 
 val googlePlayServiceKeyFilePath = project.property("ZCASH_GOOGLE_PLAY_SERVICE_KEY_FILE_PATH").toString()
-if (googlePlayServiceKeyFilePath.isNotEmpty()) {
-    // Update the versionName to reflect bumps in versionCode
-    androidComponents {
-        val versionCodeOffset = 0  // Change this to zero the final digit of the versionName
-        onVariants { variant ->
-            for (output in variant.outputs) {
+
+androidComponents {
+    onVariants { variant ->
+        for (output in variant.outputs) {
+            if (googlePlayServiceKeyFilePath.isNotEmpty()) {
+                // Update the versionName to reflect bumps in versionCode
+
+                val versionCodeOffset = 0  // Change this to zero the final digit of the versionName
+
                 val processedVersionCode = output.versionCode.map { playVersionCode ->
                     val defaultVersionName = project.property("ZCASH_VERSION_NAME").toString()
                     // Version names will look like `myCustomVersionName.123`
@@ -232,8 +211,38 @@ if (googlePlayServiceKeyFilePath.isNotEmpty()) {
                 output.versionName.set(processedVersionCode)
             }
         }
-    }
 
+        variant.packaging.resources.excludes.addAll(listOf(
+            ".readme",
+        ))
+
+        if (variant.name.toLowerCase(Locale.US).contains("release")) {
+            variant.packaging.resources.excludes.addAll(listOf(
+                "**/*.kotlin_metadata",
+                "DebugProbesKt.bin",
+                "META-INF/*.kotlin_module",
+                "META-INF/*.version",
+                "META-INF/android.arch**",
+                "META-INF/androidx**",
+                "META-INF/com.android**",
+                "META-INF/com.google.android.material_material.version",
+                "META-INF/com.google.dagger_dagger.version",
+                "build-data.properties",
+                "core.properties",
+                "firebase-**.properties",
+                "kotlin-tooling-metadata.json",
+                "kotlin/**",
+                "play-services-**.properties",
+                "protolite-well-known-types.properties",
+                "transport-api.properties",
+                "transport-backend-cct.properties",
+                "transport-runtime.properties"
+            ))
+        }
+    }
+}
+
+if (googlePlayServiceKeyFilePath.isNotEmpty()) {
     configure<com.github.triplet.gradle.play.PlayPublisherExtension> {
         serviceAccountCredentials.set(File(googlePlayServiceKeyFilePath))
 
