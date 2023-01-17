@@ -52,7 +52,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cash.z.ecc.sdk.model.SeedPhraseValidation
 import co.electriccoin.zcash.spackle.model.Index
@@ -187,7 +186,7 @@ private fun RestoreTopAppBar(onBack: () -> Unit, onClear: () -> Unit) {
 
 // TODO [#672] Implement custom seed phrase pasting for wallet import
 // TODO [#672] https://github.com/zcash/secant-android-wallet/issues/672
-@OptIn(ExperimentalLifecycleComposeApi::class)
+
 @Suppress("UNUSED_PARAMETER", "LongParameterList")
 @Composable
 private fun RestoreMainContent(

@@ -6,7 +6,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cash.z.ecc.sdk.send
 import co.electriccoin.zcash.ui.MainActivity
@@ -22,7 +21,6 @@ internal fun MainActivity.WrapSend(
     WrapSend(this, goBack)
 }
 
-@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 private fun WrapSend(
     activity: ComponentActivity,
