@@ -1,5 +1,10 @@
 package cash.z.ecc.sdk.model
 
+import cash.z.ecc.android.bip39.Mnemonics
+import cash.z.ecc.android.bip39.toSeed
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+
 // Consider using ImmutableList here
 data class SeedPhrase(val split: List<String>) {
     init {
@@ -13,7 +18,7 @@ data class SeedPhrase(val split: List<String>) {
 
     fun joinToString() = split.joinToString(DEFAULT_DELIMITER)
 
-    fun toByteArray() = joinToString().encodeToByteArray()
+    suspend fun toByteArray() = withContext(Dispatchers.IO) { Mnemonics.MnemonicCode(joinToString()).toSeed() }
 
     companion object {
         const val SEED_PHRASE_SIZE = 24
