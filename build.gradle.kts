@@ -143,11 +143,11 @@ kover {
                     "sdk-ext-ui-lib",
                     "spackle-android-lib",
                     "test-lib",
+                    "ui-benchmark-test",
                     "ui-design-lib",
                     "ui-integration-test",
                     "ui-lib",
-                    "ui-screenshot-test",
-                    "ui-benchmark-test",
+                    "ui-screenshot-test"
                 ))
             }
         }
