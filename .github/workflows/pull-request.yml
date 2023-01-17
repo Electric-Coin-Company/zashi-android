@@ -74,6 +74,24 @@ jobs:
         if: "${{ env.EMULATOR_WTF_API_KEY != '' }}"
         run: echo "defined=true" >> $GITHUB_OUTPUT
 
+  check_properties:
+    needs: prime_cache
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        timeout-minutes: 1
+        uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c
+      - name: Setup
+        id: setup
+        timeout-minutes: 5
+        uses: ./.github/actions/setup
+      - name: Check properties
+        timeout-minutes: 4
+        run: |
+          ./gradlew checkProperties
+
   static_analysis_detekt:
     needs: prime_cache
     runs-on: ubuntu-latest
