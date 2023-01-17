@@ -7,6 +7,9 @@ This documentation outlines our approach to testing. By running tests against ou
 <!-- TODO [#682]: Testing documentation update --> 
 <!-- TODO [#682]: https://github.com/zcash/secant-android-wallet/issues/682 --> 
 
+<!-- TODO [#705] Instrumentation coverage generation fails when run locally -->
+<!-- TODO [#705] https://github.com/zcash/secant-android-wallet/issues/705-->
+
 ## Manual testing
 
 We aim to automate as much as we possibly can. Still manual testing is really important for Quality Assurance.
