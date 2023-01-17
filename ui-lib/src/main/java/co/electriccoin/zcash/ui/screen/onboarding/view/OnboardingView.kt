@@ -35,7 +35,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.Body
@@ -70,7 +69,7 @@ fun ComposablePreview() {
  * @param onImportWallet Callback when the user decides to import an existing wallet.
  * @param onCreateWallet Callback when the user decides to create a new wallet.
  */
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalLifecycleComposeApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Onboarding(
     onboardingState: OnboardingState,
@@ -96,7 +95,7 @@ fun Onboarding(
 }
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalLifecycleComposeApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 private fun OnboardingTopAppBar(
     onboardingState: OnboardingState,
     isDebugMenuEnabled: Boolean,
@@ -150,7 +149,7 @@ private fun DebugMenu(onFixtureWallet: () -> Unit) {
  * @param onImportWallet Callback when the user decides to import an existing wallet.
  * @param onCreateWallet Callback when the user decides to create a new wallet.
  */
-@OptIn(ExperimentalLifecycleComposeApi::class)
+
 @Composable
 fun OnboardingMainContent(
     paddingValues: PaddingValues,

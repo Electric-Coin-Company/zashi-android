@@ -7,7 +7,6 @@ import android.content.Intent
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
-import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cash.z.ecc.sdk.model.ZecRequest
 import co.electriccoin.zcash.ui.MainActivity
@@ -23,7 +22,6 @@ internal fun MainActivity.WrapRequest(
     WrapRequest(this, goBack)
 }
 
-@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 private fun WrapRequest(
     activity: ComponentActivity,

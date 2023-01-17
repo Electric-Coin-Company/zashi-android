@@ -8,7 +8,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cash.z.ecc.android.sdk.model.ZcashNetwork
 import cash.z.ecc.sdk.fixture.SeedPhraseFixture
@@ -31,7 +30,6 @@ internal fun MainActivity.WrapOnboarding() {
     WrapOnboarding(this)
 }
 
-@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 internal fun WrapOnboarding(
     activity: ComponentActivity
@@ -95,7 +93,6 @@ internal fun WrapOnboarding(
     }
 }
 
-@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 private fun WrapRestore(activity: ComponentActivity) {
     val walletViewModel by activity.viewModels<WalletViewModel>()

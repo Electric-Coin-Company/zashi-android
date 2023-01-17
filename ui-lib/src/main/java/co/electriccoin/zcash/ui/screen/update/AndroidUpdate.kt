@@ -9,7 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
@@ -27,7 +26,6 @@ internal fun MainActivity.WrapCheckForUpdate() {
     WrapCheckForUpdate(this)
 }
 
-@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 private fun WrapCheckForUpdate(activity: ComponentActivity) {
     // TODO [#382]: https://github.com/zcash/secant-android-wallet/issues/382
@@ -55,7 +53,6 @@ private fun WrapCheckForUpdate(activity: ComponentActivity) {
     }
 }
 
-@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 private fun WrapUpdate(
     activity: ComponentActivity,

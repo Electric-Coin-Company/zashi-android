@@ -37,7 +37,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cash.z.ecc.sdk.fixture.PersistableWalletFixture
 import cash.z.ecc.sdk.model.PersistableWallet
@@ -79,7 +78,7 @@ fun ComposablePreview() {
 /**
  * @param onComplete Callback when the user has completed the backup test.
  */
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalLifecycleComposeApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @Suppress("LongParameterList")
 fun BackupWallet(
@@ -124,7 +123,6 @@ fun BackupWallet(
     }
 }
 
-@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 fun BackupMainContent(
     paddingValues: PaddingValues,
@@ -218,7 +216,7 @@ private data class TestChoice(val originalIndex: Index, val word: String)
  *  - It is possible for the same word to appear twice in the word choices
  *  - The test answer ordering is not randomized, to ensure it can never be in the correct order to start with
  */
-@OptIn(ExperimentalLifecycleComposeApi::class)
+
 @Composable
 private fun TestInProgress(
     splitSeedPhrase: List<String>,

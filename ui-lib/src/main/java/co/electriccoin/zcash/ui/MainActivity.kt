@@ -12,7 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
@@ -78,7 +77,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    @OptIn(ExperimentalLifecycleComposeApi::class)
     private fun setupUiContent() {
         setContent {
             Override(configurationOverrideFlow) {
@@ -106,7 +104,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    @OptIn(ExperimentalLifecycleComposeApi::class)
     @Composable
     private fun MainContent() {
         when (val secretState = walletViewModel.secretState.collectAsStateWithLifecycle().value) {
