@@ -26,6 +26,12 @@ dependencies {
     androidTestImplementation(libs.bundles.androidx.test)
     androidTestImplementation(libs.kotlin.test)
 
+    androidTestUtil(libs.androidx.test.services) {
+        artifact {
+            type = "apk"
+        }
+    }
+
     if (project.property("IS_USE_TEST_ORCHESTRATOR").toString().toBoolean()) {
         androidTestUtil(libs.androidx.test.orchestrator) {
             artifact {

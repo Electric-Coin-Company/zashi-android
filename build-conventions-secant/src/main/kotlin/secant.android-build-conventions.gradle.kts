@@ -18,6 +18,7 @@ pluginManager.withPlugin("com.android.application") {
 
             testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
+            testInstrumentationRunnerArguments["useTestStorageService"] = "true"
             if (project.property("IS_USE_TEST_ORCHESTRATOR").toString().toBoolean()) {
                 testInstrumentationRunnerArguments["clearPackageData"] = "true"
             }
@@ -42,6 +43,7 @@ pluginManager.withPlugin("com.android.library") {
             testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
             consumerProguardFiles("proguard-consumer.txt")
 
+            testInstrumentationRunnerArguments["useTestStorageService"] = "true"
             if (project.property("IS_USE_TEST_ORCHESTRATOR").toString().toBoolean()) {
                 testInstrumentationRunnerArguments["clearPackageData"] = "true"
             }
@@ -67,6 +69,11 @@ pluginManager.withPlugin("com.android.test") {
             resourceConfigurations.addAll(listOf("en", "en-rUS", "en-rGB", "en-rAU", "en_XA", "ar_XB"))
 
             testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+            testInstrumentationRunnerArguments["useTestStorageService"] = "true"
+            if (project.property("IS_USE_TEST_ORCHESTRATOR").toString().toBoolean()) {
+                testInstrumentationRunnerArguments["clearPackageData"] = "true"
+            }
         }
         testCoverage {
             jacocoVersion = project.property("JACOCO_VERSION").toString()
@@ -87,8 +94,11 @@ fun com.android.build.gradle.BaseExtension.configureBaseExtension(isLibrary: Boo
 
     buildTypes {
         getByName("debug").apply {
-            isTestCoverageEnabled =
+            val coverageEnabled =
                 project.property("IS_ANDROID_INSTRUMENTATION_TEST_COVERAGE_ENABLED").toString().toBoolean()
+            isTestCoverageEnabled = coverageEnabled
+            enableAndroidTestCoverage = coverageEnabled
+            enableUnitTestCoverage = coverageEnabled
         }
     }
 

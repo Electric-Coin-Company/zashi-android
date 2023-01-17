@@ -23,7 +23,17 @@ android {
         versionCode = project.property("ZCASH_VERSION_CODE").toString().toInt()
         versionName = project.property("ZCASH_VERSION_NAME").toString()
 
+        if (project.property("IS_USE_TEST_ORCHESTRATOR").toString().toBoolean()) {
+            testInstrumentationRunnerArguments["clearPackageData"] = "true"
+        }
+
         testInstrumentationRunner = "co.electriccoin.zcash.test.ZcashUiTestRunner"
+    }
+
+    if (project.property("IS_USE_TEST_ORCHESTRATOR").toString().toBoolean()) {
+        testOptions {
+            execution = "ANDROIDX_TEST_ORCHESTRATOR"
+        }
     }
 
     compileOptions {
@@ -160,6 +170,10 @@ android {
             enabled.set(false)
         }
     }
+
+    testCoverage {
+        jacocoVersion = project.property("JACOCO_VERSION").toString()
+    }
 }
 
 dependencies {
@@ -179,6 +193,12 @@ dependencies {
     implementation(projects.uiLib)
 
     androidTestImplementation(projects.testLib)
+
+    androidTestUtil(libs.androidx.test.services) {
+        artifact {
+            type = "apk"
+        }
+    }
 
     if (project.property("IS_USE_TEST_ORCHESTRATOR").toString().toBoolean()) {
         androidTestUtil(libs.androidx.test.orchestrator) {
@@ -233,7 +253,6 @@ if (googlePlayServiceKeyFilePath.isNotEmpty()) {
         }
     }
 }
-
 
 fladle {
     // Firebase Test Lab has min and max values that might differ from our project's
