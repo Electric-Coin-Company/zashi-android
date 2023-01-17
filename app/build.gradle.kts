@@ -170,6 +170,10 @@ android {
             enabled.set(false)
         }
     }
+
+    testCoverage {
+        jacocoVersion = project.property("JACOCO_VERSION").toString()
+    }
 }
 
 dependencies {
