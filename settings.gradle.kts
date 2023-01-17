@@ -4,34 +4,48 @@ pluginManagement {
     repositories {
         val isRepoRestrictionEnabled = true
 
+        val googleGroups = listOf(
+            "androidx.navigation",
+            "com.android.tools",
+            "com.google.testing.platform"
+        )
+        val googleRegexes = listOf(
+            "androidx.*",
+            "com\\.android.*",
+            "com\\.android\\.tools.*"
+        )
+        val wtfGroups = listOf("wtf.emulator")
+
         mavenCentral {
             if (isRepoRestrictionEnabled) {
                 content {
-                    includeGroup("wtf.emulator")
+                    wtfGroups.forEach {
+                        includeGroup(it)
+                    }
                 }
             }
         }
         google {
             if (isRepoRestrictionEnabled) {
                 content {
-                    includeGroup("androidx.navigation")
-                    includeGroup("com.android.tools")
-                    includeGroup("com.google.testing.platform")
-                    includeGroupByRegex("androidx.*")
-                    includeGroupByRegex("com\\.android.*")
-                    includeGroupByRegex("com\\.android\\.tools.*")
+                    googleGroups.forEach {
+                        includeGroup(it)
+                    }
+                    googleRegexes.forEach {
+                        includeGroupByRegex(it)
+                    }
                 }
             }
         }
         gradlePluginPortal {
             if (isRepoRestrictionEnabled) {
                 content {
-                    excludeGroup("androidx.navigation")
-                    excludeGroup("com.android.tools")
-                    excludeGroup("com.google.testing.platform")
-                    excludeGroupByRegex("androidx.*")
-                    excludeGroupByRegex("com\\.android.*")
-                    excludeGroupByRegex("com\\.android\\.tools.*")
+                    (wtfGroups + googleGroups).forEach {
+                        excludeGroup(it)
+                    }
+                    googleRegexes.forEach {
+                        excludeGroupByRegex(it)
+                    }
                 }
             }
         }
@@ -63,29 +77,46 @@ dependencyResolutionManagement {
     repositories {
         val isRepoRestrictionEnabled = true
 
+        val googleGroups = listOf(
+            "androidx.benchmark",
+            "androidx.navigation",
+            "com.android.tools",
+            "com.google.android.datatransport",
+            "com.google.android.gms",
+            "com.google.android.material",
+            "com.google.android.play",
+            "com.google.firebase",
+            "com.google.testing.platform",
+            "com.google.android.apps.common.testing.accessibility.framework"
+        )
+        val googleRegexes = listOf(
+            "androidx.*",
+            "com\\.android.*",
+            "com\\.android\\.tools.*"
+        )
+        val wtfGroups = listOf("wtf.emulator")
+
         google {
             if (isRepoRestrictionEnabled) {
                 content {
-                    includeGroup("android.arch.core")
-                    includeGroup("android.arch.lifecycle")
-                    includeGroup("com.google.android.material")
-                    includeGroup("com.google.testing.platform")
-                    includeGroup("com.google.android.play")
-                    includeGroupByRegex("androidx.*")
-                    includeGroupByRegex("com\\.android.*")
+                    googleGroups.forEach {
+                        includeGroup(it)
+                    }
+                    googleRegexes.forEach {
+                        includeGroupByRegex(it)
+                    }
                 }
             }
         }
         mavenCentral {
             if (isRepoRestrictionEnabled) {
                 content {
-                    excludeGroup("android.arch.lifecycle")
-                    excludeGroup("android.arch.core")
-                    excludeGroup("wtf.emulator")
-                    excludeGroup("com.google.android.material")
-                    excludeGroup("com.google.android.play")
-                    excludeGroupByRegex("androidx.*")
-                    excludeGroupByRegex("com\\.android.*")
+                    (wtfGroups + googleGroups).forEach {
+                        excludeGroup(it)
+                    }
+                    googleRegexes.forEach {
+                        excludeGroupByRegex(it)
+                    }
                 }
             }
         }
@@ -142,8 +173,8 @@ dependencyResolutionManagement {
             val kotlinVersion = extra["KOTLIN_VERSION"].toString()
             val kotlinxDateTimeVersion = extra["KOTLINX_DATETIME_VERSION"].toString()
             val kotlinxCoroutinesVersion = extra["KOTLINX_COROUTINES_VERSION"].toString()
-            val playCoreVersion = extra["PLAY_CORE_VERSION"].toString()
-            val playCoreKtxVersion = extra["PLAY_CORE_KTX_VERSION"].toString()
+            val playAppUpdateVersion = extra["PLAY_APP_UPDATE_VERSION"].toString()
+            val playAppUpdateKtxVersion = extra["PLAY_APP_UPDATE_KTX_VERSION"].toString()
             val zcashBip39Version = extra["ZCASH_BIP39_VERSION"].toString()
             val zcashSdkVersion = extra["ZCASH_SDK_VERSION"].toString()
             val zxingVersion = extra["ZXING_VERSION"].toString()
@@ -189,8 +220,8 @@ dependencyResolutionManagement {
             library("kotlinx-coroutines-core", "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
             library("kotlinx-coroutines-guava", "org.jetbrains.kotlinx:kotlinx-coroutines-guava:$kotlinxCoroutinesVersion")
             library("kotlinx-datetime", "org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDateTimeVersion")
-            library("play-core", "com.google.android.play:core:$playCoreVersion")
-            library("play-core-ktx", "com.google.android.play:core-ktx:$playCoreKtxVersion")
+            library("play-update", "com.google.android.play:app-update:$playAppUpdateVersion")
+            library("play-update-ktx", "com.google.android.play:app-update-ktx:$playAppUpdateKtxVersion")
             library("zcash-sdk", "cash.z.ecc.android:zcash-android-sdk:$zcashSdkVersion")
             library("zcash-bip39", "cash.z.ecc.android:kotlin-bip39:$zcashBip39Version")
             library("zcash-walletplgns", "cash.z.ecc.android:zcash-android-wallet-plugins:$zcashBip39Version")
@@ -243,10 +274,10 @@ dependencyResolutionManagement {
                 )
             )
             bundle(
-                "play-core",
+                "play-update",
                 listOf(
-                    "play-core",
-                    "play-core-ktx",
+                    "play-update",
+                    "play-update-ktx",
                 )
             )
             bundle(

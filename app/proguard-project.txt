@@ -9,12 +9,16 @@
 # Generate the combined proguard configuration for debugging.
 -printconfiguration build/outputs/proguard-config.txt
 
--dontwarn javax.naming.NamingEnumeration
--dontwarn javax.naming.NamingException
+-dontwarn androidx.compose.ui.util.MathHelpersKt
+-dontwarn com.google.common.util.concurrent.ListenableFuture
+-dontwarn com.google.errorprone.annotations.InlineMe
+-dontwarn com.google.errorprone.annotations.MustBeClosed
 -dontwarn javax.naming.directory.Attribute
 -dontwarn javax.naming.directory.Attributes
 -dontwarn javax.naming.directory.DirContext
 -dontwarn javax.naming.directory.InitialDirContext
+-dontwarn javax.naming.NamingEnumeration
+-dontwarn javax.naming.NamingException
 
 # kotlinx.datetime supports kotlinx.serialization, but we don't use kotlinx.serialization elsewhere
 # in the projects, so the classes aren't present.  These warnings are safe to suppress.
