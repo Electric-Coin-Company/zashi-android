@@ -45,6 +45,8 @@ import kotlinx.coroutines.withContext
 import org.junit.Rule
 import org.junit.Test
 
+private const val DEFAULT_TIMEOUT_MILLISECONDS = 5_000L
+
 /*
  * This screenshot implementation does not change the system-wide configuration, but rather
  * injects a Context with a modified Configuration to change the uiMode and Locale.
@@ -137,7 +139,7 @@ class ScreenshotTest : UiTestPrerequisites() {
             return
         }
 
-        composeTestRule.waitUntil { composeTestRule.activity.walletViewModel.secretState.value is SecretState.None }
+        composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) { composeTestRule.activity.walletViewModel.secretState.value is SecretState.None }
 
         composeTestRule.onNodeWithText(resContext.getString(R.string.onboarding_1_header)).also {
             it.assertExists()
@@ -297,25 +299,25 @@ class ScreenshotTest : UiTestPrerequisites() {
             it.performClick()
         }
 
-        composeTestRule.waitUntil { composeTestRule.activity.walletViewModel.secretState.value is SecretState.Ready }
+        composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) { composeTestRule.activity.walletViewModel.secretState.value is SecretState.Ready }
         composeTestRule.onNode(hasText(resContext.getString(R.string.home_button_request))).also {
             it.assertExists()
             it.performClick()
         }
-        composeTestRule.waitUntil { composeTestRule.activity.walletViewModel.walletSnapshot.value != null }
+        composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) { composeTestRule.activity.walletViewModel.walletSnapshot.value != null }
         requestZecScreenshots(resContext, tag, composeTestRule)
 
         navigateTo(NavigationTargets.HOME)
-        composeTestRule.waitUntil { composeTestRule.activity.walletViewModel.secretState.value is SecretState.Ready }
+        composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) { composeTestRule.activity.walletViewModel.secretState.value is SecretState.Ready }
 
         composeTestRule.onNode(hasText(resContext.getString(R.string.home_button_send))).also {
             it.assertExists()
             it.performScrollTo()
             it.performClick()
         }
-        composeTestRule.waitUntil { composeTestRule.activity.walletViewModel.synchronizer.value != null }
-        composeTestRule.waitUntil { composeTestRule.activity.walletViewModel.spendingKey.value != null }
-        composeTestRule.waitUntil { composeTestRule.activity.walletViewModel.walletSnapshot.value != null }
+        composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) { composeTestRule.activity.walletViewModel.synchronizer.value != null }
+        composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) { composeTestRule.activity.walletViewModel.spendingKey.value != null }
+        composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) { composeTestRule.activity.walletViewModel.walletSnapshot.value != null }
         sendZecScreenshots(resContext, tag, composeTestRule)
 
         navigateTo(NavigationTargets.HOME)
@@ -323,7 +325,7 @@ class ScreenshotTest : UiTestPrerequisites() {
 }
 
 private fun onboardingScreenshots(resContext: Context, tag: String, composeTestRule: AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>) {
-    composeTestRule.waitUntil { composeTestRule.activity.walletViewModel.secretState.value is SecretState.None }
+    composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) { composeTestRule.activity.walletViewModel.secretState.value is SecretState.None }
 
     composeTestRule.onNodeWithText(resContext.getString(R.string.onboarding_1_header)).also {
         it.assertExists()
@@ -361,7 +363,7 @@ private fun onboardingScreenshots(resContext: Context, tag: String, composeTestR
 }
 
 private fun backupScreenshots(resContext: Context, tag: String, composeTestRule: AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>) {
-    composeTestRule.waitUntil { composeTestRule.activity.walletViewModel.secretState.value is SecretState.NeedsBackup }
+    composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) { composeTestRule.activity.walletViewModel.secretState.value is SecretState.NeedsBackup }
 
     composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_1_header)).also {
         it.assertExists()
@@ -465,8 +467,8 @@ private fun backupScreenshots(resContext: Context, tag: String, composeTestRule:
 }
 
 private fun homeScreenshots(resContext: Context, tag: String, composeTestRule: AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>) {
-    composeTestRule.waitUntil { composeTestRule.activity.walletViewModel.secretState.value is SecretState.Ready }
-    composeTestRule.waitUntil { composeTestRule.activity.walletViewModel.walletSnapshot.value != null }
+    composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) { composeTestRule.activity.walletViewModel.secretState.value is SecretState.Ready }
+    composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) { composeTestRule.activity.walletViewModel.walletSnapshot.value != null }
 
     composeTestRule.onNode(hasText(resContext.getString(R.string.home_button_send))).also {
         it.assertExists()
@@ -476,7 +478,7 @@ private fun homeScreenshots(resContext: Context, tag: String, composeTestRule: A
 
 private fun profileScreenshots(resContext: Context, tag: String, composeTestRule: AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>) {
     // Note: increased timeout limit to satisfy time needed for SDK initialization
-    composeTestRule.waitUntil(3_000) { composeTestRule.activity.walletViewModel.addresses.value != null }
+    composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) { composeTestRule.activity.walletViewModel.addresses.value != null }
 
     composeTestRule.onNode(hasText(resContext.getString(R.string.profile_title))).also {
         it.assertExists()
