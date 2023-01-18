@@ -198,6 +198,7 @@ androidComponents {
                 val processedVersionCode = output.versionCode.map { playVersionCode ->
                     val defaultVersionName = project.property("ZCASH_VERSION_NAME").toString()
                     // Version names will look like `myCustomVersionName.123`
+                    @Suppress("UNNECESSARY_SAFE_CALL")
                     playVersionCode?.let {
                         val delta = it - versionCodeOffset
                         if (delta < 0) {
