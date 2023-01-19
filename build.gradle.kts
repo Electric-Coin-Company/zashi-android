@@ -94,8 +94,6 @@ tasks {
                 "ZCASH_GOOGLE_PLAY_SERVICE_KEY_FILE_PATH" to "",
                 "ZCASH_GOOGLE_PLAY_DEPLOY_MODE" to "build",
 
-                "ZCASH_EMULATOR_WTF_API_KEY" to "",
-
                 "SDK_INCLUDED_BUILD_PATH" to "",
                 "BIP_39_INCLUDED_BUILD_PATH" to ""
             )
