@@ -20,8 +20,8 @@ buildscript {
 plugins {
     id("com.github.ben-manes.versions")
     id("com.osacky.fulladle")
-    id("io.gitlab.arturbosch.detekt")
     id("org.jetbrains.kotlinx.kover")
+    id("secant.detekt-conventions")
     id("secant.ktlint-conventions")
     id("secant.rosetta-conventions")
 }
@@ -30,23 +30,6 @@ val uiIntegrationModuleName: String = projects.uiIntegrationTest.name
 val uiScreenshotModuleName: String = projects.uiScreenshotTest.name
 
 tasks {
-    register("detektAll", io.gitlab.arturbosch.detekt.Detekt::class) {
-        parallel = true
-        setSource(files(projectDir))
-        include("**/*.kt")
-        include("**/*.kts")
-        exclude("**/resources/**")
-        exclude("**/build/**")
-        exclude("**/commonTest/**")
-        exclude("**/jvmTest/**")
-        exclude("**/androidTest/**")
-        // To exclude the whole pure test modules
-        exclude(uiIntegrationModuleName, uiScreenshotModuleName)
-        // To regenerate the config, run the task `detektGenerateConfig`
-        config.setFrom(files("${rootProject.projectDir}/tools/detekt.yml"))
-        buildUponDefaultConfig = true
-    }
-
     withType<com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask> {
         gradleReleaseChannel = "current"
 
