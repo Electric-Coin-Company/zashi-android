@@ -38,10 +38,6 @@ android {
         }
     }
 
-    compileOptions {
-        isCoreLibraryDesugaringEnabled = true
-    }
-
     flavorDimensions.add("network")
 
     val testNetFlavorName = "zcashtestnet"
@@ -153,8 +149,6 @@ android {
 }
 
 dependencies {
-    coreLibraryDesugaring(libs.desugaring)
-
     implementation(libs.androidx.activity)
     implementation(libs.androidx.annotation)
     implementation(libs.androidx.core)

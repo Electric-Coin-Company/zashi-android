@@ -10,14 +10,9 @@ android {
     namespace = "cash.z.ecc.sdk.ext.ui"
     testNamespace = "cash.z.ecc.sdk.ext.ui.test"
     resourcePrefix = "co_electriccoin_zcash_"
-
-    compileOptions {
-        isCoreLibraryDesugaringEnabled = true
-    }
 }
 
 dependencies {
-    coreLibraryDesugaring(libs.desugaring)
     implementation(projects.sdkExtLib)
 
     implementation(libs.kotlinx.coroutines.core)

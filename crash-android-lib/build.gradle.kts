@@ -20,15 +20,9 @@ android {
     testOptions {
         execution = "ANDROIDX_TEST_ORCHESTRATOR"
     }
-
-    compileOptions {
-        isCoreLibraryDesugaringEnabled = true
-    }
 }
 
 dependencies {
-    coreLibraryDesugaring(libs.desugaring)
-
     api(projects.crashLib)
     api(libs.androidx.annotation)
     implementation(libs.kotlinx.coroutines.core)

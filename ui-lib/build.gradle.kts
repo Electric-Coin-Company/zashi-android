@@ -13,10 +13,6 @@ android {
         testInstrumentationRunner = "co.electriccoin.zcash.test.ZcashUiTestRunner"
     }
 
-    compileOptions {
-        isCoreLibraryDesugaringEnabled = true
-    }
-
     buildFeatures {
         compose = true
     }
@@ -52,8 +48,6 @@ android {
 }
 
 dependencies {
-    coreLibraryDesugaring(libs.desugaring)
-
     implementation(libs.accompanist.permissions)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.appcompat)

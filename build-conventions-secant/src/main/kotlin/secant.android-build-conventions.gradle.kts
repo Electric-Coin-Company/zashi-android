@@ -89,6 +89,8 @@ fun com.android.build.gradle.BaseExtension.configureBaseExtension(isLibrary: Boo
     ndkVersion = project.property("ANDROID_NDK_VERSION").toString()
 
     compileOptions {
+        isCoreLibraryDesugaringEnabled = true
+
         val javaVersion = JavaVersion.toVersion(project.property("ANDROID_JVM_TARGET").toString())
         sourceCompatibility = javaVersion
         targetCompatibility = javaVersion
@@ -183,6 +185,13 @@ fun com.android.build.gradle.BaseExtension.configureBaseExtension(isLibrary: Boo
             allWarningsAsErrors = project.property("ZCASH_IS_TREAT_WARNINGS_AS_ERRORS").toString().toBoolean()
             freeCompilerArgs = freeCompilerArgs + "-opt-in=kotlin.RequiresOptIn"
         }
+    }
+
+    dependencies {
+        add(
+            "coreLibraryDesugaring",
+            "com.android.tools:desugar_jdk_libs:${project.property("CORE_LIBRARY_DESUGARING_VERSION")}"
+        )
     }
 }
 
