@@ -32,6 +32,7 @@ pluginManager.withPlugin("com.android.library") {
 
         defaultConfig {
             minSdk = project.property("ANDROID_LIB_MIN_SDK_VERSION").toString().toInt()
+            // This is deprecated but we don't have a replacement for the instrumentation APKs yet
             targetSdk = project.property("ANDROID_TARGET_SDK_VERSION").toString().toInt()
 
             // The last two are for support of pseudolocales in debug builds.
@@ -60,6 +61,7 @@ pluginManager.withPlugin("com.android.test") {
 
         defaultConfig {
             minSdk = project.property("ANDROID_LIB_MIN_SDK_VERSION").toString().toInt()
+            // This is deprecated but we don't have a replacement for the instrumentation APKs yet
             targetSdk = project.property("ANDROID_TARGET_SDK_VERSION").toString().toInt()
 
             // The last two are for support of pseudolocales in debug builds.
