@@ -9,12 +9,14 @@ import co.electriccoin.zcash.spackle.LazyWithArgument
 import co.electriccoin.zcash.spackle.Twig
 import com.google.firebase.FirebaseApp
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.firebase.installations.FirebaseInstallations
 
 /**
  * Registers an exception handler with Firebase Crashlytics.
  */
 internal class FirebaseCrashReporter(
-    private val firebaseCrashlytics: FirebaseCrashlytics
+    private val firebaseCrashlytics: FirebaseCrashlytics,
+    private val firebaseInstallations: FirebaseInstallations
 ) : CrashReporter {
 
     @AnyThread
@@ -22,10 +24,21 @@ internal class FirebaseCrashReporter(
         firebaseCrashlytics.recordException(exception)
     }
 
+    override fun enable() {
+        firebaseCrashlytics.setCrashlyticsCollectionEnabled(true)
+    }
+
+    override fun disableAndDelete() {
+        firebaseCrashlytics.setCrashlyticsCollectionEnabled(false)
+        firebaseCrashlytics.deleteUnsentReports()
+        firebaseInstallations.delete()
+    }
+
     companion object {
         private val lazyWithArgument = LazyWithArgument<Context, CrashReporter?> {
             if (it.resources.getBoolean(R.bool.co_electriccoin_zcash_crash_is_firebase_enabled)) {
                 FirebaseApp.initializeApp(it)
+                val firebaseInstallations = FirebaseInstallations.getInstance()
                 val firebaseCrashlytics = FirebaseCrashlytics.getInstance().apply {
                     setCustomKey(
                         CrashlyticsUserProperties.IS_TEST,
@@ -33,9 +46,9 @@ internal class FirebaseCrashReporter(
                     )
                 }
 
-                FirebaseCrashReporter(firebaseCrashlytics)
+                FirebaseCrashReporter(firebaseCrashlytics, firebaseInstallations)
             } else {
-                Twig.warn { "Unable to initialize Firebase. Configure API keys in the app module" }
+                Twig.warn { "Unable to initialize Crashlytics. Configure API keys in the app module" }
                 null
             }
         }

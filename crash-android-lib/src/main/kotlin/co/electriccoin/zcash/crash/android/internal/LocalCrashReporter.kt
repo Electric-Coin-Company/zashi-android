@@ -26,11 +26,20 @@ internal class LocalCrashReporter(private val applicationContext: Context) : Cra
         }
     }
 
+    override fun enable() {
+        // Noop, because there's no privacy implication for locally stored data
+    }
+
+    override fun disableAndDelete() {
+        // Noop, because there's no privacy implication for locally stored data
+    }
+
     companion object {
         private val lazyWithArgument = LazyWithArgument<Context, CrashReporter>() {
             AndroidUncaughtExceptionHandler.register(it)
             LocalCrashReporter(it.applicationContext)
         }
+
         fun getInstance(context: Context): CrashReporter? {
             return lazyWithArgument.getInstance(context)
         }

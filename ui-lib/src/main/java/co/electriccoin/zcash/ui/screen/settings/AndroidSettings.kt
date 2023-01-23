@@ -10,6 +10,7 @@ import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.screen.home.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.onboarding.viewmodel.OnboardingViewModel
 import co.electriccoin.zcash.ui.screen.settings.view.Settings
+import co.electriccoin.zcash.ui.screen.settings.viewmodel.SettingsViewModel
 
 @Composable
 internal fun MainActivity.WrapSettings(
@@ -30,13 +31,16 @@ private fun WrapSettings(
     goWalletBackup: () -> Unit
 ) {
     val walletViewModel by activity.viewModels<WalletViewModel>()
+    val settingsViewModel by activity.viewModels<SettingsViewModel>()
 
     val synchronizer = walletViewModel.synchronizer.collectAsStateWithLifecycle().value
+    val isAnalyticsEnabled = settingsViewModel.isAnalyticsEnabled.collectAsStateWithLifecycle().value
 
-    if (null == synchronizer) {
+    if (null == synchronizer || null == isAnalyticsEnabled) {
         // Display loading indicator
     } else {
         Settings(
+            isAnalyticsEnabled,
             onBack = goBack,
             onBackupWallet = goWalletBackup,
             onRescanWallet = {
@@ -48,6 +52,9 @@ private fun WrapSettings(
                 val onboardingViewModel by activity.viewModels<OnboardingViewModel>()
                 onboardingViewModel.onboardingState.goToBeginning()
                 onboardingViewModel.isImporting.value = false
+            },
+            onAnalyticsSettingsChanged = {
+                settingsViewModel.setAnalyticsEnabled(it)
             }
         )
     }

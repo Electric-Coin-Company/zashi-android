@@ -215,6 +215,7 @@ dependencyResolutionManagement {
             library("androidx-workmanager", "androidx.work:work-runtime-ktx:$androidxWorkManagerVersion")
             library("desugaring", "com.android.tools:desugar_jdk_libs:$coreLibraryDesugaringVersion")
             library("firebase-bom", "com.google.firebase:firebase-bom:${extra["FIREBASE_BOM_VERSION_MATCHER"]}")
+            library("firebase-installations", "com.google.firebase", "firebase-installations").withoutVersion()
             library("firebase-crashlytics", "com.google.firebase", "firebase-crashlytics-ktx").withoutVersion()
             library("firebase-crashlytics-ndk", "com.google.firebase", "firebase-crashlytics-ndk").withoutVersion()
             library("kotlin-stdlib", "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")

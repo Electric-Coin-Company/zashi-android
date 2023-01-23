@@ -30,6 +30,7 @@ dependencies {
 
     implementation(libs.firebase.crashlytics)
     implementation(libs.firebase.crashlytics.ndk)
+    implementation(libs.firebase.installations)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.datetime)
     implementation(projects.spackleAndroidLib)

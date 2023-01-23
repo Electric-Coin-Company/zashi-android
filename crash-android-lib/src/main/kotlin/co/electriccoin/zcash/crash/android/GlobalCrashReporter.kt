@@ -43,4 +43,12 @@ object GlobalCrashReporter {
     fun reportCaughtException(exception: Throwable) {
         registeredCrashReporters?.forEach { it.reportCaughtException(exception) }
     }
+
+    fun disableAndDelete() {
+        registeredCrashReporters?.forEach { it.disableAndDelete() }
+    }
+
+    fun enable() {
+        registeredCrashReporters?.forEach { it.enable() }
+    }
 }

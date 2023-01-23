@@ -67,6 +67,20 @@ class SettingsViewTest : UiTestPrerequisites() {
 
     @Test
     @MediumTest
+    fun toggle_analytics() = runTest {
+        val testSetup = TestSetup(composeTestRule)
+
+        assertEquals(0, testSetup.getBackupCount())
+
+        composeTestRule.onNodeWithText(getStringResource(R.string.settings_enable_analytics)).also {
+            it.performClick()
+        }
+
+        assertEquals(1, testSetup.getAnalyticsToggleCount())
+    }
+
+    @Test
+    @MediumTest
     @Ignore("Wipe has been disabled in Settings and is now a debug-only option")
     fun wipe() = runTest {
         val testSetup = TestSetup(composeTestRule)
@@ -86,6 +100,7 @@ class SettingsViewTest : UiTestPrerequisites() {
         private val onBackupCount = AtomicInteger(0)
         private val onRescanCount = AtomicInteger(0)
         private val onWipeCount = AtomicInteger(0)
+        private val onAnalyticsChangedCount = AtomicInteger(0)
 
         fun getOnBackCount(): Int {
             composeTestRule.waitForIdle()
@@ -107,10 +122,16 @@ class SettingsViewTest : UiTestPrerequisites() {
             return onWipeCount.get()
         }
 
+        fun getAnalyticsToggleCount(): Int {
+            composeTestRule.waitForIdle()
+            return onAnalyticsChangedCount.get()
+        }
+
         init {
             composeTestRule.setContent {
                 ZcashTheme {
                     Settings(
+                        isAnalyticsEnabled = true,
                         onBack = {
                             onBackCount.incrementAndGet()
                         },
@@ -122,6 +143,9 @@ class SettingsViewTest : UiTestPrerequisites() {
                         },
                         onWipeWallet = {
                             onWipeCount.incrementAndGet()
+                        },
+                        onAnalyticsSettingsChanged = {
+                            onAnalyticsChangedCount.incrementAndGet()
                         }
                     )
                 }

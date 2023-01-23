@@ -178,6 +178,8 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.zcash.sdk) // just to configure logging
     implementation(projects.crashAndroidLib)
+    implementation(projects.preferenceApiLib)
+    implementation(projects.preferenceImplAndroidLib)
     implementation(projects.spackleAndroidLib)
     implementation(projects.uiLib)
 

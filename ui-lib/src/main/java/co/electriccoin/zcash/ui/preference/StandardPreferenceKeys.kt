@@ -10,6 +10,9 @@ object StandardPreferenceKeys {
      */
     val IS_USER_BACKUP_COMPLETE = BooleanPreferenceDefault(Key("is_user_backup_complete"), false)
 
+    // Default to true until https://github.com/zcash/secant-android-wallet/issues/304
+    val IS_ANALYTICS_ENABLED = BooleanPreferenceDefault(Key("is_analytics_enabled"), true)
+
     /**
      * The fiat currency that the user prefers.
      */
