@@ -1,16 +1,14 @@
-package co.electriccoin.zcash.crash.android.internal
+package co.electriccoin.zcash.crash.android.internal.local
 
 import android.content.Context
 import android.os.Looper
 import androidx.annotation.MainThread
 import co.electriccoin.zcash.crash.ReportableException
 import co.electriccoin.zcash.crash.android.R
-import co.electriccoin.zcash.spackle.Twig
-import co.electriccoin.zcash.spackle.process.ProcessNameCompat
 import kotlinx.coroutines.runBlocking
 import java.util.concurrent.atomic.AtomicBoolean
 
-class AndroidUncaughtExceptionHandler(
+internal class AndroidUncaughtExceptionHandler(
     context: Context,
     private val defaultUncaughtExceptionHandler: Thread.UncaughtExceptionHandler
 ) : Thread.UncaughtExceptionHandler {
@@ -44,17 +42,9 @@ class AndroidUncaughtExceptionHandler(
             check(Looper.myLooper() == Looper.getMainLooper()) { "Must be called from the main thread" }
             check(!isInitialized.getAndSet(true)) { "Uncaught exception handler can only be set once" }
 
-            if (isCrashProcess(context)) {
-                Twig.debug { "Uncaught exception handler will not be registered in the crash handling process" }
-            } else {
-                Thread.getDefaultUncaughtExceptionHandler()?.let { previous ->
-                    Thread.setDefaultUncaughtExceptionHandler(AndroidUncaughtExceptionHandler(context, previous))
-                }
+            Thread.getDefaultUncaughtExceptionHandler()?.let { previous ->
+                Thread.setDefaultUncaughtExceptionHandler(AndroidUncaughtExceptionHandler(context, previous))
             }
         }
-
-        private fun isCrashProcess(context: Context) =
-            ProcessNameCompat.getProcessName(context)
-                .endsWith(context.getString(R.string.co_electriccoin_zcash_crash_process_name_suffix))
     }
 }

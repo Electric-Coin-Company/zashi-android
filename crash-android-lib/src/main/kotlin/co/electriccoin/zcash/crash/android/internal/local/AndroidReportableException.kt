@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.crash.android.internal
+package co.electriccoin.zcash.crash.android.internal.local
 
 import android.content.Context
 import android.os.Bundle
@@ -7,7 +7,7 @@ import co.electriccoin.zcash.spackle.getPackageInfoCompat
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 
-fun ReportableException.Companion.new(
+internal fun ReportableException.Companion.new(
     context: Context,
     throwable: Throwable,
     isUncaught: Boolean,
@@ -25,7 +25,7 @@ fun ReportableException.Companion.new(
     )
 }
 
-fun ReportableException.toBundle() = Bundle().apply {
+internal fun ReportableException.toBundle() = Bundle().apply {
     // Although Exception is Serializable, some Kotlin Coroutines exception classes break this
     // API contract.  Therefore we have to convert to a string here.
     putSerializable(ReportableException.EXTRA_STRING_CLASS_NAME, exceptionClass)
@@ -35,7 +35,7 @@ fun ReportableException.toBundle() = Bundle().apply {
     putLong(ReportableException.EXTRA_LONG_WALLTIME_MILLIS, time.toEpochMilliseconds())
 }
 
-fun ReportableException.Companion.fromBundle(bundle: Bundle): ReportableException {
+internal fun ReportableException.Companion.fromBundle(bundle: Bundle): ReportableException {
     val className = bundle.getString(EXTRA_STRING_CLASS_NAME)!!
     val trace = bundle.getString(EXTRA_STRING_TRACE)!!
     val appVersion = bundle.getString(EXTRA_STRING_APP_VERSION)!!

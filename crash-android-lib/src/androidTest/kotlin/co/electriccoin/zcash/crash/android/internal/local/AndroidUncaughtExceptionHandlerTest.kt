@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.crash.android.internal
+package co.electriccoin.zcash.crash.android.internal.local
 
 import android.os.Handler
 import android.os.Looper

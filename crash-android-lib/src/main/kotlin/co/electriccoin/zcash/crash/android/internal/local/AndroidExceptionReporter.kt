@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.crash.android.internal
+package co.electriccoin.zcash.crash.android.internal.local
 
 import android.content.Context
 import android.media.MediaScannerConnection
@@ -7,7 +7,7 @@ import co.electriccoin.zcash.crash.ReportableException
 import co.electriccoin.zcash.crash.android.getExceptionPath
 import co.electriccoin.zcash.crash.write
 
-object AndroidExceptionReporter {
+internal object AndroidExceptionReporter {
     internal suspend fun reportException(context: Context, reportableException: ReportableException) {
         val exceptionPath = ExceptionPath.getExceptionPath(context, reportableException)
             ?: return

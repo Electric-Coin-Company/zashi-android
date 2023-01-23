@@ -56,12 +56,17 @@ object ProcessNameCompat {
      * due to some race conditions in Android.
      */
     private fun searchForProcessName(context: Context): String? {
-        return if (AndroidApiVersion.isAtLeastP) {
+        return if (AndroidApiVersion.isAtLeastT) {
+            getProcessNameTPlus()
+        } else if (AndroidApiVersion.isAtLeastP) {
             getProcessNamePPlus()
         } else {
             searchForProcessNameLegacy(context)
         }
     }
+
+    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
+    private fun getProcessNameTPlus() = Process.myProcessName()
 
     @RequiresApi(api = Build.VERSION_CODES.P)
     private fun getProcessNamePPlus() = Application.getProcessName()

@@ -4,11 +4,15 @@ import android.content.Context
 import androidx.annotation.AnyThread
 import androidx.annotation.MainThread
 import co.electriccoin.zcash.crash.android.internal.CrashReporter
-import co.electriccoin.zcash.crash.android.internal.FirebaseCrashReporter
-import co.electriccoin.zcash.crash.android.internal.LocalCrashReporter
+import co.electriccoin.zcash.crash.android.internal.firebase.FirebaseCrashReporter
+import co.electriccoin.zcash.crash.android.internal.local.LocalCrashReporter
+import co.electriccoin.zcash.spackle.Twig
+import co.electriccoin.zcash.spackle.process.ProcessNameCompat
 import java.util.Collections
 
 object GlobalCrashReporter {
+
+    internal const val CRASH_PROCESS_NAME_SUFFIX = ":crash" // $NON-NLS
 
     private val intrinsicLock = Any()
 
@@ -17,21 +21,28 @@ object GlobalCrashReporter {
 
     /**
      * Call to register detection of uncaught exceptions and enable reporting of caught exceptions.
+     *
+     * @return True if registration occurred and false if registration was skipped.
      */
     @MainThread
-    fun register(context: Context) {
+    fun register(context: Context): Boolean {
+        if (isCrashProcess(context)) {
+            Twig.debug { "Skipping registration for $CRASH_PROCESS_NAME_SUFFIX process" } // $NON-NLS
+            return false
+        }
+
         synchronized(intrinsicLock) {
             if (registeredCrashReporters == null) {
                 registeredCrashReporters = Collections.synchronizedList(
                     listOfNotNull(
-                        // Ordering is important here; we want our exception handler to come second so that it can
-                        // run before Firebase's exception handler.
-                        FirebaseCrashReporter.getInstance(context),
-                        LocalCrashReporter.getInstance(context)
+                        LocalCrashReporter.getInstance(context),
+                        FirebaseCrashReporter(context),
                     )
                 )
             }
         }
+
+        return true
     }
 
     /**
@@ -52,3 +63,7 @@ object GlobalCrashReporter {
         registeredCrashReporters?.forEach { it.enable() }
     }
 }
+
+private fun isCrashProcess(context: Context) =
+    ProcessNameCompat.getProcessName(context)
+        .endsWith(GlobalCrashReporter.CRASH_PROCESS_NAME_SUFFIX)

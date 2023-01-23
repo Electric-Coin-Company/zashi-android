@@ -42,15 +42,15 @@ class ZcashApplication : CoroutineApplication() {
     }
 
     private fun configureAnalytics() {
-        GlobalCrashReporter.register(this)
-
-        applicationScope.launch {
-            val prefs = StandardPreferenceSingleton.getInstance(applicationContext)
-            StandardPreferenceKeys.IS_ANALYTICS_ENABLED.observe(prefs).collect {
-                if (it) {
-                    GlobalCrashReporter.enable()
-                } else {
-                    GlobalCrashReporter.disableAndDelete()
+        if (GlobalCrashReporter.register(this)) {
+            applicationScope.launch {
+                val prefs = StandardPreferenceSingleton.getInstance(applicationContext)
+                StandardPreferenceKeys.IS_ANALYTICS_ENABLED.observe(prefs).collect {
+                    if (it) {
+                        GlobalCrashReporter.enable()
+                    } else {
+                        GlobalCrashReporter.disableAndDelete()
+                    }
                 }
             }
         }

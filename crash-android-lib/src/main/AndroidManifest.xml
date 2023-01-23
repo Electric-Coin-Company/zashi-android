@@ -16,17 +16,17 @@
             tools:node="remove" />
 
         <provider
-            android:name="co.electriccoin.zcash.crash.android.internal.CrashProcessNameContentProvider"
+            android:name=".internal.local.CrashProcessNameContentProvider"
             android:authorities="${applicationId}.co.electriccoin.zcash.crash"
             android:enabled="@bool/co_electriccoin_zcash_crash_is_use_secondary_process"
             android:exported="false"
-            android:process="@string/co_electriccoin_zcash_crash_process_name_suffix" />
+            android:process=":crash" />
 
         <receiver
-            android:name="co.electriccoin.zcash.crash.android.internal.ExceptionReceiver"
+            android:name=".internal.local.ExceptionReceiver"
             android:enabled="@bool/co_electriccoin_zcash_crash_is_use_secondary_process"
             android:exported="false"
-            android:process="@string/co_electriccoin_zcash_crash_process_name_suffix" />
+            android:process=":crash" />
     </application>
 
 </manifest>

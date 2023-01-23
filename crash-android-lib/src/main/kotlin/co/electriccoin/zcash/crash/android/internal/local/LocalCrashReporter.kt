@@ -1,8 +1,9 @@
-package co.electriccoin.zcash.crash.android.internal
+package co.electriccoin.zcash.crash.android.internal.local
 
 import android.content.Context
 import androidx.annotation.AnyThread
 import co.electriccoin.zcash.crash.ReportableException
+import co.electriccoin.zcash.crash.android.internal.CrashReporter
 import co.electriccoin.zcash.spackle.LazyWithArgument
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -35,12 +36,12 @@ internal class LocalCrashReporter(private val applicationContext: Context) : Cra
     }
 
     companion object {
-        private val lazyWithArgument = LazyWithArgument<Context, CrashReporter>() {
+        private val lazyWithArgument = LazyWithArgument<Context, CrashReporter> {
             AndroidUncaughtExceptionHandler.register(it)
             LocalCrashReporter(it.applicationContext)
         }
 
-        fun getInstance(context: Context): CrashReporter? {
+        fun getInstance(context: Context): CrashReporter {
             return lazyWithArgument.getInstance(context)
         }
     }
