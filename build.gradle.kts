@@ -15,6 +15,45 @@ buildscript {
             lockAllConfigurations()
         }
     }
+
+    repositories {
+        val isRepoRestrictionEnabled = true
+
+        val googleGroups = listOf<String>(
+            "com.google.firebase",
+            "com.google.gms",
+            "com.google.android.gms"
+        )
+
+        google {
+            if (isRepoRestrictionEnabled) {
+                content {
+                    googleGroups.forEach { includeGroup(it) }
+                }
+            }
+        }
+        // We don't use mavenCentral now, but in the future we may want to use it for some dependencies
+        // mavenCentral {
+        //     if (isRepoRestrictionEnabled) {
+        //         content {
+        //             googleGroups.forEach { excludeGroup(it) }
+        //         }
+        //     }
+        // }
+        gradlePluginPortal {
+            if (isRepoRestrictionEnabled) {
+                content {
+                    googleGroups.forEach { excludeGroup(it) }
+                }
+            }
+        }
+    }
+
+    dependencies {
+        val crashlyticsVersion = project.property("FIREBASE_CRASHLYTICS_BUILD_TOOLS_VERSION")
+        classpath("com.google.firebase:firebase-crashlytics-gradle:$crashlyticsVersion")
+        classpath("com.google.gms:google-services:${project.property("GOOGLE_PLAY_SERVICES_GRADLE_PLUGIN_VERSION")}")
+    }
 }
 
 plugins {

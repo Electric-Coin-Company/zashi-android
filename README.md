@@ -33,6 +33,7 @@ If you plan to fork the project to create a new app of your own, please make the
     1. Under [app/build.gradle.kts](app/build.gradle.kts), change the package name of the application
 1. Optional
     1. Configure secrets for [Continuous Integration](docs/CI.md).
+    1. Configure Firebase API keys and placing them under `app/src/debug/google-services.json` and `app/src/release/google-services.json`
 
 # Known Issues
 1. Intel-based machines may have trouble building in Android Studio.  The workaround is to add the following line to `~/.gradle/gradle.properties` `ZCASH_IS_DEPENDENCY_LOCKING_ENABLED=false`.  See [#420](https://github.com/zcash/secant-android-wallet/issues/420) for more information.

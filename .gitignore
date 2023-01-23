@@ -21,3 +21,4 @@ local.properties
 /.idea/assetWizardSettings.xml
 /.idea/inspectionProfiles/Project_Default.xml
 /.idea/androidTestResultsUserPreferences.xml
+google-services.json

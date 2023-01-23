@@ -1,7 +1,7 @@
 package co.electriccoin.zcash.app
 
 import android.app.Application
-import co.electriccoin.zcash.crash.android.CrashReporter
+import co.electriccoin.zcash.crash.android.GlobalCrashReporter
 import co.electriccoin.zcash.spackle.StrictModeCompat
 import co.electriccoin.zcash.spackle.Twig
 
@@ -24,6 +24,6 @@ class ZcashApplication : Application() {
             Twig.assertLoggingStripped()
         }
 
-        CrashReporter.register(this)
+        GlobalCrashReporter.register(this)
     }
 }
