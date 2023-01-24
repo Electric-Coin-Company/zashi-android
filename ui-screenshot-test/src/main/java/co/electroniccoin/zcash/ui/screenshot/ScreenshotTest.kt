@@ -45,7 +45,7 @@ import kotlinx.coroutines.withContext
 import org.junit.Rule
 import org.junit.Test
 
-private const val DEFAULT_TIMEOUT_MILLISECONDS = 5_000L
+private const val DEFAULT_TIMEOUT_MILLISECONDS = 10_000L
 
 /*
  * This screenshot implementation does not change the system-wide configuration, but rather
