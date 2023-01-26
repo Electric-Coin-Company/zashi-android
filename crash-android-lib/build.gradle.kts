@@ -20,17 +20,17 @@ android {
     testOptions {
         execution = "ANDROIDX_TEST_ORCHESTRATOR"
     }
-
-    compileOptions {
-        isCoreLibraryDesugaringEnabled = true
-    }
 }
 
 dependencies {
-    coreLibraryDesugaring(libs.desugaring)
-
-    api(projects.crashLib)
     api(libs.androidx.annotation)
+    api(projects.crashLib)
+
+    implementation(platform(libs.firebase.bom))
+
+    implementation(libs.firebase.crashlytics)
+    implementation(libs.firebase.crashlytics.ndk)
+    implementation(libs.firebase.installations)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.datetime)
     implementation(projects.spackleAndroidLib)

@@ -33,7 +33,6 @@ fun Body(
     modifier: Modifier = Modifier,
     textAlign: TextAlign = TextAlign.Start,
     color: Color = MaterialTheme.colorScheme.onBackground
-
 ) {
     Text(
         text = text,

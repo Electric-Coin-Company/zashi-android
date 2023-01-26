@@ -44,7 +44,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cash.z.ecc.sdk.ext.ui.model.FiatCurrencyConversionRateState
 import cash.z.ecc.sdk.model.PercentDecimal
-import co.electriccoin.zcash.crash.android.CrashReporter
+import co.electriccoin.zcash.crash.android.GlobalCrashReporter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.Body
@@ -153,7 +153,7 @@ private fun DebugMenu(resetSdk: () -> Unit, wipeEntireWallet: () -> Unit) {
             onClick = {
                 // Eventually this shouldn't rely on the Android implementation, but rather an expect/actual
                 // should be used at the crash API level.
-                CrashReporter.reportCaughtException(RuntimeException("Manually caught exception from debug menu"))
+                GlobalCrashReporter.reportCaughtException(RuntimeException("Manually caught exception from debug menu"))
                 expanded = false
             }
         )

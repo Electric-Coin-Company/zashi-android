@@ -8,6 +8,7 @@ import android.content.pm.ProviderInfo
 import android.database.Cursor
 import android.net.Uri
 import android.os.Build
+import android.os.Process
 import androidx.annotation.RequiresApi
 import co.electriccoin.zcash.spackle.AndroidApiVersion
 
@@ -22,7 +23,9 @@ open class AbstractProcessNameContentProvider : ContentProvider() {
     override fun attachInfo(context: Context, info: ProviderInfo) {
         super.attachInfo(context, info)
 
-        val processName: String = if (AndroidApiVersion.isAtLeastP) {
+        val processName: String = if (AndroidApiVersion.isAtLeastT) {
+            getProcessNameTPlus()
+        } else if (AndroidApiVersion.isAtLeastP) {
             getProcessNamePPlus()
         } else {
             getProcessNameLegacy(context, info)
@@ -30,6 +33,9 @@ open class AbstractProcessNameContentProvider : ContentProvider() {
 
         ProcessNameCompat.setProcessName(processName)
     }
+
+    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
+    private fun getProcessNameTPlus() = Process.myProcessName()
 
     @RequiresApi(api = Build.VERSION_CODES.P)
     private fun getProcessNamePPlus(): String = Application.getProcessName()

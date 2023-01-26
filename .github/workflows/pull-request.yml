@@ -2,6 +2,8 @@
 # EMULATOR_WTF_API_KEY - Optional API key for emulator.wtf
 # FIREBASE_TEST_LAB_SERVICE_ACCOUNT - Email address of Firebase Test Lab service account
 # FIREBASE_TEST_LAB_WORKLOAD_IDENTITY_PROVIDER - Workload identity provider to generate temporary service account key
+# FIREBASE_DEBUG_JSON_BASE64 - Optional JSON to enable Firebase (e.g. Crashlytics) for debug builds
+# FIREBASE_RELEASE_JSON_BASE64 - Optional JSON to enable Firebase (e.g. Crashlytics) for release builds
 
 # Expected variables
 # FIREBASE_TEST_LAB_PROJECT - Firebase Test Lab project name
@@ -392,6 +394,17 @@ jobs:
         id: setup
         timeout-minutes: 5
         uses: ./.github/actions/setup
+      - name: Export Google Services JSON
+        env:
+          FIREBASE_DEBUG_JSON_BASE64: ${{ secrets.FIREBASE_DEBUG_JSON_BASE64 }}
+          FIREBASE_RELEASE_JSON_BASE64: ${{ secrets.FIREBASE_RELEASE_JSON_BASE64 }}
+        if: "${{ env.FIREBASE_DEBUG_JSON_BASE64 != '' && env.FIREBASE_RELEASE_JSON_BASE64 != '' }}"
+        shell: bash
+        run: |
+          mkdir -p app/src/debug/
+          mkdir -p app/src/release/
+          echo ${FIREBASE_DEBUG_JSON_BASE64} | base64 --decode > app/src/debug/google-services.json
+          echo ${FIREBASE_RELEASE_JSON_BASE64} | base64 --decode > app/src/release/google-services.json
       - name: Build
         timeout-minutes: 20
         env:
@@ -429,6 +442,17 @@ jobs:
         id: setup
         timeout-minutes: 5
         uses: ./.github/actions/setup
+      - name: Export Google Services JSON
+        env:
+          FIREBASE_DEBUG_JSON_BASE64: ${{ secrets.FIREBASE_DEBUG_JSON_BASE64 }}
+          FIREBASE_RELEASE_JSON_BASE64: ${{ secrets.FIREBASE_RELEASE_JSON_BASE64 }}
+        if: "${{ env.FIREBASE_DEBUG_JSON_BASE64 != '' && env.FIREBASE_RELEASE_JSON_BASE64 != '' }}"
+        shell: bash
+        run: |
+          mkdir -p app/src/debug/
+          mkdir -p app/src/release/
+          echo ${FIREBASE_DEBUG_JSON_BASE64} | base64 --decode > app/src/debug/google-services.json
+          echo ${FIREBASE_RELEASE_JSON_BASE64} | base64 --decode > app/src/release/google-services.json
       # A fake signing key to satisfy creating a "release" build
       - name: Export Signing Key
         env:

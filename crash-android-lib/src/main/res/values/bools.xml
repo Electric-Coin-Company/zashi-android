@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <bool name="co_electriccoin_zcash_crash_is_use_secondary_process">true</bool>
+    <!-- Expected to be overridden by a resource overlay in the app module, generated
+         based on the presence of the Firebase API keys -->
+    <bool name="co_electriccoin_zcash_crash_is_firebase_enabled">false</bool>
 </resources>

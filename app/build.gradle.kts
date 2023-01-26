@@ -1,3 +1,5 @@
+import com.android.build.api.variant.BuildConfigField
+import com.android.build.api.variant.ResValue
 import java.util.Locale
 
 plugins {
@@ -8,6 +10,26 @@ plugins {
     id("com.osacky.fladle")
     id("wtf.emulator.gradle")
     id("secant.emulator-wtf-conventions")
+}
+
+val hasFirebaseApiKeys = run {
+    val srcDir = File(project.projectDir, "src")
+    val releaseApiKey = File(File(srcDir, "release"), "google-services.json")
+    val debugApiKey = File(File(srcDir, "debug"), "google-services.json")
+
+    val result = releaseApiKey.exists() && debugApiKey.exists()
+
+    if (!result) {
+        project.logger.info("Firebase API keys not found. Crashlytics will not be enabled. To enable " +
+            "Firebase, add the API keys for ${releaseApiKey.path} and ${debugApiKey.path}.")
+    }
+
+    result
+}
+
+if (hasFirebaseApiKeys) {
+    apply(plugin = "com.google.gms.google-services")
+    apply(plugin = "com.google.firebase.crashlytics")
 }
 
 val packageName = project.property("ZCASH_RELEASE_PACKAGE_NAME").toString()
@@ -38,8 +60,8 @@ android {
         }
     }
 
-    compileOptions {
-        isCoreLibraryDesugaringEnabled = true
+    buildFeatures {
+        buildConfig = true
     }
 
     flavorDimensions.add("network")
@@ -112,13 +134,6 @@ android {
                 signingConfig = signingConfigs.getByName("debug")
             }
         }
-        all {
-            buildConfigField(
-                "boolean",
-                "IS_STRICT_MODE_CRASH_ENABLED",
-                project.property("IS_CRASH_ON_STRICT_MODE_VIOLATION").toString()
-            )
-        }
     }
 
     // Resolve final app name
@@ -153,8 +168,6 @@ android {
 }
 
 dependencies {
-    coreLibraryDesugaring(libs.desugaring)
-
     implementation(libs.androidx.activity)
     implementation(libs.androidx.annotation)
     implementation(libs.androidx.core)
@@ -165,6 +178,8 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.zcash.sdk) // just to configure logging
     implementation(projects.crashAndroidLib)
+    implementation(projects.preferenceApiLib)
+    implementation(projects.preferenceImplAndroidLib)
     implementation(projects.spackleAndroidLib)
     implementation(projects.uiLib)
 
@@ -190,6 +205,21 @@ val googlePlayServiceKeyFilePath = project.property("ZCASH_GOOGLE_PLAY_SERVICE_K
 androidComponents {
     onVariants { variant ->
         for (output in variant.outputs) {
+            variant.buildConfigFields.put(
+                "IS_STRICT_MODE_CRASH_ENABLED",
+                BuildConfigField(
+                    type = "boolean",
+                    value = project.property("IS_CRASH_ON_STRICT_MODE_VIOLATION").toString(),
+                    comment = null
+                )
+            )
+
+            variant.resValues.put(
+                // Key matches the one in crash-android-lib/src/res/values/bools.xml
+                variant.makeResValueKey("bool", "co_electriccoin_zcash_crash_is_firebase_enabled"),
+                ResValue(value = hasFirebaseApiKeys.toString())
+            )
+
             if (googlePlayServiceKeyFilePath.isNotEmpty()) {
                 // Update the versionName to reflect bumps in versionCode
 

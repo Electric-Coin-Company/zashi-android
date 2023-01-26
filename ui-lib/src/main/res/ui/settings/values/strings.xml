@@ -6,5 +6,6 @@
     <string name="settings_wipe">Wipe Wallet Data</string>
 
     <string name="settings_rescan">Rescan Blockchain</string>
+    <string name="settings_enable_analytics">Report crashes</string>
 
 </resources>
