@@ -34,6 +34,11 @@ object GlobalCrashReporter {
         synchronized(intrinsicLock) {
             if (registeredCrashReporters == null) {
                 registeredCrashReporters = Collections.synchronizedList(
+                    // To prevent a race condition, register the LocalCrashReporter first.
+                    // FirebaseCrashReporter does some asynchronous registration internally, while
+                    // LocalCrashReporter uses AndroidUncaughtExceptionHandler which needs to read
+                    // and write the default UncaughtExceptionHandler.  The only way to ensure
+                    // interleaving doesn't happen is to register the LocalCrashReporter first.
                     listOfNotNull(
                         LocalCrashReporter.getInstance(context),
                         FirebaseCrashReporter(context),
