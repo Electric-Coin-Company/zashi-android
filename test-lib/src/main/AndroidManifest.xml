@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <permission android:name="android.permission.WAKE_LOCK"
-        tools:ignore="ReservedSystemPermission" />
+    <permission android:name="android.permission.WAKE_LOCK"/>
 
     <application />
 
