@@ -10,9 +10,6 @@ interface AppUpdateChecker {
 
     val stalenessDays: Int
 
-    // TODO [694]: Ktlint 0.48.1 (remove this suppress)
-    // TODO [694]: https://github.com/zcash/secant-android-wallet/issues/694
-    @Suppress("ktlint:no-semi")
     enum class Priority {
         LOW {
             override fun priorityUpperBorder() = 1
