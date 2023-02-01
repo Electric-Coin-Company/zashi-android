@@ -82,6 +82,9 @@ pluginManager.withPlugin("com.android.test") {
             if (project.property("IS_USE_TEST_ORCHESTRATOR").toString().toBoolean()) {
                 testInstrumentationRunnerArguments["clearPackageData"] = "true"
             }
+            if (project.property("IS_ANDROID_INSTRUMENTATION_TEST_COVERAGE_ENABLED").toString().toBoolean()) {
+                testInstrumentationRunnerArguments["coverageFilePath"] = "storage/emulated/0/Download/coverage/"
+            }
         }
         testCoverage {
             jacocoVersion = project.property("JACOCO_VERSION").toString()
