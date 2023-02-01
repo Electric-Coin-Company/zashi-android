@@ -28,17 +28,17 @@ The Android Gradle plugin supports code coverage with Jacoco.  This integration 
 When coverage is enabled, running instrumentation tests will automatically generate coverage reports stored under `$module/build/reports/coverage`.
 
 ### Generating code coverage locally
-To generate code coverage locally run 
- - `./gradlew <android-module-name>:connectedCheck -PIS_ANDROID_INSTRUMENTATION_TEST_COVERAGE_ENABLED=true` for android modules
- - `./gradlew <kotlin-only-module-name>:check -PIS_ANDROID_INSTRUMENTATION_TEST_COVERAGE_ENABLED=true` for kotlin modules
- -  Running instrumentation tests will automatically generate coverage reports stored under `$module/build/reports/coverage`
+To generate code coverage locally run:
+- `./gradlew <android-module-name>:connectedCheck -PIS_ANDROID_INSTRUMENTATION_TEST_COVERAGE_ENABLED=true` for android modules
+- `./gradlew <kotlin-only-module-name>:check -PIS_ANDROID_INSTRUMENTATION_TEST_COVERAGE_ENABLED=true` for kotlin modules
+- Running instrumentation tests will automatically generate coverage reports stored under `$module/build/reports/coverage`
 
-### Generating code coverage with Emulator WTF
-To generate code coverage with EmulatorWTF run
- - `./gradlew <module-name>:testDebugWithEmulatorWtf -PIS_ANDROID_INSTRUMENTATION_TEST_COVERAGE_ENABLED=true`
- - the Emulator wtf only generates .ec which are used to then generate .html page, to do this run
- - `./gradlew <module-name>:jacocoReport`
- -  Running instrumentation tests will automatically generate coverage reports stored under `$module/build/reports/coverage`
+### Generating code coverage with emulator.wtf
+To generate code coverage with emulator.wtf run:
+- `./gradlew <module-name>:testDebugWithEmulatorWtf -PIS_ANDROID_INSTRUMENTATION_TEST_COVERAGE_ENABLED=true`
+- The emulator.wtf only generates `.ec` files which are used then to generate `.html` page. To do this run:
+  - `./gradlew <module-name>:jacocoReport`
+- Running instrumentation tests will automatically generate coverage reports stored under `$module/build/reports/coverage`
 
 ## Benchmarking
 This section provides information about available benchmark tests integrated in this project as well as how to use them. Currently, we support macrobenchmark tests run locally as described in the Android [documentation](https://developer.android.com/topic/performance/benchmarking/benchmarking-overview).
