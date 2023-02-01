@@ -292,8 +292,8 @@ dependencyResolutionManagement {
                     "androidx-espresso-intents",
                     "androidx-test-core",
                     "androidx-test-junit",
-                    "androidx-test-runner",
-                    "androidx-test-orchestrator"
+                    "androidx-test-orchestrator",
+                    "androidx-test-runner"
                 )
             )
         }
