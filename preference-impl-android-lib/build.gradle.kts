@@ -17,7 +17,6 @@ android {
     if (isOrchestratorEnabled) {
         defaultConfig {
             testInstrumentationRunnerArguments["clearPackageData"] = "true"
-            testInstrumentationRunnerArguments["useTestStorageService"] = "true"
         }
 
         testOptions {

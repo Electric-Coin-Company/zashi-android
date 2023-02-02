@@ -12,7 +12,6 @@ android {
 
     defaultConfig {
         testInstrumentationRunner = "co.electriccoin.zcash.test.ZcashUiTestRunner"
-        testInstrumentationRunnerArguments["useTestStorageService"] = "true"
     }
     testOptions {
         execution = "ANDROIDX_TEST_ORCHESTRATOR"
