@@ -29,8 +29,8 @@ When coverage is enabled, running instrumentation tests will automatically gener
 
 ### Generating code coverage locally
 To generate code coverage locally run:
-- `./gradlew <android-module-name>:connectedCheck -PIS_ANDROID_INSTRUMENTATION_TEST_COVERAGE_ENABLED=true` for android modules
-- `./gradlew <kotlin-only-module-name>:check -PIS_ANDROID_INSTRUMENTATION_TEST_COVERAGE_ENABLED=true` for kotlin modules
+- `./gradlew <android-module-name>:connectedCheck -PIS_ANDROID_INSTRUMENTATION_TEST_COVERAGE_ENABLED=true` for android modules. These modules internally use JaCoCo to generate test coverage.
+- `./gradlew <kotlin-only-module-name>:check -PIS_ANDROID_INSTRUMENTATION_TEST_COVERAGE_ENABLED=true` for kotlin modules. These modules internally use Kover to generate test coverage.
 - Running instrumentation tests will automatically generate coverage reports stored under `$module/build/reports/coverage`
 
 ### Generating code coverage with emulator.wtf
