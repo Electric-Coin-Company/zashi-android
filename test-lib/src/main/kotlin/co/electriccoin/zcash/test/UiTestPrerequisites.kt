@@ -1,9 +1,7 @@
 package co.electriccoin.zcash.test
 
-import android.annotation.TargetApi
 import android.app.KeyguardManager
 import android.content.Context
-import android.os.Build
 import android.os.PowerManager
 import androidx.test.core.app.ApplicationProvider
 import org.junit.Before
@@ -15,21 +13,18 @@ import org.junit.Before
 // Originally hoped to put this into ZcashUiTestRunner, although it causes reporting of test results to fail
 open class UiTestPrerequisites {
     @Before
-    @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
     fun verifyPrerequisites() {
         assertScreenIsOn()
         assertKeyguardIsUnlocked()
     }
 
     companion object {
-        @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
         fun assertScreenIsOn() {
             if (!isScreenOn()) {
                 throw AssertionError("Screen must be on for Android UI tests to run") // $NON-NLS
             }
         }
 
-        @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
         private fun isScreenOn(): Boolean {
             val powerService = ApplicationProvider.getApplicationContext<Context>()
                 .getSystemService(Context.POWER_SERVICE) as PowerManager

@@ -7,7 +7,7 @@ pluginManager.withPlugin("com.android.application") {
         configureBaseExtension(isLibrary = false)
 
         defaultConfig {
-            minSdk = project.property("ANDROID_APP_MIN_SDK_VERSION").toString().toInt()
+            minSdk = project.property("ANDROID_MIN_SDK_VERSION").toString().toInt()
             targetSdk = project.property("ANDROID_TARGET_SDK_VERSION").toString().toInt()
 
             // en_XA and ar_XB are pseudolocales for debugging.
@@ -31,7 +31,7 @@ pluginManager.withPlugin("com.android.library") {
         configureBaseExtension(isLibrary = true)
 
         defaultConfig {
-            minSdk = project.property("ANDROID_LIB_MIN_SDK_VERSION").toString().toInt()
+            minSdk = project.property("ANDROID_MIN_SDK_VERSION").toString().toInt()
             // This is deprecated but we don't have a replacement for the instrumentation APKs yet
             targetSdk = project.property("ANDROID_TARGET_SDK_VERSION").toString().toInt()
 
@@ -60,7 +60,7 @@ pluginManager.withPlugin("com.android.test") {
         configureBaseExtension(isLibrary = true)
 
         defaultConfig {
-            minSdk = project.property("ANDROID_LIB_MIN_SDK_VERSION").toString().toInt()
+            minSdk = project.property("ANDROID_MIN_SDK_VERSION").toString().toInt()
             // This is deprecated but we don't have a replacement for the instrumentation APKs yet
             targetSdk = project.property("ANDROID_TARGET_SDK_VERSION").toString().toInt()
 
@@ -130,11 +130,7 @@ fun com.android.build.gradle.BaseExtension.configureBaseExtension(isLibrary: Boo
             val MANAGED_DEVICES_MIN_SDK = 27
 
             val testDeviceMinSdkVersion = run {
-                val buildMinSdk = if (isLibrary) {
-                    project.properties["ANDROID_LIB_MIN_SDK_VERSION"].toString().toInt()
-                } else {
-                    project.properties["ANDROID_APP_MIN_SDK_VERSION"].toString().toInt()
-                }
+                val buildMinSdk = project.properties["ANDROID_MIN_SDK_VERSION"].toString().toInt()
                 buildMinSdk.coerceAtLeast(MANAGED_DEVICES_MIN_SDK)
             }
             val testDeviceMaxSdkVersion = project.properties["ANDROID_TARGET_SDK_VERSION"].toString().toInt()

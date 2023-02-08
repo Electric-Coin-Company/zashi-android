@@ -1,9 +1,7 @@
 package co.electriccoin.zcash.preference
 
 import android.content.Context
-import android.os.Build
 import androidx.test.core.app.ApplicationProvider
-import androidx.test.filters.SdkSuppress
 import androidx.test.filters.SmallTest
 import co.electriccoin.zcash.preference.test.fixture.StringDefaultPreferenceFixture
 import kotlinx.coroutines.runBlocking
@@ -68,7 +66,6 @@ class EncryptedPreferenceProviderTest {
     // e.g. the directory path and the fact the preferences are stored as XML
     @Test
     @SmallTest
-    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.N)
     fun verify_no_plaintext() = runBlocking {
         val expectedValue = StringDefaultPreferenceFixture.DEFAULT_VALUE + "extra"
 
