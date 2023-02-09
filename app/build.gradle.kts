@@ -304,7 +304,7 @@ fladle {
     val FIREBASE_TEST_LAB_MAX_SDK = 33
 
     val minSdkVersion = run {
-        val buildMinSdk = project.properties["ANDROID_APP_MIN_SDK_VERSION"].toString().toInt()
+        val buildMinSdk = project.properties["ANDROID_MIN_SDK_VERSION"].toString().toInt()
         buildMinSdk.coerceAtLeast(FIREBASE_TEST_LAB_MIN_SDK).toString()
     }
     val targetSdkVersion = run {

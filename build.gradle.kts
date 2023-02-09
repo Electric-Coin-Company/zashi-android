@@ -151,7 +151,7 @@ fladle {
     val minSdkVersion = run {
         // Fladle will use the app APK as the additional APK, so we have to
         // use the app's minSdkVersion here.
-        val buildMinSdk = project.properties["ANDROID_APP_MIN_SDK_VERSION"].toString().toInt()
+        val buildMinSdk = project.properties["ANDROID_MIN_SDK_VERSION"].toString().toInt()
         buildMinSdk.coerceAtLeast(FIREBASE_TEST_LAB_MIN_SDK).toString()
     }
     val targetSdkVersion = run {

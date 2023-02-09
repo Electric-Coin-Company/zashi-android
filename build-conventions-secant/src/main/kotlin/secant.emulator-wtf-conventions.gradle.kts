@@ -1,6 +1,3 @@
-import com.android.build.gradle.internal.cxx.configure.buildTypeOf
-import com.android.build.gradle.internal.dsl.decorator.androidPluginDslDecorator
-
 // Emulator WTF has min and max values that might differ from our project's
 // These are determined by `ew-cli --models`
 
@@ -24,18 +21,8 @@ pluginManager.withPlugin("wtf.emulator.gradle") {
             environmentVariables.set(mapOf("useTestStorageService" to "false"))
         }
 
-        val buildMinSdk = if (pluginManager.hasPlugin("com.android.application")) {
-            project.properties["ANDROID_APP_MIN_SDK_VERSION"].toString().toInt()
-        } else if (pluginManager.hasPlugin("com.android.test")) {
-            project.properties["ANDROID_APP_MIN_SDK_VERSION"].toString().toInt()
-        } else if (pluginManager.hasPlugin("com.android.library")) {
-            project.properties["ANDROID_LIB_MIN_SDK_VERSION"].toString().toInt()
-        } else {
-            throw IllegalArgumentException("Unsupported plugin type. Make sure that the plugin type you've added is" +
-                " supported by ${this.javaClass.name}.")
-        }
-
-        val moduleMinSdkVersion = run {
+        val minSdkVersion = run {
+            val buildMinSdk = project.properties["ANDROID_MIN_SDK_VERSION"].toString().toInt()
             buildMinSdk.coerceAtLeast(EMULATOR_WTF_MIN_SDK).toString()
         }
         val targetSdkVersion = run {
@@ -45,7 +32,7 @@ pluginManager.withPlugin("wtf.emulator.gradle") {
 
         devices.set(
             listOf(
-                mapOf("model" to "Pixel2", "version" to moduleMinSdkVersion),
+                mapOf("model" to "Pixel2", "version" to minSdkVersion),
                 mapOf("model" to "Pixel2", "version" to targetSdkVersion)
             )
         )

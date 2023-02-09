@@ -15,12 +15,6 @@ object AndroidApiVersion {
         return Build.VERSION.SDK_INT >= sdk
     }
 
-    @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.N)
-    val isAtLeastN = isAtLeast(Build.VERSION_CODES.N)
-
-    @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.O)
-    val isAtLeastO = isAtLeast(Build.VERSION_CODES.O)
-
     @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.P)
     val isAtLeastP = isAtLeast(Build.VERSION_CODES.P)
 
