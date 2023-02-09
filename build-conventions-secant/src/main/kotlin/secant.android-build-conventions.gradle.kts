@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 
 pluginManager.withPlugin("com.android.application") {
     project.the<com.android.build.gradle.AppExtension>().apply {
-        configureBaseExtension(isLibrary = false)
+        configureBaseExtension()
 
         defaultConfig {
             minSdk = project.property("ANDROID_MIN_SDK_VERSION").toString().toInt()
@@ -28,7 +28,7 @@ pluginManager.withPlugin("com.android.application") {
 
 pluginManager.withPlugin("com.android.library") {
     project.the<com.android.build.gradle.LibraryExtension>().apply {
-        configureBaseExtension(isLibrary = true)
+        configureBaseExtension()
 
         defaultConfig {
             minSdk = project.property("ANDROID_MIN_SDK_VERSION").toString().toInt()
@@ -57,7 +57,7 @@ pluginManager.withPlugin("com.android.library") {
 
 pluginManager.withPlugin("com.android.test") {
     project.the<com.android.build.gradle.TestExtension>().apply {
-        configureBaseExtension(isLibrary = true)
+        configureBaseExtension()
 
         defaultConfig {
             minSdk = project.property("ANDROID_MIN_SDK_VERSION").toString().toInt()
@@ -84,7 +84,7 @@ pluginManager.withPlugin("com.android.test") {
 }
 
 @Suppress("LongMethod")
-fun com.android.build.gradle.BaseExtension.configureBaseExtension(isLibrary: Boolean) {
+fun com.android.build.gradle.BaseExtension.configureBaseExtension() {
     compileSdkVersion(project.property("ANDROID_COMPILE_SDK_VERSION").toString().toInt())
     ndkVersion = project.property("ANDROID_NDK_VERSION").toString()
 
