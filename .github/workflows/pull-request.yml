@@ -294,7 +294,7 @@ jobs:
           # Because Fulladle doesn't allow Test Orchestrator to be enabled/disabled for a specific submodule, it must be enabled for all modules
           ORG_GRADLE_PROJECT_IS_USE_TEST_ORCHESTRATOR: true
         run: |
-          ./gradlew runFlank --parallel
+          ./gradlew runFlank
       - name: Collect Artifacts
         if: ${{ always() }}
         timeout-minutes: 1

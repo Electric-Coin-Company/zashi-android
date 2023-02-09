@@ -145,7 +145,7 @@ fladle {
     // Firebase Test Lab has min and max values that might differ from our project's
     // These are determined by `gcloud firebase test android models list`
     @Suppress("MagicNumber", "PropertyName", "VariableNaming")
-    val FIREBASE_TEST_LAB_MIN_SDK = 23
+    val FIREBASE_TEST_LAB_MIN_SDK = 27 // Minimum for Pixel2.arm device
 
     @Suppress("MagicNumber", "PropertyName", "VariableNaming")
     val FIREBASE_TEST_LAB_MAX_SDK = 33
@@ -171,7 +171,7 @@ fladle {
     }
 
     devices.addAll(
-        mapOf("model" to "Pixel2", "version" to minSdkVersion),
+        mapOf("model" to "Pixel2.arm", "version" to minSdkVersion),
         mapOf("model" to "Pixel2.arm", "version" to targetSdkVersion)
     )
 
@@ -187,8 +187,8 @@ fladle {
     flankVersion.set(libs.versions.flank.get())
 
     filesToDownload.set(listOf(
-        "*/matrix_*/*test_results_merged\\.xml",
-        "*/matrix_*/*/artifacts/sdcard/googletest/test_outputfiles/*\\.png"
+        ".*/matrix_.*/.*test_results_merged\\.xml",
+        ".*/matrix_.*/.*/artifacts/sdcard/googletest/test_outputfiles/.*\\.png"
     ))
 
     directoriesToPull.set(listOf(
