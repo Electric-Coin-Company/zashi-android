@@ -22,9 +22,6 @@ pluginManager.withPlugin("com.android.application") {
             if (project.property("IS_USE_TEST_ORCHESTRATOR").toString().toBoolean()) {
                 testInstrumentationRunnerArguments["clearPackageData"] = "true"
             }
-            if (project.property("IS_ANDROID_INSTRUMENTATION_TEST_COVERAGE_ENABLED").toString().toBoolean()) {
-                testInstrumentationRunnerArguments["coverageFilePath"] = "storage/emulated/0/Download/coverage/"
-            }
         }
     }
 }
@@ -50,9 +47,6 @@ pluginManager.withPlugin("com.android.library") {
             testInstrumentationRunnerArguments["useTestStorageService"] = "true"
             if (project.property("IS_USE_TEST_ORCHESTRATOR").toString().toBoolean()) {
                 testInstrumentationRunnerArguments["clearPackageData"] = "true"
-            }
-            if (project.property("IS_ANDROID_INSTRUMENTATION_TEST_COVERAGE_ENABLED").toString().toBoolean()) {
-                testInstrumentationRunnerArguments["coverageFilePath"] = "storage/emulated/0/Download/coverage/"
             }
         }
         testCoverage {
@@ -81,9 +75,6 @@ pluginManager.withPlugin("com.android.test") {
             testInstrumentationRunnerArguments["useTestStorageService"] = "true"
             if (project.property("IS_USE_TEST_ORCHESTRATOR").toString().toBoolean()) {
                 testInstrumentationRunnerArguments["clearPackageData"] = "true"
-            }
-            if (project.property("IS_ANDROID_INSTRUMENTATION_TEST_COVERAGE_ENABLED").toString().toBoolean()) {
-                testInstrumentationRunnerArguments["coverageFilePath"] = "storage/emulated/0/Download/coverage/"
             }
         }
         testCoverage {
