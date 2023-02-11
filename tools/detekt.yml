@@ -29,3 +29,7 @@ style:
     excludes: [ '**/*.kts' ]
   WildcardImport:
     active: false
+
+Compose:
+  ModifierMissing:
+    active: false

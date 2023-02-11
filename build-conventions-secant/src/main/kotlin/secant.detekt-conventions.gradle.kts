@@ -5,6 +5,10 @@ plugins {
     id("io.gitlab.arturbosch.detekt")
 }
 
+dependencies {
+    detektPlugins("io.nlopez.compose.rules:detekt:${project.property("DETEKT_COMPOSE_RULES_VERSION")}")
+}
+
 tasks {
     register("detektAll", Detekt::class) {
         parallel = true
