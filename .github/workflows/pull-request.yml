@@ -475,10 +475,12 @@ jobs:
           ARTIFACTS_DIR_PATH: ${{ format('{0}/artifacts', env.home) }}
           BINARIES_ZIP_PATH: ${{ format('{0}/artifacts/binaries.zip', env.home) }}
           MAPPINGS_ZIP_PATH: ${{ format('{0}/artifacts/mappings.zip', env.home) }}
+          COMPOSE_METRICS_ZIP_PATH: ${{ format('{0}/artifacts/compose_metrics.zip', env.home) }}
         run: |
           mkdir ${ARTIFACTS_DIR_PATH}
           zip -r ${BINARIES_ZIP_PATH} . -i app/build/outputs/apk/\*/\*.apk app/build/outputs/apk_from_bundle/\*/\*.apk app/build/outputs/bundle/\*/\*.aab
           zip -r ${MAPPINGS_ZIP_PATH} . -i *app/build/outputs/mapping/*/mapping.txt
+          zip -r ${COMPOSE_METRICS_ZIP_PATH} . -i \*/build/compose-metrics/\* \*/build/compose-reports/\*
       - name: Upload Artifacts
         uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce
         timeout-minutes: 2

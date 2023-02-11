@@ -179,7 +179,7 @@ fun com.android.build.gradle.BaseExtension.configureBaseExtension() {
         kotlinOptions {
             jvmTarget = project.property("ANDROID_JVM_TARGET").toString()
             allWarningsAsErrors = project.property("ZCASH_IS_TREAT_WARNINGS_AS_ERRORS").toString().toBoolean()
-            freeCompilerArgs = freeCompilerArgs + "-opt-in=kotlin.RequiresOptIn"
+            freeCompilerArgs = freeCompilerArgs + "-opt-in=kotlin.RequiresOptIn" + buildComposeMetricsParameters()
         }
     }
 
@@ -193,4 +193,28 @@ fun com.android.build.gradle.BaseExtension.configureBaseExtension() {
 
 fun CommonExtension<*, *, *, *>.kotlinOptions(block: KotlinJvmOptions.() -> Unit) {
     (this as ExtensionAware).extensions.configure("kotlinOptions", block)
+}
+
+fun Project.buildComposeMetricsParameters(): List<String> {
+    val metricParameters = mutableListOf<String>()
+    val enableMetricsProvider = project.providers.gradleProperty("IS_ENABLE_COMPOSE_COMPILER_METRICS")
+    val enableMetrics = (enableMetricsProvider.orNull == "true")
+    if (enableMetrics) {
+        val metricsFolder = File(project.buildDir, "compose-metrics")
+        metricParameters.add("-P")
+        metricParameters.add(
+            "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=" + metricsFolder.absolutePath
+        )
+    }
+
+    val enableReportsProvider = project.providers.gradleProperty("IS_ENABLE_COMPOSE_COMPILER_REPORTS")
+    val enableReports = (enableReportsProvider.orNull == "true")
+    if (enableReports) {
+        val reportsFolder = File(project.buildDir, "compose-reports")
+        metricParameters.add("-P")
+        metricParameters.add(
+            "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=" + reportsFolder.absolutePath
+        )
+    }
+    return metricParameters.toList()
 }
