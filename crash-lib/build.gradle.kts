@@ -2,7 +2,6 @@ plugins {
     kotlin("multiplatform")
     id("secant.kotlin-multiplatform-build-conventions")
     id("secant.dependency-conventions")
-    id("secant.android-build-conventions")
 }
 
 kotlin {

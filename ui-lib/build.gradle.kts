@@ -4,6 +4,7 @@ plugins {
     id("secant.android-build-conventions")
     id("wtf.emulator.gradle")
     id("secant.emulator-wtf-conventions")
+    id("secant.jacoco-conventions")
 }
 
 android {
@@ -93,6 +94,7 @@ dependencies {
     }
 
     if (project.property("IS_USE_TEST_ORCHESTRATOR").toString().toBoolean()) {
+        androidTestUtil(libs.androidx.test.services)
         androidTestUtil(libs.androidx.test.orchestrator) {
             artifact {
                 type = "apk"
@@ -100,3 +102,4 @@ dependencies {
         }
     }
 }
+

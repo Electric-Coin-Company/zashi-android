@@ -4,6 +4,7 @@ plugins {
     id("secant.android-build-conventions")
     id("wtf.emulator.gradle")
     id("secant.emulator-wtf-conventions")
+    id("secant.jacoco-conventions")
 }
 
 // Note that we force enable test orchestrator for this module, because some of the test cases require it.
