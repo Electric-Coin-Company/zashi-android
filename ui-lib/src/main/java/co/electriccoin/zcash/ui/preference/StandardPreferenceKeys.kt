@@ -13,6 +13,10 @@ object StandardPreferenceKeys {
     // Default to true until https://github.com/zcash/secant-android-wallet/issues/304
     val IS_ANALYTICS_ENABLED = BooleanPreferenceDefault(Key("is_analytics_enabled"), true)
 
+    val IS_BACKGROUND_SYNC_ENABLED = BooleanPreferenceDefault(Key("is_background_sync_enabled"), true)
+
+    val IS_KEEP_SCREEN_ON_DURING_SYNC = BooleanPreferenceDefault(Key("is_keep_screen_on_during_sync"), true)
+
     /**
      * The fiat currency that the user prefers.
      */

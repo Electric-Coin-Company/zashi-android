@@ -14,6 +14,7 @@ import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.screen.home.view.Home
 import co.electriccoin.zcash.ui.screen.home.viewmodel.CheckUpdateViewModel
 import co.electriccoin.zcash.ui.screen.home.viewmodel.WalletViewModel
+import co.electriccoin.zcash.ui.screen.settings.viewmodel.SettingsViewModel
 import co.electriccoin.zcash.ui.screen.update.AppUpdateCheckerImp
 import co.electriccoin.zcash.ui.screen.update.model.UpdateState
 
@@ -53,8 +54,11 @@ internal fun WrapHome(
     }
 
     val walletViewModel by activity.viewModels<WalletViewModel>()
-
     val walletSnapshot = walletViewModel.walletSnapshot.collectAsStateWithLifecycle().value
+
+    val settingsViewModel by activity.viewModels<SettingsViewModel>()
+
+    val isKeepScreenOnWhileSyncing = settingsViewModel.isKeepScreenOnWhileSyncing.collectAsStateWithLifecycle().value
 
     if (null == walletSnapshot) {
         // Display loading indicator

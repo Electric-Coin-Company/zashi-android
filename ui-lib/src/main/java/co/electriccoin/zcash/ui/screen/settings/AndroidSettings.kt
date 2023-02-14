@@ -33,17 +33,28 @@ private fun WrapSettings(
     val settingsViewModel by activity.viewModels<SettingsViewModel>()
 
     val synchronizer = walletViewModel.synchronizer.collectAsStateWithLifecycle().value
+    val isBackgroundSyncEnabled = settingsViewModel.isBackgroundSync.collectAsStateWithLifecycle().value
+    val isKeepScreenOnWhileSyncing = settingsViewModel.isKeepScreenOnWhileSyncing.collectAsStateWithLifecycle().value
     val isAnalyticsEnabled = settingsViewModel.isAnalyticsEnabled.collectAsStateWithLifecycle().value
 
-    if (null == synchronizer || null == isAnalyticsEnabled) {
+    @Suppress("ComplexCondition")
+    if (null == synchronizer || null == isAnalyticsEnabled || null == isBackgroundSyncEnabled || null == isKeepScreenOnWhileSyncing) {
         // Display loading indicator
     } else {
         Settings(
-            isAnalyticsEnabled,
+            isBackgroundSyncEnabled = isBackgroundSyncEnabled,
+            isKeepScreenOnDuringSyncEnabled = isKeepScreenOnWhileSyncing,
+            isAnalyticsEnabled = isAnalyticsEnabled,
             onBack = goBack,
             onBackupWallet = goWalletBackup,
             onRescanWallet = {
                 walletViewModel.rescanBlockchain()
+            },
+            onBackgroundSyncSettingsChanged = {
+                settingsViewModel.setBackgroundSyncEnabled(it)
+            },
+            onIsKeepScreenOnDuringSyncSettingsChanged = {
+                settingsViewModel.setKeepScreenOnWhileSyncing(it)
             },
             onAnalyticsSettingsChanged = {
                 settingsViewModel.setAnalyticsEnabled(it)

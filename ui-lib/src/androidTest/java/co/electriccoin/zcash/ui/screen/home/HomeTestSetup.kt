@@ -45,6 +45,7 @@ class HomeTestSetup(
     fun getDefaultContent() {
         Home(
             walletSnapshot,
+            isKeepScreenOnDuringSync = false,
             emptyList(),
             goScan = {
                 onScanCount.incrementAndGet()

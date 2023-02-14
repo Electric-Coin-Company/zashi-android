@@ -32,7 +32,6 @@ import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
 import co.electriccoin.zcash.ui.preference.StandardPreferenceSingleton
 import co.electriccoin.zcash.ui.screen.home.model.CommonTransaction
 import co.electriccoin.zcash.ui.screen.home.model.WalletSnapshot
-import co.electriccoin.zcash.work.WorkIds
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
@@ -151,7 +150,7 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
         )
 
     // This is not the right API, because the transaction list could be very long and might need UI filtering
-    @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
+    @OptIn(ExperimentalCoroutinesApi::class)
     val transactionSnapshot: StateFlow<List<CommonTransaction>> = synchronizer
         .flatMapLatest {
             if (null == it) {
@@ -205,8 +204,6 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
             persistWalletMutex.withLock {
                 EncryptedPreferenceKeys.PERSISTABLE_WALLET.putValue(preferenceProvider, persistableWallet)
             }
-
-            WorkIds.enableBackgroundSynchronization(application)
         }
     }
 

@@ -7,13 +7,6 @@ import androidx.work.WorkManager
 object WorkIds {
     const val WORK_ID_BACKGROUND_SYNC = "co.electriccoin.zcash.background_sync"
 
-    /*
-     * For now, sync is always enabled.  In the future, we can consider whether a preference
-     * is a good idea.
-     *
-     * Also note that if we ever change the sync interval period, this code won't re-run on
-     * existing installations unless we make changes to call this during app startup.
-     */
     fun enableBackgroundSynchronization(context: Context) {
         val workManager = WorkManager.getInstance(context)
 
@@ -22,5 +15,11 @@ object WorkIds {
             ExistingPeriodicWorkPolicy.REPLACE,
             SyncWorker.newWorkRequest()
         )
+    }
+
+    fun disableBackgroundSynchronization(context: Context) {
+        val workManager = WorkManager.getInstance(context)
+
+        workManager.cancelUniqueWork(WORK_ID_BACKGROUND_SYNC)
     }
 }
