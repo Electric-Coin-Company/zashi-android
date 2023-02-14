@@ -38,8 +38,8 @@ import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import cash.z.ecc.sdk.fixture.WalletAddressesFixture
-import cash.z.ecc.sdk.model.WalletAddresses
+import cash.z.ecc.android.sdk.fixture.WalletAddressesFixture
+import cash.z.ecc.android.sdk.model.WalletAddresses
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.Body

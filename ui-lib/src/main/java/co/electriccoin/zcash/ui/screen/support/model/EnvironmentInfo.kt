@@ -1,7 +1,7 @@
 package co.electriccoin.zcash.ui.screen.support.model
 
 import android.content.Context
-import cash.z.ecc.sdk.ext.ui.model.MonetarySeparators
+import cash.z.ecc.android.sdk.model.MonetarySeparators
 import co.electriccoin.zcash.global.StorageChecker
 import java.util.Locale
 

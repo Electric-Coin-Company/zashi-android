@@ -2,8 +2,8 @@ package co.electriccoin.zcash.ui.screen.send.ext
 
 import androidx.compose.runtime.saveable.SaverScope
 import androidx.test.filters.SmallTest
+import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.sdk.fixture.ZecSendFixture
-import cash.z.ecc.sdk.model.ZecSend
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test

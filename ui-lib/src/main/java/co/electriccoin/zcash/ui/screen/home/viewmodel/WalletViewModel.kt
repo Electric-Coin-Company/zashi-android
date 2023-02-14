@@ -6,19 +6,23 @@ import androidx.lifecycle.viewModelScope
 import cash.z.ecc.android.bip39.Mnemonics
 import cash.z.ecc.android.bip39.toSeed
 import cash.z.ecc.android.sdk.Synchronizer
+import cash.z.ecc.android.sdk.WalletCoordinator
 import cash.z.ecc.android.sdk.block.CompactBlockProcessor
 import cash.z.ecc.android.sdk.model.Account
 import cash.z.ecc.android.sdk.model.BlockHeight
+import cash.z.ecc.android.sdk.model.FiatCurrency
 import cash.z.ecc.android.sdk.model.PendingTransaction
+import cash.z.ecc.android.sdk.model.PercentDecimal
+import cash.z.ecc.android.sdk.model.PersistableWallet
+import cash.z.ecc.android.sdk.model.WalletAddresses
 import cash.z.ecc.android.sdk.model.WalletBalance
 import cash.z.ecc.android.sdk.model.Zatoshi
+import cash.z.ecc.android.sdk.model.ZcashNetwork
 import cash.z.ecc.android.sdk.model.isMined
 import cash.z.ecc.android.sdk.model.isSubmitSuccess
 import cash.z.ecc.android.sdk.tool.DerivationTool
-import cash.z.ecc.sdk.model.FiatCurrency
-import cash.z.ecc.sdk.model.PercentDecimal
-import cash.z.ecc.sdk.model.PersistableWallet
-import cash.z.ecc.sdk.model.WalletAddresses
+import cash.z.ecc.sdk.type.fromResources
+import co.electriccoin.zcash.global.getInstance
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.common.throttle
@@ -59,7 +63,7 @@ import kotlin.time.ExperimentalTime
 // TODO [#292]: Should be moved to SDK-EXT-UI module.
 // TODO [#292]: https://github.com/zcash/secant-android-wallet/issues/292
 class WalletViewModel(application: Application) : AndroidViewModel(application) {
-    private val walletCoordinator = co.electriccoin.zcash.global.WalletCoordinator.getInstance(application)
+    private val walletCoordinator = WalletCoordinator.getInstance(application)
 
     /*
      * Using the Mutex may be overkill, but it ensures that if multiple calls are accidentally made
@@ -184,7 +188,7 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
         val application = getApplication<Application>()
 
         viewModelScope.launch {
-            val newWallet = PersistableWallet.new(application)
+            val newWallet = PersistableWallet.new(application, ZcashNetwork.fromResources(application))
             persistExistingWallet(newWallet)
         }
     }
@@ -243,20 +247,6 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
      */
     fun resetSdk() {
         walletCoordinator.resetSdk()
-    }
-
-    /**
-     * This asynchronously wipes the entire wallet state.
-     *
-     * This is destructive, as the seed phrase is deleted along with the SDK state.
-     *
-     * This could be used as part of testing, to quickly reset the app state.
-     *
-     * A more complete reset of app state can be performed in Android Settings, as this will not
-     * clear application state beyond the SDK and wallet secret.
-     */
-    fun wipeEntireWallet() {
-        walletCoordinator.wipeEntireWallet()
     }
 }
 

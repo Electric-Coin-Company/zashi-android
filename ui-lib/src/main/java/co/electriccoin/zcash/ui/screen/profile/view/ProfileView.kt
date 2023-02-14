@@ -22,8 +22,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import cash.z.ecc.sdk.fixture.WalletAddressFixture
-import cash.z.ecc.sdk.model.WalletAddress
+import cash.z.ecc.android.sdk.fixture.WalletAddressFixture
+import cash.z.ecc.android.sdk.model.WalletAddress
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.BrightenScreen
 import co.electriccoin.zcash.ui.common.DisableScreenTimeout

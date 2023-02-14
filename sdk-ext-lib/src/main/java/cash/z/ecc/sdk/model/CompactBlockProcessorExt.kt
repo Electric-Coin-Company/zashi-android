@@ -1,6 +1,7 @@
 package cash.z.ecc.sdk.model
 
 import cash.z.ecc.android.sdk.block.CompactBlockProcessor
+import cash.z.ecc.android.sdk.model.PercentDecimal
 
 fun CompactBlockProcessor.ProcessorInfo.downloadProgress(): PercentDecimal {
     val lastDownloadRangeSnapshot = lastDownloadRange

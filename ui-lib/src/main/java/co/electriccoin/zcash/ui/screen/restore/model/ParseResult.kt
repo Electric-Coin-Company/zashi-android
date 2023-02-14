@@ -1,6 +1,6 @@
 package co.electriccoin.zcash.ui.screen.restore.model
 
-import cash.z.ecc.sdk.model.SeedPhrase
+import cash.z.ecc.android.sdk.model.SeedPhrase
 import co.electriccoin.zcash.ui.common.first
 import java.util.Locale
 

@@ -9,7 +9,8 @@ import androidx.work.PeriodicWorkRequest
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkerParameters
 import cash.z.ecc.android.sdk.Synchronizer
-import co.electriccoin.zcash.global.WalletCoordinator
+import cash.z.ecc.android.sdk.WalletCoordinator
+import co.electriccoin.zcash.global.getInstance
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine

@@ -42,8 +42,8 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import cash.z.ecc.sdk.ext.ui.model.FiatCurrencyConversionRateState
-import cash.z.ecc.sdk.model.PercentDecimal
+import cash.z.ecc.android.sdk.model.FiatCurrencyConversionRateState
+import cash.z.ecc.android.sdk.model.PercentDecimal
 import co.electriccoin.zcash.crash.android.GlobalCrashReporter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
@@ -73,7 +73,6 @@ fun ComposablePreview() {
                 goSend = {},
                 goRequest = {},
                 resetSdk = {},
-                wipeEntireWallet = {},
                 isDebugMenuEnabled = false,
                 updateAvailable = false
             )
@@ -92,12 +91,11 @@ fun Home(
     goSend: () -> Unit,
     goRequest: () -> Unit,
     resetSdk: () -> Unit,
-    wipeEntireWallet: () -> Unit,
     isDebugMenuEnabled: Boolean,
     updateAvailable: Boolean
 ) {
     Scaffold(topBar = {
-        HomeTopAppBar(isDebugMenuEnabled, resetSdk, wipeEntireWallet)
+        HomeTopAppBar(isDebugMenuEnabled, resetSdk)
     }) { paddingValues ->
         HomeMainContent(
             paddingValues,
@@ -117,20 +115,21 @@ fun Home(
 private fun HomeTopAppBar(
     isDebugMenuEnabled: Boolean,
     resetSdk: () -> Unit,
-    wipeEntireWallet: () -> Unit
 ) {
     TopAppBar(
         title = { Text(text = stringResource(id = R.string.app_name)) },
         actions = {
             if (isDebugMenuEnabled) {
-                DebugMenu(resetSdk, wipeEntireWallet)
+                DebugMenu(resetSdk)
             }
         }
     )
 }
 
 @Composable
-private fun DebugMenu(resetSdk: () -> Unit, wipeEntireWallet: () -> Unit) {
+private fun DebugMenu(
+    resetSdk: () -> Unit
+) {
     var expanded by rememberSaveable { mutableStateOf(false) }
     IconButton(onClick = { expanded = true }) {
         Icon(Icons.Default.MoreVert, contentDescription = null)
@@ -161,13 +160,6 @@ private fun DebugMenu(resetSdk: () -> Unit, wipeEntireWallet: () -> Unit) {
             text = { Text("Reset SDK") },
             onClick = {
                 resetSdk()
-                expanded = false
-            }
-        )
-        DropdownMenuItem(
-            text = { Text("Wipe entire wallet") },
-            onClick = {
-                wipeEntireWallet()
                 expanded = false
             }
         )

@@ -1,6 +1,7 @@
 package cash.z.ecc.sdk.model
 
 import androidx.test.filters.SmallTest
+import cash.z.ecc.android.sdk.model.WalletAddress
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.sdk.fixture.Zip321UriBuildFixture
 import cash.z.ecc.sdk.fixture.Zip321UriParseFixture

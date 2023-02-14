@@ -1,6 +1,6 @@
 package co.electriccoin.zcash.ui.preference
 
-import cash.z.ecc.sdk.model.PersistableWallet
+import cash.z.ecc.android.sdk.model.PersistableWallet
 import co.electriccoin.zcash.preference.api.PreferenceProvider
 import co.electriccoin.zcash.preference.model.entry.Key
 import co.electriccoin.zcash.preference.model.entry.PreferenceDefault

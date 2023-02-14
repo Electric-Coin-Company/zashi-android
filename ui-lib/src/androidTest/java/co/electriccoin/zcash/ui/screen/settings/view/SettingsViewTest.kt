@@ -13,7 +13,6 @@ import co.electriccoin.zcash.ui.test.getStringResource
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import java.util.concurrent.atomic.AtomicInteger
@@ -79,27 +78,11 @@ class SettingsViewTest : UiTestPrerequisites() {
         assertEquals(1, testSetup.getAnalyticsToggleCount())
     }
 
-    @Test
-    @MediumTest
-    @Ignore("Wipe has been disabled in Settings and is now a debug-only option")
-    fun wipe() = runTest {
-        val testSetup = TestSetup(composeTestRule)
-
-        assertEquals(0, testSetup.getBackupCount())
-
-        composeTestRule.onNodeWithText(getStringResource(R.string.settings_wipe)).also {
-            it.performClick()
-        }
-
-        assertEquals(1, testSetup.getWipeCount())
-    }
-
     private class TestSetup(private val composeTestRule: ComposeContentTestRule) {
 
         private val onBackCount = AtomicInteger(0)
         private val onBackupCount = AtomicInteger(0)
         private val onRescanCount = AtomicInteger(0)
-        private val onWipeCount = AtomicInteger(0)
         private val onAnalyticsChangedCount = AtomicInteger(0)
 
         fun getOnBackCount(): Int {
@@ -115,11 +98,6 @@ class SettingsViewTest : UiTestPrerequisites() {
         fun getRescanCount(): Int {
             composeTestRule.waitForIdle()
             return onRescanCount.get()
-        }
-
-        fun getWipeCount(): Int {
-            composeTestRule.waitForIdle()
-            return onWipeCount.get()
         }
 
         fun getAnalyticsToggleCount(): Int {
@@ -140,9 +118,6 @@ class SettingsViewTest : UiTestPrerequisites() {
                         },
                         onRescanWallet = {
                             onRescanCount.incrementAndGet()
-                        },
-                        onWipeWallet = {
-                            onWipeCount.incrementAndGet()
                         },
                         onAnalyticsSettingsChanged = {
                             onAnalyticsChangedCount.incrementAndGet()

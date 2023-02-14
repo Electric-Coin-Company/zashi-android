@@ -14,7 +14,6 @@ import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.screen.home.view.Home
 import co.electriccoin.zcash.ui.screen.home.viewmodel.CheckUpdateViewModel
 import co.electriccoin.zcash.ui.screen.home.viewmodel.WalletViewModel
-import co.electriccoin.zcash.ui.screen.onboarding.viewmodel.OnboardingViewModel
 import co.electriccoin.zcash.ui.screen.update.AppUpdateCheckerImp
 import co.electriccoin.zcash.ui.screen.update.model.UpdateState
 
@@ -80,15 +79,6 @@ internal fun WrapHome(
             isDebugMenuEnabled = isDebugMenuEnabled,
             resetSdk = {
                 walletViewModel.resetSdk()
-            },
-            wipeEntireWallet = {
-                // Although this is debug only, it still might be nice to show a warning dialog
-                // before performing this action
-                walletViewModel.wipeEntireWallet()
-
-                val onboardingViewModel by activity.viewModels<OnboardingViewModel>()
-                onboardingViewModel.onboardingState.goToBeginning()
-                onboardingViewModel.isImporting.value = false
             },
             updateAvailable = updateAvailable
         )

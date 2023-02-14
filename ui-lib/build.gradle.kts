@@ -68,6 +68,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.guava)
     implementation(libs.kotlinx.datetime)
     implementation(libs.zcash.sdk)
+    implementation(libs.zcash.sdk.incubator)
     implementation(libs.zcash.bip39)
     implementation(libs.zxing)
 
@@ -76,7 +77,6 @@ dependencies {
     implementation(projects.preferenceApiLib)
     implementation(projects.preferenceImplAndroidLib)
     implementation(projects.sdkExtLib)
-    implementation(projects.sdkExtUiLib)
     implementation(projects.spackleAndroidLib)
     api(projects.uiDesignLib)
 
