@@ -75,6 +75,7 @@ internal fun WrapHome(
 
         Home(
             walletSnapshot,
+            isKeepScreenOnDuringSync = isKeepScreenOnWhileSyncing,
             transactionSnapshot,
             goScan = goScan,
             goRequest = goRequest,
