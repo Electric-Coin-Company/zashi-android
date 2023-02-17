@@ -42,10 +42,12 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.model.FiatCurrencyConversionRateState
 import cash.z.ecc.android.sdk.model.PercentDecimal
 import co.electriccoin.zcash.crash.android.GlobalCrashReporter
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.DisableScreenTimeout
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.BodyWithFiatCurrencySymbol
@@ -67,6 +69,7 @@ fun ComposablePreview() {
         GradientSurface {
             Home(
                 WalletSnapshotFixture.new(),
+                isKeepScreenOnDuringSync = false,
                 emptyList(),
                 goScan = {},
                 goProfile = {},
@@ -85,6 +88,7 @@ fun ComposablePreview() {
 @Composable
 fun Home(
     walletSnapshot: WalletSnapshot,
+    isKeepScreenOnDuringSync: Boolean?,
     transactionHistory: List<CommonTransaction>,
     goScan: () -> Unit,
     goProfile: () -> Unit,
@@ -100,6 +104,7 @@ fun Home(
         HomeMainContent(
             paddingValues,
             walletSnapshot,
+            isKeepScreenOnDuringSync = isKeepScreenOnDuringSync,
             transactionHistory,
             goScan = goScan,
             goProfile = goProfile,
@@ -171,6 +176,7 @@ private fun DebugMenu(
 private fun HomeMainContent(
     paddingValues: PaddingValues,
     walletSnapshot: WalletSnapshot,
+    isKeepScreenOnDuringSync: Boolean?,
     transactionHistory: List<CommonTransaction>,
     goScan: () -> Unit,
     goProfile: () -> Unit,
@@ -212,7 +218,18 @@ private fun HomeMainContent(
         TertiaryButton(onClick = goRequest, text = stringResource(R.string.home_button_request))
 
         History(transactionHistory)
+
+        if (isKeepScreenOnDuringSync == true && isSyncing(walletSnapshot.status)) {
+            DisableScreenTimeout()
+        }
     }
+}
+
+private fun isSyncing(status: Synchronizer.Status): Boolean {
+    return status == Synchronizer.Status.DOWNLOADING ||
+        status == Synchronizer.Status.VALIDATING ||
+        status == Synchronizer.Status.SCANNING ||
+        status == Synchronizer.Status.ENHANCING
 }
 
 @Composable

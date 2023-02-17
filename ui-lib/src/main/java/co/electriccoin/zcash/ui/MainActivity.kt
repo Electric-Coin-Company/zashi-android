@@ -12,7 +12,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavHostController
 import co.electriccoin.zcash.ui.common.BindCompLocalProvider
 import co.electriccoin.zcash.ui.design.component.ConfigurationOverride
@@ -20,12 +23,18 @@ import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.Override
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.backup.WrapBackup
+import co.electriccoin.zcash.ui.screen.home.viewmodel.HomeViewModel
 import co.electriccoin.zcash.ui.screen.home.viewmodel.SecretState
 import co.electriccoin.zcash.ui.screen.home.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.onboarding.WrapOnboarding
 import co.electriccoin.zcash.ui.screen.warning.WrapNotEnoughSpace
 import co.electriccoin.zcash.ui.screen.warning.viewmodel.StorageCheckViewModel
+import co.electriccoin.zcash.work.WorkIds
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
@@ -47,6 +56,8 @@ class MainActivity : ComponentActivity() {
         setupSplashScreen()
 
         setupUiContent()
+
+        monitorForBackgroundSync()
     }
 
     private fun setupSplashScreen() {
@@ -112,6 +123,30 @@ class MainActivity : ComponentActivity() {
             }
             is SecretState.Ready -> {
                 Navigation()
+            }
+        }
+    }
+
+    private fun monitorForBackgroundSync() {
+        val isEnableBackgroundSyncFlow = run {
+            val homeViewModel by viewModels<HomeViewModel>()
+            val isSecretReadyFlow = walletViewModel.secretState.map { it is SecretState.Ready }
+            val isBackgroundSyncEnabledFlow = homeViewModel.isBackgroundSyncEnabled.filterNotNull()
+
+            isSecretReadyFlow.combine(isBackgroundSyncEnabledFlow) { isSecretReady, isBackgroundSyncEnabled ->
+                isSecretReady && isBackgroundSyncEnabled
+            }
+        }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                isEnableBackgroundSyncFlow.collect { isEnableBackgroundSync ->
+                    if (isEnableBackgroundSync) {
+                        WorkIds.enableBackgroundSynchronization(application)
+                    } else {
+                        WorkIds.disableBackgroundSynchronization(application)
+                    }
+                }
             }
         }
     }

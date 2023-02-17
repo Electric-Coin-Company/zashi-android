@@ -39,10 +39,14 @@ fun PreviewSettings() {
     ZcashTheme(darkTheme = true) {
         GradientSurface {
             Settings(
+                isBackgroundSyncEnabled = true,
+                isKeepScreenOnDuringSyncEnabled = true,
                 isAnalyticsEnabled = true,
                 onBack = {},
                 onBackupWallet = {},
                 onRescanWallet = {},
+                onBackgroundSyncSettingsChanged = {},
+                onIsKeepScreenOnDuringSyncSettingsChanged = {},
                 onAnalyticsSettingsChanged = {}
             )
         }
@@ -53,10 +57,14 @@ fun PreviewSettings() {
 @Composable
 @Suppress("LongParameterList")
 fun Settings(
+    isBackgroundSyncEnabled: Boolean,
+    isKeepScreenOnDuringSyncEnabled: Boolean,
     isAnalyticsEnabled: Boolean,
     onBack: () -> Unit,
     onBackupWallet: () -> Unit,
     onRescanWallet: () -> Unit,
+    onBackgroundSyncSettingsChanged: (Boolean) -> Unit,
+    onIsKeepScreenOnDuringSyncSettingsChanged: (Boolean) -> Unit,
     onAnalyticsSettingsChanged: (Boolean) -> Unit
 ) {
     Scaffold(topBar = {
@@ -64,9 +72,13 @@ fun Settings(
     }) { paddingValues ->
         SettingsMainContent(
             paddingValues,
-            isAnalyticsEnabled,
+            isBackgroundSyncEnabled = isBackgroundSyncEnabled,
+            isKeepScreenOnDuringSyncEnabled = isKeepScreenOnDuringSyncEnabled,
+            isAnalyticsEnabled = isAnalyticsEnabled,
             onBackupWallet = onBackupWallet,
             onRescanWallet = onRescanWallet,
+            onBackgroundSyncSettingsChanged = onBackgroundSyncSettingsChanged,
+            onIsKeepScreenOnDuringSyncSettingsChanged = onIsKeepScreenOnDuringSyncSettingsChanged,
             onAnalyticsSettingsChanged = onAnalyticsSettingsChanged
         )
     }
@@ -94,9 +106,13 @@ private fun SettingsTopAppBar(onBack: () -> Unit) {
 @Suppress("LongParameterList")
 private fun SettingsMainContent(
     paddingValues: PaddingValues,
+    isBackgroundSyncEnabled: Boolean,
+    isKeepScreenOnDuringSyncEnabled: Boolean,
     isAnalyticsEnabled: Boolean,
     onBackupWallet: () -> Unit,
     onRescanWallet: () -> Unit,
+    onBackgroundSyncSettingsChanged: (Boolean) -> Unit,
+    onIsKeepScreenOnDuringSyncSettingsChanged: (Boolean) -> Unit,
     onAnalyticsSettingsChanged: (Boolean) -> Unit
 ) {
     Column(
@@ -104,9 +120,17 @@ private fun SettingsMainContent(
             .padding(top = paddingValues.calculateTopPadding())
     ) {
         PrimaryButton(onClick = onBackupWallet, text = stringResource(id = R.string.settings_backup))
-        // We have decided to not include this in settings; see overflow debug menu instead
-        // DangerousButton(onClick = onWipeWallet, text = stringResource(id = R.string.settings_wipe))
         TertiaryButton(onClick = onRescanWallet, text = stringResource(id = R.string.settings_rescan))
+        SwitchWithLabel(
+            label = stringResource(id = R.string.settings_enable_background_sync),
+            state = isBackgroundSyncEnabled,
+            onStateChange = { onBackgroundSyncSettingsChanged(!isBackgroundSyncEnabled) }
+        )
+        SwitchWithLabel(
+            label = stringResource(id = R.string.settings_enable_keep_screen_on),
+            state = isKeepScreenOnDuringSyncEnabled,
+            onStateChange = { onIsKeepScreenOnDuringSyncSettingsChanged(!isKeepScreenOnDuringSyncEnabled) }
+        )
         SwitchWithLabel(
             label = stringResource(id = R.string.settings_enable_analytics),
             state = isAnalyticsEnabled,

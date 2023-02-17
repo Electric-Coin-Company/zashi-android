@@ -55,7 +55,7 @@ class SettingsViewTest : UiTestPrerequisites() {
     fun rescan() = runTest {
         val testSetup = TestSetup(composeTestRule)
 
-        assertEquals(0, testSetup.getBackupCount())
+        assertEquals(0, testSetup.getRescanCount())
 
         composeTestRule.onNodeWithText(getStringResource(R.string.settings_rescan)).also {
             it.performClick()
@@ -66,10 +66,38 @@ class SettingsViewTest : UiTestPrerequisites() {
 
     @Test
     @MediumTest
+    fun toggle_background_sync() = runTest {
+        val testSetup = TestSetup(composeTestRule)
+
+        assertEquals(0, testSetup.getBackgroundSyncToggleCount())
+
+        composeTestRule.onNodeWithText(getStringResource(R.string.settings_enable_background_sync)).also {
+            it.performClick()
+        }
+
+        assertEquals(1, testSetup.getBackgroundSyncToggleCount())
+    }
+
+    @Test
+    @MediumTest
+    fun toggle_keep_screen_on() = runTest {
+        val testSetup = TestSetup(composeTestRule)
+
+        assertEquals(0, testSetup.getKeepScreenOnSyncToggleCount())
+
+        composeTestRule.onNodeWithText(getStringResource(R.string.settings_enable_keep_screen_on)).also {
+            it.performClick()
+        }
+
+        assertEquals(1, testSetup.getKeepScreenOnSyncToggleCount())
+    }
+
+    @Test
+    @MediumTest
     fun toggle_analytics() = runTest {
         val testSetup = TestSetup(composeTestRule)
 
-        assertEquals(0, testSetup.getBackupCount())
+        assertEquals(0, testSetup.getAnalyticsToggleCount())
 
         composeTestRule.onNodeWithText(getStringResource(R.string.settings_enable_analytics)).also {
             it.performClick()
@@ -83,6 +111,8 @@ class SettingsViewTest : UiTestPrerequisites() {
         private val onBackCount = AtomicInteger(0)
         private val onBackupCount = AtomicInteger(0)
         private val onRescanCount = AtomicInteger(0)
+        private val onBackgroundSyncChangedCount = AtomicInteger(0)
+        private val onKeepScreenOnChangedCount = AtomicInteger(0)
         private val onAnalyticsChangedCount = AtomicInteger(0)
 
         fun getOnBackCount(): Int {
@@ -100,6 +130,16 @@ class SettingsViewTest : UiTestPrerequisites() {
             return onRescanCount.get()
         }
 
+        fun getBackgroundSyncToggleCount(): Int {
+            composeTestRule.waitForIdle()
+            return onBackgroundSyncChangedCount.get()
+        }
+
+        fun getKeepScreenOnSyncToggleCount(): Int {
+            composeTestRule.waitForIdle()
+            return onKeepScreenOnChangedCount.get()
+        }
+
         fun getAnalyticsToggleCount(): Int {
             composeTestRule.waitForIdle()
             return onAnalyticsChangedCount.get()
@@ -109,6 +149,8 @@ class SettingsViewTest : UiTestPrerequisites() {
             composeTestRule.setContent {
                 ZcashTheme {
                     Settings(
+                        isBackgroundSyncEnabled = true,
+                        isKeepScreenOnDuringSyncEnabled = true,
                         isAnalyticsEnabled = true,
                         onBack = {
                             onBackCount.incrementAndGet()
@@ -118,6 +160,12 @@ class SettingsViewTest : UiTestPrerequisites() {
                         },
                         onRescanWallet = {
                             onRescanCount.incrementAndGet()
+                        },
+                        onBackgroundSyncSettingsChanged = {
+                            onBackgroundSyncChangedCount.incrementAndGet()
+                        },
+                        onIsKeepScreenOnDuringSyncSettingsChanged = {
+                            onKeepScreenOnChangedCount.incrementAndGet()
                         },
                         onAnalyticsSettingsChanged = {
                             onAnalyticsChangedCount.incrementAndGet()
