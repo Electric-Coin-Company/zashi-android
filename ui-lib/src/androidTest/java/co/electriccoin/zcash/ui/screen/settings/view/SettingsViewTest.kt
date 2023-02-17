@@ -55,7 +55,7 @@ class SettingsViewTest : UiTestPrerequisites() {
     fun rescan() = runTest {
         val testSetup = TestSetup(composeTestRule)
 
-        assertEquals(0, testSetup.getBackupCount())
+        assertEquals(0, testSetup.getRescanCount())
 
         composeTestRule.onNodeWithText(getStringResource(R.string.settings_rescan)).also {
             it.performClick()
@@ -69,7 +69,7 @@ class SettingsViewTest : UiTestPrerequisites() {
     fun toggle_background_sync() = runTest {
         val testSetup = TestSetup(composeTestRule)
 
-        assertEquals(0, testSetup.getBackupCount())
+        assertEquals(0, testSetup.getBackgroundSyncToggleCount())
 
         composeTestRule.onNodeWithText(getStringResource(R.string.settings_enable_background_sync)).also {
             it.performClick()
@@ -83,7 +83,7 @@ class SettingsViewTest : UiTestPrerequisites() {
     fun toggle_keep_screen_on() = runTest {
         val testSetup = TestSetup(composeTestRule)
 
-        assertEquals(0, testSetup.getBackupCount())
+        assertEquals(0, testSetup.getKeepScreenOnSyncToggleCount())
 
         composeTestRule.onNodeWithText(getStringResource(R.string.settings_enable_keep_screen_on)).also {
             it.performClick()
@@ -97,7 +97,7 @@ class SettingsViewTest : UiTestPrerequisites() {
     fun toggle_analytics() = runTest {
         val testSetup = TestSetup(composeTestRule)
 
-        assertEquals(0, testSetup.getBackupCount())
+        assertEquals(0, testSetup.getAnalyticsToggleCount())
 
         composeTestRule.onNodeWithText(getStringResource(R.string.settings_enable_analytics)).also {
             it.performClick()
