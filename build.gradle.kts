@@ -84,44 +84,46 @@ tasks {
     }
 
     register("checkProperties") {
+        // Ensure that developers do not change default values of certain properties directly
+        // in the repo, but instead set them in their local ~/.gradle/gradle.properties file
+        // (or use command line arguments)
+        val expectedPropertyValues = mapOf(
+            "ZCASH_IS_TREAT_WARNINGS_AS_ERRORS" to "true",
+            "IS_KOTLIN_TEST_COVERAGE_ENABLED" to "true",
+            "IS_ANDROID_INSTRUMENTATION_TEST_COVERAGE_ENABLED" to "false",
+            "IS_USE_TEST_ORCHESTRATOR" to "false",
+            "IS_CRASH_ON_STRICT_MODE_VIOLATION" to "false",
+
+            "ZCASH_FIREBASE_TEST_LAB_API_KEY_PATH" to "",
+            "ZCASH_FIREBASE_TEST_LAB_PROJECT" to "",
+
+            "ZCASH_EMULATOR_WTF_API_KEY" to "",
+
+            "IS_MINIFY_ENABLED" to "true",
+
+            "ZCASH_RELEASE_APP_NAME" to "Zcash",
+            "ZCASH_RELEASE_PACKAGE_NAME" to "co.electriccoin.zcash",
+
+            "ZCASH_DEBUG_KEYSTORE_PATH" to "",
+            "ZCASH_RELEASE_KEYSTORE_PATH" to "",
+            "ZCASH_RELEASE_KEYSTORE_PASSWORD" to "",
+            "ZCASH_RELEASE_KEY_ALIAS" to "",
+            "ZCASH_RELEASE_KEY_ALIAS_PASSWORD" to "",
+
+            "IS_SIGN_RELEASE_BUILD_WITH_DEBUG_KEY" to "false",
+
+            "ZCASH_GOOGLE_PLAY_SERVICE_KEY_FILE_PATH" to "",
+            "ZCASH_GOOGLE_PLAY_DEPLOY_MODE" to "build",
+
+            "SDK_INCLUDED_BUILD_PATH" to "",
+            "BIP_39_INCLUDED_BUILD_PATH" to ""
+        )
+
+        val actualPropertyValues = project.properties.filterKeys { it in expectedPropertyValues.keys }
+
         doLast {
-            // Ensure that developers do not change default values of certain properties directly
-            // in the repo, but instead set them in their local ~/.gradle/gradle.properties file
-            // (or use command line arguments)
-            val expectedPropertyValues = mapOf(
-                "ZCASH_IS_TREAT_WARNINGS_AS_ERRORS" to "true",
-                "IS_KOTLIN_TEST_COVERAGE_ENABLED" to "true",
-                "IS_ANDROID_INSTRUMENTATION_TEST_COVERAGE_ENABLED" to "false",
-                "IS_USE_TEST_ORCHESTRATOR" to "false",
-                "IS_CRASH_ON_STRICT_MODE_VIOLATION" to "false",
-
-                "ZCASH_FIREBASE_TEST_LAB_API_KEY_PATH" to "",
-                "ZCASH_FIREBASE_TEST_LAB_PROJECT" to "",
-
-                "ZCASH_EMULATOR_WTF_API_KEY" to "",
-
-                "IS_MINIFY_ENABLED" to "true",
-
-                "ZCASH_RELEASE_APP_NAME" to "Zcash",
-                "ZCASH_RELEASE_PACKAGE_NAME" to "co.electriccoin.zcash",
-
-                "ZCASH_DEBUG_KEYSTORE_PATH" to "",
-                "ZCASH_RELEASE_KEYSTORE_PATH" to "",
-                "ZCASH_RELEASE_KEYSTORE_PASSWORD" to "",
-                "ZCASH_RELEASE_KEY_ALIAS" to "",
-                "ZCASH_RELEASE_KEY_ALIAS_PASSWORD" to "",
-
-                "IS_SIGN_RELEASE_BUILD_WITH_DEBUG_KEY" to "false",
-
-                "ZCASH_GOOGLE_PLAY_SERVICE_KEY_FILE_PATH" to "",
-                "ZCASH_GOOGLE_PLAY_DEPLOY_MODE" to "build",
-
-                "SDK_INCLUDED_BUILD_PATH" to "",
-                "BIP_39_INCLUDED_BUILD_PATH" to ""
-            )
-
             val warnings = expectedPropertyValues.filter { (key, value) ->
-                project.properties[key].toString() != value
+                actualPropertyValues[key].toString() != value
             }.map { "Property ${it.key} does not have expected value \"${it.value}\"" }
 
             if (warnings.isNotEmpty()) {

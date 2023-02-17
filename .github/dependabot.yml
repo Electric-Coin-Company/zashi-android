@@ -5,7 +5,7 @@ updates:
     schedule:
       interval: "daily"
 
-  - package-ecosystem: "github-actions"
-    directory: ".github/actions/setup/"
+  - package-ecosystem: "docker"
+    directory: ".github/actions/antivirus/"
     schedule:
       interval: "daily"
