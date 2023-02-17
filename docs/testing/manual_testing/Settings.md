@@ -19,8 +19,8 @@
 1. Install a debug build of the app and connect the device to a system with the Android developer tools installed
 1. Perform a fresh install of the app
 1. Go through the onboarding to get to the home screen
-1. In the developer tools, verify that a periodic WorkManager job is scheduled or running
+1. In the developer tools (App Inspection -> Background Task Inspector), verify that a periodic WorkManager job is scheduled or running
 1. Go into the app's settings and disable the background sync option
 1. In the developer tools, verify that no periodic WorkManager job is scheduled or running (e.g. it may be cancelled)
 1. Go into the app's settings and re-enable the background sync option
-In the developer tools, verify that a periodic WorkManager job is scheduled
+1. In the developer tools, verify that a periodic WorkManager job is scheduled
