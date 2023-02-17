@@ -1,6 +1,6 @@
 package cash.z.ecc.sdk.fixture
 
-import cash.z.ecc.sdk.model.Memo
+import cash.z.ecc.android.sdk.model.Memo
 
 object MemoFixture {
     const val MEMO_STRING = "Thanks for lunch"

@@ -1,7 +1,7 @@
 package co.electriccoin.zcash.ui.screen.restore.model
 
 import androidx.test.filters.SmallTest
-import cash.z.ecc.sdk.model.SeedPhrase
+import cash.z.ecc.android.sdk.model.SeedPhrase
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue

@@ -1,6 +1,7 @@
 package cash.z.ecc.sdk.model
 
 import cash.z.ecc.android.bip39.Mnemonics
+import cash.z.ecc.android.sdk.model.SeedPhrase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.Locale

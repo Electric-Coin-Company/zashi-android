@@ -26,9 +26,9 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.filters.LargeTest
 import androidx.test.filters.MediumTest
 import androidx.test.filters.SdkSuppress
-import cash.z.ecc.sdk.ext.ui.model.MonetarySeparators
+import cash.z.ecc.android.sdk.fixture.WalletAddressFixture
+import cash.z.ecc.android.sdk.model.MonetarySeparators
 import cash.z.ecc.sdk.fixture.SeedPhraseFixture
-import cash.z.ecc.sdk.fixture.WalletAddressFixture
 import co.electriccoin.zcash.spackle.FirebaseTestLabUtil
 import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.MainActivity

@@ -17,6 +17,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.datetime)
     api(libs.zcash.sdk)
+    api(libs.zcash.sdk.incubator)
     api(libs.zcash.bip39)
 
     androidTestImplementation(libs.bundles.androidx.test)
@@ -37,4 +38,3 @@ dependencies {
         }
     }
 }
-

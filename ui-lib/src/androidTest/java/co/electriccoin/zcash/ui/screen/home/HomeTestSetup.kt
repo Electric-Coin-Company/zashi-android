@@ -59,7 +59,6 @@ class HomeTestSetup(
                 onRequestCount.incrementAndGet()
             },
             resetSdk = {},
-            wipeEntireWallet = {},
             isDebugMenuEnabled = false,
             updateAvailable = false
         )

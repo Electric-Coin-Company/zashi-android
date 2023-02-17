@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import cash.z.ecc.sdk.model.WalletAddress
+import cash.z.ecc.android.sdk.model.WalletAddress
 import co.electriccoin.zcash.ui.R
 
 /**

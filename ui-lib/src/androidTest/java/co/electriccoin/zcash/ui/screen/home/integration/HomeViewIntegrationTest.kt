@@ -9,7 +9,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.unit.dp
 import androidx.test.filters.MediumTest
 import cash.z.ecc.android.sdk.Synchronizer
-import cash.z.ecc.sdk.model.PercentDecimal
+import cash.z.ecc.android.sdk.model.PercentDecimal
 import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 import co.electriccoin.zcash.ui.screen.home.HomeTag

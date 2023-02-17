@@ -3,11 +3,11 @@ package co.electriccoin.zcash.ui.screen.home.model
 import android.content.Context
 import androidx.compose.ui.text.intl.Locale
 import cash.z.ecc.android.sdk.Synchronizer
-import cash.z.ecc.sdk.ext.ui.model.FiatCurrencyConversionRateState
-import cash.z.ecc.sdk.ext.ui.model.MonetarySeparators
-import cash.z.ecc.sdk.ext.ui.model.toZecString
-import cash.z.ecc.sdk.ext.ui.toFiatCurrencyState
-import cash.z.ecc.sdk.model.PercentDecimal
+import cash.z.ecc.android.sdk.model.FiatCurrencyConversionRateState
+import cash.z.ecc.android.sdk.model.MonetarySeparators
+import cash.z.ecc.android.sdk.model.PercentDecimal
+import cash.z.ecc.android.sdk.model.toFiatCurrencyState
+import cash.z.ecc.android.sdk.model.toZecString
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.toKotlinLocale
 import kotlin.math.roundToInt

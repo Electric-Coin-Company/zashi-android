@@ -42,7 +42,6 @@ fun PreviewSettings() {
                 isAnalyticsEnabled = true,
                 onBack = {},
                 onBackupWallet = {},
-                onWipeWallet = {},
                 onRescanWallet = {},
                 onAnalyticsSettingsChanged = {}
             )
@@ -57,7 +56,6 @@ fun Settings(
     isAnalyticsEnabled: Boolean,
     onBack: () -> Unit,
     onBackupWallet: () -> Unit,
-    onWipeWallet: () -> Unit,
     onRescanWallet: () -> Unit,
     onAnalyticsSettingsChanged: (Boolean) -> Unit
 ) {
@@ -68,7 +66,6 @@ fun Settings(
             paddingValues,
             isAnalyticsEnabled,
             onBackupWallet = onBackupWallet,
-            onWipeWallet = onWipeWallet,
             onRescanWallet = onRescanWallet,
             onAnalyticsSettingsChanged = onAnalyticsSettingsChanged
         )
@@ -99,7 +96,6 @@ private fun SettingsMainContent(
     paddingValues: PaddingValues,
     isAnalyticsEnabled: Boolean,
     onBackupWallet: () -> Unit,
-    @Suppress("UNUSED_PARAMETER") onWipeWallet: () -> Unit,
     onRescanWallet: () -> Unit,
     onAnalyticsSettingsChanged: (Boolean) -> Unit
 ) {

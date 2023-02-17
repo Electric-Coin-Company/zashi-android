@@ -26,10 +26,7 @@ class ZcashApplication : CoroutineApplication() {
         Twig.initialize(applicationContext)
         Twig.info { "Starting application…" }
 
-        if (BuildConfig.DEBUG) {
-            // This is an internal API to the Zcash SDK to enable logging; it could change in the future
-            cash.z.ecc.android.sdk.internal.Twig.enabled(true)
-        } else {
+        if (!BuildConfig.DEBUG) {
             // In release builds, logs should be stripped by R8 rules
             Twig.assertLoggingStripped()
         }

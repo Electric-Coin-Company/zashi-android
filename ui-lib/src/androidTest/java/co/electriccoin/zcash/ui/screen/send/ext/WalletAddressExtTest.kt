@@ -1,7 +1,7 @@
 package co.electriccoin.zcash.ui.screen.send.ext
 
 import androidx.test.filters.SmallTest
-import cash.z.ecc.sdk.fixture.WalletAddressFixture
+import cash.z.ecc.android.sdk.fixture.WalletAddressFixture
 import co.electriccoin.zcash.ui.test.getAppContext
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest

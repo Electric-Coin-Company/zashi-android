@@ -59,7 +59,6 @@ dependencies {
     implementation(projects.testLib)
     implementation(projects.spackleAndroidLib)
     implementation(projects.sdkExtLib)
-    implementation(projects.sdkExtUiLib)
 
     implementation(libs.bundles.androidx.test)
     implementation(libs.bundles.androidx.compose.core)

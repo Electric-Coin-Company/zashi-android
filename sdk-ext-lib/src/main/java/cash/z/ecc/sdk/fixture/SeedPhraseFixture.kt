@@ -1,6 +1,6 @@
 package cash.z.ecc.sdk.fixture
 
-import cash.z.ecc.sdk.model.SeedPhrase
+import cash.z.ecc.android.sdk.model.SeedPhrase
 
 object SeedPhraseFixture {
     @Suppress("MaxLineLength")
