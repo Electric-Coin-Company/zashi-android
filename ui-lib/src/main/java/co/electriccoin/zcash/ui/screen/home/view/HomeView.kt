@@ -227,6 +227,7 @@ private fun HomeMainContent(
 
 private fun isSyncing(status: Synchronizer.Status): Boolean {
     return status == Synchronizer.Status.DOWNLOADING ||
+        status == Synchronizer.Status.VALIDATING ||
         status == Synchronizer.Status.SCANNING ||
         status == Synchronizer.Status.ENHANCING
 }
