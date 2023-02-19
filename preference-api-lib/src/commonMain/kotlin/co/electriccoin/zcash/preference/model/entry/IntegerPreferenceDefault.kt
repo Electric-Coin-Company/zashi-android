@@ -3,7 +3,7 @@ package co.electriccoin.zcash.preference.model.entry
 import co.electriccoin.zcash.preference.api.PreferenceProvider
 
 data class IntegerPreferenceDefault(
-    override val key: Key,
+    override val key: PreferenceKey,
     private val defaultValue: Int
 ) : PreferenceDefault<Int> {
 
