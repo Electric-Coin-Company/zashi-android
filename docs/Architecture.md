@@ -26,6 +26,7 @@ The logical components of the app are implemented as a number of Gradle modules.
 
  * `app` — Compiles all the modules together into the final application.  This module contains minimal actual code.  Note that the Java package structure for this module is under `co.electriccoin.zcash.app` while the Android package name is `co.electriccoin.zcash`.
  * `build-info-lib` — Collects information from the build environment (e.g. Git SHA, Git commit count) and compiles them into the application.  Can also be used for injection of API keys or other secrets.
+ * `configuration-api-lib` — Multiplatform interfaces for remote configuration.
  * crash — For collecting and reporting exceptions and crashes
      * `crash-lib` — Common crash collection logic for Kotlin and JVM.  This is not fully-featured by itself, but the long-term plan is multiplatform support.
      * `crash-android-lib` — Android-specific crash collection logic, built on top of the common and JVM implementation in `crash-lib`
