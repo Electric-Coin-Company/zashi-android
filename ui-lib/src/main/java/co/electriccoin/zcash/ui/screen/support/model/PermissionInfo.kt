@@ -6,7 +6,7 @@ import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import co.electriccoin.zcash.spackle.getPackageInfoCompatSuspend
 
-class PermissionInfo(val permissionName: String, val permissionStatus: PermissionStatus) {
+data class PermissionInfo(val permissionName: String, val permissionStatus: PermissionStatus) {
     fun toSupportString() = buildString {
         appendLine("$permissionName $permissionStatus")
     }

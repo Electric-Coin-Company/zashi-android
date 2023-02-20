@@ -4,10 +4,13 @@ package co.electriccoin.zcash.ui.screen.about
 
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import co.electriccoin.zcash.configuration.AndroidConfigurationFactory
 import co.electriccoin.zcash.spackle.getPackageInfoCompat
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.screen.about.model.VersionInfo
 import co.electriccoin.zcash.ui.screen.about.view.About
+import co.electriccoin.zcash.ui.screen.support.model.ConfigInfo
 
 @Composable
 internal fun MainActivity.WrapAbout(
@@ -22,6 +25,12 @@ internal fun WrapAbout(
     goBack: () -> Unit
 ) {
     val packageInfo = activity.packageManager.getPackageInfoCompat(activity.packageName, 0L)
+    val configurationProvider = AndroidConfigurationFactory.getInstance(activity.applicationContext)
 
-    About(VersionInfo.new(packageInfo), goBack)
+    About(VersionInfo.new(packageInfo), ConfigInfo.new(configurationProvider), goBack)
+
+    // Allows an implicit way to force configuration refresh by simply visiting the About screen
+    LaunchedEffect(key1 = true) {
+        AndroidConfigurationFactory.getInstance(activity.applicationContext).hintToRefresh()
+    }
 }

@@ -9,7 +9,7 @@ import co.electriccoin.zcash.spackle.io.listFilesSuspend
 import kotlinx.datetime.Instant
 import java.io.File
 
-class CrashInfo(val exceptionClassName: String, val isUncaught: Boolean, val timestamp: Instant) {
+data class CrashInfo(val exceptionClassName: String, val isUncaught: Boolean, val timestamp: Instant) {
     fun toSupportString() = buildString {
         appendLine("Exception")
         appendLine("  Class name: $exceptionClassName")

@@ -9,6 +9,7 @@ import androidx.annotation.VisibleForTesting
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -18,6 +19,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavHostController
 import co.electriccoin.zcash.ui.common.BindCompLocalProvider
+import co.electriccoin.zcash.ui.configuration.RemoteConfig
 import co.electriccoin.zcash.ui.design.component.ConfigurationOverride
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.Override
@@ -40,6 +42,8 @@ import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
 class MainActivity : ComponentActivity() {
+
+    val homeViewModel by viewModels<HomeViewModel>()
 
     val walletViewModel by viewModels<WalletViewModel>()
 
@@ -74,7 +78,8 @@ class MainActivity : ComponentActivity() {
                 }
             }
 
-            SecretState.Loading == walletViewModel.secretState.value
+            // Note this condition needs to be kept in sync with the condition in MainContent()
+            homeViewModel.configurationFlow.value == null || SecretState.Loading == walletViewModel.secretState.value
         }
     }
 
@@ -107,22 +112,35 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     private fun MainContent() {
-        when (val secretState = walletViewModel.secretState.collectAsStateWithLifecycle().value) {
-            SecretState.Loading -> {
-                // For now, keep displaying splash screen using condition above.
-                // In the future, we might consider displaying something different here.
-            }
-            SecretState.None -> {
-                WrapOnboarding()
-            }
-            is SecretState.NeedsBackup -> {
-                WrapBackup(
-                    secretState.persistableWallet,
-                    onBackupComplete = { walletViewModel.persistBackupComplete() }
-                )
-            }
-            is SecretState.Ready -> {
-                Navigation()
+        val configuration = homeViewModel.configurationFlow.collectAsStateWithLifecycle().value
+        val secretState = walletViewModel.secretState.collectAsStateWithLifecycle().value
+
+        // Note this condition needs to be kept in sync with the condition in setupSplashScreen()
+        if (null == configuration || secretState == SecretState.Loading) {
+            // For now, keep displaying splash screen using condition above.
+            // In the future, we might consider displaying something different here.
+        } else {
+            // Note that the deeply nested child views will probably receive arguments derived from
+            // the configuration.  The CompositionLocalProvider is helpful for passing the configuration
+            // to the "platform" layer, which is where the arguments will be derived from.
+            CompositionLocalProvider(RemoteConfig provides configuration) {
+                when (secretState) {
+                    SecretState.None -> {
+                        WrapOnboarding()
+                    }
+                    is SecretState.NeedsBackup -> {
+                        WrapBackup(
+                            secretState.persistableWallet,
+                            onBackupComplete = { walletViewModel.persistBackupComplete() }
+                        )
+                    }
+                    is SecretState.Ready -> {
+                        Navigation()
+                    }
+                    else -> {
+                        error("Unhandled secret state: $secretState")
+                    }
+                }
             }
         }
     }

@@ -1,7 +1,10 @@
 package co.electriccoin.zcash.ui.screen.support.model
 
 import android.content.Context
+import co.electriccoin.zcash.configuration.AndroidConfigurationFactory
 import co.electriccoin.zcash.spackle.getPackageInfoCompatSuspend
+import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.toPersistentList
 
 enum class SupportInfoType {
     Time,
@@ -16,11 +19,12 @@ enum class SupportInfoType {
 data class SupportInfo(
     val timeInfo: TimeInfo,
     val appInfo: AppInfo,
+    val configInfo: ConfigInfo,
     val operatingSystemInfo: OperatingSystemInfo,
     val deviceInfo: DeviceInfo,
     val environmentInfo: EnvironmentInfo,
-    val permissionInfo: List<PermissionInfo>,
-    val crashInfo: List<CrashInfo>
+    val permissionInfo: PersistentList<PermissionInfo>,
+    val crashInfo: PersistentList<CrashInfo>
 ) {
 
     // The set of enum values is to allow optional filtering of different types of information
@@ -62,15 +66,17 @@ data class SupportInfo(
         suspend fun new(context: Context): SupportInfo {
             val applicationContext = context.applicationContext
             val packageInfo = applicationContext.packageManager.getPackageInfoCompatSuspend(context.packageName, 0L)
+            val configurationProvider = AndroidConfigurationFactory.getInstance(applicationContext)
 
             return SupportInfo(
                 TimeInfo.new(packageInfo),
                 AppInfo.new(packageInfo),
+                ConfigInfo.new(configurationProvider),
                 OperatingSystemInfo.new(),
                 DeviceInfo.new(),
                 EnvironmentInfo.new(applicationContext),
-                PermissionInfo.all(applicationContext),
-                CrashInfo.all(context)
+                PermissionInfo.all(applicationContext).toPersistentList(),
+                CrashInfo.all(context).toPersistentList()
             )
         }
     }

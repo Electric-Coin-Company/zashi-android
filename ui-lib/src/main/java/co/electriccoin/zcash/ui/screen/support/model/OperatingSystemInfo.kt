@@ -3,7 +3,7 @@ package co.electriccoin.zcash.ui.screen.support.model
 import android.os.Build
 import co.electriccoin.zcash.spackle.AndroidApiVersion
 
-class OperatingSystemInfo(val sdkInt: Int, val isPreview: Boolean) {
+data class OperatingSystemInfo(val sdkInt: Int, val isPreview: Boolean) {
 
     fun toSupportString() = buildString {
         if (isPreview) {

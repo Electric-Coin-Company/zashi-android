@@ -3,10 +3,10 @@ _Note: This document will continue to be updated as the app is implemented._
 
 # Gradle
  * Versions are declared in [gradle.properties](../gradle.properties).  There's still enough inconsistency in how versions are handled in Gradle, that this is as close as we can get to a universal system.  A version catalog is used for dependencies and is configured in [settings.gradle.kts](../settings.gradle.kts), but other versions like Gradle Plug-ins, the NDK version, Java version, and Android SDK versions don't fit into the version catalog model and are read directly from the properties
- * Much of the Gradle configuration lives in [build-convention](../build-convention/) to prevent repetitive configuration as additional modules are added to the project
+ * Much of the Gradle configuration lives in [build-conventions-secant](../build-conventions-secant/) to prevent repetitive configuration as additional modules are added to the project
  * Build scripts are written in Kotlin, so that a single language is used across build and the app code bases
  * Only Gradle, Google, and JetBrains plug-ins are included in the critical path.  Third party plug-ins can be used, but they're outside the critical path.  For example, the Gradle Versions Plugin could be removed and wouldn't negatively impact local building, testing, or releasing the app
- * Repository restrictions are enabled in [build-convention](../build-convention/settings.gradle.kts), [settings.gradle.kts](../settings.gradle.kts), and [build.gradle.kts](../build.gradle.kts) to reduce likelihood of pulling in an incorrect dependency.  If adding a new dependency, these restrictions may need to be changed otherwise an error that the dependency cannot be found will be displayed
+ * Repository restrictions are enabled in [build-conventions-secant](../build-conventions-secant/settings.gradle.kts), [settings.gradle.kts](../settings.gradle.kts), and [build.gradle.kts](../build.gradle.kts) to reduce likelihood of pulling in an incorrect dependency.  If adding a new dependency, these restrictions may need to be changed otherwise an error that the dependency cannot be found will be displayed
 
 # Multiplatform
 While this repository is for an Android application, efforts are made to give multiplatform flexibility in the future.  Specific adaptions that are being made:
@@ -26,7 +26,9 @@ The logical components of the app are implemented as a number of Gradle modules.
 
  * `app` — Compiles all the modules together into the final application.  This module contains minimal actual code.  Note that the Java package structure for this module is under `co.electriccoin.zcash.app` while the Android package name is `co.electriccoin.zcash`.
  * `build-info-lib` — Collects information from the build environment (e.g. Git SHA, Git commit count) and compiles them into the application.  Can also be used for injection of API keys or other secrets.
- * `configuration-api-lib` — Multiplatform interfaces for remote configuration.
+ * configuration
+     * `configuration-api-lib` — Multiplatform interfaces for remote configuration.
+     * `configuration-impl-android-lib` — Android-specific implementation for remote configuration storage.
  * crash — For collecting and reporting exceptions and crashes
      * `crash-lib` — Common crash collection logic for Kotlin and JVM.  This is not fully-featured by itself, but the long-term plan is multiplatform support.
      * `crash-android-lib` — Android-specific crash collection logic, built on top of the common and JVM implementation in `crash-lib`
@@ -57,6 +59,11 @@ The following diagram shows a rough depiction of dependencies between the module
           sdkExtLib[[sdk-ext-lib]];
       end
       sdkLib[[sdk-lib]] --> sdkExtLib[[sdk-ext-lib]];
+      subgraph configuration
+          configurationApiLib[[configuration-api-lib]];
+          configurationImplAndroidLib[[configuration-impl-android-lib]];
+      end
+      configurationApiLib[[configuration-api-lib]] --> configurationImplAndroidLib[[configuration-impl-android-lib]];
       subgraph preference
           preferenceApiLib[[preference-api-lib]];
           preferenceImplAndroidLib[[preference-impl-android-lib]];
@@ -82,6 +89,7 @@ The following diagram shows a rough depiction of dependencies between the module
           spackleAndroidLib[[spackle-android-lib]];
       end
       spackleLib[[spackle-lib]] --> spackleAndroidLib[[spackle-android-lib]];
+      configuration --> ui[[ui]];
       preference --> ui[[ui]];
       sdk --> ui[[ui]];
       spackle[[spackle]] --> ui[[ui]];
@@ -92,6 +100,15 @@ The following diagram shows a rough depiction of dependencies between the module
 
 # Test Fixtures
 Until the Kotlin adopts support for fixtures, fixtures live within the main source modules.  These fixtures make it easy to write automated tests, as well as create Compose previews.  Although these fixtures are compiled into the main application, they should be removed by R8 in release builds.
+
+# Debugging
+The application has support for remote configuration (aka feature toggles), which allows decoupling of releases from features being enabled.
+
+Debug builds allow for manual override of feature toggle entries, which can be set by command line invocations.  These overrides last for the lifetime of the process, so they will reset if the process dies.  Pressing the home button on Android does not necessarily stop the process, so the best way to ensure process death is to choose Force Stop in the Android settings.
+
+To set a configuration value manually, run the following shell command replacing `$SOME_KEY` and `$SOME_VALUE` with the key-value pair you'd like to set.  The change will take effect immediately.
+
+`adb shell am broadcast -n co.electriccoin.zcash/co.electriccoin.zcash.configuration.internal.intent.IntentConfigurationReceiver --es key "$SOME_KEY" --es value "$NEW_VALUE"`
 
 # Shared Resources
 There are some app-wide resources that share a common namespace, and these should be documented here to make it easy to ensure there are no collisions.

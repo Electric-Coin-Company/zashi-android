@@ -17,6 +17,8 @@ import co.electriccoin.zcash.ui.NavigationTargets.SEND
 import co.electriccoin.zcash.ui.NavigationTargets.SETTINGS
 import co.electriccoin.zcash.ui.NavigationTargets.SUPPORT
 import co.electriccoin.zcash.ui.NavigationTargets.WALLET_ADDRESS_DETAILS
+import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
+import co.electriccoin.zcash.ui.configuration.RemoteConfig
 import co.electriccoin.zcash.ui.screen.about.WrapAbout
 import co.electriccoin.zcash.ui.screen.address.WrapWalletAddresses
 import co.electriccoin.zcash.ui.screen.home.WrapHome
@@ -47,7 +49,9 @@ internal fun MainActivity.Navigation() {
                 goRequest = { navController.navigateJustOnce(REQUEST) }
             )
 
-            WrapCheckForUpdate()
+            if (ConfigurationEntries.IS_APP_UPDATE_CHECK_ENABLED.getValue(RemoteConfig.current)) {
+                WrapCheckForUpdate()
+            }
         }
         composable(PROFILE) {
             WrapProfile(
