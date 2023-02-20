@@ -27,15 +27,21 @@ import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.Header
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.fixture.ConfigInfoFixture
 import co.electriccoin.zcash.ui.fixture.VersionInfoFixture
 import co.electriccoin.zcash.ui.screen.about.model.VersionInfo
+import co.electriccoin.zcash.ui.screen.support.model.ConfigInfo
 
 @Preview
 @Composable
 fun AboutPreview() {
     ZcashTheme(darkTheme = true) {
         GradientSurface {
-            About(versionInfo = VersionInfoFixture.new(), goBack = {})
+            About(
+                versionInfo = VersionInfoFixture.new(),
+                configInfo = ConfigInfoFixture.new(),
+                goBack = {}
+            )
         }
     }
 }
@@ -44,6 +50,7 @@ fun AboutPreview() {
 @Composable
 fun About(
     versionInfo: VersionInfo,
+    configInfo: ConfigInfo,
     goBack: () -> Unit
 ) {
     Scaffold(topBar = {
@@ -51,7 +58,8 @@ fun About(
     }) { paddingValues ->
         AboutMainContent(
             paddingValues,
-            versionInfo
+            versionInfo,
+            configInfo
         )
     }
 }
@@ -75,7 +83,7 @@ private fun AboutTopAppBar(onBack: () -> Unit) {
 }
 
 @Composable
-fun AboutMainContent(paddingValues: PaddingValues, versionInfo: VersionInfo) {
+fun AboutMainContent(paddingValues: PaddingValues, versionInfo: VersionInfo, configInfo: ConfigInfo) {
     Column(
         Modifier
             .verticalScroll(rememberScrollState())
@@ -93,6 +101,13 @@ fun AboutMainContent(paddingValues: PaddingValues, versionInfo: VersionInfo) {
 
         Header(stringResource(id = R.string.about_build_header))
         Body(gitSha)
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        configInfo.configurationUpdatedAt?.let { updatedAt ->
+            Header(stringResource(id = R.string.about_build_configuration))
+            Body(updatedAt.toString())
+        }
 
         Spacer(modifier = Modifier.height(24.dp))
 

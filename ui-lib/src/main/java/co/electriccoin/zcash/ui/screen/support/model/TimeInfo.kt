@@ -9,7 +9,7 @@ import java.util.Date
 import java.util.Locale
 import kotlin.time.Duration.Companion.milliseconds
 
-class TimeInfo(
+data class TimeInfo(
     val currentTime: Instant,
     val rebootTime: Instant,
     val installTime: Instant,

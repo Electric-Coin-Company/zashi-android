@@ -4,7 +4,7 @@ import android.content.pm.PackageInfo
 import co.electriccoin.zcash.build.gitSha
 import co.electriccoin.zcash.spackle.versionCodeCompat
 
-class AppInfo(val versionName: String, val versionCode: Long, val gitSha: String) {
+data class AppInfo(val versionName: String, val versionCode: Long, val gitSha: String) {
 
     fun toSupportString() = buildString {
         appendLine("App version: $versionName ($versionCode) $gitSha")

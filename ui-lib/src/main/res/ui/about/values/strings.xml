@@ -5,6 +5,7 @@
     <string name="about_version_header">Version</string>
     <string name="about_version_format" formatted="true"><xliff:g id="version_name" example="1.0">%1$s</xliff:g> (<xliff:g id="version_code" example="1.0">%2$d</xliff:g>)</string>
     <string name="about_build_header">Build</string>
+    <string name="about_build_configuration">Configuration</string>
     <string name="about_legal_header">Legal</string>
     <!-- TODO [#392] Update with real legal info. -->
     <!-- TODO [#392] https://github.com/zcash/secant-android-wallet/issues/392 -->

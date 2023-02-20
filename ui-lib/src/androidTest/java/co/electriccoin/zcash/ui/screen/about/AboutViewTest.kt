@@ -9,9 +9,11 @@ import androidx.test.filters.MediumTest
 import co.electriccoin.zcash.build.gitSha
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.fixture.ConfigInfoFixture
 import co.electriccoin.zcash.ui.fixture.VersionInfoFixture
 import co.electriccoin.zcash.ui.screen.about.model.VersionInfo
 import co.electriccoin.zcash.ui.screen.about.view.About
+import co.electriccoin.zcash.ui.screen.support.model.ConfigInfo
 import co.electriccoin.zcash.ui.test.getStringResource
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -50,9 +52,17 @@ class AboutViewTest {
         assertEquals(1, testSetup.getOnBackCount())
     }
 
-    private fun newTestSetup() = TestSetup(composeTestRule, VersionInfoFixture.new())
+    private fun newTestSetup() = TestSetup(
+        composeTestRule,
+        VersionInfoFixture.new(),
+        ConfigInfoFixture.new()
+    )
 
-    private class TestSetup(private val composeTestRule: ComposeContentTestRule, versionInfo: VersionInfo) {
+    private class TestSetup(
+        private val composeTestRule: ComposeContentTestRule,
+        versionInfo: VersionInfo,
+        configInfo: ConfigInfo
+    ) {
 
         private val onBackCount = AtomicInteger(0)
 
@@ -64,7 +74,7 @@ class AboutViewTest {
         init {
             composeTestRule.setContent {
                 ZcashTheme {
-                    About(versionInfo = versionInfo) {
+                    About(versionInfo = versionInfo, configInfo = configInfo) {
                         onBackCount.incrementAndGet()
                     }
                 }

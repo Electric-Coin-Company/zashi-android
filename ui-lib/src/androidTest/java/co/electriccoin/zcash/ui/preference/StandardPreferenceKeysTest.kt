@@ -6,15 +6,15 @@ import org.junit.Test
 import kotlin.reflect.full.memberProperties
 import kotlin.test.assertFalse
 
-class EncryptedPreferenceKeysTest {
+class StandardPreferenceKeysTest {
     // This test is primary to prevent copy-paste errors in preference keys
     @SmallTest
     @Test
     fun unique_keys() {
         val fieldValueSet = mutableSetOf<String>()
 
-        EncryptedPreferenceKeys::class.memberProperties
-            .map { it.getter.call(EncryptedPreferenceKeys) }
+        StandardPreferenceKeys::class.memberProperties
+            .map { it.getter.call(StandardPreferenceKeys) }
             .map { it as PreferenceDefault<*> }
             .map { it.key }
             .forEach {
