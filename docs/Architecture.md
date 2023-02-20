@@ -108,7 +108,11 @@ Debug builds allow for manual override of feature toggle entries, which can be s
 
 To set a configuration value manually, run the following shell command replacing `$SOME_KEY` and `$SOME_VALUE` with the key-value pair you'd like to set.  The change will take effect immediately.
 
-`adb shell am broadcast -n co.electriccoin.zcash/co.electriccoin.zcash.configuration.internal.intent.IntentConfigurationReceiver --es key "$SOME_KEY" --es value "$NEW_VALUE"`
+`adb shell am broadcast -n co.electriccoin.zcash.debug/co.electriccoin.zcash.configuration.internal.intent.IntentConfigurationReceiver --es key "$SOME_KEY" --es value "$NEW_VALUE"`
+
+As a specific example, the "Request ZEC" button on the home screen is currently disabled because the underlying functionality is not available yet.  The button can be shown by running the command:
+
+`adb shell am broadcast -n co.electriccoin.zcash.debug/co.electriccoin.zcash.configuration.internal.intent.IntentConfigurationReceiver --es key "is_request_zec_enabled" --es value "true"`
 
 # Shared Resources
 There are some app-wide resources that share a common namespace, and these should be documented here to make it easy to ensure there are no collisions.

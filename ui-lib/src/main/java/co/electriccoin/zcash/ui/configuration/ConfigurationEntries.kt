@@ -10,5 +10,5 @@ object ConfigurationEntries {
      * Disabled because we don't have the URI parser support in the SDK yet.
      *
      */
-    val IS_REQUEST_ZEC_ENABLED = BooleanConfigurationEntry(ConfigKey("is_update_check_enabled"), false)
+    val IS_REQUEST_ZEC_ENABLED = BooleanConfigurationEntry(ConfigKey("is_request_zec_enabled"), false)
 }

@@ -9,7 +9,8 @@ import java.util.concurrent.atomic.AtomicInteger
 
 class HomeTestSetup(
     private val composeTestRule: ComposeContentTestRule,
-    private val walletSnapshot: WalletSnapshot
+    private val walletSnapshot: WalletSnapshot,
+    private val isRequestZecButtonEnabled: Boolean,
 ) {
     private val onScanCount = AtomicInteger(0)
     private val onProfileCount = AtomicInteger(0)
@@ -46,7 +47,8 @@ class HomeTestSetup(
         Home(
             walletSnapshot,
             isKeepScreenOnDuringSync = false,
-            emptyList(),
+            isRequestZecButtonEnabled = isRequestZecButtonEnabled,
+            transactionHistory = emptyList(),
             goScan = {
                 onScanCount.incrementAndGet()
             },
