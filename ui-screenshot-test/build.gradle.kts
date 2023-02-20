@@ -55,10 +55,12 @@ android {
 }
 
 dependencies {
-    implementation(projects.uiLib)
-    implementation(projects.testLib)
-    implementation(projects.spackleAndroidLib)
+    implementation(projects.configurationApiLib)
+    implementation(projects.configurationImplAndroidLib)
     implementation(projects.sdkExtLib)
+    implementation(projects.spackleAndroidLib)
+    implementation(projects.testLib)
+    implementation(projects.uiLib)
 
     implementation(libs.bundles.androidx.test)
     implementation(libs.bundles.androidx.compose.core)

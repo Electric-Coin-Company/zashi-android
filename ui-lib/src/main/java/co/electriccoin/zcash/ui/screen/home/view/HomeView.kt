@@ -70,6 +70,7 @@ fun ComposablePreview() {
             Home(
                 WalletSnapshotFixture.new(),
                 isKeepScreenOnDuringSync = false,
+                isRequestZecButtonEnabled = false,
                 emptyList(),
                 goScan = {},
                 goProfile = {},
@@ -89,6 +90,7 @@ fun ComposablePreview() {
 fun Home(
     walletSnapshot: WalletSnapshot,
     isKeepScreenOnDuringSync: Boolean?,
+    isRequestZecButtonEnabled: Boolean,
     transactionHistory: List<CommonTransaction>,
     goScan: () -> Unit,
     goProfile: () -> Unit,
@@ -105,6 +107,7 @@ fun Home(
             paddingValues,
             walletSnapshot,
             isKeepScreenOnDuringSync = isKeepScreenOnDuringSync,
+            isRequestZecButtonEnabled = isRequestZecButtonEnabled,
             transactionHistory,
             goScan = goScan,
             goProfile = goProfile,
@@ -177,6 +180,7 @@ private fun HomeMainContent(
     paddingValues: PaddingValues,
     walletSnapshot: WalletSnapshot,
     isKeepScreenOnDuringSync: Boolean?,
+    isRequestZecButtonEnabled: Boolean,
     transactionHistory: List<CommonTransaction>,
     goScan: () -> Unit,
     goProfile: () -> Unit,
@@ -215,7 +219,9 @@ private fun HomeMainContent(
 
         PrimaryButton(onClick = goSend, text = stringResource(R.string.home_button_send))
 
-        TertiaryButton(onClick = goRequest, text = stringResource(R.string.home_button_request))
+        if (isRequestZecButtonEnabled) {
+            TertiaryButton(onClick = goRequest, text = stringResource(R.string.home_button_request))
+        }
 
         History(transactionHistory)
 

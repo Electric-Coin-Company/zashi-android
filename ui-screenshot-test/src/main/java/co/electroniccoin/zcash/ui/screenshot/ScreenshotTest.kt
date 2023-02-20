@@ -29,16 +29,19 @@ import androidx.test.filters.SdkSuppress
 import cash.z.ecc.android.sdk.fixture.WalletAddressFixture
 import cash.z.ecc.android.sdk.model.MonetarySeparators
 import cash.z.ecc.sdk.fixture.SeedPhraseFixture
+import co.electriccoin.zcash.configuration.model.map.StringConfiguration
 import co.electriccoin.zcash.spackle.FirebaseTestLabUtil
 import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.NavigationTargets
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
 import co.electriccoin.zcash.ui.design.component.ConfigurationOverride
 import co.electriccoin.zcash.ui.design.component.UiMode
 import co.electriccoin.zcash.ui.screen.backup.BackupTag
 import co.electriccoin.zcash.ui.screen.home.viewmodel.SecretState
 import co.electriccoin.zcash.ui.screen.restore.RestoreTag
+import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -76,6 +79,8 @@ class ScreenshotTest : UiTestPrerequisites() {
                 .captureToBitmap()
                 .writeToTestStorage("$screenshotName - $tag")
         }
+
+        private val emptyConfiguration = StringConfiguration(persistentMapOf(), null)
     }
 
     @get:Rule
@@ -300,15 +305,19 @@ class ScreenshotTest : UiTestPrerequisites() {
         }
 
         composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) { composeTestRule.activity.walletViewModel.secretState.value is SecretState.Ready }
-        composeTestRule.onNode(hasText(resContext.getString(R.string.home_button_request))).also {
-            it.assertExists()
-            it.performClick()
-        }
-        composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) { composeTestRule.activity.walletViewModel.walletSnapshot.value != null }
-        requestZecScreenshots(resContext, tag, composeTestRule)
 
-        navigateTo(NavigationTargets.HOME)
-        composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) { composeTestRule.activity.walletViewModel.secretState.value is SecretState.Ready }
+        if (ConfigurationEntries.IS_REQUEST_ZEC_ENABLED.getValue(emptyConfiguration)) {
+            composeTestRule.onNode(hasText(resContext.getString(R.string.home_button_request))).also {
+                it.assertExists()
+                it.performClick()
+            }
+
+            composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) { composeTestRule.activity.walletViewModel.walletSnapshot.value != null }
+            requestZecScreenshots(resContext, tag, composeTestRule)
+
+            navigateTo(NavigationTargets.HOME)
+            composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) { composeTestRule.activity.walletViewModel.secretState.value is SecretState.Ready }
+        }
 
         composeTestRule.onNode(hasText(resContext.getString(R.string.home_button_send))).also {
             it.assertExists()

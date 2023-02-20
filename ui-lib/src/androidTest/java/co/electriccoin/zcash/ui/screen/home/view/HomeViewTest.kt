@@ -51,6 +51,16 @@ class HomeViewTest : UiTestPrerequisites() {
 
     @Test
     @MediumTest
+    fun hide_request_zec() {
+        newTestSetup(isRequestZecButtonEnabled = false)
+
+        composeTestRule.onNodeWithText(getStringResource(R.string.home_button_request)).also {
+            it.assertDoesNotExist()
+        }
+    }
+
+    @Test
+    @MediumTest
     fun click_scan_button() {
         val testSetup = newTestSetup()
 
@@ -97,9 +107,10 @@ class HomeViewTest : UiTestPrerequisites() {
         assertEquals(1, testSetup.getOnRequestCount())
     }
 
-    private fun newTestSetup() = HomeTestSetup(
+    private fun newTestSetup(isRequestZecButtonEnabled: Boolean = true) = HomeTestSetup(
         composeTestRule,
-        WalletSnapshotFixture.new()
+        WalletSnapshotFixture.new(),
+        isRequestZecButtonEnabled = isRequestZecButtonEnabled
     ).apply {
         setDefaultContent()
     }

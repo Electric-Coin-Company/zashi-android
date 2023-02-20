@@ -11,6 +11,8 @@ import co.electriccoin.zcash.spackle.EmulatorWtfUtil
 import co.electriccoin.zcash.spackle.FirebaseTestLabUtil
 import co.electriccoin.zcash.ui.BuildConfig
 import co.electriccoin.zcash.ui.MainActivity
+import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
+import co.electriccoin.zcash.ui.configuration.RemoteConfig
 import co.electriccoin.zcash.ui.screen.home.view.Home
 import co.electriccoin.zcash.ui.screen.home.viewmodel.CheckUpdateViewModel
 import co.electriccoin.zcash.ui.screen.home.viewmodel.WalletViewModel
@@ -76,6 +78,7 @@ internal fun WrapHome(
         Home(
             walletSnapshot,
             isKeepScreenOnDuringSync = isKeepScreenOnWhileSyncing,
+            isRequestZecButtonEnabled = ConfigurationEntries.IS_REQUEST_ZEC_ENABLED.getValue(RemoteConfig.current),
             transactionSnapshot,
             goScan = goScan,
             goRequest = goRequest,
