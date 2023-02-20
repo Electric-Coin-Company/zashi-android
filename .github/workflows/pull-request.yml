@@ -78,7 +78,7 @@ jobs:
           distribution: 'temurin'
           java-version: 17
       - name: Set up Gradle
-        uses: gradle/gradle-build-action@3fbe033aaae657f011f88f29be9e65ed26bd29ef
+        uses: gradle/gradle-build-action@6095a76664413da4c8c134ee32e8a8ae900f0f1f
         timeout-minutes: 5
       - name: Check properties
         timeout-minutes: 4
@@ -101,7 +101,7 @@ jobs:
           distribution: 'temurin'
           java-version: 17
       - name: Set up Gradle
-        uses: gradle/gradle-build-action@3fbe033aaae657f011f88f29be9e65ed26bd29ef
+        uses: gradle/gradle-build-action@6095a76664413da4c8c134ee32e8a8ae900f0f1f
         timeout-minutes: 5
       - name: Detekt
         timeout-minutes: 4
@@ -141,7 +141,7 @@ jobs:
           distribution: 'temurin'
           java-version: 17
       - name: Set up Gradle
-        uses: gradle/gradle-build-action@3fbe033aaae657f011f88f29be9e65ed26bd29ef
+        uses: gradle/gradle-build-action@6095a76664413da4c8c134ee32e8a8ae900f0f1f
         timeout-minutes: 5
       - name: Ktlint
         timeout-minutes: 4
@@ -181,7 +181,7 @@ jobs:
           distribution: 'temurin'
           java-version: 17
       - name: Set up Gradle
-        uses: gradle/gradle-build-action@3fbe033aaae657f011f88f29be9e65ed26bd29ef
+        uses: gradle/gradle-build-action@6095a76664413da4c8c134ee32e8a8ae900f0f1f
         timeout-minutes: 5
       - name: Android Lint
         timeout-minutes: 15
@@ -224,7 +224,7 @@ jobs:
           distribution: 'temurin'
           java-version: 17
       - name: Set up Gradle
-        uses: gradle/gradle-build-action@3fbe033aaae657f011f88f29be9e65ed26bd29ef
+        uses: gradle/gradle-build-action@6095a76664413da4c8c134ee32e8a8ae900f0f1f
         timeout-minutes: 5
       - name: Test
         timeout-minutes: 4
@@ -268,7 +268,7 @@ jobs:
           distribution: 'temurin'
           java-version: 17
       - name: Set up Gradle
-        uses: gradle/gradle-build-action@3fbe033aaae657f011f88f29be9e65ed26bd29ef
+        uses: gradle/gradle-build-action@6095a76664413da4c8c134ee32e8a8ae900f0f1f
         timeout-minutes: 5
       - name: Build
         timeout-minutes: 20
@@ -330,7 +330,7 @@ jobs:
           distribution: 'temurin'
           java-version: 17
       - name: Set up Gradle
-        uses: gradle/gradle-build-action@3fbe033aaae657f011f88f29be9e65ed26bd29ef
+        uses: gradle/gradle-build-action@6095a76664413da4c8c134ee32e8a8ae900f0f1f
         timeout-minutes: 5
       - name: Build and test
         timeout-minutes: 30
@@ -377,7 +377,7 @@ jobs:
           distribution: 'temurin'
           java-version: 17
       - name: Set up Gradle
-        uses: gradle/gradle-build-action@3fbe033aaae657f011f88f29be9e65ed26bd29ef
+        uses: gradle/gradle-build-action@6095a76664413da4c8c134ee32e8a8ae900f0f1f
         timeout-minutes: 5
       - name: Build and test
         timeout-minutes: 30
@@ -425,7 +425,7 @@ jobs:
           distribution: 'temurin'
           java-version: 17
       - name: Set up Gradle
-        uses: gradle/gradle-build-action@3fbe033aaae657f011f88f29be9e65ed26bd29ef
+        uses: gradle/gradle-build-action@6095a76664413da4c8c134ee32e8a8ae900f0f1f
         timeout-minutes: 5
       - name: Export Google Services JSON
         env:
@@ -478,7 +478,7 @@ jobs:
           distribution: 'temurin'
           java-version: 17
       - name: Set up Gradle
-        uses: gradle/gradle-build-action@3fbe033aaae657f011f88f29be9e65ed26bd29ef
+        uses: gradle/gradle-build-action@6095a76664413da4c8c134ee32e8a8ae900f0f1f
         timeout-minutes: 5
       - name: Export Google Services JSON
         env:
@@ -548,7 +548,7 @@ jobs:
           distribution: 'temurin'
           java-version: 17
       - name: Set up Gradle
-        uses: gradle/gradle-build-action@3fbe033aaae657f011f88f29be9e65ed26bd29ef
+        uses: gradle/gradle-build-action@6095a76664413da4c8c134ee32e8a8ae900f0f1f
         timeout-minutes: 5
       - name: Authenticate to Google Cloud for Firebase Test Lab
         id: auth_test_lab
