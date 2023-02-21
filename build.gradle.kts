@@ -101,7 +101,7 @@ tasks {
 
             "IS_MINIFY_ENABLED" to "true",
 
-            "ZCASH_RELEASE_APP_NAME" to "Zcash",
+            "ZCASH_RELEASE_APP_NAME" to "sECCant",
             "ZCASH_RELEASE_PACKAGE_NAME" to "co.electriccoin.zcash",
 
             "ZCASH_DEBUG_KEYSTORE_PATH" to "",
