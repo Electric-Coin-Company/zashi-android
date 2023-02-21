@@ -18,7 +18,11 @@ class OnboardingActivityTest : UiTestPrerequisites() {
     @get:Rule
     val composeTestRule = createAndroidComposeRule<UiTestingActivity>()
 
-    private fun newTestSetup() = OnboardingTestSetup(composeTestRule, OnboardingStage.ShieldedByDefault)
+    private fun newTestSetup() = OnboardingTestSetup(
+        composeTestRule,
+        isFullOnboardingEnabled = true,
+        OnboardingStage.ShieldedByDefault
+    )
 
     @Test
     @MediumTest

@@ -20,8 +20,8 @@ class OnboardingViewTest : UiTestPrerequisites() {
     @get:Rule
     val composeTestRule = createComposeRule()
 
-    private fun newTestSetup(initialStage: OnboardingStage): OnboardingTestSetup {
-        return OnboardingTestSetup(composeTestRule, initialStage).apply {
+    private fun newTestSetup(isFullOnboardingEnabled: Boolean = true, initialStage: OnboardingStage): OnboardingTestSetup {
+        return OnboardingTestSetup(composeTestRule, isFullOnboardingEnabled, initialStage).apply {
             setDefaultContent()
         }
     }
@@ -30,7 +30,7 @@ class OnboardingViewTest : UiTestPrerequisites() {
     @Test
     @MediumTest
     fun verify_test_setup_stage_1() {
-        val testSetup = newTestSetup(OnboardingStage.ShieldedByDefault)
+        val testSetup = newTestSetup(initialStage = OnboardingStage.ShieldedByDefault)
 
         assertEquals(OnboardingStage.ShieldedByDefault, testSetup.getOnboardingStage())
         assertEquals(0, testSetup.getOnImportWalletCallbackCount())
@@ -40,7 +40,7 @@ class OnboardingViewTest : UiTestPrerequisites() {
     @Test
     @MediumTest
     fun verify_test_setup_stage_4() {
-        val testSetup = newTestSetup(OnboardingStage.Wallet)
+        val testSetup = newTestSetup(initialStage = OnboardingStage.Wallet)
 
         assertEquals(OnboardingStage.Wallet, testSetup.getOnboardingStage())
         assertEquals(0, testSetup.getOnImportWalletCallbackCount())
@@ -50,7 +50,7 @@ class OnboardingViewTest : UiTestPrerequisites() {
     @Test
     @MediumTest
     fun stage_1_layout() {
-        newTestSetup(OnboardingStage.ShieldedByDefault)
+        newTestSetup(initialStage = OnboardingStage.ShieldedByDefault)
 
         composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_next)).also {
             it.assertExists()
@@ -77,7 +77,7 @@ class OnboardingViewTest : UiTestPrerequisites() {
     @Test
     @MediumTest
     fun stage_2_layout() {
-        newTestSetup(OnboardingStage.UnifiedAddresses)
+        newTestSetup(initialStage = OnboardingStage.UnifiedAddresses)
 
         composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_skip)).also {
             it.assertExists()
@@ -114,7 +114,7 @@ class OnboardingViewTest : UiTestPrerequisites() {
     @Test
     @MediumTest
     fun stage_3_layout() {
-        newTestSetup(OnboardingStage.More)
+        newTestSetup(initialStage = OnboardingStage.More)
 
         composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_skip)).also {
             it.assertExists()
@@ -151,7 +151,7 @@ class OnboardingViewTest : UiTestPrerequisites() {
     @Test
     @MediumTest
     fun stage_4_layout() {
-        newTestSetup(OnboardingStage.Wallet)
+        newTestSetup(initialStage = OnboardingStage.Wallet)
 
         composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_skip)).also {
             it.assertDoesNotExist()
@@ -182,8 +182,38 @@ class OnboardingViewTest : UiTestPrerequisites() {
 
     @Test
     @MediumTest
+    fun stage_4_layout_short_onboarding() {
+        newTestSetup(isFullOnboardingEnabled = false, initialStage = OnboardingStage.Wallet)
+
+        composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_skip)).also {
+            it.assertDoesNotExist()
+        }
+
+        composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_next)).also {
+            it.assertDoesNotExist()
+        }
+
+        composeTestRule.onNodeWithContentDescription(getStringResource(R.string.onboarding_back)).also {
+            it.assertDoesNotExist()
+        }
+
+        composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_4_create_new_wallet)).also {
+            it.assertExists()
+            it.assertIsEnabled()
+            it.assertHasClickAction()
+        }
+
+        composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_4_import_existing_wallet)).also {
+            it.assertExists()
+            it.assertIsEnabled()
+            it.assertHasClickAction()
+        }
+    }
+
+    @Test
+    @MediumTest
     fun stage_1_skip() {
-        val testSetup = newTestSetup(OnboardingStage.ShieldedByDefault)
+        val testSetup = newTestSetup(initialStage = OnboardingStage.ShieldedByDefault)
 
         composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_skip)).also {
             it.performClick()
@@ -195,7 +225,7 @@ class OnboardingViewTest : UiTestPrerequisites() {
     @Test
     @MediumTest
     fun last_stage_click_create_wallet() {
-        val testSetup = newTestSetup(OnboardingStage.Wallet)
+        val testSetup = newTestSetup(initialStage = OnboardingStage.Wallet)
 
         val newWalletButton = composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_4_create_new_wallet))
         newWalletButton.performClick()
@@ -207,7 +237,7 @@ class OnboardingViewTest : UiTestPrerequisites() {
     @Test
     @MediumTest
     fun last_stage_click_import_wallet() {
-        val testSetup = newTestSetup(OnboardingStage.Wallet)
+        val testSetup = newTestSetup(initialStage = OnboardingStage.Wallet)
 
         val newWalletButton = composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_4_import_existing_wallet))
         newWalletButton.performClick()
@@ -219,7 +249,7 @@ class OnboardingViewTest : UiTestPrerequisites() {
     @Test
     @MediumTest
     fun multi_stage_progression() {
-        val testSetup = newTestSetup(OnboardingStage.ShieldedByDefault)
+        val testSetup = newTestSetup(initialStage = OnboardingStage.ShieldedByDefault)
 
         composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_next)).also {
             it.performClick()
