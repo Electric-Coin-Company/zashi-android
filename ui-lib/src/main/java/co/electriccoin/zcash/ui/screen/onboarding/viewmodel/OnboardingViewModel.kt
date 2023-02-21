@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import cash.z.ecc.android.sdk.ext.collectWith
 import co.electriccoin.zcash.ui.screen.onboarding.model.OnboardingStage
 import co.electriccoin.zcash.ui.screen.onboarding.state.OnboardingState
-import kotlinx.coroutines.flow.MutableStateFlow
 
 /*
  * Android-specific ViewModel.  This is used to save and restore state across Activity recreations
@@ -15,7 +14,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
  */
 class OnboardingViewModel(
     application: Application,
-    savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle
 ) : AndroidViewModel(application) {
 
     val onboardingState: OnboardingState = run {
@@ -35,21 +34,17 @@ class OnboardingViewModel(
     // This is a bit weird being placed here, but onboarding currently is considered complete when
     // the user has a persisted wallet. Also import allows the user to go back to onboarding, while
     // creating a new wallet does not.
-    val isImporting = run {
-        val initialValue = savedStateHandle.get<Boolean?>(KEY_IS_IMPORTING) ?: false
+    val isImporting = savedStateHandle.getStateFlow(KEY_IS_IMPORTING, false)
 
-        MutableStateFlow(initialValue)
+    fun setIsImporting(isImporting: Boolean) {
+        savedStateHandle[KEY_IS_IMPORTING] = isImporting
     }
 
     init {
         // viewModelScope is constructed with Dispatchers.Main.immediate, so this will
         // update the save state as soon as a change occurs.
         onboardingState.current.collectWith(viewModelScope) {
-            savedStateHandle.set(KEY_STAGE, it)
-        }
-
-        isImporting.collectWith(viewModelScope) {
-            savedStateHandle.set(KEY_IS_IMPORTING, it)
+            savedStateHandle[KEY_STAGE] = it
         }
     }
 

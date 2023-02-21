@@ -18,7 +18,11 @@ class OnboardingIntegrationTest : UiTestPrerequisites() {
     @get:Rule
     val composeTestRule = createComposeRule()
 
-    private fun newTestSetup(initialStage: OnboardingStage) = OnboardingTestSetup(composeTestRule, initialStage)
+    private fun newTestSetup(initialStage: OnboardingStage) = OnboardingTestSetup(
+        composeTestRule,
+        isFullOnboardingEnabled = true,
+        initialStage
+    )
 
     /**
      * The test semantics are built upon StateRestorationTester component. We simulate screen state

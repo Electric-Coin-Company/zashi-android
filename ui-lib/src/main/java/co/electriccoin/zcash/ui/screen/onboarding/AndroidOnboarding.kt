@@ -18,7 +18,11 @@ import co.electriccoin.zcash.spackle.EmulatorWtfUtil
 import co.electriccoin.zcash.spackle.FirebaseTestLabUtil
 import co.electriccoin.zcash.ui.BuildConfig
 import co.electriccoin.zcash.ui.MainActivity
+import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
+import co.electriccoin.zcash.ui.configuration.RemoteConfig
 import co.electriccoin.zcash.ui.screen.home.viewmodel.WalletViewModel
+import co.electriccoin.zcash.ui.screen.onboarding.model.OnboardingStage
+import co.electriccoin.zcash.ui.screen.onboarding.state.OnboardingState
 import co.electriccoin.zcash.ui.screen.onboarding.view.Onboarding
 import co.electriccoin.zcash.ui.screen.onboarding.viewmodel.OnboardingViewModel
 import co.electriccoin.zcash.ui.screen.restore.view.RestoreWallet
@@ -47,8 +51,18 @@ internal fun WrapOnboarding(
 
     // TODO [#383]: https://github.com/zcash/secant-android-wallet/issues/383
     if (!onboardingViewModel.isImporting.collectAsStateWithLifecycle().value) {
+        val isFullOnboardingEnabled = ConfigurationEntries.IS_FULL_ONBOARDING_ENABLED.getValue(RemoteConfig.current)
+        val onboardingState = if (isFullOnboardingEnabled) {
+            onboardingViewModel.onboardingState
+        } else {
+            // Force to the last screen, which is the "create wallet" screen.
+            // This simplifies the implementation inside the Onboarding composable.
+            OnboardingState(OnboardingStage.values().last())
+        }
+
         Onboarding(
-            onboardingState = onboardingViewModel.onboardingState,
+            isFullOnboardingEnabled = isFullOnboardingEnabled,
+            onboardingState = onboardingState,
             isDebugMenuEnabled = isDebugMenuEnabled,
             onImportWallet = {
                 // In the case of the app currently being messed with by the robo test runner on
@@ -64,7 +78,7 @@ internal fun WrapOnboarding(
                     return@Onboarding
                 }
 
-                onboardingViewModel.isImporting.value = true
+                onboardingViewModel.setIsImporting(true)
             },
             onCreateWallet = {
                 if (FirebaseTestLabUtil.isFirebaseTestLab(applicationContext)) {
@@ -115,7 +129,7 @@ private fun WrapRestore(activity: ComponentActivity) {
             RestoreWallet(
                 completeWordList.list,
                 restoreViewModel.userWordList,
-                onBack = { onboardingViewModel.isImporting.value = false },
+                onBack = { onboardingViewModel.setIsImporting(false) },
                 paste = {
                     val clipboardManager = applicationContext.getSystemService(ClipboardManager::class.java)
                     return@RestoreWallet clipboardManager?.primaryClip?.toString()

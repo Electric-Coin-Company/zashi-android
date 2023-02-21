@@ -79,8 +79,6 @@ class ScreenshotTest : UiTestPrerequisites() {
                 .captureToBitmap()
                 .writeToTestStorage("$screenshotName - $tag")
         }
-
-        private val emptyConfiguration = StringConfiguration(persistentMapOf(), null)
     }
 
     @get:Rule
@@ -146,13 +144,15 @@ class ScreenshotTest : UiTestPrerequisites() {
 
         composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) { composeTestRule.activity.walletViewModel.secretState.value is SecretState.None }
 
-        composeTestRule.onNodeWithText(resContext.getString(R.string.onboarding_1_header)).also {
-            it.assertExists()
-        }
+        if (ConfigurationEntries.IS_FULL_ONBOARDING_ENABLED.getValue(emptyConfiguration)) {
+            composeTestRule.onNodeWithText(resContext.getString(R.string.onboarding_1_header)).also {
+                it.assertExists()
+            }
 
-        composeTestRule.onNodeWithText(resContext.getString(R.string.onboarding_skip)).also {
-            it.assertExists()
-            it.performClick()
+            composeTestRule.onNodeWithText(resContext.getString(R.string.onboarding_skip)).also {
+                it.assertExists()
+                it.performClick()
+            }
         }
 
         composeTestRule.onNodeWithText(resContext.getString(R.string.onboarding_4_import_existing_wallet)).also {
@@ -333,32 +333,35 @@ class ScreenshotTest : UiTestPrerequisites() {
     }
 }
 
+private val emptyConfiguration = StringConfiguration(persistentMapOf(), null)
+
 private fun onboardingScreenshots(resContext: Context, tag: String, composeTestRule: AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>) {
     composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) { composeTestRule.activity.walletViewModel.secretState.value is SecretState.None }
+    if (ConfigurationEntries.IS_FULL_ONBOARDING_ENABLED.getValue(emptyConfiguration)) {
+        composeTestRule.onNodeWithText(resContext.getString(R.string.onboarding_1_header)).also {
+            it.assertExists()
+        }
+        ScreenshotTest.takeScreenshot(tag, "Onboarding 1")
 
-    composeTestRule.onNodeWithText(resContext.getString(R.string.onboarding_1_header)).also {
-        it.assertExists()
-    }
-    ScreenshotTest.takeScreenshot(tag, "Onboarding 1")
+        composeTestRule.onNodeWithText(resContext.getString(R.string.onboarding_next)).also {
+            it.performClick()
+        }
 
-    composeTestRule.onNodeWithText(resContext.getString(R.string.onboarding_next)).also {
-        it.performClick()
-    }
+        composeTestRule.onNodeWithText(resContext.getString(R.string.onboarding_2_header)).also {
+            it.assertExists()
+            ScreenshotTest.takeScreenshot(tag, "Onboarding 2")
+        }
+        composeTestRule.onNodeWithText(resContext.getString(R.string.onboarding_next)).also {
+            it.performClick()
+        }
 
-    composeTestRule.onNodeWithText(resContext.getString(R.string.onboarding_2_header)).also {
-        it.assertExists()
-        ScreenshotTest.takeScreenshot(tag, "Onboarding 2")
-    }
-    composeTestRule.onNodeWithText(resContext.getString(R.string.onboarding_next)).also {
-        it.performClick()
-    }
-
-    composeTestRule.onNodeWithText(resContext.getString(R.string.onboarding_3_header)).also {
-        it.assertExists()
-        ScreenshotTest.takeScreenshot(tag, "Onboarding 3")
-    }
-    composeTestRule.onNodeWithText(resContext.getString(R.string.onboarding_next)).also {
-        it.performClick()
+        composeTestRule.onNodeWithText(resContext.getString(R.string.onboarding_3_header)).also {
+            it.assertExists()
+            ScreenshotTest.takeScreenshot(tag, "Onboarding 3")
+        }
+        composeTestRule.onNodeWithText(resContext.getString(R.string.onboarding_next)).also {
+            it.performClick()
+        }
     }
 
     composeTestRule.onNodeWithText(resContext.getString(R.string.onboarding_4_header)).also {

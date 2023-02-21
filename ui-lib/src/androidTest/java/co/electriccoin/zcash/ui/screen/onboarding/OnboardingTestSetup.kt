@@ -11,8 +11,17 @@ import java.util.concurrent.atomic.AtomicInteger
 
 class OnboardingTestSetup(
     private val composeTestRule: ComposeContentTestRule,
+    private val isFullOnboardingEnabled: Boolean,
     initialStage: OnboardingStage
 ) {
+    init {
+        if (!isFullOnboardingEnabled) {
+            require(initialStage == OnboardingStage.Wallet) {
+                "When full onboarding is disabled, the initial stage must be Wallet"
+            }
+        }
+    }
+
     private val onboardingState = OnboardingState(initialStage)
 
     private val onCreateWalletCallbackCount = AtomicInteger(0)
@@ -38,6 +47,7 @@ class OnboardingTestSetup(
     fun getDefaultContent() {
         ZcashTheme {
             Onboarding(
+                isFullOnboardingEnabled,
                 onboardingState,
                 isDebugMenuEnabled = false,
                 onCreateWallet = { onCreateWalletCallbackCount.incrementAndGet() },
