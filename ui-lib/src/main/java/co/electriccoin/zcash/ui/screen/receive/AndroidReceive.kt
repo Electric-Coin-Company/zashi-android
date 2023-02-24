@@ -1,6 +1,6 @@
 @file:Suppress("ktlint:filename")
 
-package co.electriccoin.zcash.ui.screen.profile
+package co.electriccoin.zcash.ui.screen.receive
 
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
@@ -9,82 +9,52 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cash.z.ecc.android.sdk.model.WalletAddresses
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.screen.home.viewmodel.WalletViewModel
-import co.electriccoin.zcash.ui.screen.profile.view.Profile
+import co.electriccoin.zcash.ui.screen.receive.view.Receive
 
 @Composable
 @Suppress("LongParameterList")
-internal fun MainActivity.WrapProfile(
+internal fun MainActivity.WrapReceive(
     onBack: () -> Unit,
     onAddressDetails: () -> Unit,
-    onAddressBook: () -> Unit,
-    onSettings: () -> Unit,
-    onCoinholderVote: () -> Unit,
-    onSupport: () -> Unit,
-    onAbout: () -> Unit
 ) {
-    WrapProfile(
+    WrapReceive(
         this,
         onBack = onBack,
         onAddressDetails = onAddressDetails,
-        onAddressBook = onAddressBook,
-        onSettings = onSettings,
-        onCoinholderVote = onCoinholderVote,
-        onSupport = onSupport,
-        onAbout = onAbout
     )
 }
 
 @Composable
 @Suppress("LongParameterList")
-internal fun WrapProfile(
+internal fun WrapReceive(
     activity: ComponentActivity,
     onBack: () -> Unit,
     onAddressDetails: () -> Unit,
-    onAddressBook: () -> Unit,
-    onSettings: () -> Unit,
-    onCoinholderVote: () -> Unit,
-    onSupport: () -> Unit,
-    onAbout: () -> Unit
 ) {
     val viewModel by activity.viewModels<WalletViewModel>()
     val walletAddresses = viewModel.addresses.collectAsStateWithLifecycle().value
 
-    WrapProfile(
+    WrapReceive(
         walletAddresses,
         onBack = onBack,
         onAddressDetails = onAddressDetails,
-        onAddressBook = onAddressBook,
-        onSettings = onSettings,
-        onCoinholderVote = onCoinholderVote,
-        onSupport = onSupport,
-        onAbout = onAbout
     )
 }
 
 @Composable
 @Suppress("LongParameterList")
-internal fun WrapProfile(
+internal fun WrapReceive(
     walletAddresses: WalletAddresses?,
     onBack: () -> Unit,
     onAddressDetails: () -> Unit,
-    onAddressBook: () -> Unit,
-    onSettings: () -> Unit,
-    onCoinholderVote: () -> Unit,
-    onSupport: () -> Unit,
-    onAbout: () -> Unit
 ) {
     if (null == walletAddresses) {
         // Display loading indicator
     } else {
-        Profile(
+        Receive(
             walletAddresses.unified,
             onBack = onBack,
             onAddressDetails = onAddressDetails,
-            onAddressBook = onAddressBook,
-            onSettings = onSettings,
-            onCoinholderVote = onCoinholderVote,
-            onSupport = onSupport,
-            onAbout = onAbout
         )
     }
 }

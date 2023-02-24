@@ -10,31 +10,42 @@ import java.util.concurrent.atomic.AtomicInteger
 class HomeTestSetup(
     private val composeTestRule: ComposeContentTestRule,
     private val walletSnapshot: WalletSnapshot,
-    private val isRequestZecButtonEnabled: Boolean,
 ) {
-    private val onScanCount = AtomicInteger(0)
-    private val onProfileCount = AtomicInteger(0)
+    private val onAboutCount = AtomicInteger(0)
+    private val onSeedCount = AtomicInteger(0)
+    private val onSettingsCount = AtomicInteger(0)
+    private val onSupportCount = AtomicInteger(0)
+    private val onReceiveCount = AtomicInteger(0)
     private val onSendCount = AtomicInteger(0)
-    private val onRequestCount = AtomicInteger(0)
 
-    fun getOnScanCount(): Int {
+    fun getOnAboutCount(): Int {
         composeTestRule.waitForIdle()
-        return onScanCount.get()
+        return onAboutCount.get()
     }
 
-    fun getOnProfileCount(): Int {
+    fun getOnSettingsCount(): Int {
         composeTestRule.waitForIdle()
-        return onProfileCount.get()
+        return onSettingsCount.get()
+    }
+
+    fun getOnSupportCount(): Int {
+        composeTestRule.waitForIdle()
+        return onSupportCount.get()
+    }
+
+    fun getOnSeedCount(): Int {
+        composeTestRule.waitForIdle()
+        return onSeedCount.get()
+    }
+
+    fun getOnReceiveCount(): Int {
+        composeTestRule.waitForIdle()
+        return onReceiveCount.get()
     }
 
     fun getOnSendCount(): Int {
         composeTestRule.waitForIdle()
         return onSendCount.get()
-    }
-
-    fun getOnRequestCount(): Int {
-        composeTestRule.waitForIdle()
-        return onRequestCount.get()
     }
 
     fun getWalletSnapshot(): WalletSnapshot {
@@ -46,24 +57,29 @@ class HomeTestSetup(
     fun getDefaultContent() {
         Home(
             walletSnapshot,
-            isKeepScreenOnDuringSync = false,
-            isRequestZecButtonEnabled = isRequestZecButtonEnabled,
             transactionHistory = emptyList(),
-            goScan = {
-                onScanCount.incrementAndGet()
+            isKeepScreenOnDuringSync = false,
+            isUpdateAvailable = false,
+            goSettings = {
+                onSettingsCount.incrementAndGet()
             },
-            goProfile = {
-                onProfileCount.incrementAndGet()
+            goSeedPhrase = {
+                onSeedCount.incrementAndGet()
+            },
+            goSupport = {
+                onSupportCount.incrementAndGet()
+            },
+            goAbout = {
+                onAboutCount.incrementAndGet()
+            },
+            goReceive = {
+                onReceiveCount.incrementAndGet()
             },
             goSend = {
                 onSendCount.incrementAndGet()
             },
-            goRequest = {
-                onRequestCount.incrementAndGet()
-            },
             resetSdk = {},
             isDebugMenuEnabled = false,
-            updateAvailable = false
         )
     }
 

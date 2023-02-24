@@ -6,10 +6,13 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.filters.MediumTest
+import co.electriccoin.zcash.configuration.model.map.StringConfiguration
 import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.test.getStringResource
+import kotlinx.collections.immutable.toPersistentMap
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -38,30 +41,22 @@ class SettingsViewTest : UiTestPrerequisites() {
 
     @Test
     @MediumTest
-    fun backup() = runTest {
-        val testSetup = TestSetup(composeTestRule)
-
-        assertEquals(0, testSetup.getBackupCount())
-
-        composeTestRule.onNodeWithText(getStringResource(R.string.settings_backup)).also {
-            it.performClick()
-        }
-
-        assertEquals(1, testSetup.getBackupCount())
-    }
-
-    @Test
-    @MediumTest
     fun rescan() = runTest {
         val testSetup = TestSetup(composeTestRule)
 
-        assertEquals(0, testSetup.getRescanCount())
+        if (ConfigurationEntries.IS_RESCAN_ENABLED.getValue(StringConfiguration(emptyMap<String, String>().toPersistentMap(), null))) {
+            assertEquals(0, testSetup.getRescanCount())
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.settings_rescan)).also {
-            it.performClick()
+            composeTestRule.onNodeWithContentDescription(getStringResource(R.string.settings_overflow_content_description)).also {
+                it.performClick()
+            }
+
+            composeTestRule.onNodeWithText(getStringResource(R.string.settings_rescan)).also {
+                it.performClick()
+            }
+
+            assertEquals(1, testSetup.getRescanCount())
         }
-
-        assertEquals(1, testSetup.getRescanCount())
     }
 
     @Test
@@ -152,11 +147,9 @@ class SettingsViewTest : UiTestPrerequisites() {
                         isBackgroundSyncEnabled = true,
                         isKeepScreenOnDuringSyncEnabled = true,
                         isAnalyticsEnabled = true,
+                        isRescanEnabled = true,
                         onBack = {
                             onBackCount.incrementAndGet()
-                        },
-                        onBackupWallet = {
-                            onBackupCount.incrementAndGet()
                         },
                         onRescanWallet = {
                             onRescanCount.incrementAndGet()

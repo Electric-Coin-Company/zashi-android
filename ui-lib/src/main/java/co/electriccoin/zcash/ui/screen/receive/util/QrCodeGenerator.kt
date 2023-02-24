@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.profile.util
+package co.electriccoin.zcash.ui.screen.receive.util
 
 interface QrCodeGenerator {
     /**

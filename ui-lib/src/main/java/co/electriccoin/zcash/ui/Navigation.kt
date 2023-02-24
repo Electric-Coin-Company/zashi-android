@@ -9,7 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import co.electriccoin.zcash.ui.NavigationTargets.ABOUT
 import co.electriccoin.zcash.ui.NavigationTargets.HOME
-import co.electriccoin.zcash.ui.NavigationTargets.PROFILE
+import co.electriccoin.zcash.ui.NavigationTargets.RECEIVE
 import co.electriccoin.zcash.ui.NavigationTargets.REQUEST
 import co.electriccoin.zcash.ui.NavigationTargets.SCAN
 import co.electriccoin.zcash.ui.NavigationTargets.SEED
@@ -22,7 +22,7 @@ import co.electriccoin.zcash.ui.configuration.RemoteConfig
 import co.electriccoin.zcash.ui.screen.about.WrapAbout
 import co.electriccoin.zcash.ui.screen.address.WrapWalletAddresses
 import co.electriccoin.zcash.ui.screen.home.WrapHome
-import co.electriccoin.zcash.ui.screen.profile.WrapProfile
+import co.electriccoin.zcash.ui.screen.receive.WrapReceive
 import co.electriccoin.zcash.ui.screen.request.WrapRequest
 import co.electriccoin.zcash.ui.screen.scan.WrapScanValidator
 import co.electriccoin.zcash.ui.screen.seed.WrapSeed
@@ -43,26 +43,17 @@ internal fun MainActivity.Navigation() {
     NavHost(navController = navController, startDestination = HOME) {
         composable(HOME) {
             WrapHome(
-                goScan = { navController.navigateJustOnce(SCAN) },
-                goProfile = { navController.navigateJustOnce(PROFILE) },
+                goSeedPhrase = { navController.navigateJustOnce(SEED) },
+                goSettings = { navController.navigateJustOnce(SETTINGS) },
+                goSupport = { navController.navigateJustOnce(SUPPORT) },
+                goAbout = { navController.navigateJustOnce(ABOUT) },
+                goReceive = { navController.navigateJustOnce(RECEIVE) },
                 goSend = { navController.navigateJustOnce(SEND) },
-                goRequest = { navController.navigateJustOnce(REQUEST) }
             )
 
             if (ConfigurationEntries.IS_APP_UPDATE_CHECK_ENABLED.getValue(RemoteConfig.current)) {
                 WrapCheckForUpdate()
             }
-        }
-        composable(PROFILE) {
-            WrapProfile(
-                onBack = { navController.popBackStackJustOnce(PROFILE) },
-                onAddressDetails = { navController.navigateJustOnce(WALLET_ADDRESS_DETAILS) },
-                onAddressBook = { },
-                onSettings = { navController.navigateJustOnce(SETTINGS) },
-                onCoinholderVote = { },
-                onSupport = { navController.navigateJustOnce(SUPPORT) },
-                onAbout = { navController.navigateJustOnce(ABOUT) }
-            )
         }
         composable(WALLET_ADDRESS_DETAILS) {
             WrapWalletAddresses(
@@ -75,9 +66,6 @@ internal fun MainActivity.Navigation() {
             WrapSettings(
                 goBack = {
                     navController.popBackStackJustOnce(SETTINGS)
-                },
-                goWalletBackup = {
-                    navController.navigateJustOnce(SEED)
                 }
             )
         }
@@ -86,6 +74,12 @@ internal fun MainActivity.Navigation() {
                 goBack = {
                     navController.popBackStackJustOnce(SEED)
                 }
+            )
+        }
+        composable(RECEIVE) {
+            WrapReceive(
+                onBack = { navController.popBackStackJustOnce(RECEIVE) },
+                onAddressDetails = { navController.navigateJustOnce(WALLET_ADDRESS_DETAILS) }
             )
         }
         composable(REQUEST) {
@@ -146,13 +140,13 @@ private fun NavHostController.popBackStackJustOnce(currentRouteToBePopped: Strin
 object NavigationTargets {
     const val HOME = "home"
 
-    const val PROFILE = "profile"
-
     const val WALLET_ADDRESS_DETAILS = "wallet_address_details"
 
     const val SETTINGS = "settings"
 
     const val SEED = "seed"
+
+    const val RECEIVE = "receive"
 
     const val REQUEST = "request"
 

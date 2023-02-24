@@ -11,8 +11,6 @@ import co.electriccoin.zcash.spackle.EmulatorWtfUtil
 import co.electriccoin.zcash.spackle.FirebaseTestLabUtil
 import co.electriccoin.zcash.ui.BuildConfig
 import co.electriccoin.zcash.ui.MainActivity
-import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
-import co.electriccoin.zcash.ui.configuration.RemoteConfig
 import co.electriccoin.zcash.ui.screen.home.view.Home
 import co.electriccoin.zcash.ui.screen.home.viewmodel.CheckUpdateViewModel
 import co.electriccoin.zcash.ui.screen.home.viewmodel.WalletViewModel
@@ -21,28 +19,36 @@ import co.electriccoin.zcash.ui.screen.update.AppUpdateCheckerImp
 import co.electriccoin.zcash.ui.screen.update.model.UpdateState
 
 @Composable
+@Suppress("LongParameterList")
 internal fun MainActivity.WrapHome(
-    goScan: () -> Unit,
-    goProfile: () -> Unit,
+    goSeedPhrase: () -> Unit,
+    goSettings: () -> Unit,
+    goSupport: () -> Unit,
+    goAbout: () -> Unit,
+    goReceive: () -> Unit,
     goSend: () -> Unit,
-    goRequest: () -> Unit
 ) {
     WrapHome(
         this,
-        goScan = goScan,
-        goProfile = goProfile,
+        goSeedPhrase = goSeedPhrase,
+        goSettings = goSettings,
+        goSupport = goSupport,
+        goAbout = goAbout,
+        goReceive = goReceive,
         goSend = goSend,
-        goRequest = goRequest
     )
 }
 
 @Composable
+@Suppress("LongParameterList")
 internal fun WrapHome(
     activity: ComponentActivity,
-    goScan: () -> Unit,
-    goProfile: () -> Unit,
+    goSeedPhrase: () -> Unit,
+    goSettings: () -> Unit,
+    goSupport: () -> Unit,
+    goAbout: () -> Unit,
+    goReceive: () -> Unit,
     goSend: () -> Unit,
-    goRequest: () -> Unit
 ) {
     // we want to show information about app update, if available
     val checkUpdateViewModel by activity.viewModels<CheckUpdateViewModel> {
@@ -77,18 +83,19 @@ internal fun WrapHome(
 
         Home(
             walletSnapshot,
-            isKeepScreenOnDuringSync = isKeepScreenOnWhileSyncing,
-            isRequestZecButtonEnabled = ConfigurationEntries.IS_REQUEST_ZEC_ENABLED.getValue(RemoteConfig.current),
             transactionSnapshot,
-            goScan = goScan,
-            goRequest = goRequest,
-            goSend = goSend,
-            goProfile = goProfile,
+            isUpdateAvailable = updateAvailable,
+            isKeepScreenOnDuringSync = isKeepScreenOnWhileSyncing,
             isDebugMenuEnabled = isDebugMenuEnabled,
+            goSeedPhrase = goSeedPhrase,
+            goSettings = goSettings,
+            goSupport = goSupport,
+            goAbout = goAbout,
+            goReceive = goReceive,
+            goSend = goSend,
             resetSdk = {
                 walletViewModel.resetSdk()
-            },
-            updateAvailable = updateAvailable
+            }
         )
 
         activity.reportFullyDrawn()

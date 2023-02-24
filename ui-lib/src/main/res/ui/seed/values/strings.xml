@@ -1,5 +1,5 @@
 <resources>
-    <string name="seed_title">Backup Wallet</string>
+    <string name="seed_title">My secret phrase</string>
     <string name="seed_back_content_description">Back</string>
 
     <string name="seed_header">Your Secret Recovery Phrase</string>

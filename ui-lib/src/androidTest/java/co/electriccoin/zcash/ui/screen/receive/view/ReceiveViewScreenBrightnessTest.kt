@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.profile.view
+package co.electriccoin.zcash.ui.screen.receive.view
 
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
@@ -7,8 +7,8 @@ import androidx.test.filters.MediumTest
 import cash.z.ecc.android.sdk.fixture.WalletAddressFixture
 import cash.z.ecc.android.sdk.model.WalletAddress
 import co.electriccoin.zcash.test.UiTestPrerequisites
-import co.electriccoin.zcash.ui.common.LocalScreenTimeout
-import co.electriccoin.zcash.ui.common.ScreenTimeout
+import co.electriccoin.zcash.ui.common.LocalScreenBrightness
+import co.electriccoin.zcash.ui.common.ScreenBrightness
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -17,7 +17,7 @@ import org.junit.Test
 import kotlin.test.assertEquals
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class ProfileViewScreenTimeoutTest : UiTestPrerequisites() {
+class ReceiveViewScreenBrightnessTest : UiTestPrerequisites() {
     @get:Rule
     val composeTestRule = createComposeRule()
 
@@ -26,31 +26,25 @@ class ProfileViewScreenTimeoutTest : UiTestPrerequisites() {
     fun testFullBrightness() = runTest {
         val testSetup = newTestSetup(WalletAddressFixture.unified())
 
-        assertEquals(1, testSetup.getScreenTimeoutCount())
+        assertEquals(1, testSetup.getSecureBrightnessCount())
     }
 
     private fun newTestSetup(walletAddress: WalletAddress) = TestSetup(composeTestRule, walletAddress)
 
     private class TestSetup(private val composeTestRule: ComposeContentTestRule, walletAddress: WalletAddress) {
+        private val screenBrightness = ScreenBrightness()
 
-        private val screenTimeout = ScreenTimeout()
-
-        fun getScreenTimeoutCount() = screenTimeout.referenceCount.value
+        fun getSecureBrightnessCount() = screenBrightness.referenceCount.value
 
         init {
             composeTestRule.setContent {
-                CompositionLocalProvider(LocalScreenTimeout provides screenTimeout) {
+                CompositionLocalProvider(LocalScreenBrightness provides screenBrightness) {
                     ZcashTheme {
                         ZcashTheme {
-                            Profile(
+                            Receive(
                                 walletAddress,
                                 onBack = { },
                                 onAddressDetails = { },
-                                onAddressBook = { },
-                                onSettings = { },
-                                onCoinholderVote = {},
-                                onSupport = { },
-                                onAbout = { }
                             )
                         }
                     }
