@@ -62,8 +62,8 @@ commits of that date. Generate tests results with the Android Studio run configu
       Starting 1 tests on Pixel 6 - 13
 
       BasicStartupBenchmark_startup
-      timeToFullDisplayMs   min 288,1,   median 305,6,   max 339,1
-      timeToInitialDisplayMs   min 288,1,   median 305,6,   max 339,1
+      timeToFullDisplayMs   min 288.1,   median 305.6,   max 339.1
+      timeToInitialDisplayMs   min 288.1,   median 305.6,   max 339.1
       Traces: Iteration 0 1 2 3 4
       
       BUILD SUCCESSFUL in 32s
@@ -78,4 +78,33 @@ commits of that date. Generate tests results with the Android Studio run configu
       Traces: Iteration 0 1 2 3 4
       
       BUILD SUCCESSFUL in 41s
+      ```
+
+#### Feb 27, 2023:
+
+- APP version: `0.1 (1)`
+- SDK version: `1.14.0-beta01-SNAPSHOT`
+- Git branch: `main`
+- Device:
+    - Pixel 6 - Android 13:
+      ```
+      Starting 1 tests on Pixel 6 - 13
+    
+      BasicStartupBenchmark_startup
+      timeToFullDisplayMs   min 259.2,   median 265.3,   max 302.4
+      timeToInitialDisplayMs   min 259.2,   median 265.3,   max 302.4
+      Traces: Iteration 0 1 2 3 4
+    
+      BUILD SUCCESSFUL in 1m 59s
+      ```
+    - Pixel 3a - Android 12:
+      ```
+      Starting 1 tests on Pixel 3a - 12
+    
+      BasicStartupBenchmark_startup
+      timeToFullDisplayMs   min 632.2,   median 730.8,   max 785.6
+      timeToInitialDisplayMs   min 632.2,   median 730.8,   max 785.6
+      Traces: Iteration 0 1 2 3 4
+    
+      BUILD SUCCESSFUL in 43s
       ```

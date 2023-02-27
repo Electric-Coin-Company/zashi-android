@@ -6,6 +6,7 @@ import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.datetime.Instant
 
 class MergingConfigurationProvider(private val configurationProviders: PersistentList<ConfigurationProvider>) : ConfigurationProvider {
@@ -14,8 +15,12 @@ class MergingConfigurationProvider(private val configurationProviders: Persisten
     }
 
     override fun getConfigurationFlow(): Flow<Configuration> {
-        return combine(configurationProviders.map { it.getConfigurationFlow() }) { configurations ->
-            MergingConfiguration(configurations.toList().toPersistentList())
+        return if (configurationProviders.isEmpty()) {
+            flowOf(MergingConfiguration(emptyList<Configuration>().toPersistentList()))
+        } else {
+            combine(configurationProviders.map { it.getConfigurationFlow() }) { configurations ->
+                MergingConfiguration(configurations.toList().toPersistentList())
+            }
         }
     }
 
