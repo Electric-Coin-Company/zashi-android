@@ -5,6 +5,7 @@ import co.electriccoin.zcash.configuration.model.map.StringConfiguration
 import co.electriccoin.zcash.configuration.test.fixture.BooleanDefaultEntryFixture
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentMapOf
+import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -39,6 +40,18 @@ class MergingConfigurationProviderTest {
         )
 
         assertTrue(BooleanDefaultEntryFixture.newTrueEntry().getValue(configurationProvider.getConfigurationFlow().first()))
+    }
+
+    @Test
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun getFlow_empty() = runTest {
+        val configurationProvider = MergingConfigurationProvider(
+            emptyList<ConfigurationProvider>().toPersistentList()
+        )
+
+        val firstMergedConfiguration = configurationProvider.getConfigurationFlow().first()
+
+        assertTrue(BooleanDefaultEntryFixture.newTrueEntry().getValue(firstMergedConfiguration))
     }
 
     @Test
