@@ -9,19 +9,19 @@ import androidx.compose.ui.test.performClick
 import androidx.test.filters.MediumTest
 import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.screen.onboarding.OnboardingTestSetup
+import co.electriccoin.zcash.ui.screen.onboarding.LongOnboardingTestSetup
 import co.electriccoin.zcash.ui.screen.onboarding.model.OnboardingStage
 import co.electriccoin.zcash.ui.test.getStringResource
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 
-class OnboardingViewTest : UiTestPrerequisites() {
+class LongOnboardingViewTest : UiTestPrerequisites() {
     @get:Rule
     val composeTestRule = createComposeRule()
 
-    private fun newTestSetup(isFullOnboardingEnabled: Boolean = true, initialStage: OnboardingStage): OnboardingTestSetup {
-        return OnboardingTestSetup(composeTestRule, isFullOnboardingEnabled, initialStage).apply {
+    private fun newTestSetup(initialStage: OnboardingStage): LongOnboardingTestSetup {
+        return LongOnboardingTestSetup(composeTestRule, initialStage).apply {
             setDefaultContent()
         }
     }
@@ -165,36 +165,6 @@ class OnboardingViewTest : UiTestPrerequisites() {
             it.assertExists()
             it.assertIsEnabled()
             it.assertHasClickAction()
-        }
-
-        composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_4_create_new_wallet)).also {
-            it.assertExists()
-            it.assertIsEnabled()
-            it.assertHasClickAction()
-        }
-
-        composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_4_import_existing_wallet)).also {
-            it.assertExists()
-            it.assertIsEnabled()
-            it.assertHasClickAction()
-        }
-    }
-
-    @Test
-    @MediumTest
-    fun stage_4_layout_short_onboarding() {
-        newTestSetup(isFullOnboardingEnabled = false, initialStage = OnboardingStage.Wallet)
-
-        composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_skip)).also {
-            it.assertDoesNotExist()
-        }
-
-        composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_next)).also {
-            it.assertDoesNotExist()
-        }
-
-        composeTestRule.onNodeWithContentDescription(getStringResource(R.string.onboarding_back)).also {
-            it.assertDoesNotExist()
         }
 
         composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_4_create_new_wallet)).also {

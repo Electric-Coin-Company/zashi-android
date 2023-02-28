@@ -9,7 +9,12 @@ object ConfigurationEntries {
     /*
      * The full onboarding flow is functional and tested, but it is disabled by default for an initially minimal feature set.
      */
-    val IS_FULL_ONBOARDING_ENABLED = BooleanConfigurationEntry(ConfigKey("is_full_onboarding_enabled"), false)
+    val IS_SHORT_ONBOARDING_UX = BooleanConfigurationEntry(ConfigKey("is_short_onboarding_ux"), true)
+
+    /*
+     * The full new wallet flow is functional and tested, but it is disabled by default for an initially minimal feature set.
+     */
+    val IS_SHORT_NEW_WALLET_BACKUP_UX = BooleanConfigurationEntry(ConfigKey("is_short_new_wallet_backup_ux"), true)
 
     /*
      * A troubleshooting step. If we fix our bugs, this should be unnecessary.

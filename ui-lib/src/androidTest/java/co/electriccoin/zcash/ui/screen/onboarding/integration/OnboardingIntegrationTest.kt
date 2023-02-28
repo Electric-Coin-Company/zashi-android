@@ -7,7 +7,7 @@ import androidx.compose.ui.test.performClick
 import androidx.test.filters.MediumTest
 import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.screen.onboarding.OnboardingTestSetup
+import co.electriccoin.zcash.ui.screen.onboarding.LongOnboardingTestSetup
 import co.electriccoin.zcash.ui.screen.onboarding.model.OnboardingStage
 import co.electriccoin.zcash.ui.test.getStringResource
 import org.junit.Assert.assertEquals
@@ -18,9 +18,8 @@ class OnboardingIntegrationTest : UiTestPrerequisites() {
     @get:Rule
     val composeTestRule = createComposeRule()
 
-    private fun newTestSetup(initialStage: OnboardingStage) = OnboardingTestSetup(
+    private fun newTestSetup(initialStage: OnboardingStage) = LongOnboardingTestSetup(
         composeTestRule,
-        isFullOnboardingEnabled = true,
         initialStage
     )
 

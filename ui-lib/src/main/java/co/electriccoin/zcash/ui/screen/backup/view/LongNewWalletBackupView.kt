@@ -65,7 +65,7 @@ import kotlinx.collections.immutable.toPersistentList
 fun ComposablePreview() {
     ZcashTheme(darkTheme = false) {
         GradientSurface {
-            BackupWallet(
+            LongNewWalletBackup(
                 PersistableWalletFixture.new(),
                 BackupState(BackupStage.EducationOverview),
                 TestChoicesFixture.new(mutableMapOf()),
@@ -83,7 +83,7 @@ fun ComposablePreview() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @Suppress("LongParameterList")
-fun BackupWallet(
+fun LongNewWalletBackup(
     wallet: PersistableWallet,
     backupState: BackupState,
     choices: TestChoices,

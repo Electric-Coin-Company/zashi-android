@@ -9,7 +9,7 @@ import co.electriccoin.zcash.ui.screen.backup.state.BackupState
 import co.electriccoin.zcash.ui.screen.backup.state.TestChoices
 import java.util.concurrent.atomic.AtomicInteger
 
-class BackupTestSetup(
+class LongBackupTestSetup(
     private val composeTestRule: ComposeContentTestRule,
     initialStage: BackupStage,
     private val initialChoices: TestChoices
@@ -53,7 +53,7 @@ class BackupTestSetup(
     @Suppress("TestFunctionName")
     fun DefaultContent() {
         ZcashTheme {
-            BackupWallet(
+            LongNewWalletBackup(
                 PersistableWalletFixture.new(),
                 state,
                 initialChoices,

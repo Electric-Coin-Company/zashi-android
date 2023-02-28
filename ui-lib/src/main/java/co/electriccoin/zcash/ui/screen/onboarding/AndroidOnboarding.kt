@@ -21,9 +21,8 @@ import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
 import co.electriccoin.zcash.ui.configuration.RemoteConfig
 import co.electriccoin.zcash.ui.screen.home.viewmodel.WalletViewModel
-import co.electriccoin.zcash.ui.screen.onboarding.model.OnboardingStage
-import co.electriccoin.zcash.ui.screen.onboarding.state.OnboardingState
-import co.electriccoin.zcash.ui.screen.onboarding.view.Onboarding
+import co.electriccoin.zcash.ui.screen.onboarding.view.LongOnboarding
+import co.electriccoin.zcash.ui.screen.onboarding.view.ShortOnboarding
 import co.electriccoin.zcash.ui.screen.onboarding.viewmodel.OnboardingViewModel
 import co.electriccoin.zcash.ui.screen.restore.view.RestoreWallet
 import co.electriccoin.zcash.ui.screen.restore.viewmodel.CompleteWordSetState
@@ -51,55 +50,58 @@ internal fun WrapOnboarding(
 
     // TODO [#383]: https://github.com/zcash/secant-android-wallet/issues/383
     if (!onboardingViewModel.isImporting.collectAsStateWithLifecycle().value) {
-        val isFullOnboardingEnabled = ConfigurationEntries.IS_FULL_ONBOARDING_ENABLED.getValue(RemoteConfig.current)
-        val onboardingState = if (isFullOnboardingEnabled) {
-            onboardingViewModel.onboardingState
-        } else {
-            // Force to the last screen, which is the "create wallet" screen.
-            // This simplifies the implementation inside the Onboarding composable.
-            OnboardingState(OnboardingStage.values().last())
-        }
-
-        Onboarding(
-            isFullOnboardingEnabled = isFullOnboardingEnabled,
-            onboardingState = onboardingState,
-            isDebugMenuEnabled = isDebugMenuEnabled,
-            onImportWallet = {
-                // In the case of the app currently being messed with by the robo test runner on
-                // Firebase Test Lab or Google Play pre-launch report, we want to skip creating
-                // a new or restoring an existing wallet screens by persisting an existing wallet
-                // with a mock seed.
-                if (FirebaseTestLabUtil.isFirebaseTestLab(applicationContext)) {
-                    persistExistingWalletWithSeedPhrase(
-                        applicationContext,
-                        walletViewModel,
-                        SeedPhraseFixture.new()
-                    )
-                    return@Onboarding
-                }
-
-                onboardingViewModel.setIsImporting(true)
-            },
-            onCreateWallet = {
-                if (FirebaseTestLabUtil.isFirebaseTestLab(applicationContext)) {
-                    persistExistingWalletWithSeedPhrase(
-                        applicationContext,
-                        walletViewModel,
-                        SeedPhraseFixture.new()
-                    )
-                    return@Onboarding
-                }
-
-                walletViewModel.persistNewWallet()
-            },
-            onFixtureWallet = {
+        val onCreateWallet = {
+            if (FirebaseTestLabUtil.isFirebaseTestLab(applicationContext)) {
                 persistExistingWalletWithSeedPhrase(
                     applicationContext,
                     walletViewModel,
                     SeedPhraseFixture.new()
                 )
+            } else {
+                walletViewModel.persistNewWallet()
             }
-        )
+        }
+
+        val onImportWallet = {
+            // In the case of the app currently being messed with by the robo test runner on
+            // Firebase Test Lab or Google Play pre-launch report, we want to skip creating
+            // a new or restoring an existing wallet screens by persisting an existing wallet
+            // with a mock seed.
+            if (FirebaseTestLabUtil.isFirebaseTestLab(applicationContext)) {
+                persistExistingWalletWithSeedPhrase(
+                    applicationContext,
+                    walletViewModel,
+                    SeedPhraseFixture.new()
+                )
+            } else {
+                onboardingViewModel.setIsImporting(true)
+            }
+        }
+
+        val onFixtureWallet = {
+            persistExistingWalletWithSeedPhrase(
+                applicationContext,
+                walletViewModel,
+                SeedPhraseFixture.new()
+            )
+        }
+
+        if (ConfigurationEntries.IS_SHORT_ONBOARDING_UX.getValue(RemoteConfig.current)) {
+            ShortOnboarding(
+                isDebugMenuEnabled = isDebugMenuEnabled,
+                onImportWallet = onImportWallet,
+                onCreateWallet = onCreateWallet,
+                onFixtureWallet = onFixtureWallet
+            )
+        } else {
+            LongOnboarding(
+                onboardingState = onboardingViewModel.onboardingState,
+                isDebugMenuEnabled = isDebugMenuEnabled,
+                onImportWallet = onImportWallet,
+                onCreateWallet = onCreateWallet,
+                onFixtureWallet = onFixtureWallet
+            )
+        }
 
         activity.reportFullyDrawn()
     } else {
