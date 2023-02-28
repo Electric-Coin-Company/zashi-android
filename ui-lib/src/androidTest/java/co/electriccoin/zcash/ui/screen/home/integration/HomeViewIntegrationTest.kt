@@ -26,8 +26,7 @@ class HomeViewIntegrationTest : UiTestPrerequisites() {
 
     private fun newTestSetup(walletSnapshot: WalletSnapshot) = HomeTestSetup(
         composeTestRule,
-        walletSnapshot,
-        isRequestZecButtonEnabled = false
+        walletSnapshot
     )
 
     // This is just basic sanity check that we still have UI set up as expected after the state restore

@@ -10,6 +10,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -18,7 +21,11 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -29,8 +36,6 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.GradientSurface
-import co.electriccoin.zcash.ui.design.component.PrimaryButton
-import co.electriccoin.zcash.ui.design.component.TertiaryButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 
 @Preview("Settings")
@@ -42,8 +47,8 @@ fun PreviewSettings() {
                 isBackgroundSyncEnabled = true,
                 isKeepScreenOnDuringSyncEnabled = true,
                 isAnalyticsEnabled = true,
+                isRescanEnabled = true,
                 onBack = {},
-                onBackupWallet = {},
                 onRescanWallet = {},
                 onBackgroundSyncSettingsChanged = {},
                 onIsKeepScreenOnDuringSyncSettingsChanged = {},
@@ -60,23 +65,25 @@ fun Settings(
     isBackgroundSyncEnabled: Boolean,
     isKeepScreenOnDuringSyncEnabled: Boolean,
     isAnalyticsEnabled: Boolean,
+    isRescanEnabled: Boolean,
     onBack: () -> Unit,
-    onBackupWallet: () -> Unit,
     onRescanWallet: () -> Unit,
     onBackgroundSyncSettingsChanged: (Boolean) -> Unit,
     onIsKeepScreenOnDuringSyncSettingsChanged: (Boolean) -> Unit,
     onAnalyticsSettingsChanged: (Boolean) -> Unit
 ) {
     Scaffold(topBar = {
-        SettingsTopAppBar(onBack = onBack)
+        SettingsTopAppBar(
+            isRescanEnabled = isRescanEnabled,
+            onBack = onBack,
+            onRescanWallet = onRescanWallet
+        )
     }) { paddingValues ->
         SettingsMainContent(
             paddingValues,
             isBackgroundSyncEnabled = isBackgroundSyncEnabled,
             isKeepScreenOnDuringSyncEnabled = isKeepScreenOnDuringSyncEnabled,
             isAnalyticsEnabled = isAnalyticsEnabled,
-            onBackupWallet = onBackupWallet,
-            onRescanWallet = onRescanWallet,
             onBackgroundSyncSettingsChanged = onBackgroundSyncSettingsChanged,
             onIsKeepScreenOnDuringSyncSettingsChanged = onIsKeepScreenOnDuringSyncSettingsChanged,
             onAnalyticsSettingsChanged = onAnalyticsSettingsChanged
@@ -86,7 +93,11 @@ fun Settings(
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-private fun SettingsTopAppBar(onBack: () -> Unit) {
+private fun SettingsTopAppBar(
+    isRescanEnabled: Boolean,
+    onBack: () -> Unit,
+    onRescanWallet: () -> Unit
+) {
     TopAppBar(
         title = { Text(text = stringResource(id = R.string.settings_header)) },
         navigationIcon = {
@@ -98,8 +109,36 @@ private fun SettingsTopAppBar(onBack: () -> Unit) {
                     contentDescription = stringResource(R.string.settings_back_content_description)
                 )
             }
+        },
+        actions = {
+            if (isRescanEnabled) {
+                TroubleshootingMenu(onRescanWallet)
+            }
         }
     )
+}
+
+@Composable
+private fun TroubleshootingMenu(
+    onRescanWallet: () -> Unit
+) {
+    var expanded by rememberSaveable { mutableStateOf(false) }
+    IconButton(onClick = { expanded = true }) {
+        Icon(Icons.Default.MoreVert, contentDescription = stringResource(id = R.string.settings_overflow_content_description))
+    }
+
+    DropdownMenu(
+        expanded = expanded,
+        onDismissRequest = { expanded = false }
+    ) {
+        DropdownMenuItem(
+            text = { Text(stringResource(id = R.string.settings_rescan)) },
+            onClick = {
+                onRescanWallet()
+                expanded = false
+            }
+        )
+    }
 }
 
 @Composable
@@ -109,8 +148,6 @@ private fun SettingsMainContent(
     isBackgroundSyncEnabled: Boolean,
     isKeepScreenOnDuringSyncEnabled: Boolean,
     isAnalyticsEnabled: Boolean,
-    onBackupWallet: () -> Unit,
-    onRescanWallet: () -> Unit,
     onBackgroundSyncSettingsChanged: (Boolean) -> Unit,
     onIsKeepScreenOnDuringSyncSettingsChanged: (Boolean) -> Unit,
     onAnalyticsSettingsChanged: (Boolean) -> Unit
@@ -119,8 +156,6 @@ private fun SettingsMainContent(
         Modifier
             .padding(top = paddingValues.calculateTopPadding())
     ) {
-        PrimaryButton(onClick = onBackupWallet, text = stringResource(id = R.string.settings_backup))
-        TertiaryButton(onClick = onRescanWallet, text = stringResource(id = R.string.settings_rescan))
         SwitchWithLabel(
             label = stringResource(id = R.string.settings_enable_background_sync),
             state = isBackgroundSyncEnabled,

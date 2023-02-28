@@ -1,3 +1,5 @@
+@file:Suppress("TooManyFunctions")
+
 package co.electroniccoin.zcash.ui.screenshot
 
 import android.content.Context
@@ -230,106 +232,29 @@ class ScreenshotTest : UiTestPrerequisites() {
         backupScreenshots(resContext, tag, composeTestRule)
         homeScreenshots(resContext, tag, composeTestRule)
 
-        // Profile screen
-        // navigateTo(MainActivity.NAV_PROFILE)
-        composeTestRule.onNode(hasContentDescription(resContext.getString(R.string.home_profile_content_description))).also {
-            it.assertExists()
-            it.performClick()
-        }
-        profileScreenshots(resContext, tag, composeTestRule)
-
-        // Settings is a subscreen of profile
-        composeTestRule.onNode(hasText(resContext.getString(R.string.profile_settings))).also {
-            it.performScrollTo()
-            it.assertExists()
-            it.performClick()
-        }
-        settingsScreenshots(resContext, tag, composeTestRule)
-
-        // Back to profile
-        composeTestRule.onNode(hasContentDescription(resContext.getString(R.string.settings_back_content_description))).also {
-            it.assertExists()
-            it.performClick()
-        }
-
-        // Address Details is a subscreen of profile
-        composeTestRule.onNode(hasText(resContext.getString(R.string.profile_see_address_details))).also {
-            it.performScrollTo()
-            it.assertExists()
-            it.performClick()
-        }
-        addressDetailsScreenshots(resContext, tag, composeTestRule)
-
-        // Back to profile
-        composeTestRule.onNode(hasContentDescription(resContext.getString(R.string.wallet_address_back_content_description))).also {
-            it.assertExists()
-            it.performClick()
-        }
-
-        // Contact Support is a subscreen of profile
-        composeTestRule.onNode(hasText(resContext.getString(R.string.profile_support))).also {
-            it.performScrollTo()
-            it.assertExists()
-            it.performClick()
-        }
-        supportScreenshots(resContext, tag, composeTestRule)
-
-        // Back to profile
-        composeTestRule.onNode(hasContentDescription(resContext.getString(R.string.support_back_content_description))).also {
-            it.assertExists()
-            it.performClick()
-        }
-
-        composeTestRule.onNode(hasText(resContext.getString(R.string.profile_title))).also {
-            it.assertExists()
-        }
-
-        // About is a subscreen of profile
-        composeTestRule.onNode(hasText(resContext.getString(R.string.profile_about))).also {
-            it.performScrollTo()
-            it.assertExists()
-            it.performClick()
-        }
-        aboutScreenshots(resContext, tag, composeTestRule)
-
-        // Back to profile
-        composeTestRule.onNode(hasContentDescription(resContext.getString(R.string.about_back_content_description))).also {
-            it.assertExists()
-            it.performClick()
-        }
-
-        // Back to home
-        composeTestRule.onNode(hasContentDescription(resContext.getString(R.string.settings_back_content_description))).also {
-            it.assertExists()
-            it.performClick()
-        }
-
-        composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) { composeTestRule.activity.walletViewModel.secretState.value is SecretState.Ready }
-
-        if (ConfigurationEntries.IS_REQUEST_ZEC_ENABLED.getValue(emptyConfiguration)) {
-            composeTestRule.onNode(hasText(resContext.getString(R.string.home_button_request))).also {
-                it.assertExists()
-                it.performClick()
-            }
-
-            composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) { composeTestRule.activity.walletViewModel.walletSnapshot.value != null }
-            requestZecScreenshots(resContext, tag, composeTestRule)
-
-            navigateTo(NavigationTargets.HOME)
-            composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) { composeTestRule.activity.walletViewModel.secretState.value is SecretState.Ready }
-        }
-
-        composeTestRule.onNode(hasText(resContext.getString(R.string.home_button_send))).also {
-            it.assertExists()
-            it.performScrollTo()
-            it.performClick()
-        }
-        composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) { composeTestRule.activity.walletViewModel.synchronizer.value != null }
-        composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) { composeTestRule.activity.walletViewModel.spendingKey.value != null }
-        composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) { composeTestRule.activity.walletViewModel.walletSnapshot.value != null }
+        // These are the buttons on the home screen
+        navigateTo(NavigationTargets.SEND)
         sendZecScreenshots(resContext, tag, composeTestRule)
 
-        navigateTo(NavigationTargets.HOME)
+        navigateTo(NavigationTargets.RECEIVE)
+        receiveZecScreenshots(resContext, tag, composeTestRule)
+
+        // These are the hamburger menu items
+        // We could manually click on each one, which is a better integration test but a worse screenshot test
+        navigateTo(NavigationTargets.SEED)
+        seedScreenshots(resContext, tag, composeTestRule)
+
+        navigateTo(NavigationTargets.SETTINGS)
+        settingsScreenshots(resContext, tag, composeTestRule)
+
+        navigateTo(NavigationTargets.SUPPORT)
+        supportScreenshots(resContext, tag, composeTestRule)
+
+        navigateTo(NavigationTargets.ABOUT)
+        aboutScreenshots(resContext, tag, composeTestRule)
+
+        navigateTo(NavigationTargets.WALLET_ADDRESS_DETAILS)
+        addressDetailsScreenshots(resContext, tag, composeTestRule)
     }
 }
 
@@ -486,17 +411,12 @@ private fun homeScreenshots(resContext: Context, tag: String, composeTestRule: A
         it.assertExists()
         ScreenshotTest.takeScreenshot(tag, "Home 1")
     }
-}
 
-private fun profileScreenshots(resContext: Context, tag: String, composeTestRule: AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>) {
-    // Note: increased timeout limit to satisfy time needed for SDK initialization
-    composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) { composeTestRule.activity.walletViewModel.addresses.value != null }
-
-    composeTestRule.onNode(hasText(resContext.getString(R.string.profile_title))).also {
+    composeTestRule.onNode(hasContentDescription(resContext.getString(R.string.home_menu_content_description))).also {
         it.assertExists()
+        it.performClick()
+        ScreenshotTest.takeScreenshot(tag, "Home 2 - Menu")
     }
-
-    ScreenshotTest.takeScreenshot(tag, "Profile 1")
 }
 
 private fun settingsScreenshots(resContext: Context, tag: String, composeTestRule: ComposeTestRule) {
@@ -515,6 +435,8 @@ private fun addressDetailsScreenshots(resContext: Context, tag: String, composeT
     ScreenshotTest.takeScreenshot(tag, "Addresses 1")
 }
 
+// This screen is not currently navigable from the app
+@Suppress("UnusedPrivateMember")
 private fun requestZecScreenshots(resContext: Context, tag: String, composeTestRule: ComposeTestRule) {
     composeTestRule.onNode(hasText(resContext.getString(R.string.request_title))).also {
         it.assertExists()
@@ -523,7 +445,29 @@ private fun requestZecScreenshots(resContext: Context, tag: String, composeTestR
     ScreenshotTest.takeScreenshot(tag, "Request 1")
 }
 
-private fun sendZecScreenshots(resContext: Context, tag: String, composeTestRule: ComposeTestRule) {
+private fun receiveZecScreenshots(resContext: Context, tag: String, composeTestRule: AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>) {
+    composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) { composeTestRule.activity.walletViewModel.addresses.value != null }
+
+    composeTestRule.onNode(hasText(resContext.getString(R.string.receive_title))).also {
+        it.assertExists()
+    }
+
+    ScreenshotTest.takeScreenshot(tag, "Receive 1")
+
+    composeTestRule.onNodeWithText(resContext.getString(R.string.receive_see_address_details)).also {
+        it.performClick()
+    }
+
+    composeTestRule.waitForIdle()
+
+    ScreenshotTest.takeScreenshot(tag, "Address details")
+}
+
+private fun sendZecScreenshots(resContext: Context, tag: String, composeTestRule: AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>) {
+    composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) { composeTestRule.activity.walletViewModel.synchronizer.value != null }
+    composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) { composeTestRule.activity.walletViewModel.spendingKey.value != null }
+    composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) { composeTestRule.activity.walletViewModel.walletSnapshot.value != null }
+
     composeTestRule.onNode(hasText(resContext.getString(R.string.send_title))).also {
         it.assertExists()
     }
@@ -563,4 +507,12 @@ private fun aboutScreenshots(resContext: Context, tag: String, composeTestRule: 
     }
 
     ScreenshotTest.takeScreenshot(tag, "About 1")
+}
+
+private fun seedScreenshots(resContext: Context, tag: String, composeTestRule: ComposeTestRule) {
+    composeTestRule.onNode(hasText(resContext.getString(R.string.seed_title))).also {
+        it.assertExists()
+    }
+
+    ScreenshotTest.takeScreenshot(tag, "Seed 1")
 }

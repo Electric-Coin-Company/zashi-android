@@ -1,10 +1,11 @@
+@file:Suppress("TooManyFunctions")
+
 package co.electriccoin.zcash.ui.screen.home.view
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,21 +17,32 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ContactSupport
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.QrCodeScanner
+import androidx.compose.material.icons.filled.Password
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DrawerState
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -48,19 +60,20 @@ import cash.z.ecc.android.sdk.model.PercentDecimal
 import co.electriccoin.zcash.crash.android.GlobalCrashReporter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.DisableScreenTimeout
-import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
+import co.electriccoin.zcash.ui.common.closeDrawerMenu
+import co.electriccoin.zcash.ui.common.openDrawerMenu
 import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.BodyWithFiatCurrencySymbol
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.HeaderWithZecIcon
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
-import co.electriccoin.zcash.ui.design.component.TertiaryButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 import co.electriccoin.zcash.ui.screen.home.HomeTag
 import co.electriccoin.zcash.ui.screen.home.model.CommonTransaction
 import co.electriccoin.zcash.ui.screen.home.model.WalletDisplayValues
 import co.electriccoin.zcash.ui.screen.home.model.WalletSnapshot
+import kotlinx.coroutines.CoroutineScope
 
 @Preview
 @Composable
@@ -68,17 +81,18 @@ fun ComposablePreview() {
     ZcashTheme(darkTheme = true) {
         GradientSurface {
             Home(
-                WalletSnapshotFixture.new(),
+                walletSnapshot = WalletSnapshotFixture.new(),
+                transactionHistory = emptyList(),
+                isUpdateAvailable = false,
                 isKeepScreenOnDuringSync = false,
-                isRequestZecButtonEnabled = false,
-                emptyList(),
-                goScan = {},
-                goProfile = {},
-                goSend = {},
-                goRequest = {},
-                resetSdk = {},
                 isDebugMenuEnabled = false,
-                updateAvailable = false
+                goSeedPhrase = {},
+                goSettings = {},
+                goSupport = {},
+                goAbout = {},
+                goReceive = {},
+                goSend = {},
+                resetSdk = {}
             )
         }
     }
@@ -89,43 +103,72 @@ fun ComposablePreview() {
 @Composable
 fun Home(
     walletSnapshot: WalletSnapshot,
-    isKeepScreenOnDuringSync: Boolean?,
-    isRequestZecButtonEnabled: Boolean,
     transactionHistory: List<CommonTransaction>,
-    goScan: () -> Unit,
-    goProfile: () -> Unit,
-    goSend: () -> Unit,
-    goRequest: () -> Unit,
-    resetSdk: () -> Unit,
+    isUpdateAvailable: Boolean,
+    isKeepScreenOnDuringSync: Boolean?,
     isDebugMenuEnabled: Boolean,
-    updateAvailable: Boolean
+    goSeedPhrase: () -> Unit,
+    goSettings: () -> Unit,
+    goSupport: () -> Unit,
+    goAbout: () -> Unit,
+    goReceive: () -> Unit,
+    goSend: () -> Unit,
+    resetSdk: () -> Unit,
+    drawerState: DrawerState = rememberDrawerState(DrawerValue.Closed),
+    scope: CoroutineScope = rememberCoroutineScope()
 ) {
-    Scaffold(topBar = {
-        HomeTopAppBar(isDebugMenuEnabled, resetSdk)
-    }) { paddingValues ->
-        HomeMainContent(
-            paddingValues,
-            walletSnapshot,
-            isKeepScreenOnDuringSync = isKeepScreenOnDuringSync,
-            isRequestZecButtonEnabled = isRequestZecButtonEnabled,
-            transactionHistory,
-            goScan = goScan,
-            goProfile = goProfile,
-            goSend = goSend,
-            goRequest = goRequest,
-            updateAvailable = updateAvailable
-        )
-    }
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            HomeDrawer(
+                onCloseDrawer = { drawerState.closeDrawerMenu(scope) },
+                goSeedPhrase = goSeedPhrase,
+                goSettings = goSettings,
+                goSupport = goSupport,
+                goAbout = goAbout
+            )
+        },
+        content = {
+            Scaffold(topBar = {
+                HomeTopAppBar(
+                    isDebugMenuEnabled = isDebugMenuEnabled,
+                    openDrawer = { drawerState.openDrawerMenu(scope) },
+                    resetSdk = resetSdk
+                )
+            }) { paddingValues ->
+                HomeMainContent(
+                    paddingValues,
+                    walletSnapshot,
+                    transactionHistory,
+                    isUpdateAvailable = isUpdateAvailable,
+                    isKeepScreenOnDuringSync = isKeepScreenOnDuringSync,
+                    goReceive = goReceive,
+                    goSend = goSend,
+                )
+            }
+        }
+    )
 }
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 private fun HomeTopAppBar(
     isDebugMenuEnabled: Boolean,
+    openDrawer: () -> Unit,
     resetSdk: () -> Unit,
 ) {
     TopAppBar(
         title = { Text(text = stringResource(id = R.string.app_name)) },
+        navigationIcon = {
+            IconButton(
+                onClick = openDrawer
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Menu,
+                    contentDescription = stringResource(R.string.home_menu_content_description)
+                )
+            }
+        },
         actions = {
             if (isDebugMenuEnabled) {
                 DebugMenu(resetSdk)
@@ -174,54 +217,81 @@ private fun DebugMenu(
     }
 }
 
+@Composable
+private fun HomeDrawer(
+    onCloseDrawer: () -> Unit,
+    goSeedPhrase: () -> Unit,
+    goSettings: () -> Unit,
+    goSupport: () -> Unit,
+    goAbout: () -> Unit,
+) {
+    ModalDrawerSheet {
+        Spacer(Modifier.height(12.dp))
+        NavigationDrawerItem(
+            icon = { Icon(Icons.Default.Password, contentDescription = null) },
+            label = { Text(stringResource(id = R.string.home_menu_seed_phrase)) },
+            selected = false,
+            onClick = {
+                onCloseDrawer()
+                goSeedPhrase()
+            },
+            modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+        )
+        NavigationDrawerItem(
+            icon = { Icon(Icons.Default.Settings, contentDescription = null) },
+            label = { Text(stringResource(id = R.string.home_menu_settings)) },
+            selected = false,
+            onClick = {
+                onCloseDrawer()
+                goSettings()
+            },
+            modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+        )
+        NavigationDrawerItem(
+            icon = { Icon(Icons.Default.ContactSupport, contentDescription = null) },
+            label = { Text(stringResource(id = R.string.home_menu_support)) },
+            selected = false,
+            onClick = {
+                onCloseDrawer()
+                goSupport()
+            },
+            modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+        )
+        NavigationDrawerItem(
+            icon = { Icon(Icons.Default.Info, contentDescription = null) },
+            label = { Text(stringResource(id = R.string.home_menu_about)) },
+            selected = false,
+            onClick = {
+                onCloseDrawer()
+                goAbout()
+            },
+            modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+        )
+    }
+}
+
 @Suppress("LongParameterList")
 @Composable
 private fun HomeMainContent(
     paddingValues: PaddingValues,
     walletSnapshot: WalletSnapshot,
-    isKeepScreenOnDuringSync: Boolean?,
-    isRequestZecButtonEnabled: Boolean,
     transactionHistory: List<CommonTransaction>,
-    goScan: () -> Unit,
-    goProfile: () -> Unit,
+    isUpdateAvailable: Boolean,
+    isKeepScreenOnDuringSync: Boolean?,
+    goReceive: () -> Unit,
     goSend: () -> Unit,
-    goRequest: () -> Unit,
-    updateAvailable: Boolean
 ) {
-    Column(Modifier.verticalScroll(rememberScrollState())) {
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .padding(top = paddingValues.calculateTopPadding())
-        ) {
-            IconButton(goScan) {
-                Icon(
-                    imageVector = Icons.Filled.QrCodeScanner,
-                    contentDescription = stringResource(R.string.home_scan_content_description)
-                )
-            }
-            Spacer(
-                Modifier
-                    .fillMaxWidth()
-                    .weight(MINIMAL_WEIGHT)
-            )
-            IconButton(goProfile) {
-                Icon(
-                    imageVector = Icons.Filled.Person,
-                    contentDescription = stringResource(R.string.home_profile_content_description)
-                )
-            }
-        }
-
-        Status(walletSnapshot, updateAvailable)
+    Column(
+        Modifier
+            .verticalScroll(rememberScrollState())
+            .padding(top = paddingValues.calculateTopPadding())
+    ) {
+        Status(walletSnapshot, isUpdateAvailable)
 
         Spacer(modifier = Modifier.height(24.dp))
 
+        PrimaryButton(onClick = goReceive, text = stringResource(R.string.home_button_receive))
         PrimaryButton(onClick = goSend, text = stringResource(R.string.home_button_send))
-
-        if (isRequestZecButtonEnabled) {
-            TertiaryButton(onClick = goRequest, text = stringResource(R.string.home_button_request))
-        }
 
         History(transactionHistory)
 

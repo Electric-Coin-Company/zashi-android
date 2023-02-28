@@ -24,7 +24,6 @@ import co.electriccoin.zcash.ui.common.SecureScreen
 import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.ChipGrid
 import co.electriccoin.zcash.ui.design.component.GradientSurface
-import co.electriccoin.zcash.ui.design.component.Header
 import co.electriccoin.zcash.ui.design.component.TertiaryButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 
@@ -94,7 +93,6 @@ private fun SeedMainContent(
             .verticalScroll(rememberScrollState())
             .padding(top = paddingValues.calculateTopPadding())
     ) {
-        Header(stringResource(R.string.seed_header))
         Body(stringResource(R.string.seed_body))
 
         ChipGrid(persistableWallet.seedPhrase.split)

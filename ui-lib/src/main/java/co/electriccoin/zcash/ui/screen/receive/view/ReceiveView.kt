@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.profile.view
+package co.electriccoin.zcash.ui.screen.receive.view
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
@@ -6,7 +6,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -30,11 +29,9 @@ import co.electriccoin.zcash.ui.common.DisableScreenTimeout
 import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
-import co.electriccoin.zcash.ui.design.component.TertiaryButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
-import co.electriccoin.zcash.ui.screen.profile.util.AndroidQrCodeImageGenerator
-import co.electriccoin.zcash.ui.screen.profile.util.JvmQrCodeGenerator
-import co.electriccoin.zcash.ui.screen.profile.util.ProfileConfiguration
+import co.electriccoin.zcash.ui.screen.receive.util.AndroidQrCodeImageGenerator
+import co.electriccoin.zcash.ui.screen.receive.util.JvmQrCodeGenerator
 import kotlinx.coroutines.runBlocking
 import kotlin.math.roundToInt
 
@@ -43,15 +40,10 @@ import kotlin.math.roundToInt
 fun ComposablePreview() {
     ZcashTheme(darkTheme = true) {
         GradientSurface {
-            Profile(
+            Receive(
                 walletAddress = runBlocking { WalletAddressFixture.unified() },
                 onBack = {},
                 onAddressDetails = {},
-                onAddressBook = {},
-                onSettings = {},
-                onCoinholderVote = {},
-                onSupport = {},
-                onAbout = {}
             )
         }
     }
@@ -59,44 +51,32 @@ fun ComposablePreview() {
 
 @Composable
 @Suppress("LongParameterList")
-fun Profile(
+fun Receive(
     walletAddress: WalletAddress,
     onBack: () -> Unit,
     onAddressDetails: () -> Unit,
-    onAddressBook: () -> Unit,
-    onSettings: () -> Unit,
-    onCoinholderVote: () -> Unit,
-    onSupport: () -> Unit,
-    onAbout: () -> Unit
 ) {
     Column {
-        ProfileTopAppBar(onBack = onBack)
-        ProfileContents(
+        ReceiveTopAppBar(onBack = onBack)
+        ReceiveContents(
             walletAddress = walletAddress,
             onAddressDetails = onAddressDetails,
-            onAddressBook = onAddressBook,
-            onSettings = onSettings,
-            onCoinholderVote = onCoinholderVote,
-            onSupport = onSupport,
-            onAbout = onAbout,
-            isAddressBookEnabled = ProfileConfiguration.IS_ADDRESS_BOOK_ENABLED,
-            isCoinholderVoteEnabled = ProfileConfiguration.IS_COINHOLDER_VOTE_ENABLED
         )
     }
 }
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-private fun ProfileTopAppBar(onBack: () -> Unit) {
+private fun ReceiveTopAppBar(onBack: () -> Unit) {
     TopAppBar(
-        title = { Text(text = stringResource(id = R.string.profile_title)) },
+        title = { Text(text = stringResource(id = R.string.receive_title)) },
         navigationIcon = {
             IconButton(
                 onClick = onBack
             ) {
                 Icon(
                     imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = stringResource(R.string.profile_back_content_description)
+                    contentDescription = stringResource(R.string.receive_back_content_description)
                 )
             }
         }
@@ -107,16 +87,9 @@ private val DEFAULT_QR_CODE_SIZE = 320.dp
 
 @Composable
 @Suppress("LongParameterList")
-private fun ProfileContents(
+private fun ReceiveContents(
     walletAddress: WalletAddress,
     onAddressDetails: () -> Unit,
-    onAddressBook: () -> Unit,
-    onSettings: () -> Unit,
-    onCoinholderVote: () -> Unit,
-    onSupport: () -> Unit,
-    onAbout: () -> Unit,
-    isAddressBookEnabled: Boolean,
-    isCoinholderVoteEnabled: Boolean
 ) {
     Column(Modifier.verticalScroll(rememberScrollState())) {
         QrCode(data = walletAddress.address, DEFAULT_QR_CODE_SIZE, Modifier.align(Alignment.CenterHorizontally))
@@ -131,17 +104,7 @@ private fun ProfileContents(
             overflow = TextOverflow.Ellipsis,
             maxLines = 1
         )
-        PrimaryButton(onClick = onAddressDetails, text = stringResource(id = R.string.profile_see_address_details))
-        if (isAddressBookEnabled) {
-            TertiaryButton(onClick = onAddressBook, text = stringResource(id = R.string.profile_address_book))
-        }
-        TertiaryButton(onClick = onSettings, text = stringResource(id = R.string.profile_settings))
-        Divider()
-        if (isCoinholderVoteEnabled) {
-            TertiaryButton(onClick = onCoinholderVote, text = stringResource(id = R.string.profile_coinholder_vote))
-        }
-        TertiaryButton(onClick = onSupport, text = stringResource(id = R.string.profile_support))
-        TertiaryButton(onClick = onAbout, text = stringResource(id = R.string.profile_about))
+        PrimaryButton(onClick = onAddressDetails, text = stringResource(id = R.string.receive_see_address_details))
     }
 }
 
@@ -162,7 +125,7 @@ private fun QrCode(data: String, size: Dp, modifier: Modifier) {
 
     Image(
         bitmap = qrCodeImage,
-        contentDescription = stringResource(R.string.profile_qr_code_content_description),
+        contentDescription = stringResource(R.string.receive_qr_code_content_description),
         modifier = modifier
     )
 }

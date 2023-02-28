@@ -1,5 +1,5 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="support_header">Support</string>
+    <string name="support_header">Contact support</string>
     <string name="support_back_content_description">Back</string>
 
     <string name="support_hint">How can we help?</string>

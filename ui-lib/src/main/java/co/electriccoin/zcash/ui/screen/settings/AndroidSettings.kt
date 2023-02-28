@@ -7,19 +7,19 @@ import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.ui.MainActivity
+import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
+import co.electriccoin.zcash.ui.configuration.RemoteConfig
 import co.electriccoin.zcash.ui.screen.home.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.settings.view.Settings
 import co.electriccoin.zcash.ui.screen.settings.viewmodel.SettingsViewModel
 
 @Composable
 internal fun MainActivity.WrapSettings(
-    goBack: () -> Unit,
-    goWalletBackup: () -> Unit
+    goBack: () -> Unit
 ) {
     WrapSettings(
         activity = this,
         goBack = goBack,
-        goWalletBackup = goWalletBackup
     )
 }
 
@@ -27,7 +27,6 @@ internal fun MainActivity.WrapSettings(
 private fun WrapSettings(
     activity: ComponentActivity,
     goBack: () -> Unit,
-    goWalletBackup: () -> Unit
 ) {
     val walletViewModel by activity.viewModels<WalletViewModel>()
     val settingsViewModel by activity.viewModels<SettingsViewModel>()
@@ -45,8 +44,8 @@ private fun WrapSettings(
             isBackgroundSyncEnabled = isBackgroundSyncEnabled,
             isKeepScreenOnDuringSyncEnabled = isKeepScreenOnWhileSyncing,
             isAnalyticsEnabled = isAnalyticsEnabled,
+            isRescanEnabled = ConfigurationEntries.IS_RESCAN_ENABLED.getValue(RemoteConfig.current),
             onBack = goBack,
-            onBackupWallet = goWalletBackup,
             onRescanWallet = {
                 walletViewModel.rescanBlockchain()
             },

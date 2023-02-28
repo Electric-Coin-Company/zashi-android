@@ -28,11 +28,7 @@ class HomeViewTest : UiTestPrerequisites() {
     fun check_all_elementary_ui_elements_displayed() {
         newTestSetup()
 
-        composeTestRule.onNodeWithContentDescription(getStringResource(R.string.home_scan_content_description)).also {
-            it.assertIsDisplayed()
-        }
-
-        composeTestRule.onNodeWithContentDescription(getStringResource(R.string.home_profile_content_description)).also {
+        composeTestRule.onNodeWithContentDescription(getStringResource(R.string.home_menu_content_description)).also {
             it.assertIsDisplayed()
         }
 
@@ -44,43 +40,21 @@ class HomeViewTest : UiTestPrerequisites() {
             it.assertIsDisplayed()
         }
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.home_button_request)).also {
+        composeTestRule.onNodeWithText(getStringResource(R.string.home_button_receive)).also {
             it.assertIsDisplayed()
         }
     }
 
     @Test
     @MediumTest
-    fun hide_request_zec() {
-        newTestSetup(isRequestZecButtonEnabled = false)
-
-        composeTestRule.onNodeWithText(getStringResource(R.string.home_button_request)).also {
-            it.assertDoesNotExist()
-        }
-    }
-
-    @Test
-    @MediumTest
-    fun click_scan_button() {
+    fun click_receive_button() {
         val testSetup = newTestSetup()
 
-        assertEquals(0, testSetup.getOnScanCount())
+        assertEquals(0, testSetup.getOnReceiveCount())
 
-        composeTestRule.clickScan()
+        composeTestRule.clickReceive()
 
-        assertEquals(1, testSetup.getOnScanCount())
-    }
-
-    @Test
-    @MediumTest
-    fun click_profile_button() {
-        val testSetup = newTestSetup()
-
-        assertEquals(0, testSetup.getOnProfileCount())
-
-        composeTestRule.clickProfile()
-
-        assertEquals(1, testSetup.getOnProfileCount())
+        assertEquals(1, testSetup.getOnReceiveCount())
     }
 
     @Test
@@ -97,46 +71,90 @@ class HomeViewTest : UiTestPrerequisites() {
 
     @Test
     @MediumTest
-    fun click_request_button() {
+    fun hamburger_seed() {
         val testSetup = newTestSetup()
 
-        assertEquals(0, testSetup.getOnRequestCount())
+        assertEquals(0, testSetup.getOnReceiveCount())
 
-        composeTestRule.clickRequest()
+        composeTestRule.openNavigationDrawer()
 
-        assertEquals(1, testSetup.getOnRequestCount())
+        composeTestRule.onNodeWithText(getStringResource(R.string.home_menu_seed_phrase)).also {
+            it.performClick()
+        }
+
+        assertEquals(1, testSetup.getOnSeedCount())
     }
 
-    private fun newTestSetup(isRequestZecButtonEnabled: Boolean = true) = HomeTestSetup(
+    @Test
+    @MediumTest
+    fun hamburger_settings() {
+        val testSetup = newTestSetup()
+
+        assertEquals(0, testSetup.getOnReceiveCount())
+
+        composeTestRule.openNavigationDrawer()
+
+        composeTestRule.onNodeWithText(getStringResource(R.string.home_menu_settings)).also {
+            it.performClick()
+        }
+
+        assertEquals(1, testSetup.getOnSettingsCount())
+    }
+
+    @Test
+    @MediumTest
+    fun hamburger_support() {
+        val testSetup = newTestSetup()
+
+        assertEquals(0, testSetup.getOnReceiveCount())
+
+        composeTestRule.openNavigationDrawer()
+
+        composeTestRule.onNodeWithText(getStringResource(R.string.home_menu_support)).also {
+            it.performClick()
+        }
+
+        assertEquals(1, testSetup.getOnSupportCount())
+    }
+
+    @Test
+    @MediumTest
+    fun hamburger_about() {
+        val testSetup = newTestSetup()
+
+        assertEquals(0, testSetup.getOnReceiveCount())
+
+        composeTestRule.openNavigationDrawer()
+
+        composeTestRule.onNodeWithText(getStringResource(R.string.home_menu_about)).also {
+            it.performClick()
+        }
+
+        assertEquals(1, testSetup.getOnAboutCount())
+    }
+
+    private fun newTestSetup() = HomeTestSetup(
         composeTestRule,
-        WalletSnapshotFixture.new(),
-        isRequestZecButtonEnabled = isRequestZecButtonEnabled
+        WalletSnapshotFixture.new()
     ).apply {
         setDefaultContent()
     }
 }
 
-fun ComposeContentTestRule.clickScan() {
-    onNodeWithContentDescription(getStringResource(R.string.home_scan_content_description)).also {
+private fun ComposeContentTestRule.openNavigationDrawer() {
+    onNodeWithContentDescription(getStringResource(R.string.home_menu_content_description)).also {
         it.performClick()
     }
 }
 
-private fun ComposeContentTestRule.clickProfile() {
-    onNodeWithContentDescription(getStringResource(R.string.home_profile_content_description)).also {
+private fun ComposeContentTestRule.clickReceive() {
+    onNodeWithText(getStringResource(R.string.home_button_receive)).also {
         it.performClick()
     }
 }
 
 private fun ComposeContentTestRule.clickSend() {
     onNodeWithText(getStringResource(R.string.home_button_send)).also {
-        it.performScrollTo()
-        it.performClick()
-    }
-}
-
-private fun ComposeContentTestRule.clickRequest() {
-    onNodeWithText(getStringResource(R.string.home_button_request)).also {
         it.performScrollTo()
         it.performClick()
     }
