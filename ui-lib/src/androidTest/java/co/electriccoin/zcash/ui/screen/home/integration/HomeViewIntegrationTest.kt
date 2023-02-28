@@ -41,7 +41,7 @@ class HomeViewIntegrationTest : UiTestPrerequisites() {
         val testSetup = newTestSetup(walletSnapshot)
 
         restorationTester.setContent {
-            testSetup.getDefaultContent()
+            testSetup.DefaultContent()
         }
 
         assertNotEquals(WalletSnapshotFixture.STATUS, testSetup.getWalletSnapshot().status)

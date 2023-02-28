@@ -26,6 +26,7 @@ class ScreenBrightness {
     }
 }
 
+@Suppress("CompositionLocalAllowlist")
 val LocalScreenBrightness = compositionLocalOf { ScreenBrightness() }
 
 @Composable

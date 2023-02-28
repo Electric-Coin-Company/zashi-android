@@ -26,6 +26,7 @@ class ScreenSecurity {
     }
 }
 
+@Suppress("CompositionLocalAllowlist")
 val LocalScreenSecurity = compositionLocalOf { ScreenSecurity() }
 
 @Composable

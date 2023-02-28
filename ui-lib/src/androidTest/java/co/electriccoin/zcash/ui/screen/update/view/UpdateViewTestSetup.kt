@@ -44,7 +44,8 @@ class UpdateViewTestSetup(
     }
 
     @Composable
-    fun getDefaultContent() {
+    @Suppress("TestFunctionName")
+    fun DefaultContent() {
         Update(
             snackbarHostState = SnackbarHostState(),
             updateInfo = updateInfo,
@@ -64,7 +65,7 @@ class UpdateViewTestSetup(
     fun setDefaultContent() {
         composeTestRule.setContent {
             ZcashTheme {
-                getDefaultContent()
+                DefaultContent()
             }
         }
     }

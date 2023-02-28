@@ -122,22 +122,24 @@ private fun SettingsTopAppBar(
 private fun TroubleshootingMenu(
     onRescanWallet: () -> Unit
 ) {
-    var expanded by rememberSaveable { mutableStateOf(false) }
-    IconButton(onClick = { expanded = true }) {
-        Icon(Icons.Default.MoreVert, contentDescription = stringResource(id = R.string.settings_overflow_content_description))
-    }
+    Column {
+        var expanded by rememberSaveable { mutableStateOf(false) }
+        IconButton(onClick = { expanded = true }) {
+            Icon(Icons.Default.MoreVert, contentDescription = stringResource(id = R.string.settings_overflow_content_description))
+        }
 
-    DropdownMenu(
-        expanded = expanded,
-        onDismissRequest = { expanded = false }
-    ) {
-        DropdownMenuItem(
-            text = { Text(stringResource(id = R.string.settings_rescan)) },
-            onClick = {
-                onRescanWallet()
-                expanded = false
-            }
-        )
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            DropdownMenuItem(
+                text = { Text(stringResource(id = R.string.settings_rescan)) },
+                onClick = {
+                    onRescanWallet()
+                    expanded = false
+                }
+            )
+        }
     }
 }
 

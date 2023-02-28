@@ -26,7 +26,7 @@ class SupportViewIntegrationTest : UiTestPrerequisites() {
         val testSetup = newTestSetup()
 
         restorationTester.setContent {
-            testSetup.getDefaultContent()
+            testSetup.DefaultContent()
         }
 
         composeTestRule.onNodeWithText("I can haz cheezburger?").also {
@@ -55,7 +55,7 @@ class SupportViewIntegrationTest : UiTestPrerequisites() {
         val testSetup = newTestSetup()
 
         restorationTester.setContent {
-            testSetup.getDefaultContent()
+            testSetup.DefaultContent()
         }
 
         composeTestRule.onNodeWithText("I can haz cheezburger?").also {

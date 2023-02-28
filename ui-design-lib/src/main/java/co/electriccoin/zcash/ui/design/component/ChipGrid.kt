@@ -8,12 +8,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import co.electriccoin.zcash.spackle.model.Index
+import kotlinx.collections.immutable.ImmutableList
 
 // Note: Row size should probably change for landscape layouts
 const val CHIP_GRID_ROW_SIZE = 3
 
 @Composable
-fun ChipGrid(wordList: List<String>) {
+fun ChipGrid(wordList: ImmutableList<String>) {
     Column(Modifier.testTag(CommonTag.CHIP_LAYOUT)) {
         wordList.chunked(CHIP_GRID_ROW_SIZE).forEachIndexed { chunkIndex, chunk ->
             Row(Modifier.fillMaxWidth()) {

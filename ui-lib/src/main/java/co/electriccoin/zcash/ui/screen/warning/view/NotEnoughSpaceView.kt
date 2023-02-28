@@ -48,9 +48,9 @@ fun NotEnoughSpaceView(storageSpaceRequiredGigabytes: Int, spaceRequiredToContin
         )
         Spacer(Modifier.height(64.dp))
         Small(
-            modifier = Modifier.fillMaxWidth(),
             text = stringResource(id = R.string.space_required_to_continue, spaceRequiredToContinueMegabytes),
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth()
         )
     }
 }

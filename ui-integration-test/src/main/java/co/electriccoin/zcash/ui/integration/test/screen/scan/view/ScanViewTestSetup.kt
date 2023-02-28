@@ -46,7 +46,7 @@ class ScanViewTestSetup(
     }
 
     @Composable
-    fun getDefaultContent() {
+    fun DefaultContent() {
         Scan(
             snackbarHostState = SnackbarHostState(),
             onBack = {},
@@ -63,7 +63,7 @@ class ScanViewTestSetup(
     fun setDefaultContent() {
         composeTestRule.setContent {
             ZcashTheme {
-                getDefaultContent()
+                DefaultContent()
             }
         }
     }

@@ -26,6 +26,7 @@ class ScreenTimeout {
     }
 }
 
+@Suppress("CompositionLocalAllowlist")
 val LocalScreenTimeout = compositionLocalOf { ScreenTimeout() }
 
 @Composable

@@ -57,6 +57,8 @@ import co.electriccoin.zcash.ui.screen.backup.BackupTag
 import co.electriccoin.zcash.ui.screen.backup.model.BackupStage
 import co.electriccoin.zcash.ui.screen.backup.state.BackupState
 import co.electriccoin.zcash.ui.screen.backup.state.TestChoices
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toPersistentList
 
 @Preview(device = Devices.PIXEL_4)
 @Composable
@@ -145,7 +147,7 @@ fun BackupMainContent(
             is BackupStage.Test -> TestInProgress(
                 selectedTestChoices = choices,
                 onChoicesChanged = onChoicesChanged,
-                splitSeedPhrase = wallet.seedPhrase.split,
+                splitSeedPhrase = wallet.seedPhrase.split.toPersistentList(),
                 backupState = backupState
             )
             is BackupStage.Failure -> TestFailure()
@@ -202,7 +204,7 @@ private fun SeedPhrase(persistableWallet: PersistableWallet) {
             .padding(vertical = ZcashTheme.paddings.padding)
     ) {
         Body(stringResource(R.string.new_wallet_3_body_1))
-        ChipGrid(persistableWallet.seedPhrase.split)
+        ChipGrid(persistableWallet.seedPhrase.split.toPersistentList())
     }
 }
 
@@ -219,7 +221,7 @@ private data class TestChoice(val originalIndex: Index, val word: String)
 
 @Composable
 private fun TestInProgress(
-    splitSeedPhrase: List<String>,
+    splitSeedPhrase: ImmutableList<String>,
     selectedTestChoices: TestChoices,
     onChoicesChanged: ((choicesCount: Int) -> Unit)?,
     backupState: BackupState
@@ -258,20 +260,21 @@ private fun TestInProgress(
                             currentIndex,
                             dropdownText = currentSelectedTestChoice[currentIndex]
                                 ?: "",
-                            choices = testChoices.map { it.word },
+                            choices = testChoices.map { it.word }.toPersistentList(),
+                            {
+                                selectedTestChoices.set(
+                                    HashMap(currentSelectedTestChoice).apply {
+                                        this[currentIndex] = testChoices[it.value].word
+                                    }
+                                )
+                                if (onChoicesChanged != null) {
+                                    onChoicesChanged(selectedTestChoices.current.value.size)
+                                }
+                            },
                             modifier = Modifier
                                 .weight(MINIMAL_WEIGHT)
                                 .testTag(BackupTag.DROPDOWN_CHIP)
-                        ) {
-                            selectedTestChoices.set(
-                                HashMap(currentSelectedTestChoice).apply {
-                                    this[currentIndex] = testChoices[it.value].word
-                                }
-                            )
-                            if (onChoicesChanged != null) {
-                                onChoicesChanged(selectedTestChoices.current.value.size)
-                            }
-                        }
+                        )
                     } else {
                         Chip(
                             index = Index(chunkIndex * CHIP_GRID_ROW_SIZE + subIndex),
@@ -388,25 +391,27 @@ private fun BackupTopAppBar(
 
 @Composable
 private fun CopySeedMenu(onCopyToClipboard: () -> Unit) {
-    var expanded by rememberSaveable { mutableStateOf(false) }
-    IconButton(onClick = { expanded = true }) {
-        Icon(
-            Icons.Default.MoreVert,
-            contentDescription = stringResource(R.string.new_wallet_toolbar_more_button_content_description)
-        )
-    }
+    Column {
+        var expanded by rememberSaveable { mutableStateOf(false) }
+        IconButton(onClick = { expanded = true }) {
+            Icon(
+                Icons.Default.MoreVert,
+                contentDescription = stringResource(R.string.new_wallet_toolbar_more_button_content_description)
+            )
+        }
 
-    DropdownMenu(
-        expanded = expanded,
-        onDismissRequest = { expanded = false }
-    ) {
-        DropdownMenuItem(
-            text = { Text(stringResource(R.string.new_wallet_3_button_copy)) },
-            onClick = {
-                expanded = false
-                onCopyToClipboard()
-            }
-        )
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.new_wallet_3_button_copy)) },
+                onClick = {
+                    expanded = false
+                    onCopyToClipboard()
+                }
+            )
+        }
     }
 }
 

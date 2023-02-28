@@ -10,6 +10,7 @@ import co.electriccoin.zcash.ui.common.LocalScreenSecurity
 import co.electriccoin.zcash.ui.common.ScreenSecurity
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.restore.state.WordList
+import kotlinx.collections.immutable.toPersistentSet
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
@@ -40,7 +41,7 @@ class RestoreViewSecuredScreenTest : UiTestPrerequisites() {
                 CompositionLocalProvider(LocalScreenSecurity provides screenSecurity) {
                     ZcashTheme {
                         RestoreWallet(
-                            Mnemonics.getCachedWords(Locale.ENGLISH.language).toSortedSet(),
+                            Mnemonics.getCachedWords(Locale.ENGLISH.language).toPersistentSet(),
                             WordList(emptyList()),
                             onBack = { },
                             paste = { "" },

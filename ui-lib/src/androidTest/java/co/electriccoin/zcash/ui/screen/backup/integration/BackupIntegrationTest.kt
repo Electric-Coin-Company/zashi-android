@@ -50,7 +50,7 @@ class BackupIntegrationTest : UiTestPrerequisites() {
         val testSetup = newTestSetup(BackupStage.EducationOverview)
 
         restorationTester.setContent {
-            testSetup.getDefaultContent()
+            testSetup.DefaultContent()
         }
 
         assertEquals(BackupStage.EducationOverview, testSetup.getStage())
@@ -73,7 +73,7 @@ class BackupIntegrationTest : UiTestPrerequisites() {
         val testSetup = newTestSetup(BackupStage.Test)
 
         restorationTester.setContent {
-            testSetup.getDefaultContent()
+            testSetup.DefaultContent()
         }
 
         assertEquals(BackupStage.Test, testSetup.getStage())
@@ -102,7 +102,7 @@ class BackupIntegrationTest : UiTestPrerequisites() {
         val testSetup = newTestSetup(BackupStage.Test)
 
         restorationTester.setContent {
-            testSetup.getDefaultContent()
+            testSetup.DefaultContent()
         }
 
         assertEquals(0, testSetup.getOnChoicesCallbackCount())

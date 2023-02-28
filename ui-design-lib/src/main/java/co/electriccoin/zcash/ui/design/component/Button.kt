@@ -162,12 +162,12 @@ fun DangerousButton(
 @Suppress("LongParameterList")
 @Composable
 fun TimedButton(
+    onClick: () -> Unit,
+    content: @Composable (RowScope.() -> Unit),
     modifier: Modifier = Modifier,
     duration: Duration = 5.seconds,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default,
-    onClick: () -> Unit,
-    content: @Composable RowScope.() -> Unit
+    coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default
 ) {
     LaunchedEffect(interactionSource) {
         var action: Job? = null

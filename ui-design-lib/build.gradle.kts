@@ -35,6 +35,7 @@ dependencies {
     implementation(libs.kotlin.stdlib)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.core)
+    api(libs.kotlinx.immutable)
     implementation(projects.spackleAndroidLib)
 
     androidTestImplementation(libs.bundles.androidx.test)

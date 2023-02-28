@@ -1,6 +1,5 @@
 package co.electriccoin.zcash.ui.screen.backup.view
 
-import android.annotation.SuppressLint
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import cash.z.ecc.sdk.fixture.PersistableWalletFixture
@@ -50,9 +49,9 @@ class BackupTestSetup(
         return state.current.value
     }
 
-    @SuppressLint("ComposableNaming")
     @Composable
-    fun getDefaultContent() {
+    @Suppress("TestFunctionName")
+    fun DefaultContent() {
         ZcashTheme {
             BackupWallet(
                 PersistableWalletFixture.new(),
@@ -70,7 +69,7 @@ class BackupTestSetup(
 
     fun setDefaultContent() {
         composeTestRule.setContent {
-            getDefaultContent()
+            DefaultContent()
         }
     }
 }

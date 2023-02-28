@@ -1,6 +1,5 @@
 package co.electriccoin.zcash.ui.screen.onboarding
 
-import android.annotation.SuppressLint
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
@@ -42,9 +41,9 @@ class OnboardingTestSetup(
         return onboardingState.current.value
     }
 
-    @SuppressLint("ComposableNaming")
     @Composable
-    fun getDefaultContent() {
+    @Suppress("TestFunctionName")
+    fun DefaultContent() {
         ZcashTheme {
             Onboarding(
                 isFullOnboardingEnabled,
@@ -60,7 +59,7 @@ class OnboardingTestSetup(
 
     fun setDefaultContent() {
         composeTestRule.setContent {
-            getDefaultContent()
+            DefaultContent()
         }
     }
 }

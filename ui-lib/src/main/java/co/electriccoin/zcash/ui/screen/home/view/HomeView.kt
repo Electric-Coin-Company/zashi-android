@@ -73,6 +73,8 @@ import co.electriccoin.zcash.ui.screen.home.HomeTag
 import co.electriccoin.zcash.ui.screen.home.model.CommonTransaction
 import co.electriccoin.zcash.ui.screen.home.model.WalletDisplayValues
 import co.electriccoin.zcash.ui.screen.home.model.WalletSnapshot
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.CoroutineScope
 
 @Preview
@@ -82,7 +84,7 @@ fun ComposablePreview() {
         GradientSurface {
             Home(
                 walletSnapshot = WalletSnapshotFixture.new(),
-                transactionHistory = emptyList(),
+                transactionHistory = emptyList<CommonTransaction>().toPersistentList(),
                 isUpdateAvailable = false,
                 isKeepScreenOnDuringSync = false,
                 isDebugMenuEnabled = false,
@@ -103,7 +105,7 @@ fun ComposablePreview() {
 @Composable
 fun Home(
     walletSnapshot: WalletSnapshot,
-    transactionHistory: List<CommonTransaction>,
+    transactionHistory: ImmutableList<CommonTransaction>,
     isUpdateAvailable: Boolean,
     isKeepScreenOnDuringSync: Boolean?,
     isDebugMenuEnabled: Boolean,
@@ -181,39 +183,41 @@ private fun HomeTopAppBar(
 private fun DebugMenu(
     resetSdk: () -> Unit
 ) {
-    var expanded by rememberSaveable { mutableStateOf(false) }
-    IconButton(onClick = { expanded = true }) {
-        Icon(Icons.Default.MoreVert, contentDescription = null)
-    }
+    Column {
+        var expanded by rememberSaveable { mutableStateOf(false) }
+        IconButton(onClick = { expanded = true }) {
+            Icon(Icons.Default.MoreVert, contentDescription = null)
+        }
 
-    DropdownMenu(
-        expanded = expanded,
-        onDismissRequest = { expanded = false }
-    ) {
-        DropdownMenuItem(
-            text = { Text("Throw Uncaught Exception") },
-            onClick = {
-                // Supposed to be generic, for manual debugging only
-                @Suppress("TooGenericExceptionThrown")
-                throw RuntimeException("Manually crashed from debug menu")
-            }
-        )
-        DropdownMenuItem(
-            text = { Text("Report Caught Exception") },
-            onClick = {
-                // Eventually this shouldn't rely on the Android implementation, but rather an expect/actual
-                // should be used at the crash API level.
-                GlobalCrashReporter.reportCaughtException(RuntimeException("Manually caught exception from debug menu"))
-                expanded = false
-            }
-        )
-        DropdownMenuItem(
-            text = { Text("Reset SDK") },
-            onClick = {
-                resetSdk()
-                expanded = false
-            }
-        )
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            DropdownMenuItem(
+                text = { Text("Throw Uncaught Exception") },
+                onClick = {
+                    // Supposed to be generic, for manual debugging only
+                    @Suppress("TooGenericExceptionThrown")
+                    throw RuntimeException("Manually crashed from debug menu")
+                }
+            )
+            DropdownMenuItem(
+                text = { Text("Report Caught Exception") },
+                onClick = {
+                    // Eventually this shouldn't rely on the Android implementation, but rather an expect/actual
+                    // should be used at the crash API level.
+                    GlobalCrashReporter.reportCaughtException(RuntimeException("Manually caught exception from debug menu"))
+                    expanded = false
+                }
+            )
+            DropdownMenuItem(
+                text = { Text("Reset SDK") },
+                onClick = {
+                    resetSdk()
+                    expanded = false
+                }
+            )
+        }
     }
 }
 
@@ -275,7 +279,7 @@ private fun HomeDrawer(
 private fun HomeMainContent(
     paddingValues: PaddingValues,
     walletSnapshot: WalletSnapshot,
-    transactionHistory: List<CommonTransaction>,
+    transactionHistory: ImmutableList<CommonTransaction>,
     isUpdateAvailable: Boolean,
     isKeepScreenOnDuringSync: Boolean?,
     goReceive: () -> Unit,
@@ -406,7 +410,7 @@ private fun Status(
 
 @Composable
 @Suppress("MagicNumber")
-private fun History(transactionHistory: List<CommonTransaction>) {
+private fun History(transactionHistory: ImmutableList<CommonTransaction>) {
     if (transactionHistory.isEmpty()) {
         return
     }

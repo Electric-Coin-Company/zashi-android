@@ -34,7 +34,7 @@ class ScanViewIntegrationTest : UiTestPrerequisites() {
         val restorationTester = StateRestorationTester(composeTestRule)
 
         restorationTester.setContent {
-            testSetup.getDefaultContent()
+            testSetup.DefaultContent()
         }
 
         assertEquals(testSetup.getScanState(), ScanState.Permission)
@@ -54,7 +54,7 @@ class ScanViewIntegrationTest : UiTestPrerequisites() {
         val restorationTester = StateRestorationTester(composeTestRule)
 
         restorationTester.setContent {
-            testSetup.getDefaultContent()
+            testSetup.DefaultContent()
         }
 
         val permissionPositiveButtonUiObject = getPermissionPositiveButtonUiObject()
@@ -78,7 +78,7 @@ class ScanViewIntegrationTest : UiTestPrerequisites() {
         val restorationTester = StateRestorationTester(composeTestRule)
 
         restorationTester.setContent {
-            testSetup.getDefaultContent()
+            testSetup.DefaultContent()
         }
 
         testSetup.grantPermission()

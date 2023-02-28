@@ -70,6 +70,9 @@ import co.electriccoin.zcash.ui.screen.restore.RestoreTag
 import co.electriccoin.zcash.ui.screen.restore.model.ParseResult
 import co.electriccoin.zcash.ui.screen.restore.state.WordList
 import co.electriccoin.zcash.ui.screen.restore.state.wordValidation
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.ImmutableSet
+import kotlinx.collections.immutable.persistentHashSetOf
 import kotlinx.coroutines.launch
 
 @Preview("Restore Wallet")
@@ -78,7 +81,7 @@ fun PreviewRestore() {
     ZcashTheme(darkTheme = true) {
         GradientSurface {
             RestoreWallet(
-                completeWordList = setOf(
+                completeWordList = persistentHashSetOf(
                     "abandon",
                     "ability",
                     "able",
@@ -113,7 +116,7 @@ fun PreviewRestoreComplete() {
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun RestoreWallet(
-    completeWordList: Set<String>,
+    completeWordList: ImmutableSet<String>,
     userWordList: WordList,
     onBack: () -> Unit,
     paste: () -> String?,
@@ -131,16 +134,16 @@ fun RestoreWallet(
             }, bottomBar = {
                 Column(Modifier.verticalScroll(rememberScrollState())) {
                     Warn(parseResult)
-                    Autocomplete(parseResult = parseResult) {
+                    Autocomplete(parseResult = parseResult, {
                         textState = ""
                         userWordList.append(listOf(it))
                         focusRequester.requestFocus()
-                    }
+                    })
                     NextWordTextField(
-                        modifier = Modifier.focusRequester(focusRequester),
                         parseResult = parseResult,
                         text = textState,
-                        setText = { textState = it }
+                        setText = { textState = it },
+                        modifier = Modifier.focusRequester(focusRequester)
                     )
                 }
             }) { paddingValues ->
@@ -236,7 +239,7 @@ private fun RestoreMainContent(
 
 @Composable
 private fun ChipGridWithText(
-    userWordList: List<String>
+    userWordList: ImmutableList<String>
 ) {
     Column(
         Modifier
@@ -268,10 +271,10 @@ private fun ChipGridWithText(
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 private fun NextWordTextField(
-    modifier: Modifier = Modifier,
     parseResult: ParseResult,
     text: String,
-    setText: (String) -> Unit
+    setText: (String) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     /*
      * Treat the user input as a password, but disable the transformation to obscure input.
@@ -285,7 +288,7 @@ private fun NextWordTextField(
         shadowElevation = 8.dp
     ) {
         TextField(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxWidth()
                 .padding(4.dp)
                 .testTag(RestoreTag.SEED_WORD_TEXT_FIELD),
@@ -312,9 +315,9 @@ private fun NextWordTextField(
 
 @Composable
 private fun Autocomplete(
-    modifier: Modifier = Modifier,
     parseResult: ParseResult,
-    onSuggestionSelected: (String) -> Unit
+    onSuggestionSelected: (String) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val (isHighlight, suggestions) = when (parseResult) {
         is ParseResult.Autocomplete -> {
@@ -336,6 +339,7 @@ private fun Autocomplete(
             modifier
         }
 
+        @Suppress("ModifierReused")
         LazyRow(highlightModifier.testTag(RestoreTag.AUTOCOMPLETE_LAYOUT)) {
             items(it) {
                 Chip(

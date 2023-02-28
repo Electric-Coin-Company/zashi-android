@@ -8,6 +8,8 @@ import cash.z.ecc.android.bip39.Mnemonics
 import cash.z.ecc.android.sdk.ext.collectWith
 import co.electriccoin.zcash.ui.common.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.screen.restore.state.WordList
+import kotlinx.collections.immutable.ImmutableSet
+import kotlinx.collections.immutable.toPersistentSet
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
@@ -15,7 +17,6 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
 import java.util.Locale
-import java.util.TreeSet
 
 class RestoreViewModel(application: Application, savedStateHandle: SavedStateHandle) : AndroidViewModel(application) {
 
@@ -29,7 +30,7 @@ class RestoreViewModel(application: Application, savedStateHandle: SavedStateHan
             Mnemonics.getCachedWords(Locale.ENGLISH.language)
         }
 
-        emit(CompleteWordSetState.Loaded(TreeSet(completeWordList)))
+        emit(CompleteWordSetState.Loaded(completeWordList.toPersistentSet()))
     }.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
@@ -54,7 +55,7 @@ class RestoreViewModel(application: Application, savedStateHandle: SavedStateHan
         // viewModelScope is constructed with Dispatchers.Main.immediate, so this will
         // update the save state as soon as a change occurs.
         userWordList.current.collectWith(viewModelScope) {
-            savedStateHandle.set(KEY_WORD_LIST, it)
+            savedStateHandle[KEY_WORD_LIST] = ArrayList(it)
         }
     }
 
@@ -65,5 +66,5 @@ class RestoreViewModel(application: Application, savedStateHandle: SavedStateHan
 
 sealed class CompleteWordSetState {
     object Loading : CompleteWordSetState()
-    data class Loaded(val list: Set<String>) : CompleteWordSetState()
+    data class Loaded(val list: ImmutableSet<String>) : CompleteWordSetState()
 }

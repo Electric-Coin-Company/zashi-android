@@ -36,7 +36,7 @@ class UpdateViewIntegrationTest {
         )
 
         restorationTester.setContent {
-            testSetup.getDefaultContent()
+            testSetup.DefaultContent()
         }
 
         assertEquals(testSetup.getUpdateInfo().priority, AppUpdateChecker.Priority.HIGH)
