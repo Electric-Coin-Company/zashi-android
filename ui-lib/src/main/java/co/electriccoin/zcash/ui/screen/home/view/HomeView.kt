@@ -1,3 +1,5 @@
+@file:Suppress("TooManyFunctions")
+
 package co.electriccoin.zcash.ui.screen.home.view
 
 import android.content.res.Configuration
@@ -118,14 +120,14 @@ fun Home(
 
     // override system back navigation action to close drawer, if opened
     BackHandler(drawerState.isOpen) {
-        closeDrawerMenu(scope, drawerState)
+        drawerState.closeDrawerMenu(scope)
     }
 
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
             HomeDrawer(
-                onCloseDrawer = { closeDrawerMenu(scope, drawerState) },
+                onCloseDrawer = { drawerState.closeDrawerMenu(scope) },
                 goSeedPhrase = goSeedPhrase,
                 goSettings = goSettings,
                 goSupport = goSupport,
@@ -136,7 +138,7 @@ fun Home(
             Scaffold(topBar = {
                 HomeTopAppBar(
                     isDebugMenuEnabled = isDebugMenuEnabled,
-                    openDrawer = { openDrawerMenu(scope, drawerState) },
+                    openDrawer = { drawerState.openDrawerMenu(scope) },
                     resetSdk = resetSdk
                 )
             }) { paddingValues ->
@@ -154,18 +156,18 @@ fun Home(
     )
 }
 
-private fun openDrawerMenu(scope: CoroutineScope, drawerState: DrawerState) {
-    if (drawerState.isOpen) {
+private fun DrawerState.openDrawerMenu(scope: CoroutineScope) {
+    if (isOpen) {
         return
     }
-    scope.launch { drawerState.open() }
+    scope.launch { open() }
 }
 
-private fun closeDrawerMenu(scope: CoroutineScope, drawerState: DrawerState) {
-    if (drawerState.isClosed) {
+private fun DrawerState.closeDrawerMenu(scope: CoroutineScope) {
+    if (isClosed) {
         return
     }
-    scope.launch { drawerState.close() }
+    scope.launch { close() }
 }
 
 @Composable
