@@ -3,7 +3,6 @@
 package co.electriccoin.zcash.ui.screen.home.view
 
 import android.content.res.Configuration
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -61,6 +60,8 @@ import cash.z.ecc.android.sdk.model.PercentDecimal
 import co.electriccoin.zcash.crash.android.GlobalCrashReporter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.DisableScreenTimeout
+import co.electriccoin.zcash.ui.common.closeDrawerMenu
+import co.electriccoin.zcash.ui.common.openDrawerMenu
 import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.BodyWithFiatCurrencySymbol
 import co.electriccoin.zcash.ui.design.component.GradientSurface
@@ -73,7 +74,6 @@ import co.electriccoin.zcash.ui.screen.home.model.CommonTransaction
 import co.electriccoin.zcash.ui.screen.home.model.WalletDisplayValues
 import co.electriccoin.zcash.ui.screen.home.model.WalletSnapshot
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 @Preview
 @Composable
@@ -113,16 +113,10 @@ fun Home(
     goAbout: () -> Unit,
     goReceive: () -> Unit,
     goSend: () -> Unit,
-    resetSdk: () -> Unit
+    resetSdk: () -> Unit,
+    drawerState: DrawerState = rememberDrawerState(DrawerValue.Closed),
+    scope: CoroutineScope = rememberCoroutineScope()
 ) {
-    val drawerState = rememberDrawerState(DrawerValue.Closed)
-    val scope = rememberCoroutineScope()
-
-    // override system back navigation action to close drawer, if opened
-    BackHandler(drawerState.isOpen) {
-        drawerState.closeDrawerMenu(scope)
-    }
-
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
@@ -154,20 +148,6 @@ fun Home(
             }
         }
     )
-}
-
-private fun DrawerState.openDrawerMenu(scope: CoroutineScope) {
-    if (isOpen) {
-        return
-    }
-    scope.launch { open() }
-}
-
-private fun DrawerState.closeDrawerMenu(scope: CoroutineScope) {
-    if (isClosed) {
-        return
-    }
-    scope.launch { close() }
 }
 
 @Composable

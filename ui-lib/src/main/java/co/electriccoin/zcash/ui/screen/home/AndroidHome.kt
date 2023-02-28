@@ -3,14 +3,19 @@
 package co.electriccoin.zcash.ui.screen.home
 
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.viewModels
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.spackle.EmulatorWtfUtil
 import co.electriccoin.zcash.spackle.FirebaseTestLabUtil
 import co.electriccoin.zcash.ui.BuildConfig
 import co.electriccoin.zcash.ui.MainActivity
+import co.electriccoin.zcash.ui.common.closeDrawerMenu
 import co.electriccoin.zcash.ui.screen.home.view.Home
 import co.electriccoin.zcash.ui.screen.home.viewmodel.CheckUpdateViewModel
 import co.electriccoin.zcash.ui.screen.home.viewmodel.WalletViewModel
@@ -80,6 +85,14 @@ internal fun WrapHome(
             !EmulatorWtfUtil.isEmulatorWtf(context)
 
         val transactionSnapshot = walletViewModel.transactionSnapshot.collectAsStateWithLifecycle().value
+
+        val drawerState = rememberDrawerState(DrawerValue.Closed)
+        val scope = rememberCoroutineScope()
+
+        // override Android back navigation action to close drawer, if opened
+        BackHandler(drawerState.isOpen) {
+            drawerState.closeDrawerMenu(scope)
+        }
 
         Home(
             walletSnapshot,
