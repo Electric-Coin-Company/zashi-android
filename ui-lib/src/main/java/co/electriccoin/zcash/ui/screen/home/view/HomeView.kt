@@ -1,6 +1,7 @@
 package co.electriccoin.zcash.ui.screen.home.view
 
 import android.content.res.Configuration
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -22,6 +23,7 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Password
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -68,6 +70,7 @@ import co.electriccoin.zcash.ui.screen.home.HomeTag
 import co.electriccoin.zcash.ui.screen.home.model.CommonTransaction
 import co.electriccoin.zcash.ui.screen.home.model.WalletDisplayValues
 import co.electriccoin.zcash.ui.screen.home.model.WalletSnapshot
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Preview
@@ -112,11 +115,17 @@ fun Home(
 ) {
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
+
+    // override system back navigation action to close drawer, if opened
+    BackHandler(drawerState.isOpen) {
+        closeDrawerMenu(scope, drawerState)
+    }
+
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
             HomeDrawer(
-                onCloseDrawer = { scope.launch { drawerState.close() } },
+                onCloseDrawer = { closeDrawerMenu(scope, drawerState) },
                 goSeedPhrase = goSeedPhrase,
                 goSettings = goSettings,
                 goSupport = goSupport,
@@ -127,7 +136,7 @@ fun Home(
             Scaffold(topBar = {
                 HomeTopAppBar(
                     isDebugMenuEnabled = isDebugMenuEnabled,
-                    openDrawer = { scope.launch { drawerState.open() } },
+                    openDrawer = { openDrawerMenu(scope, drawerState) },
                     resetSdk = resetSdk
                 )
             }) { paddingValues ->
@@ -143,6 +152,20 @@ fun Home(
             }
         }
     )
+}
+
+private fun openDrawerMenu(scope: CoroutineScope, drawerState: DrawerState) {
+    if (drawerState.isOpen) {
+        return
+    }
+    scope.launch { drawerState.open() }
+}
+
+private fun closeDrawerMenu(scope: CoroutineScope, drawerState: DrawerState) {
+    if (drawerState.isClosed) {
+        return
+    }
+    scope.launch { drawerState.close() }
 }
 
 @Composable
