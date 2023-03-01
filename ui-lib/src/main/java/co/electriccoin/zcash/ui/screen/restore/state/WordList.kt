@@ -17,7 +17,7 @@ class WordList(initial: List<String> = emptyList()) {
     }
 
     fun append(words: List<String>) {
-        mutableState.value = (ArrayList(current.value) + words).toPersistentList()
+        mutableState.value = (current.value + words).toPersistentList()
     }
 
     // Custom toString to prevent leaking word list
