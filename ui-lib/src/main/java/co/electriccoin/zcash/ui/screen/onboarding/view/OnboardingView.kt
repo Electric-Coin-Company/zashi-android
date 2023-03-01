@@ -137,19 +137,21 @@ private fun OnboardingTopAppBar(
 
 @Composable
 private fun DebugMenu(onFixtureWallet: () -> Unit) {
-    var expanded by rememberSaveable { mutableStateOf(false) }
-    IconButton(onClick = { expanded = true }) {
-        Icon(Icons.Default.MoreVert, contentDescription = null)
-    }
+    Column {
+        var expanded by rememberSaveable { mutableStateOf(false) }
+        IconButton(onClick = { expanded = true }) {
+            Icon(Icons.Default.MoreVert, contentDescription = null)
+        }
 
-    DropdownMenu(
-        expanded = expanded,
-        onDismissRequest = { expanded = false }
-    ) {
-        DropdownMenuItem(
-            text = { Text("Import wallet with fixture seed phrase") },
-            onClick = onFixtureWallet
-        )
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            DropdownMenuItem(
+                text = { Text("Import wallet with fixture seed phrase") },
+                onClick = onFixtureWallet
+            )
+        }
     }
 }
 

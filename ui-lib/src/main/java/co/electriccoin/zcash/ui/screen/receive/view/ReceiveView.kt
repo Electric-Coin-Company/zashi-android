@@ -109,23 +109,24 @@ private fun ReceiveContents(
 }
 
 @Composable
-private fun QrCode(data: String, size: Dp, modifier: Modifier) {
-    BrightenScreen()
-    DisableScreenTimeout()
-    val sizePixels = with(LocalDensity.current) { size.toPx() }.roundToInt()
+private fun QrCode(data: String, size: Dp, modifier: Modifier = Modifier) {
+    Column(modifier = modifier) {
+        BrightenScreen()
+        DisableScreenTimeout()
+        val sizePixels = with(LocalDensity.current) { size.toPx() }.roundToInt()
 
-    // In the future, use actual/expect to switch QR code generator implementations for multiplatform
+        // In the future, use actual/expect to switch QR code generator implementations for multiplatform
 
-    // Note that our implementation has an extra array copy to BooleanArray, which is a cross-platform
-    // representation.  This should have minimal performance impact since the QR code is relatively
-    // small and we only generate QR codes infrequently.
+        // Note that our implementation has an extra array copy to BooleanArray, which is a cross-platform
+        // representation.  This should have minimal performance impact since the QR code is relatively
+        // small and we only generate QR codes infrequently.
 
-    val qrCodePixelArray = JvmQrCodeGenerator.generate(data, sizePixels)
-    val qrCodeImage = AndroidQrCodeImageGenerator.generate(qrCodePixelArray, sizePixels)
+        val qrCodePixelArray = JvmQrCodeGenerator.generate(data, sizePixels)
+        val qrCodeImage = AndroidQrCodeImageGenerator.generate(qrCodePixelArray, sizePixels)
 
-    Image(
-        bitmap = qrCodeImage,
-        contentDescription = stringResource(R.string.receive_qr_code_content_description),
-        modifier = modifier
-    )
+        Image(
+            bitmap = qrCodeImage,
+            contentDescription = stringResource(R.string.receive_qr_code_content_description)
+        )
+    }
 }

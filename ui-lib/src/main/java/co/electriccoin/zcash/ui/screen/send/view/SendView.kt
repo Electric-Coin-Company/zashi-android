@@ -72,9 +72,9 @@ fun PreviewSend() {
 @Composable
 fun Send(
     mySpendableBalance: Zatoshi,
-    pressAndHoldInteractionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     goBack: () -> Unit,
-    onCreateAndSend: (ZecSend) -> Unit
+    onCreateAndSend: (ZecSend) -> Unit,
+    pressAndHoldInteractionSource: MutableInteractionSource = remember { MutableInteractionSource() }
 ) {
     // For now, we're avoiding sub-navigation to keep the navigation logic simple.  But this might
     // change once deep-linking support  is added.  It depends on whether deep linking should do one of:
@@ -272,9 +272,10 @@ private fun Confirmation(
 
         TimedButton(
             onClick = onConfirmation,
+            {
+                Text(text = stringResource(id = R.string.send_confirm))
+            },
             interactionSource = pressAndHoldInteractionSource
-        ) {
-            Text(text = stringResource(id = R.string.send_confirm))
-        }
+        )
     }
 }

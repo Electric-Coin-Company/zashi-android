@@ -37,7 +37,7 @@ class OnboardingIntegrationTest : UiTestPrerequisites() {
         val testSetup = newTestSetup(OnboardingStage.UnifiedAddresses)
 
         restorationTester.setContent {
-            testSetup.getDefaultContent()
+            testSetup.DefaultContent()
         }
 
         assertEquals(OnboardingStage.UnifiedAddresses, testSetup.getOnboardingStage())

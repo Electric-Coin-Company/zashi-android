@@ -29,6 +29,7 @@ import co.electriccoin.zcash.spackle.model.Index
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.backup.BackupTag
+import kotlinx.collections.immutable.ImmutableList
 
 /**
  * @param chipIndex The index of the chip, which is displayed to the user.
@@ -36,17 +37,15 @@ import co.electriccoin.zcash.ui.screen.backup.BackupTag
  * @param choices Item choices to display in the open drop down menu.  Positional index is important.
  * @param onChoiceSelected Callback with the positional index of the item the user selected from [choices].
  */
-
 @Composable
 fun ChipDropDown(
     chipIndex: Index,
     dropdownText: String,
-    choices: List<String>,
-    modifier: Modifier = Modifier,
-    onChoiceSelected: (Index) -> Unit
+    choices: ImmutableList<String>,
+    onChoiceSelected: (Index) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     var expanded by remember { mutableStateOf(false) }
-
     Surface(
         modifier = modifier.then(
             Modifier
@@ -71,7 +70,7 @@ fun ChipDropDown(
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSecondary
             )
-            Spacer(modifier = modifier.fillMaxWidth(MINIMAL_WEIGHT))
+            Spacer(modifier = Modifier.fillMaxWidth(MINIMAL_WEIGHT))
             Icon(
                 imageVector = Icons.Filled.ArrowDropDown,
                 contentDescription = null,

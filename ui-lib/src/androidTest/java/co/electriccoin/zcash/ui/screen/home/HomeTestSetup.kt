@@ -5,6 +5,7 @@ import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.home.model.WalletSnapshot
 import co.electriccoin.zcash.ui.screen.home.view.Home
+import kotlinx.collections.immutable.persistentListOf
 import java.util.concurrent.atomic.AtomicInteger
 
 class HomeTestSetup(
@@ -54,10 +55,11 @@ class HomeTestSetup(
     }
 
     @Composable
-    fun getDefaultContent() {
+    @Suppress("TestFunctionName")
+    fun DefaultContent() {
         Home(
             walletSnapshot,
-            transactionHistory = emptyList(),
+            transactionHistory = persistentListOf(),
             isKeepScreenOnDuringSync = false,
             isUpdateAvailable = false,
             goSettings = {
@@ -86,7 +88,7 @@ class HomeTestSetup(
     fun setDefaultContent() {
         composeTestRule.setContent {
             ZcashTheme {
-                getDefaultContent()
+                DefaultContent()
             }
         }
     }

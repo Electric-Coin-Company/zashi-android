@@ -26,6 +26,7 @@ import co.electriccoin.zcash.ui.design.component.ChipGrid
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.TertiaryButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import kotlinx.collections.immutable.toPersistentList
 
 @Preview("Seed")
 @Composable
@@ -95,7 +96,7 @@ private fun SeedMainContent(
     ) {
         Body(stringResource(R.string.seed_body))
 
-        ChipGrid(persistableWallet.seedPhrase.split)
+        ChipGrid(persistableWallet.seedPhrase.split.toPersistentList())
 
         TertiaryButton(onClick = onCopyToClipboard, text = stringResource(R.string.seed_copy))
     }

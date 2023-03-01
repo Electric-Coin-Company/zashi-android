@@ -46,8 +46,8 @@ fun Body(
 @Composable
 fun Small(
     text: String,
-    modifier: Modifier = Modifier,
-    textAlign: TextAlign
+    textAlign: TextAlign,
+    modifier: Modifier = Modifier
 ) {
     Text(
         text = text,

@@ -70,6 +70,7 @@ data class ExtendedTypography(
     val zecBalance: TextStyle
 )
 
+@Suppress("CompositionLocalAllowlist")
 val LocalExtendedTypography = staticCompositionLocalOf {
     ExtendedTypography(
         chipIndex = Typography.bodyLarge.copy(

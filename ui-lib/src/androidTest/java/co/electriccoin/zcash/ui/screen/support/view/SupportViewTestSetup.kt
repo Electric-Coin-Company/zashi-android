@@ -31,7 +31,8 @@ class SupportViewTestSetup(private val composeTestRule: ComposeContentTestRule) 
     }
 
     @Composable
-    fun getDefaultContent() {
+    @Suppress("TestFunctionName")
+    fun DefaultContent() {
         Support(
             SnackbarHostState(),
             onBack = {
@@ -47,7 +48,7 @@ class SupportViewTestSetup(private val composeTestRule: ComposeContentTestRule) 
     fun setDefaultContent() {
         composeTestRule.setContent {
             ZcashTheme {
-                getDefaultContent()
+                DefaultContent()
             }
         }
     }

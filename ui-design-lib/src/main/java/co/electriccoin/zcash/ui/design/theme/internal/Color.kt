@@ -173,6 +173,7 @@ internal val LightExtendedColorPalette = ExtendedColors(
     reference = Light.reference
 )
 
+@Suppress("CompositionLocalAllowlist")
 internal val LocalExtendedColors = staticCompositionLocalOf {
     ExtendedColors(
         surfaceEnd = Color.Unspecified,

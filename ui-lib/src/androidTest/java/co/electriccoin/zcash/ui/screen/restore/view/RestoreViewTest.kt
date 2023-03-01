@@ -26,6 +26,7 @@ import co.electriccoin.zcash.ui.screen.restore.RestoreTag
 import co.electriccoin.zcash.ui.screen.restore.state.WordList
 import co.electriccoin.zcash.ui.test.getAppContext
 import co.electriccoin.zcash.ui.test.getStringResource
+import kotlinx.collections.immutable.toPersistentSet
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -219,7 +220,7 @@ class RestoreViewTest : UiTestPrerequisites() {
             composeTestRule.setContent {
                 ZcashTheme {
                     RestoreWallet(
-                        Mnemonics.getCachedWords(Locale.ENGLISH.language).toSortedSet(),
+                        Mnemonics.getCachedWords(Locale.ENGLISH.language).toPersistentSet(),
                         state,
                         onBack = {
                             onBackCount.incrementAndGet()

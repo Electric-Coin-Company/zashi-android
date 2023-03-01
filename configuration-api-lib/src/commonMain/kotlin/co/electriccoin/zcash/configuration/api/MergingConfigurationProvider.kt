@@ -3,6 +3,7 @@ package co.electriccoin.zcash.configuration.api
 import co.electriccoin.zcash.configuration.model.entry.ConfigKey
 import co.electriccoin.zcash.configuration.model.map.Configuration
 import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -16,7 +17,7 @@ class MergingConfigurationProvider(private val configurationProviders: Persisten
 
     override fun getConfigurationFlow(): Flow<Configuration> {
         return if (configurationProviders.isEmpty()) {
-            flowOf(MergingConfiguration(emptyList<Configuration>().toPersistentList()))
+            flowOf(MergingConfiguration(persistentListOf<Configuration>()))
         } else {
             combine(configurationProviders.map { it.getConfigurationFlow() }) { configurations ->
                 MergingConfiguration(configurations.toList().toPersistentList())

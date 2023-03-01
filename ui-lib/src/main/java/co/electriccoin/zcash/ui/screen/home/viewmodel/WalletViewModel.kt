@@ -32,6 +32,9 @@ import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
 import co.electriccoin.zcash.ui.preference.StandardPreferenceSingleton
 import co.electriccoin.zcash.ui.screen.home.model.CommonTransaction
 import co.electriccoin.zcash.ui.screen.home.model.WalletSnapshot
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
@@ -151,10 +154,10 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
 
     // This is not the right API, because the transaction list could be very long and might need UI filtering
     @OptIn(ExperimentalCoroutinesApi::class)
-    val transactionSnapshot: StateFlow<List<CommonTransaction>> = synchronizer
+    val transactionSnapshot: StateFlow<ImmutableList<CommonTransaction>> = synchronizer
         .flatMapLatest {
             if (null == it) {
-                flowOf(emptyList())
+                flowOf(persistentListOf())
             } else {
                 it.toTransactions()
             }
@@ -162,7 +165,7 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            emptyList()
+            persistentListOf()
         )
 
     val addresses: StateFlow<WalletAddresses?> = synchronizer
@@ -360,7 +363,7 @@ private fun Synchronizer.toWalletSnapshot() =
         )
     }
 
-private fun Synchronizer.toTransactions() =
+private fun Synchronizer.toTransactions(): Flow<ImmutableList<CommonTransaction>> =
     combine(
         clearedTransactions.distinctUntilChanged(),
         pendingTransactions.distinctUntilChanged()
@@ -372,5 +375,5 @@ private fun Synchronizer.toTransactions() =
         buildList {
             addAll(cleared.map { CommonTransaction.Overview(it) })
             addAll(pending.map { CommonTransaction.Pending(it) })
-        }
+        }.toPersistentList()
     }
