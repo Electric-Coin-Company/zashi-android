@@ -74,7 +74,7 @@ import co.electriccoin.zcash.ui.screen.home.model.CommonTransaction
 import co.electriccoin.zcash.ui.screen.home.model.WalletDisplayValues
 import co.electriccoin.zcash.ui.screen.home.model.WalletSnapshot
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.toPersistentList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.CoroutineScope
 
 @Preview
@@ -84,7 +84,7 @@ fun ComposablePreview() {
         GradientSurface {
             Home(
                 walletSnapshot = WalletSnapshotFixture.new(),
-                transactionHistory = emptyList<CommonTransaction>().toPersistentList(),
+                transactionHistory = persistentListOf(),
                 isUpdateAvailable = false,
                 isKeepScreenOnDuringSync = false,
                 isDebugMenuEnabled = false,
