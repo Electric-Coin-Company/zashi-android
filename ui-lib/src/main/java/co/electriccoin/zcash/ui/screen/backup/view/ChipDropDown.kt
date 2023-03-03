@@ -40,6 +40,7 @@ import kotlinx.collections.immutable.ImmutableList
  * @param onChoiceSelected Callback with the positional index of the item the user selected from [choices].
  */
 @Composable
+@Suppress("LongMethod")
 fun ChipDropDown(
     chipIndex: Index,
     dropdownText: String,
@@ -60,7 +61,8 @@ fun ChipDropDown(
         tonalElevation = 8.dp,
         shadowElevation = 8.dp
     ) {
-        Row(modifier = Modifier.padding(8.dp),
+        Row(
+            modifier = Modifier.padding(8.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
