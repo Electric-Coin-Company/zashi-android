@@ -18,4 +18,8 @@
     <string name="onboarding_4_image_content_description"></string>
     <string name="onboarding_4_create_new_wallet">Create New Wallet</string>
     <string name="onboarding_4_import_existing_wallet">Import an Existing Wallet</string>
+
+    <string name="onboarding_short_header">It‘s time to set up your no-frills wallet, powered by Zcash</string>
+    <string name="onboarding_short_create_new_wallet">Create New Wallet</string>
+    <string name="onboarding_short_import_existing_wallet">Import an Existing Wallet</string>
 </resources>

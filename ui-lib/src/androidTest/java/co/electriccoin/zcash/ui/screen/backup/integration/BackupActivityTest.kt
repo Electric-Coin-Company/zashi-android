@@ -9,7 +9,7 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.UiTestingActivity
 import co.electriccoin.zcash.ui.fixture.TestChoicesFixture
 import co.electriccoin.zcash.ui.screen.backup.model.BackupStage
-import co.electriccoin.zcash.ui.screen.backup.view.BackupTestSetup
+import co.electriccoin.zcash.ui.screen.backup.view.LongBackupTestSetup
 import co.electriccoin.zcash.ui.test.getStringResource
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -20,8 +20,8 @@ class BackupActivityTest : UiTestPrerequisites() {
     @get:Rule
     val composeTestRule = createAndroidComposeRule<UiTestingActivity>()
 
-    private fun newTestSetup(): BackupTestSetup {
-        return BackupTestSetup(
+    private fun newTestSetup(): LongBackupTestSetup {
+        return LongBackupTestSetup(
             composeTestRule,
             BackupStage.EducationOverview,
             TestChoicesFixture.new(TestChoicesFixture.INITIAL_CHOICES)

@@ -2,8 +2,8 @@
 <resources>
     <string name="receive_title">Receive</string>
     <string name="receive_back_content_description">Back</string>
-    <string name="receive_qr_code_content_description">QR code for unified address</string>
-    <string name="receive_caption">Your UA Address</string>
+    <string name="receive_qr_code_content_description">QR code for address</string>
+    <string name="receive_caption">Your Address</string>
     <string name="receive_see_address_details">See Address Details</string>
 
 </resources>

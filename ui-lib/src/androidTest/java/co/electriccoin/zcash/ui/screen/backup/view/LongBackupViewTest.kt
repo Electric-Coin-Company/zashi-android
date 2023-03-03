@@ -21,12 +21,12 @@ import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 
-class BackupViewTest : UiTestPrerequisites() {
+class LongBackupViewTest : UiTestPrerequisites() {
     @get:Rule
     val composeTestRule = createComposeRule()
 
-    private fun newTestSetup(initialStage: BackupStage): BackupTestSetup {
-        return BackupTestSetup(composeTestRule, initialStage, TestChoicesFixture.new(mutableMapOf())).apply {
+    private fun newTestSetup(initialStage: BackupStage): LongBackupTestSetup {
+        return LongBackupTestSetup(composeTestRule, initialStage, TestChoicesFixture.new(mutableMapOf())).apply {
             setDefaultContent()
         }
     }
@@ -212,17 +212,18 @@ class BackupViewTest : UiTestPrerequisites() {
     }
 }
 
-fun ComposeContentTestRule.clickCopyToBuffer() {
+private fun ComposeContentTestRule.clickCopyToBuffer() {
     // open menu
     onNodeWithContentDescription(
         getStringResource(R.string.new_wallet_toolbar_more_button_content_description)
     ).also { moreMenu ->
         moreMenu.performClick()
-        // click menu button
-        onNodeWithText(
-            getStringResource(R.string.new_wallet_3_button_copy)
-        ).also { menuButton ->
-            menuButton.performClick()
-        }
+    }
+
+    // click menu button
+    onNodeWithText(
+        getStringResource(R.string.new_wallet_3_button_copy)
+    ).also { menuButton ->
+        menuButton.performClick()
     }
 }

@@ -3,6 +3,7 @@
 package co.electriccoin.zcash.ui.screen.backup.view
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
@@ -38,6 +40,7 @@ import kotlinx.collections.immutable.ImmutableList
  * @param onChoiceSelected Callback with the positional index of the item the user selected from [choices].
  */
 @Composable
+@Suppress("LongMethod")
 fun ChipDropDown(
     chipIndex: Index,
     dropdownText: String,
@@ -58,7 +61,11 @@ fun ChipDropDown(
         tonalElevation = 8.dp,
         shadowElevation = 8.dp
     ) {
-        Row(modifier = Modifier.padding(8.dp)) {
+        Row(
+            modifier = Modifier.padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
             Text(
                 text = (chipIndex.value + 1).toString(),
                 style = ZcashTheme.typography.chipIndex,

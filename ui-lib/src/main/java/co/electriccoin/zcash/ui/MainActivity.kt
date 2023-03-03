@@ -24,7 +24,7 @@ import co.electriccoin.zcash.ui.design.component.ConfigurationOverride
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.Override
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
-import co.electriccoin.zcash.ui.screen.backup.WrapBackup
+import co.electriccoin.zcash.ui.screen.backup.WrapNewWallet
 import co.electriccoin.zcash.ui.screen.home.viewmodel.HomeViewModel
 import co.electriccoin.zcash.ui.screen.home.viewmodel.SecretState
 import co.electriccoin.zcash.ui.screen.home.viewmodel.WalletViewModel
@@ -129,7 +129,7 @@ class MainActivity : ComponentActivity() {
                         WrapOnboarding()
                     }
                     is SecretState.NeedsBackup -> {
-                        WrapBackup(
+                        WrapNewWallet(
                             secretState.persistableWallet,
                             onBackupComplete = { walletViewModel.persistBackupComplete() }
                         )

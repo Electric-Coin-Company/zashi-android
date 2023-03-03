@@ -16,7 +16,7 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.fixture.TestChoicesFixture
 import co.electriccoin.zcash.ui.screen.backup.BackupTag
 import co.electriccoin.zcash.ui.screen.backup.model.BackupStage
-import co.electriccoin.zcash.ui.screen.backup.view.BackupTestSetup
+import co.electriccoin.zcash.ui.screen.backup.view.LongBackupTestSetup
 import co.electriccoin.zcash.ui.test.getStringResource
 import org.junit.Rule
 import kotlin.test.Test
@@ -29,8 +29,8 @@ class BackupIntegrationTest : UiTestPrerequisites() {
     @get:Rule
     val composeTestRule = createComposeRule()
 
-    private fun newTestSetup(initialStage: BackupStage): BackupTestSetup {
-        return BackupTestSetup(
+    private fun newTestSetup(initialStage: BackupStage): LongBackupTestSetup {
+        return LongBackupTestSetup(
             composeTestRule,
             initialStage,
             TestChoicesFixture.new(TestChoicesFixture.INITIAL_CHOICES)

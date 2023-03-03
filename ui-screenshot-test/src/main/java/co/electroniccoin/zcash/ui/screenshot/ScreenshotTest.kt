@@ -146,7 +146,12 @@ class ScreenshotTest : UiTestPrerequisites() {
 
         composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) { composeTestRule.activity.walletViewModel.secretState.value is SecretState.None }
 
-        if (ConfigurationEntries.IS_FULL_ONBOARDING_ENABLED.getValue(emptyConfiguration)) {
+        if (ConfigurationEntries.IS_SHORT_ONBOARDING_UX.getValue(emptyConfiguration)) {
+            composeTestRule.onNodeWithText(resContext.getString(R.string.onboarding_short_import_existing_wallet)).also {
+                it.assertExists()
+                it.performClick()
+            }
+        } else {
             composeTestRule.onNodeWithText(resContext.getString(R.string.onboarding_1_header)).also {
                 it.assertExists()
             }
@@ -155,11 +160,11 @@ class ScreenshotTest : UiTestPrerequisites() {
                 it.assertExists()
                 it.performClick()
             }
-        }
 
-        composeTestRule.onNodeWithText(resContext.getString(R.string.onboarding_4_import_existing_wallet)).also {
-            it.assertExists()
-            it.performClick()
+            composeTestRule.onNodeWithText(resContext.getString(R.string.onboarding_4_import_existing_wallet)).also {
+                it.assertExists()
+                it.performClick()
+            }
         }
 
         composeTestRule.onNodeWithText(resContext.getString(R.string.restore_title)).also {
@@ -262,7 +267,16 @@ private val emptyConfiguration = StringConfiguration(persistentMapOf(), null)
 
 private fun onboardingScreenshots(resContext: Context, tag: String, composeTestRule: AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>) {
     composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) { composeTestRule.activity.walletViewModel.secretState.value is SecretState.None }
-    if (ConfigurationEntries.IS_FULL_ONBOARDING_ENABLED.getValue(emptyConfiguration)) {
+    if (ConfigurationEntries.IS_SHORT_ONBOARDING_UX.getValue(emptyConfiguration)) {
+        composeTestRule.onNodeWithText(resContext.getString(R.string.onboarding_short_header)).also {
+            it.assertExists()
+            ScreenshotTest.takeScreenshot(tag, "Onboarding 1")
+        }
+
+        composeTestRule.onNodeWithText(resContext.getString(R.string.onboarding_short_create_new_wallet)).also {
+            it.performClick()
+        }
+    } else {
         composeTestRule.onNodeWithText(resContext.getString(R.string.onboarding_1_header)).also {
             it.assertExists()
         }
@@ -287,119 +301,131 @@ private fun onboardingScreenshots(resContext: Context, tag: String, composeTestR
         composeTestRule.onNodeWithText(resContext.getString(R.string.onboarding_next)).also {
             it.performClick()
         }
-    }
 
-    composeTestRule.onNodeWithText(resContext.getString(R.string.onboarding_4_header)).also {
-        it.assertExists()
-        ScreenshotTest.takeScreenshot(tag, "Onboarding 4")
-    }
+        composeTestRule.onNodeWithText(resContext.getString(R.string.onboarding_4_header)).also {
+            it.assertExists()
+            ScreenshotTest.takeScreenshot(tag, "Onboarding 4")
+        }
 
-    composeTestRule.onNodeWithText(resContext.getString(R.string.onboarding_4_create_new_wallet)).also {
-        it.performClick()
+        composeTestRule.onNodeWithText(resContext.getString(R.string.onboarding_4_create_new_wallet)).also {
+            it.performClick()
+        }
     }
 }
 
 private fun backupScreenshots(resContext: Context, tag: String, composeTestRule: AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>) {
     composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) { composeTestRule.activity.walletViewModel.secretState.value is SecretState.NeedsBackup }
 
-    composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_1_header)).also {
-        it.assertExists()
-    }
-    ScreenshotTest.takeScreenshot(tag, "Backup 1")
+    if (ConfigurationEntries.IS_SHORT_ONBOARDING_UX.getValue(emptyConfiguration)) {
+        composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_short_header)).also {
+            it.assertExists()
+        }
+        ScreenshotTest.takeScreenshot(tag, "Backup 1")
 
-    composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_1_button)).also {
-        it.performClick()
-    }
+        composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_short_button_finished)).also {
+            it.assertExists()
+            it.performClick()
+        }
+    } else {
+        composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_1_header)).also {
+            it.assertExists()
+        }
+        ScreenshotTest.takeScreenshot(tag, "Backup 1")
 
-    composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_2_header)).also {
-        it.assertExists()
-    }
-    ScreenshotTest.takeScreenshot(tag, "Backup 2")
+        composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_1_button)).also {
+            it.performClick()
+        }
 
-    composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_2_button)).also {
-        it.performClick()
-    }
+        composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_2_header)).also {
+            it.assertExists()
+        }
+        ScreenshotTest.takeScreenshot(tag, "Backup 2")
 
-    composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_3_header)).also {
-        it.assertExists()
-    }
-    ScreenshotTest.takeScreenshot(tag, "Backup 3")
+        composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_2_button)).also {
+            it.performClick()
+        }
 
-    composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_3_button_finished)).also {
-        it.performClick()
-    }
+        composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_3_header)).also {
+            it.assertExists()
+        }
+        ScreenshotTest.takeScreenshot(tag, "Backup 3")
 
-    composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_4_header)).also {
-        it.assertExists()
-    }
-    ScreenshotTest.takeScreenshot(tag, "Backup 4")
+        composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_3_button_finished)).also {
+            it.performClick()
+        }
 
-    // Fail test first
-    composeTestRule.onAllNodesWithTag(BackupTag.DROPDOWN_CHIP).also {
-        it[0].performScrollTo()
-        it[0].performClick()
-        composeTestRule.onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[0].performClick()
+        composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_4_header)).also {
+            it.assertExists()
+        }
+        ScreenshotTest.takeScreenshot(tag, "Backup 4")
 
-        it[1].performScrollTo()
-        it[1].performClick()
-        composeTestRule.onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[1].performClick()
+        // Fail test first
+        composeTestRule.onAllNodesWithTag(BackupTag.DROPDOWN_CHIP).also {
+            it[0].performScrollTo()
+            it[0].performClick()
+            composeTestRule.onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[0].performClick()
 
-        it[2].performScrollTo()
-        it[2].performClick()
-        composeTestRule.onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[2].performClick()
+            it[1].performScrollTo()
+            it[1].performClick()
+            composeTestRule.onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[1].performClick()
 
-        it[3].performScrollTo()
-        it[3].performClick()
-        composeTestRule.onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[3].performClick()
-    }
-    composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_4_header_ouch)).also {
-        it.assertExists()
-        ScreenshotTest.takeScreenshot(tag, "Backup Fail")
-    }
+            it[2].performScrollTo()
+            it[2].performClick()
+            composeTestRule.onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[2].performClick()
 
-    composeTestRule.onNode(hasText(resContext.getString(R.string.new_wallet_4_button_retry))).also {
-        it.performClick()
-    }
+            it[3].performScrollTo()
+            it[3].performClick()
+            composeTestRule.onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[3].performClick()
+        }
+        composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_4_header_ouch)).also {
+            it.assertExists()
+            ScreenshotTest.takeScreenshot(tag, "Backup Fail")
+        }
 
-    composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_3_header)).also {
-        it.assertExists()
-    }
-    composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_3_button_finished)).also {
-        it.performClick()
-    }
+        composeTestRule.onNode(hasText(resContext.getString(R.string.new_wallet_4_button_retry))).also {
+            it.performClick()
+        }
 
-    composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_4_header)).also {
-        it.assertExists()
-    }
+        composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_3_header)).also {
+            it.assertExists()
+        }
+        composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_3_button_finished)).also {
+            it.performClick()
+        }
 
-    composeTestRule.onAllNodesWithTag(BackupTag.DROPDOWN_CHIP).also {
-        it.assertCountEquals(4)
+        composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_4_header)).also {
+            it.assertExists()
+        }
 
-        it[0].performScrollTo()
-        it[0].performClick()
-        composeTestRule.onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[1].performClick()
+        composeTestRule.onAllNodesWithTag(BackupTag.DROPDOWN_CHIP).also {
+            it.assertCountEquals(4)
 
-        it[1].performScrollTo()
-        it[1].performClick()
-        composeTestRule.onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[0].performClick()
+            it[0].performScrollTo()
+            it[0].performClick()
+            composeTestRule.onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[1].performClick()
 
-        it[2].performScrollTo()
-        it[2].performClick()
-        composeTestRule.onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[3].performClick()
+            it[1].performScrollTo()
+            it[1].performClick()
+            composeTestRule.onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[0].performClick()
 
-        it[3].performScrollTo()
-        it[3].performClick()
-        composeTestRule.onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[2].performClick()
-    }
+            it[2].performScrollTo()
+            it[2].performClick()
+            composeTestRule.onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[3].performClick()
 
-    composeTestRule.onNode(hasText(resContext.getString(R.string.new_wallet_5_body))).also {
-        it.assertExists()
-        ScreenshotTest.takeScreenshot(tag, "Backup 5")
-    }
+            it[3].performScrollTo()
+            it[3].performClick()
+            composeTestRule.onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[2].performClick()
+        }
 
-    composeTestRule.onNode(hasText(resContext.getString(R.string.new_wallet_5_button_finished))).also {
-        it.assertExists()
-        it.performClick()
+        composeTestRule.onNode(hasText(resContext.getString(R.string.new_wallet_5_body))).also {
+            it.assertExists()
+            ScreenshotTest.takeScreenshot(tag, "Backup 5")
+        }
+
+        composeTestRule.onNode(hasText(resContext.getString(R.string.new_wallet_5_button_finished))).also {
+            it.assertExists()
+            it.performClick()
+        }
     }
 }
 

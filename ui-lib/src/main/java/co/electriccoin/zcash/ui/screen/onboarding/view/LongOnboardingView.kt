@@ -54,8 +54,7 @@ import co.electriccoin.zcash.ui.screen.onboarding.state.OnboardingState
 fun ComposablePreview() {
     ZcashTheme(darkTheme = true) {
         GradientSurface {
-            Onboarding(
-                isFullOnboardingEnabled = true,
+            LongOnboarding(
                 OnboardingState(OnboardingStage.Wallet),
                 isDebugMenuEnabled = false,
                 onImportWallet = {},
@@ -67,16 +66,13 @@ fun ComposablePreview() {
 }
 
 /**
- * @param isFullOnboardingEnabled Feature toggle to control whether the full onboarding flow is enabled.  If disabled, then an abbreviated flow is shown
- * and the onboarding state is treated effectively as if it is [OnboardingStage.Wallet].
  * @param onImportWallet Callback when the user decides to import an existing wallet.
  * @param onCreateWallet Callback when the user decides to create a new wallet.
  */
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 @Suppress("LongParameterList")
-fun Onboarding(
-    isFullOnboardingEnabled: Boolean,
+fun LongOnboarding(
     onboardingState: OnboardingState,
     isDebugMenuEnabled: Boolean,
     onImportWallet: () -> Unit,
@@ -86,7 +82,7 @@ fun Onboarding(
     val currentStage = onboardingState.current.collectAsStateWithLifecycle().value
     Scaffold(
         topBar = {
-            OnboardingTopAppBar(isFullOnboardingEnabled, onboardingState, isDebugMenuEnabled, onFixtureWallet)
+            OnboardingTopAppBar(onboardingState, isDebugMenuEnabled, onFixtureWallet)
         },
         bottomBar = {
             BottomNav(currentStage, onboardingState::goNext, onCreateWallet, onImportWallet)
@@ -102,7 +98,6 @@ fun Onboarding(
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 private fun OnboardingTopAppBar(
-    isFullOnboardingEnabled: Boolean,
     onboardingState: OnboardingState,
     isDebugMenuEnabled: Boolean,
     onFixtureWallet: () -> Unit
@@ -112,14 +107,12 @@ private fun OnboardingTopAppBar(
     TopAppBar(
         title = { Text(text = stringResource(id = R.string.app_name)) },
         navigationIcon = {
-            if (isFullOnboardingEnabled) {
-                if (currentStage.hasPrevious()) {
-                    IconButton(onboardingState::goPrevious) {
-                        Icon(
-                            imageVector = Icons.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.onboarding_back)
-                        )
-                    }
+            if (currentStage.hasPrevious()) {
+                IconButton(onboardingState::goPrevious) {
+                    Icon(
+                        imageVector = Icons.Filled.ArrowBack,
+                        contentDescription = stringResource(R.string.onboarding_back)
+                    )
                 }
             }
         },
