@@ -88,6 +88,7 @@ fun ComposablePreview() {
                 isUpdateAvailable = false,
                 isKeepScreenOnDuringSync = false,
                 isDebugMenuEnabled = false,
+                isFiatConversionEnabled = false,
                 goSeedPhrase = {},
                 goSettings = {},
                 goSupport = {},
@@ -108,6 +109,7 @@ fun Home(
     transactionHistory: ImmutableList<CommonTransaction>,
     isUpdateAvailable: Boolean,
     isKeepScreenOnDuringSync: Boolean?,
+    isFiatConversionEnabled: Boolean,
     isDebugMenuEnabled: Boolean,
     goSeedPhrase: () -> Unit,
     goSettings: () -> Unit,
@@ -144,6 +146,7 @@ fun Home(
                     transactionHistory,
                     isUpdateAvailable = isUpdateAvailable,
                     isKeepScreenOnDuringSync = isKeepScreenOnDuringSync,
+                    isFiatConversionEnabled = isFiatConversionEnabled,
                     goReceive = goReceive,
                     goSend = goSend,
                 )
@@ -282,6 +285,7 @@ private fun HomeMainContent(
     transactionHistory: ImmutableList<CommonTransaction>,
     isUpdateAvailable: Boolean,
     isKeepScreenOnDuringSync: Boolean?,
+    isFiatConversionEnabled: Boolean,
     goReceive: () -> Unit,
     goSend: () -> Unit,
 ) {
@@ -290,7 +294,7 @@ private fun HomeMainContent(
             .verticalScroll(rememberScrollState())
             .padding(top = paddingValues.calculateTopPadding())
     ) {
-        Status(walletSnapshot, isUpdateAvailable)
+        Status(walletSnapshot, isUpdateAvailable, isFiatConversionEnabled)
 
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -316,7 +320,8 @@ private fun isSyncing(status: Synchronizer.Status): Boolean {
 @Suppress("LongMethod", "MagicNumber")
 private fun Status(
     walletSnapshot: WalletSnapshot,
-    updateAvailable: Boolean
+    updateAvailable: Boolean,
+    isFiatConversionEnabled: Boolean
 ) {
     val configuration = LocalConfiguration.current
     val contentSizeRatioRatio = if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -376,22 +381,24 @@ private fun Status(
                     HeaderWithZecIcon(amount = walletDisplayValues.zecAmountText)
                 }
 
-                Spacer(modifier = Modifier.height(8.dp))
+                if (isFiatConversionEnabled) {
+                    Spacer(modifier = Modifier.height(8.dp))
 
-                when (walletDisplayValues.fiatCurrencyAmountState) {
-                    is FiatCurrencyConversionRateState.Current -> {
-                        BodyWithFiatCurrencySymbol(
-                            amount = walletDisplayValues.fiatCurrencyAmountText
-                        )
-                    }
-                    is FiatCurrencyConversionRateState.Stale -> {
-                        // Note: we should show information about staleness too
-                        BodyWithFiatCurrencySymbol(
-                            amount = walletDisplayValues.fiatCurrencyAmountText
-                        )
-                    }
-                    is FiatCurrencyConversionRateState.Unavailable -> {
-                        Body(text = walletDisplayValues.fiatCurrencyAmountText)
+                    when (walletDisplayValues.fiatCurrencyAmountState) {
+                        is FiatCurrencyConversionRateState.Current -> {
+                            BodyWithFiatCurrencySymbol(
+                                amount = walletDisplayValues.fiatCurrencyAmountText
+                            )
+                        }
+                        is FiatCurrencyConversionRateState.Stale -> {
+                            // Note: we should show information about staleness too
+                            BodyWithFiatCurrencySymbol(
+                                amount = walletDisplayValues.fiatCurrencyAmountText
+                            )
+                        }
+                        is FiatCurrencyConversionRateState.Unavailable -> {
+                            Body(text = walletDisplayValues.fiatCurrencyAmountText)
+                        }
                     }
                 }
 

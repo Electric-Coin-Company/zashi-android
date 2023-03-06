@@ -60,8 +60,10 @@ class HomeTestSetup(
         Home(
             walletSnapshot,
             transactionHistory = persistentListOf(),
-            isKeepScreenOnDuringSync = false,
             isUpdateAvailable = false,
+            isKeepScreenOnDuringSync = false,
+            isFiatConversionEnabled = true,
+            isDebugMenuEnabled = false,
             goSettings = {
                 onSettingsCount.incrementAndGet()
             },
@@ -81,7 +83,6 @@ class HomeTestSetup(
                 onSendCount.incrementAndGet()
             },
             resetSdk = {},
-            isDebugMenuEnabled = false,
         )
     }
 
