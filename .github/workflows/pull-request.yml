@@ -230,7 +230,7 @@ jobs:
         timeout-minutes: 4
         run: |
           # Note that we explicitly check just the Kotlin modules, to avoid compiling the Android modules here
-          ./gradlew :crash-lib:check :preference-api-lib:check :spackle-lib:check
+          ./gradlew :configuration-api-lib:check :crash-lib:check :preference-api-lib:check :spackle-lib:check
       - name: Collect Artifacts
         if: ${{ always() }}
         timeout-minutes: 1
@@ -240,7 +240,7 @@ jobs:
 
           mkdir ${ARTIFACTS_DIR_PATH}
 
-          zip -r ${RESULTS_ZIP_PATH} . -i \*build/reports/\*
+          zip -r ${RESULTS_ZIP_PATH} . -i \*build/reports/\* \*/build/kover/html/\* \*/build/kover/xml/report.xml
       - name: Upload Artifacts
         if: ${{ always() }}
         uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce

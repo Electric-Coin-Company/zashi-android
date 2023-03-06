@@ -47,6 +47,7 @@ dependencies {
         exclude(group = "org.jetbrains.kotlin", module = "kotlin-build-common")
     }
     implementation("wtf.emulator:gradle-plugin:${rootProperties.getProperty("EMULATOR_WTF_GRADLE_PLUGIN_VERSION")}")
+    implementation("org.jetbrains.kotlinx.kover:org.jetbrains.kotlinx.kover.gradle.plugin:${rootProperties.getProperty("KOVER_VERSION")}")
 }
 
 // A slightly gross way to use the root gradle.properties as the single source of truth for version numbers
