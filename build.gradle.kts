@@ -100,6 +100,7 @@ tasks {
 
             "ZCASH_RELEASE_APP_NAME" to "sECCant",
             "ZCASH_RELEASE_PACKAGE_NAME" to "co.electriccoin.zcash",
+            "ZCASH_SUPPORT_EMAIL_ADDRESS" to "",
 
             "ZCASH_DEBUG_KEYSTORE_PATH" to "",
             "ZCASH_RELEASE_KEYSTORE_PATH" to "",
