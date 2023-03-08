@@ -12,7 +12,7 @@ object WorkIds {
 
         workManager.enqueueUniquePeriodicWork(
             WORK_ID_BACKGROUND_SYNC,
-            ExistingPeriodicWorkPolicy.REPLACE,
+            ExistingPeriodicWorkPolicy.KEEP,
             SyncWorker.newWorkRequest()
         )
     }
