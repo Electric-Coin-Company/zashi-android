@@ -29,7 +29,7 @@ When coverage is enabled, running instrumentation tests will automatically gener
 
 ### Generating code coverage locally
 - `./gradlew <android-module-name>:connectedCheck -PIS_ANDROID_INSTRUMENTATION_TEST_COVERAGE_ENABLED=true` for Android modules. These modules internally use JaCoCo to generate test coverage.
-- `./gradlew <kotlin-only-module-name>:check` for Kotlin modules. These modules internally use Kover to generate test coverage.
+- `./gradlew <kotlin-only-module-name>:check` for Kotlin modules. These modules internally use Kover to generate test coverage. You can then find the coverage report in `<kotlin-only-module-name>/build/kover/html/index.html`. 
 
 ### Generating code coverage with emulator.wtf
 1. `./gradlew <module-name>:testDebugWithEmulatorWtf -PIS_ANDROID_INSTRUMENTATION_TEST_COVERAGE_ENABLED=true`
