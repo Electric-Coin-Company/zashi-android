@@ -1,5 +1,3 @@
-import kotlinx.kover.api.KoverMergedConfig
-
 buildscript {
     dependencyLocking {
         // This property is treated specially, as it is not defined by default in the root gradle.properties
@@ -59,7 +57,6 @@ buildscript {
 plugins {
     id("com.github.ben-manes.versions")
     id("com.osacky.fulladle")
-    id("org.jetbrains.kotlinx.kover")
     id("secant.detekt-conventions")
     id("secant.ktlint-conventions")
     id("secant.rosetta-conventions")
@@ -194,33 +191,4 @@ fladle {
     directoriesToPull.set(listOf(
         "/sdcard/googletest/test_outputfiles"
     ))
-}
-
-kover {
-    isDisabled.set(!project.property("IS_KOTLIN_TEST_COVERAGE_ENABLED").toString().toBoolean())
-    engine.set(kotlinx.kover.api.JacocoEngine(project.property("JACOCO_VERSION").toString()))
-
-    // Don't run on the Android projects, as they have coverage generated in a different way
-    // through Android's instrumented tests
-    extensions.configure<KoverMergedConfig> {
-        enable()
-        filters {
-            projects {
-                excludes.addAll(setOf(
-                    "app",
-                    "crash-android-lib",
-                    "preference-impl-android-lib",
-                    "sdk-ext-lib",
-                    "sdk-ext-ui-lib",
-                    "spackle-android-lib",
-                    "test-lib",
-                    "ui-benchmark-test",
-                    "ui-design-lib",
-                    "ui-integration-test",
-                    "ui-lib",
-                    "ui-screenshot-test"
-                ))
-            }
-        }
-    }
 }

@@ -2,6 +2,9 @@ plugins {
     kotlin("multiplatform")
     id("secant.kotlin-multiplatform-build-conventions")
     id("secant.dependency-conventions")
+
+    id("org.jetbrains.kotlinx.kover")
+    id("secant.kover-conventions")
 }
 
 kotlin {
