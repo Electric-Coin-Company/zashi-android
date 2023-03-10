@@ -112,7 +112,9 @@ internal fun WrapHome(
             goSend = goSend,
             resetSdk = {
                 walletViewModel.resetSdk()
-            }
+            },
+            drawerState = drawerState,
+            scope = scope
         )
 
         activity.reportFullyDrawn()
