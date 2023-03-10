@@ -36,12 +36,26 @@ class HomeViewTest : UiTestPrerequisites() {
             it.assertIsDisplayed()
         }
 
+        composeTestRule.onNodeWithTag(HomeTag.FIAT_CONVERSION).also {
+            it.assertIsDisplayed()
+        }
+
         composeTestRule.onNodeWithText(getStringResource(R.string.home_button_send)).also {
             it.assertIsDisplayed()
         }
 
         composeTestRule.onNodeWithText(getStringResource(R.string.home_button_receive)).also {
             it.assertIsDisplayed()
+        }
+    }
+
+    @Test
+    @MediumTest
+    fun hide_fiat_conversion() {
+        newTestSetup(isShowFiatConversion = false)
+
+        composeTestRule.onNodeWithTag(HomeTag.FIAT_CONVERSION).also {
+            it.assertDoesNotExist()
         }
     }
 
@@ -133,9 +147,10 @@ class HomeViewTest : UiTestPrerequisites() {
         assertEquals(1, testSetup.getOnAboutCount())
     }
 
-    private fun newTestSetup() = HomeTestSetup(
+    private fun newTestSetup(isShowFiatConversion: Boolean = true) = HomeTestSetup(
         composeTestRule,
-        WalletSnapshotFixture.new()
+        WalletSnapshotFixture.new(),
+        isShowFiatConversion = isShowFiatConversion
     ).apply {
         setDefaultContent()
     }

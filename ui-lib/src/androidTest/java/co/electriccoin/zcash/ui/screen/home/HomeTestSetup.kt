@@ -11,6 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger
 class HomeTestSetup(
     private val composeTestRule: ComposeContentTestRule,
     private val walletSnapshot: WalletSnapshot,
+    private val isShowFiatConversion: Boolean
 ) {
     private val onAboutCount = AtomicInteger(0)
     private val onSeedCount = AtomicInteger(0)
@@ -62,7 +63,7 @@ class HomeTestSetup(
             transactionHistory = persistentListOf(),
             isUpdateAvailable = false,
             isKeepScreenOnDuringSync = false,
-            isFiatConversionEnabled = true,
+            isFiatConversionEnabled = isShowFiatConversion,
             isDebugMenuEnabled = false,
             goSettings = {
                 onSettingsCount.incrementAndGet()

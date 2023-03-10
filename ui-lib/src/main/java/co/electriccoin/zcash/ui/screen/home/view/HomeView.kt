@@ -382,22 +382,24 @@ private fun Status(
                 }
 
                 if (isFiatConversionEnabled) {
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Column(Modifier.testTag(HomeTag.FIAT_CONVERSION)) {
+                        Spacer(modifier = Modifier.height(8.dp))
 
-                    when (walletDisplayValues.fiatCurrencyAmountState) {
-                        is FiatCurrencyConversionRateState.Current -> {
-                            BodyWithFiatCurrencySymbol(
-                                amount = walletDisplayValues.fiatCurrencyAmountText
-                            )
-                        }
-                        is FiatCurrencyConversionRateState.Stale -> {
-                            // Note: we should show information about staleness too
-                            BodyWithFiatCurrencySymbol(
-                                amount = walletDisplayValues.fiatCurrencyAmountText
-                            )
-                        }
-                        is FiatCurrencyConversionRateState.Unavailable -> {
-                            Body(text = walletDisplayValues.fiatCurrencyAmountText)
+                        when (walletDisplayValues.fiatCurrencyAmountState) {
+                            is FiatCurrencyConversionRateState.Current -> {
+                                BodyWithFiatCurrencySymbol(
+                                    amount = walletDisplayValues.fiatCurrencyAmountText
+                                )
+                            }
+                            is FiatCurrencyConversionRateState.Stale -> {
+                                // Note: we should show information about staleness too
+                                BodyWithFiatCurrencySymbol(
+                                    amount = walletDisplayValues.fiatCurrencyAmountText
+                                )
+                            }
+                            is FiatCurrencyConversionRateState.Unavailable -> {
+                                Body(text = walletDisplayValues.fiatCurrencyAmountText)
+                            }
                         }
                     }
                 }
