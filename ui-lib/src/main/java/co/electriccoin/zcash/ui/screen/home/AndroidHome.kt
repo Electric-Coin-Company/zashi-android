@@ -5,6 +5,7 @@ package co.electriccoin.zcash.ui.screen.home
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.viewModels
+import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
@@ -24,6 +25,7 @@ import co.electriccoin.zcash.ui.screen.home.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.settings.viewmodel.SettingsViewModel
 import co.electriccoin.zcash.ui.screen.update.AppUpdateCheckerImp
 import co.electriccoin.zcash.ui.screen.update.model.UpdateState
+import kotlinx.coroutines.CoroutineScope
 
 @Composable
 @Suppress("LongParameterList")
@@ -89,13 +91,7 @@ internal fun WrapHome(
 
         val transactionSnapshot = walletViewModel.transactionSnapshot.collectAsStateWithLifecycle().value
 
-        val drawerState = rememberDrawerState(DrawerValue.Closed)
-        val scope = rememberCoroutineScope()
-
-        // override Android back navigation action to close drawer, if opened
-        BackHandler(drawerState.isOpen) {
-            drawerState.closeDrawerMenu(scope)
-        }
+        val drawerValues = drawerBackHandler()
 
         Home(
             walletSnapshot,
@@ -113,10 +109,30 @@ internal fun WrapHome(
             resetSdk = {
                 walletViewModel.resetSdk()
             },
-            drawerState = drawerState,
-            scope = scope
+            drawerState = drawerValues.drawerState,
+            scope = drawerValues.scope
         )
 
         activity.reportFullyDrawn()
     }
 }
+
+/**
+ * Custom Drawer menu composable with back navigation handling feature, which returns its necessary values.
+ */
+@Composable
+internal fun drawerBackHandler(
+    drawerState: DrawerState = rememberDrawerState(DrawerValue.Closed),
+    scope: CoroutineScope = rememberCoroutineScope()
+): DrawerValuesWrapper {
+    // Override Android back navigation action to close drawer, if opened
+    BackHandler(drawerState.isOpen) {
+        drawerState.closeDrawerMenu(scope)
+    }
+    return DrawerValuesWrapper(drawerState, scope)
+}
+
+class DrawerValuesWrapper (
+    val drawerState: DrawerState,
+    val scope: CoroutineScope
+)
