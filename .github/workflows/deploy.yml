@@ -9,6 +9,9 @@
 # FIREBASE_DEBUG_JSON_BASE64 - Optional JSON to enable Firebase (e.g. Crashlytics) for debug builds
 # FIREBASE_RELEASE_JSON_BASE64 - Optional JSON to enable Firebase (e.g. Crashlytics) for release builds
 
+# Expected variables
+# SUPPORT_EMAIL_ADDRESS - Contact email address for sending requests from the app
+
 name: Deploy
 
 on:

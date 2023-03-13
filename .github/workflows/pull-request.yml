@@ -7,6 +7,7 @@
 
 # Expected variables
 # FIREBASE_TEST_LAB_PROJECT - Firebase Test Lab project name
+# SUPPORT_EMAIL_ADDRESS - Contact email address for sending requests from the app
 
 name: Pull Request
 
