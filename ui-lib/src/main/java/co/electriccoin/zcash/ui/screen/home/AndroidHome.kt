@@ -132,7 +132,7 @@ internal fun drawerBackHandler(
     return DrawerValuesWrapper(drawerState, scope)
 }
 
-class DrawerValuesWrapper (
+internal data class DrawerValuesWrapper(
     val drawerState: DrawerState,
     val scope: CoroutineScope
 )
