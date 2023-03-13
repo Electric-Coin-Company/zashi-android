@@ -16,6 +16,8 @@ import co.electriccoin.zcash.spackle.FirebaseTestLabUtil
 import co.electriccoin.zcash.ui.BuildConfig
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.common.closeDrawerMenu
+import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
+import co.electriccoin.zcash.ui.configuration.RemoteConfig
 import co.electriccoin.zcash.ui.screen.home.view.Home
 import co.electriccoin.zcash.ui.screen.home.viewmodel.CheckUpdateViewModel
 import co.electriccoin.zcash.ui.screen.home.viewmodel.WalletViewModel
@@ -72,6 +74,7 @@ internal fun WrapHome(
     val settingsViewModel by activity.viewModels<SettingsViewModel>()
 
     val isKeepScreenOnWhileSyncing = settingsViewModel.isKeepScreenOnWhileSyncing.collectAsStateWithLifecycle().value
+    val isFiatConversionEnabled = ConfigurationEntries.IS_FIAT_CONVERSION_ENABLED.getValue(RemoteConfig.current)
 
     if (null == walletSnapshot) {
         // Display loading indicator
@@ -99,6 +102,7 @@ internal fun WrapHome(
             transactionSnapshot,
             isUpdateAvailable = updateAvailable,
             isKeepScreenOnDuringSync = isKeepScreenOnWhileSyncing,
+            isFiatConversionEnabled = isFiatConversionEnabled,
             isDebugMenuEnabled = isDebugMenuEnabled,
             goSeedPhrase = goSeedPhrase,
             goSettings = goSettings,
