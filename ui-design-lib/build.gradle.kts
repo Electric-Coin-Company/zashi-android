@@ -29,6 +29,7 @@ android {
 
 dependencies {
     implementation(libs.androidx.annotation)
+    implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.core)
     implementation(libs.androidx.splash)
     implementation(libs.bundles.androidx.compose.core)
