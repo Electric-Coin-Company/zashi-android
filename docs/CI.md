@@ -14,6 +14,7 @@ To enhance security, [OpenID Connect](https://docs.github.com/en/actions/deploym
 
 ### Pull request
 * Variables
+    * `ZCASH_SUPPORT_EMAIL_ADDRESS` - Email address for user support requests.
     * `FIREBASE_TEST_LAB_PROJECT` - Firebase Test Lab project name.
 * Secrets
     * `EMULATOR_WTF_API_KEY` - API key for [Emulator.wtf](https://emulator.wtf)
@@ -35,6 +36,8 @@ Note that pull requests will create a "release" build with a temporary fake sign
 Note that `FIREBASE_DEBUG_JSON_BASE64` and `FIREBASE_RELEASE_JSON_BASE64` are not truly considered secret, as they contain API keys that are embedded in the application.  However we are not including them in the repository to reduce accidental pollution of our crash report data from repository forks.
 
 ### Release deployment
+* Variables
+    * `ZCASH_SUPPORT_EMAIL_ADDRESS` - Email address for user support requests.
 * Secrets
     * `GOOGLE_PLAY_CLOUD_PROJECT` - Google Cloud project associated with Google Play.
     * `GOOGLE_PLAY_SERVICE_ACCOUNT` - Email address of service account.

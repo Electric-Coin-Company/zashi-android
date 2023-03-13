@@ -23,17 +23,17 @@ Contributions are very much welcomed!  Please read our [Contributing Guidelines]
 # Forking
 If you plan to fork the project to create a new app of your own, please make the following changes.  (If you're making a GitHub fork to contribute back to the project, these steps are not necessary.)
 
-1. Change the app name and package name under [gradle.properties](gradle.properties)
-    1. ZCASH_RELEASE_APP_NAME
-    1. ZCASH_RELEASE_PACKAGE_NAME
-1. Change the support email address under ui-lib/src/res/ui/support/values/strings.xml
+1. Change the app name under [gradle.properties](gradle.properties)
+    1. See `ZCASH_RELEASE_APP_NAME`
+1. Change the package name under [app/build.gradle.kts](app/build.gradle.kts)
+    1. See `ZCASH_RELEASE_PACKAGE_NAME`
+1. Change the support email address under [gradle.properties](gradle.properties)
+    1. See `ZCASH_SUPPORT_EMAIL_ADDRESS`
 1. Remove any copyrighted ZCash or Electric Coin Company icons, logos, or assets
     1. ui-lib/src/main/res/common/ - All of the the ic_launcher assets
-1. Change the package name
-    1. Under [app/build.gradle.kts](app/build.gradle.kts), change the package name of the application
 1. Optional
-    1. Configure secrets for [Continuous Integration](docs/CI.md).
-    1. Configure Firebase API keys and placing them under `app/src/debug/google-services.json` and `app/src/release/google-services.json`
+    1. Configure secrets and variables for [Continuous Integration](docs/CI.md)
+    1. Configure Firebase API keys and place them under `app/src/debug/google-services.json` and `app/src/release/google-services.json`
 
 # Known Issues
 1. Intel-based machines may have trouble building in Android Studio.  The workaround is to add the following line to `~/.gradle/gradle.properties` `ZCASH_IS_DEPENDENCY_LOCKING_ENABLED=false`.  See [#420](https://github.com/zcash/secant-android-wallet/issues/420) for more information.

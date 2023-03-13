@@ -140,6 +140,7 @@ android {
     applicationVariants.all {
         val defaultAppName = project.property("ZCASH_RELEASE_APP_NAME").toString()
         val debugAppNameSuffix = project.property("ZCASH_DEBUG_APP_NAME_SUFFIX").toString()
+        val supportEmailAddress = project.property("ZCASH_SUPPORT_EMAIL_ADDRESS").toString()
         when (this.name) {
             "zcashtestnetDebug" -> {
                 resValue("string", "app_name", "$defaultAppName ($testnetNetworkName)$debugAppNameSuffix")
@@ -154,6 +155,7 @@ android {
                 resValue("string", "app_name", defaultAppName)
             }
         }
+        resValue("string", "support_email_address", supportEmailAddress)
     }
 
     playConfigs {
