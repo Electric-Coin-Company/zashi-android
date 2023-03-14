@@ -95,7 +95,9 @@ fun ComposablePreview() {
                 goAbout = {},
                 goReceive = {},
                 goSend = {},
-                resetSdk = {}
+                resetSdk = {},
+                drawerState = rememberDrawerState(DrawerValue.Closed),
+                scope = rememberCoroutineScope()
             )
         }
     }
@@ -118,8 +120,8 @@ fun Home(
     goReceive: () -> Unit,
     goSend: () -> Unit,
     resetSdk: () -> Unit,
-    drawerState: DrawerState = rememberDrawerState(DrawerValue.Closed),
-    scope: CoroutineScope = rememberCoroutineScope()
+    drawerState: DrawerState,
+    scope: CoroutineScope
 ) {
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -166,7 +168,8 @@ private fun HomeTopAppBar(
         title = { Text(text = stringResource(id = R.string.app_name)) },
         navigationIcon = {
             IconButton(
-                onClick = openDrawer
+                onClick = openDrawer,
+                modifier = Modifier.testTag(HomeTag.DRAWER_MENU_OPEN_BUTTON)
             ) {
                 Icon(
                     imageVector = Icons.Filled.Menu,
@@ -232,7 +235,9 @@ private fun HomeDrawer(
     goSupport: () -> Unit,
     goAbout: () -> Unit,
 ) {
-    ModalDrawerSheet {
+    ModalDrawerSheet(
+        modifier = Modifier.testTag(HomeTag.DRAWER_MENU)
+    ) {
         Spacer(Modifier.height(12.dp))
         NavigationDrawerItem(
             icon = { Icon(Icons.Default.Password, contentDescription = null) },

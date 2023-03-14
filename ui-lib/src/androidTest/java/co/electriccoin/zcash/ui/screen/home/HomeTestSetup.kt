@@ -58,6 +58,7 @@ class HomeTestSetup(
     @Composable
     @Suppress("TestFunctionName")
     fun DefaultContent() {
+        val drawerValues = drawerBackHandler()
         Home(
             walletSnapshot,
             transactionHistory = persistentListOf(),
@@ -84,6 +85,8 @@ class HomeTestSetup(
                 onSendCount.incrementAndGet()
             },
             resetSdk = {},
+            drawerState = drawerValues.drawerState,
+            scope = drawerValues.scope
         )
     }
 
