@@ -54,7 +54,7 @@ private val smallDimens = Dimens(
 )
 
 private val xlargeDimens = Dimens(
-    spacingXtiny = 104.dp,
+    spacingXtiny = 4.dp,
     spacingTiny = 8.dp,
     spacingSmall = 16.dp,
     spacingDefault = 32.dp,
