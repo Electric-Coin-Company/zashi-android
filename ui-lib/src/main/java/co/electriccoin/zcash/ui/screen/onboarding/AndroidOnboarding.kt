@@ -2,13 +2,13 @@
 
 package co.electriccoin.zcash.ui.screen.onboarding
 
-import android.content.ClipboardManager
 import android.content.Context
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import cash.z.ecc.android.sdk.model.BlockHeight
 import cash.z.ecc.android.sdk.model.PersistableWallet
 import cash.z.ecc.android.sdk.model.SeedPhrase
 import cash.z.ecc.android.sdk.model.ZcashNetwork
@@ -24,15 +24,14 @@ import co.electriccoin.zcash.ui.screen.home.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.onboarding.view.LongOnboarding
 import co.electriccoin.zcash.ui.screen.onboarding.view.ShortOnboarding
 import co.electriccoin.zcash.ui.screen.onboarding.viewmodel.OnboardingViewModel
-import co.electriccoin.zcash.ui.screen.restore.view.RestoreWallet
-import co.electriccoin.zcash.ui.screen.restore.viewmodel.CompleteWordSetState
-import co.electriccoin.zcash.ui.screen.restore.viewmodel.RestoreViewModel
+import co.electriccoin.zcash.ui.screen.restore.WrapRestore
 
 @Composable
 internal fun MainActivity.WrapOnboarding() {
     WrapOnboarding(this)
 }
 
+@Suppress("LongMethod")
 @Composable
 internal fun WrapOnboarding(
     activity: ComponentActivity
@@ -55,7 +54,8 @@ internal fun WrapOnboarding(
                 persistExistingWalletWithSeedPhrase(
                     applicationContext,
                     walletViewModel,
-                    SeedPhraseFixture.new()
+                    SeedPhraseFixture.new(),
+                    birthday = null
                 )
             } else {
                 walletViewModel.persistNewWallet()
@@ -71,7 +71,8 @@ internal fun WrapOnboarding(
                 persistExistingWalletWithSeedPhrase(
                     applicationContext,
                     walletViewModel,
-                    SeedPhraseFixture.new()
+                    SeedPhraseFixture.new(),
+                    birthday = null
                 )
             } else {
                 onboardingViewModel.setIsImporting(true)
@@ -82,7 +83,8 @@ internal fun WrapOnboarding(
             persistExistingWalletWithSeedPhrase(
                 applicationContext,
                 walletViewModel,
-                SeedPhraseFixture.new()
+                SeedPhraseFixture.new(),
+                birthday = null
             )
         }
 
@@ -109,45 +111,6 @@ internal fun WrapOnboarding(
     }
 }
 
-@Composable
-private fun WrapRestore(activity: ComponentActivity) {
-    val walletViewModel by activity.viewModels<WalletViewModel>()
-    val onboardingViewModel by activity.viewModels<OnboardingViewModel>()
-    val restoreViewModel by activity.viewModels<RestoreViewModel>()
-
-    val applicationContext = LocalContext.current.applicationContext
-
-    when (val completeWordList = restoreViewModel.completeWordList.collectAsStateWithLifecycle().value) {
-        CompleteWordSetState.Loading -> {
-            // Although it might perform IO, it should be relatively fast.
-            // Consider whether to display indeterminate progress here.
-            // Another option would be to go straight to the restore screen with autocomplete
-            // disabled for a few milliseconds.  Users would probably never notice due to the
-            // time it takes to re-orient on the new screen, unless users were doing this
-            // on a daily basis and become very proficient at our UI.  The Therac-25 has
-            // historical precedent on how that could cause problems.
-        }
-        is CompleteWordSetState.Loaded -> {
-            RestoreWallet(
-                completeWordList.list,
-                restoreViewModel.userWordList,
-                onBack = { onboardingViewModel.setIsImporting(false) },
-                paste = {
-                    val clipboardManager = applicationContext.getSystemService(ClipboardManager::class.java)
-                    return@RestoreWallet clipboardManager?.primaryClip?.toString()
-                },
-                onFinished = {
-                    persistExistingWalletWithSeedPhrase(
-                        applicationContext,
-                        walletViewModel,
-                        SeedPhrase(restoreViewModel.userWordList.current.value)
-                    )
-                }
-            )
-        }
-    }
-}
-
 /**
  * Persists existing wallet together with the backup complete flag to disk. Be aware of that, it
  * triggers navigation changes, as we observe the WalletViewModel.secretState.
@@ -155,19 +118,21 @@ private fun WrapRestore(activity: ComponentActivity) {
  * Write the backup complete flag first, then the seed phrase. That avoids the UI flickering to
  * the backup screen. Assume if a user is restoring from a backup, then the user has a valid backup.
  *
- * @param seedPhrase to be persisted along with the wallet object
+ * @param seedPhrase to be persisted as part of the wallet.
+ * @param birthday optional user provided birthday to be persisted as part of the wallet.
  */
-private fun persistExistingWalletWithSeedPhrase(
+internal fun persistExistingWalletWithSeedPhrase(
     context: Context,
     walletViewModel: WalletViewModel,
-    seedPhrase: SeedPhrase
+    seedPhrase: SeedPhrase,
+    birthday: BlockHeight?
 ) {
     walletViewModel.persistBackupComplete()
 
     val network = ZcashNetwork.fromResources(context)
     val restoredWallet = PersistableWallet(
         network,
-        null,
+        birthday,
         seedPhrase
     )
     walletViewModel.persistExistingWallet(restoredWallet)

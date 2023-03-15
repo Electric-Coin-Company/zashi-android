@@ -2,15 +2,21 @@
     <string name="restore_header">Create a wallet</string>
     <string name="restore_title">Wallet import</string>
     <string name="restore_back_content_description">Back</string>
-    <string name="restore_button_clear">Clear</string>
-    <string name="restore_instructions">You can import your backed up wallet by entering your backup recovery phrase (aka seed phrase) now.</string>
 
-    <string name="restore_warning_suggestions">This word is not in the seed phrase dictionary.  Please select the correct one from the suggestions.</string>
-    <string name="restore_warning_no_suggestions">This word is not in the seed phrase dictionary.</string>
+    <string name="restore_button_clear">Clear</string>
+    <string name="restore_seed_instructions">You can import your backed up wallet by entering your backup recovery phrase (aka seed phrase) now.</string>
+    <string name="restore_seed_button_restore">Restore wallet</string>
+    <string name="restore_seed_warning_suggestions">This word is not in the seed phrase dictionary.  Please select the correct one from the suggestions.</string>
+    <string name="restore_seed_warning_no_suggestions">This word is not in the seed phrase dictionary.</string>
+
+    <string name="restore_birthday_header">Do you know the wallet’s birthday?</string>
+    <string name="restore_birthday_body">This will allow a faster sync. If you don’t know the wallet’s birthday, don’t worry.</string>
+    <string name="restore_birthday_hint">Birthday height</string>
+    <string name="restore_birthday_button_restore">Restore with this birthday</string>
+    <string name="restore_birthday_button_skip">I don’t know the birthday</string>
 
     <string name="restore_complete_header">Seed phrase imported!</string>
     <string name="restore_complete_info">We will now scan the blockchain to find your transactions and balance.  You can do this faster by adding a wallet birthday below.</string>
     <string name="restore_button_see_wallet">Take me to my wallet</string>
-    <string name="restore_button_add_birthday">Add a wallet birthday</string>
 
 </resources>

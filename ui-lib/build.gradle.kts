@@ -87,6 +87,7 @@ dependencies {
     androidTestImplementation(libs.bundles.androidx.test)
     androidTestImplementation(libs.androidx.compose.test.junit)
     androidTestImplementation(libs.androidx.compose.test.manifest)
+    androidTestImplementation(libs.androidx.uiAutomator)
     androidTestImplementation(libs.kotlin.reflect)
     androidTestImplementation(libs.kotlin.test)
 

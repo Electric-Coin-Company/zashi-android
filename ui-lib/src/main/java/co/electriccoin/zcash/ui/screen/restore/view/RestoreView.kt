@@ -1,9 +1,10 @@
+@file:Suppress("TooManyFunctions")
+
 package co.electriccoin.zcash.ui.screen.restore.view
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -53,6 +54,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import cash.z.ecc.android.sdk.model.BlockHeight
+import cash.z.ecc.android.sdk.model.ZcashNetwork
 import cash.z.ecc.sdk.model.SeedPhraseValidation
 import co.electriccoin.zcash.spackle.model.Index
 import co.electriccoin.zcash.ui.R
@@ -65,9 +68,13 @@ import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.Header
 import co.electriccoin.zcash.ui.design.component.NavigationButton
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
+import co.electriccoin.zcash.ui.design.component.TertiaryButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.theme.ZcashTheme.dimens
 import co.electriccoin.zcash.ui.screen.restore.RestoreTag
 import co.electriccoin.zcash.ui.screen.restore.model.ParseResult
+import co.electriccoin.zcash.ui.screen.restore.model.RestoreStage
+import co.electriccoin.zcash.ui.screen.restore.state.RestoreState
 import co.electriccoin.zcash.ui.screen.restore.state.WordList
 import co.electriccoin.zcash.ui.screen.restore.state.wordValidation
 import kotlinx.collections.immutable.ImmutableList
@@ -81,6 +88,8 @@ fun PreviewRestore() {
     ZcashTheme(darkTheme = true) {
         GradientSurface {
             RestoreWallet(
+                ZcashNetwork.Mainnet,
+                restoreState = RestoreState(RestoreStage.Seed),
                 completeWordList = persistentHashSetOf(
                     "abandon",
                     "ability",
@@ -94,6 +103,8 @@ fun PreviewRestore() {
                     "ribbon"
                 ),
                 userWordList = WordList(listOf("abandon", "absorb")),
+                restoreHeight = null,
+                setRestoreHeight = {},
                 onBack = {},
                 paste = { "" },
                 onFinished = {}
@@ -113,11 +124,21 @@ fun PreviewRestoreComplete() {
 }
 
 // TODO [#409]: https://github.com/zcash/secant-android-wallet/issues/409
+/**
+ * Note that the restore review doesn't allow the user to go back once the seed is entered correctly.
+ *
+ * @param restoreHeight A null height indicates no user input.
+ */
+@Suppress("LongParameterList", "LongMethod")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun RestoreWallet(
+    zcashNetwork: ZcashNetwork,
+    restoreState: RestoreState,
     completeWordList: ImmutableSet<String>,
     userWordList: WordList,
+    restoreHeight: BlockHeight?,
+    setRestoreHeight: (BlockHeight?) -> Unit,
     onBack: () -> Unit,
     paste: () -> String?,
     onFinished: () -> Unit
@@ -126,49 +147,92 @@ fun RestoreWallet(
     val focusRequester = remember { FocusRequester() }
     val parseResult = ParseResult.new(completeWordList, textState)
 
-    SecureScreen()
-    userWordList.wordValidation().collectAsState(null).value?.let { seedPhraseValidation ->
-        if (seedPhraseValidation !is SeedPhraseValidation.Valid) {
-            Scaffold(topBar = {
-                RestoreTopAppBar(onBack = onBack, onClear = { userWordList.set(emptyList()) })
-            }, bottomBar = {
-                Column(Modifier.verticalScroll(rememberScrollState())) {
-                    Warn(parseResult)
-                    Autocomplete(parseResult = parseResult, {
-                        textState = ""
-                        userWordList.append(listOf(it))
-                        focusRequester.requestFocus()
-                    })
-                    NextWordTextField(
+    val currentStage = restoreState.current.collectAsStateWithLifecycle().value
+
+    Scaffold(
+        topBar = {
+            RestoreTopAppBar(
+                onBack = {
+                    if (currentStage.hasPrevious()) {
+                        restoreState.goPrevious()
+                    } else {
+                        onBack()
+                    }
+                },
+                isShowClear = currentStage == RestoreStage.Seed,
+                onClear = { userWordList.set(emptyList()) }
+            )
+        },
+        bottomBar = {
+            when (currentStage) {
+                RestoreStage.Seed -> {
+                    RestoreSeedBottomBar(
+                        userWordList = userWordList,
                         parseResult = parseResult,
-                        text = textState,
-                        setText = { textState = it },
-                        modifier = Modifier.focusRequester(focusRequester)
+                        setTextState = { textState = it },
+                        focusRequester = focusRequester
                     )
                 }
-            }) { paddingValues ->
-                RestoreMainContent(
-                    paddingValues = paddingValues,
-                    userWordList = userWordList,
-                    onTextStateChange = { textState = it },
-                    focusRequester = focusRequester,
-                    parseResult = parseResult,
-                    paste = paste
-                )
+                RestoreStage.Birthday -> {
+                    // No content
+                }
+                RestoreStage.Complete -> {
+                    // No content
+                }
             }
-        } else {
-            // In some cases we need to hide the software keyboard manually, as it stays shown after
-            // all words are filled successfully.
-            LocalSoftwareKeyboardController.current?.hide()
+        },
+        content = { paddingValues ->
+            when (currentStage) {
+                RestoreStage.Seed -> {
+                    SecureScreen()
 
-            RestoreComplete(onComplete = onFinished)
+                    RestoreSeedMainContent(
+                        userWordList = userWordList,
+                        textState = textState,
+                        setTextState = { textState = it },
+                        focusRequester = focusRequester,
+                        parseResult = parseResult,
+                        paste = paste,
+                        goNext = { restoreState.goNext() },
+                        modifier = Modifier.padding(
+                            top = paddingValues.calculateTopPadding(),
+                            bottom = paddingValues.calculateBottomPadding()
+                        )
+                    )
+                }
+                RestoreStage.Birthday -> {
+                    RestoreBirthday(
+                        zcashNetwork = zcashNetwork,
+                        initialRestoreHeight = restoreHeight,
+                        setRestoreHeight = setRestoreHeight,
+                        onNext = { restoreState.goNext() },
+                        modifier = Modifier.padding(
+                            top = paddingValues.calculateTopPadding(),
+                            bottom = paddingValues.calculateBottomPadding()
+                        )
+                    )
+                }
+                RestoreStage.Complete -> {
+                    // In some cases we need to hide the software keyboard manually, as it stays shown after
+                    // input on prior screens
+                    LocalSoftwareKeyboardController.current?.hide()
+
+                    RestoreComplete(
+                        onComplete = onFinished,
+                        modifier = Modifier.padding(
+                            top = paddingValues.calculateTopPadding(),
+                            bottom = paddingValues.calculateBottomPadding()
+                        )
+                    )
+                }
+            }
         }
-    }
+    )
 }
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-private fun RestoreTopAppBar(onBack: () -> Unit, onClear: () -> Unit) {
+private fun RestoreTopAppBar(onBack: () -> Unit, isShowClear: Boolean, onClear: () -> Unit) {
     TopAppBar(
         title = { Text(text = stringResource(id = R.string.restore_title)) },
         navigationIcon = {
@@ -182,7 +246,9 @@ private fun RestoreTopAppBar(onBack: () -> Unit, onClear: () -> Unit) {
             }
         },
         actions = {
-            NavigationButton(onClick = onClear, stringResource(R.string.restore_button_clear))
+            if (isShowClear) {
+                NavigationButton(onClick = onClear, stringResource(R.string.restore_button_clear))
+            }
         }
     )
 }
@@ -190,50 +256,96 @@ private fun RestoreTopAppBar(onBack: () -> Unit, onClear: () -> Unit) {
 // TODO [#672] Implement custom seed phrase pasting for wallet import
 // TODO [#672] https://github.com/zcash/secant-android-wallet/issues/672
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Suppress("UNUSED_PARAMETER", "LongParameterList")
 @Composable
-private fun RestoreMainContent(
-    paddingValues: PaddingValues,
+private fun RestoreSeedMainContent(
     userWordList: WordList,
-    onTextStateChange: (String) -> Unit,
+    textState: String,
+    setTextState: (String) -> Unit,
     focusRequester: FocusRequester,
     parseResult: ParseResult,
-    paste: () -> String?
+    paste: () -> String?,
+    goNext: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val currentUserWordList = userWordList.current.collectAsStateWithLifecycle().value
     val scrollState = rememberScrollState()
     val scope = rememberCoroutineScope()
 
     if (parseResult is ParseResult.Add) {
-        onTextStateChange("")
+        setTextState("")
         userWordList.append(parseResult.words)
     }
 
+    val isSeedValid = userWordList.wordValidation().collectAsState(null).value is SeedPhraseValidation.Valid
+
     Column(
-        Modifier
-            .fillMaxWidth()
-            .fillMaxHeight()
-            .verticalScroll(scrollState)
-            .padding(
-                top = paddingValues.calculateTopPadding(),
-                bottom = paddingValues.calculateBottomPadding()
-            )
+        modifier.then(Modifier.verticalScroll(scrollState))
     ) {
         Body(
-            modifier = Modifier.padding(16.dp),
-            text = stringResource(id = R.string.restore_instructions)
+            modifier = Modifier.padding(dimens.spacingDefault),
+            text = stringResource(id = R.string.restore_seed_instructions)
         )
 
         ChipGridWithText(currentUserWordList)
+
+        if (!isSeedValid) {
+            NextWordTextField(
+                parseResult = parseResult,
+                text = textState,
+                setText = { setTextState(it) },
+                modifier = Modifier.focusRequester(focusRequester)
+            )
+        }
+
+        // TODO: Push the button to the bottom of the screen
+        Spacer(modifier = Modifier.weight(MINIMAL_WEIGHT))
+
+        PrimaryButton(
+            onClick = goNext,
+            text = stringResource(id = R.string.restore_seed_button_restore),
+            enabled = isSeedValid
+        )
+
+        if (isSeedValid) {
+            // Hides the keyboard, making it easier for users to see the next button
+            LocalSoftwareKeyboardController.current?.hide()
+        }
     }
 
-// Cause text field to refocus
+    // Cause text field to refocus
     DisposableEffect(parseResult) {
-        focusRequester.requestFocus()
+        if (!isSeedValid) {
+            focusRequester.requestFocus()
+        }
         scope.launch {
             scrollState.scrollTo(scrollState.maxValue)
         }
         onDispose { }
+    }
+}
+
+@Composable
+private fun RestoreSeedBottomBar(
+    userWordList: WordList,
+    parseResult: ParseResult,
+    setTextState: (String) -> Unit,
+    focusRequester: FocusRequester,
+    modifier: Modifier = Modifier
+) {
+    val isSeedValid = userWordList.wordValidation().collectAsState(null).value is SeedPhraseValidation.Valid
+    // Hide the field once the user has completed the seed phrase; if they need the field back then
+    // the user can hit the clear button
+    if (!isSeedValid) {
+        Column(modifier) {
+            Warn(parseResult)
+            Autocomplete(parseResult = parseResult, {
+                setTextState("")
+                userWordList.append(listOf(it))
+                focusRequester.requestFocus()
+            })
+        }
     }
 }
 
@@ -276,21 +388,22 @@ private fun NextWordTextField(
     setText: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    /*
-     * Treat the user input as a password, but disable the transformation to obscure input.
-     */
     Surface(
         modifier = modifier
             .fillMaxWidth()
-            .padding(4.dp),
+            .padding(dimens.spacingTiny),
         shape = RoundedCornerShape(8.dp),
         color = MaterialTheme.colorScheme.secondary,
         shadowElevation = 8.dp
     ) {
+        /*
+         * Treat the user input as a password for more secure input, but disable the transformation
+         * to obscure typing.
+         */
         TextField(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(4.dp)
+                .padding(dimens.spacingTiny)
                 .testTag(RestoreTag.SEED_WORD_TEXT_FIELD),
             value = text,
             onValueChange = setText,
@@ -359,7 +472,7 @@ private fun Warn(parseResult: ParseResult) {
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(4.dp),
+                .padding(dimens.spacingTiny),
             shape = RoundedCornerShape(8.dp),
             color = MaterialTheme.colorScheme.secondary,
             shadowElevation = 4.dp
@@ -367,21 +480,85 @@ private fun Warn(parseResult: ParseResult) {
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(4.dp),
+                    .padding(dimens.spacingTiny),
                 textAlign = TextAlign.Center,
                 text = if (parseResult.suggestions.isEmpty()) {
-                    stringResource(id = R.string.restore_warning_no_suggestions)
+                    stringResource(id = R.string.restore_seed_warning_no_suggestions)
                 } else {
-                    stringResource(id = R.string.restore_warning_suggestions)
+                    stringResource(id = R.string.restore_seed_warning_suggestions)
                 }
             )
         }
     }
 }
 
+@Suppress("UNUSED_PARAMETER")
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun RestoreComplete(onComplete: () -> Unit) {
-    Column {
+private fun RestoreBirthday(
+    zcashNetwork: ZcashNetwork,
+    initialRestoreHeight: BlockHeight?,
+    setRestoreHeight: (BlockHeight?) -> Unit,
+    onNext: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val (height, setHeight) = rememberSaveable {
+        mutableStateOf(initialRestoreHeight?.value?.toString() ?: "")
+    }
+
+    Column(modifier) {
+        Header(stringResource(R.string.restore_birthday_header))
+        Body(stringResource(R.string.restore_birthday_body))
+        TextField(
+            value = height,
+            onValueChange = { heightString ->
+                val filteredHeightString = heightString.filter { it.isDigit() }
+                setHeight(filteredHeightString)
+            },
+            Modifier
+                .fillMaxWidth()
+                .padding(dimens.spacingTiny)
+                .testTag(RestoreTag.BIRTHDAY_TEXT_FIELD),
+            label = { Text(stringResource(id = R.string.restore_birthday_hint)) },
+            keyboardOptions = KeyboardOptions(
+                KeyboardCapitalization.None,
+                autoCorrect = false,
+                imeAction = ImeAction.Done,
+                keyboardType = KeyboardType.Number
+            ),
+            keyboardActions = KeyboardActions(onAny = {}),
+            shape = RoundedCornerShape(8.dp),
+        )
+        Spacer(
+            modifier = Modifier
+                .weight(MINIMAL_WEIGHT)
+        )
+
+        val isBirthdayValid = height.toLongOrNull()?.let {
+            it >= zcashNetwork.saplingActivationHeight.value
+        } ?: false
+
+        PrimaryButton(
+            onClick = {
+                setRestoreHeight(BlockHeight.new(zcashNetwork, height.toLong()))
+                onNext()
+            },
+            text = stringResource(R.string.restore_birthday_button_restore),
+            enabled = isBirthdayValid
+        )
+        TertiaryButton(
+            onClick = {
+                setRestoreHeight(null)
+                onNext()
+            },
+            text = stringResource(R.string.restore_birthday_button_skip)
+        )
+    }
+}
+
+@Composable
+private fun RestoreComplete(onComplete: () -> Unit, modifier: Modifier = Modifier) {
+    Column(modifier) {
         Header(stringResource(R.string.restore_complete_header))
         Body(stringResource(R.string.restore_complete_info))
         Spacer(
@@ -390,6 +567,5 @@ private fun RestoreComplete(onComplete: () -> Unit) {
                 .weight(MINIMAL_WEIGHT)
         )
         PrimaryButton(onComplete, stringResource(R.string.restore_button_see_wallet))
-        // TODO [#151]: Add option to provide wallet birthday
     }
 }

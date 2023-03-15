@@ -1,6 +1,8 @@
 package co.electriccoin.zcash.ui.screen.restore.state
 
+import cash.z.ecc.android.sdk.model.SeedPhrase
 import cash.z.ecc.sdk.model.SeedPhraseValidation
+import co.electriccoin.zcash.ui.common.first
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,7 +19,11 @@ class WordList(initial: List<String> = emptyList()) {
     }
 
     fun append(words: List<String>) {
-        mutableState.value = (current.value + words).toPersistentList()
+        val newList = (current.value + words)
+            .first(SeedPhrase.SEED_PHRASE_SIZE) // Prevent pasting too many words
+            .toPersistentList()
+
+        mutableState.value = newList
     }
 
     // Custom toString to prevent leaking word list
