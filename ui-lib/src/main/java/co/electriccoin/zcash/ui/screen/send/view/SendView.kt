@@ -2,7 +2,6 @@ package co.electriccoin.zcash.ui.screen.send.view
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -48,6 +47,7 @@ import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.TimedButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.theme.ZcashTheme.dimens
 import co.electriccoin.zcash.ui.screen.send.ext.ABBREVIATION_INDEX
 import co.electriccoin.zcash.ui.screen.send.ext.Saver
 import co.electriccoin.zcash.ui.screen.send.ext.abbreviated
@@ -94,12 +94,21 @@ fun Send(
         })
     }) { paddingValues ->
         SendMainContent(
-            paddingValues,
-            mySpendableBalance,
-            sendStage,
-            pressAndHoldInteractionSource,
-            setSendStage,
-            onCreateAndSend = onCreateAndSend
+            myBalance = mySpendableBalance,
+            sendStage = sendStage,
+            pressAndHoldInteractionSource = pressAndHoldInteractionSource,
+            setSendStage = setSendStage,
+            onCreateAndSend = onCreateAndSend,
+            modifier = Modifier
+                .verticalScroll(
+                    rememberScrollState()
+                )
+                .padding(
+                    top = paddingValues.calculateTopPadding() + dimens.spacingDefault,
+                    bottom = dimens.spacingDefault,
+                    start = dimens.spacingDefault,
+                    end = dimens.spacingDefault
+                )
         )
     }
 }
@@ -125,32 +134,34 @@ private fun SendTopAppBar(onBack: () -> Unit) {
 @Suppress("LongParameterList")
 @Composable
 private fun SendMainContent(
-    paddingValues: PaddingValues,
     myBalance: Zatoshi,
     sendStage: SendStage,
     pressAndHoldInteractionSource: MutableInteractionSource,
     setSendStage: (SendStage) -> Unit,
-    onCreateAndSend: (ZecSend) -> Unit
+    onCreateAndSend: (ZecSend) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val (zecSend, setZecSend) = rememberSaveable(stateSaver = ZecSend.Saver) { mutableStateOf(null) }
 
     if (sendStage == SendStage.Form || null == zecSend) {
         SendForm(
-            paddingValues,
             myBalance = myBalance,
-            previousZecSend = zecSend
-        ) {
-            setSendStage(SendStage.Confirmation)
-            setZecSend(it)
-        }
+            previousZecSend = zecSend,
+            onCreateAndSend = {
+                setSendStage(SendStage.Confirmation)
+                setZecSend(it)
+            },
+            modifier = modifier
+        )
     } else {
         Confirmation(
-            paddingValues,
-            zecSend,
-            pressAndHoldInteractionSource
-        ) {
-            onCreateAndSend(zecSend)
-        }
+            zecSend = zecSend,
+            pressAndHoldInteractionSource = pressAndHoldInteractionSource,
+            onConfirmation = {
+                onCreateAndSend(zecSend)
+            },
+            modifier = modifier
+        )
     }
 }
 
@@ -161,10 +172,10 @@ private fun SendMainContent(
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 private fun SendForm(
-    paddingValues: PaddingValues,
     myBalance: Zatoshi,
     previousZecSend: ZecSend?,
-    onCreateAndSend: (ZecSend) -> Unit
+    onCreateAndSend: (ZecSend) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
     val monetarySeparators = MonetarySeparators.current()
@@ -183,10 +194,8 @@ private fun SendForm(
     }
 
     Column(
-        Modifier
+        modifier
             .fillMaxHeight()
-            .padding(top = paddingValues.calculateTopPadding())
-            .verticalScroll(rememberScrollState())
     ) {
         Row(Modifier.fillMaxWidth()) {
             Text(text = myBalance.toZecString())
@@ -256,15 +265,12 @@ private fun SendForm(
 
 @Composable
 private fun Confirmation(
-    paddingValues: PaddingValues,
     zecSend: ZecSend,
     pressAndHoldInteractionSource: MutableInteractionSource,
-    onConfirmation: () -> Unit
+    onConfirmation: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    Column(
-        Modifier
-            .padding(top = paddingValues.calculateTopPadding())
-    ) {
+    Column(modifier) {
         Text(
             stringResource(
                 R.string.send_amount_and_address_format,
