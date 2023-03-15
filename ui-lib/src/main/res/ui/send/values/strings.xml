@@ -2,6 +2,8 @@
     <string name="send_title">Send ZEC</string>
     <string name="send_back_content_description">Back</string>
     <string name="send_scan_content_description">Scan</string>
+    <string name="send_balance" formatted="true"><xliff:g id="balance" example="12.345">%1$s</xliff:g> ZEC Available</string>
+    <string name="send_balance_subtitle">Additional funds may be in transit.</string>
     <string name="send_to">Who would you like to send ZEC to?</string>
     <string name="send_amount">How much?</string>
     <string name="send_memo">Memo</string>
