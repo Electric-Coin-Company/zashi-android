@@ -18,8 +18,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -28,7 +26,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -46,6 +43,7 @@ import cash.z.ecc.sdk.fixture.ZatoshiFixture
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.Body
+import co.electriccoin.zcash.ui.design.component.FormTextField
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.Header
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
@@ -216,31 +214,25 @@ private fun SendForm(
 
         Spacer(modifier = Modifier.height(dimens.spacingLarge))
 
-        TextField(
+        FormTextField(
             value = amountZecString,
             onValueChange = { newValue ->
                 if (!ZecStringExt.filterContinuous(context, monetarySeparators, newValue)) {
-                    return@TextField
+                    return@FormTextField
                 }
                 amountZecString = newValue.filter { allowedCharacters.contains(it) }
             },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             label = { Text(stringResource(id = R.string.send_amount)) },
-            colors = TextFieldDefaults.textFieldColors(
-                containerColor = Color.Transparent
-            ),
             modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(Modifier.size(dimens.spacingSmall))
 
-        TextField(
+        FormTextField(
             value = recipientAddressString,
             onValueChange = { recipientAddressString = it },
             label = { Text(stringResource(id = R.string.send_to)) },
-            colors = TextFieldDefaults.textFieldColors(
-                containerColor = Color.Transparent
-            ),
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -248,7 +240,7 @@ private fun SendForm(
 
         // TODO [#810]: Disable Memo UI field in case of Transparent address
         // TODO [#810]: https://github.com/zcash/secant-android-wallet/issues/810
-        TextField(
+        FormTextField(
             value = memoString,
             onValueChange = {
                 if (Memo.isWithinMaxLength(it)) {
@@ -256,9 +248,6 @@ private fun SendForm(
                 }
             },
             label = { Text(stringResource(id = R.string.send_memo)) },
-            colors = TextFieldDefaults.textFieldColors(
-                containerColor = Color.Transparent
-            ),
             modifier = Modifier.fillMaxWidth()
         )
 
