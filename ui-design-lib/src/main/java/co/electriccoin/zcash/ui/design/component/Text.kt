@@ -17,10 +17,12 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 fun Header(
     text: String,
     modifier: Modifier = Modifier,
-    color: Color = ZcashTheme.colors.onBackgroundHeader
+    textAlign: TextAlign = TextAlign.Start,
+    color: Color = ZcashTheme.colors.onBackgroundHeader,
 ) {
     Text(
         text = text,
+        textAlign = textAlign,
         style = MaterialTheme.typography.headlineLarge,
         color = color,
         modifier = modifier
@@ -46,8 +48,8 @@ fun Body(
 @Composable
 fun Small(
     text: String,
-    textAlign: TextAlign,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    textAlign: TextAlign = TextAlign.Start
 ) {
     Text(
         text = text,

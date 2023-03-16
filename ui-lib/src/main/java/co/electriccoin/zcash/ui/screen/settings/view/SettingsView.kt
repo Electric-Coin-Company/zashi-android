@@ -1,7 +1,11 @@
 package co.electriccoin.zcash.ui.screen.settings.view
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
@@ -25,7 +29,7 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.SwitchWithLabel
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
-import co.electriccoin.zcash.ui.design.theme.ZcashTheme.paddings
+import co.electriccoin.zcash.ui.design.theme.ZcashTheme.dimens
 
 @Preview("Settings")
 @Composable
@@ -75,10 +79,16 @@ fun Settings(
             onBackgroundSyncSettingsChanged = onBackgroundSyncSettingsChanged,
             onIsKeepScreenOnDuringSyncSettingsChanged = onIsKeepScreenOnDuringSyncSettingsChanged,
             onAnalyticsSettingsChanged = onAnalyticsSettingsChanged,
-            modifier = Modifier.padding(
-                top = paddingValues.calculateTopPadding() + paddings.padding,
-                bottom = paddings.padding
-            )
+            modifier = Modifier
+                .verticalScroll(
+                    rememberScrollState()
+                )
+                .padding(
+                    top = paddingValues.calculateTopPadding() + dimens.spacingDefault,
+                    bottom = dimens.spacingDefault,
+                    start = dimens.spacingDefault,
+                    end = dimens.spacingDefault
+                )
         )
     }
 }
@@ -150,20 +160,23 @@ private fun SettingsMainContent(
         SwitchWithLabel(
             label = stringResource(id = R.string.settings_enable_background_sync),
             state = isBackgroundSyncEnabled,
-            onStateChange = { onBackgroundSyncSettingsChanged(!isBackgroundSyncEnabled) },
-            modifier = Modifier.padding(paddings.padding)
+            onStateChange = { onBackgroundSyncSettingsChanged(!isBackgroundSyncEnabled) }
         )
+
+        Spacer(modifier = Modifier.height(dimens.spacingXlarge))
+
         SwitchWithLabel(
             label = stringResource(id = R.string.settings_enable_keep_screen_on),
             state = isKeepScreenOnDuringSyncEnabled,
-            onStateChange = { onIsKeepScreenOnDuringSyncSettingsChanged(!isKeepScreenOnDuringSyncEnabled) },
-            modifier = Modifier.padding(paddings.padding)
+            onStateChange = { onIsKeepScreenOnDuringSyncSettingsChanged(!isKeepScreenOnDuringSyncEnabled) }
         )
+
+        Spacer(modifier = Modifier.height(dimens.spacingXlarge))
+
         SwitchWithLabel(
             label = stringResource(id = R.string.settings_enable_analytics),
             state = isAnalyticsEnabled,
-            onStateChange = { onAnalyticsSettingsChanged(!isAnalyticsEnabled) },
-            modifier = Modifier.padding(paddings.padding)
+            onStateChange = { onAnalyticsSettingsChanged(!isAnalyticsEnabled) }
         )
     }
 }

@@ -2,14 +2,15 @@ package co.electriccoin.zcash.ui.screen.send.view
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -17,7 +18,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -29,8 +29,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import cash.z.ecc.android.sdk.model.Memo
 import cash.z.ecc.android.sdk.model.MonetarySeparators
 import cash.z.ecc.android.sdk.model.Zatoshi
@@ -42,10 +42,14 @@ import cash.z.ecc.android.sdk.model.toZecString
 import cash.z.ecc.sdk.fixture.ZatoshiFixture
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
+import co.electriccoin.zcash.ui.design.component.Body
+import co.electriccoin.zcash.ui.design.component.FormTextField
 import co.electriccoin.zcash.ui.design.component.GradientSurface
+import co.electriccoin.zcash.ui.design.component.Header
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.TimedButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.theme.ZcashTheme.dimens
 import co.electriccoin.zcash.ui.screen.send.ext.ABBREVIATION_INDEX
 import co.electriccoin.zcash.ui.screen.send.ext.Saver
 import co.electriccoin.zcash.ui.screen.send.ext.abbreviated
@@ -92,12 +96,21 @@ fun Send(
         })
     }) { paddingValues ->
         SendMainContent(
-            paddingValues,
-            mySpendableBalance,
-            sendStage,
-            pressAndHoldInteractionSource,
-            setSendStage,
-            onCreateAndSend = onCreateAndSend
+            myBalance = mySpendableBalance,
+            sendStage = sendStage,
+            pressAndHoldInteractionSource = pressAndHoldInteractionSource,
+            setSendStage = setSendStage,
+            onCreateAndSend = onCreateAndSend,
+            modifier = Modifier
+                .verticalScroll(
+                    rememberScrollState()
+                )
+                .padding(
+                    top = paddingValues.calculateTopPadding() + dimens.spacingDefault,
+                    bottom = dimens.spacingDefault,
+                    start = dimens.spacingDefault,
+                    end = dimens.spacingDefault
+                )
         )
     }
 }
@@ -123,32 +136,34 @@ private fun SendTopAppBar(onBack: () -> Unit) {
 @Suppress("LongParameterList")
 @Composable
 private fun SendMainContent(
-    paddingValues: PaddingValues,
     myBalance: Zatoshi,
     sendStage: SendStage,
     pressAndHoldInteractionSource: MutableInteractionSource,
     setSendStage: (SendStage) -> Unit,
-    onCreateAndSend: (ZecSend) -> Unit
+    onCreateAndSend: (ZecSend) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val (zecSend, setZecSend) = rememberSaveable(stateSaver = ZecSend.Saver) { mutableStateOf(null) }
 
     if (sendStage == SendStage.Form || null == zecSend) {
         SendForm(
-            paddingValues,
             myBalance = myBalance,
-            previousZecSend = zecSend
-        ) {
-            setSendStage(SendStage.Confirmation)
-            setZecSend(it)
-        }
+            previousZecSend = zecSend,
+            onCreateAndSend = {
+                setSendStage(SendStage.Confirmation)
+                setZecSend(it)
+            },
+            modifier = modifier
+        )
     } else {
         Confirmation(
-            paddingValues,
-            zecSend,
-            pressAndHoldInteractionSource
-        ) {
-            onCreateAndSend(zecSend)
-        }
+            zecSend = zecSend,
+            pressAndHoldInteractionSource = pressAndHoldInteractionSource,
+            onConfirmation = {
+                onCreateAndSend(zecSend)
+            },
+            modifier = modifier
+        )
     }
 }
 
@@ -159,15 +174,17 @@ private fun SendMainContent(
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 private fun SendForm(
-    paddingValues: PaddingValues,
     myBalance: Zatoshi,
     previousZecSend: ZecSend?,
-    onCreateAndSend: (ZecSend) -> Unit
+    onCreateAndSend: (ZecSend) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
     val monetarySeparators = MonetarySeparators.current()
     val allowedCharacters = ZecString.allowedCharacters(monetarySeparators)
 
+    // TODO [#809]: Fix ZEC balance on Send screen
+    // TODO [#809]: https://github.com/zcash/secant-android-wallet/issues/809
     var amountZecString by rememberSaveable {
         mutableStateOf(previousZecSend?.amount?.toZecString() ?: "")
     }
@@ -181,41 +198,58 @@ private fun SendForm(
     }
 
     Column(
-        Modifier
+        modifier
             .fillMaxHeight()
-            .padding(top = paddingValues.calculateTopPadding())
     ) {
-        Row(Modifier.fillMaxWidth()) {
-            Text(text = myBalance.toZecString())
-        }
+        Header(
+            text = stringResource(id = R.string.send_balance, myBalance.toZecString()),
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth()
+        )
+        Body(
+            text = stringResource(id = R.string.send_balance_subtitle),
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth()
+        )
 
-        TextField(
+        Spacer(modifier = Modifier.height(dimens.spacingLarge))
+
+        FormTextField(
             value = amountZecString,
             onValueChange = { newValue ->
                 if (!ZecStringExt.filterContinuous(context, monetarySeparators, newValue)) {
-                    return@TextField
+                    return@FormTextField
                 }
                 amountZecString = newValue.filter { allowedCharacters.contains(it) }
             },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            label = { Text(stringResource(id = R.string.send_amount)) }
+            label = { Text(stringResource(id = R.string.send_amount)) },
+            modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(Modifier.size(8.dp))
+        Spacer(Modifier.size(dimens.spacingSmall))
 
-        TextField(
+        FormTextField(
             value = recipientAddressString,
             onValueChange = { recipientAddressString = it },
-            label = { Text(stringResource(id = R.string.send_to)) }
+            label = { Text(stringResource(id = R.string.send_to)) },
+            modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(Modifier.size(8.dp))
+        Spacer(Modifier.size(dimens.spacingSmall))
 
-        TextField(value = memoString, onValueChange = {
-            if (Memo.isWithinMaxLength(it)) {
-                memoString = it
-            }
-        }, label = { Text(stringResource(id = R.string.send_memo)) })
+        // TODO [#810]: Disable Memo UI field in case of Transparent address
+        // TODO [#810]: https://github.com/zcash/secant-android-wallet/issues/810
+        FormTextField(
+            value = memoString,
+            onValueChange = {
+                if (Memo.isWithinMaxLength(it)) {
+                    memoString = it
+                }
+            },
+            label = { Text(stringResource(id = R.string.send_memo)) },
+            modifier = Modifier.fillMaxWidth()
+        )
 
         Spacer(Modifier.fillMaxHeight(MINIMAL_WEIGHT))
 
@@ -225,8 +259,13 @@ private fun SendForm(
              * without regard for RTL.  This will get resolved once we do proper validation for
              * the fields.
              */
-            Text(validation.joinToString(", "))
+            Text(
+                text = validation.joinToString(", "),
+                modifier = Modifier.fillMaxWidth()
+            )
         }
+
+        Spacer(modifier = Modifier.height(dimens.spacingDefault))
 
         PrimaryButton(
             onClick = {
@@ -253,15 +292,12 @@ private fun SendForm(
 
 @Composable
 private fun Confirmation(
-    paddingValues: PaddingValues,
     zecSend: ZecSend,
     pressAndHoldInteractionSource: MutableInteractionSource,
-    onConfirmation: () -> Unit
+    onConfirmation: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    Column(
-        Modifier
-            .padding(top = paddingValues.calculateTopPadding())
-    ) {
+    Column(modifier) {
         Text(
             stringResource(
                 R.string.send_amount_and_address_format,
