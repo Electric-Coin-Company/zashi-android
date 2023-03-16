@@ -1,6 +1,8 @@
 package co.electriccoin.zcash.ui.screen.settings.view
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -83,7 +85,9 @@ fun Settings(
                 )
                 .padding(
                     top = paddingValues.calculateTopPadding() + dimens.spacingDefault,
-                    bottom = dimens.spacingDefault
+                    bottom = dimens.spacingDefault,
+                    start = dimens.spacingDefault,
+                    end = dimens.spacingDefault
                 )
         )
     }
@@ -156,20 +160,23 @@ private fun SettingsMainContent(
         SwitchWithLabel(
             label = stringResource(id = R.string.settings_enable_background_sync),
             state = isBackgroundSyncEnabled,
-            onStateChange = { onBackgroundSyncSettingsChanged(!isBackgroundSyncEnabled) },
-            modifier = Modifier.padding(dimens.spacingDefault)
+            onStateChange = { onBackgroundSyncSettingsChanged(!isBackgroundSyncEnabled) }
         )
+
+        Spacer(modifier = Modifier.height(dimens.spacingXlarge))
+
         SwitchWithLabel(
             label = stringResource(id = R.string.settings_enable_keep_screen_on),
             state = isKeepScreenOnDuringSyncEnabled,
-            onStateChange = { onIsKeepScreenOnDuringSyncSettingsChanged(!isKeepScreenOnDuringSyncEnabled) },
-            modifier = Modifier.padding(dimens.spacingDefault)
+            onStateChange = { onIsKeepScreenOnDuringSyncSettingsChanged(!isKeepScreenOnDuringSyncEnabled) }
         )
+
+        Spacer(modifier = Modifier.height(dimens.spacingXlarge))
+
         SwitchWithLabel(
             label = stringResource(id = R.string.settings_enable_analytics),
             state = isAnalyticsEnabled,
-            onStateChange = { onAnalyticsSettingsChanged(!isAnalyticsEnabled) },
-            modifier = Modifier.padding(dimens.spacingDefault)
+            onStateChange = { onAnalyticsSettingsChanged(!isAnalyticsEnabled) }
         )
     }
 }
