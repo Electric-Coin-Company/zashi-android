@@ -186,6 +186,8 @@ private fun SendForm(
     val monetarySeparators = MonetarySeparators.current()
     val allowedCharacters = ZecString.allowedCharacters(monetarySeparators)
 
+    // TODO [#809]: Fix ZEC balance on Send screen
+    // TODO [#809]: https://github.com/zcash/secant-android-wallet/issues/809
     var amountZecString by rememberSaveable {
         mutableStateOf(previousZecSend?.amount?.toZecString() ?: "")
     }
