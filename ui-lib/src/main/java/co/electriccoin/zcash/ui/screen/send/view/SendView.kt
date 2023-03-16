@@ -247,6 +247,8 @@ private fun SendForm(
 
         Spacer(Modifier.size(8.dp))
 
+        // TODO [#810]: Disable Memo UI field in case of Transparent address
+        // TODO [#810]: https://github.com/zcash/secant-android-wallet/issues/810
         TextField(
             value = memoString,
             onValueChange = {
