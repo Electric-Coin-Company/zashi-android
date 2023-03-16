@@ -1,8 +1,5 @@
 package co.electriccoin.zcash.ui.screen.send.view
 
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.PressInteraction
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
@@ -26,13 +23,11 @@ import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.test.getStringResource
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
@@ -70,7 +65,7 @@ class SendViewTest : UiTestPrerequisites() {
         composeTestRule.setValidAddress()
         composeTestRule.clickCreateAndSend()
         composeTestRule.assertOnConfirmation()
-        clickConfirmation(testSetup.interactionSource)
+        composeTestRule.clickConfirmation()
 
         launch {
             testSetup.mutableActionExecuted.collectWith(this) {
@@ -106,7 +101,7 @@ class SendViewTest : UiTestPrerequisites() {
 
         composeTestRule.clickCreateAndSend()
         composeTestRule.assertOnConfirmation()
-        clickConfirmation(testSetup.interactionSource)
+        composeTestRule.clickConfirmation()
 
         launch {
             testSetup.mutableActionExecuted.collectWith(this) {
@@ -164,7 +159,7 @@ class SendViewTest : UiTestPrerequisites() {
 
         composeTestRule.clickCreateAndSend()
         composeTestRule.assertOnConfirmation()
-        clickConfirmation(testSetup.interactionSource)
+        composeTestRule.clickConfirmation()
 
         launch {
             testSetup.mutableActionExecuted.collectWith(this) {
@@ -242,7 +237,7 @@ class SendViewTest : UiTestPrerequisites() {
 
         composeTestRule.clickCreateAndSend()
         composeTestRule.assertOnConfirmation()
-        clickConfirmation(testSetup.interactionSource)
+        composeTestRule.clickConfirmation()
 
         launch {
             testSetup.mutableActionExecuted.collectWith(this) {
@@ -296,7 +291,6 @@ class SendViewTest : UiTestPrerequisites() {
 
         private val onBackCount = AtomicInteger(0)
         private val onCreateCount = AtomicInteger(0)
-        val interactionSource = MutableInteractionSource()
         val mutableActionExecuted = MutableStateFlow(false)
 
         @Volatile
@@ -322,7 +316,6 @@ class SendViewTest : UiTestPrerequisites() {
                 ZcashTheme {
                     Send(
                         mySpendableBalance = ZatoshiFixture.new(),
-                        pressAndHoldInteractionSource = interactionSource,
                         goBack = {
                             onBackCount.incrementAndGet()
                         },
@@ -386,10 +379,9 @@ private fun ComposeContentTestRule.clickCreateAndSend() {
     }
 }
 
-@OptIn(ExperimentalCoroutinesApi::class)
-private fun TestScope.clickConfirmation(interactionSource: MutableInteractionSource) {
-    launch(Dispatchers.Main) {
-        interactionSource.emit(PressInteraction.Press(Offset.Zero))
+private fun ComposeContentTestRule.clickConfirmation() {
+    onNodeWithText(getStringResource(R.string.send_confirm)).also {
+        it.performClick()
     }
 }
 
