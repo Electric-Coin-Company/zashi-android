@@ -58,8 +58,8 @@ object ZcashTheme {
         @Composable
         get() = LocalDimens.current
 
-    // TODO [807]: [Design system] Remove deprecated Paddings class
-    // TODO [807]: https://github.com/zcash/secant-android-wallet/issues/807
+    // TODO [#807]: [Design system] Remove deprecated Paddings class
+    // TODO [#807]: https://github.com/zcash/secant-android-wallet/issues/807
     val paddings: Paddings
         @Composable
         get() = Paddings()
