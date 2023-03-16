@@ -32,11 +32,13 @@ fun ZcashTheme(
     }
 
     CompositionLocalProvider(LocalExtendedColors provides extendedColors) {
-        MaterialTheme(
-            colorScheme = baseColors,
-            typography = Typography,
-            content = content
-        )
+        ProvideDimens {
+            MaterialTheme(
+                colorScheme = baseColors,
+                typography = Typography,
+                content = content
+            )
+        }
     }
 }
 
@@ -50,6 +52,14 @@ object ZcashTheme {
         @Composable
         get() = LocalExtendedTypography.current
 
+    // TODO [#808]: [Design system] Use Dimens across the app
+    // TODO [#808]: https://github.com/zcash/secant-android-wallet/issues/808
+    val dimens: Dimens
+        @Composable
+        get() = LocalDimens.current
+
+    // TODO [#807]: [Design system] Remove deprecated Paddings class
+    // TODO [#807]: https://github.com/zcash/secant-android-wallet/issues/807
     val paddings: Paddings
         @Composable
         get() = Paddings()
