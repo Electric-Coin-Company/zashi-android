@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.design.theme.internal
+package co.electriccoin.zcash.ui.design.theme
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
