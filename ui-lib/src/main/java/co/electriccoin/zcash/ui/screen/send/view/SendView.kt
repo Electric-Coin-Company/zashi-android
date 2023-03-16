@@ -34,7 +34,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import cash.z.ecc.android.sdk.model.Memo
 import cash.z.ecc.android.sdk.model.MonetarySeparators
 import cash.z.ecc.android.sdk.model.Zatoshi
@@ -233,7 +232,7 @@ private fun SendForm(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(Modifier.size(8.dp))
+        Spacer(Modifier.size(dimens.spacingSmall))
 
         TextField(
             value = recipientAddressString,
@@ -245,7 +244,7 @@ private fun SendForm(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(Modifier.size(8.dp))
+        Spacer(Modifier.size(dimens.spacingSmall))
 
         // TODO [#810]: Disable Memo UI field in case of Transparent address
         // TODO [#810]: https://github.com/zcash/secant-android-wallet/issues/810
