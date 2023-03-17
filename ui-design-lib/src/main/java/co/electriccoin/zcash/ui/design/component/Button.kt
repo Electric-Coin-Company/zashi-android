@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.design.component
 
+import android.widget.Button
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Column
@@ -24,6 +25,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.w3c.dom.Text
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
@@ -157,42 +159,4 @@ fun DangerousButton(
             color = ZcashTheme.colors.onDangerous
         )
     }
-}
-
-@Suppress("LongParameterList")
-@Composable
-fun TimedButton(
-    onClick: () -> Unit,
-    content: @Composable (RowScope.() -> Unit),
-    modifier: Modifier = Modifier,
-    duration: Duration = 5.seconds,
-    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default
-) {
-    LaunchedEffect(interactionSource) {
-        var action: Job? = null
-
-        interactionSource.interactions.collect { interaction ->
-            when (interaction) {
-                is PressInteraction.Press -> {
-                    action = launch(coroutineDispatcher) {
-                        delay(duration)
-                        withContext(Dispatchers.Main) {
-                            onClick()
-                        }
-                    }
-                }
-                is PressInteraction.Release -> {
-                    action?.cancel()
-                }
-            }
-        }
-    }
-
-    Button(
-        modifier = modifier,
-        onClick = {},
-        interactionSource = interactionSource,
-        content = content
-    )
 }
