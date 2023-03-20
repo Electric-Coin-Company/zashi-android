@@ -299,7 +299,6 @@ private fun RestoreSeedMainContent(
             )
         }
 
-        // TODO: Push the button to the bottom of the screen
         Spacer(modifier = Modifier.weight(MINIMAL_WEIGHT))
 
         PrimaryButton(
@@ -307,11 +306,11 @@ private fun RestoreSeedMainContent(
             text = stringResource(id = R.string.restore_seed_button_restore),
             enabled = isSeedValid
         )
+    }
 
-        if (isSeedValid) {
-            // Hides the keyboard, making it easier for users to see the next button
-            LocalSoftwareKeyboardController.current?.hide()
-        }
+    if (isSeedValid) {
+        // Hides the keyboard, making it easier for users to see the next button
+        LocalSoftwareKeyboardController.current?.hide()
     }
 
     // Cause text field to refocus

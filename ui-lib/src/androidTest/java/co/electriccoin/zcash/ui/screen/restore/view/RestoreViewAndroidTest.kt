@@ -3,6 +3,7 @@ package co.electriccoin.zcash.ui.screen.restore.view
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.os.Build.VERSION_CODES
 import android.view.KeyEvent
 import android.view.inputmethod.InputMethodManager
 import androidx.compose.ui.test.assertCountEquals
@@ -12,6 +13,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performTextInput
 import androidx.test.filters.MediumTest
+import androidx.test.filters.SdkSuppress
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import cash.z.ecc.android.sdk.model.SeedPhrase
@@ -51,6 +53,9 @@ class RestoreViewAndroidTest : UiTestPrerequisites() {
 
     @Test
     @MediumTest
+    // Functionality is compatible with Android 27+, but a bug in the Android framework prevents this
+    // test from passing until API 28. See https://issuetracker.google.com/issues/141132133
+    @SdkSuppress(minSdkVersion = VERSION_CODES.P)
     fun paste_too_many_words() {
         val testSetup = newTestSetup()
 
