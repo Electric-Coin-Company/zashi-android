@@ -1,6 +1,5 @@
 package co.electriccoin.zcash.ui.screen.send.view
 
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -22,7 +21,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -47,7 +45,6 @@ import co.electriccoin.zcash.ui.design.component.FormTextField
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.Header
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
-import co.electriccoin.zcash.ui.design.component.TimedButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme.dimens
 import co.electriccoin.zcash.ui.screen.send.ext.ABBREVIATION_INDEX
@@ -69,16 +66,12 @@ fun PreviewSend() {
     }
 }
 
-/**
- * @param pressAndHoldInteractionSource This is an argument that can be injected for automated testing.
- */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Send(
     mySpendableBalance: Zatoshi,
     goBack: () -> Unit,
-    onCreateAndSend: (ZecSend) -> Unit,
-    pressAndHoldInteractionSource: MutableInteractionSource = remember { MutableInteractionSource() }
+    onCreateAndSend: (ZecSend) -> Unit
 ) {
     // For now, we're avoiding sub-navigation to keep the navigation logic simple.  But this might
     // change once deep-linking support  is added.  It depends on whether deep linking should do one of:
@@ -98,7 +91,6 @@ fun Send(
         SendMainContent(
             myBalance = mySpendableBalance,
             sendStage = sendStage,
-            pressAndHoldInteractionSource = pressAndHoldInteractionSource,
             setSendStage = setSendStage,
             onCreateAndSend = onCreateAndSend,
             modifier = Modifier
@@ -138,7 +130,6 @@ private fun SendTopAppBar(onBack: () -> Unit) {
 private fun SendMainContent(
     myBalance: Zatoshi,
     sendStage: SendStage,
-    pressAndHoldInteractionSource: MutableInteractionSource,
     setSendStage: (SendStage) -> Unit,
     onCreateAndSend: (ZecSend) -> Unit,
     modifier: Modifier = Modifier
@@ -158,7 +149,6 @@ private fun SendMainContent(
     } else {
         Confirmation(
             zecSend = zecSend,
-            pressAndHoldInteractionSource = pressAndHoldInteractionSource,
             onConfirmation = {
                 onCreateAndSend(zecSend)
             },
@@ -293,7 +283,6 @@ private fun SendForm(
 @Composable
 private fun Confirmation(
     zecSend: ZecSend,
-    pressAndHoldInteractionSource: MutableInteractionSource,
     onConfirmation: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -306,12 +295,9 @@ private fun Confirmation(
             )
         )
 
-        TimedButton(
+        PrimaryButton(
             onClick = onConfirmation,
-            {
-                Text(text = stringResource(id = R.string.send_confirm))
-            },
-            interactionSource = pressAndHoldInteractionSource
+            text = stringResource(id = R.string.send_confirm)
         )
     }
 }

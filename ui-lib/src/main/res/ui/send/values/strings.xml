@@ -12,6 +12,6 @@
 
     <string name="send_amount_and_address_format" formatted="true">Send <xliff:g id="amount" example="12.345">%1$s</xliff:g> ZEC to <xliff:g id="address" example="zs1g7cqw … mvyzgm">%2$s</xliff:g>?</string>
     <string name="send_abbreviated_address_format" formatted="true"><xliff:g id="first_five" example="zs1g7">%1$s</xliff:g>…<xliff:g id="last_five" example="mvyzg">%2$s</xliff:g></string>
-    <string name="send_confirm">Press and hold to send ZEC</string>
+    <string name="send_confirm">Press to send ZEC</string>
 
 </resources>
