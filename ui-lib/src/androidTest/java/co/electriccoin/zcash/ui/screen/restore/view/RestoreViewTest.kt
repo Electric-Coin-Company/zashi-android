@@ -302,6 +302,7 @@ class RestoreViewTest : UiTestPrerequisites() {
         assertEquals(1, testSetup.getOnBackCount())
     }
 
+    @Test
     @MediumTest
     fun back_from_birthday() {
         val testSetup = newTestSetup(
@@ -319,6 +320,7 @@ class RestoreViewTest : UiTestPrerequisites() {
         assertEquals(0, testSetup.getOnBackCount())
     }
 
+    @Test
     @MediumTest
     fun back_from_complete() {
         val testSetup = newTestSetup(

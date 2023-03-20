@@ -4,18 +4,21 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.os.Build.VERSION_CODES
-import android.view.KeyEvent
 import android.view.inputmethod.InputMethodManager
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.performKeyInput
 import androidx.compose.ui.test.performTextInput
+import androidx.compose.ui.test.pressKey
+import androidx.compose.ui.test.withKeyDown
 import androidx.test.filters.MediumTest
 import androidx.test.filters.SdkSuppress
-import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.uiautomator.UiDevice
 import cash.z.ecc.android.sdk.model.SeedPhrase
 import cash.z.ecc.sdk.fixture.SeedPhraseFixture
 import co.electriccoin.zcash.test.UiTestPrerequisites
@@ -51,11 +54,14 @@ class RestoreViewAndroidTest : UiTestPrerequisites() {
         assertTrue(inputMethodManager.isAcceptingText)
     }
 
+    @OptIn(ExperimentalTestApi::class, ExperimentalComposeUiApi::class)
     @Test
     @MediumTest
-    // Functionality is compatible with Android 27+, but a bug in the Android framework prevents this
-    // test from passing until API 28. See https://issuetracker.google.com/issues/141132133
-    @SdkSuppress(minSdkVersion = VERSION_CODES.P)
+    // Functionality should be compatible with Android 27+, but a bug in the Android framework causes a crash
+    // on Android 27.  Further, copying to the clipboard seems to be broken in emulators until API 33 (even in
+    // other apps like the Contacts app). We haven't been able to test this on physical devices yet, but
+    // we're assuming that it works.
+    @SdkSuppress(minSdkVersion = VERSION_CODES.TIRAMISU)
     fun paste_too_many_words() {
         val testSetup = newTestSetup()
 
@@ -64,10 +70,15 @@ class RestoreViewAndroidTest : UiTestPrerequisites() {
             SeedPhraseFixture.SEED_PHRASE + " " + SeedPhraseFixture.SEED_PHRASE
         )
 
-        UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-            .pressKeyCode(KeyEvent.KEYCODE_V, KeyEvent.META_CTRL_MASK)
+        composeTestRule.onNodeWithTag(RestoreTag.SEED_WORD_TEXT_FIELD).also {
+            it.performKeyInput {
+                withKeyDown(Key.CtrlLeft) {
+                    pressKey(Key.V)
+                }
+            }
+        }
 
-        assertEquals(testSetup.getUserInputWords().size, SeedPhrase.SEED_PHRASE_SIZE)
+        assertEquals(SeedPhrase.SEED_PHRASE_SIZE, testSetup.getUserInputWords().size)
 
         composeTestRule.onNodeWithTag(RestoreTag.SEED_WORD_TEXT_FIELD).also {
             it.assertDoesNotExist()
