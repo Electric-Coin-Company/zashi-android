@@ -185,11 +185,25 @@ class ScreenshotTest : UiTestPrerequisites() {
             }
         }
 
-        composeTestRule.onNodeWithText(resContext.getString(R.string.restore_complete_header)).also {
+        composeTestRule.onNodeWithText(resContext.getString(R.string.restore_seed_button_restore)).also {
+            it.performClick()
+        }
+
+        composeTestRule.onNodeWithText(resContext.getString(R.string.restore_birthday_header)).also {
             it.assertExists()
         }
 
         takeScreenshot(tag, "Import 3")
+
+        composeTestRule.onNodeWithText(resContext.getString(R.string.restore_birthday_button_skip)).also {
+            it.performClick()
+        }
+
+        composeTestRule.onNodeWithText(resContext.getString(R.string.restore_complete_header)).also {
+            it.assertExists()
+        }
+
+        takeScreenshot(tag, "Import 4")
     }
 
     @Test
