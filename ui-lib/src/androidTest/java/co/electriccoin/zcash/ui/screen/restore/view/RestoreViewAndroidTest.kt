@@ -55,7 +55,7 @@ class RestoreViewAndroidTest : UiTestPrerequisites() {
         val testSetup = newTestSetup()
 
         copyToClipboard(
-            InstrumentationRegistry.getInstrumentation().context,
+            getAppContext(),
             SeedPhraseFixture.SEED_PHRASE + " " + SeedPhraseFixture.SEED_PHRASE
         )
 

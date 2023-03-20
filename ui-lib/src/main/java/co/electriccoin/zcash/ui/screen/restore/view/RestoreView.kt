@@ -492,7 +492,6 @@ private fun Warn(parseResult: ParseResult) {
     }
 }
 
-@Suppress("UNUSED_PARAMETER")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun RestoreBirthday(
