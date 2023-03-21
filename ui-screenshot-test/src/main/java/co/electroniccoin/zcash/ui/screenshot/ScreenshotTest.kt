@@ -142,6 +142,7 @@ class ScreenshotTest : UiTestPrerequisites() {
         }
     }
 
+    @Suppress("LongMethod", "FunctionNaming")
     private fun take_screenshots_for_restore_wallet(resContext: Context, tag: String) {
         // TODO [#286]: Screenshot tests fail on Firebase Test Lab
         // TODO [#286]: https://github.com/zcash/secant-android-wallet/issues/286
