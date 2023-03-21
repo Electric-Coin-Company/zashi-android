@@ -222,6 +222,7 @@ private fun SendForm(
     Column(
         modifier
             .fillMaxHeight()
+            .verticalScroll(rememberScrollState())
     ) {
         Header(
             text = stringResource(id = R.string.send_balance, myBalance.toZecString()),
