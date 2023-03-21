@@ -5,7 +5,9 @@ package co.electroniccoin.zcash.ui.screenshot
 import android.content.Context
 import android.os.Build
 import android.os.LocaleList
+import androidx.activity.viewModels
 import androidx.compose.ui.test.assertCountEquals
+import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
@@ -30,6 +32,7 @@ import androidx.test.filters.MediumTest
 import androidx.test.filters.SdkSuppress
 import cash.z.ecc.android.sdk.fixture.WalletAddressFixture
 import cash.z.ecc.android.sdk.model.MonetarySeparators
+import cash.z.ecc.android.sdk.model.SeedPhrase
 import cash.z.ecc.sdk.fixture.SeedPhraseFixture
 import co.electriccoin.zcash.configuration.model.map.StringConfiguration
 import co.electriccoin.zcash.spackle.FirebaseTestLabUtil
@@ -43,12 +46,14 @@ import co.electriccoin.zcash.ui.design.component.UiMode
 import co.electriccoin.zcash.ui.screen.backup.BackupTag
 import co.electriccoin.zcash.ui.screen.home.viewmodel.SecretState
 import co.electriccoin.zcash.ui.screen.restore.RestoreTag
+import co.electriccoin.zcash.ui.screen.restore.viewmodel.RestoreViewModel
 import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.junit.Rule
 import org.junit.Test
+import kotlin.time.Duration.Companion.seconds
 
 private const val DEFAULT_TIMEOUT_MILLISECONDS = 10_000L
 
@@ -185,18 +190,31 @@ class ScreenshotTest : UiTestPrerequisites() {
             }
         }
 
+        composeTestRule.waitUntil {
+            composeTestRule.activity.viewModels<RestoreViewModel>().value.userWordList.current.value.size == SeedPhrase.SEED_PHRASE_SIZE
+        }
+
         composeTestRule.onNodeWithText(resContext.getString(R.string.restore_seed_button_restore)).also {
             it.performScrollTo()
+
+            // Even with waiting for the word list in the view model, there's some latency before the button is enabled
+            composeTestRule.waitUntil(5.seconds.inWholeMilliseconds) {
+                kotlin.runCatching { it.assertIsEnabled() }.isSuccess
+            }
+
             it.performClick()
         }
 
         composeTestRule.onNodeWithText(resContext.getString(R.string.restore_birthday_button_restore)).also {
-            it.assertExists()
+            composeTestRule.waitUntil(5.seconds.inWholeMilliseconds) {
+                kotlin.runCatching { it.assertExists() }.isSuccess
+            }
         }
 
         takeScreenshot(tag, "Import 3")
 
         composeTestRule.onNodeWithText(resContext.getString(R.string.restore_birthday_button_skip)).also {
+            it.performScrollTo()
             it.performClick()
         }
 
