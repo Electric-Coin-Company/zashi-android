@@ -186,10 +186,11 @@ class ScreenshotTest : UiTestPrerequisites() {
         }
 
         composeTestRule.onNodeWithText(resContext.getString(R.string.restore_seed_button_restore)).also {
+            it.performScrollTo()
             it.performClick()
         }
 
-        composeTestRule.onNodeWithText(resContext.getString(R.string.restore_birthday_header)).also {
+        composeTestRule.onNodeWithText(resContext.getString(R.string.restore_birthday_button_restore)).also {
             it.assertExists()
         }
 

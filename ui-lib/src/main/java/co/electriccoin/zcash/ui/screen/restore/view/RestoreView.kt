@@ -503,8 +503,9 @@ private fun RestoreBirthday(
     val (height, setHeight) = rememberSaveable {
         mutableStateOf(initialRestoreHeight?.value?.toString() ?: "")
     }
+    val scrollState = rememberScrollState()
 
-    Column(modifier) {
+    Column(modifier.verticalScroll(scrollState)) {
         Header(stringResource(R.string.restore_birthday_header))
         Body(stringResource(R.string.restore_birthday_body))
         TextField(
