@@ -16,7 +16,7 @@
     <string name="restore_birthday_button_skip">I don’t know the birthday</string>
 
     <string name="restore_complete_header">Seed phrase imported!</string>
-    <string name="restore_complete_info">We will now scan the blockchain to find your transactions and balance.  You can do this faster by adding a wallet birthday below.</string>
+    <string name="restore_complete_info">We will now scan the blockchain to find your transactions and balance.</string>
     <string name="restore_button_see_wallet">Take me to my wallet</string>
 
 </resources>
