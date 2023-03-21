@@ -23,7 +23,7 @@ sealed class SeedPhraseValidation {
             @Suppress("SwallowedException")
             return try {
                 val stringified = list.joinToString(SeedPhrase.DEFAULT_DELIMITER)
-                withContext(Dispatchers.Main) {
+                withContext(Dispatchers.Default) {
                     Mnemonics.MnemonicCode(stringified, Locale.ENGLISH.language).validate()
                 }
 

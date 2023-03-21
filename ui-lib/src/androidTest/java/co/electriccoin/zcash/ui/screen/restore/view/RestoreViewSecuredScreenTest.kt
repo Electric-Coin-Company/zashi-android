@@ -5,10 +5,12 @@ import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.filters.MediumTest
 import cash.z.ecc.android.bip39.Mnemonics
+import cash.z.ecc.android.sdk.model.ZcashNetwork
 import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.common.LocalScreenSecurity
 import co.electriccoin.zcash.ui.common.ScreenSecurity
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.screen.restore.state.RestoreState
 import co.electriccoin.zcash.ui.screen.restore.state.WordList
 import kotlinx.collections.immutable.toPersistentSet
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -41,8 +43,12 @@ class RestoreViewSecuredScreenTest : UiTestPrerequisites() {
                 CompositionLocalProvider(LocalScreenSecurity provides screenSecurity) {
                     ZcashTheme {
                         RestoreWallet(
+                            ZcashNetwork.Mainnet,
+                            RestoreState(),
                             Mnemonics.getCachedWords(Locale.ENGLISH.language).toPersistentSet(),
                             WordList(emptyList()),
+                            restoreHeight = null,
+                            setRestoreHeight = {},
                             onBack = { },
                             paste = { "" },
                             onFinished = { }
