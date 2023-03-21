@@ -7,11 +7,23 @@
     <string name="send_to">Who would you like to send ZEC to?</string>
     <string name="send_amount">How much?</string>
     <string name="send_memo">Memo</string>
-
     <string name="send_create">Send</string>
 
-    <string name="send_amount_and_address_format" formatted="true">Send <xliff:g id="amount" example="12.345">%1$s</xliff:g> ZEC to <xliff:g id="address" example="zs1g7cqw … mvyzgm">%2$s</xliff:g>?</string>
-    <string name="send_abbreviated_address_format" formatted="true"><xliff:g id="first_five" example="zs1g7">%1$s</xliff:g>…<xliff:g id="last_five" example="mvyzg">%2$s</xliff:g></string>
-    <string name="send_confirm">Press to send ZEC</string>
+    <string name="send_confirmation_amount_and_address_format" formatted="true">Send <xliff:g id="amount" example="12.345">%1$s</xliff:g> ZEC to <xliff:g id="address" example="zs1g7cqw … mvyzgm">%2$s</xliff:g>?</string>
+    <string name="send_confirmation_memo_format" formatted="true">Memo: <xliff:g id="memo" example="for Veronika">%1$s</xliff:g></string>
+    <string name="send_confirmation_abbreviated_address_format" formatted="true"><xliff:g id="first_five" example="zs1g7">%1$s</xliff:g>…<xliff:g id="last_five" example="mvyzg">%2$s</xliff:g></string>
+    <string name="send_confirmation_button">Press to send ZEC</string>
+
+    <string name="send_in_progress_amount_format" formatted="true">Sending <xliff:g id="amount" example="12.345">%1$s</xliff:g> ZEC to</string>
+    <string name="send_in_progress_memo_format" formatted="true">with a memo: <xliff:g id="memo" example="for Veronika">%1$s</xliff:g></string>
+    <string name="send_in_progress_wait">Please wait</string>
+
+    <string name="send_failure_title">Sending failure</string>
+    <string name="send_failure_amount_address_memo" formatted="true">Sending failed for: <xliff:g id="amount" example="12.345">%1$s</xliff:g> ZEC to <xliff:g id="address" example="zs1g7cqw … mvyzgm">%2$s</xliff:g> with a memo: <xliff:g id="memo" example="for Veronika">%3$s</xliff:g></string>
+    <string name="send_failure_button">Back</string>
+
+    <string name="send_successful_title">Sending successful</string>
+    <string name="send_successful_amount_address_memo" formatted="true">Sending succeeded for: <xliff:g id="amount" example="12.345">%1$s</xliff:g> ZEC to <xliff:g id="address" example="zs1g7cqw … mvyzgm">%2$s</xliff:g> with a memo: <xliff:g id="memo" example="for Veronika">%3$s</xliff:g></string>
+    <string name="send_successful_button">Close</string>
 
 </resources>

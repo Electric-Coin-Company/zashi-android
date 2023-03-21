@@ -1,14 +1,10 @@
 package co.electriccoin.zcash.ui.screen.send.view
 
-import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
-import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performTextClearance
-import androidx.compose.ui.test.performTextInput
 import androidx.test.filters.MediumTest
 import cash.z.ecc.android.sdk.ext.collectWith
 import cash.z.ecc.android.sdk.fixture.WalletAddressFixture
@@ -16,22 +12,35 @@ import cash.z.ecc.android.sdk.model.Memo
 import cash.z.ecc.android.sdk.model.MonetarySeparators
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.ZecSend
-import cash.z.ecc.sdk.fixture.MemoFixture
-import cash.z.ecc.sdk.fixture.ZatoshiFixture
 import cash.z.ecc.sdk.fixture.ZecRequestFixture
+import cash.z.ecc.sdk.fixture.ZecSendFixture
 import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.screen.send.SendViewTestSetup
+import co.electriccoin.zcash.ui.screen.send.assertOnConfirmation
+import co.electriccoin.zcash.ui.screen.send.assertOnForm
+import co.electriccoin.zcash.ui.screen.send.assertOnSendFailure
+import co.electriccoin.zcash.ui.screen.send.assertOnSendSuccessful
+import co.electriccoin.zcash.ui.screen.send.assertOnSending
+import co.electriccoin.zcash.ui.screen.send.assertSendDisabled
+import co.electriccoin.zcash.ui.screen.send.assertSendEnabled
+import co.electriccoin.zcash.ui.screen.send.clickBack
+import co.electriccoin.zcash.ui.screen.send.clickConfirmation
+import co.electriccoin.zcash.ui.screen.send.clickCreateAndSend
+import co.electriccoin.zcash.ui.screen.send.model.SendStage
+import co.electriccoin.zcash.ui.screen.send.setAmount
+import co.electriccoin.zcash.ui.screen.send.setMemo
+import co.electriccoin.zcash.ui.screen.send.setValidAddress
+import co.electriccoin.zcash.ui.screen.send.setValidAmount
+import co.electriccoin.zcash.ui.screen.send.setValidMemo
 import co.electriccoin.zcash.ui.test.getStringResource
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
-import java.util.concurrent.atomic.AtomicInteger
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
@@ -40,11 +49,22 @@ class SendViewTest : UiTestPrerequisites() {
     @get:Rule
     val composeTestRule = createComposeRule()
 
+    private fun newTestSetup(
+        sendStage: SendStage = SendStage.Form,
+        zecSend: ZecSend? = null
+    ) = SendViewTestSetup(
+        composeTestRule,
+        sendStage,
+        zecSend
+    ).apply {
+        setDefaultContent()
+    }
+
     @Test
     @MediumTest
     fun create_button_disabled() {
         @Suppress("UNUSED_VARIABLE")
-        val testSetup = TestSetup(composeTestRule)
+        val testSetup = newTestSetup()
 
         composeTestRule.onNodeWithText(getStringResource(R.string.send_create)).also {
             it.assertExists()
@@ -56,10 +76,10 @@ class SendViewTest : UiTestPrerequisites() {
     @MediumTest
     @OptIn(ExperimentalCoroutinesApi::class)
     fun create_request_no_memo() = runTest {
-        val testSetup = TestSetup(composeTestRule)
+        val testSetup = newTestSetup()
 
         assertEquals(0, testSetup.getOnCreateCount())
-        assertEquals(null, testSetup.getLastSend())
+        assertEquals(null, testSetup.getLastZecSend())
 
         composeTestRule.setValidAmount()
         composeTestRule.setValidAddress()
@@ -74,7 +94,7 @@ class SendViewTest : UiTestPrerequisites() {
                 assertEquals(1, testSetup.getOnCreateCount())
 
                 launch {
-                    testSetup.getLastSend().also {
+                    testSetup.getLastZecSend().also {
                         assertNotNull(it)
                         assertEquals(WalletAddressFixture.unified(), it.destination)
                         assertEquals(Zatoshi(12345678900000), it.amount)
@@ -90,10 +110,10 @@ class SendViewTest : UiTestPrerequisites() {
     @MediumTest
     @OptIn(ExperimentalCoroutinesApi::class)
     fun create_request_with_memo() = runTest {
-        val testSetup = TestSetup(composeTestRule)
+        val testSetup = newTestSetup()
 
         assertEquals(0, testSetup.getOnCreateCount())
-        assertEquals(null, testSetup.getLastSend())
+        assertEquals(null, testSetup.getLastZecSend())
 
         composeTestRule.setValidAmount()
         composeTestRule.setValidAddress()
@@ -110,7 +130,7 @@ class SendViewTest : UiTestPrerequisites() {
                 assertEquals(1, testSetup.getOnCreateCount())
 
                 launch {
-                    testSetup.getLastSend().also {
+                    testSetup.getLastZecSend().also {
                         assertNotNull(it)
                         assertEquals(WalletAddressFixture.unified(), it.destination)
                         assertEquals(Zatoshi(12345678900000), it.amount)
@@ -126,11 +146,11 @@ class SendViewTest : UiTestPrerequisites() {
     @MediumTest
     @OptIn(ExperimentalCoroutinesApi::class)
     fun check_regex_functionality_valid_inputs() = runTest {
-        val testSetup = TestSetup(composeTestRule)
+        val testSetup = newTestSetup()
         val separators = MonetarySeparators.current()
 
         assertEquals(0, testSetup.getOnCreateCount())
-        assertEquals(null, testSetup.getLastSend())
+        assertEquals(null, testSetup.getLastZecSend())
         composeTestRule.assertSendDisabled()
 
         composeTestRule.setValidAmount()
@@ -168,7 +188,7 @@ class SendViewTest : UiTestPrerequisites() {
                 assertEquals(1, testSetup.getOnCreateCount())
 
                 launch {
-                    testSetup.getLastSend().also {
+                    testSetup.getLastZecSend().also {
                         assertNotNull(it)
                         assertEquals(WalletAddressFixture.unified(), it.destination)
                         assertEquals(Zatoshi(12345678900000), it.amount)
@@ -184,11 +204,11 @@ class SendViewTest : UiTestPrerequisites() {
     @MediumTest
     @OptIn(ExperimentalCoroutinesApi::class)
     fun check_regex_functionality_invalid_inputs() = runTest {
-        val testSetup = TestSetup(composeTestRule)
+        val testSetup = newTestSetup()
         val separators = MonetarySeparators.current()
 
         assertEquals(0, testSetup.getOnCreateCount())
-        assertEquals(null, testSetup.getLastSend())
+        assertEquals(null, testSetup.getLastZecSend())
         composeTestRule.assertSendDisabled()
 
         composeTestRule.setAmount("aaa")
@@ -214,7 +234,7 @@ class SendViewTest : UiTestPrerequisites() {
         composeTestRule.assertSendDisabled()
 
         assertEquals(0, testSetup.getOnCreateCount())
-        assertEquals(null, testSetup.getLastSend())
+        assertEquals(null, testSetup.getLastZecSend())
         composeTestRule.assertSendDisabled()
     }
 
@@ -222,7 +242,7 @@ class SendViewTest : UiTestPrerequisites() {
     @MediumTest
     @OptIn(ExperimentalCoroutinesApi::class)
     fun max_memo_length() = runTest {
-        val testSetup = TestSetup(composeTestRule)
+        val testSetup = newTestSetup()
 
         composeTestRule.setValidAmount()
         composeTestRule.setValidAddress()
@@ -246,7 +266,7 @@ class SendViewTest : UiTestPrerequisites() {
                 assertEquals(1, testSetup.getOnCreateCount())
 
                 launch {
-                    testSetup.getLastSend().also {
+                    testSetup.getLastZecSend().also {
                         assertNotNull(it)
                         assertEquals(WalletAddressFixture.unified(), it.destination)
                         assertEquals(Zatoshi(12345600000), it.amount)
@@ -261,7 +281,7 @@ class SendViewTest : UiTestPrerequisites() {
     @Test
     @MediumTest
     fun back_on_form() {
-        val testSetup = TestSetup(composeTestRule)
+        val testSetup = newTestSetup()
 
         assertEquals(0, testSetup.getOnBackCount())
 
@@ -273,7 +293,7 @@ class SendViewTest : UiTestPrerequisites() {
     @Test
     @MediumTest
     fun back_on_confirmation() {
-        val testSetup = TestSetup(composeTestRule)
+        val testSetup = newTestSetup()
 
         assertEquals(0, testSetup.getOnBackCount())
 
@@ -284,127 +304,95 @@ class SendViewTest : UiTestPrerequisites() {
         composeTestRule.clickBack()
         composeTestRule.assertOnForm()
 
+        assertEquals(1, testSetup.getOnBackCount())
+    }
+
+    @Test
+    @MediumTest
+    fun back_on_sending_disabled_check() {
+        newTestSetup(
+            SendStage.Confirmation,
+            runBlocking { ZecSendFixture.new() }
+        )
+
+        composeTestRule.assertOnConfirmation()
+        composeTestRule.clickConfirmation()
+        composeTestRule.assertOnSending()
+
+        composeTestRule.onNodeWithContentDescription(getStringResource(R.string.send_back_content_description)).also {
+            it.assertDoesNotExist()
+        }
+    }
+
+    @Test
+    @MediumTest
+    fun back_on_send_successful() {
+        val testSetup = newTestSetup(
+            SendStage.SendSuccessful,
+            runBlocking { ZecSendFixture.new() }
+        )
+
         assertEquals(0, testSetup.getOnBackCount())
+
+        composeTestRule.assertOnSendSuccessful()
+        composeTestRule.clickBack()
+
+        assertEquals(1, testSetup.getOnBackCount())
     }
 
-    private class TestSetup(private val composeTestRule: ComposeContentTestRule) {
+    @Test
+    @MediumTest
+    fun close_on_send_successful() {
+        val testSetup = newTestSetup(
+            SendStage.SendSuccessful,
+            runBlocking { ZecSendFixture.new() }
+        )
 
-        private val onBackCount = AtomicInteger(0)
-        private val onCreateCount = AtomicInteger(0)
-        val mutableActionExecuted = MutableStateFlow(false)
+        assertEquals(0, testSetup.getOnBackCount())
 
-        @Volatile
-        private var onSendZecRequest: ZecSend? = null
-
-        fun getOnBackCount(): Int {
-            composeTestRule.waitForIdle()
-            return onBackCount.get()
+        composeTestRule.assertOnSendSuccessful()
+        composeTestRule.onNodeWithText(getStringResource(R.string.send_successful_button)).also {
+            it.assertExists()
+            it.performClick()
         }
 
-        fun getOnCreateCount(): Int {
-            composeTestRule.waitForIdle()
-            return onCreateCount.get()
+        assertEquals(1, testSetup.getOnBackCount())
+    }
+
+    @Test
+    @MediumTest
+    fun back_on_send_failure() {
+        val testSetup = newTestSetup(
+            SendStage.SendFailure,
+            runBlocking { ZecSendFixture.new() }
+        )
+
+        assertEquals(0, testSetup.getOnBackCount())
+
+        composeTestRule.assertOnSendFailure()
+        composeTestRule.clickBack()
+        composeTestRule.assertOnForm()
+
+        assertEquals(1, testSetup.getOnBackCount())
+    }
+
+    @Test
+    @MediumTest
+    fun close_on_send_failure() {
+        val testSetup = newTestSetup(
+            SendStage.SendFailure,
+            runBlocking { ZecSendFixture.new() }
+        )
+
+        assertEquals(0, testSetup.getOnBackCount())
+
+        composeTestRule.assertOnSendFailure()
+        composeTestRule.onNodeWithText(getStringResource(R.string.send_failure_button)).also {
+            it.assertExists()
+            it.performClick()
         }
+        composeTestRule.assertOnForm()
 
-        fun getLastSend(): ZecSend? {
-            composeTestRule.waitForIdle()
-            return onSendZecRequest
-        }
-
-        init {
-            composeTestRule.setContent {
-                ZcashTheme {
-                    Send(
-                        mySpendableBalance = ZatoshiFixture.new(),
-                        goBack = {
-                            onBackCount.incrementAndGet()
-                        },
-                        onCreateAndSend = {
-                            onCreateCount.incrementAndGet()
-                            onSendZecRequest = it
-                            mutableActionExecuted.update { true }
-                        }
-                    )
-                }
-            }
-        }
-    }
-}
-
-private fun ComposeContentTestRule.clickBack() {
-    onNodeWithContentDescription(getStringResource(R.string.send_back_content_description)).also {
-        it.performClick()
-    }
-}
-
-private fun ComposeContentTestRule.setValidAmount() {
-    onNodeWithText(getStringResource(R.string.send_amount)).also {
-        val separators = MonetarySeparators.current()
-        it.performTextClearance()
-        it.performTextInput("123${separators.decimal}456")
-    }
-}
-
-private fun ComposeContentTestRule.setAmount(amount: String) {
-    onNodeWithText(getStringResource(R.string.send_amount)).also {
-        it.performTextClearance()
-        it.performTextInput(amount)
-    }
-}
-
-private fun ComposeContentTestRule.setValidAddress() {
-    onNodeWithText(getStringResource(R.string.send_to)).also {
-        it.performTextClearance()
-        it.performTextInput(WalletAddressFixture.UNIFIED_ADDRESS_STRING)
-    }
-}
-
-private fun ComposeContentTestRule.setValidMemo() {
-    onNodeWithText(getStringResource(R.string.send_memo)).also {
-        it.performTextClearance()
-        it.performTextInput(MemoFixture.MEMO_STRING)
-    }
-}
-
-private fun ComposeContentTestRule.setMemo(memo: String) {
-    onNodeWithText(getStringResource(R.string.send_memo)).also {
-        it.performTextClearance()
-        it.performTextInput(memo)
-    }
-}
-
-private fun ComposeContentTestRule.clickCreateAndSend() {
-    onNodeWithText(getStringResource(R.string.send_create)).also {
-        it.performClick()
-    }
-}
-
-private fun ComposeContentTestRule.clickConfirmation() {
-    onNodeWithText(getStringResource(R.string.send_confirm)).also {
-        it.performClick()
-    }
-}
-
-private fun ComposeContentTestRule.assertOnForm() {
-    onNodeWithText(getStringResource(R.string.send_create)).also {
-        it.assertExists()
-    }
-}
-
-private fun ComposeContentTestRule.assertOnConfirmation() {
-    onNodeWithText(getStringResource(R.string.send_confirm)).also {
-        it.assertExists()
-    }
-}
-
-private fun ComposeContentTestRule.assertSendEnabled() {
-    onNodeWithText(getStringResource(R.string.send_create)).also {
-        it.assertIsEnabled()
-    }
-}
-
-private fun ComposeContentTestRule.assertSendDisabled() {
-    onNodeWithText(getStringResource(R.string.send_create)).also {
-        it.assertIsNotEnabled()
+        assertEquals(1, testSetup.getOnBackCount())
     }
 }
