@@ -5,11 +5,15 @@ package co.electriccoin.zcash.ui.screen.send
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.viewModels
+import androidx.annotation.VisibleForTesting
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import cash.z.ecc.android.sdk.Synchronizer
+import cash.z.ecc.android.sdk.model.UnifiedSpendingKey
+import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.android.sdk.model.isFailedSubmit
 import cash.z.ecc.android.sdk.model.isSubmitSuccess
@@ -36,13 +40,25 @@ private fun WrapSend(
     goBack: () -> Unit
 ) {
     val walletViewModel by activity.viewModels<WalletViewModel>()
-    val scope = rememberCoroutineScope()
 
     val synchronizer = walletViewModel.synchronizer.collectAsStateWithLifecycle().value
 
     val spendableBalance = walletViewModel.walletSnapshot.collectAsStateWithLifecycle().value?.spendableBalance()
 
     val spendingKey = walletViewModel.spendingKey.collectAsStateWithLifecycle().value
+
+    WrapSend(synchronizer, spendableBalance, spendingKey, goBack)
+}
+
+@VisibleForTesting
+@Composable
+internal fun WrapSend(
+    synchronizer: Synchronizer?,
+    spendableBalance: Zatoshi?,
+    spendingKey: UnifiedSpendingKey?,
+    goBack: () -> Unit
+) {
+    val scope = rememberCoroutineScope()
 
     // For now, we're avoiding sub-navigation to keep the navigation logic simple.  But this might
     // change once deep-linking support  is added.  It depends on whether deep linking should do one of:

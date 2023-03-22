@@ -194,7 +194,6 @@ private fun SendMainContent(
 // TODO [#294]: DetektAll failed LongMethod
 @Suppress("LongMethod")
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
 private fun SendForm(
     myBalance: Zatoshi,
     previousZecSend: ZecSend?,

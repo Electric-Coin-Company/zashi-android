@@ -42,6 +42,13 @@ internal fun ComposeContentTestRule.setValidAddress() {
     }
 }
 
+internal fun ComposeContentTestRule.setAddress(address: String) {
+    onNodeWithText(getStringResource(R.string.send_to)).also {
+        it.performTextClearance()
+        it.performTextInput(address)
+    }
+}
+
 internal fun ComposeContentTestRule.setValidMemo() {
     onNodeWithText(getStringResource(R.string.send_memo)).also {
         it.performTextClearance()
