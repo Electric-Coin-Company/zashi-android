@@ -32,6 +32,7 @@ import co.electriccoin.zcash.ui.test.getStringResource
 import kotlinx.collections.immutable.toPersistentSet
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Assert.assertEquals
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import java.util.Locale
@@ -41,6 +42,11 @@ import kotlin.test.assertNull
 class RestoreViewTest : UiTestPrerequisites() {
     @get:Rule
     val composeTestRule = createComposeRule()
+
+    @Before
+    fun setup() {
+        composeTestRule.mainClock.autoAdvance = true
+    }
 
     @Test
     @MediumTest
@@ -128,6 +134,9 @@ class RestoreViewTest : UiTestPrerequisites() {
     @Test
     @MediumTest
     fun seed_finish_appears_after_24_words() {
+        // There appears to be a bug introduced in Compose 1.4.0 which makes this necessary
+        composeTestRule.mainClock.autoAdvance = false
+
         newTestSetup(initialWordsList = SeedPhraseFixture.new().split)
 
         composeTestRule.onNodeWithText(getStringResource(R.string.restore_seed_button_restore)).also {
@@ -315,6 +324,9 @@ class RestoreViewTest : UiTestPrerequisites() {
         composeTestRule.onNodeWithContentDescription(getStringResource(R.string.restore_back_content_description)).also {
             it.performClick()
         }
+
+        // There appears to be a bug introduced in Compose 1.4.0 which makes this necessary
+        composeTestRule.mainClock.autoAdvance = false
 
         assertEquals(testSetup.getStage(), RestoreStage.Seed)
         assertEquals(0, testSetup.getOnBackCount())
