@@ -23,11 +23,14 @@ fun FormTextField(
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-    colors: TextFieldColors = TextFieldDefaults.textFieldColors(
-        containerColor = Color.Transparent
+    colors: TextFieldColors = TextFieldDefaults.colors(
+        focusedContainerColor = Color.Transparent,
+        unfocusedContainerColor = Color.Transparent,
+        disabledContainerColor = Color.Transparent,
+        errorContainerColor = Color.Transparent,
     ),
     keyboardActions: KeyboardActions = KeyboardActions.Default,
-    shape: Shape = TextFieldDefaults.filledShape
+    shape: Shape = TextFieldDefaults.shape
 ) {
     TextField(
         value = value,

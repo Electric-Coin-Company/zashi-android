@@ -430,8 +430,11 @@ private fun NextWordTextField(
             keyboardActions = KeyboardActions(onAny = {}),
             shape = RoundedCornerShape(8.dp),
             isError = parseResult is ParseResult.Warn,
-            colors = TextFieldDefaults.textFieldColors(
-                containerColor = Color.Transparent,
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent,
+                disabledContainerColor = Color.Transparent,
+                errorContainerColor = Color.Transparent,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
                 disabledIndicatorColor = Color.Transparent
