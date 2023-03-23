@@ -5,14 +5,12 @@ import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.test.filters.MediumTest
-import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.fixture.WalletFixture
 import cash.z.ecc.android.sdk.model.ZcashNetwork
-import cash.z.ecc.android.sdk.model.defaultForNetwork
 import cash.z.ecc.sdk.fixture.ZatoshiFixture
 import cash.z.ecc.sdk.fixture.ZecSendFixture
-import co.electriccoin.lightwallet.client.model.LightWalletEndpoint
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.fixture.MockSynchronizer
 import co.electriccoin.zcash.ui.screen.send.WrapSend
 import co.electriccoin.zcash.ui.screen.send.assertOnConfirmation
 import co.electriccoin.zcash.ui.screen.send.assertOnForm
@@ -21,7 +19,6 @@ import co.electriccoin.zcash.ui.screen.send.clickCreateAndSend
 import co.electriccoin.zcash.ui.screen.send.setAddress
 import co.electriccoin.zcash.ui.screen.send.setAmount
 import co.electriccoin.zcash.ui.screen.send.setMemo
-import co.electriccoin.zcash.ui.test.getAppContext
 import co.electriccoin.zcash.ui.test.getStringResource
 import kotlinx.coroutines.runBlocking
 import org.junit.Rule
@@ -40,13 +37,7 @@ class SendViewIntegrationTest {
             network = network
         )
     }
-    private val synchronizer = Synchronizer.newBlocking(
-        getAppContext(),
-        network,
-        lightWalletEndpoint = LightWalletEndpoint.defaultForNetwork(network),
-        seed = wallet.seedPhrase.toByteArray(),
-        birthday = null
-    )
+    private val synchronizer = MockSynchronizer.new()
     private val balance = ZatoshiFixture.new()
 
     @Test
