@@ -8,6 +8,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import co.electriccoin.zcash.spackle.Twig
+import co.electriccoin.zcash.ui.NavigationArguments.SEND_AMOUNT
+import co.electriccoin.zcash.ui.NavigationArguments.SEND_MEMO
 import co.electriccoin.zcash.ui.NavigationArguments.SEND_RECIPIENT_ADDRESS
 import co.electriccoin.zcash.ui.NavigationTargets.ABOUT
 import co.electriccoin.zcash.ui.NavigationTargets.HOME
@@ -96,10 +98,14 @@ internal fun MainActivity.Navigation() {
                 },
                 goBack = { navController.popBackStackJustOnce(SEND) },
                 sendArgumentsWrapper = SendArgumentsWrapper(
-                    recipientAddress = backStackEntry.savedStateHandle[SEND_RECIPIENT_ADDRESS]
+                    recipientAddress = backStackEntry.savedStateHandle[SEND_RECIPIENT_ADDRESS],
+                    amount = backStackEntry.savedStateHandle[SEND_AMOUNT],
+                    memo = backStackEntry.savedStateHandle[SEND_MEMO]
                 )
             )
             backStackEntry.savedStateHandle.remove<String>(SEND_RECIPIENT_ADDRESS)
+            backStackEntry.savedStateHandle.remove<String>(SEND_AMOUNT)
+            backStackEntry.savedStateHandle.remove<String>(SEND_MEMO)
         }
         composable(SUPPORT) {
             // Pop back stack won't be right if we deep link into support
@@ -111,7 +117,12 @@ internal fun MainActivity.Navigation() {
         composable(SCAN) {
             WrapScanValidator(
                 onScanValid = { result ->
-                    navController.previousBackStackEntry?.savedStateHandle?.set(SEND_RECIPIENT_ADDRESS, result)
+                    // At this point we only pass recipient address
+                    navController.previousBackStackEntry?.savedStateHandle?.apply {
+                        set(SEND_RECIPIENT_ADDRESS, result)
+                        set(SEND_AMOUNT, null)
+                        set(SEND_MEMO, null)
+                    }
                     navController.popBackStackJustOnce(SCAN)
                 },
                 goBack = { navController.popBackStackJustOnce(SCAN) }
@@ -149,7 +160,9 @@ private fun NavHostController.popBackStackJustOnce(currentRouteToBePopped: Strin
 }
 
 object NavigationArguments {
-    const val SEND_RECIPIENT_ADDRESS = "recipientAddress"
+    const val SEND_RECIPIENT_ADDRESS = "send_recipient_address"
+    const val SEND_AMOUNT = "send_amount"
+    const val SEND_MEMO = "send_memo"
 }
 
 object NavigationTargets {

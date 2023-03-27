@@ -235,6 +235,12 @@ private fun SendForm(
     if (sendArgumentsWrapper?.recipientAddress != null) {
         recipientAddressString = sendArgumentsWrapper.recipientAddress
     }
+    if (sendArgumentsWrapper?.amount != null) {
+        amountZecString = sendArgumentsWrapper.amount
+    }
+    if (sendArgumentsWrapper?.memo != null) {
+        memoString = sendArgumentsWrapper.memo
+    }
 
     Column(
         modifier

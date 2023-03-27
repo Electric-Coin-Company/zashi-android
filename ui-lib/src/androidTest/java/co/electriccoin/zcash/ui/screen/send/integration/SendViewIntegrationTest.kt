@@ -51,9 +51,11 @@ class SendViewIntegrationTest {
 
         restorationTester.setContent {
             WrapSend(
+                sendArgumentsWrapper = null,
                 synchronizer = synchronizer,
                 spendableBalance = balance,
                 spendingKey = spendingKey,
+                goToQrScanner = {},
                 goBack = {}
             )
         }

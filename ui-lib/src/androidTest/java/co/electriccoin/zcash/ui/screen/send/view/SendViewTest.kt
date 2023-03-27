@@ -1,6 +1,7 @@
 package co.electriccoin.zcash.ui.screen.send.view
 
 import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
@@ -16,6 +17,7 @@ import cash.z.ecc.sdk.fixture.ZecRequestFixture
 import cash.z.ecc.sdk.fixture.ZecSendFixture
 import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.fixture.SendArgumentsWrapperFixture
 import co.electriccoin.zcash.ui.screen.send.SendViewTestSetup
 import co.electriccoin.zcash.ui.screen.send.assertOnConfirmation
 import co.electriccoin.zcash.ui.screen.send.assertOnForm
@@ -27,6 +29,8 @@ import co.electriccoin.zcash.ui.screen.send.assertSendEnabled
 import co.electriccoin.zcash.ui.screen.send.clickBack
 import co.electriccoin.zcash.ui.screen.send.clickConfirmation
 import co.electriccoin.zcash.ui.screen.send.clickCreateAndSend
+import co.electriccoin.zcash.ui.screen.send.clickScanner
+import co.electriccoin.zcash.ui.screen.send.model.SendArgumentsWrapper
 import co.electriccoin.zcash.ui.screen.send.model.SendStage
 import co.electriccoin.zcash.ui.screen.send.setAmount
 import co.electriccoin.zcash.ui.screen.send.setMemo
@@ -51,11 +55,13 @@ class SendViewTest : UiTestPrerequisites() {
 
     private fun newTestSetup(
         sendStage: SendStage = SendStage.Form,
-        zecSend: ZecSend? = null
+        zecSend: ZecSend? = null,
+        sendArgumentsWrapper: SendArgumentsWrapper? = null,
     ) = SendViewTestSetup(
         composeTestRule,
         sendStage,
-        zecSend
+        zecSend,
+        sendArgumentsWrapper
     ).apply {
         setDefaultContent()
     }
@@ -394,5 +400,46 @@ class SendViewTest : UiTestPrerequisites() {
         composeTestRule.assertOnForm()
 
         assertEquals(1, testSetup.getOnBackCount())
+    }
+
+    @Test
+    @MediumTest
+    fun scanner_button_on_form_hit() {
+        val testSetup = newTestSetup()
+
+        assertEquals(0, testSetup.getOnScannerCount())
+
+        composeTestRule.clickScanner()
+
+        assertEquals(1, testSetup.getOnScannerCount())
+    }
+
+    @Test
+    @MediumTest
+    fun input_arguments_to_form() {
+        newTestSetup(
+            sendStage = SendStage.Form,
+            sendArgumentsWrapper = SendArgumentsWrapperFixture.new(
+                recipientAddress = SendArgumentsWrapperFixture.RECIPIENT_ADDRESS,
+                amount = SendArgumentsWrapperFixture.AMOUNT,
+                memo = SendArgumentsWrapperFixture.MEMO
+            ),
+            zecSend = null
+        )
+
+        composeTestRule.assertOnForm()
+
+        // We use that the assertTextContains searches in SemanticsProperties.EditableText too
+        composeTestRule.onNodeWithText(getStringResource(R.string.send_to)).also {
+            it.assertTextContains(SendArgumentsWrapperFixture.RECIPIENT_ADDRESS)
+        }
+        composeTestRule.onNodeWithText(getStringResource(R.string.send_amount)).also {
+            it.assertTextContains(
+                SendArgumentsWrapperFixture.amountToFixtureZecString(SendArgumentsWrapperFixture.AMOUNT)!!
+            )
+        }
+        composeTestRule.onNodeWithText(getStringResource(R.string.send_memo)).also {
+            it.assertTextContains(SendArgumentsWrapperFixture.MEMO)
+        }
     }
 }
