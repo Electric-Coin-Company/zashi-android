@@ -4,7 +4,7 @@
     <string name="scan_back_content_description">Back</string>
     <string name="scan_preview_content_description">Camera</string>
 
-    <string name="scan_hint">We will validate any Zcash URI and take you to the appropriate action.</string>
+    <string name="scan_hint">You can scan any Zcash QR code.</string>
 
     <string name="scan_settings_button">Enable camera permission</string>
     <string name="scan_settings_open_failed">Unable to launch Settings app.</string>
