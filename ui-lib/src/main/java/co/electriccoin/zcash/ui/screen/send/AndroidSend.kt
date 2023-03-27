@@ -55,6 +55,7 @@ private fun WrapSend(
     WrapSend(sendArgumentsWrapper, synchronizer, spendableBalance, spendingKey, goToQrScanner, goBack)
 }
 
+@Suppress("LongParameterList")
 @VisibleForTesting
 @Composable
 internal fun WrapSend(

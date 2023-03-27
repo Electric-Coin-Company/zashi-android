@@ -204,7 +204,7 @@ private fun SendMainContent(
 // TODO [#217]: Need to handle changing of Locale after user input, but before submitting the button.
 // TODO [#288]: TextField component can't do long-press backspace.
 // TODO [#294]: DetektAll failed LongMethod
-@Suppress("LongMethod")
+@Suppress("LongMethod", "LongParameterList")
 @Composable
 private fun SendForm(
     myBalance: Zatoshi,
@@ -265,15 +265,17 @@ private fun SendForm(
             onValueChange = { recipientAddressString = it },
             label = { Text(stringResource(id = R.string.send_to)) },
             modifier = Modifier.fillMaxWidth(),
-            trailingIcon = { IconButton(
-                onClick = onQrScannerOpen,
-                content = {
-                    Icon(
-                        imageVector = Icons.Outlined.QrCodeScanner,
-                        contentDescription = stringResource(R.string.send_scan_content_description)
-                    )
-                }
-            )}
+            trailingIcon = {
+                IconButton(
+                    onClick = onQrScannerOpen,
+                    content = {
+                        Icon(
+                            imageVector = Icons.Outlined.QrCodeScanner,
+                            contentDescription = stringResource(R.string.send_scan_content_description)
+                        )
+                    }
+                )
+            }
         )
 
         Spacer(Modifier.size(dimens.spacingSmall))
