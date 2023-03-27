@@ -2,6 +2,7 @@ package co.electriccoin.zcash.ui.screen.send.view
 
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.assertTextContains
+import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
@@ -431,17 +432,28 @@ class SendViewTest : UiTestPrerequisites() {
 
         composeTestRule.assertOnForm()
 
-        // We use that the assertTextContains searches in SemanticsProperties.EditableText too
+        // We use that the assertTextEquals searches in SemanticsProperties.EditableText too, although to be able to
+        // compare its editable value to an exact match we need to pass all its texts
         composeTestRule.onNodeWithText(getStringResource(R.string.send_to)).also {
-            it.assertTextContains(SendArgumentsWrapperFixture.RECIPIENT_ADDRESS)
+            it.assertTextEquals(
+                getStringResource(R.string.send_to),
+                SendArgumentsWrapperFixture.RECIPIENT_ADDRESS,
+                includeEditableText = true
+            )
         }
         composeTestRule.onNodeWithText(getStringResource(R.string.send_amount)).also {
-            it.assertTextContains(
-                SendArgumentsWrapperFixture.amountToFixtureZecString(SendArgumentsWrapperFixture.AMOUNT)!!
+            it.assertTextEquals(
+                getStringResource(R.string.send_amount),
+                SendArgumentsWrapperFixture.amountToFixtureZecString(SendArgumentsWrapperFixture.AMOUNT)!!,
+                includeEditableText = true
             )
         }
         composeTestRule.onNodeWithText(getStringResource(R.string.send_memo)).also {
-            it.assertTextContains(SendArgumentsWrapperFixture.MEMO)
+            it.assertTextEquals(
+                getStringResource(R.string.send_memo),
+                SendArgumentsWrapperFixture.MEMO,
+                includeEditableText = true
+            )
         }
     }
 

@@ -1,6 +1,6 @@
 package co.electriccoin.zcash.ui.screen.send.integration
 
-import androidx.compose.ui.test.assertTextContains
+import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
@@ -80,14 +80,24 @@ class SendViewIntegrationTest {
         composeTestRule.clickBack()
         composeTestRule.assertOnForm()
 
-        // And check recreated form values too
-        // We use that the assertTextContains searches in SemanticsProperties.EditableText too
-        // Note also that we don't check the amount field value, as it's changed by validation mechanisms
+        // And check recreated form values too. Note also that we don't check the amount field value, as it's changed
+        // by validation mechanisms
+
+        // We use that the assertTextEquals searches in SemanticsProperties.EditableText too, although to be able to
+        // compare its editable value to an exact match we need to pass all its texts
         composeTestRule.onNodeWithText(getStringResource(R.string.send_to)).also {
-            it.assertTextContains(ZecSendFixture.ADDRESS)
+            it.assertTextEquals(
+                getStringResource(R.string.send_to),
+                ZecSendFixture.ADDRESS,
+                includeEditableText = true
+            )
         }
         composeTestRule.onNodeWithText(getStringResource(R.string.send_memo)).also {
-            it.assertTextContains(ZecSendFixture.MEMO.value)
+            it.assertTextEquals(
+                getStringResource(R.string.send_memo),
+                ZecSendFixture.MEMO.value,
+                includeEditableText = true
+            )
         }
     }
 }
