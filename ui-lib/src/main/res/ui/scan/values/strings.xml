@@ -15,4 +15,6 @@
     <string name="scan_state_permission">Permission for camera is necessary.</string>
     <string name="scan_state_scanning">Scanning…</string>
     <string name="scan_state_failed">Scanning failed.</string>
+
+    <string name="scan_validation_invalid_address">Invalid Zcash address scanned.</string>
 </resources>
