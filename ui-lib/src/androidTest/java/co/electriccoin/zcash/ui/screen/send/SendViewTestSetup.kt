@@ -20,7 +20,8 @@ class SendViewTestSetup(
     private val composeTestRule: ComposeContentTestRule,
     private val initialState: SendStage,
     private val initialZecSend: ZecSend?,
-    private val initialSendArgumentWrapper: SendArgumentsWrapper?
+    private val initialSendArgumentWrapper: SendArgumentsWrapper?,
+    private val hasCameraFeature: Boolean
 ) {
     private val onBackCount = AtomicInteger(0)
     private val onCreateCount = AtomicInteger(0)
@@ -102,7 +103,8 @@ class SendViewTestSetup(
                 },
                 onQrScannerOpen = {
                     onScannerCount.incrementAndGet()
-                }
+                },
+                hasCameraFeature = hasCameraFeature
             )
         }
     }

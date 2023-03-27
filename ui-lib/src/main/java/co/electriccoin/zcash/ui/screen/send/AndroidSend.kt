@@ -2,6 +2,7 @@
 
 package co.electriccoin.zcash.ui.screen.send
 
+import android.content.pm.PackageManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.viewModels
@@ -44,6 +45,8 @@ private fun WrapSend(
     goToQrScanner: () -> Unit,
     goBack: () -> Unit
 ) {
+    val hasCameraFeature = activity.packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)
+
     val walletViewModel by activity.viewModels<WalletViewModel>()
 
     val synchronizer = walletViewModel.synchronizer.collectAsStateWithLifecycle().value
@@ -52,7 +55,7 @@ private fun WrapSend(
 
     val spendingKey = walletViewModel.spendingKey.collectAsStateWithLifecycle().value
 
-    WrapSend(sendArgumentsWrapper, synchronizer, spendableBalance, spendingKey, goToQrScanner, goBack)
+    WrapSend(sendArgumentsWrapper, synchronizer, spendableBalance, spendingKey, goToQrScanner, goBack, hasCameraFeature)
 }
 
 @Suppress("LongParameterList")
@@ -64,7 +67,8 @@ internal fun WrapSend(
     spendableBalance: Zatoshi?,
     spendingKey: UnifiedSpendingKey?,
     goToQrScanner: () -> Unit,
-    goBack: () -> Unit
+    goBack: () -> Unit,
+    hasCameraFeature: Boolean
 ) {
     val scope = rememberCoroutineScope()
 
@@ -121,7 +125,8 @@ internal fun WrapSend(
                     }
                 }
             },
-            onQrScannerOpen = goToQrScanner
+            onQrScannerOpen = goToQrScanner,
+            hasCameraFeature = hasCameraFeature
         )
     }
 }

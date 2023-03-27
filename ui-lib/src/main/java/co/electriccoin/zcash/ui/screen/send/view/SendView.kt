@@ -68,7 +68,8 @@ fun PreviewSend() {
                 onZecSendChange = {},
                 onCreateAndSend = {},
                 onQrScannerOpen = {},
-                onBack = {}
+                onBack = {},
+                hasCameraFeature = true
             )
         }
     }
@@ -87,6 +88,7 @@ fun Send(
     onBack: () -> Unit,
     onCreateAndSend: (ZecSend) -> Unit,
     onQrScannerOpen: () -> Unit,
+    hasCameraFeature: Boolean
 ) {
     Scaffold(topBar = {
         SendTopAppBar(
@@ -104,6 +106,7 @@ fun Send(
             onZecSendChange = onZecSendChange,
             onSendSubmit = onCreateAndSend,
             onQrScannerOpen = onQrScannerOpen,
+            hasCameraFeature = hasCameraFeature,
             modifier = Modifier
                 .padding(
                     top = paddingValues.calculateTopPadding() + dimens.spacingDefault,
@@ -152,6 +155,7 @@ private fun SendMainContent(
     onSendStageChange: (SendStage) -> Unit,
     onSendSubmit: (ZecSend) -> Unit,
     onQrScannerOpen: () -> Unit,
+    hasCameraFeature: Boolean,
     modifier: Modifier = Modifier
 ) {
     when {
@@ -165,6 +169,7 @@ private fun SendMainContent(
                     onZecSendChange(it)
                 },
                 onQrScannerOpen = onQrScannerOpen,
+                hasCameraFeature = hasCameraFeature,
                 modifier = modifier
             )
         }
@@ -212,6 +217,7 @@ private fun SendForm(
     previousZecSend: ZecSend?,
     onCreateZecSend: (ZecSend) -> Unit,
     onQrScannerOpen: () -> Unit,
+    hasCameraFeature: Boolean,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -265,7 +271,7 @@ private fun SendForm(
             onValueChange = { recipientAddressString = it },
             label = { Text(stringResource(id = R.string.send_to)) },
             modifier = Modifier.fillMaxWidth(),
-            trailingIcon = {
+            trailingIcon = if (hasCameraFeature) { {
                 IconButton(
                     onClick = onQrScannerOpen,
                     content = {
@@ -275,7 +281,7 @@ private fun SendForm(
                         )
                     }
                 )
-            }
+            } } else { null }
         )
 
         Spacer(Modifier.size(dimens.spacingSmall))

@@ -57,11 +57,13 @@ class SendViewTest : UiTestPrerequisites() {
         sendStage: SendStage = SendStage.Form,
         zecSend: ZecSend? = null,
         sendArgumentsWrapper: SendArgumentsWrapper? = null,
+        hasCameraFeature: Boolean = true
     ) = SendViewTestSetup(
         composeTestRule,
         sendStage,
         zecSend,
-        sendArgumentsWrapper
+        sendArgumentsWrapper,
+        hasCameraFeature
     ).apply {
         setDefaultContent()
     }
@@ -440,6 +442,36 @@ class SendViewTest : UiTestPrerequisites() {
         }
         composeTestRule.onNodeWithText(getStringResource(R.string.send_memo)).also {
             it.assertTextContains(SendArgumentsWrapperFixture.MEMO)
+        }
+    }
+
+    @Test
+    @MediumTest
+    fun device_has_camera_feature() {
+        newTestSetup(
+            sendStage = SendStage.Form,
+            hasCameraFeature = true
+        )
+
+        composeTestRule.assertOnForm()
+
+        composeTestRule.onNodeWithContentDescription(getStringResource(R.string.send_scan_content_description)).also {
+            it.assertExists()
+        }
+    }
+
+    @Test
+    @MediumTest
+    fun device_has_not_camera_feature() {
+        newTestSetup(
+            sendStage = SendStage.Form,
+            hasCameraFeature = false
+        )
+
+        composeTestRule.assertOnForm()
+
+        composeTestRule.onNodeWithContentDescription(getStringResource(R.string.send_scan_content_description)).also {
+            it.assertDoesNotExist()
         }
     }
 }

@@ -56,7 +56,8 @@ class SendViewIntegrationTest {
                 spendableBalance = balance,
                 spendingKey = spendingKey,
                 goToQrScanner = {},
-                goBack = {}
+                goBack = {},
+                hasCameraFeature = true
             )
         }
 
