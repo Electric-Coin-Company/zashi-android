@@ -16,6 +16,6 @@ object ZecSendFixture {
     suspend fun new(
         address: String = ADDRESS,
         amount: Zatoshi = AMOUNT,
-        message: Memo = MEMO
-    ) = ZecSend(WalletAddress.Unified.new(address), amount, message)
+        memo: Memo = MEMO
+    ) = ZecSend(WalletAddress.Unified.new(address), amount, memo)
 }

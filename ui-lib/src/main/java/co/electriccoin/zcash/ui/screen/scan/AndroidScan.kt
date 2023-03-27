@@ -1,5 +1,3 @@
-@file:Suppress("ktlint:filename")
-
 package co.electriccoin.zcash.ui.screen.scan
 
 import androidx.activity.ComponentActivity

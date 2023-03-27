@@ -48,8 +48,8 @@ import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme.dimens
 import co.electriccoin.zcash.ui.screen.send.ext.ABBREVIATION_INDEX
-import co.electriccoin.zcash.ui.screen.send.ext.Saver
 import co.electriccoin.zcash.ui.screen.send.ext.abbreviated
+import co.electriccoin.zcash.ui.screen.send.ext.valueOrEmptyChar
 import co.electriccoin.zcash.ui.screen.send.model.SendStage
 
 @Composable
@@ -59,47 +59,47 @@ fun PreviewSend() {
         GradientSurface {
             Send(
                 mySpendableBalance = ZatoshiFixture.new(),
-                goBack = {},
-                onCreateAndSend = {}
+                sendStage = SendStage.Form,
+                onSendStageChange = {},
+                zecSend = null,
+                onZecSendChange = {},
+                onCreateAndSend = {},
+                onBack = {}
             )
         }
     }
 }
 
+@Suppress("LongParameterList")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Send(
     mySpendableBalance: Zatoshi,
-    goBack: () -> Unit,
+    sendStage: SendStage,
+    onSendStageChange: (SendStage) -> Unit,
+    zecSend: ZecSend?,
+    onZecSendChange: (ZecSend) -> Unit,
+    onBack: () -> Unit,
     onCreateAndSend: (ZecSend) -> Unit
 ) {
-    // For now, we're avoiding sub-navigation to keep the navigation logic simple.  But this might
-    // change once deep-linking support  is added.  It depends on whether deep linking should do one of:
-    // 1. Use a different UI flow entirely
-    // 2. Show a pre-filled Send form
-    // 3. Go directly to the press-and-hold confirmation
-    val (sendStage, setSendStage) = rememberSaveable { mutableStateOf(SendStage.Form) }
-
     Scaffold(topBar = {
-        SendTopAppBar(onBack = {
-            when (sendStage) {
-                SendStage.Form -> goBack()
-                SendStage.Confirmation -> setSendStage(SendStage.Form)
-            }
-        })
+        SendTopAppBar(
+            onBack = onBack,
+            showBackNavigationButton = sendStage != SendStage.Sending
+        )
     }) { paddingValues ->
         SendMainContent(
             myBalance = mySpendableBalance,
+            onBack = onBack,
             sendStage = sendStage,
-            setSendStage = setSendStage,
-            onCreateAndSend = onCreateAndSend,
+            onSendStageChange = onSendStageChange,
+            zecSend = zecSend,
+            onZecSendChange = onZecSendChange,
+            onSendSubmit = onCreateAndSend,
             modifier = Modifier
-                .verticalScroll(
-                    rememberScrollState()
-                )
                 .padding(
                     top = paddingValues.calculateTopPadding() + dimens.spacingDefault,
-                    bottom = dimens.spacingDefault,
+                    bottom = paddingValues.calculateBottomPadding() + dimens.spacingDefault,
                     start = dimens.spacingDefault,
                     end = dimens.spacingDefault
                 )
@@ -109,51 +109,83 @@ fun Send(
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-private fun SendTopAppBar(onBack: () -> Unit) {
-    TopAppBar(
-        title = { Text(text = stringResource(id = R.string.send_title)) },
-        navigationIcon = {
-            IconButton(
-                onClick = onBack
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = stringResource(R.string.send_back_content_description)
-                )
+private fun SendTopAppBar(
+    onBack: () -> Unit,
+    showBackNavigationButton: Boolean = true
+) {
+    if (showBackNavigationButton) {
+        TopAppBar(
+            title = { Text(text = stringResource(id = R.string.send_title)) },
+            navigationIcon = {
+                IconButton(
+                    onClick = onBack
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.ArrowBack,
+                        contentDescription = stringResource(R.string.send_back_content_description)
+                    )
+                }
             }
-        }
-    )
+        )
+    } else {
+        TopAppBar(title = { Text(text = stringResource(id = R.string.send_title)) })
+    }
 }
 
 @Suppress("LongParameterList")
 @Composable
 private fun SendMainContent(
     myBalance: Zatoshi,
+    zecSend: ZecSend?,
+    onZecSendChange: (ZecSend) -> Unit,
+    onBack: () -> Unit,
     sendStage: SendStage,
-    setSendStage: (SendStage) -> Unit,
-    onCreateAndSend: (ZecSend) -> Unit,
+    onSendStageChange: (SendStage) -> Unit,
+    onSendSubmit: (ZecSend) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val (zecSend, setZecSend) = rememberSaveable(stateSaver = ZecSend.Saver) { mutableStateOf(null) }
-
-    if (sendStage == SendStage.Form || null == zecSend) {
-        SendForm(
-            myBalance = myBalance,
-            previousZecSend = zecSend,
-            onCreateAndSend = {
-                setSendStage(SendStage.Confirmation)
-                setZecSend(it)
-            },
-            modifier = modifier
-        )
-    } else {
-        Confirmation(
-            zecSend = zecSend,
-            onConfirmation = {
-                onCreateAndSend(zecSend)
-            },
-            modifier = modifier
-        )
+    when {
+        (sendStage == SendStage.Form || null == zecSend) -> {
+            SendForm(
+                myBalance = myBalance,
+                previousZecSend = zecSend,
+                onCreateZecSend = {
+                    onSendStageChange(SendStage.Confirmation)
+                    onZecSendChange(it)
+                },
+                modifier = modifier
+            )
+        }
+        (sendStage == SendStage.Confirmation) -> {
+            Confirmation(
+                zecSend = zecSend,
+                onConfirmation = {
+                    onSendStageChange(SendStage.Sending)
+                    onSendSubmit(zecSend)
+                },
+                modifier = modifier
+            )
+        }
+        (sendStage == SendStage.Sending) -> {
+            Sending(
+                zecSend = zecSend,
+                modifier = modifier
+            )
+        }
+        (sendStage == SendStage.SendSuccessful) -> {
+            SendSuccessful(
+                zecSend = zecSend,
+                modifier = modifier,
+                onDone = onBack
+            )
+        }
+        (sendStage == SendStage.SendFailure) -> {
+            SendFailure(
+                zecSend = zecSend,
+                modifier = modifier,
+                onDone = onBack
+            )
+        }
     }
 }
 
@@ -162,11 +194,10 @@ private fun SendMainContent(
 // TODO [#294]: DetektAll failed LongMethod
 @Suppress("LongMethod")
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
 private fun SendForm(
     myBalance: Zatoshi,
     previousZecSend: ZecSend?,
-    onCreateAndSend: (ZecSend) -> Unit,
+    onCreateZecSend: (ZecSend) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -190,6 +221,7 @@ private fun SendForm(
     Column(
         modifier
             .fillMaxHeight()
+            .verticalScroll(rememberScrollState())
     ) {
         Header(
             text = stringResource(id = R.string.send_balance, myBalance.toZecString()),
@@ -268,7 +300,7 @@ private fun SendForm(
                 )
 
                 when (zecSendValidation) {
-                    is ZecSendExt.ZecSendValidation.Valid -> onCreateAndSend(zecSendValidation.zecSend)
+                    is ZecSendExt.ZecSendValidation.Valid -> onCreateZecSend(zecSendValidation.zecSend)
                     is ZecSendExt.ZecSendValidation.Invalid -> validation = zecSendValidation.validationErrors
                 }
             },
@@ -286,18 +318,193 @@ private fun Confirmation(
     onConfirmation: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier) {
-        Text(
+    Column(
+        Modifier
+            .fillMaxHeight()
+            .verticalScroll(
+                rememberScrollState()
+            )
+            .then(modifier)
+    ) {
+        Body(
             stringResource(
-                R.string.send_amount_and_address_format,
+                R.string.send_confirmation_amount_and_address_format,
                 zecSend.amount.toZecString(),
                 zecSend.destination.abbreviated()
             )
         )
+        if (zecSend.memo.value.isNotEmpty()) {
+            Body(
+                stringResource(
+                    R.string.send_confirmation_memo_format,
+                    zecSend.memo.value
+                )
+            )
+        }
+
+        Spacer(
+            modifier = Modifier
+                .fillMaxHeight()
+                .weight(MINIMAL_WEIGHT)
+        )
 
         PrimaryButton(
+            modifier = Modifier.padding(top = dimens.spacingSmall),
             onClick = onConfirmation,
-            text = stringResource(id = R.string.send_confirm)
+            text = stringResource(id = R.string.send_confirmation_button)
+        )
+    }
+}
+
+@Composable
+private fun Sending(
+    zecSend: ZecSend,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        Modifier
+            .fillMaxHeight()
+            .verticalScroll(
+                rememberScrollState()
+            )
+            .then(modifier)
+    ) {
+        Header(
+            text = stringResource(
+                R.string.send_in_progress_amount_format,
+                zecSend.amount.toZecString()
+            ),
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Body(
+            text = zecSend.destination.abbreviated(),
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        if (zecSend.memo.value.isNotEmpty()) {
+            Body(
+                stringResource(
+                    R.string.send_in_progress_memo_format,
+                    zecSend.memo.value
+                ),
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+
+        Spacer(
+            modifier = Modifier
+                .fillMaxHeight()
+                .weight(MINIMAL_WEIGHT)
+        )
+
+        Body(
+            modifier = Modifier
+                .padding(vertical = dimens.spacingSmall)
+                .fillMaxWidth(),
+            text = stringResource(R.string.send_in_progress_wait),
+            textAlign = TextAlign.Center,
+        )
+    }
+}
+
+@Composable
+private fun SendSuccessful(
+    zecSend: ZecSend,
+    onDone: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        Modifier
+            .fillMaxHeight()
+            .verticalScroll(
+                rememberScrollState()
+            )
+            .then(modifier)
+    ) {
+        Header(
+            text = stringResource(R.string.send_successful_title),
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(dimens.spacingDefault)
+        )
+
+        Body(
+            stringResource(
+                R.string.send_successful_amount_address_memo,
+                zecSend.amount.toZecString(),
+                zecSend.destination.abbreviated(),
+                zecSend.memo.valueOrEmptyChar()
+            )
+        )
+
+        Spacer(
+            modifier = Modifier
+                .fillMaxHeight()
+                .weight(MINIMAL_WEIGHT)
+        )
+
+        PrimaryButton(
+            modifier = Modifier.padding(top = dimens.spacingSmall),
+            text = stringResource(R.string.send_successful_button),
+            onClick = onDone
+        )
+    }
+}
+
+@Composable
+private fun SendFailure(
+    zecSend: ZecSend,
+    onDone: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        Modifier
+            .fillMaxHeight()
+            .verticalScroll(
+                rememberScrollState()
+            )
+            .then(modifier)
+    ) {
+        Header(
+            text = stringResource(R.string.send_failure_title),
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(dimens.spacingDefault)
+        )
+
+        Body(
+            stringResource(
+                R.string.send_failure_amount_address_memo,
+                zecSend.amount.toZecString(),
+                zecSend.destination.abbreviated(),
+                zecSend.memo.valueOrEmptyChar()
+            )
+        )
+
+        Spacer(
+            modifier = Modifier
+                .fillMaxHeight()
+                .weight(MINIMAL_WEIGHT)
+        )
+
+        PrimaryButton(
+            modifier = Modifier.padding(top = dimens.spacingSmall),
+            text = stringResource(R.string.send_failure_button),
+            onClick = onDone
         )
     }
 }

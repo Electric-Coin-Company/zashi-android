@@ -26,5 +26,5 @@ internal fun WalletAddress.abbreviated(context: Context): String {
     val firstFive = address.substring(0, ABBREVIATION_INDEX)
     val lastFive = address.substring(address.length - ABBREVIATION_INDEX, address.length)
 
-    return context.getString(R.string.send_abbreviated_address_format, firstFive, lastFive)
+    return context.getString(R.string.send_confirmation_abbreviated_address_format, firstFive, lastFive)
 }

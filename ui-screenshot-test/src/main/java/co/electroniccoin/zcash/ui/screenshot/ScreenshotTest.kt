@@ -23,6 +23,7 @@ import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.core.graphics.writeToTestStorage
+import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.matcher.ViewMatchers.isRoot
 import androidx.test.espresso.screenshot.captureToBitmap
@@ -33,6 +34,7 @@ import androidx.test.filters.SdkSuppress
 import cash.z.ecc.android.sdk.fixture.WalletAddressFixture
 import cash.z.ecc.android.sdk.model.MonetarySeparators
 import cash.z.ecc.android.sdk.model.SeedPhrase
+import cash.z.ecc.sdk.fixture.MemoFixture
 import cash.z.ecc.sdk.fixture.SeedPhraseFixture
 import co.electriccoin.zcash.configuration.model.map.StringConfiguration
 import co.electriccoin.zcash.spackle.FirebaseTestLabUtil
@@ -532,25 +534,56 @@ private fun sendZecScreenshots(resContext: Context, tag: String, composeTestRule
         it.assertExists()
     }
 
+    // Screenshot: Empty form
     ScreenshotTest.takeScreenshot(tag, "Send 1")
 
     composeTestRule.onNodeWithText(resContext.getString(R.string.send_amount)).also {
         val separators = MonetarySeparators.current()
 
-        it.performTextInput("{${separators.decimal}}123")
+        it.performTextInput("0${separators.decimal}123")
     }
 
     composeTestRule.onNodeWithText(resContext.getString(R.string.send_to)).also {
         it.performTextInput(WalletAddressFixture.UNIFIED_ADDRESS_STRING)
     }
 
+    composeTestRule.onNodeWithText(resContext.getString(R.string.send_memo)).also {
+        it.performTextInput(MemoFixture.MEMO_STRING)
+    }
+
+    // To close soft keyboard to reveal the send button
+    Espresso.closeSoftKeyboard()
+
+    // Screenshot: Fulfilled form
+    ScreenshotTest.takeScreenshot(tag, "Send 2")
+
     composeTestRule.onNodeWithText(resContext.getString(R.string.send_create)).also {
         it.performClick()
     }
 
-    composeTestRule.waitForIdle()
+    /*
+    TODO [#817]: Screenshot test on Send with pseudolocales problem
+    TODO [#817]: https://github.com/zcash/secant-android-wallet/issues/817
+    // Screenshot: Confirmation
+    ScreenshotTest.takeScreenshot(tag, "Send 3")
 
-    ScreenshotTest.takeScreenshot(tag, "Send 2")
+    composeTestRule.onNodeWithText(resContext.getString(R.string.send_confirmation_button)).also {
+        it.performClick()
+    }
+
+    // Screenshot: Sending
+    ScreenshotTest.takeScreenshot(tag, "Send 4")
+
+    // Note: this is potentially a long running waiting for the transaction submit result
+    // Remove this last section of taking screenshot if it turns out to be problematic
+    composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) {
+        composeTestRule.onAllNodesWithText(resContext.getString(R.string.send_in_progress_wait))
+            .fetchSemanticsNodes().isEmpty()
+    }
+
+    // Screenshot: Result
+    ScreenshotTest.takeScreenshot(tag, "Send 5")
+     */
 }
 
 private fun supportScreenshots(resContext: Context, tag: String, composeTestRule: ComposeTestRule) {
