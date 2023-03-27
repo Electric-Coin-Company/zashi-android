@@ -8,7 +8,6 @@
     <string name="home_menu_about">About</string>
     <string name="home_menu_support">Contact support</string>
 
-
     <string name="home_status_syncing_format" formatted="true">Syncing - <xliff:g id="synced_percent" example="50">%1$d</xliff:g>%%</string> <!-- double %% for escaping -->
     <string name="home_status_syncing_catchup">Syncing</string>
     <string name="home_status_syncing_amount_suffix" formatted="true"><xliff:g id="amount_prefix" example="123$">%1$s</xliff:g> so far</string>

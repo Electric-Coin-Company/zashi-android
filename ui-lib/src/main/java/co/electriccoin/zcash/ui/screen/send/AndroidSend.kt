@@ -23,20 +23,25 @@ import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.screen.home.model.spendableBalance
 import co.electriccoin.zcash.ui.screen.home.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.send.ext.Saver
+import co.electriccoin.zcash.ui.screen.send.model.SendArgumentsWrapper
 import co.electriccoin.zcash.ui.screen.send.model.SendStage
 import co.electriccoin.zcash.ui.screen.send.view.Send
 import kotlinx.coroutines.launch
 
 @Composable
 internal fun MainActivity.WrapSend(
+    sendArgumentsWrapper: SendArgumentsWrapper?,
+    goToQrScanner: () -> Unit,
     goBack: () -> Unit
 ) {
-    WrapSend(this, goBack)
+    WrapSend(this, sendArgumentsWrapper, goToQrScanner, goBack)
 }
 
 @Composable
 private fun WrapSend(
     activity: ComponentActivity,
+    sendArgumentsWrapper: SendArgumentsWrapper?,
+    goToQrScanner: () -> Unit,
     goBack: () -> Unit
 ) {
     val walletViewModel by activity.viewModels<WalletViewModel>()
@@ -47,15 +52,17 @@ private fun WrapSend(
 
     val spendingKey = walletViewModel.spendingKey.collectAsStateWithLifecycle().value
 
-    WrapSend(synchronizer, spendableBalance, spendingKey, goBack)
+    WrapSend(sendArgumentsWrapper, synchronizer, spendableBalance, spendingKey, goToQrScanner, goBack)
 }
 
 @VisibleForTesting
 @Composable
 internal fun WrapSend(
+    sendArgumentsWrapper: SendArgumentsWrapper?,
     synchronizer: Synchronizer?,
     spendableBalance: Zatoshi?,
     spendingKey: UnifiedSpendingKey?,
+    goToQrScanner: () -> Unit,
     goBack: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
@@ -88,6 +95,7 @@ internal fun WrapSend(
     } else {
         Send(
             mySpendableBalance = spendableBalance,
+            sendArgumentsWrapper = sendArgumentsWrapper,
             sendStage = sendStage,
             onSendStageChange = setSendStage,
             zecSend = zecSend,
@@ -111,7 +119,8 @@ internal fun WrapSend(
                         // All other states of Pending transaction mean waiting for one of the states above
                     }
                 }
-            }
+            },
+            onQrScannerOpen = goToQrScanner
         )
     }
 }
