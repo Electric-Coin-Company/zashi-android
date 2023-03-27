@@ -26,7 +26,8 @@ class HomeActivityTest : UiTestPrerequisites() {
     private fun newTestSetup(walletSnapshot: WalletSnapshot) = HomeTestSetup(
         composeTestRule,
         walletSnapshot,
-        isShowFiatConversion = false
+        isShowFiatConversion = false,
+        isCircularProgressBar = false
     )
 
     @Test

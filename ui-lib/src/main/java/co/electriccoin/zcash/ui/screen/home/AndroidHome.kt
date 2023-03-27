@@ -77,6 +77,8 @@ internal fun WrapHome(
 
     val isKeepScreenOnWhileSyncing = settingsViewModel.isKeepScreenOnWhileSyncing.collectAsStateWithLifecycle().value
     val isFiatConversionEnabled = ConfigurationEntries.IS_FIAT_CONVERSION_ENABLED.getValue(RemoteConfig.current)
+    val isCircularProgressBarEnabled =
+        ConfigurationEntries.IS_HOME_CIRCULAR_PROGRESS_BAR_ENABLED.getValue(RemoteConfig.current)
 
     if (null == walletSnapshot) {
         // Display loading indicator
@@ -99,6 +101,7 @@ internal fun WrapHome(
             isUpdateAvailable = updateAvailable,
             isKeepScreenOnDuringSync = isKeepScreenOnWhileSyncing,
             isFiatConversionEnabled = isFiatConversionEnabled,
+            isCircularProgressBarEnabled = isCircularProgressBarEnabled,
             isDebugMenuEnabled = isDebugMenuEnabled,
             goSeedPhrase = goSeedPhrase,
             goSettings = goSettings,
