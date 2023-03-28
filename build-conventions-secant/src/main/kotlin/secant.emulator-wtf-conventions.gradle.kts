@@ -5,7 +5,7 @@
 val EMULATOR_WTF_MIN_SDK = 23
 
 @Suppress("MagicNumber", "PropertyName", "VariableNaming")
-val EMULATOR_WTF_MAX_SDK = 31
+val EMULATOR_WTF_MAX_SDK = 33
 
 internal val className = this::class.simpleName
 
