@@ -341,8 +341,7 @@ jobs:
           # Force blank suffix for screenshot tests
           ORG_GRADLE_PROJECT_ZCASH_DEBUG_APP_NAME_SUFFIX: ""
           ORG_GRADLE_PROJECT_ZCASH_EMULATOR_WTF_API_KEY: ${{ secrets.EMULATOR_WTF_API_KEY }}
-          # Temporarily disabled https://issuetracker.google.com/issues/266109833
-          ORG_GRADLE_PROJECT_IS_ANDROID_INSTRUMENTATION_TEST_COVERAGE_ENABLED: false
+          ORG_GRADLE_PROJECT_IS_ANDROID_INSTRUMENTATION_TEST_COVERAGE_ENABLED: true
         run: |
           ./gradlew testDebugWithEmulatorWtf :ui-integration-test:testZcashmainnetDebugWithEmulatorWtf
       - name: Collect Artifacts
@@ -389,6 +388,7 @@ jobs:
           # Force blank suffix for screenshot tests
           ORG_GRADLE_PROJECT_ZCASH_DEBUG_APP_NAME_SUFFIX: ""
           ORG_GRADLE_PROJECT_ZCASH_EMULATOR_WTF_API_KEY: ${{ secrets.EMULATOR_WTF_API_KEY }}
+          ORG_GRADLE_PROJECT_IS_ANDROID_INSTRUMENTATION_TEST_COVERAGE_ENABLED: false
         run: |
           ./gradlew :app:testZcashmainnetDebugWithEmulatorWtf :ui-screenshot-test:testZcashmainnetDebugWithEmulatorWtf
       - name: Collect Artifacts
