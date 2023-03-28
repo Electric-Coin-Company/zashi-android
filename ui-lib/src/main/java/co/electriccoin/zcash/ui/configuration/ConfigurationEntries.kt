@@ -25,4 +25,11 @@ object ConfigurationEntries {
      * A troubleshooting step. If we fix our bugs, this should be unnecessary.
      */
     val IS_RESCAN_ENABLED = BooleanConfigurationEntry(ConfigKey("is_rescan_enabled"), true)
+
+    /*
+     * Circular progress bar's scaffolding on the Home screen is done, but it is disabled by default for the initial
+     * minimal feature set.
+     */
+    val IS_HOME_CIRCULAR_PROGRESS_BAR_ENABLED =
+        BooleanConfigurationEntry(ConfigKey("is_home_circular_progress_bar_enabled"), false)
 }

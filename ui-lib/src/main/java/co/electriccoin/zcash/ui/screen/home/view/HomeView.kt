@@ -89,6 +89,7 @@ fun ComposablePreview() {
                 isKeepScreenOnDuringSync = false,
                 isDebugMenuEnabled = false,
                 isFiatConversionEnabled = false,
+                isCircularProgressBarEnabled = false,
                 goSeedPhrase = {},
                 goSettings = {},
                 goSupport = {},
@@ -112,6 +113,7 @@ fun Home(
     isUpdateAvailable: Boolean,
     isKeepScreenOnDuringSync: Boolean?,
     isFiatConversionEnabled: Boolean,
+    isCircularProgressBarEnabled: Boolean,
     isDebugMenuEnabled: Boolean,
     goSeedPhrase: () -> Unit,
     goSettings: () -> Unit,
@@ -149,6 +151,7 @@ fun Home(
                     isUpdateAvailable = isUpdateAvailable,
                     isKeepScreenOnDuringSync = isKeepScreenOnDuringSync,
                     isFiatConversionEnabled = isFiatConversionEnabled,
+                    isCircularProgressBarEnabled = isCircularProgressBarEnabled,
                     goReceive = goReceive,
                     goSend = goSend,
                 )
@@ -291,6 +294,7 @@ private fun HomeMainContent(
     isUpdateAvailable: Boolean,
     isKeepScreenOnDuringSync: Boolean?,
     isFiatConversionEnabled: Boolean,
+    isCircularProgressBarEnabled: Boolean,
     goReceive: () -> Unit,
     goSend: () -> Unit,
 ) {
@@ -299,7 +303,7 @@ private fun HomeMainContent(
             .verticalScroll(rememberScrollState())
             .padding(top = paddingValues.calculateTopPadding())
     ) {
-        Status(walletSnapshot, isUpdateAvailable, isFiatConversionEnabled)
+        Status(walletSnapshot, isUpdateAvailable, isFiatConversionEnabled, isCircularProgressBarEnabled)
 
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -326,7 +330,8 @@ private fun isSyncing(status: Synchronizer.Status): Boolean {
 private fun Status(
     walletSnapshot: WalletSnapshot,
     updateAvailable: Boolean,
-    isFiatConversionEnabled: Boolean
+    isFiatConversionEnabled: Boolean,
+    isCircularProgressBarEnabled: Boolean
 ) {
     val configuration = LocalConfiguration.current
     val contentSizeRatioRatio = if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -361,18 +366,19 @@ private fun Status(
             contentAlignment = Alignment.Center
         ) {
             // progress circle
-            if (walletDisplayValues.progress.decimal > PercentDecimal.ZERO_PERCENT.decimal) {
-                CircularProgressIndicator(
-                    progress = walletDisplayValues.progress.decimal,
-                    color = Color.Gray,
-                    strokeWidth = progressCircleStroke,
-                    modifier = Modifier
-                        .matchParentSize()
-                        .padding(progressCirclePadding)
-                        .testTag(HomeTag.PROGRESS)
-                )
+            if (isCircularProgressBarEnabled) {
+                if (walletDisplayValues.progress.decimal > PercentDecimal.ZERO_PERCENT.decimal) {
+                    CircularProgressIndicator(
+                        progress = walletDisplayValues.progress.decimal,
+                        color = Color.Gray,
+                        strokeWidth = progressCircleStroke,
+                        modifier = Modifier
+                            .matchParentSize()
+                            .padding(progressCirclePadding)
+                            .testTag(HomeTag.PROGRESS)
+                    )
+                }
             }
-
             // texts
             Column(
                 modifier = Modifier
