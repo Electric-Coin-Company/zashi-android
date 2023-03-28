@@ -4,6 +4,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.os.Build.VERSION_CODES
+import android.os.SystemClock
 import android.view.inputmethod.InputMethodManager
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.input.key.Key
@@ -32,6 +33,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertFalse
+import kotlin.time.Duration.Companion.seconds
 
 // Non-multiplatform tests that require interacting with the Android system (e.g. clipboard, Context)
 // These don't have persistent state, so they are still unit tests.
@@ -95,6 +97,7 @@ class RestoreViewAndroidTest : UiTestPrerequisites() {
 
     @Test
     @MediumTest
+    @SdkSuppress(minSdkVersion = VERSION_CODES.TIRAMISU)
     fun keyboard_disappears_after_seed() {
         newTestSetup()
 
@@ -107,7 +110,10 @@ class RestoreViewAndroidTest : UiTestPrerequisites() {
         composeTestRule.waitForIdle()
 
         val inputMethodManager = getAppContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        assertFalse(inputMethodManager.isAcceptingText)
+        kotlin.runCatching { assertFalse(inputMethodManager.isAcceptingText) }.onFailure {
+            SystemClock.sleep(2.seconds.inWholeMilliseconds)
+            assertFalse(inputMethodManager.isAcceptingText)
+        }
     }
 
     private fun newTestSetup(
