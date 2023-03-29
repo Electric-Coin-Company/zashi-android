@@ -3,7 +3,7 @@
 package co.electriccoin.zcash.ui.screen.backup.view
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -74,24 +74,29 @@ fun ShortNewWalletBackup(
         }
     ) { paddingValues ->
         ShortNewWalletMainContent(
-            paddingValues = paddingValues,
             wallet = wallet,
+            modifier = Modifier.padding(
+                top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
+                bottom = paddingValues.calculateBottomPadding() + ZcashTheme.dimens.spacingDefault,
+                start = ZcashTheme.dimens.spacingDefault,
+                end = ZcashTheme.dimens.spacingDefault
+            )
         )
     }
 }
 
 @Composable
 private fun ShortNewWalletMainContent(
-    paddingValues: PaddingValues,
     wallet: PersistableWallet,
+    modifier: Modifier = Modifier,
 ) {
     Column(
         Modifier
-            .padding(
-                top = paddingValues.calculateTopPadding(),
-                bottom = paddingValues.calculateBottomPadding()
+            .fillMaxHeight()
+            .verticalScroll(
+                rememberScrollState()
             )
-    ) {
+            .then(modifier)) {
         SeedPhrase(wallet)
     }
 }
@@ -99,11 +104,7 @@ private fun ShortNewWalletMainContent(
 @Composable
 private fun SeedPhrase(persistableWallet: PersistableWallet) {
     SecureScreen()
-    Column(
-        Modifier
-            .verticalScroll(rememberScrollState())
-            .padding(vertical = ZcashTheme.paddings.padding)
-    ) {
+    Column {
         Body(stringResource(R.string.new_wallet_short_body))
         ChipGrid(persistableWallet.seedPhrase.split.toPersistentList())
     }
