@@ -1,7 +1,9 @@
 package co.electriccoin.zcash.ui.screen.seed.view
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -20,7 +22,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import cash.z.ecc.android.sdk.model.PersistableWallet
 import cash.z.ecc.sdk.fixture.PersistableWalletFixture
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.SecureScreen
 import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.ChipGrid
 import co.electriccoin.zcash.ui.design.component.GradientSurface
@@ -53,14 +54,19 @@ fun Seed(
     onBack: () -> Unit,
     onCopyToClipboard: () -> Unit
 ) {
-    SecureScreen()
+    //SecureScreen()
     Scaffold(topBar = {
         SeedTopAppBar(onBack = onBack)
     }) { paddingValues ->
         SeedMainContent(
-            paddingValues,
             persistableWallet = persistableWallet,
-            onCopyToClipboard = onCopyToClipboard
+            onCopyToClipboard = onCopyToClipboard,
+            modifier = Modifier.padding(
+                top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
+                bottom = paddingValues.calculateBottomPadding() + ZcashTheme.dimens.spacingDefault,
+                start = ZcashTheme.dimens.spacingDefault,
+                end = ZcashTheme.dimens.spacingDefault
+            )
         )
     }
 }
@@ -85,16 +91,21 @@ private fun SeedTopAppBar(onBack: () -> Unit) {
 
 @Composable
 private fun SeedMainContent(
-    paddingValues: PaddingValues,
     persistableWallet: PersistableWallet,
-    onCopyToClipboard: () -> Unit
+    onCopyToClipboard: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Column(
         Modifier
-            .verticalScroll(rememberScrollState())
-            .padding(top = paddingValues.calculateTopPadding())
+            .fillMaxHeight()
+            .verticalScroll(
+                rememberScrollState()
+            )
+            .then(modifier)
     ) {
         Body(stringResource(R.string.seed_body))
+
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
         ChipGrid(persistableWallet.seedPhrase.split.toPersistentList())
 
