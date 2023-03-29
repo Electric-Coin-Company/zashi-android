@@ -5,9 +5,9 @@ package co.electriccoin.zcash.ui.screen.home.view
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -145,7 +145,6 @@ fun Home(
                 )
             }) { paddingValues ->
                 HomeMainContent(
-                    paddingValues,
                     walletSnapshot,
                     transactionHistory,
                     isUpdateAvailable = isUpdateAvailable,
@@ -154,6 +153,12 @@ fun Home(
                     isCircularProgressBarEnabled = isCircularProgressBarEnabled,
                     goReceive = goReceive,
                     goSend = goSend,
+                    modifier = Modifier.padding(
+                        top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
+                        bottom = paddingValues.calculateBottomPadding() + ZcashTheme.dimens.spacingDefault,
+                        start = ZcashTheme.dimens.spacingDefault,
+                        end = ZcashTheme.dimens.spacingDefault
+                    )
                 )
             }
         }
@@ -241,7 +246,7 @@ private fun HomeDrawer(
     ModalDrawerSheet(
         modifier = Modifier.testTag(HomeTag.DRAWER_MENU)
     ) {
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(ZcashTheme.dimens.spacingDefault))
         NavigationDrawerItem(
             icon = { Icon(Icons.Default.Password, contentDescription = null) },
             label = { Text(stringResource(id = R.string.home_menu_seed_phrase)) },
@@ -288,7 +293,6 @@ private fun HomeDrawer(
 @Suppress("LongParameterList")
 @Composable
 private fun HomeMainContent(
-    paddingValues: PaddingValues,
     walletSnapshot: WalletSnapshot,
     transactionHistory: ImmutableList<CommonTransaction>,
     isUpdateAvailable: Boolean,
@@ -297,18 +301,26 @@ private fun HomeMainContent(
     isCircularProgressBarEnabled: Boolean,
     goReceive: () -> Unit,
     goSend: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Column(
         Modifier
-            .verticalScroll(rememberScrollState())
-            .padding(top = paddingValues.calculateTopPadding())
+            .fillMaxHeight()
+            .verticalScroll(
+                rememberScrollState()
+            )
+            .then(modifier)
     ) {
         Status(walletSnapshot, isUpdateAvailable, isFiatConversionEnabled, isCircularProgressBarEnabled)
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
 
-        PrimaryButton(onClick = goReceive, text = stringResource(R.string.home_button_receive))
+        Body(text = stringResource(id = R.string.home_information))
+
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
+
         PrimaryButton(onClick = goSend, text = stringResource(R.string.home_button_send))
+        PrimaryButton(onClick = goReceive, text = stringResource(R.string.home_button_receive))
 
         History(transactionHistory)
 
@@ -386,7 +398,7 @@ private fun Status(
                     .wrapContentSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
 
                 if (walletDisplayValues.zecAmountText.isNotEmpty()) {
                     HeaderWithZecIcon(amount = walletDisplayValues.zecAmountText)
@@ -394,7 +406,7 @@ private fun Status(
 
                 if (isFiatConversionEnabled) {
                     Column(Modifier.testTag(HomeTag.FIAT_CONVERSION)) {
-                        Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
 
                         when (walletDisplayValues.fiatCurrencyAmountState) {
                             is FiatCurrencyConversionRateState.Current -> {
@@ -415,7 +427,7 @@ private fun Status(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
 
                 if (walletDisplayValues.statusText.isNotEmpty()) {
                     Body(
