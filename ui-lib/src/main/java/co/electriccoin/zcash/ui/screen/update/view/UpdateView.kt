@@ -1,6 +1,5 @@
 package co.electriccoin.zcash.ui.screen.update.view
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -63,12 +62,6 @@ fun Update(
     onLater: () -> Unit,
     onReference: () -> Unit
 ) {
-    BackHandler(enabled = true) {
-        if (updateInfo.isForce) {
-            return@BackHandler
-        }
-        onLater()
-    }
     Scaffold(
         topBar = {
             UpdateTopAppBar(updateInfo)
