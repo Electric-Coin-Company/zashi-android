@@ -10,6 +10,7 @@ import androidx.compose.ui.unit.dp
 @Immutable
 data class Dimens(
     // Default spacings:
+    val spacingNone: Dp,
     val spacingXtiny: Dp,
     val spacingTiny: Dp,
     val spacingSmall: Dp,
@@ -22,6 +23,7 @@ data class Dimens(
 )
 
 private val defaultDimens = Dimens(
+    spacingNone = 0.dp,
     spacingXtiny = 2.dp,
     spacingTiny = 4.dp,
     spacingSmall = 8.dp,

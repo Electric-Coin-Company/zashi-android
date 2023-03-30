@@ -96,7 +96,8 @@ private fun ShortNewWalletMainContent(
             .verticalScroll(
                 rememberScrollState()
             )
-            .then(modifier)) {
+            .then(modifier)
+    ) {
         SeedPhrase(wallet)
     }
 }

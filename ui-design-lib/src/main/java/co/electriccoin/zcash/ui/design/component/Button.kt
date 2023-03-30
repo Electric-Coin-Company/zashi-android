@@ -1,6 +1,7 @@
 package co.electriccoin.zcash.ui.design.component
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
@@ -34,6 +35,10 @@ fun PrimaryButton(
     onClick: () -> Unit,
     text: String,
     modifier: Modifier = Modifier,
+    outerPaddingValues: PaddingValues = PaddingValues(
+        horizontal = ZcashTheme.dimens.spacingDefault,
+        vertical = ZcashTheme.dimens.spacingSmall
+    ),
     enabled: Boolean = true
 ) {
     Button(
@@ -41,7 +46,7 @@ fun PrimaryButton(
         modifier = modifier.then(
             Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp)
+                .padding(outerPaddingValues)
         ),
         enabled = enabled,
         colors = buttonColors(containerColor = MaterialTheme.colorScheme.primary)
@@ -59,6 +64,10 @@ fun SecondaryButton(
     onClick: () -> Unit,
     text: String,
     modifier: Modifier = Modifier,
+    outerPaddingValues: PaddingValues = PaddingValues(
+        horizontal = ZcashTheme.dimens.spacingDefault,
+        vertical = ZcashTheme.dimens.spacingSmall
+    ),
     enabled: Boolean = true
 ) {
     Button(
@@ -66,7 +75,7 @@ fun SecondaryButton(
         modifier = modifier.then(
             Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp)
+                .padding(outerPaddingValues)
         ),
         enabled = enabled,
         colors = buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
@@ -83,13 +92,17 @@ fun SecondaryButton(
 fun NavigationButton(
     onClick: () -> Unit,
     text: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    outerPaddingValues: PaddingValues = PaddingValues(
+        horizontal = ZcashTheme.dimens.spacingDefault,
+        vertical = ZcashTheme.dimens.spacingSmall
+    ),
 ) {
     Button(
         onClick = onClick,
         modifier = modifier.then(
             Modifier
-                .padding(horizontal = 16.dp, vertical = 8.dp)
+                .padding(outerPaddingValues)
         ),
         colors = buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
     ) {
@@ -102,6 +115,10 @@ fun TertiaryButton(
     onClick: () -> Unit,
     text: String,
     modifier: Modifier = Modifier,
+    outerPaddingValues: PaddingValues = PaddingValues(
+        horizontal = ZcashTheme.dimens.spacingDefault,
+        vertical = ZcashTheme.dimens.spacingSmall
+    ),
     enabled: Boolean = true
 ) {
     Button(
@@ -109,7 +126,7 @@ fun TertiaryButton(
         modifier = modifier.then(
             Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp)
+                .padding(outerPaddingValues)
         ),
         enabled = enabled,
         elevation = ButtonDefaults.buttonElevation(0.dp, 0.dp, 0.dp),
@@ -127,14 +144,18 @@ fun TertiaryButton(
 fun DangerousButton(
     onClick: () -> Unit,
     text: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    outerPaddingValues: PaddingValues = PaddingValues(
+        horizontal = ZcashTheme.dimens.spacingDefault,
+        vertical = ZcashTheme.dimens.spacingSmall
+    ),
 ) {
     Button(
         onClick = onClick,
         modifier = modifier.then(
             Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp)
+                .padding(outerPaddingValues)
         ),
         colors = buttonColors(containerColor = ZcashTheme.colors.dangerous)
     ) {

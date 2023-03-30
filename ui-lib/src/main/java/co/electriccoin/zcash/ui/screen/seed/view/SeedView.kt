@@ -1,6 +1,7 @@
 package co.electriccoin.zcash.ui.screen.seed.view
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
@@ -22,6 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import cash.z.ecc.android.sdk.model.PersistableWallet
 import cash.z.ecc.sdk.fixture.PersistableWalletFixture
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.SecureScreen
 import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.ChipGrid
 import co.electriccoin.zcash.ui.design.component.GradientSurface
@@ -54,7 +56,7 @@ fun Seed(
     onBack: () -> Unit,
     onCopyToClipboard: () -> Unit
 ) {
-    //SecureScreen()
+    SecureScreen()
     Scaffold(topBar = {
         SeedTopAppBar(onBack = onBack)
     }) { paddingValues ->
@@ -109,6 +111,13 @@ private fun SeedMainContent(
 
         ChipGrid(persistableWallet.seedPhrase.split.toPersistentList())
 
-        TertiaryButton(onClick = onCopyToClipboard, text = stringResource(R.string.seed_copy))
+        TertiaryButton(
+            onClick = onCopyToClipboard,
+            text = stringResource(R.string.seed_copy),
+            outerPaddingValues = PaddingValues(
+                horizontal = ZcashTheme.dimens.spacingNone,
+                vertical = ZcashTheme.dimens.spacingSmall
+            )
+        )
     }
 }
