@@ -1,8 +1,8 @@
 package co.electriccoin.zcash.ui.screen.about.view
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -20,7 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.build.gitSha
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.Body
@@ -57,9 +56,19 @@ fun About(
         AboutTopAppBar(onBack = goBack)
     }) { paddingValues ->
         AboutMainContent(
-            paddingValues,
             versionInfo,
-            configInfo
+            configInfo,
+            modifier = Modifier
+                .fillMaxHeight()
+                .verticalScroll(
+                    rememberScrollState()
+                )
+                .padding(
+                    top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
+                    bottom = paddingValues.calculateBottomPadding() + ZcashTheme.dimens.spacingDefault,
+                    start = ZcashTheme.dimens.spacingDefault,
+                    end = ZcashTheme.dimens.spacingDefault
+                )
         )
     }
 }
@@ -83,33 +92,33 @@ private fun AboutTopAppBar(onBack: () -> Unit) {
 }
 
 @Composable
-fun AboutMainContent(paddingValues: PaddingValues, versionInfo: VersionInfo, configInfo: ConfigInfo) {
-    Column(
-        Modifier
-            .verticalScroll(rememberScrollState())
-            .padding(top = paddingValues.calculateTopPadding())
-    ) {
+fun AboutMainContent(
+    versionInfo: VersionInfo,
+    configInfo: ConfigInfo,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier) {
         Icon(painterResource(id = R.drawable.ic_launcher_adaptive_foreground), contentDescription = null)
         Text(stringResource(id = R.string.app_name))
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
 
         Header(stringResource(id = R.string.about_version_header))
         Body(stringResource(R.string.about_version_format, versionInfo.versionName, versionInfo.versionCode))
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
 
         Header(stringResource(id = R.string.about_build_header))
         Body(gitSha)
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
 
         configInfo.configurationUpdatedAt?.let { updatedAt ->
             Header(stringResource(id = R.string.about_build_configuration))
             Body(updatedAt.toString())
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
 
         Header(stringResource(id = R.string.about_legal_header))
         Body(stringResource(id = R.string.about_legal_info))
