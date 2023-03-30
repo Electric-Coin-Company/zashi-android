@@ -317,7 +317,11 @@ private fun SendForm(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(Modifier.fillMaxHeight(MINIMAL_WEIGHT))
+        Spacer(
+            modifier = Modifier
+                .fillMaxHeight()
+                .weight(MINIMAL_WEIGHT)
+        )
 
         if (validation.isNotEmpty()) {
             /*

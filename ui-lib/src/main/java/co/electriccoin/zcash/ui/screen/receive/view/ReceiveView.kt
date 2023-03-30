@@ -2,6 +2,11 @@ package co.electriccoin.zcash.ui.screen.receive.view
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -26,8 +31,9 @@ import cash.z.ecc.android.sdk.model.WalletAddress
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.BrightenScreen
 import co.electriccoin.zcash.ui.common.DisableScreenTimeout
-import co.electriccoin.zcash.ui.design.component.Body
+import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.GradientSurface
+import co.electriccoin.zcash.ui.design.component.Header
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.receive.util.AndroidQrCodeImageGenerator
@@ -61,6 +67,10 @@ fun Receive(
         ReceiveContents(
             walletAddress = walletAddress,
             onAddressDetails = onAddressDetails,
+            modifier = Modifier
+                .fillMaxHeight()
+                .verticalScroll(rememberScrollState())
+                .padding(all = ZcashTheme.dimens.spacingDefault)
         )
     }
 }
@@ -90,21 +100,42 @@ private val DEFAULT_QR_CODE_SIZE = 320.dp
 private fun ReceiveContents(
     walletAddress: WalletAddress,
     onAddressDetails: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    Column(Modifier.verticalScroll(rememberScrollState())) {
+    Column(modifier) {
         QrCode(data = walletAddress.address, DEFAULT_QR_CODE_SIZE, Modifier.align(Alignment.CenterHorizontally))
-        Body(text = stringResource(id = R.string.wallet_address_unified), Modifier.align(Alignment.CenterHorizontally))
+
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
+
+        Header(
+            text = stringResource(id = R.string.wallet_address_unified),
+            Modifier.align(Alignment.CenterHorizontally)
+        )
+
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
+
         // TODO [#163]: Ellipsize center of the string
         // TODO [#163]: https://github.com/zcash/secant-android-wallet/issues/163
         Text(
             text = walletAddress.address,
-            style = MaterialTheme.typography.headlineLarge,
+            style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier.align(Alignment.CenterHorizontally),
             overflow = TextOverflow.Ellipsis,
             maxLines = 1
         )
-        PrimaryButton(onClick = onAddressDetails, text = stringResource(id = R.string.receive_see_address_details))
+
+        Spacer(
+            modifier = Modifier
+                .fillMaxHeight()
+                .weight(MINIMAL_WEIGHT)
+        )
+
+        PrimaryButton(
+            onClick = onAddressDetails,
+            text = stringResource(id = R.string.receive_see_address_details),
+            outerPaddingValues = PaddingValues(all = ZcashTheme.dimens.spacingNone)
+        )
     }
 }
 
