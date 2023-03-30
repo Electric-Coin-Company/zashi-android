@@ -14,8 +14,10 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -37,7 +39,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
@@ -47,19 +48,19 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.core.content.ContextCompat
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.SecondaryButton
+import co.electriccoin.zcash.ui.design.component.Small
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.scan.ScanTag
 import co.electriccoin.zcash.ui.screen.scan.model.ScanState
@@ -108,12 +109,20 @@ fun Scan(
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
         ScanMainContent(
-            paddingValues,
             onScanned,
             onOpenSettings,
             onBack,
             onScanStateChanged,
-            snackbarHostState
+            snackbarHostState,
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black)
+                .padding(
+                    top = paddingValues.calculateTopPadding(),
+                    bottom = paddingValues.calculateBottomPadding(),
+                    start = ZcashTheme.dimens.spacingNone,
+                    end = ZcashTheme.dimens.spacingNone
+                )
         )
     }
 }
@@ -121,41 +130,37 @@ fun Scan(
 @Composable
 fun ScanBottomItems(
     scanState: ScanState,
-    onOpenSettings: () -> Unit
+    onOpenSettings: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    Column(modifier = Modifier.fillMaxWidth()) {
-        Text(
+    Column(modifier) {
+        Body(
             text = stringResource(id = R.string.scan_hint),
-            color = Color.White,
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(CenterHorizontally)
-                .padding(horizontal = 24.dp, vertical = 8.dp)
+            color = Color.White
         )
 
-        Text(
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
+
+        Small(
             text = when (scanState) {
                 ScanState.Permission -> stringResource(id = R.string.scan_state_permission)
                 ScanState.Scanning -> stringResource(id = R.string.scan_state_scanning)
                 ScanState.Failed -> stringResource(id = R.string.scan_state_failed)
             },
             color = Color.White,
-            fontSize = 16.sp,
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(CenterHorizontally)
-                .padding(horizontal = 24.dp, vertical = 8.dp)
-                .testTag(ScanTag.TEXT_STATE)
+            modifier = Modifier.testTag(ScanTag.TEXT_STATE)
         )
 
         if (scanState == ScanState.Permission) {
+            Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
+
             SecondaryButton(
                 onClick = onOpenSettings,
                 text = stringResource(id = R.string.scan_settings_button),
-                modifier = Modifier
-                    .padding(horizontal = 24.dp, vertical = 12.dp)
+                outerPaddingValues = PaddingValues(
+                    vertical = ZcashTheme.dimens.spacingSmall,
+                    horizontal = ZcashTheme.dimens.spacingNone
+                )
             )
         }
     }
@@ -183,12 +188,12 @@ private fun ScanTopAppBar(onBack: () -> Unit) {
 @Suppress("MagicNumber", "LongMethod", "LongParameterList")
 @Composable
 private fun ScanMainContent(
-    paddingValues: PaddingValues,
     onScanned: (String) -> Unit,
     onOpenSettings: () -> Unit,
     onBack: () -> Unit,
     onScanStateChanged: (ScanState) -> Unit,
-    snackbarHostState: SnackbarHostState
+    snackbarHostState: SnackbarHostState,
+    modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
 
@@ -234,12 +239,7 @@ private fun ScanMainContent(
         (framePossibleSize.value.width * 0.7).roundToInt()
     }
 
-    ConstraintLayout(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black)
-            .padding(top = paddingValues.calculateTopPadding())
-    ) {
+    ConstraintLayout(modifier) {
         val (frame, bottomItems) = createRefs()
 
         when (scanState) {
@@ -292,7 +292,16 @@ private fun ScanMainContent(
         }
 
         Box(modifier = Modifier.constrainAs(bottomItems) { bottom.linkTo(parent.bottom) }) {
-            ScanBottomItems(scanState, onOpenSettings)
+            ScanBottomItems(
+                scanState = scanState,
+                onOpenSettings = onOpenSettings,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        vertical = ZcashTheme.dimens.spacingDefault,
+                        horizontal = ZcashTheme.dimens.spacingDefault
+                    )
+            )
         }
     }
 }
