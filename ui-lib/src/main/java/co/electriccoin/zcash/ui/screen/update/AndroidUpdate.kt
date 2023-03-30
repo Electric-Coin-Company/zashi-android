@@ -2,6 +2,7 @@ package co.electriccoin.zcash.ui.screen.update
 
 import android.content.Context
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.viewModels
 import androidx.annotation.VisibleForTesting
 import androidx.compose.material3.SnackbarHostState
@@ -85,6 +86,16 @@ private fun WrapUpdate(
         }
     }
 
+    val onLaterAction = {
+        if (!updateInfo.isForce && updateInfo.state != UpdateState.Running) {
+            viewModel.remindLater()
+        }
+    }
+
+    BackHandler {
+        onLaterAction()
+    }
+
     Update(
         snackbarHostState,
         updateInfo,
@@ -97,9 +108,7 @@ private fun WrapUpdate(
                 updateInfo.appUpdateInfo
             )
         },
-        onLater = {
-            viewModel.remindLater()
-        },
+        onLater = onLaterAction,
         onReference = {
             openPlayStoreAppPage(
                 activity.applicationContext,
