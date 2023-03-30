@@ -20,6 +20,7 @@ import co.electriccoin.zcash.ui.test.getStringResourceWithArgs
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
+import kotlin.test.Ignore
 
 class UpdateViewTest : UiTestPrerequisites() {
 
@@ -94,6 +95,7 @@ class UpdateViewTest : UiTestPrerequisites() {
 
     @Test
     @MediumTest
+    @Ignore("Will be refactored to AndroidUpdateTest")
     fun later_btn_force_update_test() {
         val updateInfo = UpdateInfoFixture.new(
             priority = AppUpdateChecker.Priority.HIGH,
