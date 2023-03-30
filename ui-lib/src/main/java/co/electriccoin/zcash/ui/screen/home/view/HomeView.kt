@@ -5,6 +5,7 @@ package co.electriccoin.zcash.ui.screen.home.view
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -319,8 +320,22 @@ private fun HomeMainContent(
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
 
-        PrimaryButton(onClick = goSend, text = stringResource(R.string.home_button_send))
-        PrimaryButton(onClick = goReceive, text = stringResource(R.string.home_button_receive))
+        PrimaryButton(
+            onClick = goSend,
+            text = stringResource(R.string.home_button_send),
+            outerPaddingValues = PaddingValues(
+                horizontal = ZcashTheme.dimens.spacingNone,
+                vertical = ZcashTheme.dimens.spacingSmall
+            )
+        )
+        PrimaryButton(
+            onClick = goReceive,
+            text = stringResource(R.string.home_button_receive),
+            outerPaddingValues = PaddingValues(
+                horizontal = ZcashTheme.dimens.spacingNone,
+                vertical = ZcashTheme.dimens.spacingSmall
+            )
+        )
 
         History(transactionHistory)
 

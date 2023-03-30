@@ -3,9 +3,9 @@
 package co.electriccoin.zcash.ui.screen.onboarding.view
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -146,11 +146,21 @@ private fun OnboardingMainContent(
                 .weight(MINIMAL_WEIGHT)
         )
 
-        PrimaryButton(onCreateWallet, stringResource(R.string.onboarding_short_create_new_wallet), Modifier.fillMaxWidth())
+        PrimaryButton(
+            onClick = onCreateWallet,
+            text = stringResource(R.string.onboarding_short_create_new_wallet),
+            outerPaddingValues = PaddingValues(
+                horizontal = ZcashTheme.dimens.spacingNone,
+                vertical = ZcashTheme.dimens.spacingSmall
+            )
+        )
         TertiaryButton(
             onImportWallet,
             stringResource(R.string.onboarding_short_import_existing_wallet),
-            Modifier.fillMaxWidth()
+            outerPaddingValues = PaddingValues(
+                horizontal = ZcashTheme.dimens.spacingNone,
+                vertical = ZcashTheme.dimens.spacingSmall
+            )
         )
     }
 }
