@@ -1,6 +1,7 @@
 package co.electriccoin.zcash.ui.screen.send.view
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -108,6 +109,10 @@ fun Send(
             onQrScannerOpen = onQrScannerOpen,
             hasCameraFeature = hasCameraFeature,
             modifier = Modifier
+                .fillMaxHeight()
+                .verticalScroll(
+                    rememberScrollState()
+                )
                 .padding(
                     top = paddingValues.calculateTopPadding() + dimens.spacingDefault,
                     bottom = paddingValues.calculateBottomPadding() + dimens.spacingDefault,
@@ -250,11 +255,7 @@ private fun SendForm(
         memoString = sendArgumentsWrapper.memo
     }
 
-    Column(
-        modifier
-            .fillMaxHeight()
-            .verticalScroll(rememberScrollState())
-    ) {
+    Column(modifier) {
         Header(
             text = stringResource(id = R.string.send_balance, myBalance.toZecString()),
             textAlign = TextAlign.Center,
@@ -350,7 +351,8 @@ private fun SendForm(
             text = stringResource(id = R.string.send_create),
             // Check for ABBREVIATION_INDEX goes away once proper address validation is in place.
             // For now, it just prevents a crash on the confirmation screen.
-            enabled = amountZecString.isNotBlank() && recipientAddressString.length > ABBREVIATION_INDEX
+            enabled = amountZecString.isNotBlank() && recipientAddressString.length > ABBREVIATION_INDEX,
+            outerPaddingValues = PaddingValues(top = dimens.spacingNone)
         )
     }
 }
@@ -361,14 +363,7 @@ private fun Confirmation(
     onConfirmation: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        Modifier
-            .fillMaxHeight()
-            .verticalScroll(
-                rememberScrollState()
-            )
-            .then(modifier)
-    ) {
+    Column(modifier) {
         Body(
             stringResource(
                 R.string.send_confirmation_amount_and_address_format,
@@ -394,7 +389,8 @@ private fun Confirmation(
         PrimaryButton(
             modifier = Modifier.padding(top = dimens.spacingSmall),
             onClick = onConfirmation,
-            text = stringResource(id = R.string.send_confirmation_button)
+            text = stringResource(id = R.string.send_confirmation_button),
+            outerPaddingValues = PaddingValues(top = dimens.spacingSmall)
         )
     }
 }
@@ -404,14 +400,7 @@ private fun Sending(
     zecSend: ZecSend,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        Modifier
-            .fillMaxHeight()
-            .verticalScroll(
-                rememberScrollState()
-            )
-            .then(modifier)
-    ) {
+    Column(modifier) {
         Header(
             text = stringResource(
                 R.string.send_in_progress_amount_format,
@@ -460,14 +449,7 @@ private fun SendSuccessful(
     onDone: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        Modifier
-            .fillMaxHeight()
-            .verticalScroll(
-                rememberScrollState()
-            )
-            .then(modifier)
-    ) {
+    Column(modifier) {
         Header(
             text = stringResource(R.string.send_successful_title),
             textAlign = TextAlign.Center,
@@ -498,7 +480,8 @@ private fun SendSuccessful(
         PrimaryButton(
             modifier = Modifier.padding(top = dimens.spacingSmall),
             text = stringResource(R.string.send_successful_button),
-            onClick = onDone
+            onClick = onDone,
+            outerPaddingValues = PaddingValues(top = dimens.spacingSmall)
         )
     }
 }
@@ -509,14 +492,7 @@ private fun SendFailure(
     onDone: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        Modifier
-            .fillMaxHeight()
-            .verticalScroll(
-                rememberScrollState()
-            )
-            .then(modifier)
-    ) {
+    Column(modifier) {
         Header(
             text = stringResource(R.string.send_failure_title),
             textAlign = TextAlign.Center,
@@ -547,7 +523,8 @@ private fun SendFailure(
         PrimaryButton(
             modifier = Modifier.padding(top = dimens.spacingSmall),
             text = stringResource(R.string.send_failure_button),
-            onClick = onDone
+            onClick = onDone,
+            outerPaddingValues = PaddingValues(top = dimens.spacingSmall)
         )
     }
 }
