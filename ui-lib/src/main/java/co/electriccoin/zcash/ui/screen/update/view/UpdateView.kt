@@ -73,13 +73,26 @@ fun Update(
             UpdateBottomAppBar(
                 updateInfo,
                 onDownload,
-                onLater
+                onLater,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        vertical = ZcashTheme.dimens.spacingDefault,
+                        horizontal = ZcashTheme.dimens.spacingDefault
+                    )
             )
         }
     ) { paddingValues ->
         UpdateContentNormal(
-            paddingValues,
-            onReference
+            onReference,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    top = paddingValues.calculateTopPadding(),
+                    bottom = paddingValues.calculateBottomPadding(),
+                    start = ZcashTheme.dimens.spacingDefault,
+                    end = ZcashTheme.dimens.spacingDefault
+                )
         )
     }
     UpdateOverlayRunning(updateInfo)
@@ -127,16 +140,16 @@ private fun UpdateTopAppBar(updateInfo: UpdateInfo) {
 private fun UpdateBottomAppBar(
     updateInfo: UpdateInfo,
     onDownload: (state: UpdateState) -> Unit,
-    onLater: () -> Unit
+    onLater: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    Column {
+    Column(modifier) {
         PrimaryButton(
             onClick = { onDownload(UpdateState.Running) },
             text = stringResource(R.string.update_download_button),
-            modifier = Modifier
-                .fillMaxWidth()
-                .testTag(UpdateTag.BTN_DOWNLOAD),
-            enabled = updateInfo.state != UpdateState.Running
+            modifier = Modifier.testTag(UpdateTag.BTN_DOWNLOAD),
+            enabled = updateInfo.state != UpdateState.Running,
+            outerPaddingValues = PaddingValues(all = ZcashTheme.dimens.spacingNone)
         )
 
         TertiaryButton(
@@ -150,23 +163,20 @@ private fun UpdateBottomAppBar(
                     }
                 }
             ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .testTag(UpdateTag.BTN_LATER),
-            enabled = !updateInfo.isForce && updateInfo.state != UpdateState.Running
+            modifier = Modifier.testTag(UpdateTag.BTN_LATER),
+            enabled = !updateInfo.isForce && updateInfo.state != UpdateState.Running,
+            outerPaddingValues = PaddingValues(top = ZcashTheme.dimens.spacingSmall)
         )
     }
 }
 
 @Composable
 private fun UpdateContentNormal(
-    paddingValues: PaddingValues,
-    onReference: () -> Unit
+    onReference: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Column(
-        Modifier
-            .fillMaxWidth()
-            .padding(top = paddingValues.calculateTopPadding()),
+        modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // TODO [#17]: This suppression and magic number will get replaced once we have real assets
