@@ -57,5 +57,5 @@ This section is optional and is required only if you'd like to test on an Androi
 1. Grant the Camera permission with one of the previous procedures
 1. Create QR code from the valid Zcash wallet address. You can use, for example, the [QR Code Generator](https://www.qr-code-generator.com/) tool.
 1. Scan the created QR code
-1. The code should be scanned but not validated
+1. The code should be scanned but not validated (error message is displayed).
 1. The app UI should not be changed and the Camera view should be still available for scanning another codes

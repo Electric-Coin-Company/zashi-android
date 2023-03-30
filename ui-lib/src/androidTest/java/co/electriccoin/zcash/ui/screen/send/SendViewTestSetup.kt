@@ -9,6 +9,7 @@ import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.sdk.fixture.ZatoshiFixture
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.send.ext.Saver
+import co.electriccoin.zcash.ui.screen.send.model.SendArgumentsWrapper
 import co.electriccoin.zcash.ui.screen.send.model.SendStage
 import co.electriccoin.zcash.ui.screen.send.view.Send
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,10 +19,13 @@ import java.util.concurrent.atomic.AtomicInteger
 class SendViewTestSetup(
     private val composeTestRule: ComposeContentTestRule,
     private val initialState: SendStage,
-    private val initialZecSend: ZecSend?
+    private val initialZecSend: ZecSend?,
+    private val initialSendArgumentWrapper: SendArgumentsWrapper?,
+    private val hasCameraFeature: Boolean
 ) {
     private val onBackCount = AtomicInteger(0)
     private val onCreateCount = AtomicInteger(0)
+    private val onScannerCount = AtomicInteger(0)
     val mutableActionExecuted = MutableStateFlow(false)
 
     @Volatile
@@ -38,6 +42,11 @@ class SendViewTestSetup(
     fun getOnCreateCount(): Int {
         composeTestRule.waitForIdle()
         return onCreateCount.get()
+    }
+
+    fun getOnScannerCount(): Int {
+        composeTestRule.waitForIdle()
+        return onScannerCount.get()
     }
 
     fun getLastZecSend(): ZecSend? {
@@ -82,6 +91,7 @@ class SendViewTestSetup(
             Send(
                 mySpendableBalance = ZatoshiFixture.new(),
                 sendStage = sendStage,
+                sendArgumentsWrapper = initialSendArgumentWrapper,
                 onSendStageChange = setSendStage,
                 zecSend = zecSend,
                 onZecSendChange = setZecSend,
@@ -90,7 +100,11 @@ class SendViewTestSetup(
                     onCreateCount.incrementAndGet()
                     lastZecSend = it
                     mutableActionExecuted.update { true }
-                }
+                },
+                onQrScannerOpen = {
+                    onScannerCount.incrementAndGet()
+                },
+                hasCameraFeature = hasCameraFeature
             )
         }
     }

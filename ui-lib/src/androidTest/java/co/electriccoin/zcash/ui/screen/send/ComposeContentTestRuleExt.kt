@@ -20,6 +20,12 @@ internal fun ComposeContentTestRule.clickBack() {
     }
 }
 
+internal fun ComposeContentTestRule.clickScanner() {
+    onNodeWithContentDescription(getStringResource(R.string.send_scan_content_description)).also {
+        it.performClick()
+    }
+}
+
 internal fun ComposeContentTestRule.setValidAmount() {
     onNodeWithText(getStringResource(R.string.send_amount)).also {
         val separators = MonetarySeparators.current()

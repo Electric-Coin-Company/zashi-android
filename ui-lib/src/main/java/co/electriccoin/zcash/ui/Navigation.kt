@@ -7,6 +7,10 @@ import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import co.electriccoin.zcash.spackle.Twig
+import co.electriccoin.zcash.ui.NavigationArguments.SEND_AMOUNT
+import co.electriccoin.zcash.ui.NavigationArguments.SEND_MEMO
+import co.electriccoin.zcash.ui.NavigationArguments.SEND_RECIPIENT_ADDRESS
 import co.electriccoin.zcash.ui.NavigationTargets.ABOUT
 import co.electriccoin.zcash.ui.NavigationTargets.HOME
 import co.electriccoin.zcash.ui.NavigationTargets.RECEIVE
@@ -27,6 +31,7 @@ import co.electriccoin.zcash.ui.screen.request.WrapRequest
 import co.electriccoin.zcash.ui.screen.scan.WrapScanValidator
 import co.electriccoin.zcash.ui.screen.seed.WrapSeed
 import co.electriccoin.zcash.ui.screen.send.WrapSend
+import co.electriccoin.zcash.ui.screen.send.model.SendArgumentsWrapper
 import co.electriccoin.zcash.ui.screen.settings.WrapSettings
 import co.electriccoin.zcash.ui.screen.support.WrapSupport
 import co.electriccoin.zcash.ui.screen.update.WrapCheckForUpdate
@@ -85,8 +90,22 @@ internal fun MainActivity.Navigation() {
         composable(REQUEST) {
             WrapRequest(goBack = { navController.popBackStackJustOnce(REQUEST) })
         }
-        composable(SEND) {
-            WrapSend(goBack = { navController.popBackStackJustOnce(SEND) })
+        composable(SEND) { backStackEntry ->
+            WrapSend(
+                goToQrScanner = {
+                    Twig.debug { "Opening Qr Scanner Screen" }
+                    navController.navigateJustOnce(SCAN)
+                },
+                goBack = { navController.popBackStackJustOnce(SEND) },
+                sendArgumentsWrapper = SendArgumentsWrapper(
+                    recipientAddress = backStackEntry.savedStateHandle[SEND_RECIPIENT_ADDRESS],
+                    amount = backStackEntry.savedStateHandle[SEND_AMOUNT],
+                    memo = backStackEntry.savedStateHandle[SEND_MEMO]
+                )
+            )
+            backStackEntry.savedStateHandle.remove<String>(SEND_RECIPIENT_ADDRESS)
+            backStackEntry.savedStateHandle.remove<String>(SEND_AMOUNT)
+            backStackEntry.savedStateHandle.remove<String>(SEND_MEMO)
         }
         composable(SUPPORT) {
             // Pop back stack won't be right if we deep link into support
@@ -97,11 +116,14 @@ internal fun MainActivity.Navigation() {
         }
         composable(SCAN) {
             WrapScanValidator(
-                onScanValid = {
-                    // TODO [#449] https://github.com/zcash/secant-android-wallet/issues/449
-                    navController.navigateJustOnce(SEND) {
-                        popUpTo(HOME) { inclusive = false }
+                onScanValid = { result ->
+                    // At this point we only pass recipient address
+                    navController.previousBackStackEntry?.savedStateHandle?.apply {
+                        set(SEND_RECIPIENT_ADDRESS, result)
+                        set(SEND_AMOUNT, null)
+                        set(SEND_MEMO, null)
                     }
+                    navController.popBackStackJustOnce(SCAN)
                 },
                 goBack = { navController.popBackStackJustOnce(SCAN) }
             )
@@ -135,6 +157,12 @@ private fun NavHostController.popBackStackJustOnce(currentRouteToBePopped: Strin
         return
     }
     popBackStack()
+}
+
+object NavigationArguments {
+    const val SEND_RECIPIENT_ADDRESS = "send_recipient_address"
+    const val SEND_AMOUNT = "send_amount"
+    const val SEND_MEMO = "send_memo"
 }
 
 object NavigationTargets {

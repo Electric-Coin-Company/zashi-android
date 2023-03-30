@@ -12,6 +12,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.outlined.QrCodeScanner
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -50,6 +51,7 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme.dimens
 import co.electriccoin.zcash.ui.screen.send.ext.ABBREVIATION_INDEX
 import co.electriccoin.zcash.ui.screen.send.ext.abbreviated
 import co.electriccoin.zcash.ui.screen.send.ext.valueOrEmptyChar
+import co.electriccoin.zcash.ui.screen.send.model.SendArgumentsWrapper
 import co.electriccoin.zcash.ui.screen.send.model.SendStage
 
 @Composable
@@ -59,12 +61,15 @@ fun PreviewSend() {
         GradientSurface {
             Send(
                 mySpendableBalance = ZatoshiFixture.new(),
+                sendArgumentsWrapper = null,
                 sendStage = SendStage.Form,
                 onSendStageChange = {},
                 zecSend = null,
                 onZecSendChange = {},
                 onCreateAndSend = {},
-                onBack = {}
+                onQrScannerOpen = {},
+                onBack = {},
+                hasCameraFeature = true
             )
         }
     }
@@ -75,12 +80,15 @@ fun PreviewSend() {
 @Composable
 fun Send(
     mySpendableBalance: Zatoshi,
+    sendArgumentsWrapper: SendArgumentsWrapper?,
     sendStage: SendStage,
     onSendStageChange: (SendStage) -> Unit,
     zecSend: ZecSend?,
     onZecSendChange: (ZecSend) -> Unit,
     onBack: () -> Unit,
-    onCreateAndSend: (ZecSend) -> Unit
+    onCreateAndSend: (ZecSend) -> Unit,
+    onQrScannerOpen: () -> Unit,
+    hasCameraFeature: Boolean
 ) {
     Scaffold(topBar = {
         SendTopAppBar(
@@ -90,12 +98,15 @@ fun Send(
     }) { paddingValues ->
         SendMainContent(
             myBalance = mySpendableBalance,
+            sendArgumentsWrapper = sendArgumentsWrapper,
             onBack = onBack,
             sendStage = sendStage,
             onSendStageChange = onSendStageChange,
             zecSend = zecSend,
             onZecSendChange = onZecSendChange,
             onSendSubmit = onCreateAndSend,
+            onQrScannerOpen = onQrScannerOpen,
+            hasCameraFeature = hasCameraFeature,
             modifier = Modifier
                 .padding(
                     top = paddingValues.calculateTopPadding() + dimens.spacingDefault,
@@ -136,23 +147,29 @@ private fun SendTopAppBar(
 @Composable
 private fun SendMainContent(
     myBalance: Zatoshi,
+    sendArgumentsWrapper: SendArgumentsWrapper?,
     zecSend: ZecSend?,
     onZecSendChange: (ZecSend) -> Unit,
     onBack: () -> Unit,
     sendStage: SendStage,
     onSendStageChange: (SendStage) -> Unit,
     onSendSubmit: (ZecSend) -> Unit,
+    onQrScannerOpen: () -> Unit,
+    hasCameraFeature: Boolean,
     modifier: Modifier = Modifier
 ) {
     when {
         (sendStage == SendStage.Form || null == zecSend) -> {
             SendForm(
                 myBalance = myBalance,
+                sendArgumentsWrapper = sendArgumentsWrapper,
                 previousZecSend = zecSend,
                 onCreateZecSend = {
                     onSendStageChange(SendStage.Confirmation)
                     onZecSendChange(it)
                 },
+                onQrScannerOpen = onQrScannerOpen,
+                hasCameraFeature = hasCameraFeature,
                 modifier = modifier
             )
         }
@@ -192,12 +209,15 @@ private fun SendMainContent(
 // TODO [#217]: Need to handle changing of Locale after user input, but before submitting the button.
 // TODO [#288]: TextField component can't do long-press backspace.
 // TODO [#294]: DetektAll failed LongMethod
-@Suppress("LongMethod")
+@Suppress("LongMethod", "LongParameterList")
 @Composable
 private fun SendForm(
     myBalance: Zatoshi,
+    sendArgumentsWrapper: SendArgumentsWrapper?,
     previousZecSend: ZecSend?,
     onCreateZecSend: (ZecSend) -> Unit,
+    onQrScannerOpen: () -> Unit,
+    hasCameraFeature: Boolean,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -216,6 +236,16 @@ private fun SendForm(
 
     var validation by rememberSaveable {
         mutableStateOf<Set<ZecSendExt.ZecSendValidation.Invalid.ValidationError>>(emptySet())
+    }
+
+    if (sendArgumentsWrapper?.recipientAddress != null) {
+        recipientAddressString = sendArgumentsWrapper.recipientAddress
+    }
+    if (sendArgumentsWrapper?.amount != null) {
+        amountZecString = sendArgumentsWrapper.amount
+    }
+    if (sendArgumentsWrapper?.memo != null) {
+        memoString = sendArgumentsWrapper.memo
     }
 
     Column(
@@ -237,6 +267,26 @@ private fun SendForm(
         Spacer(modifier = Modifier.height(dimens.spacingLarge))
 
         FormTextField(
+            value = recipientAddressString,
+            onValueChange = { recipientAddressString = it },
+            label = { Text(stringResource(id = R.string.send_to)) },
+            modifier = Modifier.fillMaxWidth(),
+            trailingIcon = if (hasCameraFeature) { {
+                IconButton(
+                    onClick = onQrScannerOpen,
+                    content = {
+                        Icon(
+                            imageVector = Icons.Outlined.QrCodeScanner,
+                            contentDescription = stringResource(R.string.send_scan_content_description)
+                        )
+                    }
+                )
+            } } else { null }
+        )
+
+        Spacer(Modifier.size(dimens.spacingSmall))
+
+        FormTextField(
             value = amountZecString,
             onValueChange = { newValue ->
                 if (!ZecStringExt.filterContinuous(context, monetarySeparators, newValue)) {
@@ -246,15 +296,6 @@ private fun SendForm(
             },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             label = { Text(stringResource(id = R.string.send_amount)) },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(Modifier.size(dimens.spacingSmall))
-
-        FormTextField(
-            value = recipientAddressString,
-            onValueChange = { recipientAddressString = it },
-            label = { Text(stringResource(id = R.string.send_to)) },
             modifier = Modifier.fillMaxWidth()
         )
 

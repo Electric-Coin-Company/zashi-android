@@ -18,6 +18,8 @@ fun FormTextField(
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     label: @Composable (() -> Unit)? = null,
+    leadingIcon: @Composable (() -> Unit)? = null,
+    trailingIcon: @Composable (() -> Unit)? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
     colors: TextFieldColors = TextFieldDefaults.textFieldColors(
         containerColor = Color.Transparent
@@ -29,6 +31,8 @@ fun FormTextField(
         label = label,
         keyboardOptions = keyboardOptions,
         colors = colors,
-        modifier = modifier
+        modifier = modifier,
+        leadingIcon = leadingIcon,
+        trailingIcon = trailingIcon
     )
 }

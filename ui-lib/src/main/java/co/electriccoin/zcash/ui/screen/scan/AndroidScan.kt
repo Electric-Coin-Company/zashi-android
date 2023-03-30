@@ -7,7 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.lifecycleScope
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.screen.home.viewmodel.WalletViewModel
@@ -20,7 +19,7 @@ internal fun MainActivity.WrapScanValidator(
     onScanValid: (address: String) -> Unit,
     goBack: () -> Unit
 ) {
-    WrapScanValidator(
+    WrapScan(
         this,
         onScanValid = onScanValid,
         goBack = goBack
@@ -28,7 +27,7 @@ internal fun MainActivity.WrapScanValidator(
 }
 
 @Composable
-private fun WrapScanValidator(
+fun WrapScan(
     activity: ComponentActivity,
     onScanValid: (address: String) -> Unit,
     goBack: () -> Unit
@@ -37,50 +36,41 @@ private fun WrapScanValidator(
 
     val synchronizer = walletViewModel.synchronizer.collectAsStateWithLifecycle().value
 
-    if (synchronizer == null) {
-        // Display loading indicator
-    } else {
-        WrapScan(
-            activity,
-            onScanned = { result ->
-                activity.lifecycleScope.launch {
-                    val isAddressValid = !synchronizer.validateAddress(result).isNotValid
-                    if (isAddressValid) {
-                        onScanValid(result)
-                    }
-                }
-            },
-            goBack = goBack
-        )
-    }
-}
-
-@Composable
-fun WrapScan(
-    activity: ComponentActivity,
-    onScanned: (result: String) -> Unit,
-    goBack: () -> Unit
-) {
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
-    Scan(
-        snackbarHostState,
-        onBack = goBack,
-        onScanned = onScanned,
-        onOpenSettings = {
-            runCatching {
-                activity.startActivity(SettingsUtil.newSettingsIntent(activity.packageName))
-            }.onFailure {
-                // This case should not really happen, as the Settings app should be available on every
-                // Android device, but we need to handle it somehow.
+    if (synchronizer == null) {
+        // Display loading indicator
+    } else {
+        Scan(
+            snackbarHostState = snackbarHostState,
+            onBack = goBack,
+            onScanned = { result ->
                 scope.launch {
-                    snackbarHostState.showSnackbar(
-                        message = activity.getString(R.string.scan_settings_open_failed)
-                    )
+                    val isAddressValid = !synchronizer.validateAddress(result).isNotValid
+                    if (isAddressValid) {
+                        onScanValid(result)
+                    } else {
+                        snackbarHostState.showSnackbar(
+                            message = activity.getString(R.string.scan_validation_invalid_address)
+                        )
+                    }
                 }
-            }
-        },
-        onScanStateChanged = {}
-    )
+            },
+            onOpenSettings = {
+                runCatching {
+                    activity.startActivity(SettingsUtil.newSettingsIntent(activity.packageName))
+                }.onFailure {
+                    // This case should not really happen, as the Settings app should be available on every
+                    // Android device, but we need to handle it somehow.
+                    scope.launch {
+                        snackbarHostState.showSnackbar(
+                            message = activity.getString(R.string.scan_settings_open_failed)
+                        )
+                    }
+                }
+            },
+            onScanStateChanged = {}
+        )
+    }
 }
