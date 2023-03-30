@@ -82,7 +82,7 @@ fun ListHeader(
     Text(
         text = text,
         style = ZcashTheme.typography.listItem,
-        color = MaterialTheme.colorScheme.onBackground,
+        color = ZcashTheme.colors.onBackgroundHeader,
         modifier = modifier
     )
 }

@@ -12,9 +12,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDownCircle
@@ -66,7 +70,12 @@ fun ComposablePreview() {
 fun WalletAddresses(walletAddresses: WalletAddresses, onBack: () -> Unit) {
     Column {
         WalletDetailTopAppBar(onBack)
-        WalletDetailAddresses(walletAddresses)
+        WalletDetailAddresses(
+            walletAddresses,
+            Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+        )
     }
 }
 
@@ -96,8 +105,11 @@ private val BIG_INDICATOR_WIDTH = 24.dp
 private val SMALL_INDICATOR_WIDTH = 16.dp
 
 @Composable
-private fun WalletDetailAddresses(walletAddresses: WalletAddresses) {
-    Column(Modifier.fillMaxWidth()) {
+private fun WalletDetailAddresses(
+    walletAddresses: WalletAddresses,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier) {
         Row(
             Modifier
                 .fillMaxWidth()
@@ -115,16 +127,36 @@ private fun WalletDetailAddresses(walletAddresses: WalletAddresses) {
                 ExpandableRow(
                     title = stringResource(R.string.wallet_address_unified),
                     content = walletAddresses.unified.address,
-                    isInitiallyExpanded = true
+                    isInitiallyExpanded = true,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            horizontal = ZcashTheme.dimens.spacingDefault,
+                            vertical = ZcashTheme.dimens.spacingTiny
+                        )
                 )
 
                 Box(Modifier.height(IntrinsicSize.Min)) {
                     Divider(modifier = Modifier.fillMaxHeight())
-                    ListHeader(text = stringResource(R.string.wallet_address_header_includes))
+                    ListHeader(
+                        text = stringResource(R.string.wallet_address_header_includes),
+                        modifier = Modifier.padding(all = ZcashTheme.dimens.spacingSmall)
+                    )
                 }
 
-                SaplingAddress(walletAddresses.sapling.address)
-                TransparentAddress(walletAddresses.transparent.address)
+                SaplingAddress(
+                    saplingAddress = walletAddresses.sapling.address,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(IntrinsicSize.Min)
+                )
+
+                TransparentAddress(
+                    transparentAddress = walletAddresses.transparent.address,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(IntrinsicSize.Min)
+                )
             }
         }
     }
@@ -135,34 +167,44 @@ private fun WalletDetailAddresses(walletAddresses: WalletAddresses) {
 // of row position will be needed.
 
 @Composable
-private fun SaplingAddress(saplingAddress: String) {
-    Row(
-        Modifier
-            .fillMaxWidth()
-            .height(IntrinsicSize.Min)
-    ) {
+private fun SaplingAddress(
+    saplingAddress: String,
+    modifier: Modifier = Modifier
+) {
+    Row(modifier) {
         SmallIndicator(ZcashTheme.colors.addressHighlightSapling)
 
         ExpandableRow(
             title = stringResource(R.string.wallet_address_sapling),
             content = saplingAddress,
-            isInitiallyExpanded = false
+            isInitiallyExpanded = false,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    horizontal = ZcashTheme.dimens.spacingDefault,
+                    vertical = ZcashTheme.dimens.spacingTiny
+                )
         )
     }
 }
 
 @Composable
-private fun TransparentAddress(transparentAddress: String) {
-    Row(
-        Modifier
-            .fillMaxWidth()
-            .height(IntrinsicSize.Min)
-    ) {
+private fun TransparentAddress(
+    transparentAddress: String,
+    modifier: Modifier = Modifier
+) {
+    Row(modifier) {
         SmallIndicator(ZcashTheme.colors.addressHighlightTransparent)
         ExpandableRow(
             title = stringResource(R.string.wallet_address_transparent),
             content = transparentAddress,
-            isInitiallyExpanded = false
+            isInitiallyExpanded = false,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    horizontal = ZcashTheme.dimens.spacingDefault,
+                    vertical = ZcashTheme.dimens.spacingTiny
+                )
         )
     }
 }
@@ -177,11 +219,9 @@ private fun ExpandableRow(
     var expandedState by rememberSaveable { mutableStateOf(isInitiallyExpanded) }
 
     Column(
-        modifier
-            .fillMaxWidth()
-            .clickable {
-                expandedState = !expandedState
-            }
+        Modifier
+            .clickable { expandedState = !expandedState }
+            .then(modifier) // To have proper ripple effect
     ) {
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.defaultMinSize(minHeight = 48.dp)) {
             ListItem(text = title)
