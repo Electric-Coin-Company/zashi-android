@@ -238,6 +238,8 @@ private fun SendForm(
         mutableStateOf<Set<ZecSendExt.ZecSendValidation.Invalid.ValidationError>>(emptySet())
     }
 
+    // TODO [#826]: SendArgumentsWrapper object properties validation
+    // TODO [#826]: https://github.com/zcash/secant-android-wallet/issues/826
     if (sendArgumentsWrapper?.recipientAddress != null) {
         recipientAddressString = sendArgumentsWrapper.recipientAddress
     }
