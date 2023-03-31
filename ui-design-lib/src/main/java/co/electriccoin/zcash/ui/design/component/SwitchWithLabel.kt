@@ -46,7 +46,7 @@ fun SwitchWithLabel(
         )
         Spacer(
             modifier = Modifier
-                .width(ZcashTheme.paddings.padding)
+                .width(ZcashTheme.dimens.spacingDefault)
                 .constrainAs(spacer) {
                     top.linkTo(parent.top)
                     bottom.linkTo(parent.top)
