@@ -123,7 +123,6 @@ fun PreviewRestoreComplete() {
     }
 }
 
-// TODO [#409]: https://github.com/zcash/secant-android-wallet/issues/409
 /**
  * Note that the restore review doesn't allow the user to go back once the seed is entered correctly.
  *
