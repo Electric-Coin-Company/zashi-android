@@ -7,9 +7,6 @@ This documentation outlines our approach to testing. By running tests against ou
 <!-- TODO [#682]: Testing documentation update --> 
 <!-- TODO [#682]: https://github.com/zcash/secant-android-wallet/issues/682 --> 
 
-<!-- TODO [#705] Instrumentation coverage generation fails when run locally -->
-<!-- TODO [#705] https://github.com/zcash/secant-android-wallet/issues/705-->
-
 ## Manual testing
 
 We aim to automate as much as we possibly can. Still manual testing is really important for Quality Assurance.
@@ -28,7 +25,7 @@ The Android Gradle plugin supports code coverage with Jacoco.  This integration 
 When coverage is enabled, running instrumentation tests will automatically generate coverage reports stored under `$module/build/reports/coverage`.
 
 ### Generating code coverage locally
-- `./gradlew <android-module-name>:connectedCheck -PIS_ANDROID_INSTRUMENTATION_TEST_COVERAGE_ENABLED=true` for Android modules. These modules internally use JaCoCo to generate test coverage.
+- `./gradlew <android-module-name>:connectedCheck -PIS_ANDROID_INSTRUMENTATION_TEST_COVERAGE_ENABLED=true` for Android modules. These modules internally use JaCoCo to generate test coverage. You can then find the coverage report in `<android-module-name>/build/reports/coverage/androidTest/debug/connected/index.html`.
 - `./gradlew <kotlin-only-module-name>:check` for Kotlin modules. These modules internally use Kover to generate test coverage. You can then find the coverage report in `<kotlin-only-module-name>/build/kover/html/index.html`. 
 
 ### Generating code coverage with emulator.wtf
