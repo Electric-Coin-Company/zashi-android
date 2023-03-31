@@ -29,7 +29,7 @@ internal fun MainActivity.WrapCheckForUpdate() {
 
 @Composable
 private fun WrapCheckForUpdate(activity: ComponentActivity) {
-    // TODO [#382]: https://github.com/zcash/secant-android-wallet/issues/382
+    // TODO [#403]: Manual testing of already implemented in-app update mechanisms
     // TODO [#403]: https://github.com/zcash/secant-android-wallet/issues/403
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     val checkUpdateViewModel by activity.viewModels<CheckUpdateViewModel> {
@@ -54,8 +54,9 @@ private fun WrapCheckForUpdate(activity: ComponentActivity) {
     }
 }
 
+@VisibleForTesting
 @Composable
-private fun WrapUpdate(
+internal fun WrapUpdate(
     activity: ComponentActivity,
     inputUpdateInfo: UpdateInfo
 ) {
