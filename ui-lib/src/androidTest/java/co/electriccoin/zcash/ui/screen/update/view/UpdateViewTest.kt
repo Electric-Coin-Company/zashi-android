@@ -6,7 +6,6 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
-import androidx.test.espresso.Espresso
 import androidx.test.filters.MediumTest
 import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.R
@@ -20,7 +19,6 @@ import co.electriccoin.zcash.ui.test.getStringResourceWithArgs
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
-import kotlin.test.Ignore
 
 class UpdateViewTest : UiTestPrerequisites() {
 
@@ -95,7 +93,6 @@ class UpdateViewTest : UiTestPrerequisites() {
 
     @Test
     @MediumTest
-    @Ignore("Will be refactored to AndroidUpdateTest")
     fun later_btn_force_update_test() {
         val updateInfo = UpdateInfoFixture.new(
             priority = AppUpdateChecker.Priority.HIGH,
@@ -108,10 +105,6 @@ class UpdateViewTest : UiTestPrerequisites() {
         assertEquals(0, testSetup.getOnLaterCount())
 
         composeTestRule.clickLater()
-
-        assertEquals(0, testSetup.getOnLaterCount())
-
-        Espresso.pressBack()
 
         assertEquals(0, testSetup.getOnLaterCount())
     }
