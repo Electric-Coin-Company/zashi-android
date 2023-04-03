@@ -314,9 +314,10 @@ private fun HomeMainContent(
     ) {
         Status(walletSnapshot, isUpdateAvailable, isFiatConversionEnabled, isCircularProgressBarEnabled)
 
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
-
-        Body(text = stringResource(id = R.string.home_information))
+        if (isSyncing(walletSnapshot.status)) {
+            Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
+            Body(text = stringResource(id = R.string.home_information))
+        }
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
 

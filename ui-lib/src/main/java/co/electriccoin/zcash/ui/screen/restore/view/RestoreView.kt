@@ -185,7 +185,7 @@ fun RestoreWallet(
         },
         content = { paddingValues ->
             val commonModifier = Modifier
-                // Note we set the bottom smaller, as the keyboard will be always visible
+                // We intentionally set the bottom smaller to save space in case of the software keyboard is visible.
                 .padding(
                     top = paddingValues.calculateTopPadding() + dimens.spacingDefault,
                     bottom = paddingValues.calculateBottomPadding() + dimens.spacingSmall,
