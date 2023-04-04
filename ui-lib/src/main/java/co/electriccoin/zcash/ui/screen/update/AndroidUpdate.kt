@@ -2,6 +2,7 @@ package co.electriccoin.zcash.ui.screen.update
 
 import android.content.Context
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.viewModels
 import androidx.annotation.VisibleForTesting
 import androidx.compose.material3.SnackbarHostState
@@ -28,7 +29,7 @@ internal fun MainActivity.WrapCheckForUpdate() {
 
 @Composable
 private fun WrapCheckForUpdate(activity: ComponentActivity) {
-    // TODO [#382]: https://github.com/zcash/secant-android-wallet/issues/382
+    // TODO [#403]: Manual testing of already implemented in-app update mechanisms
     // TODO [#403]: https://github.com/zcash/secant-android-wallet/issues/403
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     val checkUpdateViewModel by activity.viewModels<CheckUpdateViewModel> {
@@ -53,8 +54,9 @@ private fun WrapCheckForUpdate(activity: ComponentActivity) {
     }
 }
 
+@VisibleForTesting
 @Composable
-private fun WrapUpdate(
+internal fun WrapUpdate(
     activity: ComponentActivity,
     inputUpdateInfo: UpdateInfo
 ) {
@@ -85,6 +87,16 @@ private fun WrapUpdate(
         }
     }
 
+    val onLaterAction = {
+        if (!updateInfo.isForce && updateInfo.state != UpdateState.Running) {
+            viewModel.remindLater()
+        }
+    }
+
+    BackHandler {
+        onLaterAction()
+    }
+
     Update(
         snackbarHostState,
         updateInfo,
@@ -97,9 +109,7 @@ private fun WrapUpdate(
                 updateInfo.appUpdateInfo
             )
         },
-        onLater = {
-            viewModel.remindLater()
-        },
+        onLater = onLaterAction,
         onReference = {
             openPlayStoreAppPage(
                 activity.applicationContext,

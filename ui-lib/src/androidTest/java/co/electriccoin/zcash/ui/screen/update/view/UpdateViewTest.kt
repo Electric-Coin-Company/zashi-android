@@ -6,7 +6,6 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
-import androidx.test.espresso.Espresso
 import androidx.test.filters.MediumTest
 import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.R
@@ -106,10 +105,6 @@ class UpdateViewTest : UiTestPrerequisites() {
         assertEquals(0, testSetup.getOnLaterCount())
 
         composeTestRule.clickLater()
-
-        assertEquals(0, testSetup.getOnLaterCount())
-
-        Espresso.pressBack()
 
         assertEquals(0, testSetup.getOnLaterCount())
     }

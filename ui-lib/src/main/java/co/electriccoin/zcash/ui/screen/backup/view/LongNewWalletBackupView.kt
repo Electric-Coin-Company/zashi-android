@@ -201,7 +201,7 @@ private fun SeedPhrase(persistableWallet: PersistableWallet) {
     Column(
         Modifier
             .verticalScroll(rememberScrollState())
-            .padding(vertical = ZcashTheme.paddings.padding)
+            .padding(vertical = ZcashTheme.dimens.spacingDefault)
     ) {
         Body(stringResource(R.string.new_wallet_3_body_1))
         ChipGrid(persistableWallet.seedPhrase.split.toPersistentList())
@@ -248,7 +248,7 @@ private fun TestInProgress(
     Column(
         Modifier
             .verticalScroll(rememberScrollState())
-            .padding(vertical = ZcashTheme.paddings.padding)
+            .padding(vertical = ZcashTheme.dimens.spacingDefault)
     ) {
         splitSeedPhrase.chunked(CHIP_GRID_ROW_SIZE).forEachIndexed { chunkIndex, chunk ->
             Row(Modifier.fillMaxWidth()) {

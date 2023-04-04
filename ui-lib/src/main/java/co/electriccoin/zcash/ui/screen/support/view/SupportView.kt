@@ -1,9 +1,13 @@
 package co.electriccoin.zcash.ui.screen.support.view
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Send
@@ -17,7 +21,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -26,6 +29,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.design.component.Body
+import co.electriccoin.zcash.ui.design.component.FormTextField
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 
@@ -68,9 +73,14 @@ fun Support(
         }
     ) { paddingValues ->
         SupportMainContent(
-            paddingValues,
-            message,
-            setMessage
+            message = message,
+            setMessage = setMessage,
+            modifier = Modifier.padding(
+                top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
+                bottom = paddingValues.calculateBottomPadding() + ZcashTheme.dimens.spacingDefault,
+                start = ZcashTheme.dimens.spacingDefault,
+                end = ZcashTheme.dimens.spacingDefault
+            )
         )
 
         if (isShowingDialog) {
@@ -101,17 +111,24 @@ private fun SupportTopAppBar(onBack: () -> Unit) {
 }
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
 private fun SupportMainContent(
-    paddingValues: PaddingValues,
     message: String,
-    setMessage: (String) -> Unit
+    setMessage: (String) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Column(
         Modifier
-            .padding(top = paddingValues.calculateTopPadding())
+            .fillMaxHeight()
+            .verticalScroll(
+                rememberScrollState()
+            )
+            .then(modifier)
     ) {
-        TextField(
+        Body(stringResource(id = R.string.support_information))
+
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
+
+        FormTextField(
             value = message,
             onValueChange = setMessage,
             modifier = Modifier
@@ -119,7 +136,9 @@ private fun SupportMainContent(
             label = { Text(text = stringResource(id = R.string.support_hint)) }
         )
 
-        Text(stringResource(id = R.string.support_disclaimer))
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
+
+        Body(stringResource(id = R.string.support_disclaimer))
     }
 }
 

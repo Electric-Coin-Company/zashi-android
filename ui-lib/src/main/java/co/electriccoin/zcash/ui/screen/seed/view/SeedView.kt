@@ -2,6 +2,9 @@ package co.electriccoin.zcash.ui.screen.seed.view
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -58,9 +61,14 @@ fun Seed(
         SeedTopAppBar(onBack = onBack)
     }) { paddingValues ->
         SeedMainContent(
-            paddingValues,
             persistableWallet = persistableWallet,
-            onCopyToClipboard = onCopyToClipboard
+            onCopyToClipboard = onCopyToClipboard,
+            modifier = Modifier.padding(
+                top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
+                bottom = paddingValues.calculateBottomPadding() + ZcashTheme.dimens.spacingDefault,
+                start = ZcashTheme.dimens.spacingDefault,
+                end = ZcashTheme.dimens.spacingDefault
+            )
         )
     }
 }
@@ -85,19 +93,31 @@ private fun SeedTopAppBar(onBack: () -> Unit) {
 
 @Composable
 private fun SeedMainContent(
-    paddingValues: PaddingValues,
     persistableWallet: PersistableWallet,
-    onCopyToClipboard: () -> Unit
+    onCopyToClipboard: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Column(
         Modifier
-            .verticalScroll(rememberScrollState())
-            .padding(top = paddingValues.calculateTopPadding())
+            .fillMaxHeight()
+            .verticalScroll(
+                rememberScrollState()
+            )
+            .then(modifier)
     ) {
         Body(stringResource(R.string.seed_body))
 
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
+
         ChipGrid(persistableWallet.seedPhrase.split.toPersistentList())
 
-        TertiaryButton(onClick = onCopyToClipboard, text = stringResource(R.string.seed_copy))
+        TertiaryButton(
+            onClick = onCopyToClipboard,
+            text = stringResource(R.string.seed_copy),
+            outerPaddingValues = PaddingValues(
+                horizontal = ZcashTheme.dimens.spacingNone,
+                vertical = ZcashTheme.dimens.spacingSmall
+            )
+        )
     }
 }

@@ -85,7 +85,7 @@ fun Settings(
                 )
                 .padding(
                     top = paddingValues.calculateTopPadding() + dimens.spacingDefault,
-                    bottom = dimens.spacingDefault,
+                    bottom = paddingValues.calculateTopPadding() + dimens.spacingDefault,
                     start = dimens.spacingDefault,
                     end = dimens.spacingDefault
                 )

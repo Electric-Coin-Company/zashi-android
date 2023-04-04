@@ -22,10 +22,10 @@ fun Header(
 ) {
     Text(
         text = text,
-        textAlign = textAlign,
-        style = MaterialTheme.typography.headlineLarge,
         color = color,
-        modifier = modifier
+        textAlign = textAlign,
+        modifier = modifier,
+        style = MaterialTheme.typography.headlineLarge,
     )
 }
 
@@ -34,14 +34,14 @@ fun Body(
     text: String,
     modifier: Modifier = Modifier,
     textAlign: TextAlign = TextAlign.Start,
-    color: Color = MaterialTheme.colorScheme.onBackground
+    color: Color = MaterialTheme.colorScheme.onBackground,
 ) {
     Text(
         text = text,
-        textAlign = textAlign,
-        style = MaterialTheme.typography.bodyLarge,
         color = color,
-        modifier = modifier
+        textAlign = textAlign,
+        modifier = modifier,
+        style = MaterialTheme.typography.bodyLarge,
     )
 }
 
@@ -49,14 +49,15 @@ fun Body(
 fun Small(
     text: String,
     modifier: Modifier = Modifier,
-    textAlign: TextAlign = TextAlign.Start
+    textAlign: TextAlign = TextAlign.Start,
+    color: Color = MaterialTheme.colorScheme.onBackground,
 ) {
     Text(
         text = text,
-        style = MaterialTheme.typography.bodyMedium,
-        color = MaterialTheme.colorScheme.onBackground,
+        color = color,
+        textAlign = textAlign,
         modifier = modifier,
-        textAlign = textAlign
+        style = MaterialTheme.typography.bodyMedium,
     )
 }
 
@@ -81,7 +82,7 @@ fun ListHeader(
     Text(
         text = text,
         style = ZcashTheme.typography.listItem,
-        color = MaterialTheme.colorScheme.onBackground,
+        color = ZcashTheme.colors.onBackgroundHeader,
         modifier = modifier
     )
 }

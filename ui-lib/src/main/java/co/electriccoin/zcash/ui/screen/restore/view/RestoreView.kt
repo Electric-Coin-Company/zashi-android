@@ -5,10 +5,12 @@ package co.electriccoin.zcash.ui.screen.restore.view
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -64,6 +66,7 @@ import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.CHIP_GRID_ROW_SIZE
 import co.electriccoin.zcash.ui.design.component.Chip
+import co.electriccoin.zcash.ui.design.component.FormTextField
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.Header
 import co.electriccoin.zcash.ui.design.component.NavigationButton
@@ -123,7 +126,6 @@ fun PreviewRestoreComplete() {
     }
 }
 
-// TODO [#409]: https://github.com/zcash/secant-android-wallet/issues/409
 /**
  * Note that the restore review doesn't allow the user to go back once the seed is entered correctly.
  *
@@ -182,6 +184,15 @@ fun RestoreWallet(
             }
         },
         content = { paddingValues ->
+            val commonModifier = Modifier
+                // We intentionally set the bottom smaller to save space in case of the software keyboard is visible
+                .padding(
+                    top = paddingValues.calculateTopPadding() + dimens.spacingDefault,
+                    bottom = paddingValues.calculateBottomPadding() + dimens.spacingSmall,
+                    start = dimens.spacingDefault,
+                    end = dimens.spacingDefault
+                )
+
             when (currentStage) {
                 RestoreStage.Seed -> {
                     SecureScreen()
@@ -194,10 +205,7 @@ fun RestoreWallet(
                         parseResult = parseResult,
                         paste = paste,
                         goNext = { restoreState.goNext() },
-                        modifier = Modifier.padding(
-                            top = paddingValues.calculateTopPadding(),
-                            bottom = paddingValues.calculateBottomPadding()
-                        )
+                        modifier = commonModifier
                     )
                 }
                 RestoreStage.Birthday -> {
@@ -206,10 +214,7 @@ fun RestoreWallet(
                         initialRestoreHeight = restoreHeight,
                         setRestoreHeight = setRestoreHeight,
                         onNext = { restoreState.goNext() },
-                        modifier = Modifier.padding(
-                            top = paddingValues.calculateTopPadding(),
-                            bottom = paddingValues.calculateBottomPadding()
-                        )
+                        modifier = commonModifier
                     )
                 }
                 RestoreStage.Complete -> {
@@ -219,10 +224,7 @@ fun RestoreWallet(
 
                     RestoreComplete(
                         onComplete = onFinished,
-                        modifier = Modifier.padding(
-                            top = paddingValues.calculateTopPadding(),
-                            bottom = paddingValues.calculateBottomPadding()
-                        )
+                        modifier = commonModifier
                     )
                 }
             }
@@ -281,12 +283,14 @@ private fun RestoreSeedMainContent(
     val isSeedValid = userWordList.wordValidation().collectAsState(null).value is SeedPhraseValidation.Valid
 
     Column(
-        modifier.then(Modifier.verticalScroll(scrollState))
+        Modifier
+            .fillMaxHeight()
+            .verticalScroll(scrollState)
+            .then(modifier)
     ) {
-        Body(
-            modifier = Modifier.padding(dimens.spacingDefault),
-            text = stringResource(id = R.string.restore_seed_instructions)
-        )
+        Body(text = stringResource(id = R.string.restore_seed_instructions))
+
+        Spacer(Modifier.height(dimens.spacingSmall))
 
         ChipGridWithText(currentUserWordList)
 
@@ -299,12 +303,17 @@ private fun RestoreSeedMainContent(
             )
         }
 
-        Spacer(modifier = Modifier.weight(MINIMAL_WEIGHT))
+        Spacer(
+            modifier = Modifier
+                .fillMaxHeight()
+                .weight(MINIMAL_WEIGHT)
+        )
 
         PrimaryButton(
             onClick = goNext,
             text = stringResource(id = R.string.restore_seed_button_restore),
-            enabled = isSeedValid
+            enabled = isSeedValid,
+            outerPaddingValues = PaddingValues(top = dimens.spacingSmall)
         )
     }
 
@@ -338,7 +347,17 @@ private fun RestoreSeedBottomBar(
     // the user can hit the clear button
     if (!isSeedValid) {
         Column(modifier) {
-            Warn(parseResult)
+            Warn(
+                parseResult = parseResult,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    // Note we don't set the top, as it's set by the confirm button above
+                    .padding(
+                        bottom = dimens.spacingDefault,
+                        start = dimens.spacingDefault,
+                        end = dimens.spacingDefault
+                    )
+            )
             Autocomplete(parseResult = parseResult, {
                 setTextState("")
                 userWordList.append(listOf(it))
@@ -352,11 +371,7 @@ private fun RestoreSeedBottomBar(
 private fun ChipGridWithText(
     userWordList: ImmutableList<String>
 ) {
-    Column(
-        Modifier
-            .padding(start = 12.dp, end = 12.dp)
-            .testTag(RestoreTag.CHIP_LAYOUT)
-    ) {
+    Column(Modifier.testTag(RestoreTag.CHIP_LAYOUT)) {
         userWordList.chunked(CHIP_GRID_ROW_SIZE).forEachIndexed { chunkIndex, chunk ->
             Row(Modifier.fillMaxWidth(), verticalAlignment = CenterVertically) {
                 val remainder = (chunk.size % CHIP_GRID_ROW_SIZE)
@@ -452,11 +467,20 @@ private fun Autocomplete(
         }
 
         @Suppress("ModifierReused")
-        LazyRow(highlightModifier.testTag(RestoreTag.AUTOCOMPLETE_LAYOUT)) {
+        LazyRow(
+            modifier = highlightModifier.testTag(RestoreTag.AUTOCOMPLETE_LAYOUT),
+            // Note we don't set the top, as it's set by the confirm button above
+            // And we also set the bottom smaller, as the keyboard will be always visible
+            contentPadding = PaddingValues(
+                bottom = dimens.spacingDefault,
+                start = dimens.spacingDefault,
+                end = dimens.spacingSmall
+            )
+        ) {
             items(it) {
                 Chip(
                     text = it,
-                    modifier = modifier
+                    modifier = Modifier
                         .testTag(RestoreTag.AUTOCOMPLETE_ITEM)
                         .clickable { onSuggestionSelected(it) }
                 )
@@ -466,12 +490,13 @@ private fun Autocomplete(
 }
 
 @Composable
-private fun Warn(parseResult: ParseResult) {
+private fun Warn(
+    parseResult: ParseResult,
+    modifier: Modifier = Modifier
+) {
     if (parseResult is ParseResult.Warn) {
         Surface(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(dimens.spacingTiny),
+            modifier = modifier,
             shape = RoundedCornerShape(8.dp),
             color = MaterialTheme.colorScheme.secondary,
             shadowElevation = 4.dp
@@ -491,8 +516,8 @@ private fun Warn(parseResult: ParseResult) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
+@Suppress("LongMethod")
 private fun RestoreBirthday(
     zcashNetwork: ZcashNetwork,
     initialRestoreHeight: BlockHeight?,
@@ -503,12 +528,22 @@ private fun RestoreBirthday(
     val (height, setHeight) = rememberSaveable {
         mutableStateOf(initialRestoreHeight?.value?.toString() ?: "")
     }
-    val scrollState = rememberScrollState()
 
-    Column(modifier.verticalScroll(scrollState)) {
+    Column(
+        Modifier
+            .fillMaxHeight()
+            .verticalScroll(rememberScrollState())
+            .then(modifier)
+    ) {
         Header(stringResource(R.string.restore_birthday_header))
+
+        Spacer(modifier = Modifier.height(dimens.spacingDefault))
+
         Body(stringResource(R.string.restore_birthday_body))
-        TextField(
+
+        Spacer(modifier = Modifier.height(dimens.spacingDefault))
+
+        FormTextField(
             value = height,
             onValueChange = { heightString ->
                 val filteredHeightString = heightString.filter { it.isDigit() }
@@ -528,8 +563,10 @@ private fun RestoreBirthday(
             keyboardActions = KeyboardActions(onAny = {}),
             shape = RoundedCornerShape(8.dp),
         )
+
         Spacer(
             modifier = Modifier
+                .fillMaxHeight()
                 .weight(MINIMAL_WEIGHT)
         )
 
@@ -543,28 +580,50 @@ private fun RestoreBirthday(
                 onNext()
             },
             text = stringResource(R.string.restore_birthday_button_restore),
-            enabled = isBirthdayValid
+            enabled = isBirthdayValid,
+            outerPaddingValues = PaddingValues(top = dimens.spacingSmall)
         )
+
         TertiaryButton(
             onClick = {
                 setRestoreHeight(null)
                 onNext()
             },
-            text = stringResource(R.string.restore_birthday_button_skip)
+            text = stringResource(R.string.restore_birthday_button_skip),
+            outerPaddingValues = PaddingValues(top = dimens.spacingSmall)
         )
     }
 }
 
 @Composable
-private fun RestoreComplete(onComplete: () -> Unit, modifier: Modifier = Modifier) {
-    Column(modifier) {
+private fun RestoreComplete(
+    onComplete: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        Modifier
+            .fillMaxHeight()
+            .verticalScroll(rememberScrollState())
+            .then(modifier)
+    ) {
         Header(stringResource(R.string.restore_complete_header))
+
+        Spacer(modifier = Modifier.height(dimens.spacingDefault))
+
         Body(stringResource(R.string.restore_complete_info))
+
+        Spacer(modifier = Modifier.height(dimens.spacingDefault))
+
         Spacer(
             modifier = Modifier
                 .fillMaxHeight()
                 .weight(MINIMAL_WEIGHT)
         )
-        PrimaryButton(onComplete, stringResource(R.string.restore_button_see_wallet))
+
+        PrimaryButton(
+            onClick = onComplete,
+            text = stringResource(R.string.restore_button_see_wallet),
+            outerPaddingValues = PaddingValues(top = dimens.spacingSmall)
+        )
     }
 }

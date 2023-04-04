@@ -245,16 +245,16 @@ private fun Wallet(paddingValues: PaddingValues) {
     Column(
         Modifier
             .padding(
-                start = ZcashTheme.paddings.padding,
-                end = ZcashTheme.paddings.padding,
+                start = ZcashTheme.dimens.spacingDefault,
+                end = ZcashTheme.dimens.spacingDefault,
                 bottom = paddingValues.calculateBottomPadding()
             )
             .fillMaxWidth()
     ) {
         Header(
             modifier = Modifier.padding(
-                top = ZcashTheme.paddings.padding,
-                bottom = ZcashTheme.paddings.paddingHalf
+                top = ZcashTheme.dimens.spacingDefault,
+                bottom = ZcashTheme.dimens.spacingSmall
             ),
             text = stringResource(R.string.onboarding_4_header)
         )
@@ -280,8 +280,8 @@ private fun Content(
     ) {
         Column(
             Modifier.padding(
-                start = ZcashTheme.paddings.padding,
-                end = ZcashTheme.paddings.padding,
+                start = ZcashTheme.dimens.spacingDefault,
+                end = ZcashTheme.dimens.spacingDefault,
                 bottom = paddingValues.calculateBottomPadding()
             )
         ) {
