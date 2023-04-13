@@ -32,7 +32,7 @@ jobs:
     steps:
       - name: Checkout
         timeout-minutes: 1
-        uses: actions/checkout@8f4b7f84864484a7bf31766abe9204da3cbe65b3
+        uses: actions/checkout@83b7061638ee4956cf7545a6f7efe594e5ad0247
       # Gradle Wrapper validation can be flaky
       # https://github.com/gradle/wrapper-validation-action/issues/40
       - name: Gradle Wrapper Validation
@@ -71,7 +71,7 @@ jobs:
     steps:
       - name: Checkout
         timeout-minutes: 1
-        uses: actions/checkout@8f4b7f84864484a7bf31766abe9204da3cbe65b3
+        uses: actions/checkout@83b7061638ee4956cf7545a6f7efe594e5ad0247
       - name: Set up Java
         uses: actions/setup-java@5ffc13f4174014e2d4d4572b3d74c3fa61aeb2c2
         timeout-minutes: 1
@@ -94,7 +94,7 @@ jobs:
     steps:
       - name: Checkout
         timeout-minutes: 1
-        uses: actions/checkout@8f4b7f84864484a7bf31766abe9204da3cbe65b3
+        uses: actions/checkout@83b7061638ee4956cf7545a6f7efe594e5ad0247
       - name: Set up Java
         uses: actions/setup-java@5ffc13f4174014e2d4d4572b3d74c3fa61aeb2c2
         timeout-minutes: 1
@@ -134,7 +134,7 @@ jobs:
     steps:
       - name: Checkout
         timeout-minutes: 1
-        uses: actions/checkout@8f4b7f84864484a7bf31766abe9204da3cbe65b3
+        uses: actions/checkout@83b7061638ee4956cf7545a6f7efe594e5ad0247
       - name: Set up Java
         uses: actions/setup-java@5ffc13f4174014e2d4d4572b3d74c3fa61aeb2c2
         timeout-minutes: 1
@@ -174,7 +174,7 @@ jobs:
     steps:
       - name: Checkout
         timeout-minutes: 1
-        uses: actions/checkout@8f4b7f84864484a7bf31766abe9204da3cbe65b3
+        uses: actions/checkout@83b7061638ee4956cf7545a6f7efe594e5ad0247
       - name: Set up Java
         uses: actions/setup-java@5ffc13f4174014e2d4d4572b3d74c3fa61aeb2c2
         timeout-minutes: 1
@@ -217,7 +217,7 @@ jobs:
     steps:
       - name: Checkout
         timeout-minutes: 1
-        uses: actions/checkout@8f4b7f84864484a7bf31766abe9204da3cbe65b3
+        uses: actions/checkout@83b7061638ee4956cf7545a6f7efe594e5ad0247
       - name: Set up Java
         uses: actions/setup-java@5ffc13f4174014e2d4d4572b3d74c3fa61aeb2c2
         timeout-minutes: 1
@@ -261,7 +261,7 @@ jobs:
     steps:
       - name: Checkout
         timeout-minutes: 1
-        uses: actions/checkout@8f4b7f84864484a7bf31766abe9204da3cbe65b3
+        uses: actions/checkout@83b7061638ee4956cf7545a6f7efe594e5ad0247
       - name: Set up Java
         uses: actions/setup-java@5ffc13f4174014e2d4d4572b3d74c3fa61aeb2c2
         timeout-minutes: 1
@@ -324,7 +324,7 @@ jobs:
     steps:
       - name: Checkout
         timeout-minutes: 1
-        uses: actions/checkout@8f4b7f84864484a7bf31766abe9204da3cbe65b3
+        uses: actions/checkout@83b7061638ee4956cf7545a6f7efe594e5ad0247
       - name: Set up Java
         uses: actions/setup-java@5ffc13f4174014e2d4d4572b3d74c3fa61aeb2c2
         timeout-minutes: 1
@@ -371,7 +371,7 @@ jobs:
     steps:
       - name: Checkout
         timeout-minutes: 1
-        uses: actions/checkout@8f4b7f84864484a7bf31766abe9204da3cbe65b3
+        uses: actions/checkout@83b7061638ee4956cf7545a6f7efe594e5ad0247
       - name: Set up Java
         uses: actions/setup-java@5ffc13f4174014e2d4d4572b3d74c3fa61aeb2c2
         timeout-minutes: 1
@@ -421,7 +421,7 @@ jobs:
     steps:
       - name: Checkout
         timeout-minutes: 1
-        uses: actions/checkout@8f4b7f84864484a7bf31766abe9204da3cbe65b3
+        uses: actions/checkout@83b7061638ee4956cf7545a6f7efe594e5ad0247
       - name: Set up Java
         uses: actions/setup-java@5ffc13f4174014e2d4d4572b3d74c3fa61aeb2c2
         timeout-minutes: 1
@@ -475,7 +475,7 @@ jobs:
     steps:
       - name: Checkout
         timeout-minutes: 1
-        uses: actions/checkout@8f4b7f84864484a7bf31766abe9204da3cbe65b3
+        uses: actions/checkout@83b7061638ee4956cf7545a6f7efe594e5ad0247
       - name: Set up Java
         uses: actions/setup-java@5ffc13f4174014e2d4d4572b3d74c3fa61aeb2c2
         timeout-minutes: 1
@@ -548,7 +548,7 @@ jobs:
     steps:
       - name: Checkout
         timeout-minutes: 1
-        uses: actions/checkout@8f4b7f84864484a7bf31766abe9204da3cbe65b3
+        uses: actions/checkout@83b7061638ee4956cf7545a6f7efe594e5ad0247
       - name: Set up Java
         uses: actions/setup-java@5ffc13f4174014e2d4d4572b3d74c3fa61aeb2c2
         timeout-minutes: 1
