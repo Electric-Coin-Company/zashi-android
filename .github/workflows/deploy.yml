@@ -95,7 +95,7 @@ jobs:
           echo ${FIREBASE_RELEASE_JSON_BASE64} | base64 --decode > app/src/release/google-services.json
       - name: Authenticate to Google Cloud for Google Play
         id: auth_google_play
-        uses: google-github-actions/auth@ef5d53e30bbcd8d0836f4288f5e50ff3e086997d
+        uses: google-github-actions/auth@e8df18b60c5dd38ba618c121b779307266153fbf
         with:
           create_credentials_file: true
           project_id: ${{ secrets.GOOGLE_PLAY_CLOUD_PROJECT }}
