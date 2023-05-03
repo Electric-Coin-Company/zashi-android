@@ -70,7 +70,7 @@ class HomeViewTest : UiTestPrerequisites() {
         newTestSetup(
             isCircularProgressBar = true,
             walletSnapshot = WalletSnapshotFixture.new(
-                status = Synchronizer.Status.SCANNING,
+                status = Synchronizer.Status.SYNCING,
                 progress = PercentDecimal.ONE_HUNDRED_PERCENT
             )
         )
@@ -87,7 +87,7 @@ class HomeViewTest : UiTestPrerequisites() {
         newTestSetup(
             isCircularProgressBar = false,
             walletSnapshot = WalletSnapshotFixture.new(
-                status = Synchronizer.Status.SCANNING,
+                status = Synchronizer.Status.SYNCING,
                 progress = PercentDecimal.ONE_HUNDRED_PERCENT
             )
         )

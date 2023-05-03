@@ -5,8 +5,6 @@ import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.block.CompactBlockProcessor
 import cash.z.ecc.android.sdk.model.Account
 import cash.z.ecc.android.sdk.model.BlockHeight
-import cash.z.ecc.android.sdk.model.PendingTransaction
-import cash.z.ecc.android.sdk.model.Transaction
 import cash.z.ecc.android.sdk.model.TransactionOverview
 import cash.z.ecc.android.sdk.model.TransactionRecipient
 import cash.z.ecc.android.sdk.model.UnifiedSpendingKey
@@ -17,16 +15,12 @@ import cash.z.ecc.android.sdk.type.AddressType
 import cash.z.ecc.android.sdk.type.ConsensusMatchType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.emptyFlow
 
 /**
  * Mocked Synchronizer that can be used instead of the production SdkSynchronizer e.g. for tests.
  */
 @Suppress("TooManyFunctions", "UNUSED_PARAMETER")
 internal class MockSynchronizer : CloseableSynchronizer {
-
-    override val clearedTransactions: Flow<List<TransactionOverview>>
-        get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
 
     override val latestBirthdayHeight: BlockHeight
         get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
@@ -63,26 +57,19 @@ internal class MockSynchronizer : CloseableSynchronizer {
     override val orchardBalances: StateFlow<WalletBalance?>
         get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
 
-    override val pendingTransactions: Flow<List<PendingTransaction>>
-        get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
-
     override val processorInfo: Flow<CompactBlockProcessor.ProcessorInfo>
         get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
 
     override val progress: Flow<Int>
         get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
 
-    override val receivedTransactions: Flow<List<Transaction.Received>>
-        get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
-
     override val saplingBalances: StateFlow<WalletBalance?>
-        get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
-
-    override val sentTransactions: Flow<List<Transaction.Sent>>
         get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
 
     override val status: Flow<Synchronizer.Status>
         get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
+    override val transactions: Flow<List<TransactionOverview>>
+        get() = TODO("Not yet implemented")
 
     override val transparentBalances: StateFlow<WalletBalance?>
         get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
@@ -143,14 +130,11 @@ internal class MockSynchronizer : CloseableSynchronizer {
         error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
 
-    /**
-     * This method intentionally returns empty flow, as the PendingTransaction is only an SDK internal class.
-     */
-    override fun sendToAddress(usk: UnifiedSpendingKey, amount: Zatoshi, toAddress: String, memo: String): Flow<PendingTransaction> {
-        return emptyFlow()
+    override suspend fun sendToAddress(usk: UnifiedSpendingKey, amount: Zatoshi, toAddress: String, memo: String): Long {
+        return 1
     }
 
-    override fun shieldFunds(usk: UnifiedSpendingKey, memo: String): Flow<PendingTransaction> {
+    override suspend fun shieldFunds(usk: UnifiedSpendingKey, memo: String): Long {
         error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
 

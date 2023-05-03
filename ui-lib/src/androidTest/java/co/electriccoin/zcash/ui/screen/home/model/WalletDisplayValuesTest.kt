@@ -12,6 +12,7 @@ import co.electriccoin.zcash.ui.test.getStringResource
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 
 class WalletDisplayValuesTest {
 
@@ -20,7 +21,7 @@ class WalletDisplayValuesTest {
     fun download_running_test() {
         val walletSnapshot = WalletSnapshotFixture.new(
             progress = PercentDecimal.ONE_HUNDRED_PERCENT,
-            status = Synchronizer.Status.SCANNING,
+            status = Synchronizer.Status.SYNCING,
             orchardBalance = WalletSnapshotFixture.ORCHARD_BALANCE,
             saplingBalance = WalletSnapshotFixture.SAPLING_BALANCE,
             transparentBalance = WalletSnapshotFixture.TRANSPARENT_BALANCE
@@ -34,7 +35,7 @@ class WalletDisplayValuesTest {
         assertNotNull(values)
         assertEquals(1f, values.progress.decimal)
         assertEquals(walletSnapshot.totalBalance().toZecString(), values.zecAmountText)
-        assertEquals(getStringResource(R.string.home_status_syncing_catchup), values.statusText)
+        assertTrue(values.statusText.startsWith(getStringResource(R.string.home_status_syncing_catchup)))
         // TODO [#578] https://github.com/zcash/zcash-android-wallet-sdk/issues/578
         assertEquals(FiatCurrencyConversionRateState.Unavailable, values.fiatCurrencyAmountState)
         assertEquals(getStringResource(R.string.fiat_currency_conversion_rate_unavailable), values.fiatCurrencyAmountText)
