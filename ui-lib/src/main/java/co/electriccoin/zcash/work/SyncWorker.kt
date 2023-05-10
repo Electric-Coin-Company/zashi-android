@@ -10,6 +10,7 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkerParameters
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.WalletCoordinator
+import cash.z.ecc.android.sdk.model.PercentDecimal
 import co.electriccoin.zcash.global.getInstance
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
@@ -35,7 +36,7 @@ class SyncWorker(context: Context, workerParameters: WorkerParameters) : Corouti
                 } ?: emptyFlow()
             }
             .takeWhile {
-                it.status != Synchronizer.Status.DISCONNECTED && it.progress < ONE_HUNDRED_PERCENT
+                it.status != Synchronizer.Status.DISCONNECTED && it.progress.isLessThanHundredPercent()
             }
             .collect()
 
@@ -43,7 +44,6 @@ class SyncWorker(context: Context, workerParameters: WorkerParameters) : Corouti
     }
 
     companion object {
-        private const val ONE_HUNDRED_PERCENT = 100
 
         /*
          * There may be better periods; we have not optimized for this yet.
@@ -63,4 +63,4 @@ class SyncWorker(context: Context, workerParameters: WorkerParameters) : Corouti
     }
 }
 
-private data class StatusAndProgress(val status: Synchronizer.Status, val progress: Int)
+private data class StatusAndProgress(val status: Synchronizer.Status, val progress: PercentDecimal)

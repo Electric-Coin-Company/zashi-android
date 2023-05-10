@@ -5,6 +5,7 @@ import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.block.CompactBlockProcessor
 import cash.z.ecc.android.sdk.model.Account
 import cash.z.ecc.android.sdk.model.BlockHeight
+import cash.z.ecc.android.sdk.model.PercentDecimal
 import cash.z.ecc.android.sdk.model.TransactionOverview
 import cash.z.ecc.android.sdk.model.TransactionRecipient
 import cash.z.ecc.android.sdk.model.UnifiedSpendingKey
@@ -59,9 +60,8 @@ internal class MockSynchronizer : CloseableSynchronizer {
 
     override val processorInfo: Flow<CompactBlockProcessor.ProcessorInfo>
         get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
-
-    override val progress: Flow<Int>
-        get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
+    override val progress: Flow<PercentDecimal>
+        get() = TODO("Not yet implemented")
 
     override val saplingBalances: StateFlow<WalletBalance?>
         get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")

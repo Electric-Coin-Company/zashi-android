@@ -334,13 +334,7 @@ private fun Synchronizer.toWalletSnapshot() =
         val saplingBalance = flows[3] as WalletBalance?
         val transparentBalance = flows[4] as WalletBalance?
 
-        val progressPercentDecimal = (flows[5] as Int?)?.let { value ->
-            if (value > PercentDecimal.MAX || value < PercentDecimal.MIN) {
-                PercentDecimal.ZERO_PERCENT
-            } else {
-                PercentDecimal((flows[5] as Int) / 100f)
-            }
-        } ?: PercentDecimal.ZERO_PERCENT
+        val progressPercentDecimal = flows[5] as PercentDecimal
 
         WalletSnapshot(
             flows[0] as Synchronizer.Status,
