@@ -112,7 +112,7 @@ internal fun WrapSend(
                     runCatching { synchronizer.send(spendingKey, it) }
                         .onSuccess {
                             setSendStage(SendStage.SendSuccessful)
-                            Twig.debug { "Transaction id:$it submitted successfully at" }
+                            Twig.debug { "Transaction id:$it submitted successfully" }
                         }
                         .onFailure {
                             Twig.debug { "Transaction submission failed with: $it." }
