@@ -39,9 +39,7 @@ data class WalletDisplayValues(
             var fiatCurrencyAmountText = getFiatCurrencyRateValue(context, fiatCurrencyAmountState)
 
             when (walletSnapshot.status) {
-                Synchronizer.Status.PREPARING,
-                Synchronizer.Status.DOWNLOADING,
-                Synchronizer.Status.VALIDATING -> {
+                Synchronizer.Status.SYNCING -> {
                     progress = walletSnapshot.progress
                     val progressPercent = (walletSnapshot.progress.decimal * 100).roundToInt()
                     // we add "so far" to the amount
@@ -52,11 +50,6 @@ data class WalletDisplayValues(
                         )
                     }
                     statusText = context.getString(R.string.home_status_syncing_format, progressPercent)
-                }
-                Synchronizer.Status.SCANNING -> {
-                    // SDK provides us only one progress, which keeps on 100 in the scanning state
-                    progress = PercentDecimal.ONE_HUNDRED_PERCENT
-                    statusText = context.getString(R.string.home_status_syncing_catchup)
                 }
                 Synchronizer.Status.SYNCED,
                 Synchronizer.Status.ENHANCING -> {

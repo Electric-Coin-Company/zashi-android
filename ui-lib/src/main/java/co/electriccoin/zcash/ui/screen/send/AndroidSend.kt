@@ -16,8 +16,6 @@ import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.model.UnifiedSpendingKey
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.ZecSend
-import cash.z.ecc.android.sdk.model.isFailedSubmit
-import cash.z.ecc.android.sdk.model.isSubmitSuccess
 import cash.z.ecc.sdk.send
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.MainActivity
@@ -85,7 +83,9 @@ internal fun WrapSend(
         when (sendStage) {
             SendStage.Form -> goBack()
             SendStage.Confirmation -> setSendStage(SendStage.Form)
-            SendStage.Sending -> { /* no action - wait until done */ }
+            SendStage.Sending -> { // no action - wait until done
+            }
+
             SendStage.SendFailure -> setSendStage(SendStage.Form)
             SendStage.SendSuccessful -> goBack()
         }
@@ -108,21 +108,16 @@ internal fun WrapSend(
             onBack = onBackAction,
             onCreateAndSend = {
                 scope.launch {
-                    synchronizer.send(spendingKey, it).collect {
-                        Twig.debug { "Sending transaction id: ${it.id}" }
-
-                        if (it.isSubmitSuccess()) {
+                    Twig.debug { "Sending transaction" }
+                    runCatching { synchronizer.send(spendingKey, it) }
+                        .onSuccess {
                             setSendStage(SendStage.SendSuccessful)
-                            Twig.debug {
-                                "Transaction id:${it.id} submitted successfully at ${it.createTime} with " +
-                                    "${it.submitAttempts} attempts."
-                            }
-                        } else if (it.isFailedSubmit()) {
-                            Twig.debug { "Transaction id:${it.id} submission failed with: ${it.errorMessage}." }
+                            Twig.debug { "Transaction id:$it submitted successfully" }
+                        }
+                        .onFailure {
+                            Twig.debug { "Transaction submission failed with: $it." }
                             setSendStage(SendStage.SendFailure)
                         }
-                        // All other states of Pending transaction mean waiting for one of the states above
-                    }
                 }
             },
             onQrScannerOpen = goToQrScanner,

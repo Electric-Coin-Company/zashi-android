@@ -37,7 +37,7 @@ class HomeViewIntegrationTest : UiTestPrerequisites() {
     fun wallet_snapshot_restoration() {
         val restorationTester = StateRestorationTester(composeTestRule)
         val walletSnapshot = WalletSnapshotFixture.new(
-            status = Synchronizer.Status.DOWNLOADING,
+            status = Synchronizer.Status.SYNCING,
             progress = PercentDecimal(0.5f)
         )
         val testSetup = newTestSetup(walletSnapshot)
@@ -47,7 +47,7 @@ class HomeViewIntegrationTest : UiTestPrerequisites() {
         }
 
         assertNotEquals(WalletSnapshotFixture.STATUS, testSetup.getWalletSnapshot().status)
-        assertEquals(Synchronizer.Status.DOWNLOADING, testSetup.getWalletSnapshot().status)
+        assertEquals(Synchronizer.Status.SYNCING, testSetup.getWalletSnapshot().status)
 
         assertNotEquals(WalletSnapshotFixture.PROGRESS, testSetup.getWalletSnapshot().progress)
         assertEquals(0.5f, testSetup.getWalletSnapshot().progress.decimal)
@@ -55,7 +55,7 @@ class HomeViewIntegrationTest : UiTestPrerequisites() {
         restorationTester.emulateSavedInstanceStateRestore()
 
         assertNotEquals(WalletSnapshotFixture.STATUS, testSetup.getWalletSnapshot().status)
-        assertEquals(Synchronizer.Status.DOWNLOADING, testSetup.getWalletSnapshot().status)
+        assertEquals(Synchronizer.Status.SYNCING, testSetup.getWalletSnapshot().status)
 
         assertNotEquals(WalletSnapshotFixture.PROGRESS, testSetup.getWalletSnapshot().progress)
         assertEquals(0.5f, testSetup.getWalletSnapshot().progress.decimal)

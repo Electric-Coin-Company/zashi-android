@@ -58,6 +58,7 @@ import androidx.compose.ui.unit.dp
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.model.FiatCurrencyConversionRateState
 import cash.z.ecc.android.sdk.model.PercentDecimal
+import cash.z.ecc.android.sdk.model.TransactionOverview
 import co.electriccoin.zcash.crash.android.GlobalCrashReporter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.DisableScreenTimeout
@@ -71,7 +72,6 @@ import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 import co.electriccoin.zcash.ui.screen.home.HomeTag
-import co.electriccoin.zcash.ui.screen.home.model.CommonTransaction
 import co.electriccoin.zcash.ui.screen.home.model.WalletDisplayValues
 import co.electriccoin.zcash.ui.screen.home.model.WalletSnapshot
 import kotlinx.collections.immutable.ImmutableList
@@ -110,7 +110,7 @@ fun ComposablePreview() {
 @Composable
 fun Home(
     walletSnapshot: WalletSnapshot,
-    transactionHistory: ImmutableList<CommonTransaction>,
+    transactionHistory: ImmutableList<TransactionOverview>,
     isUpdateAvailable: Boolean,
     isKeepScreenOnDuringSync: Boolean?,
     isFiatConversionEnabled: Boolean,
@@ -295,7 +295,7 @@ private fun HomeDrawer(
 @Composable
 private fun HomeMainContent(
     walletSnapshot: WalletSnapshot,
-    transactionHistory: ImmutableList<CommonTransaction>,
+    transactionHistory: ImmutableList<TransactionOverview>,
     isUpdateAvailable: Boolean,
     isKeepScreenOnDuringSync: Boolean?,
     isFiatConversionEnabled: Boolean,
@@ -347,9 +347,7 @@ private fun HomeMainContent(
 }
 
 private fun isSyncing(status: Synchronizer.Status): Boolean {
-    return status == Synchronizer.Status.DOWNLOADING ||
-        status == Synchronizer.Status.VALIDATING ||
-        status == Synchronizer.Status.SCANNING ||
+    return status == Synchronizer.Status.SYNCING ||
         status == Synchronizer.Status.ENHANCING
 }
 
@@ -458,7 +456,7 @@ private fun Status(
 
 @Composable
 @Suppress("MagicNumber")
-private fun History(transactionHistory: ImmutableList<CommonTransaction>) {
+private fun History(transactionHistory: ImmutableList<TransactionOverview>) {
     if (transactionHistory.isEmpty()) {
         return
     }

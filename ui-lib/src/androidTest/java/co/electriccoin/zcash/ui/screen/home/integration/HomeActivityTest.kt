@@ -34,7 +34,7 @@ class HomeActivityTest : UiTestPrerequisites() {
     @MediumTest
     fun open_close_drawer_menu_test() {
         val walletSnapshot = WalletSnapshotFixture.new(
-            status = Synchronizer.Status.DOWNLOADING,
+            status = Synchronizer.Status.SYNCING,
             progress = PercentDecimal(0.5f)
         )
         val testSetup = newTestSetup(walletSnapshot)

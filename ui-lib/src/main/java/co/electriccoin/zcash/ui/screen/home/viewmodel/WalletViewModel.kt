@@ -11,15 +11,13 @@ import cash.z.ecc.android.sdk.block.CompactBlockProcessor
 import cash.z.ecc.android.sdk.model.Account
 import cash.z.ecc.android.sdk.model.BlockHeight
 import cash.z.ecc.android.sdk.model.FiatCurrency
-import cash.z.ecc.android.sdk.model.PendingTransaction
 import cash.z.ecc.android.sdk.model.PercentDecimal
 import cash.z.ecc.android.sdk.model.PersistableWallet
+import cash.z.ecc.android.sdk.model.TransactionOverview
 import cash.z.ecc.android.sdk.model.WalletAddresses
 import cash.z.ecc.android.sdk.model.WalletBalance
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.ZcashNetwork
-import cash.z.ecc.android.sdk.model.isMined
-import cash.z.ecc.android.sdk.model.isSubmitSuccess
 import cash.z.ecc.android.sdk.tool.DerivationTool
 import cash.z.ecc.sdk.type.fromResources
 import co.electriccoin.zcash.global.getInstance
@@ -30,7 +28,6 @@ import co.electriccoin.zcash.ui.preference.EncryptedPreferenceKeys
 import co.electriccoin.zcash.ui.preference.EncryptedPreferenceSingleton
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
 import co.electriccoin.zcash.ui.preference.StandardPreferenceSingleton
-import co.electriccoin.zcash.ui.screen.home.model.CommonTransaction
 import co.electriccoin.zcash.ui.screen.home.model.WalletSnapshot
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -44,7 +41,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.filterNotNull
@@ -154,12 +150,12 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
 
     // This is not the right API, because the transaction list could be very long and might need UI filtering
     @OptIn(ExperimentalCoroutinesApi::class)
-    val transactionSnapshot: StateFlow<ImmutableList<CommonTransaction>> = synchronizer
+    val transactionSnapshot: StateFlow<ImmutableList<TransactionOverview>> = synchronizer
         .flatMapLatest {
             if (null == it) {
                 flowOf(persistentListOf())
             } else {
-                it.toTransactions()
+                it.transactions.map { list -> list.toPersistentList() }
             }
         }
         .stateIn(
@@ -331,25 +327,14 @@ private fun Synchronizer.toWalletSnapshot() =
         orchardBalances, // 2
         saplingBalances, // 3
         transparentBalances, // 4
-        pendingTransactions.distinctUntilChanged(), // 5
-        progress, // 6
-        toCommonError() // 7
+        progress, // 5
+        toCommonError() // 6
     ) { flows ->
-        val pendingCount = (flows[5] as List<*>)
-            .filterIsInstance(PendingTransaction::class.java)
-            .count {
-                it.isSubmitSuccess() && !it.isMined()
-            }
         val orchardBalance = flows[2] as WalletBalance?
         val saplingBalance = flows[3] as WalletBalance?
         val transparentBalance = flows[4] as WalletBalance?
 
-        val progressPercentDecimal = (flows[6] as Int).let { value ->
-            if (value > PercentDecimal.MAX || value < PercentDecimal.MIN) {
-                PercentDecimal.ZERO_PERCENT
-            }
-            PercentDecimal((flows[6] as Int) / 100f)
-        }
+        val progressPercentDecimal = flows[5] as PercentDecimal
 
         WalletSnapshot(
             flows[0] as Synchronizer.Status,
@@ -357,23 +342,7 @@ private fun Synchronizer.toWalletSnapshot() =
             orchardBalance ?: WalletBalance(Zatoshi(0), Zatoshi(0)),
             saplingBalance ?: WalletBalance(Zatoshi(0), Zatoshi(0)),
             transparentBalance ?: WalletBalance(Zatoshi(0), Zatoshi(0)),
-            pendingCount,
             progressPercentDecimal,
-            flows[7] as SynchronizerError?
+            flows[6] as SynchronizerError?
         )
-    }
-
-private fun Synchronizer.toTransactions(): Flow<ImmutableList<CommonTransaction>> =
-    combine(
-        clearedTransactions.distinctUntilChanged(),
-        pendingTransactions.distinctUntilChanged()
-    ) { cleared, pending ->
-        // TODO [#157]: Sort the transactions to show the most recent
-        // TODO [#157]: https://github.com/zcash/secant-android-wallet/issues/157
-
-        // Note that the list of transactions will not be sorted.
-        buildList {
-            addAll(cleared.map { CommonTransaction.Overview(it) })
-            addAll(pending.map { CommonTransaction.Pending(it) })
-        }.toPersistentList()
     }
