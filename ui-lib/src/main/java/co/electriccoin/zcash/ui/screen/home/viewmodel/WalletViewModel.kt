@@ -121,7 +121,7 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
             val bip39Seed = withContext(Dispatchers.IO) {
                 Mnemonics.MnemonicCode(it.seedPhrase.joinToString()).toSeed()
             }
-            DerivationTool.deriveUnifiedSpendingKey(
+            DerivationTool.getInstance().deriveUnifiedSpendingKey(
                 seed = bip39Seed,
                 network = it.network,
                 account = Account.DEFAULT
