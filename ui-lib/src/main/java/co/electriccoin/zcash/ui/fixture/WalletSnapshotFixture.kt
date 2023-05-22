@@ -25,6 +25,7 @@ object WalletSnapshotFixture {
             null,
             null,
             null,
+            null
         ),
         orchardBalance: WalletBalance = ORCHARD_BALANCE,
         saplingBalance: WalletBalance = SAPLING_BALANCE,
