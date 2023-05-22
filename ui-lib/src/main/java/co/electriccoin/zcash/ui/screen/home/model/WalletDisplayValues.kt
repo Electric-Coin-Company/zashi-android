@@ -51,8 +51,7 @@ data class WalletDisplayValues(
                     }
                     statusText = context.getString(R.string.home_status_syncing_format, progressPercent)
                 }
-                Synchronizer.Status.SYNCED,
-                Synchronizer.Status.ENHANCING -> {
+                Synchronizer.Status.SYNCED -> {
                     statusText = if (updateAvailable) {
                         context.getString(R.string.home_status_update)
                     } else {
