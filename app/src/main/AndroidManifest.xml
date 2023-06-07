@@ -5,6 +5,8 @@
     <application
         android:name="co.electriccoin.zcash.app.ZcashApplication"
         android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher_square"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:label="@string/app_name">
 
         <!-- Alias acts as the entrypoint to the application.

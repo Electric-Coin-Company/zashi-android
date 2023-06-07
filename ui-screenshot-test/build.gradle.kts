@@ -34,7 +34,7 @@ android {
     }
     buildTypes {
         create("release") {
-            isMinifyEnabled = true
+            // To provide compatibility with other modules
         }
     }
 
