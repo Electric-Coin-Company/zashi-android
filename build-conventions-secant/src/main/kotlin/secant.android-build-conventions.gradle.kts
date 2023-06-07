@@ -126,7 +126,7 @@ fun com.android.build.gradle.BaseExtension.configureBaseExtension() {
 
         @Suppress("UnstableApiUsage")
         managedDevices {
-            @Suppress("MagicNumber", "PropertyName", "VariableNaming")
+            @Suppress("MagicNumber", "VariableNaming")
             val MANAGED_DEVICES_MIN_SDK = 27
 
             val testDeviceMinSdkVersion = run {
