@@ -13,6 +13,8 @@ android {
     namespace = "co.electroniccoin.zcash.ui.screenshot"
     // Target needs to be set to com.android.application type module
     targetProjectPath = ":${projects.app.name}"
+    // Run tests in this module
+    experimentalProperties["android.experimental.self-instrumenting"] = true
 
     defaultConfig {
         if (isOrchestratorEnabled) {
