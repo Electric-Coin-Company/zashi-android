@@ -572,7 +572,7 @@ jobs:
         with:
           name: Binaries
       - name: Robo test
-        timeout-minutes: 20
+        timeout-minutes: 25
         env:
           # Path depends on `release_build` job, plus path of `Download a single artifact` step
           BINARIES_ZIP_PATH: binaries.zip

@@ -9,6 +9,10 @@ plugins {
 
 android {
     namespace = "co.electriccoin.zcash.configuration"
+
+    buildFeatures {
+        buildConfig = true
+    }
 }
 
 dependencies {
