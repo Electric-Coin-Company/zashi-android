@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <color name="ns_peach_100">#FE7757</color>
+    <color name="ns_peach_80">#FE9279</color>
+    <color name="ns_peach_60">#FEAD9A</color>
+    <color name="ns_peach_20">#FFE4DD</color>
+    <color name="ns_parmaviolet">#D2CEF4</color>
+    <color name="ns_peach_40_dark">#70383D</color>
+    <color name="ns_peach_60_dark">#9F4D45</color>
+    <color name="ns_white">#FFFFFF</color>
+    <color name="ns_red">#CF5355</color>
+    <color name="ns_navy">#2B2551</color>
+    <color name="ns_dark_navy">#110E2B</color>
+    <color name="ns_status_bar_color">#CC1C1840</color>
+    <color name="ns_purple">#9C5776</color>
+    <color name="ns_maroon">#CF5355</color>
+    <color name="ns_bright_blue">#7AA3F3</color>
+    <color name="ns_bright_green">#9DEA79</color>
+    <color name="ns_bright_red">#F53C3C</color>
+    <color name="ns_disabled">#33FFFFFF</color>
+
+    <!--                  -->
+    <!-- palette: Android -->
+    <!--                  -->
+
+    <color name="colorPrimary">@color/ns_peach_100</color>
+    <color name="colorPrimaryMedium">@color/ns_peach_60_dark</color>
+    <color name="colorPrimaryDark">@color/ns_peach_40_dark</color>
+    <color name="colorAccent">#A1A1A1</color>
+    <color name="colorSurface">@color/text_light</color>
+    <color name="colorOnSurface">@color/background_banner</color>
+
+    <!--                  -->
+    <!-- palette: Zcash   -->
+    <!--                  -->
+
+    <!-- Colors here should have a hex value and a generic name, prefixed with zcash -->
+    <!-- This palette should be kept as small as possible
+     and should map directly to the design style guide -->
+
+    <color name="zcashWhite">#F5F5F5</color>
+    <color name="zcashGray">#616161</color>
+    <color name="zcashWhite_12">#1FFFFFFF</color>
+    <color name="zcashWhite_24">#3DFFFFFF</color>
+    <color name="zcashWhite_40">#66FFFFFF</color>
+    <color name="zcashWhite_50">#80FFFFFF</color>
+    <color name="zcashWhite_60">#A3FFFFFF</color>
+    <color name="zcashWhite_87">#BFFFFFFF</color>
+    <color name="zcashWhite_light">@color/ns_peach_20</color>
+    <color name="zcashBlack_light">#2B2B2B</color>
+    <color name="zcashBlack_12">#1F000000</color>
+    <color name="zcashBlack_40">#66000000</color>
+    <color name="zcashBlack_54">#8A000000</color>
+    <color name="zcashBlack_87">#DD000000</color>
+    <color name="zcashBlack_dark">#171717</color>
+    <color name="zcashBlack_0">#00000000</color>
+
+    <color name="zcashGreen">@color/ns_bright_green</color>
+    <color name="zcashRed">@color/ns_bright_red</color>
+    <color name="zcashBlue">@color/ns_bright_blue</color>
+    <color name="zcashBlueDark">#4A90E2</color>
+
+    <!-- yellows -->
+    <color name="zcashYellow">@color/ns_peach_100</color>
+    <color name="zcashOrange">@color/ns_peach_60_dark</color>
+
+    <!-- tab layout grey -->
+    <color name="unselected_tab_grey">#727272</color>
+
+    <!--                  -->
+    <!-- named colors     -->
+    <!--                  -->
+
+    <!-- Every color here should be a reference to a palette color
+    but have a more useful name for use in code -->
+
+    <color name="background_banner">@color/zcashBlack_dark</color>
+    <color name="background_banner_stroke">#282828</color>
+    <color name="scan_overlay_background">@color/zcashBlack_87</color>
+    <color name="spacer">#1FBB666A</color>
+    <color name="text_send_amount_disabled">@color/text_light</color>
+
+    <!-- text -->
+    <color name="text_light">@color/ns_peach_20</color>
+    <color name="text_light_dimmed">@color/zcashWhite_87</color>
+    <color name="text_dark">@color/zcashBlack_87</color>
+    <color name="text_dark_dimmed">@color/zcashBlack_54</color>
+    <color name="text_shadow">@color/zcashBlack_40</color>
+
+    <!-- text : pending design review -->
+    <!-- these are colors found in designs that fall near but outside the palette but may want to
+         replace existing palette colors, after design review -->
+    <color name="tx_text_light_dimmed">#9B9B9B</color>
+    <color name="tx_text_light_dimmed_less">#D3D3D3</color>
+    <color name="tx_circle_icon_bg">#494A4C</color>
+    <color name="tx_primary">@color/ns_peach_100</color>
+
+    <!--transaction colors-->
+    <color name="transaction_sent">#B8B8B8</color>
+
+    <color name="mtrl_textinput_default_box_stroke_color" tools:override="true" >@color/zcashWhite</color>
+</resources>

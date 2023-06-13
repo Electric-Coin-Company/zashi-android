@@ -72,6 +72,7 @@ dependencies {
     implementation(libs.zcash.sdk.incubator)
     implementation(libs.zcash.bip39)
     implementation(libs.zxing)
+    implementation(libs.pdfbox)
 
     implementation(projects.buildInfoLib)
     implementation(projects.configurationApiLib)

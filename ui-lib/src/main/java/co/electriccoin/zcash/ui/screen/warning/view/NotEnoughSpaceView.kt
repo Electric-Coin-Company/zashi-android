@@ -20,9 +20,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.Body
+import co.electriccoin.zcash.ui.design.component.BodyMedium
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.Header
-import co.electriccoin.zcash.ui.design.component.Small
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 
 @Composable
@@ -47,7 +47,7 @@ fun NotEnoughSpaceView(storageSpaceRequiredGigabytes: Int, spaceRequiredToContin
             color = Color.White
         )
         Spacer(Modifier.height(64.dp))
-        Small(
+        BodyMedium(
             text = stringResource(id = R.string.space_required_to_continue, spaceRequiredToContinueMegabytes),
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()

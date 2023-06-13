@@ -12,6 +12,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.theme.internal.Typography
 
 @Composable
 fun Header(
@@ -24,8 +25,8 @@ fun Header(
         text = text,
         color = color,
         textAlign = textAlign,
-        modifier = modifier,
-        style = MaterialTheme.typography.headlineLarge,
+        style = Typography.headlineLarge,
+        modifier = modifier
     )
 }
 
@@ -34,19 +35,19 @@ fun Body(
     text: String,
     modifier: Modifier = Modifier,
     textAlign: TextAlign = TextAlign.Start,
-    color: Color = MaterialTheme.colorScheme.onBackground,
+    color: Color = MaterialTheme.colorScheme.onBackground
 ) {
     Text(
         text = text,
-        color = color,
         textAlign = textAlign,
-        modifier = modifier,
-        style = MaterialTheme.typography.bodyLarge,
+        style = Typography.bodyLarge,
+        color = color,
+        modifier = modifier
     )
 }
 
 @Composable
-fun Small(
+fun BodyMedium(
     text: String,
     modifier: Modifier = Modifier,
     textAlign: TextAlign = TextAlign.Start,
@@ -54,10 +55,58 @@ fun Small(
 ) {
     Text(
         text = text,
+        style = Typography.bodyMedium,
         color = color,
-        textAlign = textAlign,
         modifier = modifier,
-        style = MaterialTheme.typography.bodyMedium,
+        textAlign = textAlign
+    )
+}
+
+@Composable
+fun BodySmall(
+    text: String,
+    modifier: Modifier = Modifier,
+    textAlign: TextAlign = TextAlign.Start,
+    color: Color = MaterialTheme.colorScheme.onBackground,
+) {
+    Text(
+        text = text,
+        style = Typography.bodySmall,
+        color = color,
+        modifier = modifier,
+        textAlign = textAlign
+    )
+}
+
+@Composable
+fun TitleMedium(
+    text: String,
+    modifier: Modifier = Modifier,
+    textAlign: TextAlign = TextAlign.Start,
+    color: Color = ZcashTheme.colors.onBackgroundHeader,
+) {
+    Text(
+        text = text,
+        style = Typography.titleMedium,
+        color = color,
+        modifier = modifier,
+        textAlign = textAlign
+    )
+}
+
+@Composable
+fun TitleLarge(
+    text: String,
+    modifier: Modifier = Modifier,
+    textAlign: TextAlign = TextAlign.Start,
+    color: Color = ZcashTheme.colors.onBackgroundHeader,
+) {
+    Text(
+        text = text,
+        style = Typography.titleLarge,
+        color = color,
+        modifier = modifier,
+        textAlign = textAlign
     )
 }
 
@@ -91,11 +140,12 @@ fun ListHeader(
 fun Reference(
     text: String,
     modifier: Modifier = Modifier,
+    style: TextStyle = MaterialTheme.typography.bodyLarge,
     onClick: () -> Unit
 ) {
     ClickableText(
         text = AnnotatedString(text),
-        style = MaterialTheme.typography.bodyLarge
+        style = style
             .merge(TextStyle(color = ZcashTheme.colors.reference)),
         modifier = modifier,
         onClick = {

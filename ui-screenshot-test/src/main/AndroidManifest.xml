@@ -8,7 +8,7 @@
         android:maxSdkVersion="29"/>
 
     <application
-        android:icon="@mipmap/ic_launcher_square"
+        android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round">
 
         <!-- Now we use androidx-startup for components auto-initialization -->

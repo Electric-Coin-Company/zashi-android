@@ -99,7 +99,7 @@ tasks {
             "IS_MINIFY_ENABLED" to "true",
 
             "ZCASH_RELEASE_APP_NAME" to "sECCant",
-            "ZCASH_RELEASE_PACKAGE_NAME" to "co.electriccoin.zcash",
+            "ZCASH_RELEASE_PACKAGE_NAME" to "com.nighthawkapps.wallet.android",
             "ZCASH_SUPPORT_EMAIL_ADDRESS" to "",
 
             "ZCASH_DEBUG_KEYSTORE_PATH" to "",
