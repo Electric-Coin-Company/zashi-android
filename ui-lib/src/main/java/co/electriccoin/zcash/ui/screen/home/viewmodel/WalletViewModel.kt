@@ -259,7 +259,8 @@ sealed class SecretState {
 /**
  * Represents all kind of Synchronizer errors
  */
-// TODO [#529] https://github.com/zcash/secant-android-wallet/issues/529
+// TODO [#529]: Localize Synchronizer Errors
+// TODO [#529]: https://github.com/zcash/secant-android-wallet/issues/529
 sealed class SynchronizerError {
     abstract fun getCauseMessage(): String?
 

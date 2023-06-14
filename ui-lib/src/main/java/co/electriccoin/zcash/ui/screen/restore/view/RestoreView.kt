@@ -255,8 +255,8 @@ private fun RestoreTopAppBar(onBack: () -> Unit, isShowClear: Boolean, onClear: 
     )
 }
 
-// TODO [#672] Implement custom seed phrase pasting for wallet import
-// TODO [#672] https://github.com/zcash/secant-android-wallet/issues/672
+// TODO [#672]: Implement custom seed phrase pasting for wallet import
+// TODO [#672]: https://github.com/zcash/secant-android-wallet/issues/672
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Suppress("UNUSED_PARAMETER", "LongParameterList")

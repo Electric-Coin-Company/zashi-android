@@ -38,10 +38,13 @@ private fun NotEnoughSpacePreview() {
     }
 }
 
+// TODO [#883]: NotEnoughSpace screen has dark theme hardcoded
+// TODO [#883]: https://github.com/zcash/secant-android-wallet/issues/883
+
 @Composable
 fun NotEnoughSpaceView(storageSpaceRequiredGigabytes: Int, spaceRequiredToContinueMegabytes: Int) {
     @Suppress("MagicNumber")
-    val backgroundColor = Color(0xFF1A233A) // TODO should be replaced, once we define colors
+    val backgroundColor = Color(0xFF1A233A)
     Column(
         Modifier
             .background(backgroundColor)

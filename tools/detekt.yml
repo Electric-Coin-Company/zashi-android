@@ -5,7 +5,6 @@ naming:
     excludes: ['**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**']
     functionPattern: '[a-z][a-zA-Z0-9]*'
     excludeClassPattern: '$^'
-    ignoreOverridden: true
     ignoreAnnotated:
       - 'Composable'
 
@@ -13,12 +12,17 @@ style:
   active: true
   ForbiddenComment:
     active: true
-    values:
-      - 'FIXME:'
-      - 'STOPSHIP:'
-      - 'TODO:'
-    allowedPatterns: '\[[^\]]\d+\]'
-    customMessage: 'Include issue number prefix for TODO comments, e.g. `TODO [#123]: Fix this later`'
+    comments:
+      - reason: 'Forbidden FIXME todo marker in comment, please fix the problem. Or include issue number prefix for 
+      FIXME comments, e.g. `FIXME [#123]: Fix this later`'
+        value: 'FIXME'
+      - reason: 'Forbidden STOPSHIP todo marker in comment, please address the problem before shipping the code. Or 
+      include issue number prefix for STOPSHIP comments, e.g. `STOPSHIP [#123]: Fix this later`'
+        value: 'STOPSHIP'
+      - reason: 'Forbidden TODO todo marker in comment, please do the changes. Or include issue number prefix for TODO 
+      comments, e.g. `TODO [#123]: Fix this later`'
+        value: 'TODO'
+    allowedPatterns: '[TODO|FIXME|STOPSHIP]+\s\[#\d+\]:\s.+'
   MaxLineLength:
     active: true
   NewLineAtEndOfFile:
