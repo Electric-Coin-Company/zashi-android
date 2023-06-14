@@ -60,9 +60,9 @@ import co.electriccoin.zcash.ui.screen.backup.state.TestChoices
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toPersistentList
 
-@Preview(device = Devices.PIXEL_4)
+@Preview(name = "LongNewWalletBackup", device = Devices.PIXEL_4)
 @Composable
-fun ComposablePreview() {
+private fun ComposablePreview() {
     ZcashTheme(darkTheme = false) {
         GradientSurface {
             LongNewWalletBackup(

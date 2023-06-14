@@ -33,7 +33,7 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme.dimens
 
 @Preview("Settings")
 @Composable
-fun PreviewSettings() {
+private fun PreviewSettings() {
     ZcashTheme(darkTheme = true) {
         GradientSurface {
             Settings(
@@ -51,7 +51,6 @@ fun PreviewSettings() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @Suppress("LongParameterList")
 fun Settings(

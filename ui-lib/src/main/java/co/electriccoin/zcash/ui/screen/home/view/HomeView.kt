@@ -78,9 +78,9 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.CoroutineScope
 
-@Preview
+@Preview("Home")
 @Composable
-fun ComposablePreview() {
+private fun ComposablePreview() {
     ZcashTheme(darkTheme = true) {
         GradientSurface {
             Home(
@@ -105,7 +105,6 @@ fun ComposablePreview() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Suppress("LongParameterList")
 @Composable
 fun Home(

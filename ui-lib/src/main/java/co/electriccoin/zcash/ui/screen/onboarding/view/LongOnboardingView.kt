@@ -49,9 +49,9 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.onboarding.model.OnboardingStage
 import co.electriccoin.zcash.ui.screen.onboarding.state.OnboardingState
 
-@Preview
+@Preview("LongOnboarding")
 @Composable
-fun ComposablePreview() {
+private fun ComposablePreview() {
     ZcashTheme(darkTheme = true) {
         GradientSurface {
             LongOnboarding(

@@ -27,6 +27,8 @@ style:
     active: true
     allowedNames: '(_|ignored|expected|serialVersionUID)'
     excludes: [ '**/*.kts' ]
+    ignoreAnnotated:
+      - 'Preview'
   WildcardImport:
     active: true
 

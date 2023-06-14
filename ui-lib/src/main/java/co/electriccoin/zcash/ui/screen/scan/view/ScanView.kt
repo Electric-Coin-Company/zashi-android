@@ -81,7 +81,7 @@ import kotlin.math.roundToInt
 // TODO QR scan screen elements transparency
 @Preview("Scan")
 @Composable
-fun PreviewScan() {
+private fun PreviewScan() {
     ZcashTheme(darkTheme = true) {
         GradientSurface {
             Scan(

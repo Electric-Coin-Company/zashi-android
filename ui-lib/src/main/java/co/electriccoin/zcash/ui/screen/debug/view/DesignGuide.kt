@@ -23,9 +23,9 @@ import co.electriccoin.zcash.ui.design.component.TertiaryButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.onboarding.view.Callout
 
-@Preview
+@Preview("DesignGuide")
 @Composable
-fun ComposablePreview() {
+private fun ComposablePreview() {
     ZcashTheme(darkTheme = false) {
         DesignGuide()
     }

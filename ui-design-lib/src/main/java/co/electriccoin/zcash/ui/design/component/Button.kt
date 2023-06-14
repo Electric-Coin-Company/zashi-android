@@ -17,7 +17,7 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 
 @Preview
 @Composable
-fun ButtonComposablePreview() {
+private fun ButtonComposablePreview() {
     ZcashTheme(darkTheme = true) {
         GradientSurface {
             Column {

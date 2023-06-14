@@ -36,7 +36,7 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 
 @Preview("Support")
 @Composable
-fun PreviewSupport() {
+private fun PreviewSupport() {
     ZcashTheme(darkTheme = true) {
         GradientSurface {
             Support(
@@ -48,7 +48,6 @@ fun PreviewSupport() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Support(
     snackbarHostState: SnackbarHostState,

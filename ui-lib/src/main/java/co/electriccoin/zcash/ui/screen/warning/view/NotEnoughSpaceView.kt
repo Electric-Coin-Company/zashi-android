@@ -25,6 +25,19 @@ import co.electriccoin.zcash.ui.design.component.Header
 import co.electriccoin.zcash.ui.design.component.Small
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 
+@Preview("NotEnoughSpace")
+@Composable
+private fun NotEnoughSpacePreview() {
+    ZcashTheme {
+        GradientSurface {
+            NotEnoughSpaceView(
+                storageSpaceRequiredGigabytes = 1,
+                spaceRequiredToContinueMegabytes = 300
+            )
+        }
+    }
+}
+
 @Composable
 fun NotEnoughSpaceView(storageSpaceRequiredGigabytes: Int, spaceRequiredToContinueMegabytes: Int) {
     @Suppress("MagicNumber")
@@ -52,18 +65,5 @@ fun NotEnoughSpaceView(storageSpaceRequiredGigabytes: Int, spaceRequiredToContin
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
         )
-    }
-}
-
-@Preview
-@Composable
-fun NotEnoughSpacePreview() {
-    ZcashTheme {
-        GradientSurface {
-            NotEnoughSpaceView(
-                storageSpaceRequiredGigabytes = 1,
-                spaceRequiredToContinueMegabytes = 300
-            )
-        }
     }
 }

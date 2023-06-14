@@ -33,7 +33,7 @@ import kotlinx.collections.immutable.toPersistentList
 
 @Preview("Seed")
 @Composable
-fun PreviewSeed() {
+private fun PreviewSeed() {
     ZcashTheme(darkTheme = true) {
         GradientSurface {
             Seed(
@@ -49,7 +49,6 @@ fun PreviewSeed() {
  * Note we have some things to determine regarding locking of the secrets for persistableWallet
  * (e.g. seed phrase and spending keys) which should require additional authorization to view.
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Seed(
     persistableWallet: PersistableWallet,

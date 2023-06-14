@@ -53,9 +53,9 @@ import co.electriccoin.zcash.ui.design.component.ListItem
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import kotlinx.coroutines.runBlocking
 
-@Preview
+@Preview("WalletAddresses")
 @Composable
-fun ComposablePreview() {
+private fun ComposablePreview() {
     ZcashTheme(darkTheme = true) {
         GradientSurface {
             WalletAddresses(
