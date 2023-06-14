@@ -20,6 +20,9 @@ class StringDefaultEntryTest {
     @Test
     fun value_override() {
         val entry = StringDefaultEntryFixture.newEntryEntry()
-        assertEquals("override", entry.getValue(MockConfiguration(mapOf(StringDefaultEntryFixture.KEY.key to "override"))))
+        assertEquals(
+            "override",
+            entry.getValue(MockConfiguration(mapOf(StringDefaultEntryFixture.KEY.key to "override")))
+        )
     }
 }

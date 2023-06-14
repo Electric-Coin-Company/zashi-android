@@ -7,12 +7,14 @@ object ConfigurationEntries {
     val IS_APP_UPDATE_CHECK_ENABLED = BooleanConfigurationEntry(ConfigKey("is_update_check_enabled"), true)
 
     /*
-     * The full onboarding flow is functional and tested, but it is disabled by default for an initially minimal feature set.
+     * The full onboarding flow is functional and tested, but it is disabled by default for an initially minimal
+     * feature set.
      */
     val IS_SHORT_ONBOARDING_UX = BooleanConfigurationEntry(ConfigKey("is_short_onboarding_ux"), true)
 
     /*
-     * The full new wallet flow is functional and tested, but it is disabled by default for an initially minimal feature set.
+     * The full new wallet flow is functional and tested, but it is disabled by default for an initially minimal
+     *  feature set.
      */
     val IS_SHORT_NEW_WALLET_BACKUP_UX = BooleanConfigurationEntry(ConfigKey("is_short_new_wallet_backup_ux"), true)
 

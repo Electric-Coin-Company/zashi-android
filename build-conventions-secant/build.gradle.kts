@@ -44,7 +44,10 @@ dependencies {
     implementation("io.gitlab.arturbosch.detekt:detekt-gradle-plugin:${rootProperties.getProperty("DETEKT_VERSION")}")
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${rootProperties.getProperty("KOTLIN_VERSION")}")
     implementation("wtf.emulator:gradle-plugin:${rootProperties.getProperty("EMULATOR_WTF_GRADLE_PLUGIN_VERSION")}")
-    implementation("org.jetbrains.kotlinx.kover:org.jetbrains.kotlinx.kover.gradle.plugin:${rootProperties.getProperty("KOVER_VERSION")}")
+    implementation(
+        "org.jetbrains.kotlinx.kover:org.jetbrains.kotlinx.kover.gradle.plugin:" +
+            rootProperties.getProperty("KOVER_VERSION")
+    )
 }
 
 // A slightly gross way to use the root gradle.properties as the single source of truth for version numbers

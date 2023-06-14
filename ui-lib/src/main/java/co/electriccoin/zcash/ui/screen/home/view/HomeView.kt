@@ -221,7 +221,9 @@ private fun DebugMenu(
                 onClick = {
                     // Eventually this shouldn't rely on the Android implementation, but rather an expect/actual
                     // should be used at the crash API level.
-                    GlobalCrashReporter.reportCaughtException(RuntimeException("Manually caught exception from debug menu"))
+                    GlobalCrashReporter.reportCaughtException(
+                        RuntimeException("Manually caught exception from debug menu")
+                    )
                     expanded = false
                 }
             )

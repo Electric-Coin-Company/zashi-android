@@ -38,6 +38,9 @@ class WalletDisplayValuesTest {
         assertTrue(values.statusText.startsWith(getStringResource(R.string.home_status_syncing_catchup)))
         // TODO [#578] https://github.com/zcash/zcash-android-wallet-sdk/issues/578
         assertEquals(FiatCurrencyConversionRateState.Unavailable, values.fiatCurrencyAmountState)
-        assertEquals(getStringResource(R.string.fiat_currency_conversion_rate_unavailable), values.fiatCurrencyAmountText)
+        assertEquals(
+            getStringResource(R.string.fiat_currency_conversion_rate_unavailable),
+            values.fiatCurrencyAmountText
+        )
     }
 }

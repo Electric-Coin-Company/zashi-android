@@ -22,6 +22,9 @@ class IntegerDefaultEntryTest {
         val expected = IntegerDefaultEntryFixture.DEFAULT_VALUE + 5
 
         val entry = IntegerDefaultEntryFixture.newEntry()
-        assertEquals(expected, entry.getValue(MockConfiguration(mapOf(IntegerDefaultEntryFixture.KEY.key to expected.toString()))))
+        assertEquals(
+            expected,
+            entry.getValue(MockConfiguration(mapOf(IntegerDefaultEntryFixture.KEY.key to expected.toString())))
+        )
     }
 }

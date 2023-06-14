@@ -127,7 +127,10 @@ private fun TroubleshootingMenu(
     Column {
         var expanded by rememberSaveable { mutableStateOf(false) }
         IconButton(onClick = { expanded = true }) {
-            Icon(Icons.Default.MoreVert, contentDescription = stringResource(id = R.string.settings_overflow_content_description))
+            Icon(
+                imageVector = Icons.Default.MoreVert,
+                contentDescription = stringResource(id = R.string.settings_overflow_content_description)
+            )
         }
 
         DropdownMenu(

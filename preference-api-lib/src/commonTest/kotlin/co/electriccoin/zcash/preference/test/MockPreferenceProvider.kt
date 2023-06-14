@@ -8,7 +8,9 @@ import kotlinx.coroutines.flow.flow
 /**
  * @param mutableMapFactory Emits a new mutable map.  Thread safety depends on the factory implementation.
  */
-class MockPreferenceProvider(mutableMapFactory: () -> MutableMap<String, String?> = { mutableMapOf() }) : PreferenceProvider {
+class MockPreferenceProvider(
+    mutableMapFactory: () -> MutableMap<String, String?> = { mutableMapOf() }
+) : PreferenceProvider {
 
     private val map = mutableMapFactory()
 

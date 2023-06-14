@@ -47,7 +47,9 @@ class ShortOnboardingViewTest : UiTestPrerequisites() {
     fun click_create_wallet() {
         val testSetup = newTestSetup()
 
-        val newWalletButton = composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_short_create_new_wallet))
+        val newWalletButton = composeTestRule.onNodeWithText(
+            getStringResource(R.string.onboarding_short_create_new_wallet)
+        )
         newWalletButton.performClick()
 
         assertEquals(1, testSetup.getOnCreateWalletCallbackCount())
@@ -59,7 +61,9 @@ class ShortOnboardingViewTest : UiTestPrerequisites() {
     fun click_import_wallet() {
         val testSetup = newTestSetup()
 
-        val newWalletButton = composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_short_import_existing_wallet))
+        val newWalletButton = composeTestRule.onNodeWithText(
+            getStringResource(R.string.onboarding_short_import_existing_wallet)
+        )
         newWalletButton.performClick()
 
         assertEquals(1, testSetup.getOnImportWalletCallbackCount())

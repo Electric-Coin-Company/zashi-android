@@ -6,7 +6,10 @@ import kotlinx.datetime.Instant
 
 // The configurationMapping is intended to be a public API for configuration implementations rather
 // than a public API for configuration clients.
-data class StringConfiguration(val configurationMapping: PersistentMap<String, String>, override val updatedAt: Instant?) : Configuration {
+data class StringConfiguration(
+    val configurationMapping: PersistentMap<String, String>,
+    override val updatedAt: Instant?
+) : Configuration {
 
     override fun getBoolean(
         key: ConfigKey,
@@ -29,7 +32,8 @@ data class StringConfiguration(val configurationMapping: PersistentMap<String, S
         }
     } ?: defaultValue
 
-    override fun getString(key: ConfigKey, defaultValue: String) = configurationMapping.getOrElse(key.key) { defaultValue }
+    override fun getString(key: ConfigKey, defaultValue: String) =
+        configurationMapping.getOrElse(key.key) { defaultValue }
 
     override fun hasKey(key: ConfigKey) = configurationMapping.containsKey(key.key)
 }

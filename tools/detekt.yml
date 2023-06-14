@@ -20,7 +20,7 @@ style:
     allowedPatterns: '\[[^\]]\d+\]'
     customMessage: 'Include issue number prefix for TODO comments, e.g. `TODO [#123]: Fix this later`'
   MaxLineLength:
-    active: false
+    active: true
   NewLineAtEndOfFile:
     active: false
   UnusedPrivateMember:
@@ -28,7 +28,7 @@ style:
     allowedNames: '(_|ignored|expected|serialVersionUID)'
     excludes: [ '**/*.kts' ]
   WildcardImport:
-    active: false
+    active: true
 
 Compose:
   ModifierMissing:

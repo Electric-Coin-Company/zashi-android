@@ -25,7 +25,9 @@ class IntegerPreferenceDefaultTest {
         val expected = IntegerPreferenceDefaultFixture.DEFAULT_VALUE + 5
 
         val entry = IntegerPreferenceDefaultFixture.new()
-        val mockPreferenceProvider = MockPreferenceProvider { mutableMapOf(StringDefaultPreferenceFixture.KEY.key to expected.toString()) }
+        val mockPreferenceProvider = MockPreferenceProvider {
+            mutableMapOf(StringDefaultPreferenceFixture.KEY.key to expected.toString())
+        }
 
         assertEquals(expected, entry.getValue(mockPreferenceProvider))
     }

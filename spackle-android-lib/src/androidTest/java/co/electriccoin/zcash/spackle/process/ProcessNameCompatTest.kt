@@ -9,13 +9,19 @@ class ProcessNameCompatTest {
     @SmallTest
     @Test
     fun searchForProcessName() {
-        assertEquals(TEST_PACKAGE_PROCESS, ProcessNameCompat.searchForProcessNameLegacy(ApplicationProvider.getApplicationContext()))
+        assertEquals(
+            TEST_PACKAGE_PROCESS,
+            ProcessNameCompat.searchForProcessNameLegacy(ApplicationProvider.getApplicationContext())
+        )
     }
 
     @SmallTest
     @Test
     fun getProcessName() {
-        assertEquals(TEST_PACKAGE_PROCESS, ProcessNameCompat.getProcessName(ApplicationProvider.getApplicationContext()))
+        assertEquals(
+            TEST_PACKAGE_PROCESS,
+            ProcessNameCompat.getProcessName(ApplicationProvider.getApplicationContext())
+        )
     }
 
     companion object {
