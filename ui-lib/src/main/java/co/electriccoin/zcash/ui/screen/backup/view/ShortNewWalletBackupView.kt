@@ -37,9 +37,9 @@ import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import kotlinx.collections.immutable.toPersistentList
 
-@Preview(device = Devices.PIXEL_4)
+@Preview(name = "ShortNewWalletBackup", device = Devices.PIXEL_4)
 @Composable
-fun ComposablePreviewShort() {
+private fun ComposablePreviewShort() {
     ZcashTheme(darkTheme = false) {
         GradientSurface {
             ShortNewWalletBackup(

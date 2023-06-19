@@ -37,9 +37,9 @@ import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.TertiaryButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 
-@Preview
+@Preview("ShortOnboarding")
 @Composable
-fun ShortOnboardingComposablePreview() {
+private fun ShortOnboardingComposablePreview() {
     ZcashTheme(darkTheme = true) {
         GradientSurface {
             ShortOnboarding(

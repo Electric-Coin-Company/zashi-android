@@ -35,7 +35,8 @@ class MockConfiguration(private val configurationMapping: Map<String, String> = 
         }
     } ?: defaultValue
 
-    override fun getString(key: ConfigKey, defaultValue: String) = configurationMapping.getOrElse(key.key) { defaultValue }
+    override fun getString(key: ConfigKey, defaultValue: String) =
+        configurationMapping.getOrElse(key.key) { defaultValue }
 
     override fun hasKey(key: ConfigKey) = configurationMapping.containsKey(key.key)
 }

@@ -19,7 +19,7 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 
 @Preview
 @Composable
-fun ComposablePreview() {
+private fun ComposablePreview() {
     ZcashTheme(darkTheme = false) {
         Chip(Index(0), "edict")
     }

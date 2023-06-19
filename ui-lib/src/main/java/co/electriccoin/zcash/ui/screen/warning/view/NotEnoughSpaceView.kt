@@ -25,10 +25,26 @@ import co.electriccoin.zcash.ui.design.component.Header
 import co.electriccoin.zcash.ui.design.component.Small
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 
+@Preview("NotEnoughSpace")
+@Composable
+private fun NotEnoughSpacePreview() {
+    ZcashTheme {
+        GradientSurface {
+            NotEnoughSpaceView(
+                storageSpaceRequiredGigabytes = 1,
+                spaceRequiredToContinueMegabytes = 300
+            )
+        }
+    }
+}
+
+// TODO [#883]: NotEnoughSpace screen has dark theme hardcoded
+// TODO [#883]: https://github.com/zcash/secant-android-wallet/issues/883
+
 @Composable
 fun NotEnoughSpaceView(storageSpaceRequiredGigabytes: Int, spaceRequiredToContinueMegabytes: Int) {
     @Suppress("MagicNumber")
-    val backgroundColor = Color(0xFF1A233A) // TODO should be replaced, once we define colors
+    val backgroundColor = Color(0xFF1A233A)
     Column(
         Modifier
             .background(backgroundColor)
@@ -52,18 +68,5 @@ fun NotEnoughSpaceView(storageSpaceRequiredGigabytes: Int, spaceRequiredToContin
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
         )
-    }
-}
-
-@Preview
-@Composable
-fun NotEnoughSpacePreview() {
-    ZcashTheme {
-        GradientSurface {
-            NotEnoughSpaceView(
-                storageSpaceRequiredGigabytes = 1,
-                spaceRequiredToContinueMegabytes = 300
-            )
-        }
     }
 }

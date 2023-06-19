@@ -87,7 +87,7 @@ import kotlinx.coroutines.launch
 
 @Preview("Restore Wallet")
 @Composable
-fun PreviewRestore() {
+private fun PreviewRestore() {
     ZcashTheme(darkTheme = true) {
         GradientSurface {
             RestoreWallet(
@@ -118,7 +118,7 @@ fun PreviewRestore() {
 
 @Preview("Restore Complete")
 @Composable
-fun PreviewRestoreComplete() {
+private fun PreviewRestoreComplete() {
     ZcashTheme(darkTheme = true) {
         RestoreComplete(
             onComplete = {}
@@ -132,7 +132,7 @@ fun PreviewRestoreComplete() {
  * @param restoreHeight A null height indicates no user input.
  */
 @Suppress("LongParameterList", "LongMethod")
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun RestoreWallet(
     zcashNetwork: ZcashNetwork,
@@ -255,8 +255,8 @@ private fun RestoreTopAppBar(onBack: () -> Unit, isShowClear: Boolean, onClear: 
     )
 }
 
-// TODO [#672] Implement custom seed phrase pasting for wallet import
-// TODO [#672] https://github.com/zcash/secant-android-wallet/issues/672
+// TODO [#672]: Implement custom seed phrase pasting for wallet import
+// TODO [#672]: https://github.com/zcash/secant-android-wallet/issues/672
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Suppress("UNUSED_PARAMETER", "LongParameterList")

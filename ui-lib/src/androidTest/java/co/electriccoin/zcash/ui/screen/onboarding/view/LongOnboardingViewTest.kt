@@ -209,7 +209,9 @@ class LongOnboardingViewTest : UiTestPrerequisites() {
     fun last_stage_click_import_wallet() {
         val testSetup = newTestSetup(initialStage = OnboardingStage.Wallet)
 
-        val newWalletButton = composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_4_import_existing_wallet))
+        val newWalletButton = composeTestRule.onNodeWithText(
+            getStringResource(R.string.onboarding_4_import_existing_wallet)
+        )
         newWalletButton.performClick()
 
         assertEquals(1, testSetup.getOnImportWalletCallbackCount())

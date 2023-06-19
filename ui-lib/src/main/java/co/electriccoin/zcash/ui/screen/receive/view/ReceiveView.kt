@@ -41,9 +41,9 @@ import co.electriccoin.zcash.ui.screen.receive.util.JvmQrCodeGenerator
 import kotlinx.coroutines.runBlocking
 import kotlin.math.roundToInt
 
-@Preview
+@Preview("Receive")
 @Composable
-fun ComposablePreview() {
+private fun ComposablePreview() {
     ZcashTheme(darkTheme = true) {
         GradientSurface {
             Receive(

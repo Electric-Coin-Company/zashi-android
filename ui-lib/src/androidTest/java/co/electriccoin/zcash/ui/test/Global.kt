@@ -8,4 +8,5 @@ fun getAppContext(): Context = ApplicationProvider.getApplicationContext()
 
 fun getStringResource(@StringRes resId: Int) = getAppContext().getString(resId)
 
-fun getStringResourceWithArgs(@StringRes resId: Int, vararg formatArgs: String) = getAppContext().getString(resId, *formatArgs)
+fun getStringResourceWithArgs(@StringRes resId: Int, vararg formatArgs: String) =
+    getAppContext().getString(resId, *formatArgs)

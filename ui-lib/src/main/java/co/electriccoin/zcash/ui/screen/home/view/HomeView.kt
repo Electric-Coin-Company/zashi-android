@@ -78,9 +78,9 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.CoroutineScope
 
-@Preview
+@Preview("Home")
 @Composable
-fun ComposablePreview() {
+private fun ComposablePreview() {
     ZcashTheme(darkTheme = true) {
         GradientSurface {
             Home(
@@ -105,7 +105,6 @@ fun ComposablePreview() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Suppress("LongParameterList")
 @Composable
 fun Home(
@@ -221,7 +220,9 @@ private fun DebugMenu(
                 onClick = {
                     // Eventually this shouldn't rely on the Android implementation, but rather an expect/actual
                     // should be used at the crash API level.
-                    GlobalCrashReporter.reportCaughtException(RuntimeException("Manually caught exception from debug menu"))
+                    GlobalCrashReporter.reportCaughtException(
+                        RuntimeException("Manually caught exception from debug menu")
+                    )
                     expanded = false
                 }
             )

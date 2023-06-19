@@ -37,7 +37,11 @@ private fun WrapSettings(
     val isAnalyticsEnabled = settingsViewModel.isAnalyticsEnabled.collectAsStateWithLifecycle().value
 
     @Suppress("ComplexCondition")
-    if (null == synchronizer || null == isAnalyticsEnabled || null == isBackgroundSyncEnabled || null == isKeepScreenOnWhileSyncing) {
+    if (null == synchronizer ||
+        null == isAnalyticsEnabled ||
+        null == isBackgroundSyncEnabled ||
+        null == isKeepScreenOnWhileSyncing
+    ) {
         // Display loading indicator
     } else {
         Settings(

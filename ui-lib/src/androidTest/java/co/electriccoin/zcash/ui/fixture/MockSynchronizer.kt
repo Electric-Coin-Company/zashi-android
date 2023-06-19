@@ -130,7 +130,12 @@ internal class MockSynchronizer : CloseableSynchronizer {
         error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
 
-    override suspend fun sendToAddress(usk: UnifiedSpendingKey, amount: Zatoshi, toAddress: String, memo: String): Long {
+    override suspend fun sendToAddress(
+        usk: UnifiedSpendingKey,
+        amount: Zatoshi,
+        toAddress: String,
+        memo: String
+    ): Long {
         return 1
     }
 

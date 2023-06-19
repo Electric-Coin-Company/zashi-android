@@ -119,7 +119,9 @@ class WalletAddressViewTest : UiTestPrerequisites() {
 
         assertEquals(0, testSetup.getOnBackCount())
 
-        composeTestRule.onNodeWithContentDescription(getStringResource(R.string.wallet_address_back_content_description)).also {
+        composeTestRule.onNodeWithContentDescription(
+            getStringResource(R.string.wallet_address_back_content_description)
+        ).also {
             it.performClick()
         }
 
