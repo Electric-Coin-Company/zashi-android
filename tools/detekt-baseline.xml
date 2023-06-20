@@ -2,8 +2,6 @@
 <SmellBaseline>
   <ManuallySuppressedIssues></ManuallySuppressedIssues>
   <CurrentIssues>
-    <ID>CyclomaticComplexMethod:ScreenshotTest.kt$ScreenshotTest$private fun take_screenshots_for_new_wallet_and_rest_of_app(resContext: Context, tag: String)</ID>
-    <ID>CyclomaticComplexMethod:ScreenshotTest.kt$private fun backupScreenshots(resContext: Context, tag: String, composeTestRule: AndroidComposeTestRule&lt;ActivityScenarioRule&lt;MainActivity&gt;, MainActivity&gt;)</ID>
     <ID>FunctionNaming:ScreenshotTest.kt$ScreenshotTest$@Test @LargeTest @SdkSuppress(minSdkVersion = Build.VERSION_CODES.Q) fun take_screenshots_for_new_wallet_and_rest_of_app_dark_en_US()</ID>
     <ID>FunctionNaming:ScreenshotTest.kt$ScreenshotTest$@Test @LargeTest fun take_screenshots_for_new_wallet_and_rest_of_app_light_ar_XB()</ID>
     <ID>FunctionNaming:ScreenshotTest.kt$ScreenshotTest$@Test @LargeTest fun take_screenshots_for_new_wallet_and_rest_of_app_light_en_US()</ID>
@@ -13,17 +11,12 @@
     <ID>FunctionNaming:ScreenshotTest.kt$ScreenshotTest$@Test @MediumTest fun take_screenshots_for_restore_wallet_light_en_US()</ID>
     <ID>FunctionNaming:ScreenshotTest.kt$ScreenshotTest$@Test @MediumTest fun take_screenshots_for_restore_wallet_light_en_XA()</ID>
     <ID>FunctionNaming:ScreenshotTest.kt$ScreenshotTest$private fun take_screenshots_for_new_wallet_and_rest_of_app(resContext: Context, tag: String)</ID>
-    <ID>FunctionNaming:ScreenshotTest.kt$ScreenshotTest$private fun take_screenshots_for_restore_wallet(resContext: Context, tag: String)</ID>
-    <ID>LongMethod:ScreenshotTest.kt$ScreenshotTest$private fun take_screenshots_for_new_wallet_and_rest_of_app(resContext: Context, tag: String)</ID>
-    <ID>LongMethod:ScreenshotTest.kt$private fun backupScreenshots(resContext: Context, tag: String, composeTestRule: AndroidComposeTestRule&lt;ActivityScenarioRule&lt;MainActivity&gt;, MainActivity&gt;)</ID>
     <ID>MagicNumber:ScreenshotTest.kt$3</ID>
     <ID>MagicNumber:ScreenshotTest.kt$4</ID>
     <ID>MayBeConst:EncryptedPreferenceProviderTest.kt$EncryptedPreferenceProviderTest.Companion$private val FILENAME = "encrypted_preference_test"</ID>
     <ID>MayBeConst:StandardPreferenceProviderTest.kt$StandardPreferenceProviderTest.Companion$private val FILENAME = "encrypted_preference_test"</ID>
     <ID>MayBeConst:SupportViewTest.kt$SupportViewTest.Companion$internal val DEFAULT_MESSAGE = "I can haz cheezburger?"</ID>
     <ID>SwallowedException:AndroidUncaughtExceptionHandlerTest.kt$AndroidUncaughtExceptionHandlerTest$e: IllegalStateException</ID>
-    <ID>TooManyFunctions:ScreenshotTest.kt$ScreenshotTest : UiTestPrerequisites</ID>
-    <ID>UnusedPrivateMember:FlowExtTest.kt$FlowExtTest$i</ID>
     <ID>UseRequire:CheckUpdateViewModel.kt$CheckUpdateViewModel.CheckUpdateViewModelFactory$throw IllegalArgumentException("ViewModel Not Found.")</ID>
     <ID>UseRequire:ExceptionPath.kt$ExceptionPath$throw IllegalArgumentException("Directories couldn't be created")</ID>
     <ID>UseRequire:ExceptionPath.kt$ExceptionPath$throw IllegalArgumentException("Path is a file when a directory was expected")</ID>

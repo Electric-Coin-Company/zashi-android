@@ -23,8 +23,6 @@ style:
       comments, e.g. `TODO [#123]: Fix this later`'
         value: 'TODO'
     allowedPatterns: '[TODO|FIXME|STOPSHIP]+\s\[#\d+\]:\s.+'
-  MaxLineLength:
-    active: true
   NewLineAtEndOfFile:
     active: false
   UnusedPrivateMember:
@@ -33,8 +31,6 @@ style:
     excludes: [ '**/*.kts' ]
     ignoreAnnotated:
       - 'Preview'
-  WildcardImport:
-    active: true
 
 Compose:
   ModifierMissing:
