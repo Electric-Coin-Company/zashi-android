@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cash.z.ecc.android.sdk.fixture.WalletAddressFixture
 import cash.z.ecc.android.sdk.model.MonetarySeparators
@@ -42,8 +43,9 @@ import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import kotlinx.coroutines.runBlocking
 
+@Preview("Request")
 @Composable
-fun PreviewRequest() {
+private fun PreviewRequest() {
     ZcashTheme(darkTheme = true) {
         GradientSurface {
             Request(
@@ -58,7 +60,6 @@ fun PreviewRequest() {
 /**
  * @param myAddress The address that ZEC should be sent to.
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Request(
     myAddress: WalletAddress.Unified,
@@ -98,7 +99,6 @@ private fun RequestTopAppBar(onBack: () -> Unit) {
 // TODO [#217]: Need to handle changing of Locale after user input, but before submitting the button.
 // TODO [#288]: TextField component can't do long-press backspace.
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
 private fun RequestMainContent(
     paddingValues: PaddingValues,
     myAddress: WalletAddress.Unified,
