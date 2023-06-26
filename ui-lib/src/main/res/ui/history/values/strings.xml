@@ -1,9 +1,12 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="history_title">Transaction history</string>
     <string name="history_back_content_description">Back</string>
-    <string name="history_syncing">Additional transactions may be found after syncing completes</string>
-    <string name="history_sent">Sent</string>
-    <string name="history_received">Received</string>
-    <string name="history_pending">Pending</string>
+    <string name="history_syncing">Additional transactions may be found after syncing completes…</string>
     <string name="history_empty">No transactions yet</string>
+
+    <string name="history_item_sent">Sent</string>
+    <string name="history_item_received">Received</string>
+    <string name="history_item_sent_icon_content_description">Sent</string>
+    <string name="history_item_received_icon_content_description">Received</string>
+
 </resources>
