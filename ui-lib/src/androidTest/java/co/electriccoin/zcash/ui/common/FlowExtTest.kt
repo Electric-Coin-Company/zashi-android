@@ -54,13 +54,13 @@ class FlowExtTest {
     @FlakyTest
     @Test
     fun stressTest() = runBlocking {
-        for (i in 0..10) {
+        repeat(10) {
             assertTrue { raceConditionTest(0.001.seconds) }
         }
-        for (i in 0..10) {
+        repeat(10) {
             assertTrue { raceConditionTest(0.0001.seconds) }
         }
-        for (i in 0..10) {
+        repeat(10) {
             assertTrue { raceConditionTest(0.00001.seconds) }
         }
     }

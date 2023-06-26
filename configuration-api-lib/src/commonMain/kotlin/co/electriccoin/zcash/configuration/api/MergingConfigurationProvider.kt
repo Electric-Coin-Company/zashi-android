@@ -10,7 +10,9 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.datetime.Instant
 
-class MergingConfigurationProvider(private val configurationProviders: PersistentList<ConfigurationProvider>) : ConfigurationProvider {
+class MergingConfigurationProvider(
+    private val configurationProviders: PersistentList<ConfigurationProvider>
+) : ConfigurationProvider {
     override fun peekConfiguration(): Configuration {
         return MergingConfiguration(configurationProviders.map { it.peekConfiguration() }.toPersistentList())
     }

@@ -48,7 +48,10 @@ class SupportViewTest : UiTestPrerequisites() {
 
         assertEquals(0, testSetup.getOnSendCount())
 
-        val dialogContent = getStringResourceWithArgs(R.string.support_confirmation_explanation, getStringResource(R.string.app_name))
+        val dialogContent = getStringResourceWithArgs(
+            R.string.support_confirmation_explanation,
+            getStringResource(R.string.app_name)
+        )
         composeTestRule.onNodeWithText(dialogContent).also {
             it.assertExists()
         }
@@ -88,7 +91,10 @@ class SupportViewTest : UiTestPrerequisites() {
             it.performClick()
         }
 
-        val dialogContent = getStringResourceWithArgs(R.string.support_confirmation_explanation, getStringResource(R.string.app_name))
+        val dialogContent = getStringResourceWithArgs(
+            R.string.support_confirmation_explanation,
+            getStringResource(R.string.app_name)
+        )
         composeTestRule.onNodeWithText(dialogContent).also {
             it.assertDoesNotExist()
         }

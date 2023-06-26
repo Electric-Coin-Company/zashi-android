@@ -21,8 +21,12 @@ class MergingConfigurationProviderTest {
     fun peek_ordering() {
         val configurationProvider = MergingConfigurationProvider(
             persistentListOf(
-                MockConfigurationProvider(StringConfiguration(persistentMapOf(BooleanDefaultEntryFixture.KEY.key to true.toString()), null)),
-                MockConfigurationProvider(StringConfiguration(persistentMapOf(BooleanDefaultEntryFixture.KEY.key to false.toString()), null))
+                MockConfigurationProvider(
+                    StringConfiguration(persistentMapOf(BooleanDefaultEntryFixture.KEY.key to true.toString()), null)
+                ),
+                MockConfigurationProvider(
+                    StringConfiguration(persistentMapOf(BooleanDefaultEntryFixture.KEY.key to false.toString()), null)
+                )
             )
         )
 
@@ -34,12 +38,18 @@ class MergingConfigurationProviderTest {
     fun getFlow_ordering() = runTest {
         val configurationProvider = MergingConfigurationProvider(
             persistentListOf(
-                MockConfigurationProvider(StringConfiguration(persistentMapOf(BooleanDefaultEntryFixture.KEY.key to true.toString()), null)),
-                MockConfigurationProvider(StringConfiguration(persistentMapOf(BooleanDefaultEntryFixture.KEY.key to false.toString()), null))
+                MockConfigurationProvider(
+                    StringConfiguration(persistentMapOf(BooleanDefaultEntryFixture.KEY.key to true.toString()), null)
+                ),
+                MockConfigurationProvider(
+                    StringConfiguration(persistentMapOf(BooleanDefaultEntryFixture.KEY.key to false.toString()), null)
+                )
             )
         )
 
-        assertTrue(BooleanDefaultEntryFixture.newTrueEntry().getValue(configurationProvider.getConfigurationFlow().first()))
+        assertTrue(
+            BooleanDefaultEntryFixture.newTrueEntry().getValue(configurationProvider.getConfigurationFlow().first())
+        )
     }
 
     @Test
@@ -62,8 +72,12 @@ class MergingConfigurationProviderTest {
 
         val configurationProvider = MergingConfigurationProvider(
             persistentListOf(
-                MockConfigurationProvider(StringConfiguration(persistentMapOf(BooleanDefaultEntryFixture.KEY.key to true.toString()), older)),
-                MockConfigurationProvider(StringConfiguration(persistentMapOf(BooleanDefaultEntryFixture.KEY.key to false.toString()), newer))
+                MockConfigurationProvider(
+                    StringConfiguration(persistentMapOf(BooleanDefaultEntryFixture.KEY.key to true.toString()), older)
+                ),
+                MockConfigurationProvider(
+                    StringConfiguration(persistentMapOf(BooleanDefaultEntryFixture.KEY.key to false.toString()), newer)
+                )
             )
         )
 

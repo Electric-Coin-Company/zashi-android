@@ -31,7 +31,6 @@ internal object Dark {
 
     val tertiaryButton = Color.Transparent
     val tertiaryButtonPressed = Color(0xB0C3D2BA)
-    // TODO how does the invisible button show a disabled state?
 
     val navigationButton = Color(0xFFA7C0D9)
     val navigationButtonPressed = Color(0xFFC8DCEF)
@@ -96,7 +95,8 @@ internal object Light {
     val overlay = Color(0x22000000)
     val highlight = Color(0xFFFFD800)
 
-    // [TODO #159]: The colors are wrong for light theme
+    // TODO [#159]: The colors are wrong for light theme
+    // TODO [#159]: https://github.com/zcash/secant-android-wallet/issues/159
     val addressHighlightBorder = Color(0xFF525252)
     val addressHighlightUnified = Color(0xFFFFD800)
     val addressHighlightSapling = Color(0xFF1BBFF6)

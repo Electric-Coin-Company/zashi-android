@@ -33,7 +33,7 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme.dimens
 
 @Preview("Settings")
 @Composable
-fun PreviewSettings() {
+private fun PreviewSettings() {
     ZcashTheme(darkTheme = true) {
         GradientSurface {
             Settings(
@@ -51,7 +51,6 @@ fun PreviewSettings() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @Suppress("LongParameterList")
 fun Settings(
@@ -127,7 +126,10 @@ private fun TroubleshootingMenu(
     Column {
         var expanded by rememberSaveable { mutableStateOf(false) }
         IconButton(onClick = { expanded = true }) {
-            Icon(Icons.Default.MoreVert, contentDescription = stringResource(id = R.string.settings_overflow_content_description))
+            Icon(
+                imageVector = Icons.Default.MoreVert,
+                contentDescription = stringResource(id = R.string.settings_overflow_content_description)
+            )
         }
 
         DropdownMenu(

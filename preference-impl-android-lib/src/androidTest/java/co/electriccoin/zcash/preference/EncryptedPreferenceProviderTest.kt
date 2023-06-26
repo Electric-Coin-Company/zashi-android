@@ -25,7 +25,10 @@ class EncryptedPreferenceProviderTest {
 
     @Before
     fun checkUsingOrchestrator() {
-        check(!isRun) { "State appears to be retained between test method invocations; verify that Test Orchestrator is enabled and then re-run the tests" }
+        check(!isRun) {
+            "State appears to be retained between test method invocations; verify that Test Orchestrator " +
+                "is enabled and then re-run the tests"
+        }
 
         isRun = true
     }
@@ -73,7 +76,10 @@ class EncryptedPreferenceProviderTest {
             putString(StringDefaultPreferenceFixture.KEY, expectedValue)
         }
 
-        val text = File(File(ApplicationProvider.getApplicationContext<Context>().dataDir, "shared_prefs"), "$FILENAME.xml").readText()
+        val text = File(
+            File(ApplicationProvider.getApplicationContext<Context>().dataDir, "shared_prefs"),
+            "$FILENAME.xml"
+        ).readText()
 
         assertFalse(text.contains(expectedValue))
         assertFalse(text.contains(StringDefaultPreferenceFixture.KEY.key))
@@ -81,6 +87,9 @@ class EncryptedPreferenceProviderTest {
 
     companion object {
         private val FILENAME = "encrypted_preference_test"
-        private suspend fun new() = AndroidPreferenceProvider.newEncrypted(ApplicationProvider.getApplicationContext(), FILENAME)
+        private suspend fun new() = AndroidPreferenceProvider.newEncrypted(
+            ApplicationProvider.getApplicationContext(),
+            FILENAME
+        )
     }
 }

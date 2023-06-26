@@ -47,7 +47,9 @@ class ReceiveViewTest {
 
         assertEquals(0, testSetup.getOnBackCount())
 
-        composeTestRule.onNodeWithContentDescription(getStringResource(R.string.receive_back_content_description)).also {
+        composeTestRule.onNodeWithContentDescription(
+            getStringResource(R.string.receive_back_content_description)
+        ).also {
             it.performClick()
         }
 

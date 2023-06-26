@@ -22,7 +22,7 @@ import co.electriccoin.zcash.ui.design.theme.internal.Typography
 
 @Preview
 @Composable
-fun ButtonComposablePreview() {
+private fun ButtonComposablePreview() {
     ZcashTheme(darkTheme = true) {
         GradientSurface {
             Column {

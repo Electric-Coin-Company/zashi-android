@@ -21,7 +21,9 @@ class IntentConfigurationReceiver : BroadcastReceiver() {
                     existingConfiguration + (key to value)
                 }
 
-                IntentConfigurationProvider.setConfiguration(StringConfiguration(newConfiguration.toPersistentMap(), Clock.System.now()))
+                IntentConfigurationProvider.setConfiguration(
+                    StringConfiguration(newConfiguration.toPersistentMap(), Clock.System.now())
+                )
             }
         }
     }

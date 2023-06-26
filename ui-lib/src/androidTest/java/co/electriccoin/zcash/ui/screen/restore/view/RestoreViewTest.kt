@@ -165,7 +165,10 @@ class RestoreViewTest : UiTestPrerequisites() {
     @Test
     @MediumTest
     fun height_skip() {
-        val testSetup = newTestSetup(initialStage = RestoreStage.Birthday, initialWordsList = SeedPhraseFixture.new().split)
+        val testSetup = newTestSetup(
+            initialStage = RestoreStage.Birthday,
+            initialWordsList = SeedPhraseFixture.new().split
+        )
 
         composeTestRule.onNodeWithText(getStringResource(R.string.restore_birthday_button_skip)).also {
             it.performClick()
@@ -304,7 +307,9 @@ class RestoreViewTest : UiTestPrerequisites() {
 
         assertEquals(0, testSetup.getOnBackCount())
 
-        composeTestRule.onNodeWithContentDescription(getStringResource(R.string.restore_back_content_description)).also {
+        composeTestRule.onNodeWithContentDescription(
+            getStringResource(R.string.restore_back_content_description)
+        ).also {
             it.performClick()
         }
 
@@ -321,7 +326,9 @@ class RestoreViewTest : UiTestPrerequisites() {
 
         assertEquals(0, testSetup.getOnBackCount())
 
-        composeTestRule.onNodeWithContentDescription(getStringResource(R.string.restore_back_content_description)).also {
+        composeTestRule.onNodeWithContentDescription(
+            getStringResource(R.string.restore_back_content_description)
+        ).also {
             it.performClick()
         }
 
@@ -342,7 +349,9 @@ class RestoreViewTest : UiTestPrerequisites() {
 
         assertEquals(0, testSetup.getOnBackCount())
 
-        composeTestRule.onNodeWithContentDescription(getStringResource(R.string.restore_back_content_description)).also {
+        composeTestRule.onNodeWithContentDescription(
+            getStringResource(R.string.restore_back_content_description)
+        ).also {
             it.performClick()
         }
 

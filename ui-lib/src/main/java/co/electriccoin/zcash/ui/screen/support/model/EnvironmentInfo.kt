@@ -5,7 +5,11 @@ import cash.z.ecc.android.sdk.model.MonetarySeparators
 import co.electriccoin.zcash.global.StorageChecker
 import java.util.Locale
 
-data class EnvironmentInfo(val locale: Locale, val monetarySeparators: MonetarySeparators, val usableStorageMegabytes: Int) {
+data class EnvironmentInfo(
+    val locale: Locale,
+    val monetarySeparators: MonetarySeparators,
+    val usableStorageMegabytes: Int
+) {
 
     fun toSupportString() = buildString {
         appendLine("Locale: ${locale.androidResName()}")

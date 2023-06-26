@@ -24,7 +24,8 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
 
     val isBackgroundSync: StateFlow<Boolean?> = booleanStateFlow(StandardPreferenceKeys.IS_BACKGROUND_SYNC_ENABLED)
 
-    val isKeepScreenOnWhileSyncing: StateFlow<Boolean?> = booleanStateFlow(StandardPreferenceKeys.IS_KEEP_SCREEN_ON_DURING_SYNC)
+    val isKeepScreenOnWhileSyncing: StateFlow<Boolean?> =
+        booleanStateFlow(StandardPreferenceKeys.IS_KEEP_SCREEN_ON_DURING_SYNC)
 
     private fun booleanStateFlow(default: BooleanPreferenceDefault): StateFlow<Boolean?> = flow<Boolean?> {
         val preferenceProvider = StandardPreferenceSingleton.getInstance(getApplication())

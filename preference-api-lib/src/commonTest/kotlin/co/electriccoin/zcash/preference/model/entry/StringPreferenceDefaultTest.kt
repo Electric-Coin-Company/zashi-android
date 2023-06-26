@@ -23,7 +23,9 @@ class StringPreferenceDefaultTest {
     fun value_override() = runTest {
         val entry = StringDefaultPreferenceFixture.new()
 
-        val mockPreferenceProvider = MockPreferenceProvider { mutableMapOf(StringDefaultPreferenceFixture.KEY.key to "override") }
+        val mockPreferenceProvider = MockPreferenceProvider {
+            mutableMapOf(StringDefaultPreferenceFixture.KEY.key to "override")
+        }
 
         assertEquals("override", entry.getValue(mockPreferenceProvider))
     }

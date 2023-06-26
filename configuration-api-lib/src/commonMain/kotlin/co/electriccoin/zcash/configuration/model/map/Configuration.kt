@@ -8,7 +8,8 @@ import kotlinx.datetime.Instant
  */
 interface Configuration {
     /**
-     * @return When the configuration was updated. Null indicates the configuration either doesn't refresh or has never been refreshed.
+     * @return When the configuration was updated. Null indicates the configuration either doesn't refresh or has
+     * never been refreshed.
      */
     val updatedAt: Instant?
 

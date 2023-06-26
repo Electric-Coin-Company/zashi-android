@@ -56,8 +56,8 @@ import co.electriccoin.zcash.ui.screen.send.model.SendArgumentsWrapper
 import co.electriccoin.zcash.ui.screen.send.model.SendStage
 
 @Composable
-@Preview
-fun PreviewSend() {
+@Preview("Send")
+private fun PreviewSend() {
     ZcashTheme(darkTheme = true) {
         GradientSurface {
             Send(
@@ -77,7 +77,6 @@ fun PreviewSend() {
 }
 
 @Suppress("LongParameterList")
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Send(
     mySpendableBalance: Zatoshi,

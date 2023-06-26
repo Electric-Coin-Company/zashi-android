@@ -32,7 +32,9 @@ class SettingsViewTest : UiTestPrerequisites() {
 
         assertEquals(0, testSetup.getOnBackCount())
 
-        composeTestRule.onNodeWithContentDescription(getStringResource(R.string.settings_back_content_description)).also {
+        composeTestRule.onNodeWithContentDescription(
+            getStringResource(R.string.settings_back_content_description)
+        ).also {
             it.performClick()
         }
 
@@ -44,10 +46,15 @@ class SettingsViewTest : UiTestPrerequisites() {
     fun rescan() = runTest {
         val testSetup = TestSetup(composeTestRule)
 
-        if (ConfigurationEntries.IS_RESCAN_ENABLED.getValue(StringConfiguration(emptyMap<String, String>().toPersistentMap(), null))) {
+        if (ConfigurationEntries.IS_RESCAN_ENABLED.getValue(
+                StringConfiguration(emptyMap<String, String>().toPersistentMap(), null)
+            )
+        ) {
             assertEquals(0, testSetup.getRescanCount())
 
-            composeTestRule.onNodeWithContentDescription(getStringResource(R.string.settings_overflow_content_description)).also {
+            composeTestRule.onNodeWithContentDescription(
+                getStringResource(R.string.settings_overflow_content_description)
+            ).also {
                 it.performClick()
             }
 
