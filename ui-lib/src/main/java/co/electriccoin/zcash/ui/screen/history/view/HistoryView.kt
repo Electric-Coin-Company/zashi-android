@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.history.view
+package co.electriccoin.zcash.ui.screen.history.view
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
