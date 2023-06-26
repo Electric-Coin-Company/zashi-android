@@ -1,13 +1,12 @@
 package co.electriccoin.zcash.ui.screen.onboarding.nighthawk
 
-import android.content.Intent
-import android.net.Uri
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.onLaunchUrl
 import co.electriccoin.zcash.ui.screen.home.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.onboarding.nighthawk.view.GetStarted
 import co.electriccoin.zcash.ui.screen.onboarding.nighthawk.view.RestoreWallet
@@ -40,13 +39,5 @@ internal fun WrapOnBoarding(activity: ComponentActivity) {
         )
     } else {
         RestoreWallet(activity)
-    }
-}
-
-internal fun ComponentActivity.onLaunchUrl(url: String) {
-    try {
-        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
-    } catch (t: Throwable) {
-        print("Warning: failed to open browser due to $t")
     }
 }

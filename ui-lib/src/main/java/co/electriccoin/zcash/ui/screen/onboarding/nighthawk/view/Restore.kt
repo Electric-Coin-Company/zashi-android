@@ -17,13 +17,12 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -97,7 +96,6 @@ internal fun RestoreWallet(activity: ComponentActivity) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun Restore(
     isSeedValid: Boolean,
@@ -150,7 +148,7 @@ internal fun Restore(
             label = {
                 BodyMedium(text = stringResource(id = R.string.ns_your_seed_phrase))
             },
-            colors = TextFieldDefaults.outlinedTextFieldColors(
+            colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = if (isSeedValid) MaterialTheme.colorScheme.primary else Color.White,
                 unfocusedBorderColor = if (isSeedValid) MaterialTheme.colorScheme.primary else Color.White,
             )
@@ -165,7 +163,7 @@ internal fun Restore(
             label = {
                 BodyMedium(text = stringResource(id = R.string.ns_birthday_height))
             },
-            colors = TextFieldDefaults.outlinedTextFieldColors(
+            colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = Color.White,
                 unfocusedBorderColor = Color.White
             ),

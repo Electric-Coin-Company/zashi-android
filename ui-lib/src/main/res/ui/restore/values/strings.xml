@@ -45,6 +45,7 @@
     <string name="ns_receive">Receive</string>
     <string name="ns_transaction_history">Transactions History</string>
     <string name="ns_copy">Copy</string>
+    <string name="ns_unified_address">Unified address</string>
     <string name="ns_shielded_address">Shielded address</string>
     <string name="ns_transparent_address">Transparent address</string>
 
@@ -122,6 +123,7 @@
     <string name="ns_top_up_your_wallet">Top up your wallet</string>
     <string name="ns_top_up_your_wallet_msg">Buy or trade Zcash through our specially selected partners.</string>
     <string name="ns_see_more">See More</string>
+    <string name="ns_copied">Copied</string>
 
     <!-- Settings Screen -->
     <string name="ns_settings">Settings</string>
@@ -147,7 +149,23 @@
     <string name="ns_external_services_text">Opt-in to our partner services.</string>
     <string name="ns_external_services_uns">Enable Unstoppable Domain Service</string>
     <string name="ns_security">Security</string>
+    <string name="enter_six_digit_pin_code">Enter Six Digit Pin code</string>
+    <string name="choose_six_digit_pin_code">Choose a Six Digit Pin code</string>
+    <string name="enter_the_same_six_digits">Enter the Same Six Digits</string>
+    <string name="choose_pin_code">Choose Pin code</string>
+    <string name="verify_pin_code">Verify Pin code</string>
+    <string name="wrong_pin_code">Wrong Pin code</string>
+    <string name="set_pin_code_request">Please set the Pin code first</string>
+    <string name="pin_code_setup_done">Pin code set up successfully!</string>
+    <string name="settings_toast_face_touch_id_enabled">Face/Touch ID enabled.</string>
+    <string name="settings_toast_face_touch_id_disabled">Face/Touch ID disabled.</string>
+    <string name="wrong_pin_code_message">Your pin code didn\'t match with the previous pin code.</string>
     <string name="ns_security_text">Set/Change Pin Code &amp; Biometric</string>
+    <string name="set_change_pin_code">Set/Change Nighthawk Pin Code</string>
+    <string name="biometric_backup_phrase_title">Authenticate to proceed</string>
+    <string name="enable_face_id_touch_id">Enable Face ID/Touch ID</string>
+    <string name="dialog_bio_metric_not_enabled_title">Face ID Touch ID Error</string>
+    <string name="dialog_bio_metric_not_enabled_message">Couldn\'t enable this option. It seems that Face ID or Touch ID is not enabled in your mobile device.</string>
     <string name="ns_security_choose">Choose PIN code</string>
     <string name="ns_security_try_again">Please try again</string>
     <string name="ns_about">About</string>
@@ -155,8 +173,10 @@
     <string name="ns_view_source">View Source</string>
     <string name="ns_about_text">Nighthawk v%s &amp; Licenses</string>
     <string name="ns_view_license">OSS Licenses</string>
-    <string name="ns_source_code_link">https://github.com/nighthawk-apps/nighthawk-wallet-android</string>
-    <string name="ns_privacy_policy_link">https://nighthawkwallet.com/privacypolicy/</string>
+    <string name="ns_source_code_link" translatable="false">https://github.com/nighthawk-apps/nighthawk-android-wallet</string>
+    <string name="ns_privacy_policy_link" translatable="false">https://nighthawkwallet.com/privacypolicy/</string>
+    <string name="ns_block_explorer_url_testnet" translatable="false">https://testnet.zcashblockexplorer.com/transactions/%s</string>
+    <string name="ns_block_explorer_url_main_net" translatable="false">https://zcashblockexplorer.com/transactions/%s</string>
     <string name="ns_back_up_seed_dialog_title">View Seed Words?</string>
     <string name="ns_back_up_seed_dialog_body">WARNING: Please make sure that you are the only one viewing your phone as your wallet seed key will be shown in the next screen.</string>
     <string name="ns_back_up_seed_dialog_positive">View Seed</string>
@@ -164,6 +184,14 @@
     <string name="ns_disable_pin">Disable Pin</string>
     <string name="ns_disable_pin_message">Pin disabled</string>
     <string name="ns_view_licences">View Licences</string>
+    <string name="dialog_rescan_wallet_title">Rescan This Wallet?</string>
+    <string name="dialog_rescan_wallet_message">Rescanning may take up to 10hrs depending on the length of history of your wallet’s transactions. Would you like to start a rescan?</string>
+    <string name="dialog_rescan_wallet_button_positive">Quick</string>
+    <string name="dialog_rescan_wallet_button_negative">Full</string>
+    <string name="dialog_rescan_wallet_button_neutral">Wipe</string>
+    <string name="dialog_rescan_initiated_title">Performing Full Rescan!</string>
+    <string name="dialog_rescan_failed_title">Full Rescan Failed</string>
+    <string name="rescan_wallet_wipe_success">Wiped block data successfully! Wallet data cleared. Please relaunch the app!</string>
 
     <!-- Backup/Restore Screen-->
     <string name="ns_landing_backup_skipped_message_1">Are you sure? Without a backup, funds can be lost FOREVER!</string>
@@ -211,12 +239,15 @@
     <string name="ns_format_date_time">dd/MM/yyyy</string>
     <string name="ns_view_all_transactions">View transaction history</string>
     <string name="ns_downloading_block">Downloading\n\nBlock %1s of %2s</string>
+    <string name="ns_downloading_wallet">Downloading…%1d%%</string>
+    <string name="ns_syncing_wallet">Syncing…%1d%%</string>
     <string name="ns_syncing_block">Syncing\n\nBlock %1s of %2s</string>
     <string name="ns_send_and_receive_zcash">Send and receive Zcash</string>
     <string name="ns_add_address_hint">Add address here</string>
     <string name="ns_paste_from_clip_board">Paste from clipboard</string>
     <string name="ns_clipboard_wrong_text_paste_error">Seems last copied value is not a Zcash Address</string>
     <string name="ns_memo">Memo</string>
+    <string name="ns_pool">Pool</string>
     <string name="ns_network">Network</string>
     <string name="ns_recipient">Recipient</string>
     <string name="ns_address">Address</string>
@@ -227,4 +258,24 @@
     <string name="ns_include_reply_to">include reply-to</string>
     <string name="transaction_history_format_date_time_brief" translatable="false">MM/dd/yy h:mma</string>
 
+    <string name="buy_zec_dialog_title">Buy ZEC from MoonPay</string>
+    <string name="buy_zec_dialog_msg">Customers that are not US residents can purchase Zcash (ZEC) by registering with MoonPay.\n\nYour Zcash T-Address has been copied to the clipboard.\nChoose \"Open Browser\" below, Select \'Zcash (ZEC)\' as the receiving coin once MoonPay loads, and then paste your T-address.</string>
+    <string name="open_browser">Open Browser</string>
+    <string name="fund_wallet_sideshift_title">Fund wallet with SideShift.ai?</string>
+    <string name="fund_wallet_sideshift_description">Your Z-Address has been copied to the clipboard.\n\nChoose \"Open Browser\" below, select \'Zcash (Shielded)\' as the receiving coin on the SideShift site, and then paste your Z-address.</string>
+    <string name="fund_wallet_stealthex_title">Fund wallet with StealthEx.io?</string>
+    <string name="fund_wallet_stealthex_description">Your T-Address has been copied to the clipboard.\n\nChoose \"Open Browser\" below, select \'Zcash\' as the receiving coin on the StealthEx site, and then paste your T-address.</string>
+    <string name="insufficient_msg">You don\'t have sufficient balance to send</string>
+    <string name="memo_max_length_msg">You have written maximum length to send a message</string>
+
+    <string name="autoshielding_title_text">Nighthawk is now <b>Shielded by Default</b>. This is to ensure maximum privacy.</string>
+    <string name="autoshielding_body_text"><b>Autoshielding</b> means any funds coming into your transparent address will automatically be moved to your shielded wallet.\n\nWe’ll always update you on the latest privacy-preserving best practices and recommendations.</string>
+    <string name="autoshielding_button_positive">Great!</string>
+    <string name="autoshielding_button_neutral">Learn more</string>
+    <string name="link_to_ecc_title">Redirecting to ElectricCoin.co</string>
+    <string name="link_to_ecc_description">Please confirm opening your device browser to learn more about Unified Addresses.</string>
+    <string name="shielding">Shielding…</string>
+    <string name="open_settings">Open Settings</string>
+    <string name="notification_permission_dialog_title">Alert</string>
+    <string name="notification_permission_dialog_desc">To post any notification we need to provide Notifications permission.\nFrom Settings please allow Notifications permission</string>
 </resources>

@@ -3,7 +3,7 @@
     <string name="about_back_content_description">Back</string>
     <string name="about_icon_content_description">Zcash icon</string>
     <string name="about_version_header">Version</string>
-    <string name="about_version_format" formatted="true"><xliff:g id="version_name" example="1.0">%1$s</xliff:g> (<xliff:g id="version_code" example="1.0">%2$d</xliff:g>)</string>
+    <string name="about_version_format" formatted="true"><xliff:g example="1.0" id="version_name">%1$s</xliff:g> (<xliff:g example="1.0" id="version_code">%2$d</xliff:g>)</string>
     <string name="about_build_header">Build</string>
     <string name="about_build_configuration">Configuration</string>
     <string name="about_legal_header">Legal</string>

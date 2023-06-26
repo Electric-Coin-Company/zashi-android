@@ -1,19 +1,35 @@
 package co.electriccoin.zcash.ui.design.component
 
+import androidx.annotation.DrawableRes
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonDefaults.buttonColors
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.design.R
@@ -30,6 +46,7 @@ private fun ButtonComposablePreview() {
                 SecondaryButton(onClick = { }, text = "Secondary")
                 TertiaryButton(onClick = { }, text = "Tertiary")
                 NavigationButton(onClick = { }, text = "Navigation")
+                DottedBorderTextButton(onClick = { }, text = "Scan a payment code")
             }
         }
     }
@@ -140,7 +157,7 @@ fun TertiaryButton(
         ),
         enabled = enabled,
         elevation = ButtonDefaults.buttonElevation(0.dp, 0.dp, 0.dp),
-        colors = buttonColors(containerColor = MaterialTheme.colorScheme.onPrimary),
+        colors = buttonColors(containerColor = ZcashTheme.colors.tertiary),
         shape = RoundedCornerShape(8.dp)
     ) {
         Text(
@@ -175,5 +192,42 @@ fun DangerousButton(
             text = text,
             color = ZcashTheme.colors.onDangerous
         )
+    }
+}
+
+@Composable
+fun DottedBorderTextButton(
+    onClick: () -> Unit,
+    text: String,
+    modifier: Modifier = Modifier,
+    borderColor: Color = MaterialTheme.colorScheme.primary,
+    @DrawableRes startIcon: Int? = null
+) {
+    Box(
+        modifier = modifier.then(
+            Modifier
+                .clip(RoundedCornerShape(44))
+                .padding(2.dp)
+        )
+    ) {
+        val stroke = Stroke(width = 2f, pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f))
+        Canvas(modifier = Modifier
+            .matchParentSize()
+            .background(color = colorResource(id = R.color.ns_navy))
+        ) {
+            drawRoundRect(color = borderColor, style = stroke, cornerRadius = CornerRadius(x = 40f))
+        }
+        TextButton(
+            onClick = onClick,
+            modifier = Modifier
+                .align(Alignment.Center)
+                .padding(start = 12.dp, end = 12.dp),
+        ) {
+            if (startIcon != null) {
+                Icon(painter = painterResource(id = startIcon), contentDescription = null, tint = borderColor)
+                Spacer(modifier = Modifier.width(8.dp))
+            }
+            BodyMedium(text = text, textAlign = TextAlign.Center, color = ZcashTheme.colors.surfaceEnd)
+        }
     }
 }

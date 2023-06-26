@@ -2,7 +2,6 @@ package co.electriccoin.zcash.ui
 
 import android.os.Bundle
 import android.os.SystemClock
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.annotation.VisibleForTesting
@@ -15,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -30,6 +30,7 @@ import co.electriccoin.zcash.ui.screen.home.viewmodel.SecretState
 import co.electriccoin.zcash.ui.screen.home.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.onboarding.nighthawk.WrapOnBoarding
 import co.electriccoin.zcash.ui.screen.onboarding.nighthawk.view.SeedBackup
+import co.electriccoin.zcash.ui.screen.pin.AndroidPin
 import co.electriccoin.zcash.ui.screen.warning.WrapNotEnoughSpace
 import co.electriccoin.zcash.ui.screen.warning.viewmodel.StorageCheckViewModel
 import co.electriccoin.zcash.work.WorkIds
@@ -42,7 +43,7 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
-class MainActivity : ComponentActivity() {
+class MainActivity : FragmentActivity() {
 
     val homeViewModel by viewModels<HomeViewModel>()
 
@@ -128,6 +129,9 @@ class MainActivity : ComponentActivity() {
             // to the "platform" layer, which is where the arguments will be derived from.
             CompositionLocalProvider(RemoteConfig provides configuration) {
                 when (secretState) {
+                    SecretState.NeedAuthentication -> {
+                        AndroidPin(onBack = { this.finish() } )
+                    }
                     SecretState.None -> {
                         WrapOnBoarding()
                     }
@@ -138,7 +142,7 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     is SecretState.Ready -> {
-                        Navigation()
+                        NavigationMainContent()
                     }
                     else -> {
                         error("Unhandled secret state: $secretState")

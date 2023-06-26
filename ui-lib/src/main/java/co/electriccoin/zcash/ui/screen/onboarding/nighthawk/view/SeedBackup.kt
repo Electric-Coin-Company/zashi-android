@@ -15,8 +15,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -56,22 +60,26 @@ fun SeedFeedBackPreview() {
             SeedBackupContent(
                 seedPhrase = SeedPhraseFixture.new(),
                 birthday = null,
-                onContinue = {}
+                navigationFromSettings = true,
+                onContinue = {},
+                onBack = {}
             )
         }
     }
 }
 
 @Composable
-internal fun SeedBackup(persistableWallet: PersistableWallet, onBackupComplete: () -> Unit) {
-    SeedBackupContent(persistableWallet.seedPhrase, persistableWallet.birthday, onContinue = onBackupComplete)
+internal fun SeedBackup(persistableWallet: PersistableWallet, navigationFromSettings: Boolean = false, onBackupComplete: () -> Unit = {}, onBack: () -> Unit = {}) {
+    SeedBackupContent(persistableWallet.seedPhrase, persistableWallet.birthday, navigationFromSettings = navigationFromSettings, onContinue = onBackupComplete, onBack = onBack)
 }
 
 @Composable
 fun SeedBackupContent(
     seedPhrase: SeedPhrase,
     birthday: BlockHeight?,
-    onContinue: () -> Unit
+    navigationFromSettings: Boolean,
+    onContinue: () -> Unit,
+    onBack: () -> Unit
 ) {
     val showEncryptedPdfDialog = remember { mutableStateOf(false) }
     Box(contentAlignment = Alignment.Center) {
@@ -84,7 +92,13 @@ fun SeedBackupContent(
         ) {
             val checkedState = remember { mutableStateOf(false) }
 
-            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.back_icon_size)))
+            if (navigationFromSettings) {
+                IconButton(onClick = onBack, modifier = Modifier.size(dimensionResource(id = R.dimen.back_icon_size))) {
+                    Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = stringResource(R.string.receive_back_content_description))
+                }
+            } else {
+                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.back_icon_size)))
+            }
             Image(
                 painter = painterResource(id = R.drawable.ic_nighthawk_logo),
                 contentDescription = "logo", contentScale = ContentScale.Inside,
@@ -104,35 +118,42 @@ fun SeedBackupContent(
             Spacer(modifier = Modifier.height(20.dp))
             BodyMedium(text = stringResource(id = R.string.ns_wallet_birthday, "${birthday?.value ?: ""}"))
             Spacer(modifier = Modifier.height(20.dp))
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Checkbox(
-                    checked = checkedState.value,
-                    onCheckedChange = { checkedState.value = it },
-                    modifier = Modifier.size(24.dp),
-                    colors = CheckboxDefaults.colors(uncheckedColor = Color.White)
-                )
-                BodyMedium(text = stringResource(id = R.string.ns_create_wallet_confirm_text), modifier = Modifier.padding(start = 11.dp))
+            if (!navigationFromSettings) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Checkbox(
+                        checked = checkedState.value,
+                        onCheckedChange = { checkedState.value = it },
+                        modifier = Modifier.size(24.dp),
+                        colors = CheckboxDefaults.colors(uncheckedColor = Color.White)
+                    )
+                    BodyMedium(text = stringResource(id = R.string.ns_create_wallet_confirm_text), modifier = Modifier.padding(start = 11.dp))
+                }
             }
             Spacer(modifier = Modifier.weight(1f))
-            PrimaryButton(
-                onClick = onContinue,
-                text = stringResource(id = R.string.ns_continue).uppercase(),
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .sizeIn(minWidth = dimensionResource(id = R.dimen.button_min_width), minHeight = dimensionResource(id = R.dimen.button_height)),
-                enabled = checkedState.value
-            )
-            TertiaryButton(
-                onClick = {
-                    showEncryptedPdfDialog.value = true
-                },
-                text = stringResource(id = R.string.ns_export_as_pdf).uppercase(),
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .heightIn(min = dimensionResource(id = R.dimen.button_height))
-            )
+            if (!navigationFromSettings) {
+                PrimaryButton(
+                    onClick = onContinue,
+                    text = stringResource(id = R.string.ns_continue).uppercase(),
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .sizeIn(minWidth = dimensionResource(id = R.dimen.button_min_width), minHeight = dimensionResource(id = R.dimen.button_height)),
+                    enabled = checkedState.value
+                )
+            }
+            val onExportClick = {
+                showEncryptedPdfDialog.value = true
+            }
+            val exportText = stringResource(id = R.string.ns_export_as_pdf).uppercase()
+            val exportModifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .heightIn(min = dimensionResource(id = R.dimen.button_height))
+            if (navigationFromSettings) {
+                PrimaryButton(onClick = onExportClick, text = exportText, modifier = exportModifier)
+            } else {
+                TertiaryButton(onClick = onExportClick, text = exportText, modifier = exportModifier)
+            }
             Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.screen_bottom_margin)))
         }
 

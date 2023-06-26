@@ -59,6 +59,13 @@ internal val Typography = Typography(
         letterSpacing = TextUnit(value = 0.3f, TextUnitType.Sp),
         lineHeight = TextUnit(value = 38f, TextUnitType.Sp)
     ),
+    headlineMedium = TextStyle(
+        fontFamily = PulpDisplay,
+        fontWeight = FontWeight.Normal,
+        fontSize = 28.sp,
+        letterSpacing = TextUnit(value = 0.3f, TextUnitType.Sp),
+        lineHeight = TextUnit(value = 34f, TextUnitType.Sp)
+    ),
     bodyLarge = TextStyle(
         fontFamily = PulpDisplay,
         fontWeight = FontWeight.Normal,

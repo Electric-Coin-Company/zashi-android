@@ -79,7 +79,7 @@ internal object Light {
     val secondaryButtonPressed = Color(0xFFFAFBFD)
     val secondaryButtonDisabled = Color(0xFFE6EFF8)
 
-    val tertiaryButton = Color.Transparent
+    val tertiaryButton = Color(0xFF2B2551)
     val tertiaryButtonPressed = Color(0xFFFFFFFF)
 
     val navigationButton = Color(0xFFE3EDF7)

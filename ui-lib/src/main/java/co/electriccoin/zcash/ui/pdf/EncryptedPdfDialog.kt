@@ -34,7 +34,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -47,6 +46,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.SecureFlagPolicy
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.customColors
 import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.BodyMedium
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
@@ -62,14 +62,13 @@ fun EncryptedPdfDialogPreview() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EncryptedPdfDialog(
     onDismissRequest: () -> Unit,
     onExportPdf: (password: String) -> Unit
 ) {
     Dialog(
-        onDismissRequest = { onDismissRequest.invoke() },
+        onDismissRequest = onDismissRequest,
         properties = DialogProperties(
             dismissOnClickOutside = false,
             securePolicy = SecureFlagPolicy.SecureOn
@@ -98,10 +97,7 @@ fun EncryptedPdfDialog(
                     label = {
                         BodyMedium(text = stringResource(id = R.string.ns_please_enter_password))
                     },
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        focusedBorderColor = Color.White,
-                        unfocusedBorderColor = Color.White
-                    ),
+                    colors = TextFieldDefaults.customColors(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                     trailingIcon = {

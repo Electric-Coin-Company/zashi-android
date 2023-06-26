@@ -65,9 +65,7 @@ fun GetStarted(
         BodyMedium(text = stringResource(id = R.string.ns_landing_text), modifier = Modifier.fillMaxWidth(0.7f), textAlign = TextAlign.Center)
         Spacer(modifier = Modifier.height(64.dp))
         BodySmall(text = stringResource(id = R.string.ns_landing_footer), modifier = Modifier.fillMaxWidth(0.7f), textAlign = TextAlign.Center)
-        Reference(text = stringResource(id = R.string.ns_terms_conditions), style = TextStyle(fontSize = TextUnit(12f, TextUnitType.Sp))) {
-            onReference.invoke()
-        }
+        Reference(text = stringResource(id = R.string.ns_terms_conditions), style = TextStyle(fontSize = TextUnit(12f, TextUnitType.Sp)), onClick = onReference)
         Spacer(modifier = Modifier.weight(1f))
         PrimaryButton(
             onClick = onCreateWallet,

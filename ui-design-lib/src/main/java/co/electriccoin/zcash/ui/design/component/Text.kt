@@ -63,6 +63,20 @@ fun BodyMedium(
 }
 
 @Composable
+fun BodyMedium(
+    text: AnnotatedString,
+    modifier: Modifier = Modifier,
+    textAlign: TextAlign = TextAlign.Start,
+) {
+    Text(
+        text = text,
+        style = Typography.bodyMedium,
+        modifier = modifier,
+        textAlign = textAlign
+    )
+}
+
+@Composable
 fun BodySmall(
     text: String,
     modifier: Modifier = Modifier,
@@ -72,6 +86,22 @@ fun BodySmall(
     Text(
         text = text,
         style = Typography.bodySmall,
+        color = color,
+        modifier = modifier,
+        textAlign = textAlign
+    )
+}
+
+@Composable
+fun BalanceText(
+    text: String,
+    modifier: Modifier = Modifier,
+    textAlign: TextAlign = TextAlign.Start,
+    color: Color = MaterialTheme.colorScheme.onBackground,
+) {
+    Text(
+        text = text,
+        style = Typography.headlineMedium,
         color = color,
         modifier = modifier,
         textAlign = textAlign

@@ -13,6 +13,7 @@
     <dimen name="screen_bottom_margin">65dp</dimen>
     <dimen name="screen_standard_margin">25dp</dimen>
     <dimen name="back_icon_size">22dp</dimen>
+    <dimen name="setting_list_item_min_height">50dp</dimen>
 
     <!-- Floats -->
 

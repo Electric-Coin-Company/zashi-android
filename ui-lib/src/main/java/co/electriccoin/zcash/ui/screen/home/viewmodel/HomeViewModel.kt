@@ -8,11 +8,13 @@ import co.electriccoin.zcash.configuration.model.map.Configuration
 import co.electriccoin.zcash.ui.common.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
 import co.electriccoin.zcash.ui.preference.StandardPreferenceSingleton
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 
 class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -31,4 +33,24 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
                 SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT.inWholeMilliseconds),
                 null
             )
+
+    /**
+     * A flow of whether transfer tab is enabled. We disable the transfer tab in sync state
+     */
+    private val _isTransferTabEnabled = MutableStateFlow(false)
+    val isTransferStateEnabled: StateFlow<Boolean> get() = _isTransferTabEnabled
+
+    /**
+     * A flow of whether bottom nav bar should show
+     */
+    private val _isBottomNavBarVisible = MutableStateFlow(true)
+    val isBottomNavBarVisible: StateFlow<Boolean> get() = _isBottomNavBarVisible
+
+    fun onTransferTabStateChanged(enable: Boolean) {
+        _isTransferTabEnabled.update { enable }
+    }
+
+    fun onBottomNavBarVisibilityChanged(show: Boolean) {
+        _isBottomNavBarVisible.update { show }
+    }
 }
