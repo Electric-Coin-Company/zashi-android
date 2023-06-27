@@ -8,12 +8,14 @@ import cash.z.ecc.sdk.fixture.Zip321UriParseFixture
 data class ZecRequest(val address: WalletAddress.Unified, val amount: Zatoshi, val message: ZecRequestMessage) {
 
     // TODO [#397]: Waiting for an implementation of Uri parser in SDK project
+    // TODO [#397]: https://github.com/zcash/zcash-android-wallet-sdk/issues/397
     suspend fun toUri(): String {
         return Zip321UriBuildFixture.new(this)
     }
 
     companion object {
         // TODO [#397]: Waiting for an implementation of Uri parser in SDK project
+        // TODO [#397]: https://github.com/zcash/zcash-android-wallet-sdk/issues/397
         suspend fun fromUri(uriString: String): ZecRequest {
             return Zip321UriParseFixture.new(uriString)
         }
@@ -28,6 +30,7 @@ value class ZecRequestMessage(val value: String) {
 
     companion object {
         // TODO [#219]: Define a maximum message length
+        // TODO [#219]: https://github.com/zcash/secant-android-wallet/issues/219
         // Also note that the length varies from what the user types in versus the encoded version
         // that is actually sent.
         const val MAX_MESSAGE_LENGTH = 320
