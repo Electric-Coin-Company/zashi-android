@@ -26,11 +26,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import cash.z.ecc.android.sdk.model.TransactionOverview
 import cash.z.ecc.android.sdk.model.toZecString
+import cash.z.ecc.sdk.type.ZcashCurrency
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.GradientSurface
@@ -86,7 +88,10 @@ fun History(
 }
 
 @Composable
-fun TransactionHistoryItem(transaction: TransactionOverview) {
+fun TransactionHistoryItem(
+    transaction: TransactionOverview,
+    currency: ZcashCurrency
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -140,7 +145,7 @@ fun TransactionHistoryItem(transaction: TransactionOverview) {
 
                 Spacer(modifier = Modifier.width(ZcashTheme.dimens.spacingTiny))
 
-                Body(text = "ZEC")
+                Body(text = currency.name)
             }
         }
     }
@@ -189,11 +194,15 @@ private fun HistoryMainContent(
                 modifier = Modifier.padding(all = ZcashTheme.dimens.spacingDefault)
             )
         } else {
+            val currency = ZcashCurrency.fromResources(LocalContext.current)
             LazyColumn(
                 contentPadding = PaddingValues(all = ZcashTheme.dimens.spacingDefault)
             ) {
                 items(transactions) {
-                    TransactionHistoryItem(it)
+                    TransactionHistoryItem(
+                        transaction = it,
+                        currency = currency
+                    )
                 }
             }
         }
