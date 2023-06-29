@@ -66,7 +66,7 @@ private fun ComposablePreview() {
 val dateFormat: DateFormat by lazy {
     SimpleDateFormat.getDateTimeInstance(
         SimpleDateFormat.MEDIUM,
-        SimpleDateFormat.MEDIUM,
+        SimpleDateFormat.SHORT,
         Locale.getDefault()
     )
 }
