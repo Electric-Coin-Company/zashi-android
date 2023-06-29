@@ -28,9 +28,11 @@ import co.electriccoin.zcash.ui.preference.EncryptedPreferenceKeys
 import co.electriccoin.zcash.ui.preference.EncryptedPreferenceSingleton
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
 import co.electriccoin.zcash.ui.preference.StandardPreferenceSingleton
+import co.electriccoin.zcash.ui.screen.history.state.TransactionHistorySyncState
 import co.electriccoin.zcash.ui.screen.home.model.WalletSnapshot
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -45,6 +47,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
@@ -175,18 +178,21 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
             null
         )
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    val transactionHistory = synchronizer
-        .flatMapLatest {
+    val transactionHistoryState = synchronizer
+        .map {
             if (null == it) {
-                flowOf(emptyList())
+                TransactionHistorySyncState.Loading
             } else {
-                it.toTransactionHistory()
+                if (it.isSyncing()) {
+                    TransactionHistorySyncState.Syncing(it.toTransactionHistoryList())
+                } else {
+                    TransactionHistorySyncState.Done(it.toTransactionHistoryList())
+                }
             }
         }.stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            emptyList()
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+            initialValue = TransactionHistorySyncState.Loading
         )
 
     /**
@@ -362,4 +368,9 @@ private fun Synchronizer.toWalletSnapshot() =
             flows[6] as SynchronizerError?
         )
     }
-private fun Synchronizer.toTransactionHistory() = transactions.distinctUntilChanged()
+
+private suspend fun Synchronizer.toTransactionHistoryList() =
+    transactions.distinctUntilChanged().first().toImmutableList()
+
+private suspend fun Synchronizer.isSyncing() =
+    status.distinctUntilChanged().first() == Synchronizer.Status.SYNCING
