@@ -16,8 +16,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowCircleDown
-import androidx.compose.material.icons.filled.ArrowCircleUp
+import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.outlined.ArrowCircleDown
+import androidx.compose.material.icons.outlined.ArrowCircleUp
+import androidx.compose.material.icons.twotone.ArrowCircleDown
+import androidx.compose.material.icons.twotone.ArrowCircleUp
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -31,12 +34,14 @@ import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.TopCenter
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import cash.z.ecc.android.sdk.model.TransactionOverview
+import cash.z.ecc.android.sdk.model.TransactionState
 import cash.z.ecc.android.sdk.model.toZecString
 import cash.z.ecc.sdk.type.ZcashCurrency
 import co.electriccoin.zcash.ui.R
@@ -173,6 +178,7 @@ private fun HistoryList(transactions: ImmutableList<TransactionOverview>) {
 }
 
 @Composable
+@Suppress("LongMethod")
 fun HistoryItem(
     transaction: TransactionOverview,
     currency: ZcashCurrency
@@ -183,34 +189,44 @@ fun HistoryItem(
             .padding(vertical = ZcashTheme.dimens.spacingSmall),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        if (transaction.isSentTransaction) {
-            Image(
-                imageVector = Icons.Filled.ArrowCircleUp,
-                contentDescription = stringResource(R.string.history_item_sent_icon_content_description),
-                modifier = Modifier.padding(all = ZcashTheme.dimens.spacingTiny)
-            )
-        } else {
-            Image(
-                imageVector = Icons.Filled.ArrowCircleDown,
-                contentDescription = stringResource(R.string.history_item_received_icon_content_description),
-                modifier = Modifier.padding(all = ZcashTheme.dimens.spacingTiny)
-            )
+        val transactionText: String
+        val transactionIcon: ImageVector
+        when (transaction.getExtendedState()) {
+            TransactionExtendedState.SENT -> {
+                transactionText = stringResource(id = R.string.history_item_sent)
+                transactionIcon = Icons.TwoTone.ArrowCircleUp
+            }
+            TransactionExtendedState.SENDING -> {
+                transactionText = stringResource(id = R.string.history_item_sending)
+                transactionIcon = Icons.Outlined.ArrowCircleUp
+            }
+            TransactionExtendedState.RECEIVED -> {
+                transactionText = stringResource(id = R.string.history_item_received)
+                transactionIcon = Icons.TwoTone.ArrowCircleDown
+            }
+            TransactionExtendedState.RECEIVING -> {
+                transactionText = stringResource(id = R.string.history_item_receiving)
+                transactionIcon = Icons.Outlined.ArrowCircleDown
+            }
+            TransactionExtendedState.EXPIRED -> {
+                transactionText = stringResource(id = R.string.history_item_expired)
+                transactionIcon = Icons.Filled.Cancel
+            }
         }
+
+        Image(
+            imageVector = transactionIcon,
+            contentDescription = transactionText,
+            modifier = Modifier.padding(all = ZcashTheme.dimens.spacingTiny)
+        )
 
         Column(
             modifier = Modifier.weight(1f)
         ) {
-            if (transaction.isSentTransaction) {
-                Body(
-                    text = stringResource(id = R.string.history_item_sent),
-                    color = Color.Black
-                )
-            } else {
-                Body(
-                    text = stringResource(id = R.string.history_item_received),
-                    color = Color.Black
-                )
-            }
+            Body(
+                text = transactionText,
+                color = Color.Black
+            )
 
             Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingTiny))
 
@@ -232,6 +248,39 @@ fun HistoryItem(
 
                 Body(text = currency.name)
             }
+        }
+    }
+}
+
+enum class TransactionExtendedState {
+    SENT,
+    SENDING,
+    RECEIVED,
+    RECEIVING,
+    EXPIRED
+}
+
+private fun TransactionOverview.getExtendedState(): TransactionExtendedState {
+    return when (transactionState) {
+        TransactionState.Expired -> {
+            TransactionExtendedState.EXPIRED
+        }
+        TransactionState.Confirmed -> {
+            if (isSentTransaction) {
+                TransactionExtendedState.SENT
+            } else {
+                TransactionExtendedState.RECEIVED
+            }
+        }
+        TransactionState.Pending -> {
+            if (isSentTransaction) {
+                TransactionExtendedState.SENDING
+            } else {
+                TransactionExtendedState.RECEIVING
+            }
+        }
+        else -> {
+            error("Unexpected transaction state found while calculating its extended state.")
         }
     }
 }
