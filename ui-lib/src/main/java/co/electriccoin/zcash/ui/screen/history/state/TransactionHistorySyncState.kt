@@ -6,7 +6,11 @@ import kotlinx.collections.immutable.ImmutableList
 sealed class TransactionHistorySyncState {
 
     object Loading : TransactionHistorySyncState()
-    class Syncing(val transactions: ImmutableList<TransactionOverview>) : TransactionHistorySyncState()
+    class Syncing(val transactions: ImmutableList<TransactionOverview>) : TransactionHistorySyncState() {
+        fun hasNoTransactions(): Boolean {
+            return transactions.isEmpty()
+        }
+    }
     class Done(val transactions: ImmutableList<TransactionOverview>) : TransactionHistorySyncState() {
         fun hasNoTransactions(): Boolean {
             return transactions.isEmpty()

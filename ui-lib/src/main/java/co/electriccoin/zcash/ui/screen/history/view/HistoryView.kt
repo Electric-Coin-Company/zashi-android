@@ -146,7 +146,7 @@ private fun HistoryMainContent(
                     HistoryList(transactions = transactionState.transactions)
                 }
                 // Add progress indicator only in the state of empty transaction
-                if (transactionState.transactions.isEmpty()) {
+                if (transactionState.hasNoTransactions()) {
                     CircularProgressIndicator(
                         modifier = Modifier
                             .align(alignment = Center)
