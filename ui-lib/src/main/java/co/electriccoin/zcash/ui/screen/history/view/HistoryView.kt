@@ -251,7 +251,12 @@ fun HistoryItem(
 
         Column {
             Row(modifier = Modifier.align(alignment = Alignment.End)) {
-                Body(text = transaction.netValue.toZecString())
+                val zecString = if (transaction.isSentTransaction) {
+                    "-${transaction.netValue.toZecString()}"
+                } else {
+                    transaction.netValue.toZecString()
+                }
+                Body(text = zecString)
 
                 Spacer(modifier = Modifier.width(ZcashTheme.dimens.spacingTiny))
 
