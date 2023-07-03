@@ -126,7 +126,6 @@ private fun HistoryMainContent(
                     modifier = Modifier
                         .align(alignment = Center)
                         .testTag(HistoryTag.PROGRESS)
-
                 )
             }
             is TransactionHistorySyncState.Syncing -> {
@@ -175,7 +174,8 @@ private fun HistoryMainContent(
 private fun HistoryList(transactions: ImmutableList<TransactionOverview>) {
     val currency = ZcashCurrency.fromResources(LocalContext.current)
     LazyColumn(
-        contentPadding = PaddingValues(all = ZcashTheme.dimens.spacingDefault)
+        contentPadding = PaddingValues(all = ZcashTheme.dimens.spacingDefault),
+        modifier = Modifier.testTag(HistoryTag.TRANSACTION_LIST)
     ) {
         items(transactions) {
             HistoryItem(
