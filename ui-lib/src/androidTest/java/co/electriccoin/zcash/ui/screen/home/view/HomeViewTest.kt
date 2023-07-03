@@ -121,6 +121,19 @@ class HomeViewTest : UiTestPrerequisites() {
         assertEquals(1, testSetup.getOnSendCount())
     }
 
+
+    @Test
+    @MediumTest
+    fun click_history_button() {
+        val testSetup = newTestSetup()
+
+        assertEquals(0, testSetup.getOnHistoryCount())
+
+        composeTestRule.clickHistory()
+
+        assertEquals(1, testSetup.getOnHistoryCount())
+    }
+
     @Test
     @MediumTest
     fun hamburger_seed() {
@@ -213,6 +226,13 @@ private fun ComposeContentTestRule.clickReceive() {
 
 private fun ComposeContentTestRule.clickSend() {
     onNodeWithText(getStringResource(R.string.home_button_send)).also {
+        it.performScrollTo()
+        it.performClick()
+    }
+}
+
+private fun ComposeContentTestRule.clickHistory() {
+    onNodeWithText(getStringResource(R.string.home_button_history)).also {
         it.performScrollTo()
         it.performClick()
     }
