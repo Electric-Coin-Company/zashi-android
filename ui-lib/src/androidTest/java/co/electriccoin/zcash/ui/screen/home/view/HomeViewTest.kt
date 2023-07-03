@@ -121,7 +121,6 @@ class HomeViewTest : UiTestPrerequisites() {
         assertEquals(1, testSetup.getOnSendCount())
     }
 
-
     @Test
     @MediumTest
     fun click_history_button() {

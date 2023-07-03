@@ -5,13 +5,15 @@ import kotlinx.collections.immutable.ImmutableList
 
 sealed class TransactionHistorySyncState {
 
-    object Loading : TransactionHistorySyncState()
-    class Syncing(val transactions: ImmutableList<TransactionOverview>) : TransactionHistorySyncState() {
+    object Loading : TransactionHistorySyncState() {
+        override fun toString() = "Loading" // NON-NLS
+    }
+    data class Syncing(val transactions: ImmutableList<TransactionOverview>) : TransactionHistorySyncState() {
         fun hasNoTransactions(): Boolean {
             return transactions.isEmpty()
         }
     }
-    class Done(val transactions: ImmutableList<TransactionOverview>) : TransactionHistorySyncState() {
+    data class Done(val transactions: ImmutableList<TransactionOverview>) : TransactionHistorySyncState() {
         fun hasNoTransactions(): Boolean {
             return transactions.isEmpty()
         }
