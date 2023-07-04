@@ -94,13 +94,10 @@ internal fun WrapHome(
             !FirebaseTestLabUtil.isFirebaseTestLab(context) &&
             !EmulatorWtfUtil.isEmulatorWtf(context)
 
-        val transactionSnapshot = walletViewModel.transactionSnapshot.collectAsStateWithLifecycle().value
-
         val drawerValues = drawerBackHandler()
 
         Home(
             walletSnapshot,
-            transactionSnapshot,
             isUpdateAvailable = updateAvailable,
             isKeepScreenOnDuringSync = isKeepScreenOnWhileSyncing,
             isFiatConversionEnabled = isFiatConversionEnabled,

@@ -30,8 +30,6 @@ import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
 import co.electriccoin.zcash.ui.preference.StandardPreferenceSingleton
 import co.electriccoin.zcash.ui.screen.history.state.TransactionHistorySyncState
 import co.electriccoin.zcash.ui.screen.home.model.WalletSnapshot
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -147,22 +145,6 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
             viewModelScope,
             SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
             null
-        )
-
-    // This is not the right API, because the transaction list could be very long and might need UI filtering
-    @OptIn(ExperimentalCoroutinesApi::class)
-    val transactionSnapshot: StateFlow<ImmutableList<TransactionOverview>> = synchronizer
-        .flatMapLatest {
-            if (null == it) {
-                flowOf(persistentListOf())
-            } else {
-                it.transactions.map { list -> list.toPersistentList() }
-            }
-        }
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            persistentListOf()
         )
 
     val addresses: StateFlow<WalletAddresses?> = synchronizer

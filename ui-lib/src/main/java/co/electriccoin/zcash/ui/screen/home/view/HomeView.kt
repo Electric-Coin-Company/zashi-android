@@ -56,7 +56,6 @@ import androidx.compose.ui.unit.dp
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.model.FiatCurrencyConversionRateState
 import cash.z.ecc.android.sdk.model.PercentDecimal
-import cash.z.ecc.android.sdk.model.TransactionOverview
 import co.electriccoin.zcash.crash.android.GlobalCrashReporter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.DisableScreenTimeout
@@ -73,8 +72,6 @@ import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 import co.electriccoin.zcash.ui.screen.home.HomeTag
 import co.electriccoin.zcash.ui.screen.home.model.WalletDisplayValues
 import co.electriccoin.zcash.ui.screen.home.model.WalletSnapshot
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.CoroutineScope
 
 @Preview("Home")
@@ -84,7 +81,6 @@ private fun ComposablePreview() {
         GradientSurface {
             Home(
                 walletSnapshot = WalletSnapshotFixture.new(),
-                transactionHistory = persistentListOf(),
                 isUpdateAvailable = false,
                 isKeepScreenOnDuringSync = false,
                 isDebugMenuEnabled = false,
@@ -109,7 +105,6 @@ private fun ComposablePreview() {
 @Composable
 fun Home(
     walletSnapshot: WalletSnapshot,
-    transactionHistory: ImmutableList<TransactionOverview>,
     isUpdateAvailable: Boolean,
     isKeepScreenOnDuringSync: Boolean?,
     isFiatConversionEnabled: Boolean,
@@ -146,8 +141,7 @@ fun Home(
                 )
             }) { paddingValues ->
                 HomeMainContent(
-                    walletSnapshot,
-                    transactionHistory,
+                    walletSnapshot = walletSnapshot,
                     isUpdateAvailable = isUpdateAvailable,
                     isKeepScreenOnDuringSync = isKeepScreenOnDuringSync,
                     isFiatConversionEnabled = isFiatConversionEnabled,
@@ -294,11 +288,10 @@ private fun HomeDrawer(
     }
 }
 
-@Suppress("LongParameterList", "UNUSED_PARAMETER")
+@Suppress("LongParameterList")
 @Composable
 private fun HomeMainContent(
     walletSnapshot: WalletSnapshot,
-    transactionHistory: ImmutableList<TransactionOverview>,
     isUpdateAvailable: Boolean,
     isKeepScreenOnDuringSync: Boolean?,
     isFiatConversionEnabled: Boolean,
