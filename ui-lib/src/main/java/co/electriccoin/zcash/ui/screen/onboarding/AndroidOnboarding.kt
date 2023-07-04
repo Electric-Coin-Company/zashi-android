@@ -8,11 +8,11 @@ import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import cash.z.ecc.android.sdk.fixture.WalletFixture
 import cash.z.ecc.android.sdk.model.BlockHeight
 import cash.z.ecc.android.sdk.model.PersistableWallet
 import cash.z.ecc.android.sdk.model.SeedPhrase
 import cash.z.ecc.android.sdk.model.ZcashNetwork
-import cash.z.ecc.sdk.fixture.SeedPhraseFixture
 import cash.z.ecc.sdk.type.fromResources
 import co.electriccoin.zcash.spackle.EmulatorWtfUtil
 import co.electriccoin.zcash.spackle.FirebaseTestLabUtil
@@ -54,8 +54,8 @@ internal fun WrapOnboarding(
                 persistExistingWalletWithSeedPhrase(
                     applicationContext,
                     walletViewModel,
-                    SeedPhraseFixture.new(),
-                    birthday = null
+                    SeedPhrase.new(WalletFixture.Alice.seedPhrase),
+                    birthday = WalletFixture.Alice.getBirthday(ZcashNetwork.fromResources(applicationContext))
                 )
             } else {
                 walletViewModel.persistNewWallet()
@@ -71,8 +71,8 @@ internal fun WrapOnboarding(
                 persistExistingWalletWithSeedPhrase(
                     applicationContext,
                     walletViewModel,
-                    SeedPhraseFixture.new(),
-                    birthday = null
+                    SeedPhrase.new(WalletFixture.Alice.seedPhrase),
+                    birthday = WalletFixture.Alice.getBirthday(ZcashNetwork.fromResources(applicationContext))
                 )
             } else {
                 onboardingViewModel.setIsImporting(true)
@@ -83,8 +83,8 @@ internal fun WrapOnboarding(
             persistExistingWalletWithSeedPhrase(
                 applicationContext,
                 walletViewModel,
-                SeedPhraseFixture.new(),
-                birthday = null
+                SeedPhrase.new(WalletFixture.Alice.seedPhrase),
+                birthday = WalletFixture.Alice.getBirthday(ZcashNetwork.fromResources(applicationContext))
             )
         }
 

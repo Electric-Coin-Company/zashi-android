@@ -145,7 +145,7 @@ class ScreenshotTest : UiTestPrerequisites() {
     }
 
     // TODO [#859]: Screenshot tests fail on Firebase Test Lab
-    // https://github.com/zcash/secant-android-wallet/issues/859
+    // TODO [#859]: https://github.com/zcash/secant-android-wallet/issues/859
     // Some of the restore screenshots broke with the Compose 1.4 update and we don't yet know why.
     private val isRestoreScreenshotsEnabled = false
 
@@ -312,6 +312,9 @@ class ScreenshotTest : UiTestPrerequisites() {
 
         navigateTo(NavigationTargets.WALLET_ADDRESS_DETAILS)
         addressDetailsScreenshots(resContext, tag, composeTestRule)
+
+        navigateTo(NavigationTargets.HISTORY)
+        transactionHistoryScreenshots(resContext, tag, composeTestRule)
     }
 }
 
@@ -532,6 +535,14 @@ private fun addressDetailsScreenshots(resContext: Context, tag: String, composeT
     }
 
     ScreenshotTest.takeScreenshot(tag, "Addresses 1")
+}
+
+private fun transactionHistoryScreenshots(resContext: Context, tag: String, composeTestRule: ComposeTestRule) {
+    composeTestRule.onNode(hasText(resContext.getString(R.string.history_title))).also {
+        it.assertExists()
+    }
+
+    ScreenshotTest.takeScreenshot(tag, "Transaction History 1")
 }
 
 // This screen is not currently navigable from the app

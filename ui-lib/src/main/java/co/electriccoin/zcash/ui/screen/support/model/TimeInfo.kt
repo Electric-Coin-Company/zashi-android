@@ -17,6 +17,7 @@ data class TimeInfo(
 ) {
 
     // TODO [#388]: Consider fuzzing the times
+    // TODO [#388]: https://github.com/zcash/secant-android-wallet/issues/388
     fun toSupportString() = buildString {
         // Use a slightly more human friendly format instead of ISO, since this will appear in the emails that users see
         val dateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm:ss a", Locale.US) // $NON-NLS-1$

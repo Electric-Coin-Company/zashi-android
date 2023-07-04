@@ -2,7 +2,6 @@ package co.electriccoin.zcash.ui.common
 
 import androidx.test.filters.FlakyTest
 import androidx.test.filters.SmallTest
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
@@ -17,7 +16,7 @@ import kotlin.time.TimeSource
 
 class FlowExtTest {
 
-    @OptIn(ExperimentalTime::class, ExperimentalCoroutinesApi::class)
+    @OptIn(ExperimentalTime::class)
     @Test
     @SmallTest
     fun throttle_one_sec() = runTest {
