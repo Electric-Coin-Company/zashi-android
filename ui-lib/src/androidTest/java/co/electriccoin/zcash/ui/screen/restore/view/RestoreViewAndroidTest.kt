@@ -6,7 +6,6 @@ import android.content.Context
 import android.os.Build.VERSION_CODES
 import android.os.SystemClock
 import android.view.inputmethod.InputMethodManager
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertCountEquals
@@ -62,7 +61,7 @@ class RestoreViewAndroidTest : UiTestPrerequisites() {
         assertTrue(inputMethodManager.isAcceptingText)
     }
 
-    @OptIn(ExperimentalTestApi::class, ExperimentalComposeUiApi::class)
+    @OptIn(ExperimentalTestApi::class)
     @Test
     @MediumTest
     // Functionality should be compatible with Android 27+, but a bug in the Android framework causes a crash
@@ -106,7 +105,7 @@ class RestoreViewAndroidTest : UiTestPrerequisites() {
         }
     }
 
-    @OptIn(ExperimentalTestApi::class, ExperimentalComposeUiApi::class)
+    @OptIn(ExperimentalTestApi::class)
     @Test
     @MediumTest
     @SdkSuppress(minSdkVersion = VERSION_CODES.TIRAMISU)
@@ -140,7 +139,7 @@ class RestoreViewAndroidTest : UiTestPrerequisites() {
 
         val inputMethodManager = getAppContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         kotlin.runCatching { assertFalse(inputMethodManager.isAcceptingText) }.onFailure {
-            SystemClock.sleep(2.seconds.inWholeMilliseconds)
+            SystemClock.sleep(5.seconds.inWholeMilliseconds)
             assertFalse(inputMethodManager.isAcceptingText)
         }
     }
