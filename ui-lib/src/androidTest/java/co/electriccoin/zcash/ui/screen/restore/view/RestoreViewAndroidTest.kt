@@ -138,9 +138,12 @@ class RestoreViewAndroidTest : UiTestPrerequisites() {
         composeTestRule.waitForIdle()
 
         val inputMethodManager = getAppContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        kotlin.runCatching { assertFalse(inputMethodManager.isAcceptingText) }.onFailure {
-            SystemClock.sleep(5.seconds.inWholeMilliseconds)
-            assertFalse(inputMethodManager.isAcceptingText)
+        composeTestRule.waitUntil(5.seconds.inWholeMilliseconds) {
+            kotlin.runCatching { assertFalse(inputMethodManager.isAcceptingText) }.onFailure {
+                SystemClock.sleep(2.seconds.inWholeMilliseconds)
+                composeTestRule.waitForIdle()
+                assertFalse(inputMethodManager.isAcceptingText)
+            }.isSuccess
         }
     }
 
