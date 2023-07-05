@@ -4,7 +4,6 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.os.Build.VERSION_CODES
-import android.os.SystemClock
 import android.view.inputmethod.InputMethodManager
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.test.ExperimentalTestApi
@@ -13,7 +12,10 @@ import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performKeyInput
+import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.pressKey
 import androidx.compose.ui.test.withKeyDown
 import androidx.test.filters.MediumTest
@@ -26,13 +28,13 @@ import co.electriccoin.zcash.ui.design.component.CommonTag
 import co.electriccoin.zcash.ui.screen.restore.RestoreTag
 import co.electriccoin.zcash.ui.screen.restore.model.RestoreStage
 import co.electriccoin.zcash.ui.test.getAppContext
+import co.electriccoin.zcash.ui.test.getStringResource
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import kotlin.test.Ignore
-import kotlin.test.assertFalse
 import kotlin.time.Duration.Companion.seconds
 
 // Non-multiplatform tests that require interacting with the Android system (e.g. clipboard, Context)
@@ -105,45 +107,45 @@ class RestoreViewAndroidTest : UiTestPrerequisites() {
         }
     }
 
-    @OptIn(ExperimentalTestApi::class)
     @Test
     @MediumTest
     @SdkSuppress(minSdkVersion = VERSION_CODES.TIRAMISU)
-    fun keyboard_disappears_after_seed() {
+    fun keyboard_disappears_after_correct_seed_inserted() {
         newTestSetup()
 
         composeTestRule.waitForIdle()
 
-        // This implementation stopped working with Compose 1.4.0, so we're using the clipboard instead
-        // composeTestRule.onNodeWithTag(RestoreTag.SEED_WORD_TEXT_FIELD).also {
-        //    it.performTextInput(SeedPhraseFixture.SEED_PHRASE)
-        // }
-
-        copyToClipboard(
-            getAppContext(),
-            SeedPhraseFixture.SEED_PHRASE
-        )
-
+        // Insert uncompleted seed words
         composeTestRule.onNodeWithTag(RestoreTag.SEED_WORD_TEXT_FIELD).also {
-            it.performKeyInput {
-                withKeyDown(Key.CtrlLeft) {
-                    pressKey(Key.V)
-                }
-            }
+            it.performTextInput("test")
         }
 
-        // There appears to be a bug introduced in Compose 1.4.0 which makes this necessary
-        composeTestRule.mainClock.autoAdvance = false
+        val imm = getAppContext().getSystemService(Context.INPUT_METHOD_SERVICE)
+            as InputMethodManager
+
+        // Test that the input seed text field is still expecting an input, as the inserted seed words are not complete
+        composeTestRule.waitUntil(5.seconds.inWholeMilliseconds) {
+            imm.isAcceptingText
+        }
 
         composeTestRule.waitForIdle()
 
-        val inputMethodManager = getAppContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        // Clear test seed words
+        composeTestRule.onNodeWithText(getStringResource(R.string.restore_button_clear)).also {
+            it.performClick()
+        }
+
+        composeTestRule.waitForIdle()
+
+        // Insert complete seed words
+        composeTestRule.onNodeWithTag(RestoreTag.SEED_WORD_TEXT_FIELD).also {
+            it.performTextInput(SeedPhraseFixture.SEED_PHRASE)
+        }
+
+        // Test that the input seed text field is not expecting an input anymore, as the inserted seed words are
+        // complete
         composeTestRule.waitUntil(5.seconds.inWholeMilliseconds) {
-            kotlin.runCatching { assertFalse(inputMethodManager.isAcceptingText) }.onFailure {
-                SystemClock.sleep(2.seconds.inWholeMilliseconds)
-                composeTestRule.waitForIdle()
-                assertFalse(inputMethodManager.isAcceptingText)
-            }.isSuccess
+            !imm.isAcceptingText
         }
     }
 
