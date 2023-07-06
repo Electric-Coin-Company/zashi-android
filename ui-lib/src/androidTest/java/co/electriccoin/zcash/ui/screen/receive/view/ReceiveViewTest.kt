@@ -11,7 +11,6 @@ import cash.z.ecc.android.sdk.model.WalletAddress
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.test.getStringResource
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -23,7 +22,6 @@ import java.util.concurrent.atomic.AtomicInteger
  * for that currently.  A future enhancement could take a screenshot and try to analyze the
  * screenshot contents.
  */
-@OptIn(ExperimentalCoroutinesApi::class)
 class ReceiveViewTest {
     @get:Rule
     val composeTestRule = createComposeRule()
