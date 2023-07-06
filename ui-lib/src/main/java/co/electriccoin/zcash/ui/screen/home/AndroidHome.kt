@@ -36,6 +36,7 @@ internal fun MainActivity.WrapHome(
     goAbout: () -> Unit,
     goReceive: () -> Unit,
     goSend: () -> Unit,
+    goHistory: () -> Unit
 ) {
     WrapHome(
         this,
@@ -45,6 +46,7 @@ internal fun MainActivity.WrapHome(
         goAbout = goAbout,
         goReceive = goReceive,
         goSend = goSend,
+        goHistory = goHistory,
     )
 }
 
@@ -58,6 +60,7 @@ internal fun WrapHome(
     goAbout: () -> Unit,
     goReceive: () -> Unit,
     goSend: () -> Unit,
+    goHistory: () -> Unit,
 ) {
     // we want to show information about app update, if available
     val checkUpdateViewModel by activity.viewModels<CheckUpdateViewModel> {
@@ -91,13 +94,10 @@ internal fun WrapHome(
             !FirebaseTestLabUtil.isFirebaseTestLab(context) &&
             !EmulatorWtfUtil.isEmulatorWtf(context)
 
-        val transactionSnapshot = walletViewModel.transactionSnapshot.collectAsStateWithLifecycle().value
-
         val drawerValues = drawerBackHandler()
 
         Home(
             walletSnapshot,
-            transactionSnapshot,
             isUpdateAvailable = updateAvailable,
             isKeepScreenOnDuringSync = isKeepScreenOnWhileSyncing,
             isFiatConversionEnabled = isFiatConversionEnabled,
@@ -109,6 +109,7 @@ internal fun WrapHome(
             goAbout = goAbout,
             goReceive = goReceive,
             goSend = goSend,
+            goHistory = goHistory,
             resetSdk = {
                 walletViewModel.resetSdk()
             },
