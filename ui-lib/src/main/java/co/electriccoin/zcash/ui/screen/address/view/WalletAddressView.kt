@@ -137,13 +137,7 @@ private fun WalletDetailAddresses(
                     title = stringResource(R.string.wallet_address_unified),
                     content = walletAddresses.unified.address,
                     isInitiallyExpanded = true,
-                    onCopyToClipboard = onCopyToClipboard,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(
-                            horizontal = ZcashTheme.dimens.spacingDefault,
-                            vertical = ZcashTheme.dimens.spacingTiny
-                        )
+                    onCopyToClipboard = onCopyToClipboard
                 )
 
                 Box(Modifier.height(IntrinsicSize.Min)) {
@@ -191,13 +185,7 @@ private fun SaplingAddress(
             title = stringResource(R.string.wallet_address_sapling),
             content = saplingAddress,
             isInitiallyExpanded = false,
-            onCopyToClipboard = onCopyToClipboard,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    horizontal = ZcashTheme.dimens.spacingDefault,
-                    vertical = ZcashTheme.dimens.spacingTiny
-                )
+            onCopyToClipboard = onCopyToClipboard
         )
     }
 }
@@ -214,13 +202,7 @@ private fun TransparentAddress(
             title = stringResource(R.string.wallet_address_transparent),
             content = transparentAddress,
             isInitiallyExpanded = false,
-            onCopyToClipboard = onCopyToClipboard,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    horizontal = ZcashTheme.dimens.spacingDefault,
-                    vertical = ZcashTheme.dimens.spacingTiny
-                )
+            onCopyToClipboard = onCopyToClipboard
         )
     }
 }
@@ -230,16 +212,20 @@ private fun ExpandableRow(
     title: String,
     content: String,
     isInitiallyExpanded: Boolean,
-    onCopyToClipboard: (String) -> Unit,
-    modifier: Modifier = Modifier
+    onCopyToClipboard: (String) -> Unit
 ) {
     var expandedState by rememberSaveable { mutableStateOf(isInitiallyExpanded) }
 
-    Column(modifier = modifier) {
+    Column {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.defaultMinSize(minHeight = 48.dp)
+            modifier = Modifier
+                .defaultMinSize(minHeight = 48.dp)
                 .clickable { expandedState = !expandedState }
+                .padding(
+                    horizontal = ZcashTheme.dimens.spacingDefault,
+                    vertical = ZcashTheme.dimens.spacingTiny
+                )
         ) {
             ListItem(text = title)
             Spacer(
@@ -254,6 +240,10 @@ private fun ExpandableRow(
                 content,
                 modifier = Modifier
                     .clickable { onCopyToClipboard(content) }
+                    .padding(
+                        horizontal = ZcashTheme.dimens.spacingDefault,
+                        vertical = ZcashTheme.dimens.spacingTiny
+                    )
                     .testTag(WalletAddressesTag.WALLET_ADDRESS)
             )
         }
