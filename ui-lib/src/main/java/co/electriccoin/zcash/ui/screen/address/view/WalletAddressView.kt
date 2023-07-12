@@ -39,11 +39,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cash.z.ecc.android.sdk.fixture.WalletAddressesFixture
 import cash.z.ecc.android.sdk.model.WalletAddresses
+import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.Body
@@ -51,6 +53,7 @@ import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.ListHeader
 import co.electriccoin.zcash.ui.design.component.ListItem
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.screen.address.WalletAddressesTag
 import kotlinx.coroutines.runBlocking
 
 @Preview("WalletAddresses")
@@ -60,19 +63,25 @@ private fun ComposablePreview() {
         GradientSurface {
             WalletAddresses(
                 runBlocking { WalletAddressesFixture.new() },
-                onBack = {}
+                onBack = {},
+                onCopyToClipboard = {}
             )
         }
     }
 }
 
 @Composable
-fun WalletAddresses(walletAddresses: WalletAddresses, onBack: () -> Unit) {
+fun WalletAddresses(
+    walletAddresses: WalletAddresses,
+    onBack: () -> Unit,
+    onCopyToClipboard: (String) -> Unit
+) {
     Column {
         WalletDetailTopAppBar(onBack)
         WalletDetailAddresses(
-            walletAddresses,
-            Modifier
+            walletAddresses = walletAddresses,
+            onCopyToClipboard = onCopyToClipboard,
+            modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
         )
@@ -107,6 +116,7 @@ private val SMALL_INDICATOR_WIDTH = 16.dp
 @Composable
 private fun WalletDetailAddresses(
     walletAddresses: WalletAddresses,
+    onCopyToClipboard: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier) {
@@ -128,6 +138,7 @@ private fun WalletDetailAddresses(
                     title = stringResource(R.string.wallet_address_unified),
                     content = walletAddresses.unified.address,
                     isInitiallyExpanded = true,
+                    onCopyToClipboard = onCopyToClipboard,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(
@@ -146,6 +157,7 @@ private fun WalletDetailAddresses(
 
                 SaplingAddress(
                     saplingAddress = walletAddresses.sapling.address,
+                    onCopyToClipboard = onCopyToClipboard,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(IntrinsicSize.Min)
@@ -153,6 +165,7 @@ private fun WalletDetailAddresses(
 
                 TransparentAddress(
                     transparentAddress = walletAddresses.transparent.address,
+                    onCopyToClipboard = onCopyToClipboard,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(IntrinsicSize.Min)
@@ -169,6 +182,7 @@ private fun WalletDetailAddresses(
 @Composable
 private fun SaplingAddress(
     saplingAddress: String,
+    onCopyToClipboard: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(modifier) {
@@ -178,6 +192,7 @@ private fun SaplingAddress(
             title = stringResource(R.string.wallet_address_sapling),
             content = saplingAddress,
             isInitiallyExpanded = false,
+            onCopyToClipboard = onCopyToClipboard,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(
@@ -191,6 +206,7 @@ private fun SaplingAddress(
 @Composable
 private fun TransparentAddress(
     transparentAddress: String,
+    onCopyToClipboard: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(modifier) {
@@ -199,6 +215,7 @@ private fun TransparentAddress(
             title = stringResource(R.string.wallet_address_transparent),
             content = transparentAddress,
             isInitiallyExpanded = false,
+            onCopyToClipboard = onCopyToClipboard,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(
@@ -214,16 +231,17 @@ private fun ExpandableRow(
     title: String,
     content: String,
     isInitiallyExpanded: Boolean,
+    onCopyToClipboard: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var expandedState by rememberSaveable { mutableStateOf(isInitiallyExpanded) }
 
-    Column(
-        Modifier
-            .clickable { expandedState = !expandedState }
-            .then(modifier) // To have proper ripple effect
-    ) {
-        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.defaultMinSize(minHeight = 48.dp)) {
+    Column(modifier = modifier) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.defaultMinSize(minHeight = 48.dp)
+                .clickable { expandedState = !expandedState }
+        ) {
             ListItem(text = title)
             Spacer(
                 modifier = Modifier
@@ -233,7 +251,15 @@ private fun ExpandableRow(
             ExpandableArrow(expandedState)
         }
         if (expandedState) {
-            Body(content)
+            Body(
+                content,
+                modifier = Modifier
+                    .clickable {
+                        Twig.info { "Address copied: $content" }
+                        onCopyToClipboard(content)
+                    }
+                    .testTag(WalletAddressesTag.WALLET_ADDRESS)
+            )
         }
     }
 }
@@ -241,6 +267,7 @@ private fun ExpandableRow(
 @Composable
 private fun SmallIndicator(color: Color) {
     // TODO [#160]: Border is not the right implementation here, as it causes double thickness for the middle item
+    // TODO [#160]: https://github.com/zcash/secant-android-wallet/issues/160
     Image(
         modifier = Modifier
             .fillMaxHeight()
