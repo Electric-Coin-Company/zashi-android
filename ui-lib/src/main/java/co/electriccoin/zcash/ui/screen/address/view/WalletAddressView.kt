@@ -45,7 +45,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cash.z.ecc.android.sdk.fixture.WalletAddressesFixture
 import cash.z.ecc.android.sdk.model.WalletAddresses
-import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.Body
@@ -254,10 +253,7 @@ private fun ExpandableRow(
             Body(
                 content,
                 modifier = Modifier
-                    .clickable {
-                        Twig.info { "Address copied: $content" }
-                        onCopyToClipboard(content)
-                    }
+                    .clickable { onCopyToClipboard(content) }
                     .testTag(WalletAddressesTag.WALLET_ADDRESS)
             )
         }
