@@ -32,6 +32,9 @@ sealed class SeedPhraseValidation {
                 BadWord
             } catch (e: Mnemonics.ChecksumException) {
                 FailedChecksum
+            } catch (e: IndexOutOfBoundsException) {
+                // When we type last word's character it throw this exception. So need to catch here
+                BadWord
             }
         }
     }
