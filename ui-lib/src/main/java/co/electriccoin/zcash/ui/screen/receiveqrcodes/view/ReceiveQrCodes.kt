@@ -140,9 +140,9 @@ fun ReceiveQrCodes(
         TitleLarge(text = stringResource(id = R.string.ns_nighthawk), textAlign = TextAlign.Center, modifier = Modifier.align(Alignment.CenterHorizontally))
         Spacer(modifier = Modifier.height(27.dp))
 
-        val state = rememberPagerState(initialPage = 1)
         val totalCards = 4
-        HorizontalPager(pageCount = totalCards, state = state, pageSpacing = 16.dp, contentPadding = PaddingValues(horizontal = 55.dp)) { page ->
+        val state = rememberPagerState(initialPage = 1, initialPageOffsetFraction = 0f) { totalCards }
+        HorizontalPager(state = state, pageSpacing = 16.dp, contentPadding = PaddingValues(horizontal = 55.dp)) { page ->
             Card(
                 modifier = Modifier
                     .fillMaxWidth()

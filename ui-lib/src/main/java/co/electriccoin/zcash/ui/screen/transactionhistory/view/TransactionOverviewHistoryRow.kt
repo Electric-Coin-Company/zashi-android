@@ -1,6 +1,7 @@
 package co.electriccoin.zcash.ui.screen.transactionhistory.view
 
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -41,16 +42,20 @@ import java.time.format.FormatStyle
 fun TransactionOverviewHistoryRowPreview() {
     ZcashTheme(darkTheme = false) {
         Surface {
-            TransactionOverviewHistoryRow(transactionOverview = TransactionOverviewFixture.new(), onItemClick = {})
+            TransactionOverviewHistoryRow(transactionOverview = TransactionOverviewFixture.new(), onItemClick = {}, onItemLongClick = {})
         }
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun TransactionOverviewHistoryRow(transactionOverview: TransactionOverview, onItemClick: (TransactionOverview) -> Unit) {
+fun TransactionOverviewHistoryRow(transactionOverview: TransactionOverview, onItemClick: (TransactionOverview) -> Unit, onItemLongClick: (TransactionOverview) -> Unit = {}) {
     Column(
         modifier = Modifier.fillMaxWidth()
-            .clickable { onItemClick(transactionOverview) }
+            .combinedClickable(
+                onClick = { onItemClick(transactionOverview) },
+                onLongClick = { onItemLongClick(transactionOverview) }
+            )
     ) {
         Spacer(modifier = Modifier.height(10.dp))
         Row {

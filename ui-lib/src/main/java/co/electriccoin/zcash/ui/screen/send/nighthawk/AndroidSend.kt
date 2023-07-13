@@ -15,8 +15,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cash.z.ecc.android.sdk.ext.ZcashSdk
+import cash.z.ecc.android.sdk.ext.convertZatoshiToZecString
 import cash.z.ecc.android.sdk.ext.isShielded
 import cash.z.ecc.android.sdk.model.MonetarySeparators
+import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.ZecSendExt
 import cash.z.ecc.android.sdk.model.send
 import cash.z.ecc.android.sdk.model.toZecString
@@ -41,12 +43,32 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 @Composable
-internal fun MainActivity.AndroidSend(onBack: () -> Unit, onTopUpWallet: () -> Unit, navigateTo: (String) -> Unit, onMoreDetails: (Long) -> Unit, onScan: () -> Unit) {
-    WrapAndroidSend(activity = this, onBack = onBack, onTopUpWallet = onTopUpWallet, navigateTo = navigateTo, onMoreDetails = onMoreDetails, onScan = onScan)
+internal fun MainActivity.AndroidSend(
+    onBack: () -> Unit,
+    onTopUpWallet: () -> Unit,
+    navigateTo: (String) -> Unit,
+    onMoreDetails: (Long) -> Unit,
+    onScan: () -> Unit
+) {
+    WrapAndroidSend(
+        activity = this,
+        onBack = onBack,
+        onTopUpWallet = onTopUpWallet,
+        navigateTo = navigateTo,
+        onMoreDetails = onMoreDetails,
+        onScan = onScan
+    )
 }
 
 @Composable
-internal fun WrapAndroidSend(activity: ComponentActivity, onBack: () -> Unit, onTopUpWallet: () -> Unit, navigateTo: (String) -> Unit, onMoreDetails: (Long) -> Unit, onScan: () -> Unit) {
+internal fun WrapAndroidSend(
+    activity: ComponentActivity,
+    onBack: () -> Unit,
+    onTopUpWallet: () -> Unit,
+    navigateTo: (String) -> Unit,
+    onMoreDetails: (Long) -> Unit,
+    onScan: () -> Unit
+) {
     val homeViewModel by activity.viewModels<HomeViewModel>()
     val sendViewModel by activity.viewModels<SendViewModel>()
     val walletViewModel by activity.viewModels<WalletViewModel>()
@@ -62,6 +84,14 @@ internal fun WrapAndroidSend(activity: ComponentActivity, onBack: () -> Unit, on
     DisposableEffect(key1 = Unit) {
         homeViewModel.onBottomNavBarVisibilityChanged(show = false)
         showBottomBarOnDispose.value = true
+
+        // Check for deepLink data if there is any. If we found then update receiverAddress, amount and memo
+        homeViewModel.sendDeepLinkData?.let {
+            sendViewModel.updateReceiverAddress(it.address)
+            it.amount?.let { zatoshi -> sendViewModel.enteredZecFromDeepLink(Zatoshi(zatoshi).convertZatoshiToZecString()) }
+            it.memo?.let { memo -> sendViewModel.updateMemo(memo) }
+        }?.also { homeViewModel.sendDeepLinkData = null }
+
         onDispose {
             Twig.info { "WrapAndroidSend: onDispose $sendUIState" }
             homeViewModel.onBottomNavBarVisibilityChanged(show = showBottomBarOnDispose.value)
@@ -113,7 +143,8 @@ internal fun WrapAndroidSend(activity: ComponentActivity, onBack: () -> Unit, on
                 }
                 validateAddressJob = scope.launch(Dispatchers.IO) {
                     synchronizer?.let {
-                        isContinueEnabled = sendViewModel.validateAddress(address, it).isNotValid.not()
+                        isContinueEnabled =
+                            sendViewModel.validateAddress(address, it).isNotValid.not()
                     }
                 }
             }
@@ -143,10 +174,15 @@ internal fun WrapAndroidSend(activity: ComponentActivity, onBack: () -> Unit, on
                     )
 
                     when (zecSendValidation) {
-                        is ZecSendExt.ZecSendValidation.Valid -> sendViewModel.onEnterReceiverAddressContinue(it, zecSendValidation.zecSend)
+                        is ZecSendExt.ZecSendValidation.Valid -> sendViewModel.onEnterReceiverAddressContinue(
+                            it,
+                            zecSendValidation.zecSend
+                        )
+
                         is ZecSendExt.ZecSendValidation.Invalid -> {
                             Twig.error { "Error in onContinue after adding address ${zecSendValidation.validationErrors}" }
-                            Toast.makeText(activity, "Error in validation", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(activity, "Error in validation", Toast.LENGTH_SHORT)
+                                .show()
                         }
                     }
                 }
@@ -164,12 +200,15 @@ internal fun WrapAndroidSend(activity: ComponentActivity, onBack: () -> Unit, on
                         convertedAmountWithCurrency = "--",
                         memo = sendViewModel.zecSend?.memo?.value ?: "",
                         recipientType = if ((sendViewModel.zecSend?.destination?.address
-                                ?: "").isShielded())
+                                ?: "").isShielded()
+                        )
                             stringResource(id = R.string.ns_shielded) else stringResource(id = R.string.ns_transparent),
                         receiverAddress = sendViewModel.zecSend?.destination?.address ?: "",
                         subTotal = sendViewModel.zecSend?.amount?.toZecString() ?: "",
-                        networkFees = "${ZcashSdk.MINERS_FEE.value}",
-                        totalAmount = "${sendViewModel.zecSend?.amount?.plus(ZcashSdk.MINERS_FEE)?.toZecString()}"
+                        networkFees = ZcashSdk.MINERS_FEE.toZecString(),
+                        totalAmount = "${
+                            sendViewModel.zecSend?.amount?.plus(ZcashSdk.MINERS_FEE)?.toZecString()
+                        }"
                     ),
                 onBack = sendViewModel::onPreviousSendUiState,
                 onSendZCash = {
@@ -196,7 +235,11 @@ internal fun WrapAndroidSend(activity: ComponentActivity, onBack: () -> Unit, on
                         }
                             .onSuccess {
                                 Twig.info { "Sending Zec: Sent successfully $it" }
-                                sendViewModel.updateSendConfirmationState(SendConfirmationState.Success(it))
+                                sendViewModel.updateSendConfirmationState(
+                                    SendConfirmationState.Success(
+                                        it
+                                    )
+                                )
                             }
                             .onFailure {
                                 Twig.error { "Sending Zec: Send fail $it" }

@@ -1,14 +1,13 @@
 package co.electriccoin.zcash.ui.common
 
 import androidx.annotation.DrawableRes
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
@@ -49,7 +48,7 @@ fun SettingsListItem(@DrawableRes iconRes: Int, title: String, desc: String, mod
                 .fillMaxWidth()
                 .then(modifier)
         ) {
-            Icon(painter = painterResource(id = iconRes), contentDescription = "null", modifier = Modifier.rotate(rotateByDegree))
+            Icon(painter = painterResource(id = iconRes), contentDescription = "null", modifier = Modifier.size(24.dp).rotate(rotateByDegree))
             Spacer(modifier = Modifier.width(14.dp))
             Column(modifier = Modifier.weight(1f)) {
                 TitleMedium(text = title)

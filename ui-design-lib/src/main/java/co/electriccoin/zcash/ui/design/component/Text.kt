@@ -35,12 +35,16 @@ fun Header(
 fun Body(
     text: String,
     modifier: Modifier = Modifier,
+    maxLines: Int = Int.MAX_VALUE,
+    overflow: TextOverflow = TextOverflow.Clip,
     textAlign: TextAlign = TextAlign.Start,
     color: Color = MaterialTheme.colorScheme.onBackground
 ) {
     Text(
         text = text,
         textAlign = textAlign,
+        maxLines = maxLines,
+        overflow = overflow,
         style = Typography.bodyLarge,
         color = color,
         modifier = modifier

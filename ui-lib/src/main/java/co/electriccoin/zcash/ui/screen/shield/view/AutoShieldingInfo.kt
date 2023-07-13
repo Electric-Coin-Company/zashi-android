@@ -1,12 +1,13 @@
 package co.electriccoin.zcash.ui.screen.shield.view
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
@@ -24,10 +25,10 @@ import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.AlertDialog
 import co.electriccoin.zcash.ui.common.LEARN_UNIFIED_ADDRESSES
+import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.BodyMedium
-import co.electriccoin.zcash.ui.design.component.BodySmall
+import co.electriccoin.zcash.ui.design.component.OutlinedPrimaryButton
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
-import co.electriccoin.zcash.ui.design.component.TertiaryButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 
 @Preview
@@ -42,57 +43,64 @@ fun AutoShieldingInfoPreview() {
 
 @Composable
 fun AutoShieldingInfo(onNext: () -> Unit, onLaunchUrl: (String) -> Unit) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(dimensionResource(id = R.dimen.screen_standard_margin))
-            .verticalScroll(rememberScrollState())
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
     ) {
-        val showLearnMoreDialog = remember {
-            mutableStateOf(false)
-        }
-        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.pageMargin)))
-        Icon(
-            painter = painterResource(id = R.drawable.ic_icon_shielded),
-            contentDescription = null,
+        Column(
             modifier = Modifier
-                .size(180.dp)
-                .align(Alignment.CenterHorizontally),
-            tint = ZcashTheme.colors.onBackgroundHeader
-        )
-        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.pageMargin)))
-        BodyMedium(text = stringResource(id = R.string.autoshielding_title_text))
-        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.pageMargin)))
-        BodySmall(text = stringResource(id = R.string.autoshielding_body_text))
-        Spacer(modifier = Modifier.height(50.dp))
-        PrimaryButton(
-            onClick = onNext,
-            text = stringResource(id = R.string.autoshielding_button_positive).uppercase(),
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .sizeIn(minWidth = dimensionResource(id = R.dimen.button_min_width), minHeight = dimensionResource(id = R.dimen.button_height))
-        )
-        TertiaryButton(
-            onClick = { showLearnMoreDialog.value = true },
-            text = stringResource(id = R.string.autoshielding_button_neutral).uppercase(),
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .sizeIn(minWidth = dimensionResource(id = R.dimen.button_min_width), minHeight = dimensionResource(id = R.dimen.button_height))
-        )
-
-        // show learn more dialog
-        if (showLearnMoreDialog.value) {
-            AlertDialog(
-                title = stringResource(id = R.string.link_to_ecc_title),
-                desc = stringResource(id = R.string.link_to_ecc_description),
-                confirmText = stringResource(id = R.string.open_browser),
-                dismissText = stringResource(id = R.string.ns_cancel),
-                onConfirm = {
-                    showLearnMoreDialog.value = false
-                    onLaunchUrl(LEARN_UNIFIED_ADDRESSES)
-                },
-                onDismiss = { showLearnMoreDialog.value = false }
+                .fillMaxWidth(0.8f)
+                .padding(dimensionResource(id = R.dimen.screen_standard_margin))
+                .verticalScroll(rememberScrollState())
+        ) {
+            val showLearnMoreDialog = remember {
+                mutableStateOf(false)
+            }
+            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.pageMargin)))
+            Icon(
+                painter = painterResource(id = R.drawable.ic_check_shield),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(150.dp)
+                    .align(Alignment.CenterHorizontally),
+                tint = ZcashTheme.colors.onBackgroundHeader
             )
+            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.pageMargin)))
+            Body(text = stringResource(id = R.string.autoshielding_title_text))
+            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.pageMargin)))
+            BodyMedium(text = stringResource(id = R.string.autoshielding_body_text))
+            Spacer(modifier = Modifier.height(50.dp))
+            PrimaryButton(
+                onClick = onNext,
+                text = stringResource(id = R.string.autoshielding_button_positive),
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .fillMaxWidth()
+                    .height(54.dp)
+            )
+            OutlinedPrimaryButton(
+                onClick = { showLearnMoreDialog.value = true },
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .fillMaxWidth()
+                    .height(54.dp),
+                text = stringResource(id = R.string.autoshielding_button_neutral)
+            )
+
+            // show learn more dialog
+            if (showLearnMoreDialog.value) {
+                AlertDialog(
+                    title = stringResource(id = R.string.link_to_ecc_title),
+                    desc = stringResource(id = R.string.link_to_ecc_description),
+                    confirmText = stringResource(id = R.string.open_browser),
+                    dismissText = stringResource(id = R.string.ns_cancel),
+                    onConfirm = {
+                        showLearnMoreDialog.value = false
+                        onLaunchUrl(LEARN_UNIFIED_ADDRESSES)
+                    },
+                    onDismiss = { showLearnMoreDialog.value = false }
+                )
+            }
         }
     }
 }

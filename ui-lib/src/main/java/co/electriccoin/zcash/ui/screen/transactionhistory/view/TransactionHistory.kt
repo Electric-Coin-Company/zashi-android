@@ -36,13 +36,13 @@ fun TransactionHistoryPreview() {
     ZcashTheme(darkTheme = false) {
         Surface {
             val list = listOf(TransactionOverviewFixture.new(memoCount = 2, isSentTransaction = true), TransactionOverviewFixture.new())
-            TransactionHistory(transactionSnapshot = list.toPersistentList(), onBack = {}, onTransactionDetail = {})
+            TransactionHistory(transactionSnapshot = list.toPersistentList(), onBack = {}, onTransactionDetail = {}, onItemLongClick = {})
         }
     }
 }
 
 @Composable
-fun TransactionHistory(transactionSnapshot: ImmutableList<TransactionOverview>, onBack: () -> Unit, onTransactionDetail: (Long) -> Unit) {
+fun TransactionHistory(transactionSnapshot: ImmutableList<TransactionOverview>, onBack: () -> Unit, onTransactionDetail: (Long) -> Unit, onItemLongClick: (TransactionOverview) -> Unit) {
     Column(modifier = Modifier
         .fillMaxSize()
         .padding(dimensionResource(id = R.dimen.screen_standard_margin))
@@ -58,7 +58,7 @@ fun TransactionHistory(transactionSnapshot: ImmutableList<TransactionOverview>, 
         Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.screen_standard_margin)))
         LazyColumn {
             items(transactionSnapshot) { transactionOverview ->
-                TransactionOverviewHistoryRow(transactionOverview = transactionOverview, onItemClick = {onTransactionDetail(it.id)})
+                TransactionOverviewHistoryRow(transactionOverview = transactionOverview, onItemClick = {onTransactionDetail(it.id)}, onItemLongClick = onItemLongClick)
             }
         }
     }

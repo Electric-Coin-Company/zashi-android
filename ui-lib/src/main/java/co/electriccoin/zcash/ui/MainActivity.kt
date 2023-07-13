@@ -28,6 +28,7 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.home.viewmodel.HomeViewModel
 import co.electriccoin.zcash.ui.screen.home.viewmodel.SecretState
 import co.electriccoin.zcash.ui.screen.home.viewmodel.WalletViewModel
+import co.electriccoin.zcash.ui.screen.migration.AndroidAppMigration
 import co.electriccoin.zcash.ui.screen.onboarding.nighthawk.WrapOnBoarding
 import co.electriccoin.zcash.ui.screen.onboarding.nighthawk.view.SeedBackup
 import co.electriccoin.zcash.ui.screen.pin.AndroidPin
@@ -66,6 +67,12 @@ class MainActivity : FragmentActivity() {
         setupUiContent()
 
         monitorForBackgroundSync()
+
+        handleIntentData()
+    }
+
+    private fun handleIntentData() {
+        homeViewModel.intentDataUriForDeepLink = intent?.data
     }
 
     private fun setupSplashScreen() {
@@ -116,6 +123,7 @@ class MainActivity : FragmentActivity() {
 
     @Composable
     private fun MainContent() {
+        walletViewModel.checkForOldAppMigration()
         val configuration = homeViewModel.configurationFlow.collectAsStateWithLifecycle().value
         val secretState = walletViewModel.secretState.collectAsStateWithLifecycle().value
 
@@ -129,6 +137,9 @@ class MainActivity : FragmentActivity() {
             // to the "platform" layer, which is where the arguments will be derived from.
             CompositionLocalProvider(RemoteConfig provides configuration) {
                 when (secretState) {
+                    SecretState.NeedMigrationFromOldApp -> {
+                        AndroidAppMigration()
+                    }
                     SecretState.NeedAuthentication -> {
                         AndroidPin(onBack = { this.finish() } )
                     }

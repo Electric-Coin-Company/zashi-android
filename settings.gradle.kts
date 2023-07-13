@@ -137,6 +137,9 @@ dependencyResolutionManagement {
                 }
             }
         }
+        maven("https://jitpack.io") {
+
+        }
     }
 
     @Suppress("UnstableApiUsage", "MaxLineLength")
@@ -187,6 +190,7 @@ dependencyResolutionManagement {
             val aboutLibrariesVersion = extra["ABOUT_LIBRARIES_VERSION"].toString()
             val retrofitVersion = extra["RETROFIT_VERSION"].toString()
             val okHttpVersion = extra["OKHTTP_VERSION"].toString()
+            val secureStorageVersion = extra["SECURE_STORAGE_VERSION"].toString()
 
             // Standalone versions
             version("flank", flankVersion)
@@ -250,6 +254,7 @@ dependencyResolutionManagement {
             library("square-retrofit-gson", "com.squareup.retrofit2:converter-gson:$retrofitVersion")
             library("square-okhttp", "com.squareup.okhttp3:okhttp:$okHttpVersion")
             library("square-okhttp-logging-interceptor", "com.squareup.okhttp3:logging-interceptor:$okHttpVersion")
+            library("secure-storage", "com.github.gmale:secure-storage-android:$secureStorageVersion")
 
             // Test libraries
             library("androidx-compose-test-junit", "androidx.compose.ui:ui-test-junit4:$androidxComposeVersion")

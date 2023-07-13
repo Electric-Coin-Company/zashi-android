@@ -113,8 +113,8 @@ android {
 
             // Suffixing app package name and version to avoid collisions with other installed Zcash
             // apps (e.g. from Google Play)
-            versionNameSuffix = "-debug"
-            applicationIdSuffix = ".debug"
+            // versionNameSuffix = "-debug"
+            // applicationIdSuffix = ".debug"
         }
         getByName("release").apply {
             isMinifyEnabled = project.property("IS_MINIFY_ENABLED").toString().toBoolean()

@@ -1,6 +1,7 @@
 package co.electriccoin.zcash.ui.design.component
 
 import androidx.annotation.DrawableRes
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -17,6 +18,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -47,6 +49,7 @@ private fun ButtonComposablePreview() {
                 TertiaryButton(onClick = { }, text = "Tertiary")
                 NavigationButton(onClick = { }, text = "Navigation")
                 DottedBorderTextButton(onClick = { }, text = "Scan a payment code")
+                OutlinedPrimaryButton(onClick = { }, text = "Border Button")
             }
         }
     }
@@ -165,6 +168,31 @@ fun TertiaryButton(
             text = text,
             color = ZcashTheme.colors.onTertiary
         )
+    }
+}
+
+@Composable
+fun OutlinedPrimaryButton(
+    onClick: () -> Unit,
+    text: String,
+    modifier: Modifier = Modifier,
+    outerPaddingValues: PaddingValues = PaddingValues(
+        horizontal = ZcashTheme.dimens.spacingDefault,
+        vertical = ZcashTheme.dimens.spacingSmall
+    ),
+    borderStroke: BorderStroke = BorderStroke(1.dp, color = MaterialTheme.colorScheme.primary)
+) {
+    OutlinedButton(
+        onClick = onClick,
+        modifier = modifier.then(
+            Modifier
+                .padding(outerPaddingValues)
+                .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp)
+        ),
+        shape = RoundedCornerShape(8.dp),
+        border = borderStroke
+    ) {
+        Text(text = text, style = Typography.bodyMedium, color = Color.White)
     }
 }
 

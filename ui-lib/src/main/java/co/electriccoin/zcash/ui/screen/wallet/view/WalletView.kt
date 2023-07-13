@@ -45,10 +45,12 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cash.z.ecc.android.sdk.Synchronizer
+import cash.z.ecc.android.sdk.ext.convertZecToZatoshi
 import cash.z.ecc.android.sdk.internal.Twig
 import cash.z.ecc.android.sdk.model.TransactionOverview
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.DisableScreenTimeout
+import co.electriccoin.zcash.ui.common.MIN_ZEC_FOR_SHIELDING
 import co.electriccoin.zcash.ui.design.component.BalanceText
 import co.electriccoin.zcash.ui.design.component.BodyMedium
 import co.electriccoin.zcash.ui.design.component.BodySmall
@@ -79,7 +81,8 @@ fun WalletPreview() {
                 onShieldNow = {},
                 onAddressQrCodes = {},
                 onTransactionDetail = {},
-                onViewTransactionHistory = {}
+                onViewTransactionHistory = {},
+                onLongItemClick = {}
             )
         }
     }
@@ -113,7 +116,8 @@ fun WalletView(
     onShieldNow: () -> Unit,
     onAddressQrCodes: () -> Unit,
     onTransactionDetail: (Long) -> Unit,
-    onViewTransactionHistory: () -> Unit
+    onViewTransactionHistory: () -> Unit,
+    onLongItemClick: (TransactionOverview) -> Unit
 ) {
     Column(modifier = Modifier
         .fillMaxSize()
@@ -140,8 +144,8 @@ fun WalletView(
         if (walletSnapshot.status == Synchronizer.Status.SYNCED) {
             // show synced status with viewpager
             val pageCount = BalanceViewType.TOTAL_VIEWS
-            val state = rememberPagerState()
-            HorizontalPager(pageCount = pageCount, state = state) { pageNo ->
+            val state = rememberPagerState(initialPage = 0) { pageCount }
+            HorizontalPager(state = state) { pageNo ->
                 val balanceDisplayValues = BalanceDisplayValues.getNextValue(LocalContext.current, BalanceViewType.getBalanceViewType(pageNo), walletSnapshot)
                 BalanceView(balanceDisplayValues = balanceDisplayValues)
             }
@@ -150,7 +154,7 @@ fun WalletView(
                 PageIndicator(pageCount = pageCount, pagerState = state)
             }
             // Show shield now button in last if balanceViewType is Transparent and some transparentBalance is available 0.01 ZEC
-            if (balanceViewType == BalanceViewType.TRANSPARENT && walletSnapshot.transparentBalance.available.value > 1000000L) {
+            if (balanceViewType == BalanceViewType.TRANSPARENT && walletSnapshot.transparentBalance.available > MIN_ZEC_FOR_SHIELDING.convertZecToZatoshi()) {
                 Spacer(Modifier.height(dimensionResource(id = R.dimen.pageMargin)))
                 PrimaryButton(
                     onClick = onShieldNow,
@@ -181,7 +185,7 @@ fun WalletView(
             BodyMedium(text = stringResource(id = R.string.ns_recent_activity), color = colorResource(id = co.electriccoin.zcash.ui.design.R.color.ns_parmaviolet))
             Spacer(modifier = Modifier.height(4.dp))
             transactionSnapshot.take(2).toImmutableList().forEach { transactionOverview ->
-                TransactionOverviewHistoryRow(transactionOverview = transactionOverview, onItemClick = { onTransactionDetail(it.id)})
+                TransactionOverviewHistoryRow(transactionOverview = transactionOverview, onItemClick = { onTransactionDetail(it.id) }, onItemLongClick = onLongItemClick)
             }
             Spacer(modifier = Modifier.height(10.dp))
             Row(
@@ -228,25 +232,28 @@ fun PageIndicator(pageCount: Int, pagerState: PagerState) {
 
 @Composable
 fun BalanceView(balanceDisplayValues: BalanceDisplayValues) {
-    Column(modifier = Modifier
-        .fillMaxWidth(0.8f)
-        .height(dimensionResource(id = R.dimen.home_view_pager_min_height)),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Image(
-            painter = painterResource(id = balanceDisplayValues.iconDrawableRes),
-            contentDescription = "logo", contentScale = ContentScale.Inside,
-            modifier = Modifier.align(Alignment.CenterHorizontally)
-        )
-        Spacer(Modifier.height(dimensionResource(id = R.dimen.pageMargin)))
-        if (balanceDisplayValues.balance.isNotBlank()) {
-            BalanceAmountRow(balance = balanceDisplayValues.balance, balanceUnit = balanceDisplayValues.balanceUnit, onFlipClicked = {})
-        }
-        if (balanceDisplayValues.msg.isNullOrBlank().not()) {
-            BodySmall(text = balanceDisplayValues.msg ?: "", textAlign = TextAlign.Center, color = colorResource(id = co.electriccoin.zcash.ui.design.R.color.ns_parmaviolet))
-        }
-        if (balanceDisplayValues.balanceType.isNotBlank()) {
-            BodySmall(text = balanceDisplayValues.balanceType, textAlign = TextAlign.Center, color = colorResource(id = co.electriccoin.zcash.ui.design.R.color.ns_parmaviolet))
+    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+        Column(modifier = Modifier
+            .fillMaxWidth(0.8f)
+            .height(dimensionResource(id = R.dimen.home_view_pager_min_height)),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Image(
+                painter = painterResource(id = balanceDisplayValues.iconDrawableRes),
+                contentDescription = "logo", contentScale = ContentScale.Inside,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            )
+            Spacer(Modifier.height(dimensionResource(id = R.dimen.pageMargin)))
+            if (balanceDisplayValues.balance.isNotBlank()) {
+                BalanceAmountRow(balance = balanceDisplayValues.balance, balanceUnit = balanceDisplayValues.balanceUnit, onFlipClicked = {})
+            }
+            if (balanceDisplayValues.msg.isNullOrBlank().not()) {
+                BodySmall(text = balanceDisplayValues.msg
+                    ?: "", textAlign = TextAlign.Center, color = colorResource(id = co.electriccoin.zcash.ui.design.R.color.ns_parmaviolet))
+            }
+            if (balanceDisplayValues.balanceType.isNotBlank()) {
+                BodySmall(text = balanceDisplayValues.balanceType, textAlign = TextAlign.Center, color = colorResource(id = co.electriccoin.zcash.ui.design.R.color.ns_parmaviolet))
+            }
         }
     }
 }

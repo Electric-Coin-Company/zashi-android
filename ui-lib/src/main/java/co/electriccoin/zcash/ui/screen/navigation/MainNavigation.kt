@@ -74,7 +74,8 @@ internal fun MainActivity.MainNavigation(navHostController: NavHostController, p
                 onAddressQrCodes = { navHostController.navigateJustOnce(RECEIVE_QR_CODES) },
                 onShieldNow = { navHostController.navigateJustOnce(SHIELD) },
                 onTransactionDetail = { navHostController.navigateJustOnce(NavigationTargets.navigationRouteTransactionDetails(transactionId = it)) },
-                onViewTransactionHistory = { navHostController.navigateJustOnce(TRANSACTION_HISTORY) }
+                onViewTransactionHistory = { navHostController.navigateJustOnce(TRANSACTION_HISTORY) },
+                onSendFromDeepLink = { navHostController.navigateJustOnce(SEND_MONEY) }
             )
         }
         composable(BottomNavItem.Transfer.route) {

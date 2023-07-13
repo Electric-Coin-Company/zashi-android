@@ -43,6 +43,14 @@ internal fun Context.showMessage(message: String) {
     Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
 }
 
+internal fun ByteArray.toFormattedString(): String {
+    var txId = ""
+    for (i in (this.size - 1) downTo 0) {
+        txId += String.format("%02x", this[i])
+    }
+    return txId
+}
+
 internal fun FragmentActivity.authenticate(description: String, title: String, block: () -> Unit) {
     val callback = object : BiometricPrompt.AuthenticationCallback() {
         override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {

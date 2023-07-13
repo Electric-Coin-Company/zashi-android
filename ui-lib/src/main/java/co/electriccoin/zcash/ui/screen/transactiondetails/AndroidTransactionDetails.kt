@@ -9,7 +9,6 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import cash.z.ecc.android.sdk.Synchronizer
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.common.onLaunchUrl
@@ -21,6 +20,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -46,9 +47,6 @@ internal fun WrapAndroidTransactionDetails(activity: ComponentActivity, transact
             homeViewModel.onBottomNavBarVisibilityChanged(show = previousVisibility)
         }
     }
-    val synchronizer: MutableState<Synchronizer?> = remember {
-        mutableStateOf(null)
-    }
     val synchronizerJob: MutableState<Job?> = remember {
         mutableStateOf(null)
     }
@@ -59,16 +57,10 @@ internal fun WrapAndroidTransactionDetails(activity: ComponentActivity, transact
 
     LaunchedEffect(key1 = Unit) {
         synchronizerJob.value = scope.launch(Dispatchers.IO) {
-            walletViewModel.synchronizer.collectLatest {
-                synchronizer.value = it
-            }
-        }
-
-        scope.launch {
-            synchronizer.value?.let {
-                walletViewModel.transactionUiModel(transactionId, it).collectLatest { uiModel ->
-                    transactionDetailsUIModel.value = uiModel
-                }
+            val synchronizerVal = walletViewModel.synchronizer.filterNotNull().first()
+            walletViewModel.transactionUiModel(transactionId, synchronizerVal).collectLatest { uiModel ->
+                Twig.info { "Synchronizer value is $synchronizerVal and ui mode is $uiModel" }
+                transactionDetailsUIModel.value = uiModel
             }
         }
     }

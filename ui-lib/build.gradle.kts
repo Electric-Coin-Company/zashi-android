@@ -83,6 +83,7 @@ dependencies {
     implementation(libs.square.retrofit.gson)
     implementation(libs.square.okhttp)
     implementation(libs.square.okhttp.logging.interceptor)
+    implementation(libs.secure.storage)
 
     implementation(projects.buildInfoLib)
     implementation(projects.configurationApiLib)

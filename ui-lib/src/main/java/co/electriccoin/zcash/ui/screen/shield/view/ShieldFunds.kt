@@ -14,11 +14,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -32,10 +34,12 @@ import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.TitleLarge
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.shield.model.ShieldingProcessState
+import com.airbnb.lottie.LottieProperty
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
+import com.airbnb.lottie.compose.rememberLottieDynamicProperties
+import com.airbnb.lottie.compose.rememberLottieDynamicProperty
 
 @Preview
 @Composable
@@ -54,6 +58,15 @@ fun ShieldFunds(onBack: () -> Unit, shieldingProcessState: ShieldingProcessState
         .padding(dimensionResource(id = R.dimen.screen_standard_margin))
         .verticalScroll(rememberScrollState())
     ) {
+        val dynamicProperties = rememberLottieDynamicProperties(
+            rememberLottieDynamicProperty(
+                property = LottieProperty.COLOR,
+                value = MaterialTheme.colorScheme.primary.toArgb(),
+                keyPath = arrayOf(
+                    "**"
+                )
+            )
+        )
         val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(shieldingProcessState.animRes))
         IconButton(onClick = onBack, modifier = Modifier.size(dimensionResource(id = R.dimen.back_icon_size))) {
             Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = stringResource(R.string.receive_back_content_description))
@@ -68,10 +81,10 @@ fun ShieldFunds(onBack: () -> Unit, shieldingProcessState: ShieldingProcessState
 
         LottieAnimation(
             composition = composition,
-            iterations = LottieConstants.IterateForever,
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .height(250.dp)
+                .height(250.dp),
+            dynamicProperties = if (shieldingProcessState == ShieldingProcessState.CREATING) dynamicProperties else null
         )
 
         Spacer(modifier = Modifier.weight(1f))

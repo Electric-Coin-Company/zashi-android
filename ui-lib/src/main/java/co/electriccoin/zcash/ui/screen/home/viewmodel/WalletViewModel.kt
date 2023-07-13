@@ -24,6 +24,9 @@ import cash.z.ecc.sdk.type.fromResources
 import co.electriccoin.zcash.global.getInstance
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.ANDROID_STATE_FLOW_TIMEOUT
+import co.electriccoin.zcash.ui.common.HAS_SEED_PHRASE
+import co.electriccoin.zcash.ui.common.OldSecurePreference
+import co.electriccoin.zcash.ui.common.SEED_PHRASE
 import co.electriccoin.zcash.ui.common.throttle
 import co.electriccoin.zcash.ui.preference.EncryptedPreferenceKeys
 import co.electriccoin.zcash.ui.preference.EncryptedPreferenceSingleton
@@ -77,6 +80,29 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
     private val persistWalletMutex = Mutex()
 
     /**
+     * This preference is used to get the data from old app version before migration to compose.
+     * Don't use for new value storage
+     */
+    private val oldSecurePreference by lazy { OldSecurePreference(application) }
+
+    /**
+     * Flow to determine weather we need to migrate old app or not
+     */
+    private val isMigrationRequiredFromOldWallet = MutableStateFlow(false)
+
+    /**
+     * Here we check if user is trying to migrate from old app to compose version. In old app we store local data
+     * differently so we check if seed words are available then migrate them to new wallet.
+     * This method will update [isMigrationRequiredFromOldWallet] and that will impact the [secretState]. For doing
+     * the operation on IO thread to avoid violation we defined as a method
+     */
+    fun checkForOldAppMigration() {
+        viewModelScope.launch(Dispatchers.IO) {
+            isMigrationRequiredFromOldWallet.update { oldSecurePreference.getBoolean(HAS_SEED_PHRASE) && oldSecurePreference.getString(SEED_PHRASE).isNotBlank() }
+        }
+    }
+
+    /**
      * Synchronizer that is retained long enough to survive configuration changes.
      */
     val synchronizer = walletCoordinator.synchronizer.stateIn(
@@ -122,7 +148,7 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
         val preferenceProvider = StandardPreferenceSingleton.getInstance(application)
         emit(StandardPreferenceKeys.LAST_ENTERED_PIN.getValue(preferenceProvider).isNotBlank())
     }.combine(isUserAuthenticated) { isAuthenticationEnabled, isUserAuthenticated ->
-        if(isAuthenticationEnabled) {
+        if (isAuthenticationEnabled) {
             isUserAuthenticated.not()
         } else {
             false
@@ -130,8 +156,11 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     val secretState: StateFlow<SecretState> = run {
-        combine(walletCoordinator.persistableWallet, isBackupComplete, isAuthenticationRequire) { persistableWallet: PersistableWallet?, isBackupComplete: Boolean, isAuthenticationRequire: Boolean ->
-            if (isAuthenticationRequire) {
+        combine(walletCoordinator.persistableWallet, isBackupComplete, isAuthenticationRequire, isMigrationRequiredFromOldWallet) { persistableWallet: PersistableWallet?, isBackupComplete: Boolean, isAuthenticationRequire: Boolean,
+            isMigrationRequired ->
+            if (isMigrationRequired) {
+                SecretState.NeedMigrationFromOldApp
+            } else if (isAuthenticationRequire) {
                 SecretState.NeedAuthentication
             } else if (null == persistableWallet) {
                 SecretState.None
@@ -325,6 +354,7 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
  */
 sealed class SecretState {
     object Loading : SecretState()
+    object NeedMigrationFromOldApp: SecretState()
     object NeedAuthentication : SecretState()
     object None : SecretState()
     class NeedsBackup(val persistableWallet: PersistableWallet) : SecretState()

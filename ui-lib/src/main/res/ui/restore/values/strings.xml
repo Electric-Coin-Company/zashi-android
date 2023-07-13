@@ -87,7 +87,7 @@
     <string name="ns_pending">Pending</string>
     <string name="ns_pending_confirmations">Pending %s</string>
     <string name="ns_confirmed">Confirmed</string>
-    <string name="ns_view_block_explorer">View on Block explorer</string>
+    <string name="ns_view_block_explorer">View on ZcashBlockExplorer.com</string>
     <string name="ns_view_on_explorer">View on explorer</string>
     <string name="ns_time_utc">Time (UTC)</string>
     <string name="ns_block_id">Block ID</string>
@@ -137,7 +137,7 @@
     <string name="ns_backup_wallet_pdf">Save as PDF</string>
     <string name="ns_rescan_wallet">Rescan wallet</string>
     <string name="ns_rescan_wallet_text">Rescan wallet balances to troubleshoot issues.</string>
-    <string name="ns_rescan_wallet_body">![CDATA[This fix may take a while!<br/><br/>A <b>FULL</b> scan will rewind %1$s blocks to this wallet\'s birthday and take around %2$s.<br/><br/>A <b>WIPE</b> is like a full scan but it first deletes all data then restores it from your backup seed words.]]</string>
+    <string name="ns_rescan_wallet_body">![CDATA[This fix may take a while!<br /><br />A <b>FULL</b> scan will rewind %1$s blocks to this wallet\'s birthday and take around %2$s.<br /><br />A <b>WIPE</b> is like a full scan but it first deletes all data then restores it from your backup seed words.]]</string>
     <string name="ns_rescan_wallet_full">Full rescan</string>
     <string name="ns_rescan_wallet_wipe">Wipe &amp; restart</string>
     <string name="ns_fiat_currency">Fiat Currency</string>
@@ -202,12 +202,12 @@
     <string name="ns_button_skip">Skip for now</string>
     <string name="ns_backup_done">Done</string>
     <string name="ns_view_wallet">View Wallet</string>
-    <string name="ns_exit_restore_flow_text">Are you sure? For security, the words that you have entered will be cleared!</string>
+    <string name="ns_exit_restore_flow_text">Are you certain? For security purposes, the words you have entered will be cleared!</string>
     <string name="ns_exit_restore_flow_title">Abort Restore?</string>
     <string name="ns_stay">Stay</string>
     <string name="ns_exit">Exit</string>
-    <string name="ns_landing_create_success_message">Wallet created! Congratulations!</string>
-    <string name="ns_landing_import_success_message">Wallet imported! Congratulations!</string>
+    <string name="ns_landing_create_success_message">Congratulations! Your wallet has been successfully created!</string>
+    <string name="ns_landing_import_success_message">Congratulations! Your wallet has been successfully imported!</string>
 
     <!-- Send Flow -->
     <string name="ns_scan_payment_request">Scan a Payment Request</string>
@@ -245,7 +245,7 @@
     <string name="ns_send_and_receive_zcash">Send and receive Zcash</string>
     <string name="ns_add_address_hint">Add address here</string>
     <string name="ns_paste_from_clip_board">Paste from clipboard</string>
-    <string name="ns_clipboard_wrong_text_paste_error">Seems last copied value is not a Zcash Address</string>
+    <string name="ns_clipboard_wrong_text_paste_error">It appears that the last copied value is not a valid Zcash address.</string>
     <string name="ns_memo">Memo</string>
     <string name="ns_pool">Pool</string>
     <string name="ns_network">Network</string>
@@ -257,6 +257,9 @@
     <string name="ns_transparent">Transparent</string>
     <string name="ns_include_reply_to">include reply-to</string>
     <string name="transaction_history_format_date_time_brief" translatable="false">MM/dd/yy h:mma</string>
+    <string name="ns_migration_app_title">Migrating form Old App version</string>
+    <string name="ns_migration_app_error">We apologize for the inconvenience, but it seems that an error has occurred while importing the data from the previous storage. To ensure a smooth backup process, we recommend taking the following steps:\n\n1) Uninstall the app or clear the data to remove any conflicting information.\n2) Manually enter the seed words from your backup to initiate the backup process.</string>
+    <string name="ns_migration_app_info">We have implemented an enhanced secure method for storing data locally. To ensure the integrity of your wallet, we need to migrate your seed words. You have two options:\n\n A) Proceed automatically: Your seed words will be migrated seamlessly to the new storage. No further action is required on your part.\n B) Choose manual migration: If you prefer not to migrate automatically, please uninstall the app or clear the app\'s data. Afterward, you can restore your wallet by manually entering the seed words.\n\n Would you like to proceed with automatic migration?</string>
 
     <string name="buy_zec_dialog_title">Buy ZEC from MoonPay</string>
     <string name="buy_zec_dialog_msg">Customers that are not US residents can purchase Zcash (ZEC) by registering with MoonPay.\n\nYour Zcash T-Address has been copied to the clipboard.\nChoose \"Open Browser\" below, Select \'Zcash (ZEC)\' as the receiving coin once MoonPay loads, and then paste your T-address.</string>
@@ -268,8 +271,8 @@
     <string name="insufficient_msg">You don\'t have sufficient balance to send</string>
     <string name="memo_max_length_msg">You have written maximum length to send a message</string>
 
-    <string name="autoshielding_title_text">Nighthawk is now <b>Shielded by Default</b>. This is to ensure maximum privacy.</string>
-    <string name="autoshielding_body_text"><b>Autoshielding</b> means any funds coming into your transparent address will automatically be moved to your shielded wallet.\n\nWe’ll always update you on the latest privacy-preserving best practices and recommendations.</string>
+    <string name="autoshielding_title_text">Nighthawk Wallet is <b>Shielded-by-Default</b>. We have implemented measures to guarantee the highest level of confidentiality for your funds.</string>
+    <string name="autoshielding_body_text"><b>Auto-Shielding</b> means any funds coming into your transparent address will automatically be moved to your shielded address.\n\nWe are committed to providing regular updates on the latest privacy-preserving best practices and recommendations to keep you well-informed.</string>
     <string name="autoshielding_button_positive">Great!</string>
     <string name="autoshielding_button_neutral">Learn more</string>
     <string name="link_to_ecc_title">Redirecting to ElectricCoin.co</string>
@@ -278,4 +281,5 @@
     <string name="open_settings">Open Settings</string>
     <string name="notification_permission_dialog_title">Alert</string>
     <string name="notification_permission_dialog_desc">To post any notification we need to provide Notifications permission.\nFrom Settings please allow Notifications permission</string>
+    <string name="transaction_id_copied">Transaction Id has been copied to the clipboard.</string>
 </resources>
