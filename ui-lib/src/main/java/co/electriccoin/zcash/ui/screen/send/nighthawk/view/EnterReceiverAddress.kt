@@ -106,6 +106,7 @@ fun EnterReceiverAddress(receiverAddress: String, isContinueBtnEnabled: Boolean,
                 onClick = {
                     clipboardManager.getText()?.let {
                         address.value = it.text
+                        onValueChanged(it.text)
                     }
                 },
                 text = stringResource(id = R.string.ns_paste_from_clip_board),
