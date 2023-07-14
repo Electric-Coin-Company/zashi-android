@@ -95,13 +95,19 @@ class SendViewModel(val context: Application): AndroidViewModel(application = co
     fun updateEnterZecUiStateWithWalletSnapshot(walletSnapshot: WalletSnapshot) {
         Twig.info { "SendVieModel walletSnapShot $walletSnapshot" }
         _enterZecUIState.getAndUpdate {
-            val availableZatoshi = walletSnapshot.saplingBalance.available
-            val isEnoughBalance = ((it.enteredAmount.toDoubleOrNull()?.toZec()?.convertZecToZatoshi()?.value ?: 0L) + ZcashSdk.MINERS_FEE.value) <= availableZatoshi.value
+            val availableZatoshi = walletSnapshot.saplingBalance.available - ZcashSdk.MINERS_FEE
+            val isEnoughBalance = (it.enteredAmount.toDoubleOrNull()?.toZec()?.convertZecToZatoshi()?.value ?: 0L) <= availableZatoshi.value
             it.copy(
                 spendableBalance = availableZatoshi.toZecString(),
                 isEnoughBalance = isEnoughBalance,
                 isScanPaymentCodeOptionAvailable = it.enteredAmount == "0" && isEnoughBalance
             )
+        }
+    }
+
+    fun onSendAllClicked(enteredAmount: String) {
+        _enterZecUIState.update {
+            it.copy(enteredAmount = enteredAmount)
         }
     }
 

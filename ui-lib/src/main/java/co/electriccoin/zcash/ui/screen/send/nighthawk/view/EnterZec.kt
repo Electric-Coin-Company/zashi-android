@@ -2,6 +2,7 @@ package co.electriccoin.zcash.ui.screen.send.nighthawk.view
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -63,7 +64,8 @@ fun EnterZecPreview() {
                 onContinue = {},
                 onTopUpWallet = {},
                 onNotEnoughZCash = {},
-                onKeyPressed = {}
+                onKeyPressed = {},
+                onSendAllClicked = {}
             )
         }
     }
@@ -77,7 +79,8 @@ fun EnterZec(
     onContinue: () -> Unit,
     onTopUpWallet: () -> Unit,
     onNotEnoughZCash: () -> Unit,
-    onKeyPressed: (NumberPadValueTypes) -> Unit
+    onKeyPressed: (NumberPadValueTypes) -> Unit,
+    onSendAllClicked: (String) -> Unit
 ) {
     Column(modifier = Modifier
         .fillMaxSize()
@@ -99,7 +102,14 @@ fun EnterZec(
                 TitleLarge(text = stringResource(id = R.string.ns_nighthawk), textAlign = TextAlign.Center, modifier = Modifier.align(Alignment.CenterHorizontally))
                 Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.pageMargin)))
                 BodyMedium(text = stringResource(id = R.string.ns_choose_send), textAlign = TextAlign.Center, modifier = Modifier.align(Alignment.CenterHorizontally), color = ZcashTheme.colors.surfaceEnd)
-                BodyMedium(text = stringResource(id = R.string.ns_spendable_balance, enterZecUIState.spendableBalance, enterZecUIState.amountUnit), textAlign = TextAlign.Center, modifier = Modifier.align(Alignment.CenterHorizontally), color = ZcashTheme.colors.surfaceEnd)
+                BodyMedium(
+                    text = stringResource(id = R.string.ns_spendable_balance, enterZecUIState.spendableBalance, enterZecUIState.amountUnit),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .clickable { onSendAllClicked(enterZecUIState.spendableBalance) },
+                    color = ZcashTheme.colors.surfaceEnd
+                )
                 Spacer(modifier = Modifier.height(40.dp))
                 BalanceAmountRow(balance = enterZecUIState.enteredAmount, balanceUnit = enterZecUIState.amountUnit, onFlipClicked = {}, modifier = Modifier.align(Alignment.CenterHorizontally))
                 Spacer(modifier = Modifier.height(12.dp))
