@@ -115,7 +115,8 @@ internal fun WrapAndroidSend(
                     sendViewModel.clearViewModelSavedData()
                     onBack()
                 },
-                onKeyPressed = sendViewModel::onKeyPressed
+                onKeyPressed = sendViewModel::onKeyPressed,
+                onSendAllClicked = sendViewModel::onSendAllClicked
             )
         }
 
