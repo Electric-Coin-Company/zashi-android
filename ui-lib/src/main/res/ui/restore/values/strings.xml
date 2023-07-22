@@ -282,4 +282,7 @@
     <string name="notification_permission_dialog_title">Alert</string>
     <string name="notification_permission_dialog_desc">To post any notification we need to provide Notifications permission.\nFrom Settings please allow Notifications permission</string>
     <string name="transaction_id_copied">Transaction Id has been copied to the clipboard.</string>
+    <string name="dialog_first_use_view_tx_message">Are you sure you\'d like to leave the app? This could reduce privacy, if you do not trust the destination.</string>
+    <string name="dialog_first_use_view_tx_positive">View Tx</string>
+    <string name="dialog_first_use_view_tx_title">Potential Privacy Risk</string>
 </resources>

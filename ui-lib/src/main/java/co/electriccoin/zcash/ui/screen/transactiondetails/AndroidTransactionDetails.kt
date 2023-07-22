@@ -9,6 +9,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.common.onLaunchUrl
@@ -31,7 +32,11 @@ internal fun MainActivity.AndroidTransactionDetails(transactionId: Long, onBack:
 }
 
 @Composable
-internal fun WrapAndroidTransactionDetails(activity: ComponentActivity, transactionId: Long, onBack: () -> Unit) {
+internal fun WrapAndroidTransactionDetails(
+    activity: ComponentActivity,
+    transactionId: Long,
+    onBack: () -> Unit
+) {
     Twig.info { "TransactionId $transactionId" }
     val homeViewModel by activity.viewModels<HomeViewModel>()
     val walletViewModel by activity.viewModels<WalletViewModel>()
@@ -58,13 +63,27 @@ internal fun WrapAndroidTransactionDetails(activity: ComponentActivity, transact
     LaunchedEffect(key1 = Unit) {
         synchronizerJob.value = scope.launch(Dispatchers.IO) {
             val synchronizerVal = walletViewModel.synchronizer.filterNotNull().first()
-            walletViewModel.transactionUiModel(transactionId, synchronizerVal).collectLatest { uiModel ->
-                Twig.info { "Synchronizer value is $synchronizerVal and ui mode is $uiModel" }
-                transactionDetailsUIModel.value = uiModel
-            }
+            walletViewModel.transactionUiModel(transactionId, synchronizerVal)
+                .collectLatest { uiModel ->
+                    Twig.info { "Synchronizer value is $synchronizerVal and ui mode is $uiModel" }
+                    transactionDetailsUIModel.value = uiModel
+                }
         }
     }
     Twig.info { "TransactionDetailUiModel: ${transactionDetailsUIModel.value}" }
 
-    TransactionDetails(transactionDetailsUIModel = transactionDetailsUIModel.value, onBack = onBack, viewOnBlockExplorer = { activity.onLaunchUrl(it) })
+    val isNavigateAwayFromAppWarningShown =
+        homeViewModel.isNavigateAwayFromWarningShown.collectAsStateWithLifecycle().value
+
+    TransactionDetails(
+        transactionDetailsUIModel = transactionDetailsUIModel.value,
+        isNavigateAwayFromAppWarningShown = isNavigateAwayFromAppWarningShown,
+        onBack = onBack,
+        viewOnBlockExplorer = { url, updateWarningStatus ->
+            if (updateWarningStatus) {
+                homeViewModel.updateNavigateAwayFromWaringFlag(true)
+            }
+            activity.onLaunchUrl(url)
+        }
+    )
 }

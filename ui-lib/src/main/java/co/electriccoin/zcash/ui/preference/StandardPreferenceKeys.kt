@@ -28,6 +28,8 @@ object StandardPreferenceKeys {
 
     val IS_UNSTOPPABLE_SERVICE_ENABLED = BooleanPreferenceDefault(PreferenceKey("is_unstoppable_service_enabled"), false)
 
+    val IS_NAVIGATE_AWAY_FROM_APP_WARNING_SHOWN = BooleanPreferenceDefault(PreferenceKey("is_navigate_from_app_warning_shown"), false)
+
     /**
      * The fiat currency that the user prefers.
      */

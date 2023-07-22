@@ -11,13 +11,16 @@ import co.electriccoin.zcash.ui.common.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
 import co.electriccoin.zcash.ui.preference.StandardPreferenceSingleton
 import co.electriccoin.zcash.ui.screen.home.model.WalletSnapshot
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -71,4 +74,20 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         }
         return false
     }
+
+    fun updateNavigateAwayFromWaringFlag(isShown: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val preferenceProvider = StandardPreferenceSingleton.getInstance(getApplication())
+            StandardPreferenceKeys.IS_NAVIGATE_AWAY_FROM_APP_WARNING_SHOWN.putValue(preferenceProvider, isShown)
+        }
+    }
+
+    val isNavigateAwayFromWarningShown = flow {
+        val preferenceProvider = StandardPreferenceSingleton.getInstance(application)
+        emit(StandardPreferenceKeys.IS_NAVIGATE_AWAY_FROM_APP_WARNING_SHOWN.getValue(preferenceProvider = preferenceProvider))
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+        false
+    )
 }
