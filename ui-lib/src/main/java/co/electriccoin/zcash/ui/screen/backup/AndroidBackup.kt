@@ -1,14 +1,12 @@
 package co.electriccoin.zcash.ui.screen.backup
 
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import cash.z.ecc.android.sdk.model.PersistableWallet
+import co.electriccoin.zcash.spackle.ClipboardManagerUtil
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
@@ -54,7 +52,13 @@ internal fun WrapLongNewWallet(
 ) {
     WrapLongNewWallet(
         persistableWallet,
-        onCopyToClipboard = { copyToClipboard(activity.applicationContext, persistableWallet) },
+        onCopyToClipboard = {
+            ClipboardManagerUtil.copyToClipboard(
+                activity.applicationContext,
+                activity.getString(R.string.new_wallet_clipboard_tag),
+                persistableWallet.seedPhrase.joinToString()
+            )
+        },
         onBackupComplete = onBackupComplete
     )
 }
@@ -95,7 +99,13 @@ private fun WrapShortNewWallet(
 ) {
     WrapShortNewWallet(
         persistableWallet,
-        onCopyToClipboard = { copyToClipboard(activity.applicationContext, persistableWallet) },
+        onCopyToClipboard = {
+            ClipboardManagerUtil.copyToClipboard(
+                activity.applicationContext,
+                activity.getString(R.string.new_wallet_clipboard_tag),
+                persistableWallet.seedPhrase.joinToString()
+            )
+        },
         onNewWalletComplete = onBackupComplete
     )
 }
@@ -111,13 +121,4 @@ private fun WrapShortNewWallet(
         onCopyToClipboard = onCopyToClipboard,
         onComplete = onNewWalletComplete,
     )
-}
-
-internal fun copyToClipboard(context: Context, persistableWallet: PersistableWallet) {
-    val clipboardManager = context.getSystemService(ClipboardManager::class.java)
-    val data = ClipData.newPlainText(
-        context.getString(R.string.new_wallet_clipboard_tag),
-        persistableWallet.seedPhrase.joinToString()
-    )
-    clipboardManager.setPrimaryClip(data)
 }

@@ -6,7 +6,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import co.electriccoin.zcash.spackle.ClipboardManagerUtil
 import co.electriccoin.zcash.ui.MainActivity
+import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.screen.address.view.WalletAddresses
 import co.electriccoin.zcash.ui.screen.home.viewmodel.WalletViewModel
 
@@ -31,7 +33,14 @@ private fun WrapWalletAddresses(
     } else {
         WalletAddresses(
             walletAddresses,
-            goBack
+            goBack,
+            onCopyToClipboard = { address ->
+                ClipboardManagerUtil.copyToClipboard(
+                    activity.applicationContext,
+                    activity.getString(R.string.wallet_address_clipboard_tag),
+                    address
+                )
+            },
         )
     }
 }
