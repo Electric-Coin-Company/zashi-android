@@ -103,10 +103,6 @@ internal fun WrapAndroidSend(
                 },
                 onContinue = sendViewModel::onNextSendUiState,
                 onTopUpWallet = onTopUpWallet,
-                onNotEnoughZCash = {
-                    sendViewModel.clearViewModelSavedData()
-                    onBack()
-                },
                 onKeyPressed = sendViewModel::onKeyPressed,
                 onSendAllClicked = sendViewModel::onSendAllClicked
             )

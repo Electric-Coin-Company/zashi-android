@@ -37,7 +37,6 @@ import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.BodyMedium
 import co.electriccoin.zcash.ui.design.component.DottedBorderTextButton
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
-import co.electriccoin.zcash.ui.design.component.TertiaryButton
 import co.electriccoin.zcash.ui.design.component.TitleLarge
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.send.nighthawk.model.EnterZecUIState
@@ -63,7 +62,6 @@ fun EnterZecPreview() {
                 onScanPaymentCode = {},
                 onContinue = {},
                 onTopUpWallet = {},
-                onNotEnoughZCash = {},
                 onKeyPressed = {},
                 onSendAllClicked = {}
             )
@@ -78,7 +76,6 @@ fun EnterZec(
     onScanPaymentCode: () -> Unit,
     onContinue: () -> Unit,
     onTopUpWallet: () -> Unit,
-    onNotEnoughZCash: () -> Unit,
     onKeyPressed: (NumberPadValueTypes) -> Unit,
     onSendAllClicked: (String) -> Unit
 ) {
@@ -140,14 +137,6 @@ fun EnterZec(
                     PrimaryButton(
                         onClick = onTopUpWallet,
                         text = stringResource(id = R.string.ns_top_up_wallet).uppercase(),
-                        modifier = Modifier
-                            .align(Alignment.CenterHorizontally)
-                            .sizeIn(minWidth = 220.dp, minHeight = dimensionResource(id = R.dimen.button_height))
-                    )
-
-                    TertiaryButton(
-                        onClick = onNotEnoughZCash,
-                        text = stringResource (id = R.string.ns_not_enough_zcash).uppercase(),
                         modifier = Modifier
                             .align(Alignment.CenterHorizontally)
                             .sizeIn(minWidth = 220.dp, minHeight = dimensionResource(id = R.dimen.button_height))
