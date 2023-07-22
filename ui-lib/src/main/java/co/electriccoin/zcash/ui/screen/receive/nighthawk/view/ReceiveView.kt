@@ -1,6 +1,7 @@
 package co.electriccoin.zcash.ui.screen.receive.nighthawk.view
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -34,13 +35,25 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 fun ReceiveViewPreview() {
     ZcashTheme(darkTheme = false) {
         Surface {
-            ReceiveView(onBack = {})
+            ReceiveView(
+                onBack = {},
+                onTopUpWallet = {},
+                onCopyPrivateAddress = {},
+                onShowQrCode = {},
+                onCopyTransparentAddress = {}
+            )
         }
     }
 }
 
 @Composable
-fun ReceiveView(onBack: () -> Unit) {
+fun ReceiveView(
+    onBack: () -> Unit,
+    onShowQrCode: () -> Unit,
+    onCopyPrivateAddress: () -> Unit,
+    onTopUpWallet: () -> Unit,
+    onCopyTransparentAddress: () -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -61,40 +74,63 @@ fun ReceiveView(onBack: () -> Unit) {
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
         Spacer(Modifier.height(dimensionResource(id = R.dimen.pageMargin)))
-        TitleLarge(text = stringResource(id = R.string.ns_nighthawk), textAlign = TextAlign.Center, modifier = Modifier.align(Alignment.CenterHorizontally))
+        TitleLarge(
+            text = stringResource(id = R.string.ns_nighthawk),
+            textAlign = TextAlign.Center,
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        )
         Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.pageMargin)))
-        BodyMedium(text = stringResource(id = R.string.ns_send_and_receive_zcash), textAlign = TextAlign.Center, modifier = Modifier.align(Alignment.CenterHorizontally), color = ZcashTheme.colors.surfaceEnd)
+        BodyMedium(
+            text = stringResource(id = R.string.ns_send_and_receive_zcash),
+            textAlign = TextAlign.Center,
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            color = ZcashTheme.colors.surfaceEnd
+        )
         Spacer(modifier = Modifier.height(40.dp))
-        BodyMedium(text = stringResource(id = R.string.ns_receive_money_securely), color = ZcashTheme.colors.surfaceEnd)
+        BodyMedium(
+            text = stringResource(id = R.string.ns_receive_money_securely),
+            color = ZcashTheme.colors.surfaceEnd
+        )
         Spacer(modifier = Modifier.height(13.dp))
         SettingsListItem(
             iconRes = R.drawable.ic_icon_scan_qr,
             title = stringResource(id = R.string.ns_show_qr_code),
             desc = stringResource(id = R.string.ns_show_qr_code_text),
-            modifier = Modifier.heightIn(min = dimensionResource(id = R.dimen.setting_list_item_min_height))
+            modifier = Modifier
+                .heightIn(min = dimensionResource(id = R.dimen.setting_list_item_min_height))
+                .clickable { onShowQrCode() }
         )
         Spacer(modifier = Modifier.height(10.dp))
         SettingsListItem(
             iconRes = R.drawable.ic_content_copy,
             title = stringResource(id = R.string.ns_copy_private_address),
             desc = stringResource(id = R.string.ns_copy_private_address_text),
-            modifier = Modifier.heightIn(min = dimensionResource(id = R.dimen.setting_list_item_min_height))
+            modifier = Modifier
+                .heightIn(min = dimensionResource(id = R.dimen.setting_list_item_min_height))
+                .clickable { onCopyPrivateAddress() }
         )
         Spacer(modifier = Modifier.height(10.dp))
         SettingsListItem(
             iconRes = R.drawable.ic_icon_top_up,
             title = stringResource(id = R.string.ns_top_up_your_wallet),
             desc = stringResource(id = R.string.ns_top_up_text),
-            modifier = Modifier.heightIn(min = dimensionResource(id = R.dimen.setting_list_item_min_height))
+            modifier = Modifier
+                .heightIn(min = dimensionResource(id = R.dimen.setting_list_item_min_height))
+                .clickable { onTopUpWallet() }
         )
         Spacer(modifier = Modifier.height(26.dp))
-        BodyMedium(text = stringResource(id = R.string.ns_receive_money_publicly), color = ZcashTheme.colors.surfaceEnd)
+        BodyMedium(
+            text = stringResource(id = R.string.ns_receive_money_publicly),
+            color = ZcashTheme.colors.surfaceEnd
+        )
         Spacer(modifier = Modifier.height(15.dp))
         SettingsListItem(
             iconRes = R.drawable.ic_icon_transparent,
             title = stringResource(id = R.string.ns_non_private_address),
             desc = stringResource(id = R.string.ns_receive_money_publicly_text),
-            modifier = Modifier.heightIn(min = dimensionResource(id = R.dimen.setting_list_item_min_height))
+            modifier = Modifier
+                .heightIn(min = dimensionResource(id = R.dimen.setting_list_item_min_height))
+                .clickable { onCopyTransparentAddress() }
         )
     }
 }

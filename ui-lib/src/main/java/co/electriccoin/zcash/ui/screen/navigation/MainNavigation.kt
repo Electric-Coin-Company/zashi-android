@@ -111,7 +111,9 @@ internal fun MainActivity.MainNavigation(navHostController: NavHostController, p
         }
         composable(RECEIVE_MONEY) {
             AndroidReceive(
-                onBack = { navHostController.popBackStackJustOnce(RECEIVE_MONEY) }
+                onBack = { navHostController.popBackStackJustOnce(RECEIVE_MONEY) },
+                onShowQrCode = { navHostController.navigateJustOnce(RECEIVE_QR_CODES) },
+                onTopUpWallet = { navHostController.navigateJustOnce(TOP_UP) }
             )
         }
         composable(TOP_UP) {
