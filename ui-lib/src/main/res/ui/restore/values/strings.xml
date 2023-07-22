@@ -240,7 +240,7 @@
     <string name="ns_view_all_transactions">View transaction history</string>
     <string name="ns_downloading_block">Downloading\n\nBlock %1s of %2s</string>
     <string name="ns_downloading_wallet">Downloading…%1d%%</string>
-    <string name="ns_syncing_wallet">Syncing…%1d%%</string>
+    <string name="ns_syncing_wallet">Syncing…%1$.2f%%</string>
     <string name="ns_syncing_block">Syncing\n\nBlock %1s of %2s</string>
     <string name="ns_send_and_receive_zcash">Send and receive Zcash</string>
     <string name="ns_add_address_hint">Add address here</string>

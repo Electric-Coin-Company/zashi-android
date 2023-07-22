@@ -110,7 +110,7 @@ fun TransactionDetails(transactionDetailsUIModel: TransactionDetailsUIModel?, on
         Row(
             modifier = Modifier.align(Alignment.CenterHorizontally),
         ) {
-            BalanceText(text = transactionDetailsUIModel.transactionOverview.netValue.toZecString())
+            BalanceText(text = (transactionDetailsUIModel.transactionOverview.netValue - transactionDetailsUIModel.transactionOverview.feePaid).toZecString())
             Spacer(modifier = Modifier.width(4.dp))
             BalanceText(text = stringResource(id = R.string.ns_zec), color = ZcashTheme.colors.surfaceEnd)
         }

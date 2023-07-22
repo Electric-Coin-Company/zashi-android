@@ -11,7 +11,6 @@ import cash.z.ecc.android.sdk.model.toFiatCurrencyState
 import cash.z.ecc.android.sdk.model.toZecString
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.toKotlinLocale
-import kotlin.math.roundToInt
 
 data class WalletDisplayValues(
     val progress: PercentDecimal,
@@ -37,19 +36,19 @@ data class WalletDisplayValues(
                 Locale.current.toKotlinLocale(),
                 MonetarySeparators.current()
             )
-            var fiatCurrencyAmountText = getFiatCurrencyRateValue(context, fiatCurrencyAmountState)
+            val fiatCurrencyAmountText = getFiatCurrencyRateValue(context, fiatCurrencyAmountState)
             var statusIconDrawable = R.drawable.ic_icon_connecting
 
             when (walletSnapshot.status) {
                 Synchronizer.Status.SYNCING -> {
-                    val progressPercent = (walletSnapshot.progress.decimal * 100).roundToInt()
+                    val progressPercent = (walletSnapshot.progress.decimal * 100)
                     progress = walletSnapshot.progress
                     statusText = when (progressPercent) {
-                        0 -> {
+                        0f -> {
                             statusIconDrawable = R.drawable.ic_icon_preparing
                             context.getString(R.string.ns_preparing_scan)
                         }
-                        100 -> {
+                        100f -> {
                             statusIconDrawable = R.drawable.ic_icon_preparing
                             context.getString(R.string.ns_finalizing)
                         }
