@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
+import cash.z.ecc.android.sdk.ext.isShielded
 import cash.z.ecc.android.sdk.model.ZcashNetwork
 import co.electriccoin.zcash.ui.R
 
@@ -101,5 +102,15 @@ internal fun ZcashNetwork.blockExplorerUrlStringId(): Int {
     return when (this) {
         ZcashNetwork.Mainnet -> R.string.ns_block_explorer_url_main_net
         else -> R.string.ns_block_explorer_url_testnet
+    }
+}
+
+internal fun String.addressTypeNameId(): Int {
+    return if (this.isShielded()) {
+        R.string.ns_legacy_shielded_sapling
+    } else if (this.startsWith("u")) {
+        R.string.ns_shielded
+    } else {
+        R.string.ns_transparent
     }
 }

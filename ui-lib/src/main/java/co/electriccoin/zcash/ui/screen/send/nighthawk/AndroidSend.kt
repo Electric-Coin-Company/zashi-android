@@ -23,6 +23,7 @@ import co.electriccoin.zcash.ui.screen.home.viewmodel.HomeViewModel
 import co.electriccoin.zcash.ui.screen.home.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.navigation.BottomNavItem
 import co.electriccoin.zcash.ui.screen.send.ext.ABBREVIATION_INDEX
+import co.electriccoin.zcash.ui.screen.send.model.SendArgumentsWrapper
 import co.electriccoin.zcash.ui.screen.send.nighthawk.model.SendUIState
 import co.electriccoin.zcash.ui.screen.send.nighthawk.view.EnterMessage
 import co.electriccoin.zcash.ui.screen.send.nighthawk.view.EnterReceiverAddress
@@ -40,7 +41,8 @@ internal fun MainActivity.AndroidSend(
     onTopUpWallet: () -> Unit,
     navigateTo: (String) -> Unit,
     onMoreDetails: (Long) -> Unit,
-    onScan: () -> Unit
+    onScan: () -> Unit,
+    sendArgumentsWrapper: SendArgumentsWrapper? = null
 ) {
     WrapAndroidSend(
         activity = this,
@@ -48,7 +50,8 @@ internal fun MainActivity.AndroidSend(
         onTopUpWallet = onTopUpWallet,
         navigateTo = navigateTo,
         onMoreDetails = onMoreDetails,
-        onScan = onScan
+        onScan = onScan,
+        sendArgumentsWrapper = sendArgumentsWrapper
     )
 }
 
@@ -59,7 +62,8 @@ internal fun WrapAndroidSend(
     onTopUpWallet: () -> Unit,
     navigateTo: (String) -> Unit,
     onMoreDetails: (Long) -> Unit,
-    onScan: () -> Unit
+    onScan: () -> Unit,
+    sendArgumentsWrapper: SendArgumentsWrapper? = null
 ) {
     val homeViewModel by activity.viewModels<HomeViewModel>()
     val sendViewModel by activity.viewModels<SendViewModel>()
@@ -83,6 +87,13 @@ internal fun WrapAndroidSend(
             it.amount?.let { zatoshi -> sendViewModel.enteredZecFromDeepLink(Zatoshi(zatoshi).convertZatoshiToZecString()) }
             it.memo?.let { memo -> sendViewModel.updateMemo(memo) }
         }?.also { homeViewModel.sendDeepLinkData = null }
+
+        // Get data after scan the QR code and update sendViewModel receiver address
+        sendArgumentsWrapper?.let {
+            it.recipientAddress?.let { address ->
+                sendViewModel.updateReceiverAddress(address)
+            }
+        }
 
         onDispose {
             Twig.info { "WrapAndroidSend: onDispose $sendUIState" }
@@ -143,9 +154,13 @@ internal fun WrapAndroidSend(
             }
 
             EnterReceiverAddress(
-                receiverAddress = sendViewModel.receiverAddress,
+                receiverAddress = sendArgumentsWrapper?.recipientAddress ?: sendViewModel.receiverAddress,
                 isContinueBtnEnabled = isContinueEnabled,
                 onBack = sendViewModel::onPreviousSendUiState,
+                onScan = {
+                    showBottomBarOnDispose.value = false
+                    onScan()
+                },
                 onValueChanged = { address ->
                     if (address.length <= ABBREVIATION_INDEX) {
                         isContinueEnabled = false

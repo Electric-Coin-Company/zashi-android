@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.ext.ZcashSdk
 import cash.z.ecc.android.sdk.ext.convertZecToZatoshi
-import cash.z.ecc.android.sdk.ext.isShielded
 import cash.z.ecc.android.sdk.ext.toZec
 import cash.z.ecc.android.sdk.model.UnifiedSpendingKey
 import cash.z.ecc.android.sdk.model.ZecSend
@@ -15,8 +14,8 @@ import cash.z.ecc.android.sdk.model.toZecString
 import cash.z.ecc.android.sdk.type.AddressType
 import co.electriccoin.zcash.preference.api.PreferenceProvider
 import co.electriccoin.zcash.spackle.Twig
-import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.UnsUtil
+import co.electriccoin.zcash.ui.common.addressTypeNameId
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
 import co.electriccoin.zcash.ui.preference.StandardPreferenceSingleton
 import co.electriccoin.zcash.ui.screen.home.model.WalletSnapshot
@@ -102,7 +101,7 @@ class SendViewModel(val context: Application) : AndroidViewModel(application = c
         }
     }
 
-    fun updateSendConfirmationState(sendConfirmationState: SendConfirmationState) {
+    private fun updateSendConfirmationState(sendConfirmationState: SendConfirmationState) {
         _sendConfirmationState.update { sendConfirmationState }
     }
 
@@ -133,10 +132,7 @@ class SendViewModel(val context: Application) : AndroidViewModel(application = c
                 amountToSend = zecSend?.amount?.toZecString() ?: "",
                 convertedAmountWithCurrency = "--",
                 memo = zecSend?.memo?.value ?: "",
-                recipientType = if ((zecSend?.destination?.address
-                        ?: "").isShielded()
-                )
-                    context.getString(R.string.ns_shielded) else context.getString(R.string.ns_transparent),
+                recipientType = context.getString((zecSend?.destination?.address ?: "").addressTypeNameId()),
                 receiverAddress = zecSend?.destination?.address ?: "",
                 subTotal = zecSend?.amount?.toZecString() ?: "",
                 networkFees = ZcashSdk.MINERS_FEE.toZecString(),

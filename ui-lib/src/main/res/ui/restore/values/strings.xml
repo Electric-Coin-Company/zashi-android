@@ -254,6 +254,7 @@
     <string name="ns_subtotal">Subtotal</string>
     <string name="ns_total_amount">Total amount</string>
     <string name="ns_shielded">Shielded</string>
+    <string name="ns_legacy_shielded_sapling"> Legacy Shielded Sapling</string>
     <string name="ns_transparent">Transparent</string>
     <string name="ns_include_reply_to">include reply-to</string>
     <string name="transaction_history_format_date_time_brief" translatable="false">MM/dd/yy h:mma</string>

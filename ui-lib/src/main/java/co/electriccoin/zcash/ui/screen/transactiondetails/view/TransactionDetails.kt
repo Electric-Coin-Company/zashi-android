@@ -39,7 +39,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import cash.z.ecc.android.sdk.ext.isShielded
 import cash.z.ecc.android.sdk.fixture.TransactionOverviewFixture
 import cash.z.ecc.android.sdk.model.BlockHeight
 import cash.z.ecc.android.sdk.model.TransactionRecipient
@@ -49,6 +48,7 @@ import cash.z.ecc.android.sdk.model.toZecString
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.AlertDialog
+import co.electriccoin.zcash.ui.common.addressTypeNameId
 import co.electriccoin.zcash.ui.common.blockExplorerUrlStringId
 import co.electriccoin.zcash.ui.common.toFormattedString
 import co.electriccoin.zcash.ui.design.component.BalanceText
@@ -355,9 +355,7 @@ fun TransactionDetails(
                         color = ZcashTheme.colors.surfaceEnd
                     )
                     BodyMedium(
-                        text = if (recipientAddress.isShielded()) stringResource(id = R.string.ns_shielded) else stringResource(
-                            id = R.string.ns_transparent
-                        ), color = ZcashTheme.colors.surfaceEnd
+                        text = stringResource(id = recipientAddress.addressTypeNameId()), color = ZcashTheme.colors.surfaceEnd
                     )
                 }
                 Spacer(modifier = Modifier.height(10.dp))

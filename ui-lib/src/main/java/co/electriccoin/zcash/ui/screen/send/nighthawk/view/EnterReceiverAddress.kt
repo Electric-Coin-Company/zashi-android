@@ -48,13 +48,13 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 fun EnterReceiverAddressPreview() {
     ZcashTheme(darkTheme = false) {
         Surface {
-            EnterReceiverAddress(receiverAddress = "", isContinueBtnEnabled = false, onBack = {}, onValueChanged = {}, onContinue = {})
+            EnterReceiverAddress(receiverAddress = "", isContinueBtnEnabled = false, onBack = {}, onValueChanged = {}, onContinue = {}, onScan = {})
         }
     }
 }
 
 @Composable
-fun EnterReceiverAddress(receiverAddress: String, isContinueBtnEnabled: Boolean, onBack: () -> Unit, onValueChanged: (String) -> Unit, onContinue: (String) -> Unit) {
+fun EnterReceiverAddress(receiverAddress: String, isContinueBtnEnabled: Boolean, onBack: () -> Unit, onValueChanged: (String) -> Unit, onContinue: (String) -> Unit, onScan: () -> Unit) {
     Column(modifier = Modifier
         .fillMaxSize()
         .padding(dimensionResource(id = R.dimen.screen_standard_margin))
@@ -94,7 +94,9 @@ fun EnterReceiverAddress(receiverAddress: String, isContinueBtnEnabled: Boolean,
                         onValueChanged("")
                     })
                 } else {
-                    Icon(painter = painterResource(id = R.drawable.ic_icon_scan_qr), contentDescription = "", tint = Color.White)
+                    Icon(painter = painterResource(id = R.drawable.ic_icon_scan_qr), contentDescription = "", tint = Color.White, modifier = Modifier.clickable {
+                        onScan()
+                    })
                 }
             },
             colors = TextFieldDefaults.customColors(),

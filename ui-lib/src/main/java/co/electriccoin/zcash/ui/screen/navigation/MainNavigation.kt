@@ -55,6 +55,7 @@ import co.electriccoin.zcash.ui.screen.receive.nighthawk.AndroidReceive
 import co.electriccoin.zcash.ui.screen.receiveqrcodes.AndroidReceiveQrCodes
 import co.electriccoin.zcash.ui.screen.scan.WrapScanValidator
 import co.electriccoin.zcash.ui.screen.security.AndroidSecurity
+import co.electriccoin.zcash.ui.screen.send.model.SendArgumentsWrapper
 import co.electriccoin.zcash.ui.screen.send.nighthawk.AndroidSend
 import co.electriccoin.zcash.ui.screen.settings.nighthawk.AndroidSettings
 import co.electriccoin.zcash.ui.screen.shield.AndroidShield
@@ -94,7 +95,7 @@ internal fun MainActivity.MainNavigation(navHostController: NavHostController, p
                 onAbout = { navHostController.navigateJustOnce(ABOUT) }
             )
         }
-        composable(SEND_MONEY) {
+        composable(SEND_MONEY) { backStackEntry ->
             AndroidSend(
                 onBack = { navHostController.popBackStackJustOnce(SEND_MONEY) },
                 onTopUpWallet = {
@@ -106,8 +107,16 @@ internal fun MainActivity.MainNavigation(navHostController: NavHostController, p
                     navHostController.popBackStack(BottomNavItem.Transfer.route, false)
                     navHostController.navigateJustOnce(NavigationTargets.navigationRouteTransactionDetails(transactionId = it))
                 },
-                onScan = { navHostController.navigateJustOnce(SCAN) }
+                onScan = { navHostController.navigateJustOnce(SCAN) },
+                sendArgumentsWrapper = SendArgumentsWrapper(
+                    recipientAddress = backStackEntry.savedStateHandle[NavigationArguments.SEND_RECIPIENT_ADDRESS],
+                    amount = backStackEntry.savedStateHandle[NavigationArguments.SEND_AMOUNT],
+                    memo = backStackEntry.savedStateHandle[NavigationArguments.SEND_MEMO]
+                )
             )
+            backStackEntry.savedStateHandle.remove<String>(NavigationArguments.SEND_RECIPIENT_ADDRESS)
+            backStackEntry.savedStateHandle.remove<String>(NavigationArguments.SEND_AMOUNT)
+            backStackEntry.savedStateHandle.remove<String>(NavigationArguments.SEND_MEMO)
         }
         composable(RECEIVE_MONEY) {
             AndroidReceive(

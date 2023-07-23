@@ -190,7 +190,7 @@ fun QrAddressCardUi(qrAddressPagerItem: QRAddressPagerItem, onCopyAddress: (Stri
             .padding(16.dp)
             .fillMaxWidth()
     ) {
-        QrCode(data = qrAddressPagerItem.title, DEFAULT_QR_CODE_SIZE, Modifier.align(Alignment.CenterHorizontally))
+        QrCode(data = qrAddressPagerItem.body, DEFAULT_QR_CODE_SIZE, Modifier.align(Alignment.CenterHorizontally))
         Spacer(modifier = Modifier.height(18.dp))
         BodyMedium(text = qrAddressPagerItem.title, color = colorResource(id = co.electriccoin.zcash.ui.design.R.color.ns_parmaviolet))
         Spacer(modifier = Modifier.height(10.dp))
