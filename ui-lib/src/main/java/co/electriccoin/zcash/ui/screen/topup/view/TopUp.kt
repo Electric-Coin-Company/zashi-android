@@ -89,7 +89,7 @@ fun TopUp(walletAddress: WalletAddresses?, onBack: () -> Unit, onLaunchUrl: (Str
             modifier = Modifier
                 .heightIn(min = dimensionResource(id = R.dimen.setting_list_item_min_height))
                 .clickable {
-                    walletAddress?.sapling?.address?.let {
+                    walletAddress?.unified?.address?.let {
                         clipboardManager.setText(AnnotatedString(it))
                     }
                     showSideShiftDialog = true
