@@ -82,7 +82,7 @@ internal fun WrapWallet(
     } else {
         val isSyncing = isSyncing(walletSnapshot.status)
         LaunchedEffect(key1 = isSyncing) {
-            homeViewModel.onTransferTabStateChanged(enable = isSyncing.not())
+            homeViewModel.onTransferTabStateChanged(enable = isSyncing.not() && walletSnapshot.synchronizerError != null)
 
             if (isSyncing.not()) {
                 homeViewModel.intentDataUriForDeepLink?.let {
