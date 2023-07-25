@@ -10,6 +10,7 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.ext.convertZecToZatoshi
 import cash.z.ecc.android.sdk.model.TransactionOverview
 import cash.z.ecc.android.sdk.model.Zatoshi
@@ -23,6 +24,7 @@ import co.electriccoin.zcash.ui.common.showMessage
 import co.electriccoin.zcash.ui.common.toFormattedString
 import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
 import co.electriccoin.zcash.ui.configuration.RemoteConfig
+import co.electriccoin.zcash.ui.screen.home.model.WalletSnapshot
 import co.electriccoin.zcash.ui.screen.home.viewmodel.HomeViewModel
 import co.electriccoin.zcash.ui.screen.home.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.settings.viewmodel.SettingsViewModel
@@ -30,7 +32,6 @@ import co.electriccoin.zcash.ui.screen.shield.model.ShieldUIState
 import co.electriccoin.zcash.ui.screen.shield.model.ShieldUiDestination
 import co.electriccoin.zcash.ui.screen.shield.viewmodel.ShieldViewModel
 import co.electriccoin.zcash.ui.screen.wallet.view.WalletView
-import co.electriccoin.zcash.ui.screen.wallet.view.isSyncing
 
 @Composable
 internal fun MainActivity.AndroidWallet(
@@ -80,11 +81,11 @@ internal fun WrapWallet(
     if (null == walletSnapshot) {
         // We can show progress bar
     } else {
-        val isSyncing = isSyncing(walletSnapshot.status)
-        LaunchedEffect(key1 = isSyncing) {
-            homeViewModel.onTransferTabStateChanged(enable = isSyncing.not() && walletSnapshot.synchronizerError != null)
+        val enableTransferTab = walletSnapshot.enableTransferTab()
+        LaunchedEffect(key1 = enableTransferTab) {
+            homeViewModel.onTransferTabStateChanged(enable = enableTransferTab)
 
-            if (isSyncing.not()) {
+            if (enableTransferTab) {
                 homeViewModel.intentDataUriForDeepLink?.let {
                     DeepLinkUtil.getSendDeepLinkData(it)?.let { sendDeepLinkData ->
                         homeViewModel.sendDeepLinkData = sendDeepLinkData
@@ -130,6 +131,10 @@ internal fun WrapWallet(
         }
     }
     activity.reportFullyDrawn()
+}
+
+fun WalletSnapshot.enableTransferTab(): Boolean {
+    return this.status == Synchronizer.Status.SYNCED
 }
 
 fun checkForAutoShielding(availableZatoshi: Zatoshi, shieldViewModel: ShieldViewModel) {
