@@ -8,6 +8,7 @@ import cash.z.ecc.android.sdk.ext.ZcashSdk
 import cash.z.ecc.android.sdk.ext.convertZecToZatoshi
 import cash.z.ecc.android.sdk.ext.toZec
 import cash.z.ecc.android.sdk.model.UnifiedSpendingKey
+import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.android.sdk.model.send
 import cash.z.ecc.android.sdk.model.toZecString
@@ -108,7 +109,8 @@ class SendViewModel(val context: Application) : AndroidViewModel(application = c
     fun updateEnterZecUiStateWithWalletSnapshot(walletSnapshot: WalletSnapshot) {
         Twig.info { "SendVieModel walletSnapShot $walletSnapshot" }
         _enterZecUIState.getAndUpdate {
-            val availableZatoshi = walletSnapshot.saplingBalance.available - ZcashSdk.MINERS_FEE
+            val availableZatoshi = walletSnapshot.saplingBalance.available.takeIf { available -> available.value > ZcashSdk.MINERS_FEE.value }
+                ?.let {available -> available - ZcashSdk.MINERS_FEE } ?: Zatoshi(0)
             val isEnoughBalance =
                 (it.enteredAmount.toDoubleOrNull()?.toZec()?.convertZecToZatoshi()?.value
                     ?: 0L) <= availableZatoshi.value
