@@ -37,7 +37,7 @@ jobs:
       # https://github.com/gradle/wrapper-validation-action/issues/40
       - name: Gradle Wrapper Validation
         timeout-minutes: 1
-        uses: gradle/wrapper-validation-action@8d49e559aae34d3e0eb16cde532684bc9702762b
+        uses: gradle/wrapper-validation-action@56b90f209b02bf6d1deae490e9ef18b21a389cd4
 
   check_firebase_secrets:
     runs-on: ubuntu-latest
@@ -73,13 +73,13 @@ jobs:
         timeout-minutes: 1
         uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9
       - name: Set up Java
-        uses: actions/setup-java@5ffc13f4174014e2d4d4572b3d74c3fa61aeb2c2
+        uses: actions/setup-java@cd89f46ac9d01407894225f350157564c9c7cee2
         timeout-minutes: 1
         with:
           distribution: 'temurin'
           java-version: 17
       - name: Set up Gradle
-        uses: gradle/gradle-build-action@915a66c096a03101667f9df2e56c9efef558b165
+        uses: gradle/gradle-build-action@a4cf152f482c7ca97ef56ead29bf08bcd953284c
         timeout-minutes: 5
       - name: Check properties
         timeout-minutes: 4
@@ -96,13 +96,13 @@ jobs:
         timeout-minutes: 1
         uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9
       - name: Set up Java
-        uses: actions/setup-java@5ffc13f4174014e2d4d4572b3d74c3fa61aeb2c2
+        uses: actions/setup-java@cd89f46ac9d01407894225f350157564c9c7cee2
         timeout-minutes: 1
         with:
           distribution: 'temurin'
           java-version: 17
       - name: Set up Gradle
-        uses: gradle/gradle-build-action@915a66c096a03101667f9df2e56c9efef558b165
+        uses: gradle/gradle-build-action@a4cf152f482c7ca97ef56ead29bf08bcd953284c
         timeout-minutes: 5
       - name: Detekt
         timeout-minutes: 4
@@ -136,13 +136,13 @@ jobs:
         timeout-minutes: 1
         uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9
       - name: Set up Java
-        uses: actions/setup-java@5ffc13f4174014e2d4d4572b3d74c3fa61aeb2c2
+        uses: actions/setup-java@cd89f46ac9d01407894225f350157564c9c7cee2
         timeout-minutes: 1
         with:
           distribution: 'temurin'
           java-version: 17
       - name: Set up Gradle
-        uses: gradle/gradle-build-action@915a66c096a03101667f9df2e56c9efef558b165
+        uses: gradle/gradle-build-action@a4cf152f482c7ca97ef56ead29bf08bcd953284c
         timeout-minutes: 5
       - name: Ktlint
         timeout-minutes: 4
@@ -176,13 +176,13 @@ jobs:
         timeout-minutes: 1
         uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9
       - name: Set up Java
-        uses: actions/setup-java@5ffc13f4174014e2d4d4572b3d74c3fa61aeb2c2
+        uses: actions/setup-java@cd89f46ac9d01407894225f350157564c9c7cee2
         timeout-minutes: 1
         with:
           distribution: 'temurin'
           java-version: 17
       - name: Set up Gradle
-        uses: gradle/gradle-build-action@915a66c096a03101667f9df2e56c9efef558b165
+        uses: gradle/gradle-build-action@a4cf152f482c7ca97ef56ead29bf08bcd953284c
         timeout-minutes: 5
       - name: Android Lint
         timeout-minutes: 15
@@ -219,13 +219,13 @@ jobs:
         timeout-minutes: 1
         uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9
       - name: Set up Java
-        uses: actions/setup-java@5ffc13f4174014e2d4d4572b3d74c3fa61aeb2c2
+        uses: actions/setup-java@cd89f46ac9d01407894225f350157564c9c7cee2
         timeout-minutes: 1
         with:
           distribution: 'temurin'
           java-version: 17
       - name: Set up Gradle
-        uses: gradle/gradle-build-action@915a66c096a03101667f9df2e56c9efef558b165
+        uses: gradle/gradle-build-action@a4cf152f482c7ca97ef56ead29bf08bcd953284c
         timeout-minutes: 5
       - name: Test
         timeout-minutes: 4
@@ -263,13 +263,13 @@ jobs:
         timeout-minutes: 1
         uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9
       - name: Set up Java
-        uses: actions/setup-java@5ffc13f4174014e2d4d4572b3d74c3fa61aeb2c2
+        uses: actions/setup-java@cd89f46ac9d01407894225f350157564c9c7cee2
         timeout-minutes: 1
         with:
           distribution: 'temurin'
           java-version: 17
       - name: Set up Gradle
-        uses: gradle/gradle-build-action@915a66c096a03101667f9df2e56c9efef558b165
+        uses: gradle/gradle-build-action@a4cf152f482c7ca97ef56ead29bf08bcd953284c
         timeout-minutes: 5
       - name: Build
         timeout-minutes: 20
@@ -326,13 +326,13 @@ jobs:
         timeout-minutes: 1
         uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9
       - name: Set up Java
-        uses: actions/setup-java@5ffc13f4174014e2d4d4572b3d74c3fa61aeb2c2
+        uses: actions/setup-java@cd89f46ac9d01407894225f350157564c9c7cee2
         timeout-minutes: 1
         with:
           distribution: 'temurin'
           java-version: 17
       - name: Set up Gradle
-        uses: gradle/gradle-build-action@915a66c096a03101667f9df2e56c9efef558b165
+        uses: gradle/gradle-build-action@a4cf152f482c7ca97ef56ead29bf08bcd953284c
         timeout-minutes: 5
       - name: Build and test
         timeout-minutes: 30
@@ -373,13 +373,13 @@ jobs:
         timeout-minutes: 1
         uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9
       - name: Set up Java
-        uses: actions/setup-java@5ffc13f4174014e2d4d4572b3d74c3fa61aeb2c2
+        uses: actions/setup-java@cd89f46ac9d01407894225f350157564c9c7cee2
         timeout-minutes: 1
         with:
           distribution: 'temurin'
           java-version: 17
       - name: Set up Gradle
-        uses: gradle/gradle-build-action@915a66c096a03101667f9df2e56c9efef558b165
+        uses: gradle/gradle-build-action@a4cf152f482c7ca97ef56ead29bf08bcd953284c
         timeout-minutes: 5
       - name: Build and test
         timeout-minutes: 30
@@ -423,13 +423,13 @@ jobs:
         timeout-minutes: 1
         uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9
       - name: Set up Java
-        uses: actions/setup-java@5ffc13f4174014e2d4d4572b3d74c3fa61aeb2c2
+        uses: actions/setup-java@cd89f46ac9d01407894225f350157564c9c7cee2
         timeout-minutes: 1
         with:
           distribution: 'temurin'
           java-version: 17
       - name: Set up Gradle
-        uses: gradle/gradle-build-action@915a66c096a03101667f9df2e56c9efef558b165
+        uses: gradle/gradle-build-action@a4cf152f482c7ca97ef56ead29bf08bcd953284c
         timeout-minutes: 5
       - name: Export Google Services JSON
         env:
@@ -477,13 +477,13 @@ jobs:
         timeout-minutes: 1
         uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9
       - name: Set up Java
-        uses: actions/setup-java@5ffc13f4174014e2d4d4572b3d74c3fa61aeb2c2
+        uses: actions/setup-java@cd89f46ac9d01407894225f350157564c9c7cee2
         timeout-minutes: 1
         with:
           distribution: 'temurin'
           java-version: 17
       - name: Set up Gradle
-        uses: gradle/gradle-build-action@915a66c096a03101667f9df2e56c9efef558b165
+        uses: gradle/gradle-build-action@a4cf152f482c7ca97ef56ead29bf08bcd953284c
         timeout-minutes: 5
       - name: Export Google Services JSON
         env:
@@ -550,13 +550,13 @@ jobs:
         timeout-minutes: 1
         uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9
       - name: Set up Java
-        uses: actions/setup-java@5ffc13f4174014e2d4d4572b3d74c3fa61aeb2c2
+        uses: actions/setup-java@cd89f46ac9d01407894225f350157564c9c7cee2
         timeout-minutes: 1
         with:
           distribution: 'temurin'
           java-version: 17
       - name: Set up Gradle
-        uses: gradle/gradle-build-action@915a66c096a03101667f9df2e56c9efef558b165
+        uses: gradle/gradle-build-action@a4cf152f482c7ca97ef56ead29bf08bcd953284c
         timeout-minutes: 5
       - name: Authenticate to Google Cloud for Firebase Test Lab
         id: auth_test_lab
