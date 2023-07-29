@@ -13,11 +13,10 @@ import co.electriccoin.zcash.ui.screen.navigation.MainNavigation
 internal fun MainActivity.NavigationMainContent() {
     val navController = rememberNavController()
     val homeViewModel by viewModels<HomeViewModel>()
-    val showBottomNavBar = homeViewModel.isBottomNavBarVisible.collectAsStateWithLifecycle()
     val enableTransferTab = homeViewModel.isTransferStateEnabled.collectAsStateWithLifecycle()
     Scaffold(
         bottomBar = {
-            BottomNavigation(navController = navController, showBottomNavBar = showBottomNavBar.value, enableTransferTab = enableTransferTab.value)
+            BottomNavigation(navController = navController, enableTransferTab = enableTransferTab.value)
         }
     ) {
         MainNavigation(navHostController = navController, paddingValues = it)

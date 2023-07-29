@@ -114,7 +114,7 @@ fun EnterReceiverAddress(receiverAddress: String, isContinueBtnEnabled: Boolean,
                 text = stringResource(id = R.string.ns_paste_from_clip_board),
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
-                    .height(36.dp)
+                    .height(dimensionResource(id = R.dimen.button_height))
             )
         } else {
             Spacer(modifier = Modifier.height(40.dp)) // To prevent below UI come upside

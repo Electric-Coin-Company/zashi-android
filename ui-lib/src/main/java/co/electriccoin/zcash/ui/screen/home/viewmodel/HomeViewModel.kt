@@ -46,12 +46,6 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     private val _isTransferTabEnabled = MutableStateFlow(false)
     val isTransferStateEnabled: StateFlow<Boolean> get() = _isTransferTabEnabled
 
-    /**
-     * A flow of whether bottom nav bar should show
-     */
-    private val _isBottomNavBarVisible = MutableStateFlow(true)
-    val isBottomNavBarVisible: StateFlow<Boolean> get() = _isBottomNavBarVisible
-
     var intentDataUriForDeepLink: Uri? = null
     var sendDeepLinkData: DeepLinkUtil.SendDeepLinkData? = null
     // Flag to track any expecting balance is there or not. We will show snackBar everytime user open the app until it is a confirmed transaction
@@ -59,10 +53,6 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
     fun onTransferTabStateChanged(enable: Boolean) {
         _isTransferTabEnabled.update { enable }
-    }
-
-    fun onBottomNavBarVisibilityChanged(show: Boolean) {
-        _isBottomNavBarVisible.update { show }
     }
 
     fun isAnyExpectingTransaction(walletSnapshot: WalletSnapshot): Boolean {

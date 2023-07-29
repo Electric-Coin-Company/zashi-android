@@ -76,14 +76,15 @@ fun AutoShieldingInfo(onNext: () -> Unit, onLaunchUrl: (String) -> Unit) {
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
                     .fillMaxWidth()
-                    .height(54.dp)
+                    .height(dimensionResource(id = R.dimen.auto_shielding_btn_height))
             )
+            Spacer(modifier = Modifier.height(8.dp))
             OutlinedPrimaryButton(
                 onClick = { showLearnMoreDialog.value = true },
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
                     .fillMaxWidth()
-                    .height(54.dp),
+                    .height(dimensionResource(id = R.dimen.auto_shielding_btn_height)),
                 text = stringResource(id = R.string.autoshielding_button_neutral)
             )
 

@@ -70,11 +70,12 @@ fun GetStarted(
         PrimaryButton(
             onClick = onCreateWallet,
             text = stringResource(id = R.string.ns_create_wallet).uppercase(),
-            modifier = Modifier.sizeIn(minWidth = dimensionResource(id = R.dimen.button_min_width), minHeight = dimensionResource(id = R.dimen.button_height))
+            modifier = Modifier.sizeIn(minWidth = dimensionResource(id = R.dimen.restore_button_min_width), minHeight = dimensionResource(id = R.dimen.button_height))
         )
         TertiaryButton(
             onClick = onRestore,
-            text = stringResource(id = R.string.ns_restore_from_backup).uppercase()
+            text = stringResource(id = R.string.ns_restore_from_backup).uppercase(),
+            modifier = Modifier.sizeIn(minWidth = dimensionResource(id = R.dimen.restore_button_min_width), minHeight = dimensionResource(id = R.dimen.button_height))
         )
         Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.screen_bottom_margin)))
     }

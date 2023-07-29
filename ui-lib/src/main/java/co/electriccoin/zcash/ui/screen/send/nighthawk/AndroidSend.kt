@@ -69,18 +69,11 @@ internal fun WrapAndroidSend(
     val sendViewModel by activity.viewModels<SendViewModel>()
     val walletViewModel by activity.viewModels<WalletViewModel>()
 
-    val showBottomBarOnDispose = remember {
-        mutableStateOf(true)
-    }
-
     val sendUIState = sendViewModel.currentSendUIState.collectAsStateWithLifecycle()
     BackHandler(enabled = sendUIState.value != SendUIState.ENTER_ZEC) {
         Twig.info { "WrapAndroidSend BackHandler: sendUIState $sendUIState" }
     }
     DisposableEffect(key1 = Unit) {
-        homeViewModel.onBottomNavBarVisibilityChanged(show = false)
-        showBottomBarOnDispose.value = true
-
         // Check for deepLink data if there is any. If we found then update receiverAddress, amount and memo
         homeViewModel.sendDeepLinkData?.let {
             sendViewModel.updateReceiverAddress(it.address)
@@ -97,7 +90,6 @@ internal fun WrapAndroidSend(
 
         onDispose {
             Twig.info { "WrapAndroidSend: onDispose $sendUIState" }
-            homeViewModel.onBottomNavBarVisibilityChanged(show = showBottomBarOnDispose.value)
         }
     }
 
@@ -108,10 +100,7 @@ internal fun WrapAndroidSend(
             EnterZec(
                 enterZecUIState = enterZecUIState.value,
                 onBack = onBack,
-                onScanPaymentCode = {
-                    showBottomBarOnDispose.value = false
-                    onScan.invoke()
-                },
+                onScanPaymentCode = onScan,
                 onContinue = sendViewModel::onNextSendUiState,
                 onTopUpWallet = onTopUpWallet,
                 onKeyPressed = sendViewModel::onKeyPressed,
@@ -157,10 +146,7 @@ internal fun WrapAndroidSend(
                 receiverAddress = sendArgumentsWrapper?.recipientAddress ?: sendViewModel.receiverAddress,
                 isContinueBtnEnabled = isContinueEnabled,
                 onBack = sendViewModel::onPreviousSendUiState,
-                onScan = {
-                    showBottomBarOnDispose.value = false
-                    onScan()
-                },
+                onScan = onScan,
                 onValueChanged = { address ->
                     if (address.length <= ABBREVIATION_INDEX) {
                         isContinueEnabled = false

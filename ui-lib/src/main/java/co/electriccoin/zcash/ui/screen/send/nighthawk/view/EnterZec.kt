@@ -119,7 +119,7 @@ fun EnterZec(
                     DottedBorderTextButton(
                         onClick = onScanPaymentCode,
                         text = stringResource(id = R.string.ns_scan_payment_code),
-                        modifier = Modifier.align(Alignment.CenterHorizontally).height(36.dp)
+                        modifier = Modifier.align(Alignment.CenterHorizontally).height(dimensionResource(id = R.dimen.button_height))
                     )
                 }
 
@@ -139,7 +139,7 @@ fun EnterZec(
                         text = stringResource(id = R.string.ns_top_up_wallet).uppercase(),
                         modifier = Modifier
                             .align(Alignment.CenterHorizontally)
-                            .sizeIn(minWidth = 220.dp, minHeight = dimensionResource(id = R.dimen.button_height))
+                            .sizeIn(minWidth = dimensionResource(id = R.dimen.restore_button_min_width), minHeight = dimensionResource(id = R.dimen.button_height))
                     )
                 }
                 Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.text_margin)))

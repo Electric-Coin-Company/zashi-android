@@ -2,9 +2,6 @@ package co.electriccoin.zcash.ui.screen.navigation
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
@@ -66,6 +63,7 @@ import co.electriccoin.zcash.ui.screen.transactionhistory.AndroidTransactionHist
 import co.electriccoin.zcash.ui.screen.transfer.AndroidTransfer
 import co.electriccoin.zcash.ui.screen.wallet.AndroidWallet
 import co.electriccoin.zcash.ui.settingbackupwallet.AndroidSettingBackUpWallet
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 internal fun MainActivity.MainNavigation(navHostController: NavHostController, paddingValues: PaddingValues) {
@@ -220,18 +218,14 @@ internal fun MainActivity.MainNavigation(navHostController: NavHostController, p
 }
 
 @Composable
-internal fun BottomNavigation(navController: NavController, showBottomNavBar: Boolean = true, enableTransferTab: Boolean = false) {
-    val navItemList = listOf(BottomNavItem.Wallet, BottomNavItem.Transfer, BottomNavItem.Settings)
-    AnimatedVisibility(
-        visible = showBottomNavBar,
-        enter = slideInVertically { it },
-        exit = slideOutVertically { it }
-    ) {
+internal fun BottomNavigation(navController: NavController, enableTransferTab: Boolean = false) {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+    val showBottomNavBar = destinationsWithBottomBar.any { it.contentEquals(currentRoute, true) }
+    if (showBottomNavBar) {
         NavigationBar(
             containerColor = colorResource(id = co.electriccoin.zcash.ui.design.R.color.ns_navy)
         ) {
-            val navBackStackEntry by navController.currentBackStackEntryAsState()
-            val currentRoute = navBackStackEntry?.destination?.route
             navItemList.forEach { bottomNavItem ->
                 NavigationBarItem(
                     selected = isBottomNavItemSelected(bottomNavItem.route, currentRoute),
@@ -282,6 +276,17 @@ fun isBottomNavItemSelected(bottomNavItemRoute: String, currentRoute: String?): 
         }
     }
 }
+
+private val navItemList = persistentListOf(BottomNavItem.Wallet, BottomNavItem.Transfer, BottomNavItem.Settings)
+
+private val destinationsWithBottomBar = persistentListOf(
+    BottomNavItem.Wallet.route,
+    BottomNavItem.Transfer.route,
+    BottomNavItem.Settings.route,
+    RECEIVE_MONEY,
+    TOP_UP,
+    RECEIVE_QR_CODES,
+    )
 
 object NavigationTargets {
     const val SEND_MONEY = "send_money"

@@ -3,7 +3,6 @@ package co.electriccoin.zcash.ui.screen.transactiondetails
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -19,12 +18,10 @@ import co.electriccoin.zcash.ui.screen.transactiondetails.model.TransactionDetai
 import co.electriccoin.zcash.ui.screen.transactiondetails.view.TransactionDetails
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 internal fun MainActivity.AndroidTransactionDetails(transactionId: Long, onBack: () -> Unit) {
@@ -41,17 +38,6 @@ internal fun WrapAndroidTransactionDetails(
     val homeViewModel by activity.viewModels<HomeViewModel>()
     val walletViewModel by activity.viewModels<WalletViewModel>()
     val scope = rememberCoroutineScope()
-    DisposableEffect(key1 = Unit) {
-        val previousVisibility = homeViewModel.isBottomNavBarVisible.value
-        // for handling bottomNavBar visibility due to onDispose of this screen parent class
-        scope.launch {
-            delay(500.milliseconds)
-            homeViewModel.onBottomNavBarVisibilityChanged(show = false)
-        }
-        onDispose {
-            homeViewModel.onBottomNavBarVisibilityChanged(show = previousVisibility)
-        }
-    }
     val synchronizerJob: MutableState<Job?> = remember {
         mutableStateOf(null)
     }

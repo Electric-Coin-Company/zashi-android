@@ -16,11 +16,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Card
@@ -200,7 +202,8 @@ fun QrAddressCardUi(qrAddressPagerItem: QRAddressPagerItem, onCopyAddress: (Stri
     Column(
         modifier = Modifier
             .padding(16.dp)
-            .fillMaxWidth()
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
     ) {
         QrCode(data = qrAddressPagerItem.body, logoId = qrAddressPagerItem.logoId, backGroundColor = qrAddressPagerItem.backgroundColor, DEFAULT_QR_CODE_SIZE, Modifier.align(Alignment.CenterHorizontally))
         Spacer(modifier = Modifier.height(18.dp))
@@ -213,7 +216,7 @@ fun QrAddressCardUi(qrAddressPagerItem: QRAddressPagerItem, onCopyAddress: (Stri
             text = qrAddressPagerItem.buttonText.uppercase(),
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .widthIn(min = 111.dp)
+                .sizeIn(minWidth = dimensionResource(id = R.dimen.button_min_width), minHeight = dimensionResource(id = R.dimen.button_height))
         )
     }
 }
@@ -233,7 +236,8 @@ fun TopUpCardUi(topUp: QRAddressPagerItem.TOP_UP, onSeeMore: () -> Unit) {
         Spacer(modifier = Modifier.weight(1f))
         PrimaryButton(onClick = onSeeMore, text = topUp.buttonText.uppercase(), modifier = Modifier
             .align(Alignment.CenterHorizontally)
-            .widthIn(min = 111.dp))
+            .sizeIn(minWidth = dimensionResource(id = R.dimen.button_min_width), minHeight = dimensionResource(id = R.dimen.button_height))
+        )
     }
 }
 

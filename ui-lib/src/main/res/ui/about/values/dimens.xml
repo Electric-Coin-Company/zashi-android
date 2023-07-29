@@ -3,6 +3,8 @@
     <dimen name="top_margin_logo">48dp</dimen>
     <dimen name="button_height">36dp</dimen>
     <dimen name="button_min_width">152dp</dimen>
+    <dimen name="restore_button_min_width">210dp</dimen>
+    <dimen name="auto_shielding_btn_height">48dp</dimen>
     <dimen name="top_margin_back_btn">25dp</dimen>
     <dimen name="home_view_pager_min_height">125dp</dimen>
     <dimen name="pageMargin">20dp</dimen>

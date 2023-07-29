@@ -154,7 +154,7 @@ fun SeedBackupContent(
             } else {
                 TertiaryButton(onClick = onExportClick, text = exportText, modifier = exportModifier)
             }
-            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.screen_bottom_margin)))
+            Spacer(modifier = Modifier.weight(1f))
         }
 
         if (showEncryptedPdfDialog.value) {
