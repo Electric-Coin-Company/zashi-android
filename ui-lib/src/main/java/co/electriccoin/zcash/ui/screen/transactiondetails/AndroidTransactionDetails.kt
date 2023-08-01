@@ -9,16 +9,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.common.onLaunchUrl
-import co.electriccoin.zcash.ui.screen.home.viewmodel.HomeViewModel
 import co.electriccoin.zcash.ui.screen.home.viewmodel.WalletViewModel
-import co.electriccoin.zcash.ui.screen.transactiondetails.model.TransactionDetailsUIModel
 import co.electriccoin.zcash.ui.screen.transactiondetails.view.TransactionDetails
+import co.electriccoin.zcash.ui.screen.transactiondetails.viewmodel.TransactionViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -35,39 +34,33 @@ internal fun WrapAndroidTransactionDetails(
     onBack: () -> Unit
 ) {
     Twig.info { "TransactionId $transactionId" }
-    val homeViewModel by activity.viewModels<HomeViewModel>()
     val walletViewModel by activity.viewModels<WalletViewModel>()
+    val transactionUiViewModel = viewModel<TransactionViewModel>()
     val scope = rememberCoroutineScope()
     val synchronizerJob: MutableState<Job?> = remember {
         mutableStateOf(null)
     }
 
-    val transactionDetailsUIModel: MutableState<TransactionDetailsUIModel?> = remember {
-        mutableStateOf(null)
-    }
-
     LaunchedEffect(key1 = Unit) {
         synchronizerJob.value = scope.launch(Dispatchers.IO) {
-            val synchronizerVal = walletViewModel.synchronizer.filterNotNull().first()
-            walletViewModel.transactionUiModel(transactionId, synchronizerVal)
-                .collectLatest { uiModel ->
-                    Twig.info { "Synchronizer value is $synchronizerVal and ui mode is $uiModel" }
-                    transactionDetailsUIModel.value = uiModel
-                }
+            val synchronizer = walletViewModel.synchronizer.filterNotNull().first()
+            transactionUiViewModel.getTransactionUiModel(transactionId, synchronizer)
         }
     }
-    Twig.info { "TransactionDetailUiModel: ${transactionDetailsUIModel.value}" }
 
     val isNavigateAwayFromAppWarningShown =
-        homeViewModel.isNavigateAwayFromWarningShown.collectAsStateWithLifecycle().value
+        transactionUiViewModel.isNavigateAwayFromWarningShown.collectAsStateWithLifecycle().value
+    val transactionDetailsUIModel = transactionUiViewModel.transactionDetailsUIModel.collectAsStateWithLifecycle().value
+
+    Twig.info { "TransactionDetailUiModel: $transactionDetailsUIModel" }
 
     TransactionDetails(
-        transactionDetailsUIModel = transactionDetailsUIModel.value,
+        transactionDetailsUIModel = transactionDetailsUIModel,
         isNavigateAwayFromAppWarningShown = isNavigateAwayFromAppWarningShown,
         onBack = onBack,
         viewOnBlockExplorer = { url, updateWarningStatus ->
             if (updateWarningStatus) {
-                homeViewModel.updateNavigateAwayFromWaringFlag(true)
+                transactionUiViewModel.updateNavigateAwayFromWaringFlag(true)
             }
             activity.onLaunchUrl(url)
         }

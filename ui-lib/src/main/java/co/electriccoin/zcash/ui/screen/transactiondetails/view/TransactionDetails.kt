@@ -133,7 +133,7 @@ fun TransactionDetails(
         )
         Spacer(modifier = Modifier.height(38.dp))
 
-        if (transactionDetailsUIModel == null) {
+        if (transactionDetailsUIModel?.transactionOverview == null) {
             Twig.info { "Transaction overview ui model is null" }
             return@Column
         }
@@ -237,7 +237,7 @@ fun TransactionDetails(
                 color = ZcashTheme.colors.surfaceEnd
             )
             BodyMedium(
-                text = transactionDetailsUIModel.network.networkName,
+                text = transactionDetailsUIModel.network?.networkName ?: "",
                 color = ZcashTheme.colors.surfaceEnd
             )
         }
@@ -336,8 +336,8 @@ fun TransactionDetails(
         // Recipient
         if (transactionDetailsUIModel.transactionOverview.isSentTransaction) {
             val recipientAddress = when (transactionDetailsUIModel.transactionRecipient) {
-                is TransactionRecipient.Account -> ""
                 is TransactionRecipient.Address -> transactionDetailsUIModel.transactionRecipient.addressValue
+                else -> ""
             }
             if (recipientAddress.isNotBlank()) {
                 Spacer(modifier = Modifier.height(10.dp))
@@ -482,12 +482,12 @@ fun TransactionDetails(
 
 private fun getCountText(transactionDetailsUIModel: TransactionDetailsUIModel): String {
     val latestBlockHeight = transactionDetailsUIModel.networkHeight
-    val minedHeight = transactionDetailsUIModel.transactionOverview.minedHeight
+    val minedHeight = transactionDetailsUIModel.transactionOverview?.minedHeight
     return if (latestBlockHeight == null) {
         if (isSufficientlyOld(transactionDetailsUIModel)) "Confirmed" else "Transaction Count unavailable"
     } else if (minedHeight != null) {
         "${latestBlockHeight.value - minedHeight.value}"
-    } else if ((transactionDetailsUIModel.transactionOverview.expiryHeight?.value
+    } else if ((transactionDetailsUIModel.transactionOverview?.expiryHeight?.value
             ?: Long.MAX_VALUE) < latestBlockHeight.value
     ) {
         "Pending"
@@ -498,8 +498,8 @@ private fun getCountText(transactionDetailsUIModel: TransactionDetailsUIModel): 
 
 private fun isSufficientlyOld(tx: TransactionDetailsUIModel): Boolean {
     val threshold = 75 * 1000 * 25 // approx 25 blocks
-    val delta = System.currentTimeMillis() / 1000L - tx.transactionOverview.blockTimeEpochSeconds
-    return (tx.transactionOverview.minedHeight?.value
-        ?: Long.MIN_VALUE) > tx.network.saplingActivationHeight.value &&
+    val delta = System.currentTimeMillis() / 1000L - (tx.transactionOverview?.blockTimeEpochSeconds ?: threshold.toLong())
+    return (tx.transactionOverview?.minedHeight?.value
+        ?: Long.MIN_VALUE) > (tx.network?.saplingActivationHeight?.value ?: Long.MIN_VALUE) &&
             delta < threshold
 }

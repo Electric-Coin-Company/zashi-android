@@ -14,7 +14,6 @@ import cash.z.ecc.android.sdk.model.FiatCurrency
 import cash.z.ecc.android.sdk.model.PercentDecimal
 import cash.z.ecc.android.sdk.model.PersistableWallet
 import cash.z.ecc.android.sdk.model.TransactionOverview
-import cash.z.ecc.android.sdk.model.TransactionRecipient
 import cash.z.ecc.android.sdk.model.WalletAddresses
 import cash.z.ecc.android.sdk.model.WalletBalance
 import cash.z.ecc.android.sdk.model.Zatoshi
@@ -34,7 +33,6 @@ import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
 import co.electriccoin.zcash.ui.preference.StandardPreferenceSingleton
 import co.electriccoin.zcash.ui.screen.history.state.TransactionHistorySyncState
 import co.electriccoin.zcash.ui.screen.home.model.WalletSnapshot
-import co.electriccoin.zcash.ui.screen.transactiondetails.model.TransactionDetailsUIModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
@@ -48,9 +46,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emitAll
-import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
@@ -218,27 +214,6 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
             SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
             persistentListOf()
         )
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    fun transactionUiModel(transactionId: Long, synchronizer: Synchronizer): StateFlow<TransactionDetailsUIModel?> {
-        return synchronizer.transactions
-            .distinctUntilChanged()
-            .flatMapLatest { transactionSnapshotList ->
-                val transactionOverview = transactionSnapshotList.find { it.id == transactionId }
-                    ?: return@flatMapLatest emptyFlow()
-                combine(
-                    if (transactionOverview.isSentTransaction) synchronizer.getRecipients(transactionOverview) else flowOf(TransactionRecipient.Account(Account.DEFAULT)),
-                    synchronizer.getMemos(transactionOverview),
-                    synchronizer.networkHeight
-                ) { transactionRecipient, memo, networkHeight ->
-                    TransactionDetailsUIModel(transactionOverview, transactionRecipient, synchronizer.network, networkHeight, memo)
-                }
-            }.stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-                null
-            )
-    }
 
     val addresses: StateFlow<WalletAddresses?> = synchronizer
         .filterNotNull()

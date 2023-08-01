@@ -98,7 +98,7 @@ internal fun FragmentActivity.authenticate(description: String, title: String, b
     }
 }
 
-internal fun ZcashNetwork.blockExplorerUrlStringId(): Int {
+internal fun ZcashNetwork?.blockExplorerUrlStringId(): Int {
     return when (this) {
         ZcashNetwork.Mainnet -> R.string.ns_block_explorer_url_main_net
         else -> R.string.ns_block_explorer_url_testnet
