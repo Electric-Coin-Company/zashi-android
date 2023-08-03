@@ -17,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -97,7 +98,7 @@ fun AboutMainContent(
     modifier: Modifier = Modifier
 ) {
     Column(modifier) {
-        Icon(painterResource(id = R.drawable.ic_launcher_adaptive_foreground), contentDescription = null)
+        Icon(painterResource(id = R.drawable.zashi_logo), contentDescription = null)
         Text(stringResource(id = R.string.app_name))
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
