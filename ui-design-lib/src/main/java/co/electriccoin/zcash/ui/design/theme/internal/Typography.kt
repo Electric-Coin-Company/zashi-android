@@ -3,7 +3,6 @@ package co.electriccoin.zcash.ui.design.theme.internal
 import androidx.compose.material3.Typography
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
-import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -14,7 +13,6 @@ import androidx.compose.ui.text.style.BaselineShift
 import androidx.compose.ui.unit.sp
 import co.electriccoin.zcash.ui.design.R
 
-@OptIn(ExperimentalTextApi::class)
 private val provider = GoogleFont.Provider(
     providerAuthority = "com.google.android.gms.fonts",
     providerPackage = "com.google.android.gms",
@@ -23,15 +21,13 @@ private val provider = GoogleFont.Provider(
 
 // We use bestEffort here to be able to get the closest font weight, if accidentally use
 // an unspecified font weight and not the default one.
-@OptIn(ExperimentalTextApi::class)
-private val RubikFont = GoogleFont(name = "Rubik", bestEffort = true)
+private val InterFont = GoogleFont(name = "Inter", bestEffort = true)
 
-@OptIn(ExperimentalTextApi::class)
-private val RubikFontFamily = FontFamily(
-    Font(googleFont = RubikFont, fontProvider = provider, weight = FontWeight.Normal), // W400
-    Font(googleFont = RubikFont, fontProvider = provider, weight = FontWeight.Medium), // W500
-    Font(googleFont = RubikFont, fontProvider = provider, weight = FontWeight.SemiBold), // W600
-    Font(googleFont = RubikFont, fontProvider = provider, weight = FontWeight.Bold) // W700
+private val InterFontFamily = FontFamily(
+    Font(googleFont = InterFont, fontProvider = provider, weight = FontWeight.Normal), // W400
+    Font(googleFont = InterFont, fontProvider = provider, weight = FontWeight.Medium), // W500
+    Font(googleFont = InterFont, fontProvider = provider, weight = FontWeight.SemiBold), // W600
+    Font(googleFont = InterFont, fontProvider = provider, weight = FontWeight.Bold) // W700
 )
 
 private val Zboto = FontFamily(
@@ -42,22 +38,22 @@ private val Zboto = FontFamily(
 // the defined font weights above, otherwise the closest one will be used.
 internal val Typography = Typography(
     headlineLarge = TextStyle(
-        fontFamily = RubikFontFamily,
+        fontFamily = InterFontFamily,
         fontWeight = FontWeight.SemiBold,
         fontSize = 30.sp
     ),
     bodyLarge = TextStyle(
-        fontFamily = RubikFontFamily,
+        fontFamily = InterFontFamily,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp
     ),
     bodySmall = TextStyle(
-        fontFamily = RubikFontFamily,
+        fontFamily = InterFontFamily,
         fontWeight = FontWeight.Medium,
         fontSize = 16.sp
     ),
     labelLarge = TextStyle(
-        fontFamily = RubikFontFamily,
+        fontFamily = InterFontFamily,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp
     )
