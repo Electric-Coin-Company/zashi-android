@@ -97,7 +97,7 @@ fun AboutMainContent(
     modifier: Modifier = Modifier
 ) {
     Column(modifier) {
-        Icon(painterResource(id = R.drawable.ic_launcher_adaptive_foreground), contentDescription = null)
+        Icon(painterResource(id = R.drawable.zashi_logo), contentDescription = null)
         Text(stringResource(id = R.string.app_name))
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
