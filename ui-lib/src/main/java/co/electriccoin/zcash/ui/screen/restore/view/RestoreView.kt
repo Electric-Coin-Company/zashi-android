@@ -46,6 +46,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -393,9 +394,7 @@ private fun ChipGridWithText(
     }
 }
 
-// TODO [#288]: TextField component can't do long-press backspace.
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
 private fun NextWordTextField(
     parseResult: ParseResult,
     text: String,
@@ -406,7 +405,7 @@ private fun NextWordTextField(
         modifier = modifier
             .fillMaxWidth()
             .padding(dimens.spacingTiny),
-        shape = RoundedCornerShape(8.dp),
+        shape = RectangleShape,
         color = MaterialTheme.colorScheme.secondary,
         shadowElevation = 8.dp
     ) {
@@ -500,7 +499,7 @@ private fun Warn(
     if (parseResult is ParseResult.Warn) {
         Surface(
             modifier = modifier,
-            shape = RoundedCornerShape(8.dp),
+            shape = RectangleShape,
             color = MaterialTheme.colorScheme.secondary,
             shadowElevation = 4.dp
         ) {
@@ -564,7 +563,7 @@ private fun RestoreBirthday(
                 keyboardType = KeyboardType.Number
             ),
             keyboardActions = KeyboardActions(onAny = {}),
-            shape = RoundedCornerShape(8.dp),
+            shape = RectangleShape,
         )
 
         Spacer(

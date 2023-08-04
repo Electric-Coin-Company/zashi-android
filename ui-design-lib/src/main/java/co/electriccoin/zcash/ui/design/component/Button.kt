@@ -11,6 +11,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
@@ -42,6 +43,7 @@ fun PrimaryButton(
     enabled: Boolean = true
 ) {
     Button(
+        shape = RectangleShape,
         onClick = onClick,
         modifier = modifier.then(
             Modifier
@@ -71,6 +73,7 @@ fun SecondaryButton(
     enabled: Boolean = true
 ) {
     Button(
+        shape = RectangleShape,
         onClick = onClick,
         modifier = modifier.then(
             Modifier
@@ -99,6 +102,7 @@ fun NavigationButton(
     ),
 ) {
     Button(
+        shape = RectangleShape,
         onClick = onClick,
         modifier = modifier.then(
             Modifier
@@ -122,6 +126,7 @@ fun TertiaryButton(
     enabled: Boolean = true
 ) {
     Button(
+        shape = RectangleShape,
         onClick = onClick,
         modifier = modifier.then(
             Modifier
@@ -151,6 +156,7 @@ fun DangerousButton(
     ),
 ) {
     Button(
+        shape = RectangleShape,
         onClick = onClick,
         modifier = modifier.then(
             Modifier

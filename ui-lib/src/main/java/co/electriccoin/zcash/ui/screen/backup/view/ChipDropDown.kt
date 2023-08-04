@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.DropdownMenu
@@ -25,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.spackle.model.Index
@@ -55,7 +55,7 @@ fun ChipDropDown(
                 .padding(4.dp)
                 .clickable { expanded = !expanded }
         ),
-        shape = RoundedCornerShape(8.dp),
+        shape = RectangleShape,
         color = MaterialTheme.colorScheme.secondary,
         contentColor = MaterialTheme.colorScheme.secondary,
         tonalElevation = 8.dp,

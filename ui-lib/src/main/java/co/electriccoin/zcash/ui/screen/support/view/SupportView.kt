@@ -12,7 +12,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -26,12 +25,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.FormTextField
 import co.electriccoin.zcash.ui.design.component.GradientSurface
+import co.electriccoin.zcash.ui.design.component.NavigationButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 
 @Preview("Support")
@@ -43,6 +44,19 @@ private fun PreviewSupport() {
                 onBack = {},
                 onSend = {},
                 snackbarHostState = SnackbarHostState()
+            )
+        }
+    }
+}
+
+@Preview("Support-Popup")
+@Composable
+private fun PreviewSupportPopup() {
+    ZcashTheme(darkTheme = true) {
+        GradientSurface {
+            SupportConfirmationDialog(
+                onConfirm = {},
+                onDismiss = {}
             )
         }
     }
@@ -63,7 +77,10 @@ fun Support(
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
         floatingActionButton = {
-            FloatingActionButton(onClick = { setShowDialog(true) }) {
+            FloatingActionButton(
+                shape = RectangleShape,
+                onClick = { setShowDialog(true) }
+            ) {
                 Icon(
                     imageVector = Icons.Filled.Send,
                     contentDescription = stringResource(id = R.string.support_send)
@@ -147,22 +164,21 @@ private fun SupportConfirmationDialog(
     onDismiss: () -> Unit
 ) {
     AlertDialog(
+        shape = RectangleShape,
         onDismissRequest = onDismiss,
         title = {
         },
         confirmButton = {
-            Button(
-                onClick = onConfirm
-            ) {
-                Text(stringResource(id = R.string.support_confirmation_dialog_ok))
-            }
+            NavigationButton(
+                onClick = onConfirm,
+                text = stringResource(id = R.string.support_confirmation_dialog_ok)
+            )
         },
         dismissButton = {
-            Button(
-                onClick = onDismiss
-            ) {
-                Text(stringResource(id = R.string.support_confirmation_dialog_cancel))
-            }
+            NavigationButton(
+                onClick = onDismiss,
+                text = stringResource(id = R.string.support_confirmation_dialog_cancel)
+            )
         },
         text = {
             Text(stringResource(id = R.string.support_confirmation_explanation, stringResource(id = R.string.app_name)))
