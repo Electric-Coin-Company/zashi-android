@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -28,6 +29,7 @@ import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.NavigationArguments
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.showMessage
 import co.electriccoin.zcash.ui.design.component.BodySmall
 import co.electriccoin.zcash.ui.screen.about.nighthawk.AndroidAboutView
 import co.electriccoin.zcash.ui.screen.externalservices.AndroidExternalServicesView
@@ -227,6 +229,7 @@ internal fun MainActivity.MainNavigation(navHostController: NavHostController, p
 
 @Composable
 internal fun BottomNavigation(navController: NavController, enableTransferTab: Boolean = false) {
+    val context = LocalContext.current
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
     val showBottomNavBar = destinationsWithBottomBar.any { it.contentEquals(currentRoute, true) }
@@ -238,18 +241,22 @@ internal fun BottomNavigation(navController: NavController, enableTransferTab: B
                 NavigationBarItem(
                     selected = isBottomNavItemSelected(bottomNavItem.route, currentRoute),
                     onClick = {
-                        navController.navigate(bottomNavItem.route) {
-                            navController.graph.startDestinationRoute?.let { screen_route ->
-                                popUpTo(screen_route) {
-                                    saveState = true
+                        if (BottomNavItem.Transfer.route == bottomNavItem.route && enableTransferTab.not()) {
+                            context.showMessage(context.getString(R.string.transfer_tab_disabled_msg))
+                        } else {
+                            navController.navigate(bottomNavItem.route) {
+                                navController.graph.startDestinationRoute?.let { screen_route ->
+                                    popUpTo(screen_route) {
+                                        saveState = true
+                                    }
                                 }
+                                launchSingleTop = true
+                                restoreState = true
                             }
-                            launchSingleTop = true
-                            restoreState = true
                         }
                     },
                     icon = { Icon(painter = painterResource(id = bottomNavItem.icon), contentDescription = bottomNavItem.route) },
-                    enabled = if (BottomNavItem.Transfer.route == bottomNavItem.route) enableTransferTab else true,
+                    enabled = true,
                     label = { BodySmall(text = stringResource(id = bottomNavItem.title)) },
                     alwaysShowLabel = true,
                     colors = NavigationBarItemDefaults.colors(
