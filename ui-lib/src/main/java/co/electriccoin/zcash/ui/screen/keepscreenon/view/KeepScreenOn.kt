@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.externalservices.view
+package co.electriccoin.zcash.ui.screen.keepscreenon.view
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Icon
@@ -31,26 +32,41 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 
 @Preview
 @Composable
-fun ExternalServicesPreview() {
-    ZcashTheme(darkTheme = false) {
+fun KeepScreenOnPreview() {
+    ZcashTheme(darkTheme = true) {
         Surface {
-            ExternalServices(onBack = {}, isUnstoppableChecked = true, onUnstoppableCheckStateChanged = {})
+            KeepScreenOn(isScreenOnEnabled = true, onScreenOnEnabledChanged = {}, onBack = {})
         }
     }
 }
 
 @Composable
-fun ExternalServices(onBack: () -> Unit, isUnstoppableChecked: Boolean, onUnstoppableCheckStateChanged: (Boolean) -> Unit) {
+fun KeepScreenOn(
+    isScreenOnEnabled: Boolean?,
+    onScreenOnEnabledChanged: (isEnabled: Boolean) -> Unit,
+    onBack: () -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(dimensionResource(id = R.dimen.screen_standard_margin))
     ) {
-        IconButton(onClick = onBack, modifier = Modifier.size(dimensionResource(id = R.dimen.back_icon_size))) {
-            Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = stringResource(R.string.receive_back_content_description))
+        IconButton(
+            onClick = onBack,
+            modifier = Modifier.size(dimensionResource(id = R.dimen.back_icon_size))
+        ) {
+            Icon(
+                imageVector = Icons.Filled.ArrowBack,
+                contentDescription = stringResource(R.string.receive_back_content_description)
+            )
         }
         Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.offset)))
-        TitleMedium(text = stringResource(id = R.string.ns_external_services), color = colorResource(id = co.electriccoin.zcash.ui.design.R.color.ns_parmaviolet))
+        TitleMedium(
+            text = stringResource(id = R.string.keep_screen_on_msg),
+            color = colorResource(
+                id = co.electriccoin.zcash.ui.design.R.color.ns_parmaviolet
+            )
+        )
         Spacer(modifier = Modifier.height(24.dp))
         Row(
             modifier = Modifier
@@ -59,10 +75,11 @@ fun ExternalServices(onBack: () -> Unit, isUnstoppableChecked: Boolean, onUnstop
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            BodyMedium(text = stringResource(id = R.string.ns_external_services_uns), modifier = Modifier.weight(1f))
+            BodyMedium(text = stringResource(id = R.string.keep_screen_on_detail_msg), modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.width(8.dp))
             Switch(
-                checked = isUnstoppableChecked,
-                onCheckedChange = { onUnstoppableCheckStateChanged(it) },
+                checked = isScreenOnEnabled ?: false,
+                onCheckedChange = { onScreenOnEnabledChanged(it) },
             )
         }
     }

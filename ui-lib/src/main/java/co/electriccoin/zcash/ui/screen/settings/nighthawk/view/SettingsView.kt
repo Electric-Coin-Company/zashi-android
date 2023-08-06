@@ -44,6 +44,7 @@ fun SettingsPreview() {
                 onSecurity = {},
                 onBackupWallet = {},
                 onRescan = {},
+                onKeepScreenOn = {},
                 onExternalServices = {},
                 onAbout = {}
             )
@@ -58,6 +59,7 @@ fun SettingsView(
     onSecurity: () -> Unit,
     onBackupWallet: () -> Unit,
     onRescan: (ReScanType) -> Unit,
+    onKeepScreenOn: () -> Unit,
     onExternalServices: () -> Unit,
     onAbout: () -> Unit
 ) {
@@ -130,6 +132,14 @@ fun SettingsView(
             modifier = Modifier.heightIn(min = dimensionResource(id = R.dimen.setting_list_item_min_height))
                 .clickable { onChangeServer() }
         )*/
+        Spacer(modifier = Modifier.height(10.dp))
+        SettingsListItem(
+            iconRes = R.drawable.ic_keep_screen_on,
+            title = stringResource(id = R.string.keep_screen_on),
+            desc = stringResource(id = R.string.keep_screen_on_msg),
+            modifier = Modifier.heightIn(min = dimensionResource(id = R.dimen.setting_list_item_min_height))
+                .clickable { onKeepScreenOn() }
+        )
         Spacer(modifier = Modifier.height(10.dp))
         SettingsListItem(
             iconRes = R.drawable.ic_icon_external_services,

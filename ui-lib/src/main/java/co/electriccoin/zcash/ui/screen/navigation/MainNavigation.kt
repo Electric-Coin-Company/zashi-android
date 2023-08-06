@@ -31,10 +31,12 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.BodySmall
 import co.electriccoin.zcash.ui.screen.about.nighthawk.AndroidAboutView
 import co.electriccoin.zcash.ui.screen.externalservices.AndroidExternalServicesView
+import co.electriccoin.zcash.ui.screen.keepscreenon.AndroidKeepScreenOn
 import co.electriccoin.zcash.ui.screen.navigation.ArgumentKeys.IS_PIN_SETUP
 import co.electriccoin.zcash.ui.screen.navigation.ArgumentKeys.TRANSACTION_DETAILS_ID
 import co.electriccoin.zcash.ui.screen.navigation.NavigationTargets.ABOUT
 import co.electriccoin.zcash.ui.screen.navigation.NavigationTargets.EXTERNAL_SERVICES
+import co.electriccoin.zcash.ui.screen.navigation.NavigationTargets.KEEP_SCREEN_ON
 import co.electriccoin.zcash.ui.screen.navigation.NavigationTargets.PIN
 import co.electriccoin.zcash.ui.screen.navigation.NavigationTargets.RECEIVE_MONEY
 import co.electriccoin.zcash.ui.screen.navigation.NavigationTargets.RECEIVE_QR_CODES
@@ -89,6 +91,7 @@ internal fun MainActivity.MainNavigation(navHostController: NavHostController, p
                 onSyncNotifications = { navHostController.navigateJustOnce(SYNC_NOTIFICATION) },
                 onSecurity = { navHostController.navigateJustOnce(SECURITY) },
                 onBackupWallet = { navHostController.navigateJustOnce(SETTING_BACK_UP_WALLET) },
+                onKeepScreenOn = { navHostController.navigateJustOnce(KEEP_SCREEN_ON) },
                 onExternalServices = { navHostController.navigateJustOnce(EXTERNAL_SERVICES) },
                 onAbout = { navHostController.navigateJustOnce(ABOUT) }
             )
@@ -209,6 +212,11 @@ internal fun MainActivity.MainNavigation(navHostController: NavHostController, p
                 onBack = { navHostController.popBackStackJustOnce(ABOUT) }
             )
         }
+        composable(KEEP_SCREEN_ON) {
+            AndroidKeepScreenOn(
+                onBack = { navHostController.popBackStackJustOnce(KEEP_SCREEN_ON) }
+            )
+        }
         composable(EXTERNAL_SERVICES) {
             AndroidExternalServicesView(
                 onBack = { navHostController.popBackStackJustOnce(EXTERNAL_SERVICES) }
@@ -298,6 +306,7 @@ object NavigationTargets {
     const val SYNC_NOTIFICATION = "sync_notification"
     const val SECURITY = "security"
     const val SETTING_BACK_UP_WALLET = "setting_back_up_wallet"
+    const val KEEP_SCREEN_ON = "keep_screen_on"
     const val EXTERNAL_SERVICES = "external_services"
     const val ABOUT = "about"
     const val TRANSACTION_HISTORY = "transaction_history"

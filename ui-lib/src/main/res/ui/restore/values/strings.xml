@@ -287,4 +287,7 @@
     <string name="dialog_first_use_view_tx_message">Are you sure you\'d like to leave the app? This could reduce privacy, if you do not trust the destination.</string>
     <string name="dialog_first_use_view_tx_positive">View Tx</string>
     <string name="dialog_first_use_view_tx_title">Potential Privacy Risk</string>
+    <string name="keep_screen_on">Keep Screen on</string>
+    <string name="keep_screen_on_msg">Keep Screen on while syncing the wallet</string>
+    <string name="keep_screen_on_detail_msg">This will help in keep syncing the wallet while app is in open state</string>
 </resources>
