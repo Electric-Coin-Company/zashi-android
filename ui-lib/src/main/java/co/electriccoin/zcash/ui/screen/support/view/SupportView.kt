@@ -1,6 +1,7 @@
 package co.electriccoin.zcash.ui.screen.support.view
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,10 +11,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -29,10 +28,12 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.FormTextField
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.NavigationButton
+import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 
 @Preview("Support")
@@ -75,22 +76,12 @@ fun Support(
         topBar = {
             SupportTopAppBar(onBack = onBack)
         },
-        snackbarHost = { SnackbarHost(snackbarHostState) },
-        floatingActionButton = {
-            FloatingActionButton(
-                shape = RectangleShape,
-                onClick = { setShowDialog(true) }
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Send,
-                    contentDescription = stringResource(id = R.string.support_send)
-                )
-            }
-        }
+        snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
         SupportMainContent(
             message = message,
             setMessage = setMessage,
+            setShowDialog = setShowDialog,
             modifier = Modifier.padding(
                 top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
                 bottom = paddingValues.calculateBottomPadding() + ZcashTheme.dimens.spacingDefault,
@@ -130,6 +121,7 @@ private fun SupportTopAppBar(onBack: () -> Unit) {
 private fun SupportMainContent(
     message: String,
     setMessage: (String) -> Unit,
+    setShowDialog: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -155,6 +147,20 @@ private fun SupportMainContent(
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
 
         Body(stringResource(id = R.string.support_disclaimer))
+
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
+
+        Spacer(
+            modifier = Modifier
+                .fillMaxHeight()
+                .weight(MINIMAL_WEIGHT)
+        )
+
+        PrimaryButton(
+            onClick = { setShowDialog(true) },
+            text = stringResource(id = R.string.support_send),
+            outerPaddingValues = PaddingValues(all = ZcashTheme.dimens.spacingNone)
+        )
     }
 }
 

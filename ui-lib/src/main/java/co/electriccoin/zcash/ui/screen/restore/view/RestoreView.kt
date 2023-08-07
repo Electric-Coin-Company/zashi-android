@@ -43,6 +43,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
@@ -404,10 +405,15 @@ private fun NextWordTextField(
     Surface(
         modifier = modifier
             .fillMaxWidth()
-            .padding(dimens.spacingTiny),
+            .padding(dimens.spacingTiny)
+            .shadow(
+                elevation = 12.dp,
+                ambientColor = MaterialTheme.colorScheme.primary,
+                spotColor = MaterialTheme.colorScheme.primary
+            ),
         shape = RectangleShape,
-        color = MaterialTheme.colorScheme.secondary,
-        shadowElevation = 8.dp
+        color = MaterialTheme.colorScheme.surface,
+
     ) {
         /*
          * Treat the user input as a password for more secure input, but disable the transformation

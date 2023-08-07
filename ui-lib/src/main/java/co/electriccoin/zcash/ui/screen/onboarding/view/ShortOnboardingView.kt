@@ -57,7 +57,6 @@ private fun ShortOnboardingComposablePreview() {
  * @param onCreateWallet Callback when the user decides to create a new wallet.
  */
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
 fun ShortOnboarding(
     isDebugMenuEnabled: Boolean,
     onImportWallet: () -> Unit,

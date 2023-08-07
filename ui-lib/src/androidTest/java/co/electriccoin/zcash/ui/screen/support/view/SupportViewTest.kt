@@ -115,7 +115,7 @@ private fun ComposeContentTestRule.clickBack() {
 }
 
 private fun ComposeContentTestRule.clickSend() {
-    onNodeWithContentDescription(getStringResource(R.string.support_send)).also {
+    onNodeWithText(getStringResource(R.string.support_send)).also {
         it.performClick()
     }
 }

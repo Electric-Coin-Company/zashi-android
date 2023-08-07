@@ -2,7 +2,6 @@ package co.electriccoin.zcash.ui.screen.support.view
 
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
@@ -62,7 +61,7 @@ class SupportViewIntegrationTest : UiTestPrerequisites() {
             it.assertDoesNotExist()
         }
 
-        composeTestRule.onNodeWithContentDescription(getStringResource(R.string.support_send)).also {
+        composeTestRule.onNodeWithText(getStringResource(R.string.support_send)).also {
             it.performClick()
         }
 
