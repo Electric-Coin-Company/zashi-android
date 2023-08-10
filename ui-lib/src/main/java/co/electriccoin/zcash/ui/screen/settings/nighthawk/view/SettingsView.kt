@@ -44,7 +44,7 @@ fun SettingsPreview() {
                 onSecurity = {},
                 onBackupWallet = {},
                 onRescan = {},
-                onKeepScreenOn = {},
+                onAdvancedSetting = {},
                 onExternalServices = {},
                 onAbout = {}
             )
@@ -59,7 +59,7 @@ fun SettingsView(
     onSecurity: () -> Unit,
     onBackupWallet: () -> Unit,
     onRescan: (ReScanType) -> Unit,
-    onKeepScreenOn: () -> Unit,
+    onAdvancedSetting: () -> Unit,
     onExternalServices: () -> Unit,
     onAbout: () -> Unit
 ) {
@@ -134,19 +134,19 @@ fun SettingsView(
         )*/
         Spacer(modifier = Modifier.height(10.dp))
         SettingsListItem(
-            iconRes = R.drawable.ic_keep_screen_on,
-            title = stringResource(id = R.string.keep_screen_on),
-            desc = stringResource(id = R.string.keep_screen_on_msg),
-            modifier = Modifier.heightIn(min = dimensionResource(id = R.dimen.setting_list_item_min_height))
-                .clickable { onKeepScreenOn() }
-        )
-        Spacer(modifier = Modifier.height(10.dp))
-        SettingsListItem(
             iconRes = R.drawable.ic_icon_external_services,
             title = stringResource(id = R.string.ns_external_services),
             desc = stringResource(id = R.string.ns_external_services_text),
             modifier = Modifier.heightIn(min = dimensionResource(id = R.dimen.setting_list_item_min_height))
                 .clickable { onExternalServices() }
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+        SettingsListItem(
+            iconRes = R.drawable.ic_icon_settings,
+            title = stringResource(id = R.string.advanced),
+            desc = stringResource(id = R.string.advanced_msg),
+            modifier = Modifier.heightIn(min = dimensionResource(id = R.dimen.setting_list_item_min_height))
+                .clickable { onAdvancedSetting() }
         )
         Spacer(modifier = Modifier.height(10.dp))
         SettingsListItem(

@@ -288,7 +288,11 @@
     <string name="dialog_first_use_view_tx_positive">View Tx</string>
     <string name="dialog_first_use_view_tx_title">Potential Privacy Risk</string>
     <string name="keep_screen_on">Keep Screen on</string>
-    <string name="keep_screen_on_msg">Keep Screen on while syncing the wallet</string>
-    <string name="keep_screen_on_detail_msg">This will help in keep syncing the wallet while app is in open state</string>
-    <string name="transfer_tab_disabled_msg">Wallet Sync is in progress</string>
+    <string name="keep_screen_on_detail_msg">If you haven\'t opened your wallet in a while, the sync process can take some time. Setting screen mode to \"Keep on\" will ensure your phone doesn\'t fall asleep while syncing.</string>
+    <string name="advanced">Advanced</string>
+    <string name="advanced_msg">Less common settings</string>
+    <string name="nuke_wallet">Nuke Wallet</string>
+    <string name="nuke_wallet_caution">CAUTION: This will completely wipe your wallet and you will be unable to recover funds without your seed words.Ensure you have them saved somewhere safe before proceeding</string>
+    <string name="nuke_wallet_dialog_msg">This operation is IRREVERSIBLE. Restoring your funds will be impossible without seed words. Be ABSOLUTELY sure you have saved them somewhere safe before proceeding. Due you still want to proceed?</string>
+    <string name="are_you_sure">Are you sure?</string>
 </resources>

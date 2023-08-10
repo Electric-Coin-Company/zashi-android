@@ -13,7 +13,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -29,16 +28,15 @@ import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.NavigationArguments
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.showMessage
 import co.electriccoin.zcash.ui.design.component.BodySmall
 import co.electriccoin.zcash.ui.screen.about.nighthawk.AndroidAboutView
+import co.electriccoin.zcash.ui.screen.advancesetting.AndroidAdvancedSetting
 import co.electriccoin.zcash.ui.screen.externalservices.AndroidExternalServicesView
-import co.electriccoin.zcash.ui.screen.keepscreenon.AndroidKeepScreenOn
 import co.electriccoin.zcash.ui.screen.navigation.ArgumentKeys.IS_PIN_SETUP
 import co.electriccoin.zcash.ui.screen.navigation.ArgumentKeys.TRANSACTION_DETAILS_ID
 import co.electriccoin.zcash.ui.screen.navigation.NavigationTargets.ABOUT
+import co.electriccoin.zcash.ui.screen.navigation.NavigationTargets.ADVANCED_SETTING
 import co.electriccoin.zcash.ui.screen.navigation.NavigationTargets.EXTERNAL_SERVICES
-import co.electriccoin.zcash.ui.screen.navigation.NavigationTargets.KEEP_SCREEN_ON
 import co.electriccoin.zcash.ui.screen.navigation.NavigationTargets.PIN
 import co.electriccoin.zcash.ui.screen.navigation.NavigationTargets.RECEIVE_MONEY
 import co.electriccoin.zcash.ui.screen.navigation.NavigationTargets.RECEIVE_QR_CODES
@@ -93,7 +91,7 @@ internal fun MainActivity.MainNavigation(navHostController: NavHostController, p
                 onSyncNotifications = { navHostController.navigateJustOnce(SYNC_NOTIFICATION) },
                 onSecurity = { navHostController.navigateJustOnce(SECURITY) },
                 onBackupWallet = { navHostController.navigateJustOnce(SETTING_BACK_UP_WALLET) },
-                onKeepScreenOn = { navHostController.navigateJustOnce(KEEP_SCREEN_ON) },
+                onAdvancedSetting = { navHostController.navigateJustOnce(ADVANCED_SETTING) },
                 onExternalServices = { navHostController.navigateJustOnce(EXTERNAL_SERVICES) },
                 onAbout = { navHostController.navigateJustOnce(ABOUT) }
             )
@@ -214,9 +212,9 @@ internal fun MainActivity.MainNavigation(navHostController: NavHostController, p
                 onBack = { navHostController.popBackStackJustOnce(ABOUT) }
             )
         }
-        composable(KEEP_SCREEN_ON) {
-            AndroidKeepScreenOn(
-                onBack = { navHostController.popBackStackJustOnce(KEEP_SCREEN_ON) }
+        composable(ADVANCED_SETTING) {
+            AndroidAdvancedSetting(
+                onBack = { navHostController.popBackStackJustOnce(ADVANCED_SETTING) }
             )
         }
         composable(EXTERNAL_SERVICES) {
@@ -228,8 +226,7 @@ internal fun MainActivity.MainNavigation(navHostController: NavHostController, p
 }
 
 @Composable
-internal fun BottomNavigation(navController: NavController, enableTransferTab: Boolean = false) {
-    val context = LocalContext.current
+internal fun BottomNavigation(navController: NavController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
     val showBottomNavBar = destinationsWithBottomBar.any { it.contentEquals(currentRoute, true) }
@@ -241,18 +238,14 @@ internal fun BottomNavigation(navController: NavController, enableTransferTab: B
                 NavigationBarItem(
                     selected = isBottomNavItemSelected(bottomNavItem.route, currentRoute),
                     onClick = {
-                        if (BottomNavItem.Transfer.route == bottomNavItem.route && enableTransferTab.not()) {
-                            context.showMessage(context.getString(R.string.transfer_tab_disabled_msg))
-                        } else {
-                            navController.navigate(bottomNavItem.route) {
-                                navController.graph.startDestinationRoute?.let { screen_route ->
-                                    popUpTo(screen_route) {
-                                        saveState = true
-                                    }
+                        navController.navigate(bottomNavItem.route) {
+                            navController.graph.startDestinationRoute?.let { screenRoute ->
+                                popUpTo(screenRoute) {
+                                    saveState = true
                                 }
-                                launchSingleTop = true
-                                restoreState = true
                             }
+                            launchSingleTop = true
+                            restoreState = true
                         }
                     },
                     icon = { Icon(painter = painterResource(id = bottomNavItem.icon), contentDescription = bottomNavItem.route) },
@@ -313,7 +306,7 @@ object NavigationTargets {
     const val SYNC_NOTIFICATION = "sync_notification"
     const val SECURITY = "security"
     const val SETTING_BACK_UP_WALLET = "setting_back_up_wallet"
-    const val KEEP_SCREEN_ON = "keep_screen_on"
+    const val ADVANCED_SETTING = "advanced_settings"
     const val EXTERNAL_SERVICES = "external_services"
     const val ABOUT = "about"
     const val TRANSACTION_HISTORY = "transaction_history"

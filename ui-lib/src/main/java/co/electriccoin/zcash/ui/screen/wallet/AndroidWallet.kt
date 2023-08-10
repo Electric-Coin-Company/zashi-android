@@ -83,7 +83,6 @@ internal fun WrapWallet(
     } else {
         val enableTransferTab = walletSnapshot.enableTransferTab()
         LaunchedEffect(key1 = enableTransferTab) {
-            homeViewModel.onTransferTabStateChanged(enable = enableTransferTab)
 
             if (enableTransferTab) {
                 homeViewModel.intentDataUriForDeepLink?.let {

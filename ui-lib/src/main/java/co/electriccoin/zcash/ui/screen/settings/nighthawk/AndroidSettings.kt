@@ -17,7 +17,7 @@ internal fun MainActivity.AndroidSettings(
     onSyncNotifications: () -> Unit,
     onSecurity: () -> Unit,
     onBackupWallet: () -> Unit,
-    onKeepScreenOn: () -> Unit,
+    onAdvancedSetting: () -> Unit,
     onExternalServices: () -> Unit,
     onAbout: () -> Unit
 ) {
@@ -26,7 +26,7 @@ internal fun MainActivity.AndroidSettings(
         onSyncNotifications = onSyncNotifications,
         onSecurity = onSecurity,
         onBackupWallet = onBackupWallet,
-        onKeepScreenOn = onKeepScreenOn,
+        onAdvancedSetting = onAdvancedSetting,
         onExternalServices = onExternalServices,
         onAbout = onAbout
     )
@@ -38,7 +38,7 @@ internal fun WrapSettings(
     onSyncNotifications: () -> Unit,
     onSecurity: () -> Unit,
     onBackupWallet: () -> Unit,
-    onKeepScreenOn: () -> Unit,
+    onAdvancedSetting: () -> Unit,
     onExternalServices: () -> Unit,
     onAbout: () -> Unit
 ) {
@@ -64,7 +64,7 @@ internal fun WrapSettings(
         onSecurity = onSecurity,
         onBackupWallet = onBackupWallet,
         onRescan = onReScan,
-        onKeepScreenOn = onKeepScreenOn,
+        onAdvancedSetting = onAdvancedSetting,
         onExternalServices = onExternalServices,
         onAbout = onAbout
     )

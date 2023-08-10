@@ -11,13 +11,11 @@ import co.electriccoin.zcash.ui.common.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
 import co.electriccoin.zcash.ui.preference.StandardPreferenceSingleton
 import co.electriccoin.zcash.ui.screen.home.model.WalletSnapshot
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 
 class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -37,20 +35,10 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
                 null
             )
 
-    /**
-     * A flow of whether transfer tab is enabled. We disable the transfer tab in sync state
-     */
-    private val _isTransferTabEnabled = MutableStateFlow(false)
-    val isTransferStateEnabled: StateFlow<Boolean> get() = _isTransferTabEnabled
-
     var intentDataUriForDeepLink: Uri? = null
     var sendDeepLinkData: DeepLinkUtil.SendDeepLinkData? = null
     // Flag to track any expecting balance is there or not. We will show snackBar everytime user open the app until it is a confirmed transaction
     var expectingZatoshi = 0L
-
-    fun onTransferTabStateChanged(enable: Boolean) {
-        _isTransferTabEnabled.update { enable }
-    }
 
     fun isAnyExpectingTransaction(walletSnapshot: WalletSnapshot): Boolean {
         val totalBalance = walletSnapshot.saplingBalance.total + walletSnapshot.transparentBalance.total
