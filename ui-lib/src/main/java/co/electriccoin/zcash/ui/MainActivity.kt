@@ -73,6 +73,7 @@ class MainActivity : FragmentActivity() {
 
     private fun handleIntentData() {
         homeViewModel.intentDataUriForDeepLink = intent?.data
+        homeViewModel.shortcutAction = HomeViewModel.ShortcutAction.getShortcutAction(intent?.getStringExtra(HomeViewModel.ShortcutAction.KEY_SHORT_CUT_CLICK))
     }
 
     private fun setupSplashScreen() {

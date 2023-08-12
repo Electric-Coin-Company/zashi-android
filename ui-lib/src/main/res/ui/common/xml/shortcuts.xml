@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:background="@color/colorPrimary">
+
+    <shortcut
+        android:shortcutId="show_qr_code_to_receive"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_send_money"
+        android:shortcutShortLabel="@string/ns_receive_money"
+        android:shortcutLongLabel="@string/ns_receive_money_securely"
+        android:shortcutDisabledMessage="@string/ns_receive_money">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.nighthawkapps.wallet.android"
+            android:targetClass="co.electriccoin.zcash.ui.MainActivity">
+            <extra
+                 android:name="shortcut_click"
+                 android:value="show_qr_code_to_receive"/>
+        </intent>
+        <categories android:name="android.shortcut.conversation" />
+    </shortcut>
+
+    <shortcut
+        android:shortcutId="scan_qr_to_send"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_receive_money"
+        android:shortcutShortLabel="@string/ns_send_money"
+        android:shortcutLongLabel="@string/ns_scan_payment_code"
+        android:shortcutDisabledMessage="@string/ns_receive_money">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.nighthawkapps.wallet.android"
+            android:targetClass="co.electriccoin.zcash.ui.MainActivity">
+            <extra
+                android:name="shortcut_click"
+                android:value="scan_qr_to_send"/>
+        </intent>
+        <categories android:name="android.shortcut.conversation" />
+    </shortcut>
+</shortcuts>

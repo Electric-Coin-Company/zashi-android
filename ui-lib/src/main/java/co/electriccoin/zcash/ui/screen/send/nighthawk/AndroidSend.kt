@@ -81,6 +81,13 @@ internal fun WrapAndroidSend(
             it.memo?.let { memo -> sendViewModel.updateMemo(memo) }
         }?.also { homeViewModel.sendDeepLinkData = null }
 
+        // Check if there is any shortcut click data available or not
+        homeViewModel.shortcutAction?.let {
+            if (it == HomeViewModel.ShortcutAction.SEND_MONEY_SCAN_QR_CODE) {
+                onScan()
+            }
+        }?.also { homeViewModel.shortcutAction = null }
+
         // Get data after scan the QR code and update sendViewModel receiver address
         sendArgumentsWrapper?.let {
             it.recipientAddress?.let { address ->

@@ -84,7 +84,16 @@ internal fun WrapWallet(
         val enableTransferTab = walletSnapshot.enableTransferTab()
         LaunchedEffect(key1 = enableTransferTab) {
 
-            if (enableTransferTab) {
+            if (enableTransferTab.not()) {
+                homeViewModel.shortcutAction?.let {
+                    when (it) {
+                        HomeViewModel.ShortcutAction.SEND_MONEY_SCAN_QR_CODE -> onSendFromDeepLink()
+                        HomeViewModel.ShortcutAction.RECEIVE_MONEY_QR_CODE -> {
+                            onAddressQrCodes()
+                            homeViewModel.shortcutAction = null
+                        }
+                    }
+                }
                 homeViewModel.intentDataUriForDeepLink?.let {
                     DeepLinkUtil.getSendDeepLinkData(it)?.let { sendDeepLinkData ->
                         homeViewModel.sendDeepLinkData = sendDeepLinkData

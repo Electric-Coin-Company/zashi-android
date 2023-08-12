@@ -94,7 +94,7 @@ fun EnterReceiverAddress(receiverAddress: String, isContinueBtnEnabled: Boolean,
                         onValueChanged("")
                     })
                 } else {
-                    Icon(painter = painterResource(id = R.drawable.ic_icon_scan_qr), contentDescription = "", tint = Color.White, modifier = Modifier.clickable {
+                    Icon(painter = painterResource(id = R.drawable.ic_qr_scan), contentDescription = "", tint = Color.White, modifier = Modifier.clickable {
                         onScan()
                     })
                 }

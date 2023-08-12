@@ -37,6 +37,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
     var intentDataUriForDeepLink: Uri? = null
     var sendDeepLinkData: DeepLinkUtil.SendDeepLinkData? = null
+    var shortcutAction: ShortcutAction? = null
     // Flag to track any expecting balance is there or not. We will show snackBar everytime user open the app until it is a confirmed transaction
     var expectingZatoshi = 0L
 
@@ -48,5 +49,15 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             return true
         }
         return false
+    }
+
+    enum class ShortcutAction(val action: String) {
+        SEND_MONEY_SCAN_QR_CODE("scan_qr_to_send"),
+        RECEIVE_MONEY_QR_CODE("show_qr_code_to_receive");
+
+        companion object {
+            const val KEY_SHORT_CUT_CLICK = "shortcut_click"
+            fun getShortcutAction(action: String?) = ShortcutAction.values().find { it.action == action }
+        }
     }
 }
