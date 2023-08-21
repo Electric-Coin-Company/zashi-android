@@ -1,7 +1,7 @@
 package co.electriccoin.zcash.ui.fixture
 
 import cash.z.ecc.android.sdk.Synchronizer
-import cash.z.ecc.android.sdk.block.CompactBlockProcessor
+import cash.z.ecc.android.sdk.block.processor.CompactBlockProcessor
 import cash.z.ecc.android.sdk.model.PercentDecimal
 import cash.z.ecc.android.sdk.model.WalletBalance
 import cash.z.ecc.android.sdk.model.Zatoshi
@@ -22,7 +22,6 @@ object WalletSnapshotFixture {
     fun new(
         status: Synchronizer.Status = STATUS,
         processorInfo: CompactBlockProcessor.ProcessorInfo = CompactBlockProcessor.ProcessorInfo(
-            null,
             null,
             null,
             null

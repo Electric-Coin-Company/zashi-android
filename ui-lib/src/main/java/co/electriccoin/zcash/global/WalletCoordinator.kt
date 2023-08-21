@@ -2,6 +2,7 @@ package co.electriccoin.zcash.global
 
 import android.content.Context
 import cash.z.ecc.android.sdk.WalletCoordinator
+import cash.z.ecc.android.sdk.block.processor.CompactBlockProcessor
 import co.electriccoin.zcash.spackle.LazyWithArgument
 import co.electriccoin.zcash.ui.preference.EncryptedPreferenceKeys
 import co.electriccoin.zcash.ui.preference.EncryptedPreferenceSingleton
@@ -20,7 +21,11 @@ private val lazy = LazyWithArgument<Context, WalletCoordinator> {
         emitAll(EncryptedPreferenceKeys.PERSISTABLE_WALLET.observe(encryptedPreferenceProvider))
     }
 
-    WalletCoordinator(it, persistableWallet)
+    WalletCoordinator(
+        context = it,
+        persistableWallet = persistableWallet,
+        syncAlgorithm = CompactBlockProcessor.SyncAlgorithm.SPEND_BEFORE_SYNC
+    )
 }
 
 fun WalletCoordinator.Companion.getInstance(context: Context) = lazy.getInstance(context)
