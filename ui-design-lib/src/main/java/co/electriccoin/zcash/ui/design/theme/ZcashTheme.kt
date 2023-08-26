@@ -11,6 +11,8 @@ import co.electriccoin.zcash.ui.design.theme.internal.LightColorPalette
 import co.electriccoin.zcash.ui.design.theme.internal.LightExtendedColorPalette
 import co.electriccoin.zcash.ui.design.theme.internal.LocalExtendedColors
 import co.electriccoin.zcash.ui.design.theme.internal.LocalExtendedTypography
+import co.electriccoin.zcash.ui.design.theme.internal.LocalTypographies
+import co.electriccoin.zcash.ui.design.theme.internal.PrimaryTypography
 import co.electriccoin.zcash.ui.design.theme.internal.Typography
 
 @Composable
@@ -34,7 +36,7 @@ fun ZcashTheme(
         ProvideDimens {
             MaterialTheme(
                 colorScheme = baseColors,
-                typography = Typography,
+                typography = PrimaryTypography,
                 content = content
             )
         }
@@ -47,7 +49,11 @@ object ZcashTheme {
         @Composable
         get() = LocalExtendedColors.current
 
-    val typography: ExtendedTypography
+    val typography: Typography
+        @Composable
+        get() = LocalTypographies.current
+
+    val extendedTypography: ExtendedTypography
         @Composable
         get() = LocalExtendedTypography.current
 
