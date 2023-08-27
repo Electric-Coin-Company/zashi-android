@@ -1,9 +1,7 @@
 # Third Party Licenses
 
-The majority of the contents of this Git repository are covered under the [LICENSE](../LICENSE).  However certain items, as described below, are under different license.
-
-## Electric Coin Company copyrights trademarks
-
+The majority of the contents of this Git repository are covered under the [LICENSE](../LICENSE).  However certain 
+items, as described below, are under different license.
 
 ## Fonts
 We use these fonts from Google Fonts:
