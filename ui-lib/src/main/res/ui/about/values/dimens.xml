@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="top_margin_logo">48dp</dimen>
+    <dimen name="button_height">36dp</dimen>
+    <dimen name="button_min_width">152dp</dimen>
+    <dimen name="restore_button_min_width">210dp</dimen>
+    <dimen name="auto_shielding_btn_height">48dp</dimen>
+    <dimen name="top_margin_back_btn">25dp</dimen>
+    <dimen name="home_view_pager_min_height">125dp</dimen>
+    <dimen name="pageMargin">20dp</dimen>
+    <dimen name="offset">60dp</dimen>
+    <dimen name="radio_button_padding_horizontal">22dp</dimen>
+    <dimen name="radio_button_padding_vertical">12dp</dimen>
+    <dimen name="text_margin">15dp</dimen>
+    <dimen name="screen_bottom_margin">65dp</dimen>
+    <dimen name="screen_standard_margin">25dp</dimen>
+    <dimen name="back_icon_size">22dp</dimen>
+    <dimen name="setting_list_item_min_height">50dp</dimen>
+
+    <!-- Floats -->
+
+    <item name="ratio_golden_small" format="float" type="dimen">0.381966</item>
+    <item name="ratio_golden_large" format="float" type="dimen">0.618034</item>
+    <item name="calculator_button_width_percent" format="float" type="dimen">0.145631068</item>
+</resources>

@@ -23,6 +23,9 @@ import cash.z.ecc.sdk.type.fromResources
 import co.electriccoin.zcash.global.getInstance
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.ANDROID_STATE_FLOW_TIMEOUT
+import co.electriccoin.zcash.ui.common.HAS_SEED_PHRASE
+import co.electriccoin.zcash.ui.common.OldSecurePreference
+import co.electriccoin.zcash.ui.common.SEED_PHRASE
 import co.electriccoin.zcash.ui.common.throttle
 import co.electriccoin.zcash.ui.preference.EncryptedPreferenceKeys
 import co.electriccoin.zcash.ui.preference.EncryptedPreferenceSingleton
@@ -30,11 +33,14 @@ import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
 import co.electriccoin.zcash.ui.preference.StandardPreferenceSingleton
 import co.electriccoin.zcash.ui.screen.history.state.TransactionHistorySyncState
 import co.electriccoin.zcash.ui.screen.home.model.WalletSnapshot
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
@@ -48,6 +54,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -67,6 +74,29 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
      * that they have a consistent ordering.
      */
     private val persistWalletMutex = Mutex()
+
+    /**
+     * This preference is used to get the data from old app version before migration to compose.
+     * Don't use for new value storage
+     */
+    private val oldSecurePreference by lazy { OldSecurePreference(application) }
+
+    /**
+     * Flow to determine weather we need to migrate old app or not
+     */
+    private val isMigrationRequiredFromOldWallet = MutableStateFlow(false)
+
+    /**
+     * Here we check if user is trying to migrate from old app to compose version. In old app we store local data
+     * differently so we check if seed words are available then migrate them to new wallet.
+     * This method will update [isMigrationRequiredFromOldWallet] and that will impact the [secretState]. For doing
+     * the operation on IO thread to avoid violation we defined as a method
+     */
+    fun checkForOldAppMigration() {
+        viewModelScope.launch(Dispatchers.IO) {
+            isMigrationRequiredFromOldWallet.update { oldSecurePreference.getBoolean(HAS_SEED_PHRASE) && oldSecurePreference.getString(SEED_PHRASE).isNotBlank() }
+        }
+    }
 
     /**
      * Synchronizer that is retained long enough to survive configuration changes.
@@ -97,9 +127,38 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
         emitAll(StandardPreferenceKeys.IS_USER_BACKUP_COMPLETE.observe(preferenceProvider))
     }
 
-    val secretState: StateFlow<SecretState> = walletCoordinator.persistableWallet
-        .combine(isBackupComplete) { persistableWallet: PersistableWallet?, isBackupComplete: Boolean ->
-            if (null == persistableWallet) {
+    /**
+     * This flow will be used to update that user is authenticated to enter in the app or not.
+     * This will used when user has enabled authentication and to track that it is enabled or not  we are using
+     * @see isAuthenticationRequire
+     */
+    private val isUserAuthenticated = MutableStateFlow(false)
+
+    /**
+     * A flow of whether authentication require to allow user to use the app.
+     * If authentication is not enabled by user we will return false,
+     * if user has enabled authentication then we check isUserAuthenticated
+     * @see isUserAuthenticated
+     */
+    private val isAuthenticationRequire = flow {
+        val preferenceProvider = StandardPreferenceSingleton.getInstance(application)
+        emit(StandardPreferenceKeys.LAST_ENTERED_PIN.getValue(preferenceProvider).isNotBlank())
+    }.combine(isUserAuthenticated) { isAuthenticationEnabled, isUserAuthenticated ->
+        if (isAuthenticationEnabled) {
+            isUserAuthenticated.not()
+        } else {
+            false
+        }
+    }
+
+    val secretState: StateFlow<SecretState> = run {
+        combine(walletCoordinator.persistableWallet, isBackupComplete, isAuthenticationRequire, isMigrationRequiredFromOldWallet) { persistableWallet: PersistableWallet?, isBackupComplete: Boolean, isAuthenticationRequire: Boolean,
+            isMigrationRequired ->
+            if (isMigrationRequired) {
+                SecretState.NeedMigrationFromOldApp
+            } else if (isAuthenticationRequire) {
+                SecretState.NeedAuthentication
+            } else if (null == persistableWallet) {
                 SecretState.None
             } else if (!isBackupComplete) {
                 SecretState.NeedsBackup(persistableWallet)
@@ -111,6 +170,7 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
             SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
             SecretState.Loading
         )
+    }
 
     // This needs to be refactored once we support pin lock
     val spendingKey = secretState
@@ -134,17 +194,25 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
     @OptIn(ExperimentalCoroutinesApi::class, ExperimentalTime::class)
     val walletSnapshot: StateFlow<WalletSnapshot?> = synchronizer
         .flatMapLatest {
-            if (null == it) {
-                flowOf(null)
-            } else {
-                it.toWalletSnapshot()
-            }
+            it?.toWalletSnapshot() ?: flowOf(null)
         }
         .throttle(1.seconds)
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
             null
+        )
+
+    // This is not the right API, because the transaction list could be very long and might need UI filtering
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val transactionSnapshot: StateFlow<ImmutableList<TransactionOverview>> = synchronizer
+        .flatMapLatest {
+            it?.transactions?.map { list -> list.toPersistentList() } ?: flowOf(persistentListOf())
+        }
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+            persistentListOf()
         )
 
     val addresses: StateFlow<WalletAddresses?> = synchronizer
@@ -246,6 +314,14 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
     fun resetSdk() {
         walletCoordinator.resetSdk()
     }
+
+    /**
+     * This asynchronously update the SecretState.
+     * If user is authenticated then only we allow user to enter in the app
+     */
+    fun updateAuthenticationState(isUserAuthenticated: Boolean) {
+        this.isUserAuthenticated.update { isUserAuthenticated }
+    }
 }
 
 /**
@@ -253,6 +329,8 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
  */
 sealed class SecretState {
     object Loading : SecretState()
+    object NeedMigrationFromOldApp: SecretState()
+    object NeedAuthentication : SecretState()
     object None : SecretState()
     class NeedsBackup(val persistableWallet: PersistableWallet) : SecretState()
     class Ready(val persistableWallet: PersistableWallet) : SecretState()

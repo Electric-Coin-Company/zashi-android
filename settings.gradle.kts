@@ -63,6 +63,7 @@ pluginManagement {
         id("com.osacky.fulladle") version (extra["FULLADLE_VERSION"].toString()) apply (false)
         id("org.jetbrains.kotlinx.kover") version (extra["KOVER_VERSION"].toString()) apply (false)
         id("wtf.emulator.gradle") version (extra["EMULATOR_WTF_GRADLE_PLUGIN_VERSION"].toString()) apply (false)
+        id("com.mikepenz.aboutlibraries.plugin") version (extra["ABOUT_LIBRARIES_VERSION"].toString()) apply (false)
         kotlin("android") version (kotlinVersion) apply (false)
         kotlin("jvm") version (kotlinVersion)
         kotlin("multiplatform") version (kotlinVersion)
@@ -136,6 +137,9 @@ dependencyResolutionManagement {
                 }
             }
         }
+        maven("https://jitpack.io") {
+
+        }
     }
 
     @Suppress("UnstableApiUsage", "MaxLineLength")
@@ -180,6 +184,13 @@ dependencyResolutionManagement {
             val zcashBip39Version = extra["ZCASH_BIP39_VERSION"].toString()
             val zcashSdkVersion = extra["ZCASH_SDK_VERSION"].toString()
             val zxingVersion = extra["ZXING_VERSION"].toString()
+            val pdfBoxVersion = extra["PDF_BOX_VERSION"].toString()
+            val lottieVersion = extra["LOTTIE_VERSION"].toString()
+            val bioMetricVersion = extra["BIO_METRIC_VERSION"].toString()
+            val aboutLibrariesVersion = extra["ABOUT_LIBRARIES_VERSION"].toString()
+            val retrofitVersion = extra["RETROFIT_VERSION"].toString()
+            val okHttpVersion = extra["OKHTTP_VERSION"].toString()
+            val secureStorageVersion = extra["SECURE_STORAGE_VERSION"].toString()
 
             // Standalone versions
             version("flank", flankVersion)
@@ -201,6 +212,7 @@ dependencyResolutionManagement {
             library("androidx-compose-material-icons-extended", "androidx.compose.material:material-icons-extended:$androidxComposeMaterialIconsVersion")
             library("androidx-compose-tooling", "androidx.compose.ui:ui-tooling:$androidxComposeVersion")
             library("androidx-compose-ui", "androidx.compose.ui:ui:$androidxComposeVersion")
+            library("androidx-compose-ui", "androidx.compose.ui:ui-util:$androidxComposeVersion")
             library("androidx-compose-ui-fonts", "androidx.compose.ui:ui-text-google-fonts:$androidxComposeVersion")
             library("androidx-compose-compiler", "androidx.compose.compiler:compiler:$androidxComposeCompilerVersion")
             library("androidx-core", "androidx.core:core-ktx:$androidxCoreVersion")
@@ -234,6 +246,15 @@ dependencyResolutionManagement {
             library("zcash-bip39", "cash.z.ecc.android:kotlin-bip39:$zcashBip39Version")
             library("zcash-walletplgns", "cash.z.ecc.android:zcash-android-wallet-plugins:$zcashBip39Version")
             library("zxing", "com.google.zxing:core:$zxingVersion")
+            library("pdfbox", "com.tom-roush:pdfbox-android:$pdfBoxVersion")
+            library("lottie", "com.airbnb.android:lottie-compose:$lottieVersion")
+            library("androidx.biometric", "androidx.biometric:biometric-ktx:$bioMetricVersion")
+            library("about-libraries", "com.mikepenz:aboutlibraries-compose:$aboutLibrariesVersion")
+            library("square-retrofit", "com.squareup.retrofit2:retrofit:$retrofitVersion")
+            library("square-retrofit-gson", "com.squareup.retrofit2:converter-gson:$retrofitVersion")
+            library("square-okhttp", "com.squareup.okhttp3:okhttp:$okHttpVersion")
+            library("square-okhttp-logging-interceptor", "com.squareup.okhttp3:logging-interceptor:$okHttpVersion")
+            library("secure-storage", "com.github.gmale:secure-storage-android:$secureStorageVersion")
 
             // Test libraries
             library("androidx-compose-test-junit", "androidx.compose.ui:ui-test-junit4:$androidxComposeVersion")

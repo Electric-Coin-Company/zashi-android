@@ -2,17 +2,19 @@ package co.electriccoin.zcash.ui
 
 import android.os.Bundle
 import android.os.SystemClock
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.annotation.VisibleForTesting
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -21,14 +23,15 @@ import androidx.navigation.NavHostController
 import co.electriccoin.zcash.ui.common.BindCompLocalProvider
 import co.electriccoin.zcash.ui.configuration.RemoteConfig
 import co.electriccoin.zcash.ui.design.component.ConfigurationOverride
-import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.Override
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
-import co.electriccoin.zcash.ui.screen.backup.WrapNewWallet
 import co.electriccoin.zcash.ui.screen.home.viewmodel.HomeViewModel
 import co.electriccoin.zcash.ui.screen.home.viewmodel.SecretState
 import co.electriccoin.zcash.ui.screen.home.viewmodel.WalletViewModel
-import co.electriccoin.zcash.ui.screen.onboarding.WrapOnboarding
+import co.electriccoin.zcash.ui.screen.migration.AndroidAppMigration
+import co.electriccoin.zcash.ui.screen.onboarding.nighthawk.WrapOnBoarding
+import co.electriccoin.zcash.ui.screen.onboarding.nighthawk.view.SeedBackup
+import co.electriccoin.zcash.ui.screen.pin.AndroidPin
 import co.electriccoin.zcash.ui.screen.warning.WrapNotEnoughSpace
 import co.electriccoin.zcash.ui.screen.warning.viewmodel.StorageCheckViewModel
 import co.electriccoin.zcash.work.WorkIds
@@ -41,7 +44,7 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
-class MainActivity : ComponentActivity() {
+class MainActivity : FragmentActivity() {
 
     val homeViewModel by viewModels<HomeViewModel>()
 
@@ -56,12 +59,21 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        window.statusBarColor = ContextCompat.getColor(this, co.electriccoin.zcash.ui.design.R.color.ns_dark_navy)
+        window.navigationBarColor = ContextCompat.getColor(this, co.electriccoin.zcash.ui.design.R.color.ns_dark_navy)
 
         setupSplashScreen()
 
         setupUiContent()
 
         monitorForBackgroundSync()
+
+        handleIntentData()
+    }
+
+    private fun handleIntentData() {
+        homeViewModel.intentDataUriForDeepLink = intent?.data
+        homeViewModel.shortcutAction = HomeViewModel.ShortcutAction.getShortcutAction(intent?.getStringExtra(HomeViewModel.ShortcutAction.KEY_SHORT_CUT_CLICK))
     }
 
     private fun setupSplashScreen() {
@@ -87,7 +99,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             Override(configurationOverrideFlow) {
                 ZcashTheme {
-                    GradientSurface(
+                    Surface(
                         Modifier
                             .fillMaxWidth()
                             .fillMaxHeight()
@@ -112,6 +124,7 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     private fun MainContent() {
+        walletViewModel.checkForOldAppMigration()
         val configuration = homeViewModel.configurationFlow.collectAsStateWithLifecycle().value
         val secretState = walletViewModel.secretState.collectAsStateWithLifecycle().value
 
@@ -125,17 +138,23 @@ class MainActivity : ComponentActivity() {
             // to the "platform" layer, which is where the arguments will be derived from.
             CompositionLocalProvider(RemoteConfig provides configuration) {
                 when (secretState) {
+                    SecretState.NeedMigrationFromOldApp -> {
+                        AndroidAppMigration()
+                    }
+                    SecretState.NeedAuthentication -> {
+                        AndroidPin(onBack = { this.finish() } )
+                    }
                     SecretState.None -> {
-                        WrapOnboarding()
+                        WrapOnBoarding()
                     }
                     is SecretState.NeedsBackup -> {
-                        WrapNewWallet(
-                            secretState.persistableWallet,
+                        SeedBackup(
+                            persistableWallet = secretState.persistableWallet,
                             onBackupComplete = { walletViewModel.persistBackupComplete() }
                         )
                     }
                     is SecretState.Ready -> {
-                        Navigation()
+                        NavigationMainContent()
                     }
                     else -> {
                         error("Unhandled secret state: $secretState")

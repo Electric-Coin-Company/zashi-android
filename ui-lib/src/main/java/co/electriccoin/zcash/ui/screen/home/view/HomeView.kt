@@ -311,7 +311,7 @@ private fun HomeMainContent(
     ) {
         Status(walletSnapshot, isUpdateAvailable, isFiatConversionEnabled, isCircularProgressBarEnabled)
 
-        if (walletSnapshot.status == Synchronizer.Status.SYNCING) {
+        if (isSyncing(walletSnapshot.status)) {
             Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
             Body(text = stringResource(id = R.string.home_information))
         }
@@ -337,10 +337,14 @@ private fun HomeMainContent(
 
         TertiaryButton(onClick = goHistory, text = stringResource(R.string.home_button_history))
 
-        if (isKeepScreenOnDuringSync == true && walletSnapshot.status == Synchronizer.Status.SYNCING) {
+        if (isKeepScreenOnDuringSync == true && isSyncing(walletSnapshot.status)) {
             DisableScreenTimeout()
         }
     }
+}
+
+private fun isSyncing(status: Synchronizer.Status): Boolean {
+    return status == Synchronizer.Status.SYNCING
 }
 
 @Composable

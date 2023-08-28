@@ -58,9 +58,9 @@ import androidx.core.content.ContextCompat
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.Body
+import co.electriccoin.zcash.ui.design.component.BodySmall
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.SecondaryButton
-import co.electriccoin.zcash.ui.design.component.Small
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.scan.ScanTag
 import co.electriccoin.zcash.ui.screen.scan.model.ScanState
@@ -141,7 +141,7 @@ fun ScanBottomItems(
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
 
-        Small(
+        BodySmall(
             text = when (scanState) {
                 ScanState.Permission -> stringResource(id = R.string.scan_state_permission)
                 ScanState.Scanning -> stringResource(id = R.string.scan_state_scanning)

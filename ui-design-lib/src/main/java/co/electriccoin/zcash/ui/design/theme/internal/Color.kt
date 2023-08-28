@@ -57,21 +57,21 @@ internal object Dark {
 }
 
 internal object Light {
-    val backgroundStart = Color(0xFFE3EFF9)
+    val backgroundStart = Color(0xFF110E2B)
     val backgroundEnd = Color(0xFFD2E4F3)
+    val primaryPeach = Color(0xFFFE7757)
 
-    val textHeaderOnBackground = Color(0xff2D3747)
-    val textBodyOnBackground = Color(0xFF7B8897)
+    val textHeaderOnBackground = primaryPeach
+    val textBodyOnBackground = Color.White
     val textNavigationButton = Color(0xFF7B8897)
-    val textPrimaryButton = Color(0xFFF2F7FC)
+    val textPrimaryButton = Color(0xFF110E2B)
     val textSecondaryButton = Color(0xFF2E476E)
-    val textTertiaryButton = Color(0xFF283559)
+    val textTertiaryButton = primaryPeach
     val textCaption = Color(0xFF2D3747)
     val textChipIndex = Color(0xFFEE8592)
 
-    // TODO [#159]: The button colors are wrong for light
-    // TODO [#159]: https://github.com/zcash/secant-android-wallet/issues/159
-    val primaryButton = Color(0xFF263357)
+    // TODO The button colors are wrong for light
+    val primaryButton = Color(0xFFFE7757)
     val primaryButtonPressed = Color(0xFFFFD800)
     val primaryButtonDisabled = Color(0x33F4B728)
 
@@ -79,7 +79,7 @@ internal object Light {
     val secondaryButtonPressed = Color(0xFFFAFBFD)
     val secondaryButtonDisabled = Color(0xFFE6EFF8)
 
-    val tertiaryButton = Color.Transparent
+    val tertiaryButton = Color(0xFF2B2551)
     val tertiaryButtonPressed = Color(0xFFFFFFFF)
 
     val navigationButton = Color(0xFFE3EDF7)
@@ -105,7 +105,7 @@ internal object Light {
     val dangerous = Color(0xFFEC0008)
     val onDangerous = Color(0xFFFFFFFF)
 
-    val reference = Color(0xFF10A5FF)
+    val reference = primaryPeach
 }
 
 internal val DarkColorPalette = darkColorScheme(

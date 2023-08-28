@@ -6,12 +6,17 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import cash.z.ecc.android.sdk.ext.convertZatoshiToZecString
+import cash.z.ecc.android.sdk.model.Zatoshi
+import co.electriccoin.zcash.global.DeepLinkUtil
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.screen.home.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.scan.util.SettingsUtil
 import co.electriccoin.zcash.ui.screen.scan.view.Scan
+import co.electriccoin.zcash.ui.screen.send.nighthawk.viewmodel.SendViewModel
 import kotlinx.coroutines.launch
 
 @Composable
@@ -33,6 +38,7 @@ fun WrapScan(
     goBack: () -> Unit
 ) {
     val walletViewModel by activity.viewModels<WalletViewModel>()
+    val sendViewModel by activity.viewModels<SendViewModel>()
 
     val synchronizer = walletViewModel.synchronizer.collectAsStateWithLifecycle().value
 
@@ -47,8 +53,15 @@ fun WrapScan(
             onBack = goBack,
             onScanned = { result ->
                 scope.launch {
-                    val isAddressValid = !synchronizer.validateAddress(result).isNotValid
+                    val sendDeepLinkData = DeepLinkUtil.getSendDeepLinkData(result.toUri())
+                    val address = sendDeepLinkData?.address ?: result
+                    val isAddressValid = !synchronizer.validateAddress(address).isNotValid
                     if (isAddressValid) {
+                        sendDeepLinkData?.let {
+                            sendViewModel.updateReceiverAddress(it.address)
+                            it.amount?.let { zatoshi -> sendViewModel.enteredZecFromDeepLink(Zatoshi(zatoshi).convertZatoshiToZecString()) }
+                            it.memo?.let { memo -> sendViewModel.updateMemo(memo) }
+                        }
                         onScanValid(result)
                     } else {
                         snackbarHostState.showSnackbar(
