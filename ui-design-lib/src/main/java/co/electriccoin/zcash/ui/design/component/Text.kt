@@ -74,7 +74,7 @@ fun ListItem(
 ) {
     Text(
         text = text,
-        style = ZcashTheme.typography.listItem,
+        style = ZcashTheme.extendedTypography.listItem,
         color = MaterialTheme.colorScheme.onBackground,
         modifier = modifier
     )
@@ -87,7 +87,7 @@ fun ListHeader(
 ) {
     Text(
         text = text,
-        style = ZcashTheme.typography.listItem,
+        style = ZcashTheme.extendedTypography.listItem,
         color = ZcashTheme.colors.onBackgroundHeader,
         modifier = modifier
     )
@@ -124,7 +124,7 @@ fun HeaderWithZecIcon(
 ) {
     Text(
         text = stringResource(R.string.amount_with_zec_currency_symbol, amount),
-        style = ZcashTheme.typography.zecBalance,
+        style = ZcashTheme.extendedTypography.zecBalance,
         color = MaterialTheme.colorScheme.onBackground,
         modifier = modifier
     )

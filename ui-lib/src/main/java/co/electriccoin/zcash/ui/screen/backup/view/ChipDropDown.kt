@@ -68,7 +68,7 @@ fun ChipDropDown(
         ) {
             Text(
                 text = (chipIndex.value + 1).toString(),
-                style = ZcashTheme.typography.chipIndex,
+                style = ZcashTheme.extendedTypography.chipIndex,
                 color = ZcashTheme.colors.chipIndex
             )
             Spacer(modifier = Modifier.padding(horizontal = 2.dp, vertical = 0.dp))

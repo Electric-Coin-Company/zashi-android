@@ -45,7 +45,7 @@ fun Chip(
         ) {
             Text(
                 text = (index.value + 1).toString(),
-                style = ZcashTheme.typography.chipIndex,
+                style = ZcashTheme.extendedTypography.chipIndex,
                 color = ZcashTheme.colors.chipIndex
             )
             Text(
