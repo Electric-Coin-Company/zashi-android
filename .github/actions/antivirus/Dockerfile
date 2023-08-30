@@ -1,3 +1,3 @@
-FROM clamav/clamav:1.1.1
+FROM clamav/clamav:1.2.0
 RUN freshclam
 ENTRYPOINT ["clamscan", "--recursive"]
