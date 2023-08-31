@@ -22,12 +22,19 @@ private val provider = GoogleFont.Provider(
 // We use bestEffort here to be able to get the closest font weight, if accidentally use
 // an unspecified font weight and not the default one.
 private val InterFont = GoogleFont(name = "Inter", bestEffort = true)
+private val ArchivoFont = GoogleFont(name = "Archivo", bestEffort = true)
 
 private val InterFontFamily = FontFamily(
     Font(googleFont = InterFont, fontProvider = provider, weight = FontWeight.Normal), // W400
     Font(googleFont = InterFont, fontProvider = provider, weight = FontWeight.Medium), // W500
     Font(googleFont = InterFont, fontProvider = provider, weight = FontWeight.SemiBold), // W600
     Font(googleFont = InterFont, fontProvider = provider, weight = FontWeight.Bold) // W700
+)
+private val ArchivoFontFamily = FontFamily(
+    Font(googleFont = ArchivoFont, fontProvider = provider, weight = FontWeight.Normal), // W400
+    Font(googleFont = ArchivoFont, fontProvider = provider, weight = FontWeight.Medium), // W500
+    Font(googleFont = ArchivoFont, fontProvider = provider, weight = FontWeight.SemiBold), // W600
+    Font(googleFont = ArchivoFont, fontProvider = provider, weight = FontWeight.Bold) // W700
 )
 
 private val Zboto = FontFamily(
@@ -36,7 +43,7 @@ private val Zboto = FontFamily(
 
 // If you change this definition of our Typography, don't forget to check if you use only
 // the defined font weights above, otherwise the closest one will be used.
-internal val Typography = Typography(
+internal val PrimaryTypography = Typography(
     headlineLarge = TextStyle(
         fontFamily = InterFontFamily,
         fontWeight = FontWeight.SemiBold,
@@ -59,6 +66,35 @@ internal val Typography = Typography(
     )
 )
 
+internal val SecondaryTypography = Typography(
+    headlineLarge = TextStyle(
+        fontFamily = ArchivoFontFamily,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 30.sp
+    ),
+    bodyLarge = TextStyle(
+        fontFamily = ArchivoFontFamily,
+        fontWeight = FontWeight.Normal,
+        fontSize = 16.sp
+    ),
+    bodySmall = TextStyle(
+        fontFamily = ArchivoFontFamily,
+        fontWeight = FontWeight.Medium,
+        fontSize = 16.sp
+    ),
+    labelLarge = TextStyle(
+        fontFamily = ArchivoFontFamily,
+        fontWeight = FontWeight.Normal,
+        fontSize = 16.sp
+    )
+)
+
+@Immutable
+data class Typography(
+    val primary: Typography,
+    val secondary: Typography
+)
+
 @Immutable
 data class ExtendedTypography(
     val chipIndex: TextStyle,
@@ -67,14 +103,22 @@ data class ExtendedTypography(
 )
 
 @Suppress("CompositionLocalAllowlist")
+val LocalTypographies = staticCompositionLocalOf {
+    Typography(
+        primary = PrimaryTypography,
+        secondary = SecondaryTypography
+    )
+}
+
+@Suppress("CompositionLocalAllowlist")
 val LocalExtendedTypography = staticCompositionLocalOf {
     ExtendedTypography(
-        chipIndex = Typography.bodyLarge.copy(
+        chipIndex = PrimaryTypography.bodyLarge.copy(
             fontSize = 10.sp,
             baselineShift = BaselineShift.Superscript,
             fontWeight = FontWeight.Bold
         ),
-        listItem = Typography.bodyLarge.copy(
+        listItem = PrimaryTypography.bodyLarge.copy(
             fontSize = 24.sp
         ),
         zecBalance = TextStyle(
