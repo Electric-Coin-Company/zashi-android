@@ -42,7 +42,9 @@ fun FormTextField(
         colors = colors,
         modifier = if (withBorder) {
             modifier.border(width = 1.dp, color = MaterialTheme.colorScheme.primary)
-        } else modifier,
+        } else {
+            modifier
+        },
         leadingIcon = leadingIcon,
         trailingIcon = trailingIcon,
         keyboardActions = keyboardActions,

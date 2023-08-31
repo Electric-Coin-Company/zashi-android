@@ -36,11 +36,13 @@ private fun ButtonComposablePreview() {
                 SecondaryButton(onClick = { }, text = "Secondary")
                 TertiaryButton(onClick = { }, text = "Tertiary")
                 NavigationButton(onClick = { }, text = "Navigation")
+                DangerousButton(onClick = { }, text = "Dangerous")
             }
         }
     }
 }
 
+@Suppress("LongParameterList")
 @Composable
 fun PrimaryButton(
     onClick: () -> Unit,
@@ -56,7 +58,7 @@ fun PrimaryButton(
 ) {
     Button(
         shape = RectangleShape,
-        enabled= enabled,
+        enabled = enabled,
         modifier = modifier
             .padding(outerPaddingValues)
             .shadow(
@@ -70,10 +72,14 @@ fun PrimaryButton(
             )
             .defaultMinSize(230.dp, 50.dp)
             .border(1.dp, Color.Black),
-        colors =  buttonColors(buttonColor, disabledContainerColor = Color(0xFFB7B7B7), disabledContentColor = Color(0xFFDDDDDD)),
+        colors = buttonColors(
+            buttonColor,
+            disabledContainerColor = ZcashTheme.colors.disabledButtonColor,
+            disabledContentColor = ZcashTheme.colors.disabledButtonTextColor
+        ),
         onClick = onClick,
-    ){
-        Text(text = text,color = textColor,  style = MaterialTheme.typography.labelLarge)
+    ) {
+        Text(text = text, color = textColor, style = MaterialTheme.typography.labelLarge)
     }
 }
 
@@ -189,6 +195,7 @@ fun DangerousButton(
     }
 }
 
+@Suppress("LongParameterList")
 fun Modifier.shadow(
     color: Color = Color.Black,
     borderRadius: Dp = 0.dp,
@@ -202,7 +209,7 @@ fun Modifier.shadow(
     modifier.drawBehind {
         this.drawIntoCanvas {
             val paint = Paint()
-            if(stroke) {
+            if (stroke) {
                 paint.style = PaintingStyle.Stroke
                 paint.strokeWidth = 2f
                 paint.color = Color.Black

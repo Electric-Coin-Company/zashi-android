@@ -18,16 +18,16 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 private fun ComposablePreview() {
     val checkBoxState = remember { mutableStateOf(false) }
     ZcashTheme(darkTheme = false) {
-        CheckBox(text= "test", onCheckedChange = {checkBoxState.value= it}, checked = checkBoxState.value)
+        CheckBox(text = "test", onCheckedChange = { checkBoxState.value = it }, checked = checkBoxState.value)
     }
 }
 
 @Composable
 fun CheckBox(
-    modifier: Modifier = Modifier,
-    checked: Boolean= false,
     onCheckedChange: ((Boolean) -> Unit),
     text: String,
+    modifier: Modifier = Modifier,
+    checked: Boolean = false
 ) {
     Row(modifier = Modifier.padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
         Checkbox(
