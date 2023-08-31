@@ -29,6 +29,7 @@ data class ExtendedColors(
     val reference: Color,
     val disabledButtonColor: Color,
     val disabledButtonTextColor: Color,
+    val buttonShadowColor: Color,
 ) {
     @Composable
     fun surfaceGradient() = Brush.verticalGradient(
