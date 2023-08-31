@@ -62,15 +62,15 @@ fun PrimaryButton(
         modifier = modifier
             .padding(outerPaddingValues)
             .shadow(
-                Color.Black,
+                ZcashTheme.colors.buttonShadowColor,
                 borderRadius = 0.dp,
-                offsetX = 20.dp,
-                offsetY = 20.dp,
-                spread = 10.dp,
+                offsetX = ZcashTheme.dimens.shadowOffsetX,
+                offsetY = ZcashTheme.dimens.shadowOffsetY,
+                spread = ZcashTheme.dimens.shadowSpread,
                 blurRadius = 0.dp,
-                stroke = textColor != Color.Black,
+                stroke = textColor != MaterialTheme.colorScheme.onPrimary,
             )
-            .defaultMinSize(230.dp, 50.dp)
+            .defaultMinSize(ZcashTheme.dimens.defaultButtonWidth, ZcashTheme.dimens.defaultButtonHeight)
             .border(1.dp, Color.Black),
         colors = buttonColors(
             buttonColor,
