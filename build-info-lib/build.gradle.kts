@@ -11,7 +11,7 @@ plugins {
 // Note timestamp is not currently injected because it effectively disables the cache since it
 // changes with every build
 val generateBuildConfigTask = tasks.create("buildConfig") {
-    val generatedDir = "$buildDir/generated"
+    val generatedDir = layout.buildDirectory.dir("generated").get().asFile
 
     val gitInfo = co.electriccoin.zcash.Git.newInfo(parent!!.projectDir)
     //val buildTimestamp = newIso8601Timestamp()
@@ -20,7 +20,7 @@ val generateBuildConfigTask = tasks.create("buildConfig") {
     inputs.property("gitCommitCount", gitInfo.commitCount)
     //inputs.property("buildTimestamp", buildTimestamp)
 
-    outputs.dir(File(generatedDir))
+    outputs.dir(generatedDir)
 
     doLast {
         val outputFile = File("$generatedDir/co/electriccoin/zcash/build/BuildConfig.kt")
