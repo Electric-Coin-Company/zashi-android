@@ -68,7 +68,7 @@ fun PrimaryButton(
                 offsetY = ZcashTheme.dimens.shadowOffsetY,
                 spread = ZcashTheme.dimens.shadowSpread,
                 blurRadius = 0.dp,
-                stroke = textColor != MaterialTheme.colorScheme.onPrimary,
+                stroke = textColor != MaterialTheme.colorScheme.primary,
             )
             .defaultMinSize(ZcashTheme.dimens.defaultButtonWidth, ZcashTheme.dimens.defaultButtonHeight)
             .border(1.dp, Color.Black),
