@@ -1,7 +1,9 @@
 package co.electriccoin.zcash.ui.design.component
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
@@ -10,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
 
 @Suppress("LongParameterList")
 @Composable
@@ -28,7 +31,8 @@ fun FormTextField(
         errorContainerColor = Color.Transparent,
     ),
     keyboardActions: KeyboardActions = KeyboardActions.Default,
-    shape: Shape = TextFieldDefaults.shape
+    shape: Shape = TextFieldDefaults.shape,
+    withBorder: Boolean = true, // To enable border around the TextField
 ) {
     TextField(
         value = value,
@@ -36,7 +40,11 @@ fun FormTextField(
         label = label,
         keyboardOptions = keyboardOptions,
         colors = colors,
-        modifier = modifier,
+        modifier = if (withBorder) {
+            modifier.border(width = 1.dp, color = MaterialTheme.colorScheme.primary)
+        } else {
+            modifier
+        },
         leadingIcon = leadingIcon,
         trailingIcon = trailingIcon,
         keyboardActions = keyboardActions,
