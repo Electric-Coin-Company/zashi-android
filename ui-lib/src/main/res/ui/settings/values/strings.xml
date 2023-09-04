@@ -1,5 +1,6 @@
 <resources>
-    <string name="settings_header">Settings</string>
+    <string name="settings_header">SETTINGS</string>
+    <string name="settings_back">BACK</string>
     <string name="settings_back_content_description">Back</string>
 
     <string name="settings_overflow_content_description">Additional settings</string>
@@ -7,5 +8,11 @@
     <string name="settings_enable_background_sync">Background sync</string>
     <string name="settings_enable_keep_screen_on">Keep screen on during sync</string>
     <string name="settings_enable_analytics">Report crashes</string>
+
+    <string name="settings_backup_wallet">BACKUP WALLET</string>
+    <string name="settings_documentation">SEND US FEEDBACK</string>
+    <string name="settings_privacy_policy">PRIVACY POLICY</string>
+    <string name="settings_send_us_feedback">DOCUMENTATION</string>
+    <string name="settings_about">ABOUT</string>
 
 </resources>

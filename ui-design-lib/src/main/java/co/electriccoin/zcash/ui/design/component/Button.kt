@@ -79,7 +79,11 @@ fun PrimaryButton(
         ),
         onClick = onClick,
     ) {
-        Text(text = text, color = textColor, style = MaterialTheme.typography.labelLarge)
+        Text(
+            style = ZcashTheme.extendedTypography.buttonText,
+            text = text,
+            color = textColor
+        )
     }
 }
 

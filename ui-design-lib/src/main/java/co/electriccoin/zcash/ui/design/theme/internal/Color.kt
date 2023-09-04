@@ -59,6 +59,9 @@ internal object Dark {
     val disabledButtonTextColor = Color(0xFFDDDDDD)
 
     val buttonShadowColor = Color(0xFFFFFFFF)
+
+    // to be added later for dark theme
+    val screenTitleColor = Color.Unspecified
 }
 
 internal object Light {
@@ -115,6 +118,8 @@ internal object Light {
     val disabledButtonColor = Color(0xFFB7B7B7)
     val disabledButtonTextColor = Color(0xFFDDDDDD)
     val buttonShadowColor = Color(0xFF000000)
+
+    val screenTitleColor = Color(0xFF040404)
 }
 
 internal val DarkColorPalette = darkColorScheme(
@@ -162,7 +167,7 @@ internal val DarkExtendedColorPalette = ExtendedColors(
     disabledButtonColor = Dark.disabledButtonColor,
     reference = Dark.reference,
     buttonShadowColor = Dark.buttonShadowColor,
-
+    screenTitleColor = Dark.screenTitleColor
 )
 
 internal val LightExtendedColorPalette = ExtendedColors(
@@ -187,7 +192,8 @@ internal val LightExtendedColorPalette = ExtendedColors(
     disabledButtonTextColor = Light.disabledButtonTextColor,
     disabledButtonColor = Light.disabledButtonColor,
     reference = Light.reference,
-    buttonShadowColor = Light.buttonShadowColor
+    buttonShadowColor = Light.buttonShadowColor,
+    screenTitleColor = Light.screenTitleColor,
 )
 
 @Suppress("CompositionLocalAllowlist")
@@ -215,5 +221,6 @@ internal val LocalExtendedColors = staticCompositionLocalOf {
         disabledButtonColor = Color.Unspecified,
         reference = Color.Unspecified,
         buttonShadowColor = Color.Unspecified,
+        screenTitleColor = Color.Unspecified,
     )
 }

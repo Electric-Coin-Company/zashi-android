@@ -3,16 +3,12 @@ package co.electriccoin.zcash.ui.screen.settings.view
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
-import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.filters.MediumTest
-import co.electriccoin.zcash.configuration.model.map.StringConfiguration
 import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.test.getStringResource
-import kotlinx.collections.immutable.toPersistentMap
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -41,7 +37,8 @@ class SettingsViewTest : UiTestPrerequisites() {
         assertEquals(1, testSetup.getOnBackCount())
     }
 
-    @Test
+    // functionality not available in settings screen
+   /* @Test
     @MediumTest
     fun rescan() = runTest {
         val testSetup = TestSetup(composeTestRule)
@@ -106,23 +103,23 @@ class SettingsViewTest : UiTestPrerequisites() {
         }
 
         assertEquals(1, testSetup.getAnalyticsToggleCount())
-    }
+    }*/
 
     private class TestSetup(private val composeTestRule: ComposeContentTestRule) {
 
         private val onBackCount = AtomicInteger(0)
-        private val onBackupCount = AtomicInteger(0)
+        /*private val onBackupCount = AtomicInteger(0)
         private val onRescanCount = AtomicInteger(0)
         private val onBackgroundSyncChangedCount = AtomicInteger(0)
         private val onKeepScreenOnChangedCount = AtomicInteger(0)
-        private val onAnalyticsChangedCount = AtomicInteger(0)
+        private val onAnalyticsChangedCount = AtomicInteger(0)*/
 
         fun getOnBackCount(): Int {
             composeTestRule.waitForIdle()
             return onBackCount.get()
         }
 
-        fun getBackupCount(): Int {
+        /*fun getBackupCount(): Int {
             composeTestRule.waitForIdle()
             return onBackupCount.get()
         }
@@ -145,31 +142,19 @@ class SettingsViewTest : UiTestPrerequisites() {
         fun getAnalyticsToggleCount(): Int {
             composeTestRule.waitForIdle()
             return onAnalyticsChangedCount.get()
-        }
+        }*/
 
         init {
             composeTestRule.setContent {
                 ZcashTheme {
                     Settings(
-                        isBackgroundSyncEnabled = true,
-                        isKeepScreenOnDuringSyncEnabled = true,
-                        isAnalyticsEnabled = true,
-                        isRescanEnabled = true,
+                        // isRescanEnabled = true,
                         onBack = {
                             onBackCount.incrementAndGet()
                         },
-                        onRescanWallet = {
+                     /*   onRescanWallet = {
                             onRescanCount.incrementAndGet()
-                        },
-                        onBackgroundSyncSettingsChanged = {
-                            onBackgroundSyncChangedCount.incrementAndGet()
-                        },
-                        onIsKeepScreenOnDuringSyncSettingsChanged = {
-                            onKeepScreenOnChangedCount.incrementAndGet()
-                        },
-                        onAnalyticsSettingsChanged = {
-                            onAnalyticsChangedCount.incrementAndGet()
-                        }
+                        },*/
                     )
                 }
             }
