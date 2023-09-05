@@ -10,6 +10,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.googlefonts.Font
 import androidx.compose.ui.text.googlefonts.GoogleFont
 import androidx.compose.ui.text.style.BaselineShift
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import co.electriccoin.zcash.ui.design.R
 
@@ -86,6 +87,12 @@ internal val SecondaryTypography = Typography(
         fontFamily = ArchivoFontFamily,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp
+    ),
+    headlineMedium = TextStyle(
+        fontFamily = ArchivoFontFamily,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 25.sp,
+        textAlign = TextAlign.Center
     )
 )
 
@@ -99,7 +106,10 @@ data class Typography(
 data class ExtendedTypography(
     val chipIndex: TextStyle,
     val listItem: TextStyle,
-    val zecBalance: TextStyle
+    val zecBalance: TextStyle,
+    val buttonText: TextStyle,
+    val checkboxText: TextStyle,
+    val securityWarningText: TextStyle
 )
 
 @Suppress("CompositionLocalAllowlist")
@@ -125,6 +135,15 @@ val LocalExtendedTypography = staticCompositionLocalOf {
             fontFamily = Zboto,
             fontWeight = FontWeight.Normal,
             fontSize = 30.sp
-        )
+        ),
+        buttonText = PrimaryTypography.bodySmall.copy(
+            fontSize = 14.sp
+        ),
+        checkboxText = PrimaryTypography.bodyMedium.copy(
+            fontSize = 14.sp
+        ),
+        securityWarningText = PrimaryTypography.bodySmall.copy(
+            lineHeight = 22.32.sp
+        ),
     )
 }

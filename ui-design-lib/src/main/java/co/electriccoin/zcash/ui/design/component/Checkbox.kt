@@ -3,14 +3,16 @@ package co.electriccoin.zcash.ui.design.component
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.LocalMinimumInteractiveComponentEnforcement
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 
 @Preview
@@ -22,6 +24,7 @@ private fun ComposablePreview() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CheckBox(
     onCheckedChange: ((Boolean) -> Unit),
@@ -29,13 +32,25 @@ fun CheckBox(
     modifier: Modifier = Modifier,
     checked: Boolean = false
 ) {
-    Row(modifier = Modifier.padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
-        Checkbox(
-            checked = checked,
-            onCheckedChange = onCheckedChange,
-            enabled = true,
-            modifier = modifier
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+    ) {
+        CompositionLocalProvider(LocalMinimumInteractiveComponentEnforcement provides false) {
+            Checkbox(
+                checked = checked,
+                onCheckedChange = onCheckedChange,
+                enabled = true,
+                modifier = Modifier.padding(
+                    top = ZcashTheme.dimens.spacingTiny,
+                    bottom = ZcashTheme.dimens.spacingTiny,
+                    end = ZcashTheme.dimens.spacingTiny
+                )
+            )
+        }
+        Text(
+            text = text,
+            style = ZcashTheme.extendedTypography.checkboxText
         )
-        Text(text = text)
     }
 }
