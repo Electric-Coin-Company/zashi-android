@@ -6,6 +6,7 @@ tasks {
     register("jacocoReport", JacocoReport::class) {
         group = "Coverage"
         description = "Generate XML/HTML code coverage reports for coverage.ec"
+        val buildDirectory = layout.buildDirectory.get().asFile
 
         reports {
             xml.required.set(false)
@@ -17,19 +18,19 @@ tasks {
             listOf("**/R.class", "**/R$*.class", "**/BuildConfig.*", "**/Manifest*.*", "**/*Test*.*", "android/**/*.*")
 
         classDirectories.setFrom(
-            files("${buildDir}/intermediates/javac/debug").map {
+            files("${buildDirectory}/intermediates/javac/debug").map {
                 fileTree(it) {
                     exclude(fileFilter)
                 }
             },
-            files("${buildDir}/tmp/kotlin-classes/debug").map {
+            files("${buildDirectory}/tmp/kotlin-classes/debug").map {
                 fileTree(it) {
                     exclude(fileFilter)
                 }
             })
 
         executionData.setFrom(
-            files("${buildDir}/test-results").map {
+            files("${buildDirectory}/test-results").map {
                 fileTree(it) {
                     include("**/*.ec", "**/*.exec")
                 }

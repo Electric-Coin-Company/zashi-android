@@ -327,12 +327,13 @@ fladle {
     flakyTestAttempts.set(1)
 
     configs {
+        val buildDirectory = layout.buildDirectory.get().asFile
         create("sanityConfigDebug") {
             clearPropertiesForSanityRobo()
 
             debugApk.set(
                 project.provider {
-                    "${buildDir}/outputs/apk/zcashmainnet/debug/app-zcashmainnet-debug.apk"
+                    "${buildDirectory}/outputs/apk/zcashmainnet/debug/app-zcashmainnet-debug.apk"
                 }
             )
 
@@ -350,7 +351,7 @@ fladle {
 
             debugApk.set(
                 project.provider {
-                    "${buildDir}/outputs/apk_from_bundle/zcashmainnetRelease/app-zcashmainnet-release-universal.apk"
+                    "${buildDirectory}/outputs/apk_from_bundle/zcashmainnetRelease/app-zcashmainnet-release-universal.apk"
                 }
             )
 
