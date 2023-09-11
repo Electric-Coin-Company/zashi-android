@@ -6,7 +6,6 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.filters.MediumTest
-import co.electriccoin.zcash.build.gitSha
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.VersionInfoFixture
@@ -28,10 +27,6 @@ class AboutViewTest {
         newTestSetup()
 
         composeTestRule.onNodeWithText(VersionInfoFixture.VERSION_NAME, substring = true).also {
-            it.assertExists()
-        }
-
-        composeTestRule.onNodeWithText(gitSha, substring = true).also {
             it.assertExists()
         }
     }
