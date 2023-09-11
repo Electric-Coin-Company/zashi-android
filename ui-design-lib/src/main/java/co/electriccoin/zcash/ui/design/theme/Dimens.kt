@@ -25,6 +25,9 @@ data class Dimens(
     val shadowSpread: Dp,
     val defaultButtonWidth: Dp,
     val defaultButtonHeight: Dp,
+    val zcashLogoHeight: Dp,
+    val zcashLogoWidth: Dp,
+    val zcashTextLogoHeight: Dp
 )
 
 private val defaultDimens = Dimens(
@@ -41,6 +44,9 @@ private val defaultDimens = Dimens(
     shadowSpread = 10.dp,
     defaultButtonWidth = 230.dp,
     defaultButtonHeight = 50.dp,
+    zcashLogoHeight = 100.dp,
+    zcashLogoWidth = 60.dp,
+    zcashTextLogoHeight = 30.dp
 )
 
 private val normalDimens = defaultDimens

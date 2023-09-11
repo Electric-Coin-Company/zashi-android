@@ -99,7 +99,8 @@ data class Typography(
 data class ExtendedTypography(
     val chipIndex: TextStyle,
     val listItem: TextStyle,
-    val zecBalance: TextStyle
+    val zecBalance: TextStyle,
+    val aboutText: TextStyle
 )
 
 @Suppress("CompositionLocalAllowlist")
@@ -125,6 +126,10 @@ val LocalExtendedTypography = staticCompositionLocalOf {
             fontFamily = Zboto,
             fontWeight = FontWeight.Normal,
             fontSize = 30.sp
+        ),
+        aboutText = PrimaryTypography.bodyLarge.copy(
+            fontSize = 14.sp,
+            lineHeight = 20.sp
         )
     )
 }
