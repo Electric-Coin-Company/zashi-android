@@ -8,6 +8,7 @@ import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import cash.z.ecc.android.sdk.WalletInitMode
 import cash.z.ecc.android.sdk.fixture.WalletFixture
 import cash.z.ecc.android.sdk.model.BlockHeight
 import cash.z.ecc.android.sdk.model.PersistableWallet
@@ -133,7 +134,8 @@ internal fun persistExistingWalletWithSeedPhrase(
     val restoredWallet = PersistableWallet(
         network,
         birthday,
-        seedPhrase
+        seedPhrase,
+        WalletInitMode.RestoreWallet
     )
     walletViewModel.persistExistingWallet(restoredWallet)
 }
