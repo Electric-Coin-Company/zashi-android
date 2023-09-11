@@ -59,8 +59,8 @@ fun Settings(
                     rememberScrollState()
                 )
                 .padding(
-                    top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingHuge,
-                    bottom = paddingValues.calculateBottomPadding() + ZcashTheme.dimens.spacingHuge,
+                    top = paddingValues.calculateTopPadding() + dimens.spacingHuge,
+                    bottom = paddingValues.calculateBottomPadding() + dimens.spacingHuge,
                     start = dimens.spacingHuge,
                     end = dimens.spacingHuge
                 )
