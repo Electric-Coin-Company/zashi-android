@@ -10,7 +10,6 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.ext.convertZecToZatoshi
 import cash.z.ecc.android.sdk.model.TransactionOverview
 import cash.z.ecc.android.sdk.model.Zatoshi
@@ -24,7 +23,6 @@ import co.electriccoin.zcash.ui.common.showMessage
 import co.electriccoin.zcash.ui.common.toFormattedString
 import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
 import co.electriccoin.zcash.ui.configuration.RemoteConfig
-import co.electriccoin.zcash.ui.screen.home.model.WalletSnapshot
 import co.electriccoin.zcash.ui.screen.home.viewmodel.HomeViewModel
 import co.electriccoin.zcash.ui.screen.home.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.settings.viewmodel.SettingsViewModel
@@ -81,33 +79,31 @@ internal fun WrapWallet(
     if (null == walletSnapshot) {
         // We can show progress bar
     } else {
-        val enableTransferTab = walletSnapshot.enableTransferTab()
-        LaunchedEffect(key1 = enableTransferTab) {
-
-            if (enableTransferTab.not()) {
-                homeViewModel.shortcutAction?.let {
-                    when (it) {
-                        HomeViewModel.ShortcutAction.SEND_MONEY_SCAN_QR_CODE -> onSendFromDeepLink()
-                        HomeViewModel.ShortcutAction.RECEIVE_MONEY_QR_CODE -> {
-                            onAddressQrCodes()
-                            homeViewModel.shortcutAction = null
-                        }
+        LaunchedEffect(key1 = Unit) {
+            homeViewModel.shortcutAction?.let {
+                when (it) {
+                    HomeViewModel.ShortcutAction.SEND_MONEY_SCAN_QR_CODE -> onSendFromDeepLink()
+                    HomeViewModel.ShortcutAction.RECEIVE_MONEY_QR_CODE -> {
+                        onAddressQrCodes()
+                        homeViewModel.shortcutAction = null
                     }
                 }
-                homeViewModel.intentDataUriForDeepLink?.let {
-                    DeepLinkUtil.getSendDeepLinkData(it)?.let { sendDeepLinkData ->
-                        homeViewModel.sendDeepLinkData = sendDeepLinkData
-                        onSendFromDeepLink()
-                        homeViewModel.intentDataUriForDeepLink = null
-                    }
+            }
+            homeViewModel.intentDataUriForDeepLink?.let {
+                DeepLinkUtil.getSendDeepLinkData(it)?.let { sendDeepLinkData ->
+                    homeViewModel.sendDeepLinkData = sendDeepLinkData
+                    onSendFromDeepLink()
+                    homeViewModel.intentDataUriForDeepLink = null
                 }
-                checkForAutoShielding(walletSnapshot.transparentBalance.available, shieldViewModel)
-                if (homeViewModel.isAnyExpectingTransaction(walletSnapshot)) {
-                    activity.showMessage(activity.getString(R.string.ns_expecting_balance_snack_bar_msg,
+            }
+            checkForAutoShielding(walletSnapshot.transparentBalance.available, shieldViewModel)
+            if (homeViewModel.isAnyExpectingTransaction(walletSnapshot)) {
+                activity.showMessage(
+                    activity.getString(
+                        R.string.ns_expecting_balance_snack_bar_msg,
                         Zatoshi(homeViewModel.expectingZatoshi).toZecString()
                     ))
                 }
-            }
         }
         val onItemLongClickAction: (TransactionOverview) -> Unit = {
             clipboardManager.setText(AnnotatedString(it.rawId.byteArray.toFormattedString()))
@@ -139,10 +135,6 @@ internal fun WrapWallet(
         }
     }
     activity.reportFullyDrawn()
-}
-
-fun WalletSnapshot.enableTransferTab(): Boolean {
-    return this.status == Synchronizer.Status.SYNCED
 }
 
 fun checkForAutoShielding(availableZatoshi: Zatoshi, shieldViewModel: ShieldViewModel) {

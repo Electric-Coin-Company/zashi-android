@@ -3,6 +3,7 @@ package co.electriccoin.zcash.ui.screen.migration.viewmodel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import cash.z.ecc.android.sdk.WalletInitMode
 import cash.z.ecc.android.sdk.model.BlockHeight
 import cash.z.ecc.android.sdk.model.PersistableWallet
 import cash.z.ecc.android.sdk.model.SeedPhrase
@@ -48,7 +49,8 @@ class AppMigrationViewModel(private val context: Application) : AndroidViewModel
                         PersistableWallet(
                             network = network,
                             birthday = birthday,
-                            seedPhrase = seedPhrase
+                            seedPhrase = seedPhrase,
+                            walletInitMode = WalletInitMode.RestoreWallet
                         )
                     )
                 }

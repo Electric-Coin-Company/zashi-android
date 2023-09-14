@@ -8,6 +8,7 @@ import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import cash.z.ecc.android.sdk.WalletInitMode
 import cash.z.ecc.android.sdk.fixture.WalletFixture
 import cash.z.ecc.android.sdk.model.BlockHeight
 import cash.z.ecc.android.sdk.model.PersistableWallet
@@ -55,7 +56,8 @@ internal fun WrapOnboarding(
                     applicationContext,
                     walletViewModel,
                     SeedPhrase.new(WalletFixture.Alice.seedPhrase),
-                    birthday = WalletFixture.Alice.getBirthday(ZcashNetwork.fromResources(applicationContext))
+                    birthday = WalletFixture.Alice.getBirthday(ZcashNetwork.fromResources(applicationContext)),
+                    WalletInitMode.NewWallet
                 )
             } else {
                 walletViewModel.persistNewWallet()
@@ -72,7 +74,8 @@ internal fun WrapOnboarding(
                     applicationContext,
                     walletViewModel,
                     SeedPhrase.new(WalletFixture.Alice.seedPhrase),
-                    birthday = WalletFixture.Alice.getBirthday(ZcashNetwork.fromResources(applicationContext))
+                    birthday = WalletFixture.Alice.getBirthday(ZcashNetwork.fromResources(applicationContext)),
+                    WalletInitMode.RestoreWallet
                 )
             } else {
                 onboardingViewModel.setIsImporting(true)
@@ -84,7 +87,8 @@ internal fun WrapOnboarding(
                 applicationContext,
                 walletViewModel,
                 SeedPhrase.new(WalletFixture.Alice.seedPhrase),
-                birthday = WalletFixture.Alice.getBirthday(ZcashNetwork.fromResources(applicationContext))
+                birthday = WalletFixture.Alice.getBirthday(ZcashNetwork.fromResources(applicationContext)),
+                WalletInitMode.ExistingWallet
             )
         }
 
@@ -125,7 +129,8 @@ internal fun persistExistingWalletWithSeedPhrase(
     context: Context,
     walletViewModel: WalletViewModel,
     seedPhrase: SeedPhrase,
-    birthday: BlockHeight?
+    birthday: BlockHeight?,
+    walletInitMode: WalletInitMode
 ) {
     walletViewModel.persistBackupComplete()
 
@@ -133,7 +138,8 @@ internal fun persistExistingWalletWithSeedPhrase(
     val restoredWallet = PersistableWallet(
         network,
         birthday,
-        seedPhrase
+        seedPhrase,
+        walletInitMode
     )
     walletViewModel.persistExistingWallet(restoredWallet)
 }

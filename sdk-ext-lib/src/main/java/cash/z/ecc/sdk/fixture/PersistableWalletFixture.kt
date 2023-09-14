@@ -1,5 +1,6 @@
 package cash.z.ecc.sdk.fixture
 
+import cash.z.ecc.android.sdk.WalletInitMode
 import cash.z.ecc.android.sdk.model.BlockHeight
 import cash.z.ecc.android.sdk.model.PersistableWallet
 import cash.z.ecc.android.sdk.model.SeedPhrase
@@ -14,9 +15,12 @@ object PersistableWalletFixture {
 
     val SEED_PHRASE = SeedPhraseFixture.new()
 
+    val WALLET_INIT_MODE = WalletInitMode.ExistingWallet
+
     fun new(
         network: ZcashNetwork = NETWORK,
         birthday: BlockHeight = BIRTHDAY,
-        seedPhrase: SeedPhrase = SEED_PHRASE
-    ) = PersistableWallet(network, birthday, seedPhrase)
+        seedPhrase: SeedPhrase = SEED_PHRASE,
+        walletInitMode: WalletInitMode = WALLET_INIT_MODE
+    ) = PersistableWallet(network, birthday, seedPhrase, walletInitMode)
 }
