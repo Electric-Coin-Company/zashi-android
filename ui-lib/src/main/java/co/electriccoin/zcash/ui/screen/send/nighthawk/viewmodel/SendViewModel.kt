@@ -224,6 +224,11 @@ class SendViewModel(val context: Application) : AndroidViewModel(application = c
         zecSend = null
         updateMemo("")
         updateReceiverAddress("")
+        resetSendConfirmationState()
+    }
+
+    fun resetSendConfirmationState() {
+        updateSendConfirmationState(SendConfirmationState.Sending)
     }
 
     private suspend fun getSharedPrefProvider(): PreferenceProvider {

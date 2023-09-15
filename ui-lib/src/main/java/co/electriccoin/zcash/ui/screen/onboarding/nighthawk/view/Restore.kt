@@ -41,6 +41,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import cash.z.ecc.android.sdk.WalletInitMode
 import cash.z.ecc.android.sdk.model.BlockHeight
 import cash.z.ecc.android.sdk.model.SeedPhrase
 import cash.z.ecc.android.sdk.model.ZcashNetwork
@@ -84,7 +85,8 @@ internal fun RestoreWallet(activity: ComponentActivity) {
             applicationContext,
             walletViewModel,
             SeedPhrase.new(seedPhrase),
-            birthdayHeight?.let { BlockHeight.new(ZcashNetwork.fromResources(applicationContext), it) }
+            birthdayHeight?.let { BlockHeight.new(ZcashNetwork.fromResources(applicationContext), it) },
+            WalletInitMode.RestoreWallet
         )
     }
     Restore(

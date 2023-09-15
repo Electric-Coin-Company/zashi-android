@@ -6,6 +6,7 @@ import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import cash.z.ecc.android.sdk.WalletInitMode
 import cash.z.ecc.android.sdk.model.SeedPhrase
 import cash.z.ecc.android.sdk.model.ZcashNetwork
 import cash.z.ecc.sdk.type.fromResources
@@ -52,7 +53,8 @@ fun WrapRestore(activity: ComponentActivity) {
                         applicationContext,
                         walletViewModel,
                         SeedPhrase(restoreViewModel.userWordList.current.value),
-                        restoreViewModel.userBirthdayHeight.value
+                        restoreViewModel.userBirthdayHeight.value,
+                        WalletInitMode.RestoreWallet
                     )
                 }
             )
