@@ -17,7 +17,7 @@
     <string name="restore_complete_info">We will now scan the blockchain to find your transactions and balance.</string>
     <string name="restore_button_see_wallet">Take me to my wallet</string>
     <!-- Start Flow -->
-    <string name="ns_nighthawk">نايث هاوك</string>
+    <string name="ns_nighthawk">Nighthawk</string>
     <string name="ns_motto">Private money in your pocket.</string>
     <string name="ns_powered_by">Powered by Zcash</string>
     <string name="ns_get_started">Get Started</string>
@@ -183,12 +183,12 @@
     <!-- Backup/Restore Screen-->
     <string name="ns_landing_backup_skipped_message_1">Are you sure? Without a backup, funds can be lost FOREVER!</string>
     <string name="ns_landing_backup_skipped_message_2">You can\'t backup later. You\'re probably going to lose your funds!</string>
-    <string name="ns_landing_button_backup_skipped_1">لاحقاً</string>
-    <string name="ns_landing_button_backup_skipped_2">لقد تم تحذيري</string>
-    <string name="ns_landing_button_progress_create">إنشاء</string>
+    <string name="ns_landing_button_backup_skipped_1">Later</string>
+    <string name="ns_landing_button_backup_skipped_2">I\'ve been warned</string>
+    <string name="ns_landing_button_progress_create">Creating</string>
     <string name="ns_button_skip">Skip for now</string>
-    <string name="ns_backup_done">تم</string>
-    <string name="ns_view_wallet">عرض المحفظة</string>
+    <string name="ns_backup_done">Done</string>
+    <string name="ns_view_wallet">View Wallet</string>
     <string name="ns_exit_restore_flow_text">Are you certain? For security purposes, the words you have entered will be cleared!</string>
     <string name="ns_exit_restore_flow_title">Abort Restore?</string>
     <string name="ns_stay">Stay</string>
@@ -209,14 +209,14 @@
     <string name="ns_choose_who">Choose who to send it to</string>
     <string name="ns_review_and_send">Review and send</string>
     <string name="ns_network_fee">Network Fee</string>
-    <string name="ns_send_zcash">ارسل Zcash</string>
+    <string name="ns_send_zcash">Send Zcash</string>
     <string name="ns_sending">Sending</string>
     <string name="ns_pending_confirmation">Pending confirmation</string>
     <string name="ns_expired">Expired</string>
-    <string name="ns_unknown">مجهول</string>
-    <string name="ns_cancel">إلغاء</string>
-    <string name="ns_success">تمت العملية بنجاح</string>
-    <string name="ns_done">تم</string>
+    <string name="ns_unknown">Unknown</string>
+    <string name="ns_cancel">Cancel</string>
+    <string name="ns_success">Success</string>
+    <string name="ns_done">Done</string>
     <string name="ns_more_details">More Details</string>
     <string name="ns_failed">Failed</string>
     <string name="ns_try_again">Try Again</string>
@@ -232,7 +232,7 @@
     <string name="ns_add_address_hint">Add address here</string>
     <string name="ns_paste_from_clip_board">Paste from clipboard</string>
     <string name="ns_clipboard_wrong_text_paste_error">It appears that the last copied value is not a valid Zcash address.</string>
-    <string name="ns_memo">المذكرة</string>
+    <string name="ns_memo">Memo</string>
     <string name="ns_pool">Pool</string>
     <string name="ns_network">Network</string>
     <string name="ns_recipient">Recipient</string>
@@ -248,8 +248,8 @@
     <string name="ns_migration_app_info">We have implemented an enhanced secure method for storing data locally. To ensure the integrity of your wallet, we need to migrate your seed words. You have two options:\n\n A) Proceed automatically: Your seed words will be migrated seamlessly to the new storage. No further action is required on your part.\n B) Choose manual migration: If you prefer not to migrate automatically, please uninstall the app or clear the app\'s data. Afterward, you can restore your wallet by manually entering the seed words.\n\n Would you like to proceed with automatic migration?</string>
     <string name="buy_zec_dialog_title">Buy ZEC from MoonPay</string>
     <string name="buy_zec_dialog_msg">Customers that are not US residents can purchase Zcash (ZEC) by registering with MoonPay.\n\nYour Zcash T-Address has been copied to the clipboard.\nChoose \"Open Browser\" below, Select \'Zcash (ZEC)\' as the receiving coin once MoonPay loads, and then paste your T-address.</string>
-    <string name="open_browser">افتح المتصفح</string>
-    <string name="fund_wallet_sideshift_title">تمويل المحفظة بواسطة SideShift.ai؟</string>
+    <string name="open_browser">Open Browser</string>
+    <string name="fund_wallet_sideshift_title">Fund wallet with SideShift.ai?</string>
     <string name="fund_wallet_sideshift_description">Your Z-Address has been copied to the clipboard.\n\nChoose \"Open Browser\" below, select \'Zcash (Shielded)\' as the receiving coin on the SideShift site, and then paste your Z-address.</string>
     <string name="fund_wallet_stealthex_title">Fund wallet with StealthEx.io?</string>
     <string name="fund_wallet_stealthex_description">Your T-Address has been copied to the clipboard.\n\nChoose \"Open Browser\" below, select \'Zcash\' as the receiving coin on the StealthEx site, and then paste your T-address.</string>
