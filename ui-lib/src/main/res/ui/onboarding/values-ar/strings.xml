@@ -3,7 +3,7 @@
     <string name="app_name">zcash-ui</string>
     <string name="onboarding_back">Back</string>
     <string name="onboarding_skip">Skip</string>
-    <string name="onboarding_next">التالي</string>
+    <string name="onboarding_next">Next</string>
     <string name="onboarding_1_header">Welcome!</string>
     <string name="onboarding_1_body">As a privacy focused wallet, we shield by default. Your wallet uses the shielded address for sending and moves transparent funds to that address automatically.\n\nIn other words, the ‘privacy-please’ sign is on the door.</string>
     <string name="onboarding_1_image_content_description"></string>
