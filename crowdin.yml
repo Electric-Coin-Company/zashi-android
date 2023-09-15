@@ -1,3 +1,37 @@
 files:
-  - source: /ui-lib/src/main/res/ui/*/values/strings.xml
-    translation: /ui-lib/src/main/res/ui/*/values-%two_letters_code%/strings.xml
+  - source: /ui-lib/src/main/res/ui/about/values/strings.xml
+    translation: /ui-lib/src/main/res/ui/about/values-%two_letters_code%/strings.xml
+  - source: /ui-lib/src/main/res/ui/backup/values/strings.xml
+    translation: /ui-lib/src/main/res/ui/backup/values-%two_letters_code%/strings.xml
+  - source: /ui-lib/src/main/res/ui/common/values/strings.xml
+    translation: /ui-lib/src/main/res/ui/common/values-%two_letters_code%/strings.xml
+  - source: /ui-lib/src/main/res/ui/history/values/strings.xml
+    translation: /ui-lib/src/main/res/ui/history/values-%two_letters_code%/strings.xml
+  - source: /ui-lib/src/main/res/ui/home/values/strings.xml
+    translation: /ui-lib/src/main/res/ui/home/values-%two_letters_code%/strings.xml
+  - source: /ui-lib/src/main/res/ui/new/values/strings.xml
+    translation: /ui-lib/src/main/res/ui/new/values-%two_letters_code%/strings.xml
+  - source: /ui-lib/src/main/res/ui/onboarding/values/strings.xml
+    translation: /ui-lib/src/main/res/ui/onboarding/values-%two_letters_code%/strings.xml
+  - source: /ui-lib/src/main/res/ui/receive/values/strings.xml
+    translation: /ui-lib/src/main/res/ui/receive/values-%two_letters_code%/strings.xml
+  - source: /ui-lib/src/main/res/ui/request/values/strings.xml
+    translation: /ui-lib/src/main/res/ui/request/values-%two_letters_code%/strings.xml
+  - source: /ui-lib/src/main/res/ui/restore/values/strings.xml
+    translation: /ui-lib/src/main/res/ui/restore/values-%two_letters_code%/strings.xml
+  - source: /ui-lib/src/main/res/ui/scan/values/strings.xml
+    translation: /ui-lib/src/main/res/ui/scan/values-%two_letters_code%/strings.xml
+  - source: /ui-lib/src/main/res/ui/seed/values/strings.xml
+    translation: /ui-lib/src/main/res/ui/seed/values-%two_letters_code%/strings.xml
+  - source: /ui-lib/src/main/res/ui/send/values/strings.xml
+    translation: /ui-lib/src/main/res/ui/send/values-%two_letters_code%/strings.xml
+  - source: /ui-lib/src/main/res/ui/settings/values/strings.xml
+    translation: /ui-lib/src/main/res/ui/settings/values-%two_letters_code%/strings.xml
+  - source: /ui-lib/src/main/res/ui/support/values/strings.xml
+    translation: /ui-lib/src/main/res/ui/support/values-%two_letters_code%/strings.xml
+  - source: /ui-lib/src/main/res/ui/update/values/strings.xml
+    translation: /ui-lib/src/main/res/ui/update/values-%two_letters_code%/strings.xml
+  - source: /ui-lib/src/main/res/ui/wallet_address/values/strings.xml
+    translation: /ui-lib/src/main/res/ui/wallet_address/values-%two_letters_code%/strings.xml
+  - source: /ui-lib/src/main/res/ui/warning/values/strings.xml
+    translation: /ui-lib/src/main/res/ui/warning/values-%two_letters_code%/strings.xml
