@@ -37,8 +37,8 @@
     <string name="ns_continue">Continue</string>
     <string name="ns_export_as_pdf">Export as Pdf</string>
     <string name="ns_pdf_dialog_sub_heading">Экспорт фразы восстановления в PDF-файл, защищённый паролем, который может быть скопирован в защищенный пользователем портативный накопитель.</string>
-    <string name="ns_please_enter_password">Please Enter Password</string>
-    <string name="ns_export_pdf">Export PDF</string>
+    <string name="ns_please_enter_password">Пожалуйста, введите пароль</string>
+    <string name="ns_export_pdf">Экспортировать в PDF</string>
     <string name="ns_receive">Receive</string>
     <string name="ns_transaction_history">Transactions History</string>
     <string name="ns_copy">Copy</string>
@@ -154,7 +154,7 @@
     <string name="wrong_pin_code_message">Your pin code didn\'t match with the previous pin code.</string>
     <string name="ns_security_text">Set/Change Pin Code &amp; Biometric</string>
     <string name="set_change_pin_code">Set/Change Nighthawk Pin Code</string>
-    <string name="biometric_backup_phrase_title">Авторизоваться для продолжения</string>
+    <string name="biometric_backup_phrase_title">Authenticate to proceed</string>
     <string name="enable_face_id_touch_id">Enable Face ID/Touch ID</string>
     <string name="dialog_bio_metric_not_enabled_title">Face ID Touch ID Error</string>
     <string name="dialog_bio_metric_not_enabled_message">Couldn\'t enable this option. It seems that Face ID or Touch ID is not enabled in your mobile device.</string>
@@ -181,18 +181,18 @@
     <string name="dialog_rescan_failed_title">Full Rescan Failed</string>
     <string name="rescan_wallet_wipe_success">Wiped block data successfully! Wallet data cleared. Please relaunch the app!</string>
     <!-- Backup/Restore Screen-->
-    <string name="ns_landing_backup_skipped_message_1">Вы уверены? Без резервной копии средства могут быть потеряны НАВСЕГДА!</string>
-    <string name="ns_landing_backup_skipped_message_2">Без наличия резервной фразы восстановления вероятность потери ваших средств очень высока!</string>
-    <string name="ns_landing_button_backup_skipped_1">Позже</string>
-    <string name="ns_landing_button_backup_skipped_2">Я был предупреждён</string>
-    <string name="ns_landing_button_progress_create">Создание</string>
+    <string name="ns_landing_backup_skipped_message_1">Are you sure? Without a backup, funds can be lost FOREVER!</string>
+    <string name="ns_landing_backup_skipped_message_2">You can\'t backup later. You\'re probably going to lose your funds!</string>
+    <string name="ns_landing_button_backup_skipped_1">Later</string>
+    <string name="ns_landing_button_backup_skipped_2">I\'ve been warned</string>
+    <string name="ns_landing_button_progress_create">Creating</string>
     <string name="ns_button_skip">Skip for now</string>
-    <string name="ns_backup_done">Готово</string>
-    <string name="ns_view_wallet">Посмотреть кошелёк</string>
+    <string name="ns_backup_done">Done</string>
+    <string name="ns_view_wallet">View Wallet</string>
     <string name="ns_exit_restore_flow_text">Are you certain? For security purposes, the words you have entered will be cleared!</string>
     <string name="ns_exit_restore_flow_title">Abort Restore?</string>
     <string name="ns_stay">Stay</string>
-    <string name="ns_exit">Выход</string>
+    <string name="ns_exit">Exit</string>
     <string name="ns_landing_create_success_message">Congratulations! Your wallet has been successfully created!</string>
     <string name="ns_landing_import_success_message">Congratulations! Your wallet has been successfully imported!</string>
     <!-- Send Flow -->
@@ -209,14 +209,14 @@
     <string name="ns_choose_who">Choose who to send it to</string>
     <string name="ns_review_and_send">Review and send</string>
     <string name="ns_network_fee">Network Fee</string>
-    <string name="ns_send_zcash">Отправить Zcash</string>
+    <string name="ns_send_zcash">Send Zcash</string>
     <string name="ns_sending">Sending</string>
     <string name="ns_pending_confirmation">Pending confirmation</string>
     <string name="ns_expired">Expired</string>
-    <string name="ns_unknown">Неизвестно</string>
-    <string name="ns_cancel">Отмена</string>
-    <string name="ns_success">Успешно</string>
-    <string name="ns_done">Готово</string>
+    <string name="ns_unknown">Unknown</string>
+    <string name="ns_cancel">Cancel</string>
+    <string name="ns_success">Success</string>
+    <string name="ns_done">Done</string>
     <string name="ns_more_details">More Details</string>
     <string name="ns_failed">Failed</string>
     <string name="ns_try_again">Try Again</string>
@@ -232,7 +232,7 @@
     <string name="ns_add_address_hint">Add address here</string>
     <string name="ns_paste_from_clip_board">Paste from clipboard</string>
     <string name="ns_clipboard_wrong_text_paste_error">It appears that the last copied value is not a valid Zcash address.</string>
-    <string name="ns_memo">Заметка</string>
+    <string name="ns_memo">Memo</string>
     <string name="ns_pool">Pool</string>
     <string name="ns_network">Network</string>
     <string name="ns_recipient">Recipient</string>
@@ -248,8 +248,8 @@
     <string name="ns_migration_app_info">We have implemented an enhanced secure method for storing data locally. To ensure the integrity of your wallet, we need to migrate your seed words. You have two options:\n\n A) Proceed automatically: Your seed words will be migrated seamlessly to the new storage. No further action is required on your part.\n B) Choose manual migration: If you prefer not to migrate automatically, please uninstall the app or clear the app\'s data. Afterward, you can restore your wallet by manually entering the seed words.\n\n Would you like to proceed with automatic migration?</string>
     <string name="buy_zec_dialog_title">Купить ZEC на MoonPay</string>
     <string name="buy_zec_dialog_msg">Клиенты, не являющиеся резидентами США, могут приобрести Zcash (ZEC), зарегистрировавшись в MoonPay.\n\nВаш Zcash T-адрес скопирован в буфер обмена.\nВыберите «Открыть браузер» ниже, а после загрузки MoonPay выберите «Zcash (ZEC)», а затем вставьте свой T-адрес в поле \"адрес\".</string>
-    <string name="open_browser">Открыть браузер</string>
-    <string name="fund_wallet_sideshift_title">Пополнить кошелек с помощью SideShift.ai?</string>
+    <string name="open_browser">Open Browser</string>
+    <string name="fund_wallet_sideshift_title">Fund wallet with SideShift.ai?</string>
     <string name="fund_wallet_sideshift_description">Your Z-Address has been copied to the clipboard.\n\nChoose \"Open Browser\" below, select \'Zcash (Shielded)\' as the receiving coin on the SideShift site, and then paste your Z-address.</string>
     <string name="fund_wallet_stealthex_title">Fund wallet with StealthEx.io?</string>
     <string name="fund_wallet_stealthex_description">Your T-Address has been copied to the clipboard.\n\nChoose \"Open Browser\" below, select \'Zcash\' as the receiving coin on the StealthEx site, and then paste your T-address.</string>
