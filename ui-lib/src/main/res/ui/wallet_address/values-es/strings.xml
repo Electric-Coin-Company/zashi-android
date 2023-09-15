@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="wallet_address_title">My wallet addresses</string>
+    <string name="wallet_address_back_content_description">Back</string>
+    <string name="wallet_address_unified">Your Unified Address</string>
+    <string name="wallet_address_header_includes">which includes</string>
+    <string name="wallet_address_sapling">Shielded Sapling (NU1)</string>
+    <string name="wallet_address_transparent">Transparente</string>
+    <string name="wallet_address_show">Show address</string>
+    <string name="wallet_address_hide">Hide address</string>
+    <string name="wallet_address_clipboard_tag">Zcash Wallet Address</string>
+</resources>
