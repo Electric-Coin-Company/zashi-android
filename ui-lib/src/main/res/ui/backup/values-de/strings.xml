@@ -32,6 +32,6 @@
     <string name="new_wallet_5_button_back">Show me my phrase again</string>
     <string name="backup_1_content_description">Bank</string>
     <string name="backup_2_content_description">Checklist</string>
-    <string name="backup_success_content_description">Erfolg</string>
+    <string name="backup_success_content_description">Success</string>
     <string name="backup_failure_content_description">Alert</string>
 </resources>
