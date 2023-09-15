@@ -206,7 +206,10 @@ internal fun WrapAndroidSend(
                     navigateTo(BottomNavItem.Transfer.route)
 
                 },
-                onTryAgain = sendViewModel::onPreviousSendUiState,
+                onTryAgain = {
+                    sendViewModel.resetSendConfirmationState()
+                    sendViewModel.onPreviousSendUiState()
+                },
                 onDone = {
                     sendViewModel.clearViewModelSavedData()
                     navigateTo(BottomNavItem.Transfer.route)
