@@ -17,7 +17,7 @@
     <string name="restore_complete_info">We will now scan the blockchain to find your transactions and balance.</string>
     <string name="restore_button_see_wallet">Take me to my wallet</string>
     <!-- Start Flow -->
-    <string name="ns_nighthawk">Нічний яструб</string>
+    <string name="ns_nighthawk">Nighthawk</string>
     <string name="ns_motto">Private money in your pocket.</string>
     <string name="ns_powered_by">Powered by Zcash</string>
     <string name="ns_get_started">Get Started</string>
