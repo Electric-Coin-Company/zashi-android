@@ -3,9 +3,9 @@
     <string name="support_header">Contact support</string>
     <string name="support_back_content_description">Back</string>
     <string name="support_hint">How can we help?</string>
-    <string name="support_send">إرسال</string>
+    <string name="support_send">Send</string>
     <string name="support_confirmation_dialog_ok">OK</string>
-    <string name="support_confirmation_dialog_cancel">إلغاء</string>
+    <string name="support_confirmation_dialog_cancel">Cancel</string>
     <string name="support_confirmation_explanation"><xliff:g id="app_name" example="Zcash">%1$s</xliff:g> is about to open your email app with a pre-filled message.\n\nBe sure to hit send within your email app.</string>
     <!-- This is replaced by a resource overlay via app/build.gradle.kts -->
     <string name="support_email_address"></string>
