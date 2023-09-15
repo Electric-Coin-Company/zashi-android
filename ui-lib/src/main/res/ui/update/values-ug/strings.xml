@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="update_header">Update available!</string>
+    <string name="update_critical_header">Critical update required!</string>
+    <string name="update_image_content_description"></string>
+    <string name="update_description">There is a new version of the app available.</string>
+    <string name="update_link_text">Learn more about this update here.</string>
+    <string name="update_download_button">Download Update</string>
+    <string name="update_later_enabled_button">Remind me later</string>
+    <string name="update_later_disabled_button">This can not be skipped.</string>
+    <string name="update_unable_to_open_play_store">Unable to launch Google Play store app.</string>
+</resources>
