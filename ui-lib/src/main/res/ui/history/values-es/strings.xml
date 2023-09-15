@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="history_title">Transaction history</string>
+    <string name="history_back_content_description">Back</string>
+    <string name="history_syncing">Additional transactions may be found after syncing completes…</string>
+    <string name="history_empty">No transactions yet</string>
+    <string name="history_item_sent">Enviado</string>
+    <string name="history_item_received">Recibido</string>
+    <string name="history_item_sending">Enviando</string>
+    <string name="history_item_receiving">Receiving</string>
+    <string name="history_item_expired">Expirado</string>
+</resources>
