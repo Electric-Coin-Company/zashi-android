@@ -3,5 +3,5 @@
     <string name="not_enough_space_title">Not enough space!</string>
     <string name="not_enough_space_description">You need approximately <xliff:g example="1" id="required_gigabytes">%1$s</xliff:g> gig of space while synchronizing the Zcash blockchain, but only 300 megs once done. Syncing will stay paused until more space is available.</string>
     <string name="space_required_to_continue"><xliff:g example="300" id="required_megabytes">~%1$s</xliff:g> megs required to continue </string>
-    <string name="unknown">Неизвестно</string>
+    <string name="unknown">Unknown</string>
 </resources>
