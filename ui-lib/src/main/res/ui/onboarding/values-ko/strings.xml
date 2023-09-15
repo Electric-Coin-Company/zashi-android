@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">zcash-ui</string>
+    <string name="onboarding_back">Back</string>
+    <string name="onboarding_skip">Skip</string>
+    <string name="onboarding_next">다음</string>
+    <string name="onboarding_1_header">Welcome!</string>
+    <string name="onboarding_1_body">As a privacy focused wallet, we shield by default. Your wallet uses the shielded address for sending and moves transparent funds to that address automatically.\n\nIn other words, the ‘privacy-please’ sign is on the door.</string>
+    <string name="onboarding_1_image_content_description"></string>
+    <string name="onboarding_2_header">Unified Addresses</string>
+    <string name="onboarding_2_body">You now have a unified address that includes an up-to-date shielded address and a transparency address for legacy systems.\n\nThis makes your wallet friendlier, and gives you an address that you won’t have to update again.</string>
+    <string name="onboarding_2_image_content_description"></string>
+    <string name="onboarding_3_header">And so much more…</string>
+    <string name="onboarding_3_body">Due to Zcash’s increased popularity, we are optimizing our syncing schemes to be faster and more efficient!\n\nThe future is fast!</string>
+    <string name="onboarding_3_image_content_description"></string>
+    <string name="onboarding_4_header">Let’s get started!</string>
+    <string name="onboarding_4_body">Choose between creating a new wallet and importing an existing Secret Recovery Phrase.</string>
+    <string name="onboarding_4_image_content_description"></string>
+    <string name="onboarding_4_create_new_wallet">Create New Wallet</string>
+    <string name="onboarding_4_import_existing_wallet">Import an Existing Wallet</string>
+    <string name="onboarding_short_header">It‘s time to set up your no-frills wallet, powered by Zcash</string>
+    <string name="onboarding_short_information">We need to create a new wallet or restore an existing one. Select your path:</string>
+    <string name="onboarding_short_create_new_wallet">Create New Wallet</string>
+    <string name="onboarding_short_import_existing_wallet">Import an Existing Wallet</string>
+</resources>
