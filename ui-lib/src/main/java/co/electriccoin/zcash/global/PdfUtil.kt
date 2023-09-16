@@ -116,7 +116,7 @@ object PdfUtil {
                     contentStream.newLineAtOffset(-seedWordXOffset, -leading)
                     contentStream.showText("Wallet Birthday: $birthDay")
 
-                    // Pdf generated time
+                    // PDF generated time
                     val dateFormatter = SimpleDateFormat(context.getString(R.string.transaction_history_format_date_time_brief), context.resources.configuration.locales[0])
                     contentStream.newLineAtOffset(0f, -leading)
                     contentStream.showText("Backup PDF generated at: ${dateFormatter.format(Date())}")
