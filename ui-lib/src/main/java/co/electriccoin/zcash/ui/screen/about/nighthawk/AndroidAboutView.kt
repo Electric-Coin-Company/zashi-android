@@ -38,6 +38,9 @@ internal fun WrapAboutView(activity: ComponentActivity, onBack: () -> Unit) {
         onViewSource = {
             activity.onLaunchUrl(activity.getString(R.string.ns_source_code_link))
         },
+        onCredits = {
+            activity.onLaunchUrl(activity.getString(R.string.ns_credits_link))
+        },
         onTermAndCondition = {
             activity.onLaunchUrl(activity.getString(R.string.ns_privacy_policy_link))
         },

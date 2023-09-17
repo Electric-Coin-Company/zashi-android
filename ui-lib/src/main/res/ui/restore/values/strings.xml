@@ -172,9 +172,11 @@
     <string name="ns_about">About</string>
     <string name="ns_about_message">Nighthawk is a Shielded Zcash light-wallet with support for Z-addresses, including sending &amp; receiving shielded transactions, memo support &amp; optional t-addresses support with Auto-Shielding technology.\n\nAs a non-custodial wallet for Zcash, you have sole responsibility over its funds. Please immediately and securely back up the seed words upon creating a wallet.\n\nZcash is a digital currency, or cryptocurrency, like Bitcoin. Zcash was built on the original Bitcoin code base. It was conceived by scientists at MIT, Johns Hopkins and other respected academic and scientific institutions.\n\nNighthawk Wallet requires trust in the default or custom lightwalletd server to display accurate transaction information and CoinGecko service for exchange rate feed. This software is provided "as is", without warranty of any kind, express or implied.</string>
     <string name="ns_view_source">View Source</string>
+    <string name="ns_credits">Nighthawk friends</string>
     <string name="ns_about_text">Nighthawk v%s &amp; Licenses</string>
     <string name="ns_view_license">OSS Licenses</string>
     <string name="ns_source_code_link" translatable="false">https://github.com/nighthawk-apps/nighthawk-android-wallet</string>
+    <string name="ns_credits_link" translatable="false">https://nighthawkwallet.com/credits/</string>
     <string name="ns_privacy_policy_link" translatable="false">https://nighthawkwallet.com/privacypolicy/</string>
     <string name="ns_block_explorer_url_testnet" translatable="false">https://testnet.zcashblockexplorer.com/transactions/%s</string>
     <string name="ns_block_explorer_url_main_net" translatable="false">https://zcashblockexplorer.com/transactions/%s</string>

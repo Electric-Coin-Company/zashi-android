@@ -37,13 +37,13 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 fun AboutViewPreview() {
     ZcashTheme(darkTheme = false) {
         Surface {
-            AboutView(onBack = {}, onViewSource = {}, onTermAndCondition = {}, onViewLicence = {})
+            AboutView(onBack = {}, onViewSource = {}, onCredits = {}, onTermAndCondition = {}, onViewLicence = {})
         }
     }
 }
 
 @Composable
-fun AboutView(onBack: () -> Unit, onViewSource: () -> Unit, onTermAndCondition: () -> Unit, onViewLicence: () -> Unit) {
+fun AboutView(onBack: () -> Unit, onViewSource: () -> Unit, onCredits: () -> Unit, onTermAndCondition: () -> Unit, onViewLicence: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -59,6 +59,8 @@ fun AboutView(onBack: () -> Unit, onViewSource: () -> Unit, onTermAndCondition: 
         BodyMedium(text = stringResource(id = R.string.ns_about_message))
         Spacer(modifier = Modifier.height(24.dp))
         Reference(text = stringResource(id = R.string.ns_view_source), style = TextStyle(fontSize = TextUnit(12f, TextUnitType.Sp)), onClick = onViewSource)
+        Spacer(modifier = Modifier.height(10.dp))
+        Reference(text = stringResource(id = R.string.ns_credits), style = TextStyle(fontSize = TextUnit(12f, TextUnitType.Sp)), onClick = onCredits)
         Spacer(modifier = Modifier.height(10.dp))
         Reference(text = stringResource(id = R.string.ns_terms_conditions), style = TextStyle(fontSize = TextUnit(12f, TextUnitType.Sp)), onClick = onTermAndCondition)
         Spacer(modifier = Modifier.weight(1f))
