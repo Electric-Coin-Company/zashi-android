@@ -18,7 +18,7 @@ class BooleanPreferenceDefaultTest {
     @Test
     fun value_default_true() = runTest {
         val entry = BooleanPreferenceDefaultFixture.newTrue()
-        assertFalse(entry.getValue(MockPreferenceProvider()))
+        assertTrue(entry.getValue(MockPreferenceProvider()))
     }
 
     @Test
