@@ -157,6 +157,9 @@ private fun SettingsMainContent(
                 vertical = dimens.spacingSmall
             ),
         )
+
+        Spacer(modifier = Modifier.height(dimens.spacingDefault))
+
         Spacer(
             modifier = Modifier
                 .fillMaxHeight()
