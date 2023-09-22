@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.PaintingStyle
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -81,6 +82,7 @@ fun PrimaryButton(
     ) {
         Text(
             style = ZcashTheme.extendedTypography.buttonText,
+            textAlign = TextAlign.Center,
             text = text,
             color = textColor
         )
@@ -111,6 +113,7 @@ fun SecondaryButton(
     ) {
         Text(
             style = MaterialTheme.typography.labelLarge,
+            textAlign = TextAlign.Center,
             text = text,
             color = MaterialTheme.colorScheme.onSecondary
         )
@@ -136,7 +139,12 @@ fun NavigationButton(
         ),
         colors = buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
     ) {
-        Text(style = MaterialTheme.typography.labelLarge, text = text, color = MaterialTheme.colorScheme.onSecondary)
+        Text(
+            style = MaterialTheme.typography.labelLarge,
+            textAlign = TextAlign.Center,
+            text = text,
+            color = MaterialTheme.colorScheme.onSecondary
+        )
     }
 }
 
@@ -165,6 +173,7 @@ fun TertiaryButton(
     ) {
         Text(
             style = MaterialTheme.typography.labelLarge,
+            textAlign = TextAlign.Center,
             text = text,
             color = ZcashTheme.colors.onTertiary
         )
@@ -193,6 +202,7 @@ fun DangerousButton(
     ) {
         Text(
             style = MaterialTheme.typography.labelLarge,
+            textAlign = TextAlign.Center,
             text = text,
             color = ZcashTheme.colors.onDangerous
         )
