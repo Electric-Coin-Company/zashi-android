@@ -19,8 +19,10 @@ import cash.z.ecc.android.sdk.model.WalletAddresses
 import cash.z.ecc.android.sdk.model.WalletBalance
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.ZcashNetwork
+import cash.z.ecc.android.sdk.model.defaultForNetwork
 import cash.z.ecc.android.sdk.tool.DerivationTool
 import cash.z.ecc.sdk.type.fromResources
+import co.electriccoin.lightwallet.client.model.LightWalletEndpoint
 import co.electriccoin.zcash.global.getInstance
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.ANDROID_STATE_FLOW_TIMEOUT
@@ -189,10 +191,12 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
         val application = getApplication<Application>()
 
         viewModelScope.launch {
+            val zcashNetwork = ZcashNetwork.fromResources(application)
             val newWallet = PersistableWallet.new(
-                application,
-                ZcashNetwork.fromResources(application),
-                WalletInitMode.NewWallet
+                application = application,
+                zcashNetwork = zcashNetwork,
+                endpoint = LightWalletEndpoint.defaultForNetwork(zcashNetwork),
+                walletInitMode = WalletInitMode.NewWallet
             )
             persistWallet(newWallet)
         }
