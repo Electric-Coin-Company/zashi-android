@@ -7,7 +7,8 @@ import cash.z.ecc.android.bip39.Mnemonics
 import cash.z.ecc.android.bip39.toSeed
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.WalletCoordinator
-import cash.z.ecc.android.sdk.block.CompactBlockProcessor
+import cash.z.ecc.android.sdk.WalletInitMode
+import cash.z.ecc.android.sdk.block.processor.CompactBlockProcessor
 import cash.z.ecc.android.sdk.model.Account
 import cash.z.ecc.android.sdk.model.BlockHeight
 import cash.z.ecc.android.sdk.model.FiatCurrency
@@ -188,8 +189,12 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
         val application = getApplication<Application>()
 
         viewModelScope.launch {
-            val newWallet = PersistableWallet.new(application, ZcashNetwork.fromResources(application))
-            persistExistingWallet(newWallet)
+            val newWallet = PersistableWallet.new(
+                application,
+                ZcashNetwork.fromResources(application),
+                WalletInitMode.NewWallet
+            )
+            persistWallet(newWallet)
         }
     }
 
@@ -198,6 +203,13 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
      * to see the side effects.  This would be used for a user restoring a wallet from a backup.
      */
     fun persistExistingWallet(persistableWallet: PersistableWallet) {
+        persistWallet(persistableWallet)
+    }
+
+    /**
+     * Persists a wallet asynchronously.  Clients observe [secretState] to see the side effects.
+     */
+    private fun persistWallet(persistableWallet: PersistableWallet) {
         val application = getApplication<Application>()
 
         viewModelScope.launch {
