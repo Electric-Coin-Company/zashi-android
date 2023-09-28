@@ -10,15 +10,13 @@ import androidx.test.filters.MediumTest
 import androidx.test.filters.SmallTest
 import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.settings.SettingsTag
+import co.electriccoin.zcash.ui.screen.settings.SettingsViewTestSetup
 import co.electriccoin.zcash.ui.screen.settings.fixture.TroubleshootingParametersFixture
-import co.electriccoin.zcash.ui.screen.settings.model.TroubleshootingParameters
 import co.electriccoin.zcash.ui.test.getStringResource
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
-import java.util.concurrent.atomic.AtomicInteger
 
 class SettingsViewTest : UiTestPrerequisites() {
     @get:Rule
@@ -26,10 +24,10 @@ class SettingsViewTest : UiTestPrerequisites() {
 
     @Test
     @MediumTest
-    fun back() {
-        val testSetup = TestSetup(composeTestRule, TroubleshootingParametersFixture.new())
+    fun on_back_test() {
+        val testSetup = SettingsViewTestSetup(composeTestRule, TroubleshootingParametersFixture.new())
 
-        assertEquals(0, testSetup.getOnBackCount())
+        assertEquals(0, testSetup.getBackCount())
 
         composeTestRule.onNodeWithContentDescription(
             getStringResource(R.string.settings_back_content_description)
@@ -37,13 +35,93 @@ class SettingsViewTest : UiTestPrerequisites() {
             it.performClick()
         }
 
-        assertEquals(1, testSetup.getOnBackCount())
+        assertEquals(1, testSetup.getBackCount())
+    }
+
+    @Test
+    @MediumTest
+    fun on_feedback_test() {
+        val testSetup = SettingsViewTestSetup(composeTestRule, TroubleshootingParametersFixture.new())
+
+        assertEquals(0, testSetup.getFeedbackCount())
+
+        composeTestRule.onNodeWithText(
+            getStringResource(R.string.settings_send_us_feedback)
+        ).also {
+            it.performClick()
+        }
+
+        assertEquals(1, testSetup.getFeedbackCount())
+    }
+
+    @Test
+    @MediumTest
+    fun on_backup_test() {
+        val testSetup = SettingsViewTestSetup(composeTestRule, TroubleshootingParametersFixture.new())
+
+        assertEquals(0, testSetup.getBackupCount())
+
+        composeTestRule.onNodeWithText(
+            getStringResource(R.string.settings_backup_wallet)
+        ).also {
+            it.performClick()
+        }
+
+        assertEquals(1, testSetup.getBackupCount())
+    }
+
+    @Test
+    @MediumTest
+    fun on_documentation_test() {
+        val testSetup = SettingsViewTestSetup(composeTestRule, TroubleshootingParametersFixture.new())
+
+        assertEquals(0, testSetup.getDocumentationCount())
+
+        composeTestRule.onNodeWithText(
+            getStringResource(R.string.settings_documentation)
+        ).also {
+            it.performClick()
+        }
+
+        assertEquals(1, testSetup.getDocumentationCount())
+    }
+
+    @Test
+    @MediumTest
+    fun on_privacy_policy_test() {
+        val testSetup = SettingsViewTestSetup(composeTestRule, TroubleshootingParametersFixture.new())
+
+        assertEquals(0, testSetup.getPrivacyPolicyCount())
+
+        composeTestRule.onNodeWithText(
+            getStringResource(R.string.settings_privacy_policy)
+        ).also {
+            it.performClick()
+        }
+
+        assertEquals(1, testSetup.getPrivacyPolicyCount())
+    }
+
+    @Test
+    @MediumTest
+    fun on_about_test() {
+        val testSetup = SettingsViewTestSetup(composeTestRule, TroubleshootingParametersFixture.new())
+
+        assertEquals(0, testSetup.getAboutCount())
+
+        composeTestRule.onNodeWithText(
+            getStringResource(R.string.settings_about)
+        ).also {
+            it.performClick()
+        }
+
+        assertEquals(1, testSetup.getAboutCount())
     }
 
     @Test
     @SmallTest
     fun troubleshooting_menu_visible_test() {
-        TestSetup(composeTestRule, TroubleshootingParametersFixture.new(isEnabled = true))
+        SettingsViewTestSetup(composeTestRule, TroubleshootingParametersFixture.new(isEnabled = true))
 
         composeTestRule.onNodeWithTag(SettingsTag.TROUBLESHOOTING_MENU).also {
             it.assertExists()
@@ -53,7 +131,7 @@ class SettingsViewTest : UiTestPrerequisites() {
     @Test
     @SmallTest
     fun troubleshooting_menu_not_visible_test() {
-        TestSetup(composeTestRule, TroubleshootingParametersFixture.new(isEnabled = false))
+        SettingsViewTestSetup(composeTestRule, TroubleshootingParametersFixture.new(isEnabled = false))
 
         composeTestRule.onNodeWithTag(SettingsTag.TROUBLESHOOTING_MENU).also {
             it.assertDoesNotExist()
@@ -63,7 +141,7 @@ class SettingsViewTest : UiTestPrerequisites() {
     @Test
     @MediumTest
     fun troubleshooting_rescan_test() {
-        val testSetup = TestSetup(
+        val testSetup = SettingsViewTestSetup(
             composeTestRule,
             TroubleshootingParametersFixture.new(
                 isEnabled = true,
@@ -85,7 +163,7 @@ class SettingsViewTest : UiTestPrerequisites() {
     @Test
     @MediumTest
     fun troubleshooting_background_sync_test() {
-        val testSetup = TestSetup(
+        val testSetup = SettingsViewTestSetup(
             composeTestRule,
             TroubleshootingParametersFixture.new(
                 isEnabled = true,
@@ -109,7 +187,7 @@ class SettingsViewTest : UiTestPrerequisites() {
     @Test
     @MediumTest
     fun troubleshooting_keep_screen_on_during_sync_test() {
-        val testSetup = TestSetup(
+        val testSetup = SettingsViewTestSetup(
             composeTestRule,
             TroubleshootingParametersFixture.new(
                 isEnabled = true,
@@ -133,7 +211,7 @@ class SettingsViewTest : UiTestPrerequisites() {
     @Test
     @MediumTest
     fun troubleshooting_analytics_test() {
-        val testSetup = TestSetup(
+        val testSetup = SettingsViewTestSetup(
             composeTestRule,
             TroubleshootingParametersFixture.new(
                 isEnabled = true,
@@ -152,73 +230,6 @@ class SettingsViewTest : UiTestPrerequisites() {
         }
 
         assertEquals(1, testSetup.getAnalyticsCount())
-    }
-
-    private class TestSetup(
-        private val composeTestRule: ComposeContentTestRule,
-        private val troubleshootingParameters: TroubleshootingParameters
-    ) {
-        private val onBackCount = AtomicInteger(0)
-        private val onBackupCount = AtomicInteger(0)
-        private val onRescanCount = AtomicInteger(0)
-        private val onBackgroundSyncChangedCount = AtomicInteger(0)
-        private val onKeepScreenOnChangedCount = AtomicInteger(0)
-        private val onAnalyticsChangedCount = AtomicInteger(0)
-
-        fun getOnBackCount(): Int {
-            composeTestRule.waitForIdle()
-            return onBackCount.get()
-        }
-
-        fun getBackupCount(): Int {
-            composeTestRule.waitForIdle()
-            return onBackupCount.get()
-        }
-
-        fun getRescanCount(): Int {
-            composeTestRule.waitForIdle()
-            return onRescanCount.get()
-        }
-
-        fun getBackgroundSyncCount(): Int {
-            composeTestRule.waitForIdle()
-            return onBackgroundSyncChangedCount.get()
-        }
-
-        fun getKeepScreenOnSyncCount(): Int {
-            composeTestRule.waitForIdle()
-            return onKeepScreenOnChangedCount.get()
-        }
-
-        fun getAnalyticsCount(): Int {
-            composeTestRule.waitForIdle()
-            return onAnalyticsChangedCount.get()
-        }
-
-        init {
-            composeTestRule.setContent {
-                ZcashTheme {
-                    Settings(
-                        troubleshootingParameters = troubleshootingParameters,
-                        onBack = {
-                            onBackCount.incrementAndGet()
-                        },
-                        onRescanWallet = {
-                            onRescanCount.incrementAndGet()
-                        },
-                        onBackgroundSyncSettingsChanged = {
-                            onBackgroundSyncChangedCount.incrementAndGet()
-                        },
-                        onKeepScreenOnDuringSyncSettingsChanged = {
-                            onKeepScreenOnChangedCount.incrementAndGet()
-                        },
-                        onAnalyticsSettingsChanged = {
-                            onAnalyticsChangedCount.incrementAndGet()
-                        }
-                    )
-                }
-            }
-        }
     }
 }
 

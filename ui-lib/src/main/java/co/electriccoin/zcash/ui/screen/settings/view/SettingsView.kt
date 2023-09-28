@@ -57,6 +57,11 @@ private fun PreviewSettings() {
                     isRescanEnabled = false
                 ),
                 onBack = {},
+                onBackup = {},
+                onDocumentation = {},
+                onPrivacyPolicy = {},
+                onFeedback = {},
+                onAbout = {},
                 onRescanWallet = {},
                 onBackgroundSyncSettingsChanged = {},
                 onKeepScreenOnDuringSyncSettingsChanged = {},
@@ -71,6 +76,11 @@ private fun PreviewSettings() {
 fun Settings(
     troubleshootingParameters: TroubleshootingParameters,
     onBack: () -> Unit,
+    onBackup: () -> Unit,
+    onDocumentation: () -> Unit,
+    onPrivacyPolicy: () -> Unit,
+    onFeedback: () -> Unit,
+    onAbout: () -> Unit,
     onRescanWallet: () -> Unit,
     onBackgroundSyncSettingsChanged: (Boolean) -> Unit,
     onKeepScreenOnDuringSyncSettingsChanged: (Boolean) -> Unit,
@@ -96,7 +106,12 @@ fun Settings(
                     bottom = paddingValues.calculateBottomPadding() + dimens.spacingHuge,
                     start = dimens.spacingHuge,
                     end = dimens.spacingHuge
-                )
+                ),
+            onBackup = onBackup,
+            onDocumentation = onDocumentation,
+            onPrivacyPolicy = onPrivacyPolicy,
+            onFeedback = onFeedback,
+            onAbout = onAbout,
         )
     }
 }
@@ -239,6 +254,11 @@ private fun TroubleshootingMenu(
 @Composable
 @Suppress("LongParameterList")
 private fun SettingsMainContent(
+    onBackup: () -> Unit,
+    onDocumentation: () -> Unit,
+    onPrivacyPolicy: () -> Unit,
+    onFeedback: () -> Unit,
+    onAbout: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -249,7 +269,7 @@ private fun SettingsMainContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         PrimaryButton(
-            onClick = {},
+            onClick = onBackup,
             text = stringResource(R.string.settings_backup_wallet),
             outerPaddingValues = PaddingValues(
                 horizontal = dimens.spacingNone,
@@ -258,8 +278,9 @@ private fun SettingsMainContent(
         )
 
         Spacer(modifier = Modifier.height(dimens.spacingDefault))
+
         PrimaryButton(
-            onClick = { },
+            onClick = onFeedback,
             text = stringResource(R.string.settings_send_us_feedback),
             outerPaddingValues = PaddingValues(
                 horizontal = dimens.spacingNone,
@@ -270,7 +291,7 @@ private fun SettingsMainContent(
         Spacer(modifier = Modifier.height(dimens.spacingDefault))
 
         PrimaryButton(
-            onClick = {},
+            onClick = onPrivacyPolicy,
             text = stringResource(R.string.settings_privacy_policy),
             outerPaddingValues = PaddingValues(
                 horizontal = dimens.spacingNone,
@@ -281,7 +302,7 @@ private fun SettingsMainContent(
         Spacer(modifier = Modifier.height(dimens.spacingDefault))
 
         PrimaryButton(
-            onClick = {},
+            onClick = onDocumentation,
             text = stringResource(R.string.settings_documentation),
             outerPaddingValues = PaddingValues(
                 horizontal = dimens.spacingNone,
@@ -298,7 +319,7 @@ private fun SettingsMainContent(
         )
 
         PrimaryButton(
-            onClick = {},
+            onClick = onAbout,
             text = stringResource(R.string.settings_about),
             outerPaddingValues = PaddingValues(
                 horizontal = dimens.spacingNone,

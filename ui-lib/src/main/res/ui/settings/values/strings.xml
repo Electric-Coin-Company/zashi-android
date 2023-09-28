@@ -10,9 +10,9 @@
     <string name="settings_troubleshooting_enable_analytics">Report crashes</string>
 
     <string name="settings_backup_wallet">BACKUP WALLET</string>
-    <string name="settings_documentation">SEND US FEEDBACK</string>
+    <string name="settings_documentation">DOCUMENTATION</string>
     <string name="settings_privacy_policy">PRIVACY POLICY</string>
-    <string name="settings_send_us_feedback">DOCUMENTATION</string>
+    <string name="settings_send_us_feedback">SEND US FEEDBACK</string>
     <string name="settings_about">ABOUT</string>
 
 </resources>

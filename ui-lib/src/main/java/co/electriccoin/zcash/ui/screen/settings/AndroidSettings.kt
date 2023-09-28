@@ -55,6 +55,11 @@ private fun WrapSettings(
                 isRescanEnabled = ConfigurationEntries.IS_RESCAN_ENABLED.getValue(RemoteConfig.current),
             ),
             onBack = goBack,
+            onBackup = {},
+            onDocumentation = {},
+            onPrivacyPolicy = {},
+            onFeedback = {},
+            onAbout = {},
             onRescanWallet = {
                 walletViewModel.rescanBlockchain()
             },
