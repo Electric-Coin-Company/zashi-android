@@ -14,7 +14,9 @@ import cash.z.ecc.android.sdk.model.BlockHeight
 import cash.z.ecc.android.sdk.model.PersistableWallet
 import cash.z.ecc.android.sdk.model.SeedPhrase
 import cash.z.ecc.android.sdk.model.ZcashNetwork
+import cash.z.ecc.android.sdk.model.defaultForNetwork
 import cash.z.ecc.sdk.type.fromResources
+import co.electriccoin.lightwallet.client.model.LightWalletEndpoint
 import co.electriccoin.zcash.spackle.EmulatorWtfUtil
 import co.electriccoin.zcash.spackle.FirebaseTestLabUtil
 import co.electriccoin.zcash.ui.BuildConfig
@@ -132,10 +134,11 @@ internal fun persistExistingWalletWithSeedPhrase(
 
     val network = ZcashNetwork.fromResources(context)
     val restoredWallet = PersistableWallet(
-        network,
-        birthday,
-        seedPhrase,
-        WalletInitMode.RestoreWallet
+        network = network,
+        birthday = birthday,
+        endpoint = LightWalletEndpoint.defaultForNetwork(network),
+        seedPhrase = seedPhrase,
+        walletInitMode = WalletInitMode.RestoreWallet
     )
     walletViewModel.persistExistingWallet(restoredWallet)
 }
