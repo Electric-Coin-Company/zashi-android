@@ -83,7 +83,7 @@ fun PrimaryButton(
         Text(
             style = ZcashTheme.extendedTypography.buttonText,
             textAlign = TextAlign.Center,
-            text = text,
+            text = text.uppercase(),
             color = textColor
         )
     }
@@ -114,7 +114,7 @@ fun SecondaryButton(
         Text(
             style = MaterialTheme.typography.labelLarge,
             textAlign = TextAlign.Center,
-            text = text,
+            text = text.uppercase(),
             color = MaterialTheme.colorScheme.onSecondary
         )
     }

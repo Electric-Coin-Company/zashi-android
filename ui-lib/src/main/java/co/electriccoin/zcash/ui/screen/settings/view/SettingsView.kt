@@ -130,9 +130,7 @@ private fun SettingsTopAppBar(
     CenterAlignedTopAppBar(
         title = {
             Text(
-                text = stringResource(
-                    id = R.string.settings_header
-                ),
+                text = stringResource(id = R.string.settings_header).uppercase(),
                 style = ZcashTheme.typography.primary.titleSmall,
                 color = ZcashTheme.colors.screenTitleColor
             )
@@ -151,7 +149,7 @@ private fun SettingsTopAppBar(
                     )
                 }
                 Text(
-                    text = stringResource(id = R.string.settings_back),
+                    text = stringResource(id = R.string.settings_back).uppercase(),
                     style = ZcashTheme.typography.primary.bodyMedium
                 )
             }

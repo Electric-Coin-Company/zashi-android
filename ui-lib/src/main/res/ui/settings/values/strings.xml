@@ -1,6 +1,6 @@
 <resources>
-    <string name="settings_header">SETTINGS</string>
-    <string name="settings_back">BACK</string>
+    <string name="settings_header">Settings</string>
+    <string name="settings_back">Back</string>
     <string name="settings_back_content_description">Back</string>
 
     <string name="settings_troubleshooting_menu_content_description">Additional settings</string>
@@ -9,10 +9,10 @@
     <string name="settings_troubleshooting_enable_keep_screen_on">Keep screen on during sync</string>
     <string name="settings_troubleshooting_enable_analytics">Report crashes</string>
 
-    <string name="settings_backup_wallet">BACKUP WALLET</string>
-    <string name="settings_documentation">DOCUMENTATION</string>
-    <string name="settings_privacy_policy">PRIVACY POLICY</string>
-    <string name="settings_send_us_feedback">SEND US FEEDBACK</string>
-    <string name="settings_about">ABOUT</string>
+    <string name="settings_backup_wallet">Backup wallet</string>
+    <string name="settings_documentation">Documentation</string>
+    <string name="settings_privacy_policy">Privacy policy</string>
+    <string name="settings_send_us_feedback">Send us feedback</string>
+    <string name="settings_about">About</string>
 
 </resources>
