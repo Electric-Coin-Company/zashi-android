@@ -49,6 +49,11 @@ internal val PrimaryTypography = Typography(
         fontWeight = FontWeight.SemiBold,
         fontSize = 30.sp
     ),
+    titleSmall = TextStyle(
+        fontFamily = InterFontFamily,
+        fontWeight = FontWeight.Bold,
+        fontSize = 14.sp
+    ),
     bodyLarge = TextStyle(
         fontFamily = InterFontFamily,
         fontWeight = FontWeight.Normal,
@@ -99,7 +104,8 @@ data class Typography(
 data class ExtendedTypography(
     val chipIndex: TextStyle,
     val listItem: TextStyle,
-    val zecBalance: TextStyle
+    val zecBalance: TextStyle,
+    val buttonText: TextStyle,
 )
 
 @Suppress("CompositionLocalAllowlist")
@@ -125,6 +131,9 @@ val LocalExtendedTypography = staticCompositionLocalOf {
             fontFamily = Zboto,
             fontWeight = FontWeight.Normal,
             fontSize = 30.sp
-        )
+        ),
+        buttonText = PrimaryTypography.bodySmall.copy(
+            fontSize = 14.sp
+        ),
     )
 }

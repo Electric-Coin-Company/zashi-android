@@ -1,7 +1,12 @@
 package co.electriccoin.zcash.ui.screen.settings.view
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -9,6 +14,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.outlined.Cancel
+import androidx.compose.material.icons.outlined.CheckCircle
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -16,35 +24,47 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.GradientSurface
-import co.electriccoin.zcash.ui.design.component.SwitchWithLabel
+import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme.dimens
+import co.electriccoin.zcash.ui.screen.settings.SettingsTag
+import co.electriccoin.zcash.ui.screen.settings.model.TroubleshootingParameters
 
 @Preview("Settings")
 @Composable
 private fun PreviewSettings() {
-    ZcashTheme(darkTheme = true) {
+    ZcashTheme(darkTheme = false) {
         GradientSurface {
             Settings(
-                isBackgroundSyncEnabled = true,
-                isKeepScreenOnDuringSyncEnabled = true,
-                isAnalyticsEnabled = true,
-                isRescanEnabled = true,
+                TroubleshootingParameters(
+                    isEnabled = false,
+                    isBackgroundSyncEnabled = false,
+                    isKeepScreenOnDuringSyncEnabled = false,
+                    isAnalyticsEnabled = false,
+                    isRescanEnabled = false
+                ),
                 onBack = {},
+                onBackup = {},
+                onDocumentation = {},
+                onPrivacyPolicy = {},
+                onFeedback = {},
+                onAbout = {},
                 onRescanWallet = {},
                 onBackgroundSyncSettingsChanged = {},
-                onIsKeepScreenOnDuringSyncSettingsChanged = {},
+                onKeepScreenOnDuringSyncSettingsChanged = {},
                 onAnalyticsSettingsChanged = {}
             )
         }
@@ -54,81 +74,134 @@ private fun PreviewSettings() {
 @Composable
 @Suppress("LongParameterList")
 fun Settings(
-    isBackgroundSyncEnabled: Boolean,
-    isKeepScreenOnDuringSyncEnabled: Boolean,
-    isAnalyticsEnabled: Boolean,
-    isRescanEnabled: Boolean,
+    troubleshootingParameters: TroubleshootingParameters,
     onBack: () -> Unit,
+    onBackup: () -> Unit,
+    onDocumentation: () -> Unit,
+    onPrivacyPolicy: () -> Unit,
+    onFeedback: () -> Unit,
+    onAbout: () -> Unit,
     onRescanWallet: () -> Unit,
     onBackgroundSyncSettingsChanged: (Boolean) -> Unit,
-    onIsKeepScreenOnDuringSyncSettingsChanged: (Boolean) -> Unit,
+    onKeepScreenOnDuringSyncSettingsChanged: (Boolean) -> Unit,
     onAnalyticsSettingsChanged: (Boolean) -> Unit
 ) {
     Scaffold(topBar = {
         SettingsTopAppBar(
-            isRescanEnabled = isRescanEnabled,
+            troubleshootingParameters = troubleshootingParameters,
+            onBackgroundSyncSettingsChanged = onBackgroundSyncSettingsChanged,
+            onKeepScreenOnDuringSyncSettingsChanged = onKeepScreenOnDuringSyncSettingsChanged,
+            onAnalyticsSettingsChanged = onAnalyticsSettingsChanged,
+            onRescanWallet = onRescanWallet,
             onBack = onBack,
-            onRescanWallet = onRescanWallet
         )
     }) { paddingValues ->
         SettingsMainContent(
-            isBackgroundSyncEnabled = isBackgroundSyncEnabled,
-            isKeepScreenOnDuringSyncEnabled = isKeepScreenOnDuringSyncEnabled,
-            isAnalyticsEnabled = isAnalyticsEnabled,
-            onBackgroundSyncSettingsChanged = onBackgroundSyncSettingsChanged,
-            onIsKeepScreenOnDuringSyncSettingsChanged = onIsKeepScreenOnDuringSyncSettingsChanged,
-            onAnalyticsSettingsChanged = onAnalyticsSettingsChanged,
             modifier = Modifier
                 .verticalScroll(
                     rememberScrollState()
                 )
                 .padding(
-                    top = paddingValues.calculateTopPadding() + dimens.spacingDefault,
-                    bottom = paddingValues.calculateTopPadding() + dimens.spacingDefault,
-                    start = dimens.spacingDefault,
-                    end = dimens.spacingDefault
-                )
+                    top = paddingValues.calculateTopPadding() + dimens.spacingHuge,
+                    bottom = paddingValues.calculateBottomPadding() + dimens.spacingHuge,
+                    start = dimens.spacingHuge,
+                    end = dimens.spacingHuge
+                ),
+            onBackup = onBackup,
+            onDocumentation = onDocumentation,
+            onPrivacyPolicy = onPrivacyPolicy,
+            onFeedback = onFeedback,
+            onAbout = onAbout,
         )
     }
 }
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
+@Suppress("LongParameterList")
 private fun SettingsTopAppBar(
-    isRescanEnabled: Boolean,
+    troubleshootingParameters: TroubleshootingParameters,
+    onBackgroundSyncSettingsChanged: (Boolean) -> Unit,
+    onKeepScreenOnDuringSyncSettingsChanged: (Boolean) -> Unit,
+    onAnalyticsSettingsChanged: (Boolean) -> Unit,
+    onRescanWallet: () -> Unit,
     onBack: () -> Unit,
-    onRescanWallet: () -> Unit
 ) {
-    TopAppBar(
-        title = { Text(text = stringResource(id = R.string.settings_header)) },
+    CenterAlignedTopAppBar(
+        title = {
+            Text(
+                text = stringResource(id = R.string.settings_header).uppercase(),
+                style = ZcashTheme.typography.primary.titleSmall,
+                color = ZcashTheme.colors.screenTitleColor
+            )
+        },
         navigationIcon = {
-            IconButton(
-                onClick = onBack
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Icon(
-                    imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = stringResource(R.string.settings_back_content_description)
+                IconButton(
+                    onClick = onBack
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.ArrowBack,
+                        contentDescription = stringResource(R.string.settings_back_content_description)
+                    )
+                }
+                Text(
+                    text = stringResource(id = R.string.settings_back).uppercase(),
+                    style = ZcashTheme.typography.primary.bodyMedium
                 )
             }
         },
         actions = {
-            if (isRescanEnabled) {
-                TroubleshootingMenu(onRescanWallet)
+            if (troubleshootingParameters.isEnabled) {
+                TroubleshootingMenu(
+                    troubleshootingParameters,
+                    onBackgroundSyncSettingsChanged,
+                    onKeepScreenOnDuringSyncSettingsChanged,
+                    onAnalyticsSettingsChanged,
+                    onRescanWallet
+                )
             }
         }
     )
 }
 
+/**
+ * Add icon to Troubleshooting menu. No content description, as this is debug only menu.
+ */
+@Composable
+private fun AddIcon(enabled: Boolean) {
+    if (enabled) {
+        Icon(
+            imageVector = Icons.Outlined.CheckCircle,
+            contentDescription = null
+        )
+    } else {
+        Icon(
+            imageVector = Icons.Outlined.Cancel,
+            contentDescription = null
+        )
+    }
+}
+
 @Composable
 private fun TroubleshootingMenu(
+    troubleshootParams: TroubleshootingParameters,
+    onBackgroundSyncSettingsChanged: (Boolean) -> Unit,
+    onKeepScreenOnDuringSyncSettingsChanged: (Boolean) -> Unit,
+    onAnalyticsSettingsChanged: (Boolean) -> Unit,
     onRescanWallet: () -> Unit
 ) {
-    Column {
+    Column(
+        modifier = Modifier.testTag(SettingsTag.TROUBLESHOOTING_MENU)
+    ) {
         var expanded by rememberSaveable { mutableStateOf(false) }
         IconButton(onClick = { expanded = true }) {
             Icon(
                 imageVector = Icons.Default.MoreVert,
-                contentDescription = stringResource(id = R.string.settings_overflow_content_description)
+                contentDescription = stringResource(id = R.string.settings_troubleshooting_menu_content_description)
             )
         }
 
@@ -137,12 +210,41 @@ private fun TroubleshootingMenu(
             onDismissRequest = { expanded = false }
         ) {
             DropdownMenuItem(
-                text = { Text(stringResource(id = R.string.settings_rescan)) },
+                text = { Text(stringResource(id = R.string.settings_troubleshooting_enable_background_sync)) },
                 onClick = {
-                    onRescanWallet()
+                    onBackgroundSyncSettingsChanged(!troubleshootParams.isBackgroundSyncEnabled)
                     expanded = false
-                }
+                },
+                leadingIcon = { AddIcon(troubleshootParams.isBackgroundSyncEnabled) }
             )
+            DropdownMenuItem(
+                text = { Text(stringResource(id = R.string.settings_troubleshooting_enable_keep_screen_on)) },
+                onClick = {
+                    onKeepScreenOnDuringSyncSettingsChanged(!troubleshootParams.isKeepScreenOnDuringSyncEnabled)
+                    expanded = false
+                },
+                leadingIcon = { AddIcon(troubleshootParams.isKeepScreenOnDuringSyncEnabled) }
+            )
+            DropdownMenuItem(
+                text = { Text(stringResource(id = R.string.settings_troubleshooting_enable_analytics)) },
+                onClick = {
+                    onAnalyticsSettingsChanged(!troubleshootParams.isAnalyticsEnabled)
+                    expanded = false
+                },
+                leadingIcon = { AddIcon(troubleshootParams.isAnalyticsEnabled) }
+            )
+            // isRescanEnabled means if this feature should be visible, not whether it is enabled as in the case of
+            // the previous booleans
+            if (troubleshootParams.isRescanEnabled) {
+                DropdownMenuItem(
+                    text = { Text(stringResource(id = R.string.settings_troubleshooting_rescan)) },
+                    onClick = {
+                        onRescanWallet()
+                        expanded = false
+                    },
+                    leadingIcon = { AddIcon(true) }
+                )
+            }
         }
     }
 }
@@ -150,35 +252,77 @@ private fun TroubleshootingMenu(
 @Composable
 @Suppress("LongParameterList")
 private fun SettingsMainContent(
-    isBackgroundSyncEnabled: Boolean,
-    isKeepScreenOnDuringSyncEnabled: Boolean,
-    isAnalyticsEnabled: Boolean,
-    onBackgroundSyncSettingsChanged: (Boolean) -> Unit,
-    onIsKeepScreenOnDuringSyncSettingsChanged: (Boolean) -> Unit,
-    onAnalyticsSettingsChanged: (Boolean) -> Unit,
+    onBackup: () -> Unit,
+    onDocumentation: () -> Unit,
+    onPrivacyPolicy: () -> Unit,
+    onFeedback: () -> Unit,
+    onAbout: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier = modifier) {
-        SwitchWithLabel(
-            label = stringResource(id = R.string.settings_enable_background_sync),
-            state = isBackgroundSyncEnabled,
-            onStateChange = { onBackgroundSyncSettingsChanged(!isBackgroundSyncEnabled) }
+    Column(
+        Modifier
+            .fillMaxHeight()
+            .fillMaxWidth()
+            .then(modifier),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        PrimaryButton(
+            onClick = onBackup,
+            text = stringResource(R.string.settings_backup_wallet),
+            outerPaddingValues = PaddingValues(
+                horizontal = dimens.spacingNone,
+                vertical = dimens.spacingSmall
+            ),
         )
 
-        Spacer(modifier = Modifier.height(dimens.spacingXlarge))
+        Spacer(modifier = Modifier.height(dimens.spacingDefault))
 
-        SwitchWithLabel(
-            label = stringResource(id = R.string.settings_enable_keep_screen_on),
-            state = isKeepScreenOnDuringSyncEnabled,
-            onStateChange = { onIsKeepScreenOnDuringSyncSettingsChanged(!isKeepScreenOnDuringSyncEnabled) }
+        PrimaryButton(
+            onClick = onFeedback,
+            text = stringResource(R.string.settings_send_us_feedback),
+            outerPaddingValues = PaddingValues(
+                horizontal = dimens.spacingNone,
+                vertical = dimens.spacingSmall
+            ),
         )
 
-        Spacer(modifier = Modifier.height(dimens.spacingXlarge))
+        Spacer(modifier = Modifier.height(dimens.spacingDefault))
 
-        SwitchWithLabel(
-            label = stringResource(id = R.string.settings_enable_analytics),
-            state = isAnalyticsEnabled,
-            onStateChange = { onAnalyticsSettingsChanged(!isAnalyticsEnabled) }
+        PrimaryButton(
+            onClick = onPrivacyPolicy,
+            text = stringResource(R.string.settings_privacy_policy),
+            outerPaddingValues = PaddingValues(
+                horizontal = dimens.spacingNone,
+                vertical = dimens.spacingSmall
+            ),
+        )
+
+        Spacer(modifier = Modifier.height(dimens.spacingDefault))
+
+        PrimaryButton(
+            onClick = onDocumentation,
+            text = stringResource(R.string.settings_documentation),
+            outerPaddingValues = PaddingValues(
+                horizontal = dimens.spacingNone,
+                vertical = dimens.spacingSmall
+            ),
+        )
+
+        Spacer(modifier = Modifier.height(dimens.spacingDefault))
+
+        Spacer(
+            modifier = Modifier
+                .fillMaxHeight()
+                .weight(MINIMAL_WEIGHT)
+        )
+
+        PrimaryButton(
+            onClick = onAbout,
+            text = stringResource(R.string.settings_about),
+            outerPaddingValues = PaddingValues(
+                horizontal = dimens.spacingNone,
+                vertical = dimens.spacingSmall
+            ),
         )
     }
 }
