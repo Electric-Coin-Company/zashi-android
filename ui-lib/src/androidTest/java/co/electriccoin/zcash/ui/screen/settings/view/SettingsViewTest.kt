@@ -46,7 +46,8 @@ class SettingsViewTest : UiTestPrerequisites() {
         assertEquals(0, testSetup.getFeedbackCount())
 
         composeTestRule.onNodeWithText(
-            getStringResource(R.string.settings_send_us_feedback)
+            text = getStringResource(R.string.settings_send_us_feedback),
+            ignoreCase = true
         ).also {
             it.performClick()
         }
@@ -62,7 +63,8 @@ class SettingsViewTest : UiTestPrerequisites() {
         assertEquals(0, testSetup.getBackupCount())
 
         composeTestRule.onNodeWithText(
-            getStringResource(R.string.settings_backup_wallet)
+            text = getStringResource(R.string.settings_backup_wallet),
+            ignoreCase = true
         ).also {
             it.performClick()
         }
@@ -78,7 +80,8 @@ class SettingsViewTest : UiTestPrerequisites() {
         assertEquals(0, testSetup.getDocumentationCount())
 
         composeTestRule.onNodeWithText(
-            getStringResource(R.string.settings_documentation)
+            text = getStringResource(R.string.settings_documentation),
+            ignoreCase = true
         ).also {
             it.performClick()
         }
@@ -94,7 +97,8 @@ class SettingsViewTest : UiTestPrerequisites() {
         assertEquals(0, testSetup.getPrivacyPolicyCount())
 
         composeTestRule.onNodeWithText(
-            getStringResource(R.string.settings_privacy_policy)
+            text = getStringResource(R.string.settings_privacy_policy),
+            ignoreCase = true
         ).also {
             it.performClick()
         }
@@ -110,7 +114,8 @@ class SettingsViewTest : UiTestPrerequisites() {
         assertEquals(0, testSetup.getAboutCount())
 
         composeTestRule.onNodeWithText(
-            getStringResource(R.string.settings_about)
+            text = getStringResource(R.string.settings_about),
+            ignoreCase = true
         ).also {
             it.performClick()
         }

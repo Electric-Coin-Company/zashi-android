@@ -38,7 +38,10 @@ class ShortBackupViewTest : UiTestPrerequisites() {
     fun click_finish() {
         val testSetup = newTestSetup()
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.new_wallet_short_button_finished)).also {
+        composeTestRule.onNodeWithText(
+            text = getStringResource(R.string.new_wallet_short_button_finished),
+            ignoreCase = true
+        ).also {
             it.performClick()
         }
 
