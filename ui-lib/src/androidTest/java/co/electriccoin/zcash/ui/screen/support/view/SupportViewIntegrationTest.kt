@@ -61,7 +61,7 @@ class SupportViewIntegrationTest : UiTestPrerequisites() {
             it.assertDoesNotExist()
         }
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.support_send)).also {
+        composeTestRule.onNodeWithText(getStringResource(R.string.support_send), ignoreCase = true).also {
             it.performClick()
         }
 

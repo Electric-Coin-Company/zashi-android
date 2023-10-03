@@ -126,7 +126,7 @@ class ScanViewTest : UiTestPrerequisites() {
             it.assertTextEquals(getStringResource(R.string.scan_state_permission))
         }
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.scan_settings_button)).also {
+        composeTestRule.onNodeWithText(getStringResource(R.string.scan_settings_button), ignoreCase = true).also {
             it.assertIsDisplayed()
             it.assertHasClickAction()
         }
@@ -139,7 +139,7 @@ class ScanViewTest : UiTestPrerequisites() {
 
         assertEquals(0, testSetup.getOnOpenSettingsCount())
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.scan_settings_button)).also {
+        composeTestRule.onNodeWithText(getStringResource(R.string.scan_settings_button), ignoreCase = true).also {
             it.performClick()
         }
 

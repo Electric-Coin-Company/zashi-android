@@ -31,7 +31,7 @@ class OnboardingActivityTest : UiTestPrerequisites() {
 
         assertEquals(OnboardingStage.ShieldedByDefault, testSetup.getOnboardingStage())
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_next)).also {
+        composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_next), ignoreCase = true).also {
             it.performClick()
         }
 

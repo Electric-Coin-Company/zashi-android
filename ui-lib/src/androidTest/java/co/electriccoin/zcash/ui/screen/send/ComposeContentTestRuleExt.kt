@@ -70,25 +70,25 @@ internal fun ComposeContentTestRule.setMemo(memo: String) {
 }
 
 internal fun ComposeContentTestRule.clickCreateAndSend() {
-    onNodeWithText(getStringResource(R.string.send_create)).also {
+    onNodeWithText(getStringResource(R.string.send_create), ignoreCase = true).also {
         it.performClick()
     }
 }
 
 internal fun ComposeContentTestRule.clickConfirmation() {
-    onNodeWithText(getStringResource(R.string.send_confirmation_button)).also {
+    onNodeWithText(getStringResource(R.string.send_confirmation_button), ignoreCase = true).also {
         it.performClick()
     }
 }
 
 internal fun ComposeContentTestRule.assertOnForm() {
-    onNodeWithText(getStringResource(R.string.send_create)).also {
+    onNodeWithText(getStringResource(R.string.send_create), ignoreCase = true).also {
         it.assertExists()
     }
 }
 
 internal fun ComposeContentTestRule.assertOnConfirmation() {
-    onNodeWithText(getStringResource(R.string.send_confirmation_button)).also {
+    onNodeWithText(getStringResource(R.string.send_confirmation_button), ignoreCase = true).also {
         it.assertExists()
     }
 }
@@ -112,13 +112,13 @@ internal fun ComposeContentTestRule.assertOnSendFailure() {
 }
 
 internal fun ComposeContentTestRule.assertSendEnabled() {
-    onNodeWithText(getStringResource(R.string.send_create)).also {
+    onNodeWithText(getStringResource(R.string.send_create), ignoreCase = true).also {
         it.assertIsEnabled()
     }
 }
 
 internal fun ComposeContentTestRule.assertSendDisabled() {
-    onNodeWithText(getStringResource(R.string.send_create)).also {
+    onNodeWithText(getStringResource(R.string.send_create), ignoreCase = true).also {
         it.assertIsNotEnabled()
     }
 }
