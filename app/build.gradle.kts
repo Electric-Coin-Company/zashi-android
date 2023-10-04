@@ -236,7 +236,7 @@ androidComponents {
                         if (delta < 0) {
                             defaultVersionName
                         } else {
-                            "$defaultVersionName build $delta"
+                            "$defaultVersionName ($delta)"
                         }
                     } ?: defaultVersionName
                 }
