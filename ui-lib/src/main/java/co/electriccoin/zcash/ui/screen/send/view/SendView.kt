@@ -1,3 +1,5 @@
+@file:Suppress("TooManyFunctions")
+
 package co.electriccoin.zcash.ui.screen.send.view
 
 import androidx.compose.foundation.layout.Column
@@ -25,12 +27,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import cash.z.ecc.android.sdk.fixture.WalletAddressFixture
 import cash.z.ecc.android.sdk.model.Memo
 import cash.z.ecc.android.sdk.model.MonetarySeparators
 import cash.z.ecc.android.sdk.model.Zatoshi
@@ -39,6 +43,7 @@ import cash.z.ecc.android.sdk.model.ZecSendExt
 import cash.z.ecc.android.sdk.model.ZecString
 import cash.z.ecc.android.sdk.model.ZecStringExt
 import cash.z.ecc.android.sdk.model.toZecString
+import cash.z.ecc.sdk.fixture.MemoFixture
 import cash.z.ecc.sdk.fixture.ZatoshiFixture
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
@@ -54,11 +59,12 @@ import co.electriccoin.zcash.ui.screen.send.ext.abbreviated
 import co.electriccoin.zcash.ui.screen.send.ext.valueOrEmptyChar
 import co.electriccoin.zcash.ui.screen.send.model.SendArgumentsWrapper
 import co.electriccoin.zcash.ui.screen.send.model.SendStage
+import kotlinx.coroutines.runBlocking
 
 @Composable
-@Preview("Send")
-private fun PreviewSend() {
-    ZcashTheme(darkTheme = true) {
+@Preview("SendForm")
+private fun PreviewSendForm() {
+    ZcashTheme {
         GradientSurface {
             Send(
                 mySpendableBalance = ZatoshiFixture.new(),
@@ -71,6 +77,57 @@ private fun PreviewSend() {
                 onQrScannerOpen = {},
                 onBack = {},
                 hasCameraFeature = true
+            )
+        }
+    }
+}
+
+@Composable
+@Preview("SendSuccessful")
+private fun PreviewSendSuccessful() {
+    ZcashTheme {
+        GradientSurface {
+            SendSuccessful(
+                zecSend = ZecSend(
+                    destination = runBlocking { WalletAddressFixture.sapling() },
+                    amount = ZatoshiFixture.new(),
+                    memo = MemoFixture.new()
+                ),
+                onDone = {}
+            )
+        }
+    }
+}
+
+@Composable
+@Preview("SendFailure")
+private fun PreviewSendFailure() {
+    ZcashTheme {
+        GradientSurface {
+            SendFailure(
+                zecSend = ZecSend(
+                    destination = runBlocking { WalletAddressFixture.sapling() },
+                    amount = ZatoshiFixture.new(),
+                    memo = MemoFixture.new()
+                ),
+                onDone = {}
+            )
+        }
+    }
+}
+
+@Composable
+@Preview("SendConfirmation")
+private fun PreviewSendConfirmation() {
+    ZcashTheme {
+        GradientSurface {
+            Confirmation(
+                zecSend = ZecSend(
+                    destination = runBlocking { WalletAddressFixture.sapling() },
+                    amount = ZatoshiFixture.new(),
+                    memo = MemoFixture.new()
+                ),
+                onConfirmation = {}
             )
         }
     }
@@ -254,7 +311,10 @@ private fun SendForm(
         memoString = sendArgumentsWrapper.memo
     }
 
-    Column(modifier) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Header(
             text = stringResource(id = R.string.send_balance, myBalance.toZecString()),
             textAlign = TextAlign.Center,
@@ -366,7 +426,10 @@ private fun Confirmation(
     onConfirmation: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Body(
             stringResource(
                 R.string.send_confirmation_amount_and_address_format,
@@ -395,6 +458,8 @@ private fun Confirmation(
             text = stringResource(id = R.string.send_confirmation_button),
             outerPaddingValues = PaddingValues(top = dimens.spacingSmall)
         )
+
+        Spacer(modifier = Modifier.height(dimens.spacingDefault))
     }
 }
 
@@ -452,7 +517,10 @@ private fun SendSuccessful(
     onDone: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Header(
             text = stringResource(R.string.send_successful_title),
             textAlign = TextAlign.Center,
@@ -486,6 +554,8 @@ private fun SendSuccessful(
             onClick = onDone,
             outerPaddingValues = PaddingValues(top = dimens.spacingSmall)
         )
+
+        Spacer(modifier = Modifier.height(dimens.spacingDefault))
     }
 }
 
@@ -495,7 +565,10 @@ private fun SendFailure(
     onDone: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Header(
             text = stringResource(R.string.send_failure_title),
             textAlign = TextAlign.Center,
@@ -529,5 +602,7 @@ private fun SendFailure(
             onClick = onDone,
             outerPaddingValues = PaddingValues(top = dimens.spacingSmall)
         )
+
+        Spacer(modifier = Modifier.height(dimens.spacingDefault))
     }
 }

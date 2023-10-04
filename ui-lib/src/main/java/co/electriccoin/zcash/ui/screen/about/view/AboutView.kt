@@ -34,7 +34,7 @@ import co.electriccoin.zcash.ui.screen.support.model.ConfigInfo
 @Preview("About")
 @Composable
 private fun AboutPreview() {
-    ZcashTheme(darkTheme = true) {
+    ZcashTheme(darkTheme = false) {
         GradientSurface {
             About(
                 versionInfo = VersionInfoFixture.new(),
