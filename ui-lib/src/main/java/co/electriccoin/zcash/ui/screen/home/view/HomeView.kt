@@ -311,11 +311,6 @@ private fun HomeMainContent(
     ) {
         Status(walletSnapshot, isUpdateAvailable, isFiatConversionEnabled, isCircularProgressBarEnabled)
 
-        if (walletSnapshot.status == Synchronizer.Status.SYNCING) {
-            Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
-            Body(text = stringResource(id = R.string.home_information))
-        }
-
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
 
         PrimaryButton(
