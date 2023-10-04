@@ -28,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.painter.Painter
@@ -52,7 +53,7 @@ import co.electriccoin.zcash.ui.screen.onboarding.state.OnboardingState
 @Preview("LongOnboarding")
 @Composable
 private fun ComposablePreview() {
-    ZcashTheme(darkTheme = true) {
+    ZcashTheme(darkTheme = false) {
         GradientSurface {
             LongOnboarding(
                 OnboardingState(OnboardingStage.Wallet),
@@ -188,12 +189,17 @@ private fun WalletStageBottomNav(
     onCreateWallet: () -> Unit,
     onImportWallet: () -> Unit
 ) {
-    PrimaryButton(onCreateWallet, stringResource(R.string.onboarding_4_create_new_wallet), Modifier.fillMaxWidth())
-    TertiaryButton(
-        onImportWallet,
-        stringResource(R.string.onboarding_4_import_existing_wallet),
-        Modifier.fillMaxWidth()
-    )
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        PrimaryButton(onCreateWallet, stringResource(R.string.onboarding_4_create_new_wallet))
+        TertiaryButton(
+            onImportWallet,
+            stringResource(R.string.onboarding_4_import_existing_wallet),
+            Modifier.fillMaxWidth()
+        )
+    }
 }
 
 @Composable

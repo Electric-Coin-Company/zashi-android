@@ -77,7 +77,7 @@ import kotlinx.coroutines.CoroutineScope
 @Preview("Home")
 @Composable
 private fun ComposablePreview() {
-    ZcashTheme(darkTheme = true) {
+    ZcashTheme(darkTheme = false) {
         GradientSurface {
             Home(
                 walletSnapshot = WalletSnapshotFixture.new(),
@@ -307,7 +307,8 @@ private fun HomeMainContent(
             .verticalScroll(
                 rememberScrollState()
             )
-            .then(modifier)
+            .then(modifier),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Status(walletSnapshot, isUpdateAvailable, isFiatConversionEnabled, isCircularProgressBarEnabled)
 

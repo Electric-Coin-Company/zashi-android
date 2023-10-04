@@ -30,7 +30,7 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 @Preview
 @Composable
 private fun ButtonComposablePreview() {
-    ZcashTheme(darkTheme = true) {
+    ZcashTheme(darkTheme = false) {
         GradientSurface {
             Column {
                 PrimaryButton(onClick = { }, text = "Primary")
