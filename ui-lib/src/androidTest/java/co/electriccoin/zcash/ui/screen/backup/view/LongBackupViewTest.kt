@@ -111,13 +111,18 @@ class LongBackupViewTest : UiTestPrerequisites() {
 
         composeTestRule.onNode(hasText(getStringResource(R.string.new_wallet_4_header_ouch)))
 
-        composeTestRule.onNode(hasText(getStringResource(R.string.new_wallet_4_button_retry))).also {
+        composeTestRule.onNode(hasText(getStringResource(R.string.new_wallet_4_button_retry), ignoreCase = true)).also {
             it.performClick()
         }
 
         assertEquals(BackupStage.Seed, testSetup.getStage())
 
-        composeTestRule.onNode(hasText(getStringResource(R.string.new_wallet_3_button_finished))).also {
+        composeTestRule.onNode(
+            hasText(
+                text = getStringResource(R.string.new_wallet_3_button_finished),
+                ignoreCase = true
+            )
+        ).also {
             it.performClick()
         }
 
@@ -139,7 +144,8 @@ class LongBackupViewTest : UiTestPrerequisites() {
     fun last_stage_click_finish() {
         val testSetup = newTestSetup(BackupStage.Complete)
 
-        val goToWalletButton = composeTestRule.onNodeWithText(getStringResource(R.string.new_wallet_5_button_finished))
+        val goToWalletButton =
+            composeTestRule.onNodeWithText(getStringResource(R.string.new_wallet_5_button_finished), ignoreCase = true)
         goToWalletButton.performClick()
 
         assertEquals(0, testSetup.getOnCopyToClipboardCount())
@@ -166,13 +172,13 @@ class LongBackupViewTest : UiTestPrerequisites() {
     fun multi_stage_progression() {
         val testSetup = newTestSetup(BackupStage.EducationOverview)
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.new_wallet_1_button)).also {
+        composeTestRule.onNodeWithText(getStringResource(R.string.new_wallet_1_button), ignoreCase = true).also {
             it.performClick()
         }
 
         assertEquals(BackupStage.EducationRecoveryPhrase, testSetup.getStage())
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.new_wallet_2_button)).also {
+        composeTestRule.onNodeWithText(getStringResource(R.string.new_wallet_2_button), ignoreCase = true).also {
             it.performClick()
         }
 
@@ -182,7 +188,10 @@ class LongBackupViewTest : UiTestPrerequisites() {
 
         assertEquals(1, testSetup.getOnCopyToClipboardCount())
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.new_wallet_3_button_finished)).also {
+        composeTestRule.onNodeWithText(
+            text = getStringResource(R.string.new_wallet_3_button_finished),
+            ignoreCase = true
+        ).also {
             it.performClick()
         }
 
@@ -206,7 +215,8 @@ class LongBackupViewTest : UiTestPrerequisites() {
 
         assertEquals(BackupStage.Complete, testSetup.getStage())
 
-        composeTestRule.onNode(hasText(getStringResource(R.string.new_wallet_5_button_finished))).performClick()
+        composeTestRule.onNode(hasText(getStringResource(R.string.new_wallet_5_button_finished), ignoreCase = true))
+            .performClick()
 
         assertEquals(1, testSetup.getOnCompleteCallbackCount())
     }

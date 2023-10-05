@@ -23,6 +23,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
@@ -39,7 +40,7 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 @Preview("Support")
 @Composable
 private fun PreviewSupport() {
-    ZcashTheme(darkTheme = true) {
+    ZcashTheme(darkTheme = false) {
         GradientSurface {
             Support(
                 onBack = {},
@@ -53,7 +54,7 @@ private fun PreviewSupport() {
 @Preview("Support-Popup")
 @Composable
 private fun PreviewSupportPopup() {
-    ZcashTheme(darkTheme = true) {
+    ZcashTheme(darkTheme = false) {
         GradientSurface {
             SupportConfirmationDialog(
                 onConfirm = {},
@@ -130,7 +131,8 @@ private fun SupportMainContent(
             .verticalScroll(
                 rememberScrollState()
             )
-            .then(modifier)
+            .then(modifier),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Body(stringResource(id = R.string.support_information))
 

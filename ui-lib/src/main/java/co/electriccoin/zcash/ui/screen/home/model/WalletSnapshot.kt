@@ -1,7 +1,7 @@
 package co.electriccoin.zcash.ui.screen.home.model
 
 import cash.z.ecc.android.sdk.Synchronizer
-import cash.z.ecc.android.sdk.block.CompactBlockProcessor
+import cash.z.ecc.android.sdk.block.processor.CompactBlockProcessor
 import cash.z.ecc.android.sdk.ext.ZcashSdk
 import cash.z.ecc.android.sdk.model.PercentDecimal
 import cash.z.ecc.android.sdk.model.WalletBalance

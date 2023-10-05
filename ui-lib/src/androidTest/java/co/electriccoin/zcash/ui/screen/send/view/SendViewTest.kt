@@ -74,7 +74,7 @@ class SendViewTest : UiTestPrerequisites() {
         @Suppress("UNUSED_VARIABLE")
         val testSetup = newTestSetup()
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.send_create)).also {
+        composeTestRule.onNodeWithText(getStringResource(R.string.send_create), ignoreCase = true).also {
             it.assertExists()
             it.assertIsNotEnabled()
         }
@@ -359,7 +359,7 @@ class SendViewTest : UiTestPrerequisites() {
         assertEquals(0, testSetup.getOnBackCount())
 
         composeTestRule.assertOnSendSuccessful()
-        composeTestRule.onNodeWithText(getStringResource(R.string.send_successful_button)).also {
+        composeTestRule.onNodeWithText(getStringResource(R.string.send_successful_button), ignoreCase = true).also {
             it.assertExists()
             it.performClick()
         }
@@ -395,7 +395,7 @@ class SendViewTest : UiTestPrerequisites() {
         assertEquals(0, testSetup.getOnBackCount())
 
         composeTestRule.assertOnSendFailure()
-        composeTestRule.onNodeWithText(getStringResource(R.string.send_failure_button)).also {
+        composeTestRule.onNodeWithText(getStringResource(R.string.send_failure_button), ignoreCase = true).also {
             it.assertExists()
             it.performClick()
         }

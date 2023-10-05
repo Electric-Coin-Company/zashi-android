@@ -34,7 +34,7 @@ import kotlinx.collections.immutable.toPersistentList
 @Preview("Seed")
 @Composable
 private fun PreviewSeed() {
-    ZcashTheme(darkTheme = true) {
+    ZcashTheme(darkTheme = false) {
         GradientSurface {
             Seed(
                 persistableWallet = PersistableWalletFixture.new(),

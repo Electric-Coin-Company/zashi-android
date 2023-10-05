@@ -7,7 +7,8 @@ import cash.z.ecc.android.bip39.Mnemonics
 import cash.z.ecc.android.bip39.toSeed
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.WalletCoordinator
-import cash.z.ecc.android.sdk.block.CompactBlockProcessor
+import cash.z.ecc.android.sdk.WalletInitMode
+import cash.z.ecc.android.sdk.block.processor.CompactBlockProcessor
 import cash.z.ecc.android.sdk.model.Account
 import cash.z.ecc.android.sdk.model.BlockHeight
 import cash.z.ecc.android.sdk.model.FiatCurrency
@@ -18,8 +19,10 @@ import cash.z.ecc.android.sdk.model.WalletAddresses
 import cash.z.ecc.android.sdk.model.WalletBalance
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.ZcashNetwork
+import cash.z.ecc.android.sdk.model.defaultForNetwork
 import cash.z.ecc.android.sdk.tool.DerivationTool
 import cash.z.ecc.sdk.type.fromResources
+import co.electriccoin.lightwallet.client.model.LightWalletEndpoint
 import co.electriccoin.zcash.global.getInstance
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.ANDROID_STATE_FLOW_TIMEOUT
@@ -188,8 +191,14 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
         val application = getApplication<Application>()
 
         viewModelScope.launch {
-            val newWallet = PersistableWallet.new(application, ZcashNetwork.fromResources(application))
-            persistExistingWallet(newWallet)
+            val zcashNetwork = ZcashNetwork.fromResources(application)
+            val newWallet = PersistableWallet.new(
+                application = application,
+                zcashNetwork = zcashNetwork,
+                endpoint = LightWalletEndpoint.defaultForNetwork(zcashNetwork),
+                walletInitMode = WalletInitMode.NewWallet
+            )
+            persistWallet(newWallet)
         }
     }
 
@@ -198,6 +207,13 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
      * to see the side effects.  This would be used for a user restoring a wallet from a backup.
      */
     fun persistExistingWallet(persistableWallet: PersistableWallet) {
+        persistWallet(persistableWallet)
+    }
+
+    /**
+     * Persists a wallet asynchronously.  Clients observe [secretState] to see the side effects.
+     */
+    private fun persistWallet(persistableWallet: PersistableWallet) {
         val application = getApplication<Application>()
 
         viewModelScope.launch {

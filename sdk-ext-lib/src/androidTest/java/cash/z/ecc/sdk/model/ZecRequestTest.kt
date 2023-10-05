@@ -5,7 +5,6 @@ import cash.z.ecc.android.sdk.model.WalletAddress
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.sdk.fixture.Zip321UriBuildFixture
 import cash.z.ecc.sdk.fixture.Zip321UriParseFixture
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.junit.Ignore
@@ -32,7 +31,6 @@ class ZecRequestTest {
 
     @Test
     @SmallTest
-    @OptIn(ExperimentalCoroutinesApi::class)
     fun parse_uri_not_null() = runTest {
         val parsed = ZecRequest.fromUri(Zip321UriParseFixture.URI)
 
@@ -41,7 +39,6 @@ class ZecRequestTest {
 
     @Test
     @SmallTest
-    @OptIn(ExperimentalCoroutinesApi::class)
     fun parse_uri_valid_result() = runTest {
         val parsed = ZecRequest.fromUri(Zip321UriParseFixture.URI)
 
@@ -52,7 +49,6 @@ class ZecRequestTest {
 
     @Test
     @SmallTest
-    @OptIn(ExperimentalCoroutinesApi::class)
     fun parse_uri_correct_result() = runTest {
         val parsed = ZecRequest.fromUri(Zip321UriParseFixture.URI)
         val expected = ZecRequest(
@@ -66,7 +62,6 @@ class ZecRequestTest {
 
     @Test
     @SmallTest
-    @OptIn(ExperimentalCoroutinesApi::class)
     // TODO [#397]: Waiting for an implementation of Uri parser in SDK project
     @Ignore("Waiting for an implementation of Uri parser in SDK project")
     fun parse_uri_incorrect_result() = runTest {
@@ -84,7 +79,6 @@ class ZecRequestTest {
 
     @Test
     @SmallTest
-    @OptIn(ExperimentalCoroutinesApi::class)
     fun build_uri_not_null() = runTest {
         val request = Zip321UriBuildFixture.REQUEST
         val built = request.toUri()
@@ -94,7 +88,6 @@ class ZecRequestTest {
 
     @Test
     @SmallTest
-    @OptIn(ExperimentalCoroutinesApi::class)
     fun build_uri_valid_result() = runTest {
         val request = Zip321UriBuildFixture.REQUEST
         val built = request.toUri()
@@ -105,7 +98,6 @@ class ZecRequestTest {
 
     @Test
     @SmallTest
-    @OptIn(ExperimentalCoroutinesApi::class)
     fun built_uri_correct_result() = runTest {
         val request = Zip321UriBuildFixture.REQUEST
         val built = request.toUri()
@@ -116,7 +108,6 @@ class ZecRequestTest {
 
     @Test
     @SmallTest
-    @OptIn(ExperimentalCoroutinesApi::class)
     // TODO [#397]: Waiting for an implementation of Uri parser in SDK project
     @Ignore("Waiting for an implementation of Uri parser in SDK project")
     fun build_uri_incorrect_result() = runTest {

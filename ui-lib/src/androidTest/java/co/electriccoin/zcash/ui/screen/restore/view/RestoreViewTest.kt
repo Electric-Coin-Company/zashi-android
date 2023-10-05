@@ -126,7 +126,10 @@ class RestoreViewTest : UiTestPrerequisites() {
     fun seed_invalid_phrase_does_not_progress() {
         newTestSetup(initialWordsList = generateSequence { "abandon" }.take(SeedPhrase.SEED_PHRASE_SIZE).toList())
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.restore_seed_button_restore)).also {
+        composeTestRule.onNodeWithText(
+            text = getStringResource(R.string.restore_seed_button_restore),
+            ignoreCase = true
+        ).also {
             it.assertIsNotEnabled()
         }
     }
@@ -139,7 +142,10 @@ class RestoreViewTest : UiTestPrerequisites() {
 
         newTestSetup(initialWordsList = SeedPhraseFixture.new().split)
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.restore_seed_button_restore)).also {
+        composeTestRule.onNodeWithText(
+            text = getStringResource(R.string.restore_seed_button_restore),
+            ignoreCase = true
+        ).also {
             it.assertExists()
         }
     }
@@ -186,7 +192,10 @@ class RestoreViewTest : UiTestPrerequisites() {
             initialWordsList = SeedPhraseFixture.new().split
         )
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.restore_birthday_button_restore)).also {
+        composeTestRule.onNodeWithText(
+            text = getStringResource(R.string.restore_birthday_button_restore),
+            ignoreCase = true
+        ).also {
             it.assertIsNotEnabled()
         }
 
@@ -194,7 +203,10 @@ class RestoreViewTest : UiTestPrerequisites() {
             it.performTextInput(ZcashNetwork.Mainnet.saplingActivationHeight.value.toString())
         }
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.restore_birthday_button_restore)).also {
+        composeTestRule.onNodeWithText(
+            text = getStringResource(R.string.restore_birthday_button_restore),
+            ignoreCase = true
+        ).also {
             it.assertIsEnabled()
             it.performClick()
         }
@@ -211,7 +223,10 @@ class RestoreViewTest : UiTestPrerequisites() {
             initialWordsList = SeedPhraseFixture.new().split
         )
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.restore_birthday_button_restore)).also {
+        composeTestRule.onNodeWithText(
+            text = getStringResource(R.string.restore_birthday_button_restore),
+            ignoreCase = true
+        ).also {
             it.assertIsNotEnabled()
         }
 
@@ -235,7 +250,10 @@ class RestoreViewTest : UiTestPrerequisites() {
             initialWordsList = SeedPhraseFixture.new().split
         )
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.restore_birthday_button_restore)).also {
+        composeTestRule.onNodeWithText(
+            text = getStringResource(R.string.restore_birthday_button_restore),
+            ignoreCase = true
+        ).also {
             it.assertIsNotEnabled()
         }
 
@@ -243,7 +261,10 @@ class RestoreViewTest : UiTestPrerequisites() {
             it.performTextInput((ZcashNetwork.Mainnet.saplingActivationHeight.value - 1L).toString())
         }
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.restore_birthday_button_restore)).also {
+        composeTestRule.onNodeWithText(
+            text = getStringResource(R.string.restore_birthday_button_restore),
+            ignoreCase = true
+        ).also {
             it.assertIsNotEnabled()
         }
 
@@ -263,7 +284,10 @@ class RestoreViewTest : UiTestPrerequisites() {
             initialWordsList = SeedPhraseFixture.new().split
         )
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.restore_birthday_button_restore)).also {
+        composeTestRule.onNodeWithText(
+            text = getStringResource(R.string.restore_birthday_button_restore),
+            ignoreCase = true
+        ).also {
             it.assertIsNotEnabled()
         }
 
@@ -271,7 +295,10 @@ class RestoreViewTest : UiTestPrerequisites() {
             it.performTextInput("1.2")
         }
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.restore_birthday_button_restore)).also {
+        composeTestRule.onNodeWithText(
+            text = getStringResource(R.string.restore_birthday_button_restore),
+            ignoreCase = true
+        ).also {
             it.assertIsNotEnabled()
         }
 
@@ -293,7 +320,7 @@ class RestoreViewTest : UiTestPrerequisites() {
 
         assertEquals(0, testSetup.getOnFinishedCount())
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.restore_button_see_wallet)).also {
+        composeTestRule.onNodeWithText(getStringResource(R.string.restore_button_see_wallet), ignoreCase = true).also {
             it.performClick()
         }
 

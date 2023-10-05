@@ -50,6 +50,11 @@ internal val PrimaryTypography = Typography(
         fontWeight = FontWeight.SemiBold,
         fontSize = 30.sp
     ),
+    titleSmall = TextStyle(
+        fontFamily = InterFontFamily,
+        fontWeight = FontWeight.Bold,
+        fontSize = 14.sp
+    ),
     bodyLarge = TextStyle(
         fontFamily = InterFontFamily,
         fontWeight = FontWeight.Normal,
@@ -144,6 +149,6 @@ val LocalExtendedTypography = staticCompositionLocalOf {
         ),
         securityWarningText = PrimaryTypography.bodySmall.copy(
             lineHeight = 22.32.sp
-        ),
+        )
     )
 }

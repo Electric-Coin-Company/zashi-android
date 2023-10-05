@@ -61,7 +61,10 @@ class ReceiveViewTest {
 
         assertEquals(0, testSetup.getOnAddressDetailsCount())
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.receive_see_address_details)).also {
+        composeTestRule.onNodeWithText(
+            text = getStringResource(R.string.receive_see_address_details),
+            ignoreCase = true
+        ).also {
             it.performClick()
         }
 

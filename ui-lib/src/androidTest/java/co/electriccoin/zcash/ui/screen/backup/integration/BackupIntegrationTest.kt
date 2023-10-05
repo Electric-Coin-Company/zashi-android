@@ -55,7 +55,7 @@ class BackupIntegrationTest : UiTestPrerequisites() {
 
         assertEquals(BackupStage.EducationOverview, testSetup.getStage())
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.new_wallet_1_button)).also {
+        composeTestRule.onNodeWithText(getStringResource(R.string.new_wallet_1_button), ignoreCase = true).also {
             it.performClick()
         }
 

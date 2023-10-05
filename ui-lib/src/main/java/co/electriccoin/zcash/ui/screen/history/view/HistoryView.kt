@@ -58,7 +58,7 @@ import java.util.Locale
 @Preview("History")
 @Composable
 private fun ComposablePreview() {
-    ZcashTheme(darkTheme = true) {
+    ZcashTheme(darkTheme = false) {
         GradientSurface {
             History(
                 transactionState = TransactionHistorySyncState.Loading,
@@ -239,9 +239,15 @@ fun HistoryItem(
 
             Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingTiny))
 
-            // * 1000 to covert to millis
-            @Suppress("MagicNumber")
-            val dateString = dateFormat.format(transaction.blockTimeEpochSeconds.times(1000))
+            val dateString = transaction.minedHeight?.let {
+                transaction.blockTimeEpochSeconds?.let { blockTimeEpochSeconds ->
+                    // * 1000 to covert to millis
+                    @Suppress("MagicNumber")
+                    dateFormat.format(blockTimeEpochSeconds.times(1000L))
+                } ?: stringResource(id = R.string.history_item_date_not_available)
+            } ?: stringResource(id = R.string.history_item_date_not_available)
+            // For now, use the same label for the above missing transaction date
+
             Body(
                 text = dateString,
                 maxLines = 1,
