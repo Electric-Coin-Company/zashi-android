@@ -1,11 +1,19 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="security_warning_text" formatted="true">Zashi <xliff:g example="1.0" id="version_name">%1$s
-    </xliff:g> is a Zcash-only shielded wallet, built by Zcashers for Zcashers. The purpose of this release is primarily to test functionality and collect feedback. While Zashi has been engineered for your privacy and safety, this release has not yet been security audited. Users are cautioned to deposit, send, and receive only small amounts of ZEC. Please click below to proceed.</string>
+    <string name="security_warning_text_part_1" formatted="true">Zashi <xliff:g example="0.2.0" id="version_name">%1$s
+    </xliff:g>is a Zcash-only shielded wallet, built by Zcashers for Zcashers. The purpose of this release is
+        primarily to test functionality and collect feedback. While Zashi has been engineered for your privacy and
+        safety (read the privacy policy\u0020</string>
+    <string name="security_warning_text_part_2">here</string>
+    <string name="security_warning_text_part_3">), this release has not yet been security audited.</string>
+    <string name="security_warning_text_part_4">\u0020Users are cautioned to deposit, send, and receive only small
+        amounts
+        of ZEC.</string>
+    <string name="security_warning_text_part_5">\u0020Please click below to proceed.</string>
     <string name="security_warning_confirm">confirm</string>
     <string name="security_warning_acknowledge">I acknowledge</string>
     <string name="security_warning_back_content_description">Back</string>
     <string name="zcash_logo_content_description">Zcash logo</string>
     <string name="security_warning_header">Security warning:</string>
     <string name="security_warning_back">back</string>
+    <string name="security_warning_unable_to_web_browser">Unable to find a web browser app.</string>
 </resources>

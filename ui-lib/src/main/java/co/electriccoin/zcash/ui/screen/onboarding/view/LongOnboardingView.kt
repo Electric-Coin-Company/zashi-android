@@ -71,7 +71,6 @@ private fun ComposablePreview() {
  * @param onCreateWallet Callback when the user decides to create a new wallet.
  */
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
 @Suppress("LongParameterList")
 fun LongOnboarding(
     onboardingState: OnboardingState,
