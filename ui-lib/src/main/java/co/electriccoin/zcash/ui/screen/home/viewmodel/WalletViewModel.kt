@@ -32,6 +32,7 @@ import co.electriccoin.zcash.ui.preference.EncryptedPreferenceSingleton
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
 import co.electriccoin.zcash.ui.preference.StandardPreferenceSingleton
 import co.electriccoin.zcash.ui.screen.history.state.TransactionHistorySyncState
+import co.electriccoin.zcash.ui.screen.home.model.OnboardingState
 import co.electriccoin.zcash.ui.screen.home.model.WalletSnapshot
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.Dispatchers
@@ -93,27 +94,37 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
     )
 
     /**
-     * A flow of whether a backup of the user's wallet has been performed.
+     * A flow of the wallet onboarding state.
      */
-    private val isBackupComplete = flow {
+    private val onboardingState = flow {
         val preferenceProvider = StandardPreferenceSingleton.getInstance(application)
-        emitAll(StandardPreferenceKeys.IS_USER_BACKUP_COMPLETE.observe(preferenceProvider))
+        emitAll(
+            StandardPreferenceKeys.ONBOARDING_STATE.observe(preferenceProvider).map { persistedNumber ->
+                OnboardingState.fromNumber(persistedNumber)
+            }
+        )
     }
 
-    val secretState: StateFlow<SecretState> = walletCoordinator.persistableWallet
-        .combine(isBackupComplete) { persistableWallet: PersistableWallet?, isBackupComplete: Boolean ->
-            if (null == persistableWallet) {
-                SecretState.None
-            } else if (!isBackupComplete) {
+    val secretState: StateFlow<SecretState> = combine(
+        walletCoordinator.persistableWallet,
+        onboardingState
+    ) { persistableWallet: PersistableWallet?, onboardingState: OnboardingState ->
+        when {
+            onboardingState == OnboardingState.NONE -> SecretState.None
+            onboardingState == OnboardingState.NEEDS_WARN -> SecretState.NeedsWarning
+            onboardingState == OnboardingState.NEEDS_BACKUP && persistableWallet != null -> {
                 SecretState.NeedsBackup(persistableWallet)
-            } else {
+            }
+            onboardingState == OnboardingState.READY && persistableWallet != null -> {
                 SecretState.Ready(persistableWallet)
             }
-        }.stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            SecretState.Loading
-        )
+            else -> SecretState.None
+        }
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+        SecretState.Loading
+    )
 
     // This needs to be refactored once we support pin lock
     val spendingKey = secretState
@@ -229,18 +240,18 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
      * is ready to use.  Clients observe [secretState] to see the side effects.  This would be used
      * for a user creating a new wallet.
      */
-    fun persistBackupComplete() {
+    fun persistOnboardingState(onboardingState: OnboardingState) {
         val application = getApplication<Application>()
 
         viewModelScope.launch {
             val preferenceProvider = StandardPreferenceSingleton.getInstance(application)
 
-            // Use the Mutex here to avoid timing issues.  During wallet restore, persistBackupComplete()
-            // is called prior to persistExistingWallet().  Although persistBackupComplete() should
+            // Use the Mutex here to avoid timing issues.  During wallet restore, persistOnboardingState()
+            // is called prior to persistExistingWallet().  Although persistOnboardingState() should
             // complete quickly, it isn't guaranteed to complete before persistExistingWallet()
             // unless a mutex is used here.
             persistWalletMutex.withLock {
-                StandardPreferenceKeys.IS_USER_BACKUP_COMPLETE.putValue(preferenceProvider, true)
+                StandardPreferenceKeys.ONBOARDING_STATE.putValue(preferenceProvider, onboardingState.toNumber())
             }
         }
     }
@@ -270,6 +281,7 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
 sealed class SecretState {
     object Loading : SecretState()
     object None : SecretState()
+    object NeedsWarning : SecretState()
     class NeedsBackup(val persistableWallet: PersistableWallet) : SecretState()
     class Ready(val persistableWallet: PersistableWallet) : SecretState()
 }

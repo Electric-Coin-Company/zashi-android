@@ -329,6 +329,7 @@ private fun onboardingScreenshots(
         composeTestRule.activity.walletViewModel.secretState.value is SecretState.None
     }
     if (ConfigurationEntries.IS_SHORT_ONBOARDING_UX.getValue(emptyConfiguration)) {
+        // Welcome screen
         composeTestRule.onNodeWithText(resContext.getString(R.string.onboarding_short_header)).also {
             it.assertExists()
             ScreenshotTest.takeScreenshot(tag, "Onboarding 1")
@@ -336,6 +337,19 @@ private fun onboardingScreenshots(
 
         composeTestRule.onNodeWithText(
             text = resContext.getString(R.string.onboarding_short_create_new_wallet),
+            ignoreCase = true
+        ).also {
+            it.performClick()
+        }
+
+        // Security Warning screen
+        composeTestRule.onNodeWithText(text = resContext.getString(R.string.security_warning_acknowledge)).also {
+            it.assertExists()
+            it.performClick()
+            ScreenshotTest.takeScreenshot(tag, "Security Warning")
+        }
+        composeTestRule.onNodeWithText(
+            text = resContext.getString(R.string.security_warning_confirm),
             ignoreCase = true
         ).also {
             it.performClick()

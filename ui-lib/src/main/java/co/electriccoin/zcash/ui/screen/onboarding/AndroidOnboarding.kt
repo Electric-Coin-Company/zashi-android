@@ -23,6 +23,7 @@ import co.electriccoin.zcash.ui.BuildConfig
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
 import co.electriccoin.zcash.ui.configuration.RemoteConfig
+import co.electriccoin.zcash.ui.screen.home.model.OnboardingState
 import co.electriccoin.zcash.ui.screen.home.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.onboarding.view.LongOnboarding
 import co.electriccoin.zcash.ui.screen.onboarding.view.ShortOnboarding
@@ -51,20 +52,11 @@ internal fun WrapOnboarding(
         !EmulatorWtfUtil.isEmulatorWtf(applicationContext)
 
     // TODO [#383]: https://github.com/zcash/secant-android-wallet/issues/383
+    // TODO [#383]: Refactoring of UI state retention into rememberSaveable fields
     if (!onboardingViewModel.isImporting.collectAsStateWithLifecycle().value) {
         val onCreateWallet = {
-            if (FirebaseTestLabUtil.isFirebaseTestLab(applicationContext)) {
-                persistExistingWalletWithSeedPhrase(
-                    applicationContext,
-                    walletViewModel,
-                    SeedPhrase.new(WalletFixture.Alice.seedPhrase),
-                    birthday = WalletFixture.Alice.getBirthday(ZcashNetwork.fromResources(applicationContext))
-                )
-            } else {
-                walletViewModel.persistNewWallet()
-            }
+            walletViewModel.persistOnboardingState(OnboardingState.NEEDS_WARN)
         }
-
         val onImportWallet = {
             // In the case of the app currently being messed with by the robo test runner on
             // Firebase Test Lab or Google Play pre-launch report, we want to skip creating
@@ -130,7 +122,7 @@ internal fun persistExistingWalletWithSeedPhrase(
     seedPhrase: SeedPhrase,
     birthday: BlockHeight?
 ) {
-    walletViewModel.persistBackupComplete()
+    walletViewModel.persistOnboardingState(OnboardingState.READY)
 
     val network = ZcashNetwork.fromResources(context)
     val restoredWallet = PersistableWallet(
