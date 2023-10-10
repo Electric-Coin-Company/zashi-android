@@ -85,10 +85,8 @@ internal fun WrapOnboarding(
 
         if (ConfigurationEntries.IS_SHORT_ONBOARDING_UX.getValue(RemoteConfig.current)) {
             ShortOnboarding(
-                isDebugMenuEnabled = isDebugMenuEnabled,
                 onImportWallet = onImportWallet,
                 onCreateWallet = onCreateWallet,
-                onFixtureWallet = onFixtureWallet
             )
         } else {
             LongOnboarding(
