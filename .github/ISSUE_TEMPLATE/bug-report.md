@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Create a report about a bug in Secant Android Wallet.
+about: Create a report about a bug in Zashi Android Wallet.
 title: ''
 labels: 'bug'
 assignees: ''
@@ -8,7 +8,7 @@ assignees: ''
 ---
 
 <!--
-This issue tracker is only for technical issues related to Secant Android Wallet.
+This issue tracker is only for technical issues related to Zashi Android Wallet.
 
 General Zcash questions and/or support requests and are best directed to either:
  * Zcash Forum: https://forum.zcashcommunity.com/)

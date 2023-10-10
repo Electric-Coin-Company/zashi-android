@@ -41,7 +41,7 @@ class OnboardingIntegrationTest : UiTestPrerequisites() {
 
         assertEquals(OnboardingStage.UnifiedAddresses, testSetup.getOnboardingStage())
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_next)).also {
+        composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_next), ignoreCase = true).also {
             it.performClick()
         }
 

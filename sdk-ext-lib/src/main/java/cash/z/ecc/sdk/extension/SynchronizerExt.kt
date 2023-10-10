@@ -1,6 +1,6 @@
 @file:Suppress("ktlint:filename")
 
-package cash.z.ecc.sdk
+package cash.z.ecc.sdk.extension
 
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.model.UnifiedSpendingKey

@@ -280,13 +280,13 @@ private fun ComposeContentTestRule.setMessage(message: String) {
 }
 
 private fun ComposeContentTestRule.clickCreateAndSend() {
-    onNodeWithText(getStringResource(R.string.request_create)).also {
+    onNodeWithText(getStringResource(R.string.request_create), ignoreCase = true).also {
         it.performClick()
     }
 }
 
 private fun ComposeContentTestRule.assertSendDisabled() {
-    onNodeWithText(getStringResource(R.string.request_create)).also {
+    onNodeWithText(getStringResource(R.string.request_create), ignoreCase = true).also {
         it.assertIsNotEnabled()
     }
 }
