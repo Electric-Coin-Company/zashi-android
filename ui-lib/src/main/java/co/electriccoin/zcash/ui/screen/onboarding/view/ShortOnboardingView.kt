@@ -103,10 +103,6 @@ private fun OnboardingMainContent(
 ) {
     Column(
         Modifier
-            .fillMaxSize()
-            .verticalScroll(
-                rememberScrollState()
-            )
             .then(modifier),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
