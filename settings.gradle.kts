@@ -139,7 +139,7 @@ dependencyResolutionManagement {
         }
     }
 
-    @Suppress("UnstableApiUsage", "MaxLineLength")
+    @Suppress("MaxLineLength")
     versionCatalogs {
         create("libs") {
             val accompanistPermissionsVersion = extra["ACCOMPANIST_PERMISSIONS_VERSION"].toString()
