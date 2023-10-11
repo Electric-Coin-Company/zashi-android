@@ -1,0 +1,12 @@
+<!-- No icon placeholder to satisfy necessary splash screen icon and
+be able to create custom welcome screen animation -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="1px"
+    android:height="1px"
+    android:viewportWidth="1"
+    android:viewportHeight="1">
+  <!-- A very simple path data needs to be provided -->
+  <path
+      android:pathData="L10,0 L0,10 z"
+      android:fillColor="@color/splash_screen_background" />
+</vector>
