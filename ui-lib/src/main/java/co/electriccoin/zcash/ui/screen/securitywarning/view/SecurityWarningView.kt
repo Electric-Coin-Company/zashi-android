@@ -61,6 +61,9 @@ private fun SecurityWarningPreview() {
     }
 }
 
+// TODO [#998]: Check and enhance screen dark mode
+// TODO [#998]: https://github.com/zcash/secant-android-wallet/issues/998
+
 @Composable
 @Suppress("LongParameterList")
 fun SecurityWarning(

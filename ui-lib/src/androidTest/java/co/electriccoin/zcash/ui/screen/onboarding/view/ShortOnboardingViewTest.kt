@@ -29,14 +29,17 @@ class ShortOnboardingViewTest : UiTestPrerequisites() {
     fun layout() {
         newTestSetup()
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_short_import_existing_wallet)).also {
+        composeTestRule.onNodeWithText(
+            text = getStringResource(R.string.onboarding_short_create_new_wallet),
+            ignoreCase = true
+        ).also {
             it.assertExists()
             it.assertIsEnabled()
             it.assertHasClickAction()
         }
 
         composeTestRule.onNodeWithText(
-            text = getStringResource(R.string.onboarding_short_create_new_wallet),
+            text = getStringResource(R.string.onboarding_short_import_existing_wallet),
             ignoreCase = true
         ).also {
             it.assertExists()
@@ -66,7 +69,8 @@ class ShortOnboardingViewTest : UiTestPrerequisites() {
         val testSetup = newTestSetup()
 
         val newWalletButton = composeTestRule.onNodeWithText(
-            getStringResource(R.string.onboarding_short_import_existing_wallet)
+            text = getStringResource(R.string.onboarding_short_import_existing_wallet),
+            ignoreCase = true
         )
         newWalletButton.performClick()
 

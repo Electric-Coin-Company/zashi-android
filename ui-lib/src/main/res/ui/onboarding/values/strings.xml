@@ -19,11 +19,11 @@
     <string name="onboarding_4_create_new_wallet">Create New Wallet</string>
     <string name="onboarding_4_import_existing_wallet">Import an Existing Wallet</string>
 
-    <string name="onboarding_short_header">A no frills wallet for sending and receiving Zcash (ZEC)</string>
+    <string name="onboarding_short_header">A no-frills wallet for sending and receiving Zcash (ZEC)</string>
     <string name="onboarding_short_information">We need to create a new wallet or restore an existing one. Select your path:</string>
     <string name="onboarding_short_create_new_wallet">Create New Wallet</string>
-    <string name="onboarding_short_import_existing_wallet">Import an Existing Wallet</string>
+    <string name="onboarding_short_import_existing_wallet">Restore Existing Wallet</string>
+
     <string name="zcash_logo_onboarding_content_description">Zcash logo in onboarding screen</string>
-    <string name="cracked_corner_image_description">an image with crack at edge</string>
-    <string name="zcash_logo_with_hi_text_content_description">zcash logo with text hi</string>
+    <string name="zcash_logo_with_hi_text_content_description">Zcash logo with text Hi</string>
 </resources>

@@ -56,6 +56,7 @@ internal fun WrapOnboarding(
     if (!onboardingViewModel.isImporting.collectAsStateWithLifecycle().value) {
         val onCreateWallet = {
             walletViewModel.persistOnboardingState(OnboardingState.NEEDS_WARN)
+            onboardingViewModel.setShowWelcomeAnimation(false)
         }
         val onImportWallet = {
             // In the case of the app currently being messed with by the robo test runner on
@@ -72,6 +73,8 @@ internal fun WrapOnboarding(
             } else {
                 onboardingViewModel.setIsImporting(true)
             }
+
+            onboardingViewModel.setShowWelcomeAnimation(false)
         }
 
         val onFixtureWallet = {
@@ -83,8 +86,14 @@ internal fun WrapOnboarding(
             )
         }
 
+        val showWelcomeAnimation = onboardingViewModel.showWelcomeAnimation.collectAsStateWithLifecycle().value
+
+        // TODO [#1003]: Clear unused alternative Onboarding screens
+        // TODO [#1003]: https://github.com/zcash/secant-android-wallet/issues/1003
+
         if (ConfigurationEntries.IS_SHORT_ONBOARDING_UX.getValue(RemoteConfig.current)) {
             ShortOnboarding(
+                showWelcomeAnim = showWelcomeAnimation,
                 onImportWallet = onImportWallet,
                 onCreateWallet = onCreateWallet,
             )

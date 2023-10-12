@@ -74,6 +74,9 @@ fun ShortNewWalletBackup(
         bottomBar = {
             ShortNewWalletBottomNav(
                 onComplete = onComplete,
+                modifier = Modifier.padding(
+                    bottom = ZcashTheme.dimens.spacingHuge
+                ).fillMaxWidth(),
             )
         }
     ) { paddingValues ->
@@ -157,10 +160,11 @@ private fun CopySeedMenu(onCopyToClipboard: () -> Unit) {
 @Suppress("LongParameterList")
 @Composable
 private fun ShortNewWalletBottomNav(
-    onComplete: () -> Unit
+    onComplete: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         PrimaryButton(onClick = onComplete, text = stringResource(R.string.new_wallet_short_button_finished))
