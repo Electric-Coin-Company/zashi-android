@@ -138,7 +138,9 @@ private fun ReceiveContents(
         PrimaryButton(
             onClick = onAddressDetails,
             text = stringResource(id = R.string.receive_see_address_details),
-            outerPaddingValues = PaddingValues(all = ZcashTheme.dimens.spacingNone)
+            outerPaddingValues = PaddingValues(
+                bottom = ZcashTheme.dimens.spacingHuge
+            )
         )
     }
 }

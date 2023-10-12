@@ -163,9 +163,10 @@ class ScreenshotTest : UiTestPrerequisites() {
 
         if (ConfigurationEntries.IS_SHORT_ONBOARDING_UX.getValue(emptyConfiguration)) {
             composeTestRule.onNodeWithText(
-                resContext.getString(
+                text = resContext.getString(
                     R.string.onboarding_short_import_existing_wallet
-                )
+                ),
+                ignoreCase = true
             ).also {
                 it.assertExists()
                 it.performClick()

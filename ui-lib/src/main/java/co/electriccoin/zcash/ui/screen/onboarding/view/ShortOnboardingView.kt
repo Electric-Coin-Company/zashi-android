@@ -2,42 +2,46 @@
 
 package co.electriccoin.zcash.ui.screen.onboarding.view
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.ColorPainter
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.zIndex
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
-import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.GradientSurface
-import co.electriccoin.zcash.ui.design.component.Header
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
-import co.electriccoin.zcash.ui.design.component.TertiaryButton
+import co.electriccoin.zcash.ui.design.component.SecondaryButton
+import co.electriccoin.zcash.ui.design.component.TitleLarge
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.util.ScreenHeight
+import co.electriccoin.zcash.ui.design.util.screenHeight
+import kotlinx.coroutines.delay
 
 @Preview("ShortOnboarding")
 @Composable
@@ -45,76 +49,60 @@ private fun ShortOnboardingComposablePreview() {
     ZcashTheme(darkTheme = false) {
         GradientSurface {
             ShortOnboarding(
-                isDebugMenuEnabled = false,
                 onImportWallet = {},
                 onCreateWallet = {},
-                onFixtureWallet = {}
+                showWelcomeAnim = false,
             )
         }
     }
 }
 
+// TODO [#998]: Check and enhance screen dark mode
+// TODO [#998]: https://github.com/zcash/secant-android-wallet/issues/998
+
+// TODO [#1001]: Screens in landscape mode
+// TODO [#1001]: https://github.com/zcash/secant-android-wallet/issues/1001
+
 /**
+ * @param showWelcomeAnim Whether the welcome screen growing chart animation should be done or not.
  * @param onImportWallet Callback when the user decides to import an existing wallet.
  * @param onCreateWallet Callback when the user decides to create a new wallet.
  */
 @Composable
 fun ShortOnboarding(
-    isDebugMenuEnabled: Boolean,
+    showWelcomeAnim: Boolean,
     onImportWallet: () -> Unit,
     onCreateWallet: () -> Unit,
-    onFixtureWallet: () -> Unit
 ) {
-    Scaffold(
-        topBar = {
-            OnboardingTopAppBar(isDebugMenuEnabled, onFixtureWallet)
-        }
-    ) { paddingValues ->
-        OnboardingMainContent(
-            onImportWallet = onImportWallet,
-            onCreateWallet = onCreateWallet,
-            modifier = Modifier.padding(
-                top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
-                bottom = paddingValues.calculateBottomPadding() + ZcashTheme.dimens.spacingDefault,
-                start = ZcashTheme.dimens.spacingDefault,
-                end = ZcashTheme.dimens.spacingDefault
-            )
-        )
-    }
-}
-
-@Composable
-@OptIn(ExperimentalMaterial3Api::class)
-private fun OnboardingTopAppBar(
-    isDebugMenuEnabled: Boolean,
-    onFixtureWallet: () -> Unit
-) {
-    TopAppBar(
-        title = { Text(text = stringResource(id = R.string.app_name)) },
-        actions = {
-            if (isDebugMenuEnabled) {
-                DebugMenu(onFixtureWallet)
-            }
-        }
-    )
-}
-
-@Composable
-private fun DebugMenu(onFixtureWallet: () -> Unit) {
-    Column {
-        var expanded by rememberSaveable { mutableStateOf(false) }
-        IconButton(onClick = { expanded = true }) {
-            Icon(Icons.Default.MoreVert, contentDescription = null)
+    Scaffold { paddingValues ->
+        val screenHeight = screenHeight()
+        val (welcomeAnimVisibility, setWelcomeAnimVisibility) = rememberSaveable {
+            mutableStateOf(showWelcomeAnim)
         }
 
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false }
+        Column(
+            modifier = Modifier.verticalScroll(rememberScrollState())
         ) {
-            DropdownMenuItem(
-                text = { Text("Import wallet with fixture seed phrase") },
-                onClick = onFixtureWallet
-            )
+            Box(modifier = Modifier.fillMaxSize()) {
+                AnimatedImage(
+                    screenHeight = screenHeight,
+                    welcomeAnimVisibility = welcomeAnimVisibility,
+                    setWelcomeAnimVisibility = setWelcomeAnimVisibility,
+                    modifier = Modifier.zIndex(1f)
+                )
+                OnboardingMainContent(
+                    onImportWallet = onImportWallet,
+                    onCreateWallet = onCreateWallet,
+                    modifier = Modifier
+                        .padding(
+                            top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingHuge,
+                            bottom = paddingValues.calculateBottomPadding() + ZcashTheme.dimens.spacingHuge,
+                            start = ZcashTheme.dimens.spacingHuge,
+                            end = ZcashTheme.dimens.spacingHuge
+                        )
+                        .height(screenHeight.contentHeight - paddingValues.calculateBottomPadding())
+                )
+            }
         }
     }
 }
@@ -126,19 +114,27 @@ private fun OnboardingMainContent(
     modifier: Modifier = Modifier
 ) {
     Column(
-        Modifier
-            .fillMaxSize()
-            .verticalScroll(
-                rememberScrollState()
-            )
-            .then(modifier),
+        modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Header(text = stringResource(R.string.onboarding_short_header))
+        Image(
+            painterResource(id = R.drawable.zashi_logo_without_text),
+            stringResource(R.string.zcash_logo_onboarding_content_description),
+            Modifier
+                .height(ZcashTheme.dimens.zcashLogoHeight)
+                .width(ZcashTheme.dimens.zcashLogoWidth)
+        )
 
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingXlarge))
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
-        Body(text = stringResource(R.string.onboarding_short_information))
+        Image(
+            painterResource(id = R.drawable.zashi_text_logo),
+            ""
+        )
+
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
+
+        TitleLarge(text = stringResource(R.string.onboarding_short_header), textAlign = TextAlign.Center)
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
@@ -154,9 +150,12 @@ private fun OnboardingMainContent(
             outerPaddingValues = PaddingValues(
                 horizontal = ZcashTheme.dimens.spacingNone,
                 vertical = ZcashTheme.dimens.spacingSmall
-            )
+            ),
         )
-        TertiaryButton(
+
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
+
+        SecondaryButton(
             onImportWallet,
             stringResource(R.string.onboarding_short_import_existing_wallet),
             outerPaddingValues = PaddingValues(
@@ -165,4 +164,61 @@ private fun OnboardingMainContent(
             )
         )
     }
+}
+
+@Composable
+fun AnimatedImage(
+    screenHeight: ScreenHeight,
+    welcomeAnimVisibility: Boolean,
+    setWelcomeAnimVisibility: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    // TODO [#1002]: Welcome screen animation masking
+    // TODO [#1002]: https://github.com/zcash/secant-android-wallet/issues/1002
+
+    AnimatedVisibility(
+        visible = welcomeAnimVisibility,
+        exit = slideOutVertically(
+            targetOffsetY = { -it },
+            animationSpec = tween(AnimationConstants.ANIMATION_DURATION)
+        ),
+        modifier = modifier
+    ) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            Column(modifier = Modifier.fillMaxHeight()) {
+                Image(
+                    painter = ColorPainter(ZcashTheme.colors.welcomeAnimationColor),
+                    contentScale = ContentScale.FillBounds,
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .height(screenHeight.overallScreenHeight()),
+                    contentDescription = null
+                )
+                Image(
+                    painter = painterResource(id = R.drawable.chart_line),
+                    contentScale = ContentScale.FillBounds,
+                    contentDescription = null
+                )
+            }
+
+            Image(
+                painter = painterResource(id = R.drawable.logo_with_hi),
+                contentDescription = stringResource(R.string.zcash_logo_with_hi_text_content_description),
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .fillMaxWidth()
+                    .padding(top = screenHeight.systemStatusBarHeight + ZcashTheme.dimens.spacingHuge)
+            )
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        delay(AnimationConstants.INITIAL_DELAY)
+        setWelcomeAnimVisibility(false)
+    }
+}
+
+object AnimationConstants {
+    const val ANIMATION_DURATION = 1250
+    const val INITIAL_DELAY: Long = 800
 }

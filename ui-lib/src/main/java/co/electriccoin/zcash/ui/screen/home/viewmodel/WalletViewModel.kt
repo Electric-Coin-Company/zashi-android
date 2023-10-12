@@ -295,19 +295,19 @@ sealed class SynchronizerError {
     abstract fun getCauseMessage(): String?
 
     class Critical(val error: Throwable?) : SynchronizerError() {
-        override fun getCauseMessage(): String? = error?.localizedMessage
+        override fun getCauseMessage(): String? = error?.message
     }
 
     class Processor(val error: Throwable?) : SynchronizerError() {
-        override fun getCauseMessage(): String? = error?.localizedMessage
+        override fun getCauseMessage(): String? = error?.message
     }
 
     class Submission(val error: Throwable?) : SynchronizerError() {
-        override fun getCauseMessage(): String? = error?.localizedMessage
+        override fun getCauseMessage(): String? = error?.message
     }
 
     class Setup(val error: Throwable?) : SynchronizerError() {
-        override fun getCauseMessage(): String? = error?.localizedMessage
+        override fun getCauseMessage(): String? = error?.message
     }
 
     class Chain(val x: BlockHeight, val y: BlockHeight) : SynchronizerError() {

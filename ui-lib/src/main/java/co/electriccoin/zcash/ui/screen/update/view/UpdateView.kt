@@ -76,8 +76,10 @@ fun Update(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(
-                        vertical = ZcashTheme.dimens.spacingDefault,
-                        horizontal = ZcashTheme.dimens.spacingDefault
+                        top = ZcashTheme.dimens.spacingDefault,
+                        bottom = ZcashTheme.dimens.spacingHuge,
+                        start = ZcashTheme.dimens.spacingDefault,
+                        end = ZcashTheme.dimens.spacingDefault
                     )
             )
         }

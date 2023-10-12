@@ -175,7 +175,10 @@ fun RestoreWallet(
                         userWordList = userWordList,
                         parseResult = parseResult,
                         setTextState = { textState = it },
-                        focusRequester = focusRequester
+                        focusRequester = focusRequester,
+                        modifier = Modifier.padding(
+                            bottom = ZcashTheme.dimens.spacingHuge
+                        ).fillMaxWidth()
                     )
                 }
                 RestoreStage.Birthday -> {
@@ -352,7 +355,9 @@ private fun RestoreSeedBottomBar(
     // Hide the field once the user has completed the seed phrase; if they need the field back then
     // the user can hit the clear button
     if (!isSeedValid) {
-        Column(modifier) {
+        Column(
+            modifier = modifier
+        ) {
             Warn(
                 parseResult = parseResult,
                 modifier = Modifier

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.os.SystemClock
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.annotation.VisibleForTesting
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -92,6 +93,11 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun setupUiContent() {
+        // Turn off the decor fitting system windows, which allows us to handle insets,
+        // including IME animations, and go edge-to-edge.
+        // This also sets up the initial system bar style based on the platform theme
+        enableEdgeToEdge()
+
         setContent {
             Override(configurationOverrideFlow) {
                 ZcashTheme {

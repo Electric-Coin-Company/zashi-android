@@ -113,7 +113,10 @@ fun LongNewWalletBackup(
                 onComplete = onComplete,
                 onBackToSeedPhrase = {
                     backupState.goToStage(BackupStage.ReviewSeed)
-                }
+                },
+                modifier = Modifier.padding(
+                    bottom = ZcashTheme.dimens.spacingHuge
+                ).fillMaxWidth()
             )
         }
     ) { paddingValues ->
@@ -425,10 +428,11 @@ private fun BackupBottomNav(
     onBack: () -> Unit,
     selectedTestChoices: TestChoices,
     onComplete: () -> Unit,
-    onBackToSeedPhrase: () -> Unit
+    onBackToSeedPhrase: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         when (backupStage) {

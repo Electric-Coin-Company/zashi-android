@@ -54,8 +54,8 @@ private fun ButtonComposablePreview() {
     }
 }
 
-@Suppress("LongParameterList")
 @Composable
+@Suppress("LongParameterList")
 fun PrimaryButton(
     onClick: () -> Unit,
     text: String,
@@ -105,6 +105,7 @@ fun PrimaryButton(
 }
 
 @Composable
+@Suppress("LongParameterList")
 fun SecondaryButton(
     onClick: () -> Unit,
     text: String,
@@ -113,24 +114,42 @@ fun SecondaryButton(
         horizontal = ZcashTheme.dimens.spacingDefault,
         vertical = ZcashTheme.dimens.spacingSmall
     ),
-    enabled: Boolean = true
+    enabled: Boolean = true,
+    buttonColor: Color = MaterialTheme.colorScheme.secondary,
+    textColor: Color = MaterialTheme.colorScheme.onSecondary,
 ) {
     Button(
         shape = RectangleShape,
-        onClick = onClick,
-        modifier = modifier.then(
-            Modifier
-                .fillMaxWidth()
-                .padding(outerPaddingValues)
-        ),
         enabled = enabled,
-        colors = buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
+        modifier = modifier
+            .padding(outerPaddingValues)
+            .shadow(
+                ZcashTheme.colors.buttonShadowColor,
+                borderRadius = 0.dp,
+                offsetX = ZcashTheme.dimens.shadowOffsetX,
+                offsetY = ZcashTheme.dimens.shadowOffsetY,
+                spread = ZcashTheme.dimens.shadowSpread,
+                blurRadius = 0.dp,
+                stroke = textColor != MaterialTheme.colorScheme.primary,
+            )
+            .translationClick(
+                translationX = ZcashTheme.dimens.shadowOffsetX + 6.dp, // + 6dp to exactly cover the bottom shadow
+                translationY = ZcashTheme.dimens.shadowOffsetX + 6.dp
+            )
+            .defaultMinSize(ZcashTheme.dimens.defaultButtonWidth, ZcashTheme.dimens.defaultButtonHeight)
+            .border(1.dp, Color.Black),
+        colors = buttonColors(
+            buttonColor,
+            disabledContainerColor = ZcashTheme.colors.disabledButtonColor,
+            disabledContentColor = ZcashTheme.colors.disabledButtonTextColor
+        ),
+        onClick = onClick,
     ) {
         Text(
-            style = MaterialTheme.typography.labelLarge,
+            style = ZcashTheme.extendedTypography.buttonText,
             textAlign = TextAlign.Center,
             text = text.uppercase(),
-            color = MaterialTheme.colorScheme.onSecondary
+            color = textColor
         )
     }
 }
