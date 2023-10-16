@@ -42,7 +42,7 @@ class UpdateViewIntegrationTest {
         assertEquals(testSetup.getUpdateInfo().priority, AppUpdateChecker.Priority.HIGH)
         assertEquals(testSetup.getUpdateState(), UpdateState.Prepared)
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.update_download_button)).also {
+        composeTestRule.onNodeWithText(getStringResource(R.string.update_download_button), ignoreCase = true).also {
             it.performClick()
         }
 

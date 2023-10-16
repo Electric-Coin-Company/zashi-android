@@ -40,6 +40,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -90,7 +91,7 @@ import kotlinx.coroutines.launch
 @Preview("Restore Wallet")
 @Composable
 private fun PreviewRestore() {
-    ZcashTheme(darkTheme = true) {
+    ZcashTheme(darkTheme = false) {
         GradientSurface {
             RestoreWallet(
                 ZcashNetwork.Mainnet,
@@ -121,7 +122,7 @@ private fun PreviewRestore() {
 @Preview("Restore Complete")
 @Composable
 private fun PreviewRestoreComplete() {
-    ZcashTheme(darkTheme = true) {
+    ZcashTheme(darkTheme = false) {
         RestoreComplete(
             onComplete = {}
         )
@@ -174,7 +175,10 @@ fun RestoreWallet(
                         userWordList = userWordList,
                         parseResult = parseResult,
                         setTextState = { textState = it },
-                        focusRequester = focusRequester
+                        focusRequester = focusRequester,
+                        modifier = Modifier.padding(
+                            bottom = ZcashTheme.dimens.spacingHuge
+                        ).fillMaxWidth()
                     )
                 }
                 RestoreStage.Birthday -> {
@@ -288,7 +292,8 @@ private fun RestoreSeedMainContent(
         Modifier
             .fillMaxHeight()
             .verticalScroll(scrollState)
-            .then(modifier)
+            .then(modifier),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Body(text = stringResource(id = R.string.restore_seed_instructions))
 
@@ -317,6 +322,8 @@ private fun RestoreSeedMainContent(
             enabled = isSeedValid,
             outerPaddingValues = PaddingValues(top = dimens.spacingSmall)
         )
+
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
     }
 
     if (isSeedValid) {
@@ -348,7 +355,9 @@ private fun RestoreSeedBottomBar(
     // Hide the field once the user has completed the seed phrase; if they need the field back then
     // the user can hit the clear button
     if (!isSeedValid) {
-        Column(modifier) {
+        Column(
+            modifier = modifier
+        ) {
             Warn(
                 parseResult = parseResult,
                 modifier = Modifier
@@ -541,7 +550,8 @@ private fun RestoreBirthday(
         Modifier
             .fillMaxHeight()
             .verticalScroll(rememberScrollState())
-            .then(modifier)
+            .then(modifier),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Header(stringResource(R.string.restore_birthday_header))
 
@@ -600,6 +610,8 @@ private fun RestoreBirthday(
             text = stringResource(R.string.restore_birthday_button_skip),
             outerPaddingValues = PaddingValues(top = dimens.spacingSmall)
         )
+
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
     }
 }
 
@@ -612,7 +624,8 @@ private fun RestoreComplete(
         Modifier
             .fillMaxHeight()
             .verticalScroll(rememberScrollState())
-            .then(modifier)
+            .then(modifier),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Header(stringResource(R.string.restore_complete_header))
 
@@ -633,5 +646,7 @@ private fun RestoreComplete(
             text = stringResource(R.string.restore_button_see_wallet),
             outerPaddingValues = PaddingValues(top = dimens.spacingSmall)
         )
+
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
     }
 }

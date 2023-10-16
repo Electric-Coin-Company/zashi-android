@@ -45,11 +45,11 @@ class HomeViewTest : UiTestPrerequisites() {
             it.assertIsDisplayed()
         }
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.home_button_send)).also {
+        composeTestRule.onNodeWithText(getStringResource(R.string.home_button_send), ignoreCase = true).also {
             it.assertIsDisplayed()
         }
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.home_button_receive)).also {
+        composeTestRule.onNodeWithText(getStringResource(R.string.home_button_receive), ignoreCase = true).also {
             it.assertIsDisplayed()
         }
     }
@@ -218,20 +218,20 @@ private fun ComposeContentTestRule.openNavigationDrawer() {
 }
 
 private fun ComposeContentTestRule.clickReceive() {
-    onNodeWithText(getStringResource(R.string.home_button_receive)).also {
+    onNodeWithText(getStringResource(R.string.home_button_receive), ignoreCase = true).also {
         it.performClick()
     }
 }
 
 private fun ComposeContentTestRule.clickSend() {
-    onNodeWithText(getStringResource(R.string.home_button_send)).also {
+    onNodeWithText(getStringResource(R.string.home_button_send), ignoreCase = true).also {
         it.performScrollTo()
         it.performClick()
     }
 }
 
 private fun ComposeContentTestRule.clickHistory() {
-    onNodeWithText(getStringResource(R.string.home_button_history)).also {
+    onNodeWithText(getStringResource(R.string.home_button_history), ignoreCase = true).also {
         it.performScrollTo()
         it.performClick()
     }

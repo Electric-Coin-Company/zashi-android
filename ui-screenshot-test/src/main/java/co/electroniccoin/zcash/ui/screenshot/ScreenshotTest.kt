@@ -163,9 +163,10 @@ class ScreenshotTest : UiTestPrerequisites() {
 
         if (ConfigurationEntries.IS_SHORT_ONBOARDING_UX.getValue(emptyConfiguration)) {
             composeTestRule.onNodeWithText(
-                resContext.getString(
+                text = resContext.getString(
                     R.string.onboarding_short_import_existing_wallet
-                )
+                ),
+                ignoreCase = true
             ).also {
                 it.assertExists()
                 it.performClick()
@@ -329,12 +330,29 @@ private fun onboardingScreenshots(
         composeTestRule.activity.walletViewModel.secretState.value is SecretState.None
     }
     if (ConfigurationEntries.IS_SHORT_ONBOARDING_UX.getValue(emptyConfiguration)) {
+        // Welcome screen
         composeTestRule.onNodeWithText(resContext.getString(R.string.onboarding_short_header)).also {
             it.assertExists()
             ScreenshotTest.takeScreenshot(tag, "Onboarding 1")
         }
 
-        composeTestRule.onNodeWithText(resContext.getString(R.string.onboarding_short_create_new_wallet)).also {
+        composeTestRule.onNodeWithText(
+            text = resContext.getString(R.string.onboarding_short_create_new_wallet),
+            ignoreCase = true
+        ).also {
+            it.performClick()
+        }
+
+        // Security Warning screen
+        composeTestRule.onNodeWithText(text = resContext.getString(R.string.security_warning_acknowledge)).also {
+            it.assertExists()
+            it.performClick()
+            ScreenshotTest.takeScreenshot(tag, "Security Warning")
+        }
+        composeTestRule.onNodeWithText(
+            text = resContext.getString(R.string.security_warning_confirm),
+            ignoreCase = true
+        ).also {
             it.performClick()
         }
     } else {
@@ -390,7 +408,10 @@ private fun backupScreenshots(
         }
         ScreenshotTest.takeScreenshot(tag, "Backup 1")
 
-        composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_short_button_finished)).also {
+        composeTestRule.onNodeWithText(
+            text = resContext.getString(R.string.new_wallet_short_button_finished),
+            ignoreCase = true
+        ).also {
             it.assertExists()
             it.performClick()
         }
@@ -509,7 +530,7 @@ private fun homeScreenshots(
         composeTestRule.activity.walletViewModel.walletSnapshot.value != null
     }
 
-    composeTestRule.onNode(hasText(resContext.getString(R.string.home_button_send))).also {
+    composeTestRule.onNode(hasText(resContext.getString(R.string.home_button_send), ignoreCase = true)).also {
         it.assertExists()
         ScreenshotTest.takeScreenshot(tag, "Home 1")
     }
@@ -522,7 +543,7 @@ private fun homeScreenshots(
 }
 
 private fun settingsScreenshots(resContext: Context, tag: String, composeTestRule: ComposeTestRule) {
-    composeTestRule.onNode(hasText(resContext.getString(R.string.settings_header))).also {
+    composeTestRule.onNode(hasText(resContext.getString(R.string.settings_header), ignoreCase = true)).also {
         it.assertExists()
     }
 
@@ -570,7 +591,7 @@ private fun receiveZecScreenshots(
 
     ScreenshotTest.takeScreenshot(tag, "Receive 1")
 
-    composeTestRule.onNodeWithText(resContext.getString(R.string.receive_see_address_details)).also {
+    composeTestRule.onNodeWithText(resContext.getString(R.string.receive_see_address_details), ignoreCase = true).also {
         it.performClick()
     }
 
@@ -621,7 +642,7 @@ private fun sendZecScreenshots(
     // Screenshot: Fulfilled form
     ScreenshotTest.takeScreenshot(tag, "Send 2")
 
-    composeTestRule.onNodeWithText(resContext.getString(R.string.send_create)).also {
+    composeTestRule.onNodeWithText(resContext.getString(R.string.send_create), ignoreCase = true).also {
         it.performClick()
     }
 

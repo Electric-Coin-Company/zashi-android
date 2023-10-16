@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
@@ -21,6 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -46,7 +48,7 @@ import kotlinx.coroutines.runBlocking
 @Preview("Request")
 @Composable
 private fun PreviewRequest() {
-    ZcashTheme(darkTheme = true) {
+    ZcashTheme(darkTheme = false) {
         GradientSurface {
             Request(
                 myAddress = runBlocking { WalletAddressFixture.unified() },
@@ -70,8 +72,8 @@ fun Request(
         RequestTopAppBar(onBack = goBack)
     }) { paddingValues ->
         RequestMainContent(
-            paddingValues,
-            myAddress,
+            paddingValues = paddingValues,
+            myAddress = myAddress,
             onCreateAndSend = onCreateAndSend
         )
     }
@@ -113,8 +115,9 @@ private fun RequestMainContent(
 
     Column(
         Modifier
-            .fillMaxHeight()
-            .padding(top = paddingValues.calculateTopPadding())
+            .fillMaxSize()
+            .padding(top = paddingValues.calculateTopPadding()),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // TODO [#289]: Crash occurs while typed more than some acceptable amount to this field.
         TextField(

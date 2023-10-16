@@ -8,18 +8,22 @@ import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import cash.z.ecc.android.sdk.WalletInitMode
 import cash.z.ecc.android.sdk.fixture.WalletFixture
 import cash.z.ecc.android.sdk.model.BlockHeight
 import cash.z.ecc.android.sdk.model.PersistableWallet
 import cash.z.ecc.android.sdk.model.SeedPhrase
 import cash.z.ecc.android.sdk.model.ZcashNetwork
+import cash.z.ecc.android.sdk.model.defaultForNetwork
 import cash.z.ecc.sdk.type.fromResources
+import co.electriccoin.lightwallet.client.model.LightWalletEndpoint
 import co.electriccoin.zcash.spackle.EmulatorWtfUtil
 import co.electriccoin.zcash.spackle.FirebaseTestLabUtil
 import co.electriccoin.zcash.ui.BuildConfig
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
 import co.electriccoin.zcash.ui.configuration.RemoteConfig
+import co.electriccoin.zcash.ui.screen.home.model.OnboardingState
 import co.electriccoin.zcash.ui.screen.home.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.onboarding.view.LongOnboarding
 import co.electriccoin.zcash.ui.screen.onboarding.view.ShortOnboarding
@@ -48,20 +52,12 @@ internal fun WrapOnboarding(
         !EmulatorWtfUtil.isEmulatorWtf(applicationContext)
 
     // TODO [#383]: https://github.com/zcash/secant-android-wallet/issues/383
+    // TODO [#383]: Refactoring of UI state retention into rememberSaveable fields
     if (!onboardingViewModel.isImporting.collectAsStateWithLifecycle().value) {
         val onCreateWallet = {
-            if (FirebaseTestLabUtil.isFirebaseTestLab(applicationContext)) {
-                persistExistingWalletWithSeedPhrase(
-                    applicationContext,
-                    walletViewModel,
-                    SeedPhrase.new(WalletFixture.Alice.seedPhrase),
-                    birthday = WalletFixture.Alice.getBirthday(ZcashNetwork.fromResources(applicationContext))
-                )
-            } else {
-                walletViewModel.persistNewWallet()
-            }
+            walletViewModel.persistOnboardingState(OnboardingState.NEEDS_WARN)
+            onboardingViewModel.setShowWelcomeAnimation(false)
         }
-
         val onImportWallet = {
             // In the case of the app currently being messed with by the robo test runner on
             // Firebase Test Lab or Google Play pre-launch report, we want to skip creating
@@ -77,6 +73,8 @@ internal fun WrapOnboarding(
             } else {
                 onboardingViewModel.setIsImporting(true)
             }
+
+            onboardingViewModel.setShowWelcomeAnimation(false)
         }
 
         val onFixtureWallet = {
@@ -88,12 +86,16 @@ internal fun WrapOnboarding(
             )
         }
 
+        val showWelcomeAnimation = onboardingViewModel.showWelcomeAnimation.collectAsStateWithLifecycle().value
+
+        // TODO [#1003]: Clear unused alternative Onboarding screens
+        // TODO [#1003]: https://github.com/zcash/secant-android-wallet/issues/1003
+
         if (ConfigurationEntries.IS_SHORT_ONBOARDING_UX.getValue(RemoteConfig.current)) {
             ShortOnboarding(
-                isDebugMenuEnabled = isDebugMenuEnabled,
+                showWelcomeAnim = showWelcomeAnimation,
                 onImportWallet = onImportWallet,
                 onCreateWallet = onCreateWallet,
-                onFixtureWallet = onFixtureWallet
             )
         } else {
             LongOnboarding(
@@ -127,13 +129,15 @@ internal fun persistExistingWalletWithSeedPhrase(
     seedPhrase: SeedPhrase,
     birthday: BlockHeight?
 ) {
-    walletViewModel.persistBackupComplete()
+    walletViewModel.persistOnboardingState(OnboardingState.READY)
 
     val network = ZcashNetwork.fromResources(context)
     val restoredWallet = PersistableWallet(
-        network,
-        birthday,
-        seedPhrase
+        network = network,
+        birthday = birthday,
+        endpoint = LightWalletEndpoint.defaultForNetwork(network),
+        seedPhrase = seedPhrase,
+        walletInitMode = WalletInitMode.RestoreWallet
     )
     walletViewModel.persistExistingWallet(restoredWallet)
 }

@@ -40,7 +40,7 @@ import co.electriccoin.zcash.ui.screen.update.model.UpdateState
 @Preview("Update")
 @Composable
 private fun PreviewUpdate() {
-    ZcashTheme(darkTheme = true) {
+    ZcashTheme(darkTheme = false) {
         GradientSurface {
             Update(
                 snackbarHostState = SnackbarHostState(),
@@ -76,8 +76,10 @@ fun Update(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(
-                        vertical = ZcashTheme.dimens.spacingDefault,
-                        horizontal = ZcashTheme.dimens.spacingDefault
+                        top = ZcashTheme.dimens.spacingDefault,
+                        bottom = ZcashTheme.dimens.spacingHuge,
+                        start = ZcashTheme.dimens.spacingDefault,
+                        end = ZcashTheme.dimens.spacingDefault
                     )
             )
         }
@@ -142,7 +144,10 @@ private fun UpdateBottomAppBar(
     onLater: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         PrimaryButton(
             onClick = { onDownload(UpdateState.Running) },
             text = stringResource(R.string.update_download_button),

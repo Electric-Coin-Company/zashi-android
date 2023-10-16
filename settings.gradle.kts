@@ -70,6 +70,7 @@ pluginManagement {
 }
 
 dependencyResolutionManagement {
+    @Suppress("UnstableApiUsage")
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
 
     @Suppress("UnstableApiUsage")
@@ -138,7 +139,7 @@ dependencyResolutionManagement {
         }
     }
 
-    @Suppress("UnstableApiUsage", "MaxLineLength")
+    @Suppress("MaxLineLength")
     versionCatalogs {
         create("libs") {
             val accompanistPermissionsVersion = extra["ACCOMPANIST_PERMISSIONS_VERSION"].toString()

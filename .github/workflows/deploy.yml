@@ -36,7 +36,7 @@ jobs:
     steps:
       - name: Checkout
         timeout-minutes: 1
-        uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac
+        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608
       # Gradle Wrapper validation can be flaky
       # https://github.com/gradle/wrapper-validation-action/issues/40
       - name: Gradle Wrapper Validation
@@ -70,15 +70,15 @@ jobs:
     steps:
       - name: Checkout
         timeout-minutes: 1
-        uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac
+        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608
       - name: Set up Java
-        uses: actions/setup-java@cd89f46ac9d01407894225f350157564c9c7cee2
+        uses: actions/setup-java@0ab4596768b603586c0de567f2430c30f5b0d2b0
         timeout-minutes: 1
         with:
           distribution: 'temurin'
           java-version: 17
       - name: Set up Gradle
-        uses: gradle/gradle-build-action@ef76a971e2fa3f867b617efd72f2fbd72cf6f8bc
+        uses: gradle/gradle-build-action@842c587ad8aa4c68eeba24c396e15af4c2e9f30a
         timeout-minutes: 10
         with:
           gradle-home-cache-cleanup: true
@@ -153,7 +153,7 @@ jobs:
     steps:
       - name: Checkout
         timeout-minutes: 1
-        uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac
+        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608
       - name: Download release artifact
         uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a
         with:

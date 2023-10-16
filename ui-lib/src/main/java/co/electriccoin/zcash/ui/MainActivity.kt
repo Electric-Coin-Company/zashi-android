@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.os.SystemClock
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.annotation.VisibleForTesting
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -18,6 +19,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavHostController
+import cash.z.ecc.android.sdk.fixture.WalletFixture
+import cash.z.ecc.android.sdk.model.SeedPhrase
+import cash.z.ecc.android.sdk.model.ZcashNetwork
+import cash.z.ecc.sdk.type.fromResources
+import co.electriccoin.zcash.spackle.FirebaseTestLabUtil
 import co.electriccoin.zcash.ui.common.BindCompLocalProvider
 import co.electriccoin.zcash.ui.configuration.RemoteConfig
 import co.electriccoin.zcash.ui.design.component.ConfigurationOverride
@@ -25,10 +31,13 @@ import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.Override
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.backup.WrapNewWallet
+import co.electriccoin.zcash.ui.screen.home.model.OnboardingState
 import co.electriccoin.zcash.ui.screen.home.viewmodel.HomeViewModel
 import co.electriccoin.zcash.ui.screen.home.viewmodel.SecretState
 import co.electriccoin.zcash.ui.screen.home.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.onboarding.WrapOnboarding
+import co.electriccoin.zcash.ui.screen.onboarding.persistExistingWalletWithSeedPhrase
+import co.electriccoin.zcash.ui.screen.securitywarning.WrapSecurityWarning
 import co.electriccoin.zcash.ui.screen.warning.WrapNotEnoughSpace
 import co.electriccoin.zcash.ui.screen.warning.viewmodel.StorageCheckViewModel
 import co.electriccoin.zcash.work.WorkIds
@@ -84,6 +93,11 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun setupUiContent() {
+        // Turn off the decor fitting system windows, which allows us to handle insets,
+        // including IME animations, and go edge-to-edge.
+        // This also sets up the initial system bar style based on the platform theme
+        enableEdgeToEdge()
+
         setContent {
             Override(configurationOverrideFlow) {
                 ZcashTheme {
@@ -128,10 +142,29 @@ class MainActivity : ComponentActivity() {
                     SecretState.None -> {
                         WrapOnboarding()
                     }
+                    is SecretState.NeedsWarning -> {
+                        WrapSecurityWarning(
+                            onBack = { walletViewModel.persistOnboardingState(OnboardingState.NONE) },
+                            onConfirm = {
+                                walletViewModel.persistOnboardingState(OnboardingState.NEEDS_BACKUP)
+
+                                if (FirebaseTestLabUtil.isFirebaseTestLab(applicationContext)) {
+                                    persistExistingWalletWithSeedPhrase(
+                                        applicationContext,
+                                        walletViewModel,
+                                        SeedPhrase.new(WalletFixture.Alice.seedPhrase),
+                                        WalletFixture.Alice.getBirthday(ZcashNetwork.fromResources(applicationContext))
+                                    )
+                                } else {
+                                    walletViewModel.persistNewWallet()
+                                }
+                            }
+                        )
+                    }
                     is SecretState.NeedsBackup -> {
                         WrapNewWallet(
                             secretState.persistableWallet,
-                            onBackupComplete = { walletViewModel.persistBackupComplete() }
+                            onBackupComplete = { walletViewModel.persistOnboardingState(OnboardingState.READY) }
                         )
                     }
                     is SecretState.Ready -> {

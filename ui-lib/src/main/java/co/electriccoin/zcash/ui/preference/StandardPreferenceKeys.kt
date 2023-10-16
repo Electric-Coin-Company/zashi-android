@@ -1,14 +1,19 @@
 package co.electriccoin.zcash.ui.preference
 
 import co.electriccoin.zcash.preference.model.entry.BooleanPreferenceDefault
+import co.electriccoin.zcash.preference.model.entry.IntegerPreferenceDefault
 import co.electriccoin.zcash.preference.model.entry.PreferenceKey
+import co.electriccoin.zcash.ui.screen.home.model.OnboardingState
 
 object StandardPreferenceKeys {
 
     /**
-     * Whether the user has completed the backup flow for a newly created wallet.
+     * State defining whether the user has completed any of the onboarding wallet states.
      */
-    val IS_USER_BACKUP_COMPLETE = BooleanPreferenceDefault(PreferenceKey("is_user_backup_complete"), false)
+    val ONBOARDING_STATE = IntegerPreferenceDefault(
+        PreferenceKey("onboarding_state"),
+        OnboardingState.NONE.toNumber()
+    )
 
     // Default to true until https://github.com/zcash/secant-android-wallet/issues/304
     val IS_ANALYTICS_ENABLED = BooleanPreferenceDefault(PreferenceKey("is_analytics_enabled"), true)

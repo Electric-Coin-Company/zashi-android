@@ -27,11 +27,9 @@ class ShortOnboardingTestSetup(
     fun DefaultContent() {
         ZcashTheme {
             ShortOnboarding(
-                isDebugMenuEnabled = false,
-                onCreateWallet = { onCreateWalletCallbackCount.incrementAndGet() },
                 onImportWallet = { onImportWalletCallbackCount.incrementAndGet() },
-                // We aren't testing this because it is for debug builds only.
-                onFixtureWallet = {}
+                onCreateWallet = { onCreateWalletCallbackCount.incrementAndGet() },
+                showWelcomeAnim = false, // It's fine to test the screen UI after the welcome animation
             )
         }
     }

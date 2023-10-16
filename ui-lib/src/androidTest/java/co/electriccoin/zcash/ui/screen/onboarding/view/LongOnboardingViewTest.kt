@@ -52,7 +52,7 @@ class LongOnboardingViewTest : UiTestPrerequisites() {
     fun stage_1_layout() {
         newTestSetup(initialStage = OnboardingStage.ShieldedByDefault)
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_next)).also {
+        composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_next), ignoreCase = true).also {
             it.assertExists()
             it.assertHasClickAction()
         }
@@ -84,12 +84,15 @@ class LongOnboardingViewTest : UiTestPrerequisites() {
             it.assertHasClickAction()
         }
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_next)).also {
+        composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_next), ignoreCase = true).also {
             it.assertExists()
             it.assertHasClickAction()
         }
 
-        composeTestRule.onNodeWithContentDescription(getStringResource(R.string.onboarding_back)).also {
+        composeTestRule.onNodeWithContentDescription(
+            label = getStringResource(R.string.onboarding_back),
+            ignoreCase = true
+        ).also {
             it.assertExists()
             it.assertHasClickAction()
         }
@@ -116,17 +119,20 @@ class LongOnboardingViewTest : UiTestPrerequisites() {
     fun stage_3_layout() {
         newTestSetup(initialStage = OnboardingStage.More)
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_skip)).also {
+        composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_skip), ignoreCase = true).also {
             it.assertExists()
             it.assertHasClickAction()
         }
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_next)).also {
+        composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_next), ignoreCase = true).also {
             it.assertExists()
             it.assertHasClickAction()
         }
 
-        composeTestRule.onNodeWithContentDescription(getStringResource(R.string.onboarding_back)).also {
+        composeTestRule.onNodeWithContentDescription(
+            label = getStringResource(R.string.onboarding_back),
+            ignoreCase = true
+        ).also {
             it.assertExists()
             it.assertHasClickAction()
         }
@@ -139,11 +145,17 @@ class LongOnboardingViewTest : UiTestPrerequisites() {
             it.assertExists()
         }
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_4_create_new_wallet)).also {
+        composeTestRule.onNodeWithText(
+            text = getStringResource(R.string.onboarding_4_create_new_wallet),
+            ignoreCase = true
+        ).also {
             it.assertDoesNotExist()
         }
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_4_import_existing_wallet)).also {
+        composeTestRule.onNodeWithText(
+            text = getStringResource(R.string.onboarding_4_import_existing_wallet),
+            ignoreCase = true
+        ).also {
             it.assertDoesNotExist()
         }
     }
@@ -167,13 +179,19 @@ class LongOnboardingViewTest : UiTestPrerequisites() {
             it.assertHasClickAction()
         }
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_4_create_new_wallet)).also {
+        composeTestRule.onNodeWithText(
+            text = getStringResource(R.string.onboarding_4_create_new_wallet),
+            ignoreCase = true
+        ).also {
             it.assertExists()
             it.assertIsEnabled()
             it.assertHasClickAction()
         }
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_4_import_existing_wallet)).also {
+        composeTestRule.onNodeWithText(
+            text = getStringResource(R.string.onboarding_4_import_existing_wallet),
+            ignoreCase = true
+        ).also {
             it.assertExists()
             it.assertIsEnabled()
             it.assertHasClickAction()
@@ -197,8 +215,12 @@ class LongOnboardingViewTest : UiTestPrerequisites() {
     fun last_stage_click_create_wallet() {
         val testSetup = newTestSetup(initialStage = OnboardingStage.Wallet)
 
-        val newWalletButton = composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_4_create_new_wallet))
-        newWalletButton.performClick()
+        composeTestRule.onNodeWithText(
+            text = getStringResource(R.string.onboarding_4_create_new_wallet),
+            ignoreCase = true
+        ).also {
+            it.performClick()
+        }
 
         assertEquals(1, testSetup.getOnCreateWalletCallbackCount())
         assertEquals(0, testSetup.getOnImportWalletCallbackCount())
@@ -223,15 +245,15 @@ class LongOnboardingViewTest : UiTestPrerequisites() {
     fun multi_stage_progression() {
         val testSetup = newTestSetup(initialStage = OnboardingStage.ShieldedByDefault)
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_next)).also {
+        composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_next), ignoreCase = true).also {
             it.performClick()
         }
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_next)).also {
+        composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_next), ignoreCase = true).also {
             it.performClick()
         }
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_next)).also {
+        composeTestRule.onNodeWithText(getStringResource(R.string.onboarding_next), ignoreCase = true).also {
             it.performClick()
         }
 

@@ -8,9 +8,9 @@ import cash.z.ecc.android.sdk.model.MonetarySeparators
 import cash.z.ecc.android.sdk.model.PercentDecimal
 import cash.z.ecc.android.sdk.model.toFiatCurrencyState
 import cash.z.ecc.android.sdk.model.toZecString
+import cash.z.ecc.sdk.extension.toPercentageWithDecimal
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.toKotlinLocale
-import kotlin.math.roundToInt
 
 data class WalletDisplayValues(
     val progress: PercentDecimal,
@@ -42,7 +42,6 @@ data class WalletDisplayValues(
             when (walletSnapshot.status) {
                 Synchronizer.Status.SYNCING -> {
                     progress = walletSnapshot.progress
-                    val progressPercent = (walletSnapshot.progress.decimal * 100).roundToInt()
                     // we add "so far" to the amount
                     if (fiatCurrencyAmountState != FiatCurrencyConversionRateState.Unavailable) {
                         fiatCurrencyAmountText = context.getString(
@@ -50,7 +49,10 @@ data class WalletDisplayValues(
                             fiatCurrencyAmountText
                         )
                     }
-                    statusText = context.getString(R.string.home_status_syncing_format, progressPercent)
+                    statusText = context.getString(
+                        R.string.home_status_syncing_format,
+                        walletSnapshot.progress.toPercentageWithDecimal()
+                    )
                 }
                 Synchronizer.Status.SYNCED -> {
                     statusText = if (updateAvailable) {

@@ -7,7 +7,8 @@ import cash.z.ecc.android.bip39.Mnemonics
 import cash.z.ecc.android.bip39.toSeed
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.WalletCoordinator
-import cash.z.ecc.android.sdk.block.CompactBlockProcessor
+import cash.z.ecc.android.sdk.WalletInitMode
+import cash.z.ecc.android.sdk.block.processor.CompactBlockProcessor
 import cash.z.ecc.android.sdk.model.Account
 import cash.z.ecc.android.sdk.model.BlockHeight
 import cash.z.ecc.android.sdk.model.FiatCurrency
@@ -18,8 +19,10 @@ import cash.z.ecc.android.sdk.model.WalletAddresses
 import cash.z.ecc.android.sdk.model.WalletBalance
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.ZcashNetwork
+import cash.z.ecc.android.sdk.model.defaultForNetwork
 import cash.z.ecc.android.sdk.tool.DerivationTool
 import cash.z.ecc.sdk.type.fromResources
+import co.electriccoin.lightwallet.client.model.LightWalletEndpoint
 import co.electriccoin.zcash.global.getInstance
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.ANDROID_STATE_FLOW_TIMEOUT
@@ -29,6 +32,7 @@ import co.electriccoin.zcash.ui.preference.EncryptedPreferenceSingleton
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
 import co.electriccoin.zcash.ui.preference.StandardPreferenceSingleton
 import co.electriccoin.zcash.ui.screen.history.state.TransactionHistorySyncState
+import co.electriccoin.zcash.ui.screen.home.model.OnboardingState
 import co.electriccoin.zcash.ui.screen.home.model.WalletSnapshot
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.Dispatchers
@@ -90,27 +94,37 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
     )
 
     /**
-     * A flow of whether a backup of the user's wallet has been performed.
+     * A flow of the wallet onboarding state.
      */
-    private val isBackupComplete = flow {
+    private val onboardingState = flow {
         val preferenceProvider = StandardPreferenceSingleton.getInstance(application)
-        emitAll(StandardPreferenceKeys.IS_USER_BACKUP_COMPLETE.observe(preferenceProvider))
+        emitAll(
+            StandardPreferenceKeys.ONBOARDING_STATE.observe(preferenceProvider).map { persistedNumber ->
+                OnboardingState.fromNumber(persistedNumber)
+            }
+        )
     }
 
-    val secretState: StateFlow<SecretState> = walletCoordinator.persistableWallet
-        .combine(isBackupComplete) { persistableWallet: PersistableWallet?, isBackupComplete: Boolean ->
-            if (null == persistableWallet) {
-                SecretState.None
-            } else if (!isBackupComplete) {
+    val secretState: StateFlow<SecretState> = combine(
+        walletCoordinator.persistableWallet,
+        onboardingState
+    ) { persistableWallet: PersistableWallet?, onboardingState: OnboardingState ->
+        when {
+            onboardingState == OnboardingState.NONE -> SecretState.None
+            onboardingState == OnboardingState.NEEDS_WARN -> SecretState.NeedsWarning
+            onboardingState == OnboardingState.NEEDS_BACKUP && persistableWallet != null -> {
                 SecretState.NeedsBackup(persistableWallet)
-            } else {
+            }
+            onboardingState == OnboardingState.READY && persistableWallet != null -> {
                 SecretState.Ready(persistableWallet)
             }
-        }.stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            SecretState.Loading
-        )
+            else -> SecretState.None
+        }
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+        SecretState.Loading
+    )
 
     // This needs to be refactored once we support pin lock
     val spendingKey = secretState
@@ -188,8 +202,14 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
         val application = getApplication<Application>()
 
         viewModelScope.launch {
-            val newWallet = PersistableWallet.new(application, ZcashNetwork.fromResources(application))
-            persistExistingWallet(newWallet)
+            val zcashNetwork = ZcashNetwork.fromResources(application)
+            val newWallet = PersistableWallet.new(
+                application = application,
+                zcashNetwork = zcashNetwork,
+                endpoint = LightWalletEndpoint.defaultForNetwork(zcashNetwork),
+                walletInitMode = WalletInitMode.NewWallet
+            )
+            persistWallet(newWallet)
         }
     }
 
@@ -198,6 +218,13 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
      * to see the side effects.  This would be used for a user restoring a wallet from a backup.
      */
     fun persistExistingWallet(persistableWallet: PersistableWallet) {
+        persistWallet(persistableWallet)
+    }
+
+    /**
+     * Persists a wallet asynchronously.  Clients observe [secretState] to see the side effects.
+     */
+    private fun persistWallet(persistableWallet: PersistableWallet) {
         val application = getApplication<Application>()
 
         viewModelScope.launch {
@@ -213,18 +240,18 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
      * is ready to use.  Clients observe [secretState] to see the side effects.  This would be used
      * for a user creating a new wallet.
      */
-    fun persistBackupComplete() {
+    fun persistOnboardingState(onboardingState: OnboardingState) {
         val application = getApplication<Application>()
 
         viewModelScope.launch {
             val preferenceProvider = StandardPreferenceSingleton.getInstance(application)
 
-            // Use the Mutex here to avoid timing issues.  During wallet restore, persistBackupComplete()
-            // is called prior to persistExistingWallet().  Although persistBackupComplete() should
+            // Use the Mutex here to avoid timing issues.  During wallet restore, persistOnboardingState()
+            // is called prior to persistExistingWallet().  Although persistOnboardingState() should
             // complete quickly, it isn't guaranteed to complete before persistExistingWallet()
             // unless a mutex is used here.
             persistWalletMutex.withLock {
-                StandardPreferenceKeys.IS_USER_BACKUP_COMPLETE.putValue(preferenceProvider, true)
+                StandardPreferenceKeys.ONBOARDING_STATE.putValue(preferenceProvider, onboardingState.toNumber())
             }
         }
     }
@@ -254,6 +281,7 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
 sealed class SecretState {
     object Loading : SecretState()
     object None : SecretState()
+    object NeedsWarning : SecretState()
     class NeedsBackup(val persistableWallet: PersistableWallet) : SecretState()
     class Ready(val persistableWallet: PersistableWallet) : SecretState()
 }
@@ -267,19 +295,19 @@ sealed class SynchronizerError {
     abstract fun getCauseMessage(): String?
 
     class Critical(val error: Throwable?) : SynchronizerError() {
-        override fun getCauseMessage(): String? = error?.localizedMessage
+        override fun getCauseMessage(): String? = error?.message
     }
 
     class Processor(val error: Throwable?) : SynchronizerError() {
-        override fun getCauseMessage(): String? = error?.localizedMessage
+        override fun getCauseMessage(): String? = error?.message
     }
 
     class Submission(val error: Throwable?) : SynchronizerError() {
-        override fun getCauseMessage(): String? = error?.localizedMessage
+        override fun getCauseMessage(): String? = error?.message
     }
 
     class Setup(val error: Throwable?) : SynchronizerError() {
-        override fun getCauseMessage(): String? = error?.localizedMessage
+        override fun getCauseMessage(): String? = error?.message
     }
 
     class Chain(val x: BlockHeight, val y: BlockHeight) : SynchronizerError() {

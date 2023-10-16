@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -44,7 +45,7 @@ import kotlin.math.roundToInt
 @Preview("Receive")
 @Composable
 private fun ComposablePreview() {
-    ZcashTheme(darkTheme = true) {
+    ZcashTheme(darkTheme = false) {
         GradientSurface {
             Receive(
                 walletAddress = runBlocking { WalletAddressFixture.unified() },
@@ -102,7 +103,10 @@ private fun ReceiveContents(
     onAddressDetails: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         QrCode(data = walletAddress.address, DEFAULT_QR_CODE_SIZE, Modifier.align(Alignment.CenterHorizontally))
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
@@ -134,7 +138,9 @@ private fun ReceiveContents(
         PrimaryButton(
             onClick = onAddressDetails,
             text = stringResource(id = R.string.receive_see_address_details),
-            outerPaddingValues = PaddingValues(all = ZcashTheme.dimens.spacingNone)
+            outerPaddingValues = PaddingValues(
+                bottom = ZcashTheme.dimens.spacingHuge
+            )
         )
     }
 }
