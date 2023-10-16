@@ -106,7 +106,7 @@ private fun AboutTopAppBar(onBack: () -> Unit) {
             IconButton(onClick = {}) {
                 Icon(
                     imageVector = Icons.Outlined.Settings,
-                    contentDescription = stringResource(R.string.settings_icon_content_description)
+                    contentDescription = stringResource(R.string.about_settings_icon_content_description)
                 )
             }
         }
@@ -132,7 +132,7 @@ fun AboutMainContent(
                 painterResource(
                     id = R.drawable.zashi_text_logo
                 ),
-                contentDescription = stringResource(R.string.zashi_text_logo_content_description),
+                contentDescription = stringResource(R.string.about_zashi_text_logo_content_description),
                 modifier = Modifier.height(ZcashTheme.dimens.zcashTextLogoHeight)
             )
         }

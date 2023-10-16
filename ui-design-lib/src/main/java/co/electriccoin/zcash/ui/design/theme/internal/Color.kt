@@ -176,7 +176,7 @@ internal val DarkExtendedColorPalette = ExtendedColors(
     reference = Dark.reference,
     buttonShadowColor = Dark.buttonShadowColor,
     screenTitleColor = Dark.screenTitleColor,
-    aboutTextColor = Dark.aboutTextColor
+    aboutTextColor = Dark.aboutTextColor,
     welcomeAnimationColor = Dark.welcomeAnimationColor
 )
 
@@ -204,7 +204,7 @@ internal val LightExtendedColorPalette = ExtendedColors(
     reference = Light.reference,
     buttonShadowColor = Light.buttonShadowColor,
     screenTitleColor = Light.screenTitleColor,
-    aboutTextColor = Light.aboutTextColor
+    aboutTextColor = Light.aboutTextColor,
     welcomeAnimationColor = Light.welcomeAnimationColor
 )
 
@@ -234,7 +234,7 @@ internal val LocalExtendedColors = staticCompositionLocalOf {
         reference = Color.Unspecified,
         buttonShadowColor = Color.Unspecified,
         screenTitleColor = Color.Unspecified,
-        aboutTextColor = Color.Unspecified
+        aboutTextColor = Color.Unspecified,
         welcomeAnimationColor = Color.Unspecified,
     )
 }

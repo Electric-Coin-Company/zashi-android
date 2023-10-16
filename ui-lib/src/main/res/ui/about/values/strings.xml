@@ -14,9 +14,8 @@ Zashi is a minimal-design, self-custody, ZEC-only shielded wallet that keeps you
     <!-- TODO [#392] Update with real legal info. -->
     <!-- TODO [#392] https://github.com/zcash/secant-android-wallet/issues/392 -->
     <string name="about_legal_info">GitHub Issue #392</string>
-    <string name="cracked_corner_image_description">An image with cracked corner</string>
-    <string name="zcash_logo_with_hi_text_content_description">Zcash logo with hi text</string>
-    <string name="zcash_logo_content_description">Zcash logo</string>
-    <string name="zashi_text_logo_content_description">Zashi text logo</string>
-    <string name="settings_icon_content_description">settings icon</string>
+    <string name="about_zcash_logo_with_hi_text_content_description">Zcash logo with hi text</string>
+    <string name="about_zcash_logo_content_description">Zcash logo</string>
+    <string name="about_zashi_text_logo_content_description">Zashi text logo</string>
+    <string name="about_settings_icon_content_description">settings icon</string>
 </resources>
