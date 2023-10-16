@@ -42,7 +42,7 @@ import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.VersionInfoFixture
-import co.electriccoin.zcash.ui.screen.about.model.VersionInfo
+import co.electriccoin.zcash.ui.common.VersionInfo
 
 @Preview("Security Warning")
 @Composable

@@ -8,10 +8,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import co.electriccoin.zcash.configuration.AndroidConfigurationFactory
-import co.electriccoin.zcash.spackle.getPackageInfoCompat
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.screen.about.model.VersionInfo
+import co.electriccoin.zcash.ui.common.VersionInfo
 import co.electriccoin.zcash.ui.screen.securitywarning.util.WebBrowserUtil
 import co.electriccoin.zcash.ui.screen.securitywarning.view.SecurityWarning
 import kotlinx.coroutines.CoroutineScope
@@ -35,14 +34,12 @@ internal fun WrapSecurityWarning(
     onBack: () -> Unit,
     onConfirm: () -> Unit
 ) {
-    val packageInfo = activity.packageManager.getPackageInfoCompat(activity.packageName, 0L)
-
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
     SecurityWarning(
         snackbarHostState = snackbarHostState,
-        versionInfo = VersionInfo.new(packageInfo),
+        versionInfo = VersionInfo.new(activity.applicationContext),
         onBack = onBack,
         onAcknowledged = {
             // Needed for UI testing only
