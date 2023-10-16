@@ -71,7 +71,6 @@ class HomeTestSetup(
             isKeepScreenOnDuringSync = false,
             isFiatConversionEnabled = isShowFiatConversion,
             isCircularProgressBarEnabled = isCircularProgressBar,
-            isDebugMenuEnabled = false,
             goSettings = {
                 onSettingsCount.incrementAndGet()
             },
@@ -93,7 +92,6 @@ class HomeTestSetup(
             goHistory = {
                 onHistoryCount.incrementAndGet()
             },
-            resetSdk = {},
             drawerState = drawerValues.drawerState,
             scope = drawerValues.scope
         )

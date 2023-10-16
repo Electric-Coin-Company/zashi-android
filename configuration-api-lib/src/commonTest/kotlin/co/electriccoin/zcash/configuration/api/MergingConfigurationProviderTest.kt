@@ -6,7 +6,6 @@ import co.electriccoin.zcash.configuration.test.fixture.BooleanDefaultEntryFixtu
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.collections.immutable.toPersistentList
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
@@ -34,7 +33,6 @@ class MergingConfigurationProviderTest {
     }
 
     @Test
-    @OptIn(ExperimentalCoroutinesApi::class)
     fun getFlow_ordering() = runTest {
         val configurationProvider = MergingConfigurationProvider(
             persistentListOf(
@@ -53,7 +51,6 @@ class MergingConfigurationProviderTest {
     }
 
     @Test
-    @OptIn(ExperimentalCoroutinesApi::class)
     fun getFlow_empty() = runTest {
         val configurationProvider = MergingConfigurationProvider(
             emptyList<ConfigurationProvider>().toPersistentList()
@@ -65,7 +62,6 @@ class MergingConfigurationProviderTest {
     }
 
     @Test
-    @OptIn(ExperimentalCoroutinesApi::class)
     fun getUpdatedAt_newest() = runTest {
         val older = "2023-01-15T08:38:45.415Z".toInstant()
         val newer = "2023-01-17T08:38:45.415Z".toInstant()

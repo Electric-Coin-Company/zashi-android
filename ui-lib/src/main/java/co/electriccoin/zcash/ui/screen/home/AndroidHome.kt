@@ -86,23 +86,14 @@ internal fun WrapHome(
     if (null == walletSnapshot) {
         // Display loading indicator
     } else {
-        val context = LocalContext.current
-
-        // We might eventually want to check the debuggable property of the manifest instead
-        // of relying on BuildConfig.
-        val isDebugMenuEnabled = BuildConfig.DEBUG &&
-            !FirebaseTestLabUtil.isFirebaseTestLab(context) &&
-            !EmulatorWtfUtil.isEmulatorWtf(context)
-
         val drawerValues = drawerBackHandler()
 
         Home(
-            walletSnapshot,
+            walletSnapshot = walletSnapshot,
             isUpdateAvailable = updateAvailable,
             isKeepScreenOnDuringSync = isKeepScreenOnWhileSyncing,
             isFiatConversionEnabled = isFiatConversionEnabled,
             isCircularProgressBarEnabled = isCircularProgressBarEnabled,
-            isDebugMenuEnabled = isDebugMenuEnabled,
             goSeedPhrase = goSeedPhrase,
             goSettings = goSettings,
             goSupport = goSupport,
@@ -110,9 +101,6 @@ internal fun WrapHome(
             goReceive = goReceive,
             goSend = goSend,
             goHistory = goHistory,
-            resetSdk = {
-                walletViewModel.resetSdk()
-            },
             drawerState = drawerValues.drawerState,
             scope = drawerValues.scope
         )

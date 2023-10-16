@@ -83,7 +83,6 @@ private fun ComposablePreview() {
                 walletSnapshot = WalletSnapshotFixture.new(),
                 isUpdateAvailable = false,
                 isKeepScreenOnDuringSync = false,
-                isDebugMenuEnabled = false,
                 isFiatConversionEnabled = false,
                 isCircularProgressBarEnabled = false,
                 goSeedPhrase = {},
@@ -93,7 +92,6 @@ private fun ComposablePreview() {
                 goReceive = {},
                 goSend = {},
                 goHistory = {},
-                resetSdk = {},
                 drawerState = rememberDrawerState(DrawerValue.Closed),
                 scope = rememberCoroutineScope()
             )
@@ -109,7 +107,6 @@ fun Home(
     isKeepScreenOnDuringSync: Boolean?,
     isFiatConversionEnabled: Boolean,
     isCircularProgressBarEnabled: Boolean,
-    isDebugMenuEnabled: Boolean,
     goSeedPhrase: () -> Unit,
     goSettings: () -> Unit,
     goSupport: () -> Unit,
@@ -117,7 +114,6 @@ fun Home(
     goReceive: () -> Unit,
     goSend: () -> Unit,
     goHistory: () -> Unit,
-    resetSdk: () -> Unit,
     drawerState: DrawerState,
     scope: CoroutineScope
 ) {
@@ -135,9 +131,7 @@ fun Home(
         content = {
             Scaffold(topBar = {
                 HomeTopAppBar(
-                    isDebugMenuEnabled = isDebugMenuEnabled,
-                    openDrawer = { drawerState.openDrawerMenu(scope) },
-                    resetSdk = resetSdk
+                    openDrawer = { drawerState.openDrawerMenu(scope) }
                 )
             }) { paddingValues ->
                 HomeMainContent(
@@ -164,9 +158,7 @@ fun Home(
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 private fun HomeTopAppBar(
-    isDebugMenuEnabled: Boolean,
-    openDrawer: () -> Unit,
-    resetSdk: () -> Unit,
+    openDrawer: () -> Unit
 ) {
     TopAppBar(
         title = { Text(text = stringResource(id = R.string.app_name)) },
@@ -180,57 +172,8 @@ private fun HomeTopAppBar(
                     contentDescription = stringResource(R.string.home_menu_content_description)
                 )
             }
-        },
-        actions = {
-            if (isDebugMenuEnabled) {
-                DebugMenu(resetSdk)
-            }
         }
     )
-}
-
-@Composable
-private fun DebugMenu(
-    resetSdk: () -> Unit
-) {
-    Column {
-        var expanded by rememberSaveable { mutableStateOf(false) }
-        IconButton(onClick = { expanded = true }) {
-            Icon(Icons.Default.MoreVert, contentDescription = null)
-        }
-
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false }
-        ) {
-            DropdownMenuItem(
-                text = { Text("Throw Uncaught Exception") },
-                onClick = {
-                    // Supposed to be generic, for manual debugging only
-                    @Suppress("TooGenericExceptionThrown")
-                    throw RuntimeException("Manually crashed from debug menu")
-                }
-            )
-            DropdownMenuItem(
-                text = { Text("Report Caught Exception") },
-                onClick = {
-                    // Eventually this shouldn't rely on the Android implementation, but rather an expect/actual
-                    // should be used at the crash API level.
-                    GlobalCrashReporter.reportCaughtException(
-                        RuntimeException("Manually caught exception from debug menu")
-                    )
-                    expanded = false
-                }
-            )
-            DropdownMenuItem(
-                text = { Text("Reset SDK") },
-                onClick = {
-                    resetSdk()
-                    expanded = false
-                }
-            )
-        }
-    }
 }
 
 @Composable
