@@ -1,35 +1,36 @@
 package co.electriccoin.zcash.ui.screen.about.view
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import co.electriccoin.zcash.build.gitSha
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.GradientSurface
-import co.electriccoin.zcash.ui.design.component.Header
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
-import co.electriccoin.zcash.ui.fixture.ConfigInfoFixture
 import co.electriccoin.zcash.ui.fixture.VersionInfoFixture
 import co.electriccoin.zcash.ui.screen.about.model.VersionInfo
-import co.electriccoin.zcash.ui.screen.support.model.ConfigInfo
 
 @Preview("About")
 @Composable
@@ -38,7 +39,6 @@ private fun AboutPreview() {
         GradientSurface {
             About(
                 versionInfo = VersionInfoFixture.new(),
-                configInfo = ConfigInfoFixture.new(),
                 goBack = {}
             )
         }
@@ -48,7 +48,6 @@ private fun AboutPreview() {
 @Composable
 fun About(
     versionInfo: VersionInfo,
-    configInfo: ConfigInfo,
     goBack: () -> Unit
 ) {
     Scaffold(topBar = {
@@ -56,7 +55,6 @@ fun About(
     }) { paddingValues ->
         AboutMainContent(
             versionInfo,
-            configInfo,
             modifier = Modifier
                 .fillMaxHeight()
                 .verticalScroll(
@@ -65,8 +63,8 @@ fun About(
                 .padding(
                     top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
                     bottom = paddingValues.calculateBottomPadding() + ZcashTheme.dimens.spacingDefault,
-                    start = ZcashTheme.dimens.spacingDefault,
-                    end = ZcashTheme.dimens.spacingDefault
+                    start = ZcashTheme.dimens.spacingHuge,
+                    end = ZcashTheme.dimens.spacingHuge
                 )
         )
     }
@@ -75,15 +73,40 @@ fun About(
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 private fun AboutTopAppBar(onBack: () -> Unit) {
-    TopAppBar(
-        title = { Text(text = stringResource(id = R.string.about_title)) },
+    CenterAlignedTopAppBar(
+        title = {
+            Text(
+                text = stringResource(
+                    id = R.string.about_title
+                ),
+                style = ZcashTheme.typography.primary.titleSmall,
+                color = ZcashTheme.colors.screenTitleColor
+            )
+        },
         navigationIcon = {
-            IconButton(
-                onClick = onBack
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
+                IconButton(
+                    onClick = onBack
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.ArrowBack,
+                        contentDescription = stringResource(R.string.about_back_content_description)
+                    )
+                }
+                Text(
+                    text = stringResource(id = R.string.about_back_label),
+                    style = ZcashTheme.typography.primary.bodyMedium
+                )
+            }
+        },
+        actions = {
+            IconButton(onClick = {}) {
                 Icon(
-                    imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = stringResource(R.string.about_back_content_description)
+                    imageVector = Icons.Outlined.Settings,
+                    contentDescription = stringResource(R.string.settings_icon_content_description)
                 )
             }
         }
@@ -93,33 +116,44 @@ private fun AboutTopAppBar(onBack: () -> Unit) {
 @Composable
 fun AboutMainContent(
     versionInfo: VersionInfo,
-    configInfo: ConfigInfo,
     modifier: Modifier = Modifier
 ) {
     Column(modifier) {
-        Icon(painterResource(id = R.drawable.zashi_logo), contentDescription = null)
-        Text(stringResource(id = R.string.app_name))
-
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
-
-        Header(stringResource(id = R.string.about_version_header))
-        Body(stringResource(R.string.about_version_format, versionInfo.versionName, versionInfo.versionCode))
-
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
-
-        Header(stringResource(id = R.string.about_build_header))
-        Body(gitSha)
-
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
-
-        configInfo.configurationUpdatedAt?.let { updatedAt ->
-            Header(stringResource(id = R.string.about_build_configuration))
-            Body(updatedAt.toString())
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Image(
+                painterResource(id = R.drawable.zashi_logo_without_text),
+                stringResource(R.string.zcash_logo_content_description),
+                Modifier
+                    .height(ZcashTheme.dimens.zcashLogoHeight)
+                    .width(ZcashTheme.dimens.zcashLogoWidth)
+            )
+            Spacer(modifier = Modifier.width(ZcashTheme.dimens.spacingDefault))
+            Image(
+                painterResource(
+                    id = R.drawable.zashi_text_logo
+                ),
+                contentDescription = stringResource(R.string.zashi_text_logo_content_description),
+                modifier = Modifier.height(ZcashTheme.dimens.zcashTextLogoHeight)
+            )
         }
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
 
-        Header(stringResource(id = R.string.about_legal_header))
-        Body(stringResource(id = R.string.about_legal_info))
+        Text(
+            text = stringResource(
+                R.string.about_version_format,
+                versionInfo.versionName,
+                versionInfo.versionCode
+            ),
+            style = ZcashTheme.typography.primary.titleSmall
+        )
+
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
+
+        Text(
+            text = stringResource(id = R.string.about_description),
+            color = ZcashTheme.colors.aboutTextColor,
+            style = ZcashTheme.extendedTypography.aboutText
+        )
     }
 }
