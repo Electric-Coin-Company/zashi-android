@@ -10,11 +10,7 @@ import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import co.electriccoin.zcash.spackle.EmulatorWtfUtil
-import co.electriccoin.zcash.spackle.FirebaseTestLabUtil
-import co.electriccoin.zcash.ui.BuildConfig
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.common.closeDrawerMenu
 import co.electriccoin.zcash.ui.configuration.ConfigurationEntries

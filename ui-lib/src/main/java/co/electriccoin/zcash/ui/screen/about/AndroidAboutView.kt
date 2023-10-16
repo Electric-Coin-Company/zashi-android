@@ -35,5 +35,4 @@ internal fun WrapAbout(
         versionInfo = VersionInfo.new(activity.applicationContext),
         configInfo = configInfo
     )
-
 }

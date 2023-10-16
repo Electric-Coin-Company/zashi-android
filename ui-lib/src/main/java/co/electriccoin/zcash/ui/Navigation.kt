@@ -74,6 +74,9 @@ internal fun MainActivity.Navigation() {
             WrapSettings(
                 goBack = {
                     navController.popBackStackJustOnce(SETTINGS)
+                },
+                goAbout = {
+                    navController.navigateJustOnce(ABOUT)
                 }
             )
         }

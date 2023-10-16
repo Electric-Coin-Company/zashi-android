@@ -680,7 +680,9 @@ private fun supportScreenshots(resContext: Context, tag: String, composeTestRule
 }
 
 private fun aboutScreenshots(resContext: Context, tag: String, composeTestRule: ComposeTestRule) {
-    composeTestRule.onNode(hasText(resContext.getString(R.string.about_title))).also {
+    composeTestRule.onNode(
+        hasText(resContext.getString(R.string.about_title).uppercase())
+    ).also {
         it.assertExists()
     }
 

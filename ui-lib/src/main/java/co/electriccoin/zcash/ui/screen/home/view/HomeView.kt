@@ -19,14 +19,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ContactSupport
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Password
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -40,9 +37,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,7 +51,6 @@ import androidx.compose.ui.unit.dp
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.model.FiatCurrencyConversionRateState
 import cash.z.ecc.android.sdk.model.PercentDecimal
-import co.electriccoin.zcash.crash.android.GlobalCrashReporter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.DisableScreenTimeout
 import co.electriccoin.zcash.ui.common.closeDrawerMenu
