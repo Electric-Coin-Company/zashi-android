@@ -1,6 +1,6 @@
 package co.electriccoin.zcash.ui.fixture
 
-import co.electriccoin.zcash.ui.common.VersionInfo
+import co.electriccoin.zcash.ui.common.model.VersionInfo
 
 // Magic Number doesn't matter here for hard-coded fixture values
 @Suppress("MagicNumber")

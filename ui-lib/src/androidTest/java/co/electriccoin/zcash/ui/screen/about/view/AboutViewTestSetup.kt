@@ -1,7 +1,7 @@
 package co.electriccoin.zcash.ui.screen.about.view
 
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
-import co.electriccoin.zcash.ui.common.VersionInfo
+import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.support.model.ConfigInfo
 import java.util.concurrent.atomic.AtomicInteger

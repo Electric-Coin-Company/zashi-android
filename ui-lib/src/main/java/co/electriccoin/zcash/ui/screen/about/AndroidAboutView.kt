@@ -7,7 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import co.electriccoin.zcash.configuration.AndroidConfigurationFactory
 import co.electriccoin.zcash.ui.MainActivity
-import co.electriccoin.zcash.ui.common.VersionInfo
+import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.screen.about.view.About
 import co.electriccoin.zcash.ui.screen.support.model.ConfigInfo
 
