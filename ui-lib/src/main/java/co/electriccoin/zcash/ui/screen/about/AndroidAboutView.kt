@@ -6,9 +6,8 @@ import androidx.activity.ComponentActivity
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import co.electriccoin.zcash.configuration.AndroidConfigurationFactory
-import co.electriccoin.zcash.spackle.getPackageInfoCompat
 import co.electriccoin.zcash.ui.MainActivity
-import co.electriccoin.zcash.ui.screen.about.model.VersionInfo
+import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.screen.about.view.About
 import co.electriccoin.zcash.ui.screen.support.model.ConfigInfo
 
@@ -24,13 +23,17 @@ internal fun WrapAbout(
     activity: ComponentActivity,
     goBack: () -> Unit
 ) {
-    val packageInfo = activity.packageManager.getPackageInfoCompat(activity.packageName, 0L)
-    val configurationProvider = AndroidConfigurationFactory.getInstance(activity.applicationContext)
-
-    About(VersionInfo.new(packageInfo), ConfigInfo.new(configurationProvider), goBack)
+    val configInfo = ConfigInfo.new(AndroidConfigurationFactory.getInstance(activity.applicationContext))
+    val versionInfo = VersionInfo.new(activity.applicationContext)
 
     // Allows an implicit way to force configuration refresh by simply visiting the About screen
     LaunchedEffect(key1 = true) {
         AndroidConfigurationFactory.getInstance(activity.applicationContext).hintToRefresh()
     }
+
+    About(
+        onBack = goBack,
+        versionInfo = versionInfo,
+        configInfo = configInfo
+    )
 }

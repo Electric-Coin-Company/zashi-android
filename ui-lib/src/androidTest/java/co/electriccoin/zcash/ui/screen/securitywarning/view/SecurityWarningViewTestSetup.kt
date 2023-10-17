@@ -3,10 +3,8 @@ package co.electriccoin.zcash.ui.screen.securitywarning.view
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
-import co.electriccoin.zcash.spackle.getPackageInfoCompat
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
-import co.electriccoin.zcash.ui.screen.about.model.VersionInfo
-import co.electriccoin.zcash.ui.test.getAppContext
+import co.electriccoin.zcash.ui.fixture.VersionInfoFixture
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -50,9 +48,7 @@ class SecurityWarningViewTestSetup(private val composeTestRule: ComposeContentTe
             onConfirm = {
                 onConfirmCount.incrementAndGet()
             },
-            versionInfo = VersionInfo.new(
-                getAppContext().packageManager.getPackageInfoCompat(getAppContext().packageName, 0L)
-            )
+            versionInfo = VersionInfoFixture.new()
         )
     }
 

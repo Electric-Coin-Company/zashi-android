@@ -1,13 +1,14 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="about_title">About</string>
+    <string name="about_back">Back</string>
     <string name="about_back_content_description">Back</string>
-    <string name="about_icon_content_description">Zcash icon</string>
-    <string name="about_version_header">Version</string>
-    <string name="about_version_format" formatted="true"><xliff:g id="version_name" example="1.0">%1$s</xliff:g> (<xliff:g id="version_code" example="1.0">%2$d</xliff:g>)</string>
-    <string name="about_build_header">Build</string>
-    <string name="about_build_configuration">Configuration</string>
-    <string name="about_legal_header">Legal</string>
-    <!-- TODO [#392] Update with real legal info. -->
-    <!-- TODO [#392] https://github.com/zcash/secant-android-wallet/issues/392 -->
-    <string name="about_legal_info">GitHub Issue #392</string>
+    <string name="about_app_logo_content_description">Zcash logo</string>
+    <string name="about_version_format" formatted="true">Version <xliff:g example="1.0" id="version_name">%1$s
+    </xliff:g> (<xliff:g example="1.0" id="version_code">%2$d</xliff:g>)</string>
+    <string name="about_debug_menu_build">Build: <xliff:g example="635dac0eb9ddc2bc6da5177f0dd495d8b76af4dc"
+        id="git_commit_hash">%1$s</xliff:g></string>
+    <string name="about_description">Send and receive ZEC on Zashi! Zashi is a minimal-design, self-custody, ZEC-only
+        shielded wallet that keeps your transaction history and wallet balance private. Built by Zcashers, for
+        Zcashers. Developed and maintained by Electric Coin Co., the inventor of Zcash, Zashi features a built-in
+        user-feedback mechanism to enable more features, more quickly.</string>
 </resources>

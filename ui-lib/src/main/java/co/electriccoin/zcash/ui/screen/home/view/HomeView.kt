@@ -19,14 +19,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ContactSupport
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Password
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -40,9 +37,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,7 +51,6 @@ import androidx.compose.ui.unit.dp
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.model.FiatCurrencyConversionRateState
 import cash.z.ecc.android.sdk.model.PercentDecimal
-import co.electriccoin.zcash.crash.android.GlobalCrashReporter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.DisableScreenTimeout
 import co.electriccoin.zcash.ui.common.closeDrawerMenu
@@ -83,7 +77,6 @@ private fun ComposablePreview() {
                 walletSnapshot = WalletSnapshotFixture.new(),
                 isUpdateAvailable = false,
                 isKeepScreenOnDuringSync = false,
-                isDebugMenuEnabled = false,
                 isFiatConversionEnabled = false,
                 isCircularProgressBarEnabled = false,
                 goSeedPhrase = {},
@@ -93,7 +86,6 @@ private fun ComposablePreview() {
                 goReceive = {},
                 goSend = {},
                 goHistory = {},
-                resetSdk = {},
                 drawerState = rememberDrawerState(DrawerValue.Closed),
                 scope = rememberCoroutineScope()
             )
@@ -109,7 +101,6 @@ fun Home(
     isKeepScreenOnDuringSync: Boolean?,
     isFiatConversionEnabled: Boolean,
     isCircularProgressBarEnabled: Boolean,
-    isDebugMenuEnabled: Boolean,
     goSeedPhrase: () -> Unit,
     goSettings: () -> Unit,
     goSupport: () -> Unit,
@@ -117,7 +108,6 @@ fun Home(
     goReceive: () -> Unit,
     goSend: () -> Unit,
     goHistory: () -> Unit,
-    resetSdk: () -> Unit,
     drawerState: DrawerState,
     scope: CoroutineScope
 ) {
@@ -135,9 +125,7 @@ fun Home(
         content = {
             Scaffold(topBar = {
                 HomeTopAppBar(
-                    isDebugMenuEnabled = isDebugMenuEnabled,
-                    openDrawer = { drawerState.openDrawerMenu(scope) },
-                    resetSdk = resetSdk
+                    openDrawer = { drawerState.openDrawerMenu(scope) }
                 )
             }) { paddingValues ->
                 HomeMainContent(
@@ -164,9 +152,7 @@ fun Home(
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 private fun HomeTopAppBar(
-    isDebugMenuEnabled: Boolean,
-    openDrawer: () -> Unit,
-    resetSdk: () -> Unit,
+    openDrawer: () -> Unit
 ) {
     TopAppBar(
         title = { Text(text = stringResource(id = R.string.app_name)) },
@@ -180,57 +166,8 @@ private fun HomeTopAppBar(
                     contentDescription = stringResource(R.string.home_menu_content_description)
                 )
             }
-        },
-        actions = {
-            if (isDebugMenuEnabled) {
-                DebugMenu(resetSdk)
-            }
         }
     )
-}
-
-@Composable
-private fun DebugMenu(
-    resetSdk: () -> Unit
-) {
-    Column {
-        var expanded by rememberSaveable { mutableStateOf(false) }
-        IconButton(onClick = { expanded = true }) {
-            Icon(Icons.Default.MoreVert, contentDescription = null)
-        }
-
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false }
-        ) {
-            DropdownMenuItem(
-                text = { Text("Throw Uncaught Exception") },
-                onClick = {
-                    // Supposed to be generic, for manual debugging only
-                    @Suppress("TooGenericExceptionThrown")
-                    throw RuntimeException("Manually crashed from debug menu")
-                }
-            )
-            DropdownMenuItem(
-                text = { Text("Report Caught Exception") },
-                onClick = {
-                    // Eventually this shouldn't rely on the Android implementation, but rather an expect/actual
-                    // should be used at the crash API level.
-                    GlobalCrashReporter.reportCaughtException(
-                        RuntimeException("Manually caught exception from debug menu")
-                    )
-                    expanded = false
-                }
-            )
-            DropdownMenuItem(
-                text = { Text("Reset SDK") },
-                onClick = {
-                    resetSdk()
-                    expanded = false
-                }
-            )
-        }
-    }
 }
 
 @Composable

@@ -6,8 +6,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import co.electriccoin.zcash.ui.BuildConfig
 import co.electriccoin.zcash.ui.MainActivity
+import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
 import co.electriccoin.zcash.ui.configuration.RemoteConfig
 import co.electriccoin.zcash.ui.screen.home.viewmodel.WalletViewModel
@@ -17,11 +17,13 @@ import co.electriccoin.zcash.ui.screen.settings.viewmodel.SettingsViewModel
 
 @Composable
 internal fun MainActivity.WrapSettings(
-    goBack: () -> Unit
+    goBack: () -> Unit,
+    goAbout: () -> Unit,
 ) {
     WrapSettings(
         activity = this,
         goBack = goBack,
+        goAbout = goAbout
     )
 }
 
@@ -29,9 +31,12 @@ internal fun MainActivity.WrapSettings(
 private fun WrapSettings(
     activity: ComponentActivity,
     goBack: () -> Unit,
+    goAbout: () -> Unit,
 ) {
     val walletViewModel by activity.viewModels<WalletViewModel>()
     val settingsViewModel by activity.viewModels<SettingsViewModel>()
+
+    val versionInfo = VersionInfo.new(activity.applicationContext)
 
     val synchronizer = walletViewModel.synchronizer.collectAsStateWithLifecycle().value
     val isBackgroundSyncEnabled = settingsViewModel.isBackgroundSync.collectAsStateWithLifecycle().value
@@ -48,7 +53,7 @@ private fun WrapSettings(
     } else {
         Settings(
             TroubleshootingParameters(
-                isEnabled = BuildConfig.DEBUG,
+                isEnabled = versionInfo.isDebuggable,
                 isBackgroundSyncEnabled = isBackgroundSyncEnabled,
                 isKeepScreenOnDuringSyncEnabled = isKeepScreenOnWhileSyncing,
                 isAnalyticsEnabled = isAnalyticsEnabled,
@@ -59,7 +64,7 @@ private fun WrapSettings(
             onDocumentation = {},
             onPrivacyPolicy = {},
             onFeedback = {},
-            onAbout = {},
+            onAbout = goAbout,
             onRescanWallet = {
                 walletViewModel.rescanBlockchain()
             },

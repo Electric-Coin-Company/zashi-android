@@ -10,11 +10,7 @@ import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import co.electriccoin.zcash.spackle.EmulatorWtfUtil
-import co.electriccoin.zcash.spackle.FirebaseTestLabUtil
-import co.electriccoin.zcash.ui.BuildConfig
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.common.closeDrawerMenu
 import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
@@ -86,23 +82,14 @@ internal fun WrapHome(
     if (null == walletSnapshot) {
         // Display loading indicator
     } else {
-        val context = LocalContext.current
-
-        // We might eventually want to check the debuggable property of the manifest instead
-        // of relying on BuildConfig.
-        val isDebugMenuEnabled = BuildConfig.DEBUG &&
-            !FirebaseTestLabUtil.isFirebaseTestLab(context) &&
-            !EmulatorWtfUtil.isEmulatorWtf(context)
-
         val drawerValues = drawerBackHandler()
 
         Home(
-            walletSnapshot,
+            walletSnapshot = walletSnapshot,
             isUpdateAvailable = updateAvailable,
             isKeepScreenOnDuringSync = isKeepScreenOnWhileSyncing,
             isFiatConversionEnabled = isFiatConversionEnabled,
             isCircularProgressBarEnabled = isCircularProgressBarEnabled,
-            isDebugMenuEnabled = isDebugMenuEnabled,
             goSeedPhrase = goSeedPhrase,
             goSettings = goSettings,
             goSupport = goSupport,
@@ -110,9 +97,6 @@ internal fun WrapHome(
             goReceive = goReceive,
             goSend = goSend,
             goHistory = goHistory,
-            resetSdk = {
-                walletViewModel.resetSdk()
-            },
             drawerState = drawerValues.drawerState,
             scope = drawerValues.scope
         )
