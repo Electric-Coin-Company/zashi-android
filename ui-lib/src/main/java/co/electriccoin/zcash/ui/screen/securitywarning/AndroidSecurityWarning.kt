@@ -10,7 +10,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import co.electriccoin.zcash.configuration.AndroidConfigurationFactory
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.VersionInfo
+import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.screen.securitywarning.util.WebBrowserUtil
 import co.electriccoin.zcash.ui.screen.securitywarning.view.SecurityWarning
 import kotlinx.coroutines.CoroutineScope

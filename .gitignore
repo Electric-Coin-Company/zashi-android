@@ -23,3 +23,4 @@ local.properties
 /.idea/androidTestResultsUserPreferences.xml
 google-services.json
 /.idea/kotlinc.xml
+/.idea/other.xml

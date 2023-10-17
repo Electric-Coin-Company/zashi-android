@@ -12,9 +12,9 @@ import co.electriccoin.zcash.ui.fixture.ConfigInfoFixture
 import co.electriccoin.zcash.ui.fixture.VersionInfoFixture
 import co.electriccoin.zcash.ui.screen.about.AboutTag
 import co.electriccoin.zcash.ui.test.getStringResource
-import org.junit.Assert.assertEquals
 import org.junit.Rule
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class AboutViewTest {
     @get:Rule

@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.common
+package co.electriccoin.zcash.ui.common.model
 
 import android.content.Context
 import android.content.pm.ApplicationInfo
@@ -23,7 +23,7 @@ data class VersionInfo(
 
             return VersionInfo(
                 versionName = packageInfo.versionName ?: "null", // Should only be null during tests
-                versionCode = packageInfo.versionCodeCompat,
+                versionCode = packageInfo.versionCodeCompat, // Should only be 0 during tests
                 isDebuggable = (
                     (0 != applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) &&
                         !FirebaseTestLabUtil.isFirebaseTestLab(context.applicationContext) &&
