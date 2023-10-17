@@ -43,6 +43,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cash.z.ecc.android.sdk.model.PersistableWallet
 import cash.z.ecc.sdk.fixture.PersistableWalletFixture
 import co.electriccoin.zcash.spackle.model.Index
+import co.electriccoin.zcash.ui.BuildConfig
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.SecureScreen
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
@@ -202,7 +203,9 @@ private fun EducationRecoveryPhrase() {
 
 @Composable
 private fun SeedPhrase(persistableWallet: PersistableWallet) {
-    SecureScreen()
+    if (BuildConfig.IS_SECURE_SCREEN_ENABLED) {
+        SecureScreen()
+    }
     Column(
         Modifier
             .verticalScroll(rememberScrollState())
@@ -225,14 +228,16 @@ private data class TestChoice(val originalIndex: Index, val word: String)
  */
 
 @Composable
+@Suppress("LongMethod")
 private fun TestInProgress(
     splitSeedPhrase: ImmutableList<String>,
     selectedTestChoices: TestChoices,
     onChoicesChanged: ((choicesCount: Int) -> Unit)?,
     backupState: BackupState
 ) {
-    SecureScreen()
-
+    if (BuildConfig.IS_SECURE_SCREEN_ENABLED) {
+        SecureScreen()
+    }
     val testChoices = splitSeedPhrase
         .mapIndexed { index, word -> TestChoice(Index(index), word) }
         .filter { testIndices.contains(it.originalIndex) }

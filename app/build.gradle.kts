@@ -207,6 +207,7 @@ val googlePlayServiceKeyFilePath = project.property("ZCASH_GOOGLE_PLAY_SERVICE_K
 androidComponents {
     onVariants { variant ->
         for (output in variant.outputs) {
+            // Configure strict mode in runtime
             variant.buildConfigFields.put(
                 "IS_STRICT_MODE_CRASH_ENABLED",
                 BuildConfigField(
