@@ -6,7 +6,6 @@ import android.content.Context
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cash.z.ecc.android.sdk.WalletInitMode
 import cash.z.ecc.android.sdk.fixture.WalletFixture
@@ -17,10 +16,9 @@ import cash.z.ecc.android.sdk.model.ZcashNetwork
 import cash.z.ecc.android.sdk.model.defaultForNetwork
 import cash.z.ecc.sdk.type.fromResources
 import co.electriccoin.lightwallet.client.model.LightWalletEndpoint
-import co.electriccoin.zcash.spackle.EmulatorWtfUtil
 import co.electriccoin.zcash.spackle.FirebaseTestLabUtil
-import co.electriccoin.zcash.ui.BuildConfig
 import co.electriccoin.zcash.ui.MainActivity
+import co.electriccoin.zcash.ui.common.VersionInfo
 import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
 import co.electriccoin.zcash.ui.configuration.RemoteConfig
 import co.electriccoin.zcash.ui.screen.home.model.OnboardingState
@@ -43,13 +41,7 @@ internal fun WrapOnboarding(
     val walletViewModel by activity.viewModels<WalletViewModel>()
     val onboardingViewModel by activity.viewModels<OnboardingViewModel>()
 
-    val applicationContext = LocalContext.current.applicationContext
-
-    // We might eventually want to check the debuggable property of the manifest instead
-    // of relying on BuildConfig.
-    val isDebugMenuEnabled = BuildConfig.DEBUG &&
-        !FirebaseTestLabUtil.isFirebaseTestLab(applicationContext) &&
-        !EmulatorWtfUtil.isEmulatorWtf(applicationContext)
+    val versionInfo = VersionInfo.new(activity.applicationContext)
 
     // TODO [#383]: https://github.com/zcash/secant-android-wallet/issues/383
     // TODO [#383]: Refactoring of UI state retention into rememberSaveable fields
@@ -63,12 +55,12 @@ internal fun WrapOnboarding(
             // Firebase Test Lab or Google Play pre-launch report, we want to skip creating
             // a new or restoring an existing wallet screens by persisting an existing wallet
             // with a mock seed.
-            if (FirebaseTestLabUtil.isFirebaseTestLab(applicationContext)) {
+            if (FirebaseTestLabUtil.isFirebaseTestLab(activity.applicationContext)) {
                 persistExistingWalletWithSeedPhrase(
-                    applicationContext,
+                    activity.applicationContext,
                     walletViewModel,
                     SeedPhrase.new(WalletFixture.Alice.seedPhrase),
-                    birthday = WalletFixture.Alice.getBirthday(ZcashNetwork.fromResources(applicationContext))
+                    birthday = WalletFixture.Alice.getBirthday(ZcashNetwork.fromResources(activity.applicationContext))
                 )
             } else {
                 onboardingViewModel.setIsImporting(true)
@@ -79,10 +71,10 @@ internal fun WrapOnboarding(
 
         val onFixtureWallet = {
             persistExistingWalletWithSeedPhrase(
-                applicationContext,
+                activity.applicationContext,
                 walletViewModel,
                 SeedPhrase.new(WalletFixture.Alice.seedPhrase),
-                birthday = WalletFixture.Alice.getBirthday(ZcashNetwork.fromResources(applicationContext))
+                birthday = WalletFixture.Alice.getBirthday(ZcashNetwork.fromResources(activity.applicationContext))
             )
         }
 
@@ -100,7 +92,7 @@ internal fun WrapOnboarding(
         } else {
             LongOnboarding(
                 onboardingState = onboardingViewModel.onboardingState,
-                isDebugMenuEnabled = isDebugMenuEnabled,
+                isDebugMenuEnabled = versionInfo.isDebuggable,
                 onImportWallet = onImportWallet,
                 onCreateWallet = onCreateWallet,
                 onFixtureWallet = onFixtureWallet

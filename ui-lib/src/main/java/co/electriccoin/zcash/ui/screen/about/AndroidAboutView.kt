@@ -24,6 +24,7 @@ internal fun WrapAbout(
     goBack: () -> Unit
 ) {
     val configInfo = ConfigInfo.new(AndroidConfigurationFactory.getInstance(activity.applicationContext))
+    val versionInfo = VersionInfo.new(activity.applicationContext)
 
     // Allows an implicit way to force configuration refresh by simply visiting the About screen
     LaunchedEffect(key1 = true) {
@@ -32,7 +33,7 @@ internal fun WrapAbout(
 
     About(
         onBack = goBack,
-        versionInfo = VersionInfo.new(activity.applicationContext),
+        versionInfo = versionInfo,
         configInfo = configInfo
     )
 }

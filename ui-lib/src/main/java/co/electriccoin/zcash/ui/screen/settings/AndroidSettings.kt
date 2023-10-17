@@ -6,8 +6,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import co.electriccoin.zcash.ui.BuildConfig
 import co.electriccoin.zcash.ui.MainActivity
+import co.electriccoin.zcash.ui.common.VersionInfo
 import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
 import co.electriccoin.zcash.ui.configuration.RemoteConfig
 import co.electriccoin.zcash.ui.screen.home.viewmodel.WalletViewModel
@@ -36,6 +36,8 @@ private fun WrapSettings(
     val walletViewModel by activity.viewModels<WalletViewModel>()
     val settingsViewModel by activity.viewModels<SettingsViewModel>()
 
+    val versionInfo = VersionInfo.new(activity.applicationContext)
+
     val synchronizer = walletViewModel.synchronizer.collectAsStateWithLifecycle().value
     val isBackgroundSyncEnabled = settingsViewModel.isBackgroundSync.collectAsStateWithLifecycle().value
     val isKeepScreenOnWhileSyncing = settingsViewModel.isKeepScreenOnWhileSyncing.collectAsStateWithLifecycle().value
@@ -51,7 +53,7 @@ private fun WrapSettings(
     } else {
         Settings(
             TroubleshootingParameters(
-                isEnabled = BuildConfig.DEBUG,
+                isEnabled = versionInfo.isDebuggable,
                 isBackgroundSyncEnabled = isBackgroundSyncEnabled,
                 isKeepScreenOnDuringSyncEnabled = isKeepScreenOnWhileSyncing,
                 isAnalyticsEnabled = isAnalyticsEnabled,
