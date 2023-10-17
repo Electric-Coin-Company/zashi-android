@@ -1,3 +1,5 @@
+import com.android.build.api.variant.BuildConfigField
+
 plugins {
     id("com.android.library")
     kotlin("android")
@@ -48,6 +50,20 @@ android {
                 )
             )
         }
+    }
+}
+
+androidComponents {
+    onVariants { variant ->
+        // Configure SecureScreen for protecting screens with sensitive data in runtime
+        variant.buildConfigFields.put(
+            "IS_SECURE_SCREEN_ENABLED",
+            BuildConfigField(
+                type = "boolean",
+                value = project.property("IS_SECURE_SCREEN_PROTECTION_ACTIVE").toString(),
+                comment = null
+            )
+        )
     }
 }
 

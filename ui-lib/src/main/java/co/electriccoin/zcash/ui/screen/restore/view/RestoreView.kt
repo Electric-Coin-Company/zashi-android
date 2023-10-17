@@ -63,6 +63,7 @@ import cash.z.ecc.android.sdk.model.BlockHeight
 import cash.z.ecc.android.sdk.model.ZcashNetwork
 import cash.z.ecc.sdk.model.SeedPhraseValidation
 import co.electriccoin.zcash.spackle.model.Index
+import co.electriccoin.zcash.ui.BuildConfig
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.SecureScreen
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
@@ -201,7 +202,9 @@ fun RestoreWallet(
 
             when (currentStage) {
                 RestoreStage.Seed -> {
-                    SecureScreen()
+                    if (BuildConfig.IS_SECURE_SCREEN_ENABLED) {
+                        SecureScreen()
+                    }
 
                     RestoreSeedMainContent(
                         userWordList = userWordList,

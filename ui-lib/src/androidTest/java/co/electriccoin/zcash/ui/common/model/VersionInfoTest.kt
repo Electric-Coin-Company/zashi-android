@@ -16,7 +16,6 @@ class VersionInfoTest {
 
         // We expect some VersionInfo object parameters to be empty during the testing
         // isDebuggable is not tested as it's not static during UI testing in CI or locally
-
         assertEquals("null", versionInfo.versionName)
         assertEquals(0, versionInfo.versionCode)
         assertNotEquals(versionInfo.gitSha, "")

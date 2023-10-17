@@ -32,6 +32,7 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import cash.z.ecc.android.sdk.model.PersistableWallet
 import cash.z.ecc.sdk.fixture.PersistableWalletFixture
+import co.electriccoin.zcash.ui.BuildConfig
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.SecureScreen
 import co.electriccoin.zcash.ui.design.component.Body
@@ -111,7 +112,9 @@ private fun ShortNewWalletMainContent(
 
 @Composable
 private fun SeedPhrase(persistableWallet: PersistableWallet) {
-    SecureScreen()
+    if (BuildConfig.IS_SECURE_SCREEN_ENABLED) {
+        SecureScreen()
+    }
     Column {
         Body(stringResource(R.string.new_wallet_short_body))
         ChipGrid(persistableWallet.seedPhrase.split.toPersistentList())
