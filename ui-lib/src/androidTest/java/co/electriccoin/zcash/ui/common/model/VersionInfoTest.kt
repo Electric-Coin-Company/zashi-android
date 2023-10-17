@@ -14,9 +14,8 @@ class VersionInfoTest {
     fun sanity_check_version_info_in_testing() {
         val versionInfo = VersionInfo.new(getAppContext())
 
-        // We expect few of its parameter to be not set during testing
-        // isDebuggable not tested as it's not static during UI testing in CI or locally
-
+        // We expect some VersionInfo object parameters to be empty during the testing
+        // isDebuggable is not tested as it's not static during UI testing in CI or locally
         assertEquals("null", versionInfo.versionName)
         assertEquals(0, versionInfo.versionCode)
         assertNotEquals(versionInfo.gitSha, "")
