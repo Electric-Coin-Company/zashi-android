@@ -26,7 +26,7 @@ import co.electriccoin.zcash.ui.screen.onboarding.view.Callout
 @Preview("DesignGuide")
 @Composable
 private fun ComposablePreview() {
-    ZcashTheme(darkTheme = false) {
+    ZcashTheme(forceDarkMode = false) {
         DesignGuide()
     }
 }

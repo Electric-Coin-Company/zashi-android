@@ -61,7 +61,7 @@ androidComponents {
             BuildConfigField(
                 type = "boolean",
                 value = project.property("IS_SECURE_SCREEN_PROTECTION_ACTIVE").toString(),
-                comment = null
+                comment = "Whether is the SecureScreen sensitive data protection enabled"
             )
         )
     }

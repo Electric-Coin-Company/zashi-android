@@ -1,3 +1,5 @@
+import com.android.build.api.variant.BuildConfigField
+
 plugins {
     id("com.android.library")
     kotlin("android")
@@ -10,6 +12,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     composeOptions {
@@ -24,6 +27,20 @@ android {
                 )
             )
         }
+    }
+}
+
+androidComponents {
+    onVariants { variant ->
+        // Configure dark mode support for the app runtime
+        variant.buildConfigFields.put(
+            "IS_APP_DARK_MODE_ENABLED",
+            BuildConfigField(
+                type = "boolean",
+                value = project.property("IS_DARK_MODE_ENABLED").toString(),
+                comment = "Whether is the app dark mode supported"
+            )
+        )
     }
 }
 

@@ -213,7 +213,7 @@ androidComponents {
                 BuildConfigField(
                     type = "boolean",
                     value = project.property("IS_CRASH_ON_STRICT_MODE_VIOLATION").toString(),
-                    comment = null
+                    comment = "Whether is the strict mode enabled"
                 )
             )
 

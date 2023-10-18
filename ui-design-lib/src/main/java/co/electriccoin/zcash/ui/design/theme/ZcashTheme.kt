@@ -4,6 +4,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import co.electriccoin.zcash.ui.design.BuildConfig
 import co.electriccoin.zcash.ui.design.theme.internal.DarkColorPalette
 import co.electriccoin.zcash.ui.design.theme.internal.DarkExtendedColorPalette
 import co.electriccoin.zcash.ui.design.theme.internal.ExtendedTypography
@@ -15,18 +16,28 @@ import co.electriccoin.zcash.ui.design.theme.internal.LocalTypographies
 import co.electriccoin.zcash.ui.design.theme.internal.PrimaryTypography
 import co.electriccoin.zcash.ui.design.theme.internal.Typography
 
+/**
+ * Commonly used top level app theme definition
+ *
+ * @param forceDarkMode Set this to true to force the app to use the dark mode theme, which is helpful, e.g.,
+ * for the compose previews.
+ */
 @Composable
 fun ZcashTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    forceDarkMode: Boolean = false,
     content: @Composable () -> Unit
 ) {
-    val baseColors = if (darkTheme) {
+    // forceDarkMode takes precedence, then decides, based on the globally defined Gradle property
+    // IS_APP_DARK_MODE_ENABLED, whether the device's system dark mode is on or off.
+    val useDarkMode = forceDarkMode || (BuildConfig.IS_APP_DARK_MODE_ENABLED && isSystemInDarkTheme())
+
+    val baseColors = if (useDarkMode) {
         DarkColorPalette
     } else {
         LightColorPalette
     }
 
-    val extendedColors = if (darkTheme) {
+    val extendedColors = if (useDarkMode) {
         DarkExtendedColorPalette
     } else {
         LightExtendedColorPalette

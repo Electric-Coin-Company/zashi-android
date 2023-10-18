@@ -82,7 +82,7 @@ import kotlin.math.roundToInt
 @Preview("Scan")
 @Composable
 private fun PreviewScan() {
-    ZcashTheme(darkTheme = false) {
+    ZcashTheme(forceDarkMode = false) {
         GradientSurface {
             Scan(
                 snackbarHostState = SnackbarHostState(),

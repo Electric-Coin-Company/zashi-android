@@ -45,7 +45,7 @@ import kotlin.math.roundToInt
 @Preview("Receive")
 @Composable
 private fun ComposablePreview() {
-    ZcashTheme(darkTheme = false) {
+    ZcashTheme(forceDarkMode = false) {
         GradientSurface {
             Receive(
                 walletAddress = runBlocking { WalletAddressFixture.unified() },

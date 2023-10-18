@@ -58,7 +58,7 @@ import kotlinx.coroutines.runBlocking
 @Preview("WalletAddresses")
 @Composable
 private fun ComposablePreview() {
-    ZcashTheme(darkTheme = false) {
+    ZcashTheme(forceDarkMode = false) {
         GradientSurface {
             WalletAddresses(
                 runBlocking { WalletAddressesFixture.new() },
