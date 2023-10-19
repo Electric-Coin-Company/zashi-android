@@ -58,7 +58,7 @@ import java.util.Locale
 @Preview("History")
 @Composable
 private fun ComposablePreview() {
-    ZcashTheme(darkTheme = false) {
+    ZcashTheme(forceDarkMode = false) {
         GradientSurface {
             History(
                 transactionState = TransactionHistorySyncState.Loading,

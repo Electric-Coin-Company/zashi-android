@@ -64,7 +64,7 @@ import kotlinx.coroutines.runBlocking
 @Composable
 @Preview("SendForm")
 private fun PreviewSendForm() {
-    ZcashTheme {
+    ZcashTheme(forceDarkMode = false) {
         GradientSurface {
             Send(
                 mySpendableBalance = ZatoshiFixture.new(),
@@ -85,7 +85,7 @@ private fun PreviewSendForm() {
 @Composable
 @Preview("SendSuccessful")
 private fun PreviewSendSuccessful() {
-    ZcashTheme {
+    ZcashTheme(forceDarkMode = false) {
         GradientSurface {
             SendSuccessful(
                 zecSend = ZecSend(
@@ -102,7 +102,7 @@ private fun PreviewSendSuccessful() {
 @Composable
 @Preview("SendFailure")
 private fun PreviewSendFailure() {
-    ZcashTheme {
+    ZcashTheme(forceDarkMode = false) {
         GradientSurface {
             SendFailure(
                 zecSend = ZecSend(
@@ -119,7 +119,7 @@ private fun PreviewSendFailure() {
 @Composable
 @Preview("SendConfirmation")
 private fun PreviewSendConfirmation() {
-    ZcashTheme {
+    ZcashTheme(forceDarkMode = false) {
         GradientSurface {
             Confirmation(
                 zecSend = ZecSend(

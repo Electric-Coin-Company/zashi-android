@@ -47,7 +47,7 @@ import co.electriccoin.zcash.ui.fixture.VersionInfoFixture
 @Preview("Security Warning")
 @Composable
 private fun SecurityWarningPreview() {
-    ZcashTheme {
+    ZcashTheme(forceDarkMode = false) {
         GradientSurface {
             SecurityWarning(
                 snackbarHostState = SnackbarHostState(),

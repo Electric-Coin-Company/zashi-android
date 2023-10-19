@@ -40,7 +40,7 @@ import co.electriccoin.zcash.ui.screen.update.model.UpdateState
 @Preview("Update")
 @Composable
 private fun PreviewUpdate() {
-    ZcashTheme(darkTheme = false) {
+    ZcashTheme(forceDarkMode = false) {
         GradientSurface {
             Update(
                 snackbarHostState = SnackbarHostState(),

@@ -46,7 +46,7 @@ import co.electriccoin.zcash.ui.screen.settings.model.TroubleshootingParameters
 @Preview("Settings")
 @Composable
 private fun PreviewSettings() {
-    ZcashTheme(darkTheme = false) {
+    ZcashTheme(forceDarkMode = false) {
         GradientSurface {
             Settings(
                 TroubleshootingParameters(

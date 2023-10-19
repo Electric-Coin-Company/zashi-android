@@ -28,7 +28,7 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 @Preview("NotEnoughSpace")
 @Composable
 private fun NotEnoughSpacePreview() {
-    ZcashTheme {
+    ZcashTheme(forceDarkMode = false) {
         GradientSurface {
             NotEnoughSpaceView(
                 storageSpaceRequiredGigabytes = 1,

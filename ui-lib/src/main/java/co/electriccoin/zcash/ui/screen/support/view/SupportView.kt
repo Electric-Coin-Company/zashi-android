@@ -40,7 +40,7 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 @Preview("Support")
 @Composable
 private fun PreviewSupport() {
-    ZcashTheme(darkTheme = false) {
+    ZcashTheme(forceDarkMode = false) {
         GradientSurface {
             Support(
                 onBack = {},
@@ -54,7 +54,7 @@ private fun PreviewSupport() {
 @Preview("Support-Popup")
 @Composable
 private fun PreviewSupportPopup() {
-    ZcashTheme(darkTheme = false) {
+    ZcashTheme(forceDarkMode = false) {
         GradientSurface {
             SupportConfirmationDialog(
                 onConfirm = {},

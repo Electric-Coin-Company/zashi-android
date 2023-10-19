@@ -46,7 +46,7 @@ import kotlinx.coroutines.delay
 @Preview("ShortOnboarding")
 @Composable
 private fun ShortOnboardingComposablePreview() {
-    ZcashTheme(darkTheme = false) {
+    ZcashTheme(forceDarkMode = false) {
         GradientSurface {
             ShortOnboarding(
                 onImportWallet = {},

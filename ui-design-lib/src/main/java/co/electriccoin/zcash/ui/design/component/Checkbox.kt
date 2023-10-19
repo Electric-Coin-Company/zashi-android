@@ -19,7 +19,7 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 @Composable
 private fun ComposablePreview() {
     val checkBoxState = remember { mutableStateOf(false) }
-    ZcashTheme(darkTheme = false) {
+    ZcashTheme(forceDarkMode = false) {
         CheckBox(
             onCheckedChange = { checkBoxState.value = it },
             text = "test",

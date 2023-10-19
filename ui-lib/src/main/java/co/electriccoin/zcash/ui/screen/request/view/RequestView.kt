@@ -48,7 +48,7 @@ import kotlinx.coroutines.runBlocking
 @Preview("Request")
 @Composable
 private fun PreviewRequest() {
-    ZcashTheme(darkTheme = false) {
+    ZcashTheme(forceDarkMode = false) {
         GradientSurface {
             Request(
                 myAddress = runBlocking { WalletAddressFixture.unified() },

@@ -45,7 +45,7 @@ import kotlinx.collections.immutable.toPersistentList
 @Preview(name = "ShortNewWalletBackup", device = Devices.PIXEL_4)
 @Composable
 private fun ComposablePreviewShort() {
-    ZcashTheme(darkTheme = false) {
+    ZcashTheme(forceDarkMode = false) {
         GradientSurface {
             ShortNewWalletBackup(
                 PersistableWalletFixture.new(),

@@ -92,7 +92,7 @@ import kotlinx.coroutines.launch
 @Preview("Restore Wallet")
 @Composable
 private fun PreviewRestore() {
-    ZcashTheme(darkTheme = false) {
+    ZcashTheme(forceDarkMode = false) {
         GradientSurface {
             RestoreWallet(
                 ZcashNetwork.Mainnet,
@@ -123,7 +123,7 @@ private fun PreviewRestore() {
 @Preview("Restore Complete")
 @Composable
 private fun PreviewRestoreComplete() {
-    ZcashTheme(darkTheme = false) {
+    ZcashTheme(forceDarkMode = false) {
         RestoreComplete(
             onComplete = {}
         )
