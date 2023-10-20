@@ -1,5 +1,4 @@
 <resources>
-    <string name="settings_header">Settings</string>
     <string name="settings_back">Back</string>
     <string name="settings_back_content_description">Back</string>
 

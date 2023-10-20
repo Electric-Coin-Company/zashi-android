@@ -1,7 +1,6 @@
 package co.electriccoin.zcash.ui.screen.about.view
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,12 +11,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -38,6 +34,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.design.component.GradientSurface
+import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.ConfigInfoFixture
 import co.electriccoin.zcash.ui.fixture.VersionInfoFixture
@@ -89,40 +86,17 @@ fun About(
 }
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
 private fun AboutTopAppBar(
     onBack: () -> Unit,
     versionInfo: VersionInfo,
     configInfo: ConfigInfo
 ) {
-    CenterAlignedTopAppBar(
-        title = {
-            Text(
-                text = stringResource(id = R.string.about_title).uppercase(),
-                style = ZcashTheme.typography.primary.titleSmall,
-                color = ZcashTheme.colors.screenTitleColor
-            )
-        },
-        navigationIcon = {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                IconButton(
-                    onClick = onBack
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.ArrowBack,
-                        contentDescription = stringResource(R.string.about_back_content_description)
-                    )
-                }
-                Text(
-                    text = stringResource(id = R.string.about_back).uppercase(),
-                    style = ZcashTheme.typography.primary.bodyMedium
-                )
-            }
-        },
-        actions = {
+    SmallTopAppBar(
+        titleText = stringResource(id = R.string.about_title).uppercase(),
+        backText = stringResource(id = R.string.about_back).uppercase(),
+        backContentDescriptionText = stringResource(R.string.about_back_content_description),
+        onBack = onBack,
+        regularActions = {
             if (versionInfo.isDebuggable) {
                 DebugMenu(versionInfo, configInfo)
             }
@@ -178,14 +152,14 @@ fun AboutMainContent(
                 painter = painterResource(id = R.drawable.zashi_logo_without_text),
                 contentDescription = null,
                 Modifier
-                    .height(ZcashTheme.dimens.zcashLogoHeight)
-                    .width(ZcashTheme.dimens.zcashLogoWidth)
+                    .height(ZcashTheme.dimens.inScreenZcashLogoHeight)
+                    .width(ZcashTheme.dimens.inScreenZcashLogoWidth)
             )
             Spacer(modifier = Modifier.width(ZcashTheme.dimens.spacingDefault))
             Image(
                 painter = painterResource(id = R.drawable.zashi_text_logo),
                 contentDescription = null,
-                modifier = Modifier.height(ZcashTheme.dimens.zcashTextLogoHeight)
+                modifier = Modifier.height(ZcashTheme.dimens.inScreenZcashTextLogoHeight)
             )
         }
 

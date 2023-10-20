@@ -49,6 +49,7 @@ import co.electriccoin.zcash.ui.screen.backup.BackupTag
 import co.electriccoin.zcash.ui.screen.home.viewmodel.SecretState
 import co.electriccoin.zcash.ui.screen.restore.RestoreTag
 import co.electriccoin.zcash.ui.screen.restore.viewmodel.RestoreViewModel
+import co.electriccoin.zcash.ui.screen.settings.SettingsTag
 import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -303,7 +304,7 @@ class ScreenshotTest : UiTestPrerequisites() {
         seedScreenshots(resContext, tag, composeTestRule)
 
         navigateTo(NavigationTargets.SETTINGS)
-        settingsScreenshots(resContext, tag, composeTestRule)
+        settingsScreenshots(tag, composeTestRule)
 
         navigateTo(NavigationTargets.SUPPORT)
         supportScreenshots(resContext, tag, composeTestRule)
@@ -542,8 +543,8 @@ private fun homeScreenshots(
     }
 }
 
-private fun settingsScreenshots(resContext: Context, tag: String, composeTestRule: ComposeTestRule) {
-    composeTestRule.onNode(hasText(resContext.getString(R.string.settings_header), ignoreCase = true)).also {
+private fun settingsScreenshots(tag: String, composeTestRule: ComposeTestRule) {
+    composeTestRule.onNode(hasTestTag(SettingsTag.SETTINGS_TOP_APP_BAR)).also {
         it.assertExists()
     }
 
