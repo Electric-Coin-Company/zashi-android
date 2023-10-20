@@ -11,16 +11,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -41,6 +35,7 @@ import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.CheckBox
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
+import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.VersionInfoFixture
 
@@ -97,27 +92,13 @@ fun SecurityWarning(
 }
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
 private fun SecurityWarningTopAppBar(
     onBack: () -> Unit,
 ) {
-    TopAppBar(
-        title = {
-            Text(
-                text = stringResource(R.string.security_warning_back).uppercase(),
-                style = ZcashTheme.typography.primary.bodyMedium
-            )
-        },
-        navigationIcon = {
-            IconButton(
-                onClick = onBack
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = stringResource(R.string.security_warning_back_content_description)
-                )
-            }
-        }
+    SmallTopAppBar(
+        backText = stringResource(R.string.security_warning_back).uppercase(),
+        backContentDescriptionText = stringResource(R.string.security_warning_back_content_description),
+        onBack = onBack,
     )
 }
 

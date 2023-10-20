@@ -20,14 +20,21 @@ data class Dimens(
     val spacingHuge: Dp,
 
     // List of custom spacings:
+
+    // Button:
     val shadowOffsetX: Dp,
     val shadowOffsetY: Dp,
     val shadowSpread: Dp,
     val defaultButtonWidth: Dp,
     val defaultButtonHeight: Dp,
-    val zcashLogoHeight: Dp,
-    val zcashLogoWidth: Dp,
-    val zcashTextLogoHeight: Dp
+
+    // TopAppBar:
+    val topAppBarZcashLogoHeight: Dp,
+
+    // In screen custom spacings:
+    val inScreenZcashLogoHeight: Dp,
+    val inScreenZcashLogoWidth: Dp,
+    val inScreenZcashTextLogoHeight: Dp
 )
 
 private val defaultDimens = Dimens(
@@ -44,9 +51,10 @@ private val defaultDimens = Dimens(
     shadowSpread = 10.dp,
     defaultButtonWidth = 230.dp,
     defaultButtonHeight = 50.dp,
-    zcashLogoHeight = 100.dp,
-    zcashLogoWidth = 60.dp,
-    zcashTextLogoHeight = 30.dp
+    topAppBarZcashLogoHeight = 24.dp,
+    inScreenZcashLogoHeight = 100.dp,
+    inScreenZcashLogoWidth = 60.dp,
+    inScreenZcashTextLogoHeight = 30.dp
 )
 
 private val normalDimens = defaultDimens

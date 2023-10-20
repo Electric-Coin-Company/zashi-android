@@ -53,7 +53,7 @@ internal object Dark {
     val dangerous = Color(0xFFEC0008)
     val onDangerous = Color(0xFFFFFFFF)
 
-    val reference = Color(0xFF10A5FF)
+    val reference = Color(0xFFFFFFFF)
 
     val disabledButtonColor = Color(0xFFB7B7B7)
     val disabledButtonTextColor = Color(0xFFDDDDDD)
@@ -117,7 +117,7 @@ internal object Light {
     val dangerous = Color(0xFFEC0008)
     val onDangerous = Color(0xFFFFFFFF)
 
-    val reference = Color(0xFF10A5FF)
+    val reference = Color(0xFF000000)
 
     val disabledButtonColor = Color(0xFFB7B7B7)
     val disabledButtonTextColor = Color(0xFFDDDDDD)

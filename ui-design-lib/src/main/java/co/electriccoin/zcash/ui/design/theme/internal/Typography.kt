@@ -78,6 +78,18 @@ internal val SecondaryTypography = Typography(
         fontWeight = FontWeight.SemiBold,
         fontSize = 30.sp
     ),
+    headlineMedium = TextStyle(
+        fontFamily = ArchivoFontFamily,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 25.sp,
+        textAlign = TextAlign.Center
+    ),
+    headlineSmall = TextStyle(
+        fontFamily = ArchivoFontFamily,
+        fontWeight = FontWeight.Bold,
+        fontSize = 18.sp,
+        textAlign = TextAlign.Center
+    ),
     bodyLarge = TextStyle(
         fontFamily = ArchivoFontFamily,
         fontWeight = FontWeight.Normal,
@@ -92,12 +104,6 @@ internal val SecondaryTypography = Typography(
         fontFamily = ArchivoFontFamily,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp
-    ),
-    headlineMedium = TextStyle(
-        fontFamily = ArchivoFontFamily,
-        fontWeight = FontWeight.SemiBold,
-        fontSize = 25.sp,
-        textAlign = TextAlign.Center
     )
 )
 

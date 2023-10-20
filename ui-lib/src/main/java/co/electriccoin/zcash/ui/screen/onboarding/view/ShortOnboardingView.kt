@@ -121,8 +121,8 @@ private fun OnboardingMainContent(
             painterResource(id = R.drawable.zashi_logo_without_text),
             stringResource(R.string.zcash_logo_onboarding_content_description),
             Modifier
-                .height(ZcashTheme.dimens.zcashLogoHeight)
-                .width(ZcashTheme.dimens.zcashLogoWidth)
+                .height(ZcashTheme.dimens.inScreenZcashLogoHeight)
+                .width(ZcashTheme.dimens.inScreenZcashLogoWidth)
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))

@@ -1,9 +1,7 @@
 package co.electriccoin.zcash.ui.screen.settings.view
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,14 +10,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.outlined.Cancel
 import androidx.compose.material.icons.outlined.CheckCircle
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -38,6 +33,7 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
+import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme.dimens
 import co.electriccoin.zcash.ui.screen.settings.SettingsTag
@@ -117,7 +113,6 @@ fun Settings(
 }
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
 @Suppress("LongParameterList")
 private fun SettingsTopAppBar(
     troubleshootingParameters: TroubleshootingParameters,
@@ -127,34 +122,12 @@ private fun SettingsTopAppBar(
     onRescanWallet: () -> Unit,
     onBack: () -> Unit,
 ) {
-    CenterAlignedTopAppBar(
-        title = {
-            Text(
-                text = stringResource(id = R.string.settings_header).uppercase(),
-                style = ZcashTheme.typography.primary.titleSmall,
-                color = ZcashTheme.colors.screenTitleColor
-            )
-        },
-        navigationIcon = {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                IconButton(
-                    onClick = onBack
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.ArrowBack,
-                        contentDescription = stringResource(R.string.settings_back_content_description)
-                    )
-                }
-                Text(
-                    text = stringResource(id = R.string.settings_back).uppercase(),
-                    style = ZcashTheme.typography.primary.bodyMedium
-                )
-            }
-        },
-        actions = {
+    SmallTopAppBar(
+        backText = stringResource(id = R.string.settings_back).uppercase(),
+        backContentDescriptionText = stringResource(R.string.settings_back_content_description),
+        onBack = onBack,
+        showTitleLogo = true,
+        regularActions = {
             if (troubleshootingParameters.isEnabled) {
                 TroubleshootingMenu(
                     troubleshootingParameters,
@@ -164,7 +137,8 @@ private fun SettingsTopAppBar(
                     onRescanWallet
                 )
             }
-        }
+        },
+        modifier = Modifier.testTag(SettingsTag.SETTINGS_TOP_APP_BAR)
     )
 }
 

@@ -10,6 +10,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
@@ -118,12 +119,19 @@ fun ListHeader(
 fun Reference(
     text: String,
     modifier: Modifier = Modifier,
+    textAlign: TextAlign = TextAlign.Start,
     onClick: () -> Unit
 ) {
     ClickableText(
         text = AnnotatedString(text),
         style = MaterialTheme.typography.bodyLarge
-            .merge(TextStyle(color = ZcashTheme.colors.reference)),
+            .merge(
+                TextStyle(
+                    color = ZcashTheme.colors.reference,
+                    textAlign = textAlign,
+                    textDecoration = TextDecoration.Underline
+                )
+            ),
         modifier = modifier,
         onClick = {
             onClick()
