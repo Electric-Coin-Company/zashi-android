@@ -37,6 +37,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import cash.z.ecc.android.sdk.fixture.WalletFixture
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.GradientSurface
@@ -77,7 +78,7 @@ fun LongOnboarding(
     isDebugMenuEnabled: Boolean,
     onImportWallet: () -> Unit,
     onCreateWallet: () -> Unit,
-    onFixtureWallet: () -> Unit
+    onFixtureWallet: (seed: String) -> Unit
 ) {
     val currentStage = onboardingState.current.collectAsStateWithLifecycle().value
     Scaffold(
@@ -100,7 +101,7 @@ fun LongOnboarding(
 private fun OnboardingTopAppBar(
     onboardingState: OnboardingState,
     isDebugMenuEnabled: Boolean,
-    onFixtureWallet: () -> Unit
+    onFixtureWallet: (String) -> Unit
 ) {
     val currentStage = onboardingState.current.collectAsStateWithLifecycle().value
 
@@ -129,7 +130,9 @@ private fun OnboardingTopAppBar(
 }
 
 @Composable
-private fun DebugMenu(onFixtureWallet: () -> Unit) {
+private fun DebugMenu(
+    onFixtureWallet: (String) -> Unit
+) {
     Column {
         var expanded by rememberSaveable { mutableStateOf(false) }
         IconButton(onClick = { expanded = true }) {
@@ -141,8 +144,12 @@ private fun DebugMenu(onFixtureWallet: () -> Unit) {
             onDismissRequest = { expanded = false }
         ) {
             DropdownMenuItem(
-                text = { Text("Import wallet with fixture seed phrase") },
-                onClick = onFixtureWallet
+                text = { Text("Import Alice's wallet") },
+                onClick = { onFixtureWallet(WalletFixture.Alice.seedPhrase) }
+            )
+            DropdownMenuItem(
+                text = { Text("Import Ben's wallet") },
+                onClick = { onFixtureWallet(WalletFixture.Ben.seedPhrase) }
             )
         }
     }

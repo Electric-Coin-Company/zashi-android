@@ -69,11 +69,11 @@ internal fun WrapOnboarding(
             onboardingViewModel.setShowWelcomeAnimation(false)
         }
 
-        val onFixtureWallet = {
+        val onFixtureWallet: (String) -> Unit = { seed ->
             persistExistingWalletWithSeedPhrase(
                 activity.applicationContext,
                 walletViewModel,
-                SeedPhrase.new(WalletFixture.Alice.seedPhrase),
+                SeedPhrase.new(seed),
                 birthday = WalletFixture.Alice.getBirthday(ZcashNetwork.fromResources(activity.applicationContext))
             )
         }
@@ -86,8 +86,10 @@ internal fun WrapOnboarding(
         if (ConfigurationEntries.IS_SHORT_ONBOARDING_UX.getValue(RemoteConfig.current)) {
             ShortOnboarding(
                 showWelcomeAnim = showWelcomeAnimation,
+                isDebugMenuEnabled = versionInfo.isDebuggable,
                 onImportWallet = onImportWallet,
                 onCreateWallet = onCreateWallet,
+                onFixtureWallet = onFixtureWallet
             )
         } else {
             LongOnboarding(
