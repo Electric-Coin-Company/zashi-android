@@ -9,13 +9,11 @@ import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.common.LocalScreenSecurity
 import co.electriccoin.zcash.ui.common.ScreenSecurity
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertEquals
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class SeedViewSecuredScreenTest : UiTestPrerequisites() {
     @get:Rule
     val composeTestRule = createComposeRule()
