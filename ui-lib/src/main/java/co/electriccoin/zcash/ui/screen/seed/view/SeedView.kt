@@ -22,9 +22,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import cash.z.ecc.android.sdk.model.PersistableWallet
 import cash.z.ecc.sdk.fixture.PersistableWalletFixture
-import co.electriccoin.zcash.ui.BuildConfig
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.SecureScreen
+import co.electriccoin.zcash.ui.common.shouldSecureScreen
 import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.ChipGrid
 import co.electriccoin.zcash.ui.design.component.GradientSurface
@@ -56,7 +56,7 @@ fun Seed(
     onBack: () -> Unit,
     onCopyToClipboard: () -> Unit
 ) {
-    if (BuildConfig.IS_SECURE_SCREEN_ENABLED) {
+    if (shouldSecureScreen) {
         SecureScreen()
     }
     Scaffold(topBar = {

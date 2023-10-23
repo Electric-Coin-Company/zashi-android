@@ -7,6 +7,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.filters.MediumTest
+import androidx.test.filters.SmallTest
 import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,10 +16,29 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class ScreenSecurityTest : UiTestPrerequisites() {
     @get:Rule
     val composeTestRule = createComposeRule()
+
+    @Test
+    @SmallTest
+    fun sanity_is_running_test_check() {
+        assertTrue(
+            actual = isRunningTest,
+            message = "isRunningTest must always be TRUE while running from an automated Android UI test."
+        )
+    }
+
+    @Test
+    @SmallTest
+    fun sanity_should_secure_screen_check() {
+        assertTrue(
+            actual = shouldSecureScreen,
+            message = "shouldSecureScreen must always be TRUE while running from an automated Android UI test."
+        )
+    }
 
     @Test
     @MediumTest

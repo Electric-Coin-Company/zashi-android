@@ -32,9 +32,9 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import cash.z.ecc.android.sdk.model.PersistableWallet
 import cash.z.ecc.sdk.fixture.PersistableWalletFixture
-import co.electriccoin.zcash.ui.BuildConfig
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.SecureScreen
+import co.electriccoin.zcash.ui.common.shouldSecureScreen
 import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.ChipGrid
 import co.electriccoin.zcash.ui.design.component.GradientSurface
@@ -59,7 +59,6 @@ private fun ComposablePreviewShort() {
 /**
  * @param onComplete Callback when the user has confirmed viewing the seed phrase.
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShortNewWalletBackup(
     wallet: PersistableWallet,
@@ -112,7 +111,7 @@ private fun ShortNewWalletMainContent(
 
 @Composable
 private fun SeedPhrase(persistableWallet: PersistableWallet) {
-    if (BuildConfig.IS_SECURE_SCREEN_ENABLED) {
+    if (shouldSecureScreen) {
         SecureScreen()
     }
     Column {

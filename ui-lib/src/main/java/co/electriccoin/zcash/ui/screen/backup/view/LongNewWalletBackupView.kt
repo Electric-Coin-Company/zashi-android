@@ -43,9 +43,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cash.z.ecc.android.sdk.model.PersistableWallet
 import cash.z.ecc.sdk.fixture.PersistableWalletFixture
 import co.electriccoin.zcash.spackle.model.Index
-import co.electriccoin.zcash.ui.BuildConfig
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.SecureScreen
+import co.electriccoin.zcash.ui.common.shouldSecureScreen
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.CHIP_GRID_ROW_SIZE
@@ -203,7 +203,7 @@ private fun EducationRecoveryPhrase() {
 
 @Composable
 private fun SeedPhrase(persistableWallet: PersistableWallet) {
-    if (BuildConfig.IS_SECURE_SCREEN_ENABLED) {
+    if (shouldSecureScreen) {
         SecureScreen()
     }
     Column(
@@ -235,7 +235,7 @@ private fun TestInProgress(
     onChoicesChanged: ((choicesCount: Int) -> Unit)?,
     backupState: BackupState
 ) {
-    if (BuildConfig.IS_SECURE_SCREEN_ENABLED) {
+    if (shouldSecureScreen) {
         SecureScreen()
     }
     val testChoices = splitSeedPhrase
