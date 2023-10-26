@@ -41,6 +41,10 @@ dependencies {
     val rootProperties = getRootProperties()
 
     implementation("com.android.tools.build:gradle:${rootProperties.getProperty("ANDROID_GRADLE_PLUGIN_VERSION")}")
+    implementation("com.google.apis:google-api-services-androidpublisher:${rootProperties.getProperty
+         ("PLAY_PUBLISHER_API_VERSION")}")
+    implementation("com.google.auth:google-auth-library-oauth2-http:${rootProperties.getProperty
+         ("GOOGLE_AUTH_LIB_JAVA_VERSION")}")
     implementation("io.gitlab.arturbosch.detekt:detekt-gradle-plugin:${rootProperties.getProperty("DETEKT_VERSION")}")
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${rootProperties.getProperty("KOTLIN_VERSION")}")
     implementation("wtf.emulator:gradle-plugin:${rootProperties.getProperty("EMULATOR_WTF_GRADLE_PLUGIN_VERSION")}")

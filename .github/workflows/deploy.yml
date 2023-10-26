@@ -1,6 +1,8 @@
 # Expected secrets
 # GOOGLE_PLAY_CLOUD_PROJECT - Google Cloud project associated with Google Play
 # GOOGLE_PLAY_SERVICE_ACCOUNT - Email address of service account
+# GOOGLE_PLAY_SERVICE_ACCOUNT_KEY - Google Play Service Account key to authorize on Google Play
+# GOOGLE_PLAY_PUBLISHER_API_KEY - Google Play Publisher API key to authorize the publisher on Google Play API
 # GOOGLE_PLAY_WORKLOAD_IDENTITY_PROVIDER - Workload identity provider to generate temporary service account key
 # UPLOAD_KEYSTORE_BASE_64 - The upload signing key for the app
 # UPLOAD_KEYSTORE_PASSWORD - The password for UPLOAD_KEYSTORE_BASE_64
@@ -54,9 +56,17 @@ jobs:
       - id: check_secrets
         env:
           GOOGLE_PLAY_CLOUD_PROJECT: ${{ secrets.GOOGLE_PLAY_CLOUD_PROJECT }}
-          GOOGLE_PLAY_SERVICE_ACCOUNT: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT }}
-          GOOGLE_PLAY_WORKLOAD_IDENTITY_PROVIDER: ${{ secrets.GOOGLE_PLAY_WORKLOAD_IDENTITY_PROVIDER }}
-        if: "${{ env.GOOGLE_PLAY_CLOUD_PROJECT != '' && env.GOOGLE_PLAY_SERVICE_ACCOUNT != '' && env.GOOGLE_PLAY_WORKLOAD_IDENTITY_PROVIDER != '' }}"
+          # TODO [#1033]: Use token-based authorization on Google Play for automated deployment
+          # TODO [#1033]: https://github.com/zcash/secant-android-wallet/issues/1033
+          # Note that these properties are not currently used due to #1033
+          # GOOGLE_PLAY_SERVICE_ACCOUNT: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT }}
+          # GOOGLE_PLAY_WORKLOAD_IDENTITY_PROVIDER: ${{ secrets.GOOGLE_PLAY_WORKLOAD_IDENTITY_PROVIDER }}
+          GOOGLE_PLAY_SERVICE_ACCOUNT_KEY: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_KEY }}
+          GOOGLE_PLAY_PUBLISHER_API_KEY: ${{ secrets.GOOGLE_PLAY_PUBLISHER_API_KEY }}
+        if: "${{ env.GOOGLE_PLAY_CLOUD_PROJECT != '' &&  
+          env.GOOGLE_PLAY_SERVICE_ACCOUNT_KEY != '' && 
+          env.GOOGLE_PLAY_PUBLISHER_API_KEY != '' 
+        }}"
         run: echo "defined=true" >> $GITHUB_OUTPUT
 
   build_and_deploy:
@@ -71,6 +81,9 @@ jobs:
       - name: Checkout
         timeout-minutes: 1
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+        with:
+          ref: main
+          fetch-depth: 0  # To fetch all commits
       - name: Set up Java
         uses: actions/setup-java@0ab4596768b603586c0de567f2430c30f5b0d2b0
         timeout-minutes: 1
@@ -94,6 +107,10 @@ jobs:
           echo ${FIREBASE_DEBUG_JSON_BASE64} | base64 --decode > app/src/debug/google-services.json
           echo ${FIREBASE_RELEASE_JSON_BASE64} | base64 --decode > app/src/release/google-services.json
       - name: Authenticate to Google Cloud for Google Play
+        # TODO [#1033]: Use token-based authorization on Google Play for automated deployment
+        # TODO [#1033]: https://github.com/zcash/secant-android-wallet/issues/1033
+        # Note that this step is not currently used due to #1033
+        if: false
         id: auth_google_play
         uses: google-github-actions/auth@35b0e87d162680511bf346c299f71c9c5c379033
         with:
@@ -117,14 +134,21 @@ jobs:
         timeout-minutes: 25
         env:
           ORG_GRADLE_PROJECT_ZCASH_SUPPORT_EMAIL_ADDRESS: ${{ vars.SUPPORT_EMAIL_ADDRESS }}
-          ORG_GRADLE_PROJECT_ZCASH_GOOGLE_PLAY_SERVICE_KEY_FILE_PATH: ${{ steps.auth_google_play.outputs.credentials_file_path }}
+          # TODO [#1033]: Use token-based authorization on Google Play for automated deployment
+          # TODO [#1033]: https://github.com/zcash/secant-android-wallet/issues/1033
+          # Note that these properties are not currently used due to #1033
+          # ORG_GRADLE_PROJECT_ZCASH_GOOGLE_PLAY_SERVICE_ACCOUNT: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT }}
+          # ORG_GRADLE_PROJECT_ZCASH_GOOGLE_PLAY_SERVICE_KEY_FILE_PATH: ${{ steps.auth_google_play.outputs.credentials_file_path }}
+          ORG_GRADLE_PROJECT_ZCASH_GOOGLE_PLAY_SERVICE_ACCOUNT_KEY: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_KEY }}
+          ORG_GRADLE_PROJECT_ZCASH_GOOGLE_PLAY_PUBLISHER_API_KEY: ${{ secrets.GOOGLE_PLAY_PUBLISHER_API_KEY }}
+          ORG_GRADLE_PROJECT_ZCASH_GOOGLE_PLAY_DEPLOY_TRACK: internal
+          ORG_GRADLE_PROJECT_ZCASH_GOOGLE_PLAY_DEPLOY_STATUS: completed
           ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEYSTORE_PATH: ${{ format('{0}/release.jks', env.home) }}
           ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEYSTORE_PASSWORD: ${{ secrets.UPLOAD_KEYSTORE_PASSWORD }}
           ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEY_ALIAS: ${{ secrets.UPLOAD_KEY_ALIAS }}
           ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEY_ALIAS_PASSWORD: ${{ secrets.UPLOAD_KEY_ALIAS_PASSWORD }}
-          ORG_GRADLE_PROJECT_ZCASH_GOOGLE_PLAY_DEPLOY_MODE: deploy
         run: |
-          ./gradlew :app:assembleDebug :app:publishBundle :app:packageZcashmainnetReleaseUniversalApk
+          ./gradlew :app:publishToGooglePlay
       - name: Collect Artifacts
         timeout-minutes: 1
         env:
@@ -133,11 +157,11 @@ jobs:
           MAPPINGS_ZIP_PATH: ${{ format('{0}/artifacts/mappings.zip', env.home) }}
         run: |
           mkdir ${ARTIFACTS_DIR_PATH}
-          zip -r ${BINARIES_ZIP_PATH} . -i app/build/outputs/apk/\*/\*.apk app/build/outputs/universal_apk/\*/\*.apk app/build/outputs/bundle/\*/\*.aab
+          zip -r ${BINARIES_ZIP_PATH} . -i app/build/outputs/apk/\*/\*.apk app/build/outputs/bundle/\*/\*.aab
           zip -r ${MAPPINGS_ZIP_PATH} . -i app/build/outputs/mapping/\*/mapping.txt
       - name: Upload Artifacts
         uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32
-        timeout-minutes: 1
+        timeout-minutes: 5
         with:
           name: Binaries
           path: ~/artifacts
