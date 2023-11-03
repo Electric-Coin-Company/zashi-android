@@ -2,6 +2,7 @@
 
 package co.electriccoin.zcash.ui.screen.restore.view
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -11,6 +12,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -156,6 +159,7 @@ fun RestoreWallet(
     val currentStage = restoreState.current.collectAsStateWithLifecycle().value
 
     Scaffold(
+        modifier = Modifier.navigationBarsPadding(),
         topBar = {
             RestoreTopAppBar(
                 onBack = {
@@ -177,9 +181,11 @@ fun RestoreWallet(
                         parseResult = parseResult,
                         setTextState = { textState = it },
                         focusRequester = focusRequester,
-                        modifier = Modifier.padding(
-                            bottom = ZcashTheme.dimens.spacingHuge
-                        ).fillMaxWidth()
+                        modifier = Modifier
+                            .imePadding()
+                            .navigationBarsPadding()
+                            .animateContentSize()
+                            .fillMaxWidth()
                     )
                 }
                 RestoreStage.Birthday -> {
