@@ -40,8 +40,10 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import cash.z.ecc.android.sdk.fixture.TransactionOverviewFixture
 import cash.z.ecc.android.sdk.model.TransactionOverview
 import cash.z.ecc.android.sdk.model.TransactionState
+import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.toZecString
 import cash.z.ecc.sdk.type.ZcashCurrency
 import co.electriccoin.zcash.ui.R
@@ -51,17 +53,38 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.history.HistoryTag
 import co.electriccoin.zcash.ui.screen.history.state.TransactionHistorySyncState
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-@Preview("History")
 @Composable
+@Preview("History")
 private fun ComposablePreview() {
     ZcashTheme(forceDarkMode = false) {
         GradientSurface {
             History(
                 transactionState = TransactionHistorySyncState.Loading,
+                goBack = {}
+            )
+        }
+    }
+}
+
+@Composable
+@Preview("History List")
+private fun ComposableHistoryListPreview() {
+    ZcashTheme(forceDarkMode = false) {
+        GradientSurface {
+            History(
+                transactionState = TransactionHistorySyncState.Syncing(
+                    @Suppress("MagicNumber")
+                    persistentListOf(
+                        TransactionOverviewFixture.new(netValue = Zatoshi(100000000)),
+                        TransactionOverviewFixture.new(netValue = Zatoshi(200000000)),
+                        TransactionOverviewFixture.new(netValue = Zatoshi(300000000)),
+                    )
+                ),
                 goBack = {}
             )
         }
