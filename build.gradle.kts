@@ -103,6 +103,7 @@ tasks {
             "ZCASH_SUPPORT_EMAIL_ADDRESS" to "support@electriccoin.co",
             "IS_SECURE_SCREEN_PROTECTION_ACTIVE" to "true",
             "IS_DARK_MODE_ENABLED" to "false",
+            "IS_SCREEN_ROTATION_ENABLED" to "false",
 
             "ZCASH_DEBUG_KEYSTORE_PATH" to "",
             "ZCASH_RELEASE_KEYSTORE_PATH" to "",

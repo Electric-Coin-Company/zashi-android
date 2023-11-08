@@ -64,6 +64,15 @@ androidComponents {
                 comment = "Whether is the SecureScreen sensitive data protection enabled"
             )
         )
+        // To configure screen orientation in runtime
+        variant.buildConfigFields.put(
+            "IS_SCREEN_ROTATION_ENABLED",
+            BuildConfigField(
+                type = "boolean",
+                value = project.property("IS_SCREEN_ROTATION_ENABLED").toString(),
+                comment = "Whether is the screen rotation enabled, otherwise, it's locked in the portrait mode"
+            )
+        )
     }
 }
 

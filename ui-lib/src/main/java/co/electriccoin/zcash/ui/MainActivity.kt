@@ -1,5 +1,7 @@
 package co.electriccoin.zcash.ui
 
+import android.annotation.SuppressLint
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.os.SystemClock
 import androidx.activity.ComponentActivity
@@ -66,11 +68,25 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        setAllowedScreenOrientation()
+
         setupSplashScreen()
 
         setupUiContent()
 
         monitorForBackgroundSync()
+    }
+
+    /**
+     * Sets whether the screen rotation is enabled or screen orientation is locked in the portrait mode.
+     */
+    @SuppressLint("SourceLockedOrientationActivity")
+    private fun setAllowedScreenOrientation() {
+        requestedOrientation = if (BuildConfig.IS_SCREEN_ROTATION_ENABLED) {
+            ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+        } else {
+            ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        }
     }
 
     private fun setupSplashScreen() {
