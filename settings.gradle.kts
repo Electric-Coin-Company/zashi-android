@@ -233,7 +233,6 @@ dependencyResolutionManagement {
             library("zcash-sdk", "cash.z.ecc.android:zcash-android-sdk:$zcashSdkVersion")
             library("zcash-sdk-incubator", "cash.z.ecc.android:zcash-android-sdk-incubator:$zcashSdkVersion")
             library("zcash-bip39", "cash.z.ecc.android:kotlin-bip39:$zcashBip39Version")
-            library("zcash-walletplgns", "cash.z.ecc.android:zcash-android-wallet-plugins:$zcashBip39Version")
             library("zxing", "com.google.zxing:core:$zxingVersion")
 
             // Test libraries
