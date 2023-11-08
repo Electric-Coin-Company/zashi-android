@@ -9,7 +9,7 @@ object WebBrowserUtil {
         Intent.FLAG_ACTIVITY_NEW_TASK or
         Intent.FLAG_ACTIVITY_MULTIPLE_TASK
 
-    const val ZCASH_PRIVACY_POLICY_URI = "https://z.cash/privacy-policy/"
+    const val ZCASH_PRIVACY_POLICY_URI = "https://z.cash/privacy-policy/" // NON-NLS
 
     /**
      * Returns new action view app intent. We assume the a web browser app is installed.

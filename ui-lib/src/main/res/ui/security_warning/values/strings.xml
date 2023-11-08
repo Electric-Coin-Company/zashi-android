@@ -12,7 +12,6 @@
     <string name="security_warning_confirm">confirm</string>
     <string name="security_warning_acknowledge">I acknowledge</string>
     <string name="security_warning_back_content_description">Back</string>
-    <string name="zcash_logo_content_description">Zcash logo</string>
     <string name="security_warning_header">Security warning:</string>
     <string name="security_warning_back">back</string>
     <string name="security_warning_unable_to_web_browser">Unable to find a web browser app.</string>

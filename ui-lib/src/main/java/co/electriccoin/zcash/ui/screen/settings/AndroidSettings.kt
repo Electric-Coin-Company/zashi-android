@@ -17,13 +17,15 @@ import co.electriccoin.zcash.ui.screen.settings.viewmodel.SettingsViewModel
 
 @Composable
 internal fun MainActivity.WrapSettings(
-    goBack: () -> Unit,
     goAbout: () -> Unit,
+    goBack: () -> Unit,
+    goExportPrivateData: () -> Unit,
 ) {
     WrapSettings(
         activity = this,
+        goAbout = goAbout,
         goBack = goBack,
-        goAbout = goAbout
+        goExportPrivateData = goExportPrivateData
     )
 }
 
@@ -32,6 +34,7 @@ private fun WrapSettings(
     activity: ComponentActivity,
     goBack: () -> Unit,
     goAbout: () -> Unit,
+    goExportPrivateData: () -> Unit,
 ) {
     val walletViewModel by activity.viewModels<WalletViewModel>()
     val settingsViewModel by activity.viewModels<SettingsViewModel>()
@@ -65,6 +68,7 @@ private fun WrapSettings(
             onPrivacyPolicy = {},
             onFeedback = {},
             onAbout = goAbout,
+            onExportPrivateData = goExportPrivateData,
             onRescanWallet = {
                 walletViewModel.rescanBlockchain()
             },

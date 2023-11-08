@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.fixture
 
+import android.content.Context
 import cash.z.ecc.android.sdk.CloseableSynchronizer
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.block.processor.CompactBlockProcessor
@@ -148,6 +149,10 @@ internal class MockSynchronizer : CloseableSynchronizer {
     }
 
     override suspend fun validateConsensusBranch(): ConsensusMatchType {
+        error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
+    }
+
+    override suspend fun getExistingDataDbFilePath(context: Context, network: ZcashNetwork, alias: String): String {
         error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
 

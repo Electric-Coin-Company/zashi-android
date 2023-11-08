@@ -32,6 +32,7 @@ android {
                     "src/main/res/ui/about",
                     "src/main/res/ui/backup",
                     "src/main/res/ui/common",
+                    "src/main/res/ui/export_data",
                     "src/main/res/ui/history",
                     "src/main/res/ui/home",
                     "src/main/res/ui/onboarding",

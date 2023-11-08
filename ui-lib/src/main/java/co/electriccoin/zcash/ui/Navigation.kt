@@ -12,6 +12,7 @@ import co.electriccoin.zcash.ui.NavigationArguments.SEND_AMOUNT
 import co.electriccoin.zcash.ui.NavigationArguments.SEND_MEMO
 import co.electriccoin.zcash.ui.NavigationArguments.SEND_RECIPIENT_ADDRESS
 import co.electriccoin.zcash.ui.NavigationTargets.ABOUT
+import co.electriccoin.zcash.ui.NavigationTargets.EXPORT_PRIVATE_DATA
 import co.electriccoin.zcash.ui.NavigationTargets.HISTORY
 import co.electriccoin.zcash.ui.NavigationTargets.HOME
 import co.electriccoin.zcash.ui.NavigationTargets.RECEIVE
@@ -26,6 +27,7 @@ import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
 import co.electriccoin.zcash.ui.configuration.RemoteConfig
 import co.electriccoin.zcash.ui.screen.about.WrapAbout
 import co.electriccoin.zcash.ui.screen.address.WrapWalletAddresses
+import co.electriccoin.zcash.ui.screen.exportdata.WrapExportPrivateData
 import co.electriccoin.zcash.ui.screen.history.WrapHistory
 import co.electriccoin.zcash.ui.screen.home.WrapHome
 import co.electriccoin.zcash.ui.screen.receive.WrapReceive
@@ -50,13 +52,13 @@ internal fun MainActivity.Navigation() {
     NavHost(navController = navController, startDestination = HOME) {
         composable(HOME) {
             WrapHome(
+                goAbout = { navController.navigateJustOnce(ABOUT) },
+                goHistory = { navController.navigateJustOnce(HISTORY) },
+                goReceive = { navController.navigateJustOnce(RECEIVE) },
                 goSeedPhrase = { navController.navigateJustOnce(SEED) },
+                goSend = { navController.navigateJustOnce(SEND) },
                 goSettings = { navController.navigateJustOnce(SETTINGS) },
                 goSupport = { navController.navigateJustOnce(SUPPORT) },
-                goAbout = { navController.navigateJustOnce(ABOUT) },
-                goReceive = { navController.navigateJustOnce(RECEIVE) },
-                goSend = { navController.navigateJustOnce(SEND) },
-                goHistory = { navController.navigateJustOnce(HISTORY) }
             )
 
             if (ConfigurationEntries.IS_APP_UPDATE_CHECK_ENABLED.getValue(RemoteConfig.current)) {
@@ -72,11 +74,14 @@ internal fun MainActivity.Navigation() {
         }
         composable(SETTINGS) {
             WrapSettings(
+                goAbout = {
+                    navController.navigateJustOnce(ABOUT)
+                },
                 goBack = {
                     navController.popBackStackJustOnce(SETTINGS)
                 },
-                goAbout = {
-                    navController.navigateJustOnce(ABOUT)
+                goExportPrivateData = {
+                    navController.navigateJustOnce(EXPORT_PRIVATE_DATA)
                 }
             )
         }
@@ -134,7 +139,12 @@ internal fun MainActivity.Navigation() {
                 goBack = { navController.popBackStackJustOnce(SCAN) }
             )
         }
-
+        composable(EXPORT_PRIVATE_DATA) {
+            WrapExportPrivateData(
+                goBack = { navController.popBackStackJustOnce(EXPORT_PRIVATE_DATA) },
+                onConfirm = { navController.popBackStackJustOnce(EXPORT_PRIVATE_DATA) }
+            )
+        }
         composable(HISTORY) {
             WrapHistory(goBack = { navController.navigateUp() })
         }
@@ -176,25 +186,16 @@ object NavigationArguments {
 }
 
 object NavigationTargets {
-    const val HOME = "home"
-
-    const val WALLET_ADDRESS_DETAILS = "wallet_address_details"
-
-    const val SETTINGS = "settings"
-
-    const val SEED = "seed"
-
-    const val RECEIVE = "receive"
-
-    const val REQUEST = "request"
-
-    const val HISTORY = "history"
-
-    const val SEND = "send"
-
-    const val SUPPORT = "support"
-
     const val ABOUT = "about"
-
+    const val EXPORT_PRIVATE_DATA = "export_private_data"
+    const val HISTORY = "history"
+    const val HOME = "home"
+    const val RECEIVE = "receive"
+    const val REQUEST = "request"
     const val SCAN = "scan"
+    const val SEED = "seed"
+    const val SEND = "send"
+    const val SETTINGS = "settings"
+    const val SUPPORT = "support"
+    const val WALLET_ADDRESS_DETAILS = "wallet_address_details"
 }

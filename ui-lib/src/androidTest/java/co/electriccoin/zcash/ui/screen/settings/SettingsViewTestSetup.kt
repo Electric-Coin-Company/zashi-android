@@ -15,6 +15,7 @@ class SettingsViewTestSetup(
     private val onDocumentationCount = AtomicInteger(0)
     private val onPrivacyPolicyCount = AtomicInteger(0)
     private val onFeedbackCount = AtomicInteger(0)
+    private val onExportPrivateData = AtomicInteger(0)
     private val onAboutCount = AtomicInteger(0)
     private val onRescanCount = AtomicInteger(0)
     private val onBackgroundSyncChangedCount = AtomicInteger(0)
@@ -44,6 +45,11 @@ class SettingsViewTestSetup(
     fun getFeedbackCount(): Int {
         composeTestRule.waitForIdle()
         return onFeedbackCount.get()
+    }
+
+    fun getExportPrivateDataCount(): Int {
+        composeTestRule.waitForIdle()
+        return onExportPrivateData.get()
     }
 
     fun getAboutCount(): Int {
@@ -90,6 +96,9 @@ class SettingsViewTestSetup(
                     },
                     onFeedback = {
                         onFeedbackCount.incrementAndGet()
+                    },
+                    onExportPrivateData = {
+                        onExportPrivateData.incrementAndGet()
                     },
                     onAbout = {
                         onAboutCount.incrementAndGet()
