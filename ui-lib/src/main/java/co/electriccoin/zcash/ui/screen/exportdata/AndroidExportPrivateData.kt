@@ -52,7 +52,7 @@ internal fun WrapExportPrivateData(
         ExportPrivateData(
             snackbarHostState = snackbarHostState,
             onBack = onBack,
-            onAcknowledged = {
+            onAgree = {
                 // Needed for UI testing only
             },
             onConfirm = {

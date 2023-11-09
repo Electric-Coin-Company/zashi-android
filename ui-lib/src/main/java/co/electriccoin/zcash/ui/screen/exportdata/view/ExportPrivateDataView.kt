@@ -19,6 +19,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -40,7 +41,7 @@ private fun ExportPrivateDataPreview() {
             ExportPrivateData(
                 snackbarHostState = SnackbarHostState(),
                 onBack = {},
-                onAcknowledged = {},
+                onAgree = {},
                 onConfirm = {},
             )
         }
@@ -54,7 +55,7 @@ private fun ExportPrivateDataPreview() {
 fun ExportPrivateData(
     snackbarHostState: SnackbarHostState,
     onBack: () -> Unit,
-    onAcknowledged: (Boolean) -> Unit,
+    onAgree: (Boolean) -> Unit,
     onConfirm: () -> Unit,
 ) {
     Scaffold(
@@ -62,7 +63,7 @@ fun ExportPrivateData(
         snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { paddingValues ->
         ExportPrivateDataContent(
-            onAcknowledged = onAcknowledged,
+            onAgree = onAgree,
             onConfirm = onConfirm,
             modifier = Modifier
                 .fillMaxSize()
@@ -90,7 +91,7 @@ private fun ExportPrivateDataTopAppBar(
 
 @Composable
 private fun ExportPrivateDataContent(
-    onAcknowledged: (Boolean) -> Unit,
+    onAgree: (Boolean) -> Unit,
     onConfirm: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -114,11 +115,15 @@ private fun ExportPrivateDataContent(
 
         Spacer(Modifier.height(ZcashTheme.dimens.spacingDefault))
 
-        Body(text = stringResource(R.string.export_data_text_1))
+        Body(
+            modifier = Modifier.testTag(ExportPrivateDataScreenTag.WARNING_TEXT_TAG),
+            text = stringResource(R.string.export_data_text_1)
+        )
 
         Spacer(Modifier.height(ZcashTheme.dimens.spacingDefault))
 
         Text(
+            modifier = Modifier.testTag(ExportPrivateDataScreenTag.ADDITIONAL_TEXT_TAG),
             text = stringResource(R.string.export_data_text_2),
             fontSize = 14.sp
         )
@@ -133,10 +138,10 @@ private fun ExportPrivateDataContent(
             checked = checkedState.value,
             onCheckedChange = {
                 checkedState.value = it
-                onAcknowledged(it)
+                onAgree(it)
             },
-            text = stringResource(R.string.export_data_acknowledge),
-            checkBoxTestTag = ExportPrivateDataScreenTag.ACKNOWLEDGE_CHECKBOX_TAG
+            text = stringResource(R.string.export_data_agree),
+            checkBoxTestTag = ExportPrivateDataScreenTag.AGREE_CHECKBOX_TAG
         )
 
         Spacer(

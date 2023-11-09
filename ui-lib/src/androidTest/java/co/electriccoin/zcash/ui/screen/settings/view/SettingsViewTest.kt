@@ -108,6 +108,23 @@ class SettingsViewTest : UiTestPrerequisites() {
 
     @Test
     @MediumTest
+    fun on_export_private_data_test() {
+        val testSetup = SettingsViewTestSetup(composeTestRule, TroubleshootingParametersFixture.new())
+
+        assertEquals(0, testSetup.getExportPrivateDataCount())
+
+        composeTestRule.onNodeWithText(
+            text = getStringResource(R.string.settings_export_private_data),
+            ignoreCase = true
+        ).also {
+            it.performClick()
+        }
+
+        assertEquals(1, testSetup.getExportPrivateDataCount())
+    }
+
+    @Test
+    @MediumTest
     fun on_about_test() {
         val testSetup = SettingsViewTestSetup(composeTestRule, TroubleshootingParametersFixture.new())
 

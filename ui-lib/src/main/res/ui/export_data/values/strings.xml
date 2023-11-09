@@ -8,7 +8,7 @@
     <string name="export_data_text_2">*Note that this private data does not give them the ability to spend your
         funds, only the ability to see what you do with your funds.</string>
     <string name="export_data_confirm">Export private data</string>
-    <string name="export_data_acknowledge">I agree</string>
+    <string name="export_data_agree">I agree</string>
     <string name="export_data_back">Back</string>
     <string name="export_data_back_content_description">Back</string>
     <string name="export_data_export_data_chooser_title">Share internal Zashi data with:</string>

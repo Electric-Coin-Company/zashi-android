@@ -227,7 +227,7 @@ private fun TroubleshootingMenu(
 }
 
 @Composable
-@Suppress("LongParameterList","LongMethod")
+@Suppress("LongParameterList", "LongMethod")
 private fun SettingsMainContent(
     onBackup: () -> Unit,
     onDocumentation: () -> Unit,

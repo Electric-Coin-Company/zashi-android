@@ -13,6 +13,18 @@
         <activity
             android:name="co.electriccoin.zcash.ui.common.UiTestingActivity"
             android:exported="false" />
+
+        <!-- This copies main/AndroidManifest -->
+        <provider
+            android:name="co.electriccoin.zcash.ui.screen.exportdata.util.TestShareFileProvider"
+            android:authorities="co.electriccoin.zcash.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/share_file_provider_paths" />
+        </provider>
+
     </application>
 
 </manifest>
