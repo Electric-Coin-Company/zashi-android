@@ -341,18 +341,16 @@ enum class PublishStatus {
 }
 
 tasks {
-    println("Checking for automated deployment availability...")
-
     // Validate Google Play Service Account KEY input
     val googlePlayServiceAccountKey = project.property("ZCASH_GOOGLE_PLAY_SERVICE_ACCOUNT_KEY").toString()
     if (googlePlayServiceAccountKey.isEmpty()) {
-        println("The deployment will not run: service account key is empty")
+        // The deployment will not run: service account key is empty
         return@tasks
     }
     // Validate Google Play Publisher API KEY input
     val googlePlayPublisherApiKey = project.property("ZCASH_GOOGLE_PLAY_PUBLISHER_API_KEY").toString()
     if (googlePlayServiceAccountKey.isEmpty()) {
-        println("The deployment will not run: publisher api key is empty")
+        // The deployment will not run: publisher api key is empty
         return@tasks
     }
 
@@ -360,7 +358,7 @@ tasks {
     val deployTrackString = project.property("ZCASH_GOOGLE_PLAY_DEPLOY_TRACK").toString()
     val deployTrack = deployTrackString.let {
         if (it.isEmpty()) {
-            println("The deployment will not run: track empty")
+            // The deployment will not run: track empty
             return@tasks
         }
         PublishTrack.new(it)
@@ -370,13 +368,11 @@ tasks {
     val deployStatusString = project.property("ZCASH_GOOGLE_PLAY_DEPLOY_STATUS").toString()
     val deployStatus = deployStatusString.let {
         if (it.isEmpty()) {
-            println("The deployment will not run: status empty")
+            // The deployment will not run: status empty
             return@tasks
         }
         PublishStatus.new(it)
     }
-
-    println("The deployment task can be registered")
 
     // The new task [publishToGooglePlay] runs [assembleDebug] and [bundleZcashmainnetRelease] as its
     // dependencies.
@@ -392,4 +388,6 @@ tasks {
     )
         .dependsOn(":app:assembleDebug")
         .dependsOn(":app:bundleZcashmainnetRelease")
+
+    println("Automated deployment task registered - all the necessary attributes set")
 }
