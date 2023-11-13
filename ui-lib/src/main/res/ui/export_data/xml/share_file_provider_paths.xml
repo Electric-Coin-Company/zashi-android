@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <!-- Android Studio complains about root-path. Search for an alternative way of approaching no_backup folder -->
+    <root-path name="root" path="/data/data/co.electriccoin.zcash.debug/no_backup/co.electricoin.zcash/." />
+    <root-path name="root" path="/data/data/co.electriccoin.zcash/no_backup/co.electricoin.zcash/." />
+</paths>

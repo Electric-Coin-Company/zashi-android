@@ -1,6 +1,0 @@
-<resources>
-    <string name="new_wallet_header">My secret phrase</string>
-    <string name="new_wallet_body">These words represent your funds and the security used to protect them.\n\nBack them up now!.</string>
-    <string name="new_wallet_button_finished">I wrote it down</string>
-    <string name="new_wallet_button_copy">Copy to buffer</string>
-</resources>

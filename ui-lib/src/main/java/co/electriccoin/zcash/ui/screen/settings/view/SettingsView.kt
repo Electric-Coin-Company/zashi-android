@@ -57,6 +57,7 @@ private fun PreviewSettings() {
                 onDocumentation = {},
                 onPrivacyPolicy = {},
                 onFeedback = {},
+                onExportPrivateData = {},
                 onAbout = {},
                 onRescanWallet = {},
                 onBackgroundSyncSettingsChanged = {},
@@ -76,6 +77,7 @@ fun Settings(
     onDocumentation: () -> Unit,
     onPrivacyPolicy: () -> Unit,
     onFeedback: () -> Unit,
+    onExportPrivateData: () -> Unit,
     onAbout: () -> Unit,
     onRescanWallet: () -> Unit,
     onBackgroundSyncSettingsChanged: (Boolean) -> Unit,
@@ -107,6 +109,7 @@ fun Settings(
             onDocumentation = onDocumentation,
             onPrivacyPolicy = onPrivacyPolicy,
             onFeedback = onFeedback,
+            onExportPrivateData = onExportPrivateData,
             onAbout = onAbout,
         )
     }
@@ -224,12 +227,13 @@ private fun TroubleshootingMenu(
 }
 
 @Composable
-@Suppress("LongParameterList")
+@Suppress("LongParameterList", "LongMethod")
 private fun SettingsMainContent(
     onBackup: () -> Unit,
     onDocumentation: () -> Unit,
     onPrivacyPolicy: () -> Unit,
     onFeedback: () -> Unit,
+    onExportPrivateData: () -> Unit,
     onAbout: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -276,6 +280,17 @@ private fun SettingsMainContent(
         PrimaryButton(
             onClick = onDocumentation,
             text = stringResource(R.string.settings_documentation),
+            outerPaddingValues = PaddingValues(
+                horizontal = dimens.spacingNone,
+                vertical = dimens.spacingSmall
+            ),
+        )
+
+        Spacer(modifier = Modifier.height(dimens.spacingDefault))
+
+        PrimaryButton(
+            onClick = onExportPrivateData,
+            text = stringResource(R.string.settings_export_private_data),
             outerPaddingValues = PaddingValues(
                 horizontal = dimens.spacingNone,
                 vertical = dimens.spacingSmall
