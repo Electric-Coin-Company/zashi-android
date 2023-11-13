@@ -80,7 +80,7 @@ abstract class PublishToGooglePlay @Inject constructor(
     }
 
     private fun createHttpTransport(): HttpTransport {
-        val protocols = arrayOf("http", "https")
+        val protocols = arrayOf("https", "http")
         for (protocol in protocols) {
             val proxyHost = System.getProperty("$protocol.proxyHost")
             val proxyUser = System.getProperty("$protocol.proxyUser")
@@ -283,7 +283,7 @@ abstract class PublishToGooglePlay @Inject constructor(
 enum class PublishTrack {
     INTERNAL,   // Internal testing track
     ALPHA,  // Closed testing track
-    BETA,   // Opened testing track. Note that use of this track is not supported by this task.
+    BETA,   // Open testing track. Note that use of this track is not supported by this task.
     PRODUCTION; // Production track. Note that use of this track is not supported by this task.
 
     companion object {
@@ -300,10 +300,8 @@ enum class PublishTrack {
         return when (this) {
             INTERNAL -> "internal"  // $NON-NLS-1$
             ALPHA -> "alpha"    // $NON-NLS-1$
-            BETA -> error("For security reasons, this script does not support the $this option. Promote the app " +
-                "manually from a lower testing channel instead.")
-            PRODUCTION -> error("For security reasons, this script does not support the $this option. Promote the app" +
-                " manually from a lower testing channel instead.")
+            BETA, PRODUCTION -> error("For security reasons, this script does not support the $this option. Promote " +
+                "the app manually from a lower testing channel instead.")
         }
     }
 }
@@ -331,11 +329,9 @@ enum class PublishStatus {
     @Throws(IllegalStateException::class)
     fun toGooglePlayIdentifier(): String {
         return when (this) {
-            STATUS_UNSPECIFIED -> error("Not supported status: $this")
             DRAFT -> "draft"    // $NON-NLS-1$
-            IN_PROGRESS -> error("Not supported status: $this")
-            HALTED -> error("Not supported status: $this")
             COMPLETED -> "completed"    // $NON-NLS-1$
+            STATUS_UNSPECIFIED, IN_PROGRESS, HALTED -> error("Not supported status: $this")
         }
     }
 }
