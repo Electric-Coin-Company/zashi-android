@@ -7,7 +7,6 @@ plugins {
     id("com.android.application")
     kotlin("android")
     id("secant.android-build-conventions")
-    id("com.github.triplet.play")
     id("com.osacky.fladle")
     id("wtf.emulator.gradle")
     id("secant.emulator-wtf-conventions")
@@ -158,12 +157,6 @@ android {
             }
         }
         resValue("string", "support_email_address", supportEmailAddress)
-    }
-
-    playConfigs {
-        register(testNetFlavorName) {
-            enabled.set(false)
-        }
     }
 
     testCoverage {
