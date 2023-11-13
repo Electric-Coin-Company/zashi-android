@@ -112,6 +112,7 @@ tasks {
             "ZCASH_RELEASE_KEY_ALIAS_PASSWORD" to "",
 
             "IS_SIGN_RELEASE_BUILD_WITH_DEBUG_KEY" to "false",
+            "IS_RELEASE_BUILD_DEBUGGABLE" to "false",
 
             "ZCASH_GOOGLE_PLAY_SERVICE_ACCOUNT" to "",
             "ZCASH_GOOGLE_PLAY_SERVICE_ACCOUNT_KEY" to "",

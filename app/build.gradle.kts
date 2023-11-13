@@ -125,9 +125,12 @@ android {
                 "proguard-project.txt"
             )
 
+            val isReleaseBuildDebuggable = project.property("IS_RELEASE_BUILD_DEBUGGABLE")
+                .toString().toBoolean()
+            isDebuggable = isReleaseBuildDebuggable
+
             val isSignReleaseBuildWithDebugKey = project.property("IS_SIGN_RELEASE_BUILD_WITH_DEBUG_KEY")
                 .toString().toBoolean()
-
             if (isReleaseSigningConfigured) {
                 signingConfig = signingConfigs.getByName("release")
             } else if (isSignReleaseBuildWithDebugKey) {
