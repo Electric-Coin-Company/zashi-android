@@ -19,16 +19,6 @@
             android:theme="@style/Theme.App.Starting"
             android:windowSoftInputMode="adjustResize" />
 
-        <provider
-            android:name=".screen.exportdata.util.ShareFileProvider"
-            android:authorities="co.electriccoin.zcash.provider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/share_file_provider_paths" />
-        </provider>
-
     </application>
 
 </manifest>

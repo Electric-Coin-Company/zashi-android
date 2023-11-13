@@ -17,7 +17,7 @@
         <!-- This copies main/AndroidManifest -->
         <provider
             android:name="co.electriccoin.zcash.ui.screen.exportdata.util.TestShareFileProvider"
-            android:authorities="co.electriccoin.zcash.provider"
+            android:authorities="co.electriccoin.zcash.provider_test"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
