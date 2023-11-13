@@ -113,8 +113,12 @@ tasks {
 
             "IS_SIGN_RELEASE_BUILD_WITH_DEBUG_KEY" to "false",
 
+            "ZCASH_GOOGLE_PLAY_SERVICE_ACCOUNT" to "",
+            "ZCASH_GOOGLE_PLAY_SERVICE_ACCOUNT_KEY" to "",
+            "ZCASH_GOOGLE_PLAY_PUBLISHER_API_KEY" to "",
             "ZCASH_GOOGLE_PLAY_SERVICE_KEY_FILE_PATH" to "",
-            "ZCASH_GOOGLE_PLAY_DEPLOY_MODE" to "build",
+            "ZCASH_GOOGLE_PLAY_DEPLOY_TRACK" to "internal",
+            "ZCASH_GOOGLE_PLAY_DEPLOY_STATUS" to "draft",
 
             "SDK_INCLUDED_BUILD_PATH" to "",
             "BIP_39_INCLUDED_BUILD_PATH" to ""

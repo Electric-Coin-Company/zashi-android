@@ -1,3 +1,4 @@
+import co.electriccoin.zcash.Git
 import com.android.build.api.variant.BuildConfigField
 import com.android.build.api.variant.ResValue
 import java.util.Locale
@@ -6,10 +7,10 @@ plugins {
     id("com.android.application")
     kotlin("android")
     id("secant.android-build-conventions")
-    id("com.github.triplet.play")
     id("com.osacky.fladle")
     id("wtf.emulator.gradle")
     id("secant.emulator-wtf-conventions")
+    id("secant.publish-conventions")
 }
 
 val hasFirebaseApiKeys = run {
@@ -158,12 +159,6 @@ android {
         resValue("string", "support_email_address", supportEmailAddress)
     }
 
-    playConfigs {
-        register(testNetFlavorName) {
-            enabled.set(false)
-        }
-    }
-
     testCoverage {
         jacocoVersion = project.property("JACOCO_VERSION").toString()
     }
@@ -202,8 +197,6 @@ dependencies {
     }
 }
 
-val googlePlayServiceKeyFilePath = project.property("ZCASH_GOOGLE_PLAY_SERVICE_KEY_FILE_PATH").toString()
-
 androidComponents {
     onVariants { variant ->
         for (output in variant.outputs) {
@@ -223,7 +216,9 @@ androidComponents {
                 ResValue(value = hasFirebaseApiKeys.toString())
             )
 
-            if (googlePlayServiceKeyFilePath.isNotEmpty()) {
+            if (project.property("ZCASH_GOOGLE_PLAY_SERVICE_ACCOUNT_KEY").toString().isNotEmpty() &&
+                project.property("ZCASH_GOOGLE_PLAY_PUBLISHER_API_KEY").toString().isNotEmpty()
+            ) {
                 // Update the versionName to reflect bumps in versionCode
 
                 val versionCodeOffset = 0  // Change this to zero the final digit of the versionName
@@ -243,6 +238,9 @@ androidComponents {
                 }
 
                 output.versionName.set(processedVersionCode)
+
+                val gitInfo = Git.newInfo(Git.MAIN, parent!!.projectDir)
+                output.versionCode.set(gitInfo.commitCount)
             }
         }
 
@@ -272,27 +270,6 @@ androidComponents {
                 "transport-backend-cct.properties",
                 "transport-runtime.properties"
             ))
-        }
-    }
-}
-
-if (googlePlayServiceKeyFilePath.isNotEmpty()) {
-    configure<com.github.triplet.gradle.play.PlayPublisherExtension> {
-        serviceAccountCredentials.set(File(googlePlayServiceKeyFilePath))
-
-        // For safety, only allow deployment to internal testing track
-        track.set("internal")
-
-        // Automatically manage version incrementing
-        resolutionStrategy.set(com.github.triplet.gradle.androidpublisher.ResolutionStrategy.AUTO)
-
-        val deployMode = project.property("ZCASH_GOOGLE_PLAY_DEPLOY_MODE").toString()
-        if ("build" == deployMode) {
-            releaseStatus.set(com.github.triplet.gradle.androidpublisher.ReleaseStatus.DRAFT)
-            // Prevent upload; only generates a build with the correct version number
-            commit.set(false)
-        } else if ("deploy" == deployMode) {
-            releaseStatus.set(com.github.triplet.gradle.androidpublisher.ReleaseStatus.COMPLETED)
         }
     }
 }

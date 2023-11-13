@@ -6,13 +6,17 @@ import java.io.File
 
 object Git {
     // Get the info for the current branch
-    private const val HEAD = "HEAD"
+    const val HEAD = "HEAD" // $NON-NLS-1$
+    const val MAIN = "main" // $NON-NLS-1$
 
-    fun newInfo(workingDirectory: File): GitInfo {
+    fun newInfo(
+        branch: String,
+        workingDirectory: File
+    ): GitInfo {
         val git = Git.open(workingDirectory)
         val repository = git.repository
 
-        val head: ObjectId = repository.resolve(HEAD)
+        val head: ObjectId = repository.resolve(branch)
         val count = git.log().call().count()
 
         return GitInfo(ObjectId.toString(head), count)

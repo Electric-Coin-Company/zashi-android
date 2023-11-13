@@ -1,3 +1,4 @@
+import co.electriccoin.zcash.Git
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -13,7 +14,10 @@ plugins {
 val generateBuildConfigTask = tasks.create("buildConfig") {
     val generatedDir = layout.buildDirectory.dir("generated").get().asFile
 
-    val gitInfo = co.electriccoin.zcash.Git.newInfo(parent!!.projectDir)
+    val gitInfo = co.electriccoin.zcash.Git.newInfo(
+        Git.HEAD,
+        parent!!.projectDir
+    )
     //val buildTimestamp = newIso8601Timestamp()
 
     inputs.property("gitSha", gitInfo.sha)
