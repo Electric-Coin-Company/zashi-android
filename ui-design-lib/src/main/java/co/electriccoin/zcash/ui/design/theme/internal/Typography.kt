@@ -87,7 +87,7 @@ internal val SecondaryTypography = Typography(
     headlineSmall = TextStyle(
         fontFamily = ArchivoFontFamily,
         fontWeight = FontWeight.Bold,
-        fontSize = 18.sp,
+        fontSize = 20.sp,
         textAlign = TextAlign.Center
     ),
     bodyLarge = TextStyle(
