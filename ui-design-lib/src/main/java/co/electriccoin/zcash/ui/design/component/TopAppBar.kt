@@ -128,9 +128,9 @@ private fun TopBarHamburgerMenuExample(
 
 @Composable
 private fun TopBarRegularMenuExample(
+    modifier: Modifier = Modifier,
     actionOneCallback: () -> Unit,
     actionTwoCallback: () -> Unit,
-    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier

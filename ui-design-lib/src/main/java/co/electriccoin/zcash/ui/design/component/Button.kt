@@ -1,6 +1,5 @@
 package co.electriccoin.zcash.ui.design.component
 
-import android.graphics.BlurMaskFilter
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.border
@@ -74,13 +73,12 @@ fun PrimaryButton(
         modifier = modifier
             .padding(outerPaddingValues)
             .shadow(
-                ZcashTheme.colors.buttonShadowColor,
-                borderRadius = 0.dp,
+                contentColor = textColor,
+                strokeColor = buttonColor,
+                strokeWidth = 1.dp,
                 offsetX = ZcashTheme.dimens.shadowOffsetX,
                 offsetY = ZcashTheme.dimens.shadowOffsetY,
                 spread = ZcashTheme.dimens.shadowSpread,
-                blurRadius = 0.dp,
-                stroke = textColor != MaterialTheme.colorScheme.primary,
             )
             .translationClick(
                 translationX = ZcashTheme.dimens.shadowOffsetX + 6.dp, // + 6dp to exactly cover the bottom shadow
@@ -89,7 +87,7 @@ fun PrimaryButton(
             .defaultMinSize(ZcashTheme.dimens.defaultButtonWidth, ZcashTheme.dimens.defaultButtonHeight)
             .border(1.dp, Color.Black),
         colors = buttonColors(
-            buttonColor,
+            containerColor = buttonColor,
             disabledContainerColor = ZcashTheme.colors.disabledButtonColor,
             disabledContentColor = ZcashTheme.colors.disabledButtonTextColor
         ),
@@ -124,13 +122,11 @@ fun SecondaryButton(
         modifier = modifier
             .padding(outerPaddingValues)
             .shadow(
-                ZcashTheme.colors.buttonShadowColor,
-                borderRadius = 0.dp,
+                contentColor = textColor,
+                strokeColor = textColor,
                 offsetX = ZcashTheme.dimens.shadowOffsetX,
                 offsetY = ZcashTheme.dimens.shadowOffsetY,
                 spread = ZcashTheme.dimens.shadowSpread,
-                blurRadius = 0.dp,
-                stroke = textColor != MaterialTheme.colorScheme.primary,
             )
             .translationClick(
                 translationX = ZcashTheme.dimens.shadowOffsetX + 6.dp, // + 6dp to exactly cover the bottom shadow
@@ -139,7 +135,7 @@ fun SecondaryButton(
             .defaultMinSize(ZcashTheme.dimens.defaultButtonWidth, ZcashTheme.dimens.defaultButtonHeight)
             .border(1.dp, Color.Black),
         colors = buttonColors(
-            buttonColor,
+            containerColor = buttonColor,
             disabledContainerColor = ZcashTheme.colors.disabledButtonColor,
             disabledContentColor = ZcashTheme.colors.disabledButtonTextColor
         ),
@@ -245,45 +241,51 @@ fun DangerousButton(
 
 @Suppress("LongParameterList")
 fun Modifier.shadow(
-    color: Color = Color.Black,
-    borderRadius: Dp = 0.dp,
-    blurRadius: Dp = 0.dp,
+    contentColor: Color = Color.Black,
+    strokeColor: Color = Color.Black,
+    strokeWidth: Dp = 2.dp,
     offsetY: Dp = 0.dp,
     offsetX: Dp = 0.dp,
     spread: Dp = 0f.dp,
-    stroke: Boolean = true,
     modifier: Modifier = Modifier
 ) = this.then(
     modifier.drawBehind {
         this.drawIntoCanvas {
-            val paint = Paint()
-            if (stroke) {
-                paint.style = PaintingStyle.Stroke
-                paint.strokeWidth = 2f
-                paint.color = Color.Black
-            }
-            val frameworkPaint = paint.asFrameworkPaint()
-            val spreadPixel = spread.toPx()
-            val leftPixel = (0f - spreadPixel) + offsetX.toPx()
-            val topPixel = (0f - spreadPixel) + offsetY.toPx()
-            val rightPixel = (this.size.width + spreadPixel)
-            val bottomPixel = (this.size.height + spreadPixel)
+            val strokePaint = Paint()
+            strokePaint.style = PaintingStyle.Stroke
+            strokePaint.strokeWidth = strokeWidth.toPx()
 
-            if (blurRadius != 0.dp) {
-                frameworkPaint.maskFilter =
-                    (BlurMaskFilter(blurRadius.toPx(), BlurMaskFilter.Blur.NORMAL))
+            val contentPaint = Paint()
+            strokePaint.style = PaintingStyle.Fill
+
+            // Reusable inner function to be able to reach modifier and canvas properties
+            fun drawShadowLayer(
+                paint: Paint,
+                color: Color,
+                paddingWidth: Float
+            ) {
+                val frameworkPaint = paint.asFrameworkPaint()
+                val spreadPixel = spread.toPx()
+                val leftPixel = (0f - spreadPixel) + offsetX.toPx()
+                val topPixel = (0f - spreadPixel) + offsetY.toPx()
+                val rightPixel = (this.size.width + spreadPixel)
+                val bottomPixel = (this.size.height + spreadPixel)
+
+                frameworkPaint.color = color.toArgb()
+                it.drawRoundRect(
+                    left = leftPixel + paddingWidth,
+                    top = topPixel + paddingWidth,
+                    right = rightPixel - paddingWidth,
+                    bottom = bottomPixel - paddingWidth,
+                    radiusX = 0f,
+                    radiusY = 0f,
+                    paint
+                )
             }
 
-            frameworkPaint.color = color.toArgb()
-            it.drawRoundRect(
-                left = leftPixel,
-                top = topPixel,
-                right = rightPixel,
-                bottom = bottomPixel,
-                radiusX = borderRadius.toPx(),
-                radiusY = borderRadius.toPx(),
-                paint
-            )
+            // Draw stroke and then content paints
+            drawShadowLayer(strokePaint, strokeColor, 0f)
+            drawShadowLayer(contentPaint, contentColor, strokeWidth.toPx())
         }
     }
 )
