@@ -56,13 +56,6 @@ the project, these steps are not necessary.)
 
 # Known Issues
 
-1. Intel-based machines may have trouble building in Android Studio. The
-   workaround is to add the following line to `~/.gradle/gradle.properties`:
-   ~~~
-   ZCASH_IS_DEPENDENCY_LOCKING_ENABLED=false
-   ~~~
-   See [#420](https://github.com/zcash/secant-android-wallet/issues/420) for more
-   information.
 1. During builds, a warning will be printed that says "Unable to detect AGP
    versions for included builds. All projects in the build should use the same
    AGP version."  This can be safely ignored.  The version under
