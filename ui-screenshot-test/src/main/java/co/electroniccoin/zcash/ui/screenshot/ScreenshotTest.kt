@@ -296,7 +296,7 @@ class ScreenshotTest : UiTestPrerequisites() {
 
         // These are the hamburger menu items
         // We could manually click on each one, which is a better integration test but a worse screenshot test
-        navigateTo(NavigationTargets.SEED)
+        navigateTo(NavigationTargets.SEED_RECOVERY)
         seedScreenshots(resContext, tag, composeTestRule)
 
         navigateTo(NavigationTargets.SETTINGS)
@@ -588,7 +588,7 @@ private fun aboutScreenshots(resContext: Context, tag: String, composeTestRule: 
 }
 
 private fun seedScreenshots(resContext: Context, tag: String, composeTestRule: ComposeTestRule) {
-    composeTestRule.onNode(hasText(resContext.getString(R.string.seed_title))).also {
+    composeTestRule.onNode(hasText(resContext.getString(R.string.seed_recovery_header))).also {
         it.assertExists()
     }
 

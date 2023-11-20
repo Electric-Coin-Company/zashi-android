@@ -158,7 +158,7 @@ class RestoreViewAndroidTest : UiTestPrerequisites() {
 private fun copyToClipboard(context: Context, text: String) {
     val clipboardManager = context.getSystemService(ClipboardManager::class.java)
     val data = ClipData.newPlainText(
-        context.getString(R.string.new_wallet_seed_clipboard_tag),
+        context.getString(R.string.new_wallet_recovery_seed_clipboard_tag),
         text
     )
     clipboardManager.setPrimaryClip(data)

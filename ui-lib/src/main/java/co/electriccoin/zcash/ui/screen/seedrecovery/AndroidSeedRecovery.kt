@@ -1,6 +1,4 @@
-@file:Suppress("ktlint:filename")
-
-package co.electriccoin.zcash.ui.screen.seed
+package co.electriccoin.zcash.ui.screen.seedrecovery
 
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
@@ -11,19 +9,21 @@ import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.screen.home.viewmodel.SecretState
 import co.electriccoin.zcash.ui.screen.home.viewmodel.WalletViewModel
-import co.electriccoin.zcash.ui.screen.seed.view.Seed
+import co.electriccoin.zcash.ui.screen.seedrecovery.view.SeedRecovery
 
 @Composable
-internal fun MainActivity.WrapSeed(
-    goBack: () -> Unit
+internal fun MainActivity.WrapSeedRecovery(
+    goBack: () -> Unit,
+    onDone: () -> Unit
 ) {
-    WrapSeed(this, goBack)
+    WrapSeedRecovery(this, goBack, onDone)
 }
 
 @Composable
-private fun WrapSeed(
+private fun WrapSeedRecovery(
     activity: ComponentActivity,
-    goBack: () -> Unit
+    goBack: () -> Unit,
+    onDone: () -> Unit
 ) {
     val walletViewModel by activity.viewModels<WalletViewModel>()
 
@@ -40,16 +40,24 @@ private fun WrapSeed(
     if (null == synchronizer || null == persistableWallet) {
         // Display loading indicator
     } else {
-        Seed(
-            persistableWallet = persistableWallet,
+        SeedRecovery(
+            persistableWallet,
             onBack = goBack,
-            onCopyToClipboard = {
+            onSeedCopy = {
                 ClipboardManagerUtil.copyToClipboard(
                     activity.applicationContext,
-                    activity.getString(R.string.new_wallet_seed_clipboard_tag),
+                    activity.getString(R.string.seed_recovery_seed_clipboard_tag),
                     persistableWallet.seedPhrase.joinToString()
                 )
             },
+            onBirthdayCopy = {
+                ClipboardManagerUtil.copyToClipboard(
+                    activity.applicationContext,
+                    activity.getString(R.string.seed_recovery_birthday_clipboard_tag),
+                    persistableWallet.birthday?.value.toString()
+                )
+            },
+            onDone = onDone
         )
     }
 }

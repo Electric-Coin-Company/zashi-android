@@ -1,9 +1,0 @@
-<resources>
-    <string name="seed_title">My secret phrase</string>
-    <string name="seed_back_content_description">Back</string>
-
-    <string name="seed_header">Your Secret Recovery Phrase</string>
-    <string name="seed_body">These words represent your funds and the security used to protect them.</string>
-    <string name="seed_copy">Copy to buffer</string>
-
-</resources>

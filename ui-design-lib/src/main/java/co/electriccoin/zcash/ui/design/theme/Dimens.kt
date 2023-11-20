@@ -30,6 +30,7 @@ data class Dimens(
 
     // TopAppBar:
     val topAppBarZcashLogoHeight: Dp,
+    val topAppBarActionRippleCorner: Dp,
 
     // In screen custom spacings:
     val inScreenZcashLogoHeight: Dp,
@@ -52,6 +53,7 @@ private val defaultDimens = Dimens(
     defaultButtonWidth = 230.dp,
     defaultButtonHeight = 50.dp,
     topAppBarZcashLogoHeight = 24.dp,
+    topAppBarActionRippleCorner = 28.dp,
     inScreenZcashLogoHeight = 100.dp,
     inScreenZcashLogoWidth = 60.dp,
     inScreenZcashTextLogoHeight = 30.dp,

@@ -16,45 +16,28 @@ fun MainActivity.WrapNewWalletRecovery(
     WrapNewWalletRecovery(this, persistableWallet, onBackupComplete)
 }
 
-// This layer of indirection allows for activity re-creation tests
 @Composable
 private fun WrapNewWalletRecovery(
     activity: ComponentActivity,
     persistableWallet: PersistableWallet,
     onBackupComplete: () -> Unit
 ) {
-    WrapNewWalletRecovery(
+    NewWalletRecovery(
         persistableWallet,
-        onSeedCopyToClipboard = {
+        onSeedCopy = {
             ClipboardManagerUtil.copyToClipboard(
                 activity.applicationContext,
-                activity.getString(R.string.new_wallet_seed_clipboard_tag),
+                activity.getString(R.string.new_wallet_recovery_seed_clipboard_tag),
                 persistableWallet.seedPhrase.joinToString()
             )
         },
-        onBirthdayCopyToClipboard = {
+        onBirthdayCopy = {
             ClipboardManagerUtil.copyToClipboard(
                 activity.applicationContext,
-                activity.getString(R.string.new_wallet_birthday_clipboard_tag),
+                activity.getString(R.string.new_wallet_recovery_birthday_clipboard_tag),
                 persistableWallet.birthday?.value.toString()
             )
         },
-        onNewWalletComplete = onBackupComplete
-    )
-}
-
-// This extra layer of indirection allows unit tests to validate the screen state retention
-@Composable
-private fun WrapNewWalletRecovery(
-    persistableWallet: PersistableWallet,
-    onSeedCopyToClipboard: () -> Unit,
-    onBirthdayCopyToClipboard: () -> Unit,
-    onNewWalletComplete: () -> Unit
-) {
-    NewWalletRecovery(
-        persistableWallet,
-        onSeedCopy = onSeedCopyToClipboard,
-        onBirthdayCopy = onBirthdayCopyToClipboard,
-        onComplete = onNewWalletComplete,
+        onComplete = onBackupComplete
     )
 }

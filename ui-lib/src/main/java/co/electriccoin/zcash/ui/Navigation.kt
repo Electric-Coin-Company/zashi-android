@@ -18,7 +18,7 @@ import co.electriccoin.zcash.ui.NavigationTargets.HOME
 import co.electriccoin.zcash.ui.NavigationTargets.RECEIVE
 import co.electriccoin.zcash.ui.NavigationTargets.REQUEST
 import co.electriccoin.zcash.ui.NavigationTargets.SCAN
-import co.electriccoin.zcash.ui.NavigationTargets.SEED
+import co.electriccoin.zcash.ui.NavigationTargets.SEED_RECOVERY
 import co.electriccoin.zcash.ui.NavigationTargets.SEND
 import co.electriccoin.zcash.ui.NavigationTargets.SETTINGS
 import co.electriccoin.zcash.ui.NavigationTargets.SUPPORT
@@ -33,7 +33,7 @@ import co.electriccoin.zcash.ui.screen.home.WrapHome
 import co.electriccoin.zcash.ui.screen.receive.WrapReceive
 import co.electriccoin.zcash.ui.screen.request.WrapRequest
 import co.electriccoin.zcash.ui.screen.scan.WrapScanValidator
-import co.electriccoin.zcash.ui.screen.seed.WrapSeed
+import co.electriccoin.zcash.ui.screen.seedrecovery.WrapSeedRecovery
 import co.electriccoin.zcash.ui.screen.send.WrapSend
 import co.electriccoin.zcash.ui.screen.send.model.SendArgumentsWrapper
 import co.electriccoin.zcash.ui.screen.settings.WrapSettings
@@ -55,7 +55,7 @@ internal fun MainActivity.Navigation() {
                 goAbout = { navController.navigateJustOnce(ABOUT) },
                 goHistory = { navController.navigateJustOnce(HISTORY) },
                 goReceive = { navController.navigateJustOnce(RECEIVE) },
-                goSeedPhrase = { navController.navigateJustOnce(SEED) },
+                goSeedPhrase = { navController.navigateJustOnce(SEED_RECOVERY) },
                 goSend = { navController.navigateJustOnce(SEND) },
                 goSettings = { navController.navigateJustOnce(SETTINGS) },
                 goSupport = { navController.navigateJustOnce(SUPPORT) },
@@ -82,13 +82,19 @@ internal fun MainActivity.Navigation() {
                 },
                 goExportPrivateData = {
                     navController.navigateJustOnce(EXPORT_PRIVATE_DATA)
+                },
+                goSeedRecovery = {
+                    navController.navigateJustOnce(SEED_RECOVERY)
                 }
             )
         }
-        composable(SEED) {
-            WrapSeed(
+        composable(SEED_RECOVERY) {
+            WrapSeedRecovery(
                 goBack = {
-                    navController.popBackStackJustOnce(SEED)
+                    navController.popBackStackJustOnce(SEED_RECOVERY)
+                },
+                onDone = {
+                    navController.popBackStackJustOnce(SEED_RECOVERY)
                 }
             )
         }
@@ -193,7 +199,7 @@ object NavigationTargets {
     const val RECEIVE = "receive"
     const val REQUEST = "request"
     const val SCAN = "scan"
-    const val SEED = "seed"
+    const val SEED_RECOVERY = "seed_recovery"
     const val SEND = "send"
     const val SETTINGS = "settings"
     const val SUPPORT = "support"

@@ -1,0 +1,14 @@
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="seed_recovery_back">Back</string>
+    <string name="seed_recovery_back_content_description">Back</string>
+    <string name="seed_recovery_header">Your secret recovery phrase</string>
+    <string name="seed_recovery_description">The following 24 words are the keys to your funds and are the only way to
+        recover your funds if you get locked out or get a new device. Protect your ZEC by storing this phrase in a
+        place you trust and never share it with anyone!</string>
+    <string name="seed_recovery_birthday_height" formatted="true">Wallet birthday height: <xliff:g example="419200"
+        id="birthday_height">%1$d</xliff:g></string>
+    <string name="seed_recovery_button_finished">I got it!</string>
+    <string name="seed_recovery_copy">Tap to Copy</string>
+    <string name="seed_recovery_seed_clipboard_tag">Zcash Seed Phrase</string>
+    <string name="seed_recovery_birthday_clipboard_tag">Zcash Wallet Birthday</string>
+</resources>
