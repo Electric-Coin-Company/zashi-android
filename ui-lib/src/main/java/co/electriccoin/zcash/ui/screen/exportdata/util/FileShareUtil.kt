@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.core.content.FileProvider
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.model.VersionInfo
 import java.io.File
 
 object FileShareUtil {
@@ -15,6 +16,7 @@ object FileShareUtil {
     const val ZASHI_INTERNAL_DATA_MIME_TYPE = "application/octet-stream" // NON-NLS
 
     const val ZASHI_INTERNAL_DATA_AUTHORITY = "co.electriccoin.zcash.provider" // NON-NLS
+    const val ZASHI_INTERNAL_DATA_AUTHORITY_DEBUG = "co.electriccoin.zcash.debug.provider" // NON-NLS
 
     /**
      * Returns a new share internal app data intent with necessary permission granted exclusively to the data file.
@@ -25,11 +27,16 @@ object FileShareUtil {
      */
     internal fun newShareContentIntent(
         context: Context,
-        dataFilePath: String
+        dataFilePath: String,
+        versionInfo: VersionInfo
     ): Intent {
         val fileUri = FileProvider.getUriForFile(
             context,
-            ZASHI_INTERNAL_DATA_AUTHORITY,
+            if (versionInfo.isDebuggable) {
+                ZASHI_INTERNAL_DATA_AUTHORITY_DEBUG
+            } else {
+                ZASHI_INTERNAL_DATA_AUTHORITY
+            },
             File(dataFilePath)
         )
 

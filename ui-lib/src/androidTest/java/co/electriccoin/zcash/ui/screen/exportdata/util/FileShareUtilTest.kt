@@ -2,6 +2,7 @@ package co.electriccoin.zcash.ui.screen.exportdata.util
 
 import android.content.Intent
 import androidx.test.filters.SmallTest
+import co.electriccoin.zcash.ui.fixture.VersionInfoFixture
 import co.electriccoin.zcash.ui.test.getAppContext
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -22,8 +23,9 @@ class FileShareUtilTest {
             suffix = ".sqlite3"
         )
         val intent = FileShareUtil.newShareContentIntent(
-            getAppContext(),
-            tempFilePath.pathString
+            context = getAppContext(),
+            dataFilePath = tempFilePath.pathString,
+            versionInfo = VersionInfoFixture.new()
         )
         assertEquals(intent.action, Intent.ACTION_VIEW)
         assertEquals(
