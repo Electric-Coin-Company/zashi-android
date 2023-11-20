@@ -12,7 +12,7 @@ import kotlin.test.assertContains
 class FileShareUtilTest {
 
     // TODO [#1034]: Finish disabled FileShareUtilTest
-    // TODO [#1034]: https://github.com/zcash/secant-android-wallet/issues/1034
+    // TODO [#1034]: https://github.com/Electric-Coin-Company/zashi-android/issues/1034
     @Ignore("Temporary file permission is not correctly set")
     @Test
     @SmallTest

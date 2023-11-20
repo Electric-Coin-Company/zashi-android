@@ -253,7 +253,7 @@ private fun ExpandableRow(
 @Composable
 private fun SmallIndicator(color: Color) {
     // TODO [#160]: Border is not the right implementation here, as it causes double thickness for the middle item
-    // TODO [#160]: https://github.com/zcash/secant-android-wallet/issues/160
+    // TODO [#160]: https://github.com/Electric-Coin-Company/zashi-android/issues/160
     Image(
         modifier = Modifier
             .fillMaxHeight()

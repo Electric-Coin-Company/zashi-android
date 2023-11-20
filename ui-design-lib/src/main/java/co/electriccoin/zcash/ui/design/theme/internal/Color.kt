@@ -82,7 +82,7 @@ internal object Light {
     val textChipIndex = Color(0xFFEE8592)
 
     // TODO [#159]: The button colors are wrong for light
-    // TODO [#159]: https://github.com/zcash/secant-android-wallet/issues/159
+    // TODO [#159]: https://github.com/Electric-Coin-Company/zashi-android/issues/159
     val primaryButton = Color(0xFF000000)
     val primaryButtonPressed = Color(0xFF000000)
     val primaryButtonDisabled = Color(0xFF000000)
@@ -108,7 +108,7 @@ internal object Light {
     val highlight = Color(0xFFFFD800)
 
     // TODO [#159]: The colors are wrong for light theme
-    // TODO [#159]: https://github.com/zcash/secant-android-wallet/issues/159
+    // TODO [#159]: https://github.com/Electric-Coin-Company/zashi-android/issues/159
     val addressHighlightBorder = Color(0xFF525252)
     val addressHighlightUnified = Color(0xFFFFD800)
     val addressHighlightSapling = Color(0xFF1BBFF6)

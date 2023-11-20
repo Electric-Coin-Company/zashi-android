@@ -32,7 +32,7 @@ class AboutViewTest {
         }
 
         composeTestRule.onNodeWithContentDescription(
-            label = getStringResource(R.string.about_app_logo_content_description)
+            label = getStringResource(R.string.zcash_logo_content_description)
         ).also {
             it.assertExists()
         }

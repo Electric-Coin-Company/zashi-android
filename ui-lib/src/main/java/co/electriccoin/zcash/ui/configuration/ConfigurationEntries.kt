@@ -13,12 +13,6 @@ object ConfigurationEntries {
     val IS_SHORT_ONBOARDING_UX = BooleanConfigurationEntry(ConfigKey("is_short_onboarding_ux"), true)
 
     /*
-     * The full new wallet flow is functional and tested, but it is disabled by default for an initially minimal
-     *  feature set.
-     */
-    val IS_SHORT_NEW_WALLET_BACKUP_UX = BooleanConfigurationEntry(ConfigKey("is_short_new_wallet_backup_ux"), true)
-
-    /*
      * This isn't fully implemented yet, so it is disabled from being shown.
      */
     val IS_FIAT_CONVERSION_ENABLED = BooleanConfigurationEntry(ConfigKey("is_fiat_conversion_enabled"), false)

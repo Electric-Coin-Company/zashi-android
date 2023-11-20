@@ -9,7 +9,7 @@ import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.ui.screen.home.viewmodel.SynchronizerError
 
 // TODO [#292]: Should be moved to SDK-EXT-UI module.
-// TODO [#292]: https://github.com/zcash/secant-android-wallet/issues/292
+// TODO [#292]: https://github.com/Electric-Coin-Company/zashi-android/issues/292
 data class WalletSnapshot(
     val status: Synchronizer.Status,
     val processorInfo: CompactBlockProcessor.ProcessorInfo,

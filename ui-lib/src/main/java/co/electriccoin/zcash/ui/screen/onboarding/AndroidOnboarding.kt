@@ -43,7 +43,7 @@ internal fun WrapOnboarding(
 
     val versionInfo = VersionInfo.new(activity.applicationContext)
 
-    // TODO [#383]: https://github.com/zcash/secant-android-wallet/issues/383
+    // TODO [#383]: https://github.com/Electric-Coin-Company/zashi-android/issues/383
     // TODO [#383]: Refactoring of UI state retention into rememberSaveable fields
     if (!onboardingViewModel.isImporting.collectAsStateWithLifecycle().value) {
         val onCreateWallet = {
@@ -81,7 +81,7 @@ internal fun WrapOnboarding(
         val showWelcomeAnimation = onboardingViewModel.showWelcomeAnimation.collectAsStateWithLifecycle().value
 
         // TODO [#1003]: Clear unused alternative Onboarding screens
-        // TODO [#1003]: https://github.com/zcash/secant-android-wallet/issues/1003
+        // TODO [#1003]: https://github.com/Electric-Coin-Company/zashi-android/issues/1003
 
         if (ConfigurationEntries.IS_SHORT_ONBOARDING_UX.getValue(RemoteConfig.current)) {
             ShortOnboarding(

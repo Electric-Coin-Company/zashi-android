@@ -45,7 +45,7 @@ class RestoreViewModel(application: Application, savedStateHandle: SavedStateHan
      */
     // This is a hack to prevent disk IO on the main thread
     val completeWordList = flow<CompleteWordSetState> {
-        // Using IO context because of https://github.com/zcash/kotlin-bip39/issues/13
+        // Using IO context because of https://github.com/Electric-Coin-Company/kotlin-bip39/issues/13
         val completeWordList = withContext(Dispatchers.IO) {
             Mnemonics.getCachedWords(Locale.ENGLISH.language)
         }

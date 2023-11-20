@@ -71,10 +71,10 @@ private fun ShortOnboardingComposablePreview() {
 }
 
 // TODO [#998]: Check and enhance screen dark mode
-// TODO [#998]: https://github.com/zcash/secant-android-wallet/issues/998
+// TODO [#998]: https://github.com/Electric-Coin-Company/zashi-android/issues/998
 
 // TODO [#1001]: Screens in landscape mode
-// TODO [#1001]: https://github.com/zcash/secant-android-wallet/issues/1001
+// TODO [#1001]: https://github.com/Electric-Coin-Company/zashi-android/issues/1001
 
 /**
  * @param showWelcomeAnim Whether the welcome screen growing chart animation should be done or not.
@@ -171,7 +171,7 @@ private fun OnboardingMainContent(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Image(
-                painterResource(id = R.drawable.zashi_logo_without_text),
+                painterResource(id = co.electriccoin.zcash.ui.design.R.drawable.zashi_logo_without_text),
                 stringResource(R.string.zcash_logo_onboarding_content_description),
                 Modifier
                     .height(ZcashTheme.dimens.inScreenZcashLogoHeight)
@@ -181,7 +181,7 @@ private fun OnboardingMainContent(
             Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
             Image(
-                painterResource(id = R.drawable.zashi_text_logo),
+                painterResource(id = co.electriccoin.zcash.ui.design.R.drawable.zashi_text_logo),
                 ""
             )
 
@@ -228,7 +228,7 @@ fun AnimatedImage(
     modifier: Modifier = Modifier,
 ) {
     // TODO [#1002]: Welcome screen animation masking
-    // TODO [#1002]: https://github.com/zcash/secant-android-wallet/issues/1002
+    // TODO [#1002]: https://github.com/Electric-Coin-Company/zashi-android/issues/1002
 
     AnimatedVisibility(
         visible = welcomeAnimVisibility,

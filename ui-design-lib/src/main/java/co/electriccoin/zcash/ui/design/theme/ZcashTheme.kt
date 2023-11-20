@@ -69,7 +69,7 @@ object ZcashTheme {
         get() = LocalExtendedTypography.current
 
     // TODO [#808]: [Design system] Use Dimens across the app
-    // TODO [#808]: https://github.com/zcash/secant-android-wallet/issues/808
+    // TODO [#808]: https://github.com/Electric-Coin-Company/zashi-android/issues/808
     val dimens: Dimens
         @Composable
         get() = LocalDimens.current

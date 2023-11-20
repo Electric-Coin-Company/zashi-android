@@ -33,6 +33,27 @@ fun Header(
 
 @Composable
 @Suppress("LongParameterList")
+fun BodySmall(
+    text: String,
+    modifier: Modifier = Modifier,
+    maxLines: Int = Int.MAX_VALUE,
+    overflow: TextOverflow = TextOverflow.Clip,
+    textAlign: TextAlign = TextAlign.Start,
+    color: Color = MaterialTheme.colorScheme.onBackground,
+) {
+    Text(
+        text = text,
+        color = color,
+        maxLines = maxLines,
+        overflow = overflow,
+        textAlign = textAlign,
+        modifier = modifier,
+        style = MaterialTheme.typography.bodyMedium,
+    )
+}
+
+@Composable
+@Suppress("LongParameterList")
 fun Body(
     text: String,
     modifier: Modifier = Modifier,

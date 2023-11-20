@@ -119,7 +119,7 @@ private fun ReceiveContents(
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
 
         // TODO [#163]: Ellipsize center of the string
-        // TODO [#163]: https://github.com/zcash/secant-android-wallet/issues/163
+        // TODO [#163]: https://github.com/Electric-Coin-Company/zashi-android/issues/163
         Text(
             text = walletAddress.address,
             style = MaterialTheme.typography.bodyLarge,

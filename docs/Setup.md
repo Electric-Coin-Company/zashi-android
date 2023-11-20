@@ -47,7 +47,7 @@ Start by making sure the command line with Gradle works first, because **all the
     1. To check out a git repo from GitHub, there are three authentication methods: SSH, HTTPS, and GitHub API.  We recommend SSH.
     1. Create a new SSH key, following [GitHub's instructions](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
     1. Add the SSH key under [GitHub account settings](https://github.com/settings/keys)
-    1. Clone repo in a terminal on your computer `git clone git@github.com:zcash/secant-android-wallet.git`
+    1. Clone repo in a terminal on your computer `git clone git@github.com:Electric-Coin-Company/zashi-android.git`
 1. Compile from the command line
     1. Navigate to the repo checkout in a terminal
     1. Compile the application with the gradle command `./gradlew assemble`
@@ -171,7 +171,7 @@ Although the goal of this document is to enable readers to build the app from so
 
 1. Go through the first two setup steps above, "Install Java" and "Install Android Studio and the Android SDK"
 1. Obtain binary
-    1. Look under the [GitHub Actions tab](https://github.com/zcash/secant-android-wallet/actions).  Every pull request and merge to the main branch will trigger a workflow that generates builds of the app.  The workflows are called Pull Request and Deploy.
+    1. Look under the [GitHub Actions tab](https://github.com/Electric-Coin-Company/zashi-android/actions).  Every pull request and merge to the main branch will trigger a workflow that generates builds of the app.  The workflows are called Pull Request and Deploy.
     1. Click on a successful workflow
     1. Scroll down the workflow results page to find an attached build output called Binaries
     1. Download the Binaries file

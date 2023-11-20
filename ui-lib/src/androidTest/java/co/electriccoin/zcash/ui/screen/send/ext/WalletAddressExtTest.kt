@@ -17,7 +17,7 @@ class WalletAddressExtTest {
         val actual = WalletAddressFixture.sapling().abbreviated(getAppContext())
 
         // TODO [#248]: The expected value should probably be reversed if the locale is RTL
-        // TODO [#248]: https://github.com/zcash/secant-android-wallet/issues/248
+        // TODO [#248]: https://github.com/Electric-Coin-Company/zashi-android/issues/248
         val expected = "zs1hf…skt4u"
 
         assertEquals(expected, actual)
@@ -30,7 +30,7 @@ class WalletAddressExtTest {
         val actual = WalletAddressFixture.transparent().abbreviated(getAppContext())
 
         // TODO [#248]: The expected value should probably be reversed if the locale is RTL
-        // TODO [#248]: https://github.com/zcash/secant-android-wallet/issues/248
+        // TODO [#248]: https://github.com/Electric-Coin-Company/zashi-android/issues/248
         val expected = "t1QZM…3CSPK"
 
         assertEquals(expected, actual)
