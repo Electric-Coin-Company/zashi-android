@@ -32,10 +32,11 @@ data class Dimens(
     val topAppBarZcashLogoHeight: Dp,
     val topAppBarActionRippleCorner: Dp,
 
-    // In screen custom spacings:
+    // Screen custom spacings:
     val inScreenZcashLogoHeight: Dp,
     val inScreenZcashLogoWidth: Dp,
     val inScreenZcashTextLogoHeight: Dp,
+    val screenHorizontalSpacing: Dp
 )
 
 private val defaultDimens = Dimens(
@@ -57,6 +58,7 @@ private val defaultDimens = Dimens(
     inScreenZcashLogoHeight = 100.dp,
     inScreenZcashLogoWidth = 60.dp,
     inScreenZcashTextLogoHeight = 30.dp,
+    screenHorizontalSpacing = 64.dp,
 )
 
 private val normalDimens = defaultDimens

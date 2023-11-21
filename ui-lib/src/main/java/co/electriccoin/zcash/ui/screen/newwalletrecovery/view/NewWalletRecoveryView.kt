@@ -140,7 +140,7 @@ private fun NewWalletRecoveryMainContent(
         TopScreenLogoTitle(
             title = stringResource(R.string.new_wallet_recovery_header),
             logoContentDescription = stringResource(R.string.zcash_logo_content_description),
-            modifier = Modifier.padding(horizontal = ZcashTheme.dimens.spacingHuge)
+            modifier = Modifier.padding(horizontal = ZcashTheme.dimens.screenHorizontalSpacing)
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
@@ -148,7 +148,7 @@ private fun NewWalletRecoveryMainContent(
         BodySmall(
             text = stringResource(R.string.new_wallet_recovery_description),
             textAlign = TextAlign.Center,
-            modifier = Modifier.padding(horizontal = ZcashTheme.dimens.spacingHuge)
+            modifier = Modifier.padding(horizontal = ZcashTheme.dimens.screenHorizontalSpacing)
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
@@ -167,13 +167,15 @@ private fun NewWalletRecoveryMainContent(
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
 
-        NewWalletRecoveryBottomNav(
-            onComplete = onComplete,
+        PrimaryButton(
+            onClick = onComplete,
+            text = stringResource(R.string.new_wallet_recovery_button_finished),
             modifier = Modifier
                 .padding(
-                    bottom = ZcashTheme.dimens.spacingHuge
+                    bottom = ZcashTheme.dimens.spacingHuge,
+                    start = ZcashTheme.dimens.screenHorizontalSpacing,
+                    end = ZcashTheme.dimens.screenHorizontalSpacing
                 )
-                .fillMaxWidth(),
         )
     }
 }
@@ -219,18 +221,5 @@ private fun NewWalletRecoverySeedPhrase(
                 )
             }
         }
-    }
-}
-
-@Composable
-private fun NewWalletRecoveryBottomNav(
-    onComplete: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        PrimaryButton(onClick = onComplete, text = stringResource(R.string.new_wallet_recovery_button_finished))
     }
 }

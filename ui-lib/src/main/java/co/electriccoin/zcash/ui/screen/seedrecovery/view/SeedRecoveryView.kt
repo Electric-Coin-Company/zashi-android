@@ -147,7 +147,7 @@ private fun SeedRecoveryMainContent(
         TopScreenLogoTitle(
             title = stringResource(R.string.seed_recovery_header),
             logoContentDescription = stringResource(R.string.zcash_logo_content_description),
-            modifier = Modifier.padding(horizontal = ZcashTheme.dimens.spacingHuge)
+            modifier = Modifier.padding(horizontal = ZcashTheme.dimens.screenHorizontalSpacing)
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
@@ -155,7 +155,7 @@ private fun SeedRecoveryMainContent(
         BodySmall(
             text = stringResource(R.string.seed_recovery_description),
             textAlign = TextAlign.Center,
-            modifier = Modifier.padding(horizontal = ZcashTheme.dimens.spacingHuge)
+            modifier = Modifier.padding(horizontal = ZcashTheme.dimens.screenHorizontalSpacing)
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
@@ -174,13 +174,15 @@ private fun SeedRecoveryMainContent(
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
 
-        SeedRecoveryBottomNav(
-            onDone = onDone,
+        PrimaryButton(
+            onClick = onDone,
+            text = stringResource(R.string.seed_recovery_button_finished),
             modifier = Modifier
                 .padding(
-                    bottom = ZcashTheme.dimens.spacingHuge
+                    bottom = ZcashTheme.dimens.spacingHuge,
+                    start = ZcashTheme.dimens.screenHorizontalSpacing,
+                    end = ZcashTheme.dimens.screenHorizontalSpacing
                 )
-                .fillMaxWidth(),
         )
     }
 }
@@ -226,19 +228,5 @@ private fun SeedRecoverySeedPhrase(
                 )
             }
         }
-    }
-}
-
-@Suppress("LongParameterList")
-@Composable
-private fun SeedRecoveryBottomNav(
-    onDone: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        PrimaryButton(onClick = onDone, text = stringResource(R.string.seed_recovery_button_finished))
     }
 }

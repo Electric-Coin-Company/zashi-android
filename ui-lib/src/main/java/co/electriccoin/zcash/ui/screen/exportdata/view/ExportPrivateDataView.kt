@@ -69,8 +69,8 @@ fun ExportPrivateData(
                 .padding(
                     top = paddingValues.calculateTopPadding(),
                     bottom = paddingValues.calculateBottomPadding(),
-                    start = ZcashTheme.dimens.spacingHuge,
-                    end = ZcashTheme.dimens.spacingHuge
+                    start = ZcashTheme.dimens.screenHorizontalSpacing,
+                    end = ZcashTheme.dimens.screenHorizontalSpacing
                 )
                 .verticalScroll(rememberScrollState())
         )
@@ -140,12 +140,14 @@ private fun ExportPrivateDataContent(
                 .weight(MINIMAL_WEIGHT)
         )
 
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
+
         PrimaryButton(
             onClick = onConfirm,
             text = stringResource(R.string.export_data_confirm).uppercase(),
             enabled = checkedState.value
         )
 
-        Spacer(Modifier.height(ZcashTheme.dimens.spacingXlarge))
+        Spacer(Modifier.height(ZcashTheme.dimens.spacingHuge))
     }
 }

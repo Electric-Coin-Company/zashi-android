@@ -2,7 +2,6 @@ package co.electriccoin.zcash.ui.screen.receive.view
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -33,8 +32,8 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.BrightenScreen
 import co.electriccoin.zcash.ui.common.DisableScreenTimeout
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
+import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.GradientSurface
-import co.electriccoin.zcash.ui.design.component.Header
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.receive.util.AndroidQrCodeImageGenerator
@@ -63,6 +62,7 @@ fun Receive(
     onBack: () -> Unit,
     onAddressDetails: () -> Unit,
 ) {
+    // Rework this into Scaffold
     Column {
         ReceiveTopAppBar(onBack = onBack)
         ReceiveContents(
@@ -71,7 +71,11 @@ fun Receive(
             modifier = Modifier
                 .fillMaxHeight()
                 .verticalScroll(rememberScrollState())
-                .padding(all = ZcashTheme.dimens.spacingDefault)
+                .padding(
+                    top = ZcashTheme.dimens.spacingDefault,
+                    start = ZcashTheme.dimens.screenHorizontalSpacing,
+                    end = ZcashTheme.dimens.screenHorizontalSpacing
+                )
         )
     }
 }
@@ -111,7 +115,7 @@ private fun ReceiveContents(
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
 
-        Header(
+        Body(
             text = stringResource(id = R.string.wallet_address_unified),
             Modifier.align(Alignment.CenterHorizontally)
         )
@@ -135,13 +139,14 @@ private fun ReceiveContents(
                 .weight(MINIMAL_WEIGHT)
         )
 
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
+
         PrimaryButton(
             onClick = onAddressDetails,
-            text = stringResource(id = R.string.receive_see_address_details),
-            outerPaddingValues = PaddingValues(
-                bottom = ZcashTheme.dimens.spacingHuge
-            )
+            text = stringResource(id = R.string.receive_see_address_details)
         )
+
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingHuge))
     }
 }
 

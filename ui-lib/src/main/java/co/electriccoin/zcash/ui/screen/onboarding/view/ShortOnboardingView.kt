@@ -8,7 +8,6 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -113,9 +112,9 @@ fun ShortOnboarding(
                     modifier = Modifier
                         .padding(
                             top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingHuge,
-                            bottom = paddingValues.calculateBottomPadding() + ZcashTheme.dimens.spacingHuge,
-                            start = ZcashTheme.dimens.spacingHuge,
-                            end = ZcashTheme.dimens.spacingHuge
+                            bottom = paddingValues.calculateBottomPadding(),
+                            start = ZcashTheme.dimens.screenHorizontalSpacing,
+                            end = ZcashTheme.dimens.screenHorizontalSpacing
                         )
                         .height(screenHeight.contentHeight - paddingValues.calculateBottomPadding())
                 )
@@ -199,22 +198,14 @@ private fun OnboardingMainContent(
 
             PrimaryButton(
                 onClick = onCreateWallet,
-                text = stringResource(R.string.onboarding_short_create_new_wallet),
-                outerPaddingValues = PaddingValues(
-                    horizontal = ZcashTheme.dimens.spacingNone,
-                    vertical = ZcashTheme.dimens.spacingSmall
-                ),
+                text = stringResource(R.string.onboarding_short_create_new_wallet)
             )
 
             Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
 
             SecondaryButton(
                 onImportWallet,
-                stringResource(R.string.onboarding_short_import_existing_wallet),
-                outerPaddingValues = PaddingValues(
-                    horizontal = ZcashTheme.dimens.spacingNone,
-                    vertical = ZcashTheme.dimens.spacingSmall
-                )
+                stringResource(R.string.onboarding_short_import_existing_wallet)
             )
         }
     }
