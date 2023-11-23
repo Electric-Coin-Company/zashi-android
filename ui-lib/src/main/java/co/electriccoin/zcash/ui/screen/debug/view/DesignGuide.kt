@@ -1,6 +1,7 @@
 package co.electriccoin.zcash.ui.screen.debug.view
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.List
@@ -9,6 +10,7 @@ import androidx.compose.material.icons.filled.Shield
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.spackle.model.Index
 import co.electriccoin.zcash.spackle.model.Progress
 import co.electriccoin.zcash.ui.design.component.Body
@@ -41,9 +43,9 @@ fun DesignGuide() {
             Body(text = "body")
             NavigationButton(onClick = { }, text = "Back")
             NavigationButton(onClick = { }, text = "Next")
-            PrimaryButton(onClick = { }, text = "Primary button")
-            SecondaryButton(onClick = { }, text = "Secondary button")
-            TertiaryButton(onClick = { }, text = "Tertiary button")
+            PrimaryButton(onClick = { }, text = "Primary button", outerPaddingValues = PaddingValues(24.dp))
+            SecondaryButton(onClick = { }, text = "Secondary button", outerPaddingValues = PaddingValues(24.dp))
+            TertiaryButton(onClick = { }, text = "Tertiary button", outerPaddingValues = PaddingValues(24.dp))
             Callout(Icons.Filled.Shield, contentDescription = "Shield")
             Callout(Icons.Filled.Person, contentDescription = "Person")
             Callout(Icons.Filled.List, contentDescription = "List")

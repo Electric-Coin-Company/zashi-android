@@ -38,7 +38,6 @@ import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.ConfigInfoFixture
 import co.electriccoin.zcash.ui.fixture.VersionInfoFixture
-import co.electriccoin.zcash.ui.screen.about.AboutTag
 import co.electriccoin.zcash.ui.screen.support.model.ConfigInfo
 
 @Preview("About")
@@ -78,8 +77,8 @@ fun About(
                 .padding(
                     top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
                     bottom = paddingValues.calculateBottomPadding() + ZcashTheme.dimens.spacingDefault,
-                    start = ZcashTheme.dimens.spacingHuge,
-                    end = ZcashTheme.dimens.spacingHuge
+                    start = ZcashTheme.dimens.screenHorizontalSpacing,
+                    end = ZcashTheme.dimens.screenHorizontalSpacing
                 )
         )
     }
@@ -141,7 +140,7 @@ fun AboutMainContent(
     modifier: Modifier = Modifier
 ) {
     Column(modifier) {
-        val logoContentDescription = stringResource(R.string.about_app_logo_content_description)
+        val logoContentDescription = stringResource(R.string.zcash_logo_content_description)
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.semantics(mergeDescendants = true) {
@@ -149,7 +148,7 @@ fun AboutMainContent(
             }
         ) {
             Image(
-                painter = painterResource(id = R.drawable.zashi_logo_without_text),
+                painter = painterResource(id = co.electriccoin.zcash.ui.design.R.drawable.zashi_logo_without_text),
                 contentDescription = null,
                 Modifier
                     .height(ZcashTheme.dimens.inScreenZcashLogoHeight)
@@ -157,7 +156,7 @@ fun AboutMainContent(
             )
             Spacer(modifier = Modifier.width(ZcashTheme.dimens.spacingDefault))
             Image(
-                painter = painterResource(id = R.drawable.zashi_text_logo),
+                painter = painterResource(id = co.electriccoin.zcash.ui.design.R.drawable.zashi_text_logo),
                 contentDescription = null,
                 modifier = Modifier.height(ZcashTheme.dimens.inScreenZcashTextLogoHeight)
             )

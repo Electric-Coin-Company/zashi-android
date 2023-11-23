@@ -1,7 +1,6 @@
 package co.electriccoin.zcash.ui.screen.support.view
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -85,9 +84,9 @@ fun Support(
             setShowDialog = setShowDialog,
             modifier = Modifier.padding(
                 top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
-                bottom = paddingValues.calculateBottomPadding() + ZcashTheme.dimens.spacingDefault,
-                start = ZcashTheme.dimens.spacingDefault,
-                end = ZcashTheme.dimens.spacingDefault
+                bottom = paddingValues.calculateBottomPadding(),
+                start = ZcashTheme.dimens.screenHorizontalSpacing,
+                end = ZcashTheme.dimens.screenHorizontalSpacing
             )
         )
 
@@ -150,19 +149,20 @@ private fun SupportMainContent(
 
         Body(stringResource(id = R.string.support_disclaimer))
 
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
-
         Spacer(
             modifier = Modifier
                 .fillMaxHeight()
                 .weight(MINIMAL_WEIGHT)
         )
 
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
+
         PrimaryButton(
             onClick = { setShowDialog(true) },
-            text = stringResource(id = R.string.support_send),
-            outerPaddingValues = PaddingValues(all = ZcashTheme.dimens.spacingNone)
+            text = stringResource(id = R.string.support_send)
         )
+
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingHuge))
     }
 }
 

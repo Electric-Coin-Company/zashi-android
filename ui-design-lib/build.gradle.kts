@@ -54,6 +54,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.core)
     api(libs.kotlinx.immutable)
+    implementation(libs.zcash.sdk.incubator)
     implementation(projects.spackleAndroidLib)
 
     androidTestImplementation(libs.bundles.androidx.test)

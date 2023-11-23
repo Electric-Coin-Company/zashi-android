@@ -5,7 +5,6 @@ package co.electriccoin.zcash.ui.screen.home.view
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -53,6 +52,7 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.DisableScreenTimeout
 import co.electriccoin.zcash.ui.common.closeDrawerMenu
 import co.electriccoin.zcash.ui.common.openDrawerMenu
+import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.BodyWithFiatCurrencySymbol
 import co.electriccoin.zcash.ui.design.component.GradientSurface
@@ -137,9 +137,9 @@ fun Home(
                     goHistory = goHistory,
                     modifier = Modifier.padding(
                         top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
-                        bottom = paddingValues.calculateBottomPadding() + ZcashTheme.dimens.spacingDefault,
-                        start = ZcashTheme.dimens.spacingDefault,
-                        end = ZcashTheme.dimens.spacingDefault
+                        bottom = paddingValues.calculateBottomPadding() + ZcashTheme.dimens.spacingHuge,
+                        start = ZcashTheme.dimens.screenHorizontalSpacing,
+                        end = ZcashTheme.dimens.screenHorizontalSpacing
                     )
                 )
             }
@@ -247,24 +247,27 @@ private fun HomeMainContent(
     ) {
         Status(walletSnapshot, isUpdateAvailable, isFiatConversionEnabled, isCircularProgressBarEnabled)
 
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
+        Spacer(
+            modifier = Modifier
+                .fillMaxHeight()
+                .weight(MINIMAL_WEIGHT)
+        )
+
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
 
         PrimaryButton(
             onClick = goSend,
-            text = stringResource(R.string.home_button_send),
-            outerPaddingValues = PaddingValues(
-                horizontal = ZcashTheme.dimens.spacingNone,
-                vertical = ZcashTheme.dimens.spacingSmall
-            )
+            text = stringResource(R.string.home_button_send)
         )
+
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
+
         PrimaryButton(
             onClick = goReceive,
-            text = stringResource(R.string.home_button_receive),
-            outerPaddingValues = PaddingValues(
-                horizontal = ZcashTheme.dimens.spacingNone,
-                vertical = ZcashTheme.dimens.spacingSmall
-            )
+            text = stringResource(R.string.home_button_receive)
         )
+
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
 
         TertiaryButton(onClick = goHistory, text = stringResource(R.string.home_button_history))
 

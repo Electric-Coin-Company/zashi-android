@@ -15,7 +15,7 @@ object StandardPreferenceKeys {
         OnboardingState.NONE.toNumber()
     )
 
-    // Default to true until https://github.com/zcash/secant-android-wallet/issues/304
+    // Default to true until https://github.com/Electric-Coin-Company/zashi-android/issues/304
     val IS_ANALYTICS_ENABLED = BooleanPreferenceDefault(PreferenceKey("is_analytics_enabled"), true)
 
     val IS_BACKGROUND_SYNC_ENABLED = BooleanPreferenceDefault(PreferenceKey("is_background_sync_enabled"), true)

@@ -8,7 +8,6 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -71,10 +70,10 @@ private fun ShortOnboardingComposablePreview() {
 }
 
 // TODO [#998]: Check and enhance screen dark mode
-// TODO [#998]: https://github.com/zcash/secant-android-wallet/issues/998
+// TODO [#998]: https://github.com/Electric-Coin-Company/zashi-android/issues/998
 
 // TODO [#1001]: Screens in landscape mode
-// TODO [#1001]: https://github.com/zcash/secant-android-wallet/issues/1001
+// TODO [#1001]: https://github.com/Electric-Coin-Company/zashi-android/issues/1001
 
 /**
  * @param showWelcomeAnim Whether the welcome screen growing chart animation should be done or not.
@@ -113,9 +112,9 @@ fun ShortOnboarding(
                     modifier = Modifier
                         .padding(
                             top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingHuge,
-                            bottom = paddingValues.calculateBottomPadding() + ZcashTheme.dimens.spacingHuge,
-                            start = ZcashTheme.dimens.spacingHuge,
-                            end = ZcashTheme.dimens.spacingHuge
+                            bottom = paddingValues.calculateBottomPadding(),
+                            start = ZcashTheme.dimens.screenHorizontalSpacing,
+                            end = ZcashTheme.dimens.screenHorizontalSpacing
                         )
                         .height(screenHeight.contentHeight - paddingValues.calculateBottomPadding())
                 )
@@ -171,7 +170,7 @@ private fun OnboardingMainContent(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Image(
-                painterResource(id = R.drawable.zashi_logo_without_text),
+                painterResource(id = co.electriccoin.zcash.ui.design.R.drawable.zashi_logo_without_text),
                 stringResource(R.string.zcash_logo_onboarding_content_description),
                 Modifier
                     .height(ZcashTheme.dimens.inScreenZcashLogoHeight)
@@ -181,7 +180,7 @@ private fun OnboardingMainContent(
             Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
             Image(
-                painterResource(id = R.drawable.zashi_text_logo),
+                painterResource(id = co.electriccoin.zcash.ui.design.R.drawable.zashi_text_logo),
                 ""
             )
 
@@ -199,22 +198,14 @@ private fun OnboardingMainContent(
 
             PrimaryButton(
                 onClick = onCreateWallet,
-                text = stringResource(R.string.onboarding_short_create_new_wallet),
-                outerPaddingValues = PaddingValues(
-                    horizontal = ZcashTheme.dimens.spacingNone,
-                    vertical = ZcashTheme.dimens.spacingSmall
-                ),
+                text = stringResource(R.string.onboarding_short_create_new_wallet)
             )
 
             Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
 
             SecondaryButton(
                 onImportWallet,
-                stringResource(R.string.onboarding_short_import_existing_wallet),
-                outerPaddingValues = PaddingValues(
-                    horizontal = ZcashTheme.dimens.spacingNone,
-                    vertical = ZcashTheme.dimens.spacingSmall
-                )
+                stringResource(R.string.onboarding_short_import_existing_wallet)
             )
         }
     }
@@ -228,7 +219,7 @@ fun AnimatedImage(
     modifier: Modifier = Modifier,
 ) {
     // TODO [#1002]: Welcome screen animation masking
-    // TODO [#1002]: https://github.com/zcash/secant-android-wallet/issues/1002
+    // TODO [#1002]: https://github.com/Electric-Coin-Company/zashi-android/issues/1002
 
     AnimatedVisibility(
         visible = welcomeAnimVisibility,

@@ -11,7 +11,7 @@ import com.google.zxing.PlanarYUVLuminanceSource
 import com.google.zxing.common.HybridBinarizer
 import java.nio.ByteBuffer
 
-// TODO [#437]: https://github.com/zcash/secant-android-wallet/issues/437
+// TODO [#437]: https://github.com/Electric-Coin-Company/zashi-android/issues/437
 class QrCodeAnalyzer(
     private val onQrCodeScanned: (String) -> Unit
 ) : ImageAnalysis.Analyzer {

@@ -14,6 +14,7 @@ import cash.z.ecc.android.sdk.model.ZcashNetwork
 import cash.z.ecc.sdk.type.fromResources
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.screen.exportdata.util.FileShareUtil
 import co.electriccoin.zcash.ui.screen.exportdata.view.ExportPrivateData
 import co.electriccoin.zcash.ui.screen.home.viewmodel.WalletViewModel
@@ -78,13 +79,14 @@ fun shareData(
     snackbarHostState: SnackbarHostState,
 ): Flow<Boolean> = callbackFlow {
     val shareIntent = FileShareUtil.newShareContentIntent(
-        context,
+        context = context,
         // Example of the expected db file absolute path:
         // /data/user/0/co.electriccoin.zcash.debug/no_backup/co.electricoin.zcash/zcash_sdk_mainnet_data.sqlite3
-        (synchronizer as SdkSynchronizer).getExistingDataDbFilePath(
+        dataFilePath = (synchronizer as SdkSynchronizer).getExistingDataDbFilePath(
             context = context,
             network = ZcashNetwork.fromResources(context)
-        )
+        ),
+        versionInfo = VersionInfo.new(context.applicationContext)
     )
     runCatching {
         context.startActivity(shareIntent)

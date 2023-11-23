@@ -1,10 +1,17 @@
 package co.electriccoin.zcash.ui.design.component
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
@@ -22,6 +29,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -209,22 +217,23 @@ fun SmallTopAppBar(
         },
         navigationIcon = {
             backText?.let {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
+                Box(
+                    modifier = Modifier
+                        .wrapContentSize()
+                        .clip(RoundedCornerShape(ZcashTheme.dimens.topAppBarActionRippleCorner))
+                        .clickable { onBack?.run { onBack() } }
                 ) {
-                    IconButton(
-                        onClick = if (onBack != null) {
-                            onBack
-                        } else {
-                            {}
-                        }
+                    Row(
+                        modifier = Modifier.padding(all = ZcashTheme.dimens.spacingDefault),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(
+                        Image(
                             imageVector = Icons.Filled.ArrowBack,
                             contentDescription = backContentDescriptionText
                         )
+                        Spacer(modifier = Modifier.size(size = ZcashTheme.dimens.spacingSmall))
+                        Text(text = backText.uppercase())
                     }
-                    Text(text = backText.uppercase())
                 }
             }
         },

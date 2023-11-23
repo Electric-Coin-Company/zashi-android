@@ -10,7 +10,6 @@ import androidx.test.filters.SmallTest
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.fixture.ConfigInfoFixture
 import co.electriccoin.zcash.ui.fixture.VersionInfoFixture
-import co.electriccoin.zcash.ui.screen.about.AboutTag
 import co.electriccoin.zcash.ui.test.getStringResource
 import org.junit.Rule
 import kotlin.test.Test
@@ -32,7 +31,7 @@ class AboutViewTest {
         }
 
         composeTestRule.onNodeWithContentDescription(
-            label = getStringResource(R.string.about_app_logo_content_description)
+            label = getStringResource(R.string.zcash_logo_content_description)
         ).also {
             it.assertExists()
         }

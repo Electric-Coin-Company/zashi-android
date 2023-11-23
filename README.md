@@ -66,7 +66,7 @@ the project, these steps are not necessary.)
    APK cannot be run.  The coverage flag should therefore only be set when
    running automated tests.
 1. Test coverage for Compose code will be low, due to [known limitations](https://github.com/jacoco/jacoco/issues/1208) in the interaction between Compose and Jacoco.
-1. Adding the `espresso-contrib` dependency will cause builds to fail, due to conflicting classes.  This is a [known issue](https://github.com/zcash/zcash-android-wallet-sdk/issues/306) with the Zcash Android SDK.
+1. Adding the `espresso-contrib` dependency will cause builds to fail, due to conflicting classes.  This is a [known issue](https://github.com/Electric-Coin-Company/zcash-android-wallet-sdk/issues/306) with the Zcash Android SDK.
 1. Android Studio will warn about the Gradle checksum.  This is a [known issue](https://github.com/gradle/gradle/issues/9361) and can be safely ignored.
-1. [#96](https://github.com/zcash/secant-android-wallet/issues/96) - Release builds print some R8 warnings which can be safely ignored.
+1. [#96](https://github.com/Electric-Coin-Company/zashi-android/issues/96) - Release builds print some R8 warnings which can be safely ignored.
 1. During app first launch, the following exception starting with `AndroidKeysetManager: keyset not found, will generate a new one` is printed twice.  This exception is not an error, and the code is not being invoked twice.

@@ -1,13 +1,16 @@
 package co.electriccoin.zcash.ui.design.component
 
-import androidx.compose.foundation.text.ClickableText
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -28,6 +31,27 @@ fun Header(
         textAlign = textAlign,
         modifier = modifier,
         style = MaterialTheme.typography.headlineLarge,
+    )
+}
+
+@Composable
+@Suppress("LongParameterList")
+fun BodySmall(
+    text: String,
+    modifier: Modifier = Modifier,
+    maxLines: Int = Int.MAX_VALUE,
+    overflow: TextOverflow = TextOverflow.Clip,
+    textAlign: TextAlign = TextAlign.Start,
+    color: Color = MaterialTheme.colorScheme.onBackground,
+) {
+    Text(
+        text = text,
+        color = color,
+        maxLines = maxLines,
+        overflow = overflow,
+        textAlign = textAlign,
+        modifier = modifier,
+        style = MaterialTheme.typography.bodyMedium,
     )
 }
 
@@ -122,21 +146,25 @@ fun Reference(
     textAlign: TextAlign = TextAlign.Start,
     onClick: () -> Unit
 ) {
-    ClickableText(
-        text = AnnotatedString(text),
-        style = MaterialTheme.typography.bodyLarge
-            .merge(
-                TextStyle(
-                    color = ZcashTheme.colors.reference,
-                    textAlign = textAlign,
-                    textDecoration = TextDecoration.Underline
-                )
-            ),
-        modifier = modifier,
-        onClick = {
-            onClick()
-        }
-    )
+    Box(
+        modifier = Modifier
+            .wrapContentSize()
+            .clip(RoundedCornerShape(ZcashTheme.dimens.topAppBarActionRippleCorner))
+            .clickable { onClick() }
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodyLarge
+                .merge(
+                    TextStyle(
+                        color = ZcashTheme.colors.reference,
+                        textAlign = textAlign,
+                        textDecoration = TextDecoration.Underline
+                    )
+                ),
+            modifier = modifier
+        )
+    }
 }
 
 /**

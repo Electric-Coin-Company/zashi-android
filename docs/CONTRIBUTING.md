@@ -16,7 +16,7 @@ Pull requests should adhere to our [Code Review Guidelines](CODE_REVIEW_GUIDELIN
 All contributions _will_ be licensed under the MIT license.
 
 ## Getting Started
-Our backlog has many items [tagged with "good first issue"](https://github.com/zcash/secant-android-wallet/labels/good%20first%20issue).  If you'd like to pick one of these up, please fork the repo and make a pull request for us to review.
+Our backlog has many items [tagged with "good first issue"](https://github.com/Electric-Coin-Company/zashi-android/labels/good%20first%20issue).  If you'd like to pick one of these up, please fork the repo and make a pull request for us to review.
 
 Our [Architecture.md](Architecture.md) documentation is a good reference get oriented on the structure of the codebase.
 

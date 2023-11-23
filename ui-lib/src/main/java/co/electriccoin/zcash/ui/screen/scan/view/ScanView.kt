@@ -13,7 +13,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -78,7 +77,7 @@ import kotlinx.coroutines.guava.await
 import kotlin.math.roundToInt
 
 // TODO [#423]: QR scan screen elements transparency
-// TODO [#423]: https://github.com/zcash/secant-android-wallet/issues/423
+// TODO [#423]: https://github.com/Electric-Coin-Company/zashi-android/issues/423
 @Preview("Scan")
 @Composable
 private fun PreviewScan() {
@@ -156,11 +155,7 @@ fun ScanBottomItems(
 
             SecondaryButton(
                 onClick = onOpenSettings,
-                text = stringResource(id = R.string.scan_settings_button),
-                outerPaddingValues = PaddingValues(
-                    vertical = ZcashTheme.dimens.spacingSmall,
-                    horizontal = ZcashTheme.dimens.spacingNone
-                )
+                text = stringResource(id = R.string.scan_settings_button)
             )
         }
     }
@@ -249,7 +244,7 @@ private fun ScanMainContent(
             }
             ScanState.Scanning -> {
                 // TODO [#437]: Scan QR Screen Frame Analysing
-                // TODO [#437]: https://github.com/zcash/secant-android-wallet/issues/437
+                // TODO [#437]: https://github.com/Electric-Coin-Company/zashi-android/issues/437
                 onScanStateChanged(ScanState.Scanning)
                 ScanCameraView(
                     onScanned = onScanned,
@@ -298,8 +293,8 @@ private fun ScanMainContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(
-                        vertical = ZcashTheme.dimens.spacingDefault,
-                        horizontal = ZcashTheme.dimens.spacingDefault
+                        vertical = ZcashTheme.dimens.spacingHuge,
+                        horizontal = ZcashTheme.dimens.screenHorizontalSpacing
                     )
             )
         }

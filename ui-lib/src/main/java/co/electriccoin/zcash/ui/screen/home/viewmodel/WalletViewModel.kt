@@ -62,7 +62,7 @@ import kotlin.time.ExperimentalTime
 // To make this more multiplatform compatible, we need to remove the dependency on Context
 // for loading the preferences.
 // TODO [#292]: Should be moved to SDK-EXT-UI module.
-// TODO [#292]: https://github.com/zcash/secant-android-wallet/issues/292
+// TODO [#292]: https://github.com/Electric-Coin-Company/zashi-android/issues/292
 class WalletViewModel(application: Application) : AndroidViewModel(application) {
     private val walletCoordinator = WalletCoordinator.getInstance(application)
 
@@ -290,7 +290,7 @@ sealed class SecretState {
  * Represents all kind of Synchronizer errors
  */
 // TODO [#529]: Localize Synchronizer Errors
-// TODO [#529]: https://github.com/zcash/secant-android-wallet/issues/529
+// TODO [#529]: https://github.com/Electric-Coin-Company/zashi-android/issues/529
 sealed class SynchronizerError {
     abstract fun getCauseMessage(): String?
 

@@ -1,6 +1,5 @@
 package co.electriccoin.zcash.ui.screen.securitywarning.view
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -14,14 +13,12 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -36,6 +33,7 @@ import co.electriccoin.zcash.ui.design.component.CheckBox
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
+import co.electriccoin.zcash.ui.design.component.TopScreenLogoTitle
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.VersionInfoFixture
 
@@ -57,7 +55,7 @@ private fun SecurityWarningPreview() {
 }
 
 // TODO [#998]: Check and enhance screen dark mode
-// TODO [#998]: https://github.com/zcash/secant-android-wallet/issues/998
+// TODO [#998]: https://github.com/Electric-Coin-Company/zashi-android/issues/998
 
 @Composable
 @Suppress("LongParameterList")
@@ -83,8 +81,8 @@ fun SecurityWarning(
                 .padding(
                     top = paddingValues.calculateTopPadding(),
                     bottom = paddingValues.calculateBottomPadding(),
-                    start = ZcashTheme.dimens.spacingHuge,
-                    end = ZcashTheme.dimens.spacingHuge
+                    start = ZcashTheme.dimens.screenHorizontalSpacing,
+                    end = ZcashTheme.dimens.screenHorizontalSpacing
                 )
                 .verticalScroll(rememberScrollState())
         )
@@ -114,21 +112,12 @@ private fun SecurityWarningContent(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Image(
-            painterResource(id = R.drawable.zashi_logo_without_text),
-            stringResource(R.string.zcash_logo_content_description),
-            Modifier.fillMaxWidth()
+        TopScreenLogoTitle(
+            title = stringResource(R.string.security_warning_header),
+            logoContentDescription = stringResource(R.string.zcash_logo_content_description)
         )
 
-        Spacer(Modifier.height(ZcashTheme.dimens.spacingXlarge))
-
-        Text(
-            text = stringResource(R.string.security_warning_header),
-            style = ZcashTheme.typography.secondary.headlineMedium,
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(Modifier.height(ZcashTheme.dimens.spacingDefault))
+        Spacer(Modifier.height(ZcashTheme.dimens.spacingLarge))
 
         SecurityWarningContentText(
             versionInfo = versionInfo,
@@ -163,7 +152,7 @@ private fun SecurityWarningContent(
             enabled = checkedState.value
         )
 
-        Spacer(Modifier.height(ZcashTheme.dimens.spacingXlarge))
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingHuge))
     }
 }
 
