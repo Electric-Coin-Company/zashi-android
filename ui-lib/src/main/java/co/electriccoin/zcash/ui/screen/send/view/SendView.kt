@@ -286,7 +286,7 @@ private fun SendForm(
     val allowedCharacters = ZecString.allowedCharacters(monetarySeparators)
 
     // TODO [#809]: Fix ZEC balance on Send screen
-    // TODO [#809]: https://github.com/zcash/secant-android-wallet/issues/809
+    // TODO [#809]: https://github.com/Electric-Coin-Company/zashi-android/issues/809
     var amountZecString by rememberSaveable {
         mutableStateOf(previousZecSend?.amount?.toZecString() ?: "")
     }
@@ -300,7 +300,7 @@ private fun SendForm(
     }
 
     // TODO [#826]: SendArgumentsWrapper object properties validation
-    // TODO [#826]: https://github.com/zcash/secant-android-wallet/issues/826
+    // TODO [#826]: https://github.com/Electric-Coin-Company/zashi-android/issues/826
     if (sendArgumentsWrapper?.recipientAddress != null) {
         recipientAddressString = sendArgumentsWrapper.recipientAddress
     }
@@ -364,7 +364,7 @@ private fun SendForm(
         Spacer(Modifier.size(dimens.spacingSmall))
 
         // TODO [#810]: Disable Memo UI field in case of Transparent address
-        // TODO [#810]: https://github.com/zcash/secant-android-wallet/issues/810
+        // TODO [#810]: https://github.com/Electric-Coin-Company/zashi-android/issues/810
         FormTextField(
             value = memoString,
             onValueChange = {

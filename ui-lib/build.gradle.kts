@@ -30,7 +30,7 @@ android {
             res.setSrcDirs(
                 setOf(
                     "src/main/res/ui/about",
-                    "src/main/res/ui/backup",
+                    "src/main/res/ui/new_wallet_recovery",
                     "src/main/res/ui/common",
                     "src/main/res/ui/export_data",
                     "src/main/res/ui/history",

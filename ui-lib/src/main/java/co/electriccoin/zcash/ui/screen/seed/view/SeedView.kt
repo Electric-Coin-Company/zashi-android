@@ -111,7 +111,10 @@ private fun SeedMainContent(
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
-        ChipGrid(persistableWallet.seedPhrase.split.toPersistentList())
+        ChipGrid(
+            wordList = persistableWallet.seedPhrase.split.toPersistentList(),
+            onGridClick = {}
+        )
 
         TertiaryButton(
             onClick = onCopyToClipboard,

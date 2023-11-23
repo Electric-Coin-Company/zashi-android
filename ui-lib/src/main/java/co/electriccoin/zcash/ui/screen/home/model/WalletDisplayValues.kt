@@ -30,7 +30,7 @@ data class WalletDisplayValues(
             val zecAmountText = walletSnapshot.totalBalance().toZecString()
             var statusText = ""
             // TODO [#578]: Provide Zatoshi -> USD fiat currency formatting
-            // TODO [#578]: https://github.com/zcash/zcash-android-wallet-sdk/issues/578
+            // TODO [#578]: https://github.com/Electric-Coin-Company/zcash-android-wallet-sdk/issues/578
             // We'll ideally provide a "fresh" currencyConversion object here
             val fiatCurrencyAmountState = walletSnapshot.spendableBalance().toFiatCurrencyState(
                 null,

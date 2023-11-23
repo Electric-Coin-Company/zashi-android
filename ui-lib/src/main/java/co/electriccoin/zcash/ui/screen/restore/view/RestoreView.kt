@@ -71,7 +71,6 @@ import co.electriccoin.zcash.ui.common.SecureScreen
 import co.electriccoin.zcash.ui.common.shouldSecureScreen
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.Body
-import co.electriccoin.zcash.ui.design.component.CHIP_GRID_ROW_SIZE
 import co.electriccoin.zcash.ui.design.component.Chip
 import co.electriccoin.zcash.ui.design.component.FormTextField
 import co.electriccoin.zcash.ui.design.component.GradientSurface
@@ -271,7 +270,7 @@ private fun RestoreTopAppBar(onBack: () -> Unit, isShowClear: Boolean, onClear: 
 }
 
 // TODO [#672]: Implement custom seed phrase pasting for wallet import
-// TODO [#672]: https://github.com/zcash/secant-android-wallet/issues/672
+// TODO [#672]: https://github.com/Electric-Coin-Company/zashi-android/issues/672
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Suppress("UNUSED_PARAMETER", "LongParameterList")
@@ -386,6 +385,8 @@ private fun RestoreSeedBottomBar(
         }
     }
 }
+
+const val CHIP_GRID_ROW_SIZE = 3
 
 @Composable
 private fun ChipGridWithText(

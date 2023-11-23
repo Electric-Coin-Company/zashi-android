@@ -60,11 +60,15 @@ class RestoreViewTest : UiTestPrerequisites() {
             it.assertTextContains("ab")
         }
 
-        composeTestRule.onNode(hasText("abandon") and hasTestTag(RestoreTag.AUTOCOMPLETE_ITEM)).also {
+        composeTestRule.onNode(
+            matcher = hasText("abandon", substring = true) and hasTestTag(RestoreTag.AUTOCOMPLETE_ITEM)
+        ).also {
             it.assertExists()
         }
 
-        composeTestRule.onNode(hasText("able") and hasTestTag(RestoreTag.AUTOCOMPLETE_ITEM)).also {
+        composeTestRule.onNode(
+            matcher = hasText("able", substring = true) and hasTestTag(RestoreTag.AUTOCOMPLETE_ITEM)
+        ).also {
             it.assertExists()
         }
     }
@@ -78,7 +82,9 @@ class RestoreViewTest : UiTestPrerequisites() {
             it.performTextInput("ab")
         }
 
-        composeTestRule.onNode(hasText("abandon") and hasTestTag(RestoreTag.AUTOCOMPLETE_ITEM)).also {
+        composeTestRule.onNode(
+            matcher = hasText("abandon", substring = true) and hasTestTag(RestoreTag.AUTOCOMPLETE_ITEM)
+        ).also {
             it.performClick()
         }
 
@@ -86,7 +92,10 @@ class RestoreViewTest : UiTestPrerequisites() {
             it.assertDoesNotExist()
         }
 
-        composeTestRule.onNode(hasText("abandon") and hasTestTag(CommonTag.CHIP), useUnmergedTree = true).also {
+        composeTestRule.onNode(
+            matcher = hasText("abandon", substring = true) and hasTestTag(CommonTag.CHIP),
+            useUnmergedTree = true
+        ).also {
             it.assertExists()
         }
 
@@ -112,9 +121,13 @@ class RestoreViewTest : UiTestPrerequisites() {
             it.assertDoesNotExist()
         }
 
-        composeTestRule.onNode(hasText("abandon") and hasTestTag(CommonTag.CHIP), useUnmergedTree = true).also {
-            it.assertExists()
-        }
+        composeTestRule.onNode(
+            matcher = hasText(text = "abandon", substring = true) and hasTestTag(CommonTag.CHIP),
+            useUnmergedTree = true
+        )
+            .also {
+                it.assertExists()
+            }
 
         composeTestRule.onNodeWithTag(RestoreTag.SEED_WORD_TEXT_FIELD).also {
             it.assertTextEquals("")
@@ -155,7 +168,10 @@ class RestoreViewTest : UiTestPrerequisites() {
     fun seed_clear() {
         newTestSetup(initialWordsList = listOf("abandon"))
 
-        composeTestRule.onNode(hasText("abandon") and hasTestTag(CommonTag.CHIP), useUnmergedTree = true).also {
+        composeTestRule.onNode(
+            matcher = hasText(text = "abandon", substring = true) and hasTestTag(CommonTag.CHIP),
+            useUnmergedTree = true
+        ).also {
             it.assertExists()
         }
 
@@ -163,7 +179,10 @@ class RestoreViewTest : UiTestPrerequisites() {
             it.performClick()
         }
 
-        composeTestRule.onNode(hasText("abandon") and hasTestTag(CommonTag.CHIP), useUnmergedTree = true).also {
+        composeTestRule.onNode(
+            matcher = hasText("abandon", substring = true) and hasTestTag(CommonTag.CHIP),
+            useUnmergedTree = true
+        ).also {
             it.assertDoesNotExist()
         }
     }

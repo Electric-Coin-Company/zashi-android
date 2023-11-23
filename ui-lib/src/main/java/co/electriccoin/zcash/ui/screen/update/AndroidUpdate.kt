@@ -30,7 +30,7 @@ internal fun MainActivity.WrapCheckForUpdate() {
 @Composable
 private fun WrapCheckForUpdate(activity: ComponentActivity) {
     // TODO [#403]: Manual testing of already implemented in-app update mechanisms
-    // TODO [#403]: https://github.com/zcash/secant-android-wallet/issues/403
+    // TODO [#403]: https://github.com/Electric-Coin-Company/zashi-android/issues/403
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     val checkUpdateViewModel by activity.viewModels<CheckUpdateViewModel> {
         CheckUpdateViewModel.CheckUpdateViewModelFactory(

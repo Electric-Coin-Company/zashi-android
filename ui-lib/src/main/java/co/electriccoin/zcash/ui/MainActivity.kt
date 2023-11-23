@@ -32,11 +32,11 @@ import co.electriccoin.zcash.ui.design.component.ConfigurationOverride
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.Override
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
-import co.electriccoin.zcash.ui.screen.backup.WrapNewWallet
 import co.electriccoin.zcash.ui.screen.home.model.OnboardingState
 import co.electriccoin.zcash.ui.screen.home.viewmodel.HomeViewModel
 import co.electriccoin.zcash.ui.screen.home.viewmodel.SecretState
 import co.electriccoin.zcash.ui.screen.home.viewmodel.WalletViewModel
+import co.electriccoin.zcash.ui.screen.newwalletrecovery.WrapNewWalletRecovery
 import co.electriccoin.zcash.ui.screen.onboarding.WrapOnboarding
 import co.electriccoin.zcash.ui.screen.onboarding.persistExistingWalletWithSeedPhrase
 import co.electriccoin.zcash.ui.screen.securitywarning.WrapSecurityWarning
@@ -178,7 +178,7 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     is SecretState.NeedsBackup -> {
-                        WrapNewWallet(
+                        WrapNewWalletRecovery(
                             secretState.persistableWallet,
                             onBackupComplete = { walletViewModel.persistOnboardingState(OnboardingState.READY) }
                         )

@@ -6,7 +6,6 @@ import android.content.Context
 import android.os.Build
 import android.os.LocaleList
 import androidx.activity.viewModels
-import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasTestTag
@@ -14,8 +13,6 @@ import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.onAllNodesWithTag
-import androidx.compose.ui.test.onChildren
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -45,7 +42,6 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
 import co.electriccoin.zcash.ui.design.component.ConfigurationOverride
 import co.electriccoin.zcash.ui.design.component.UiMode
-import co.electriccoin.zcash.ui.screen.backup.BackupTag
 import co.electriccoin.zcash.ui.screen.home.viewmodel.SecretState
 import co.electriccoin.zcash.ui.screen.restore.RestoreTag
 import co.electriccoin.zcash.ui.screen.restore.viewmodel.RestoreViewModel
@@ -146,14 +142,14 @@ class ScreenshotTest : UiTestPrerequisites() {
     }
 
     // TODO [#859]: Screenshot tests fail on Firebase Test Lab
-    // TODO [#859]: https://github.com/zcash/secant-android-wallet/issues/859
+    // TODO [#859]: https://github.com/Electric-Coin-Company/zashi-android/issues/859
     // Some of the restore screenshots broke with the Compose 1.4 update and we don't yet know why.
     private val isRestoreScreenshotsEnabled = false
 
     @Suppress("LongMethod", "FunctionNaming", "CyclomaticComplexMethod")
     private fun take_screenshots_for_restore_wallet(resContext: Context, tag: String) {
         // TODO [#286]: Screenshot tests fail on Firebase Test Lab
-        // TODO [#286]: https://github.com/zcash/secant-android-wallet/issues/286
+        // TODO [#286]: https://github.com/Electric-Coin-Company/zashi-android/issues/286
         if (FirebaseTestLabUtil.isFirebaseTestLab(ApplicationProvider.getApplicationContext())) {
             return
         }
@@ -282,7 +278,7 @@ class ScreenshotTest : UiTestPrerequisites() {
 
     private fun take_screenshots_for_new_wallet_and_rest_of_app(resContext: Context, tag: String) {
         // TODO [#286]: Screenshot tests fail on Firebase Test Lab
-        // TODO [#286]: https://github.com/zcash/secant-android-wallet/issues/286
+        // TODO [#286]: https://github.com/Electric-Coin-Company/zashi-android/issues/286
         if (FirebaseTestLabUtil.isFirebaseTestLab(ApplicationProvider.getApplicationContext())) {
             return
         }
@@ -404,116 +400,17 @@ private fun backupScreenshots(
     }
 
     if (ConfigurationEntries.IS_SHORT_ONBOARDING_UX.getValue(emptyConfiguration)) {
-        composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_short_header)).also {
+        composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_recovery_header)).also {
             it.assertExists()
         }
         ScreenshotTest.takeScreenshot(tag, "Backup 1")
 
         composeTestRule.onNodeWithText(
-            text = resContext.getString(R.string.new_wallet_short_button_finished),
+            text = resContext.getString(R.string.new_wallet_recovery_button_finished),
             ignoreCase = true
         ).also {
             it.assertExists()
-            it.performClick()
-        }
-    } else {
-        composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_1_header)).also {
-            it.assertExists()
-        }
-        ScreenshotTest.takeScreenshot(tag, "Backup 1")
-
-        composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_1_button)).also {
-            it.performClick()
-        }
-
-        composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_2_header)).also {
-            it.assertExists()
-        }
-        ScreenshotTest.takeScreenshot(tag, "Backup 2")
-
-        composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_2_button)).also {
-            it.performClick()
-        }
-
-        composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_3_header)).also {
-            it.assertExists()
-        }
-        ScreenshotTest.takeScreenshot(tag, "Backup 3")
-
-        composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_3_button_finished)).also {
-            it.performClick()
-        }
-
-        composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_4_header)).also {
-            it.assertExists()
-        }
-        ScreenshotTest.takeScreenshot(tag, "Backup 4")
-
-        // Fail test first
-        composeTestRule.onAllNodesWithTag(BackupTag.DROPDOWN_CHIP).also {
-            it[0].performScrollTo()
-            it[0].performClick()
-            composeTestRule.onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[0].performClick()
-
-            it[1].performScrollTo()
-            it[1].performClick()
-            composeTestRule.onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[1].performClick()
-
-            it[2].performScrollTo()
-            it[2].performClick()
-            composeTestRule.onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[2].performClick()
-
-            it[3].performScrollTo()
-            it[3].performClick()
-            composeTestRule.onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[3].performClick()
-        }
-        composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_4_header_ouch)).also {
-            it.assertExists()
-            ScreenshotTest.takeScreenshot(tag, "Backup Fail")
-        }
-
-        composeTestRule.onNode(hasText(resContext.getString(R.string.new_wallet_4_button_retry))).also {
-            it.performClick()
-        }
-
-        composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_3_header)).also {
-            it.assertExists()
-        }
-        composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_3_button_finished)).also {
-            it.performClick()
-        }
-
-        composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_4_header)).also {
-            it.assertExists()
-        }
-
-        composeTestRule.onAllNodesWithTag(BackupTag.DROPDOWN_CHIP).also {
-            it.assertCountEquals(4)
-
-            it[0].performScrollTo()
-            it[0].performClick()
-            composeTestRule.onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[1].performClick()
-
-            it[1].performScrollTo()
-            it[1].performClick()
-            composeTestRule.onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[0].performClick()
-
-            it[2].performScrollTo()
-            it[2].performClick()
-            composeTestRule.onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[3].performClick()
-
-            it[3].performScrollTo()
-            it[3].performClick()
-            composeTestRule.onNode(hasTestTag(BackupTag.DROPDOWN_MENU)).onChildren()[2].performClick()
-        }
-
-        composeTestRule.onNode(hasText(resContext.getString(R.string.new_wallet_5_body))).also {
-            it.assertExists()
-            ScreenshotTest.takeScreenshot(tag, "Backup 5")
-        }
-
-        composeTestRule.onNode(hasText(resContext.getString(R.string.new_wallet_5_button_finished))).also {
-            it.assertExists()
+            it.performScrollTo()
             it.performClick()
         }
     }
@@ -649,7 +546,7 @@ private fun sendZecScreenshots(
 
     /*
     TODO [#817]: Screenshot test on Send with pseudolocales problem
-    TODO [#817]: https://github.com/zcash/secant-android-wallet/issues/817
+    TODO [#817]: https://github.com/Electric-Coin-Company/zashi-android/issues/817
     // Screenshot: Confirmation
     ScreenshotTest.takeScreenshot(tag, "Send 3")
 

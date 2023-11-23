@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.backup.view
+package co.electriccoin.zcash.ui.screen.newwalletrecovery.view
 
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
@@ -9,14 +9,12 @@ import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.common.LocalScreenSecurity
 import co.electriccoin.zcash.ui.common.ScreenSecurity
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertEquals
 
-@OptIn(ExperimentalCoroutinesApi::class)
-class ShortBackupViewsSecuredScreenTest : UiTestPrerequisites() {
+class NewWalletRecoveryViewsSecuredScreenTest : UiTestPrerequisites() {
     @get:Rule
     val composeTestRule = createComposeRule()
 
@@ -42,10 +40,11 @@ class ShortBackupViewsSecuredScreenTest : UiTestPrerequisites() {
             composeTestRule.setContent {
                 CompositionLocalProvider(LocalScreenSecurity provides screenSecurity) {
                     ZcashTheme {
-                        ShortNewWalletBackup(
+                        NewWalletRecovery(
                             PersistableWalletFixture.new(),
-                            onCopyToClipboard = { },
-                            onComplete = { }
+                            onSeedCopy = {},
+                            onBirthdayCopy = {},
+                            onComplete = {}
                         )
                     }
                 }

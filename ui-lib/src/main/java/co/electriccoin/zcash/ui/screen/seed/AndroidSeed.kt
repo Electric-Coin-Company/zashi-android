@@ -46,7 +46,7 @@ private fun WrapSeed(
             onCopyToClipboard = {
                 ClipboardManagerUtil.copyToClipboard(
                     activity.applicationContext,
-                    activity.getString(R.string.new_wallet_clipboard_tag),
+                    activity.getString(R.string.new_wallet_seed_clipboard_tag),
                     persistableWallet.seedPhrase.joinToString()
                 )
             },

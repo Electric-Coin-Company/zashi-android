@@ -13,7 +13,7 @@ data class BooleanPreferenceDefault(
             it.toBooleanStrict()
         } catch (e: IllegalArgumentException) {
             // TODO [#32]: Log coercion failure instead of just silently returning default
-            // TODO [#32]: https://github.com/zcash/secant-android-wallet/issues/32
+            // TODO [#32]: https://github.com/Electric-Coin-Company/zashi-android/issues/32
             defaultValue
         }
     } ?: defaultValue

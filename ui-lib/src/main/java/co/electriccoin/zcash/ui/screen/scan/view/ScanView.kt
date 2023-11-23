@@ -78,7 +78,7 @@ import kotlinx.coroutines.guava.await
 import kotlin.math.roundToInt
 
 // TODO [#423]: QR scan screen elements transparency
-// TODO [#423]: https://github.com/zcash/secant-android-wallet/issues/423
+// TODO [#423]: https://github.com/Electric-Coin-Company/zashi-android/issues/423
 @Preview("Scan")
 @Composable
 private fun PreviewScan() {
@@ -249,7 +249,7 @@ private fun ScanMainContent(
             }
             ScanState.Scanning -> {
                 // TODO [#437]: Scan QR Screen Frame Analysing
-                // TODO [#437]: https://github.com/zcash/secant-android-wallet/issues/437
+                // TODO [#437]: https://github.com/Electric-Coin-Company/zashi-android/issues/437
                 onScanStateChanged(ScanState.Scanning)
                 ScanCameraView(
                     onScanned = onScanned,

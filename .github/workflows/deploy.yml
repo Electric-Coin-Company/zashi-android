@@ -57,7 +57,7 @@ jobs:
         env:
           GOOGLE_PLAY_CLOUD_PROJECT: ${{ secrets.GOOGLE_PLAY_CLOUD_PROJECT }}
           # TODO [#1033]: Use token-based authorization on Google Play for automated deployment
-          # TODO [#1033]: https://github.com/zcash/secant-android-wallet/issues/1033
+          # TODO [#1033]: https://github.com/Electric-Coin-Company/zashi-android/issues/1033
           # Note that these properties are not currently used due to #1033
           # GOOGLE_PLAY_SERVICE_ACCOUNT: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT }}
           # GOOGLE_PLAY_WORKLOAD_IDENTITY_PROVIDER: ${{ secrets.GOOGLE_PLAY_WORKLOAD_IDENTITY_PROVIDER }}
@@ -108,7 +108,7 @@ jobs:
           echo ${FIREBASE_RELEASE_JSON_BASE64} | base64 --decode > app/src/release/google-services.json
       - name: Authenticate to Google Cloud for Google Play
         # TODO [#1033]: Use token-based authorization on Google Play for automated deployment
-        # TODO [#1033]: https://github.com/zcash/secant-android-wallet/issues/1033
+        # TODO [#1033]: https://github.com/Electric-Coin-Company/zashi-android/issues/1033
         # Note that this step is not currently used due to #1033
         if: false
         id: auth_google_play
@@ -135,7 +135,7 @@ jobs:
         env:
           ORG_GRADLE_PROJECT_ZCASH_SUPPORT_EMAIL_ADDRESS: ${{ vars.SUPPORT_EMAIL_ADDRESS }}
           # TODO [#1033]: Use token-based authorization on Google Play for automated deployment
-          # TODO [#1033]: https://github.com/zcash/secant-android-wallet/issues/1033
+          # TODO [#1033]: https://github.com/Electric-Coin-Company/zashi-android/issues/1033
           # Note that these properties are not currently used due to #1033
           # ORG_GRADLE_PROJECT_ZCASH_GOOGLE_PLAY_SERVICE_ACCOUNT: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT }}
           # ORG_GRADLE_PROJECT_ZCASH_GOOGLE_PLAY_SERVICE_KEY_FILE_PATH: ${{ steps.auth_google_play.outputs.credentials_file_path }}

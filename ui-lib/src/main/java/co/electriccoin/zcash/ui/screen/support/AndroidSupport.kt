@@ -51,7 +51,7 @@ internal fun WrapSupport(
             }
 
             // TODO [#386]: This should only fail if there's no email app, e.g. on a TV device
-            // TODO [#386]: https://github.com/zcash/secant-android-wallet/issues/386
+            // TODO [#386]: https://github.com/Electric-Coin-Company/zashi-android/issues/386
 
             runCatching {
                 activity.startActivity(mailIntent)
