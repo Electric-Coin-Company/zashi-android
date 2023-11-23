@@ -201,8 +201,8 @@ fun RestoreWallet(
                 .padding(
                     top = paddingValues.calculateTopPadding() + dimens.spacingDefault,
                     bottom = paddingValues.calculateBottomPadding() + dimens.spacingSmall,
-                    start = dimens.spacingDefault,
-                    end = dimens.spacingDefault
+                    start = dimens.screenHorizontalSpacing,
+                    end = dimens.screenHorizontalSpacing
                 )
 
             when (currentStage) {
@@ -248,7 +248,11 @@ fun RestoreWallet(
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-private fun RestoreTopAppBar(onBack: () -> Unit, isShowClear: Boolean, onClear: () -> Unit) {
+private fun RestoreTopAppBar(
+    onBack: () -> Unit,
+    isShowClear: Boolean,
+    onClear: () -> Unit
+) {
     TopAppBar(
         title = { Text(text = stringResource(id = R.string.restore_title)) },
         navigationIcon = {

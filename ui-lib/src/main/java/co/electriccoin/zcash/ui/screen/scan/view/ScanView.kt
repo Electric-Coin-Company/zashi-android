@@ -13,7 +13,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -156,11 +155,7 @@ fun ScanBottomItems(
 
             SecondaryButton(
                 onClick = onOpenSettings,
-                text = stringResource(id = R.string.scan_settings_button),
-                outerPaddingValues = PaddingValues(
-                    vertical = ZcashTheme.dimens.spacingSmall,
-                    horizontal = ZcashTheme.dimens.spacingNone
-                )
+                text = stringResource(id = R.string.scan_settings_button)
             )
         }
     }
@@ -298,8 +293,8 @@ private fun ScanMainContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(
-                        vertical = ZcashTheme.dimens.spacingDefault,
-                        horizontal = ZcashTheme.dimens.spacingDefault
+                        vertical = ZcashTheme.dimens.spacingHuge,
+                        horizontal = ZcashTheme.dimens.screenHorizontalSpacing
                     )
             )
         }

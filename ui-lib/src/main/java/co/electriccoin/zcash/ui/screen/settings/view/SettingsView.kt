@@ -1,7 +1,6 @@
 package co.electriccoin.zcash.ui.screen.settings.view
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -101,9 +100,9 @@ fun Settings(
                 )
                 .padding(
                     top = paddingValues.calculateTopPadding() + dimens.spacingHuge,
-                    bottom = paddingValues.calculateBottomPadding() + dimens.spacingHuge,
-                    start = dimens.spacingHuge,
-                    end = dimens.spacingHuge
+                    bottom = paddingValues.calculateBottomPadding(),
+                    start = dimens.screenHorizontalSpacing,
+                    end = dimens.screenHorizontalSpacing
                 ),
             onSeedRecovery = onSeedRecovery,
             onDocumentation = onDocumentation,
@@ -246,58 +245,36 @@ private fun SettingsMainContent(
     ) {
         PrimaryButton(
             onClick = onSeedRecovery,
-            text = stringResource(R.string.settings_backup_wallet),
-            outerPaddingValues = PaddingValues(
-                horizontal = dimens.spacingNone,
-                vertical = dimens.spacingSmall
-            ),
+            text = stringResource(R.string.settings_backup_wallet)
         )
 
         Spacer(modifier = Modifier.height(dimens.spacingDefault))
 
         PrimaryButton(
             onClick = onFeedback,
-            text = stringResource(R.string.settings_send_us_feedback),
-            outerPaddingValues = PaddingValues(
-                horizontal = dimens.spacingNone,
-                vertical = dimens.spacingSmall
-            ),
+            text = stringResource(R.string.settings_send_us_feedback)
         )
 
         Spacer(modifier = Modifier.height(dimens.spacingDefault))
 
         PrimaryButton(
             onClick = onPrivacyPolicy,
-            text = stringResource(R.string.settings_privacy_policy),
-            outerPaddingValues = PaddingValues(
-                horizontal = dimens.spacingNone,
-                vertical = dimens.spacingSmall
-            ),
+            text = stringResource(R.string.settings_privacy_policy)
         )
 
         Spacer(modifier = Modifier.height(dimens.spacingDefault))
 
         PrimaryButton(
             onClick = onDocumentation,
-            text = stringResource(R.string.settings_documentation),
-            outerPaddingValues = PaddingValues(
-                horizontal = dimens.spacingNone,
-                vertical = dimens.spacingSmall
-            ),
+            text = stringResource(R.string.settings_documentation)
         )
 
         Spacer(modifier = Modifier.height(dimens.spacingDefault))
 
         PrimaryButton(
             onClick = onExportPrivateData,
-            text = stringResource(R.string.settings_export_private_data),
-            outerPaddingValues = PaddingValues(
-                horizontal = dimens.spacingNone,
-                vertical = dimens.spacingSmall
-            ),
+            text = stringResource(R.string.settings_export_private_data)
         )
-
-        Spacer(modifier = Modifier.height(dimens.spacingDefault))
 
         Spacer(
             modifier = Modifier
@@ -305,13 +282,13 @@ private fun SettingsMainContent(
                 .weight(MINIMAL_WEIGHT)
         )
 
+        Spacer(modifier = Modifier.height(dimens.spacingDefault))
+
         PrimaryButton(
             onClick = onAbout,
-            text = stringResource(R.string.settings_about),
-            outerPaddingValues = PaddingValues(
-                horizontal = dimens.spacingNone,
-                vertical = dimens.spacingSmall
-            ),
+            text = stringResource(R.string.settings_about)
         )
+
+        Spacer(modifier = Modifier.height(dimens.spacingHuge))
     }
 }

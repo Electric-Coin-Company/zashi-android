@@ -77,8 +77,8 @@ fun About(
                 .padding(
                     top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
                     bottom = paddingValues.calculateBottomPadding() + ZcashTheme.dimens.spacingDefault,
-                    start = ZcashTheme.dimens.spacingHuge,
-                    end = ZcashTheme.dimens.spacingHuge
+                    start = ZcashTheme.dimens.screenHorizontalSpacing,
+                    end = ZcashTheme.dimens.screenHorizontalSpacing
                 )
         )
     }

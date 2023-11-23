@@ -171,9 +171,9 @@ fun Send(
                 )
                 .padding(
                     top = paddingValues.calculateTopPadding() + dimens.spacingDefault,
-                    bottom = paddingValues.calculateBottomPadding() + dimens.spacingDefault,
-                    start = dimens.spacingDefault,
-                    end = dimens.spacingDefault
+                    bottom = paddingValues.calculateBottomPadding() + dimens.spacingHuge,
+                    start = dimens.screenHorizontalSpacing,
+                    end = dimens.screenHorizontalSpacing
                 )
         )
     }
@@ -253,15 +253,15 @@ private fun SendMainContent(
         (sendStage == SendStage.SendSuccessful) -> {
             SendSuccessful(
                 zecSend = zecSend,
+                onDone = onBack,
                 modifier = modifier,
-                onDone = onBack
             )
         }
         (sendStage == SendStage.SendFailure) -> {
             SendFailure(
                 zecSend = zecSend,
+                onDone = onBack,
                 modifier = modifier,
-                onDone = onBack
             )
         }
     }

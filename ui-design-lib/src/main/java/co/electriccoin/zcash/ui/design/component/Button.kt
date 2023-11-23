@@ -60,7 +60,7 @@ fun PrimaryButton(
     text: String,
     modifier: Modifier = Modifier,
     outerPaddingValues: PaddingValues = PaddingValues(
-        horizontal = ZcashTheme.dimens.spacingDefault,
+        horizontal = ZcashTheme.dimens.spacingNone,
         vertical = ZcashTheme.dimens.spacingSmall
     ),
     enabled: Boolean = true,
@@ -70,7 +70,7 @@ fun PrimaryButton(
     Button(
         shape = RectangleShape,
         enabled = enabled,
-        modifier = modifier
+        modifier = modifier.then(Modifier.fillMaxWidth())
             .padding(outerPaddingValues)
             .shadow(
                 contentColor = textColor,
@@ -109,7 +109,7 @@ fun SecondaryButton(
     text: String,
     modifier: Modifier = Modifier,
     outerPaddingValues: PaddingValues = PaddingValues(
-        horizontal = ZcashTheme.dimens.spacingDefault,
+        horizontal = ZcashTheme.dimens.spacingNone,
         vertical = ZcashTheme.dimens.spacingSmall
     ),
     enabled: Boolean = true,
@@ -119,7 +119,7 @@ fun SecondaryButton(
     Button(
         shape = RectangleShape,
         enabled = enabled,
-        modifier = modifier
+        modifier = modifier.then(Modifier.fillMaxWidth())
             .padding(outerPaddingValues)
             .shadow(
                 contentColor = textColor,

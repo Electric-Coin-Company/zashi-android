@@ -1,10 +1,9 @@
 package co.electriccoin.zcash.ui.screen.request.view
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
@@ -72,9 +71,14 @@ fun Request(
         RequestTopAppBar(onBack = goBack)
     }) { paddingValues ->
         RequestMainContent(
-            paddingValues = paddingValues,
             myAddress = myAddress,
-            onCreateAndSend = onCreateAndSend
+            onCreateAndSend = onCreateAndSend,
+            modifier = Modifier.padding(
+                top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
+                bottom = paddingValues.calculateTopPadding(),
+                start = ZcashTheme.dimens.screenHorizontalSpacing,
+                end = ZcashTheme.dimens.screenHorizontalSpacing
+            )
         )
     }
 }
@@ -102,9 +106,9 @@ private fun RequestTopAppBar(onBack: () -> Unit) {
 // TODO [#288]: TextField component can't do long-press backspace.
 @Composable
 private fun RequestMainContent(
-    paddingValues: PaddingValues,
     myAddress: WalletAddress.Unified,
-    onCreateAndSend: (ZecRequest) -> Unit
+    onCreateAndSend: (ZecRequest) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
     val monetarySeparators = MonetarySeparators.current()
@@ -114,9 +118,7 @@ private fun RequestMainContent(
     var message by rememberSaveable { mutableStateOf("") }
 
     Column(
-        Modifier
-            .fillMaxSize()
-            .padding(top = paddingValues.calculateTopPadding()),
+        modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // TODO [#289]: Crash occurs while typed more than some acceptable amount to this field.
@@ -140,7 +142,13 @@ private fun RequestMainContent(
             }
         }, label = { Text(stringResource(id = R.string.request_message)) })
 
-        Spacer(Modifier.fillMaxHeight(MINIMAL_WEIGHT))
+        Spacer(
+            modifier = Modifier
+                .fillMaxHeight()
+                .weight(MINIMAL_WEIGHT)
+        )
+
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
 
         val zatoshi = Zatoshi.fromZecString(context, amountZecString, monetarySeparators)
 
@@ -151,5 +159,7 @@ private fun RequestMainContent(
             text = stringResource(id = R.string.request_create),
             enabled = null != zatoshi
         )
+
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingHuge))
     }
 }
