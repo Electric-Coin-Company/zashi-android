@@ -20,12 +20,14 @@ internal fun MainActivity.WrapSettings(
     goAbout: () -> Unit,
     goBack: () -> Unit,
     goExportPrivateData: () -> Unit,
+    goSeedRecovery: () -> Unit,
 ) {
     WrapSettings(
         activity = this,
         goAbout = goAbout,
         goBack = goBack,
-        goExportPrivateData = goExportPrivateData
+        goExportPrivateData = goExportPrivateData,
+        goSeedRecovery = goSeedRecovery
     )
 }
 
@@ -35,6 +37,7 @@ private fun WrapSettings(
     goBack: () -> Unit,
     goAbout: () -> Unit,
     goExportPrivateData: () -> Unit,
+    goSeedRecovery: () -> Unit,
 ) {
     val walletViewModel by activity.viewModels<WalletViewModel>()
     val settingsViewModel by activity.viewModels<SettingsViewModel>()
@@ -63,7 +66,7 @@ private fun WrapSettings(
                 isRescanEnabled = ConfigurationEntries.IS_RESCAN_ENABLED.getValue(RemoteConfig.current),
             ),
             onBack = goBack,
-            onBackup = {},
+            onSeedRecovery = goSeedRecovery,
             onDocumentation = {},
             onPrivacyPolicy = {},
             onFeedback = {},

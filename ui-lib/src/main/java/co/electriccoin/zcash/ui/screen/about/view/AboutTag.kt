@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.about
+package co.electriccoin.zcash.ui.screen.about.view
 
 /**
  * These are only used for automated testing.

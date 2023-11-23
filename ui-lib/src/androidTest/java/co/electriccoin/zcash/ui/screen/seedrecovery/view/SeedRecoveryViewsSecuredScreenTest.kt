@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.seed.view
+package co.electriccoin.zcash.ui.screen.seedrecovery.view
 
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
@@ -14,31 +14,38 @@ import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertEquals
 
-class SeedViewSecuredScreenTest : UiTestPrerequisites() {
+class SeedRecoveryViewsSecuredScreenTest : UiTestPrerequisites() {
     @get:Rule
     val composeTestRule = createComposeRule()
+
+    private fun newTestSetup() =
+        TestSetup(composeTestRule).apply {
+            setContentView()
+        }
 
     @Test
     @MediumTest
     fun acquireScreenSecurity() = runTest {
-        val testSetup = TestSetup(composeTestRule)
+        val testSetup = newTestSetup()
 
         assertEquals(1, testSetup.getSecureScreenCount())
     }
 
-    private class TestSetup(composeTestRule: ComposeContentTestRule) {
+    private class TestSetup(private val composeTestRule: ComposeContentTestRule) {
         private val screenSecurity = ScreenSecurity()
 
         fun getSecureScreenCount() = screenSecurity.referenceCount.value
 
-        init {
+        fun setContentView() {
             composeTestRule.setContent {
                 CompositionLocalProvider(LocalScreenSecurity provides screenSecurity) {
                     ZcashTheme {
-                        Seed(
-                            persistableWallet = PersistableWalletFixture.new(),
+                        SeedRecovery(
+                            PersistableWalletFixture.new(),
                             onBack = {},
-                            onCopyToClipboard = {}
+                            onSeedCopy = {},
+                            onBirthdayCopy = {},
+                            onDone = {}
                         )
                     }
                 }

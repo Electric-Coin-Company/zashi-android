@@ -10,7 +10,6 @@ import androidx.test.filters.SmallTest
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.fixture.ConfigInfoFixture
 import co.electriccoin.zcash.ui.fixture.VersionInfoFixture
-import co.electriccoin.zcash.ui.screen.about.AboutTag
 import co.electriccoin.zcash.ui.test.getStringResource
 import org.junit.Rule
 import kotlin.test.Test

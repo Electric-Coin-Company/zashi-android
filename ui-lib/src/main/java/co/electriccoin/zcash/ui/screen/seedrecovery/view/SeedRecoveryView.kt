@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.newwalletrecovery.view
+package co.electriccoin.zcash.ui.screen.seedrecovery.view
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.basicMarquee
@@ -42,16 +42,17 @@ import co.electriccoin.zcash.ui.design.component.TopScreenLogoTitle
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import kotlinx.collections.immutable.toPersistentList
 
-@Preview(name = "NewWalletRecovery", device = Devices.PIXEL_4)
+@Preview(name = "SeedRecovery", device = Devices.PIXEL_4)
 @Composable
 private fun ComposablePreview() {
     ZcashTheme(forceDarkMode = false) {
         GradientSurface {
-            NewWalletRecovery(
+            SeedRecovery(
                 PersistableWalletFixture.new(),
-                onSeedCopy = {},
+                onBack = {},
                 onBirthdayCopy = {},
-                onComplete = {},
+                onDone = {},
+                onSeedCopy = {},
             )
         }
     }
@@ -61,25 +62,27 @@ private fun ComposablePreview() {
 // TODO [#998]: https://github.com/Electric-Coin-Company/zashi-android/issues/998
 
 /**
- * @param onComplete Callback when the user has confirmed viewing the seed phrase.
+ * @param onDone Callback when the user has confirmed viewing the seed phrase.
  */
 @Composable
-fun NewWalletRecovery(
+fun SeedRecovery(
     wallet: PersistableWallet,
-    onSeedCopy: () -> Unit,
+    onBack: () -> Unit,
     onBirthdayCopy: () -> Unit,
-    onComplete: () -> Unit,
+    onDone: () -> Unit,
+    onSeedCopy: () -> Unit,
 ) {
     Scaffold(
         topBar = {
-            NewWalletRecoveryTopAppBar(
+            SeedRecoveryTopAppBar(
+                onBack = onBack,
                 onSeedCopy = onSeedCopy,
             )
         }
     ) { paddingValues ->
-        NewWalletRecoveryMainContent(
+        SeedRecoveryMainContent(
             wallet = wallet,
-            onComplete = onComplete,
+            onDone = onDone,
             onSeedCopy = onSeedCopy,
             onBirthdayCopy = onBirthdayCopy,
             // Horizontal paddings will be part of each UI element to minimize a possible truncation on very
@@ -93,14 +96,18 @@ fun NewWalletRecovery(
 }
 
 @Composable
-private fun NewWalletRecoveryTopAppBar(
+private fun SeedRecoveryTopAppBar(
+    onBack: () -> Unit,
+    onSeedCopy: () -> Unit,
     modifier: Modifier = Modifier,
-    onSeedCopy: () -> Unit
 ) {
     SmallTopAppBar(
         modifier = modifier,
+        backText = stringResource(id = R.string.seed_recovery_back).uppercase(),
+        backContentDescriptionText = stringResource(R.string.seed_recovery_back_content_description),
+        onBack = onBack,
         regularActions = {
-            NewWalletRecoveryCopyToBufferMenuItem(
+            SeedRecoveryCopyToBufferMenuItem(
                 onCopyToClipboard = onSeedCopy
             )
         }
@@ -108,12 +115,12 @@ private fun NewWalletRecoveryTopAppBar(
 }
 
 @Composable
-private fun NewWalletRecoveryCopyToBufferMenuItem(
+private fun SeedRecoveryCopyToBufferMenuItem(
     modifier: Modifier = Modifier,
     onCopyToClipboard: () -> Unit,
 ) {
     Reference(
-        text = stringResource(id = R.string.new_wallet_recovery_copy),
+        text = stringResource(id = R.string.seed_recovery_copy),
         onClick = onCopyToClipboard,
         textAlign = TextAlign.Center,
         modifier = modifier.then(
@@ -123,11 +130,11 @@ private fun NewWalletRecoveryCopyToBufferMenuItem(
 }
 
 @Composable
-private fun NewWalletRecoveryMainContent(
+private fun SeedRecoveryMainContent(
     wallet: PersistableWallet,
     onSeedCopy: () -> Unit,
     onBirthdayCopy: () -> Unit,
-    onComplete: () -> Unit,
+    onDone: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -138,7 +145,7 @@ private fun NewWalletRecoveryMainContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         TopScreenLogoTitle(
-            title = stringResource(R.string.new_wallet_recovery_header),
+            title = stringResource(R.string.seed_recovery_header),
             logoContentDescription = stringResource(R.string.zcash_logo_content_description),
             modifier = Modifier.padding(horizontal = ZcashTheme.dimens.spacingHuge)
         )
@@ -146,14 +153,14 @@ private fun NewWalletRecoveryMainContent(
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
 
         BodySmall(
-            text = stringResource(R.string.new_wallet_recovery_description),
+            text = stringResource(R.string.seed_recovery_description),
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(horizontal = ZcashTheme.dimens.spacingHuge)
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
-        NewWalletRecoverySeedPhrase(
+        SeedRecoverySeedPhrase(
             persistableWallet = wallet,
             onSeedCopy = onSeedCopy,
             onBirthdayCopy = onBirthdayCopy,
@@ -167,8 +174,8 @@ private fun NewWalletRecoveryMainContent(
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
 
-        NewWalletRecoveryBottomNav(
-            onComplete = onComplete,
+        SeedRecoveryBottomNav(
+            onDone = onDone,
             modifier = Modifier
                 .padding(
                     bottom = ZcashTheme.dimens.spacingHuge
@@ -180,7 +187,7 @@ private fun NewWalletRecoveryMainContent(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun NewWalletRecoverySeedPhrase(
+private fun SeedRecoverySeedPhrase(
     persistableWallet: PersistableWallet,
     onSeedCopy: () -> Unit,
     onBirthdayCopy: () -> Unit,
@@ -205,7 +212,7 @@ private fun NewWalletRecoverySeedPhrase(
                 horizontalArrangement = Arrangement.Center
             ) {
                 BodySmall(
-                    text = stringResource(R.string.new_wallet_recovery_birthday_height, it.value),
+                    text = stringResource(R.string.seed_recovery_birthday_height, it.value),
                     modifier = Modifier
                         .testTag(WALLET_BIRTHDAY)
                         .padding(horizontal = ZcashTheme.dimens.spacingDefault)
@@ -222,15 +229,16 @@ private fun NewWalletRecoverySeedPhrase(
     }
 }
 
+@Suppress("LongParameterList")
 @Composable
-private fun NewWalletRecoveryBottomNav(
-    onComplete: () -> Unit,
+private fun SeedRecoveryBottomNav(
+    onDone: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        PrimaryButton(onClick = onComplete, text = stringResource(R.string.new_wallet_recovery_button_finished))
+        PrimaryButton(onClick = onDone, text = stringResource(R.string.seed_recovery_button_finished))
     }
 }

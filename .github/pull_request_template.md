@@ -10,7 +10,7 @@
 - [ ] Add **automated tests** as appropriate
 - [ ] Update the [**manual tests**](../blob/main/docs/testing/manual_testing)[^2] as appropriate
 - [ ] Check the **code coverage**[^3] report for the automated tests
-- [ ] Update **documentation** as appropriate (e.g [README.md](../blob/main/README.md), and [**Architecture.md**](../blob/main/docs/Architecture.md), etc.)
+- [ ] Update **documentation** as appropriate (e.g [**README.md**](../blob/main/README.md), [**Architecture.md**](../blob/main/docs/Architecture.md), [**CHANGELOG.md**](../blob/main/CHANGELOG.md), etc.)
 - [ ] **Run the app** and try the changes
 - [ ] Pull in the latest changes from the **main** branch and **squash** your commits before assigning a reviewer[^4]
 
@@ -23,7 +23,7 @@
 - [ ] Perform an **ad hoc review**[^5]
 - [ ] Review the **automated tests**
 - [ ] Review the **manual tests**
-- [ ] Review the **documentation**, [**README.md**](../blob/main/README.md), and [**Architecture.md**](../blob/main/docs/Architecture.md) as appropriate
+- [ ] Review the **documentation**, [**README.md**](../blob/main/README.md), [**Architecture.md**](../blob/main/docs/Architecture.md), etc. as appropriate
 - [ ] **Run the app** and try the changes[^6]
 
 [^1]: _Code often looks different when reviewing the diff in a browser, making it easier to spot potential bugs._

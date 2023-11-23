@@ -40,7 +40,7 @@ android {
                     "src/main/res/ui/request",
                     "src/main/res/ui/restore",
                     "src/main/res/ui/scan",
-                    "src/main/res/ui/seed",
+                    "src/main/res/ui/seed_recovery",
                     "src/main/res/ui/send",
                     "src/main/res/ui/settings",
                     "src/main/res/ui/support",

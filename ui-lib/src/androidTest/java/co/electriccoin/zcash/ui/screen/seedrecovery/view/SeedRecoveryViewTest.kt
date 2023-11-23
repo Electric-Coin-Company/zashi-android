@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.newwalletrecovery.view
+package co.electriccoin.zcash.ui.screen.seedrecovery.view
 
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -16,12 +16,12 @@ import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class NewWalletRecoveryViewTest : UiTestPrerequisites() {
+class SeedRecoveryViewTest : UiTestPrerequisites() {
     @get:Rule
     val composeTestRule = createComposeRule()
 
-    private fun newTestSetup(): NewWalletRecoveryBackupTestSetup {
-        return NewWalletRecoveryBackupTestSetup(composeTestRule).apply {
+    private fun newTestSetup(): SeedRecoveryBackupTestSetup {
+        return SeedRecoveryBackupTestSetup(composeTestRule).apply {
             setDefaultContent()
         }
     }
@@ -34,8 +34,14 @@ class NewWalletRecoveryViewTest : UiTestPrerequisites() {
         assertEquals(0, testSetup.getOnSeedCopyCount())
         assertEquals(0, testSetup.getOnBirthdayCopyCount())
         assertEquals(0, testSetup.getOnCompleteCount())
+        assertEquals(0, testSetup.getOnBackCount())
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.new_wallet_recovery_copy)).also {
+        composeTestRule.onNodeWithContentDescription(getStringResource(R.string.seed_recovery_back_content_description))
+            .also {
+                it.assertExists()
+            }
+
+        composeTestRule.onNodeWithText(getStringResource(R.string.seed_recovery_copy)).also {
             it.assertExists()
         }
 
@@ -45,11 +51,11 @@ class NewWalletRecoveryViewTest : UiTestPrerequisites() {
             it.assertExists()
         }
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.new_wallet_recovery_header)).also {
+        composeTestRule.onNodeWithText(getStringResource(R.string.seed_recovery_header)).also {
             it.assertExists()
         }
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.new_wallet_recovery_description)).also {
+        composeTestRule.onNodeWithText(getStringResource(R.string.seed_recovery_description)).also {
             it.assertExists()
         }
 
@@ -63,7 +69,7 @@ class NewWalletRecoveryViewTest : UiTestPrerequisites() {
             it.assertExists()
         }
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.new_wallet_recovery_button_finished).uppercase())
+        composeTestRule.onNodeWithText(getStringResource(R.string.seed_recovery_button_finished).uppercase())
             .also {
                 it.performScrollTo()
                 it.assertExists()
@@ -72,6 +78,22 @@ class NewWalletRecoveryViewTest : UiTestPrerequisites() {
         assertEquals(0, testSetup.getOnSeedCopyCount())
         assertEquals(0, testSetup.getOnBirthdayCopyCount())
         assertEquals(0, testSetup.getOnCompleteCount())
+        assertEquals(0, testSetup.getOnBackCount())
+    }
+
+    @Test
+    @MediumTest
+    fun back_test() {
+        val testSetup = newTestSetup()
+
+        assertEquals(0, testSetup.getOnBackCount())
+
+        composeTestRule.onNodeWithContentDescription(getStringResource(R.string.seed_recovery_back_content_description))
+            .also {
+                it.performClick()
+            }
+
+        assertEquals(1, testSetup.getOnBackCount())
     }
 
     @Test
@@ -81,7 +103,7 @@ class NewWalletRecoveryViewTest : UiTestPrerequisites() {
 
         assertEquals(0, testSetup.getOnSeedCopyCount())
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.new_wallet_recovery_copy)).also { menuButton ->
+        composeTestRule.onNodeWithText(getStringResource(R.string.seed_recovery_copy)).also { menuButton ->
             menuButton.performClick()
         }
 
@@ -128,7 +150,7 @@ class NewWalletRecoveryViewTest : UiTestPrerequisites() {
         assertEquals(0, testSetup.getOnCompleteCount())
 
         composeTestRule.onNodeWithText(
-            text = getStringResource(R.string.new_wallet_recovery_button_finished),
+            text = getStringResource(R.string.seed_recovery_button_finished),
             ignoreCase = true
         ).also {
             it.performScrollTo()

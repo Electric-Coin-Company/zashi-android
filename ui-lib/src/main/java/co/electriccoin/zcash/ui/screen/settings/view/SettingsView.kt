@@ -53,7 +53,7 @@ private fun PreviewSettings() {
                     isRescanEnabled = false
                 ),
                 onBack = {},
-                onBackup = {},
+                onSeedRecovery = {},
                 onDocumentation = {},
                 onPrivacyPolicy = {},
                 onFeedback = {},
@@ -73,7 +73,7 @@ private fun PreviewSettings() {
 fun Settings(
     troubleshootingParameters: TroubleshootingParameters,
     onBack: () -> Unit,
-    onBackup: () -> Unit,
+    onSeedRecovery: () -> Unit,
     onDocumentation: () -> Unit,
     onPrivacyPolicy: () -> Unit,
     onFeedback: () -> Unit,
@@ -105,7 +105,7 @@ fun Settings(
                     start = dimens.spacingHuge,
                     end = dimens.spacingHuge
                 ),
-            onBackup = onBackup,
+            onSeedRecovery = onSeedRecovery,
             onDocumentation = onDocumentation,
             onPrivacyPolicy = onPrivacyPolicy,
             onFeedback = onFeedback,
@@ -229,7 +229,7 @@ private fun TroubleshootingMenu(
 @Composable
 @Suppress("LongParameterList", "LongMethod")
 private fun SettingsMainContent(
-    onBackup: () -> Unit,
+    onSeedRecovery: () -> Unit,
     onDocumentation: () -> Unit,
     onPrivacyPolicy: () -> Unit,
     onFeedback: () -> Unit,
@@ -245,7 +245,7 @@ private fun SettingsMainContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         PrimaryButton(
-            onClick = onBackup,
+            onClick = onSeedRecovery,
             text = stringResource(R.string.settings_backup_wallet),
             outerPaddingValues = PaddingValues(
                 horizontal = dimens.spacingNone,

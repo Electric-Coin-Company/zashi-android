@@ -85,7 +85,7 @@ class SettingsViewTestSetup(
                     onBack = {
                         onBackCount.incrementAndGet()
                     },
-                    onBackup = {
+                    onSeedRecovery = {
                         onBackupCount.incrementAndGet()
                     },
                     onDocumentation = {
