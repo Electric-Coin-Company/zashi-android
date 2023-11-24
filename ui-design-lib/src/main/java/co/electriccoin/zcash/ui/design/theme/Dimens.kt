@@ -22,21 +22,31 @@ data class Dimens(
     // List of custom spacings:
 
     // Button:
-    val shadowOffsetX: Dp,
-    val shadowOffsetY: Dp,
-    val shadowSpread: Dp,
-    val defaultButtonWidth: Dp,
-    val defaultButtonHeight: Dp,
+    val buttonShadowOffsetX: Dp,
+    val buttonShadowOffsetY: Dp,
+    val buttonShadowSpread: Dp,
+    val buttonWidth: Dp,
+    val buttonHeight: Dp,
+
+    // Chip
+    val chipShadowElevation: Dp,
+    val chipStroke: Dp,
 
     // TopAppBar:
     val topAppBarZcashLogoHeight: Dp,
     val topAppBarActionRippleCorner: Dp,
 
+    // TextField:
+    val textFieldDefaultHeight: Dp,
+
+    // Any Layout:
+    val layoutStroke: Dp,
+
     // Screen custom spacings:
     val inScreenZcashLogoHeight: Dp,
     val inScreenZcashLogoWidth: Dp,
     val inScreenZcashTextLogoHeight: Dp,
-    val screenHorizontalSpacing: Dp
+    val screenHorizontalSpacing: Dp,
 )
 
 private val defaultDimens = Dimens(
@@ -48,13 +58,17 @@ private val defaultDimens = Dimens(
     spacingLarge = 24.dp,
     spacingXlarge = 32.dp,
     spacingHuge = 64.dp,
-    shadowOffsetX = 20.dp,
-    shadowOffsetY = 20.dp,
-    shadowSpread = 10.dp,
-    defaultButtonWidth = 230.dp,
-    defaultButtonHeight = 50.dp,
+    buttonShadowOffsetX = 20.dp,
+    buttonShadowOffsetY = 20.dp,
+    buttonShadowSpread = 10.dp,
+    buttonWidth = 230.dp,
+    buttonHeight = 50.dp,
+    chipShadowElevation = 4.dp,
+    chipStroke = 0.5.dp,
     topAppBarZcashLogoHeight = 24.dp,
     topAppBarActionRippleCorner = 28.dp,
+    textFieldDefaultHeight = 215.dp,
+    layoutStroke = 1.dp,
     inScreenZcashLogoHeight = 100.dp,
     inScreenZcashLogoWidth = 60.dp,
     inScreenZcashTextLogoHeight = 30.dp,

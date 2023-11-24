@@ -76,15 +76,15 @@ fun PrimaryButton(
                 contentColor = textColor,
                 strokeColor = buttonColor,
                 strokeWidth = 1.dp,
-                offsetX = ZcashTheme.dimens.shadowOffsetX,
-                offsetY = ZcashTheme.dimens.shadowOffsetY,
-                spread = ZcashTheme.dimens.shadowSpread,
+                offsetX = ZcashTheme.dimens.buttonShadowOffsetX,
+                offsetY = ZcashTheme.dimens.buttonShadowOffsetY,
+                spread = ZcashTheme.dimens.buttonShadowSpread,
             )
             .translationClick(
-                translationX = ZcashTheme.dimens.shadowOffsetX + 6.dp, // + 6dp to exactly cover the bottom shadow
-                translationY = ZcashTheme.dimens.shadowOffsetX + 6.dp
+                translationX = ZcashTheme.dimens.buttonShadowOffsetX + 6.dp, // + 6dp to exactly cover the bottom shadow
+                translationY = ZcashTheme.dimens.buttonShadowOffsetX + 6.dp
             )
-            .defaultMinSize(ZcashTheme.dimens.defaultButtonWidth, ZcashTheme.dimens.defaultButtonHeight)
+            .defaultMinSize(ZcashTheme.dimens.buttonWidth, ZcashTheme.dimens.buttonHeight)
             .border(1.dp, Color.Black),
         colors = buttonColors(
             containerColor = buttonColor,
@@ -124,15 +124,15 @@ fun SecondaryButton(
             .shadow(
                 contentColor = textColor,
                 strokeColor = textColor,
-                offsetX = ZcashTheme.dimens.shadowOffsetX,
-                offsetY = ZcashTheme.dimens.shadowOffsetY,
-                spread = ZcashTheme.dimens.shadowSpread,
+                offsetX = ZcashTheme.dimens.buttonShadowOffsetX,
+                offsetY = ZcashTheme.dimens.buttonShadowOffsetY,
+                spread = ZcashTheme.dimens.buttonShadowSpread,
             )
             .translationClick(
-                translationX = ZcashTheme.dimens.shadowOffsetX + 6.dp, // + 6dp to exactly cover the bottom shadow
-                translationY = ZcashTheme.dimens.shadowOffsetX + 6.dp
+                translationX = ZcashTheme.dimens.buttonShadowOffsetX + 6.dp, // + 6dp to exactly cover the bottom shadow
+                translationY = ZcashTheme.dimens.buttonShadowOffsetX + 6.dp
             )
-            .defaultMinSize(ZcashTheme.dimens.defaultButtonWidth, ZcashTheme.dimens.defaultButtonHeight)
+            .defaultMinSize(ZcashTheme.dimens.buttonWidth, ZcashTheme.dimens.buttonHeight)
             .border(1.dp, Color.Black),
         colors = buttonColors(
             containerColor = buttonColor,

@@ -18,6 +18,8 @@ data class ExtendedColors(
     val progressEnd: Color,
     val progressBackground: Color,
     val chipIndex: Color,
+    val textFieldHint: Color,
+    val layoutStroke: Color,
     val overlay: Color,
     val highlight: Color,
     val addressHighlightBorder: Color,

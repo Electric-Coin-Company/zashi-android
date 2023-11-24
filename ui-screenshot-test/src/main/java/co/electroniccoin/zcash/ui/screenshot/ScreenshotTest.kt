@@ -211,7 +211,7 @@ class ScreenshotTest : UiTestPrerequisites() {
             return
         }
 
-        composeTestRule.onNodeWithText(resContext.getString(R.string.restore_seed_button_restore)).also {
+        composeTestRule.onNodeWithText(resContext.getString(R.string.restore_seed_button_next)).also {
             it.performScrollTo()
 
             // Even with waiting for the word list in the view model, there's some latency before the button is enabled

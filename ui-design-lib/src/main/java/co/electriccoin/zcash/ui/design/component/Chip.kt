@@ -1,5 +1,7 @@
 package co.electriccoin.zcash.ui.design.component
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -10,7 +12,6 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.spackle.model.Index
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 
@@ -18,7 +19,15 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 @Composable
 private fun ComposableChipPreview() {
     ZcashTheme(forceDarkMode = false) {
-        Chip(Index(0), "edict")
+        Chip("route")
+    }
+}
+
+@Preview
+@Composable
+private fun ComposableChipIndexedPreview() {
+    ZcashTheme(forceDarkMode = false) {
+        ChipIndexed(Index(0), "edict")
     }
 }
 
@@ -26,12 +35,35 @@ private fun ComposableChipPreview() {
 @Composable
 private fun ComposableLongChipPreview() {
     ZcashTheme(forceDarkMode = false) {
-        Chip(Index(1), "a_very_long_seed_word_that_does_not_fit_into_the_chip_and_thus_needs_to_be_truncated")
+        ChipIndexed(Index(1), "a_very_long_seed_word_that_does_not_fit_into_the_chip_and_thus_needs_to_be_truncated")
+    }
+}
+
+@Preview
+@Composable
+private fun ComposableChipOnSurfacePreview() {
+    ZcashTheme(forceDarkMode = false) {
+        ChipOnSurface("ribbon")
     }
 }
 
 @Composable
 fun Chip(
+    text: String,
+    modifier: Modifier = Modifier
+) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.bodyLarge,
+        color = MaterialTheme.colorScheme.onSecondary,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
+        modifier = modifier.then(Modifier.testTag(CommonTag.CHIP))
+    )
+}
+
+@Composable
+fun ChipIndexed(
     index: Index,
     text: String,
     modifier: Modifier = Modifier
@@ -47,22 +79,32 @@ fun Chip(
 }
 
 @Composable
-fun Chip(
+fun ChipOnSurface(
     text: String,
     modifier: Modifier = Modifier
 ) {
     Surface(
         shape = RectangleShape,
-        modifier = modifier.padding(4.dp),
+        modifier = modifier
+            .padding(horizontal = ZcashTheme.dimens.spacingTiny)
+            .border(
+                border = BorderStroke(
+                    width = ZcashTheme.dimens.chipStroke,
+                    color = ZcashTheme.colors.layoutStroke
+                )
+            ),
         color = MaterialTheme.colorScheme.secondary,
-        shadowElevation = 8.dp
+        shadowElevation = ZcashTheme.dimens.chipShadowElevation,
     ) {
         Text(
             text = text,
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSecondary,
             modifier = Modifier
-                .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 8.dp)
+                .padding(
+                    vertical = ZcashTheme.dimens.spacingSmall,
+                    horizontal = ZcashTheme.dimens.spacingDefault
+                )
                 .testTag(CommonTag.CHIP)
         )
     }
