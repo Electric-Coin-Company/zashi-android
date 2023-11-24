@@ -10,5 +10,7 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 ## [Unreleased]
 
 ### Changed
-- The user interface for both the Recovery Seed screen within the New Wallet Screens flow and the one accessible from 
-Settings has been updated.
+- Updated user interface of these screens:
+   - New Wallet Recovery Seed screen accessible from onboarding 
+   - Seed Recovery screen accessible from Settings
+   - Restore existing wallet accessible from onboarding
