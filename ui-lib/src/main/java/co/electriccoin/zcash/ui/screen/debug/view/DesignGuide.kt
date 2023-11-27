@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.spackle.model.Index
 import co.electriccoin.zcash.spackle.model.Progress
 import co.electriccoin.zcash.ui.design.component.Body
-import co.electriccoin.zcash.ui.design.component.Chip
+import co.electriccoin.zcash.ui.design.component.ChipIndexed
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.Header
 import co.electriccoin.zcash.ui.design.component.NavigationButton
@@ -50,7 +50,7 @@ fun DesignGuide() {
             Callout(Icons.Filled.Person, contentDescription = "Person")
             Callout(Icons.Filled.List, contentDescription = "List")
             PinkProgress(progress = Progress(Index(1), Index(4)), Modifier.fillMaxWidth())
-            Chip(Index(1), "edict")
+            ChipIndexed(Index(1), "edict")
         }
     }
 }

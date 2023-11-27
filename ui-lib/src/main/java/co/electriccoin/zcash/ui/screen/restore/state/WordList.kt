@@ -26,6 +26,16 @@ class WordList(initial: List<String> = emptyList()) {
         mutableState.value = newList
     }
 
+    fun removeLast() {
+        val newList = if (mutableState.value.isNotEmpty()) {
+            current.value.subList(0, current.value.size - 1)
+        } else {
+            current.value
+        }.toPersistentList()
+
+        mutableState.value = newList
+    }
+
     // Custom toString to prevent leaking word list
     override fun toString() = "WordList"
 }

@@ -92,15 +92,12 @@ class RestoreViewTest : UiTestPrerequisites() {
             it.assertDoesNotExist()
         }
 
-        composeTestRule.onNode(
-            matcher = hasText("abandon", substring = true) and hasTestTag(CommonTag.CHIP),
-            useUnmergedTree = true
-        ).also {
+        composeTestRule.onNode(matcher = hasText("abandon", substring = true)).also {
             it.assertExists()
         }
 
         composeTestRule.onNodeWithTag(RestoreTag.SEED_WORD_TEXT_FIELD).also {
-            it.assertTextEquals("")
+            it.assertTextEquals("abandon ", includeEditableText = true)
         }
     }
 
@@ -114,24 +111,17 @@ class RestoreViewTest : UiTestPrerequisites() {
         }
 
         composeTestRule.onNodeWithTag(RestoreTag.SEED_WORD_TEXT_FIELD).also {
-            it.assertTextEquals("")
+            it.assertTextEquals("abandon ", includeEditableText = true)
         }
 
         composeTestRule.onNodeWithTag(RestoreTag.AUTOCOMPLETE_LAYOUT).also {
             it.assertDoesNotExist()
         }
 
-        composeTestRule.onNode(
-            matcher = hasText(text = "abandon", substring = true) and hasTestTag(CommonTag.CHIP),
-            useUnmergedTree = true
-        )
+        composeTestRule.onNode(matcher = hasText(text = "abandon", substring = true))
             .also {
                 it.assertExists()
             }
-
-        composeTestRule.onNodeWithTag(RestoreTag.SEED_WORD_TEXT_FIELD).also {
-            it.assertTextEquals("")
-        }
     }
 
     @Test
@@ -140,7 +130,7 @@ class RestoreViewTest : UiTestPrerequisites() {
         newTestSetup(initialWordsList = generateSequence { "abandon" }.take(SeedPhrase.SEED_PHRASE_SIZE).toList())
 
         composeTestRule.onNodeWithText(
-            text = getStringResource(R.string.restore_seed_button_restore),
+            text = getStringResource(R.string.restore_seed_button_next),
             ignoreCase = true
         ).also {
             it.assertIsNotEnabled()
@@ -156,7 +146,7 @@ class RestoreViewTest : UiTestPrerequisites() {
         newTestSetup(initialWordsList = SeedPhraseFixture.new().split)
 
         composeTestRule.onNodeWithText(
-            text = getStringResource(R.string.restore_seed_button_restore),
+            text = getStringResource(R.string.restore_seed_button_next),
             ignoreCase = true
         ).also {
             it.assertExists()
@@ -169,7 +159,7 @@ class RestoreViewTest : UiTestPrerequisites() {
         newTestSetup(initialWordsList = listOf("abandon"))
 
         composeTestRule.onNode(
-            matcher = hasText(text = "abandon", substring = true) and hasTestTag(CommonTag.CHIP),
+            matcher = hasText(text = "abandon", substring = true),
             useUnmergedTree = true
         ).also {
             it.assertExists()

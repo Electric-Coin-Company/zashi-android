@@ -64,7 +64,7 @@ fun ChipGrid(
                     modifier = Modifier.padding(horizontal = ZcashTheme.dimens.spacingDefault)
                 ) {
                     chunk.forEachIndexed { subIndex, word ->
-                        Chip(
+                        ChipIndexed(
                             index = Index(chunkIndex * CHIP_GRID_COLUMN_SIZE + subIndex),
                             text = word,
                             modifier = Modifier.padding(ZcashTheme.dimens.spacingXtiny)

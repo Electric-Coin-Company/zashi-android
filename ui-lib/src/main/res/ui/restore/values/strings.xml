@@ -1,11 +1,13 @@
 <resources>
-    <string name="restore_header">Create a wallet</string>
-    <string name="restore_title">Wallet import</string>
+    <string name="restore_back">Back</string>
     <string name="restore_back_content_description">Back</string>
+    <string name="restore_button_clear">Clear Seed</string>
 
-    <string name="restore_button_clear">Clear</string>
-    <string name="restore_seed_instructions">You can import your backed up wallet by entering your backup recovery phrase (aka seed phrase) now.</string>
-    <string name="restore_seed_button_restore">Restore wallet</string>
+    <string name="restore_title">Enter secret recovery phrase</string>
+    <string name="restore_seed_instructions">Enter your 24-word seed phrase to restore the associated wallet.</string>
+    <string name="restore_seed_hint">Enter private seed here…</string>
+    <string name="restore_seed_button_next">Next</string>
+
     <string name="restore_seed_warning_suggestions">This word is not in the seed phrase dictionary.  Please select the correct one from the suggestions.</string>
     <string name="restore_seed_warning_no_suggestions">This word is not in the seed phrase dictionary.</string>
 

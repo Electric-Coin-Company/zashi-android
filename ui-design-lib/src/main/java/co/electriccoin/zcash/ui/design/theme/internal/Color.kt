@@ -8,6 +8,9 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import co.electriccoin.zcash.ui.design.theme.ExtendedColors
 
+// TODO [#998]: Check and enhance screen dark mode
+// TODO [#998]: https://github.com/Electric-Coin-Company/zashi-android/issues/998
+
 internal object Dark {
     val backgroundStart = Color(0xFF000000)
     val backgroundEnd = Color(0xFF000000)
@@ -20,6 +23,8 @@ internal object Dark {
     val textNavigationButton = Color.Black
     val textCaption = Color(0xFFFFFFFF)
     val textChipIndex = Color(0xFFFFB900)
+    val textFieldHint = Color(0xFFB7B7B7)
+    val layoutStroke = Color(0xFFFFFFFF)
 
     val primaryButton = Color(0xFFFFFFFF)
     val primaryButtonPressed = Color(0xFFFFFFFF)
@@ -80,6 +85,8 @@ internal object Light {
     val textTertiaryButton = Color(0xFF000000)
     val textCaption = Color(0xFF000000)
     val textChipIndex = Color(0xFFEE8592)
+    val textFieldHint = Color(0xFFB7B7B7)
+    val layoutStroke = Color(0xFF000000)
 
     // TODO [#159]: The button colors are wrong for light
     // TODO [#159]: https://github.com/Electric-Coin-Company/zashi-android/issues/159
@@ -163,6 +170,8 @@ internal val DarkExtendedColorPalette = ExtendedColors(
     progressEnd = Dark.progressEnd,
     progressBackground = Dark.progressBackground,
     chipIndex = Dark.textChipIndex,
+    textFieldHint = Dark.textFieldHint,
+    layoutStroke = Dark.layoutStroke,
     overlay = Dark.overlay,
     highlight = Dark.highlight,
     addressHighlightBorder = Dark.addressHighlightBorder,
@@ -191,6 +200,8 @@ internal val LightExtendedColorPalette = ExtendedColors(
     progressEnd = Light.progressEnd,
     progressBackground = Light.progressBackground,
     chipIndex = Light.textChipIndex,
+    textFieldHint = Light.textFieldHint,
+    layoutStroke = Light.layoutStroke,
     overlay = Light.overlay,
     highlight = Light.highlight,
     addressHighlightBorder = Light.addressHighlightBorder,
@@ -221,6 +232,8 @@ internal val LocalExtendedColors = staticCompositionLocalOf {
         progressEnd = Color.Unspecified,
         progressBackground = Color.Unspecified,
         chipIndex = Color.Unspecified,
+        textFieldHint = Color.Unspecified,
+        layoutStroke = Color.Unspecified,
         overlay = Color.Unspecified,
         highlight = Color.Unspecified,
         addressHighlightBorder = Color.Unspecified,

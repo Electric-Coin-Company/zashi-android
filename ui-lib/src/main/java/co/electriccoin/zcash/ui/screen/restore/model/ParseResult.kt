@@ -5,7 +5,10 @@ import co.electriccoin.zcash.ui.common.first
 import java.util.Locale
 
 internal sealed class ParseResult {
-    object Continue : ParseResult()
+    object Continue : ParseResult() {
+        override fun toString() = "Continue"
+    }
+
     data class Add(val words: List<String>) : ParseResult() {
         // Override to prevent logging of user secrets
         override fun toString() = "Add"
@@ -51,6 +54,10 @@ internal sealed class ParseResult {
 
             return Warn(findSuggestions(trimmed, completeWordList))
         }
+    }
+
+    override fun toString(): String {
+        return "ParseResult()"
     }
 }
 

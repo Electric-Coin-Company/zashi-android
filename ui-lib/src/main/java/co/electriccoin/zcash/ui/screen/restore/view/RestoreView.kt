@@ -3,12 +3,14 @@
 package co.electriccoin.zcash.ui.screen.restore.view
 
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -18,75 +20,70 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cash.z.ecc.android.sdk.model.BlockHeight
 import cash.z.ecc.android.sdk.model.ZcashNetwork
 import cash.z.ecc.sdk.model.SeedPhraseValidation
-import co.electriccoin.zcash.spackle.model.Index
+import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.SecureScreen
 import co.electriccoin.zcash.ui.common.shouldSecureScreen
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.Body
-import co.electriccoin.zcash.ui.design.component.Chip
+import co.electriccoin.zcash.ui.design.component.ChipOnSurface
 import co.electriccoin.zcash.ui.design.component.FormTextField
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.Header
-import co.electriccoin.zcash.ui.design.component.NavigationButton
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
+import co.electriccoin.zcash.ui.design.component.Reference
+import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.TertiaryButton
+import co.electriccoin.zcash.ui.design.component.TopScreenLogoTitle
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
-import co.electriccoin.zcash.ui.design.theme.ZcashTheme.dimens
 import co.electriccoin.zcash.ui.screen.restore.RestoreTag
 import co.electriccoin.zcash.ui.screen.restore.model.ParseResult
 import co.electriccoin.zcash.ui.screen.restore.model.RestoreStage
 import co.electriccoin.zcash.ui.screen.restore.state.RestoreState
 import co.electriccoin.zcash.ui.screen.restore.state.WordList
 import co.electriccoin.zcash.ui.screen.restore.state.wordValidation
-import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableSet
 import kotlinx.collections.immutable.persistentHashSetOf
 import kotlinx.coroutines.launch
@@ -151,11 +148,21 @@ fun RestoreWallet(
     paste: () -> String?,
     onFinished: () -> Unit
 ) {
-    var textState by rememberSaveable { mutableStateOf("") }
-    val focusRequester = remember { FocusRequester() }
-    val parseResult = ParseResult.new(completeWordList, textState)
+    val scope = rememberCoroutineScope()
+    var text by rememberSaveable { mutableStateOf("") }
+    val parseResult = ParseResult.new(completeWordList, text)
 
     val currentStage = restoreState.current.collectAsStateWithLifecycle().value
+
+    var isSeedValid by rememberSaveable { mutableStateOf(false) }
+    // To avoid unnecessary recompositions that this flow produces
+    SideEffect {
+        scope.launch {
+            userWordList.wordValidation().collect {
+                isSeedValid = it is SeedPhraseValidation.Valid
+            }
+        }
+    }
 
     Scaffold(
         modifier = Modifier.navigationBarsPadding(),
@@ -169,7 +176,10 @@ fun RestoreWallet(
                     }
                 },
                 isShowClear = currentStage == RestoreStage.Seed,
-                onClear = { userWordList.set(emptyList()) }
+                onClear = {
+                    userWordList.set(emptyList())
+                    text = ""
+                }
             )
         },
         bottomBar = {
@@ -177,9 +187,9 @@ fun RestoreWallet(
                 RestoreStage.Seed -> {
                     RestoreSeedBottomBar(
                         userWordList = userWordList,
+                        isSeedValid = isSeedValid,
                         parseResult = parseResult,
-                        setTextState = { textState = it },
-                        focusRequester = focusRequester,
+                        setText = { text = it },
                         modifier = Modifier
                             .imePadding()
                             .navigationBarsPadding()
@@ -197,12 +207,11 @@ fun RestoreWallet(
         },
         content = { paddingValues ->
             val commonModifier = Modifier
-                // We intentionally set the bottom smaller to save space in case of the software keyboard is visible
                 .padding(
-                    top = paddingValues.calculateTopPadding() + dimens.spacingDefault,
-                    bottom = paddingValues.calculateBottomPadding() + dimens.spacingSmall,
-                    start = dimens.screenHorizontalSpacing,
-                    end = dimens.screenHorizontalSpacing
+                    top = paddingValues.calculateTopPadding(),
+                    bottom = paddingValues.calculateBottomPadding(),
+                    start = ZcashTheme.dimens.screenHorizontalSpacing,
+                    end = ZcashTheme.dimens.screenHorizontalSpacing
                 )
 
             when (currentStage) {
@@ -210,12 +219,11 @@ fun RestoreWallet(
                     if (shouldSecureScreen) {
                         SecureScreen()
                     }
-
                     RestoreSeedMainContent(
                         userWordList = userWordList,
-                        textState = textState,
-                        setTextState = { textState = it },
-                        focusRequester = focusRequester,
+                        isSeedValid = isSeedValid,
+                        text = text,
+                        setText = { text = it },
                         parseResult = parseResult,
                         paste = paste,
                         goNext = { restoreState.goNext() },
@@ -229,6 +237,9 @@ fun RestoreWallet(
                         setRestoreHeight = setRestoreHeight,
                         onNext = { restoreState.goNext() },
                         modifier = commonModifier
+                            .imePadding()
+                            .navigationBarsPadding()
+                            .animateContentSize()
                     )
                 }
                 RestoreStage.Complete -> {
@@ -247,58 +258,71 @@ fun RestoreWallet(
 }
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
 private fun RestoreTopAppBar(
     onBack: () -> Unit,
+    onClear: () -> Unit,
     isShowClear: Boolean,
-    onClear: () -> Unit
+    modifier: Modifier = Modifier,
 ) {
-    TopAppBar(
-        title = { Text(text = stringResource(id = R.string.restore_title)) },
-        navigationIcon = {
-            IconButton(
-                onClick = onBack
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = stringResource(R.string.restore_back_content_description)
-                )
-            }
-        },
-        actions = {
-            if (isShowClear) {
-                NavigationButton(onClick = onClear, stringResource(R.string.restore_button_clear))
-            }
+    SmallTopAppBar(
+        backText = stringResource(id = R.string.restore_back).uppercase(),
+        backContentDescriptionText = stringResource(R.string.restore_back_content_description),
+        onBack = onBack,
+        regularActions = if (isShowClear) { {
+            ClearSeedMenuItem(
+                onSeedClear = onClear
+            )
         }
+        } else {
+            null
+        },
+        modifier = modifier,
+    )
+}
+
+@Composable
+private fun ClearSeedMenuItem(
+    modifier: Modifier = Modifier,
+    onSeedClear: () -> Unit,
+) {
+    Reference(
+        text = stringResource(id = R.string.restore_button_clear),
+        onClick = onSeedClear,
+        textAlign = TextAlign.Center,
+        modifier = modifier.then(
+            Modifier.padding(all = ZcashTheme.dimens.spacingDefault)
+        )
     )
 }
 
 // TODO [#672]: Implement custom seed phrase pasting for wallet import
 // TODO [#672]: https://github.com/Electric-Coin-Company/zashi-android/issues/672
+// TODO [#1060]: https://github.com/Electric-Coin-Company/zashi-android/issues/1060
 
 @OptIn(ExperimentalComposeUiApi::class)
-@Suppress("UNUSED_PARAMETER", "LongParameterList")
+@Suppress("UNUSED_PARAMETER", "LongParameterList", "LongMethod")
 @Composable
 private fun RestoreSeedMainContent(
     userWordList: WordList,
-    textState: String,
-    setTextState: (String) -> Unit,
-    focusRequester: FocusRequester,
+    isSeedValid: Boolean,
+    text: String,
+    setText: (String) -> Unit,
     parseResult: ParseResult,
     paste: () -> String?,
     goNext: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
-    val currentUserWordList = userWordList.current.collectAsStateWithLifecycle().value
-    val scrollState = rememberScrollState()
     val scope = rememberCoroutineScope()
+    val scrollState = rememberScrollState()
+    val focusRequester = remember { FocusRequester() }
+    val textFieldScrollToHeight = rememberSaveable { mutableIntStateOf(0) }
+
+    Twig.error { "TEST: $parseResult, $text" }
 
     if (parseResult is ParseResult.Add) {
-        setTextState("")
+        setText("")
         userWordList.append(parseResult.words)
     }
-
-    val isSeedValid = userWordList.wordValidation().collectAsState(null).value is SeedPhraseValidation.Valid
 
     Column(
         Modifier
@@ -307,20 +331,35 @@ private fun RestoreSeedMainContent(
             .then(modifier),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Body(text = stringResource(id = R.string.restore_seed_instructions))
+        // Used to calculate necessary scroll to have the seed TextFiled visible
+        Column(
+            modifier = Modifier.onSizeChanged { size ->
+                textFieldScrollToHeight.intValue = size.height
+                Twig.debug { "TextField scroll height: ${textFieldScrollToHeight.intValue}" }
+            }
+        ) {
+            TopScreenLogoTitle(
+                title = stringResource(R.string.restore_title),
+                logoContentDescription = stringResource(R.string.zcash_logo_content_description),
+            )
 
-        Spacer(Modifier.height(dimens.spacingSmall))
+            Spacer(Modifier.height(ZcashTheme.dimens.spacingDefault))
 
-        ChipGridWithText(currentUserWordList)
-
-        if (!isSeedValid) {
-            NextWordTextField(
-                parseResult = parseResult,
-                text = textState,
-                setText = { setTextState(it) },
-                modifier = Modifier.focusRequester(focusRequester)
+            Body(
+                text = stringResource(id = R.string.restore_seed_instructions),
+                textAlign = TextAlign.Center
             )
         }
+
+        Spacer(Modifier.height(ZcashTheme.dimens.spacingDefault))
+
+        SeedGridWithText(
+            text = text,
+            userWordList = userWordList,
+            focusRequester = focusRequester,
+            parseResult = parseResult,
+            setText = setText
+        )
 
         Spacer(
             modifier = Modifier
@@ -328,42 +367,48 @@ private fun RestoreSeedMainContent(
                 .weight(MINIMAL_WEIGHT)
         )
 
+        Spacer(Modifier.height(ZcashTheme.dimens.spacingLarge))
+
         PrimaryButton(
             onClick = goNext,
-            text = stringResource(id = R.string.restore_seed_button_restore),
             enabled = isSeedValid,
-            outerPaddingValues = PaddingValues(top = dimens.spacingSmall)
+            text = stringResource(id = R.string.restore_seed_button_next),
+            outerPaddingValues = PaddingValues(top = ZcashTheme.dimens.spacingSmall)
         )
 
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingHuge))
     }
 
     if (isSeedValid) {
-        // Hides the keyboard, making it easier for users to see the next button
+        // Clear focus and hide keyboard to make it easier for users to see the next button
         LocalSoftwareKeyboardController.current?.hide()
+        LocalFocusManager.current.clearFocus()
     }
 
-    // Cause text field to refocus
     DisposableEffect(parseResult) {
+        // Causes the TextFiled to refocus
         if (!isSeedValid) {
+            Twig.error { "NUT" }
             focusRequester.requestFocus()
         }
-        scope.launch {
-            scrollState.scrollTo(scrollState.maxValue)
+        // Causes scroll to the TextField after the first type action
+        if (text.isNotEmpty() && userWordList.current.value.isEmpty()) {
+            scope.launch {
+                scrollState.animateScrollTo(textFieldScrollToHeight.intValue)
+            }
         }
-        onDispose { }
+        onDispose { /* Nothing to dispose */ }
     }
 }
 
 @Composable
 private fun RestoreSeedBottomBar(
     userWordList: WordList,
+    isSeedValid: Boolean,
     parseResult: ParseResult,
-    setTextState: (String) -> Unit,
-    focusRequester: FocusRequester,
-    modifier: Modifier = Modifier
+    setText: (String) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    val isSeedValid = userWordList.wordValidation().collectAsState(null).value is SeedPhraseValidation.Valid
     // Hide the field once the user has completed the seed phrase; if they need the field back then
     // the user can hit the clear button
     if (!isSeedValid) {
@@ -374,81 +419,82 @@ private fun RestoreSeedBottomBar(
                 parseResult = parseResult,
                 modifier = Modifier
                     .fillMaxWidth()
-                    // Note we don't set the top, as it's set by the confirm button above
                     .padding(
-                        bottom = dimens.spacingDefault,
-                        start = dimens.spacingDefault,
-                        end = dimens.spacingDefault
+                        horizontal = ZcashTheme.dimens.spacingDefault,
+                        vertical = ZcashTheme.dimens.spacingSmall
                     )
             )
             Autocomplete(parseResult = parseResult, {
-                setTextState("")
+                setText("")
                 userWordList.append(listOf(it))
-                focusRequester.requestFocus()
             })
         }
     }
 }
 
-const val CHIP_GRID_ROW_SIZE = 3
-
 @Composable
-private fun ChipGridWithText(
-    userWordList: ImmutableList<String>
-) {
-    Column(Modifier.testTag(RestoreTag.CHIP_LAYOUT)) {
-        userWordList.chunked(CHIP_GRID_ROW_SIZE).forEachIndexed { chunkIndex, chunk ->
-            Row(Modifier.fillMaxWidth(), verticalAlignment = CenterVertically) {
-                val remainder = (chunk.size % CHIP_GRID_ROW_SIZE)
-
-                val singleItemWeight = 1f / CHIP_GRID_ROW_SIZE
-                chunk.forEachIndexed { subIndex, word ->
-                    Chip(
-                        index = Index(chunkIndex * CHIP_GRID_ROW_SIZE + subIndex),
-                        text = word,
-                        modifier = Modifier.weight(singleItemWeight)
-                    )
-                }
-
-                if (0 != remainder) {
-                    Spacer(modifier = Modifier.weight((CHIP_GRID_ROW_SIZE - chunk.size) * singleItemWeight))
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun NextWordTextField(
-    parseResult: ParseResult,
+@Suppress("LongParameterList", "LongMethod")
+private fun SeedGridWithText(
     text: String,
     setText: (String) -> Unit,
+    userWordList: WordList,
+    focusRequester: FocusRequester,
+    parseResult: ParseResult,
     modifier: Modifier = Modifier
 ) {
-    Surface(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(dimens.spacingTiny)
-            .shadow(
-                elevation = 12.dp,
-                ambientColor = MaterialTheme.colorScheme.primary,
-                spotColor = MaterialTheme.colorScheme.primary
-            ),
-        shape = RectangleShape,
-        color = MaterialTheme.colorScheme.surface,
+    val currentUserWordList = userWordList.current.collectAsStateWithLifecycle().value
 
+    val currentSeedText = currentUserWordList.run {
+        if (isEmpty()) {
+            text
+        } else {
+            joinToString(separator = " ", postfix = " ").plus(text)
+        }
+    }
+
+    Column(
+        modifier = Modifier
+            .border(
+                border = BorderStroke(
+                    width = ZcashTheme.dimens.layoutStroke,
+                    color = ZcashTheme.colors.layoutStroke
+                )
+            )
+            .fillMaxWidth()
+            .defaultMinSize(minHeight = ZcashTheme.dimens.textFieldDefaultHeight)
+            .then(modifier)
+            .testTag(RestoreTag.CHIP_LAYOUT)
     ) {
         /*
          * Treat the user input as a password for more secure input, but disable the transformation
          * to obscure typing.
          */
         TextField(
+            textStyle = ZcashTheme.extendedTypography.textFieldValue,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(dimens.spacingTiny)
-                .testTag(RestoreTag.SEED_WORD_TEXT_FIELD),
-            value = text,
-            onValueChange = setText,
+                .padding(ZcashTheme.dimens.spacingTiny)
+                .testTag(RestoreTag.SEED_WORD_TEXT_FIELD)
+                .focusRequester(focusRequester),
+            value = TextFieldValue(
+                text = currentSeedText,
+                selection = TextRange(index = currentSeedText.length)
+            ),
+            placeholder = {
+                Text(
+                    text = stringResource(id = R.string.restore_seed_hint),
+                    style = ZcashTheme.extendedTypography.textFieldHint,
+                    color = ZcashTheme.colors.textFieldHint
+                )
+            },
+            onValueChange = {
+                processTextInput(
+                    currentSeedText = currentSeedText,
+                    updateSeedText = it.text,
+                    userWordList = userWordList,
+                    setText = setText
+                )
+            },
             keyboardOptions = KeyboardOptions(
                 KeyboardCapitalization.None,
                 autoCorrect = false,
@@ -456,7 +502,6 @@ private fun NextWordTextField(
                 keyboardType = KeyboardType.Password
             ),
             keyboardActions = KeyboardActions(onAny = {}),
-            shape = RoundedCornerShape(8.dp),
             isError = parseResult is ParseResult.Warn,
             colors = TextFieldDefaults.colors(
                 focusedContainerColor = Color.Transparent,
@@ -471,45 +516,82 @@ private fun NextWordTextField(
     }
 }
 
+val pasteSeedWordRegex by lazy { Regex("\\s\\S") } // $NON-NLS
+val whiteSpaceRegex by lazy { "\\s".toRegex() } // $NON-NLS
+
+// TODO [#1061]: Restore screen input validation refactoring and adding tests
+// TODO [#1061]: https://github.com/Electric-Coin-Company/zashi-android/issues/1061
+
+/**
+ * This function processes the text from user input after every change. It compares with what is already typed in. It
+ * does a simple validation as well.
+ *
+ * @param currentSeedText Previously typed in text
+ * @param updateSeedText Updated text after every user input
+ * @param userWordList Validated type-safe list of seed words
+ * @param setText New text callback
+ */
+fun processTextInput(
+    currentSeedText: String,
+    updateSeedText: String,
+    userWordList: WordList,
+    setText: (String) -> Unit
+) {
+    val textDifference = if (updateSeedText.length > currentSeedText.length) {
+        updateSeedText.substring(currentSeedText.length)
+    } else {
+        ""
+    }
+    Twig.debug { "Text difference: $textDifference" }
+
+    if (whiteSpaceRegex.matches(textDifference)) {
+        // User tried to type a white space without confirming a valid seed word
+    } else if (pasteSeedWordRegex.containsMatchIn(textDifference)) {
+        // User pasted their seed from the device buffer
+        setText(updateSeedText)
+    } else if (updateSeedText < currentSeedText &&
+        whiteSpaceRegex.matches(currentSeedText.last().toString()) &&
+        currentSeedText.isNotEmpty()
+    ) {
+        // User backspaced to a previously confirmed word - remove it
+        userWordList.removeLast()
+    } else {
+        // User typed in a character
+        setText(updateSeedText.split(whiteSpaceRegex).last())
+    }
+}
+
 @Composable
+@Suppress("UNUSED_VARIABLE")
 private fun Autocomplete(
     parseResult: ParseResult,
     onSuggestionSelected: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    // TODO [#1061]: Restore screen input validation refactoring and adding tests
+    // TODO [#1061]: https://github.com/Electric-Coin-Company/zashi-android/issues/1061
+    // Note that we currently do not use the highlighting of the suggestion bar
     val (isHighlight, suggestions) = when (parseResult) {
         is ParseResult.Autocomplete -> {
             Pair(false, parseResult.suggestions)
         }
-
         is ParseResult.Warn -> {
             return
         }
-
         else -> {
             Pair(false, null)
         }
     }
     suggestions?.let {
-        val highlightModifier = if (isHighlight) {
-            modifier.border(2.dp, ZcashTheme.colors.highlight)
-        } else {
-            modifier
-        }
-
-        @Suppress("ModifierReused")
         LazyRow(
-            modifier = highlightModifier.testTag(RestoreTag.AUTOCOMPLETE_LAYOUT),
-            // Note we don't set the top, as it's set by the confirm button above
-            // And we also set the bottom smaller, as the keyboard will be always visible
-            contentPadding = PaddingValues(
-                bottom = dimens.spacingDefault,
-                start = dimens.spacingDefault,
-                end = dimens.spacingSmall
-            )
+            modifier = modifier
+                .testTag(RestoreTag.AUTOCOMPLETE_LAYOUT)
+                .fillMaxWidth(),
+            contentPadding = PaddingValues(all = ZcashTheme.dimens.spacingSmall),
+            horizontalArrangement = Arrangement.Absolute.Center
         ) {
             items(it) {
-                Chip(
+                ChipOnSurface(
                     text = it,
                     modifier = Modifier
                         .testTag(RestoreTag.AUTOCOMPLETE_ITEM)
@@ -527,15 +609,22 @@ private fun Warn(
 ) {
     if (parseResult is ParseResult.Warn) {
         Surface(
-            modifier = modifier,
+            modifier = modifier.then(
+                Modifier.border(
+                    border = BorderStroke(
+                        width = ZcashTheme.dimens.chipStroke,
+                        color = ZcashTheme.colors.layoutStroke
+                    )
+                )
+            ),
             shape = RectangleShape,
             color = MaterialTheme.colorScheme.secondary,
-            shadowElevation = 4.dp
+            shadowElevation = ZcashTheme.dimens.chipShadowElevation
         ) {
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(dimens.spacingTiny),
+                    .padding(ZcashTheme.dimens.spacingSmall),
                 textAlign = TextAlign.Center,
                 text = if (parseResult.suggestions.isEmpty()) {
                     stringResource(id = R.string.restore_seed_warning_no_suggestions)
@@ -569,11 +658,11 @@ private fun RestoreBirthday(
     ) {
         Header(stringResource(R.string.restore_birthday_header))
 
-        Spacer(modifier = Modifier.height(dimens.spacingDefault))
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
         Body(stringResource(R.string.restore_birthday_body))
 
-        Spacer(modifier = Modifier.height(dimens.spacingDefault))
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
         FormTextField(
             value = height,
@@ -583,7 +672,7 @@ private fun RestoreBirthday(
             },
             Modifier
                 .fillMaxWidth()
-                .padding(dimens.spacingTiny)
+                .padding(ZcashTheme.dimens.spacingTiny)
                 .testTag(RestoreTag.BIRTHDAY_TEXT_FIELD),
             label = { Text(stringResource(id = R.string.restore_birthday_hint)) },
             keyboardOptions = KeyboardOptions(
@@ -602,6 +691,8 @@ private fun RestoreBirthday(
                 .weight(MINIMAL_WEIGHT)
         )
 
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
+
         val isBirthdayValid = height.toLongOrNull()?.let {
             it >= zcashNetwork.saplingActivationHeight.value
         } ?: false
@@ -613,7 +704,7 @@ private fun RestoreBirthday(
             },
             text = stringResource(R.string.restore_birthday_button_restore),
             enabled = isBirthdayValid,
-            outerPaddingValues = PaddingValues(top = dimens.spacingSmall)
+            outerPaddingValues = PaddingValues(top = ZcashTheme.dimens.spacingSmall)
         )
 
         TertiaryButton(
@@ -622,7 +713,7 @@ private fun RestoreBirthday(
                 onNext()
             },
             text = stringResource(R.string.restore_birthday_button_skip),
-            outerPaddingValues = PaddingValues(top = dimens.spacingSmall)
+            outerPaddingValues = PaddingValues(top = ZcashTheme.dimens.spacingDefault)
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
@@ -643,11 +734,11 @@ private fun RestoreComplete(
     ) {
         Header(stringResource(R.string.restore_complete_header))
 
-        Spacer(modifier = Modifier.height(dimens.spacingDefault))
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
         Body(stringResource(R.string.restore_complete_info))
 
-        Spacer(modifier = Modifier.height(dimens.spacingDefault))
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
         Spacer(
             modifier = Modifier
@@ -658,7 +749,7 @@ private fun RestoreComplete(
         PrimaryButton(
             onClick = onComplete,
             text = stringResource(R.string.restore_button_see_wallet),
-            outerPaddingValues = PaddingValues(top = dimens.spacingSmall)
+            outerPaddingValues = PaddingValues(top = ZcashTheme.dimens.spacingSmall)
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))

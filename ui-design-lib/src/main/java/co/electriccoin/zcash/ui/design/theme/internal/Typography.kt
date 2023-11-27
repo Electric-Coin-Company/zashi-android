@@ -121,7 +121,9 @@ data class ExtendedTypography(
     val aboutText: TextStyle,
     val buttonText: TextStyle,
     val checkboxText: TextStyle,
-    val securityWarningText: TextStyle
+    val securityWarningText: TextStyle,
+    val textFieldHint: TextStyle,
+    val textFieldValue: TextStyle,
 )
 
 @Suppress("CompositionLocalAllowlist")
@@ -160,6 +162,14 @@ val LocalExtendedTypography = staticCompositionLocalOf {
         ),
         securityWarningText = PrimaryTypography.bodySmall.copy(
             lineHeight = 22.32.sp
-        )
+        ),
+        textFieldHint = PrimaryTypography.bodySmall.copy(
+            fontSize = 13.sp,
+            lineHeight = 15.73.sp,
+            fontWeight = FontWeight.Normal
+        ),
+        textFieldValue = PrimaryTypography.bodyLarge.copy(
+            fontSize = 17.sp,
+        ),
     )
 }
