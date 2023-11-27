@@ -11,14 +11,8 @@
     <string name="restore_seed_warning_suggestions">This word is not in the seed phrase dictionary.  Please select the correct one from the suggestions.</string>
     <string name="restore_seed_warning_no_suggestions">This word is not in the seed phrase dictionary.</string>
 
-    <string name="restore_birthday_header">Do you know the wallet’s birthday?</string>
-    <string name="restore_birthday_body">This will allow a faster sync. If you don’t know the wallet’s birthday, don’t worry.</string>
-    <string name="restore_birthday_hint">Birthday height</string>
-    <string name="restore_birthday_button_restore">Restore with this birthday</string>
-    <string name="restore_birthday_button_skip">I don’t know the birthday</string>
-
-    <string name="restore_complete_header">Seed phrase imported!</string>
-    <string name="restore_complete_info">We will now scan the blockchain to find your transactions and balance.</string>
-    <string name="restore_button_see_wallet">Take me to my wallet</string>
+    <string name="restore_birthday_header">Wallet birthday height</string>
+    <string name="restore_birthday_sub_header">(optional)</string>
+    <string name="restore_birthday_button_restore">Restore</string>
 
 </resources>

@@ -40,11 +40,13 @@ fun FormTextField(
         label = label,
         keyboardOptions = keyboardOptions,
         colors = colors,
-        modifier = if (withBorder) {
-            modifier.border(width = 1.dp, color = MaterialTheme.colorScheme.primary)
-        } else {
-            modifier
-        },
+        modifier = modifier.then(
+            if (withBorder) {
+                modifier.border(width = 1.dp, color = MaterialTheme.colorScheme.primary)
+            } else {
+                Modifier
+            }
+        ),
         leadingIcon = leadingIcon,
         trailingIcon = trailingIcon,
         keyboardActions = keyboardActions,
