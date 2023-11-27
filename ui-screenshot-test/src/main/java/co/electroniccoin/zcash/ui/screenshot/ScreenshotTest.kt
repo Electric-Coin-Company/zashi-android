@@ -141,11 +141,6 @@ class ScreenshotTest : UiTestPrerequisites() {
         }
     }
 
-    // TODO [#859]: Screenshot tests fail on Firebase Test Lab
-    // TODO [#859]: https://github.com/Electric-Coin-Company/zashi-android/issues/859
-    // Some of the restore screenshots broke with the Compose 1.4 update and we don't yet know why.
-    private val isRestoreScreenshotsEnabled = false
-
     @Suppress("LongMethod", "FunctionNaming", "CyclomaticComplexMethod")
     private fun take_screenshots_for_restore_wallet(resContext: Context, tag: String) {
         // TODO [#286]: Screenshot tests fail on Firebase Test Lab
@@ -207,39 +202,31 @@ class ScreenshotTest : UiTestPrerequisites() {
                 SeedPhrase.SEED_PHRASE_SIZE
         }
 
-        if (isRestoreScreenshotsEnabled.not()) {
-            return
-        }
-
-        composeTestRule.onNodeWithText(resContext.getString(R.string.restore_seed_button_next)).also {
-            it.performScrollTo()
-
+        composeTestRule.onNodeWithText(
+            text = resContext.getString(R.string.restore_seed_button_next),
+            ignoreCase = true
+        ).also {
             // Even with waiting for the word list in the view model, there's some latency before the button is enabled
             composeTestRule.waitUntil(5.seconds.inWholeMilliseconds) {
                 runCatching { it.assertIsEnabled() }.isSuccess
             }
-
-            it.performClick()
-        }
-
-        composeTestRule.onNodeWithText(resContext.getString(R.string.restore_birthday_button_restore)).also {
-            composeTestRule.waitUntil(5.seconds.inWholeMilliseconds) {
-                kotlin.runCatching { it.assertExists() }.isSuccess
-            }
-        }
-
-        takeScreenshot(tag, "Import 3")
-
-        composeTestRule.onNodeWithText(resContext.getString(R.string.restore_birthday_button_skip)).also {
             it.performScrollTo()
             it.performClick()
         }
 
-        composeTestRule.onNodeWithText(resContext.getString(R.string.restore_complete_header)).also {
+        composeTestRule.onNodeWithText(resContext.getString(R.string.restore_birthday_header)).also {
             it.assertExists()
         }
 
-        takeScreenshot(tag, "Import 4")
+        takeScreenshot(tag, "Import 3")
+
+        composeTestRule.onNodeWithText(
+            text = resContext.getString(R.string.restore_birthday_button_restore),
+            ignoreCase = true
+        ).also {
+            it.performScrollTo()
+            it.performClick()
+        }
     }
 
     @Test

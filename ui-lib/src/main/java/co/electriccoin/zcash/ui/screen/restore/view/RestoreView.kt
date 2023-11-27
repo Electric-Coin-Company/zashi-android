@@ -337,8 +337,6 @@ private fun RestoreSeedMainContent(
     val focusRequester = remember { FocusRequester() }
     val textFieldScrollToHeight = rememberSaveable { mutableIntStateOf(0) }
 
-    Twig.error { "TEST: $parseResult, $text" }
-
     if (parseResult is ParseResult.Add) {
         setText("")
         userWordList.append(parseResult.words)
@@ -698,6 +696,7 @@ private fun RestoreBirthdayMainContent(
                 .padding(ZcashTheme.dimens.spacingTiny)
                 .focusRequester(focusRequester)
                 .testTag(RestoreTag.BIRTHDAY_TEXT_FIELD),
+            textStyle = ZcashTheme.extendedTypography.textFieldBirthday,
             keyboardOptions = KeyboardOptions(
                 KeyboardCapitalization.None,
                 autoCorrect = false,

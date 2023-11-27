@@ -11,8 +11,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 
 @Suppress("LongParameterList")
 @Composable
@@ -20,6 +22,7 @@ fun FormTextField(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
+    textStyle: TextStyle = ZcashTheme.extendedTypography.textFieldValue,
     label: @Composable (() -> Unit)? = null,
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null,
@@ -38,6 +41,7 @@ fun FormTextField(
         value = value,
         onValueChange = onValueChange,
         label = label,
+        textStyle = textStyle,
         keyboardOptions = keyboardOptions,
         colors = colors,
         modifier = modifier.then(
