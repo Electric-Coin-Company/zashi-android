@@ -157,7 +157,7 @@ jobs:
           MAPPINGS_ZIP_PATH: ${{ format('{0}/artifacts/mappings.zip', env.home) }}
         run: |
           mkdir ${ARTIFACTS_DIR_PATH}
-          zip -r ${BINARIES_ZIP_PATH} . -i app/build/outputs/apk/\*/\*.apk app/build/outputs/bundle/\*/\*.aab
+          zip -r ${BINARIES_ZIP_PATH} . -i app/build/outputs/apk/\*/\*.apk app/build/outputs/apk_from_bundle/\*/\*.apk app/build/outputs/bundle/\*/\*.aab
           zip -r ${MAPPINGS_ZIP_PATH} . -i app/build/outputs/mapping/\*/mapping.txt
       - name: Upload Artifacts
         uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32

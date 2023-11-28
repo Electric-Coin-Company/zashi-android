@@ -384,6 +384,7 @@ tasks {
     )
         .dependsOn(":app:assembleDebug")
         .dependsOn(":app:bundleZcashmainnetRelease")
+        .dependsOn(":app:packageZcashmainnetReleaseUniversalApk")
 
     println("Automated deployment task registered - all the necessary attributes set")
 }
