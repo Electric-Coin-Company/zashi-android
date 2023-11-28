@@ -124,6 +124,7 @@ data class ExtendedTypography(
     val securityWarningText: TextStyle,
     val textFieldHint: TextStyle,
     val textFieldValue: TextStyle,
+    val textFieldBirthday: TextStyle,
 )
 
 @Suppress("CompositionLocalAllowlist")
@@ -171,5 +172,6 @@ val LocalExtendedTypography = staticCompositionLocalOf {
         textFieldValue = PrimaryTypography.bodyLarge.copy(
             fontSize = 17.sp,
         ),
+        textFieldBirthday = SecondaryTypography.headlineMedium.copy(),
     )
 }

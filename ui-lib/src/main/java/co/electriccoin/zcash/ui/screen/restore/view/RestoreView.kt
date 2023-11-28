@@ -31,6 +31,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -71,11 +72,9 @@ import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.ChipOnSurface
 import co.electriccoin.zcash.ui.design.component.FormTextField
 import co.electriccoin.zcash.ui.design.component.GradientSurface
-import co.electriccoin.zcash.ui.design.component.Header
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.Reference
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
-import co.electriccoin.zcash.ui.design.component.TertiaryButton
 import co.electriccoin.zcash.ui.design.component.TopScreenLogoTitle
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.restore.RestoreTag
@@ -88,9 +87,9 @@ import kotlinx.collections.immutable.ImmutableSet
 import kotlinx.collections.immutable.persistentHashSetOf
 import kotlinx.coroutines.launch
 
-@Preview("Restore Wallet")
+@Preview("Restore Seed")
 @Composable
-private fun PreviewRestore() {
+private fun PreviewRestoreSeed() {
     ZcashTheme(forceDarkMode = false) {
         GradientSurface {
             RestoreWallet(
@@ -119,12 +118,31 @@ private fun PreviewRestore() {
     }
 }
 
-@Preview("Restore Complete")
+@Preview("Restore Seed Birthday")
 @Composable
-private fun PreviewRestoreComplete() {
+private fun PreviewRestoreBirthday() {
     ZcashTheme(forceDarkMode = false) {
-        RestoreComplete(
-            onComplete = {}
+        RestoreWallet(
+            ZcashNetwork.Mainnet,
+            restoreState = RestoreState(RestoreStage.Birthday),
+            completeWordList = persistentHashSetOf(
+                "abandon",
+                "ability",
+                "able",
+                "about",
+                "above",
+                "absent",
+                "absorb",
+                "abstract",
+                "rib",
+                "ribbon"
+            ),
+            userWordList = WordList(listOf("abandon", "absorb")),
+            restoreHeight = null,
+            setRestoreHeight = {},
+            onBack = {},
+            paste = { "" },
+            onFinished = {}
         )
     }
 }
@@ -135,7 +153,6 @@ private fun PreviewRestoreComplete() {
  * @param restoreHeight A null height indicates no user input.
  */
 @Suppress("LongParameterList", "LongMethod")
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun RestoreWallet(
     zcashNetwork: ZcashNetwork,
@@ -167,20 +184,28 @@ fun RestoreWallet(
     Scaffold(
         modifier = Modifier.navigationBarsPadding(),
         topBar = {
-            RestoreTopAppBar(
-                onBack = {
-                    if (currentStage.hasPrevious()) {
-                        restoreState.goPrevious()
-                    } else {
-                        onBack()
-                    }
-                },
-                isShowClear = currentStage == RestoreStage.Seed,
-                onClear = {
-                    userWordList.set(emptyList())
-                    text = ""
+            when (currentStage) {
+                RestoreStage.Seed -> {
+                    RestoreSeedTopAppBar(
+                        onBack = onBack,
+                        onClear = {
+                            userWordList.set(emptyList())
+                            text = ""
+                        }
+                    )
                 }
-            )
+                RestoreStage.Birthday -> {
+                    RestoreSeedBirthdayTopAppBar(
+                        onBack = {
+                            if (currentStage.hasPrevious()) {
+                                restoreState.goPrevious()
+                            } else {
+                                onBack()
+                            }
+                        }
+                    )
+                }
+            }
         },
         bottomBar = {
             when (currentStage) {
@@ -198,10 +223,7 @@ fun RestoreWallet(
                     )
                 }
                 RestoreStage.Birthday -> {
-                    // No content
-                }
-                RestoreStage.Complete -> {
-                    // No content
+                    // No content. The action button is part of scrollable content.
                 }
             }
         },
@@ -231,52 +253,18 @@ fun RestoreWallet(
                     )
                 }
                 RestoreStage.Birthday -> {
-                    RestoreBirthday(
+                    RestoreBirthdayMainContent(
                         zcashNetwork = zcashNetwork,
                         initialRestoreHeight = restoreHeight,
                         setRestoreHeight = setRestoreHeight,
-                        onNext = { restoreState.goNext() },
+                        onDone = onFinished,
                         modifier = commonModifier
                             .imePadding()
                             .navigationBarsPadding()
-                            .animateContentSize()
-                    )
-                }
-                RestoreStage.Complete -> {
-                    // In some cases we need to hide the software keyboard manually, as it stays shown after
-                    // input on prior screens
-                    LocalSoftwareKeyboardController.current?.hide()
-
-                    RestoreComplete(
-                        onComplete = onFinished,
-                        modifier = commonModifier
                     )
                 }
             }
         }
-    )
-}
-
-@Composable
-private fun RestoreTopAppBar(
-    onBack: () -> Unit,
-    onClear: () -> Unit,
-    isShowClear: Boolean,
-    modifier: Modifier = Modifier,
-) {
-    SmallTopAppBar(
-        backText = stringResource(id = R.string.restore_back).uppercase(),
-        backContentDescriptionText = stringResource(R.string.restore_back_content_description),
-        onBack = onBack,
-        regularActions = if (isShowClear) { {
-            ClearSeedMenuItem(
-                onSeedClear = onClear
-            )
-        }
-        } else {
-            null
-        },
-        modifier = modifier,
     )
 }
 
@@ -292,6 +280,38 @@ private fun ClearSeedMenuItem(
         modifier = modifier.then(
             Modifier.padding(all = ZcashTheme.dimens.spacingDefault)
         )
+    )
+}
+
+@Composable
+private fun RestoreSeedTopAppBar(
+    onBack: () -> Unit,
+    onClear: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    SmallTopAppBar(
+        backText = stringResource(id = R.string.restore_back).uppercase(),
+        backContentDescriptionText = stringResource(R.string.restore_back_content_description),
+        onBack = onBack,
+        regularActions = {
+            ClearSeedMenuItem(
+                onSeedClear = onClear
+            )
+        },
+        modifier = modifier,
+    )
+}
+
+@Composable
+private fun RestoreSeedBirthdayTopAppBar(
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    SmallTopAppBar(
+        backText = stringResource(id = R.string.restore_back).uppercase(),
+        backContentDescriptionText = stringResource(R.string.restore_back_content_description),
+        onBack = onBack,
+        modifier = modifier
     )
 }
 
@@ -316,8 +336,6 @@ private fun RestoreSeedMainContent(
     val scrollState = rememberScrollState()
     val focusRequester = remember { FocusRequester() }
     val textFieldScrollToHeight = rememberSaveable { mutableIntStateOf(0) }
-
-    Twig.error { "TEST: $parseResult, $text" }
 
     if (parseResult is ParseResult.Add) {
         setText("")
@@ -388,7 +406,6 @@ private fun RestoreSeedMainContent(
     DisposableEffect(parseResult) {
         // Causes the TextFiled to refocus
         if (!isSeedValid) {
-            Twig.error { "NUT" }
             focusRequester.requestFocus()
         }
         // Causes scroll to the TextField after the first type action
@@ -638,13 +655,16 @@ private fun Warn(
 
 @Composable
 @Suppress("LongMethod")
-private fun RestoreBirthday(
+private fun RestoreBirthdayMainContent(
     zcashNetwork: ZcashNetwork,
     initialRestoreHeight: BlockHeight?,
     setRestoreHeight: (BlockHeight?) -> Unit,
-    onNext: () -> Unit,
+    onDone: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val scrollState = rememberScrollState()
+    val focusRequester = remember { FocusRequester() }
+
     val (height, setHeight) = rememberSaveable {
         mutableStateOf(initialRestoreHeight?.value?.toString() ?: "")
     }
@@ -652,15 +672,16 @@ private fun RestoreBirthday(
     Column(
         Modifier
             .fillMaxHeight()
-            .verticalScroll(rememberScrollState())
+            .verticalScroll(scrollState)
             .then(modifier),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Header(stringResource(R.string.restore_birthday_header))
+        TopScreenLogoTitle(
+            title = stringResource(R.string.restore_birthday_header),
+            logoContentDescription = stringResource(R.string.zcash_logo_content_description),
+        )
 
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
-
-        Body(stringResource(R.string.restore_birthday_body))
+        Body(stringResource(R.string.restore_birthday_sub_header))
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
@@ -670,11 +691,12 @@ private fun RestoreBirthday(
                 val filteredHeightString = heightString.filter { it.isDigit() }
                 setHeight(filteredHeightString)
             },
-            Modifier
+            modifier = Modifier
                 .fillMaxWidth()
                 .padding(ZcashTheme.dimens.spacingTiny)
+                .focusRequester(focusRequester)
                 .testTag(RestoreTag.BIRTHDAY_TEXT_FIELD),
-            label = { Text(stringResource(id = R.string.restore_birthday_hint)) },
+            textStyle = ZcashTheme.extendedTypography.textFieldBirthday,
             keyboardOptions = KeyboardOptions(
                 KeyboardCapitalization.None,
                 autoCorrect = false,
@@ -682,7 +704,7 @@ private fun RestoreBirthday(
                 keyboardType = KeyboardType.Number
             ),
             keyboardActions = KeyboardActions(onAny = {}),
-            shape = RectangleShape,
+            withBorder = false,
         )
 
         Spacer(
@@ -693,65 +715,33 @@ private fun RestoreBirthday(
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
-        val isBirthdayValid = height.toLongOrNull()?.let {
+        // Empty birthday value is a valid birthday height too, thus run validation only in case of non-empty heights.
+        val isBirthdayValid = height.isEmpty() || height.toLongOrNull()?.let {
             it >= zcashNetwork.saplingActivationHeight.value
         } ?: false
 
+        val isEmptyBirthday = height.isEmpty()
+
         PrimaryButton(
             onClick = {
-                setRestoreHeight(BlockHeight.new(zcashNetwork, height.toLong()))
-                onNext()
+                if (isEmptyBirthday) {
+                    setRestoreHeight(null)
+                } else if (isBirthdayValid) {
+                    setRestoreHeight(BlockHeight.new(zcashNetwork, height.toLong()))
+                } else {
+                    error("The restore button should not expect click events")
+                }
+                onDone()
             },
             text = stringResource(R.string.restore_birthday_button_restore),
-            enabled = isBirthdayValid,
-            outerPaddingValues = PaddingValues(top = ZcashTheme.dimens.spacingSmall)
+            enabled = isBirthdayValid
         )
 
-        TertiaryButton(
-            onClick = {
-                setRestoreHeight(null)
-                onNext()
-            },
-            text = stringResource(R.string.restore_birthday_button_skip),
-            outerPaddingValues = PaddingValues(top = ZcashTheme.dimens.spacingDefault)
-        )
-
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingHuge))
     }
-}
 
-@Composable
-private fun RestoreComplete(
-    onComplete: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        Modifier
-            .fillMaxHeight()
-            .verticalScroll(rememberScrollState())
-            .then(modifier),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Header(stringResource(R.string.restore_complete_header))
-
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
-
-        Body(stringResource(R.string.restore_complete_info))
-
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
-
-        Spacer(
-            modifier = Modifier
-                .fillMaxHeight()
-                .weight(MINIMAL_WEIGHT)
-        )
-
-        PrimaryButton(
-            onClick = onComplete,
-            text = stringResource(R.string.restore_button_see_wallet),
-            outerPaddingValues = PaddingValues(top = ZcashTheme.dimens.spacingSmall)
-        )
-
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
+    LaunchedEffect(Unit) {
+        // Causes the TextFiled to focus on the first screen visit
+        focusRequester.requestFocus()
     }
 }

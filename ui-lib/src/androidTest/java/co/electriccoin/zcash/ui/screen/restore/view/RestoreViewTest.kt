@@ -185,12 +185,16 @@ class RestoreViewTest : UiTestPrerequisites() {
             initialWordsList = SeedPhraseFixture.new().split
         )
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.restore_birthday_button_skip)).also {
+        composeTestRule.onNodeWithText(
+            text = getStringResource(R.string.restore_birthday_button_restore),
+            ignoreCase = true
+        ).also {
+            it.assertIsEnabled()
             it.performClick()
         }
 
         assertEquals(testSetup.getRestoreHeight(), null)
-        assertEquals(testSetup.getStage(), RestoreStage.Complete)
+        assertEquals(1, testSetup.getOnFinishedCount())
     }
 
     @Test
@@ -201,14 +205,7 @@ class RestoreViewTest : UiTestPrerequisites() {
             initialWordsList = SeedPhraseFixture.new().split
         )
 
-        composeTestRule.onNodeWithText(
-            text = getStringResource(R.string.restore_birthday_button_restore),
-            ignoreCase = true
-        ).also {
-            it.assertIsNotEnabled()
-        }
-
-        composeTestRule.onNodeWithText(getStringResource(R.string.restore_birthday_hint)).also {
+        composeTestRule.onNodeWithTag(RestoreTag.BIRTHDAY_TEXT_FIELD).also {
             it.performTextInput(ZcashNetwork.Mainnet.saplingActivationHeight.value.toString())
         }
 
@@ -221,34 +218,7 @@ class RestoreViewTest : UiTestPrerequisites() {
         }
 
         assertEquals(testSetup.getRestoreHeight(), ZcashNetwork.Mainnet.saplingActivationHeight)
-        assertEquals(testSetup.getStage(), RestoreStage.Complete)
-    }
-
-    @Test
-    @MediumTest
-    fun height_set_valid_but_skip() {
-        val testSetup = newTestSetup(
-            initialStage = RestoreStage.Birthday,
-            initialWordsList = SeedPhraseFixture.new().split
-        )
-
-        composeTestRule.onNodeWithText(
-            text = getStringResource(R.string.restore_birthday_button_restore),
-            ignoreCase = true
-        ).also {
-            it.assertIsNotEnabled()
-        }
-
-        composeTestRule.onNodeWithText(getStringResource(R.string.restore_birthday_hint)).also {
-            it.performTextInput(ZcashNetwork.Mainnet.saplingActivationHeight.value.toString())
-        }
-
-        composeTestRule.onNodeWithText(getStringResource(R.string.restore_birthday_button_skip)).also {
-            it.performClick()
-        }
-
-        assertNull(testSetup.getRestoreHeight())
-        assertEquals(testSetup.getStage(), RestoreStage.Complete)
+        assertEquals(1, testSetup.getOnFinishedCount())
     }
 
     @Test
@@ -263,10 +233,10 @@ class RestoreViewTest : UiTestPrerequisites() {
             text = getStringResource(R.string.restore_birthday_button_restore),
             ignoreCase = true
         ).also {
-            it.assertIsNotEnabled()
+            it.assertIsEnabled()
         }
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.restore_birthday_hint)).also {
+        composeTestRule.onNodeWithTag(RestoreTag.BIRTHDAY_TEXT_FIELD).also {
             it.performTextInput((ZcashNetwork.Mainnet.saplingActivationHeight.value - 1L).toString())
         }
 
@@ -275,14 +245,11 @@ class RestoreViewTest : UiTestPrerequisites() {
             ignoreCase = true
         ).also {
             it.assertIsNotEnabled()
-        }
-
-        composeTestRule.onNodeWithText(getStringResource(R.string.restore_birthday_button_skip)).also {
             it.performClick()
         }
 
         assertNull(testSetup.getRestoreHeight())
-        assertEquals(testSetup.getStage(), RestoreStage.Complete)
+        assertEquals(0, testSetup.getOnFinishedCount())
     }
 
     @Test
@@ -293,14 +260,7 @@ class RestoreViewTest : UiTestPrerequisites() {
             initialWordsList = SeedPhraseFixture.new().split
         )
 
-        composeTestRule.onNodeWithText(
-            text = getStringResource(R.string.restore_birthday_button_restore),
-            ignoreCase = true
-        ).also {
-            it.assertIsNotEnabled()
-        }
-
-        composeTestRule.onNodeWithText(getStringResource(R.string.restore_birthday_hint)).also {
+        composeTestRule.onNodeWithTag(RestoreTag.BIRTHDAY_TEXT_FIELD).also {
             it.performTextInput("1.2")
         }
 
@@ -309,27 +269,27 @@ class RestoreViewTest : UiTestPrerequisites() {
             ignoreCase = true
         ).also {
             it.assertIsNotEnabled()
-        }
-
-        composeTestRule.onNodeWithText(getStringResource(R.string.restore_birthday_button_skip)).also {
             it.performClick()
         }
 
         assertNull(testSetup.getRestoreHeight())
-        assertEquals(testSetup.getStage(), RestoreStage.Complete)
+        assertEquals(0, testSetup.getOnFinishedCount())
     }
 
     @Test
     @MediumTest
     fun complete_click_take_to_wallet() {
         val testSetup = newTestSetup(
-            initialStage = RestoreStage.Complete,
+            initialStage = RestoreStage.Birthday,
             initialWordsList = SeedPhraseFixture.new().split
         )
 
         assertEquals(0, testSetup.getOnFinishedCount())
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.restore_button_see_wallet), ignoreCase = true).also {
+        composeTestRule.onNodeWithText(
+            text = getStringResource(R.string.restore_birthday_button_restore),
+            ignoreCase = true
+        ).also {
             it.performClick()
         }
 
@@ -372,26 +332,6 @@ class RestoreViewTest : UiTestPrerequisites() {
         composeTestRule.mainClock.autoAdvance = false
 
         assertEquals(testSetup.getStage(), RestoreStage.Seed)
-        assertEquals(0, testSetup.getOnBackCount())
-    }
-
-    @Test
-    @MediumTest
-    fun back_from_complete() {
-        val testSetup = newTestSetup(
-            initialStage = RestoreStage.Complete,
-            initialWordsList = SeedPhraseFixture.new().split
-        )
-
-        assertEquals(0, testSetup.getOnBackCount())
-
-        composeTestRule.onNodeWithContentDescription(
-            getStringResource(R.string.restore_back_content_description)
-        ).also {
-            it.performClick()
-        }
-
-        assertEquals(testSetup.getStage(), RestoreStage.Birthday)
         assertEquals(0, testSetup.getOnBackCount())
     }
 

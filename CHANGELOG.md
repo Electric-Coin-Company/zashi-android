@@ -11,6 +11,7 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ### Changed
 - Updated user interface of these screens:
-   - New Wallet Recovery Seed screen accessible from onboarding 
-   - Seed Recovery screen accessible from Settings
-   - Restore existing wallet accessible from onboarding
+   - New Wallet Recovery Seed screen (accessible from onboarding) 
+   - Seed Recovery screen (accessible from Settings)
+   - Restore Seed screen for an existing wallet (accessible from onboarding)
+   - Restore Seed Birthday Height screen for an existing wallet (accessible from onboarding)
