@@ -1,7 +1,7 @@
 package co.electriccoin.zcash.ui.screen.home.model
 
 /**
- * Common Onboarding/SecurityWarning/Backup screen enum.
+ * Common Onboarding/SecurityWarning/Recovery screen enum.
  *
  * WARN: Do NOT re-order or change the values, it would update their ordinal numbers, and thus break screens ordering.
  */

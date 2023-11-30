@@ -20,8 +20,8 @@ class NewWalletRecoveryViewTest : UiTestPrerequisites() {
     @get:Rule
     val composeTestRule = createComposeRule()
 
-    private fun newTestSetup(): NewWalletRecoveryBackupTestSetup {
-        return NewWalletRecoveryBackupTestSetup(composeTestRule).apply {
+    private fun newTestSetup(): NewWalletRecoveryTestSetup {
+        return NewWalletRecoveryTestSetup(composeTestRule).apply {
             setDefaultContent()
         }
     }

@@ -171,7 +171,7 @@ private fun OnboardingMainContent(
         ) {
             Image(
                 painterResource(id = co.electriccoin.zcash.ui.design.R.drawable.zashi_logo_without_text),
-                stringResource(R.string.zcash_logo_onboarding_content_description),
+                stringResource(R.string.zcash_logo_content_description),
                 Modifier
                     .height(ZcashTheme.dimens.inScreenZcashLogoHeight)
                     .width(ZcashTheme.dimens.inScreenZcashLogoWidth)
@@ -186,7 +186,7 @@ private fun OnboardingMainContent(
 
             Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
 
-            TitleLarge(text = stringResource(R.string.onboarding_short_header), textAlign = TextAlign.Center)
+            TitleLarge(text = stringResource(R.string.onboarding_header), textAlign = TextAlign.Center)
 
             Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
@@ -198,14 +198,14 @@ private fun OnboardingMainContent(
 
             PrimaryButton(
                 onClick = onCreateWallet,
-                text = stringResource(R.string.onboarding_short_create_new_wallet)
+                text = stringResource(R.string.onboarding_create_new_wallet)
             )
 
             Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
 
             SecondaryButton(
                 onImportWallet,
-                stringResource(R.string.onboarding_short_import_existing_wallet)
+                stringResource(R.string.onboarding_import_existing_wallet)
             )
         }
     }

@@ -19,11 +19,8 @@ import co.electriccoin.lightwallet.client.model.LightWalletEndpoint
 import co.electriccoin.zcash.spackle.FirebaseTestLabUtil
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.common.model.VersionInfo
-import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
-import co.electriccoin.zcash.ui.configuration.RemoteConfig
 import co.electriccoin.zcash.ui.screen.home.model.OnboardingState
 import co.electriccoin.zcash.ui.screen.home.viewmodel.WalletViewModel
-import co.electriccoin.zcash.ui.screen.onboarding.view.LongOnboarding
 import co.electriccoin.zcash.ui.screen.onboarding.view.ShortOnboarding
 import co.electriccoin.zcash.ui.screen.onboarding.viewmodel.OnboardingViewModel
 import co.electriccoin.zcash.ui.screen.restore.WrapRestore
@@ -80,26 +77,13 @@ internal fun WrapOnboarding(
 
         val showWelcomeAnimation = onboardingViewModel.showWelcomeAnimation.collectAsStateWithLifecycle().value
 
-        // TODO [#1003]: Clear unused alternative Onboarding screens
-        // TODO [#1003]: https://github.com/Electric-Coin-Company/zashi-android/issues/1003
-
-        if (ConfigurationEntries.IS_SHORT_ONBOARDING_UX.getValue(RemoteConfig.current)) {
-            ShortOnboarding(
-                showWelcomeAnim = showWelcomeAnimation,
-                isDebugMenuEnabled = versionInfo.isDebuggable,
-                onImportWallet = onImportWallet,
-                onCreateWallet = onCreateWallet,
-                onFixtureWallet = onFixtureWallet
-            )
-        } else {
-            LongOnboarding(
-                onboardingState = onboardingViewModel.onboardingState,
-                isDebugMenuEnabled = versionInfo.isDebuggable,
-                onImportWallet = onImportWallet,
-                onCreateWallet = onCreateWallet,
-                onFixtureWallet = onFixtureWallet
-            )
-        }
+        ShortOnboarding(
+            showWelcomeAnim = showWelcomeAnimation,
+            isDebugMenuEnabled = versionInfo.isDebuggable,
+            onImportWallet = onImportWallet,
+            onCreateWallet = onCreateWallet,
+            onFixtureWallet = onFixtureWallet
+        )
 
         activity.reportFullyDrawn()
     } else {

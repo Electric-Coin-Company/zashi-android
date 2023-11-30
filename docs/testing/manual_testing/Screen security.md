@@ -1,3 +1,6 @@
+<!-- TODO[#1074]: Check and update manual test guides --> 
+<!-- TODO [#1074]: https://github.com/Electric-Coin-Company/zashi-android/issues/1074 -->
+
 # Testing screens with secure flag
 1. install the app
 1. go to screens with seed phrase:

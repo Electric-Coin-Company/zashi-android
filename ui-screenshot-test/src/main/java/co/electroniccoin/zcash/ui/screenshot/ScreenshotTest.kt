@@ -33,20 +33,17 @@ import cash.z.ecc.android.sdk.model.MonetarySeparators
 import cash.z.ecc.android.sdk.model.SeedPhrase
 import cash.z.ecc.sdk.fixture.MemoFixture
 import cash.z.ecc.sdk.fixture.SeedPhraseFixture
-import co.electriccoin.zcash.configuration.model.map.StringConfiguration
 import co.electriccoin.zcash.spackle.FirebaseTestLabUtil
 import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.NavigationTargets
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
 import co.electriccoin.zcash.ui.design.component.ConfigurationOverride
 import co.electriccoin.zcash.ui.design.component.UiMode
 import co.electriccoin.zcash.ui.screen.home.viewmodel.SecretState
 import co.electriccoin.zcash.ui.screen.restore.RestoreTag
 import co.electriccoin.zcash.ui.screen.restore.viewmodel.RestoreViewModel
 import co.electriccoin.zcash.ui.screen.settings.SettingsTag
-import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -153,30 +150,14 @@ class ScreenshotTest : UiTestPrerequisites() {
             composeTestRule.activity.walletViewModel.secretState.value is SecretState.None
         }
 
-        if (ConfigurationEntries.IS_SHORT_ONBOARDING_UX.getValue(emptyConfiguration)) {
-            composeTestRule.onNodeWithText(
-                text = resContext.getString(
-                    R.string.onboarding_short_import_existing_wallet
-                ),
-                ignoreCase = true
-            ).also {
-                it.assertExists()
-                it.performClick()
-            }
-        } else {
-            composeTestRule.onNodeWithText(resContext.getString(R.string.onboarding_1_header)).also {
-                it.assertExists()
-            }
-
-            composeTestRule.onNodeWithText(resContext.getString(R.string.onboarding_skip)).also {
-                it.assertExists()
-                it.performClick()
-            }
-
-            composeTestRule.onNodeWithText(resContext.getString(R.string.onboarding_4_import_existing_wallet)).also {
-                it.assertExists()
-                it.performClick()
-            }
+        composeTestRule.onNodeWithText(
+            text = resContext.getString(
+                R.string.onboarding_import_existing_wallet
+            ),
+            ignoreCase = true
+        ).also {
+            it.assertExists()
+            it.performClick()
         }
 
         composeTestRule.onNodeWithText(resContext.getString(R.string.restore_title)).also {
@@ -271,7 +252,7 @@ class ScreenshotTest : UiTestPrerequisites() {
         }
 
         onboardingScreenshots(resContext, tag, composeTestRule)
-        backupScreenshots(resContext, tag, composeTestRule)
+        recoveryScreenshots(resContext, tag, composeTestRule)
         homeScreenshots(resContext, tag, composeTestRule)
 
         // These are the buttons on the home screen
@@ -303,8 +284,6 @@ class ScreenshotTest : UiTestPrerequisites() {
     }
 }
 
-private val emptyConfiguration = StringConfiguration(persistentMapOf(), null)
-
 private fun onboardingScreenshots(
     resContext: Context,
     tag: String,
@@ -313,71 +292,36 @@ private fun onboardingScreenshots(
     composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) {
         composeTestRule.activity.walletViewModel.secretState.value is SecretState.None
     }
-    if (ConfigurationEntries.IS_SHORT_ONBOARDING_UX.getValue(emptyConfiguration)) {
-        // Welcome screen
-        composeTestRule.onNodeWithText(resContext.getString(R.string.onboarding_short_header)).also {
-            it.assertExists()
-            ScreenshotTest.takeScreenshot(tag, "Onboarding 1")
-        }
 
-        composeTestRule.onNodeWithText(
-            text = resContext.getString(R.string.onboarding_short_create_new_wallet),
-            ignoreCase = true
-        ).also {
-            it.performClick()
-        }
-
-        // Security Warning screen
-        composeTestRule.onNodeWithText(text = resContext.getString(R.string.security_warning_acknowledge)).also {
-            it.assertExists()
-            it.performClick()
-            ScreenshotTest.takeScreenshot(tag, "Security Warning")
-        }
-        composeTestRule.onNodeWithText(
-            text = resContext.getString(R.string.security_warning_confirm),
-            ignoreCase = true
-        ).also {
-            it.performClick()
-        }
-    } else {
-        composeTestRule.onNodeWithText(resContext.getString(R.string.onboarding_1_header)).also {
-            it.assertExists()
-        }
+    // Welcome screen
+    composeTestRule.onNodeWithText(resContext.getString(R.string.onboarding_header)).also {
+        it.assertExists()
         ScreenshotTest.takeScreenshot(tag, "Onboarding 1")
+    }
 
-        composeTestRule.onNodeWithText(resContext.getString(R.string.onboarding_next)).also {
-            it.performClick()
-        }
+    composeTestRule.onNodeWithText(
+        text = resContext.getString(R.string.onboarding_create_new_wallet),
+        ignoreCase = true
+    ).also {
+        it.performClick()
+    }
 
-        composeTestRule.onNodeWithText(resContext.getString(R.string.onboarding_2_header)).also {
-            it.assertExists()
-            ScreenshotTest.takeScreenshot(tag, "Onboarding 2")
-        }
-        composeTestRule.onNodeWithText(resContext.getString(R.string.onboarding_next)).also {
-            it.performClick()
-        }
-
-        composeTestRule.onNodeWithText(resContext.getString(R.string.onboarding_3_header)).also {
-            it.assertExists()
-            ScreenshotTest.takeScreenshot(tag, "Onboarding 3")
-        }
-        composeTestRule.onNodeWithText(resContext.getString(R.string.onboarding_next)).also {
-            it.performClick()
-        }
-
-        composeTestRule.onNodeWithText(resContext.getString(R.string.onboarding_4_header)).also {
-            it.assertExists()
-            ScreenshotTest.takeScreenshot(tag, "Onboarding 4")
-        }
-
-        composeTestRule.onNodeWithText(resContext.getString(R.string.onboarding_4_create_new_wallet)).also {
-            it.performClick()
-        }
+    // Security Warning screen
+    composeTestRule.onNodeWithText(text = resContext.getString(R.string.security_warning_acknowledge)).also {
+        it.assertExists()
+        it.performClick()
+        ScreenshotTest.takeScreenshot(tag, "Security Warning")
+    }
+    composeTestRule.onNodeWithText(
+        text = resContext.getString(R.string.security_warning_confirm),
+        ignoreCase = true
+    ).also {
+        it.performClick()
     }
 }
 
 @Suppress("LongMethod", "CyclomaticComplexMethod")
-private fun backupScreenshots(
+private fun recoveryScreenshots(
     resContext: Context,
     tag: String,
     composeTestRule: AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>
@@ -386,20 +330,18 @@ private fun backupScreenshots(
         composeTestRule.activity.walletViewModel.secretState.value is SecretState.NeedsBackup
     }
 
-    if (ConfigurationEntries.IS_SHORT_ONBOARDING_UX.getValue(emptyConfiguration)) {
-        composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_recovery_header)).also {
-            it.assertExists()
-        }
-        ScreenshotTest.takeScreenshot(tag, "Backup 1")
+    composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_recovery_header)).also {
+        it.assertExists()
+    }
+    ScreenshotTest.takeScreenshot(tag, "Recovery 1")
 
-        composeTestRule.onNodeWithText(
-            text = resContext.getString(R.string.new_wallet_recovery_button_finished),
-            ignoreCase = true
-        ).also {
-            it.assertExists()
-            it.performScrollTo()
-            it.performClick()
-        }
+    composeTestRule.onNodeWithText(
+        text = resContext.getString(R.string.new_wallet_recovery_button_finished),
+        ignoreCase = true
+    ).also {
+        it.assertExists()
+        it.performScrollTo()
+        it.performClick()
     }
 }
 
