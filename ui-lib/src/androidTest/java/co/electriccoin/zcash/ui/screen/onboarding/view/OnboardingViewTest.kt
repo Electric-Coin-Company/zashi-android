@@ -8,18 +8,18 @@ import androidx.compose.ui.test.performClick
 import androidx.test.filters.MediumTest
 import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.screen.onboarding.ShortOnboardingTestSetup
+import co.electriccoin.zcash.ui.screen.onboarding.OnboardingTestSetup
 import co.electriccoin.zcash.ui.test.getStringResource
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 
-class ShortOnboardingViewTest : UiTestPrerequisites() {
+class OnboardingViewTest : UiTestPrerequisites() {
     @get:Rule
     val composeTestRule = createComposeRule()
 
-    private fun newTestSetup(): ShortOnboardingTestSetup {
-        return ShortOnboardingTestSetup(composeTestRule).apply {
+    private fun newTestSetup(): OnboardingTestSetup {
+        return OnboardingTestSetup(composeTestRule).apply {
             setDefaultContent()
         }
     }
@@ -30,7 +30,7 @@ class ShortOnboardingViewTest : UiTestPrerequisites() {
         newTestSetup()
 
         composeTestRule.onNodeWithText(
-            text = getStringResource(R.string.onboarding_short_create_new_wallet),
+            text = getStringResource(R.string.onboarding_create_new_wallet),
             ignoreCase = true
         ).also {
             it.assertExists()
@@ -39,7 +39,7 @@ class ShortOnboardingViewTest : UiTestPrerequisites() {
         }
 
         composeTestRule.onNodeWithText(
-            text = getStringResource(R.string.onboarding_short_import_existing_wallet),
+            text = getStringResource(R.string.onboarding_import_existing_wallet),
             ignoreCase = true
         ).also {
             it.assertExists()
@@ -54,7 +54,7 @@ class ShortOnboardingViewTest : UiTestPrerequisites() {
         val testSetup = newTestSetup()
 
         val newWalletButton = composeTestRule.onNodeWithText(
-            text = getStringResource(R.string.onboarding_short_create_new_wallet),
+            text = getStringResource(R.string.onboarding_create_new_wallet),
             ignoreCase = true
         )
         newWalletButton.performClick()
@@ -69,7 +69,7 @@ class ShortOnboardingViewTest : UiTestPrerequisites() {
         val testSetup = newTestSetup()
 
         val newWalletButton = composeTestRule.onNodeWithText(
-            text = getStringResource(R.string.onboarding_short_import_existing_wallet),
+            text = getStringResource(R.string.onboarding_import_existing_wallet),
             ignoreCase = true
         )
         newWalletButton.performClick()

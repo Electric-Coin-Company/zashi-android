@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Update
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -20,9 +22,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import co.electriccoin.zcash.ui.R
@@ -183,12 +183,12 @@ private fun UpdateContentNormal(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // TODO [#17]: This suppression and magic number will get replaced once we have real assets
+        // Replace this placeholder graphic once this screen is being redesigned
         @Suppress("MagicNumber")
         Image(
-            ImageBitmap.imageResource(id = R.drawable.update_main_graphic),
+            imageVector = Icons.Filled.Update,
             contentDescription = stringResource(id = R.string.update_image_content_description),
-            Modifier.fillMaxSize(0.50f)
+            modifier = Modifier.fillMaxSize(0.45f)
         )
 
         Body(

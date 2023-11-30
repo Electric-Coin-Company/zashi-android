@@ -20,8 +20,8 @@ class SeedRecoveryViewTest : UiTestPrerequisites() {
     @get:Rule
     val composeTestRule = createComposeRule()
 
-    private fun newTestSetup(): SeedRecoveryBackupTestSetup {
-        return SeedRecoveryBackupTestSetup(composeTestRule).apply {
+    private fun newTestSetup(): SeedRecoveryTestSetup {
+        return SeedRecoveryTestSetup(composeTestRule).apply {
             setDefaultContent()
         }
     }

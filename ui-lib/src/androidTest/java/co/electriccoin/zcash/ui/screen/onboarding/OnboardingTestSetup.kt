@@ -6,7 +6,7 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.onboarding.view.ShortOnboarding
 import java.util.concurrent.atomic.AtomicInteger
 
-class ShortOnboardingTestSetup(
+class OnboardingTestSetup(
     private val composeTestRule: ComposeContentTestRule,
 ) {
     private val onCreateWalletCallbackCount = AtomicInteger(0)

@@ -6,7 +6,7 @@ import cash.z.ecc.sdk.fixture.PersistableWalletFixture
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import java.util.concurrent.atomic.AtomicInteger
 
-class SeedRecoveryBackupTestSetup(
+class SeedRecoveryTestSetup(
     private val composeTestRule: ComposeContentTestRule,
 ) {
 

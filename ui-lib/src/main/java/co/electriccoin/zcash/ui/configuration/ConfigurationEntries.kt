@@ -7,12 +7,6 @@ object ConfigurationEntries {
     val IS_APP_UPDATE_CHECK_ENABLED = BooleanConfigurationEntry(ConfigKey("is_update_check_enabled"), true)
 
     /*
-     * The full onboarding flow is functional and tested, but it is disabled by default for an initially minimal
-     * feature set.
-     */
-    val IS_SHORT_ONBOARDING_UX = BooleanConfigurationEntry(ConfigKey("is_short_onboarding_ux"), true)
-
-    /*
      * This isn't fully implemented yet, so it is disabled from being shown.
      */
     val IS_FIAT_CONVERSION_ENABLED = BooleanConfigurationEntry(ConfigKey("is_fiat_conversion_enabled"), false)
