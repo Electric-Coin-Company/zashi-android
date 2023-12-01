@@ -9,6 +9,9 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+### Changed
+- Home screen navigation switched from the Side menu to the Bottom Navigation Tabs menu
+
 ## [0.2.0 (505)] - 2023-12-11
 
 ### Added
