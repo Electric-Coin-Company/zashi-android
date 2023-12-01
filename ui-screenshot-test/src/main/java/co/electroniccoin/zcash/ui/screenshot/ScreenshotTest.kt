@@ -7,7 +7,6 @@ import android.os.Build
 import android.os.LocaleList
 import androidx.activity.viewModels
 import androidx.compose.ui.test.assertIsEnabled
-import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
@@ -262,25 +261,28 @@ class ScreenshotTest : UiTestPrerequisites() {
         navigateTo(NavigationTargets.RECEIVE)
         receiveZecScreenshots(resContext, tag, composeTestRule)
 
-        // These are the hamburger menu items
-        // We could manually click on each one, which is a better integration test but a worse screenshot test
-        navigateTo(NavigationTargets.SEED_RECOVERY)
-        seedScreenshots(resContext, tag, composeTestRule)
-
-        navigateTo(NavigationTargets.SETTINGS)
-        settingsScreenshots(tag, composeTestRule)
-
-        navigateTo(NavigationTargets.SUPPORT)
-        supportScreenshots(resContext, tag, composeTestRule)
-
-        navigateTo(NavigationTargets.ABOUT)
-        aboutScreenshots(resContext, tag, composeTestRule)
-
         navigateTo(NavigationTargets.WALLET_ADDRESS_DETAILS)
         addressDetailsScreenshots(resContext, tag, composeTestRule)
 
         navigateTo(NavigationTargets.HISTORY)
         transactionHistoryScreenshots(resContext, tag, composeTestRule)
+
+        navigateTo(NavigationTargets.SETTINGS)
+        settingsScreenshots(tag, composeTestRule)
+
+        // These are the Settings screen items
+        // We could manually click on each one, which is a better integration test but a worse screenshot test
+        navigateTo(NavigationTargets.SEED_RECOVERY)
+        seedScreenshots(resContext, tag, composeTestRule)
+
+        navigateTo(NavigationTargets.SUPPORT)
+        supportScreenshots(resContext, tag, composeTestRule)
+
+        navigateTo(NavigationTargets.EXPORT_PRIVATE_DATA)
+        exportPrivateDataScreenshots(resContext, tag, composeTestRule)
+
+        navigateTo(NavigationTargets.ABOUT)
+        aboutScreenshots(resContext, tag, composeTestRule)
     }
 }
 
@@ -360,12 +362,6 @@ private fun homeScreenshots(
     composeTestRule.onNode(hasText(resContext.getString(R.string.home_button_send), ignoreCase = true)).also {
         it.assertExists()
         ScreenshotTest.takeScreenshot(tag, "Home 1")
-    }
-
-    composeTestRule.onNode(hasContentDescription(resContext.getString(R.string.home_menu_content_description))).also {
-        it.assertExists()
-        it.performClick()
-        ScreenshotTest.takeScreenshot(tag, "Home 2 - Menu")
     }
 }
 
@@ -504,6 +500,14 @@ private fun supportScreenshots(resContext: Context, tag: String, composeTestRule
     }
 
     ScreenshotTest.takeScreenshot(tag, "Support 1")
+}
+
+private fun exportPrivateDataScreenshots(resContext: Context, tag: String, composeTestRule: ComposeTestRule) {
+    composeTestRule.onNode(hasText(resContext.getString(R.string.export_data_header))).also {
+        it.assertExists()
+    }
+
+    ScreenshotTest.takeScreenshot(tag, "Export Private Data 1")
 }
 
 private fun aboutScreenshots(resContext: Context, tag: String, composeTestRule: ComposeTestRule) {

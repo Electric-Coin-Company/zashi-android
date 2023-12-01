@@ -13,32 +13,14 @@ class HomeTestSetup(
     private val isShowFiatConversion: Boolean,
     private val isCircularProgressBar: Boolean
 ) {
-    private val onAboutCount = AtomicInteger(0)
-    private val onSeedCount = AtomicInteger(0)
     private val onSettingsCount = AtomicInteger(0)
-    private val onSupportCount = AtomicInteger(0)
     private val onReceiveCount = AtomicInteger(0)
     private val onSendCount = AtomicInteger(0)
     private val onHistoryCount = AtomicInteger(0)
 
-    fun getOnAboutCount(): Int {
-        composeTestRule.waitForIdle()
-        return onAboutCount.get()
-    }
-
     fun getOnSettingsCount(): Int {
         composeTestRule.waitForIdle()
         return onSettingsCount.get()
-    }
-
-    fun getOnSupportCount(): Int {
-        composeTestRule.waitForIdle()
-        return onSupportCount.get()
-    }
-
-    fun getOnSeedCount(): Int {
-        composeTestRule.waitForIdle()
-        return onSeedCount.get()
     }
 
     fun getOnReceiveCount(): Int {
@@ -64,7 +46,6 @@ class HomeTestSetup(
     @Composable
     @Suppress("TestFunctionName")
     fun DefaultContent() {
-        val drawerValues = drawerBackHandler()
         Home(
             walletSnapshot,
             isUpdateAvailable = false,
@@ -73,15 +54,6 @@ class HomeTestSetup(
             isCircularProgressBarEnabled = isCircularProgressBar,
             goSettings = {
                 onSettingsCount.incrementAndGet()
-            },
-            goSeedPhrase = {
-                onSeedCount.incrementAndGet()
-            },
-            goSupport = {
-                onSupportCount.incrementAndGet()
-            },
-            goAbout = {
-                onAboutCount.incrementAndGet()
             },
             goReceive = {
                 onReceiveCount.incrementAndGet()
@@ -92,8 +64,6 @@ class HomeTestSetup(
             goHistory = {
                 onHistoryCount.incrementAndGet()
             },
-            drawerState = drawerValues.drawerState,
-            scope = drawerValues.scope
         )
     }
 

@@ -8,6 +8,5 @@ object HomeTag {
     const val PROGRESS = "progress_bar"
     const val SINGLE_LINE_TEXT = "single_line_text"
     const val FIAT_CONVERSION = "fiat_conversion"
-    const val DRAWER_MENU = "drawer_menu"
-    const val DRAWER_MENU_OPEN_BUTTON = "drawer_menu_open_button"
+    const val SETTINGS_TOP_BAR_BUTTON = "settings_top_bar_button"
 }

@@ -122,6 +122,12 @@ private fun DebugMenu(
             DropdownMenuItem(
                 text = {
                     Column {
+                        Text(
+                            stringResource(
+                                id = R.string.about_debug_menu_app_name,
+                                stringResource(id = R.string.app_name)
+                            )
+                        )
                         Text(stringResource(R.string.about_debug_menu_build, versionInfo.gitSha))
                         Text(configInfo.toSupportString())
                     }
@@ -167,8 +173,7 @@ fun AboutMainContent(
         Text(
             text = stringResource(
                 R.string.about_version_format,
-                versionInfo.versionName,
-                versionInfo.versionCode
+                versionInfo.versionName
             ),
             style = ZcashTheme.typography.primary.titleSmall
         )

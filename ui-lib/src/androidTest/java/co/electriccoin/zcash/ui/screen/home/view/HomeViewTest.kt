@@ -135,66 +135,14 @@ class HomeViewTest : UiTestPrerequisites() {
 
     @Test
     @MediumTest
-    fun hamburger_seed() {
-        val testSetup = newTestSetup()
-
-        assertEquals(0, testSetup.getOnReceiveCount())
-
-        composeTestRule.openNavigationDrawer()
-
-        composeTestRule.onNodeWithText(getStringResource(R.string.home_menu_seed_phrase)).also {
-            it.performClick()
-        }
-
-        assertEquals(1, testSetup.getOnSeedCount())
-    }
-
-    @Test
-    @MediumTest
     fun hamburger_settings() {
         val testSetup = newTestSetup()
 
         assertEquals(0, testSetup.getOnReceiveCount())
 
-        composeTestRule.openNavigationDrawer()
-
-        composeTestRule.onNodeWithText(getStringResource(R.string.home_menu_settings)).also {
-            it.performClick()
-        }
+        composeTestRule.openSettings()
 
         assertEquals(1, testSetup.getOnSettingsCount())
-    }
-
-    @Test
-    @MediumTest
-    fun hamburger_support() {
-        val testSetup = newTestSetup()
-
-        assertEquals(0, testSetup.getOnReceiveCount())
-
-        composeTestRule.openNavigationDrawer()
-
-        composeTestRule.onNodeWithText(getStringResource(R.string.home_menu_support)).also {
-            it.performClick()
-        }
-
-        assertEquals(1, testSetup.getOnSupportCount())
-    }
-
-    @Test
-    @MediumTest
-    fun hamburger_about() {
-        val testSetup = newTestSetup()
-
-        assertEquals(0, testSetup.getOnReceiveCount())
-
-        composeTestRule.openNavigationDrawer()
-
-        composeTestRule.onNodeWithText(getStringResource(R.string.home_menu_about)).also {
-            it.performClick()
-        }
-
-        assertEquals(1, testSetup.getOnAboutCount())
     }
 
     private fun newTestSetup(
@@ -211,7 +159,7 @@ class HomeViewTest : UiTestPrerequisites() {
     }
 }
 
-private fun ComposeContentTestRule.openNavigationDrawer() {
+private fun ComposeContentTestRule.openSettings() {
     onNodeWithContentDescription(getStringResource(R.string.home_menu_content_description)).also {
         it.performClick()
     }

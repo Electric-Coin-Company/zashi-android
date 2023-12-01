@@ -3,7 +3,9 @@
     <string name="about_back">Back</string>
     <string name="about_back_content_description">Back</string>
     <string name="about_version_format" formatted="true">Version <xliff:g example="1.0" id="version_name">%1$s
-    </xliff:g> (<xliff:g example="1.0" id="version_code">%2$d</xliff:g>)</string>
+    </xliff:g></string>
+    <string name="about_debug_menu_app_name">App name:
+        <xliff:g example="Zashi (D)" id="app_name">%1$s</xliff:g></string>
     <string name="about_debug_menu_build">Build: <xliff:g example="635dac0eb9ddc2bc6da5177f0dd495d8b76af4dc"
         id="git_commit_hash">%1$s</xliff:g></string>
     <string name="about_description">Send and receive ZEC on Zashi! Zashi is a minimal-design, self-custody, ZEC-only

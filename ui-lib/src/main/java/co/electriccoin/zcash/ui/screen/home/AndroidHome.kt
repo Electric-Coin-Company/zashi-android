@@ -26,20 +26,14 @@ import kotlinx.coroutines.CoroutineScope
 @Composable
 @Suppress("LongParameterList")
 internal fun MainActivity.WrapHome(
-    goSeedPhrase: () -> Unit,
     goSettings: () -> Unit,
-    goSupport: () -> Unit,
-    goAbout: () -> Unit,
     goReceive: () -> Unit,
     goSend: () -> Unit,
     goHistory: () -> Unit
 ) {
     WrapHome(
         this,
-        goSeedPhrase = goSeedPhrase,
         goSettings = goSettings,
-        goSupport = goSupport,
-        goAbout = goAbout,
         goReceive = goReceive,
         goSend = goSend,
         goHistory = goHistory,
@@ -50,10 +44,7 @@ internal fun MainActivity.WrapHome(
 @Suppress("LongParameterList")
 internal fun WrapHome(
     activity: ComponentActivity,
-    goSeedPhrase: () -> Unit,
     goSettings: () -> Unit,
-    goSupport: () -> Unit,
-    goAbout: () -> Unit,
     goReceive: () -> Unit,
     goSend: () -> Unit,
     goHistory: () -> Unit,
@@ -82,23 +73,16 @@ internal fun WrapHome(
     if (null == walletSnapshot) {
         // Display loading indicator
     } else {
-        val drawerValues = drawerBackHandler()
-
         Home(
             walletSnapshot = walletSnapshot,
             isUpdateAvailable = updateAvailable,
             isKeepScreenOnDuringSync = isKeepScreenOnWhileSyncing,
             isFiatConversionEnabled = isFiatConversionEnabled,
             isCircularProgressBarEnabled = isCircularProgressBarEnabled,
-            goSeedPhrase = goSeedPhrase,
             goSettings = goSettings,
-            goSupport = goSupport,
-            goAbout = goAbout,
             goReceive = goReceive,
             goSend = goSend,
-            goHistory = goHistory,
-            drawerState = drawerValues.drawerState,
-            scope = drawerValues.scope
+            goHistory = goHistory
         )
 
         activity.reportFullyDrawn()

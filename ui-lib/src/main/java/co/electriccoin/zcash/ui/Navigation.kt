@@ -52,13 +52,10 @@ internal fun MainActivity.Navigation() {
     NavHost(navController = navController, startDestination = HOME) {
         composable(HOME) {
             WrapHome(
-                goAbout = { navController.navigateJustOnce(ABOUT) },
                 goHistory = { navController.navigateJustOnce(HISTORY) },
                 goReceive = { navController.navigateJustOnce(RECEIVE) },
-                goSeedPhrase = { navController.navigateJustOnce(SEED_RECOVERY) },
                 goSend = { navController.navigateJustOnce(SEND) },
                 goSettings = { navController.navigateJustOnce(SETTINGS) },
-                goSupport = { navController.navigateJustOnce(SUPPORT) },
             )
 
             if (ConfigurationEntries.IS_APP_UPDATE_CHECK_ENABLED.getValue(RemoteConfig.current)) {
@@ -80,8 +77,19 @@ internal fun MainActivity.Navigation() {
                 goBack = {
                     navController.popBackStackJustOnce(SETTINGS)
                 },
+                goDocumentation = {
+                    // TODO [#1084]: Documentation screen
+                    // TODO [#1084]: https://github.com/Electric-Coin-Company/zashi-android/issues/1084
+                },
                 goExportPrivateData = {
                     navController.navigateJustOnce(EXPORT_PRIVATE_DATA)
+                },
+                goFeedback = {
+                    navController.navigateJustOnce(SUPPORT)
+                },
+                goPrivacyPolicy = {
+                    // TODO [#1083]: Privacy Policy screen
+                    // TODO [#1083]: https://github.com/Electric-Coin-Company/zashi-android/issues/1083
                 },
                 goSeedRecovery = {
                     navController.navigateJustOnce(SEED_RECOVERY)

@@ -14,34 +14,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ContactSupport
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Password
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DrawerState
-import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ModalDrawerSheet
-import androidx.compose.material3.ModalNavigationDrawer
-import androidx.compose.material3.NavigationDrawerItem
-import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -50,21 +34,19 @@ import cash.z.ecc.android.sdk.model.FiatCurrencyConversionRateState
 import cash.z.ecc.android.sdk.model.PercentDecimal
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.DisableScreenTimeout
-import co.electriccoin.zcash.ui.common.closeDrawerMenu
-import co.electriccoin.zcash.ui.common.openDrawerMenu
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.BodyWithFiatCurrencySymbol
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.HeaderWithZecIcon
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
+import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.TertiaryButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 import co.electriccoin.zcash.ui.screen.home.HomeTag
 import co.electriccoin.zcash.ui.screen.home.model.WalletDisplayValues
 import co.electriccoin.zcash.ui.screen.home.model.WalletSnapshot
-import kotlinx.coroutines.CoroutineScope
 
 @Preview("Home")
 @Composable
@@ -77,15 +59,10 @@ private fun ComposablePreview() {
                 isKeepScreenOnDuringSync = false,
                 isFiatConversionEnabled = false,
                 isCircularProgressBarEnabled = false,
-                goSeedPhrase = {},
                 goSettings = {},
-                goSupport = {},
-                goAbout = {},
                 goReceive = {},
                 goSend = {},
-                goHistory = {},
-                drawerState = rememberDrawerState(DrawerValue.Closed),
-                scope = rememberCoroutineScope()
+                goHistory = {}
             )
         }
     }
@@ -99,128 +76,51 @@ fun Home(
     isKeepScreenOnDuringSync: Boolean?,
     isFiatConversionEnabled: Boolean,
     isCircularProgressBarEnabled: Boolean,
-    goSeedPhrase: () -> Unit,
     goSettings: () -> Unit,
-    goSupport: () -> Unit,
-    goAbout: () -> Unit,
     goReceive: () -> Unit,
     goSend: () -> Unit,
-    goHistory: () -> Unit,
-    drawerState: DrawerState,
-    scope: CoroutineScope
+    goHistory: () -> Unit
 ) {
-    ModalNavigationDrawer(
-        drawerState = drawerState,
-        drawerContent = {
-            HomeDrawer(
-                onCloseDrawer = { drawerState.closeDrawerMenu(scope) },
-                goSeedPhrase = goSeedPhrase,
-                goSettings = goSettings,
-                goSupport = goSupport,
-                goAbout = goAbout
+    Scaffold(topBar = {
+        HomeTopAppBar(onSettings = goSettings)
+    }) { paddingValues ->
+        HomeMainContent(
+            walletSnapshot = walletSnapshot,
+            isUpdateAvailable = isUpdateAvailable,
+            isKeepScreenOnDuringSync = isKeepScreenOnDuringSync,
+            isFiatConversionEnabled = isFiatConversionEnabled,
+            isCircularProgressBarEnabled = isCircularProgressBarEnabled,
+            goReceive = goReceive,
+            goSend = goSend,
+            goHistory = goHistory,
+            modifier = Modifier.padding(
+                top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
+                bottom = paddingValues.calculateBottomPadding() + ZcashTheme.dimens.spacingHuge,
+                start = ZcashTheme.dimens.screenHorizontalSpacing,
+                end = ZcashTheme.dimens.screenHorizontalSpacing
             )
-        },
-        content = {
-            Scaffold(topBar = {
-                HomeTopAppBar(
-                    openDrawer = { drawerState.openDrawerMenu(scope) }
-                )
-            }) { paddingValues ->
-                HomeMainContent(
-                    walletSnapshot = walletSnapshot,
-                    isUpdateAvailable = isUpdateAvailable,
-                    isKeepScreenOnDuringSync = isKeepScreenOnDuringSync,
-                    isFiatConversionEnabled = isFiatConversionEnabled,
-                    isCircularProgressBarEnabled = isCircularProgressBarEnabled,
-                    goReceive = goReceive,
-                    goSend = goSend,
-                    goHistory = goHistory,
-                    modifier = Modifier.padding(
-                        top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
-                        bottom = paddingValues.calculateBottomPadding() + ZcashTheme.dimens.spacingHuge,
-                        start = ZcashTheme.dimens.screenHorizontalSpacing,
-                        end = ZcashTheme.dimens.screenHorizontalSpacing
-                    )
-                )
-            }
-        }
-    )
-}
-
-@Composable
-@OptIn(ExperimentalMaterial3Api::class)
-private fun HomeTopAppBar(
-    openDrawer: () -> Unit
-) {
-    TopAppBar(
-        title = { Text(text = stringResource(id = R.string.app_name)) },
-        navigationIcon = {
-            IconButton(
-                onClick = openDrawer,
-                modifier = Modifier.testTag(HomeTag.DRAWER_MENU_OPEN_BUTTON)
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Menu,
-                    contentDescription = stringResource(R.string.home_menu_content_description)
-                )
-            }
-        }
-    )
-}
-
-@Composable
-private fun HomeDrawer(
-    onCloseDrawer: () -> Unit,
-    goSeedPhrase: () -> Unit,
-    goSettings: () -> Unit,
-    goSupport: () -> Unit,
-    goAbout: () -> Unit,
-) {
-    ModalDrawerSheet(
-        modifier = Modifier.testTag(HomeTag.DRAWER_MENU)
-    ) {
-        Spacer(Modifier.height(ZcashTheme.dimens.spacingDefault))
-        NavigationDrawerItem(
-            icon = { Icon(Icons.Default.Password, contentDescription = null) },
-            label = { Text(stringResource(id = R.string.home_menu_seed_phrase)) },
-            selected = false,
-            onClick = {
-                onCloseDrawer()
-                goSeedPhrase()
-            },
-            modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
-        )
-        NavigationDrawerItem(
-            icon = { Icon(Icons.Default.Settings, contentDescription = null) },
-            label = { Text(stringResource(id = R.string.home_menu_settings)) },
-            selected = false,
-            onClick = {
-                onCloseDrawer()
-                goSettings()
-            },
-            modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
-        )
-        NavigationDrawerItem(
-            icon = { Icon(Icons.Default.ContactSupport, contentDescription = null) },
-            label = { Text(stringResource(id = R.string.home_menu_support)) },
-            selected = false,
-            onClick = {
-                onCloseDrawer()
-                goSupport()
-            },
-            modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
-        )
-        NavigationDrawerItem(
-            icon = { Icon(Icons.Default.Info, contentDescription = null) },
-            label = { Text(stringResource(id = R.string.home_menu_about)) },
-            selected = false,
-            onClick = {
-                onCloseDrawer()
-                goAbout()
-            },
-            modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
         )
     }
+}
+
+@Composable
+private fun HomeTopAppBar(
+    onSettings: () -> Unit
+) {
+    SmallTopAppBar(
+        showTitleLogo = true,
+        hamburgerMenuActions = {
+            IconButton(
+                onClick = onSettings,
+                modifier = Modifier.testTag(HomeTag.SETTINGS_TOP_BAR_BUTTON)
+            ) {
+                Icon(
+                    painter = painterResource(id = co.electriccoin.zcash.ui.design.R.drawable.hamburger_menu_icon),
+                    contentDescription = stringResource(id = R.string.home_menu_content_description)
+                )
+            }
+        }
+    )
 }
 
 @Suppress("LongParameterList")

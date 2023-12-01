@@ -9,6 +9,9 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+### Removed
+- Home screen side menu navigation was removed in favor of the Settings screen
+
 ## [2.0.2 (491)] - 2023-12-01
 
 ### Changed
