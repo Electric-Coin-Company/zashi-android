@@ -29,9 +29,17 @@ also be used for a Windows-based machine.
    disk space (IDE + Android SDK + Android Emulator).
 1. The second option is to install the Android SDK tools only, which requires less disk space and is used 
    within the machine's terminal. Remember that this approach requires some manual steps, and you might need to 
-   adjust the commands based on the specific versions and configurations you choose. 
+   adjust the following commands based on the specific versions and configurations you choose. 
    - Tip: On Unix-based OS, SdkManager and the other tools are invoked with `./sdkmanager`. On Windows, SdkManager 
      is invoked with `sdkmanager`. Throughout the documentation, the macOS and Linux syntax is used by  default.
+   1. Download and install **Java** if you haven't done so yet
+      - Install JVM 17 or greater on your system.  Our setup has been tested with Java 17.  Although a variety of
+         JVM distributions are available and should work, we have settled on recommending [Adoptium/Temurin]
+         (https://adoptium.net) because this is the default distribution used by Gradle toolchains. Be sure that the
+         `JAVA_HOME` environment variable points to the correct Java version using the command:
+         ```
+         export JAVA_HOME="$(/usr/libexec/java_home)"
+         ```
    1. Download Android **cmdline-tools**
       - If you haven't already, download the Android cmdline-tools from the official 
       [website](https://developer.android.com/studio), section _Command Line Tools_.
