@@ -6,7 +6,7 @@ import kotlinx.datetime.Instant
 data class ConfigInfo(val configurationUpdatedAt: Instant?) {
 
     fun toSupportString() = buildString {
-        appendLine("Configuration: $configurationUpdatedAt")
+        append("Configuration: $configurationUpdatedAt")
     }
 
     companion object {

@@ -16,27 +16,38 @@ import co.electriccoin.zcash.ui.screen.settings.view.Settings
 import co.electriccoin.zcash.ui.screen.settings.viewmodel.SettingsViewModel
 
 @Composable
+@Suppress("LongParameterList")
 internal fun MainActivity.WrapSettings(
     goAbout: () -> Unit,
     goBack: () -> Unit,
+    goDocumentation: () -> Unit,
     goExportPrivateData: () -> Unit,
+    goFeedback: () -> Unit,
+    goPrivacyPolicy: () -> Unit,
     goSeedRecovery: () -> Unit,
 ) {
     WrapSettings(
         activity = this,
         goAbout = goAbout,
         goBack = goBack,
+        goDocumentation = goDocumentation,
         goExportPrivateData = goExportPrivateData,
+        goFeedback = goFeedback,
+        goPrivacyPolicy = goPrivacyPolicy,
         goSeedRecovery = goSeedRecovery
     )
 }
 
 @Composable
+@Suppress("LongParameterList")
 private fun WrapSettings(
     activity: ComponentActivity,
-    goBack: () -> Unit,
     goAbout: () -> Unit,
+    goBack: () -> Unit,
+    goDocumentation: () -> Unit,
     goExportPrivateData: () -> Unit,
+    goFeedback: () -> Unit,
+    goPrivacyPolicy: () -> Unit,
     goSeedRecovery: () -> Unit,
 ) {
     val walletViewModel by activity.viewModels<WalletViewModel>()
@@ -67,9 +78,9 @@ private fun WrapSettings(
             ),
             onBack = goBack,
             onSeedRecovery = goSeedRecovery,
-            onDocumentation = {},
-            onPrivacyPolicy = {},
-            onFeedback = {},
+            onDocumentation = goDocumentation,
+            onPrivacyPolicy = goPrivacyPolicy,
+            onFeedback = goFeedback,
             onAbout = goAbout,
             onExportPrivateData = goExportPrivateData,
             onRescanWallet = {
