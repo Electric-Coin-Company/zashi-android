@@ -10,8 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger
 class HomeTestSetup(
     private val composeTestRule: ComposeContentTestRule,
     private val walletSnapshot: WalletSnapshot,
-    private val isShowFiatConversion: Boolean,
-    private val isCircularProgressBar: Boolean
+    private val isShowFiatConversion: Boolean
 ) {
     private val onSettingsCount = AtomicInteger(0)
     private val onReceiveCount = AtomicInteger(0)
@@ -51,7 +50,6 @@ class HomeTestSetup(
             isUpdateAvailable = false,
             isKeepScreenOnDuringSync = false,
             isFiatConversionEnabled = isShowFiatConversion,
-            isCircularProgressBarEnabled = isCircularProgressBar,
             goSettings = {
                 onSettingsCount.incrementAndGet()
             },
