@@ -27,8 +27,7 @@ class HomeViewIntegrationTest : UiTestPrerequisites() {
     private fun newTestSetup(walletSnapshot: WalletSnapshot) = HomeTestSetup(
         composeTestRule,
         walletSnapshot,
-        isShowFiatConversion = false,
-        isCircularProgressBar = true
+        isShowFiatConversion = false
     )
 
     // This is just basic sanity check that we still have UI set up as expected after the state restore
@@ -59,16 +58,6 @@ class HomeViewIntegrationTest : UiTestPrerequisites() {
 
         assertNotEquals(WalletSnapshotFixture.PROGRESS, testSetup.getWalletSnapshot().progress)
         assertEquals(0.5f, testSetup.getWalletSnapshot().progress.decimal)
-
-        composeTestRule.onNodeWithTag(HomeTag.PROGRESS).also {
-            it.assertIsDisplayed()
-            it.assertHeightIsAtLeast(1.dp)
-        }
-
-        composeTestRule.onNodeWithTag(HomeTag.PROGRESS).also {
-            it.assertIsDisplayed()
-            it.assertHeightIsAtLeast(1.dp)
-        }
 
         composeTestRule.onNodeWithTag(HomeTag.SINGLE_LINE_TEXT).also {
             it.assertIsDisplayed()
