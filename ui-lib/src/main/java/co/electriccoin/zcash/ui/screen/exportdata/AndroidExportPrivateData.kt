@@ -15,9 +15,9 @@ import cash.z.ecc.sdk.type.fromResources
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.VersionInfo
+import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.exportdata.util.FileShareUtil
 import co.electriccoin.zcash.ui.screen.exportdata.view.ExportPrivateData
-import co.electriccoin.zcash.ui.screen.home.viewmodel.WalletViewModel
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow

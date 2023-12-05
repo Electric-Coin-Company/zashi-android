@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.home.model
+package co.electriccoin.zcash.ui.common.model
 
 /**
  * Common Onboarding/SecurityWarning/Recovery screen enum.

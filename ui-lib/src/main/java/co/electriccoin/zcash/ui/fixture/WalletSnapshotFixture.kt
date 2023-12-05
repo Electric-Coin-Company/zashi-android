@@ -5,8 +5,8 @@ import cash.z.ecc.android.sdk.block.processor.CompactBlockProcessor
 import cash.z.ecc.android.sdk.model.PercentDecimal
 import cash.z.ecc.android.sdk.model.WalletBalance
 import cash.z.ecc.android.sdk.model.Zatoshi
-import co.electriccoin.zcash.ui.screen.home.model.WalletSnapshot
-import co.electriccoin.zcash.ui.screen.home.viewmodel.SynchronizerError
+import co.electriccoin.zcash.ui.common.model.WalletSnapshot
+import co.electriccoin.zcash.ui.common.viewmodel.SynchronizerError
 
 @Suppress("MagicNumber")
 object WalletSnapshotFixture {
