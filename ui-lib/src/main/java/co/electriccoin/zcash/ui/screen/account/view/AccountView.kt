@@ -1,6 +1,4 @@
-@file:Suppress("TooManyFunctions")
-
-package co.electriccoin.zcash.ui.screen.home.view
+package co.electriccoin.zcash.ui.screen.account.view
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -36,15 +34,15 @@ import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.TertiaryButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
-import co.electriccoin.zcash.ui.screen.home.HomeTag
-import co.electriccoin.zcash.ui.screen.home.model.WalletDisplayValues
+import co.electriccoin.zcash.ui.screen.account.AccountTag
+import co.electriccoin.zcash.ui.screen.account.model.WalletDisplayValues
 
-@Preview("Home")
+@Preview("Account")
 @Composable
 private fun ComposablePreview() {
     ZcashTheme(forceDarkMode = false) {
         GradientSurface {
-            Home(
+            Account(
                 walletSnapshot = WalletSnapshotFixture.new(),
                 isUpdateAvailable = false,
                 isKeepScreenOnDuringSync = false,
@@ -60,7 +58,7 @@ private fun ComposablePreview() {
 
 @Suppress("LongParameterList")
 @Composable
-fun Home(
+fun Account(
     walletSnapshot: WalletSnapshot,
     isUpdateAvailable: Boolean,
     isKeepScreenOnDuringSync: Boolean?,
@@ -71,9 +69,9 @@ fun Home(
     goHistory: () -> Unit
 ) {
     Scaffold(topBar = {
-        HomeTopAppBar(onSettings = goSettings)
+        AccountTopAppBar(onSettings = goSettings)
     }) { paddingValues ->
-        HomeMainContent(
+        AccountMainContent(
             walletSnapshot = walletSnapshot,
             isUpdateAvailable = isUpdateAvailable,
             isKeepScreenOnDuringSync = isKeepScreenOnDuringSync,
@@ -92,7 +90,7 @@ fun Home(
 }
 
 @Composable
-private fun HomeTopAppBar(
+private fun AccountTopAppBar(
     onSettings: () -> Unit
 ) {
     SmallTopAppBar(
@@ -100,11 +98,11 @@ private fun HomeTopAppBar(
         hamburgerMenuActions = {
             IconButton(
                 onClick = onSettings,
-                modifier = Modifier.testTag(HomeTag.SETTINGS_TOP_BAR_BUTTON)
+                modifier = Modifier.testTag(AccountTag.SETTINGS_TOP_BAR_BUTTON)
             ) {
                 Icon(
                     painter = painterResource(id = co.electriccoin.zcash.ui.design.R.drawable.hamburger_menu_icon),
-                    contentDescription = stringResource(id = R.string.home_menu_content_description)
+                    contentDescription = stringResource(id = R.string.account_menu_content_description)
                 )
             }
         }
@@ -113,7 +111,7 @@ private fun HomeTopAppBar(
 
 @Suppress("LongParameterList")
 @Composable
-private fun HomeMainContent(
+private fun AccountMainContent(
     walletSnapshot: WalletSnapshot,
     isUpdateAvailable: Boolean,
     isKeepScreenOnDuringSync: Boolean?,
@@ -146,19 +144,19 @@ private fun HomeMainContent(
 
         PrimaryButton(
             onClick = goSend,
-            text = stringResource(R.string.home_button_send)
+            text = stringResource(R.string.account_button_send)
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
 
         PrimaryButton(
             onClick = goReceive,
-            text = stringResource(R.string.home_button_receive)
+            text = stringResource(R.string.account_button_receive)
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
 
-        TertiaryButton(onClick = goHistory, text = stringResource(R.string.home_button_history))
+        TertiaryButton(onClick = goHistory, text = stringResource(R.string.account_button_history))
 
         if (isKeepScreenOnDuringSync == true && walletSnapshot.status == Synchronizer.Status.SYNCING) {
             DisableScreenTimeout()
@@ -182,7 +180,7 @@ private fun Status(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .testTag(HomeTag.STATUS_VIEWS),
+            .testTag(AccountTag.STATUS_VIEWS),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
@@ -192,7 +190,7 @@ private fun Status(
         }
 
         if (isFiatConversionEnabled) {
-            Column(Modifier.testTag(HomeTag.FIAT_CONVERSION)) {
+            Column(Modifier.testTag(AccountTag.FIAT_CONVERSION)) {
                 Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
 
                 when (walletDisplayValues.fiatCurrencyAmountState) {
@@ -219,7 +217,7 @@ private fun Status(
         if (walletDisplayValues.statusText.isNotEmpty()) {
             Body(
                 text = walletDisplayValues.statusText,
-                modifier = Modifier.testTag(HomeTag.SINGLE_LINE_TEXT)
+                modifier = Modifier.testTag(AccountTag.SINGLE_LINE_TEXT)
             )
         }
     }

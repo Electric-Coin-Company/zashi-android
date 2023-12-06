@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.home.viewmodel
+package co.electriccoin.zcash.ui.common.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel

@@ -9,8 +9,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.spackle.ClipboardManagerUtil
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.address.view.WalletAddresses
-import co.electriccoin.zcash.ui.screen.home.viewmodel.WalletViewModel
 
 @Composable
 internal fun MainActivity.WrapWalletAddresses(

@@ -6,8 +6,8 @@ import androidx.compose.runtime.Composable
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cash.z.ecc.android.sdk.internal.Twig
 import co.electriccoin.zcash.ui.MainActivity
+import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.history.view.History
-import co.electriccoin.zcash.ui.screen.home.viewmodel.WalletViewModel
 
 @Composable
 internal fun MainActivity.WrapHistory(

@@ -26,10 +26,10 @@ import co.electriccoin.zcash.ui.NavigationTargets.WALLET_ADDRESS_DETAILS
 import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
 import co.electriccoin.zcash.ui.configuration.RemoteConfig
 import co.electriccoin.zcash.ui.screen.about.WrapAbout
+import co.electriccoin.zcash.ui.screen.account.WrapAccount
 import co.electriccoin.zcash.ui.screen.address.WrapWalletAddresses
 import co.electriccoin.zcash.ui.screen.exportdata.WrapExportPrivateData
 import co.electriccoin.zcash.ui.screen.history.WrapHistory
-import co.electriccoin.zcash.ui.screen.home.WrapHome
 import co.electriccoin.zcash.ui.screen.receive.WrapReceive
 import co.electriccoin.zcash.ui.screen.request.WrapRequest
 import co.electriccoin.zcash.ui.screen.scan.WrapScanValidator
@@ -51,7 +51,7 @@ internal fun MainActivity.Navigation() {
 
     NavHost(navController = navController, startDestination = HOME) {
         composable(HOME) {
-            WrapHome(
+            WrapAccount(
                 goHistory = { navController.navigateJustOnce(HISTORY) },
                 goReceive = { navController.navigateJustOnce(RECEIVE) },
                 goSend = { navController.navigateJustOnce(SEND) },

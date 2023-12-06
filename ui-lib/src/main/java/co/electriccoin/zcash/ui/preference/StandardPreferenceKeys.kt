@@ -3,7 +3,7 @@ package co.electriccoin.zcash.ui.preference
 import co.electriccoin.zcash.preference.model.entry.BooleanPreferenceDefault
 import co.electriccoin.zcash.preference.model.entry.IntegerPreferenceDefault
 import co.electriccoin.zcash.preference.model.entry.PreferenceKey
-import co.electriccoin.zcash.ui.screen.home.model.OnboardingState
+import co.electriccoin.zcash.ui.common.model.OnboardingState
 
 object StandardPreferenceKeys {
 

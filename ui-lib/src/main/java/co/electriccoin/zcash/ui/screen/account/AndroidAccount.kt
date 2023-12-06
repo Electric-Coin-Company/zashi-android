@@ -1,6 +1,6 @@
 @file:Suppress("ktlint:filename")
 
-package co.electriccoin.zcash.ui.screen.home
+package co.electriccoin.zcash.ui.screen.account
 
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
@@ -11,20 +11,20 @@ import co.electriccoin.zcash.ui.common.viewmodel.CheckUpdateViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
 import co.electriccoin.zcash.ui.configuration.RemoteConfig
-import co.electriccoin.zcash.ui.screen.home.view.Home
+import co.electriccoin.zcash.ui.screen.account.view.Account
 import co.electriccoin.zcash.ui.screen.settings.viewmodel.SettingsViewModel
 import co.electriccoin.zcash.ui.screen.update.AppUpdateCheckerImp
 import co.electriccoin.zcash.ui.screen.update.model.UpdateState
 
 @Composable
 @Suppress("LongParameterList")
-internal fun MainActivity.WrapHome(
+internal fun MainActivity.WrapAccount(
     goSettings: () -> Unit,
     goReceive: () -> Unit,
     goSend: () -> Unit,
     goHistory: () -> Unit
 ) {
-    WrapHome(
+    WrapAccount(
         this,
         goSettings = goSettings,
         goReceive = goReceive,
@@ -35,7 +35,7 @@ internal fun MainActivity.WrapHome(
 
 @Composable
 @Suppress("LongParameterList")
-internal fun WrapHome(
+internal fun WrapAccount(
     activity: ComponentActivity,
     goSettings: () -> Unit,
     goReceive: () -> Unit,
@@ -64,7 +64,7 @@ internal fun WrapHome(
     if (null == walletSnapshot) {
         // Display loading indicator
     } else {
-        Home(
+        Account(
             walletSnapshot = walletSnapshot,
             isUpdateAvailable = updateAvailable,
             isKeepScreenOnDuringSync = isKeepScreenOnWhileSyncing,

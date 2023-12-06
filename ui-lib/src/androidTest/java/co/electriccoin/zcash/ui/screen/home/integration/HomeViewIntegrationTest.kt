@@ -10,10 +10,10 @@ import androidx.test.filters.MediumTest
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.model.PercentDecimal
 import co.electriccoin.zcash.test.UiTestPrerequisites
+import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 import co.electriccoin.zcash.ui.screen.home.HomeTag
 import co.electriccoin.zcash.ui.screen.home.HomeTestSetup
-import co.electriccoin.zcash.ui.screen.home.model.WalletSnapshot
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Rule
