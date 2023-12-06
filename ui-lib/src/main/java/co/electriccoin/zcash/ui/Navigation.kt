@@ -1,7 +1,9 @@
 package co.electriccoin.zcash.ui
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.NavHost
@@ -43,6 +45,7 @@ import co.electriccoin.zcash.ui.screen.update.WrapCheckForUpdate
 @Composable
 @Suppress("LongMethod")
 internal fun MainActivity.Navigation() {
+    val context = LocalContext.current
     val navController = rememberNavController().also {
         // This suppress is necessary, as this is how we set up the nav controller for tests.
         @SuppressLint("RestrictedApi")
@@ -80,6 +83,7 @@ internal fun MainActivity.Navigation() {
                 goDocumentation = {
                     // TODO [#1084]: Documentation screen
                     // TODO [#1084]: https://github.com/Electric-Coin-Company/zashi-android/issues/1084
+                    Toast.makeText(context, context.getString(R.string.not_implemented_yet), Toast.LENGTH_SHORT).show()
                 },
                 goExportPrivateData = {
                     navController.navigateJustOnce(EXPORT_PRIVATE_DATA)
@@ -90,6 +94,7 @@ internal fun MainActivity.Navigation() {
                 goPrivacyPolicy = {
                     // TODO [#1083]: Privacy Policy screen
                     // TODO [#1083]: https://github.com/Electric-Coin-Company/zashi-android/issues/1083
+                    Toast.makeText(context, context.getString(R.string.not_implemented_yet), Toast.LENGTH_SHORT).show()
                 },
                 goSeedRecovery = {
                     navController.navigateJustOnce(SEED_RECOVERY)
