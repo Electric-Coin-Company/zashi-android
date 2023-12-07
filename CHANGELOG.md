@@ -9,6 +9,9 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+### Added
+- Unfinished features show a "Not implemented yet" message after accessing in the app UI 
+
 ### Removed
 - Home screen side menu navigation was removed in favor of the Settings screen
 
