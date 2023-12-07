@@ -12,6 +12,10 @@ directly impact users rather than highlighting other key architectural updates.*
 ### Added
 - Unfinished features show a "Not implemented yet" message after accessing in the app UI 
 
+### Changed
+- Home and Receive screens have their Top app bar UI changed
+- Automatic brightness adjustment switched to an on-demand feature after a new button is clicked on the Receive screen 
+
 ### Removed
 - Home screen side menu navigation was removed in favor of the Settings screen
 
