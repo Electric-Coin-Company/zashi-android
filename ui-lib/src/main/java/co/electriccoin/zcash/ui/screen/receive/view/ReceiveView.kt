@@ -10,14 +10,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material.icons.filled.BrightnessHigh
+import androidx.compose.material.icons.filled.BrightnessLow
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
@@ -35,6 +36,7 @@ import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
+import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.receive.util.AndroidQrCodeImageGenerator
 import co.electriccoin.zcash.ui.screen.receive.util.JvmQrCodeGenerator
@@ -50,24 +52,35 @@ private fun ComposablePreview() {
                 walletAddress = runBlocking { WalletAddressFixture.unified() },
                 onBack = {},
                 onAddressDetails = {},
+                onAdjustBrightness = {},
             )
         }
     }
 }
 
 @Composable
-@Suppress("LongParameterList")
 fun Receive(
     walletAddress: WalletAddress,
     onBack: () -> Unit,
     onAddressDetails: () -> Unit,
+    onAdjustBrightness: (Boolean) -> Unit,
 ) {
+    val (brightness, setBrightness) = rememberSaveable { mutableStateOf(false) }
+
     // Rework this into Scaffold
     Column {
-        ReceiveTopAppBar(onBack = onBack)
+        ReceiveTopAppBar(
+            adjustBrightness = brightness,
+            onBack = onBack,
+            onBrightness = {
+                onAdjustBrightness(!brightness)
+                setBrightness(!brightness)
+            }
+        )
         ReceiveContents(
             walletAddress = walletAddress,
             onAddressDetails = onAddressDetails,
+            adjustBrightness = brightness,
             modifier = Modifier
                 .fillMaxHeight()
                 .verticalScroll(rememberScrollState())
@@ -81,17 +94,27 @@ fun Receive(
 }
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
-private fun ReceiveTopAppBar(onBack: () -> Unit) {
-    TopAppBar(
-        title = { Text(text = stringResource(id = R.string.receive_title)) },
-        navigationIcon = {
+private fun ReceiveTopAppBar(
+    adjustBrightness: Boolean,
+    onBack: () -> Unit,
+    onBrightness: () -> Unit
+) {
+    SmallTopAppBar(
+        titleText = stringResource(id = R.string.receive_title),
+        backText = stringResource(id = R.string.receive_back),
+        backContentDescriptionText = stringResource(id = R.string.receive_back_content_description),
+        onBack = onBack,
+        regularActions = {
             IconButton(
-                onClick = onBack
+                onClick = onBrightness
             ) {
                 Icon(
-                    imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = stringResource(R.string.receive_back_content_description)
+                    imageVector = if (adjustBrightness) {
+                        Icons.Default.BrightnessLow
+                    } else {
+                        Icons.Default.BrightnessHigh
+                    },
+                    contentDescription = stringResource(R.string.receive_brightness_content_description)
                 )
             }
         }
@@ -101,17 +124,22 @@ private fun ReceiveTopAppBar(onBack: () -> Unit) {
 private val DEFAULT_QR_CODE_SIZE = 320.dp
 
 @Composable
-@Suppress("LongParameterList")
 private fun ReceiveContents(
     walletAddress: WalletAddress,
     onAddressDetails: () -> Unit,
-    modifier: Modifier = Modifier
+    adjustBrightness: Boolean,
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        QrCode(data = walletAddress.address, DEFAULT_QR_CODE_SIZE, Modifier.align(Alignment.CenterHorizontally))
+        QrCode(
+            data = walletAddress.address,
+            size = DEFAULT_QR_CODE_SIZE,
+            adjustBrightness = adjustBrightness,
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
 
@@ -151,10 +179,18 @@ private fun ReceiveContents(
 }
 
 @Composable
-private fun QrCode(data: String, size: Dp, modifier: Modifier = Modifier) {
+private fun QrCode(
+    data: String,
+    size: Dp,
+    modifier: Modifier = Modifier,
+    adjustBrightness: Boolean = false,
+) {
     Column(modifier = modifier) {
-        BrightenScreen()
-        DisableScreenTimeout()
+        if (adjustBrightness) {
+            BrightenScreen()
+            DisableScreenTimeout()
+        }
+
         val sizePixels = with(LocalDensity.current) { size.toPx() }.roundToInt()
 
         // In the future, use actual/expect to switch QR code generator implementations for multiplatform

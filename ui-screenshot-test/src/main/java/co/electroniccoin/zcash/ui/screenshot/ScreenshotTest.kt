@@ -155,6 +155,7 @@ class ScreenshotTest : UiTestPrerequisites() {
             ),
             ignoreCase = true
         ).also {
+            it.performScrollTo()
             it.assertExists()
             it.performClick()
         }
@@ -408,7 +409,7 @@ private fun receiveZecScreenshots(
         composeTestRule.activity.walletViewModel.addresses.value != null
     }
 
-    composeTestRule.onNode(hasText(resContext.getString(R.string.receive_title))).also {
+    composeTestRule.onNode(hasText(resContext.getString(R.string.receive_title), ignoreCase = true)).also {
         it.assertExists()
     }
 

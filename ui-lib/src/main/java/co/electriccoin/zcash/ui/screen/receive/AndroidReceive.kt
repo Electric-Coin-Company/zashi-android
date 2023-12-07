@@ -55,6 +55,7 @@ internal fun WrapReceive(
             walletAddresses.unified,
             onBack = onBack,
             onAddressDetails = onAddressDetails,
+            onAdjustBrightness = { /* Just for testing */ }
         )
     }
 }
