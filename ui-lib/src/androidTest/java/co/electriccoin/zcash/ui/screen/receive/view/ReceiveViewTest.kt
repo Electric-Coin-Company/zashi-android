@@ -1,6 +1,5 @@
 package co.electriccoin.zcash.ui.screen.receive.view
 
-import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
@@ -9,13 +8,11 @@ import androidx.test.filters.MediumTest
 import cash.z.ecc.android.sdk.fixture.WalletAddressFixture
 import cash.z.ecc.android.sdk.model.WalletAddress
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.test.getStringResource
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
-import java.util.concurrent.atomic.AtomicInteger
 
 /*
  * Note: It is difficult to test the QR code from automated tests.  There is a manual test case
@@ -71,37 +68,5 @@ class ReceiveViewTest {
         assertEquals(1, testSetup.getOnAddressDetailsCount())
     }
 
-    private fun newTestSetup(walletAddress: WalletAddress) = TestSetup(composeTestRule, walletAddress)
-
-    private class TestSetup(private val composeTestRule: ComposeContentTestRule, walletAddress: WalletAddress) {
-
-        private val onBackCount = AtomicInteger(0)
-        private val onAddressDetailsCount = AtomicInteger(0)
-
-        fun getOnBackCount(): Int {
-            composeTestRule.waitForIdle()
-            return onBackCount.get()
-        }
-
-        fun getOnAddressDetailsCount(): Int {
-            composeTestRule.waitForIdle()
-            return onAddressDetailsCount.get()
-        }
-
-        init {
-            composeTestRule.setContent {
-                ZcashTheme {
-                    Receive(
-                        walletAddress,
-                        onBack = {
-                            onBackCount.getAndIncrement()
-                        },
-                        onAddressDetails = {
-                            onAddressDetailsCount.getAndIncrement()
-                        }
-                    )
-                }
-            }
-        }
-    }
+    private fun newTestSetup(walletAddress: WalletAddress) = ReceiveViewTestSetup(composeTestRule, walletAddress)
 }

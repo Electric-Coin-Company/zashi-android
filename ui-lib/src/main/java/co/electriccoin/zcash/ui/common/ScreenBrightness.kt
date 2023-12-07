@@ -17,7 +17,7 @@ class ScreenBrightness {
         mutableReferenceCount.update { it + 1 }
     }
 
-    fun restore() {
+    fun restoreBrightness() {
         val after = mutableReferenceCount.updateAndGet { it - 1 }
 
         if (after < 0) {
@@ -34,6 +34,6 @@ fun BrightenScreen() {
     val screenBrightness = LocalScreenBrightness.current
     DisposableEffect(screenBrightness) {
         screenBrightness.fullBrightness()
-        onDispose { screenBrightness.restore() }
+        onDispose { screenBrightness.restoreBrightness() }
     }
 }
