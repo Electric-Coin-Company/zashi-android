@@ -9,7 +9,6 @@ import kotlinx.coroutines.launch
 
 @Suppress("unused")
 class ZcashApplication : CoroutineApplication() {
-
     override fun onCreate() {
         super.onCreate()
 

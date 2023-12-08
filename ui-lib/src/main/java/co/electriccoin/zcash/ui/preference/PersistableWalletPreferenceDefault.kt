@@ -9,7 +9,6 @@ import org.json.JSONObject
 data class PersistableWalletPreferenceDefault(
     override val key: PreferenceKey
 ) : PreferenceDefault<PersistableWallet?> {
-
     override suspend fun getValue(preferenceProvider: PreferenceProvider) =
         preferenceProvider.getString(key)?.let { PersistableWallet.from(JSONObject(it)) }
 

@@ -7,7 +7,6 @@ import kotlinx.coroutines.flow.Flow
  * Provides a remote config implementation.
  */
 interface ConfigurationProvider {
-
     /**
      * @return The configuration if it has been loaded already.  If not loaded, returns an empty configuration.
      */

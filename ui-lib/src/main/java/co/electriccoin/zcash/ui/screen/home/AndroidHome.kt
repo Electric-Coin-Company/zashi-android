@@ -1,4 +1,4 @@
-@file:Suppress("ktlint:filename")
+@file:Suppress("ktlint:standard:filename")
 
 package co.electriccoin.zcash.ui.screen.home
 
@@ -49,9 +49,10 @@ internal fun WrapHome(
             AppUpdateCheckerImp.new()
         )
     }
-    val updateAvailable = checkUpdateViewModel.updateInfo.collectAsStateWithLifecycle().value.let {
-        it?.appUpdateInfo != null && it.state == UpdateState.Prepared
-    }
+    val updateAvailable =
+        checkUpdateViewModel.updateInfo.collectAsStateWithLifecycle().value.let {
+            it?.appUpdateInfo != null && it.state == UpdateState.Prepared
+        }
 
     val walletViewModel by activity.viewModels<WalletViewModel>()
     val walletSnapshot = walletViewModel.walletSnapshot.collectAsStateWithLifecycle().value

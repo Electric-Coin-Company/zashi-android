@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.os.StrictMode
 
 object StrictModeCompat {
-
     fun enableStrictMode(isCrashOnViolation: Boolean) {
         configureStrictMode(isCrashOnViolation)
     }

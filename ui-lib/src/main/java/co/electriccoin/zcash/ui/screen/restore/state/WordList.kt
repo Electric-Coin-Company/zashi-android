@@ -19,19 +19,21 @@ class WordList(initial: List<String> = emptyList()) {
     }
 
     fun append(words: List<String>) {
-        val newList = (current.value + words)
-            .first(SeedPhrase.SEED_PHRASE_SIZE) // Prevent pasting too many words
-            .toPersistentList()
+        val newList =
+            (current.value + words)
+                .first(SeedPhrase.SEED_PHRASE_SIZE) // Prevent pasting too many words
+                .toPersistentList()
 
         mutableState.value = newList
     }
 
     fun removeLast() {
-        val newList = if (mutableState.value.isNotEmpty()) {
-            current.value.subList(0, current.value.size - 1)
-        } else {
-            current.value
-        }.toPersistentList()
+        val newList =
+            if (mutableState.value.isNotEmpty()) {
+                current.value.subList(0, current.value.size - 1)
+            } else {
+                current.value
+            }.toPersistentList()
 
         mutableState.value = newList
     }
@@ -40,5 +42,6 @@ class WordList(initial: List<String> = emptyList()) {
     override fun toString() = "WordList"
 }
 
-fun WordList.wordValidation() = current
-    .map { SeedPhraseValidation.new(it) }
+fun WordList.wordValidation() =
+    current
+        .map { SeedPhraseValidation.new(it) }

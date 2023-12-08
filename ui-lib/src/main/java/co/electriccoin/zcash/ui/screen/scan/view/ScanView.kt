@@ -113,15 +113,16 @@ fun Scan(
             onBack,
             onScanStateChanged,
             snackbarHostState,
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Black)
-                .padding(
-                    top = paddingValues.calculateTopPadding(),
-                    bottom = paddingValues.calculateBottomPadding(),
-                    start = ZcashTheme.dimens.spacingNone,
-                    end = ZcashTheme.dimens.spacingNone
-                )
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(Color.Black)
+                    .padding(
+                        top = paddingValues.calculateTopPadding(),
+                        bottom = paddingValues.calculateBottomPadding(),
+                        start = ZcashTheme.dimens.spacingNone,
+                        end = ZcashTheme.dimens.spacingNone
+                    )
         )
     }
 }
@@ -141,11 +142,12 @@ fun ScanBottomItems(
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
 
         Small(
-            text = when (scanState) {
-                ScanState.Permission -> stringResource(id = R.string.scan_state_permission)
-                ScanState.Scanning -> stringResource(id = R.string.scan_state_scanning)
-                ScanState.Failed -> stringResource(id = R.string.scan_state_failed)
-            },
+            text =
+                when (scanState) {
+                    ScanState.Permission -> stringResource(id = R.string.scan_state_permission)
+                    ScanState.Scanning -> stringResource(id = R.string.scan_state_scanning)
+                    ScanState.Failed -> stringResource(id = R.string.scan_state_failed)
+                },
             color = Color.White,
             modifier = Modifier.testTag(ScanTag.TEXT_STATE)
         )
@@ -192,19 +194,21 @@ private fun ScanMainContent(
 ) {
     val context = LocalContext.current
 
-    val permissionState = rememberPermissionState(
-        Manifest.permission.CAMERA
-    )
-
-    val (scanState, setScanState) = rememberSaveable {
-        mutableStateOf(
-            if (permissionState.status.isGranted) {
-                ScanState.Scanning
-            } else {
-                ScanState.Permission
-            }
+    val permissionState =
+        rememberPermissionState(
+            Manifest.permission.CAMERA
         )
-    }
+
+    val (scanState, setScanState) =
+        rememberSaveable {
+            mutableStateOf(
+                if (permissionState.status.isGranted) {
+                    ScanState.Scanning
+                } else {
+                    ScanState.Permission
+                }
+            )
+        }
 
     if (!permissionState.status.isGranted) {
         setScanState(ScanState.Permission)
@@ -228,11 +232,12 @@ private fun ScanMainContent(
     val framePossibleSize = remember { mutableStateOf(IntSize.Zero) }
 
     val configuration = LocalConfiguration.current
-    val frameActualSize = if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-        (framePossibleSize.value.height * 0.85).roundToInt()
-    } else {
-        (framePossibleSize.value.width * 0.7).roundToInt()
-    }
+    val frameActualSize =
+        if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            (framePossibleSize.value.height * 0.85).roundToInt()
+        } else {
+            (framePossibleSize.value.width * 0.7).roundToInt()
+        }
 
     ConstraintLayout(modifier) {
         val (frame, bottomItems) = createRefs()
@@ -253,18 +258,19 @@ private fun ScanMainContent(
                 )
 
                 Box(
-                    modifier = Modifier
-                        .constrainAs(frame) {
-                            top.linkTo(parent.top)
-                            bottom.linkTo(bottomItems.top)
-                            start.linkTo(parent.start)
-                            end.linkTo(parent.end)
-                            width = Dimension.fillToConstraints
-                            height = Dimension.fillToConstraints
-                        }
-                        .onSizeChanged { coordinates ->
-                            framePossibleSize.value = coordinates
-                        },
+                    modifier =
+                        Modifier
+                            .constrainAs(frame) {
+                                top.linkTo(parent.top)
+                                bottom.linkTo(bottomItems.top)
+                                start.linkTo(parent.start)
+                                end.linkTo(parent.end)
+                                width = Dimension.fillToConstraints
+                                height = Dimension.fillToConstraints
+                            }
+                            .onSizeChanged { coordinates ->
+                                framePossibleSize.value = coordinates
+                            },
                     contentAlignment = Alignment.Center
                 ) {
                     ScanFrame(frameActualSize)
@@ -275,10 +281,11 @@ private fun ScanMainContent(
                 LaunchedEffect(key1 = true) {
                     setScanState(ScanState.Failed)
                     onScanStateChanged(ScanState.Failed)
-                    val snackbarResult = snackbarHostState.showSnackbar(
-                        message = context.getString(R.string.scan_setup_failed),
-                        actionLabel = context.getString(R.string.scan_setup_back)
-                    )
+                    val snackbarResult =
+                        snackbarHostState.showSnackbar(
+                            message = context.getString(R.string.scan_setup_failed),
+                            actionLabel = context.getString(R.string.scan_setup_back)
+                        )
                     if (snackbarResult == SnackbarResult.ActionPerformed) {
                         onBack()
                     }
@@ -290,12 +297,13 @@ private fun ScanMainContent(
             ScanBottomItems(
                 scanState = scanState,
                 onOpenSettings = onOpenSettings,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        vertical = ZcashTheme.dimens.spacingHuge,
-                        horizontal = ZcashTheme.dimens.screenHorizontalSpacing
-                    )
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            vertical = ZcashTheme.dimens.spacingHuge,
+                            horizontal = ZcashTheme.dimens.screenHorizontalSpacing
+                        )
             )
         }
     }
@@ -305,11 +313,12 @@ private fun ScanMainContent(
 @Composable
 fun ScanFrame(frameSize: Int) {
     Box(
-        modifier = Modifier
-            .size(with(LocalDensity.current) { frameSize.toDp() })
-            .background(Color.Transparent)
-            .border(BorderStroke(10.dp, Color.White), RoundedCornerShape(10))
-            .testTag(ScanTag.QR_FRAME)
+        modifier =
+            Modifier
+                .size(with(LocalDensity.current) { frameSize.toDp() })
+                .background(Color.Transparent)
+                .border(BorderStroke(10.dp, Color.White), RoundedCornerShape(10))
+                .testTag(ScanTag.QR_FRAME)
     )
 }
 
@@ -326,13 +335,14 @@ fun ScanCameraView(
 
     // we check the permission first, as the ProcessCameraProvider's emit won't be called again after
     // recomposition with the permission granted
-    val cameraProviderFlow = if (permissionState.status.isGranted) {
-        remember {
-            flow<ProcessCameraProvider> { emit(ProcessCameraProvider.getInstance(context).await()) }
+    val cameraProviderFlow =
+        if (permissionState.status.isGranted) {
+            remember {
+                flow<ProcessCameraProvider> { emit(ProcessCameraProvider.getInstance(context).await()) }
+            }
+        } else {
+            null
         }
-    } else {
-        null
-    }
 
     val collectedCameraProvider = cameraProviderFlow?.collectAsState(initial = null)?.value
 
@@ -341,26 +351,31 @@ fun ScanCameraView(
     } else {
         val contentDescription = stringResource(id = R.string.scan_preview_content_description)
 
-        val imageAnalysis = ImageAnalysis.Builder()
-            .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-            .build()
+        val imageAnalysis =
+            ImageAnalysis.Builder()
+                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                .build()
 
         AndroidView(
             factory = { factoryContext ->
-                val previewView = PreviewView(factoryContext).apply {
-                    this.scaleType = PreviewView.ScaleType.FILL_CENTER
-                    layoutParams = ViewGroup.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.MATCH_PARENT
-                    )
-                }
+                val previewView =
+                    PreviewView(factoryContext).apply {
+                        this.scaleType = PreviewView.ScaleType.FILL_CENTER
+                        layoutParams =
+                            ViewGroup.LayoutParams(
+                                ViewGroup.LayoutParams.MATCH_PARENT,
+                                ViewGroup.LayoutParams.MATCH_PARENT
+                            )
+                    }
                 previewView.contentDescription = contentDescription
-                val selector = CameraSelector.Builder()
-                    .requireLensFacing(CameraSelector.LENS_FACING_BACK)
-                    .build()
-                val preview = androidx.camera.core.Preview.Builder().build().apply {
-                    setSurfaceProvider(previewView.surfaceProvider)
-                }
+                val selector =
+                    CameraSelector.Builder()
+                        .requireLensFacing(CameraSelector.LENS_FACING_BACK)
+                        .build()
+                val preview =
+                    androidx.camera.core.Preview.Builder().build().apply {
+                        setSurfaceProvider(previewView.surfaceProvider)
+                    }
 
                 runCatching {
                     // we must unbind the use-cases before rebinding them
@@ -392,20 +407,21 @@ fun ScanCameraView(
 // Using callbackFlow because QrCodeAnalyzer has a non-suspending callback which makes
 // a basic flow builder not work here.
 @Composable
-fun ImageAnalysis.qrCodeFlow(context: Context): Flow<String> = remember {
-    callbackFlow {
-        setAnalyzer(
-            ContextCompat.getMainExecutor(context),
-            QrCodeAnalyzer { result ->
-                // Note that these callbacks aren't tied to the Compose lifecycle, so they could occur
-                // after the view goes away.  Collection needs to occur within the Compose lifecycle
-                // to make this not be a problem.
-                trySend(result)
-            }
-        )
+fun ImageAnalysis.qrCodeFlow(context: Context): Flow<String> =
+    remember {
+        callbackFlow {
+            setAnalyzer(
+                ContextCompat.getMainExecutor(context),
+                QrCodeAnalyzer { result ->
+                    // Note that these callbacks aren't tied to the Compose lifecycle, so they could occur
+                    // after the view goes away.  Collection needs to occur within the Compose lifecycle
+                    // to make this not be a problem.
+                    trySend(result)
+                }
+            )
 
-        awaitClose {
-            // Nothing to close
+            awaitClose {
+                // Nothing to close
+            }
         }
     }
-}

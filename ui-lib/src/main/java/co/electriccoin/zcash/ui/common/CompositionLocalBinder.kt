@@ -30,8 +30,9 @@ fun ComponentActivity.BindCompLocalProvider(content: @Composable () -> Unit) {
 
 private fun ComponentActivity.observeScreenSecurityFlag(screenSecurity: ScreenSecurity) {
     screenSecurity.referenceCount.map { it > 0 }.collectWith(lifecycleScope) { isSecure ->
-        val isTest = FirebaseTestLabUtil.isFirebaseTestLab(applicationContext) ||
-            EmulatorWtfUtil.isEmulatorWtf(applicationContext)
+        val isTest =
+            FirebaseTestLabUtil.isFirebaseTestLab(applicationContext) ||
+                EmulatorWtfUtil.isEmulatorWtf(applicationContext)
 
         if (isSecure && !isTest) {
             window.setFlags(
@@ -47,13 +48,15 @@ private fun ComponentActivity.observeScreenSecurityFlag(screenSecurity: ScreenSe
 private fun ComponentActivity.observeScreenBrightnessFlag(screenBrightness: ScreenBrightness) {
     screenBrightness.referenceCount.map { it > 0 }.collectWith(lifecycleScope) { maxBrightness ->
         if (maxBrightness) {
-            window.attributes = window.attributes.apply {
-                this.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_FULL
-            }
+            window.attributes =
+                window.attributes.apply {
+                    this.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_FULL
+                }
         } else {
-            window.attributes = window.attributes.apply {
-                this.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
-            }
+            window.attributes =
+                window.attributes.apply {
+                    this.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
+                }
         }
     }
 }

@@ -20,7 +20,6 @@ import co.electriccoin.zcash.spackle.process.ProcessNameCompat.getProcessName
  * way to get process name on older Android versions.
  */
 object ProcessNameCompat {
-
     // GuardedBy intrinsicLock
     private var processName: String? = null
 

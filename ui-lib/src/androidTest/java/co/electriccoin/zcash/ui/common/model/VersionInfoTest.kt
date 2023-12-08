@@ -8,7 +8,6 @@ import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
 class VersionInfoTest {
-
     @Test
     @SmallTest
     fun sanity_check_version_info_in_testing() {

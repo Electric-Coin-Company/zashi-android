@@ -8,9 +8,13 @@ import co.electriccoin.zcash.crash.android.getExceptionPath
 import co.electriccoin.zcash.crash.write
 
 internal object AndroidExceptionReporter {
-    internal suspend fun reportException(context: Context, reportableException: ReportableException) {
-        val exceptionPath = ExceptionPath.getExceptionPath(context, reportableException)
-            ?: return
+    internal suspend fun reportException(
+        context: Context,
+        reportableException: ReportableException
+    ) {
+        val exceptionPath =
+            ExceptionPath.getExceptionPath(context, reportableException)
+                ?: return
 
         reportableException.write(exceptionPath)
 

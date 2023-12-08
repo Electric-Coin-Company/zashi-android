@@ -10,25 +10,27 @@ import kotlinx.datetime.Instant
 import java.io.File
 
 data class CrashInfo(val exceptionClassName: String, val isUncaught: Boolean, val timestamp: Instant) {
-    fun toSupportString() = buildString {
-        appendLine("Exception")
-        appendLine("  Class name: $exceptionClassName")
-        appendLine("  Is uncaught: $isUncaught")
-        appendLine("  Timestamp: $timestamp")
+    fun toSupportString() =
+        buildString {
+            appendLine("Exception")
+            appendLine("  Class name: $exceptionClassName")
+            appendLine("  Is uncaught: $isUncaught")
+            appendLine("  Timestamp: $timestamp")
 
-        // For now, don't include the stacktrace. It'll be too long for the emails we want to generate
-    }
+            // For now, don't include the stacktrace. It'll be too long for the emails we want to generate
+        }
 
     companion object
 }
 
-fun List<CrashInfo>.toCrashSupportString() = buildString {
-    // Using the header "Exceptions" instead of "Crashes" to reduce risk of alarming users
-    appendLine("Exceptions:")
-    this@toCrashSupportString.forEach {
-        appendLine(it.toSupportString())
+fun List<CrashInfo>.toCrashSupportString() =
+    buildString {
+        // Using the header "Exceptions" instead of "Crashes" to reduce risk of alarming users
+        appendLine("Exceptions:")
+        this@toCrashSupportString.forEach {
+            appendLine(it.toSupportString())
+        }
     }
-}
 
 // If you change this, be sure to update the test case under /docs/testing/manual_testing/Contact Support.md
 private const val MAX_EXCEPTIONS_TO_REPORT = 5

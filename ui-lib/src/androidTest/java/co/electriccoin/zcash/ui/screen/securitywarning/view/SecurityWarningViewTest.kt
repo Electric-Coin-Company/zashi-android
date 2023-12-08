@@ -96,9 +96,10 @@ class SecurityWarningViewTest : UiTestPrerequisites() {
         assertEquals(true, testSetup.getOnAcknowledged())
     }
 
-    private fun newTestSetup() = SecurityWarningViewTestSetup(composeTestRule).apply {
-        setDefaultContent()
-    }
+    private fun newTestSetup() =
+        SecurityWarningViewTestSetup(composeTestRule).apply {
+            setDefaultContent()
+        }
 }
 
 private fun ComposeContentTestRule.clickBack() {

@@ -85,14 +85,16 @@ fun ChipOnSurface(
 ) {
     Surface(
         shape = RectangleShape,
-        modifier = modifier
-            .padding(horizontal = ZcashTheme.dimens.spacingTiny)
-            .border(
-                border = BorderStroke(
-                    width = ZcashTheme.dimens.chipStroke,
-                    color = ZcashTheme.colors.layoutStroke
-                )
-            ),
+        modifier =
+            modifier
+                .padding(horizontal = ZcashTheme.dimens.spacingTiny)
+                .border(
+                    border =
+                        BorderStroke(
+                            width = ZcashTheme.dimens.chipStroke,
+                            color = ZcashTheme.colors.layoutStroke
+                        )
+                ),
         color = MaterialTheme.colorScheme.secondary,
         shadowElevation = ZcashTheme.dimens.chipShadowElevation,
     ) {
@@ -100,12 +102,13 @@ fun ChipOnSurface(
             text = text,
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSecondary,
-            modifier = Modifier
-                .padding(
-                    vertical = ZcashTheme.dimens.spacingSmall,
-                    horizontal = ZcashTheme.dimens.spacingDefault
-                )
-                .testTag(CommonTag.CHIP)
+            modifier =
+                Modifier
+                    .padding(
+                        vertical = ZcashTheme.dimens.spacingSmall,
+                        horizontal = ZcashTheme.dimens.spacingDefault
+                    )
+                    .testTag(CommonTag.CHIP)
         )
     }
 }

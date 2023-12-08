@@ -9,7 +9,6 @@ import java.util.concurrent.atomic.AtomicInteger
 class SeedRecoveryTestSetup(
     private val composeTestRule: ComposeContentTestRule,
 ) {
-
     private val onSeedCopyCount = AtomicInteger(0)
 
     private val onBirthdayCopyCount = AtomicInteger(0)
@@ -22,6 +21,7 @@ class SeedRecoveryTestSetup(
         composeTestRule.waitForIdle()
         return onSeedCopyCount.get()
     }
+
     fun getOnBirthdayCopyCount(): Int {
         composeTestRule.waitForIdle()
         return onBirthdayCopyCount.get()

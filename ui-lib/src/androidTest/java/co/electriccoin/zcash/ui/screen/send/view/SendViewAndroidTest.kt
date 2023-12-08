@@ -41,10 +41,11 @@ class SendViewAndroidTest : UiTestPrerequisites() {
     @Test
     @MediumTest
     fun back_on_sending_with_system_navigation_disabled_check() {
-        val testSetup = newTestSetup(
-            SendStage.Confirmation,
-            runBlocking { ZecSendFixture.new() }
-        )
+        val testSetup =
+            newTestSetup(
+                SendStage.Confirmation,
+                runBlocking { ZecSendFixture.new() }
+            )
 
         assertEquals(0, testSetup.getOnBackCount())
 
@@ -62,10 +63,11 @@ class SendViewAndroidTest : UiTestPrerequisites() {
     @Test
     @MediumTest
     fun back_on_send_successful_with_system_navigation() {
-        val testSetup = newTestSetup(
-            SendStage.SendSuccessful,
-            runBlocking { ZecSendFixture.new() }
-        )
+        val testSetup =
+            newTestSetup(
+                SendStage.SendSuccessful,
+                runBlocking { ZecSendFixture.new() }
+            )
 
         assertEquals(0, testSetup.getOnBackCount())
 
@@ -79,10 +81,11 @@ class SendViewAndroidTest : UiTestPrerequisites() {
     @Test
     @MediumTest
     fun back_on_send_failure_with_system_navigation() {
-        val testSetup = newTestSetup(
-            SendStage.SendFailure,
-            runBlocking { ZecSendFixture.new() }
-        )
+        val testSetup =
+            newTestSetup(
+                SendStage.SendFailure,
+                runBlocking { ZecSendFixture.new() }
+            )
 
         assertEquals(0, testSetup.getOnBackCount())
 

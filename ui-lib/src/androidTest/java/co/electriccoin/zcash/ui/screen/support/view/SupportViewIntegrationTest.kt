@@ -14,7 +14,6 @@ import org.junit.Rule
 import org.junit.Test
 
 class SupportViewIntegrationTest : UiTestPrerequisites() {
-
     @get:Rule
     val composeTestRule = createComposeRule()
 
@@ -67,10 +66,11 @@ class SupportViewIntegrationTest : UiTestPrerequisites() {
 
         restorationTester.emulateSavedInstanceStateRestore()
 
-        val dialogContent = getStringResourceWithArgs(
-            R.string.support_confirmation_explanation,
-            getStringResource(R.string.app_name)
-        )
+        val dialogContent =
+            getStringResourceWithArgs(
+                R.string.support_confirmation_explanation,
+                getStringResource(R.string.app_name)
+            )
         composeTestRule.onNodeWithText(dialogContent).also {
             it.assertExists()
         }

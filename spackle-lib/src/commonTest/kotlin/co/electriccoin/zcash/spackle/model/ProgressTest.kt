@@ -4,7 +4,6 @@ import kotlin.test.Test
 import kotlin.test.assertFailsWith
 
 class ProgressTest {
-
     @Test
     fun last_greater_than_zero() {
         assertFailsWith(IllegalArgumentException::class) {

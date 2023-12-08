@@ -15,14 +15,14 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 
 class HomeViewModel(application: Application) : AndroidViewModel(application) {
-
     /**
      * A flow of whether background sync is enabled
      */
-    val isBackgroundSyncEnabled: StateFlow<Boolean?> = flow {
-        val preferenceProvider = StandardPreferenceSingleton.getInstance(application)
-        emitAll(StandardPreferenceKeys.IS_BACKGROUND_SYNC_ENABLED.observe(preferenceProvider))
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT.inWholeMilliseconds), null)
+    val isBackgroundSyncEnabled: StateFlow<Boolean?> =
+        flow {
+            val preferenceProvider = StandardPreferenceSingleton.getInstance(application)
+            emitAll(StandardPreferenceKeys.IS_BACKGROUND_SYNC_ENABLED.observe(preferenceProvider))
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT.inWholeMilliseconds), null)
 
     val configurationFlow: StateFlow<Configuration?> =
         AndroidConfigurationFactory.getInstance(application).getConfigurationFlow()

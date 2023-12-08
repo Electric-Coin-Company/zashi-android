@@ -9,7 +9,6 @@ import java.util.concurrent.CountDownLatch
 import java.util.concurrent.atomic.AtomicBoolean
 
 class AndroidUncaughtExceptionHandlerTest {
-
     @Test(expected = IllegalStateException::class)
     fun requires_main_thread() {
         AndroidUncaughtExceptionHandler.register(ApplicationProvider.getApplicationContext())

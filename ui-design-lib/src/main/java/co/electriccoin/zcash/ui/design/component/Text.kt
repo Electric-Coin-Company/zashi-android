@@ -147,21 +147,23 @@ fun Reference(
     onClick: () -> Unit
 ) {
     Box(
-        modifier = Modifier
-            .wrapContentSize()
-            .clip(RoundedCornerShape(ZcashTheme.dimens.topAppBarActionRippleCorner))
-            .clickable { onClick() }
+        modifier =
+            Modifier
+                .wrapContentSize()
+                .clip(RoundedCornerShape(ZcashTheme.dimens.topAppBarActionRippleCorner))
+                .clickable { onClick() }
     ) {
         Text(
             text = text,
-            style = MaterialTheme.typography.bodyLarge
-                .merge(
-                    TextStyle(
-                        color = ZcashTheme.colors.reference,
-                        textAlign = textAlign,
-                        textDecoration = TextDecoration.Underline
-                    )
-                ),
+            style =
+                MaterialTheme.typography.bodyLarge
+                    .merge(
+                        TextStyle(
+                            color = ZcashTheme.colors.reference,
+                            textAlign = textAlign,
+                            textDecoration = TextDecoration.Underline
+                        )
+                    ),
             modifier = modifier
         )
     }

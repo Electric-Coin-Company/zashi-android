@@ -42,7 +42,10 @@ private fun NotEnoughSpacePreview() {
 // TODO [#883]: https://github.com/Electric-Coin-Company/zashi-android/issues/883
 
 @Composable
-fun NotEnoughSpaceView(storageSpaceRequiredGigabytes: Int, spaceRequiredToContinueMegabytes: Int) {
+fun NotEnoughSpaceView(
+    storageSpaceRequiredGigabytes: Int,
+    spaceRequiredToContinueMegabytes: Int
+) {
     @Suppress("MagicNumber")
     val backgroundColor = Color(0xFF1A233A)
     Column(

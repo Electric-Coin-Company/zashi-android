@@ -13,7 +13,6 @@ class UpdateViewTestSetup(
     private val composeTestRule: ComposeContentTestRule,
     private val updateInfo: UpdateInfo
 ) {
-
     private val onDownloadCount = AtomicInteger(0)
     private val onLaterCount = AtomicInteger(0)
     private val onReferenceCount = AtomicInteger(0)
@@ -38,6 +37,7 @@ class UpdateViewTestSetup(
         composeTestRule.waitForIdle()
         return updateState.get()
     }
+
     fun getUpdateInfo(): UpdateInfo {
         composeTestRule.waitForIdle()
         return updateInfo

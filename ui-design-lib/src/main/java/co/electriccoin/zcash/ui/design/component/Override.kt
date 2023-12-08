@@ -15,7 +15,10 @@ import kotlinx.coroutines.flow.StateFlow
  * for automated tests.
  */
 @Composable
-fun Override(configurationOverrideFlow: StateFlow<ConfigurationOverride?>, content: @Composable () -> Unit) {
+fun Override(
+    configurationOverrideFlow: StateFlow<ConfigurationOverride?>,
+    content: @Composable () -> Unit
+) {
     val configurationOverride = configurationOverrideFlow.collectAsState().value
 
     if (null == configurationOverride) {
@@ -23,15 +26,16 @@ fun Override(configurationOverrideFlow: StateFlow<ConfigurationOverride?>, conte
     } else {
         val configuration = configurationOverride.newConfiguration(LocalConfiguration.current)
 
-        val contextWrapper = run {
-            val context = LocalContext.current
-            object : ContextThemeWrapper() {
-                init {
-                    attachBaseContext(context)
-                    applyOverrideConfiguration(configuration)
+        val contextWrapper =
+            run {
+                val context = LocalContext.current
+                object : ContextThemeWrapper() {
+                    init {
+                        attachBaseContext(context)
+                        applyOverrideConfiguration(configuration)
+                    }
                 }
             }
-        }
 
         CompositionLocalProvider(
             LocalConfiguration provides configuration,
@@ -43,15 +47,16 @@ fun Override(configurationOverrideFlow: StateFlow<ConfigurationOverride?>, conte
 }
 
 data class ConfigurationOverride(val uiMode: UiMode?, val locale: LocaleList?) {
-    fun newConfiguration(fromConfiguration: Configuration) = Configuration(fromConfiguration).apply {
-        this@ConfigurationOverride.uiMode?.let {
-            uiMode = (uiMode and Configuration.UI_MODE_NIGHT_MASK.inv()) or it.flag()
-        }
+    fun newConfiguration(fromConfiguration: Configuration) =
+        Configuration(fromConfiguration).apply {
+            this@ConfigurationOverride.uiMode?.let {
+                uiMode = (uiMode and Configuration.UI_MODE_NIGHT_MASK.inv()) or it.flag()
+            }
 
-        this@ConfigurationOverride.locale?.let {
-            setLocales(it)
+            this@ConfigurationOverride.locale?.let {
+                setLocales(it)
+            }
         }
-    }
 }
 
 enum class UiMode {
@@ -59,7 +64,8 @@ enum class UiMode {
     Dark
 }
 
-private fun UiMode.flag() = when (this) {
-    UiMode.Light -> Configuration.UI_MODE_NIGHT_NO
-    UiMode.Dark -> Configuration.UI_MODE_NIGHT_YES
-}
+private fun UiMode.flag() =
+    when (this) {
+        UiMode.Light -> Configuration.UI_MODE_NIGHT_NO
+        UiMode.Dark -> Configuration.UI_MODE_NIGHT_YES
+    }

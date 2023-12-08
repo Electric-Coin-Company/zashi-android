@@ -1,4 +1,4 @@
-@file:Suppress("ktlint:filename")
+@file:Suppress("ktlint:standard:filename")
 
 package co.electriccoin.zcash.ui.screen.support
 
@@ -20,9 +20,7 @@ import co.electriccoin.zcash.ui.screen.support.viewmodel.SupportViewModel
 import kotlinx.coroutines.launch
 
 @Composable
-internal fun MainActivity.WrapSupport(
-    goBack: () -> Unit
-) {
+internal fun MainActivity.WrapSupport(goBack: () -> Unit) {
     WrapSupport(this, goBack)
 }
 
@@ -42,13 +40,14 @@ internal fun WrapSupport(
         onSend = { userMessage ->
             val fullMessage = formatMessage(userMessage, supportMessage)
 
-            val mailIntent = EmailUtil.newMailActivityIntent(
-                activity.getString(R.string.support_email_address),
-                activity.getString(R.string.app_name),
-                fullMessage
-            ).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            }
+            val mailIntent =
+                EmailUtil.newMailActivityIntent(
+                    activity.getString(R.string.support_email_address),
+                    activity.getString(R.string.app_name),
+                    fullMessage
+                ).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                }
 
             // TODO [#386]: This should only fail if there's no email app, e.g. on a TV device
             // TODO [#386]: https://github.com/Electric-Coin-Company/zashi-android/issues/386

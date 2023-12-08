@@ -120,8 +120,9 @@ class RestoreViewAndroidTest : UiTestPrerequisites() {
             it.performTextInput("test")
         }
 
-        val imm = getAppContext().getSystemService(Context.INPUT_METHOD_SERVICE)
-            as InputMethodManager
+        val imm =
+            getAppContext().getSystemService(Context.INPUT_METHOD_SERVICE)
+                as InputMethodManager
 
         // Test that the input seed text field is still expecting an input, as the inserted seed words are not complete
         composeTestRule.waitUntil(5.seconds.inWholeMilliseconds) {
@@ -155,11 +156,15 @@ class RestoreViewAndroidTest : UiTestPrerequisites() {
     ) = RestoreViewTest.TestSetup(composeTestRule, initialStage, initialWordsList)
 }
 
-private fun copyToClipboard(context: Context, text: String) {
+private fun copyToClipboard(
+    context: Context,
+    text: String
+) {
     val clipboardManager = context.getSystemService(ClipboardManager::class.java)
-    val data = ClipData.newPlainText(
-        context.getString(R.string.new_wallet_recovery_seed_clipboard_tag),
-        text
-    )
+    val data =
+        ClipData.newPlainText(
+            context.getString(R.string.new_wallet_recovery_seed_clipboard_tag),
+            text
+        )
     clipboardManager.setPrimaryClip(data)
 }

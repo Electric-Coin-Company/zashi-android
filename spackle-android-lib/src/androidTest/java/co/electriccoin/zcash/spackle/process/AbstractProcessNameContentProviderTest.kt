@@ -13,16 +13,19 @@ class AbstractProcessNameContentProviderTest {
     @SmallTest
     fun getProcessName_from_provider_info() {
         val expectedApplicationProcessName = "beep" // $NON-NLS
-        val ctx: ContextWrapper = object : ContextWrapper(ApplicationProvider.getApplicationContext()) {
-            override fun getApplicationInfo() = ApplicationInfo().apply {
-                processName = expectedApplicationProcessName
+        val ctx: ContextWrapper =
+            object : ContextWrapper(ApplicationProvider.getApplicationContext()) {
+                override fun getApplicationInfo() =
+                    ApplicationInfo().apply {
+                        processName = expectedApplicationProcessName
+                    }
             }
-        }
 
-        val actualProcessName = AbstractProcessNameContentProvider.getProcessNameLegacy(
-            ctx,
-            ProviderInfo()
-        )
+        val actualProcessName =
+            AbstractProcessNameContentProvider.getProcessNameLegacy(
+                ctx,
+                ProviderInfo()
+            )
 
         assertEquals(expectedApplicationProcessName, actualProcessName)
     }

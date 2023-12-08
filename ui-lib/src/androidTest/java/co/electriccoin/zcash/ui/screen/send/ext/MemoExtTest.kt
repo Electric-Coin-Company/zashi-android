@@ -8,7 +8,6 @@ import org.junit.Test
 import kotlin.test.assertEquals
 
 class MemoExtTest {
-
     @Test
     @SmallTest
     fun value_or_empty_char_test_empty_input() {

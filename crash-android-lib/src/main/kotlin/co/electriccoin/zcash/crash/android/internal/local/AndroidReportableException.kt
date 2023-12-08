@@ -13,8 +13,9 @@ internal fun ReportableException.Companion.new(
     isUncaught: Boolean,
     clock: Clock = Clock.System
 ): ReportableException {
-    val versionName = context.packageManager.getPackageInfoCompat(context.packageName, 0L).versionName
-        ?: "null"
+    val versionName =
+        context.packageManager.getPackageInfoCompat(context.packageName, 0L).versionName
+            ?: "null"
 
     return ReportableException(
         throwable.javaClass.name,
@@ -25,15 +26,16 @@ internal fun ReportableException.Companion.new(
     )
 }
 
-internal fun ReportableException.toBundle() = Bundle().apply {
-    // Although Exception is Serializable, some Kotlin Coroutines exception classes break this
-    // API contract.  Therefore we have to convert to a string here.
-    putSerializable(ReportableException.EXTRA_STRING_CLASS_NAME, exceptionClass)
-    putSerializable(ReportableException.EXTRA_STRING_TRACE, exceptionTrace)
-    putString(ReportableException.EXTRA_STRING_APP_VERSION, appVersion)
-    putBoolean(ReportableException.EXTRA_BOOLEAN_IS_UNCAUGHT, isUncaught)
-    putLong(ReportableException.EXTRA_LONG_WALLTIME_MILLIS, time.toEpochMilliseconds())
-}
+internal fun ReportableException.toBundle() =
+    Bundle().apply {
+        // Although Exception is Serializable, some Kotlin Coroutines exception classes break this
+        // API contract.  Therefore we have to convert to a string here.
+        putSerializable(ReportableException.EXTRA_STRING_CLASS_NAME, exceptionClass)
+        putSerializable(ReportableException.EXTRA_STRING_TRACE, exceptionTrace)
+        putString(ReportableException.EXTRA_STRING_APP_VERSION, appVersion)
+        putBoolean(ReportableException.EXTRA_BOOLEAN_IS_UNCAUGHT, isUncaught)
+        putLong(ReportableException.EXTRA_LONG_WALLTIME_MILLIS, time.toEpochMilliseconds())
+    }
 
 internal fun ReportableException.Companion.fromBundle(bundle: Bundle): ReportableException {
     val className = bundle.getString(EXTRA_STRING_CLASS_NAME)!!

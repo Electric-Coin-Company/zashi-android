@@ -7,21 +7,27 @@ import android.content.pm.PackageManager
 import co.electriccoin.zcash.spackle.getPackageInfoCompatSuspend
 
 data class PermissionInfo(val permissionName: String, val permissionStatus: PermissionStatus) {
-    fun toSupportString() = buildString {
-        appendLine("$permissionName $permissionStatus")
-    }
+    fun toSupportString() =
+        buildString {
+            appendLine("$permissionName $permissionStatus")
+        }
 
     companion object {
         private val permissionsOfInterest = listOf(Manifest.permission.CAMERA)
 
         suspend fun all(context: Context): List<PermissionInfo> {
-            val myPackageInfo: PackageInfo = context.packageManager
-                .getPackageInfoCompatSuspend(context.packageName, PackageManager.GET_PERMISSIONS.toLong())
+            val myPackageInfo: PackageInfo =
+                context.packageManager
+                    .getPackageInfoCompatSuspend(context.packageName, PackageManager.GET_PERMISSIONS.toLong())
 
             return permissionsOfInterest.map { new(context, myPackageInfo, it) }
         }
 
-        private fun new(context: Context, packageInfo: PackageInfo, permissionName: String): PermissionInfo {
+        private fun new(
+            context: Context,
+            packageInfo: PackageInfo,
+            permissionName: String
+        ): PermissionInfo {
             return if (isPermissionGrantedByUser(context, permissionName)) {
                 PermissionInfo(permissionName, PermissionStatus.Granted)
             } else if (isPermissionGrantedByManifest(packageInfo, permissionName)) {
@@ -31,26 +37,33 @@ data class PermissionInfo(val permissionName: String, val permissionStatus: Perm
             }
         }
 
-        private fun isPermissionGrantedByUser(context: Context, permissionName: String): Boolean {
+        private fun isPermissionGrantedByUser(
+            context: Context,
+            permissionName: String
+        ): Boolean {
             // Note: this is only checking very basic permissions
             // Some permissions, such as REQUEST_IGNORE_BATTERY_OPTIMIZATIONS, require different checks
             return PackageManager.PERMISSION_GRANTED == context.checkSelfPermission(permissionName)
         }
 
-        private fun isPermissionGrantedByManifest(packageInfo: PackageInfo, permissionName: String): Boolean {
+        private fun isPermissionGrantedByManifest(
+            packageInfo: PackageInfo,
+            permissionName: String
+        ): Boolean {
             return packageInfo.requestedPermissions?.any { permissionName == it } ?: false
         }
     }
 }
 
-fun List<PermissionInfo>.toPermissionSupportString() = buildString {
-    if (this@toPermissionSupportString.isNotEmpty()) {
-        appendLine("Permissions:")
-        this@toPermissionSupportString.forEach {
-            appendLine(it.toSupportString())
+fun List<PermissionInfo>.toPermissionSupportString() =
+    buildString {
+        if (this@toPermissionSupportString.isNotEmpty()) {
+            appendLine("Permissions:")
+            this@toPermissionSupportString.forEach {
+                appendLine(it.toSupportString())
+            }
         }
     }
-}
 
 enum class PermissionStatus {
     NotGrantedByManifest,

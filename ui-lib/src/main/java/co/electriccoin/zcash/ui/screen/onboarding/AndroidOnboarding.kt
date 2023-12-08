@@ -1,4 +1,4 @@
-@file:Suppress("ktlint:filename")
+@file:Suppress("ktlint:standard:filename")
 
 package co.electriccoin.zcash.ui.screen.onboarding
 
@@ -32,9 +32,7 @@ internal fun MainActivity.WrapOnboarding() {
 
 @Suppress("LongMethod")
 @Composable
-internal fun WrapOnboarding(
-    activity: ComponentActivity
-) {
+internal fun WrapOnboarding(activity: ComponentActivity) {
     val walletViewModel by activity.viewModels<WalletViewModel>()
     val onboardingViewModel by activity.viewModels<OnboardingViewModel>()
 
@@ -110,12 +108,13 @@ internal fun persistExistingWalletWithSeedPhrase(
     walletViewModel.persistOnboardingState(OnboardingState.READY)
 
     val network = ZcashNetwork.fromResources(context)
-    val restoredWallet = PersistableWallet(
-        network = network,
-        birthday = birthday,
-        endpoint = LightWalletEndpoint.defaultForNetwork(network),
-        seedPhrase = seedPhrase,
-        walletInitMode = WalletInitMode.RestoreWallet
-    )
+    val restoredWallet =
+        PersistableWallet(
+            network = network,
+            birthday = birthday,
+            endpoint = LightWalletEndpoint.defaultForNetwork(network),
+            seedPhrase = seedPhrase,
+            walletInitMode = WalletInitMode.RestoreWallet
+        )
     walletViewModel.persistExistingWallet(restoredWallet)
 }

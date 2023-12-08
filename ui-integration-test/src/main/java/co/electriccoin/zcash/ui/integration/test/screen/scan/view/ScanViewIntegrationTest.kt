@@ -17,7 +17,6 @@ import org.junit.Rule
 import org.junit.Test
 
 class ScanViewIntegrationTest : UiTestPrerequisites() {
-
     @get:Rule
     val composeTestRule = createAndroidComposeRule<IntegrationTestingActivity>()
 

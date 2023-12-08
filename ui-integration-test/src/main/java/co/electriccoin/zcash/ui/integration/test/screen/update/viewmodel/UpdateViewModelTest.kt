@@ -36,18 +36,20 @@ class UpdateViewModelTest : UiTestPrerequisites() {
     fun setup() {
         checker = AppUpdateCheckerMock.new()
 
-        initialUpdateInfo = UpdateInfoFixture.new(
-            appUpdateInfo = null,
-            state = UpdateState.Prepared,
-            priority = AppUpdateChecker.Priority.LOW,
-            force = false
-        )
+        initialUpdateInfo =
+            UpdateInfoFixture.new(
+                appUpdateInfo = null,
+                state = UpdateState.Prepared,
+                priority = AppUpdateChecker.Priority.LOW,
+                force = false
+            )
 
-        viewModel = UpdateViewModel(
-            composeTestRule.activity.application,
-            initialUpdateInfo,
-            checker
-        )
+        viewModel =
+            UpdateViewModel(
+                composeTestRule.activity.application,
+                initialUpdateInfo,
+                checker
+            )
     }
 
     @After
@@ -57,51 +59,52 @@ class UpdateViewModelTest : UiTestPrerequisites() {
 
     @Test
     @MediumTest
-    fun validate_result_of_update_methods_calls() = runTest {
-        viewModel.checkForAppUpdate()
+    fun validate_result_of_update_methods_calls() =
+        runTest {
+            viewModel.checkForAppUpdate()
 
-        // Although this test does not copy the real world situation, as the initial and result objects
-        // should be mostly the same, we test VM proper functionality. VM emits the initial object
-        // defined in this class, then we expect the result object from the AppUpdateCheckerMock class
-        // and a newly acquired AppUpdateInfo object.
-        viewModel.updateInfo.take(4).collectIndexed { index, incomingInfo ->
-            when (index) {
-                0 -> {
-                    // checkForAppUpdate initial callback
-                    incomingInfo.also {
-                        assertNull(it.appUpdateInfo)
+            // Although this test does not copy the real world situation, as the initial and result objects
+            // should be mostly the same, we test VM proper functionality. VM emits the initial object
+            // defined in this class, then we expect the result object from the AppUpdateCheckerMock class
+            // and a newly acquired AppUpdateInfo object.
+            viewModel.updateInfo.take(4).collectIndexed { index, incomingInfo ->
+                when (index) {
+                    0 -> {
+                        // checkForAppUpdate initial callback
+                        incomingInfo.also {
+                            assertNull(it.appUpdateInfo)
 
-                        assertEquals(initialUpdateInfo.state, it.state)
-                        assertEquals(initialUpdateInfo.appUpdateInfo, it.appUpdateInfo)
-                        assertEquals(initialUpdateInfo.priority, it.priority)
-                        assertEquals(initialUpdateInfo.state, it.state)
-                        assertEquals(initialUpdateInfo.isForce, it.isForce)
+                            assertEquals(initialUpdateInfo.state, it.state)
+                            assertEquals(initialUpdateInfo.appUpdateInfo, it.appUpdateInfo)
+                            assertEquals(initialUpdateInfo.priority, it.priority)
+                            assertEquals(initialUpdateInfo.state, it.state)
+                            assertEquals(initialUpdateInfo.isForce, it.isForce)
+                        }
                     }
-                }
-                1 -> {
-                    // checkForAppUpdate result callback
-                    incomingInfo.also {
-                        assertNotNull(it.appUpdateInfo)
+                    1 -> {
+                        // checkForAppUpdate result callback
+                        incomingInfo.also {
+                            assertNotNull(it.appUpdateInfo)
 
-                        assertEquals(AppUpdateCheckerMock.resultUpdateInfo.state, it.state)
-                        assertEquals(AppUpdateCheckerMock.resultUpdateInfo.priority, it.priority)
-                        assertEquals(AppUpdateCheckerMock.resultUpdateInfo.isForce, it.isForce)
+                            assertEquals(AppUpdateCheckerMock.resultUpdateInfo.state, it.state)
+                            assertEquals(AppUpdateCheckerMock.resultUpdateInfo.priority, it.priority)
+                            assertEquals(AppUpdateCheckerMock.resultUpdateInfo.isForce, it.isForce)
+                        }
+
+                        // now we can start the update
+                        viewModel.goForUpdate(composeTestRule.activity, incomingInfo.appUpdateInfo!!)
                     }
-
-                    // now we can start the update
-                    viewModel.goForUpdate(composeTestRule.activity, incomingInfo.appUpdateInfo!!)
-                }
-                2 -> {
-                    // goForUpdate initial callback
-                    assertNotNull(incomingInfo.appUpdateInfo)
-                    assertEquals(UpdateState.Running, incomingInfo.state)
-                }
-                3 -> {
-                    // goForUpdate result callback
-                    assertNotNull(incomingInfo.appUpdateInfo)
-                    assertEquals(UpdateState.Done, incomingInfo.state)
+                    2 -> {
+                        // goForUpdate initial callback
+                        assertNotNull(incomingInfo.appUpdateInfo)
+                        assertEquals(UpdateState.Running, incomingInfo.state)
+                    }
+                    3 -> {
+                        // goForUpdate result callback
+                        assertNotNull(incomingInfo.appUpdateInfo)
+                        assertEquals(UpdateState.Done, incomingInfo.state)
+                    }
                 }
             }
         }
-    }
 }

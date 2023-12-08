@@ -41,19 +41,20 @@ fun CheckBox(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
     ) {
-        val checkBoxModifier = Modifier
-            .padding(
-                top = ZcashTheme.dimens.spacingTiny,
-                bottom = ZcashTheme.dimens.spacingTiny,
-                end = ZcashTheme.dimens.spacingTiny
-            )
-            .then(
-                if (checkBoxTestTag != null) {
-                    Modifier.testTag(checkBoxTestTag)
-                } else {
-                    Modifier
-                }
-            )
+        val checkBoxModifier =
+            Modifier
+                .padding(
+                    top = ZcashTheme.dimens.spacingTiny,
+                    bottom = ZcashTheme.dimens.spacingTiny,
+                    end = ZcashTheme.dimens.spacingTiny
+                )
+                .then(
+                    if (checkBoxTestTag != null) {
+                        Modifier.testTag(checkBoxTestTag)
+                    } else {
+                        Modifier
+                    }
+                )
         val (checkedState, setCheckedState) = rememberSaveable { mutableStateOf(checked) }
         Checkbox(
             checked = checkedState,

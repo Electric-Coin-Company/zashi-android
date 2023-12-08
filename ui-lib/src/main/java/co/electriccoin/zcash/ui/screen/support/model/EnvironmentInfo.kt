@@ -10,13 +10,13 @@ data class EnvironmentInfo(
     val monetarySeparators: MonetarySeparators,
     val usableStorageMegabytes: Int
 ) {
-
-    fun toSupportString() = buildString {
-        appendLine("Locale: ${locale.androidResName()}")
-        appendLine("Currency grouping separator: ${monetarySeparators.grouping}")
-        appendLine("Currency decimal separator: ${monetarySeparators.decimal}")
-        appendLine("Usable storage: $usableStorageMegabytes MB")
-    }
+    fun toSupportString() =
+        buildString {
+            appendLine("Locale: ${locale.androidResName()}")
+            appendLine("Currency grouping separator: ${monetarySeparators.grouping}")
+            appendLine("Currency decimal separator: ${monetarySeparators.decimal}")
+            appendLine("Usable storage: $usableStorageMegabytes MB")
+        }
 
     companion object {
         suspend fun new(context: Context): EnvironmentInfo {

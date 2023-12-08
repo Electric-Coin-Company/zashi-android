@@ -8,37 +8,45 @@ import java.io.File
 import java.io.IOException
 import java.util.UUID
 
-suspend fun File.existsSuspend() = withContext(Dispatchers.IO) {
-    exists()
-}
+suspend fun File.existsSuspend() =
+    withContext(Dispatchers.IO) {
+        exists()
+    }
 
-suspend fun File.mkdirsSuspend() = withContext(Dispatchers.IO) {
-    mkdirs()
-}
+suspend fun File.mkdirsSuspend() =
+    withContext(Dispatchers.IO) {
+        mkdirs()
+    }
 
-suspend fun File.isDirectorySuspend() = withContext(Dispatchers.IO) {
-    isDirectory
-}
+suspend fun File.isDirectorySuspend() =
+    withContext(Dispatchers.IO) {
+        isDirectory
+    }
 
-suspend fun File.isFileSuspend() = withContext(Dispatchers.IO) {
-    isFile
-}
+suspend fun File.isFileSuspend() =
+    withContext(Dispatchers.IO) {
+        isFile
+    }
 
-suspend fun File.canWriteSuspend() = withContext(Dispatchers.IO) {
-    canWrite()
-}
+suspend fun File.canWriteSuspend() =
+    withContext(Dispatchers.IO) {
+        canWrite()
+    }
 
-suspend fun File.deleteSuspend() = withContext(Dispatchers.IO) {
-    delete()
-}
+suspend fun File.deleteSuspend() =
+    withContext(Dispatchers.IO) {
+        delete()
+    }
 
-suspend fun File.renameToSuspend(destination: File) = withContext(Dispatchers.IO) {
-    renameTo(destination)
-}
+suspend fun File.renameToSuspend(destination: File) =
+    withContext(Dispatchers.IO) {
+        renameTo(destination)
+    }
 
-suspend fun File.listFilesSuspend() = withContext(Dispatchers.IO) {
-    listFiles()
-}
+suspend fun File.listFilesSuspend() =
+    withContext(Dispatchers.IO) {
+        listFiles()
+    }
 
 /**
  * Given an ultimate output file destination, this generates a temporary file that [action] can write to.  After action
@@ -50,18 +58,21 @@ suspend fun File.listFilesSuspend() = withContext(Dispatchers.IO) {
  * delete, rename, or do other operations in the filesystem.
  */
 suspend fun File.writeAtomically(action: (suspend (File) -> Unit)) {
-    val tempFile = withContext(Dispatchers.IO) {
-        File(parentFile, name.newTempFileName()).also {
-            it.deleteOnExit()
+    val tempFile =
+        withContext(Dispatchers.IO) {
+            File(parentFile, name.newTempFileName()).also {
+                it.deleteOnExit()
+            }
         }
-    }
 
     var isWriteSuccessful = false
 
     try {
         action(tempFile)
         isWriteSuccessful = true
-    } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
+    } catch (
+        @Suppress("TooGenericExceptionCaught") e: Exception
+    ) {
         tempFile.deleteSuspend()
         throw e
     } finally {

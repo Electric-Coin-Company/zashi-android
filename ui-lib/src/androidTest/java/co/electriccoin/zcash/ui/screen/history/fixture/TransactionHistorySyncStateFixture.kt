@@ -7,11 +7,12 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 internal object TransactionHistorySyncStateFixture {
-    val TRANSACTIONS = persistentListOf(
-        TransactionOverviewFixture.new(),
-        TransactionOverviewFixture.new(),
-        TransactionOverviewFixture.new()
-    )
+    val TRANSACTIONS =
+        persistentListOf(
+            TransactionOverviewFixture.new(),
+            TransactionOverviewFixture.new(),
+            TransactionOverviewFixture.new()
+        )
     val STATE = TransactionHistorySyncState.Syncing(TRANSACTIONS)
 
     fun new(

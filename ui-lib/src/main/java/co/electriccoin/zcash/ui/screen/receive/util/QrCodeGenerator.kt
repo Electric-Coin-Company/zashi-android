@@ -6,5 +6,8 @@ interface QrCodeGenerator {
      * @param sizePixels Size in pixels of the QR code.
      * @return A QR code pixel matrix, represented as an array of booleans where false is white and true is black.
      */
-    fun generate(data: String, sizePixels: Int): BooleanArray
+    fun generate(
+        data: String,
+        sizePixels: Int
+    ): BooleanArray
 }

@@ -87,10 +87,11 @@ fun SeedRecovery(
             onBirthdayCopy = onBirthdayCopy,
             // Horizontal paddings will be part of each UI element to minimize a possible truncation on very
             // small screens
-            modifier = Modifier.padding(
-                top = paddingValues.calculateTopPadding(),
-                bottom = paddingValues.calculateBottomPadding()
-            )
+            modifier =
+                Modifier.padding(
+                    top = paddingValues.calculateTopPadding(),
+                    bottom = paddingValues.calculateBottomPadding()
+                )
         )
     }
 }
@@ -123,9 +124,10 @@ private fun SeedRecoveryCopyToBufferMenuItem(
         text = stringResource(id = R.string.seed_recovery_copy),
         onClick = onCopyToClipboard,
         textAlign = TextAlign.Center,
-        modifier = modifier.then(
-            Modifier.padding(all = ZcashTheme.dimens.spacingDefault)
-        )
+        modifier =
+            modifier.then(
+                Modifier.padding(all = ZcashTheme.dimens.spacingDefault)
+            )
     )
 }
 
@@ -167,9 +169,10 @@ private fun SeedRecoveryMainContent(
         )
 
         Spacer(
-            modifier = Modifier
-                .fillMaxHeight()
-                .weight(MINIMAL_WEIGHT)
+            modifier =
+                Modifier
+                    .fillMaxHeight()
+                    .weight(MINIMAL_WEIGHT)
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
@@ -177,12 +180,13 @@ private fun SeedRecoveryMainContent(
         PrimaryButton(
             onClick = onDone,
             text = stringResource(R.string.seed_recovery_button_finished),
-            modifier = Modifier
-                .padding(
-                    bottom = ZcashTheme.dimens.spacingHuge,
-                    start = ZcashTheme.dimens.screenHorizontalSpacing,
-                    end = ZcashTheme.dimens.screenHorizontalSpacing
-                )
+            modifier =
+                Modifier
+                    .padding(
+                        bottom = ZcashTheme.dimens.spacingHuge,
+                        start = ZcashTheme.dimens.screenHorizontalSpacing,
+                        end = ZcashTheme.dimens.screenHorizontalSpacing
+                    )
         )
     }
 }
@@ -215,16 +219,18 @@ private fun SeedRecoverySeedPhrase(
             ) {
                 BodySmall(
                     text = stringResource(R.string.seed_recovery_birthday_height, it.value),
-                    modifier = Modifier
-                        .testTag(WALLET_BIRTHDAY)
-                        .padding(horizontal = ZcashTheme.dimens.spacingDefault)
-                        .basicMarquee()
-                        // Apply click callback to the text only as the wrapping layout can be much wider
-                        .clickable(
-                            interactionSource = interactionSource,
-                            indication = null, // Disable ripple
-                            onClick = onBirthdayCopy
-                        )
+                    modifier =
+                        Modifier
+                            .testTag(WALLET_BIRTHDAY)
+                            .padding(horizontal = ZcashTheme.dimens.spacingDefault)
+                            .basicMarquee()
+                            // Apply click callback to the text only as the wrapping layout can be much wider
+                            .clickable(
+                                interactionSource = interactionSource,
+                                // Disable ripple
+                                indication = null,
+                                onClick = onBirthdayCopy
+                            )
                 )
             }
         }

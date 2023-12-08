@@ -21,19 +21,19 @@ import org.junit.Rule
 import org.junit.Test
 
 class UpdateViewTest : UiTestPrerequisites() {
-
     @get:Rule
     val composeTestRule = createComposeRule()
 
     @Test
     @MediumTest
     fun texts_force_update_test() {
-        val updateInfo = UpdateInfoFixture.new(
-            priority = AppUpdateChecker.Priority.HIGH,
-            force = true,
-            appUpdateInfo = null,
-            state = UpdateState.Prepared
-        )
+        val updateInfo =
+            UpdateInfoFixture.new(
+                priority = AppUpdateChecker.Priority.HIGH,
+                force = true,
+                appUpdateInfo = null,
+                state = UpdateState.Prepared
+            )
 
         newTestSetup(updateInfo)
 
@@ -53,12 +53,13 @@ class UpdateViewTest : UiTestPrerequisites() {
     @Test
     @MediumTest
     fun later_btn_not_force_update_test() {
-        val updateInfo = UpdateInfoFixture.new(
-            priority = AppUpdateChecker.Priority.LOW,
-            force = false,
-            appUpdateInfo = null,
-            state = UpdateState.Prepared
-        )
+        val updateInfo =
+            UpdateInfoFixture.new(
+                priority = AppUpdateChecker.Priority.LOW,
+                force = false,
+                appUpdateInfo = null,
+                state = UpdateState.Prepared
+            )
         val testSetup = newTestSetup(updateInfo)
 
         assertEquals(0, testSetup.getOnLaterCount())
@@ -71,12 +72,13 @@ class UpdateViewTest : UiTestPrerequisites() {
     @Test
     @MediumTest
     fun texts_not_force_update_test() {
-        val updateInfo = UpdateInfoFixture.new(
-            priority = AppUpdateChecker.Priority.MEDIUM,
-            force = false,
-            appUpdateInfo = null,
-            state = UpdateState.Prepared
-        )
+        val updateInfo =
+            UpdateInfoFixture.new(
+                priority = AppUpdateChecker.Priority.MEDIUM,
+                force = false,
+                appUpdateInfo = null,
+                state = UpdateState.Prepared
+            )
 
         newTestSetup(updateInfo)
 
@@ -94,12 +96,13 @@ class UpdateViewTest : UiTestPrerequisites() {
     @Test
     @MediumTest
     fun later_btn_force_update_test() {
-        val updateInfo = UpdateInfoFixture.new(
-            priority = AppUpdateChecker.Priority.HIGH,
-            force = true,
-            appUpdateInfo = null,
-            state = UpdateState.Prepared
-        )
+        val updateInfo =
+            UpdateInfoFixture.new(
+                priority = AppUpdateChecker.Priority.HIGH,
+                force = true,
+                appUpdateInfo = null,
+                state = UpdateState.Prepared
+            )
         val testSetup = newTestSetup(updateInfo)
 
         assertEquals(0, testSetup.getOnLaterCount())
@@ -145,12 +148,13 @@ class UpdateViewTest : UiTestPrerequisites() {
         assertEquals(1, testSetup.getOnReferenceCount())
     }
 
-    private fun newTestSetup(updateInfo: UpdateInfo) = UpdateViewTestSetup(
-        composeTestRule,
-        updateInfo
-    ).apply {
-        setDefaultContent()
-    }
+    private fun newTestSetup(updateInfo: UpdateInfo) =
+        UpdateViewTestSetup(
+            composeTestRule,
+            updateInfo
+        ).apply {
+            setDefaultContent()
+        }
 }
 
 private fun ComposeContentTestRule.clickLater() {

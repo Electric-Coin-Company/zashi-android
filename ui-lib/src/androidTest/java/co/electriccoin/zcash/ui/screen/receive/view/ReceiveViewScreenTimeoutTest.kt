@@ -16,25 +16,27 @@ class ReceiveViewScreenTimeoutTest : UiTestPrerequisites() {
 
     @Test
     @MediumTest
-    fun testTimeoutDefaultState() = runTest {
-        val testSetup = newTestSetup(WalletAddressFixture.unified())
+    fun testTimeoutDefaultState() =
+        runTest {
+            val testSetup = newTestSetup(WalletAddressFixture.unified())
 
-        assertEquals(0, testSetup.getScreenTimeoutCount())
-    }
+            assertEquals(0, testSetup.getScreenTimeoutCount())
+        }
 
     @Test
     @MediumTest
-    fun testTimeoutOnState() = runTest {
-        val testSetup = newTestSetup(WalletAddressFixture.unified())
+    fun testTimeoutOnState() =
+        runTest {
+            val testSetup = newTestSetup(WalletAddressFixture.unified())
 
-        assertEquals(false, testSetup.getOnAdjustBrightness())
-        assertEquals(0, testSetup.getScreenTimeoutCount())
+            assertEquals(false, testSetup.getOnAdjustBrightness())
+            assertEquals(0, testSetup.getScreenTimeoutCount())
 
-        composeTestRule.clickAdjustBrightness()
+            composeTestRule.clickAdjustBrightness()
 
-        assertEquals(true, testSetup.getOnAdjustBrightness())
-        assertEquals(1, testSetup.getScreenTimeoutCount())
-    }
+            assertEquals(true, testSetup.getOnAdjustBrightness())
+            assertEquals(1, testSetup.getScreenTimeoutCount())
+        }
 
     private fun newTestSetup(walletAddress: WalletAddress) = ReceiveViewTestSetup(composeTestRule, walletAddress)
 }

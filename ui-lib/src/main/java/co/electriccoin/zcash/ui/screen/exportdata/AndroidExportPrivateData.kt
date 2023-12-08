@@ -77,27 +77,30 @@ fun shareData(
     context: Context,
     synchronizer: Synchronizer,
     snackbarHostState: SnackbarHostState,
-): Flow<Boolean> = callbackFlow {
-    val shareIntent = FileShareUtil.newShareContentIntent(
-        context = context,
-        // Example of the expected db file absolute path:
-        // /data/user/0/co.electriccoin.zcash.debug/no_backup/co.electricoin.zcash/zcash_sdk_mainnet_data.sqlite3
-        dataFilePath = (synchronizer as SdkSynchronizer).getExistingDataDbFilePath(
-            context = context,
-            network = ZcashNetwork.fromResources(context)
-        ),
-        versionInfo = VersionInfo.new(context.applicationContext)
-    )
-    runCatching {
-        context.startActivity(shareIntent)
-        trySend(true)
-    }.onFailure {
-        snackbarHostState.showSnackbar(
-            message = context.getString(R.string.export_data_unable_to_share)
-        )
-        trySend(false)
+): Flow<Boolean> =
+    callbackFlow {
+        val shareIntent =
+            FileShareUtil.newShareContentIntent(
+                context = context,
+                // Example of the expected db file absolute path:
+                // /data/user/0/co.electriccoin.zcash/no_backup/co.electricoin.zcash/zcash_sdk_mainnet_data.sqlite3
+                dataFilePath =
+                    (synchronizer as SdkSynchronizer).getExistingDataDbFilePath(
+                        context = context,
+                        network = ZcashNetwork.fromResources(context)
+                    ),
+                versionInfo = VersionInfo.new(context.applicationContext)
+            )
+        runCatching {
+            context.startActivity(shareIntent)
+            trySend(true)
+        }.onFailure {
+            snackbarHostState.showSnackbar(
+                message = context.getString(R.string.export_data_unable_to_share)
+            )
+            trySend(false)
+        }
+        awaitClose {
+            // No resources to release
+        }
     }
-    awaitClose {
-        // No resources to release
-    }
-}

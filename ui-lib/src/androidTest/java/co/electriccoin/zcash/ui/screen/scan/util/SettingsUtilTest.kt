@@ -10,10 +10,10 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
 class SettingsUtilTest {
-
     companion object {
-        val SETTINGS_URI = SettingsUtil.SETTINGS_URI_PREFIX +
-            getAppContext().packageName
+        val SETTINGS_URI =
+            SettingsUtil.SETTINGS_URI_PREFIX +
+                getAppContext().packageName
     }
 
     @Test

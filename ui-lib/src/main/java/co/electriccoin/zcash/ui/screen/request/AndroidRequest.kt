@@ -1,4 +1,4 @@
-@file:Suppress("ktlint:filename")
+@file:Suppress("ktlint:standard:filename")
 
 package co.electriccoin.zcash.ui.screen.request
 
@@ -16,9 +16,7 @@ import co.electriccoin.zcash.ui.screen.request.view.Request
 import kotlinx.coroutines.runBlocking
 
 @Composable
-internal fun MainActivity.WrapRequest(
-    goBack: () -> Unit
-) {
+internal fun MainActivity.WrapRequest(goBack: () -> Unit) {
     WrapRequest(this, goBack)
 }
 
@@ -37,10 +35,11 @@ private fun WrapRequest(
             walletAddresses.unified,
             goBack = goBack,
             onCreateAndSend = {
-                val chooserIntent = Intent.createChooser(
-                    it.newShareIntent(activity.applicationContext),
-                    null
-                )
+                val chooserIntent =
+                    Intent.createChooser(
+                        it.newShareIntent(activity.applicationContext),
+                        null
+                    )
 
                 activity.startActivity(chooserIntent)
 
@@ -50,10 +49,11 @@ private fun WrapRequest(
     }
 }
 
-private fun ZecRequest.newShareIntent(context: Context) = runBlocking {
-    Intent().apply {
-        action = Intent.ACTION_SEND
-        putExtra(Intent.EXTRA_TEXT, context.getString(R.string.request_template_format, toUri()))
-        type = "text/plain"
+private fun ZecRequest.newShareIntent(context: Context) =
+    runBlocking {
+        Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, context.getString(R.string.request_template_format, toUri()))
+            type = "text/plain"
+        }
     }
-}

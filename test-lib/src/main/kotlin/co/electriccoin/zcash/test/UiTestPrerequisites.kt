@@ -10,8 +10,9 @@ import org.junit.Before
  * Subclass this in view unit and integration tests.  This verifies that
  * prerequisites necessary for reliable UI tests are met, and it provides more useful error messages.
  */
-// Originally hoped to put this into ZcashUiTestRunner, although it causes reporting of test results to fail
 open class UiTestPrerequisites {
+    // Originally hoped to put this into ZcashUiTestRunner, although it causes reporting of test results to fail
+
     @Before
     fun verifyPrerequisites() {
         assertScreenIsOn()
@@ -26,8 +27,9 @@ open class UiTestPrerequisites {
         }
 
         private fun isScreenOn(): Boolean {
-            val powerService = ApplicationProvider.getApplicationContext<Context>()
-                .getSystemService(Context.POWER_SERVICE) as PowerManager
+            val powerService =
+                ApplicationProvider.getApplicationContext<Context>()
+                    .getSystemService(Context.POWER_SERVICE) as PowerManager
             return powerService.isInteractive
         }
 
@@ -41,7 +43,7 @@ open class UiTestPrerequisites {
             val keyguardService = (
                 ApplicationProvider.getApplicationContext<Context>()
                     .getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
-                )
+            )
 
             return keyguardService.isKeyguardLocked
         }

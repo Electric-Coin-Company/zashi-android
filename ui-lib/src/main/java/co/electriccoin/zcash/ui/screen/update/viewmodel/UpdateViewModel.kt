@@ -21,7 +21,6 @@ class UpdateViewModel(
     updateInfo: UpdateInfo,
     private val appUpdateChecker: AppUpdateChecker
 ) : AndroidViewModel(application) {
-
     val updateInfo: MutableStateFlow<UpdateInfo> = MutableStateFlow(updateInfo)
 
     fun checkForAppUpdate() {
@@ -49,12 +48,13 @@ class UpdateViewModel(
                 activity,
                 appUpdateInfo
             ).onFirst { resultCode ->
-                val state = when (resultCode) {
-                    Activity.RESULT_OK -> UpdateState.Done
-                    Activity.RESULT_CANCELED -> UpdateState.Canceled
-                    ActivityResult.RESULT_IN_APP_UPDATE_FAILED -> UpdateState.Failed
-                    else -> UpdateState.Prepared
-                }
+                val state =
+                    when (resultCode) {
+                        Activity.RESULT_OK -> UpdateState.Done
+                        Activity.RESULT_CANCELED -> UpdateState.Canceled
+                        ActivityResult.RESULT_IN_APP_UPDATE_FAILED -> UpdateState.Failed
+                        else -> UpdateState.Prepared
+                    }
                 updateInfo.value = updateInfo.value.copy(state = state)
             }
         }

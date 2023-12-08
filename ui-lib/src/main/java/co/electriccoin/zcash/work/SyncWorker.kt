@@ -44,17 +44,17 @@ class SyncWorker(context: Context, workerParameters: WorkerParameters) : Corouti
     }
 
     companion object {
-
         /*
          * There may be better periods; we have not optimized for this yet.
          */
         private val DEFAULT_SYNC_PERIOD = 24.hours
 
         fun newWorkRequest(): PeriodicWorkRequest {
-            val constraints = Constraints.Builder()
-                .setRequiresStorageNotLow(true)
-                .setRequiredNetworkType(NetworkType.CONNECTED)
-                .build()
+            val constraints =
+                Constraints.Builder()
+                    .setRequiresStorageNotLow(true)
+                    .setRequiredNetworkType(NetworkType.CONNECTED)
+                    .build()
 
             return PeriodicWorkRequestBuilder<SyncWorker>(DEFAULT_SYNC_PERIOD.toJavaDuration())
                 .setConstraints(constraints)

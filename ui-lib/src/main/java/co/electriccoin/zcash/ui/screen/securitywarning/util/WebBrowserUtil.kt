@@ -4,10 +4,10 @@ import android.content.Intent
 import android.net.Uri
 
 object WebBrowserUtil {
-
-    const val FLAGS = Intent.FLAG_ACTIVITY_NO_HISTORY or
-        Intent.FLAG_ACTIVITY_NEW_TASK or
-        Intent.FLAG_ACTIVITY_MULTIPLE_TASK
+    const val FLAGS =
+        Intent.FLAG_ACTIVITY_NO_HISTORY or
+            Intent.FLAG_ACTIVITY_NEW_TASK or
+            Intent.FLAG_ACTIVITY_MULTIPLE_TASK
 
     const val ZCASH_PRIVACY_POLICY_URI = "https://z.cash/privacy-policy/" // NON-NLS
 

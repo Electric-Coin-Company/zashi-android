@@ -20,33 +20,32 @@ import kotlin.math.roundToInt
  * @return Wrapper object of the calculated heights in density pixels.
  */
 @Composable
-fun screenHeight(
-    cacheKey: Any = true
-): ScreenHeight {
+fun screenHeight(cacheKey: Any = true): ScreenHeight {
     val density = LocalDensity.current
     val configuration = LocalConfiguration.current
     val statusBars = WindowInsets.statusBars
     val navigationBars = WindowInsets.navigationBars
 
-    val cachedResult = remember(cacheKey) {
-        val contentHeightPx = with(density) { configuration.screenHeightDp.dp.roundToPx() }
-        Twig.debug { "Screen content height in pixels: $contentHeightPx" }
+    val cachedResult =
+        remember(cacheKey) {
+            val contentHeightPx = with(density) { configuration.screenHeightDp.dp.roundToPx() }
+            Twig.debug { "Screen content height in pixels: $contentHeightPx" }
 
-        val statusBarHeight = statusBars.getTop(density).dp
-        Twig.debug { "Status bar height: $statusBarHeight" }
+            val statusBarHeight = statusBars.getTop(density).dp
+            Twig.debug { "Status bar height: $statusBarHeight" }
 
-        val navigationBarHeight = navigationBars.getBottom(density).dp
-        Twig.debug { "Navigation bar height: $navigationBarHeight" }
+            val navigationBarHeight = navigationBars.getBottom(density).dp
+            Twig.debug { "Navigation bar height: $navigationBarHeight" }
 
-        val contentHeight = (contentHeightPx / density.density.roundToInt()).dp
-        Twig.debug { "Screen content height in dps: $contentHeight" }
+            val contentHeight = (contentHeightPx / density.density.roundToInt()).dp
+            Twig.debug { "Screen content height in dps: $contentHeight" }
 
-        ScreenHeight(
-            contentHeight = contentHeight,
-            systemStatusBarHeight = statusBarHeight,
-            systemNavigationBarHeight = navigationBarHeight,
-        )
-    }
+            ScreenHeight(
+                contentHeight = contentHeight,
+                systemStatusBarHeight = statusBarHeight,
+                systemNavigationBarHeight = navigationBarHeight,
+            )
+        }
     Twig.debug { "Screen total height: $cachedResult" }
 
     return cachedResult
@@ -58,5 +57,6 @@ data class ScreenHeight(
     val systemNavigationBarHeight: Dp
 ) {
     fun overallScreenHeight() = contentHeight + systemBarsHeight()
+
     fun systemBarsHeight() = systemStatusBarHeight + systemNavigationBarHeight
 }

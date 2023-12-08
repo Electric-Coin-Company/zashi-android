@@ -9,7 +9,6 @@ import cash.z.ecc.android.sdk.model.ZcashNetwork
 import co.electriccoin.lightwallet.client.model.LightWalletEndpoint
 
 object PersistableWalletFixture {
-
     val NETWORK = ZcashNetwork.Mainnet
 
     val ENDPOINT = LightWalletEndpoint.Mainnet

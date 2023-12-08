@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.flow
 class MockPreferenceProvider(
     mutableMapFactory: () -> MutableMap<String, String?> = { mutableMapOf() }
 ) : PreferenceProvider {
-
     private val map = mutableMapFactory()
 
     override suspend fun getString(key: PreferenceKey) = map[key.key]
@@ -21,7 +20,10 @@ class MockPreferenceProvider(
 
     override suspend fun hasKey(key: PreferenceKey) = map.containsKey(key.key)
 
-    override suspend fun putString(key: PreferenceKey, value: String?) {
+    override suspend fun putString(
+        key: PreferenceKey,
+        value: String?
+    ) {
         map[key.key] = value
     }
 }

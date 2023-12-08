@@ -15,7 +15,6 @@ class CheckUpdateViewModel(
     application: Application,
     private val appUpdateChecker: AppUpdateChecker
 ) : AndroidViewModel(application) {
-
     val updateInfo: MutableStateFlow<UpdateInfo?> = MutableStateFlow(null)
 
     fun checkForAppUpdate() {

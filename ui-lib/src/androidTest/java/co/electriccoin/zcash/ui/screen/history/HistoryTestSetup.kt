@@ -10,7 +10,6 @@ class HistoryTestSetup(
     private val composeTestRule: ComposeContentTestRule,
     initialHistorySyncState: TransactionHistorySyncState
 ) {
-
     private val onBackCount = AtomicInteger(0)
 
     fun getOnBackCount(): Int {

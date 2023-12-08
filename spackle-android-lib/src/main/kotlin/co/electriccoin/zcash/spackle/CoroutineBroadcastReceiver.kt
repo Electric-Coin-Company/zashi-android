@@ -11,7 +11,10 @@ import kotlinx.coroutines.launch
  * It is not recommended to cancel this scope.
  */
 abstract class CoroutineBroadcastReceiver(private val broadcastReceiverScope: CoroutineScope) : BroadcastReceiver() {
-    final override fun onReceive(context: Context, intent: Intent) {
+    final override fun onReceive(
+        context: Context,
+        intent: Intent
+    ) {
         val pendingResult = goAsync()
 
         broadcastReceiverScope.launch {
@@ -29,5 +32,8 @@ abstract class CoroutineBroadcastReceiver(private val broadcastReceiverScope: Co
      * the Android timeout for broadcast receivers.  This method is suitable for brief disk IO but
      * not suitable for network calls.
      */
-    abstract suspend fun onReceiveSuspend(context: Context, intent: Intent)
+    abstract suspend fun onReceiveSuspend(
+        context: Context,
+        intent: Intent
+    )
 }

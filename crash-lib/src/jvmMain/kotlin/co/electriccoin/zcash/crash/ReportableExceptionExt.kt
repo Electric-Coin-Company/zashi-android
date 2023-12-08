@@ -1,4 +1,4 @@
-@file:Suppress("ktlint:filename")
+@file:Suppress("ktlint:standard:filename")
 
 package co.electriccoin.zcash.crash
 
@@ -8,12 +8,13 @@ import kotlinx.coroutines.withContext
 import java.io.File
 
 suspend fun ReportableException.write(path: File) {
-    val exceptionString = buildString {
-        appendLine("App version: $appVersion")
-        appendLine("Is uncaught: $isUncaught")
-        appendLine("Time: $time")
-        append(exceptionTrace)
-    }
+    val exceptionString =
+        buildString {
+            appendLine("App version: $appVersion")
+            appendLine("Is uncaught: $isUncaught")
+            appendLine("Time: $time")
+            append(exceptionTrace)
+        }
 
     withContext(Dispatchers.IO) {
         path.writeAtomically { tempFile ->

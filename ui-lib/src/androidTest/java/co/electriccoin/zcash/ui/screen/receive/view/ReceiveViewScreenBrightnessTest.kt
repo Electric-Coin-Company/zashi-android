@@ -16,25 +16,27 @@ class ReceiveViewScreenBrightnessTest : UiTestPrerequisites() {
 
     @Test
     @MediumTest
-    fun testBrightnessDefaultState() = runTest {
-        val testSetup = newTestSetup(WalletAddressFixture.unified())
+    fun testBrightnessDefaultState() =
+        runTest {
+            val testSetup = newTestSetup(WalletAddressFixture.unified())
 
-        assertEquals(0, testSetup.getScreenBrightnessCount())
-    }
+            assertEquals(0, testSetup.getScreenBrightnessCount())
+        }
 
     @Test
     @MediumTest
-    fun testBrightnessOnState() = runTest {
-        val testSetup = newTestSetup(WalletAddressFixture.unified())
+    fun testBrightnessOnState() =
+        runTest {
+            val testSetup = newTestSetup(WalletAddressFixture.unified())
 
-        assertEquals(false, testSetup.getOnAdjustBrightness())
-        assertEquals(0, testSetup.getScreenBrightnessCount())
+            assertEquals(false, testSetup.getOnAdjustBrightness())
+            assertEquals(0, testSetup.getScreenBrightnessCount())
 
-        composeTestRule.clickAdjustBrightness()
+            composeTestRule.clickAdjustBrightness()
 
-        assertEquals(true, testSetup.getOnAdjustBrightness())
-        assertEquals(1, testSetup.getScreenBrightnessCount())
-    }
+            assertEquals(true, testSetup.getOnAdjustBrightness())
+            assertEquals(1, testSetup.getScreenBrightnessCount())
+        }
 
     private fun newTestSetup(walletAddress: WalletAddress) = ReceiveViewTestSetup(composeTestRule, walletAddress)
 }

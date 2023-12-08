@@ -11,7 +11,6 @@ class AboutViewTestSetup(
     versionInfo: VersionInfo,
     configInfo: ConfigInfo
 ) {
-
     private val onBackCount = AtomicInteger(0)
 
     fun getOnBackCount(): Int {

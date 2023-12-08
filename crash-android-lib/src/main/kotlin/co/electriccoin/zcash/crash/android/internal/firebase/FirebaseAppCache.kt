@@ -30,9 +30,10 @@ object FirebaseAppCache {
     }
 }
 
-private suspend fun getFirebaseAppContainer(context: Context): FirebaseAppContainer = withContext(Dispatchers.IO) {
-    val firebaseApp = FirebaseApp.initializeApp(context)
-    FirebaseAppContainer(firebaseApp)
-}
+private suspend fun getFirebaseAppContainer(context: Context): FirebaseAppContainer =
+    withContext(Dispatchers.IO) {
+        val firebaseApp = FirebaseApp.initializeApp(context)
+        FirebaseAppContainer(firebaseApp)
+    }
 
 private class FirebaseAppContainer(val firebaseApp: FirebaseApp?)

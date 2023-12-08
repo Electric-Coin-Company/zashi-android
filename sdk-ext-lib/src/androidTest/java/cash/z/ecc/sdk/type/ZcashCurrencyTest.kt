@@ -7,7 +7,6 @@ import org.junit.Test
 import kotlin.test.assertNotSame
 
 class ZcashCurrencyTest {
-
     @SmallTest
     @Test
     fun check_is_zec_type() {

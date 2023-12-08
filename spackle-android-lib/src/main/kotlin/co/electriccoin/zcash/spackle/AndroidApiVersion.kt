@@ -11,7 +11,9 @@ object AndroidApiVersion {
      * [sdk].
      */
     @ChecksSdkIntAtLeast(parameter = 0)
-    fun isAtLeast(@IntRange(from = Build.VERSION_CODES.BASE.toLong()) sdk: Int): Boolean {
+    fun isAtLeast(
+        @IntRange(from = Build.VERSION_CODES.BASE.toLong()) sdk: Int
+    ): Boolean {
         return Build.VERSION.SDK_INT >= sdk
     }
 

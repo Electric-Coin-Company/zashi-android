@@ -7,14 +7,20 @@ import android.os.Build
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-fun PackageManager.getPackageInfoCompat(packageName: String, flags: Long): PackageInfo =
+fun PackageManager.getPackageInfoCompat(
+    packageName: String,
+    flags: Long
+): PackageInfo =
     if (AndroidApiVersion.isAtLeastT) {
         getPackageInfoTPlus(packageName, flags)
     } else {
         getPackageInfoLegacy(packageName, flags)
     }
 
-suspend fun PackageManager.getPackageInfoCompatSuspend(packageName: String, flags: Long): PackageInfo =
+suspend fun PackageManager.getPackageInfoCompatSuspend(
+    packageName: String,
+    flags: Long
+): PackageInfo =
     if (AndroidApiVersion.isAtLeastT) {
         withContext(Dispatchers.IO) { getPackageInfoTPlus(packageName, flags) }
     } else {
@@ -22,9 +28,13 @@ suspend fun PackageManager.getPackageInfoCompatSuspend(packageName: String, flag
     }
 
 @TargetApi(Build.VERSION_CODES.TIRAMISU)
-private fun PackageManager.getPackageInfoTPlus(packageName: String, flags: Long) =
-    getPackageInfo(packageName, PackageManager.PackageInfoFlags.of(flags))
+private fun PackageManager.getPackageInfoTPlus(
+    packageName: String,
+    flags: Long
+) = getPackageInfo(packageName, PackageManager.PackageInfoFlags.of(flags))
 
 @Suppress("Deprecation")
-private fun PackageManager.getPackageInfoLegacy(packageName: String, flags: Long) =
-    getPackageInfo(packageName, flags.toInt())
+private fun PackageManager.getPackageInfoLegacy(
+    packageName: String,
+    flags: Long
+) = getPackageInfo(packageName, flags.toInt())

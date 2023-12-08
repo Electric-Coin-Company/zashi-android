@@ -12,11 +12,13 @@ object StorageChecker {
 
     @SuppressLint("UsableSpace")
     @Suppress("MagicNumber")
-    suspend fun checkAvailableStorageMegabytes(): Int = withContext(Dispatchers.IO) {
-        return@withContext (Environment.getDataDirectory().usableSpace / (1024 * 1024)).toInt()
-    }
+    suspend fun checkAvailableStorageMegabytes(): Int =
+        withContext(Dispatchers.IO) {
+            return@withContext (Environment.getDataDirectory().usableSpace / (1024 * 1024)).toInt()
+        }
 
-    suspend fun spaceRequiredToContinueMegabytes() = withContext(Dispatchers.IO) {
-        return@withContext REQUIRED_FREE_SPACE_MEGABYTES - checkAvailableStorageMegabytes()
-    }
+    suspend fun spaceRequiredToContinueMegabytes() =
+        withContext(Dispatchers.IO) {
+            return@withContext REQUIRED_FREE_SPACE_MEGABYTES - checkAvailableStorageMegabytes()
+        }
 }

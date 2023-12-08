@@ -53,7 +53,6 @@ import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
 class MainActivity : ComponentActivity() {
-
     val homeViewModel by viewModels<HomeViewModel>()
 
     val walletViewModel by viewModels<WalletViewModel>()
@@ -82,11 +81,12 @@ class MainActivity : ComponentActivity() {
      */
     @SuppressLint("SourceLockedOrientationActivity")
     private fun setAllowedScreenOrientation() {
-        requestedOrientation = if (BuildConfig.IS_SCREEN_ROTATION_ENABLED) {
-            ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
-        } else {
-            ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        }
+        requestedOrientation =
+            if (BuildConfig.IS_SCREEN_ROTATION_ENABLED) {
+                ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+            } else {
+                ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+            }
     }
 
     private fun setupSplashScreen() {
@@ -195,15 +195,16 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun monitorForBackgroundSync() {
-        val isEnableBackgroundSyncFlow = run {
-            val homeViewModel by viewModels<HomeViewModel>()
-            val isSecretReadyFlow = walletViewModel.secretState.map { it is SecretState.Ready }
-            val isBackgroundSyncEnabledFlow = homeViewModel.isBackgroundSyncEnabled.filterNotNull()
+        val isEnableBackgroundSyncFlow =
+            run {
+                val homeViewModel by viewModels<HomeViewModel>()
+                val isSecretReadyFlow = walletViewModel.secretState.map { it is SecretState.Ready }
+                val isBackgroundSyncEnabledFlow = homeViewModel.isBackgroundSyncEnabled.filterNotNull()
 
-            isSecretReadyFlow.combine(isBackgroundSyncEnabledFlow) { isSecretReady, isBackgroundSyncEnabled ->
-                isSecretReady && isBackgroundSyncEnabled
+                isSecretReadyFlow.combine(isBackgroundSyncEnabledFlow) { isSecretReady, isBackgroundSyncEnabled ->
+                    isSecretReady && isBackgroundSyncEnabled
+                }
             }
-        }
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {

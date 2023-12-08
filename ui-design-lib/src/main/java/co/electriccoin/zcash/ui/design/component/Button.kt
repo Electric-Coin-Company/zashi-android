@@ -59,10 +59,11 @@ fun PrimaryButton(
     onClick: () -> Unit,
     text: String,
     modifier: Modifier = Modifier,
-    outerPaddingValues: PaddingValues = PaddingValues(
-        horizontal = ZcashTheme.dimens.spacingNone,
-        vertical = ZcashTheme.dimens.spacingSmall
-    ),
+    outerPaddingValues: PaddingValues =
+        PaddingValues(
+            horizontal = ZcashTheme.dimens.spacingNone,
+            vertical = ZcashTheme.dimens.spacingSmall
+        ),
     enabled: Boolean = true,
     buttonColor: Color = MaterialTheme.colorScheme.primary,
     textColor: Color = MaterialTheme.colorScheme.onPrimary,
@@ -70,27 +71,30 @@ fun PrimaryButton(
     Button(
         shape = RectangleShape,
         enabled = enabled,
-        modifier = modifier.then(Modifier.fillMaxWidth())
-            .padding(outerPaddingValues)
-            .shadow(
-                contentColor = textColor,
-                strokeColor = buttonColor,
-                strokeWidth = 1.dp,
-                offsetX = ZcashTheme.dimens.buttonShadowOffsetX,
-                offsetY = ZcashTheme.dimens.buttonShadowOffsetY,
-                spread = ZcashTheme.dimens.buttonShadowSpread,
-            )
-            .translationClick(
-                translationX = ZcashTheme.dimens.buttonShadowOffsetX + 6.dp, // + 6dp to exactly cover the bottom shadow
-                translationY = ZcashTheme.dimens.buttonShadowOffsetX + 6.dp
-            )
-            .defaultMinSize(ZcashTheme.dimens.buttonWidth, ZcashTheme.dimens.buttonHeight)
-            .border(1.dp, Color.Black),
-        colors = buttonColors(
-            containerColor = buttonColor,
-            disabledContainerColor = ZcashTheme.colors.disabledButtonColor,
-            disabledContentColor = ZcashTheme.colors.disabledButtonTextColor
-        ),
+        modifier =
+            modifier.then(Modifier.fillMaxWidth())
+                .padding(outerPaddingValues)
+                .shadow(
+                    contentColor = textColor,
+                    strokeColor = buttonColor,
+                    strokeWidth = 1.dp,
+                    offsetX = ZcashTheme.dimens.buttonShadowOffsetX,
+                    offsetY = ZcashTheme.dimens.buttonShadowOffsetY,
+                    spread = ZcashTheme.dimens.buttonShadowSpread,
+                )
+                .translationClick(
+                    // + 6dp to exactly cover the bottom shadow
+                    translationX = ZcashTheme.dimens.buttonShadowOffsetX + 6.dp,
+                    translationY = ZcashTheme.dimens.buttonShadowOffsetX + 6.dp
+                )
+                .defaultMinSize(ZcashTheme.dimens.buttonWidth, ZcashTheme.dimens.buttonHeight)
+                .border(1.dp, Color.Black),
+        colors =
+            buttonColors(
+                containerColor = buttonColor,
+                disabledContainerColor = ZcashTheme.colors.disabledButtonColor,
+                disabledContentColor = ZcashTheme.colors.disabledButtonTextColor
+            ),
         onClick = onClick,
     ) {
         Text(
@@ -108,10 +112,11 @@ fun SecondaryButton(
     onClick: () -> Unit,
     text: String,
     modifier: Modifier = Modifier,
-    outerPaddingValues: PaddingValues = PaddingValues(
-        horizontal = ZcashTheme.dimens.spacingNone,
-        vertical = ZcashTheme.dimens.spacingSmall
-    ),
+    outerPaddingValues: PaddingValues =
+        PaddingValues(
+            horizontal = ZcashTheme.dimens.spacingNone,
+            vertical = ZcashTheme.dimens.spacingSmall
+        ),
     enabled: Boolean = true,
     buttonColor: Color = MaterialTheme.colorScheme.secondary,
     textColor: Color = MaterialTheme.colorScheme.onSecondary,
@@ -119,26 +124,29 @@ fun SecondaryButton(
     Button(
         shape = RectangleShape,
         enabled = enabled,
-        modifier = modifier.then(Modifier.fillMaxWidth())
-            .padding(outerPaddingValues)
-            .shadow(
-                contentColor = textColor,
-                strokeColor = textColor,
-                offsetX = ZcashTheme.dimens.buttonShadowOffsetX,
-                offsetY = ZcashTheme.dimens.buttonShadowOffsetY,
-                spread = ZcashTheme.dimens.buttonShadowSpread,
-            )
-            .translationClick(
-                translationX = ZcashTheme.dimens.buttonShadowOffsetX + 6.dp, // + 6dp to exactly cover the bottom shadow
-                translationY = ZcashTheme.dimens.buttonShadowOffsetX + 6.dp
-            )
-            .defaultMinSize(ZcashTheme.dimens.buttonWidth, ZcashTheme.dimens.buttonHeight)
-            .border(1.dp, Color.Black),
-        colors = buttonColors(
-            containerColor = buttonColor,
-            disabledContainerColor = ZcashTheme.colors.disabledButtonColor,
-            disabledContentColor = ZcashTheme.colors.disabledButtonTextColor
-        ),
+        modifier =
+            modifier.then(Modifier.fillMaxWidth())
+                .padding(outerPaddingValues)
+                .shadow(
+                    contentColor = textColor,
+                    strokeColor = textColor,
+                    offsetX = ZcashTheme.dimens.buttonShadowOffsetX,
+                    offsetY = ZcashTheme.dimens.buttonShadowOffsetY,
+                    spread = ZcashTheme.dimens.buttonShadowSpread,
+                )
+                .translationClick(
+                    // + 6dp to exactly cover the bottom shadow
+                    translationX = ZcashTheme.dimens.buttonShadowOffsetX + 6.dp,
+                    translationY = ZcashTheme.dimens.buttonShadowOffsetX + 6.dp
+                )
+                .defaultMinSize(ZcashTheme.dimens.buttonWidth, ZcashTheme.dimens.buttonHeight)
+                .border(1.dp, Color.Black),
+        colors =
+            buttonColors(
+                containerColor = buttonColor,
+                disabledContainerColor = ZcashTheme.colors.disabledButtonColor,
+                disabledContentColor = ZcashTheme.colors.disabledButtonTextColor
+            ),
         onClick = onClick,
     ) {
         Text(
@@ -155,18 +163,20 @@ fun NavigationButton(
     onClick: () -> Unit,
     text: String,
     modifier: Modifier = Modifier,
-    outerPaddingValues: PaddingValues = PaddingValues(
-        horizontal = ZcashTheme.dimens.spacingDefault,
-        vertical = ZcashTheme.dimens.spacingSmall
-    ),
+    outerPaddingValues: PaddingValues =
+        PaddingValues(
+            horizontal = ZcashTheme.dimens.spacingDefault,
+            vertical = ZcashTheme.dimens.spacingSmall
+        ),
 ) {
     Button(
         shape = RectangleShape,
         onClick = onClick,
-        modifier = modifier.then(
-            Modifier
-                .padding(outerPaddingValues)
-        ),
+        modifier =
+            modifier.then(
+                Modifier
+                    .padding(outerPaddingValues)
+            ),
         colors = buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
     ) {
         Text(
@@ -183,20 +193,22 @@ fun TertiaryButton(
     onClick: () -> Unit,
     text: String,
     modifier: Modifier = Modifier,
-    outerPaddingValues: PaddingValues = PaddingValues(
-        horizontal = ZcashTheme.dimens.spacingDefault,
-        vertical = ZcashTheme.dimens.spacingSmall
-    ),
+    outerPaddingValues: PaddingValues =
+        PaddingValues(
+            horizontal = ZcashTheme.dimens.spacingDefault,
+            vertical = ZcashTheme.dimens.spacingSmall
+        ),
     enabled: Boolean = true
 ) {
     Button(
         shape = RectangleShape,
         onClick = onClick,
-        modifier = modifier.then(
-            Modifier
-                .fillMaxWidth()
-                .padding(outerPaddingValues)
-        ),
+        modifier =
+            modifier.then(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(outerPaddingValues)
+            ),
         enabled = enabled,
         elevation = ButtonDefaults.buttonElevation(0.dp, 0.dp, 0.dp),
         colors = buttonColors(containerColor = ZcashTheme.colors.tertiary)
@@ -215,19 +227,21 @@ fun DangerousButton(
     onClick: () -> Unit,
     text: String,
     modifier: Modifier = Modifier,
-    outerPaddingValues: PaddingValues = PaddingValues(
-        horizontal = ZcashTheme.dimens.spacingDefault,
-        vertical = ZcashTheme.dimens.spacingSmall
-    ),
+    outerPaddingValues: PaddingValues =
+        PaddingValues(
+            horizontal = ZcashTheme.dimens.spacingDefault,
+            vertical = ZcashTheme.dimens.spacingSmall
+        ),
 ) {
     Button(
         shape = RectangleShape,
         onClick = onClick,
-        modifier = modifier.then(
-            Modifier
-                .fillMaxWidth()
-                .padding(outerPaddingValues)
-        ),
+        modifier =
+            modifier.then(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(outerPaddingValues)
+            ),
         colors = buttonColors(containerColor = ZcashTheme.colors.dangerous)
     ) {
         Text(
@@ -291,6 +305,7 @@ fun Modifier.shadow(
 )
 
 private enum class ButtonState { Pressed, Idle }
+
 fun Modifier.translationClick(
     translationX: Dp = 0.dp,
     translationY: Dp = 0.dp
@@ -298,26 +313,30 @@ fun Modifier.translationClick(
     var buttonState by remember { mutableStateOf(ButtonState.Idle) }
 
     val translationXAnimated by animateFloatAsState(
-        targetValue = if (buttonState == ButtonState.Pressed) {
-            translationX.value
-        } else {
-            0f
-        },
+        targetValue =
+            if (buttonState == ButtonState.Pressed) {
+                translationX.value
+            } else {
+                0f
+            },
         label = "ClickTranslationXAnimation",
-        animationSpec = tween(
-            durationMillis = 100
-        )
+        animationSpec =
+            tween(
+                durationMillis = 100
+            )
     )
     val translationYAnimated by animateFloatAsState(
-        targetValue = if (buttonState == ButtonState.Pressed) {
-            translationY.value
-        } else {
-            0f
-        },
+        targetValue =
+            if (buttonState == ButtonState.Pressed) {
+                translationY.value
+            } else {
+                0f
+            },
         label = "ClickTranslationYAnimation",
-        animationSpec = tween(
-            durationMillis = 100
-        )
+        animationSpec =
+            tween(
+                durationMillis = 100
+            )
     )
 
     this
@@ -327,13 +346,14 @@ fun Modifier.translationClick(
         }
         .pointerInput(buttonState) {
             awaitPointerEventScope {
-                buttonState = if (buttonState == ButtonState.Pressed) {
-                    waitForUpOrCancellation()
-                    ButtonState.Idle
-                } else {
-                    awaitFirstDown(false)
-                    ButtonState.Pressed
-                }
+                buttonState =
+                    if (buttonState == ButtonState.Pressed) {
+                        waitForUpOrCancellation()
+                        ButtonState.Idle
+                    } else {
+                        awaitFirstDown(false)
+                        ButtonState.Pressed
+                    }
             }
         }
 }

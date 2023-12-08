@@ -121,8 +121,10 @@ class HistoryViewTest {
 
     private fun newTestSetup(
         transactionHistorySyncState: TransactionHistorySyncState = TransactionHistorySyncStateFixture.new()
-    ) = HistoryTestSetup(
-        composeTestRule = composeTestRule,
-        initialHistorySyncState = transactionHistorySyncState
-    )
+    ): HistoryTestSetup {
+        return HistoryTestSetup(
+            composeTestRule = composeTestRule,
+            initialHistorySyncState = transactionHistorySyncState
+        )
+    }
 }

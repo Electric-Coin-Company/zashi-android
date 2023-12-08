@@ -79,20 +79,19 @@ fun Account(
             goReceive = goReceive,
             goSend = goSend,
             goHistory = goHistory,
-            modifier = Modifier.padding(
-                top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
-                bottom = paddingValues.calculateBottomPadding() + ZcashTheme.dimens.spacingHuge,
-                start = ZcashTheme.dimens.screenHorizontalSpacing,
-                end = ZcashTheme.dimens.screenHorizontalSpacing
-            )
+            modifier =
+                Modifier.padding(
+                    top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
+                    bottom = paddingValues.calculateBottomPadding() + ZcashTheme.dimens.spacingHuge,
+                    start = ZcashTheme.dimens.screenHorizontalSpacing,
+                    end = ZcashTheme.dimens.screenHorizontalSpacing
+                )
         )
     }
 }
 
 @Composable
-private fun AccountTopAppBar(
-    onSettings: () -> Unit
-) {
+private fun AccountTopAppBar(onSettings: () -> Unit) {
     SmallTopAppBar(
         showTitleLogo = true,
         hamburgerMenuActions = {
@@ -135,9 +134,10 @@ private fun AccountMainContent(
         Status(walletSnapshot, isUpdateAvailable, isFiatConversionEnabled)
 
         Spacer(
-            modifier = Modifier
-                .fillMaxHeight()
-                .weight(MINIMAL_WEIGHT)
+            modifier =
+                Modifier
+                    .fillMaxHeight()
+                    .weight(MINIMAL_WEIGHT)
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
@@ -171,16 +171,18 @@ private fun Status(
     updateAvailable: Boolean,
     isFiatConversionEnabled: Boolean
 ) {
-    val walletDisplayValues = WalletDisplayValues.getNextValues(
-        LocalContext.current,
-        walletSnapshot,
-        updateAvailable
-    )
+    val walletDisplayValues =
+        WalletDisplayValues.getNextValues(
+            LocalContext.current,
+            walletSnapshot,
+            updateAvailable
+        )
 
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .testTag(AccountTag.STATUS_VIEWS),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .testTag(AccountTag.STATUS_VIEWS),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))

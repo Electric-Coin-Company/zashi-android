@@ -6,7 +6,10 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 
 object AndroidQrCodeImageGenerator : QrCodeImageGenerator {
-    override fun generate(bitArray: BooleanArray, sizePixels: Int): ImageBitmap {
+    override fun generate(
+        bitArray: BooleanArray,
+        sizePixels: Int
+    ): ImageBitmap {
         val colorArray = bitArray.toBlackAndWhiteColorArray()
 
         return Bitmap.createBitmap(colorArray, sizePixels, sizePixels, Bitmap.Config.ARGB_8888)
@@ -14,10 +17,11 @@ object AndroidQrCodeImageGenerator : QrCodeImageGenerator {
     }
 }
 
-private fun BooleanArray.toBlackAndWhiteColorArray() = IntArray(size) {
-    if (this[it]) {
-        Color.BLACK
-    } else {
-        Color.WHITE
+private fun BooleanArray.toBlackAndWhiteColorArray() =
+    IntArray(size) {
+        if (this[it]) {
+            Color.BLACK
+        } else {
+            Color.WHITE
+        }
     }
-}

@@ -90,9 +90,10 @@ fun ShortOnboarding(
 ) {
     Scaffold { paddingValues ->
         val screenHeight = screenHeight()
-        val (welcomeAnimVisibility, setWelcomeAnimVisibility) = rememberSaveable {
-            mutableStateOf(showWelcomeAnim)
-        }
+        val (welcomeAnimVisibility, setWelcomeAnimVisibility) =
+            rememberSaveable {
+                mutableStateOf(showWelcomeAnim)
+            }
 
         Column(
             modifier = Modifier.verticalScroll(rememberScrollState())
@@ -109,14 +110,15 @@ fun ShortOnboarding(
                     onImportWallet = onImportWallet,
                     onCreateWallet = onCreateWallet,
                     onFixtureWallet = onFixtureWallet,
-                    modifier = Modifier
-                        .padding(
-                            top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingHuge,
-                            bottom = paddingValues.calculateBottomPadding(),
-                            start = ZcashTheme.dimens.screenHorizontalSpacing,
-                            end = ZcashTheme.dimens.screenHorizontalSpacing
-                        )
-                        .height(screenHeight.contentHeight - paddingValues.calculateBottomPadding())
+                    modifier =
+                        Modifier
+                            .padding(
+                                top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingHuge,
+                                bottom = paddingValues.calculateBottomPadding(),
+                                start = ZcashTheme.dimens.screenHorizontalSpacing,
+                                end = ZcashTheme.dimens.screenHorizontalSpacing
+                            )
+                            .height(screenHeight.contentHeight - paddingValues.calculateBottomPadding())
                 )
             }
         }
@@ -124,9 +126,7 @@ fun ShortOnboarding(
 }
 
 @Composable
-private fun DebugMenu(
-    onFixtureWallet: (String) -> Unit
-) {
+private fun DebugMenu(onFixtureWallet: (String) -> Unit) {
     Column {
         var expanded by rememberSaveable { mutableStateOf(false) }
         IconButton(onClick = { expanded = true }) {
@@ -191,9 +191,10 @@ private fun OnboardingMainContent(
             Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
             Spacer(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .weight(MINIMAL_WEIGHT)
+                modifier =
+                    Modifier
+                        .fillMaxHeight()
+                        .weight(MINIMAL_WEIGHT)
             )
 
             PrimaryButton(
@@ -223,10 +224,11 @@ fun AnimatedImage(
 
     AnimatedVisibility(
         visible = welcomeAnimVisibility,
-        exit = slideOutVertically(
-            targetOffsetY = { -it },
-            animationSpec = tween(AnimationConstants.ANIMATION_DURATION)
-        ),
+        exit =
+            slideOutVertically(
+                targetOffsetY = { -it },
+                animationSpec = tween(AnimationConstants.ANIMATION_DURATION)
+            ),
         modifier = modifier
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
@@ -234,9 +236,10 @@ fun AnimatedImage(
                 Image(
                     painter = ColorPainter(ZcashTheme.colors.welcomeAnimationColor),
                     contentScale = ContentScale.FillBounds,
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .height(screenHeight.overallScreenHeight()),
+                    modifier =
+                        Modifier
+                            .fillMaxHeight()
+                            .height(screenHeight.overallScreenHeight()),
                     contentDescription = null
                 )
                 Image(
@@ -249,10 +252,11 @@ fun AnimatedImage(
             Image(
                 painter = painterResource(id = R.drawable.logo_with_hi),
                 contentDescription = stringResource(R.string.zcash_logo_with_hi_text_content_description),
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .fillMaxWidth()
-                    .padding(top = screenHeight.systemStatusBarHeight + ZcashTheme.dimens.spacingHuge)
+                modifier =
+                    Modifier
+                        .align(Alignment.TopCenter)
+                        .fillMaxWidth()
+                        .padding(top = screenHeight.systemStatusBarHeight + ZcashTheme.dimens.spacingHuge)
             )
         }
     }

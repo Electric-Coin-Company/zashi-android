@@ -10,22 +10,23 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class ZecSendExtTest {
-
     @Test
     @SmallTest
     @OptIn(ExperimentalCoroutinesApi::class)
-    fun round_trip() = runTest {
-        val original = ZecSendFixture.new()
-        val saved = with(ZecSend.Saver) {
-            val allowingScope = SaverScope { true }
+    fun round_trip() =
+        runTest {
+            val original = ZecSendFixture.new()
+            val saved =
+                with(ZecSend.Saver) {
+                    val allowingScope = SaverScope { true }
 
-            allowingScope.save(original)
+                    allowingScope.save(original)
+                }
+
+            val restored = ZecSend.Saver.restore(saved!!)
+
+            assertEquals(original, restored)
         }
-
-        val restored = ZecSend.Saver.restore(saved!!)
-
-        assertEquals(original, restored)
-    }
 
     @Test
     @SmallTest

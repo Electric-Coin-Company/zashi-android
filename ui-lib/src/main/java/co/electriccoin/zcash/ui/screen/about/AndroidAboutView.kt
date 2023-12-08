@@ -1,4 +1,4 @@
-@file:Suppress("ktlint:filename")
+@file:Suppress("ktlint:standard:filename")
 
 package co.electriccoin.zcash.ui.screen.about
 
@@ -12,9 +12,7 @@ import co.electriccoin.zcash.ui.screen.about.view.About
 import co.electriccoin.zcash.ui.screen.support.model.ConfigInfo
 
 @Composable
-internal fun MainActivity.WrapAbout(
-    goBack: () -> Unit
-) {
+internal fun MainActivity.WrapAbout(goBack: () -> Unit) {
     WrapAbout(this, goBack)
 }
 

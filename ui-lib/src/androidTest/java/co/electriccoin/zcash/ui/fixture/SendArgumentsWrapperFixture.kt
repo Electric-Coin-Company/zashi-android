@@ -12,6 +12,7 @@ internal object SendArgumentsWrapperFixture {
     val RECIPIENT_ADDRESS = WalletFixture.Alice.getAddresses(ZcashNetwork.Testnet).unified
     val MEMO = MemoFixture.new("Thanks for lunch").value
     val AMOUNT = ZatoshiFixture.new(1)
+
     fun amountToFixtureZecString(amount: Zatoshi?) = amount?.toZecString()
 
     fun new(

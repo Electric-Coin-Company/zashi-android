@@ -24,18 +24,18 @@ class ScreenBrightnessTest : UiTestPrerequisites() {
 
     @Test
     @MediumTest
-    fun acquireAndReleaseScreenBrightness() = runTest {
-        val testSetup = TestSetup(composeTestRule)
+    fun acquireAndReleaseScreenBrightness() =
+        runTest {
+            val testSetup = TestSetup(composeTestRule)
 
-        assertEquals(1, testSetup.getSecureBrightnessCount())
+            assertEquals(1, testSetup.getSecureBrightnessCount())
 
-        testSetup.mutableScreenBrightnessFlag.update { false }
-        composeTestRule.awaitIdle()
-        assertEquals(0, testSetup.getSecureBrightnessCount())
-    }
+            testSetup.mutableScreenBrightnessFlag.update { false }
+            composeTestRule.awaitIdle()
+            assertEquals(0, testSetup.getSecureBrightnessCount())
+        }
 
     private class TestSetup(composeTestRule: ComposeContentTestRule) {
-
         val mutableScreenBrightnessFlag = MutableStateFlow(true)
 
         private val screenBrightness = ScreenBrightness()

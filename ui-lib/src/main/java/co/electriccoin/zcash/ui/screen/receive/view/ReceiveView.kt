@@ -81,14 +81,15 @@ fun Receive(
             walletAddress = walletAddress,
             onAddressDetails = onAddressDetails,
             adjustBrightness = brightness,
-            modifier = Modifier
-                .fillMaxHeight()
-                .verticalScroll(rememberScrollState())
-                .padding(
-                    top = ZcashTheme.dimens.spacingDefault,
-                    start = ZcashTheme.dimens.screenHorizontalSpacing,
-                    end = ZcashTheme.dimens.screenHorizontalSpacing
-                )
+            modifier =
+                Modifier
+                    .fillMaxHeight()
+                    .verticalScroll(rememberScrollState())
+                    .padding(
+                        top = ZcashTheme.dimens.spacingDefault,
+                        start = ZcashTheme.dimens.screenHorizontalSpacing,
+                        end = ZcashTheme.dimens.screenHorizontalSpacing
+                    )
         )
     }
 }
@@ -109,11 +110,12 @@ private fun ReceiveTopAppBar(
                 onClick = onBrightness
             ) {
                 Icon(
-                    imageVector = if (adjustBrightness) {
-                        Icons.Default.BrightnessLow
-                    } else {
-                        Icons.Default.BrightnessHigh
-                    },
+                    imageVector =
+                        if (adjustBrightness) {
+                            Icons.Default.BrightnessLow
+                        } else {
+                            Icons.Default.BrightnessHigh
+                        },
                     contentDescription = stringResource(R.string.receive_brightness_content_description)
                 )
             }
@@ -162,9 +164,10 @@ private fun ReceiveContents(
         )
 
         Spacer(
-            modifier = Modifier
-                .fillMaxHeight()
-                .weight(MINIMAL_WEIGHT)
+            modifier =
+                Modifier
+                    .fillMaxHeight()
+                    .weight(MINIMAL_WEIGHT)
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))

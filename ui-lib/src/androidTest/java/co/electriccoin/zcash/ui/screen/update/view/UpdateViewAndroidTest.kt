@@ -18,26 +18,27 @@ import org.junit.Test
 // Non-multiplatform tests that require interacting with the Android system (e.g. system back navigation)
 // These don't have persistent state, so they are still unit tests.
 class UpdateViewAndroidTest : UiTestPrerequisites() {
-
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
-    private fun newTestSetup(updateInfo: UpdateInfo) = UpdateViewAndroidTestSetup(
-        composeTestRule,
-        updateInfo
-    ).apply {
-        setDefaultContent()
-    }
+    private fun newTestSetup(updateInfo: UpdateInfo) =
+        UpdateViewAndroidTestSetup(
+            composeTestRule,
+            updateInfo
+        ).apply {
+            setDefaultContent()
+        }
 
     @Test
     @MediumTest
     fun postpone_optional_update_test() {
-        val updateInfo = UpdateInfoFixture.new(
-            priority = AppUpdateChecker.Priority.LOW,
-            force = false,
-            appUpdateInfo = null,
-            state = UpdateState.Prepared
-        )
+        val updateInfo =
+            UpdateInfoFixture.new(
+                priority = AppUpdateChecker.Priority.LOW,
+                force = false,
+                appUpdateInfo = null,
+                state = UpdateState.Prepared
+            )
         newTestSetup(updateInfo)
 
         composeTestRule.onNodeWithText(getStringResource(R.string.update_header)).also {
@@ -54,12 +55,13 @@ class UpdateViewAndroidTest : UiTestPrerequisites() {
     @Test
     @MediumTest
     fun postpone_force_update_test() {
-        val updateInfo = UpdateInfoFixture.new(
-            priority = AppUpdateChecker.Priority.HIGH,
-            force = true,
-            appUpdateInfo = null,
-            state = UpdateState.Prepared
-        )
+        val updateInfo =
+            UpdateInfoFixture.new(
+                priority = AppUpdateChecker.Priority.HIGH,
+                force = true,
+                appUpdateInfo = null,
+                state = UpdateState.Prepared
+            )
         newTestSetup(updateInfo)
 
         composeTestRule.onNodeWithText(getStringResource(R.string.update_critical_header)).also {

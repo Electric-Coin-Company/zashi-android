@@ -6,7 +6,5 @@ data class BooleanConfigurationEntry(
     override val key: ConfigKey,
     private val defaultValue: Boolean
 ) : DefaultEntry<Boolean> {
-
-    override fun getValue(configuration: Configuration) =
-        configuration.getBoolean(key, defaultValue)
+    override fun getValue(configuration: Configuration) = configuration.getBoolean(key, defaultValue)
 }

@@ -9,7 +9,6 @@ import java.util.concurrent.atomic.AtomicInteger
 class NewWalletRecoveryTestSetup(
     private val composeTestRule: ComposeContentTestRule,
 ) {
-
     private val onSeedCopyCount = AtomicInteger(0)
 
     private val onBirthdayCopyCount = AtomicInteger(0)
@@ -20,6 +19,7 @@ class NewWalletRecoveryTestSetup(
         composeTestRule.waitForIdle()
         return onSeedCopyCount.get()
     }
+
     fun getOnBirthdayCopyCount(): Int {
         composeTestRule.waitForIdle()
         return onBirthdayCopyCount.get()

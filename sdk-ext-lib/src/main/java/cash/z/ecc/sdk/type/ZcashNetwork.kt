@@ -1,4 +1,4 @@
-@file:Suppress("ktlint:filename")
+@file:Suppress("ktlint:standard:filename")
 
 package cash.z.ecc.sdk.type
 
@@ -21,6 +21,7 @@ import cash.z.ecc.sdk.ext.R
  *  - Using a ContentProvider for dynamic injection, where the URI is defined
  *  - Using AndroidManifest metadata for dynamic injection
  */
+
 /**
  * @return Zcash network determined from resources.  A resource overlay of [R.bool.zcash_is_testnet]
  * can be used for different build variants to change the network type.

@@ -6,14 +6,14 @@ import co.electriccoin.zcash.preference.model.entry.PreferenceKey
 import co.electriccoin.zcash.ui.common.model.OnboardingState
 
 object StandardPreferenceKeys {
-
     /**
      * State defining whether the user has completed any of the onboarding wallet states.
      */
-    val ONBOARDING_STATE = IntegerPreferenceDefault(
-        PreferenceKey("onboarding_state"),
-        OnboardingState.NONE.toNumber()
-    )
+    val ONBOARDING_STATE =
+        IntegerPreferenceDefault(
+            PreferenceKey("onboarding_state"),
+            OnboardingState.NONE.toNumber()
+        )
 
     // Default to true until https://github.com/Electric-Coin-Company/zashi-android/issues/304
     val IS_ANALYTICS_ENABLED = BooleanPreferenceDefault(PreferenceKey("is_analytics_enabled"), true)

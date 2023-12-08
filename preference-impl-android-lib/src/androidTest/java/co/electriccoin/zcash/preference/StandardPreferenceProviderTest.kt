@@ -33,41 +33,48 @@ class StandardPreferenceProviderTest {
 
     @Test
     @SmallTest
-    fun put_and_get_string() = runBlocking {
-        val expectedValue = StringDefaultPreferenceFixture.DEFAULT_VALUE + "extra"
+    fun put_and_get_string() =
+        runBlocking {
+            val expectedValue = StringDefaultPreferenceFixture.DEFAULT_VALUE + "extra"
 
-        val preferenceProvider = new().apply {
-            putString(StringDefaultPreferenceFixture.KEY, expectedValue)
+            val preferenceProvider =
+                new().apply {
+                    putString(StringDefaultPreferenceFixture.KEY, expectedValue)
+                }
+
+            assertEquals(expectedValue, StringDefaultPreferenceFixture.new().getValue(preferenceProvider))
         }
-
-        assertEquals(expectedValue, StringDefaultPreferenceFixture.new().getValue(preferenceProvider))
-    }
 
     @Test
     @SmallTest
-    fun hasKey_false() = runBlocking {
-        val preferenceProvider = new()
+    fun hasKey_false() =
+        runBlocking {
+            val preferenceProvider = new()
 
-        assertFalse(preferenceProvider.hasKey(StringDefaultPreferenceFixture.new().key))
-    }
+            assertFalse(preferenceProvider.hasKey(StringDefaultPreferenceFixture.new().key))
+        }
 
     @Test
     @SmallTest
-    fun put_and_check_key() = runBlocking {
-        val expectedValue = StringDefaultPreferenceFixture.DEFAULT_VALUE + "extra"
+    fun put_and_check_key() =
+        runBlocking {
+            val expectedValue = StringDefaultPreferenceFixture.DEFAULT_VALUE + "extra"
 
-        val preferenceProvider = new().apply {
-            putString(StringDefaultPreferenceFixture.KEY, expectedValue)
+            val preferenceProvider =
+                new().apply {
+                    putString(StringDefaultPreferenceFixture.KEY, expectedValue)
+                }
+
+            assertTrue(preferenceProvider.hasKey(StringDefaultPreferenceFixture.new().key))
         }
-
-        assertTrue(preferenceProvider.hasKey(StringDefaultPreferenceFixture.new().key))
-    }
 
     companion object {
         private val FILENAME = "encrypted_preference_test"
-        private suspend fun new() = AndroidPreferenceProvider.newStandard(
-            ApplicationProvider.getApplicationContext(),
-            FILENAME
-        )
+
+        private suspend fun new() =
+            AndroidPreferenceProvider.newStandard(
+                ApplicationProvider.getApplicationContext(),
+                FILENAME
+            )
     }
 }

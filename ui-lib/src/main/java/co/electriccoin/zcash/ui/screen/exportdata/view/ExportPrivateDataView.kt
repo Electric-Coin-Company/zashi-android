@@ -64,23 +64,22 @@ fun ExportPrivateData(
         ExportPrivateDataContent(
             onAgree = onAgree,
             onConfirm = onConfirm,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(
-                    top = paddingValues.calculateTopPadding(),
-                    bottom = paddingValues.calculateBottomPadding(),
-                    start = ZcashTheme.dimens.screenHorizontalSpacing,
-                    end = ZcashTheme.dimens.screenHorizontalSpacing
-                )
-                .verticalScroll(rememberScrollState())
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(
+                        top = paddingValues.calculateTopPadding(),
+                        bottom = paddingValues.calculateBottomPadding(),
+                        start = ZcashTheme.dimens.screenHorizontalSpacing,
+                        end = ZcashTheme.dimens.screenHorizontalSpacing
+                    )
+                    .verticalScroll(rememberScrollState())
         )
     }
 }
 
 @Composable
-private fun ExportPrivateDataTopAppBar(
-    onBack: () -> Unit,
-) {
+private fun ExportPrivateDataTopAppBar(onBack: () -> Unit) {
     SmallTopAppBar(
         backText = stringResource(R.string.export_data_back).uppercase(),
         backContentDescriptionText = stringResource(R.string.export_data_back_content_description),
@@ -122,9 +121,10 @@ private fun ExportPrivateDataContent(
 
         val checkedState = rememberSaveable { mutableStateOf(false) }
         CheckBox(
-            modifier = Modifier
-                .align(Alignment.Start)
-                .fillMaxWidth(),
+            modifier =
+                Modifier
+                    .align(Alignment.Start)
+                    .fillMaxWidth(),
             checked = checkedState.value,
             onCheckedChange = {
                 checkedState.value = it
@@ -135,9 +135,10 @@ private fun ExportPrivateDataContent(
         )
 
         Spacer(
-            modifier = Modifier
-                .fillMaxHeight()
-                .weight(MINIMAL_WEIGHT)
+            modifier =
+                Modifier
+                    .fillMaxHeight()
+                    .weight(MINIMAL_WEIGHT)
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))

@@ -106,9 +106,10 @@ class ExportPrivateDataViewTest : UiTestPrerequisites() {
         assertEquals(true, testSetup.getOnAgree())
     }
 
-    private fun newTestSetup() = ExportPrivateDataViewTestSetup(composeTestRule).apply {
-        setDefaultContent()
-    }
+    private fun newTestSetup() =
+        ExportPrivateDataViewTestSetup(composeTestRule).apply {
+            setDefaultContent()
+        }
 }
 
 private fun ComposeContentTestRule.clickBack() {

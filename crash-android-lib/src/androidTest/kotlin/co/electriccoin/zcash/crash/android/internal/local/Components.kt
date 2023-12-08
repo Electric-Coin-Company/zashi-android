@@ -12,7 +12,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class Components {
-
     @Test
     @SmallTest
     fun process_names() {
@@ -26,16 +25,18 @@ class Components {
     }
 }
 
-private fun PackageManager.getProviderInfoCompat(componentName: ComponentName) = if (AndroidApiVersion.isAtLeastT) {
-    getProviderInfo(componentName, PackageManager.ComponentInfoFlags.of(0))
-} else {
-    @Suppress("Deprecation")
-    getProviderInfo(componentName, 0)
-}
+private fun PackageManager.getProviderInfoCompat(componentName: ComponentName) =
+    if (AndroidApiVersion.isAtLeastT) {
+        getProviderInfo(componentName, PackageManager.ComponentInfoFlags.of(0))
+    } else {
+        @Suppress("Deprecation")
+        getProviderInfo(componentName, 0)
+    }
 
-private fun PackageManager.getReceiverInfoCompat(componentName: ComponentName) = if (AndroidApiVersion.isAtLeastT) {
-    getReceiverInfo(componentName, PackageManager.ComponentInfoFlags.of(0))
-} else {
-    @Suppress("Deprecation")
-    getReceiverInfo(componentName, 0)
-}
+private fun PackageManager.getReceiverInfoCompat(componentName: ComponentName) =
+    if (AndroidApiVersion.isAtLeastT) {
+        getReceiverInfo(componentName, PackageManager.ComponentInfoFlags.of(0))
+    } else {
+        @Suppress("Deprecation")
+        getReceiverInfo(componentName, 0)
+    }

@@ -27,11 +27,12 @@ class RestoreViewSecuredScreenTest : UiTestPrerequisites() {
 
     @Test
     @MediumTest
-    fun acquireScreenSecurity() = runTest {
-        val testSetup = TestSetup(composeTestRule)
+    fun acquireScreenSecurity() =
+        runTest {
+            val testSetup = TestSetup(composeTestRule)
 
-        assertEquals(1, testSetup.getSecureScreenCount())
-    }
+            assertEquals(1, testSetup.getSecureScreenCount())
+        }
 
     private class TestSetup(composeTestRule: ComposeContentTestRule) {
         private val screenSecurity = ScreenSecurity()
