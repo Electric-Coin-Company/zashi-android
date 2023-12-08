@@ -13,6 +13,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
 import androidx.test.filters.MediumTest
 import cash.z.ecc.android.bip39.Mnemonics
@@ -189,6 +190,7 @@ class RestoreViewTest : UiTestPrerequisites() {
             text = getStringResource(R.string.restore_birthday_button_restore),
             ignoreCase = true
         ).also {
+            it.performScrollTo()
             it.assertIsEnabled()
             it.performClick()
         }
