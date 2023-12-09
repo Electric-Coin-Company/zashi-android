@@ -181,10 +181,7 @@ private fun TopBarOneVisibleActionMenuExample(
         text = "Action 1",
         onClick = actionCallback,
         textAlign = TextAlign.Center,
-        modifier =
-            modifier.then(
-                Modifier.padding(all = ZcashTheme.dimens.spacingDefault)
-            )
+        modifier = modifier
     )
 }
 

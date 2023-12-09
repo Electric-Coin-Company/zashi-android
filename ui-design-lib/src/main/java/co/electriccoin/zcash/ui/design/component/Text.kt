@@ -2,6 +2,7 @@ package co.electriccoin.zcash.ui.design.component
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -152,6 +153,7 @@ fun Reference(
                 .wrapContentSize()
                 .clip(RoundedCornerShape(ZcashTheme.dimens.topAppBarActionRippleCorner))
                 .clickable { onClick() }
+                .then(modifier)
     ) {
         Text(
             text = text,
@@ -164,7 +166,7 @@ fun Reference(
                             textDecoration = TextDecoration.Underline
                         )
                     ),
-            modifier = modifier
+            modifier = Modifier.padding(all = ZcashTheme.dimens.spacingDefault)
         )
     }
 }
