@@ -9,6 +9,5 @@ data class ReportableException(
     val isUncaught: Boolean,
     val time: Instant
 ) {
-
     companion object
 }

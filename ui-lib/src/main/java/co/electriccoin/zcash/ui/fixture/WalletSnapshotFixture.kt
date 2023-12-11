@@ -10,7 +10,6 @@ import co.electriccoin.zcash.ui.common.viewmodel.SynchronizerError
 
 @Suppress("MagicNumber")
 object WalletSnapshotFixture {
-
     val STATUS = Synchronizer.Status.SYNCED
     val PROGRESS = PercentDecimal.ZERO_PERCENT
     val TRANSPARENT_BALANCE: WalletBalance = WalletBalance(Zatoshi(8), Zatoshi(1))
@@ -21,11 +20,12 @@ object WalletSnapshotFixture {
     @Suppress("LongParameterList")
     fun new(
         status: Synchronizer.Status = STATUS,
-        processorInfo: CompactBlockProcessor.ProcessorInfo = CompactBlockProcessor.ProcessorInfo(
-            null,
-            null,
-            null
-        ),
+        processorInfo: CompactBlockProcessor.ProcessorInfo =
+            CompactBlockProcessor.ProcessorInfo(
+                null,
+                null,
+                null
+            ),
         orchardBalance: WalletBalance = ORCHARD_BALANCE,
         saplingBalance: WalletBalance = SAPLING_BALANCE,
         transparentBalance: WalletBalance = TRANSPARENT_BALANCE,

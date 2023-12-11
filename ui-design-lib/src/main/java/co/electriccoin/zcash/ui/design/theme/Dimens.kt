@@ -18,30 +18,23 @@ data class Dimens(
     val spacingLarge: Dp,
     val spacingXlarge: Dp,
     val spacingHuge: Dp,
-
     // List of custom spacings:
-
     // Button:
     val buttonShadowOffsetX: Dp,
     val buttonShadowOffsetY: Dp,
     val buttonShadowSpread: Dp,
     val buttonWidth: Dp,
     val buttonHeight: Dp,
-
     // Chip
     val chipShadowElevation: Dp,
     val chipStroke: Dp,
-
     // TopAppBar:
     val topAppBarZcashLogoHeight: Dp,
     val topAppBarActionRippleCorner: Dp,
-
     // TextField:
     val textFieldDefaultHeight: Dp,
-
     // Any Layout:
     val layoutStroke: Dp,
-
     // Screen custom spacings:
     val inScreenZcashLogoHeight: Dp,
     val inScreenZcashLogoWidth: Dp,
@@ -49,35 +42,36 @@ data class Dimens(
     val screenHorizontalSpacing: Dp,
 )
 
-private val defaultDimens = Dimens(
-    spacingNone = 0.dp,
-    spacingXtiny = 2.dp,
-    spacingTiny = 4.dp,
-    spacingSmall = 8.dp,
-    spacingDefault = 16.dp,
-    spacingLarge = 24.dp,
-    spacingXlarge = 32.dp,
-    spacingHuge = 64.dp,
-    buttonShadowOffsetX = 20.dp,
-    buttonShadowOffsetY = 20.dp,
-    buttonShadowSpread = 10.dp,
-    buttonWidth = 230.dp,
-    buttonHeight = 50.dp,
-    chipShadowElevation = 4.dp,
-    chipStroke = 0.5.dp,
-    topAppBarZcashLogoHeight = 24.dp,
-    topAppBarActionRippleCorner = 28.dp,
-    textFieldDefaultHeight = 215.dp,
-    layoutStroke = 1.dp,
-    inScreenZcashLogoHeight = 100.dp,
-    inScreenZcashLogoWidth = 60.dp,
-    inScreenZcashTextLogoHeight = 30.dp,
-    screenHorizontalSpacing = 64.dp,
-)
+private val defaultDimens =
+    Dimens(
+        spacingNone = 0.dp,
+        spacingXtiny = 2.dp,
+        spacingTiny = 4.dp,
+        spacingSmall = 8.dp,
+        spacingDefault = 16.dp,
+        spacingLarge = 24.dp,
+        spacingXlarge = 32.dp,
+        spacingHuge = 64.dp,
+        buttonShadowOffsetX = 20.dp,
+        buttonShadowOffsetY = 20.dp,
+        buttonShadowSpread = 10.dp,
+        buttonWidth = 230.dp,
+        buttonHeight = 50.dp,
+        chipShadowElevation = 4.dp,
+        chipStroke = 0.5.dp,
+        topAppBarZcashLogoHeight = 24.dp,
+        topAppBarActionRippleCorner = 28.dp,
+        textFieldDefaultHeight = 215.dp,
+        layoutStroke = 1.dp,
+        inScreenZcashLogoHeight = 100.dp,
+        inScreenZcashLogoWidth = 60.dp,
+        inScreenZcashTextLogoHeight = 30.dp,
+        screenHorizontalSpacing = 64.dp,
+    )
 
 private val normalDimens = defaultDimens
 
-internal var LocalDimens = staticCompositionLocalOf { defaultDimens }
+internal var localDimens = staticCompositionLocalOf { defaultDimens }
 
 /**
  * This is a convenience way on how to provide device specification based spacings. We use Configuration from Compose
@@ -119,7 +113,7 @@ internal var LocalDimens = staticCompositionLocalOf { defaultDimens }
  *  - rounded/normal screen shape
  */
 @Composable
-internal fun ProvideDimens(content: @Composable () -> Unit,) {
+internal fun ProvideDimens(content: @Composable () -> Unit) {
     val resultDimens = normalDimens
-    CompositionLocalProvider(LocalDimens provides resultDimens, content = content)
+    CompositionLocalProvider(localDimens provides resultDimens, content = content)
 }

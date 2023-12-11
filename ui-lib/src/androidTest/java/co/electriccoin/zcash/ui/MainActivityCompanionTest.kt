@@ -6,7 +6,6 @@ import org.junit.Test
 import kotlin.time.Duration
 
 class MainActivityCompanionTest {
-
     @Test
     @SmallTest
     fun splashScreenDelayDisabled() {

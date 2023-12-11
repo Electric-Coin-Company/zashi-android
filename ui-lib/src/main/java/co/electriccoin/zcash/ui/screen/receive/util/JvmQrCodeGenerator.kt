@@ -4,10 +4,14 @@ import com.google.zxing.BarcodeFormat
 import com.google.zxing.qrcode.QRCodeWriter
 
 object JvmQrCodeGenerator : QrCodeGenerator {
-    override fun generate(data: String, sizePixels: Int): BooleanArray {
-        val bitMatrix = QRCodeWriter().let {
-            it.encode(data, BarcodeFormat.QR_CODE, sizePixels, sizePixels)
-        }
+    override fun generate(
+        data: String,
+        sizePixels: Int
+    ): BooleanArray {
+        val bitMatrix =
+            QRCodeWriter().let {
+                it.encode(data, BarcodeFormat.QR_CODE, sizePixels, sizePixels)
+            }
 
         return BooleanArray(sizePixels * sizePixels).apply {
             var booleanArrayPosition = 0

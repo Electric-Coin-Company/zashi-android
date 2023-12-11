@@ -83,208 +83,214 @@ class SendViewTest : UiTestPrerequisites() {
     @Test
     @MediumTest
     @OptIn(ExperimentalCoroutinesApi::class)
-    fun create_request_no_memo() = runTest {
-        val testSetup = newTestSetup()
+    fun create_request_no_memo() =
+        runTest {
+            val testSetup = newTestSetup()
 
-        assertEquals(0, testSetup.getOnCreateCount())
-        assertEquals(null, testSetup.getLastZecSend())
+            assertEquals(0, testSetup.getOnCreateCount())
+            assertEquals(null, testSetup.getLastZecSend())
 
-        composeTestRule.setValidAmount()
-        composeTestRule.setValidAddress()
-        composeTestRule.clickCreateAndSend()
-        composeTestRule.assertOnConfirmation()
-        composeTestRule.clickConfirmation()
+            composeTestRule.setValidAmount()
+            composeTestRule.setValidAddress()
+            composeTestRule.clickCreateAndSend()
+            composeTestRule.assertOnConfirmation()
+            composeTestRule.clickConfirmation()
 
-        launch {
-            testSetup.mutableActionExecuted.collectWith(this) {
-                if (!it) return@collectWith
+            launch {
+                testSetup.mutableActionExecuted.collectWith(this) {
+                    if (!it) return@collectWith
 
-                assertEquals(1, testSetup.getOnCreateCount())
+                    assertEquals(1, testSetup.getOnCreateCount())
 
-                launch {
-                    testSetup.getLastZecSend().also {
-                        assertNotNull(it)
-                        assertEquals(WalletAddressFixture.unified(), it.destination)
-                        assertEquals(Zatoshi(12345678900000), it.amount)
-                        assertEquals(ZecRequestFixture.MESSAGE.value, it.memo.value)
+                    launch {
+                        testSetup.getLastZecSend().also {
+                            assertNotNull(it)
+                            assertEquals(WalletAddressFixture.unified(), it.destination)
+                            assertEquals(Zatoshi(12345678900000), it.amount)
+                            assertEquals(ZecRequestFixture.MESSAGE.value, it.memo.value)
+                        }
                     }
+                    this.cancel()
                 }
-                this.cancel()
             }
         }
-    }
 
     @Test
     @MediumTest
     @OptIn(ExperimentalCoroutinesApi::class)
-    fun create_request_with_memo() = runTest {
-        val testSetup = newTestSetup()
+    fun create_request_with_memo() =
+        runTest {
+            val testSetup = newTestSetup()
 
-        assertEquals(0, testSetup.getOnCreateCount())
-        assertEquals(null, testSetup.getLastZecSend())
+            assertEquals(0, testSetup.getOnCreateCount())
+            assertEquals(null, testSetup.getLastZecSend())
 
-        composeTestRule.setValidAmount()
-        composeTestRule.setValidAddress()
-        composeTestRule.setValidMemo()
+            composeTestRule.setValidAmount()
+            composeTestRule.setValidAddress()
+            composeTestRule.setValidMemo()
 
-        composeTestRule.clickCreateAndSend()
-        composeTestRule.assertOnConfirmation()
-        composeTestRule.clickConfirmation()
+            composeTestRule.clickCreateAndSend()
+            composeTestRule.assertOnConfirmation()
+            composeTestRule.clickConfirmation()
 
-        launch {
-            testSetup.mutableActionExecuted.collectWith(this) {
-                if (!it) return@collectWith
+            launch {
+                testSetup.mutableActionExecuted.collectWith(this) {
+                    if (!it) return@collectWith
 
-                assertEquals(1, testSetup.getOnCreateCount())
+                    assertEquals(1, testSetup.getOnCreateCount())
 
-                launch {
-                    testSetup.getLastZecSend().also {
-                        assertNotNull(it)
-                        assertEquals(WalletAddressFixture.unified(), it.destination)
-                        assertEquals(Zatoshi(12345678900000), it.amount)
-                        assertEquals(ZecRequestFixture.MESSAGE.value, it.memo.value)
+                    launch {
+                        testSetup.getLastZecSend().also {
+                            assertNotNull(it)
+                            assertEquals(WalletAddressFixture.unified(), it.destination)
+                            assertEquals(Zatoshi(12345678900000), it.amount)
+                            assertEquals(ZecRequestFixture.MESSAGE.value, it.memo.value)
+                        }
                     }
+                    this.cancel()
                 }
-                this.cancel()
             }
         }
-    }
 
     @Test
     @MediumTest
     @OptIn(ExperimentalCoroutinesApi::class)
-    fun check_regex_functionality_valid_inputs() = runTest {
-        val testSetup = newTestSetup()
-        val separators = MonetarySeparators.current()
+    fun check_regex_functionality_valid_inputs() =
+        runTest {
+            val testSetup = newTestSetup()
+            val separators = MonetarySeparators.current()
 
-        assertEquals(0, testSetup.getOnCreateCount())
-        assertEquals(null, testSetup.getLastZecSend())
-        composeTestRule.assertSendDisabled()
+            assertEquals(0, testSetup.getOnCreateCount())
+            assertEquals(null, testSetup.getLastZecSend())
+            composeTestRule.assertSendDisabled()
 
-        composeTestRule.setValidAmount()
-        composeTestRule.setValidAddress()
-        composeTestRule.setValidMemo()
-        composeTestRule.assertSendEnabled()
+            composeTestRule.setValidAmount()
+            composeTestRule.setValidAddress()
+            composeTestRule.setValidMemo()
+            composeTestRule.assertSendEnabled()
 
-        composeTestRule.setAmount("123")
-        composeTestRule.assertSendEnabled()
+            composeTestRule.setAmount("123")
+            composeTestRule.assertSendEnabled()
 
-        // e.g. 123,
-        composeTestRule.setAmount("123${separators.grouping}")
-        composeTestRule.assertSendEnabled()
+            // e.g. 123,
+            composeTestRule.setAmount("123${separators.grouping}")
+            composeTestRule.assertSendEnabled()
 
-        // e.g. 123.
-        composeTestRule.setAmount("123${separators.decimal}")
-        composeTestRule.assertSendEnabled()
+            // e.g. 123.
+            composeTestRule.setAmount("123${separators.decimal}")
+            composeTestRule.assertSendEnabled()
 
-        // e.g. 123,456.
-        composeTestRule.setAmount("123${separators.grouping}456${separators.decimal}")
-        composeTestRule.assertSendEnabled()
+            // e.g. 123,456.
+            composeTestRule.setAmount("123${separators.grouping}456${separators.decimal}")
+            composeTestRule.assertSendEnabled()
 
-        // e.g. 123,456.789
-        composeTestRule.setAmount("123${separators.grouping}456${separators.decimal}789")
-        composeTestRule.assertSendEnabled()
+            // e.g. 123,456.789
+            composeTestRule.setAmount("123${separators.grouping}456${separators.decimal}789")
+            composeTestRule.assertSendEnabled()
 
-        composeTestRule.clickCreateAndSend()
-        composeTestRule.assertOnConfirmation()
-        composeTestRule.clickConfirmation()
+            composeTestRule.clickCreateAndSend()
+            composeTestRule.assertOnConfirmation()
+            composeTestRule.clickConfirmation()
 
-        launch {
-            testSetup.mutableActionExecuted.collectWith(this) {
-                if (!it) return@collectWith
+            launch {
+                testSetup.mutableActionExecuted.collectWith(this) {
+                    if (!it) return@collectWith
 
-                assertEquals(1, testSetup.getOnCreateCount())
+                    assertEquals(1, testSetup.getOnCreateCount())
 
-                launch {
-                    testSetup.getLastZecSend().also {
-                        assertNotNull(it)
-                        assertEquals(WalletAddressFixture.unified(), it.destination)
-                        assertEquals(Zatoshi(12345678900000), it.amount)
-                        assertEquals(ZecRequestFixture.MESSAGE.value, it.memo.value)
+                    launch {
+                        testSetup.getLastZecSend().also {
+                            assertNotNull(it)
+                            assertEquals(WalletAddressFixture.unified(), it.destination)
+                            assertEquals(Zatoshi(12345678900000), it.amount)
+                            assertEquals(ZecRequestFixture.MESSAGE.value, it.memo.value)
+                        }
                     }
+                    this.cancel()
                 }
-                this.cancel()
             }
         }
-    }
 
     @Test
     @MediumTest
     @OptIn(ExperimentalCoroutinesApi::class)
-    fun check_regex_functionality_invalid_inputs() = runTest {
-        val testSetup = newTestSetup()
-        val separators = MonetarySeparators.current()
+    fun check_regex_functionality_invalid_inputs() =
+        runTest {
+            val testSetup = newTestSetup()
+            val separators = MonetarySeparators.current()
 
-        assertEquals(0, testSetup.getOnCreateCount())
-        assertEquals(null, testSetup.getLastZecSend())
-        composeTestRule.assertSendDisabled()
+            assertEquals(0, testSetup.getOnCreateCount())
+            assertEquals(null, testSetup.getLastZecSend())
+            composeTestRule.assertSendDisabled()
 
-        composeTestRule.setAmount("aaa")
-        composeTestRule.assertSendDisabled()
+            composeTestRule.setAmount("aaa")
+            composeTestRule.assertSendDisabled()
 
-        composeTestRule.setAmount("123aaa")
-        composeTestRule.assertSendDisabled()
+            composeTestRule.setAmount("123aaa")
+            composeTestRule.assertSendDisabled()
 
-        // e.g. ,.
-        composeTestRule.setAmount("${separators.grouping}${separators.decimal}")
-        composeTestRule.assertSendDisabled()
+            // e.g. ,.
+            composeTestRule.setAmount("${separators.grouping}${separators.decimal}")
+            composeTestRule.assertSendDisabled()
 
-        // e.g. 123,.
-        composeTestRule.setAmount("123${separators.grouping}${separators.decimal}")
-        composeTestRule.assertSendDisabled()
+            // e.g. 123,.
+            composeTestRule.setAmount("123${separators.grouping}${separators.decimal}")
+            composeTestRule.assertSendDisabled()
 
-        // e.g. 1,2,3
-        composeTestRule.setAmount("1${separators.grouping}2${separators.grouping}3")
-        composeTestRule.assertSendDisabled()
+            // e.g. 1,2,3
+            composeTestRule.setAmount("1${separators.grouping}2${separators.grouping}3")
+            composeTestRule.assertSendDisabled()
 
-        // e.g. 1.2.3
-        composeTestRule.setAmount("1${separators.decimal}2${separators.decimal}3")
-        composeTestRule.assertSendDisabled()
+            // e.g. 1.2.3
+            composeTestRule.setAmount("1${separators.decimal}2${separators.decimal}3")
+            composeTestRule.assertSendDisabled()
 
-        assertEquals(0, testSetup.getOnCreateCount())
-        assertEquals(null, testSetup.getLastZecSend())
-        composeTestRule.assertSendDisabled()
-    }
+            assertEquals(0, testSetup.getOnCreateCount())
+            assertEquals(null, testSetup.getLastZecSend())
+            composeTestRule.assertSendDisabled()
+        }
 
     @Test
     @MediumTest
     @OptIn(ExperimentalCoroutinesApi::class)
-    fun max_memo_length() = runTest {
-        val testSetup = newTestSetup()
+    fun max_memo_length() =
+        runTest {
+            val testSetup = newTestSetup()
 
-        composeTestRule.setValidAmount()
-        composeTestRule.setValidAddress()
+            composeTestRule.setValidAmount()
+            composeTestRule.setValidAddress()
 
-        val input = buildString {
-            while (Memo.isWithinMaxLength(toString())) {
-                append("a")
-            }
-        }
-
-        composeTestRule.setMemo(input)
-
-        composeTestRule.clickCreateAndSend()
-        composeTestRule.assertOnConfirmation()
-        composeTestRule.clickConfirmation()
-
-        launch {
-            testSetup.mutableActionExecuted.collectWith(this) {
-                if (!it) return@collectWith
-
-                assertEquals(1, testSetup.getOnCreateCount())
-
-                launch {
-                    testSetup.getLastZecSend().also {
-                        assertNotNull(it)
-                        assertEquals(WalletAddressFixture.unified(), it.destination)
-                        assertEquals(Zatoshi(12345600000), it.amount)
-                        assertTrue(it.memo.value.isEmpty())
+            val input =
+                buildString {
+                    while (Memo.isWithinMaxLength(toString())) {
+                        append("a")
                     }
                 }
-                this.cancel()
+
+            composeTestRule.setMemo(input)
+
+            composeTestRule.clickCreateAndSend()
+            composeTestRule.assertOnConfirmation()
+            composeTestRule.clickConfirmation()
+
+            launch {
+                testSetup.mutableActionExecuted.collectWith(this) {
+                    if (!it) return@collectWith
+
+                    assertEquals(1, testSetup.getOnCreateCount())
+
+                    launch {
+                        testSetup.getLastZecSend().also {
+                            assertNotNull(it)
+                            assertEquals(WalletAddressFixture.unified(), it.destination)
+                            assertEquals(Zatoshi(12345600000), it.amount)
+                            assertTrue(it.memo.value.isEmpty())
+                        }
+                    }
+                    this.cancel()
+                }
             }
         }
-    }
 
     @Test
     @MediumTest
@@ -335,10 +341,11 @@ class SendViewTest : UiTestPrerequisites() {
     @Test
     @MediumTest
     fun back_on_send_successful() {
-        val testSetup = newTestSetup(
-            SendStage.SendSuccessful,
-            runBlocking { ZecSendFixture.new() }
-        )
+        val testSetup =
+            newTestSetup(
+                SendStage.SendSuccessful,
+                runBlocking { ZecSendFixture.new() }
+            )
 
         assertEquals(0, testSetup.getOnBackCount())
 
@@ -351,10 +358,11 @@ class SendViewTest : UiTestPrerequisites() {
     @Test
     @MediumTest
     fun close_on_send_successful() {
-        val testSetup = newTestSetup(
-            SendStage.SendSuccessful,
-            runBlocking { ZecSendFixture.new() }
-        )
+        val testSetup =
+            newTestSetup(
+                SendStage.SendSuccessful,
+                runBlocking { ZecSendFixture.new() }
+            )
 
         assertEquals(0, testSetup.getOnBackCount())
 
@@ -370,10 +378,11 @@ class SendViewTest : UiTestPrerequisites() {
     @Test
     @MediumTest
     fun back_on_send_failure() {
-        val testSetup = newTestSetup(
-            SendStage.SendFailure,
-            runBlocking { ZecSendFixture.new() }
-        )
+        val testSetup =
+            newTestSetup(
+                SendStage.SendFailure,
+                runBlocking { ZecSendFixture.new() }
+            )
 
         assertEquals(0, testSetup.getOnBackCount())
 
@@ -387,10 +396,11 @@ class SendViewTest : UiTestPrerequisites() {
     @Test
     @MediumTest
     fun close_on_send_failure() {
-        val testSetup = newTestSetup(
-            SendStage.SendFailure,
-            runBlocking { ZecSendFixture.new() }
-        )
+        val testSetup =
+            newTestSetup(
+                SendStage.SendFailure,
+                runBlocking { ZecSendFixture.new() }
+            )
 
         assertEquals(0, testSetup.getOnBackCount())
 
@@ -421,11 +431,12 @@ class SendViewTest : UiTestPrerequisites() {
     fun input_arguments_to_form() {
         newTestSetup(
             sendStage = SendStage.Form,
-            sendArgumentsWrapper = SendArgumentsWrapperFixture.new(
-                recipientAddress = SendArgumentsWrapperFixture.RECIPIENT_ADDRESS,
-                amount = SendArgumentsWrapperFixture.AMOUNT,
-                memo = SendArgumentsWrapperFixture.MEMO
-            ),
+            sendArgumentsWrapper =
+                SendArgumentsWrapperFixture.new(
+                    recipientAddress = SendArgumentsWrapperFixture.RECIPIENT_ADDRESS,
+                    amount = SendArgumentsWrapperFixture.AMOUNT,
+                    memo = SendArgumentsWrapperFixture.MEMO
+                ),
             zecSend = null
         )
 

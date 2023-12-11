@@ -76,23 +76,22 @@ fun SecurityWarning(
             onPrivacyPolicy = onPrivacyPolicy,
             onAcknowledged = onAcknowledged,
             onConfirm = onConfirm,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(
-                    top = paddingValues.calculateTopPadding(),
-                    bottom = paddingValues.calculateBottomPadding(),
-                    start = ZcashTheme.dimens.screenHorizontalSpacing,
-                    end = ZcashTheme.dimens.screenHorizontalSpacing
-                )
-                .verticalScroll(rememberScrollState())
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(
+                        top = paddingValues.calculateTopPadding(),
+                        bottom = paddingValues.calculateBottomPadding(),
+                        start = ZcashTheme.dimens.screenHorizontalSpacing,
+                        end = ZcashTheme.dimens.screenHorizontalSpacing
+                    )
+                    .verticalScroll(rememberScrollState())
         )
     }
 }
 
 @Composable
-private fun SecurityWarningTopAppBar(
-    onBack: () -> Unit,
-) {
+private fun SecurityWarningTopAppBar(onBack: () -> Unit) {
     SmallTopAppBar(
         backText = stringResource(R.string.security_warning_back).uppercase(),
         backContentDescriptionText = stringResource(R.string.security_warning_back_content_description),
@@ -128,9 +127,10 @@ private fun SecurityWarningContent(
 
         val checkedState = rememberSaveable { mutableStateOf(false) }
         CheckBox(
-            modifier = Modifier
-                .align(Alignment.Start)
-                .fillMaxWidth(),
+            modifier =
+                Modifier
+                    .align(Alignment.Start)
+                    .fillMaxWidth(),
             checked = checkedState.value,
             onCheckedChange = {
                 checkedState.value = it
@@ -141,9 +141,10 @@ private fun SecurityWarningContent(
         )
 
         Spacer(
-            modifier = Modifier
-                .fillMaxHeight()
-                .weight(MINIMAL_WEIGHT)
+            modifier =
+                Modifier
+                    .fillMaxHeight()
+                    .weight(MINIMAL_WEIGHT)
         )
 
         PrimaryButton(
@@ -164,21 +165,23 @@ fun SecurityWarningContentText(
     val textPart1 = stringResource(R.string.security_warning_text_part_1, versionInfo.versionName)
     val textPart2 = stringResource(R.string.security_warning_text_part_2)
     ClickableText(
-        text = buildAnnotatedString {
-            append(textPart1)
-            withStyle(SpanStyle(textDecoration = TextDecoration.Underline)) {
-                append(textPart2)
-            }
-            append(stringResource(R.string.security_warning_text_part_3))
-            withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
-                append(stringResource(R.string.security_warning_text_part_4))
-            }
-            append(stringResource(R.string.security_warning_text_part_5))
-        },
+        text =
+            buildAnnotatedString {
+                append(textPart1)
+                withStyle(SpanStyle(textDecoration = TextDecoration.Underline)) {
+                    append(textPart2)
+                }
+                append(stringResource(R.string.security_warning_text_part_3))
+                withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
+                    append(stringResource(R.string.security_warning_text_part_4))
+                }
+                append(stringResource(R.string.security_warning_text_part_5))
+            },
         style = ZcashTheme.extendedTypography.securityWarningText,
-        modifier = Modifier
-            .fillMaxWidth()
-            .testTag(SecurityScreenTag.WARNING_TEXT_TAG),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .testTag(SecurityScreenTag.WARNING_TEXT_TAG),
         onClick = { letterOffset ->
             // Call the callback only if user clicked the underlined part
             if (letterOffset >= textPart1.length && letterOffset <= (textPart1.length + textPart2.length)) {

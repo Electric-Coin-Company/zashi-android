@@ -25,11 +25,12 @@ class NewWalletRecoveryViewsSecuredScreenTest : UiTestPrerequisites() {
 
     @Test
     @MediumTest
-    fun acquireScreenSecurity() = runTest {
-        val testSetup = newTestSetup()
+    fun acquireScreenSecurity() =
+        runTest {
+            val testSetup = newTestSetup()
 
-        assertEquals(1, testSetup.getSecureScreenCount())
-    }
+            assertEquals(1, testSetup.getSecureScreenCount())
+        }
 
     private class TestSetup(private val composeTestRule: ComposeContentTestRule) {
         private val screenSecurity = ScreenSecurity()

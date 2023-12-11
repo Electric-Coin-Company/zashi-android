@@ -69,17 +69,18 @@ fun About(
     }) { paddingValues ->
         AboutMainContent(
             versionInfo = versionInfo,
-            modifier = Modifier
-                .fillMaxHeight()
-                .verticalScroll(
-                    rememberScrollState()
-                )
-                .padding(
-                    top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
-                    bottom = paddingValues.calculateBottomPadding() + ZcashTheme.dimens.spacingDefault,
-                    start = ZcashTheme.dimens.screenHorizontalSpacing,
-                    end = ZcashTheme.dimens.screenHorizontalSpacing
-                )
+            modifier =
+                Modifier
+                    .fillMaxHeight()
+                    .verticalScroll(
+                        rememberScrollState()
+                    )
+                    .padding(
+                        top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
+                        bottom = paddingValues.calculateBottomPadding() + ZcashTheme.dimens.spacingDefault,
+                        start = ZcashTheme.dimens.screenHorizontalSpacing,
+                        end = ZcashTheme.dimens.screenHorizontalSpacing
+                    )
         )
     }
 }
@@ -149,9 +150,10 @@ fun AboutMainContent(
         val logoContentDescription = stringResource(R.string.zcash_logo_content_description)
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.semantics(mergeDescendants = true) {
-                contentDescription = logoContentDescription
-            }
+            modifier =
+                Modifier.semantics(mergeDescendants = true) {
+                    contentDescription = logoContentDescription
+                }
         ) {
             Image(
                 painter = painterResource(id = co.electriccoin.zcash.ui.design.R.drawable.zashi_logo_without_text),
@@ -171,10 +173,11 @@ fun AboutMainContent(
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
 
         Text(
-            text = stringResource(
-                R.string.about_version_format,
-                versionInfo.versionName
-            ),
+            text =
+                stringResource(
+                    R.string.about_version_format,
+                    versionInfo.versionName
+                ),
             style = ZcashTheme.typography.primary.titleSmall
         )
 

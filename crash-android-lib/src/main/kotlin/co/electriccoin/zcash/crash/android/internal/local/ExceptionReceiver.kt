@@ -8,16 +8,18 @@ import kotlinx.coroutines.GlobalScope
 
 @OptIn(kotlinx.coroutines.DelicateCoroutinesApi::class)
 class ExceptionReceiver : CoroutineBroadcastReceiver(GlobalScope) {
-
-    override suspend fun onReceiveSuspend(context: Context, intent: Intent) {
-        val reportableException = intent.extras?.let { ReportableException.fromBundle(it) }
-            ?: return
+    override suspend fun onReceiveSuspend(
+        context: Context,
+        intent: Intent
+    ) {
+        val reportableException =
+            intent.extras?.let { ReportableException.fromBundle(it) }
+                ?: return
 
         AndroidExceptionReporter.reportException(context, reportableException)
     }
 
     companion object {
-
         /**
          * @return Explicit intent to broadcast to log the exception.
          */

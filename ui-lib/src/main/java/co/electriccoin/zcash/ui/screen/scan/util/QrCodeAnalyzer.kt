@@ -15,40 +15,43 @@ import java.nio.ByteBuffer
 class QrCodeAnalyzer(
     private val onQrCodeScanned: (String) -> Unit
 ) : ImageAnalysis.Analyzer {
-
-    private val supportedImageFormats = listOf(
-        ImageFormat.YUV_420_888,
-        ImageFormat.YUV_422_888,
-        ImageFormat.YUV_444_888
-    )
+    private val supportedImageFormats =
+        listOf(
+            ImageFormat.YUV_420_888,
+            ImageFormat.YUV_422_888,
+            ImageFormat.YUV_444_888
+        )
 
     override fun analyze(image: ImageProxy) {
         image.use {
             if (image.format in supportedImageFormats) {
                 val bytes = image.planes.first().buffer.toByteArray()
-                val source = PlanarYUVLuminanceSource(
-                    bytes,
-                    image.width,
-                    image.height,
-                    0,
-                    0,
-                    image.width,
-                    image.height,
-                    false
-                )
+                val source =
+                    PlanarYUVLuminanceSource(
+                        bytes,
+                        image.width,
+                        image.height,
+                        0,
+                        0,
+                        image.width,
+                        image.height,
+                        false
+                    )
 
                 val binaryBmp = BinaryBitmap(HybridBinarizer(source))
 
                 runCatching {
-                    val result = MultiFormatReader().apply {
-                        setHints(
-                            mapOf(
-                                DecodeHintType.POSSIBLE_FORMATS to arrayListOf(
-                                    BarcodeFormat.QR_CODE
+                    val result =
+                        MultiFormatReader().apply {
+                            setHints(
+                                mapOf(
+                                    DecodeHintType.POSSIBLE_FORMATS to
+                                        arrayListOf(
+                                            BarcodeFormat.QR_CODE
+                                        )
                                 )
                             )
-                        )
-                    }.decode(binaryBmp)
+                        }.decode(binaryBmp)
 
                     onQrCodeScanned(result.text)
                 }.onFailure {

@@ -50,7 +50,9 @@ val isRunningTest: Boolean by lazy {
 val shouldSecureScreen: Boolean by lazy {
     if (isRunningTest) {
         true
-    } else BuildConfig.IS_SECURE_SCREEN_ENABLED
+    } else {
+        BuildConfig.IS_SECURE_SCREEN_ENABLED
+    }
 }
 
 @Composable

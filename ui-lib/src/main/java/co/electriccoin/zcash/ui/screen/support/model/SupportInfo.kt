@@ -26,39 +26,39 @@ data class SupportInfo(
     val permissionInfo: PersistentList<PermissionInfo>,
     val crashInfo: PersistentList<CrashInfo>
 ) {
-
     // The set of enum values is to allow optional filtering of different types of information
     // by users in the future.  This would mostly be useful for using a web service request to post
     // instead of email (where users can edit the auto generated message)
-    fun toSupportString(set: Set<SupportInfoType>) = buildString {
-        if (set.contains(SupportInfoType.Time)) {
-            append(timeInfo.toSupportString())
-        }
+    fun toSupportString(set: Set<SupportInfoType>) =
+        buildString {
+            if (set.contains(SupportInfoType.Time)) {
+                append(timeInfo.toSupportString())
+            }
 
-        if (set.contains(SupportInfoType.App)) {
-            append(appInfo.toSupportString())
-        }
+            if (set.contains(SupportInfoType.App)) {
+                append(appInfo.toSupportString())
+            }
 
-        if (set.contains(SupportInfoType.Os)) {
-            append(operatingSystemInfo.toSupportString())
-        }
+            if (set.contains(SupportInfoType.Os)) {
+                append(operatingSystemInfo.toSupportString())
+            }
 
-        if (set.contains(SupportInfoType.Device)) {
-            append(deviceInfo.toSupportString())
-        }
+            if (set.contains(SupportInfoType.Device)) {
+                append(deviceInfo.toSupportString())
+            }
 
-        if (set.contains(SupportInfoType.Environment)) {
-            append(environmentInfo.toSupportString())
-        }
+            if (set.contains(SupportInfoType.Environment)) {
+                append(environmentInfo.toSupportString())
+            }
 
-        if (set.contains(SupportInfoType.Permission)) {
-            append(permissionInfo.toPermissionSupportString())
-        }
+            if (set.contains(SupportInfoType.Permission)) {
+                append(permissionInfo.toPermissionSupportString())
+            }
 
-        if (set.contains(SupportInfoType.Crash)) {
-            append(crashInfo.toCrashSupportString())
+            if (set.contains(SupportInfoType.Crash)) {
+                append(crashInfo.toCrashSupportString())
+            }
         }
-    }
 
     companion object {
         // Although most of our calls now are non-blocking, we expect more of them to be blocking

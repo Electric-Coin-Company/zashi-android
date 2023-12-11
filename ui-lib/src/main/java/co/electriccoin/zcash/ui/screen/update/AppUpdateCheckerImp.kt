@@ -16,7 +16,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 
 class AppUpdateCheckerImp private constructor() : AppUpdateChecker {
-
     companion object {
         private const val DEFAULT_STALENESS_DAYS = 3
 
@@ -36,38 +35,41 @@ class AppUpdateCheckerImp private constructor() : AppUpdateChecker {
      *
      * @return UpdateInfo object encapsulated in Flow in case of conditions succeeded
      */
-    override fun newCheckForUpdateAvailabilityFlow(
-        context: Context
-    ): Flow<UpdateInfo> = callbackFlow {
-        val appUpdateInfoTask = AppUpdateManagerFactory.create(context.applicationContext).appUpdateInfo
+    override fun newCheckForUpdateAvailabilityFlow(context: Context): Flow<UpdateInfo> =
+        callbackFlow {
+            val appUpdateInfoTask = AppUpdateManagerFactory.create(context.applicationContext).appUpdateInfo
 
-        appUpdateInfoTask.addOnCompleteListener { infoTask ->
-            if (!infoTask.isSuccessful) {
-                emitFailure(this)
-                return@addOnCompleteListener
-            }
+            appUpdateInfoTask.addOnCompleteListener { infoTask ->
+                if (!infoTask.isSuccessful) {
+                    emitFailure(this)
+                    return@addOnCompleteListener
+                }
 
-            val appUpdateInfo = infoTask.result
-            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE &&
-                appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
-            ) {
-                // we force user to update immediately in case of high priority
-                // or in case of staleness days passed
-                if (isHighPriority(appUpdateInfo.updatePriority()) ||
-                    (appUpdateInfo.clientVersionStalenessDays() ?: -1) >= stalenessDays
+                val appUpdateInfo = infoTask.result
+                if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE &&
+                    appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
                 ) {
-                    emitSuccess(this, infoTask.result, UpdateState.Prepared)
-                } else {
-                    emitSuccess(this, infoTask.result, UpdateState.Done)
+                    // we force user to update immediately in case of high priority
+                    // or in case of staleness days passed
+                    if (isHighPriority(appUpdateInfo.updatePriority()) ||
+                        (appUpdateInfo.clientVersionStalenessDays() ?: -1) >= stalenessDays
+                    ) {
+                        emitSuccess(this, infoTask.result, UpdateState.Prepared)
+                    } else {
+                        emitSuccess(this, infoTask.result, UpdateState.Done)
+                    }
                 }
             }
+            awaitClose {
+                // No resources to release
+            }
         }
-        awaitClose {
-            // No resources to release
-        }
-    }
 
-    private fun emitSuccess(producerScope: ProducerScope<UpdateInfo>, info: AppUpdateInfo, state: UpdateState) {
+    private fun emitSuccess(
+        producerScope: ProducerScope<UpdateInfo>,
+        info: AppUpdateInfo,
+        state: UpdateState
+    ) {
         producerScope.trySend(
             UpdateInfo(
                 getPriority(info.updatePriority()),
@@ -106,23 +108,25 @@ class AppUpdateCheckerImp private constructor() : AppUpdateChecker {
     override fun newStartUpdateFlow(
         activity: ComponentActivity,
         appUpdateInfo: AppUpdateInfo
-    ): Flow<Int> = callbackFlow {
-        val appUpdateResultTask = AppUpdateManagerFactory.create(activity).startUpdateFlow(
-            appUpdateInfo,
-            activity,
-            AppUpdateOptions.defaultOptions(AppUpdateType.IMMEDIATE)
-        )
+    ): Flow<Int> =
+        callbackFlow {
+            val appUpdateResultTask =
+                AppUpdateManagerFactory.create(activity).startUpdateFlow(
+                    appUpdateInfo,
+                    activity,
+                    AppUpdateOptions.defaultOptions(AppUpdateType.IMMEDIATE)
+                )
 
-        appUpdateResultTask.addOnCompleteListener { resultTask ->
-            if (resultTask.isSuccessful) {
-                trySend(resultTask.result)
-            } else {
-                trySend(ActivityResult.RESULT_IN_APP_UPDATE_FAILED)
+            appUpdateResultTask.addOnCompleteListener { resultTask ->
+                if (resultTask.isSuccessful) {
+                    trySend(resultTask.result)
+                } else {
+                    trySend(ActivityResult.RESULT_IN_APP_UPDATE_FAILED)
+                }
+            }
+
+            awaitClose {
+                // No resources to release
             }
         }
-
-        awaitClose {
-            // No resources to release
-        }
-    }
 }

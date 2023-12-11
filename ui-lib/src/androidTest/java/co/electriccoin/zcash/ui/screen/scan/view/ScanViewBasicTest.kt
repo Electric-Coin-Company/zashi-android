@@ -23,7 +23,6 @@ import org.junit.Test
 // Its ensured by GrantPermissionRule component. More complex UI and integration tests can be found
 // in the ui-integration-test-lib module.
 class ScanViewBasicTest : UiTestPrerequisites() {
-
     @get:Rule
     val composeTestRule = createComposeRule()
 
@@ -90,7 +89,8 @@ class ScanViewBasicTest : UiTestPrerequisites() {
         assertEquals(ScanState.Scanning, testSetup.getScanState())
     }
 
-    private fun newTestSetup() = ScanViewBasicTestSetup(composeTestRule).apply {
-        setDefaultContent()
-    }
+    private fun newTestSetup() =
+        ScanViewBasicTestSetup(composeTestRule).apply {
+            setDefaultContent()
+        }
 }

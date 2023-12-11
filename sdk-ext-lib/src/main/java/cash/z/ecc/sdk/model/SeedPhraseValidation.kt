@@ -10,8 +10,11 @@ import java.util.Locale
 // there as part of creating the object
 sealed class SeedPhraseValidation {
     object BadCount : SeedPhraseValidation()
+
     object BadWord : SeedPhraseValidation()
+
     object FailedChecksum : SeedPhraseValidation()
+
     class Valid(val seedPhrase: SeedPhrase) : SeedPhraseValidation()
 
     companion object {

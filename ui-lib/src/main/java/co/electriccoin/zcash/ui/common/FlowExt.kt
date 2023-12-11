@@ -18,41 +18,43 @@ import kotlin.time.TimeSource
 fun <T> Flow<T>.throttle(
     duration: Duration,
     timeSource: TimeSource = TimeSource.Monotonic
-): Flow<T> = flow {
-    coroutineScope {
-        val context = coroutineContext
-        val mutex = Mutex()
+): Flow<T> =
+    flow {
+        coroutineScope {
+            val context = coroutineContext
+            val mutex = Mutex()
 
-        var timeMark = timeSource.markNow()
-        var delayEmit: Deferred<Unit>? = null
-        var firstValue = true
-        var valueToEmit: T
-        collect { value ->
-            if (firstValue) {
-                firstValue = false
-                emit(value)
-                timeMark = timeSource.markNow()
-                return@collect
-            }
-            delayEmit?.cancel()
-            valueToEmit = value
-
-            if (timeMark.elapsedNow() >= duration) {
-                mutex.withLock {
-                    emit(valueToEmit)
+            var timeMark = timeSource.markNow()
+            var delayEmit: Deferred<Unit>? = null
+            var firstValue = true
+            var valueToEmit: T
+            collect { value ->
+                if (firstValue) {
+                    firstValue = false
+                    emit(value)
                     timeMark = timeSource.markNow()
+                    return@collect
                 }
-            } else {
-                delayEmit = async(Dispatchers.Default) {
+                delayEmit?.cancel()
+                valueToEmit = value
+
+                if (timeMark.elapsedNow() >= duration) {
                     mutex.withLock {
-                        delay(duration)
-                        withContext(context) {
-                            emit(valueToEmit)
-                        }
+                        emit(valueToEmit)
                         timeMark = timeSource.markNow()
                     }
+                } else {
+                    delayEmit =
+                        async(Dispatchers.Default) {
+                            mutex.withLock {
+                                delay(duration)
+                                withContext(context) {
+                                    emit(valueToEmit)
+                                }
+                                timeMark = timeSource.markNow()
+                            }
+                        }
                 }
             }
         }
     }
-}

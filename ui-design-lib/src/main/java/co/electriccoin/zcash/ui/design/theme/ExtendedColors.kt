@@ -37,10 +37,12 @@ data class ExtendedColors(
     val welcomeAnimationColor: Color,
 ) {
     @Composable
-    fun surfaceGradient() = Brush.verticalGradient(
-        colors = listOf(
-            MaterialTheme.colorScheme.surface,
-            ZcashTheme.colors.surfaceEnd
+    fun surfaceGradient() =
+        Brush.verticalGradient(
+            colors =
+                listOf(
+                    MaterialTheme.colorScheme.surface,
+                    ZcashTheme.colors.surfaceEnd
+                )
         )
-    )
 }

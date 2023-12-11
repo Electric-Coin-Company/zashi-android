@@ -11,7 +11,6 @@ import kotlinx.datetime.Instant
  * though, making the initial mapping thread-safe.
  */
 class MockConfiguration(private val configurationMapping: Map<String, String> = emptyMap()) : Configuration {
-
     override val updatedAt: Instant? = null
 
     override fun getBoolean(
@@ -20,23 +19,32 @@ class MockConfiguration(private val configurationMapping: Map<String, String> = 
     ) = configurationMapping[key.key]?.let {
         try {
             it.toBooleanStrict()
-        } catch (@Suppress("SwallowedException") e: IllegalArgumentException) {
+        } catch (
+            @Suppress("SwallowedException") e: IllegalArgumentException
+        ) {
             // In the future, log coercion failure as this could mean someone made an error in the remote config console
             defaultValue
         }
     } ?: defaultValue
 
-    override fun getInt(key: ConfigKey, defaultValue: Int) = configurationMapping[key.key]?.let {
+    override fun getInt(
+        key: ConfigKey,
+        defaultValue: Int
+    ) = configurationMapping[key.key]?.let {
         try {
             it.toInt()
-        } catch (@Suppress("SwallowedException") e: NumberFormatException) {
+        } catch (
+            @Suppress("SwallowedException") e: NumberFormatException
+        ) {
             // In the future, log coercion failure as this could mean someone made an error in the remote config console
             defaultValue
         }
     } ?: defaultValue
 
-    override fun getString(key: ConfigKey, defaultValue: String) =
-        configurationMapping.getOrElse(key.key) { defaultValue }
+    override fun getString(
+        key: ConfigKey,
+        defaultValue: String
+    ) = configurationMapping.getOrElse(key.key) { defaultValue }
 
     override fun hasKey(key: ConfigKey) = configurationMapping.containsKey(key.key)
 }

@@ -163,13 +163,14 @@ class SettingsViewTest : UiTestPrerequisites() {
     @Test
     @MediumTest
     fun troubleshooting_rescan_test() {
-        val testSetup = SettingsViewTestSetup(
-            composeTestRule,
-            TroubleshootingParametersFixture.new(
-                isEnabled = true,
-                isRescanEnabled = true
+        val testSetup =
+            SettingsViewTestSetup(
+                composeTestRule,
+                TroubleshootingParametersFixture.new(
+                    isEnabled = true,
+                    isRescanEnabled = true
+                )
             )
-        )
 
         assertEquals(0, testSetup.getRescanCount())
 
@@ -185,13 +186,14 @@ class SettingsViewTest : UiTestPrerequisites() {
     @Test
     @MediumTest
     fun troubleshooting_background_sync_test() {
-        val testSetup = SettingsViewTestSetup(
-            composeTestRule,
-            TroubleshootingParametersFixture.new(
-                isEnabled = true,
-                isBackgroundSyncEnabled = true
+        val testSetup =
+            SettingsViewTestSetup(
+                composeTestRule,
+                TroubleshootingParametersFixture.new(
+                    isEnabled = true,
+                    isBackgroundSyncEnabled = true
+                )
             )
-        )
 
         assertEquals(0, testSetup.getBackgroundSyncCount())
 
@@ -209,13 +211,14 @@ class SettingsViewTest : UiTestPrerequisites() {
     @Test
     @MediumTest
     fun troubleshooting_keep_screen_on_during_sync_test() {
-        val testSetup = SettingsViewTestSetup(
-            composeTestRule,
-            TroubleshootingParametersFixture.new(
-                isEnabled = true,
-                isKeepScreenOnDuringSyncEnabled = true
+        val testSetup =
+            SettingsViewTestSetup(
+                composeTestRule,
+                TroubleshootingParametersFixture.new(
+                    isEnabled = true,
+                    isKeepScreenOnDuringSyncEnabled = true
+                )
             )
-        )
 
         assertEquals(0, testSetup.getKeepScreenOnSyncCount())
 
@@ -233,13 +236,14 @@ class SettingsViewTest : UiTestPrerequisites() {
     @Test
     @MediumTest
     fun troubleshooting_analytics_test() {
-        val testSetup = SettingsViewTestSetup(
-            composeTestRule,
-            TroubleshootingParametersFixture.new(
-                isEnabled = true,
-                isAnalyticsEnabled = true
+        val testSetup =
+            SettingsViewTestSetup(
+                composeTestRule,
+                TroubleshootingParametersFixture.new(
+                    isEnabled = true,
+                    isAnalyticsEnabled = true
+                )
             )
-        )
 
         assertEquals(0, testSetup.getAnalyticsCount())
 

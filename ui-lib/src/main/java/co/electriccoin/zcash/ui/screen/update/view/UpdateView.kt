@@ -73,27 +73,29 @@ fun Update(
                 updateInfo,
                 onDownload,
                 onLater,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        top = ZcashTheme.dimens.spacingDefault,
-                        bottom = ZcashTheme.dimens.spacingHuge,
-                        start = ZcashTheme.dimens.screenHorizontalSpacing,
-                        end = ZcashTheme.dimens.screenHorizontalSpacing
-                    )
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            top = ZcashTheme.dimens.spacingDefault,
+                            bottom = ZcashTheme.dimens.spacingHuge,
+                            start = ZcashTheme.dimens.screenHorizontalSpacing,
+                            end = ZcashTheme.dimens.screenHorizontalSpacing
+                        )
             )
         }
     ) { paddingValues ->
         UpdateContentNormal(
             onReference,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    top = paddingValues.calculateTopPadding(),
-                    bottom = paddingValues.calculateBottomPadding(),
-                    start = ZcashTheme.dimens.spacingDefault,
-                    end = ZcashTheme.dimens.spacingDefault
-                )
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        top = paddingValues.calculateTopPadding(),
+                        bottom = paddingValues.calculateBottomPadding(),
+                        start = ZcashTheme.dimens.spacingDefault,
+                        end = ZcashTheme.dimens.spacingDefault
+                    )
         )
     }
     UpdateOverlayRunning(updateInfo)
@@ -123,15 +125,16 @@ private fun UpdateTopAppBar(updateInfo: UpdateInfo) {
     TopAppBar(
         title = {
             Text(
-                text = stringResource(
-                    updateInfo.isForce.let { force ->
-                        if (force) {
-                            R.string.update_critical_header
-                        } else {
-                            R.string.update_header
+                text =
+                    stringResource(
+                        updateInfo.isForce.let { force ->
+                            if (force) {
+                                R.string.update_critical_header
+                            } else {
+                                R.string.update_header
+                            }
                         }
-                    }
-                )
+                    )
             )
         }
     )
@@ -158,15 +161,16 @@ private fun UpdateBottomAppBar(
 
         TertiaryButton(
             onClick = onLater,
-            text = stringResource(
-                updateInfo.isForce.let { force ->
-                    if (force) {
-                        R.string.update_later_disabled_button
-                    } else {
-                        R.string.update_later_enabled_button
+            text =
+                stringResource(
+                    updateInfo.isForce.let { force ->
+                        if (force) {
+                            R.string.update_later_disabled_button
+                        } else {
+                            R.string.update_later_enabled_button
+                        }
                     }
-                }
-            ),
+                ),
             modifier = Modifier.testTag(UpdateTag.BTN_LATER),
             enabled = !updateInfo.isForce && updateInfo.state != UpdateState.Running,
             outerPaddingValues = PaddingValues(top = ZcashTheme.dimens.spacingSmall)
@@ -193,16 +197,18 @@ private fun UpdateContentNormal(
 
         Body(
             text = stringResource(id = R.string.update_description),
-            modifier = Modifier
-                .wrapContentHeight()
-                .align(Alignment.CenterHorizontally)
+            modifier =
+                Modifier
+                    .wrapContentHeight()
+                    .align(Alignment.CenterHorizontally)
         )
 
         Reference(
             text = stringResource(id = R.string.update_link_text),
-            modifier = Modifier
-                .wrapContentHeight()
-                .align(Alignment.CenterHorizontally),
+            modifier =
+                Modifier
+                    .wrapContentHeight()
+                    .align(Alignment.CenterHorizontally),
             onClick = {
                 onReference()
             }

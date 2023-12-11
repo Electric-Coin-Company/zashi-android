@@ -8,7 +8,6 @@ import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicReference
 
 class SupportViewTestSetup(private val composeTestRule: ComposeContentTestRule) {
-
     private val onBackCount = AtomicInteger(0)
 
     private val onSendCount = AtomicInteger(0)

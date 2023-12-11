@@ -10,10 +10,11 @@ import org.junit.Test
 class ParseResultTest {
     companion object {
         private val SAMPLE_WORD_LIST = setOf("bar", "baz", "foo")
-        private val SAMPLE_WORD_LIST_EXT = buildSet {
-            addAll(SAMPLE_WORD_LIST)
-            add("bazooka")
-        }
+        private val SAMPLE_WORD_LIST_EXT =
+            buildSet {
+                addAll(SAMPLE_WORD_LIST)
+                add("bazooka")
+            }
     }
 
     @Test

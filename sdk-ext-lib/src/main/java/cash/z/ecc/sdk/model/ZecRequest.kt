@@ -6,7 +6,6 @@ import cash.z.ecc.sdk.fixture.Zip321UriBuildFixture
 import cash.z.ecc.sdk.fixture.Zip321UriParseFixture
 
 data class ZecRequest(val address: WalletAddress.Unified, val amount: Zatoshi, val message: ZecRequestMessage) {
-
     // TODO [#397]: Waiting for an implementation of Uri parser in SDK project
     // TODO [#397]: https://github.com/Electric-Coin-Company/zcash-android-wallet-sdk/issues/397
     suspend fun toUri(): String {

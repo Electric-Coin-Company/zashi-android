@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 
 internal object IntentConfigurationProvider : ConfigurationProvider {
-
     private val configurationStateFlow = MutableStateFlow(StringConfiguration(persistentMapOf(), null))
 
     override fun peekConfiguration() = configurationStateFlow.value

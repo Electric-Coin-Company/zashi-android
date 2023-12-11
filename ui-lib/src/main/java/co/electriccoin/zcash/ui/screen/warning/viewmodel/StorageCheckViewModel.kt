@@ -14,12 +14,13 @@ class StorageCheckViewModel : ViewModel() {
     val requiredStorageSpaceGigabytes: Int =
         (StorageChecker.REQUIRED_FREE_SPACE_MEGABYTES / 1000)
 
-    val isEnoughSpace = flow { emit(StorageChecker.isEnoughSpace()) }
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            null
-        )
+    val isEnoughSpace =
+        flow { emit(StorageChecker.isEnoughSpace()) }
+            .stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+                null
+            )
 
     val spaceRequiredToContinueMegabytes =
         flow { emit(StorageChecker.spaceRequiredToContinueMegabytes()) }

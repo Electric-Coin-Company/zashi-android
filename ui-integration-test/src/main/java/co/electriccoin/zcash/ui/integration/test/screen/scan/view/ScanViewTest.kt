@@ -26,7 +26,6 @@ import org.junit.Test
 import kotlin.time.Duration.Companion.milliseconds
 
 class ScanViewTest : UiTestPrerequisites() {
-
     @get:Rule
     val composeTestRule = createAndroidComposeRule<IntegrationTestingActivity>()
 
@@ -34,9 +33,10 @@ class ScanViewTest : UiTestPrerequisites() {
 
     @Before
     fun prepareTestSetup() {
-        testSetup = ScanViewTestSetup(composeTestRule).apply {
-            setDefaultContent()
-        }
+        testSetup =
+            ScanViewTestSetup(composeTestRule).apply {
+                setDefaultContent()
+            }
     }
 
     @Test

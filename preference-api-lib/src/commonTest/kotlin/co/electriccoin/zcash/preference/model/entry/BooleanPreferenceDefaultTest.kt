@@ -16,32 +16,38 @@ class BooleanPreferenceDefaultTest {
     }
 
     @Test
-    fun value_default_true() = runTest {
-        val entry = BooleanPreferenceDefaultFixture.newTrue()
-        assertTrue(entry.getValue(MockPreferenceProvider()))
-    }
-
-    @Test
-    fun value_default_false() = runTest {
-        val entry = BooleanPreferenceDefaultFixture.newFalse()
-        assertFalse(entry.getValue(MockPreferenceProvider()))
-    }
-
-    @Test
-    fun value_from_config_false() = runTest {
-        val entry = BooleanPreferenceDefaultFixture.newTrue()
-        val mockPreferenceProvider = MockPreferenceProvider {
-            mutableMapOf(BooleanPreferenceDefaultFixture.KEY.key to false.toString())
+    fun value_default_true() =
+        runTest {
+            val entry = BooleanPreferenceDefaultFixture.newTrue()
+            assertTrue(entry.getValue(MockPreferenceProvider()))
         }
-        assertFalse(entry.getValue(mockPreferenceProvider))
-    }
 
     @Test
-    fun value_from_config_true() = runTest {
-        val entry = BooleanPreferenceDefaultFixture.newTrue()
-        val mockPreferenceProvider = MockPreferenceProvider {
-            mutableMapOf(BooleanPreferenceDefaultFixture.KEY.key to true.toString())
+    fun value_default_false() =
+        runTest {
+            val entry = BooleanPreferenceDefaultFixture.newFalse()
+            assertFalse(entry.getValue(MockPreferenceProvider()))
         }
-        assertTrue(entry.getValue(mockPreferenceProvider))
-    }
+
+    @Test
+    fun value_from_config_false() =
+        runTest {
+            val entry = BooleanPreferenceDefaultFixture.newTrue()
+            val mockPreferenceProvider =
+                MockPreferenceProvider {
+                    mutableMapOf(BooleanPreferenceDefaultFixture.KEY.key to false.toString())
+                }
+            assertFalse(entry.getValue(mockPreferenceProvider))
+        }
+
+    @Test
+    fun value_from_config_true() =
+        runTest {
+            val entry = BooleanPreferenceDefaultFixture.newTrue()
+            val mockPreferenceProvider =
+                MockPreferenceProvider {
+                    mutableMapOf(BooleanPreferenceDefaultFixture.KEY.key to true.toString())
+                }
+            assertTrue(entry.getValue(mockPreferenceProvider))
+        }
 }

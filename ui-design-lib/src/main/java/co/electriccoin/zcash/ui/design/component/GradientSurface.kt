@@ -9,11 +9,15 @@ import androidx.compose.ui.graphics.RectangleShape
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 
 @Composable
-fun GradientSurface(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
+fun GradientSurface(
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit
+) {
     Surface(
         color = Color.Transparent,
-        modifier = modifier
-            .background(ZcashTheme.colors.surfaceGradient()),
+        modifier =
+            modifier
+                .background(ZcashTheme.colors.surfaceGradient()),
         shape = RectangleShape,
         content = content
     )

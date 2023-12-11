@@ -16,22 +16,23 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class WalletDisplayValuesTest {
-
     @Test
     @SmallTest
     fun download_running_test() {
-        val walletSnapshot = WalletSnapshotFixture.new(
-            progress = PercentDecimal.ONE_HUNDRED_PERCENT,
-            status = Synchronizer.Status.SYNCING,
-            orchardBalance = WalletSnapshotFixture.ORCHARD_BALANCE,
-            saplingBalance = WalletSnapshotFixture.SAPLING_BALANCE,
-            transparentBalance = WalletSnapshotFixture.TRANSPARENT_BALANCE
-        )
-        val values = WalletDisplayValues.getNextValues(
-            getAppContext(),
-            walletSnapshot,
-            false
-        )
+        val walletSnapshot =
+            WalletSnapshotFixture.new(
+                progress = PercentDecimal.ONE_HUNDRED_PERCENT,
+                status = Synchronizer.Status.SYNCING,
+                orchardBalance = WalletSnapshotFixture.ORCHARD_BALANCE,
+                saplingBalance = WalletSnapshotFixture.SAPLING_BALANCE,
+                transparentBalance = WalletSnapshotFixture.TRANSPARENT_BALANCE
+            )
+        val values =
+            WalletDisplayValues.getNextValues(
+                getAppContext(),
+                walletSnapshot,
+                false
+            )
 
         assertNotNull(values)
         assertEquals(1f, values.progress.decimal)

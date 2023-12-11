@@ -1,4 +1,4 @@
-@file:Suppress("ktlint:filename")
+@file:Suppress("ktlint:standard:filename")
 
 package co.electriccoin.zcash.ui.screen.address
 
@@ -13,9 +13,7 @@ import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.address.view.WalletAddresses
 
 @Composable
-internal fun MainActivity.WrapWalletAddresses(
-    goBack: () -> Unit
-) {
+internal fun MainActivity.WrapWalletAddresses(goBack: () -> Unit) {
     WrapWalletAddresses(this, goBack)
 }
 

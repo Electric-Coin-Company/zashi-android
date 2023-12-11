@@ -23,21 +23,23 @@ class HomeViewIntegrationTest : UiTestPrerequisites() {
     @get:Rule
     val composeTestRule = createComposeRule()
 
-    private fun newTestSetup(walletSnapshot: WalletSnapshot) = HomeTestSetup(
-        composeTestRule,
-        walletSnapshot,
-        isShowFiatConversion = false
-    )
+    private fun newTestSetup(walletSnapshot: WalletSnapshot) =
+        HomeTestSetup(
+            composeTestRule,
+            walletSnapshot,
+            isShowFiatConversion = false
+        )
 
     // This is just basic sanity check that we still have UI set up as expected after the state restore
     @Test
     @MediumTest
     fun wallet_snapshot_restoration() {
         val restorationTester = StateRestorationTester(composeTestRule)
-        val walletSnapshot = WalletSnapshotFixture.new(
-            status = Synchronizer.Status.SYNCING,
-            progress = PercentDecimal(0.5f)
-        )
+        val walletSnapshot =
+            WalletSnapshotFixture.new(
+                status = Synchronizer.Status.SYNCING,
+                progress = PercentDecimal(0.5f)
+            )
         val testSetup = newTestSetup(walletSnapshot)
 
         restorationTester.setContent {

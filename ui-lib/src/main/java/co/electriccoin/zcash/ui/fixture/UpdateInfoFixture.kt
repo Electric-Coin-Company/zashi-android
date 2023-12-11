@@ -6,7 +6,6 @@ import co.electriccoin.zcash.ui.screen.update.model.UpdateState
 import com.google.android.play.core.appupdate.AppUpdateInfo
 
 object UpdateInfoFixture {
-
     val INITIAL_PRIORITY = AppUpdateChecker.Priority.LOW
     val INITIAL_STATE = UpdateState.Prepared
     const val INITIAL_FORCE = false

@@ -27,15 +27,17 @@ fun FormTextField(
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-    colors: TextFieldColors = TextFieldDefaults.colors(
-        focusedContainerColor = Color.Transparent,
-        unfocusedContainerColor = Color.Transparent,
-        disabledContainerColor = Color.Transparent,
-        errorContainerColor = Color.Transparent,
-    ),
+    colors: TextFieldColors =
+        TextFieldDefaults.colors(
+            focusedContainerColor = Color.Transparent,
+            unfocusedContainerColor = Color.Transparent,
+            disabledContainerColor = Color.Transparent,
+            errorContainerColor = Color.Transparent,
+        ),
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     shape: Shape = TextFieldDefaults.shape,
-    withBorder: Boolean = true, // To enable border around the TextField
+    // To enable border around the TextField
+    withBorder: Boolean = true,
 ) {
     TextField(
         value = value,
@@ -44,13 +46,14 @@ fun FormTextField(
         textStyle = textStyle,
         keyboardOptions = keyboardOptions,
         colors = colors,
-        modifier = modifier.then(
-            if (withBorder) {
-                modifier.border(width = 1.dp, color = MaterialTheme.colorScheme.primary)
-            } else {
-                Modifier
-            }
-        ),
+        modifier =
+            modifier.then(
+                if (withBorder) {
+                    modifier.border(width = 1.dp, color = MaterialTheme.colorScheme.primary)
+                } else {
+                    Modifier
+                }
+            ),
         leadingIcon = leadingIcon,
         trailingIcon = trailingIcon,
         keyboardActions = keyboardActions,

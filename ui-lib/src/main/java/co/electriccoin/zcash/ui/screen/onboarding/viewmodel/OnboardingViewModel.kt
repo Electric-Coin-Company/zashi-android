@@ -12,7 +12,6 @@ class OnboardingViewModel(
     application: Application,
     private val savedStateHandle: SavedStateHandle
 ) : AndroidViewModel(application) {
-
     // This is a bit weird being placed here, but onboarding currently is considered complete when
     // the user has a persisted wallet. Also import allows the user to go back to onboarding, while
     // creating a new wallet does not.
@@ -23,6 +22,7 @@ class OnboardingViewModel(
     }
 
     val showWelcomeAnimation = savedStateHandle.getStateFlow(KEY_SHOW_WELCOME_ANIMATION, true)
+
     fun setShowWelcomeAnimation(setShowWelcomeAnimation: Boolean) {
         savedStateHandle[KEY_SHOW_WELCOME_ANIMATION] = setShowWelcomeAnimation
     }

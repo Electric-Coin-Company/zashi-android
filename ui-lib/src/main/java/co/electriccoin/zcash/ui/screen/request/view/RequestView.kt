@@ -73,12 +73,13 @@ fun Request(
         RequestMainContent(
             myAddress = myAddress,
             onCreateAndSend = onCreateAndSend,
-            modifier = Modifier.padding(
-                top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
-                bottom = paddingValues.calculateTopPadding(),
-                start = ZcashTheme.dimens.screenHorizontalSpacing,
-                end = ZcashTheme.dimens.screenHorizontalSpacing
-            )
+            modifier =
+                Modifier.padding(
+                    top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
+                    bottom = paddingValues.calculateTopPadding(),
+                    start = ZcashTheme.dimens.screenHorizontalSpacing,
+                    end = ZcashTheme.dimens.screenHorizontalSpacing
+                )
         )
     }
 }
@@ -143,9 +144,10 @@ private fun RequestMainContent(
         }, label = { Text(stringResource(id = R.string.request_message)) })
 
         Spacer(
-            modifier = Modifier
-                .fillMaxHeight()
-                .weight(MINIMAL_WEIGHT)
+            modifier =
+                Modifier
+                    .fillMaxHeight()
+                    .weight(MINIMAL_WEIGHT)
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))

@@ -8,7 +8,6 @@ import co.electriccoin.zcash.ui.common.model.VersionInfo
 import java.io.File
 
 object FileShareUtil {
-
     const val SHARE_OUTSIDE_THE_APP_FLAGS = Intent.FLAG_ACTIVITY_NEW_TASK
 
     const val SHARE_CONTENT_PERMISSION_FLAGS = Intent.FLAG_GRANT_READ_URI_PERMISSION
@@ -30,31 +29,34 @@ object FileShareUtil {
         dataFilePath: String,
         versionInfo: VersionInfo
     ): Intent {
-        val fileUri = FileProvider.getUriForFile(
-            context,
-            if (versionInfo.isDebuggable) {
-                ZASHI_INTERNAL_DATA_AUTHORITY_DEBUG
-            } else {
-                ZASHI_INTERNAL_DATA_AUTHORITY
-            },
-            File(dataFilePath)
-        )
-
-        val dataIntent: Intent = Intent().apply {
-            action = Intent.ACTION_SEND
-            putExtra(Intent.EXTRA_STREAM, fileUri)
-            type = ZASHI_INTERNAL_DATA_MIME_TYPE
-        }
-
-        val shareDataIntent = Intent.createChooser(
-            dataIntent,
-            context.getString(R.string.export_data_export_data_chooser_title)
-        ).apply {
-            addFlags(
-                SHARE_CONTENT_PERMISSION_FLAGS or
-                    SHARE_OUTSIDE_THE_APP_FLAGS
+        val fileUri =
+            FileProvider.getUriForFile(
+                context,
+                if (versionInfo.isDebuggable) {
+                    ZASHI_INTERNAL_DATA_AUTHORITY_DEBUG
+                } else {
+                    ZASHI_INTERNAL_DATA_AUTHORITY
+                },
+                File(dataFilePath)
             )
-        }
+
+        val dataIntent: Intent =
+            Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_STREAM, fileUri)
+                type = ZASHI_INTERNAL_DATA_MIME_TYPE
+            }
+
+        val shareDataIntent =
+            Intent.createChooser(
+                dataIntent,
+                context.getString(R.string.export_data_export_data_chooser_title)
+            ).apply {
+                addFlags(
+                    SHARE_CONTENT_PERMISSION_FLAGS or
+                        SHARE_OUTSIDE_THE_APP_FLAGS
+                )
+            }
 
         return shareDataIntent
     }

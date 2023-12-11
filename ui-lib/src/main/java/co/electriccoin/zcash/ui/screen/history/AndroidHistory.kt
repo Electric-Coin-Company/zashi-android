@@ -10,9 +10,7 @@ import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.history.view.History
 
 @Composable
-internal fun MainActivity.WrapHistory(
-    goBack: () -> Unit
-) {
+internal fun MainActivity.WrapHistory(goBack: () -> Unit) {
     WrapHistory(
         activity = this,
         goBack = goBack

@@ -6,7 +6,6 @@ import org.junit.Test
 import kotlin.test.assertEquals
 
 class UpdateInfoFixtureTest {
-
     companion object {
         val updateInfo = UpdateInfoFixture.new(appUpdateInfo = null)
     }

@@ -5,16 +5,18 @@ import co.electriccoin.zcash.build.gitSha
 import co.electriccoin.zcash.spackle.versionCodeCompat
 
 data class AppInfo(val versionName: String, val versionCode: Long, val gitSha: String) {
-
-    fun toSupportString() = buildString {
-        appendLine("App version: $versionName ($versionCode) $gitSha")
-    }
+    fun toSupportString() =
+        buildString {
+            appendLine("App version: $versionName ($versionCode) $gitSha")
+        }
 
     companion object {
-        fun new(packageInfo: PackageInfo) = AppInfo(
-            packageInfo.versionName ?: "null", // Should only be null during tests
-            packageInfo.versionCodeCompat,
-            gitSha
-        )
+        fun new(packageInfo: PackageInfo) =
+            AppInfo(
+                // Should only be null during tests
+                packageInfo.versionName ?: "null",
+                packageInfo.versionCodeCompat,
+                gitSha
+            )
     }
 }

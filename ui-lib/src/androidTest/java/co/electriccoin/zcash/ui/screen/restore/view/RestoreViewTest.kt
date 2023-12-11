@@ -181,10 +181,11 @@ class RestoreViewTest : UiTestPrerequisites() {
     @Test
     @MediumTest
     fun height_skip() {
-        val testSetup = newTestSetup(
-            initialStage = RestoreStage.Birthday,
-            initialWordsList = SeedPhraseFixture.new().split
-        )
+        val testSetup =
+            newTestSetup(
+                initialStage = RestoreStage.Birthday,
+                initialWordsList = SeedPhraseFixture.new().split
+            )
 
         composeTestRule.onNodeWithText(
             text = getStringResource(R.string.restore_birthday_button_restore),
@@ -202,10 +203,11 @@ class RestoreViewTest : UiTestPrerequisites() {
     @Test
     @MediumTest
     fun height_set_valid() {
-        val testSetup = newTestSetup(
-            initialStage = RestoreStage.Birthday,
-            initialWordsList = SeedPhraseFixture.new().split
-        )
+        val testSetup =
+            newTestSetup(
+                initialStage = RestoreStage.Birthday,
+                initialWordsList = SeedPhraseFixture.new().split
+            )
 
         composeTestRule.onNodeWithTag(RestoreTag.BIRTHDAY_TEXT_FIELD).also {
             it.performTextInput(ZcashNetwork.Mainnet.saplingActivationHeight.value.toString())
@@ -226,10 +228,11 @@ class RestoreViewTest : UiTestPrerequisites() {
     @Test
     @MediumTest
     fun height_set_invalid_too_small() {
-        val testSetup = newTestSetup(
-            initialStage = RestoreStage.Birthday,
-            initialWordsList = SeedPhraseFixture.new().split
-        )
+        val testSetup =
+            newTestSetup(
+                initialStage = RestoreStage.Birthday,
+                initialWordsList = SeedPhraseFixture.new().split
+            )
 
         composeTestRule.onNodeWithText(
             text = getStringResource(R.string.restore_birthday_button_restore),
@@ -257,10 +260,11 @@ class RestoreViewTest : UiTestPrerequisites() {
     @Test
     @MediumTest
     fun height_set_invalid_non_digit() {
-        val testSetup = newTestSetup(
-            initialStage = RestoreStage.Birthday,
-            initialWordsList = SeedPhraseFixture.new().split
-        )
+        val testSetup =
+            newTestSetup(
+                initialStage = RestoreStage.Birthday,
+                initialWordsList = SeedPhraseFixture.new().split
+            )
 
         composeTestRule.onNodeWithTag(RestoreTag.BIRTHDAY_TEXT_FIELD).also {
             it.performTextInput("1.2")
@@ -281,10 +285,11 @@ class RestoreViewTest : UiTestPrerequisites() {
     @Test
     @MediumTest
     fun complete_click_take_to_wallet() {
-        val testSetup = newTestSetup(
-            initialStage = RestoreStage.Birthday,
-            initialWordsList = SeedPhraseFixture.new().split
-        )
+        val testSetup =
+            newTestSetup(
+                initialStage = RestoreStage.Birthday,
+                initialWordsList = SeedPhraseFixture.new().split
+            )
 
         assertEquals(0, testSetup.getOnFinishedCount())
 
@@ -317,10 +322,11 @@ class RestoreViewTest : UiTestPrerequisites() {
     @Test
     @MediumTest
     fun back_from_birthday() {
-        val testSetup = newTestSetup(
-            initialStage = RestoreStage.Birthday,
-            initialWordsList = SeedPhraseFixture.new().split
-        )
+        val testSetup =
+            newTestSetup(
+                initialStage = RestoreStage.Birthday,
+                initialWordsList = SeedPhraseFixture.new().split
+            )
 
         assertEquals(0, testSetup.getOnBackCount())
 

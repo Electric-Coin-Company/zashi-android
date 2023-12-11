@@ -11,9 +11,10 @@ object EmulatorWtfUtil {
     private const val EMULATOR_WTF_SETTING = "emulator.wtf" // $NON-NLS
     private const val SETTING_TRUE = "true" // $NON-NLS
 
-    private val isEmulatorWtfCached = LazyWithArgument<Context, Boolean> {
-        isEmulatorWtfImpl(it)
-    }
+    private val isEmulatorWtfCached =
+        LazyWithArgument<Context, Boolean> {
+            isEmulatorWtfImpl(it)
+        }
 
     /**
      * @return True if the environment is emulator.wtf

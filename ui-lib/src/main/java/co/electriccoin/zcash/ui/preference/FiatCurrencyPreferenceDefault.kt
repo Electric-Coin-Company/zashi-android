@@ -8,7 +8,6 @@ import co.electriccoin.zcash.preference.model.entry.PreferenceKey
 data class FiatCurrencyPreferenceDefault(
     override val key: PreferenceKey
 ) : PreferenceDefault<FiatCurrency> {
-
     override suspend fun getValue(preferenceProvider: PreferenceProvider) =
         preferenceProvider.getString(key)?.let { FiatCurrency(it) } ?: FiatCurrency("USD")
 

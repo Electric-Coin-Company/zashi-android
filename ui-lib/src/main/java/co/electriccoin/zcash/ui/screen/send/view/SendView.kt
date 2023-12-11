@@ -88,11 +88,12 @@ private fun PreviewSendSuccessful() {
     ZcashTheme(forceDarkMode = false) {
         GradientSurface {
             SendSuccessful(
-                zecSend = ZecSend(
-                    destination = runBlocking { WalletAddressFixture.sapling() },
-                    amount = ZatoshiFixture.new(),
-                    memo = MemoFixture.new()
-                ),
+                zecSend =
+                    ZecSend(
+                        destination = runBlocking { WalletAddressFixture.sapling() },
+                        amount = ZatoshiFixture.new(),
+                        memo = MemoFixture.new()
+                    ),
                 onDone = {}
             )
         }
@@ -105,11 +106,12 @@ private fun PreviewSendFailure() {
     ZcashTheme(forceDarkMode = false) {
         GradientSurface {
             SendFailure(
-                zecSend = ZecSend(
-                    destination = runBlocking { WalletAddressFixture.sapling() },
-                    amount = ZatoshiFixture.new(),
-                    memo = MemoFixture.new()
-                ),
+                zecSend =
+                    ZecSend(
+                        destination = runBlocking { WalletAddressFixture.sapling() },
+                        amount = ZatoshiFixture.new(),
+                        memo = MemoFixture.new()
+                    ),
                 onDone = {}
             )
         }
@@ -122,11 +124,12 @@ private fun PreviewSendConfirmation() {
     ZcashTheme(forceDarkMode = false) {
         GradientSurface {
             Confirmation(
-                zecSend = ZecSend(
-                    destination = runBlocking { WalletAddressFixture.sapling() },
-                    amount = ZatoshiFixture.new(),
-                    memo = MemoFixture.new()
-                ),
+                zecSend =
+                    ZecSend(
+                        destination = runBlocking { WalletAddressFixture.sapling() },
+                        amount = ZatoshiFixture.new(),
+                        memo = MemoFixture.new()
+                    ),
                 onConfirmation = {}
             )
         }
@@ -164,17 +167,18 @@ fun Send(
             onSendSubmit = onCreateAndSend,
             onQrScannerOpen = onQrScannerOpen,
             hasCameraFeature = hasCameraFeature,
-            modifier = Modifier
-                .fillMaxHeight()
-                .verticalScroll(
-                    rememberScrollState()
-                )
-                .padding(
-                    top = paddingValues.calculateTopPadding() + dimens.spacingDefault,
-                    bottom = paddingValues.calculateBottomPadding() + dimens.spacingHuge,
-                    start = dimens.screenHorizontalSpacing,
-                    end = dimens.screenHorizontalSpacing
-                )
+            modifier =
+                Modifier
+                    .fillMaxHeight()
+                    .verticalScroll(
+                        rememberScrollState()
+                    )
+                    .padding(
+                        top = paddingValues.calculateTopPadding() + dimens.spacingDefault,
+                        bottom = paddingValues.calculateBottomPadding() + dimens.spacingHuge,
+                        start = dimens.screenHorizontalSpacing,
+                        end = dimens.screenHorizontalSpacing
+                    )
         )
     }
 }
@@ -333,17 +337,22 @@ private fun SendForm(
             onValueChange = { recipientAddressString = it },
             label = { Text(stringResource(id = R.string.send_to)) },
             modifier = Modifier.fillMaxWidth(),
-            trailingIcon = if (hasCameraFeature) { {
-                IconButton(
-                    onClick = onQrScannerOpen,
-                    content = {
-                        Icon(
-                            imageVector = Icons.Outlined.QrCodeScanner,
-                            contentDescription = stringResource(R.string.send_scan_content_description)
+            trailingIcon =
+                if (hasCameraFeature) {
+                    {
+                        IconButton(
+                            onClick = onQrScannerOpen,
+                            content = {
+                                Icon(
+                                    imageVector = Icons.Outlined.QrCodeScanner,
+                                    contentDescription = stringResource(R.string.send_scan_content_description)
+                                )
+                            }
                         )
                     }
-                )
-            } } else { null }
+                } else {
+                    null
+                }
         )
 
         Spacer(Modifier.size(dimens.spacingSmall))
@@ -377,9 +386,10 @@ private fun SendForm(
         )
 
         Spacer(
-            modifier = Modifier
-                .fillMaxHeight()
-                .weight(MINIMAL_WEIGHT)
+            modifier =
+                Modifier
+                    .fillMaxHeight()
+                    .weight(MINIMAL_WEIGHT)
         )
 
         if (validation.isNotEmpty()) {
@@ -398,13 +408,14 @@ private fun SendForm(
 
         PrimaryButton(
             onClick = {
-                val zecSendValidation = ZecSendExt.new(
-                    context,
-                    recipientAddressString,
-                    amountZecString,
-                    memoString,
-                    monetarySeparators
-                )
+                val zecSendValidation =
+                    ZecSendExt.new(
+                        context,
+                        recipientAddressString,
+                        amountZecString,
+                        memoString,
+                        monetarySeparators
+                    )
 
                 when (zecSendValidation) {
                     is ZecSendExt.ZecSendValidation.Valid -> onCreateZecSend(zecSendValidation.zecSend)
@@ -447,9 +458,10 @@ private fun Confirmation(
         }
 
         Spacer(
-            modifier = Modifier
-                .fillMaxHeight()
-                .weight(MINIMAL_WEIGHT)
+            modifier =
+                Modifier
+                    .fillMaxHeight()
+                    .weight(MINIMAL_WEIGHT)
         )
 
         PrimaryButton(
@@ -470,10 +482,11 @@ private fun Sending(
 ) {
     Column(modifier) {
         Header(
-            text = stringResource(
-                R.string.send_in_progress_amount_format,
-                zecSend.amount.toZecString()
-            ),
+            text =
+                stringResource(
+                    R.string.send_in_progress_amount_format,
+                    zecSend.amount.toZecString()
+                ),
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
         )
@@ -496,15 +509,17 @@ private fun Sending(
         }
 
         Spacer(
-            modifier = Modifier
-                .fillMaxHeight()
-                .weight(MINIMAL_WEIGHT)
+            modifier =
+                Modifier
+                    .fillMaxHeight()
+                    .weight(MINIMAL_WEIGHT)
         )
 
         Body(
-            modifier = Modifier
-                .padding(vertical = dimens.spacingSmall)
-                .fillMaxWidth(),
+            modifier =
+                Modifier
+                    .padding(vertical = dimens.spacingSmall)
+                    .fillMaxWidth(),
             text = stringResource(R.string.send_in_progress_wait),
             textAlign = TextAlign.Center,
         )
@@ -528,9 +543,10 @@ private fun SendSuccessful(
         )
 
         Spacer(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(dimens.spacingDefault)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(dimens.spacingDefault)
         )
 
         Body(
@@ -543,9 +559,10 @@ private fun SendSuccessful(
         )
 
         Spacer(
-            modifier = Modifier
-                .fillMaxHeight()
-                .weight(MINIMAL_WEIGHT)
+            modifier =
+                Modifier
+                    .fillMaxHeight()
+                    .weight(MINIMAL_WEIGHT)
         )
 
         PrimaryButton(
@@ -576,9 +593,10 @@ private fun SendFailure(
         )
 
         Spacer(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(dimens.spacingDefault)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(dimens.spacingDefault)
         )
 
         Body(
@@ -591,9 +609,10 @@ private fun SendFailure(
         )
 
         Spacer(
-            modifier = Modifier
-                .fillMaxHeight()
-                .weight(MINIMAL_WEIGHT)
+            modifier =
+                Modifier
+                    .fillMaxHeight()
+                    .weight(MINIMAL_WEIGHT)
         )
 
         PrimaryButton(

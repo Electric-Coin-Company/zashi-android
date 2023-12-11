@@ -26,7 +26,10 @@ interface Configuration {
      * be returned if type coercion fails.
      * @return boolean mapping for `key` or `defaultValue`.
      */
-    fun getBoolean(key: ConfigKey, defaultValue: Boolean): Boolean
+    fun getBoolean(
+        key: ConfigKey,
+        defaultValue: Boolean
+    ): Boolean
 
     /**
      * @param key          Key to use to retrieve the value.
@@ -35,7 +38,10 @@ interface Configuration {
      * be returned if type coercion fails.
      * @return int mapping for `key` or `defaultValue`.
      */
-    fun getInt(key: ConfigKey, defaultValue: Int): Int
+    fun getInt(
+        key: ConfigKey,
+        defaultValue: Int
+    ): Int
 
     /**
      * @param key          Key to use to retrieve the value.
@@ -44,5 +50,8 @@ interface Configuration {
      * be returned if type coercion fails.
      * @return String mapping for `key` or `defaultValue`.
      */
-    fun getString(key: ConfigKey, defaultValue: String): String
+    fun getString(
+        key: ConfigKey,
+        defaultValue: String
+    ): String
 }

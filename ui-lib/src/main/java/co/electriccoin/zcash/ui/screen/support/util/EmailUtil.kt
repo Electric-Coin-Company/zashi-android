@@ -4,7 +4,6 @@ import android.content.Intent
 import android.net.Uri
 
 object EmailUtil {
-
     /*
      * This mimetype is to hopefully ensure that only email apps respond to
      * the Intent. That isn't always the case though, as Evernote seems to

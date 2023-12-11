@@ -18,7 +18,6 @@ import org.junit.Test
  * version and later on.
  */
 class BasicStartupBenchmark {
-
     companion object {
         private const val APP_TARGET_PACKAGE_NAME = "co.electriccoin.zcash"
     }
@@ -27,13 +26,14 @@ class BasicStartupBenchmark {
     val benchmarkRule = MacrobenchmarkRule()
 
     @Test
-    fun startup() = benchmarkRule.measureRepeated(
-        packageName = APP_TARGET_PACKAGE_NAME,
-        metrics = listOf(StartupTimingMetric()),
-        iterations = 5,
-        startupMode = StartupMode.COLD
-    ) {
-        pressHome()
-        startActivityAndWait()
-    }
+    fun startup() =
+        benchmarkRule.measureRepeated(
+            packageName = APP_TARGET_PACKAGE_NAME,
+            metrics = listOf(StartupTimingMetric()),
+            iterations = 5,
+            startupMode = StartupMode.COLD
+        ) {
+            pressHome()
+            startActivityAndWait()
+        }
 }

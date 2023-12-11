@@ -7,7 +7,6 @@ import android.widget.Toast
 import kotlinx.coroutines.runBlocking
 
 object ClipboardManagerUtil {
-
     fun copyToClipboard(
         context: Context,
         label: String,
@@ -15,10 +14,11 @@ object ClipboardManagerUtil {
     ) {
         Twig.info { "Copied to clipboard: label: $label, value: $value" }
         val clipboardManager = context.getSystemService(ClipboardManager::class.java)
-        val data = ClipData.newPlainText(
-            label,
-            value
-        )
+        val data =
+            ClipData.newPlainText(
+                label,
+                value
+            )
         if (AndroidApiVersion.isAtLeastT) {
             // API 33 and later implement their system Toast UI.
             clipboardManager.setPrimaryClip(data)

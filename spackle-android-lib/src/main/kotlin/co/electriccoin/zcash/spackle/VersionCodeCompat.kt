@@ -5,11 +5,12 @@ import android.content.pm.PackageInfo
 import android.os.Build
 
 val PackageInfo.versionCodeCompat
-    get() = if (AndroidApiVersion.isAtLeastP) {
-        getVersionCodePPlus()
-    } else {
-        versionCodeLegacy.toLong()
-    }
+    get() =
+        if (AndroidApiVersion.isAtLeastP) {
+            getVersionCodePPlus()
+        } else {
+            versionCodeLegacy.toLong()
+        }
 
 @Suppress("Deprecation")
 private val PackageInfo.versionCodeLegacy

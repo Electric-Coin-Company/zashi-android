@@ -10,7 +10,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class AndroidApiTest {
-
     @Test
     @SmallTest
     fun checkTargetApi() {

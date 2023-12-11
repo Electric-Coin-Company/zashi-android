@@ -26,7 +26,10 @@ internal sealed class ParseResult {
 
     companion object {
         @Suppress("ReturnCount")
-        fun new(completeWordList: Set<String>, rawInput: String): ParseResult {
+        fun new(
+            completeWordList: Set<String>,
+            rawInput: String
+        ): ParseResult {
             // Note: This assumes the word list is English words
             val trimmed = rawInput.lowercase(Locale.US).trim()
 
@@ -45,9 +48,10 @@ internal sealed class ParseResult {
                 return Autocomplete(autocomplete)
             }
 
-            val multiple = trimmed.split(SeedPhrase.DEFAULT_DELIMITER)
-                .filter { completeWordList.contains(it) }
-                .first(SeedPhrase.SEED_PHRASE_SIZE)
+            val multiple =
+                trimmed.split(SeedPhrase.DEFAULT_DELIMITER)
+                    .filter { completeWordList.contains(it) }
+                    .first(SeedPhrase.SEED_PHRASE_SIZE)
             if (multiple.isNotEmpty()) {
                 return Add(multiple)
             }
@@ -61,7 +65,10 @@ internal sealed class ParseResult {
     }
 }
 
-internal fun findSuggestions(input: String, completeWordList: Set<String>): List<String> {
+internal fun findSuggestions(
+    input: String,
+    completeWordList: Set<String>
+): List<String> {
     return if (input.isBlank()) {
         emptyList()
     } else {

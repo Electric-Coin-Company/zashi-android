@@ -9,10 +9,10 @@ import org.junit.Test
 import kotlin.test.assertContains
 
 class PlayStoreUtilTest {
-
     companion object {
-        val PLAY_STORE_URI = PlayStoreUtil.PLAY_STORE_APP_URI +
-            getAppContext().packageName
+        val PLAY_STORE_URI =
+            PlayStoreUtil.PLAY_STORE_APP_URI +
+                getAppContext().packageName
     }
 
     @Test

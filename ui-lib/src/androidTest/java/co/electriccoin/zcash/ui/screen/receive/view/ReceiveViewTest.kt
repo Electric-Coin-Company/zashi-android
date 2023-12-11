@@ -25,48 +25,51 @@ class ReceiveViewTest {
 
     @Test
     @MediumTest
-    fun setup() = runTest {
-        val walletAddress = WalletAddressFixture.unified()
-        newTestSetup(walletAddress)
+    fun setup() =
+        runTest {
+            val walletAddress = WalletAddressFixture.unified()
+            newTestSetup(walletAddress)
 
-        // Enable substring for ellipsizing
-        composeTestRule.onNodeWithText(walletAddress.address, substring = true).also {
-            it.assertExists()
+            // Enable substring for ellipsizing
+            composeTestRule.onNodeWithText(walletAddress.address, substring = true).also {
+                it.assertExists()
+            }
         }
-    }
 
     @Test
     @MediumTest
-    fun back() = runTest {
-        val testSetup = newTestSetup(WalletAddressFixture.unified())
+    fun back() =
+        runTest {
+            val testSetup = newTestSetup(WalletAddressFixture.unified())
 
-        assertEquals(0, testSetup.getOnBackCount())
+            assertEquals(0, testSetup.getOnBackCount())
 
-        composeTestRule.onNodeWithContentDescription(
-            getStringResource(R.string.receive_back_content_description)
-        ).also {
-            it.performClick()
+            composeTestRule.onNodeWithContentDescription(
+                getStringResource(R.string.receive_back_content_description)
+            ).also {
+                it.performClick()
+            }
+
+            assertEquals(1, testSetup.getOnBackCount())
         }
-
-        assertEquals(1, testSetup.getOnBackCount())
-    }
 
     @Test
     @MediumTest
-    fun address_details() = runTest {
-        val testSetup = newTestSetup(WalletAddressFixture.unified())
+    fun address_details() =
+        runTest {
+            val testSetup = newTestSetup(WalletAddressFixture.unified())
 
-        assertEquals(0, testSetup.getOnAddressDetailsCount())
+            assertEquals(0, testSetup.getOnAddressDetailsCount())
 
-        composeTestRule.onNodeWithText(
-            text = getStringResource(R.string.receive_see_address_details),
-            ignoreCase = true
-        ).also {
-            it.performClick()
+            composeTestRule.onNodeWithText(
+                text = getStringResource(R.string.receive_see_address_details),
+                ignoreCase = true
+            ).also {
+                it.performClick()
+            }
+
+            assertEquals(1, testSetup.getOnAddressDetailsCount())
         }
-
-        assertEquals(1, testSetup.getOnAddressDetailsCount())
-    }
 
     private fun newTestSetup(walletAddress: WalletAddress) = ReceiveViewTestSetup(composeTestRule, walletAddress)
 }

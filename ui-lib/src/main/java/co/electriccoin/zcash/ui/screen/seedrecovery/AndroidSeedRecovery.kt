@@ -27,14 +27,15 @@ private fun WrapSeedRecovery(
 ) {
     val walletViewModel by activity.viewModels<WalletViewModel>()
 
-    val persistableWallet = run {
-        val secretState = walletViewModel.secretState.collectAsStateWithLifecycle().value
-        if (secretState is SecretState.Ready) {
-            secretState.persistableWallet
-        } else {
-            null
+    val persistableWallet =
+        run {
+            val secretState = walletViewModel.secretState.collectAsStateWithLifecycle().value
+            if (secretState is SecretState.Ready) {
+                secretState.persistableWallet
+            } else {
+                null
+            }
         }
-    }
     val synchronizer = walletViewModel.synchronizer.collectAsStateWithLifecycle().value
 
     if (null == synchronizer || null == persistableWallet) {

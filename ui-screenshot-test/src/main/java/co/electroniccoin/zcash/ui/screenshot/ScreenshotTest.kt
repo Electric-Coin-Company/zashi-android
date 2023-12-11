@@ -74,9 +74,11 @@ private const val DEFAULT_TIMEOUT_MILLISECONDS = 10_000L
  * we pull in the appcompat library.
  */
 class ScreenshotTest : UiTestPrerequisites() {
-
     companion object {
-        fun takeScreenshot(tag: String, screenshotName: String) {
+        fun takeScreenshot(
+            tag: String,
+            screenshotName: String
+        ) {
             onView(isRoot())
                 .captureToBitmap()
                 .writeToTestStorage("$screenshotName - $tag")
@@ -86,13 +88,18 @@ class ScreenshotTest : UiTestPrerequisites() {
     @get:Rule
     val composeTestRule = createAndroidComposeRule(MainActivity::class.java)
 
-    private fun navigateTo(route: String) = runBlocking {
-        withContext(Dispatchers.Main) {
-            composeTestRule.activity.navControllerForTesting.navigate(route)
+    private fun navigateTo(route: String) =
+        runBlocking {
+            withContext(Dispatchers.Main) {
+                composeTestRule.activity.navControllerForTesting.navigate(route)
+            }
         }
-    }
 
-    private fun runWith(uiMode: UiMode, locale: String, action: (Context, String) -> Unit) {
+    private fun runWith(
+        uiMode: UiMode,
+        locale: String,
+        action: (Context, String) -> Unit
+    ) {
         val configurationOverride = ConfigurationOverride(uiMode, LocaleList.forLanguageTags(locale))
         composeTestRule.activity.configurationOverrideFlow.value = configurationOverride
 
@@ -105,25 +112,25 @@ class ScreenshotTest : UiTestPrerequisites() {
 
     @Test
     @MediumTest
-    fun take_screenshots_for_restore_wallet_light_en_XA() {
+    fun takeScreenshotsForRestoreWalletLightEnXA() {
         runWith(UiMode.Light, "en-XA") { context, tag ->
-            take_screenshots_for_restore_wallet(context, tag)
+            takeScreenshotsForRestoreWallet(context, tag)
         }
     }
 
     @Test
     @MediumTest
-    fun take_screenshots_for_restore_wallet_light_ar_XB() {
+    fun takeScreenshotsForRestoreWalletLightArXB() {
         runWith(UiMode.Light, "ar-XB") { context, tag ->
-            take_screenshots_for_restore_wallet(context, tag)
+            takeScreenshotsForRestoreWallet(context, tag)
         }
     }
 
     @Test
     @MediumTest
-    fun take_screenshots_for_restore_wallet_light_en_US() {
+    fun takeScreenshotsForRestoreWalletLightEnUS() {
         runWith(UiMode.Light, "en-US") { context, tag ->
-            take_screenshots_for_restore_wallet(context, tag)
+            takeScreenshotsForRestoreWallet(context, tag)
         }
     }
 
@@ -131,14 +138,17 @@ class ScreenshotTest : UiTestPrerequisites() {
     @Test
     @MediumTest
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.Q)
-    fun take_screenshots_for_restore_wallet_dark_en_US() {
+    fun takeScreenshotsForRestoreWalletDarkEnUS() {
         runWith(UiMode.Dark, "en-US") { context, tag ->
-            take_screenshots_for_restore_wallet(context, tag)
+            takeScreenshotsForRestoreWallet(context, tag)
         }
     }
 
-    @Suppress("LongMethod", "FunctionNaming", "CyclomaticComplexMethod")
-    private fun take_screenshots_for_restore_wallet(resContext: Context, tag: String) {
+    @Suppress("LongMethod", "CyclomaticComplexMethod")
+    private fun takeScreenshotsForRestoreWallet(
+        resContext: Context,
+        tag: String
+    ) {
         // TODO [#286]: Screenshot tests fail on Firebase Test Lab
         // TODO [#286]: https://github.com/Electric-Coin-Company/zashi-android/issues/286
         if (FirebaseTestLabUtil.isFirebaseTestLab(ApplicationProvider.getApplicationContext())) {
@@ -150,9 +160,10 @@ class ScreenshotTest : UiTestPrerequisites() {
         }
 
         composeTestRule.onNodeWithText(
-            text = resContext.getString(
-                R.string.onboarding_import_existing_wallet
-            ),
+            text =
+                resContext.getString(
+                    R.string.onboarding_import_existing_wallet
+                ),
             ignoreCase = true
         ).also {
             it.performScrollTo()
@@ -212,25 +223,25 @@ class ScreenshotTest : UiTestPrerequisites() {
 
     @Test
     @LargeTest
-    fun take_screenshots_for_new_wallet_and_rest_of_app_light_en_XA() {
+    fun takeScreenshotsForNewWalletAndRestOfAppLightEnXA() {
         runWith(UiMode.Light, "en-XA") { context, tag ->
-            take_screenshots_for_new_wallet_and_rest_of_app(context, tag)
+            takeScreenshotsForNewWalletAndRestOfApp(context, tag)
         }
     }
 
     @Test
     @LargeTest
-    fun take_screenshots_for_new_wallet_and_rest_of_app_light_ar_XB() {
+    fun takeScreenshotsForNewWalletAndRestOfAppLightArXB() {
         runWith(UiMode.Light, "ar-XB") { context, tag ->
-            take_screenshots_for_new_wallet_and_rest_of_app(context, tag)
+            takeScreenshotsForNewWalletAndRestOfApp(context, tag)
         }
     }
 
     @Test
     @LargeTest
-    fun take_screenshots_for_new_wallet_and_rest_of_app_light_en_US() {
+    fun takeScreenshotsForNewWalletAndRestOfAppLightEnUS() {
         runWith(UiMode.Light, "en-US") { context, tag ->
-            take_screenshots_for_new_wallet_and_rest_of_app(context, tag)
+            takeScreenshotsForNewWalletAndRestOfApp(context, tag)
         }
     }
 
@@ -238,13 +249,16 @@ class ScreenshotTest : UiTestPrerequisites() {
     @Test
     @LargeTest
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.Q)
-    fun take_screenshots_for_new_wallet_and_rest_of_app_dark_en_US() {
+    fun takeScreenshotsForNewWalletAndRestOfAppDarkEnUS() {
         runWith(UiMode.Dark, "en-US") { context, tag ->
-            take_screenshots_for_new_wallet_and_rest_of_app(context, tag)
+            takeScreenshotsForNewWalletAndRestOfApp(context, tag)
         }
     }
 
-    private fun take_screenshots_for_new_wallet_and_rest_of_app(resContext: Context, tag: String) {
+    private fun takeScreenshotsForNewWalletAndRestOfApp(
+        resContext: Context,
+        tag: String
+    ) {
         // TODO [#286]: Screenshot tests fail on Firebase Test Lab
         // TODO [#286]: https://github.com/Electric-Coin-Company/zashi-android/issues/286
         if (FirebaseTestLabUtil.isFirebaseTestLab(ApplicationProvider.getApplicationContext())) {
@@ -366,7 +380,10 @@ private fun homeScreenshots(
     }
 }
 
-private fun settingsScreenshots(tag: String, composeTestRule: ComposeTestRule) {
+private fun settingsScreenshots(
+    tag: String,
+    composeTestRule: ComposeTestRule
+) {
     composeTestRule.onNode(hasTestTag(SettingsTag.SETTINGS_TOP_APP_BAR)).also {
         it.assertExists()
     }
@@ -374,7 +391,11 @@ private fun settingsScreenshots(tag: String, composeTestRule: ComposeTestRule) {
     ScreenshotTest.takeScreenshot(tag, "Settings 1")
 }
 
-private fun addressDetailsScreenshots(resContext: Context, tag: String, composeTestRule: ComposeTestRule) {
+private fun addressDetailsScreenshots(
+    resContext: Context,
+    tag: String,
+    composeTestRule: ComposeTestRule
+) {
     composeTestRule.onNode(hasText(resContext.getString(R.string.wallet_address_title))).also {
         it.assertExists()
     }
@@ -382,7 +403,11 @@ private fun addressDetailsScreenshots(resContext: Context, tag: String, composeT
     ScreenshotTest.takeScreenshot(tag, "Addresses 1")
 }
 
-private fun transactionHistoryScreenshots(resContext: Context, tag: String, composeTestRule: ComposeTestRule) {
+private fun transactionHistoryScreenshots(
+    resContext: Context,
+    tag: String,
+    composeTestRule: ComposeTestRule
+) {
     composeTestRule.onNode(hasText(resContext.getString(R.string.history_title))).also {
         it.assertExists()
     }
@@ -392,7 +417,11 @@ private fun transactionHistoryScreenshots(resContext: Context, tag: String, comp
 
 // This screen is not currently navigable from the app
 @Suppress("UnusedPrivateMember")
-private fun requestZecScreenshots(resContext: Context, tag: String, composeTestRule: ComposeTestRule) {
+private fun requestZecScreenshots(
+    resContext: Context,
+    tag: String,
+    composeTestRule: ComposeTestRule
+) {
     composeTestRule.onNode(hasText(resContext.getString(R.string.request_title))).also {
         it.assertExists()
     }
@@ -471,7 +500,7 @@ private fun sendZecScreenshots(
     }
 
     /*
-    TODO [#817]: Screenshot test on Send with pseudolocales problem
+    TODO [#817]: Screenshot test on Send with pseudo-locales problem
     TODO [#817]: https://github.com/Electric-Coin-Company/zashi-android/issues/817
     // Screenshot: Confirmation
     ScreenshotTest.takeScreenshot(tag, "Send 3")
@@ -495,7 +524,11 @@ private fun sendZecScreenshots(
      */
 }
 
-private fun supportScreenshots(resContext: Context, tag: String, composeTestRule: ComposeTestRule) {
+private fun supportScreenshots(
+    resContext: Context,
+    tag: String,
+    composeTestRule: ComposeTestRule
+) {
     composeTestRule.onNode(hasText(resContext.getString(R.string.support_header))).also {
         it.assertExists()
     }
@@ -503,7 +536,11 @@ private fun supportScreenshots(resContext: Context, tag: String, composeTestRule
     ScreenshotTest.takeScreenshot(tag, "Support 1")
 }
 
-private fun exportPrivateDataScreenshots(resContext: Context, tag: String, composeTestRule: ComposeTestRule) {
+private fun exportPrivateDataScreenshots(
+    resContext: Context,
+    tag: String,
+    composeTestRule: ComposeTestRule
+) {
     composeTestRule.onNode(hasText(resContext.getString(R.string.export_data_header))).also {
         it.assertExists()
     }
@@ -511,7 +548,11 @@ private fun exportPrivateDataScreenshots(resContext: Context, tag: String, compo
     ScreenshotTest.takeScreenshot(tag, "Export Private Data 1")
 }
 
-private fun aboutScreenshots(resContext: Context, tag: String, composeTestRule: ComposeTestRule) {
+private fun aboutScreenshots(
+    resContext: Context,
+    tag: String,
+    composeTestRule: ComposeTestRule
+) {
     composeTestRule.onNode(
         hasText(resContext.getString(R.string.about_title).uppercase())
     ).also {
@@ -521,7 +562,11 @@ private fun aboutScreenshots(resContext: Context, tag: String, composeTestRule: 
     ScreenshotTest.takeScreenshot(tag, "About 1")
 }
 
-private fun seedScreenshots(resContext: Context, tag: String, composeTestRule: ComposeTestRule) {
+private fun seedScreenshots(
+    resContext: Context,
+    tag: String,
+    composeTestRule: ComposeTestRule
+) {
     composeTestRule.onNode(hasText(resContext.getString(R.string.seed_recovery_header))).also {
         it.assertExists()
     }

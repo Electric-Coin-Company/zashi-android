@@ -181,9 +181,10 @@ private fun TopBarOneVisibleActionMenuExample(
         text = "Action 1",
         onClick = actionCallback,
         textAlign = TextAlign.Center,
-        modifier = modifier.then(
-            Modifier.padding(all = ZcashTheme.dimens.spacingDefault)
-        )
+        modifier =
+            modifier.then(
+                Modifier.padding(all = ZcashTheme.dimens.spacingDefault)
+            )
     )
 }
 
@@ -218,10 +219,11 @@ fun SmallTopAppBar(
         navigationIcon = {
             backText?.let {
                 Box(
-                    modifier = Modifier
-                        .wrapContentSize()
-                        .clip(RoundedCornerShape(ZcashTheme.dimens.topAppBarActionRippleCorner))
-                        .clickable { onBack?.run { onBack() } }
+                    modifier =
+                        Modifier
+                            .wrapContentSize()
+                            .clip(RoundedCornerShape(ZcashTheme.dimens.topAppBarActionRippleCorner))
+                            .clickable { onBack?.run { onBack() } }
                 ) {
                     Row(
                         modifier = Modifier.padding(all = ZcashTheme.dimens.spacingDefault),

@@ -23,7 +23,6 @@ import kotlinx.coroutines.flow.StateFlow
  */
 @Suppress("TooManyFunctions", "UNUSED_PARAMETER")
 internal class MockSynchronizer : CloseableSynchronizer {
-
     override val latestBirthdayHeight: BlockHeight
         get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
 
@@ -123,7 +122,10 @@ internal class MockSynchronizer : CloseableSynchronizer {
         error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
 
-    override suspend fun refreshUtxos(account: Account, since: BlockHeight): Int? {
+    override suspend fun refreshUtxos(
+        account: Account,
+        since: BlockHeight
+    ): Int? {
         error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
 
@@ -140,7 +142,10 @@ internal class MockSynchronizer : CloseableSynchronizer {
         return 1
     }
 
-    override suspend fun shieldFunds(usk: UnifiedSpendingKey, memo: String): Long {
+    override suspend fun shieldFunds(
+        usk: UnifiedSpendingKey,
+        memo: String
+    ): Long {
         error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
 
@@ -152,7 +157,11 @@ internal class MockSynchronizer : CloseableSynchronizer {
         error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
 
-    override suspend fun getExistingDataDbFilePath(context: Context, network: ZcashNetwork, alias: String): String {
+    override suspend fun getExistingDataDbFilePath(
+        context: Context,
+        network: ZcashNetwork,
+        alias: String
+    ): String {
         error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
 

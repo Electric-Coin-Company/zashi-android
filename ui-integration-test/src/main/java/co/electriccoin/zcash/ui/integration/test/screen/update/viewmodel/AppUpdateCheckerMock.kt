@@ -21,50 +21,53 @@ import kotlinx.coroutines.flow.flow
 import kotlin.time.Duration.Companion.milliseconds
 
 class AppUpdateCheckerMock private constructor() : AppUpdateChecker {
-
     companion object {
         private const val DEFAULT_STALENESS_DAYS = 3
 
         fun new() = AppUpdateCheckerMock()
 
         // used mostly for tests
-        val resultUpdateInfo = UpdateInfoFixture.new(
-            appUpdateInfo = null,
-            state = UpdateState.Prepared,
-            priority = AppUpdateChecker.Priority.HIGH,
-            force = true
-        )
+        val resultUpdateInfo =
+            UpdateInfoFixture.new(
+                appUpdateInfo = null,
+                state = UpdateState.Prepared,
+                priority = AppUpdateChecker.Priority.HIGH,
+                force = true
+            )
     }
 
     override val stalenessDays = DEFAULT_STALENESS_DAYS
 
-    override fun newCheckForUpdateAvailabilityFlow(
-        context: Context
-    ): Flow<UpdateInfo> = callbackFlow {
-        val fakeAppUpdateManager = FakeAppUpdateManager(context.applicationContext).also {
-            it.setClientVersionStalenessDays(stalenessDays)
-            it.setUpdateAvailable(
-                context.packageManager.getPackageInfoCompat(context.packageName, 0L).versionCodeCompat.toInt(),
-                AppUpdateType.IMMEDIATE
-            )
-            it.setUpdatePriority(resultUpdateInfo.priority.priorityUpperBorder())
+    override fun newCheckForUpdateAvailabilityFlow(context: Context): Flow<UpdateInfo> =
+        callbackFlow {
+            val fakeAppUpdateManager =
+                FakeAppUpdateManager(context.applicationContext).also {
+                    it.setClientVersionStalenessDays(stalenessDays)
+                    it.setUpdateAvailable(
+                        context.packageManager.getPackageInfoCompat(context.packageName, 0L).versionCodeCompat.toInt(),
+                        AppUpdateType.IMMEDIATE
+                    )
+                    it.setUpdatePriority(resultUpdateInfo.priority.priorityUpperBorder())
+                }
+
+            val appUpdateInfoTask = fakeAppUpdateManager.appUpdateInfo
+
+            // to simulate a real-world situation
+            delay(100.milliseconds)
+
+            appUpdateInfoTask.addOnCompleteListener { infoTask ->
+                emitResult(this, infoTask.result)
+            }
+
+            awaitClose {
+                // No resources to release
+            }
         }
 
-        val appUpdateInfoTask = fakeAppUpdateManager.appUpdateInfo
-
-        // to simulate a real-world situation
-        delay(100.milliseconds)
-
-        appUpdateInfoTask.addOnCompleteListener { infoTask ->
-            emitResult(this, infoTask.result)
-        }
-
-        awaitClose {
-            // No resources to release
-        }
-    }
-
-    private fun emitResult(producerScope: ProducerScope<UpdateInfo>, info: AppUpdateInfo) {
+    private fun emitResult(
+        producerScope: ProducerScope<UpdateInfo>,
+        info: AppUpdateInfo
+    ) {
         producerScope.trySend(
             UpdateInfoFixture.new(
                 getPriority(info.updatePriority()),
@@ -78,9 +81,10 @@ class AppUpdateCheckerMock private constructor() : AppUpdateChecker {
     override fun newStartUpdateFlow(
         activity: ComponentActivity,
         appUpdateInfo: AppUpdateInfo
-    ): Flow<Int> = flow {
-        // to simulate a real-world situation
-        delay(100.milliseconds)
-        emit(Activity.RESULT_OK)
-    }
+    ): Flow<Int> =
+        flow {
+            // to simulate a real-world situation
+            delay(100.milliseconds)
+            emit(Activity.RESULT_OK)
+        }
 }

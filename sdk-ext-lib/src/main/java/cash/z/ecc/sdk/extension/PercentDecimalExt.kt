@@ -1,4 +1,4 @@
-@file:Suppress("ktlint:filename")
+@file:Suppress("ktlint:standard:filename")
 
 package cash.z.ecc.sdk.extension
 
@@ -12,9 +12,10 @@ fun PercentDecimal.toPercentageWithDecimal(decimalFormat: DecimalFormat = prepar
     return decimalFormat.format(decimal * 100)
 }
 
-private fun preparePercentDecimalFormat(): DecimalFormat = DecimalFormat().apply {
-    val monetarySeparators = MonetarySeparators.current()
-    val localizedPattern = "##0${monetarySeparators.decimal}00"
-    applyLocalizedPattern(localizedPattern)
-    roundingMode = RoundingMode.HALF_UP
-}
+private fun preparePercentDecimalFormat(): DecimalFormat =
+    DecimalFormat().apply {
+        val monetarySeparators = MonetarySeparators.current()
+        val localizedPattern = "##0${monetarySeparators.decimal}00"
+        applyLocalizedPattern(localizedPattern)
+        roundingMode = RoundingMode.HALF_UP
+    }

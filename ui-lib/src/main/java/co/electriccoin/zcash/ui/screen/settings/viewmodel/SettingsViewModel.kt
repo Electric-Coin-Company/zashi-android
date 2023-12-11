@@ -27,10 +27,11 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
     val isKeepScreenOnWhileSyncing: StateFlow<Boolean?> =
         booleanStateFlow(StandardPreferenceKeys.IS_KEEP_SCREEN_ON_DURING_SYNC)
 
-    private fun booleanStateFlow(default: BooleanPreferenceDefault): StateFlow<Boolean?> = flow<Boolean?> {
-        val preferenceProvider = StandardPreferenceSingleton.getInstance(getApplication())
-        emitAll(default.observe(preferenceProvider))
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT), null)
+    private fun booleanStateFlow(default: BooleanPreferenceDefault): StateFlow<Boolean?> =
+        flow<Boolean?> {
+            val preferenceProvider = StandardPreferenceSingleton.getInstance(getApplication())
+            emitAll(default.observe(preferenceProvider))
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT), null)
 
     fun setAnalyticsEnabled(enabled: Boolean) {
         setBooleanPreference(StandardPreferenceKeys.IS_ANALYTICS_ENABLED, enabled)
@@ -44,7 +45,10 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         setBooleanPreference(StandardPreferenceKeys.IS_KEEP_SCREEN_ON_DURING_SYNC, enabled)
     }
 
-    private fun setBooleanPreference(default: BooleanPreferenceDefault, newState: Boolean) {
+    private fun setBooleanPreference(
+        default: BooleanPreferenceDefault,
+        newState: Boolean
+    ) {
         viewModelScope.launch {
             val prefs = StandardPreferenceSingleton.getInstance(getApplication())
             mutex.withLock {

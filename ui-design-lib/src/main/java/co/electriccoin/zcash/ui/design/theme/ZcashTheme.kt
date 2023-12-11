@@ -31,17 +31,19 @@ fun ZcashTheme(
     // IS_APP_DARK_MODE_ENABLED, whether the device's system dark mode is on or off.
     val useDarkMode = forceDarkMode || (BuildConfig.IS_APP_DARK_MODE_ENABLED && isSystemInDarkTheme())
 
-    val baseColors = if (useDarkMode) {
-        DarkColorPalette
-    } else {
-        LightColorPalette
-    }
+    val baseColors =
+        if (useDarkMode) {
+            DarkColorPalette
+        } else {
+            LightColorPalette
+        }
 
-    val extendedColors = if (useDarkMode) {
-        DarkExtendedColorPalette
-    } else {
-        LightExtendedColorPalette
-    }
+    val extendedColors =
+        if (useDarkMode) {
+            DarkExtendedColorPalette
+        } else {
+            LightExtendedColorPalette
+        }
 
     CompositionLocalProvider(LocalExtendedColors provides extendedColors) {
         ProvideDimens {
@@ -72,5 +74,5 @@ object ZcashTheme {
     // TODO [#808]: https://github.com/Electric-Coin-Company/zashi-android/issues/808
     val dimens: Dimens
         @Composable
-        get() = LocalDimens.current
+        get() = localDimens.current
 }

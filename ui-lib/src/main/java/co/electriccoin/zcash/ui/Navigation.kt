@@ -46,11 +46,12 @@ import co.electriccoin.zcash.ui.screen.update.WrapCheckForUpdate
 @Suppress("LongMethod")
 internal fun MainActivity.Navigation() {
     val context = LocalContext.current
-    val navController = rememberNavController().also {
-        // This suppress is necessary, as this is how we set up the nav controller for tests.
-        @SuppressLint("RestrictedApi")
-        navControllerForTesting = it
-    }
+    val navController =
+        rememberNavController().also {
+            // This suppress is necessary, as this is how we set up the nav controller for tests.
+            @SuppressLint("RestrictedApi")
+            navControllerForTesting = it
+        }
 
     NavHost(navController = navController, startDestination = HOME) {
         composable(HOME) {
@@ -127,11 +128,12 @@ internal fun MainActivity.Navigation() {
                     navController.navigateJustOnce(SCAN)
                 },
                 goBack = { navController.popBackStackJustOnce(SEND) },
-                sendArgumentsWrapper = SendArgumentsWrapper(
-                    recipientAddress = backStackEntry.savedStateHandle[SEND_RECIPIENT_ADDRESS],
-                    amount = backStackEntry.savedStateHandle[SEND_AMOUNT],
-                    memo = backStackEntry.savedStateHandle[SEND_MEMO]
-                )
+                sendArgumentsWrapper =
+                    SendArgumentsWrapper(
+                        recipientAddress = backStackEntry.savedStateHandle[SEND_RECIPIENT_ADDRESS],
+                        amount = backStackEntry.savedStateHandle[SEND_AMOUNT],
+                        memo = backStackEntry.savedStateHandle[SEND_MEMO]
+                    )
             )
             backStackEntry.savedStateHandle.remove<String>(SEND_RECIPIENT_ADDRESS)
             backStackEntry.savedStateHandle.remove<String>(SEND_AMOUNT)

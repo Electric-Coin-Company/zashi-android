@@ -6,7 +6,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class ReportableExceptionTest {
-
     @Test
     fun bundle() {
         val reportableException = ReportableExceptionFixture.new()

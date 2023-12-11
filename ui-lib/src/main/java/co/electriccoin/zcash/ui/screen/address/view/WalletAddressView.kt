@@ -80,9 +80,10 @@ fun WalletAddresses(
         WalletDetailAddresses(
             walletAddresses = walletAddresses,
             onCopyToClipboard = onCopyToClipboard,
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
         )
     }
 }
@@ -127,9 +128,10 @@ private fun WalletDetailAddresses(
             Image(
                 painter = ColorPainter(ZcashTheme.colors.highlight),
                 contentDescription = "",
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .width(BIG_INDICATOR_WIDTH)
+                modifier =
+                    Modifier
+                        .fillMaxHeight()
+                        .width(BIG_INDICATOR_WIDTH)
             )
 
             Column(Modifier.fillMaxWidth()) {
@@ -151,17 +153,19 @@ private fun WalletDetailAddresses(
                 SaplingAddress(
                     saplingAddress = walletAddresses.sapling.address,
                     onCopyToClipboard = onCopyToClipboard,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(IntrinsicSize.Min)
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .height(IntrinsicSize.Min)
                 )
 
                 TransparentAddress(
                     transparentAddress = walletAddresses.transparent.address,
                     onCopyToClipboard = onCopyToClipboard,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(IntrinsicSize.Min)
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .height(IntrinsicSize.Min)
                 )
             }
         }
@@ -219,32 +223,35 @@ private fun ExpandableRow(
     Column {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .defaultMinSize(minHeight = 48.dp)
-                .clickable { expandedState = !expandedState }
-                .padding(
-                    horizontal = ZcashTheme.dimens.spacingDefault,
-                    vertical = ZcashTheme.dimens.spacingTiny
-                )
+            modifier =
+                Modifier
+                    .defaultMinSize(minHeight = 48.dp)
+                    .clickable { expandedState = !expandedState }
+                    .padding(
+                        horizontal = ZcashTheme.dimens.spacingDefault,
+                        vertical = ZcashTheme.dimens.spacingTiny
+                    )
         ) {
             ListItem(text = title)
             Spacer(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(MINIMAL_WEIGHT)
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .weight(MINIMAL_WEIGHT)
             )
             ExpandableArrow(expandedState)
         }
         if (expandedState) {
             Body(
                 content,
-                modifier = Modifier
-                    .clickable { onCopyToClipboard(content) }
-                    .padding(
-                        horizontal = ZcashTheme.dimens.spacingDefault,
-                        vertical = ZcashTheme.dimens.spacingTiny
-                    )
-                    .testTag(WalletAddressesTag.WALLET_ADDRESS)
+                modifier =
+                    Modifier
+                        .clickable { onCopyToClipboard(content) }
+                        .padding(
+                            horizontal = ZcashTheme.dimens.spacingDefault,
+                            vertical = ZcashTheme.dimens.spacingTiny
+                        )
+                        .testTag(WalletAddressesTag.WALLET_ADDRESS)
             )
         }
     }
@@ -255,10 +262,11 @@ private fun SmallIndicator(color: Color) {
     // TODO [#160]: Border is not the right implementation here, as it causes double thickness for the middle item
     // TODO [#160]: https://github.com/Electric-Coin-Company/zashi-android/issues/160
     Image(
-        modifier = Modifier
-            .fillMaxHeight()
-            .width(SMALL_INDICATOR_WIDTH)
-            .border(1.dp, ZcashTheme.colors.addressHighlightBorder),
+        modifier =
+            Modifier
+                .fillMaxHeight()
+                .width(SMALL_INDICATOR_WIDTH)
+                .border(1.dp, ZcashTheme.colors.addressHighlightBorder),
         painter = ColorPainter(color),
         contentDescription = ""
     )
@@ -270,16 +278,18 @@ private const val NINETY_DEGREES = 90f
 private fun ExpandableArrow(isExpanded: Boolean) {
     Icon(
         imageVector = Icons.Filled.ArrowDropDownCircle,
-        contentDescription = if (isExpanded) {
-            stringResource(id = R.string.wallet_address_hide)
-        } else {
-            stringResource(id = R.string.wallet_address_show)
-        },
-        modifier = if (isExpanded) {
-            Modifier
-        } else {
-            Modifier.rotate(NINETY_DEGREES)
-        },
+        contentDescription =
+            if (isExpanded) {
+                stringResource(id = R.string.wallet_address_hide)
+            } else {
+                stringResource(id = R.string.wallet_address_show)
+            },
+        modifier =
+            if (isExpanded) {
+                Modifier
+            } else {
+                Modifier.rotate(NINETY_DEGREES)
+            },
         tint = MaterialTheme.colorScheme.onBackground
     )
 }

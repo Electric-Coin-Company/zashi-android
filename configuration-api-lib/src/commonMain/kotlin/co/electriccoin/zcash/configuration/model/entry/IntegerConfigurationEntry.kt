@@ -6,6 +6,5 @@ data class IntegerConfigurationEntry(
     override val key: ConfigKey,
     private val defaultValue: Int
 ) : DefaultEntry<Int> {
-
     override fun getValue(configuration: Configuration) = configuration.getInt(key, defaultValue)
 }

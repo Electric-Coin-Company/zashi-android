@@ -77,14 +77,15 @@ private fun ComposableHistoryListPreview() {
     ZcashTheme(forceDarkMode = false) {
         GradientSurface {
             History(
-                transactionState = TransactionHistorySyncState.Syncing(
-                    @Suppress("MagicNumber")
-                    persistentListOf(
-                        TransactionOverviewFixture.new(netValue = Zatoshi(100000000)),
-                        TransactionOverviewFixture.new(netValue = Zatoshi(200000000)),
-                        TransactionOverviewFixture.new(netValue = Zatoshi(300000000)),
-                    )
-                ),
+                transactionState =
+                    TransactionHistorySyncState.Syncing(
+                        @Suppress("MagicNumber")
+                        persistentListOf(
+                            TransactionOverviewFixture.new(netValue = Zatoshi(100000000)),
+                            TransactionOverviewFixture.new(netValue = Zatoshi(200000000)),
+                            TransactionOverviewFixture.new(netValue = Zatoshi(300000000)),
+                        )
+                    ),
                 goBack = {}
             )
         }
@@ -109,12 +110,13 @@ fun History(
     }) { paddingValues ->
         HistoryMainContent(
             transactionState = transactionState,
-            modifier = Modifier
-                .fillMaxHeight()
-                .padding(
-                    top = paddingValues.calculateTopPadding(),
-                    bottom = paddingValues.calculateBottomPadding()
-                )
+            modifier =
+                Modifier
+                    .fillMaxHeight()
+                    .padding(
+                        top = paddingValues.calculateTopPadding(),
+                        bottom = paddingValues.calculateBottomPadding()
+                    )
         )
     }
 }
@@ -146,9 +148,10 @@ private fun HistoryMainContent(
         when (transactionState) {
             is TransactionHistorySyncState.Loading -> {
                 CircularProgressIndicator(
-                    modifier = Modifier
-                        .align(alignment = Center)
-                        .testTag(HistoryTag.PROGRESS)
+                    modifier =
+                        Modifier
+                            .align(alignment = Center)
+                            .testTag(HistoryTag.PROGRESS)
                 )
             }
             is TransactionHistorySyncState.Syncing -> {
@@ -157,23 +160,24 @@ private fun HistoryMainContent(
                 ) {
                     Body(
                         text = stringResource(id = R.string.history_syncing),
-                        modifier = Modifier
-                            .padding(
-                                top = ZcashTheme.dimens.spacingSmall,
-                                bottom = ZcashTheme.dimens.spacingSmall,
-                                start = ZcashTheme.dimens.spacingDefault,
-                                end = ZcashTheme.dimens.spacingDefault
-                            )
+                        modifier =
+                            Modifier
+                                .padding(
+                                    top = ZcashTheme.dimens.spacingSmall,
+                                    bottom = ZcashTheme.dimens.spacingSmall,
+                                    start = ZcashTheme.dimens.spacingDefault,
+                                    end = ZcashTheme.dimens.spacingDefault
+                                )
                     )
                     HistoryList(transactions = transactionState.transactions)
                 }
                 // Add progress indicator only in the state of empty transaction
                 if (transactionState.hasNoTransactions()) {
                     CircularProgressIndicator(
-                        modifier = Modifier
-                            .align(alignment = Center)
-                            .testTag(HistoryTag.PROGRESS)
-
+                        modifier =
+                            Modifier
+                                .align(alignment = Center)
+                                .testTag(HistoryTag.PROGRESS)
                     )
                 }
             }
@@ -181,9 +185,10 @@ private fun HistoryMainContent(
                 if (transactionState.hasNoTransactions()) {
                     Body(
                         text = stringResource(id = R.string.history_empty),
-                        modifier = Modifier
-                            .padding(all = ZcashTheme.dimens.spacingDefault)
-                            .align(alignment = Center)
+                        modifier =
+                            Modifier
+                                .padding(all = ZcashTheme.dimens.spacingDefault)
+                                .align(alignment = Center)
                     )
                 } else {
                     HistoryList(transactions = transactionState.transactions)
@@ -216,9 +221,10 @@ fun HistoryItem(
     currency: ZcashCurrency
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = ZcashTheme.dimens.spacingSmall),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(vertical = ZcashTheme.dimens.spacingSmall),
         verticalAlignment = Alignment.CenterVertically
     ) {
         val transactionText: String
@@ -262,13 +268,14 @@ fun HistoryItem(
 
             Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingTiny))
 
-            val dateString = transaction.minedHeight?.let {
-                transaction.blockTimeEpochSeconds?.let { blockTimeEpochSeconds ->
-                    // * 1000 to covert to millis
-                    @Suppress("MagicNumber")
-                    dateFormat.format(blockTimeEpochSeconds.times(1000L))
+            val dateString =
+                transaction.minedHeight?.let {
+                    transaction.blockTimeEpochSeconds?.let { blockTimeEpochSeconds ->
+                        // * 1000 to covert to millis
+                        @Suppress("MagicNumber")
+                        dateFormat.format(blockTimeEpochSeconds.times(1000L))
+                    } ?: stringResource(id = R.string.history_item_date_not_available)
                 } ?: stringResource(id = R.string.history_item_date_not_available)
-            } ?: stringResource(id = R.string.history_item_date_not_available)
             // For now, use the same label for the above missing transaction date
 
             Body(
@@ -280,11 +287,12 @@ fun HistoryItem(
 
         Column {
             Row(modifier = Modifier.align(alignment = Alignment.End)) {
-                val zecString = if (transaction.isSentTransaction) {
-                    "-${transaction.netValue.toZecString()}"
-                } else {
-                    transaction.netValue.toZecString()
-                }
+                val zecString =
+                    if (transaction.isSentTransaction) {
+                        "-${transaction.netValue.toZecString()}"
+                    } else {
+                        transaction.netValue.toZecString()
+                    }
                 Body(text = zecString)
 
                 Spacer(modifier = Modifier.width(ZcashTheme.dimens.spacingTiny))

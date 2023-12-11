@@ -21,7 +21,6 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class AppUpdateCheckerImpTest {
-
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
@@ -40,46 +39,48 @@ class AppUpdateCheckerImpTest {
     @Test
     @MediumTest
     @OptIn(ExperimentalCoroutinesApi::class)
-    fun check_for_update_availability_test() = runTest {
-        assertNotNull(updateChecker)
+    fun check_for_update_availability_test() =
+        runTest {
+            assertNotNull(updateChecker)
 
-        getAppUpdateInfoFlow().onFirst { updateInfo ->
-            assertTrue(
-                listOf(
-                    UpdateState.Failed,
-                    UpdateState.Prepared,
-                    UpdateState.Done
-                ).contains(updateInfo.state)
-            )
+            getAppUpdateInfoFlow().onFirst { updateInfo ->
+                assertTrue(
+                    listOf(
+                        UpdateState.Failed,
+                        UpdateState.Prepared,
+                        UpdateState.Done
+                    ).contains(updateInfo.state)
+                )
+            }
         }
-    }
 
     @Test
     @MediumTest
     @OptIn(ExperimentalCoroutinesApi::class)
-    fun start_update_availability_test() = runTest {
-        getAppUpdateInfoFlow().onFirst { updateInfo ->
-            // In case we get result with FAILED state, e.g. app is still not released in the Google
-            // Play store, there is no way to continue with the test.
-            if (updateInfo.state == UpdateState.Failed) {
-                assertNull(updateInfo.appUpdateInfo)
-                return@onFirst
-            }
+    fun start_update_availability_test() =
+        runTest {
+            getAppUpdateInfoFlow().onFirst { updateInfo ->
+                // In case we get result with FAILED state, e.g. app is still not released in the Google
+                // Play store, there is no way to continue with the test.
+                if (updateInfo.state == UpdateState.Failed) {
+                    assertNull(updateInfo.appUpdateInfo)
+                    return@onFirst
+                }
 
-            assertNotNull(updateInfo.appUpdateInfo)
+                assertNotNull(updateInfo.appUpdateInfo)
 
-            updateChecker.newStartUpdateFlow(
-                composeTestRule.activity,
-                updateInfo.appUpdateInfo!!
-            ).onFirst { result ->
-                assertTrue {
-                    listOf(
-                        Activity.RESULT_OK,
-                        Activity.RESULT_CANCELED,
-                        ActivityResult.RESULT_IN_APP_UPDATE_FAILED
-                    ).contains(result)
+                updateChecker.newStartUpdateFlow(
+                    composeTestRule.activity,
+                    updateInfo.appUpdateInfo!!
+                ).onFirst { result ->
+                    assertTrue {
+                        listOf(
+                            Activity.RESULT_OK,
+                            Activity.RESULT_CANCELED,
+                            ActivityResult.RESULT_IN_APP_UPDATE_FAILED
+                        ).contains(result)
+                    }
                 }
             }
         }
-    }
 }

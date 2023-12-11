@@ -25,18 +25,18 @@ import org.junit.Rule
 import org.junit.Test
 
 class SendViewIntegrationTest {
-
     @get:Rule
     val composeTestRule = createComposeRule()
 
     private val wallet = WalletFixture.Alice
     private val network = ZcashNetwork.Testnet
-    private val spendingKey = runBlocking {
-        WalletFixture.Alice.getUnifiedSpendingKey(
-            seed = wallet.seedPhrase,
-            network = network
-        )
-    }
+    private val spendingKey =
+        runBlocking {
+            WalletFixture.Alice.getUnifiedSpendingKey(
+                seed = wallet.seedPhrase,
+                network = network
+            )
+        }
     private val synchronizer = MockSynchronizer.new()
     private val balance = ZatoshiFixture.new()
 

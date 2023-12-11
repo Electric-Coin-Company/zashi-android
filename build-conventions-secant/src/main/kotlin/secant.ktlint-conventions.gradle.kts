@@ -5,7 +5,7 @@ plugins {
 val ktlint by configurations.creating
 
 dependencies {
-    ktlint("com.pinterest:ktlint:${project.property("KTLINT_VERSION")}") {
+    ktlint("com.pinterest.ktlint:ktlint-cli:${project.property("KTLINT_VERSION")}") {
         attributes {
             attribute(Bundling.BUNDLING_ATTRIBUTE, objects.named<Bundling>(Bundling.EXTERNAL))
         }

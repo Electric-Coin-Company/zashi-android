@@ -7,7 +7,6 @@ import org.junit.Test
 import kotlin.test.assertContains
 
 class WebBrowserUtilTest {
-
     @Test
     @SmallTest
     fun check_intent_for_web_browser() {

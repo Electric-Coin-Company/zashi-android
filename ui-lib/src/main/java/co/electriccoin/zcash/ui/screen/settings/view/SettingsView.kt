@@ -94,16 +94,17 @@ fun Settings(
         )
     }) { paddingValues ->
         SettingsMainContent(
-            modifier = Modifier
-                .verticalScroll(
-                    rememberScrollState()
-                )
-                .padding(
-                    top = paddingValues.calculateTopPadding() + dimens.spacingHuge,
-                    bottom = paddingValues.calculateBottomPadding(),
-                    start = dimens.screenHorizontalSpacing,
-                    end = dimens.screenHorizontalSpacing
-                ),
+            modifier =
+                Modifier
+                    .verticalScroll(
+                        rememberScrollState()
+                    )
+                    .padding(
+                        top = paddingValues.calculateTopPadding() + dimens.spacingHuge,
+                        bottom = paddingValues.calculateBottomPadding(),
+                        start = dimens.screenHorizontalSpacing,
+                        end = dimens.screenHorizontalSpacing
+                    ),
             onSeedRecovery = onSeedRecovery,
             onDocumentation = onDocumentation,
             onPrivacyPolicy = onPrivacyPolicy,
@@ -277,9 +278,10 @@ private fun SettingsMainContent(
         )
 
         Spacer(
-            modifier = Modifier
-                .fillMaxHeight()
-                .weight(MINIMAL_WEIGHT)
+            modifier =
+                Modifier
+                    .fillMaxHeight()
+                    .weight(MINIMAL_WEIGHT)
         )
 
         Spacer(modifier = Modifier.height(dimens.spacingDefault))

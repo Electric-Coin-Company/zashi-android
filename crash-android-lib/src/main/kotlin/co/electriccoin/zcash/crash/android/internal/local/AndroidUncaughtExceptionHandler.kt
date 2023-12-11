@@ -12,14 +12,17 @@ internal class AndroidUncaughtExceptionHandler(
     context: Context,
     private val defaultUncaughtExceptionHandler: Thread.UncaughtExceptionHandler
 ) : Thread.UncaughtExceptionHandler {
-
     private val applicationContext = context.applicationContext
 
-    override fun uncaughtException(t: Thread, e: Throwable) {
+    override fun uncaughtException(
+        t: Thread,
+        e: Throwable
+    ) {
         val reportableException = ReportableException.new(applicationContext, e, true)
 
-        val isUseSecondaryProcess = applicationContext.resources
-            .getBoolean(R.bool.co_electriccoin_zcash_crash_is_use_secondary_process)
+        val isUseSecondaryProcess =
+            applicationContext.resources
+                .getBoolean(R.bool.co_electriccoin_zcash_crash_is_use_secondary_process)
 
         if (isUseSecondaryProcess) {
             applicationContext.sendBroadcast(ExceptionReceiver.newIntent(applicationContext, reportableException))
@@ -31,7 +34,6 @@ internal class AndroidUncaughtExceptionHandler(
     }
 
     companion object {
-
         private val isInitialized = AtomicBoolean(false)
 
         /**

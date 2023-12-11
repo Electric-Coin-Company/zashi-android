@@ -40,19 +40,28 @@ private data class MergingConfiguration(private val configurations: PersistentLi
         return null != configurations.firstWithKey(key)
     }
 
-    override fun getBoolean(key: ConfigKey, defaultValue: Boolean): Boolean {
+    override fun getBoolean(
+        key: ConfigKey,
+        defaultValue: Boolean
+    ): Boolean {
         return configurations.firstWithKey(key)?.let {
             return it.getBoolean(key, defaultValue)
         } ?: defaultValue
     }
 
-    override fun getInt(key: ConfigKey, defaultValue: Int): Int {
+    override fun getInt(
+        key: ConfigKey,
+        defaultValue: Int
+    ): Int {
         return configurations.firstWithKey(key)?.let {
             return it.getInt(key, defaultValue)
         } ?: defaultValue
     }
 
-    override fun getString(key: ConfigKey, defaultValue: String): String {
+    override fun getString(
+        key: ConfigKey,
+        defaultValue: String
+    ): String {
         return configurations.firstWithKey(key)?.let {
             return it.getString(key, defaultValue)
         } ?: defaultValue

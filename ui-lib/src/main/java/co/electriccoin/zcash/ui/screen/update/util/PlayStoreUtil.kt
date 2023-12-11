@@ -5,12 +5,12 @@ import android.content.Intent
 import android.net.Uri
 
 object PlayStoreUtil {
-
     const val PLAY_STORE_APP_URI = "market://details?id="
 
-    const val FLAGS = Intent.FLAG_ACTIVITY_NO_HISTORY or
-        Intent.FLAG_ACTIVITY_NEW_TASK or
-        Intent.FLAG_ACTIVITY_MULTIPLE_TASK
+    const val FLAGS =
+        Intent.FLAG_ACTIVITY_NO_HISTORY or
+            Intent.FLAG_ACTIVITY_NEW_TASK or
+            Intent.FLAG_ACTIVITY_MULTIPLE_TASK
 
     /**
      * Returns Google Play store app intent. We assume the Play store app is installed, as we use

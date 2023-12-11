@@ -20,16 +20,20 @@ import co.electriccoin.zcash.spackle.AndroidApiVersion
 open class AbstractProcessNameContentProvider : ContentProvider() {
     override fun onCreate() = true
 
-    override fun attachInfo(context: Context, info: ProviderInfo) {
+    override fun attachInfo(
+        context: Context,
+        info: ProviderInfo
+    ) {
         super.attachInfo(context, info)
 
-        val processName: String = if (AndroidApiVersion.isAtLeastT) {
-            getProcessNameTPlus()
-        } else if (AndroidApiVersion.isAtLeastP) {
-            getProcessNamePPlus()
-        } else {
-            getProcessNameLegacy(context, info)
-        }
+        val processName: String =
+            if (AndroidApiVersion.isAtLeastT) {
+                getProcessNameTPlus()
+            } else if (AndroidApiVersion.isAtLeastP) {
+                getProcessNamePPlus()
+            } else {
+                getProcessNameLegacy(context, info)
+            }
 
         ProcessNameCompat.setProcessName(processName)
     }
@@ -54,11 +58,18 @@ open class AbstractProcessNameContentProvider : ContentProvider() {
         throw UnsupportedOperationException()
     }
 
-    override fun insert(uri: Uri, values: ContentValues?): Uri? {
+    override fun insert(
+        uri: Uri,
+        values: ContentValues?
+    ): Uri? {
         throw UnsupportedOperationException()
     }
 
-    override fun delete(uri: Uri, selection: String?, selectionArgs: Array<out String>?): Int {
+    override fun delete(
+        uri: Uri,
+        selection: String?,
+        selectionArgs: Array<out String>?
+    ): Int {
         throw UnsupportedOperationException()
     }
 
@@ -72,7 +83,9 @@ open class AbstractProcessNameContentProvider : ContentProvider() {
     }
 
     companion object {
-        internal fun getProcessNameLegacy(context: Context, info: ProviderInfo) =
-            info.processName ?: context.applicationInfo.processName ?: context.packageName
+        internal fun getProcessNameLegacy(
+            context: Context,
+            info: ProviderInfo
+        ) = info.processName ?: context.applicationInfo.processName ?: context.packageName
     }
 }

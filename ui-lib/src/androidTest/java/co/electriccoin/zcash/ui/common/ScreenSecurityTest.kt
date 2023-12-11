@@ -42,18 +42,18 @@ class ScreenSecurityTest : UiTestPrerequisites() {
 
     @Test
     @MediumTest
-    fun acquireAndReleaseScreenSecurity() = runTest {
-        val testSetup = TestSetup(composeTestRule)
+    fun acquireAndReleaseScreenSecurity() =
+        runTest {
+            val testSetup = TestSetup(composeTestRule)
 
-        assertEquals(1, testSetup.getSecureScreenCount())
+            assertEquals(1, testSetup.getSecureScreenCount())
 
-        testSetup.mutableSecureScreenFlag.update { false }
-        composeTestRule.awaitIdle()
-        assertEquals(0, testSetup.getSecureScreenCount())
-    }
+            testSetup.mutableSecureScreenFlag.update { false }
+            composeTestRule.awaitIdle()
+            assertEquals(0, testSetup.getSecureScreenCount())
+        }
 
     private class TestSetup(composeTestRule: ComposeContentTestRule) {
-
         val mutableSecureScreenFlag = MutableStateFlow(true)
 
         private val screenSecurity = ScreenSecurity()

@@ -25,13 +25,13 @@ import kotlinx.coroutines.async
 internal class FirebaseCrashReporter(
     context: Context
 ) : CrashReporter {
-
     @OptIn(kotlinx.coroutines.DelicateCoroutinesApi::class)
     private val analyticsScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 
-    private val initFirebaseJob: Deferred<CrashReporter?> = analyticsScope.async {
-        FirebaseCrashReporterImpl.getInstance(context)
-    }
+    private val initFirebaseJob: Deferred<CrashReporter?> =
+        analyticsScope.async {
+            FirebaseCrashReporterImpl.getInstance(context)
+        }
 
     @AnyThread
     override fun reportCaughtException(exception: Throwable) {
@@ -67,7 +67,6 @@ private class FirebaseCrashReporterImpl(
     private val firebaseCrashlytics: FirebaseCrashlytics,
     private val firebaseInstallations: FirebaseInstallations
 ) : CrashReporter {
-
     @AnyThread
     override fun reportCaughtException(exception: Throwable) {
         firebaseCrashlytics.recordException(exception)
@@ -90,30 +89,32 @@ private class FirebaseCrashReporterImpl(
          * early crashes may be missed.  This is a tradeoff we are willing to make in order to avoid
          * ANRs.
          */
-        private val lazyWithArgument = SuspendingLazy<Context, CrashReporter?> {
-            if (it.resources.getBoolean(R.bool.co_electriccoin_zcash_crash_is_firebase_enabled)) {
+        private val lazyWithArgument =
+            SuspendingLazy<Context, CrashReporter?> {
+                if (it.resources.getBoolean(R.bool.co_electriccoin_zcash_crash_is_firebase_enabled)) {
 
-                // Workaround for disk IO on main thread in Firebase initialization
-                val firebaseApp = FirebaseAppCache.getFirebaseApp(it)
-                if (firebaseApp == null) {
-                    Twig.warn { "Unable to initialize Crashlytics. FirebaseApp is null" }
-                    return@SuspendingLazy null
+                    // Workaround for disk IO on main thread in Firebase initialization
+                    val firebaseApp = FirebaseAppCache.getFirebaseApp(it)
+                    if (firebaseApp == null) {
+                        Twig.warn { "Unable to initialize Crashlytics. FirebaseApp is null" }
+                        return@SuspendingLazy null
+                    }
+
+                    val firebaseInstallations = FirebaseInstallations.getInstance(firebaseApp)
+                    val firebaseCrashlytics =
+                        FirebaseCrashlytics.getInstance().apply {
+                            setCustomKey(
+                                CrashlyticsUserProperties.IS_TEST,
+                                EmulatorWtfUtil.isEmulatorWtf(it) || FirebaseTestLabUtil.isFirebaseTestLab(it)
+                            )
+                        }
+
+                    FirebaseCrashReporterImpl(firebaseCrashlytics, firebaseInstallations)
+                } else {
+                    Twig.warn { "Unable to initialize Crashlytics. Configure API keys in the app module" }
+                    null
                 }
-
-                val firebaseInstallations = FirebaseInstallations.getInstance(firebaseApp)
-                val firebaseCrashlytics = FirebaseCrashlytics.getInstance().apply {
-                    setCustomKey(
-                        CrashlyticsUserProperties.IS_TEST,
-                        EmulatorWtfUtil.isEmulatorWtf(it) || FirebaseTestLabUtil.isFirebaseTestLab(it)
-                    )
-                }
-
-                FirebaseCrashReporterImpl(firebaseCrashlytics, firebaseInstallations)
-            } else {
-                Twig.warn { "Unable to initialize Crashlytics. Configure API keys in the app module" }
-                null
             }
-        }
 
         suspend fun getInstance(context: Context): CrashReporter? {
             return lazyWithArgument.getInstance(context)

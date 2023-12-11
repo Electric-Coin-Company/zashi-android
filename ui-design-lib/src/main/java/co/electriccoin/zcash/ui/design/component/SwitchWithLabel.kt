@@ -24,48 +24,53 @@ fun SwitchWithLabel(
     val interactionSource = remember { MutableInteractionSource() }
 
     ConstraintLayout(
-        modifier = modifier
-            .clickable(
-                interactionSource = interactionSource,
-                indication = null, // disable ripple
-                role = Role.Switch,
-                onClick = { onStateChange(!state) }
-            )
-            .fillMaxWidth()
+        modifier =
+            modifier
+                .clickable(
+                    interactionSource = interactionSource,
+                    // disable ripple
+                    indication = null,
+                    role = Role.Switch,
+                    onClick = { onStateChange(!state) }
+                )
+                .fillMaxWidth()
     ) {
         val (text, spacer, switchButton) = createRefs()
         Body(
             text = label,
-            modifier = Modifier.constrainAs(text) {
-                top.linkTo(parent.top)
-                bottom.linkTo(parent.top)
-                start.linkTo(parent.start)
-                end.linkTo(spacer.start)
-                width = Dimension.fillToConstraints
-            }
-        )
-        Spacer(
-            modifier = Modifier
-                .width(ZcashTheme.dimens.spacingDefault)
-                .constrainAs(spacer) {
+            modifier =
+                Modifier.constrainAs(text) {
                     top.linkTo(parent.top)
                     bottom.linkTo(parent.top)
-                    start.linkTo(text.end)
-                    end.linkTo(switchButton.start)
+                    start.linkTo(parent.start)
+                    end.linkTo(spacer.start)
+                    width = Dimension.fillToConstraints
                 }
+        )
+        Spacer(
+            modifier =
+                Modifier
+                    .width(ZcashTheme.dimens.spacingDefault)
+                    .constrainAs(spacer) {
+                        top.linkTo(parent.top)
+                        bottom.linkTo(parent.top)
+                        start.linkTo(text.end)
+                        end.linkTo(switchButton.start)
+                    }
         )
         Switch(
             checked = state,
             onCheckedChange = {
                 onStateChange(it)
             },
-            modifier = Modifier.constrainAs(switchButton) {
-                top.linkTo(parent.top)
-                bottom.linkTo(parent.top)
-                start.linkTo(spacer.end)
-                end.linkTo(parent.end)
-                width = Dimension.wrapContent
-            }
+            modifier =
+                Modifier.constrainAs(switchButton) {
+                    top.linkTo(parent.top)
+                    bottom.linkTo(parent.top)
+                    start.linkTo(spacer.end)
+                    end.linkTo(parent.end)
+                    width = Dimension.wrapContent
+                }
         )
     }
 }

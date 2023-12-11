@@ -48,14 +48,16 @@ fun ChipGrid(
         horizontalArrangement = Arrangement.Center
     ) {
         Row(
-            modifier = Modifier
-                .wrapContentWidth()
-                .clickable(
-                    interactionSource = interactionSource,
-                    indication = null, // Disable ripple
-                    onClick = onGridClick
-                )
-                .testTag(CommonTag.CHIP_LAYOUT)
+            modifier =
+                Modifier
+                    .wrapContentWidth()
+                    .clickable(
+                        interactionSource = interactionSource,
+                        // Disable ripple
+                        indication = null,
+                        onClick = onGridClick
+                    )
+                    .testTag(CommonTag.CHIP_LAYOUT)
         ) {
             wordList.chunked(CHIP_GRID_COLUMN_SIZE).forEachIndexed { chunkIndex, chunk ->
                 // TODO [#1043]: Correctly align numbers and words on Recovery screen

@@ -15,20 +15,23 @@ class IntegerPreferenceDefaultTest {
     }
 
     @Test
-    fun value_default() = runTest {
-        val entry = IntegerPreferenceDefaultFixture.new()
-        assertEquals(IntegerPreferenceDefaultFixture.DEFAULT_VALUE, entry.getValue(MockPreferenceProvider()))
-    }
-
-    @Test
-    fun value_override() = runTest {
-        val expected = IntegerPreferenceDefaultFixture.DEFAULT_VALUE + 5
-
-        val entry = IntegerPreferenceDefaultFixture.new()
-        val mockPreferenceProvider = MockPreferenceProvider {
-            mutableMapOf(StringDefaultPreferenceFixture.KEY.key to expected.toString())
+    fun value_default() =
+        runTest {
+            val entry = IntegerPreferenceDefaultFixture.new()
+            assertEquals(IntegerPreferenceDefaultFixture.DEFAULT_VALUE, entry.getValue(MockPreferenceProvider()))
         }
 
-        assertEquals(expected, entry.getValue(mockPreferenceProvider))
-    }
+    @Test
+    fun value_override() =
+        runTest {
+            val expected = IntegerPreferenceDefaultFixture.DEFAULT_VALUE + 5
+
+            val entry = IntegerPreferenceDefaultFixture.new()
+            val mockPreferenceProvider =
+                MockPreferenceProvider {
+                    mutableMapOf(StringDefaultPreferenceFixture.KEY.key to expected.toString())
+                }
+
+            assertEquals(expected, entry.getValue(mockPreferenceProvider))
+        }
 }

@@ -18,7 +18,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 
 class UpdateViewIntegrationTest {
-
     @get:Rule
     val composeTestRule = createComposeRule()
 
@@ -26,14 +25,15 @@ class UpdateViewIntegrationTest {
     @MediumTest
     fun update_info_state_restoration() {
         val restorationTester = StateRestorationTester(composeTestRule)
-        val testSetup = newTestSetup(
-            UpdateInfoFixture.new(
-                priority = AppUpdateChecker.Priority.HIGH,
-                force = true,
-                appUpdateInfo = null,
-                state = UpdateState.Prepared
+        val testSetup =
+            newTestSetup(
+                UpdateInfoFixture.new(
+                    priority = AppUpdateChecker.Priority.HIGH,
+                    force = true,
+                    appUpdateInfo = null,
+                    state = UpdateState.Prepared
+                )
             )
-        )
 
         restorationTester.setContent {
             testSetup.DefaultContent()
@@ -55,8 +55,9 @@ class UpdateViewIntegrationTest {
         assertNotEquals(testSetup.getUpdateState(), UpdateState.Prepared)
     }
 
-    private fun newTestSetup(updateInfo: UpdateInfo) = UpdateViewTestSetup(
-        composeTestRule,
-        updateInfo
-    )
+    private fun newTestSetup(updateInfo: UpdateInfo) =
+        UpdateViewTestSetup(
+            composeTestRule,
+            updateInfo
+        )
 }

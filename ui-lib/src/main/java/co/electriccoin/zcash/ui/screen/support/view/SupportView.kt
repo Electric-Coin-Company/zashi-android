@@ -82,12 +82,13 @@ fun Support(
             message = message,
             setMessage = setMessage,
             setShowDialog = setShowDialog,
-            modifier = Modifier.padding(
-                top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
-                bottom = paddingValues.calculateBottomPadding(),
-                start = ZcashTheme.dimens.screenHorizontalSpacing,
-                end = ZcashTheme.dimens.screenHorizontalSpacing
-            )
+            modifier =
+                Modifier.padding(
+                    top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
+                    bottom = paddingValues.calculateBottomPadding(),
+                    start = ZcashTheme.dimens.screenHorizontalSpacing,
+                    end = ZcashTheme.dimens.screenHorizontalSpacing
+                )
         )
 
         if (isShowingDialog) {
@@ -140,8 +141,9 @@ private fun SupportMainContent(
         FormTextField(
             value = message,
             onValueChange = setMessage,
-            modifier = Modifier
-                .fillMaxWidth(),
+            modifier =
+                Modifier
+                    .fillMaxWidth(),
             label = { Text(text = stringResource(id = R.string.support_hint)) }
         )
 
@@ -150,9 +152,10 @@ private fun SupportMainContent(
         Body(stringResource(id = R.string.support_disclaimer))
 
         Spacer(
-            modifier = Modifier
-                .fillMaxHeight()
-                .weight(MINIMAL_WEIGHT)
+            modifier =
+                Modifier
+                    .fillMaxHeight()
+                    .weight(MINIMAL_WEIGHT)
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))

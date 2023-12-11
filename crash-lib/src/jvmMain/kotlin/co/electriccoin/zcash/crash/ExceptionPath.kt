@@ -14,8 +14,10 @@ object ExceptionPath {
     const val TYPE = "txt"
 
     @Suppress("MaxLineLength")
-    fun newExceptionFileName(exception: ReportableException, uuid: UUID = UUID.randomUUID()) =
-        "${exception.time.epochSeconds}$SEPARATOR$uuid$SEPARATOR${exception.exceptionClass}$SEPARATOR${exception.isUncaught}.$TYPE"
+    fun newExceptionFileName(
+        exception: ReportableException,
+        uuid: UUID = UUID.randomUUID()
+    ) = "${exception.time.epochSeconds}$SEPARATOR$uuid$SEPARATOR${exception.exceptionClass}$SEPARATOR${exception.isUncaught}.$TYPE"
 
     // The exceptions are really just for debugging
     @Suppress("ThrowsCount")

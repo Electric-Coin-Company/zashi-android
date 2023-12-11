@@ -16,47 +16,50 @@ class WriteAtomicallyTest {
     private fun newFile() = File(File("build"), "atomic_file_test-${UUID.randomUUID()}")
 
     @Test
-    fun `file has temp name`() = runTest {
-        val testFile = newFile()
-        try {
-            testFile.writeAtomically {
-                it.writeText("test text")
-                assertNotEquals(testFile.name, it.name)
+    fun `file has temp name`() =
+        runTest {
+            val testFile = newFile()
+            try {
+                testFile.writeAtomically {
+                    it.writeText("test text")
+                    assertNotEquals(testFile.name, it.name)
+                }
+            } finally {
+                testFile.delete()
             }
-        } finally {
-            testFile.delete()
         }
-    }
 
     @Test
-    fun `temp file deleted`() = runTest {
-        val testFile = newFile()
-        try {
-            var tempFile: File? = null
+    fun `temp file deleted`() =
+        runTest {
+            val testFile = newFile()
+            try {
+                var tempFile: File? = null
 
-            testFile.writeAtomically {
-                tempFile = it
-                it.writeText("test text")
+                testFile.writeAtomically {
+                    tempFile = it
+                    it.writeText("test text")
+                }
+
+                assertNotNull(tempFile)
+                assertFalse(tempFile!!.exists())
+            } finally {
+                testFile.delete()
             }
-
-            assertNotNull(tempFile)
-            assertFalse(tempFile!!.exists())
-        } finally {
-            testFile.delete()
         }
-    }
 
     @Test
-    fun `file is renamed`() = runTest {
-        val testFile = newFile()
-        try {
-            testFile.writeAtomically {
-                it.writeText("test text")
-            }
+    fun `file is renamed`() =
+        runTest {
+            val testFile = newFile()
+            try {
+                testFile.writeAtomically {
+                    it.writeText("test text")
+                }
 
-            assertTrue(testFile.exists())
-        } finally {
-            testFile.delete()
+                assertTrue(testFile.exists())
+            } finally {
+                testFile.delete()
+            }
         }
-    }
 }

@@ -22,13 +22,15 @@ data class VersionInfo(
             val applicationInfo = context.applicationInfo
 
             return VersionInfo(
-                versionName = packageInfo.versionName ?: "null", // Should only be null during tests
-                versionCode = packageInfo.versionCodeCompat, // Should only be 0 during tests
+                // Should only be null during tests
+                versionName = packageInfo.versionName ?: "null",
+                // Should only be 0 during tests
+                versionCode = packageInfo.versionCodeCompat,
                 isDebuggable = (
                     (0 != applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) &&
                         !FirebaseTestLabUtil.isFirebaseTestLab(context.applicationContext) &&
                         !EmulatorWtfUtil.isEmulatorWtf(context.applicationContext)
-                    ),
+                ),
                 gitSha = gitSha,
                 gitCommitCount = gitCommitCount.toLong()
             )

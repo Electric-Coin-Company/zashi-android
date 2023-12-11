@@ -88,9 +88,10 @@ class AboutViewTest {
         }
     }
 
-    private fun newTestSetup(isDebuggable: Boolean = false) = AboutViewTestSetup(
-        composeTestRule,
-        VersionInfoFixture.new(isDebuggable = isDebuggable),
-        ConfigInfoFixture.new()
-    )
+    private fun newTestSetup(isDebuggable: Boolean = false) =
+        AboutViewTestSetup(
+            composeTestRule,
+            VersionInfoFixture.new(isDebuggable = isDebuggable),
+            ConfigInfoFixture.new()
+        )
 }

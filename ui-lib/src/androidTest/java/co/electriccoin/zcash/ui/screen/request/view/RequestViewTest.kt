@@ -45,50 +45,52 @@ class RequestViewTest : UiTestPrerequisites() {
     @Test
     @MediumTest
     @OptIn(ExperimentalCoroutinesApi::class)
-    fun create_request_no_message() = runTest {
-        val testSetup = TestSetup(composeTestRule)
+    fun create_request_no_message() =
+        runTest {
+            val testSetup = TestSetup(composeTestRule)
 
-        assertEquals(0, testSetup.getOnCreateCount())
-        assertEquals(null, testSetup.getLastCreateZecRequest())
+            assertEquals(0, testSetup.getOnCreateCount())
+            assertEquals(null, testSetup.getLastCreateZecRequest())
 
-        composeTestRule.setValidAmount()
+            composeTestRule.setValidAmount()
 
-        composeTestRule.clickCreateAndSend()
+            composeTestRule.clickCreateAndSend()
 
-        assertEquals(1, testSetup.getOnCreateCount())
+            assertEquals(1, testSetup.getOnCreateCount())
 
-        testSetup.getLastCreateZecRequest().also {
-            assertNotNull(it)
-            assertEquals(WalletAddressFixture.unified(), it.address)
-            assertEquals(Zatoshi(12345600000), it.amount)
-            assertTrue(it.message.value.isEmpty())
+            testSetup.getLastCreateZecRequest().also {
+                assertNotNull(it)
+                assertEquals(WalletAddressFixture.unified(), it.address)
+                assertEquals(Zatoshi(12345600000), it.amount)
+                assertTrue(it.message.value.isEmpty())
+            }
         }
-    }
 
     @Test
     @MediumTest
     @OptIn(ExperimentalCoroutinesApi::class)
-    fun create_request_with_message() = runTest {
-        val testSetup = TestSetup(composeTestRule)
+    fun create_request_with_message() =
+        runTest {
+            val testSetup = TestSetup(composeTestRule)
 
-        assertEquals(0, testSetup.getOnCreateCount())
-        assertEquals(null, testSetup.getLastCreateZecRequest())
+            assertEquals(0, testSetup.getOnCreateCount())
+            assertEquals(null, testSetup.getLastCreateZecRequest())
 
-        composeTestRule.setValidAmount()
+            composeTestRule.setValidAmount()
 
-        composeTestRule.setValidMessage()
+            composeTestRule.setValidMessage()
 
-        composeTestRule.clickCreateAndSend()
+            composeTestRule.clickCreateAndSend()
 
-        assertEquals(1, testSetup.getOnCreateCount())
+            assertEquals(1, testSetup.getOnCreateCount())
 
-        testSetup.getLastCreateZecRequest().also {
-            assertNotNull(it)
-            assertEquals(WalletAddressFixture.unified(), it.address)
-            assertEquals(Zatoshi(12345600000), it.amount)
-            assertEquals(ZecRequestFixture.MESSAGE.value, it.message.value)
+            testSetup.getLastCreateZecRequest().also {
+                assertNotNull(it)
+                assertEquals(WalletAddressFixture.unified(), it.address)
+                assertEquals(Zatoshi(12345600000), it.amount)
+                assertEquals(ZecRequestFixture.MESSAGE.value, it.message.value)
+            }
         }
-    }
 
     @Test
     @MediumTest
@@ -165,30 +167,31 @@ class RequestViewTest : UiTestPrerequisites() {
     @Test
     @MediumTest
     @OptIn(ExperimentalCoroutinesApi::class)
-    fun max_message_length() = runTest {
-        val testSetup = TestSetup(composeTestRule)
+    fun max_message_length() =
+        runTest {
+            val testSetup = TestSetup(composeTestRule)
 
-        composeTestRule.setValidAmount()
+            composeTestRule.setValidAmount()
 
-        composeTestRule.setMessage(
-            buildString {
-                repeat(ZecRequestMessage.MAX_MESSAGE_LENGTH + 1) { number ->
-                    append("$number")
+            composeTestRule.setMessage(
+                buildString {
+                    repeat(ZecRequestMessage.MAX_MESSAGE_LENGTH + 1) { number ->
+                        append("$number")
+                    }
                 }
+            )
+
+            composeTestRule.clickCreateAndSend()
+
+            assertEquals(1, testSetup.getOnCreateCount())
+
+            testSetup.getLastCreateZecRequest().also {
+                assertNotNull(it)
+                assertEquals(WalletAddressFixture.unified(), it.address)
+                assertEquals(Zatoshi(12345600000), it.amount)
+                assertTrue(it.message.value.isEmpty())
             }
-        )
-
-        composeTestRule.clickCreateAndSend()
-
-        assertEquals(1, testSetup.getOnCreateCount())
-
-        testSetup.getLastCreateZecRequest().also {
-            assertNotNull(it)
-            assertEquals(WalletAddressFixture.unified(), it.address)
-            assertEquals(Zatoshi(12345600000), it.amount)
-            assertTrue(it.message.value.isEmpty())
         }
-    }
 
     @Test
     @MediumTest
@@ -203,7 +206,6 @@ class RequestViewTest : UiTestPrerequisites() {
     }
 
     private class TestSetup(private val composeTestRule: ComposeContentTestRule) {
-
         private val onBackCount = AtomicInteger(0)
         private val onCreateCount = AtomicInteger(0)
 

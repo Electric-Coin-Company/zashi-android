@@ -8,16 +8,16 @@ import co.electriccoin.zcash.configuration.model.map.Configuration
  * variation in default value.  Clients define the key and default value together, rather than just
  * the key.
  */
-/*
- * API note: the default value is not available through the public interface in order to prevent
- * clients from accidentally using the default value instead of the configuration value.
- *
- * Implementation note: although primitives would be nice, Objects don't increase memory usage much.
- * The autoboxing cache solves Booleans, and Strings are already objects, so that just leaves Integers.
- * Overall the number of Integer configuration entries is expected to be low compared to Booleans,
- * and perhaps many Integer values will also fit within the autoboxing cache.
- */
 interface DefaultEntry<T> {
+    /*
+     * API note: the default value is not available through the public interface in order to prevent
+     * clients from accidentally using the default value instead of the configuration value.
+     *
+     * Implementation note: although primitives would be nice, Objects don't increase memory usage much.
+     * The autoboxing cache solves Booleans, and Strings are already objects, so that just leaves Integers.
+     * Overall the number of Integer configuration entries is expected to be low compared to Booleans,
+     * and perhaps many Integer values will also fit within the autoboxing cache.
+     */
 
     val key: ConfigKey
 
