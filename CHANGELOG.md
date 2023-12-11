@@ -9,6 +9,8 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [0.2.0 (505)] - 2023-12-11
+
 ### Added
 - Unfinished features show a "Not implemented yet" message after accessing in the app UI 
 
@@ -19,7 +21,7 @@ directly impact users rather than highlighting other key architectural updates.*
 ### Removed
 - Home screen side menu navigation was removed in favor of the Settings screen
 
-## [2.0.2 (491)] - 2023-12-01
+## [0.2.0 (491)] - 2023-12-01
 
 ### Changed
 - Updated user interface of these screens:
