@@ -5,5 +5,5 @@ import co.electriccoin.zcash.configuration.model.map.Configuration
 import co.electriccoin.zcash.configuration.model.map.StringConfiguration
 import kotlinx.collections.immutable.persistentMapOf
 
-@Suppress("CompositionLocalAllowlist")
+@Suppress("CompositionLocalAllowlist", "CompositionLocalNaming")
 val RemoteConfig = compositionLocalOf<Configuration> { StringConfiguration(persistentMapOf(), null) }

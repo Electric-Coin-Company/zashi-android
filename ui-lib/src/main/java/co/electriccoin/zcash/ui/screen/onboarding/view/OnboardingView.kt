@@ -157,6 +157,7 @@ private fun OnboardingMainContent(
     onFixtureWallet: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    @Suppress("ModifierNotUsedAtRoot")
     Box {
         SmallTopAppBar(
             regularActions = {
