@@ -21,6 +21,7 @@ import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.common.model.spendableBalance
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
+import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.screen.send.ext.Saver
 import co.electriccoin.zcash.ui.screen.send.model.SendArgumentsWrapper
 import co.electriccoin.zcash.ui.screen.send.model.SendStage
@@ -96,7 +97,8 @@ internal fun WrapSend(
     }
 
     if (null == synchronizer || null == spendableBalance || null == spendingKey) {
-        // Display loading indicator
+        // Improve this by allowing screen composition and updating it after the data is available
+        CircularScreenProgressIndicator()
     } else {
         Send(
             mySpendableBalance = spendableBalance,

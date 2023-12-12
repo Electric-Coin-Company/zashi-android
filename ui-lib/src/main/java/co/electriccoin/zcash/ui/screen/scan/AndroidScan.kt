@@ -10,6 +10,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
+import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.screen.scan.util.SettingsUtil
 import co.electriccoin.zcash.ui.screen.scan.view.Scan
 import kotlinx.coroutines.launch
@@ -40,7 +41,8 @@ fun WrapScan(
     val scope = rememberCoroutineScope()
 
     if (synchronizer == null) {
-        // Display loading indicator
+        // Improve this by allowing screen composition and updating it after the data is available
+        CircularScreenProgressIndicator()
     } else {
         Scan(
             snackbarHostState = snackbarHostState,
