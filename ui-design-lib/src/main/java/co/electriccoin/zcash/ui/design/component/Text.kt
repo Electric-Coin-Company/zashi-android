@@ -1,5 +1,7 @@
 package co.electriccoin.zcash.ui.design.component
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
@@ -178,6 +180,7 @@ fun Reference(
  * @param amount of ZECs to be displayed
  * @param modifier to modify the Text UI element as needed
  */
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HeaderWithZecIcon(
     amount: String,
@@ -187,7 +190,8 @@ fun HeaderWithZecIcon(
         text = stringResource(R.string.amount_with_zec_currency_symbol, amount),
         style = ZcashTheme.extendedTypography.zecBalance,
         color = MaterialTheme.colorScheme.onBackground,
-        modifier = modifier
+        maxLines = 1,
+        modifier = Modifier.basicMarquee().then(modifier)
     )
 }
 
