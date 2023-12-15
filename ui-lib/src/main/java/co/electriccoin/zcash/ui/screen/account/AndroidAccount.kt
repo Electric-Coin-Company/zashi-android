@@ -18,32 +18,24 @@ import co.electriccoin.zcash.ui.screen.update.AppUpdateCheckerImp
 import co.electriccoin.zcash.ui.screen.update.model.UpdateState
 
 @Composable
-@Suppress("LongParameterList")
 internal fun MainActivity.WrapAccount(
     goSettings: () -> Unit,
-    goReceive: () -> Unit,
-    goSend: () -> Unit,
     goHistory: () -> Unit
 ) {
     WrapAccount(
         this,
         goSettings = goSettings,
-        goReceive = goReceive,
-        goSend = goSend,
         goHistory = goHistory,
     )
 }
 
 @Composable
-@Suppress("LongParameterList")
 internal fun WrapAccount(
     activity: ComponentActivity,
     goSettings: () -> Unit,
-    goReceive: () -> Unit,
-    goSend: () -> Unit,
     goHistory: () -> Unit,
 ) {
-    // we want to show information about app update, if available
+    // Show information about the app update, if available
     val checkUpdateViewModel by activity.viewModels<CheckUpdateViewModel> {
         CheckUpdateViewModel.CheckUpdateViewModelFactory(
             activity.application,
@@ -73,11 +65,10 @@ internal fun WrapAccount(
             isKeepScreenOnDuringSync = isKeepScreenOnWhileSyncing,
             isFiatConversionEnabled = isFiatConversionEnabled,
             goSettings = goSettings,
-            goReceive = goReceive,
-            goSend = goSend,
             goHistory = goHistory
         )
 
+        // For benchmarking purposes
         activity.reportFullyDrawn()
     }
 }

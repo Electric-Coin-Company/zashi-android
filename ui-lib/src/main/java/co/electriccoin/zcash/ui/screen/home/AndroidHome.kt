@@ -2,80 +2,43 @@
 
 package co.electriccoin.zcash.ui.screen.home
 
-import androidx.activity.ComponentActivity
-import androidx.activity.viewModels
+import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import co.electriccoin.zcash.ui.MainActivity
-import co.electriccoin.zcash.ui.common.viewmodel.CheckUpdateViewModel
-import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
-import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
-import co.electriccoin.zcash.ui.configuration.RemoteConfig
+import androidx.compose.runtime.saveable.rememberSaveable
+import co.electriccoin.zcash.ui.screen.home.model.TabItem
 import co.electriccoin.zcash.ui.screen.home.view.Home
-import co.electriccoin.zcash.ui.screen.settings.viewmodel.SettingsViewModel
-import co.electriccoin.zcash.ui.screen.update.AppUpdateCheckerImp
-import co.electriccoin.zcash.ui.screen.update.model.UpdateState
+import kotlinx.collections.immutable.ImmutableList
+import kotlin.random.Random
 
 @Composable
-@Suppress("LongParameterList")
-internal fun MainActivity.WrapHome(
-    goSettings: () -> Unit,
-    goReceive: () -> Unit,
-    goSend: () -> Unit,
-    goHistory: () -> Unit
+internal fun WrapHome(
+    tabs: ImmutableList<TabItem>,
+    forcePage: ForcePage?,
+    onPageChange: (Int) -> Unit,
+    goBack: () -> Unit,
 ) {
-    WrapHome(
-        this,
-        goSettings = goSettings,
-        goReceive = goReceive,
-        goSend = goSend,
-        goHistory = goHistory,
+    val subScreens = rememberSaveable { tabs }
+
+    BackHandler {
+        goBack()
+    }
+
+    Home(
+        subScreens = subScreens,
+        forcePage = forcePage,
+        onPageChange = onPageChange
     )
 }
 
-@Composable
-@Suppress("LongParameterList")
-internal fun WrapHome(
-    activity: ComponentActivity,
-    goSettings: () -> Unit,
-    goReceive: () -> Unit,
-    goSend: () -> Unit,
-    goHistory: () -> Unit,
+/**
+ * Wrapper class used to pass forced pages index into the view layer
+ */
+class ForcePage(
+    val currentPageIndex: Int = 0,
 ) {
-    // we want to show information about app update, if available
-    val checkUpdateViewModel by activity.viewModels<CheckUpdateViewModel> {
-        CheckUpdateViewModel.CheckUpdateViewModelFactory(
-            activity.application,
-            AppUpdateCheckerImp.new()
-        )
-    }
-    val updateAvailable =
-        checkUpdateViewModel.updateInfo.collectAsStateWithLifecycle().value.let {
-            it?.appUpdateInfo != null && it.state == UpdateState.Prepared
-        }
+    // Ensures that every value of this class will be emitted in encapsulating stream API
+    @Suppress("EqualsAlwaysReturnsTrueOrFalse")
+    override fun equals(other: Any?) = false
 
-    val walletViewModel by activity.viewModels<WalletViewModel>()
-    val walletSnapshot = walletViewModel.walletSnapshot.collectAsStateWithLifecycle().value
-
-    val settingsViewModel by activity.viewModels<SettingsViewModel>()
-
-    val isKeepScreenOnWhileSyncing = settingsViewModel.isKeepScreenOnWhileSyncing.collectAsStateWithLifecycle().value
-    val isFiatConversionEnabled = ConfigurationEntries.IS_FIAT_CONVERSION_ENABLED.getValue(RemoteConfig.current)
-
-    if (null == walletSnapshot) {
-        // Display loading indicator
-    } else {
-        Home(
-            walletSnapshot = walletSnapshot,
-            isUpdateAvailable = updateAvailable,
-            isKeepScreenOnDuringSync = isKeepScreenOnWhileSyncing,
-            isFiatConversionEnabled = isFiatConversionEnabled,
-            goSettings = goSettings,
-            goReceive = goReceive,
-            goSend = goSend,
-            goHistory = goHistory
-        )
-
-        activity.reportFullyDrawn()
-    }
+    override fun hashCode() = Random.nextInt()
 }

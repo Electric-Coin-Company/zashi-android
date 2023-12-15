@@ -8,9 +8,7 @@ import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.screen.balances.view.Balances
 
 @Composable
-internal fun MainActivity.WrapBalances(
-    goSettings: () -> Unit,
-) {
+internal fun MainActivity.WrapBalances(goSettings: () -> Unit) {
     WrapBalances(
         this,
         goSettings = goSettings,
@@ -24,6 +22,6 @@ internal fun WrapBalances(
     goSettings: () -> Unit,
 ) {
     Balances(
-        goSettings = goSettings,
+        onSettings = goSettings,
     )
 }

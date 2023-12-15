@@ -24,6 +24,7 @@ import cash.z.ecc.android.sdk.model.FiatCurrencyConversionRateState
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.DisableScreenTimeout
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
+import co.electriccoin.zcash.ui.common.test.CommonTag
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.BodyWithFiatCurrencySymbol
@@ -31,7 +32,6 @@ import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.HeaderWithZecIcon
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
-import co.electriccoin.zcash.ui.design.component.TertiaryButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 import co.electriccoin.zcash.ui.screen.account.AccountTag
@@ -48,8 +48,6 @@ private fun ComposablePreview() {
                 isKeepScreenOnDuringSync = false,
                 isFiatConversionEnabled = false,
                 goSettings = {},
-                goReceive = {},
-                goSend = {},
                 goHistory = {}
             )
         }
@@ -64,8 +62,6 @@ fun Account(
     isKeepScreenOnDuringSync: Boolean?,
     isFiatConversionEnabled: Boolean,
     goSettings: () -> Unit,
-    goReceive: () -> Unit,
-    goSend: () -> Unit,
     goHistory: () -> Unit
 ) {
     Scaffold(topBar = {
@@ -76,8 +72,6 @@ fun Account(
             isUpdateAvailable = isUpdateAvailable,
             isKeepScreenOnDuringSync = isKeepScreenOnDuringSync,
             isFiatConversionEnabled = isFiatConversionEnabled,
-            goReceive = goReceive,
-            goSend = goSend,
             goHistory = goHistory,
             modifier =
                 Modifier.padding(
@@ -97,11 +91,11 @@ private fun AccountTopAppBar(onSettings: () -> Unit) {
         hamburgerMenuActions = {
             IconButton(
                 onClick = onSettings,
-                modifier = Modifier.testTag(AccountTag.SETTINGS_TOP_BAR_BUTTON)
+                modifier = Modifier.testTag(CommonTag.SETTINGS_TOP_BAR_BUTTON)
             ) {
                 Icon(
                     painter = painterResource(id = co.electriccoin.zcash.ui.design.R.drawable.hamburger_menu_icon),
-                    contentDescription = stringResource(id = R.string.account_menu_content_description)
+                    contentDescription = stringResource(id = R.string.settings_menu_content_description)
                 )
             }
         }
@@ -115,8 +109,6 @@ private fun AccountMainContent(
     isUpdateAvailable: Boolean,
     isKeepScreenOnDuringSync: Boolean?,
     isFiatConversionEnabled: Boolean,
-    goReceive: () -> Unit,
-    goSend: () -> Unit,
     goHistory: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -142,21 +134,7 @@ private fun AccountMainContent(
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
 
-        PrimaryButton(
-            onClick = goSend,
-            text = stringResource(R.string.account_button_send)
-        )
-
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
-
-        PrimaryButton(
-            onClick = goReceive,
-            text = stringResource(R.string.account_button_receive)
-        )
-
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
-
-        TertiaryButton(onClick = goHistory, text = stringResource(R.string.account_button_history))
+        PrimaryButton(onClick = goHistory, text = stringResource(R.string.account_button_history))
 
         if (isKeepScreenOnDuringSync == true && walletSnapshot.status == Synchronizer.Status.SYNCING) {
             DisableScreenTimeout()

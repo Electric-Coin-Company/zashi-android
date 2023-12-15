@@ -1,9 +1,10 @@
 package co.electriccoin.zcash.ui
 
-import android.annotation.SuppressLint
 import android.widget.Toast
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.NavHost
@@ -17,11 +18,9 @@ import co.electriccoin.zcash.ui.NavigationTargets.ABOUT
 import co.electriccoin.zcash.ui.NavigationTargets.EXPORT_PRIVATE_DATA
 import co.electriccoin.zcash.ui.NavigationTargets.HISTORY
 import co.electriccoin.zcash.ui.NavigationTargets.HOME
-import co.electriccoin.zcash.ui.NavigationTargets.RECEIVE
 import co.electriccoin.zcash.ui.NavigationTargets.REQUEST
 import co.electriccoin.zcash.ui.NavigationTargets.SCAN
 import co.electriccoin.zcash.ui.NavigationTargets.SEED_RECOVERY
-import co.electriccoin.zcash.ui.NavigationTargets.SEND
 import co.electriccoin.zcash.ui.NavigationTargets.SETTINGS
 import co.electriccoin.zcash.ui.NavigationTargets.SUPPORT
 import co.electriccoin.zcash.ui.NavigationTargets.WALLET_ADDRESS_DETAILS
@@ -30,8 +29,12 @@ import co.electriccoin.zcash.ui.configuration.RemoteConfig
 import co.electriccoin.zcash.ui.screen.about.WrapAbout
 import co.electriccoin.zcash.ui.screen.account.WrapAccount
 import co.electriccoin.zcash.ui.screen.address.WrapWalletAddresses
+import co.electriccoin.zcash.ui.screen.balances.WrapBalances
 import co.electriccoin.zcash.ui.screen.exportdata.WrapExportPrivateData
 import co.electriccoin.zcash.ui.screen.history.WrapHistory
+import co.electriccoin.zcash.ui.screen.home.ForcePage
+import co.electriccoin.zcash.ui.screen.home.WrapHome
+import co.electriccoin.zcash.ui.screen.home.model.TabItem
 import co.electriccoin.zcash.ui.screen.receive.WrapReceive
 import co.electriccoin.zcash.ui.screen.request.WrapRequest
 import co.electriccoin.zcash.ui.screen.scan.WrapScanValidator
@@ -41,6 +44,9 @@ import co.electriccoin.zcash.ui.screen.send.model.SendArgumentsWrapper
 import co.electriccoin.zcash.ui.screen.settings.WrapSettings
 import co.electriccoin.zcash.ui.screen.support.WrapSupport
 import co.electriccoin.zcash.ui.screen.update.WrapCheckForUpdate
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
 
 @Composable
 @Suppress("LongMethod")
@@ -48,18 +54,89 @@ internal fun MainActivity.Navigation() {
     val context = LocalContext.current
     val navController =
         rememberNavController().also {
-            // This suppress is necessary, as this is how we set up the nav controller for tests.
-            @SuppressLint("RestrictedApi")
             navControllerForTesting = it
         }
 
+    // Flow for propagating the new page index to the pager in the view layer
+    val forceHomePageIndexFlow: MutableSharedFlow<ForcePage?> =
+        MutableSharedFlow(
+            Int.MAX_VALUE,
+            Int.MAX_VALUE,
+            BufferOverflow.SUSPEND
+        )
+
     NavHost(navController = navController, startDestination = HOME) {
-        composable(HOME) {
-            WrapAccount(
-                goHistory = { navController.navigateJustOnce(HISTORY) },
-                goReceive = { navController.navigateJustOnce(RECEIVE) },
-                goSend = { navController.navigateJustOnce(SEND) },
-                goSettings = { navController.navigateJustOnce(SETTINGS) },
+        composable(HOME) { backStackEntry ->
+
+            val forceIndex = forceHomePageIndexFlow.collectAsState(initial = null).value
+
+            val homeGoBack: () -> Unit = {
+                when (homeViewModel.screenIndex.value) {
+                    0 -> finish()
+                    1, 2, 3 -> forceHomePageIndexFlow.tryEmit(ForcePage())
+                }
+            }
+
+            val tabs = persistentListOf(
+                    TabItem(
+                        index = 0,
+                        title = stringResource(id = R.string.home_tab_account),
+                        screenContent = {
+                            WrapAccount(
+                                goHistory = { navController.navigateJustOnce(HISTORY) },
+                                goSettings = { navController.navigateJustOnce(SETTINGS) },
+                            )
+                        }
+                    ),
+                    TabItem(
+                        index = 1,
+                        title = stringResource(id = R.string.home_tab_send),
+                        screenContent = {
+                            WrapSend(
+                                goToQrScanner = {
+                                    Twig.info { "Opening Qr Scanner Screen" }
+                                    navController.navigateJustOnce(SCAN)
+                                },
+                                goBack = homeGoBack,
+                                goSettings = {
+                                    navController.navigateJustOnce(SETTINGS)
+                                },
+                                sendArgumentsWrapper =
+                                    SendArgumentsWrapper(
+                                        recipientAddress = backStackEntry.savedStateHandle[SEND_RECIPIENT_ADDRESS],
+                                        amount = backStackEntry.savedStateHandle[SEND_AMOUNT],
+                                        memo = backStackEntry.savedStateHandle[SEND_MEMO]
+                                    )
+                            )
+                        }
+                    ),
+                    TabItem(
+                        index = 2,
+                        title = stringResource(id = R.string.home_tab_receive),
+                        screenContent = {
+                            WrapReceive(
+                                onSettings = { navController.navigateJustOnce(SETTINGS) },
+                                onAddressDetails = { navController.navigateJustOnce(WALLET_ADDRESS_DETAILS) },
+                            )
+                        }
+                    ),
+                    TabItem(
+                        index = 3,
+                        title = stringResource(id = R.string.home_tab_balances),
+                        screenContent = {
+                            WrapBalances(
+                                goSettings = { navController.navigateJustOnce(SETTINGS) }
+                            )
+                        }
+                    )
+                )
+            WrapHome(
+                tabs = tabs,
+                forcePage = forceIndex,
+                onPageChange = {
+                    homeViewModel.screenIndex.value = it
+                },
+                goBack = homeGoBack
             )
 
             if (ConfigurationEntries.IS_APP_UPDATE_CHECK_ENABLED.getValue(RemoteConfig.current)) {
@@ -112,32 +189,8 @@ internal fun MainActivity.Navigation() {
                 }
             )
         }
-        composable(RECEIVE) {
-            WrapReceive(
-                onBack = { navController.popBackStackJustOnce(RECEIVE) },
-                onAddressDetails = { navController.navigateJustOnce(WALLET_ADDRESS_DETAILS) }
-            )
-        }
         composable(REQUEST) {
             WrapRequest(goBack = { navController.popBackStackJustOnce(REQUEST) })
-        }
-        composable(SEND) { backStackEntry ->
-            WrapSend(
-                goToQrScanner = {
-                    Twig.debug { "Opening Qr Scanner Screen" }
-                    navController.navigateJustOnce(SCAN)
-                },
-                goBack = { navController.popBackStackJustOnce(SEND) },
-                sendArgumentsWrapper =
-                    SendArgumentsWrapper(
-                        recipientAddress = backStackEntry.savedStateHandle[SEND_RECIPIENT_ADDRESS],
-                        amount = backStackEntry.savedStateHandle[SEND_AMOUNT],
-                        memo = backStackEntry.savedStateHandle[SEND_MEMO]
-                    )
-            )
-            backStackEntry.savedStateHandle.remove<String>(SEND_RECIPIENT_ADDRESS)
-            backStackEntry.savedStateHandle.remove<String>(SEND_AMOUNT)
-            backStackEntry.savedStateHandle.remove<String>(SEND_MEMO)
         }
         composable(SUPPORT) {
             // Pop back stack won't be right if we deep link into support
@@ -208,6 +261,7 @@ object NavigationArguments {
 
 object NavigationTargets {
     const val ABOUT = "about"
+    const val ACCOUNT = "account"
     const val EXPORT_PRIVATE_DATA = "export_private_data"
     const val HISTORY = "history"
     const val HOME = "home"

@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="receive_title">Receive</string>
-    <string name="receive_back">Back</string>
-    <string name="receive_back_content_description">Back</string>
     <string name="receive_brightness_content_description">Adjust brightness</string>
     <string name="receive_qr_code_content_description">QR code for address</string>
     <string name="receive_caption">Your Address</string>

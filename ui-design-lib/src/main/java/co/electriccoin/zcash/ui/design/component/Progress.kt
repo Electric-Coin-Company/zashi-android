@@ -21,13 +21,12 @@ private fun CircularScreenProgressIndicatorComposablePreview() {
 }
 
 @Composable
-fun CircularScreenProgressIndicator(
-    modifier: Modifier = Modifier
-) {
+fun CircularScreenProgressIndicator(modifier: Modifier = Modifier) {
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .then(modifier),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .then(modifier),
         contentAlignment = Alignment.Center
     ) {
         CircularProgressIndicator(

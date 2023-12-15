@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -105,6 +106,31 @@ private fun TopAppBarHamburgerMenuComposablePreview() {
                     TopBarHamburgerMenuExample(
                         actionCallback = {}
                     )
+                }
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun TopAppBarHamburgerPlusActionComposablePreview() {
+    ZcashTheme(forceDarkMode = false) {
+        GradientSurface {
+            SmallTopAppBar(
+                titleText = "Screen E",
+                hamburgerMenuActions = {
+                    TopBarHamburgerMenuExample(
+                        actionCallback = {}
+                    )
+                },
+                regularActions = {
+                    IconButton(onClick = {}) {
+                        Icon(
+                            imageVector = Icons.Default.AccountCircle,
+                            contentDescription = "Content description text"
+                        )
+                    }
                 }
             )
         }
@@ -236,7 +262,10 @@ fun SmallTopAppBar(
                 }
             }
         },
-        actions = hamburgerMenuActions ?: regularActions ?: {},
+        actions = {
+            regularActions?.invoke(this)
+            hamburgerMenuActions?.invoke(this)
+        },
         modifier = modifier
     )
 }

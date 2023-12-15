@@ -22,6 +22,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,6 +34,7 @@ import cash.z.ecc.android.sdk.model.WalletAddress
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.BrightenScreen
 import co.electriccoin.zcash.ui.common.DisableScreenTimeout
+import co.electriccoin.zcash.ui.common.test.CommonTag
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.GradientSurface
@@ -50,7 +53,7 @@ private fun ComposablePreview() {
         GradientSurface {
             Receive(
                 walletAddress = runBlocking { WalletAddressFixture.unified() },
-                onBack = {},
+                onSettings = {},
                 onAddressDetails = {},
                 onAdjustBrightness = {},
             )
@@ -61,7 +64,7 @@ private fun ComposablePreview() {
 @Composable
 fun Receive(
     walletAddress: WalletAddress,
-    onBack: () -> Unit,
+    onSettings: () -> Unit,
     onAddressDetails: () -> Unit,
     onAdjustBrightness: (Boolean) -> Unit,
 ) {
@@ -71,7 +74,7 @@ fun Receive(
     Column {
         ReceiveTopAppBar(
             adjustBrightness = brightness,
-            onBack = onBack,
+            onSettings = onSettings,
             onBrightness = {
                 onAdjustBrightness(!brightness)
                 setBrightness(!brightness)
@@ -97,14 +100,11 @@ fun Receive(
 @Composable
 private fun ReceiveTopAppBar(
     adjustBrightness: Boolean,
-    onBack: () -> Unit,
+    onSettings: () -> Unit,
     onBrightness: () -> Unit
 ) {
     SmallTopAppBar(
         titleText = stringResource(id = R.string.receive_title),
-        backText = stringResource(id = R.string.receive_back),
-        backContentDescriptionText = stringResource(id = R.string.receive_back_content_description),
-        onBack = onBack,
         regularActions = {
             IconButton(
                 onClick = onBrightness
@@ -117,6 +117,17 @@ private fun ReceiveTopAppBar(
                             Icons.Default.BrightnessHigh
                         },
                     contentDescription = stringResource(R.string.receive_brightness_content_description)
+                )
+            }
+        },
+        hamburgerMenuActions = {
+            IconButton(
+                onClick = onSettings,
+                modifier = Modifier.testTag(CommonTag.SETTINGS_TOP_BAR_BUTTON)
+            ) {
+                Icon(
+                    painter = painterResource(id = co.electriccoin.zcash.ui.design.R.drawable.hamburger_menu_icon),
+                    contentDescription = stringResource(id = R.string.settings_menu_content_description)
                 )
             }
         }

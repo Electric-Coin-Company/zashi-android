@@ -3,6 +3,7 @@
 package co.electriccoin.zcash.ui.screen.settings
 
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -60,6 +61,10 @@ private fun WrapSettings(
     val isBackgroundSyncEnabled = settingsViewModel.isBackgroundSync.collectAsStateWithLifecycle().value
     val isKeepScreenOnWhileSyncing = settingsViewModel.isKeepScreenOnWhileSyncing.collectAsStateWithLifecycle().value
     val isAnalyticsEnabled = settingsViewModel.isAnalyticsEnabled.collectAsStateWithLifecycle().value
+
+    BackHandler {
+        goBack()
+    }
 
     @Suppress("ComplexCondition")
     if (null == synchronizer ||

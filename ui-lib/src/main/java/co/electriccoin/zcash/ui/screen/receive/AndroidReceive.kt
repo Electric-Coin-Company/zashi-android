@@ -13,23 +13,21 @@ import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.screen.receive.view.Receive
 
 @Composable
-@Suppress("LongParameterList")
 internal fun MainActivity.WrapReceive(
-    onBack: () -> Unit,
+    onSettings: () -> Unit,
     onAddressDetails: () -> Unit,
 ) {
     WrapReceive(
         this,
-        onBack = onBack,
+        onSettings = onSettings,
         onAddressDetails = onAddressDetails,
     )
 }
 
 @Composable
-@Suppress("LongParameterList")
 internal fun WrapReceive(
     activity: ComponentActivity,
-    onBack: () -> Unit,
+    onSettings: () -> Unit,
     onAddressDetails: () -> Unit,
 ) {
     val viewModel by activity.viewModels<WalletViewModel>()
@@ -37,16 +35,15 @@ internal fun WrapReceive(
 
     WrapReceive(
         walletAddresses,
-        onBack = onBack,
+        onSettings = onSettings,
         onAddressDetails = onAddressDetails,
     )
 }
 
 @Composable
-@Suppress("LongParameterList")
 internal fun WrapReceive(
     walletAddresses: WalletAddresses?,
-    onBack: () -> Unit,
+    onSettings: () -> Unit,
     onAddressDetails: () -> Unit,
 ) {
     if (null == walletAddresses) {
@@ -55,7 +52,7 @@ internal fun WrapReceive(
     } else {
         Receive(
             walletAddresses.unified,
-            onBack = onBack,
+            onSettings = onSettings,
             onAddressDetails = onAddressDetails,
             onAdjustBrightness = { /* Just for testing */ }
         )

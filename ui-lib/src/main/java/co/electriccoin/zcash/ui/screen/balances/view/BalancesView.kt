@@ -21,7 +21,6 @@ import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
-import co.electriccoin.zcash.ui.screen.account.AccountTag
 
 @Preview("Balances")
 @Composable
@@ -29,18 +28,16 @@ private fun ComposablePreview() {
     ZcashTheme(forceDarkMode = false) {
         GradientSurface {
             Balances(
-                goSettings = {},
+                onSettings = {},
             )
         }
     }
 }
 
 @Composable
-fun Balances(
-    goSettings: () -> Unit,
-) {
+fun Balances(onSettings: () -> Unit) {
     Scaffold(topBar = {
-        BalancesTopAppBar(onSettings = goSettings)
+        BalancesTopAppBar(onSettings = onSettings)
     }) { paddingValues ->
         BalancesMainContent(
             modifier =
@@ -73,9 +70,7 @@ private fun BalancesTopAppBar(onSettings: () -> Unit) {
 }
 
 @Composable
-private fun BalancesMainContent(
-    modifier: Modifier = Modifier
-) {
+private fun BalancesMainContent(modifier: Modifier = Modifier) {
     Box(
         Modifier
             .fillMaxSize()

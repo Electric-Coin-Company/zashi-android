@@ -32,9 +32,16 @@ import kotlinx.coroutines.launch
 internal fun MainActivity.WrapSend(
     sendArgumentsWrapper: SendArgumentsWrapper?,
     goToQrScanner: () -> Unit,
-    goBack: () -> Unit
+    goBack: () -> Unit,
+    goSettings: () -> Unit,
 ) {
-    WrapSend(this, sendArgumentsWrapper, goToQrScanner, goBack)
+    WrapSend(
+        this,
+        sendArgumentsWrapper,
+        goToQrScanner,
+        goBack,
+        goSettings
+    )
 }
 
 @Composable
@@ -42,7 +49,8 @@ private fun WrapSend(
     activity: ComponentActivity,
     sendArgumentsWrapper: SendArgumentsWrapper?,
     goToQrScanner: () -> Unit,
-    goBack: () -> Unit
+    goBack: () -> Unit,
+    goSettings: () -> Unit,
 ) {
     val hasCameraFeature = activity.packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)
 
@@ -54,7 +62,16 @@ private fun WrapSend(
 
     val spendingKey = walletViewModel.spendingKey.collectAsStateWithLifecycle().value
 
-    WrapSend(sendArgumentsWrapper, synchronizer, spendableBalance, spendingKey, goToQrScanner, goBack, hasCameraFeature)
+    WrapSend(
+        sendArgumentsWrapper,
+        synchronizer,
+        spendableBalance,
+        spendingKey,
+        goToQrScanner,
+        goBack,
+        goSettings,
+        hasCameraFeature
+    )
 }
 
 @Suppress("LongParameterList")
@@ -67,6 +84,7 @@ internal fun WrapSend(
     spendingKey: UnifiedSpendingKey?,
     goToQrScanner: () -> Unit,
     goBack: () -> Unit,
+    goSettings: () -> Unit,
     hasCameraFeature: Boolean
 ) {
     val scope = rememberCoroutineScope()
@@ -84,9 +102,7 @@ internal fun WrapSend(
         when (sendStage) {
             SendStage.Form -> goBack()
             SendStage.Confirmation -> setSendStage(SendStage.Form)
-            SendStage.Sending -> { // no action - wait until done
-            }
-
+            SendStage.Sending -> { /* no action - wait until done */ }
             SendStage.SendFailure -> setSendStage(SendStage.Form)
             SendStage.SendSuccessful -> goBack()
         }
@@ -108,6 +124,7 @@ internal fun WrapSend(
             zecSend = zecSend,
             onZecSendChange = setZecSend,
             onBack = onBackAction,
+            onSettings = goSettings,
             onCreateAndSend = {
                 scope.launch {
                     Twig.debug { "Sending transaction" }
