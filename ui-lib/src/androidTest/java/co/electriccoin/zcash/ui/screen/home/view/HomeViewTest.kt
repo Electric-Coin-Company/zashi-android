@@ -9,7 +9,8 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.test.getStringResource
 
 class HomeViewTest {
-    // TODO []
+    // TODO [#1126]: Home screen view: Add view test
+    // TODO [#1126]: https://github.com/Electric-Coin-Company/zashi-android/issues/1126
 }
 
 private fun ComposeContentTestRule.clickAccount() {
@@ -17,7 +18,6 @@ private fun ComposeContentTestRule.clickAccount() {
         it.performClick()
     }
 }
-
 private fun ComposeContentTestRule.clickSend() {
     onNodeWithText(getStringResource(R.string.home_tab_send), ignoreCase = true).also {
         it.performScrollTo()

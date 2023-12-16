@@ -8,7 +8,8 @@ class HomeViewIntegrationTest : UiTestPrerequisites() {
     @get:Rule
     val composeTestRule = createComposeRule()
 
-    // TODO
+    // TODO [#1125]: Home screen navigation: Add integration test
+    // TODO [#1125]: https://github.com/Electric-Coin-Company/zashi-android/issues/1125
 
     /*
     private fun newTestSetup(walletSnapshot: WalletSnapshot) =

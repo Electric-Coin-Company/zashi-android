@@ -31,7 +31,11 @@ class HomeTestSetup(
         return onBalancesCount.get()
     }
 
-    // TODO
+    // TODO [#1125]: Home screen navigation: Add integration test
+    // TODO [#1125]: https://github.com/Electric-Coin-Company/zashi-android/issues/1125
+
+    // TODO [#1126]: Home screen view: Add view test
+    // TODO [#1126]: https://github.com/Electric-Coin-Company/zashi-android/issues/1126
 
     /*
     @Composable
