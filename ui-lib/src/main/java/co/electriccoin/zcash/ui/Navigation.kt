@@ -33,6 +33,7 @@ import co.electriccoin.zcash.ui.screen.balances.WrapBalances
 import co.electriccoin.zcash.ui.screen.exportdata.WrapExportPrivateData
 import co.electriccoin.zcash.ui.screen.history.WrapHistory
 import co.electriccoin.zcash.ui.screen.home.ForcePage
+import co.electriccoin.zcash.ui.screen.home.HomeScreenIndex
 import co.electriccoin.zcash.ui.screen.home.WrapHome
 import co.electriccoin.zcash.ui.screen.home.model.TabItem
 import co.electriccoin.zcash.ui.screen.receive.WrapReceive
@@ -72,14 +73,17 @@ internal fun MainActivity.Navigation() {
 
             val homeGoBack: () -> Unit = {
                 when (homeViewModel.screenIndex.value) {
-                    0 -> finish()
-                    1, 2, 3 -> forceHomePageIndexFlow.tryEmit(ForcePage())
+                    HomeScreenIndex.ACCOUNT -> finish()
+                    HomeScreenIndex.SEND,
+                    HomeScreenIndex.RECEIVE,
+                    HomeScreenIndex.BALANCES -> forceHomePageIndexFlow.tryEmit(ForcePage())
                 }
             }
 
-            val tabs = persistentListOf(
+            val tabs =
+                persistentListOf(
                     TabItem(
-                        index = 0,
+                        index = HomeScreenIndex.ACCOUNT,
                         title = stringResource(id = R.string.home_tab_account),
                         screenContent = {
                             WrapAccount(
@@ -89,7 +93,7 @@ internal fun MainActivity.Navigation() {
                         }
                     ),
                     TabItem(
-                        index = 1,
+                        index = HomeScreenIndex.SEND,
                         title = stringResource(id = R.string.home_tab_send),
                         screenContent = {
                             WrapSend(
@@ -111,7 +115,7 @@ internal fun MainActivity.Navigation() {
                         }
                     ),
                     TabItem(
-                        index = 2,
+                        index = HomeScreenIndex.RECEIVE,
                         title = stringResource(id = R.string.home_tab_receive),
                         screenContent = {
                             WrapReceive(
@@ -121,7 +125,7 @@ internal fun MainActivity.Navigation() {
                         }
                     ),
                     TabItem(
-                        index = 3,
+                        index = HomeScreenIndex.BALANCES,
                         title = stringResource(id = R.string.home_tab_balances),
                         screenContent = {
                             WrapBalances(

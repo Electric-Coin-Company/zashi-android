@@ -25,6 +25,7 @@ import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.home.ForcePage
+import co.electriccoin.zcash.ui.screen.home.HomeScreenIndex
 import co.electriccoin.zcash.ui.screen.home.model.TabItem
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -51,7 +52,7 @@ private fun ComposablePreview() {
 fun Home(
     subScreens: ImmutableList<TabItem>,
     forcePage: ForcePage?,
-    onPageChange: (Int) -> Unit,
+    onPageChange: (HomeScreenIndex) -> Unit,
 ) {
     val pagerState =
         rememberPagerState(
@@ -67,14 +68,14 @@ fun Home(
         }.distinctUntilChanged()
             .collect { page ->
                 Twig.info { "Current pager page: $page" }
-                onPageChange(page)
+                onPageChange(HomeScreenIndex.fromIndex(page))
             }
     }
 
     // Force page change e.g. when system back navigation event detected
     forcePage?.let {
         LaunchedEffect(forcePage) {
-            pagerState.scrollToPage(forcePage.currentPageIndex)
+            pagerState.scrollToPage(forcePage.currentPage.ordinal)
         }
     }
 
