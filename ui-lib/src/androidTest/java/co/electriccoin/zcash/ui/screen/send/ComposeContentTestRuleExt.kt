@@ -20,6 +20,12 @@ internal fun ComposeContentTestRule.clickBack() {
     }
 }
 
+internal fun ComposeContentTestRule.clickSettingsTopAppBarMenu() {
+    onNodeWithContentDescription(getStringResource(R.string.settings_menu_content_description)).also {
+        it.performClick()
+    }
+}
+
 internal fun ComposeContentTestRule.clickScanner() {
     onNodeWithContentDescription(getStringResource(R.string.send_scan_content_description)).also {
         it.performClick()

@@ -4,6 +4,7 @@ import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.filters.MediumTest
@@ -18,6 +19,7 @@ import cash.z.ecc.sdk.fixture.ZecSendFixture
 import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.fixture.SendArgumentsWrapperFixture
+import co.electriccoin.zcash.ui.screen.send.SendTag.SEND_FAILED_BACK
 import co.electriccoin.zcash.ui.screen.send.SendViewTestSetup
 import co.electriccoin.zcash.ui.screen.send.assertOnConfirmation
 import co.electriccoin.zcash.ui.screen.send.assertOnForm
@@ -30,6 +32,7 @@ import co.electriccoin.zcash.ui.screen.send.clickBack
 import co.electriccoin.zcash.ui.screen.send.clickConfirmation
 import co.electriccoin.zcash.ui.screen.send.clickCreateAndSend
 import co.electriccoin.zcash.ui.screen.send.clickScanner
+import co.electriccoin.zcash.ui.screen.send.clickSettingsTopAppBarMenu
 import co.electriccoin.zcash.ui.screen.send.model.SendArgumentsWrapper
 import co.electriccoin.zcash.ui.screen.send.model.SendStage
 import co.electriccoin.zcash.ui.screen.send.setAmount
@@ -82,7 +85,6 @@ class SendViewTest : UiTestPrerequisites() {
 
     @Test
     @MediumTest
-    @OptIn(ExperimentalCoroutinesApi::class)
     fun create_request_no_memo() =
         runTest {
             val testSetup = newTestSetup()
@@ -117,7 +119,6 @@ class SendViewTest : UiTestPrerequisites() {
 
     @Test
     @MediumTest
-    @OptIn(ExperimentalCoroutinesApi::class)
     fun create_request_with_memo() =
         runTest {
             val testSetup = newTestSetup()
@@ -154,7 +155,6 @@ class SendViewTest : UiTestPrerequisites() {
 
     @Test
     @MediumTest
-    @OptIn(ExperimentalCoroutinesApi::class)
     fun check_regex_functionality_valid_inputs() =
         runTest {
             val testSetup = newTestSetup()
@@ -213,7 +213,6 @@ class SendViewTest : UiTestPrerequisites() {
 
     @Test
     @MediumTest
-    @OptIn(ExperimentalCoroutinesApi::class)
     fun check_regex_functionality_invalid_inputs() =
         runTest {
             val testSetup = newTestSetup()
@@ -252,7 +251,6 @@ class SendViewTest : UiTestPrerequisites() {
 
     @Test
     @MediumTest
-    @OptIn(ExperimentalCoroutinesApi::class)
     fun max_memo_length() =
         runTest {
             val testSetup = newTestSetup()
@@ -292,16 +290,17 @@ class SendViewTest : UiTestPrerequisites() {
             }
         }
 
+
     @Test
     @MediumTest
-    fun back_on_form() {
+    fun on_settings_click_test() {
         val testSetup = newTestSetup()
 
-        assertEquals(0, testSetup.getOnBackCount())
+        assertEquals(0, testSetup.getOnSettingsCount())
 
-        composeTestRule.clickBack()
+        composeTestRule.clickSettingsTopAppBarMenu()
 
-        assertEquals(1, testSetup.getOnBackCount())
+        assertEquals(1, testSetup.getOnSettingsCount())
     }
 
     @Test
@@ -405,7 +404,7 @@ class SendViewTest : UiTestPrerequisites() {
         assertEquals(0, testSetup.getOnBackCount())
 
         composeTestRule.assertOnSendFailure()
-        composeTestRule.onNodeWithText(getStringResource(R.string.send_failure_button), ignoreCase = true).also {
+        composeTestRule.onNodeWithTag(SEND_FAILED_BACK).also {
             it.assertExists()
             it.performClick()
         }

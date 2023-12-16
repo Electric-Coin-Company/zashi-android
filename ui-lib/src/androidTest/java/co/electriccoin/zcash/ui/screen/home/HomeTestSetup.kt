@@ -1,30 +1,19 @@
 package co.electriccoin.zcash.ui.screen.home
 
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
-import co.electriccoin.zcash.ui.common.model.WalletSnapshot
-import co.electriccoin.zcash.ui.design.theme.ZcashTheme
-import co.electriccoin.zcash.ui.screen.home.view.Home
 import java.util.concurrent.atomic.AtomicInteger
 
 class HomeTestSetup(
     private val composeTestRule: ComposeContentTestRule,
-    private val walletSnapshot: WalletSnapshot,
-    private val isShowFiatConversion: Boolean
 ) {
-    private val onSettingsCount = AtomicInteger(0)
-    private val onReceiveCount = AtomicInteger(0)
+    private val onAccountsCount = AtomicInteger(0)
     private val onSendCount = AtomicInteger(0)
-    private val onHistoryCount = AtomicInteger(0)
+    private val onReceiveCount = AtomicInteger(0)
+    private val onBalancesCount = AtomicInteger(0)
 
-    fun getOnSettingsCount(): Int {
+    fun getOnAccountCount(): Int {
         composeTestRule.waitForIdle()
-        return onSettingsCount.get()
-    }
-
-    fun getOnReceiveCount(): Int {
-        composeTestRule.waitForIdle()
-        return onReceiveCount.get()
+        return onAccountsCount.get()
     }
 
     fun getOnSendCount(): Int {
@@ -32,37 +21,23 @@ class HomeTestSetup(
         return onSendCount.get()
     }
 
-    fun getOnHistoryCount(): Int {
+    fun getOnReceiveCount(): Int {
         composeTestRule.waitForIdle()
-        return onHistoryCount.get()
+        return onReceiveCount.get()
     }
 
-    fun getWalletSnapshot(): WalletSnapshot {
+    fun getOnBalancesCount(): Int {
         composeTestRule.waitForIdle()
-        return walletSnapshot
+        return onBalancesCount.get()
     }
 
+    // TODO
+
+    /*
     @Composable
     @Suppress("TestFunctionName")
     fun DefaultContent() {
-        Home(
-            walletSnapshot,
-            isUpdateAvailable = false,
-            isKeepScreenOnDuringSync = false,
-            isFiatConversionEnabled = isShowFiatConversion,
-            goSettings = {
-                onSettingsCount.incrementAndGet()
-            },
-            goReceive = {
-                onReceiveCount.incrementAndGet()
-            },
-            goSend = {
-                onSendCount.incrementAndGet()
-            },
-            goHistory = {
-                onHistoryCount.incrementAndGet()
-            },
-        )
+        Home()
     }
 
     fun setDefaultContent() {
@@ -72,4 +47,5 @@ class HomeTestSetup(
             }
         }
     }
+     */
 }

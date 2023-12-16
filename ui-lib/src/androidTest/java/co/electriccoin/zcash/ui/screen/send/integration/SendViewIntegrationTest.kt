@@ -57,7 +57,8 @@ class SendViewIntegrationTest {
                 spendingKey = spendingKey,
                 goToQrScanner = {},
                 goBack = {},
-                hasCameraFeature = true
+                hasCameraFeature = true,
+                goSettings = {}
             )
         }
 

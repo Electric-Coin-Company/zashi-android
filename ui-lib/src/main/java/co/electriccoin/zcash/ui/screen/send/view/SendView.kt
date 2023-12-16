@@ -55,6 +55,7 @@ import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme.dimens
+import co.electriccoin.zcash.ui.screen.send.SendTag.SEND_FAILED_BACK
 import co.electriccoin.zcash.ui.screen.send.ext.ABBREVIATION_INDEX
 import co.electriccoin.zcash.ui.screen.send.ext.abbreviated
 import co.electriccoin.zcash.ui.screen.send.ext.valueOrEmptyChar
@@ -625,7 +626,9 @@ private fun SendFailure(
         )
 
         PrimaryButton(
-            modifier = Modifier.padding(top = dimens.spacingSmall),
+            modifier = Modifier
+                .padding(top = dimens.spacingSmall)
+                .testTag(SEND_FAILED_BACK),
             text = stringResource(R.string.send_failure_button),
             onClick = onDone,
             outerPaddingValues = PaddingValues(top = dimens.spacingSmall)

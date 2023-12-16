@@ -19,7 +19,7 @@ class ReceiveViewTestSetup(
     private val composeTestRule: ComposeContentTestRule,
     walletAddress: WalletAddress
 ) {
-    private val onBackCount = AtomicInteger(0)
+    private val onSettingsCount = AtomicInteger(0)
     private val onAddressDetailsCount = AtomicInteger(0)
     private val screenBrightness = ScreenBrightness()
     private val screenTimeout = ScreenTimeout()
@@ -34,9 +34,9 @@ class ReceiveViewTestSetup(
         return onAdjustBrightness.get()
     }
 
-    fun getOnBackCount(): Int {
+    fun getOnSettingsCount(): Int {
         composeTestRule.waitForIdle()
-        return onBackCount.get()
+        return onSettingsCount.get()
     }
 
     fun getOnAddressDetailsCount(): Int {
@@ -54,8 +54,8 @@ class ReceiveViewTestSetup(
                     ZcashTheme {
                         Receive(
                             walletAddress,
-                            onBack = {
-                                onBackCount.getAndIncrement()
+                            onSettings = {
+                                onSettingsCount.getAndIncrement()
                             },
                             onAddressDetails = {
                                 onAddressDetailsCount.getAndIncrement()
