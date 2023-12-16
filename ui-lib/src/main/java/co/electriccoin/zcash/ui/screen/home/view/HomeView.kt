@@ -75,7 +75,7 @@ fun Home(
     // Force page change e.g. when system back navigation event detected
     forcePage?.let {
         LaunchedEffect(forcePage) {
-            pagerState.scrollToPage(forcePage.currentPage.ordinal)
+            pagerState.animateScrollToPage(forcePage.currentPage.ordinal)
         }
     }
 

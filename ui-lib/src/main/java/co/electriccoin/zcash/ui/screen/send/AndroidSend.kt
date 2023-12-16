@@ -45,7 +45,7 @@ internal fun MainActivity.WrapSend(
 }
 
 @Composable
-private fun WrapSend(
+internal fun WrapSend(
     activity: ComponentActivity,
     sendArgumentsWrapper: SendArgumentsWrapper?,
     goToQrScanner: () -> Unit,

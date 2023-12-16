@@ -2,15 +2,12 @@ package co.electriccoin.zcash.ui
 
 import android.widget.Toast
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.NavigationArguments.SEND_AMOUNT
 import co.electriccoin.zcash.ui.NavigationArguments.SEND_MEMO
 import co.electriccoin.zcash.ui.NavigationArguments.SEND_RECIPIENT_ADDRESS
@@ -27,27 +24,17 @@ import co.electriccoin.zcash.ui.NavigationTargets.WALLET_ADDRESS_DETAILS
 import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
 import co.electriccoin.zcash.ui.configuration.RemoteConfig
 import co.electriccoin.zcash.ui.screen.about.WrapAbout
-import co.electriccoin.zcash.ui.screen.account.WrapAccount
 import co.electriccoin.zcash.ui.screen.address.WrapWalletAddresses
-import co.electriccoin.zcash.ui.screen.balances.WrapBalances
 import co.electriccoin.zcash.ui.screen.exportdata.WrapExportPrivateData
 import co.electriccoin.zcash.ui.screen.history.WrapHistory
-import co.electriccoin.zcash.ui.screen.home.ForcePage
-import co.electriccoin.zcash.ui.screen.home.HomeScreenIndex
 import co.electriccoin.zcash.ui.screen.home.WrapHome
-import co.electriccoin.zcash.ui.screen.home.model.TabItem
-import co.electriccoin.zcash.ui.screen.receive.WrapReceive
 import co.electriccoin.zcash.ui.screen.request.WrapRequest
 import co.electriccoin.zcash.ui.screen.scan.WrapScanValidator
 import co.electriccoin.zcash.ui.screen.seedrecovery.WrapSeedRecovery
-import co.electriccoin.zcash.ui.screen.send.WrapSend
 import co.electriccoin.zcash.ui.screen.send.model.SendArgumentsWrapper
 import co.electriccoin.zcash.ui.screen.settings.WrapSettings
 import co.electriccoin.zcash.ui.screen.support.WrapSupport
 import co.electriccoin.zcash.ui.screen.update.WrapCheckForUpdate
-import kotlinx.collections.immutable.persistentListOf
-import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.flow.MutableSharedFlow
 
 @Composable
 @Suppress("LongMethod")
@@ -58,89 +45,23 @@ internal fun MainActivity.Navigation() {
             navControllerForTesting = it
         }
 
-    // Flow for propagating the new page index to the pager in the view layer
-    val forceHomePageIndexFlow: MutableSharedFlow<ForcePage?> =
-        MutableSharedFlow(
-            Int.MAX_VALUE,
-            Int.MAX_VALUE,
-            BufferOverflow.SUSPEND
-        )
-
     NavHost(navController = navController, startDestination = HOME) {
         composable(HOME) { backStackEntry ->
-
-            val forceIndex = forceHomePageIndexFlow.collectAsState(initial = null).value
-
-            val homeGoBack: () -> Unit = {
-                when (homeViewModel.screenIndex.value) {
-                    HomeScreenIndex.ACCOUNT -> finish()
-                    HomeScreenIndex.SEND,
-                    HomeScreenIndex.RECEIVE,
-                    HomeScreenIndex.BALANCES -> forceHomePageIndexFlow.tryEmit(ForcePage())
-                }
-            }
-
-            val tabs =
-                persistentListOf(
-                    TabItem(
-                        index = HomeScreenIndex.ACCOUNT,
-                        title = stringResource(id = R.string.home_tab_account),
-                        screenContent = {
-                            WrapAccount(
-                                goHistory = { navController.navigateJustOnce(HISTORY) },
-                                goSettings = { navController.navigateJustOnce(SETTINGS) },
-                            )
-                        }
-                    ),
-                    TabItem(
-                        index = HomeScreenIndex.SEND,
-                        title = stringResource(id = R.string.home_tab_send),
-                        screenContent = {
-                            WrapSend(
-                                goToQrScanner = {
-                                    Twig.info { "Opening Qr Scanner Screen" }
-                                    navController.navigateJustOnce(SCAN)
-                                },
-                                goBack = homeGoBack,
-                                goSettings = {
-                                    navController.navigateJustOnce(SETTINGS)
-                                },
-                                sendArgumentsWrapper =
-                                    SendArgumentsWrapper(
-                                        recipientAddress = backStackEntry.savedStateHandle[SEND_RECIPIENT_ADDRESS],
-                                        amount = backStackEntry.savedStateHandle[SEND_AMOUNT],
-                                        memo = backStackEntry.savedStateHandle[SEND_MEMO]
-                                    )
-                            )
-                        }
-                    ),
-                    TabItem(
-                        index = HomeScreenIndex.RECEIVE,
-                        title = stringResource(id = R.string.home_tab_receive),
-                        screenContent = {
-                            WrapReceive(
-                                onSettings = { navController.navigateJustOnce(SETTINGS) },
-                                onAddressDetails = { navController.navigateJustOnce(WALLET_ADDRESS_DETAILS) },
-                            )
-                        }
-                    ),
-                    TabItem(
-                        index = HomeScreenIndex.BALANCES,
-                        title = stringResource(id = R.string.home_tab_balances),
-                        screenContent = {
-                            WrapBalances(
-                                goSettings = { navController.navigateJustOnce(SETTINGS) }
-                            )
-                        }
-                    )
-                )
             WrapHome(
-                tabs = tabs,
-                forcePage = forceIndex,
                 onPageChange = {
                     homeViewModel.screenIndex.value = it
                 },
-                goBack = homeGoBack
+                goAddressDetails = { navController.navigateJustOnce(WALLET_ADDRESS_DETAILS) },
+                goBack = { finish() },
+                goHistory = { navController.navigateJustOnce(HISTORY) },
+                goSettings = { navController.navigateJustOnce(SETTINGS) },
+                goScan = { navController.navigateJustOnce(SCAN) },
+                sendArgumentsWrapper =
+                    SendArgumentsWrapper(
+                        recipientAddress = backStackEntry.savedStateHandle[SEND_RECIPIENT_ADDRESS],
+                        amount = backStackEntry.savedStateHandle[SEND_AMOUNT],
+                        memo = backStackEntry.savedStateHandle[SEND_MEMO]
+                    ),
             )
 
             if (ConfigurationEntries.IS_APP_UPDATE_CHECK_ENABLED.getValue(RemoteConfig.current)) {

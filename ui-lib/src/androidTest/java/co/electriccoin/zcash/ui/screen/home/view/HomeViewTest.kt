@@ -1,3 +1,5 @@
+@file:Suppress("UnusedPrivateMember")
+
 package co.electriccoin.zcash.ui.screen.home.view
 
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
@@ -7,7 +9,6 @@ import androidx.compose.ui.test.performScrollTo
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.test.getStringResource
 
-@Suppress("UnusedPrivateMember")
 class HomeViewTest {
     // TODO [#1126]: Home screen view: Add view test
     // TODO [#1126]: https://github.com/Electric-Coin-Company/zashi-android/issues/1126
