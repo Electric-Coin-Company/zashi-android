@@ -1,3 +1,5 @@
+@file:Suppress("TooManyFunctions")
+
 package co.electriccoin.zcash.ui.design.component
 
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -15,6 +17,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
@@ -204,6 +207,28 @@ fun BodyWithFiatCurrencySymbol(
         text = amount,
         style = MaterialTheme.typography.bodyLarge,
         color = MaterialTheme.colorScheme.onBackground,
+        modifier = modifier
+    )
+}
+
+@Composable
+fun NavigationTabText(
+    text: String,
+    selected: Boolean,
+    modifier: Modifier = Modifier
+) {
+    Text(
+        text = text,
+        style = ZcashTheme.extendedTypography.textNavTab,
+        fontWeight =
+            if (selected) {
+                FontWeight.Black
+            } else {
+                FontWeight.Normal
+            },
+        maxLines = 1,
+        overflow = TextOverflow.Visible,
+        color = ZcashTheme.colors.tabTextColor,
         modifier = modifier
     )
 }

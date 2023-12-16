@@ -6,7 +6,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.common.viewmodel.CheckUpdateViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
@@ -16,18 +15,6 @@ import co.electriccoin.zcash.ui.screen.account.view.Account
 import co.electriccoin.zcash.ui.screen.settings.viewmodel.SettingsViewModel
 import co.electriccoin.zcash.ui.screen.update.AppUpdateCheckerImp
 import co.electriccoin.zcash.ui.screen.update.model.UpdateState
-
-@Composable
-internal fun MainActivity.WrapAccount(
-    goSettings: () -> Unit,
-    goHistory: () -> Unit
-) {
-    WrapAccount(
-        this,
-        goSettings = goSettings,
-        goHistory = goHistory,
-    )
-}
 
 @Composable
 internal fun WrapAccount(

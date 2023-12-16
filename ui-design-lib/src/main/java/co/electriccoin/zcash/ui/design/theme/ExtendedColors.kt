@@ -36,6 +36,8 @@ data class ExtendedColors(
     val aboutTextColor: Color,
     val welcomeAnimationColor: Color,
     val complementaryColor: Color,
+    val dividerColor: Color,
+    val tabTextColor: Color,
 ) {
     @Composable
     fun surfaceGradient() =

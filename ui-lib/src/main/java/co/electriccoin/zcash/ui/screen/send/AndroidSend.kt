@@ -18,7 +18,6 @@ import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.sdk.extension.send
 import co.electriccoin.zcash.spackle.Twig
-import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.common.model.spendableBalance
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
@@ -27,22 +26,6 @@ import co.electriccoin.zcash.ui.screen.send.model.SendArgumentsWrapper
 import co.electriccoin.zcash.ui.screen.send.model.SendStage
 import co.electriccoin.zcash.ui.screen.send.view.Send
 import kotlinx.coroutines.launch
-
-@Composable
-internal fun MainActivity.WrapSend(
-    sendArgumentsWrapper: SendArgumentsWrapper?,
-    goToQrScanner: () -> Unit,
-    goBack: () -> Unit,
-    goSettings: () -> Unit,
-) {
-    WrapSend(
-        this,
-        sendArgumentsWrapper,
-        goToQrScanner,
-        goBack,
-        goSettings
-    )
-}
 
 @Composable
 internal fun WrapSend(

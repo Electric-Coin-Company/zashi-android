@@ -7,22 +7,9 @@ import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cash.z.ecc.android.sdk.model.WalletAddresses
-import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.screen.receive.view.Receive
-
-@Composable
-internal fun MainActivity.WrapReceive(
-    onSettings: () -> Unit,
-    onAddressDetails: () -> Unit,
-) {
-    WrapReceive(
-        this,
-        onSettings = onSettings,
-        onAddressDetails = onAddressDetails,
-    )
-}
 
 @Composable
 internal fun WrapReceive(

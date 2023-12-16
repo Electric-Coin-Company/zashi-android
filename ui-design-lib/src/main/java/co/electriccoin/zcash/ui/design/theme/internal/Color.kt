@@ -68,14 +68,13 @@ internal object Dark {
 
     val buttonShadowColor = Color(0xFFFFFFFF)
 
-    // to be added later
+    // Proper values will be added later, see #998
     val aboutTextColor = Color.Unspecified
-
     val screenTitleColor = Color(0xFF040404)
-
     val welcomeAnimationColor = Color(0xFF231F20)
-
     val complementaryColor = Color(0xFFF4B728)
+    val dividerColor = Color(0xFFDDDDDD)
+    val tabTextColor = Color(0xFF040404)
 }
 
 internal object Light {
@@ -136,12 +135,11 @@ internal object Light {
     val buttonShadowColor = Color(0xFF000000)
 
     val screenTitleColor = Color(0xFF040404)
-
     val aboutTextColor = Color(0xFF4E4E4E)
-
     val welcomeAnimationColor = Color(0xFF231F20)
-
     val complementaryColor = Color(0xFFF4B728)
+    val dividerColor = Color(0xFFDDDDDD)
+    val tabTextColor = Color(0xFF040404)
 }
 
 internal val DarkColorPalette =
@@ -198,6 +196,8 @@ internal val DarkExtendedColorPalette =
         aboutTextColor = Dark.aboutTextColor,
         welcomeAnimationColor = Dark.welcomeAnimationColor,
         complementaryColor = Dark.complementaryColor,
+        dividerColor = Dark.dividerColor,
+        tabTextColor = Dark.tabTextColor,
     )
 
 internal val LightExtendedColorPalette =
@@ -230,6 +230,8 @@ internal val LightExtendedColorPalette =
         aboutTextColor = Light.aboutTextColor,
         welcomeAnimationColor = Light.welcomeAnimationColor,
         complementaryColor = Light.complementaryColor,
+        dividerColor = Light.dividerColor,
+        tabTextColor = Dark.tabTextColor,
     )
 
 @Suppress("CompositionLocalAllowlist")
@@ -264,5 +266,7 @@ internal val LocalExtendedColors =
             aboutTextColor = Color.Unspecified,
             welcomeAnimationColor = Color.Unspecified,
             complementaryColor = Color.Unspecified,
+            dividerColor = Color.Unspecified,
+            tabTextColor = Color.Unspecified
         )
     }
