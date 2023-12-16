@@ -626,9 +626,10 @@ private fun SendFailure(
         )
 
         PrimaryButton(
-            modifier = Modifier
-                .padding(top = dimens.spacingSmall)
-                .testTag(SEND_FAILED_BACK),
+            modifier =
+                Modifier
+                    .padding(top = dimens.spacingSmall)
+                    .testTag(SEND_FAILED_BACK),
             text = stringResource(R.string.send_failure_button),
             onClick = onDone,
             outerPaddingValues = PaddingValues(top = dimens.spacingSmall)

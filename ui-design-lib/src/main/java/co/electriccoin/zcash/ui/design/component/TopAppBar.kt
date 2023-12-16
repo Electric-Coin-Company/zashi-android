@@ -267,8 +267,9 @@ fun SmallTopAppBar(
             regularActions?.invoke(this)
             hamburgerMenuActions?.invoke(this)
         },
-        modifier = Modifier
-            .testTag(CommonTag.TOP_APP_BAR)
-            .then(modifier)
+        modifier =
+            Modifier
+                .testTag(CommonTag.TOP_APP_BAR)
+                .then(modifier)
     )
 }

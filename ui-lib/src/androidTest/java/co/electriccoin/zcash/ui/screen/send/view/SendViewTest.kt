@@ -41,7 +41,6 @@ import co.electriccoin.zcash.ui.screen.send.setValidAddress
 import co.electriccoin.zcash.ui.screen.send.setValidAmount
 import co.electriccoin.zcash.ui.screen.send.setValidMemo
 import co.electriccoin.zcash.ui.test.getStringResource
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -289,7 +288,6 @@ class SendViewTest : UiTestPrerequisites() {
                 }
             }
         }
-
 
     @Test
     @MediumTest

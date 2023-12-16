@@ -3,7 +3,6 @@ package co.electriccoin.zcash.ui.screen.account.view
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -33,8 +32,8 @@ class AccountViewTest : UiTestPrerequisites() {
 
         composeTestRule.onNodeWithTag(CommonTag.TOP_APP_BAR)
             .also {
-            it.assertIsDisplayed()
-        }
+                it.assertIsDisplayed()
+            }
 
         composeTestRule.onNodeWithTag(AccountTag.STATUS_VIEWS).also {
             it.assertIsDisplayed()
