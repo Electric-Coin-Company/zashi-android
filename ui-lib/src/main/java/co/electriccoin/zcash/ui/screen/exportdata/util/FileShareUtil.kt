@@ -17,6 +17,9 @@ object FileShareUtil {
     const val ZASHI_INTERNAL_DATA_AUTHORITY = "co.electriccoin.zcash.provider" // NON-NLS
     const val ZASHI_INTERNAL_DATA_AUTHORITY_DEBUG = "co.electriccoin.zcash.debug.provider" // NON-NLS
 
+    const val ZASHI_INTERNAL_DATA_AUTHORITY_TESTNET = "co.electriccoin.zcash.provider.testnet" // NON-NLS
+    const val ZASHI_INTERNAL_DATA_AUTHORITY_TESTNET_DEBUG = "co.electriccoin.zcash.debug.provider.testnet" // NON-NLS
+
     /**
      * Returns a new share internal app data intent with necessary permission granted exclusively to the data file.
      *
@@ -32,11 +35,7 @@ object FileShareUtil {
         val fileUri =
             FileProvider.getUriForFile(
                 context,
-                if (versionInfo.isDebuggable) {
-                    ZASHI_INTERNAL_DATA_AUTHORITY_DEBUG
-                } else {
-                    ZASHI_INTERNAL_DATA_AUTHORITY
-                },
+                getAuthorityByVersionInfo(versionInfo),
                 File(dataFilePath)
             )
 
@@ -60,4 +59,19 @@ object FileShareUtil {
 
         return shareDataIntent
     }
+
+    private fun getAuthorityByVersionInfo(versionInfo: VersionInfo) =
+        if (versionInfo.isTestnet) {
+            if (versionInfo.isDebuggable) {
+                ZASHI_INTERNAL_DATA_AUTHORITY_TESTNET_DEBUG
+            } else {
+                ZASHI_INTERNAL_DATA_AUTHORITY_TESTNET
+            }
+        } else {
+            if (versionInfo.isDebuggable) {
+                ZASHI_INTERNAL_DATA_AUTHORITY_DEBUG
+            } else {
+                ZASHI_INTERNAL_DATA_AUTHORITY
+            }
+        }
 }
