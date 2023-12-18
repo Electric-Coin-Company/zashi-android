@@ -19,7 +19,8 @@ import cash.z.ecc.sdk.fixture.ZecSendFixture
 import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.fixture.SendArgumentsWrapperFixture
-import co.electriccoin.zcash.ui.screen.send.SendTag.SEND_FAILED_BACK
+import co.electriccoin.zcash.ui.screen.send.SendTag
+import co.electriccoin.zcash.ui.screen.send.SendTag.SEND_FAILED_BUTTON
 import co.electriccoin.zcash.ui.screen.send.SendViewTestSetup
 import co.electriccoin.zcash.ui.screen.send.assertOnConfirmation
 import co.electriccoin.zcash.ui.screen.send.assertOnForm
@@ -76,7 +77,7 @@ class SendViewTest : UiTestPrerequisites() {
         @Suppress("UNUSED_VARIABLE")
         val testSetup = newTestSetup()
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.send_create), ignoreCase = true).also {
+        composeTestRule.onNodeWithTag(SendTag.SEND_FORM_BUTTON).also {
             it.assertExists()
             it.assertIsNotEnabled()
         }
@@ -402,7 +403,7 @@ class SendViewTest : UiTestPrerequisites() {
         assertEquals(0, testSetup.getOnBackCount())
 
         composeTestRule.assertOnSendFailure()
-        composeTestRule.onNodeWithTag(SEND_FAILED_BACK).also {
+        composeTestRule.onNodeWithTag(SEND_FAILED_BUTTON).also {
             it.assertExists()
             it.performClick()
         }

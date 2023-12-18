@@ -21,6 +21,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.spackle.Twig
@@ -119,7 +120,10 @@ fun Home(
                                     selected = selected
                                 )
                             },
-                            modifier = Modifier.padding(all = 0.dp),
+                            modifier =
+                                Modifier
+                                    .padding(all = 0.dp)
+                                    .testTag(item.testTag),
                             onClick = { coroutineScope.launch { pagerState.animateScrollToPage(index) } },
                         )
                     }

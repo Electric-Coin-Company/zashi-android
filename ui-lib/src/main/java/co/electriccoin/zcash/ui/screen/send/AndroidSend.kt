@@ -85,9 +85,13 @@ internal fun WrapSend(
         when (sendStage) {
             SendStage.Form -> goBack()
             SendStage.Confirmation -> setSendStage(SendStage.Form)
-            SendStage.Sending -> { /* no action - wait until done */ }
+            SendStage.Sending -> { /* no action - wait until the sending is done */ }
             SendStage.SendFailure -> setSendStage(SendStage.Form)
-            SendStage.SendSuccessful -> goBack()
+            SendStage.SendSuccessful -> {
+                setZecSend(null)
+                setSendStage(SendStage.Form)
+                goBack()
+            }
         }
     }
 

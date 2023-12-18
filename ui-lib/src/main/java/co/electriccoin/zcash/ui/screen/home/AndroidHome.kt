@@ -86,6 +86,7 @@ internal fun WrapHome(
             TabItem(
                 index = HomeScreenIndex.ACCOUNT,
                 title = stringResource(id = R.string.home_tab_account),
+                testTag = HomeTag.TAB_ACCOUNT,
                 screenContent = {
                     WrapAccount(
                         activity = activity,
@@ -97,6 +98,7 @@ internal fun WrapHome(
             TabItem(
                 index = HomeScreenIndex.SEND,
                 title = stringResource(id = R.string.home_tab_send),
+                testTag = HomeTag.TAB_SEND,
                 screenContent = {
                     WrapSend(
                         activity = activity,
@@ -110,6 +112,7 @@ internal fun WrapHome(
             TabItem(
                 index = HomeScreenIndex.RECEIVE,
                 title = stringResource(id = R.string.home_tab_receive),
+                testTag = HomeTag.TAB_RECEIVE,
                 screenContent = {
                     WrapReceive(
                         activity = activity,
@@ -121,6 +124,7 @@ internal fun WrapHome(
             TabItem(
                 index = HomeScreenIndex.BALANCES,
                 title = stringResource(id = R.string.home_tab_balances),
+                testTag = HomeTag.TAB_BALANCES,
                 screenContent = {
                     WrapBalances(
                         activity = activity,

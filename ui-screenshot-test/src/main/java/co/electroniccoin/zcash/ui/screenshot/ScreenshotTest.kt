@@ -7,9 +7,10 @@ import android.os.Build
 import android.os.LocaleList
 import androidx.activity.viewModels
 import androidx.compose.ui.test.assertIsEnabled
-import androidx.compose.ui.test.hasTestTag
+import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
+import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
@@ -40,9 +41,11 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.viewmodel.SecretState
 import co.electriccoin.zcash.ui.design.component.ConfigurationOverride
 import co.electriccoin.zcash.ui.design.component.UiMode
+import co.electriccoin.zcash.ui.screen.account.AccountTag
+import co.electriccoin.zcash.ui.screen.home.HomeTag
 import co.electriccoin.zcash.ui.screen.restore.RestoreTag
 import co.electriccoin.zcash.ui.screen.restore.viewmodel.RestoreViewModel
-import co.electriccoin.zcash.ui.screen.settings.SettingsTag
+import co.electriccoin.zcash.ui.screen.send.SendTag
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -94,6 +97,13 @@ class ScreenshotTest : UiTestPrerequisites() {
                 composeTestRule.activity.navControllerForTesting.navigate(route)
             }
         }
+
+    private fun ComposeContentTestRule.navigateInHomeTab(destinationTag: String) {
+        onNodeWithTag(destinationTag).also {
+            it.assertExists()
+            it.performClick()
+        }
+    }
 
     private fun runWith(
         uiMode: UiMode,
@@ -265,16 +275,21 @@ class ScreenshotTest : UiTestPrerequisites() {
             return
         }
 
+        // These are the home screen bottom navigation sub-screens
         onboardingScreenshots(resContext, tag, composeTestRule)
         recoveryScreenshots(resContext, tag, composeTestRule)
-        homeScreenshots(resContext, tag, composeTestRule)
 
-        // These are the buttons on the home screen
-        navigateTo(NavigationTargets.SEND)
+        composeTestRule.navigateInHomeTab(HomeTag.TAB_ACCOUNT)
+        accountScreenshots(tag, composeTestRule)
+
+        composeTestRule.navigateInHomeTab(HomeTag.TAB_SEND)
         sendZecScreenshots(resContext, tag, composeTestRule)
 
-        navigateTo(NavigationTargets.RECEIVE)
+        composeTestRule.navigateInHomeTab(HomeTag.TAB_RECEIVE)
         receiveZecScreenshots(resContext, tag, composeTestRule)
+
+        composeTestRule.navigateInHomeTab(HomeTag.TAB_BALANCES)
+        balancesScreenshots(resContext, tag, composeTestRule)
 
         navigateTo(NavigationTargets.WALLET_ADDRESS_DETAILS)
         addressDetailsScreenshots(resContext, tag, composeTestRule)
@@ -283,7 +298,7 @@ class ScreenshotTest : UiTestPrerequisites() {
         transactionHistoryScreenshots(resContext, tag, composeTestRule)
 
         navigateTo(NavigationTargets.SETTINGS)
-        settingsScreenshots(tag, composeTestRule)
+        settingsScreenshots(resContext, tag, composeTestRule)
 
         // These are the Settings screen items
         // We could manually click on each one, which is a better integration test but a worse screenshot test
@@ -362,8 +377,7 @@ private fun recoveryScreenshots(
     }
 }
 
-private fun homeScreenshots(
-    resContext: Context,
+private fun accountScreenshots(
     tag: String,
     composeTestRule: AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>
 ) {
@@ -374,17 +388,32 @@ private fun homeScreenshots(
         composeTestRule.activity.walletViewModel.walletSnapshot.value != null
     }
 
-    composeTestRule.onNode(hasText(resContext.getString(R.string.home_button_send), ignoreCase = true)).also {
+    composeTestRule.onNodeWithTag(AccountTag.STATUS_VIEWS).also {
         it.assertExists()
-        ScreenshotTest.takeScreenshot(tag, "Home 1")
+        ScreenshotTest.takeScreenshot(tag, "Account 1")
+    }
+}
+
+private fun balancesScreenshots(
+    resContext: Context,
+    tag: String,
+    composeTestRule: AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>
+) {
+    // TODO [#1127]: Implement Balances screen
+    // TODO [#1127]: https://github.com/Electric-Coin-Company/zashi-android/issues/1127
+
+    composeTestRule.onNodeWithText(resContext.getString(R.string.not_implemented_yet)).also {
+        it.assertExists()
+        ScreenshotTest.takeScreenshot(tag, "Balances 1")
     }
 }
 
 private fun settingsScreenshots(
+    resContext: Context,
     tag: String,
     composeTestRule: ComposeTestRule
 ) {
-    composeTestRule.onNode(hasTestTag(SettingsTag.SETTINGS_TOP_APP_BAR)).also {
+    composeTestRule.onNode(hasText(resContext.getString(R.string.settings_backup_wallet), ignoreCase = true)).also {
         it.assertExists()
     }
 
@@ -438,19 +467,16 @@ private fun receiveZecScreenshots(
         composeTestRule.activity.walletViewModel.addresses.value != null
     }
 
-    composeTestRule.onNode(hasText(resContext.getString(R.string.receive_title), ignoreCase = true)).also {
+    composeTestRule.onNode(
+        hasContentDescription(
+            value = resContext.getString(R.string.receive_qr_code_content_description),
+            ignoreCase = true
+        )
+    ).also {
         it.assertExists()
     }
 
     ScreenshotTest.takeScreenshot(tag, "Receive 1")
-
-    composeTestRule.onNodeWithText(resContext.getString(R.string.receive_see_address_details), ignoreCase = true).also {
-        it.performClick()
-    }
-
-    composeTestRule.waitForIdle()
-
-    ScreenshotTest.takeScreenshot(tag, "Address details")
 }
 
 private fun sendZecScreenshots(
@@ -495,7 +521,7 @@ private fun sendZecScreenshots(
     // Screenshot: Fulfilled form
     ScreenshotTest.takeScreenshot(tag, "Send 2")
 
-    composeTestRule.onNodeWithText(resContext.getString(R.string.send_create), ignoreCase = true).also {
+    composeTestRule.onNodeWithTag(SendTag.SEND_FORM_BUTTON).also {
         it.performClick()
     }
 

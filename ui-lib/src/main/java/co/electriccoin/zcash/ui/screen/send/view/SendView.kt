@@ -55,7 +55,7 @@ import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme.dimens
-import co.electriccoin.zcash.ui.screen.send.SendTag.SEND_FAILED_BACK
+import co.electriccoin.zcash.ui.screen.send.SendTag
 import co.electriccoin.zcash.ui.screen.send.ext.ABBREVIATION_INDEX
 import co.electriccoin.zcash.ui.screen.send.ext.abbreviated
 import co.electriccoin.zcash.ui.screen.send.ext.valueOrEmptyChar
@@ -126,7 +126,7 @@ private fun PreviewSendFailure() {
 private fun PreviewSendConfirmation() {
     ZcashTheme(forceDarkMode = false) {
         GradientSurface {
-            Confirmation(
+            SendConfirmation(
                 zecSend =
                     ZecSend(
                         destination = runBlocking { WalletAddressFixture.sapling() },
@@ -249,7 +249,7 @@ private fun SendMainContent(
             )
         }
         (sendStage == SendStage.Confirmation) -> {
-            Confirmation(
+            SendConfirmation(
                 zecSend = zecSend,
                 onConfirmation = {
                     onSendStageChange(SendStage.Sending)
@@ -436,13 +436,14 @@ private fun SendForm(
             // Check for ABBREVIATION_INDEX goes away once proper address validation is in place.
             // For now, it just prevents a crash on the confirmation screen.
             enabled = amountZecString.isNotBlank() && recipientAddressString.length > ABBREVIATION_INDEX,
-            outerPaddingValues = PaddingValues(top = dimens.spacingNone)
+            outerPaddingValues = PaddingValues(top = dimens.spacingNone),
+            modifier = Modifier.testTag(SendTag.SEND_FORM_BUTTON)
         )
     }
 }
 
 @Composable
-private fun Confirmation(
+private fun SendConfirmation(
     zecSend: ZecSend,
     onConfirmation: () -> Unit,
     modifier: Modifier = Modifier
@@ -475,7 +476,10 @@ private fun Confirmation(
         )
 
         PrimaryButton(
-            modifier = Modifier.padding(top = dimens.spacingSmall),
+            modifier =
+                Modifier
+                    .padding(top = dimens.spacingSmall)
+                    .testTag(SendTag.SEND_CONFIRMATION_BUTTON),
             onClick = onConfirmation,
             text = stringResource(id = R.string.send_confirmation_button),
             outerPaddingValues = PaddingValues(top = dimens.spacingSmall)
@@ -576,7 +580,10 @@ private fun SendSuccessful(
         )
 
         PrimaryButton(
-            modifier = Modifier.padding(top = dimens.spacingSmall),
+            modifier =
+                Modifier
+                    .padding(top = dimens.spacingSmall)
+                    .testTag(SendTag.SEND_SUCCESS_BUTTON),
             text = stringResource(R.string.send_successful_button),
             onClick = onDone,
             outerPaddingValues = PaddingValues(top = dimens.spacingSmall)
@@ -629,7 +636,7 @@ private fun SendFailure(
             modifier =
                 Modifier
                     .padding(top = dimens.spacingSmall)
-                    .testTag(SEND_FAILED_BACK),
+                    .testTag(SendTag.SEND_FAILED_BUTTON),
             text = stringResource(R.string.send_failure_button),
             onClick = onDone,
             outerPaddingValues = PaddingValues(top = dimens.spacingSmall)

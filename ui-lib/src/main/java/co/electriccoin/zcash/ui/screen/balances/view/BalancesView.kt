@@ -34,6 +34,9 @@ private fun ComposablePreview() {
     }
 }
 
+// TODO [#1127]: Implement Balances screen
+// TODO [#1127]: https://github.com/Electric-Coin-Company/zashi-android/issues/1127
+
 @Composable
 fun Balances(onSettings: () -> Unit) {
     Scaffold(topBar = {

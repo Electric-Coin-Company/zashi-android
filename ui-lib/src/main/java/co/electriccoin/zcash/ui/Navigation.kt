@@ -63,6 +63,10 @@ internal fun MainActivity.Navigation() {
                         memo = backStackEntry.savedStateHandle[SEND_MEMO]
                     ),
             )
+            // Remove used Send screen parameters passed from the Scan screen if some exist
+            backStackEntry.savedStateHandle.remove<String>(SEND_RECIPIENT_ADDRESS)
+            backStackEntry.savedStateHandle.remove<String>(SEND_AMOUNT)
+            backStackEntry.savedStateHandle.remove<String>(SEND_MEMO)
 
             if (ConfigurationEntries.IS_APP_UPDATE_CHECK_ENABLED.getValue(RemoteConfig.current)) {
                 WrapCheckForUpdate()
