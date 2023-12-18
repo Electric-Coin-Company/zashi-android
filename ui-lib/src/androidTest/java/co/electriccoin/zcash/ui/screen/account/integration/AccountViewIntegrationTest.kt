@@ -1,24 +1,36 @@
-package co.electriccoin.zcash.ui.screen.home.integration
+package co.electriccoin.zcash.ui.screen.account.integration
 
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertWidthIsAtLeast
+import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.unit.dp
+import androidx.test.filters.MediumTest
+import cash.z.ecc.android.sdk.Synchronizer
+import cash.z.ecc.android.sdk.model.PercentDecimal
 import co.electriccoin.zcash.test.UiTestPrerequisites
+import co.electriccoin.zcash.ui.common.model.WalletSnapshot
+import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
+import co.electriccoin.zcash.ui.screen.account.AccountTag
+import co.electriccoin.zcash.ui.screen.account.AccountTestSetup
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
 import org.junit.Rule
+import org.junit.Test
 
-class HomeViewIntegrationTest : UiTestPrerequisites() {
+class AccountViewIntegrationTest : UiTestPrerequisites() {
     @get:Rule
     val composeTestRule = createComposeRule()
 
-    // TODO [#1125]: Home screen navigation: Add integration test
-    // TODO [#1125]: https://github.com/Electric-Coin-Company/zashi-android/issues/1125
-
-    /*
     private fun newTestSetup(walletSnapshot: WalletSnapshot) =
-        HomeTestSetup(
+        AccountTestSetup(
             composeTestRule,
             walletSnapshot,
             isShowFiatConversion = false
         )
 
+    // This is just basic sanity check that we still have UI set up as expected after the state restore
     @Test
     @MediumTest
     fun wallet_snapshot_restoration() {
@@ -53,5 +65,4 @@ class HomeViewIntegrationTest : UiTestPrerequisites() {
             it.assertWidthIsAtLeast(1.dp)
         }
     }
-     */
 }

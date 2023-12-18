@@ -24,6 +24,7 @@ class SendViewTestSetup(
     private val hasCameraFeature: Boolean
 ) {
     private val onBackCount = AtomicInteger(0)
+    private val onSettingsCount = AtomicInteger(0)
     private val onCreateCount = AtomicInteger(0)
     private val onScannerCount = AtomicInteger(0)
     val mutableActionExecuted = MutableStateFlow(false)
@@ -37,6 +38,11 @@ class SendViewTestSetup(
     fun getOnBackCount(): Int {
         composeTestRule.waitForIdle()
         return onBackCount.get()
+    }
+
+    fun getOnSettingsCount(): Int {
+        composeTestRule.waitForIdle()
+        return onSettingsCount.get()
     }
 
     fun getOnCreateCount(): Int {
@@ -96,6 +102,7 @@ class SendViewTestSetup(
                 zecSend = zecSend,
                 onZecSendChange = setZecSend,
                 onBack = onBackAction,
+                onSettings = { onSettingsCount.incrementAndGet() },
                 onCreateAndSend = {
                     onCreateCount.incrementAndGet()
                     lastZecSend = it

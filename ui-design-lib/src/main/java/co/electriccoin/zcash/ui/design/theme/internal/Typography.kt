@@ -9,7 +9,6 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.googlefonts.Font
 import androidx.compose.ui.text.googlefonts.GoogleFont
-import androidx.compose.ui.text.style.BaselineShift
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import co.electriccoin.zcash.ui.design.R
@@ -129,6 +128,12 @@ internal val SecondaryTypography =
                 fontFamily = ArchivoFontFamily,
                 fontWeight = FontWeight.Normal,
                 fontSize = 16.sp
+            ),
+        labelMedium =
+            TextStyle(
+                fontFamily = ArchivoFontFamily,
+                fontWeight = FontWeight.Normal,
+                fontSize = 12.sp
             )
     )
 
@@ -140,7 +145,6 @@ data class Typography(
 
 @Immutable
 data class ExtendedTypography(
-    val chipIndex: TextStyle,
     val listItem: TextStyle,
     val zecBalance: TextStyle,
     val aboutText: TextStyle,
@@ -150,6 +154,7 @@ data class ExtendedTypography(
     val textFieldHint: TextStyle,
     val textFieldValue: TextStyle,
     val textFieldBirthday: TextStyle,
+    val textNavTab: TextStyle,
 )
 
 @Suppress("CompositionLocalAllowlist")
@@ -165,12 +170,6 @@ val LocalTypographies =
 val LocalExtendedTypography =
     staticCompositionLocalOf {
         ExtendedTypography(
-            chipIndex =
-                PrimaryTypography.bodyLarge.copy(
-                    fontSize = 10.sp,
-                    baselineShift = BaselineShift.Superscript,
-                    fontWeight = FontWeight.Bold
-                ),
             listItem =
                 PrimaryTypography.bodyLarge.copy(
                     fontSize = 24.sp
@@ -209,5 +208,9 @@ val LocalExtendedTypography =
                     fontSize = 17.sp,
                 ),
             textFieldBirthday = SecondaryTypography.headlineMedium.copy(),
+            textNavTab =
+                SecondaryTypography.labelSmall.copy(
+                    fontSize = 13.sp
+                ),
         )
     }

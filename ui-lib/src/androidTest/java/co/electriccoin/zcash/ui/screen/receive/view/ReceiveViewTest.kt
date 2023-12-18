@@ -38,19 +38,19 @@ class ReceiveViewTest {
 
     @Test
     @MediumTest
-    fun back() =
+    fun click_settings_test() =
         runTest {
             val testSetup = newTestSetup(WalletAddressFixture.unified())
 
-            assertEquals(0, testSetup.getOnBackCount())
+            assertEquals(0, testSetup.getOnSettingsCount())
 
             composeTestRule.onNodeWithContentDescription(
-                getStringResource(R.string.receive_back_content_description)
+                getStringResource(R.string.settings_menu_content_description)
             ).also {
                 it.performClick()
             }
 
-            assertEquals(1, testSetup.getOnBackCount())
+            assertEquals(1, testSetup.getOnSettingsCount())
         }
 
     @Test

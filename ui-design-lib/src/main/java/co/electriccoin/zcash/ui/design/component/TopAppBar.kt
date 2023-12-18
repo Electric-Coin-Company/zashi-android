@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -30,6 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -105,6 +107,31 @@ private fun TopAppBarHamburgerMenuComposablePreview() {
                     TopBarHamburgerMenuExample(
                         actionCallback = {}
                     )
+                }
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun TopAppBarHamburgerPlusActionComposablePreview() {
+    ZcashTheme(forceDarkMode = false) {
+        GradientSurface {
+            SmallTopAppBar(
+                titleText = "Screen E",
+                hamburgerMenuActions = {
+                    TopBarHamburgerMenuExample(
+                        actionCallback = {}
+                    )
+                },
+                regularActions = {
+                    IconButton(onClick = {}) {
+                        Icon(
+                            imageVector = Icons.Default.AccountCircle,
+                            contentDescription = "Content description text"
+                        )
+                    }
                 }
             )
         }
@@ -236,7 +263,13 @@ fun SmallTopAppBar(
                 }
             }
         },
-        actions = hamburgerMenuActions ?: regularActions ?: {},
-        modifier = modifier
+        actions = {
+            regularActions?.invoke(this)
+            hamburgerMenuActions?.invoke(this)
+        },
+        modifier =
+            Modifier
+                .testTag(CommonTag.TOP_APP_BAR)
+                .then(modifier)
     )
 }

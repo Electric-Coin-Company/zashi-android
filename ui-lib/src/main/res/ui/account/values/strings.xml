@@ -1,7 +1,4 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="account_menu_content_description">Open Settings</string>
-    <string name="account_button_receive">Receive</string>
-    <string name="account_button_send">Send</string>
     <string name="account_button_history">Transaction History</string>
 
     <string name="account_status_syncing_format" formatted="true">Syncing - <xliff:g id="synced_percent" example="50.25">

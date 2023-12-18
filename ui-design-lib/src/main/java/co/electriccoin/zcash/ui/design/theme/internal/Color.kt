@@ -11,6 +11,9 @@ import co.electriccoin.zcash.ui.design.theme.ExtendedColors
 // TODO [#998]: Check and enhance screen dark mode
 // TODO [#998]: https://github.com/Electric-Coin-Company/zashi-android/issues/998
 
+// TODO [#1091]: Clear unused color resources
+// TODO [#1091]: https://github.com/Electric-Coin-Company/zashi-android/issues/1091
+
 internal object Dark {
     val backgroundStart = Color(0xFF000000)
     val backgroundEnd = Color(0xFF000000)
@@ -65,12 +68,13 @@ internal object Dark {
 
     val buttonShadowColor = Color(0xFFFFFFFF)
 
-    // to be added later
+    // Proper values will be added later, see #998
     val aboutTextColor = Color.Unspecified
-
     val screenTitleColor = Color(0xFF040404)
-
     val welcomeAnimationColor = Color(0xFF231F20)
+    val complementaryColor = Color(0xFFF4B728)
+    val dividerColor = Color(0xFFDDDDDD)
+    val tabTextColor = Color(0xFF040404)
 }
 
 internal object Light {
@@ -131,10 +135,11 @@ internal object Light {
     val buttonShadowColor = Color(0xFF000000)
 
     val screenTitleColor = Color(0xFF040404)
-
     val aboutTextColor = Color(0xFF4E4E4E)
-
     val welcomeAnimationColor = Color(0xFF231F20)
+    val complementaryColor = Color(0xFFF4B728)
+    val dividerColor = Color(0xFFDDDDDD)
+    val tabTextColor = Color(0xFF040404)
 }
 
 internal val DarkColorPalette =
@@ -189,7 +194,10 @@ internal val DarkExtendedColorPalette =
         buttonShadowColor = Dark.buttonShadowColor,
         screenTitleColor = Dark.screenTitleColor,
         aboutTextColor = Dark.aboutTextColor,
-        welcomeAnimationColor = Dark.welcomeAnimationColor
+        welcomeAnimationColor = Dark.welcomeAnimationColor,
+        complementaryColor = Dark.complementaryColor,
+        dividerColor = Dark.dividerColor,
+        tabTextColor = Dark.tabTextColor,
     )
 
 internal val LightExtendedColorPalette =
@@ -220,7 +228,10 @@ internal val LightExtendedColorPalette =
         buttonShadowColor = Light.buttonShadowColor,
         screenTitleColor = Light.screenTitleColor,
         aboutTextColor = Light.aboutTextColor,
-        welcomeAnimationColor = Light.welcomeAnimationColor
+        welcomeAnimationColor = Light.welcomeAnimationColor,
+        complementaryColor = Light.complementaryColor,
+        dividerColor = Light.dividerColor,
+        tabTextColor = Dark.tabTextColor,
     )
 
 @Suppress("CompositionLocalAllowlist")
@@ -254,5 +265,8 @@ internal val LocalExtendedColors =
             screenTitleColor = Color.Unspecified,
             aboutTextColor = Color.Unspecified,
             welcomeAnimationColor = Color.Unspecified,
+            complementaryColor = Color.Unspecified,
+            dividerColor = Color.Unspecified,
+            tabTextColor = Color.Unspecified
         )
     }

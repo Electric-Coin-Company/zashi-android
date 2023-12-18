@@ -5,4 +5,5 @@ package co.electriccoin.zcash.ui.common.test
  */
 object CommonTag {
     const val WALLET_BIRTHDAY = "wallet_birthday"
+    const val SETTINGS_TOP_BAR_BUTTON = "settings_top_bar_button"
 }

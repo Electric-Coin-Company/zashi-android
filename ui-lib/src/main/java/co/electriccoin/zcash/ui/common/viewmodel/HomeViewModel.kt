@@ -8,6 +8,8 @@ import co.electriccoin.zcash.configuration.model.map.Configuration
 import co.electriccoin.zcash.ui.common.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
 import co.electriccoin.zcash.ui.preference.StandardPreferenceSingleton
+import co.electriccoin.zcash.ui.screen.home.HomeScreenIndex
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.emitAll
@@ -16,7 +18,13 @@ import kotlinx.coroutines.flow.stateIn
 
 class HomeViewModel(application: Application) : AndroidViewModel(application) {
     /**
+     * Current Home sub-screen index in flow.
+     */
+    val screenIndex: MutableStateFlow<HomeScreenIndex> = MutableStateFlow(HomeScreenIndex.ACCOUNT)
+
+    /**
      * A flow of whether background sync is enabled
+     * Current Home sub-screen index in flow.
      */
     val isBackgroundSyncEnabled: StateFlow<Boolean?> =
         flow {

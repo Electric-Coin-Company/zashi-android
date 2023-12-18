@@ -1,43 +1,40 @@
-@file:Suppress("TooManyFunctions")
-
 package co.electriccoin.zcash.ui.screen.home.view
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PageSize
+import androidx.compose.foundation.pager.PagerDefaults
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.Divider
+import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
+import androidx.compose.material3.TabRowDefaults
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import cash.z.ecc.android.sdk.Synchronizer
-import cash.z.ecc.android.sdk.model.FiatCurrencyConversionRateState
-import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.DisableScreenTimeout
-import co.electriccoin.zcash.ui.common.model.WalletSnapshot
-import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
-import co.electriccoin.zcash.ui.design.component.Body
-import co.electriccoin.zcash.ui.design.component.BodyWithFiatCurrencySymbol
+import androidx.compose.ui.unit.dp
+import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.design.component.GradientSurface
-import co.electriccoin.zcash.ui.design.component.HeaderWithZecIcon
-import co.electriccoin.zcash.ui.design.component.PrimaryButton
-import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
-import co.electriccoin.zcash.ui.design.component.TertiaryButton
+import co.electriccoin.zcash.ui.design.component.NavigationTabText
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
-import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
-import co.electriccoin.zcash.ui.screen.home.HomeTag
-import co.electriccoin.zcash.ui.screen.home.model.WalletDisplayValues
+import co.electriccoin.zcash.ui.screen.home.ForcePage
+import co.electriccoin.zcash.ui.screen.home.HomeScreenIndex
+import co.electriccoin.zcash.ui.screen.home.model.TabItem
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.launch
 
 @Preview("Home")
 @Composable
@@ -45,184 +42,115 @@ private fun ComposablePreview() {
     ZcashTheme(forceDarkMode = false) {
         GradientSurface {
             Home(
-                walletSnapshot = WalletSnapshotFixture.new(),
-                isUpdateAvailable = false,
-                isKeepScreenOnDuringSync = false,
-                isFiatConversionEnabled = false,
-                goSettings = {},
-                goReceive = {},
-                goSend = {},
-                goHistory = {}
+                subScreens = persistentListOf(),
+                forcePage = null,
+                onPageChange = {}
             )
         }
     }
 }
 
-@Suppress("LongParameterList")
+@OptIn(ExperimentalFoundationApi::class)
+@Suppress("LongMethod")
 @Composable
 fun Home(
-    walletSnapshot: WalletSnapshot,
-    isUpdateAvailable: Boolean,
-    isKeepScreenOnDuringSync: Boolean?,
-    isFiatConversionEnabled: Boolean,
-    goSettings: () -> Unit,
-    goReceive: () -> Unit,
-    goSend: () -> Unit,
-    goHistory: () -> Unit
+    subScreens: ImmutableList<TabItem>,
+    forcePage: ForcePage?,
+    onPageChange: (HomeScreenIndex) -> Unit,
 ) {
-    Scaffold(topBar = {
-        HomeTopAppBar(onSettings = goSettings)
-    }) { paddingValues ->
-        HomeMainContent(
-            walletSnapshot = walletSnapshot,
-            isUpdateAvailable = isUpdateAvailable,
-            isKeepScreenOnDuringSync = isKeepScreenOnDuringSync,
-            isFiatConversionEnabled = isFiatConversionEnabled,
-            goReceive = goReceive,
-            goSend = goSend,
-            goHistory = goHistory,
-            modifier =
-                Modifier.padding(
-                    top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
-                    bottom = paddingValues.calculateBottomPadding() + ZcashTheme.dimens.spacingHuge,
-                    start = ZcashTheme.dimens.screenHorizontalSpacing,
-                    end = ZcashTheme.dimens.screenHorizontalSpacing
-                )
+    val pagerState =
+        rememberPagerState(
+            initialPage = 0,
+            initialPageOffsetFraction = 0f,
+            pageCount = { subScreens.size }
         )
-    }
-}
 
-@Composable
-private fun HomeTopAppBar(onSettings: () -> Unit) {
-    SmallTopAppBar(
-        showTitleLogo = true,
-        hamburgerMenuActions = {
-            IconButton(
-                onClick = onSettings,
-                modifier = Modifier.testTag(HomeTag.SETTINGS_TOP_BAR_BUTTON)
-            ) {
-                Icon(
-                    painter = painterResource(id = co.electriccoin.zcash.ui.design.R.drawable.hamburger_menu_icon),
-                    contentDescription = stringResource(id = R.string.home_menu_content_description)
-                )
+    // Listening for the current page change
+    LaunchedEffect(pagerState) {
+        snapshotFlow {
+            pagerState.currentPage
+        }.distinctUntilChanged()
+            .collect { page ->
+                Twig.info { "Current pager page: $page" }
+                onPageChange(HomeScreenIndex.fromIndex(page))
             }
-        }
-    )
-}
+    }
 
-@Suppress("LongParameterList")
-@Composable
-private fun HomeMainContent(
-    walletSnapshot: WalletSnapshot,
-    isUpdateAvailable: Boolean,
-    isKeepScreenOnDuringSync: Boolean?,
-    isFiatConversionEnabled: Boolean,
-    goReceive: () -> Unit,
-    goSend: () -> Unit,
-    goHistory: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        Modifier
-            .fillMaxHeight()
-            .verticalScroll(
-                rememberScrollState()
-            )
-            .then(modifier),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
-
-        Status(walletSnapshot, isUpdateAvailable, isFiatConversionEnabled)
-
-        Spacer(
-            modifier =
-                Modifier
-                    .fillMaxHeight()
-                    .weight(MINIMAL_WEIGHT)
-        )
-
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
-
-        PrimaryButton(
-            onClick = goSend,
-            text = stringResource(R.string.home_button_send)
-        )
-
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
-
-        PrimaryButton(
-            onClick = goReceive,
-            text = stringResource(R.string.home_button_receive)
-        )
-
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
-
-        TertiaryButton(onClick = goHistory, text = stringResource(R.string.home_button_history))
-
-        if (isKeepScreenOnDuringSync == true && walletSnapshot.status == Synchronizer.Status.SYNCING) {
-            DisableScreenTimeout()
+    // Force page change e.g. when system back navigation event detected
+    forcePage?.let {
+        LaunchedEffect(forcePage) {
+            pagerState.animateScrollToPage(forcePage.currentPage.ordinal)
         }
     }
-}
 
-@Composable
-@Suppress("LongMethod", "MagicNumber")
-private fun Status(
-    walletSnapshot: WalletSnapshot,
-    updateAvailable: Boolean,
-    isFiatConversionEnabled: Boolean
-) {
-    val walletDisplayValues =
-        WalletDisplayValues.getNextValues(
-            LocalContext.current,
-            walletSnapshot,
-            updateAvailable
-        )
+    val coroutineScope = rememberCoroutineScope()
 
-    Column(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .testTag(HomeTag.STATUS_VIEWS),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
-
-        if (walletDisplayValues.zecAmountText.isNotEmpty()) {
-            HeaderWithZecIcon(amount = walletDisplayValues.zecAmountText)
-        }
-
-        if (isFiatConversionEnabled) {
-            Column(Modifier.testTag(HomeTag.FIAT_CONVERSION)) {
-                Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
-
-                when (walletDisplayValues.fiatCurrencyAmountState) {
-                    is FiatCurrencyConversionRateState.Current -> {
-                        BodyWithFiatCurrencySymbol(
-                            amount = walletDisplayValues.fiatCurrencyAmountText
+    Scaffold(
+        bottomBar = {
+            Column {
+                Divider(
+                    thickness = DividerDefaults.Thickness,
+                    color = ZcashTheme.colors.dividerColor
+                )
+                TabRow(
+                    selectedTabIndex = pagerState.currentPage,
+                    // Don't use the predefined divider, as it's fixed position is below the tabs bar
+                    divider = {},
+                    indicator = { tabPositions ->
+                        TabRowDefaults.Indicator(
+                            modifier =
+                                Modifier
+                                    .tabIndicatorOffset(tabPositions[pagerState.currentPage])
+                                    .padding(horizontal = ZcashTheme.dimens.spacingDefault),
+                            color = ZcashTheme.colors.complementaryColor
                         )
-                    }
-                    is FiatCurrencyConversionRateState.Stale -> {
-                        // Note: we should show information about staleness too
-                        BodyWithFiatCurrencySymbol(
-                            amount = walletDisplayValues.fiatCurrencyAmountText
+                    },
+                    modifier =
+                        Modifier
+                            .navigationBarsPadding()
+                            .padding(all = ZcashTheme.dimens.spacingDefault)
+                ) {
+                    subScreens.forEachIndexed { index, item ->
+                        val selected = index == pagerState.currentPage
+                        Tab(
+                            selected = selected,
+                            text = {
+                                NavigationTabText(
+                                    text = item.title,
+                                    selected = selected
+                                )
+                            },
+                            modifier =
+                                Modifier
+                                    .padding(all = 0.dp)
+                                    .testTag(item.testTag),
+                            onClick = { coroutineScope.launch { pagerState.animateScrollToPage(index) } },
                         )
-                    }
-                    is FiatCurrencyConversionRateState.Unavailable -> {
-                        Body(text = walletDisplayValues.fiatCurrencyAmountText)
                     }
                 }
             }
         }
-
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
-
-        if (walletDisplayValues.statusText.isNotEmpty()) {
-            Body(
-                text = walletDisplayValues.statusText,
-                modifier = Modifier.testTag(HomeTag.SINGLE_LINE_TEXT)
-            )
-        }
+    ) { paddingValues ->
+        HorizontalPager(
+            state = pagerState,
+            pageSpacing = 0.dp,
+            pageSize = PageSize.Fill,
+            pageNestedScrollConnection =
+                PagerDefaults.pageNestedScrollConnection(
+                    Orientation.Horizontal
+                ),
+            pageContent = { index ->
+                subScreens[index].screenContent()
+            },
+            key = { index ->
+                subScreens[index].title
+            },
+            beyondBoundsPageCount = 1,
+            modifier =
+                Modifier
+                    .padding(
+                        bottom = paddingValues.calculateBottomPadding()
+                    )
+        )
     }
 }

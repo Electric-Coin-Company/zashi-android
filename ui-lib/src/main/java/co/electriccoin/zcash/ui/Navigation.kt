@@ -1,6 +1,5 @@
 package co.electriccoin.zcash.ui
 
-import android.annotation.SuppressLint
 import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
@@ -9,7 +8,6 @@ import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.NavigationArguments.SEND_AMOUNT
 import co.electriccoin.zcash.ui.NavigationArguments.SEND_MEMO
 import co.electriccoin.zcash.ui.NavigationArguments.SEND_RECIPIENT_ADDRESS
@@ -17,26 +15,22 @@ import co.electriccoin.zcash.ui.NavigationTargets.ABOUT
 import co.electriccoin.zcash.ui.NavigationTargets.EXPORT_PRIVATE_DATA
 import co.electriccoin.zcash.ui.NavigationTargets.HISTORY
 import co.electriccoin.zcash.ui.NavigationTargets.HOME
-import co.electriccoin.zcash.ui.NavigationTargets.RECEIVE
 import co.electriccoin.zcash.ui.NavigationTargets.REQUEST
 import co.electriccoin.zcash.ui.NavigationTargets.SCAN
 import co.electriccoin.zcash.ui.NavigationTargets.SEED_RECOVERY
-import co.electriccoin.zcash.ui.NavigationTargets.SEND
 import co.electriccoin.zcash.ui.NavigationTargets.SETTINGS
 import co.electriccoin.zcash.ui.NavigationTargets.SUPPORT
 import co.electriccoin.zcash.ui.NavigationTargets.WALLET_ADDRESS_DETAILS
 import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
 import co.electriccoin.zcash.ui.configuration.RemoteConfig
 import co.electriccoin.zcash.ui.screen.about.WrapAbout
-import co.electriccoin.zcash.ui.screen.account.WrapAccount
 import co.electriccoin.zcash.ui.screen.address.WrapWalletAddresses
 import co.electriccoin.zcash.ui.screen.exportdata.WrapExportPrivateData
 import co.electriccoin.zcash.ui.screen.history.WrapHistory
-import co.electriccoin.zcash.ui.screen.receive.WrapReceive
+import co.electriccoin.zcash.ui.screen.home.WrapHome
 import co.electriccoin.zcash.ui.screen.request.WrapRequest
 import co.electriccoin.zcash.ui.screen.scan.WrapScanValidator
 import co.electriccoin.zcash.ui.screen.seedrecovery.WrapSeedRecovery
-import co.electriccoin.zcash.ui.screen.send.WrapSend
 import co.electriccoin.zcash.ui.screen.send.model.SendArgumentsWrapper
 import co.electriccoin.zcash.ui.screen.settings.WrapSettings
 import co.electriccoin.zcash.ui.screen.support.WrapSupport
@@ -48,19 +42,31 @@ internal fun MainActivity.Navigation() {
     val context = LocalContext.current
     val navController =
         rememberNavController().also {
-            // This suppress is necessary, as this is how we set up the nav controller for tests.
-            @SuppressLint("RestrictedApi")
             navControllerForTesting = it
         }
 
     NavHost(navController = navController, startDestination = HOME) {
-        composable(HOME) {
-            WrapAccount(
+        composable(HOME) { backStackEntry ->
+            WrapHome(
+                onPageChange = {
+                    homeViewModel.screenIndex.value = it
+                },
+                goAddressDetails = { navController.navigateJustOnce(WALLET_ADDRESS_DETAILS) },
+                goBack = { finish() },
                 goHistory = { navController.navigateJustOnce(HISTORY) },
-                goReceive = { navController.navigateJustOnce(RECEIVE) },
-                goSend = { navController.navigateJustOnce(SEND) },
                 goSettings = { navController.navigateJustOnce(SETTINGS) },
+                goScan = { navController.navigateJustOnce(SCAN) },
+                sendArgumentsWrapper =
+                    SendArgumentsWrapper(
+                        recipientAddress = backStackEntry.savedStateHandle[SEND_RECIPIENT_ADDRESS],
+                        amount = backStackEntry.savedStateHandle[SEND_AMOUNT],
+                        memo = backStackEntry.savedStateHandle[SEND_MEMO]
+                    ),
             )
+            // Remove used Send screen parameters passed from the Scan screen if some exist
+            backStackEntry.savedStateHandle.remove<String>(SEND_RECIPIENT_ADDRESS)
+            backStackEntry.savedStateHandle.remove<String>(SEND_AMOUNT)
+            backStackEntry.savedStateHandle.remove<String>(SEND_MEMO)
 
             if (ConfigurationEntries.IS_APP_UPDATE_CHECK_ENABLED.getValue(RemoteConfig.current)) {
                 WrapCheckForUpdate()
@@ -112,32 +118,8 @@ internal fun MainActivity.Navigation() {
                 }
             )
         }
-        composable(RECEIVE) {
-            WrapReceive(
-                onBack = { navController.popBackStackJustOnce(RECEIVE) },
-                onAddressDetails = { navController.navigateJustOnce(WALLET_ADDRESS_DETAILS) }
-            )
-        }
         composable(REQUEST) {
             WrapRequest(goBack = { navController.popBackStackJustOnce(REQUEST) })
-        }
-        composable(SEND) { backStackEntry ->
-            WrapSend(
-                goToQrScanner = {
-                    Twig.debug { "Opening Qr Scanner Screen" }
-                    navController.navigateJustOnce(SCAN)
-                },
-                goBack = { navController.popBackStackJustOnce(SEND) },
-                sendArgumentsWrapper =
-                    SendArgumentsWrapper(
-                        recipientAddress = backStackEntry.savedStateHandle[SEND_RECIPIENT_ADDRESS],
-                        amount = backStackEntry.savedStateHandle[SEND_AMOUNT],
-                        memo = backStackEntry.savedStateHandle[SEND_MEMO]
-                    )
-            )
-            backStackEntry.savedStateHandle.remove<String>(SEND_RECIPIENT_ADDRESS)
-            backStackEntry.savedStateHandle.remove<String>(SEND_AMOUNT)
-            backStackEntry.savedStateHandle.remove<String>(SEND_MEMO)
         }
         composable(SUPPORT) {
             // Pop back stack won't be right if we deep link into support
@@ -208,6 +190,7 @@ object NavigationArguments {
 
 object NavigationTargets {
     const val ABOUT = "about"
+    const val ACCOUNT = "account"
     const val EXPORT_PRIVATE_DATA = "export_private_data"
     const val HISTORY = "history"
     const val HOME = "home"

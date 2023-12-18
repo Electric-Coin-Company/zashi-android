@@ -1,5 +1,6 @@
-<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="send_title">Send ZEC</string>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="send_title">Send</string>
+    <string name="send_back">Back</string>
     <string name="send_back_content_description">Back</string>
     <string name="send_scan_content_description">Scan</string>
     <string name="send_balance" formatted="true"><xliff:g id="balance" example="12.345">%1$s</xliff:g> ZEC Available</string>

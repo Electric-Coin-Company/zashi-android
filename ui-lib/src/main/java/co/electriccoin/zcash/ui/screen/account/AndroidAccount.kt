@@ -6,43 +6,23 @@ import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.common.viewmodel.CheckUpdateViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
 import co.electriccoin.zcash.ui.configuration.RemoteConfig
+import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.screen.account.view.Account
 import co.electriccoin.zcash.ui.screen.settings.viewmodel.SettingsViewModel
 import co.electriccoin.zcash.ui.screen.update.AppUpdateCheckerImp
 import co.electriccoin.zcash.ui.screen.update.model.UpdateState
 
 @Composable
-@Suppress("LongParameterList")
-internal fun MainActivity.WrapAccount(
-    goSettings: () -> Unit,
-    goReceive: () -> Unit,
-    goSend: () -> Unit,
-    goHistory: () -> Unit
-) {
-    WrapAccount(
-        this,
-        goSettings = goSettings,
-        goReceive = goReceive,
-        goSend = goSend,
-        goHistory = goHistory,
-    )
-}
-
-@Composable
-@Suppress("LongParameterList")
 internal fun WrapAccount(
     activity: ComponentActivity,
     goSettings: () -> Unit,
-    goReceive: () -> Unit,
-    goSend: () -> Unit,
     goHistory: () -> Unit,
 ) {
-    // we want to show information about app update, if available
+    // Show information about the app update, if available
     val checkUpdateViewModel by activity.viewModels<CheckUpdateViewModel> {
         CheckUpdateViewModel.CheckUpdateViewModelFactory(
             activity.application,
@@ -63,7 +43,8 @@ internal fun WrapAccount(
     val isFiatConversionEnabled = ConfigurationEntries.IS_FIAT_CONVERSION_ENABLED.getValue(RemoteConfig.current)
 
     if (null == walletSnapshot) {
-        // Display loading indicator
+        // Improve this by allowing screen composition and updating it after the data is available
+        CircularScreenProgressIndicator()
     } else {
         Account(
             walletSnapshot = walletSnapshot,
@@ -71,11 +52,10 @@ internal fun WrapAccount(
             isKeepScreenOnDuringSync = isKeepScreenOnWhileSyncing,
             isFiatConversionEnabled = isFiatConversionEnabled,
             goSettings = goSettings,
-            goReceive = goReceive,
-            goSend = goSend,
             goHistory = goHistory
         )
 
+        // For benchmarking purposes
         activity.reportFullyDrawn()
     }
 }

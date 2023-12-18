@@ -4,6 +4,7 @@ import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextClearance
@@ -16,6 +17,12 @@ import co.electriccoin.zcash.ui.test.getStringResource
 
 internal fun ComposeContentTestRule.clickBack() {
     onNodeWithContentDescription(getStringResource(R.string.send_back_content_description)).also {
+        it.performClick()
+    }
+}
+
+internal fun ComposeContentTestRule.clickSettingsTopAppBarMenu() {
+    onNodeWithContentDescription(getStringResource(R.string.settings_menu_content_description)).also {
         it.performClick()
     }
 }
@@ -70,25 +77,25 @@ internal fun ComposeContentTestRule.setMemo(memo: String) {
 }
 
 internal fun ComposeContentTestRule.clickCreateAndSend() {
-    onNodeWithText(getStringResource(R.string.send_create), ignoreCase = true).also {
+    onNodeWithTag(SendTag.SEND_FORM_BUTTON).also {
         it.performClick()
     }
 }
 
 internal fun ComposeContentTestRule.clickConfirmation() {
-    onNodeWithText(getStringResource(R.string.send_confirmation_button), ignoreCase = true).also {
+    onNodeWithTag(SendTag.SEND_CONFIRMATION_BUTTON).also {
         it.performClick()
     }
 }
 
 internal fun ComposeContentTestRule.assertOnForm() {
-    onNodeWithText(getStringResource(R.string.send_create), ignoreCase = true).also {
+    onNodeWithTag(SendTag.SEND_FORM_BUTTON).also {
         it.assertExists()
     }
 }
 
 internal fun ComposeContentTestRule.assertOnConfirmation() {
-    onNodeWithText(getStringResource(R.string.send_confirmation_button), ignoreCase = true).also {
+    onNodeWithTag(SendTag.SEND_CONFIRMATION_BUTTON).also {
         it.assertExists()
     }
 }
@@ -112,13 +119,13 @@ internal fun ComposeContentTestRule.assertOnSendFailure() {
 }
 
 internal fun ComposeContentTestRule.assertSendEnabled() {
-    onNodeWithText(getStringResource(R.string.send_create), ignoreCase = true).also {
+    onNodeWithTag(SendTag.SEND_FORM_BUTTON).also {
         it.assertIsEnabled()
     }
 }
 
 internal fun ComposeContentTestRule.assertSendDisabled() {
-    onNodeWithText(getStringResource(R.string.send_create), ignoreCase = true).also {
+    onNodeWithTag(SendTag.SEND_FORM_BUTTON).also {
         it.assertIsNotEnabled()
     }
 }

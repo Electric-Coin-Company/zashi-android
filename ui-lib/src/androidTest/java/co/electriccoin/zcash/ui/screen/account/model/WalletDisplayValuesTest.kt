@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.home.model
+package co.electriccoin.zcash.ui.screen.account.model
 
 import androidx.test.filters.SmallTest
 import cash.z.ecc.android.sdk.Synchronizer
@@ -37,7 +37,7 @@ class WalletDisplayValuesTest {
         assertNotNull(values)
         assertEquals(1f, values.progress.decimal)
         assertEquals(walletSnapshot.totalBalance().toZecString(), values.zecAmountText)
-        assertTrue(values.statusText.startsWith(getStringResource(R.string.home_status_syncing_catchup)))
+        assertTrue(values.statusText.startsWith(getStringResource(R.string.account_status_syncing_catchup)))
         // TODO [#578]: Provide Zatoshi -> USD fiat currency formatting
         // TODO [#578]: https://github.com/Electric-Coin-Company/zcash-android-wallet-sdk/issues/578
         assertEquals(FiatCurrencyConversionRateState.Unavailable, values.fiatCurrencyAmountState)

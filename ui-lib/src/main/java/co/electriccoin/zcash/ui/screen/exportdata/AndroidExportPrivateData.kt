@@ -16,6 +16,7 @@ import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
+import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.screen.exportdata.util.FileShareUtil
 import co.electriccoin.zcash.ui.screen.exportdata.view.ExportPrivateData
 import kotlinx.coroutines.channels.awaitClose
@@ -45,7 +46,8 @@ internal fun WrapExportPrivateData(
     val synchronizer = walletViewModel.synchronizer.collectAsStateWithLifecycle().value
 
     if (synchronizer == null) {
-        // Display loading indicator
+        // Improve this by allowing screen composition and updating it after the data is available
+        CircularScreenProgressIndicator()
     } else {
         val snackbarHostState = remember { SnackbarHostState() }
         val scope = rememberCoroutineScope()

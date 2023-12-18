@@ -31,11 +31,12 @@ android {
                 setOf(
                     "src/main/res/ui/about",
                     "src/main/res/ui/account",
-                    "src/main/res/ui/new_wallet_recovery",
+                    "src/main/res/ui/balances",
                     "src/main/res/ui/common",
                     "src/main/res/ui/export_data",
                     "src/main/res/ui/history",
                     "src/main/res/ui/home",
+                    "src/main/res/ui/new_wallet_recovery",
                     "src/main/res/ui/onboarding",
                     "src/main/res/ui/receive",
                     "src/main/res/ui/request",

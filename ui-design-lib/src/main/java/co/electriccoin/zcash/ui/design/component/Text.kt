@@ -1,5 +1,9 @@
+@file:Suppress("TooManyFunctions")
+
 package co.electriccoin.zcash.ui.design.component
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
@@ -13,6 +17,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
@@ -178,6 +183,7 @@ fun Reference(
  * @param amount of ZECs to be displayed
  * @param modifier to modify the Text UI element as needed
  */
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HeaderWithZecIcon(
     amount: String,
@@ -187,7 +193,8 @@ fun HeaderWithZecIcon(
         text = stringResource(R.string.amount_with_zec_currency_symbol, amount),
         style = ZcashTheme.extendedTypography.zecBalance,
         color = MaterialTheme.colorScheme.onBackground,
-        modifier = modifier
+        maxLines = 1,
+        modifier = Modifier.basicMarquee().then(modifier)
     )
 }
 
@@ -200,6 +207,28 @@ fun BodyWithFiatCurrencySymbol(
         text = amount,
         style = MaterialTheme.typography.bodyLarge,
         color = MaterialTheme.colorScheme.onBackground,
+        modifier = modifier
+    )
+}
+
+@Composable
+fun NavigationTabText(
+    text: String,
+    selected: Boolean,
+    modifier: Modifier = Modifier
+) {
+    Text(
+        text = text,
+        style = ZcashTheme.extendedTypography.textNavTab,
+        fontWeight =
+            if (selected) {
+                FontWeight.Black
+            } else {
+                FontWeight.Normal
+            },
+        maxLines = 1,
+        overflow = TextOverflow.Visible,
+        color = ZcashTheme.colors.tabTextColor,
         modifier = modifier
     )
 }

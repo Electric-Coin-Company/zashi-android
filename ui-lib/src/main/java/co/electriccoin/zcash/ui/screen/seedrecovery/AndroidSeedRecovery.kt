@@ -9,6 +9,7 @@ import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.viewmodel.SecretState
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
+import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.screen.seedrecovery.view.SeedRecovery
 
 @Composable
@@ -39,7 +40,8 @@ private fun WrapSeedRecovery(
     val synchronizer = walletViewModel.synchronizer.collectAsStateWithLifecycle().value
 
     if (null == synchronizer || null == persistableWallet) {
-        // Display loading indicator
+        // Improve this by allowing screen composition and updating it after the data is available
+        CircularScreenProgressIndicator()
     } else {
         SeedRecovery(
             persistableWallet,

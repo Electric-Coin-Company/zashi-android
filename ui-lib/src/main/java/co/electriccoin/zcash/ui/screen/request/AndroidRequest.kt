@@ -12,6 +12,7 @@ import cash.z.ecc.sdk.model.ZecRequest
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
+import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.screen.request.view.Request
 import kotlinx.coroutines.runBlocking
 
@@ -29,7 +30,8 @@ private fun WrapRequest(
     val walletAddresses = walletViewModel.addresses.collectAsStateWithLifecycle().value
 
     if (null == walletAddresses) {
-        // Display loading indicator
+        // Improve this by allowing screen composition and updating it after the data is available
+        CircularScreenProgressIndicator()
     } else {
         Request(
             walletAddresses.unified,

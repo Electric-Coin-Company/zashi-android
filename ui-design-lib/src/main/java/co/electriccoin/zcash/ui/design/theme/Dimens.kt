@@ -28,6 +28,8 @@ data class Dimens(
     // Chip
     val chipShadowElevation: Dp,
     val chipStroke: Dp,
+    // Progress
+    val circularScreenProgressWidth: Dp,
     // TopAppBar:
     val topAppBarZcashLogoHeight: Dp,
     val topAppBarActionRippleCorner: Dp,
@@ -59,6 +61,7 @@ private val defaultDimens =
         buttonHeight = 50.dp,
         chipShadowElevation = 4.dp,
         chipStroke = 0.5.dp,
+        circularScreenProgressWidth = 48.dp,
         topAppBarZcashLogoHeight = 24.dp,
         topAppBarActionRippleCorner = 28.dp,
         textFieldDefaultHeight = 215.dp,

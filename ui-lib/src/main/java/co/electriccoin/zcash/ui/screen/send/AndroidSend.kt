@@ -18,9 +18,9 @@ import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.sdk.extension.send
 import co.electriccoin.zcash.spackle.Twig
-import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.common.model.spendableBalance
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
+import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.screen.send.ext.Saver
 import co.electriccoin.zcash.ui.screen.send.model.SendArgumentsWrapper
 import co.electriccoin.zcash.ui.screen.send.model.SendStage
@@ -28,20 +28,12 @@ import co.electriccoin.zcash.ui.screen.send.view.Send
 import kotlinx.coroutines.launch
 
 @Composable
-internal fun MainActivity.WrapSend(
-    sendArgumentsWrapper: SendArgumentsWrapper?,
-    goToQrScanner: () -> Unit,
-    goBack: () -> Unit
-) {
-    WrapSend(this, sendArgumentsWrapper, goToQrScanner, goBack)
-}
-
-@Composable
-private fun WrapSend(
+internal fun WrapSend(
     activity: ComponentActivity,
     sendArgumentsWrapper: SendArgumentsWrapper?,
     goToQrScanner: () -> Unit,
-    goBack: () -> Unit
+    goBack: () -> Unit,
+    goSettings: () -> Unit,
 ) {
     val hasCameraFeature = activity.packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)
 
@@ -53,7 +45,16 @@ private fun WrapSend(
 
     val spendingKey = walletViewModel.spendingKey.collectAsStateWithLifecycle().value
 
-    WrapSend(sendArgumentsWrapper, synchronizer, spendableBalance, spendingKey, goToQrScanner, goBack, hasCameraFeature)
+    WrapSend(
+        sendArgumentsWrapper,
+        synchronizer,
+        spendableBalance,
+        spendingKey,
+        goToQrScanner,
+        goBack,
+        goSettings,
+        hasCameraFeature
+    )
 }
 
 @Suppress("LongParameterList")
@@ -66,6 +67,7 @@ internal fun WrapSend(
     spendingKey: UnifiedSpendingKey?,
     goToQrScanner: () -> Unit,
     goBack: () -> Unit,
+    goSettings: () -> Unit,
     hasCameraFeature: Boolean
 ) {
     val scope = rememberCoroutineScope()
@@ -83,11 +85,13 @@ internal fun WrapSend(
         when (sendStage) {
             SendStage.Form -> goBack()
             SendStage.Confirmation -> setSendStage(SendStage.Form)
-            SendStage.Sending -> { // no action - wait until done
-            }
-
+            SendStage.Sending -> { /* no action - wait until the sending is done */ }
             SendStage.SendFailure -> setSendStage(SendStage.Form)
-            SendStage.SendSuccessful -> goBack()
+            SendStage.SendSuccessful -> {
+                setZecSend(null)
+                setSendStage(SendStage.Form)
+                goBack()
+            }
         }
     }
 
@@ -96,7 +100,8 @@ internal fun WrapSend(
     }
 
     if (null == synchronizer || null == spendableBalance || null == spendingKey) {
-        // Display loading indicator
+        // Improve this by allowing screen composition and updating it after the data is available
+        CircularScreenProgressIndicator()
     } else {
         Send(
             mySpendableBalance = spendableBalance,
@@ -106,6 +111,7 @@ internal fun WrapSend(
             zecSend = zecSend,
             onZecSendChange = setZecSend,
             onBack = onBackAction,
+            onSettings = goSettings,
             onCreateAndSend = {
                 scope.launch {
                     Twig.debug { "Sending transaction" }

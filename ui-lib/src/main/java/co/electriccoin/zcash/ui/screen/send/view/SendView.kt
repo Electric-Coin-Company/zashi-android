@@ -14,14 +14,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.outlined.QrCodeScanner
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,6 +27,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -46,14 +45,17 @@ import cash.z.ecc.android.sdk.model.toZecString
 import cash.z.ecc.sdk.fixture.MemoFixture
 import cash.z.ecc.sdk.fixture.ZatoshiFixture
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.test.CommonTag
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.FormTextField
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.Header
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
+import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme.dimens
+import co.electriccoin.zcash.ui.screen.send.SendTag
 import co.electriccoin.zcash.ui.screen.send.ext.ABBREVIATION_INDEX
 import co.electriccoin.zcash.ui.screen.send.ext.abbreviated
 import co.electriccoin.zcash.ui.screen.send.ext.valueOrEmptyChar
@@ -76,6 +78,7 @@ private fun PreviewSendForm() {
                 onCreateAndSend = {},
                 onQrScannerOpen = {},
                 onBack = {},
+                onSettings = {},
                 hasCameraFeature = true
             )
         }
@@ -123,7 +126,7 @@ private fun PreviewSendFailure() {
 private fun PreviewSendConfirmation() {
     ZcashTheme(forceDarkMode = false) {
         GradientSurface {
-            Confirmation(
+            SendConfirmation(
                 zecSend =
                     ZecSend(
                         destination = runBlocking { WalletAddressFixture.sapling() },
@@ -146,6 +149,7 @@ fun Send(
     zecSend: ZecSend?,
     onZecSendChange: (ZecSend) -> Unit,
     onBack: () -> Unit,
+    onSettings: () -> Unit,
     onCreateAndSend: (ZecSend) -> Unit,
     onQrScannerOpen: () -> Unit,
     hasCameraFeature: Boolean
@@ -153,7 +157,8 @@ fun Send(
     Scaffold(topBar = {
         SendTopAppBar(
             onBack = onBack,
-            showBackNavigationButton = sendStage != SendStage.Sending
+            onSettings = onSettings,
+            showBackNavigationButton = (sendStage != SendStage.Sending && sendStage != SendStage.Form)
         )
     }) { paddingValues ->
         SendMainContent(
@@ -184,28 +189,33 @@ fun Send(
 }
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
 private fun SendTopAppBar(
     onBack: () -> Unit,
+    onSettings: () -> Unit,
     showBackNavigationButton: Boolean = true
 ) {
-    if (showBackNavigationButton) {
-        TopAppBar(
-            title = { Text(text = stringResource(id = R.string.send_title)) },
-            navigationIcon = {
-                IconButton(
-                    onClick = onBack
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.ArrowBack,
-                        contentDescription = stringResource(R.string.send_back_content_description)
-                    )
-                }
+    SmallTopAppBar(
+        titleText = stringResource(id = R.string.send_title),
+        onBack = onBack,
+        backText =
+            if (showBackNavigationButton) {
+                stringResource(id = R.string.send_back)
+            } else {
+                null
+            },
+        backContentDescriptionText = stringResource(id = R.string.send_back_content_description),
+        hamburgerMenuActions = {
+            IconButton(
+                onClick = onSettings,
+                modifier = Modifier.testTag(CommonTag.SETTINGS_TOP_BAR_BUTTON)
+            ) {
+                Icon(
+                    painter = painterResource(id = co.electriccoin.zcash.ui.design.R.drawable.hamburger_menu_icon),
+                    contentDescription = stringResource(id = R.string.settings_menu_content_description)
+                )
             }
-        )
-    } else {
-        TopAppBar(title = { Text(text = stringResource(id = R.string.send_title)) })
-    }
+        }
+    )
 }
 
 @Suppress("LongParameterList")
@@ -239,7 +249,7 @@ private fun SendMainContent(
             )
         }
         (sendStage == SendStage.Confirmation) -> {
-            Confirmation(
+            SendConfirmation(
                 zecSend = zecSend,
                 onConfirmation = {
                     onSendStageChange(SendStage.Sending)
@@ -426,13 +436,14 @@ private fun SendForm(
             // Check for ABBREVIATION_INDEX goes away once proper address validation is in place.
             // For now, it just prevents a crash on the confirmation screen.
             enabled = amountZecString.isNotBlank() && recipientAddressString.length > ABBREVIATION_INDEX,
-            outerPaddingValues = PaddingValues(top = dimens.spacingNone)
+            outerPaddingValues = PaddingValues(top = dimens.spacingNone),
+            modifier = Modifier.testTag(SendTag.SEND_FORM_BUTTON)
         )
     }
 }
 
 @Composable
-private fun Confirmation(
+private fun SendConfirmation(
     zecSend: ZecSend,
     onConfirmation: () -> Unit,
     modifier: Modifier = Modifier
@@ -465,7 +476,10 @@ private fun Confirmation(
         )
 
         PrimaryButton(
-            modifier = Modifier.padding(top = dimens.spacingSmall),
+            modifier =
+                Modifier
+                    .padding(top = dimens.spacingSmall)
+                    .testTag(SendTag.SEND_CONFIRMATION_BUTTON),
             onClick = onConfirmation,
             text = stringResource(id = R.string.send_confirmation_button),
             outerPaddingValues = PaddingValues(top = dimens.spacingSmall)
@@ -566,7 +580,10 @@ private fun SendSuccessful(
         )
 
         PrimaryButton(
-            modifier = Modifier.padding(top = dimens.spacingSmall),
+            modifier =
+                Modifier
+                    .padding(top = dimens.spacingSmall)
+                    .testTag(SendTag.SEND_SUCCESS_BUTTON),
             text = stringResource(R.string.send_successful_button),
             onClick = onDone,
             outerPaddingValues = PaddingValues(top = dimens.spacingSmall)
@@ -616,7 +633,10 @@ private fun SendFailure(
         )
 
         PrimaryButton(
-            modifier = Modifier.padding(top = dimens.spacingSmall),
+            modifier =
+                Modifier
+                    .padding(top = dimens.spacingSmall)
+                    .testTag(SendTag.SEND_FAILED_BUTTON),
             text = stringResource(R.string.send_failure_button),
             onClick = onDone,
             outerPaddingValues = PaddingValues(top = dimens.spacingSmall)
