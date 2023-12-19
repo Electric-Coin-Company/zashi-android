@@ -97,7 +97,7 @@ private fun AboutTopAppBar(
         backContentDescriptionText = stringResource(R.string.about_back_content_description),
         onBack = onBack,
         regularActions = {
-            if (versionInfo.isDebuggable) {
+            if (versionInfo.isDebuggable && !versionInfo.isRunningUnderTestService) {
                 DebugMenu(versionInfo, configInfo)
             }
         }

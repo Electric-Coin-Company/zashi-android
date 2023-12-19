@@ -77,7 +77,7 @@ private fun WrapSettings(
     } else {
         Settings(
             TroubleshootingParameters(
-                isEnabled = versionInfo.isDebuggable,
+                isEnabled = versionInfo.isDebuggable && !versionInfo.isRunningUnderTestService,
                 isBackgroundSyncEnabled = isBackgroundSyncEnabled,
                 isKeepScreenOnDuringSyncEnabled = isKeepScreenOnWhileSyncing,
                 isAnalyticsEnabled = isAnalyticsEnabled,
