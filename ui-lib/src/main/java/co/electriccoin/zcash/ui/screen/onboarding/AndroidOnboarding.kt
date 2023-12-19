@@ -77,7 +77,7 @@ internal fun WrapOnboarding(activity: ComponentActivity) {
 
         ShortOnboarding(
             showWelcomeAnim = showWelcomeAnimation,
-            isDebugMenuEnabled = versionInfo.isDebuggable,
+            isDebugMenuEnabled = versionInfo.isDebuggable && !versionInfo.isRunningUnderTestService,
             onImportWallet = onImportWallet,
             onCreateWallet = onCreateWallet,
             onFixtureWallet = onFixtureWallet

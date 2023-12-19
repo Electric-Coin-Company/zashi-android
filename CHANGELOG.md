@@ -11,6 +11,8 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ### Changed
 - Home screen navigation switched from the Side menu to the Bottom Navigation Tabs menu
+- Re-enabled the possibility of installing different Zashi application build types on the same device simultaneously 
+  (i.e., Mainnet, Testnet, Production, Debug)  
 
 ## [0.2.0 (505)] - 2023-12-11
 

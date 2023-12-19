@@ -13,6 +13,8 @@ data class VersionInfo(
     val versionName: String,
     val versionCode: Long,
     val isDebuggable: Boolean,
+    val isRunningUnderTestService: Boolean,
+    val isTestnet: Boolean,
     val gitSha: String,
     val gitCommitCount: Long
 ) {
@@ -26,11 +28,12 @@ data class VersionInfo(
                 versionName = packageInfo.versionName ?: "null",
                 // Should only be 0 during tests
                 versionCode = packageInfo.versionCodeCompat,
-                isDebuggable = (
-                    (0 != applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) &&
-                        !FirebaseTestLabUtil.isFirebaseTestLab(context.applicationContext) &&
-                        !EmulatorWtfUtil.isEmulatorWtf(context.applicationContext)
+                isDebuggable = (0 != applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE),
+                isRunningUnderTestService = (
+                    FirebaseTestLabUtil.isFirebaseTestLab(context.applicationContext) ||
+                        EmulatorWtfUtil.isEmulatorWtf(context.applicationContext)
                 ),
+                isTestnet = context.resources.getBoolean(cash.z.ecc.sdk.ext.R.bool.zcash_is_testnet),
                 gitSha = gitSha,
                 gitCommitCount = gitCommitCount.toLong()
             )
