@@ -2,6 +2,7 @@ package co.electriccoin.zcash.ui.design.component
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.text.KeyboardActions
@@ -52,6 +53,7 @@ fun FormTextField(
 
     val composedModifier =
         modifier
+            .defaultMinSize(minHeight = ZcashTheme.dimens.textFieldDefaultHeight)
             .onFocusEvent { focusState ->
                 if (focusState.isFocused) {
                     coroutineScope.launch {

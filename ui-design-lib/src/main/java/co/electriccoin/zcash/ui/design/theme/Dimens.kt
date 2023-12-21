@@ -35,6 +35,7 @@ data class Dimens(
     val topAppBarActionRippleCorner: Dp,
     // TextField:
     val textFieldDefaultHeight: Dp,
+    val textFieldPanelDefaultHeight: Dp,
     // Any Layout:
     val layoutStroke: Dp,
     // Screen custom spacings:
@@ -65,7 +66,8 @@ private val defaultDimens =
         circularScreenProgressWidth = 48.dp,
         topAppBarZcashLogoHeight = 24.dp,
         topAppBarActionRippleCorner = 28.dp,
-        textFieldDefaultHeight = 215.dp,
+        textFieldDefaultHeight = 64.dp,
+        textFieldPanelDefaultHeight = 215.dp,
         layoutStroke = 1.dp,
         inScreenZcashLogoHeight = 100.dp,
         inScreenZcashLogoWidth = 60.dp,

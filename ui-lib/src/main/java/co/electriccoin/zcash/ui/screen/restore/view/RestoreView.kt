@@ -488,7 +488,7 @@ private fun SeedGridWithText(
                         )
                 )
                 .fillMaxWidth()
-                .defaultMinSize(minHeight = ZcashTheme.dimens.textFieldDefaultHeight)
+                .defaultMinSize(minHeight = ZcashTheme.dimens.textFieldPanelDefaultHeight)
                 .then(modifier)
                 .testTag(RestoreTag.CHIP_LAYOUT)
     ) {

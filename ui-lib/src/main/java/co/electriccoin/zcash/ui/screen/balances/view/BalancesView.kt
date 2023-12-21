@@ -77,9 +77,7 @@ private fun BalancesTopAppBar(onSettings: () -> Unit) {
 }
 
 @Composable
-private fun BalancesMainContent(
-    modifier: Modifier = Modifier
-) {
+private fun BalancesMainContent(modifier: Modifier = Modifier) {
     Column(
         modifier =
             Modifier
