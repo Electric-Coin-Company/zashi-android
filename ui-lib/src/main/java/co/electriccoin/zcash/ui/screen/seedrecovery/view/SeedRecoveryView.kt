@@ -146,7 +146,7 @@ private fun SeedRecoveryMainContent(
         TopScreenLogoTitle(
             title = stringResource(R.string.seed_recovery_header),
             logoContentDescription = stringResource(R.string.zcash_logo_content_description),
-            modifier = Modifier.padding(horizontal = ZcashTheme.dimens.screenHorizontalSpacing)
+            modifier = Modifier.padding(horizontal = ZcashTheme.dimens.screenHorizontalSpacingBig)
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
@@ -154,7 +154,7 @@ private fun SeedRecoveryMainContent(
         BodySmall(
             text = stringResource(R.string.seed_recovery_description),
             textAlign = TextAlign.Center,
-            modifier = Modifier.padding(horizontal = ZcashTheme.dimens.screenHorizontalSpacing)
+            modifier = Modifier.padding(horizontal = ZcashTheme.dimens.screenHorizontalSpacingBig)
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
@@ -181,8 +181,8 @@ private fun SeedRecoveryMainContent(
                 Modifier
                     .padding(
                         bottom = ZcashTheme.dimens.spacingHuge,
-                        start = ZcashTheme.dimens.screenHorizontalSpacing,
-                        end = ZcashTheme.dimens.screenHorizontalSpacing
+                        start = ZcashTheme.dimens.screenHorizontalSpacingBig,
+                        end = ZcashTheme.dimens.screenHorizontalSpacingBig
                     )
         )
     }

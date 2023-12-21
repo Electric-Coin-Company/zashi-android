@@ -115,8 +115,8 @@ fun ShortOnboarding(
                             .padding(
                                 top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingHuge,
                                 bottom = paddingValues.calculateBottomPadding(),
-                                start = ZcashTheme.dimens.screenHorizontalSpacing,
-                                end = ZcashTheme.dimens.screenHorizontalSpacing
+                                start = ZcashTheme.dimens.screenHorizontalSpacingBig,
+                                end = ZcashTheme.dimens.screenHorizontalSpacingBig
                             )
                             .height(screenHeight.contentHeight - paddingValues.calculateBottomPadding())
                 )

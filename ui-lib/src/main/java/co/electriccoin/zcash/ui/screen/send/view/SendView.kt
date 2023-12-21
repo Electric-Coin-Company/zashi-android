@@ -183,8 +183,8 @@ fun Send(
                     .padding(
                         top = paddingValues.calculateTopPadding() + dimens.spacingDefault,
                         bottom = paddingValues.calculateBottomPadding() + dimens.spacingHuge,
-                        start = dimens.screenHorizontalSpacing,
-                        end = dimens.screenHorizontalSpacing
+                        start = dimens.screenHorizontalSpacingRegular,
+                        end = dimens.screenHorizontalSpacingRegular
                     )
         )
     }

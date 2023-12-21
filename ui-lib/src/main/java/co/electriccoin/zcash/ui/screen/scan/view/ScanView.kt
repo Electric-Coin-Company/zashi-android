@@ -302,7 +302,7 @@ private fun ScanMainContent(
                         .fillMaxWidth()
                         .padding(
                             vertical = ZcashTheme.dimens.spacingHuge,
-                            horizontal = ZcashTheme.dimens.screenHorizontalSpacing
+                            horizontal = ZcashTheme.dimens.screenHorizontalSpacingBig
                         )
             )
         }

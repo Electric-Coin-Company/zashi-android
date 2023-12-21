@@ -90,8 +90,8 @@ fun Receive(
                     .verticalScroll(rememberScrollState())
                     .padding(
                         top = ZcashTheme.dimens.spacingDefault,
-                        start = ZcashTheme.dimens.screenHorizontalSpacing,
-                        end = ZcashTheme.dimens.screenHorizontalSpacing
+                        start = ZcashTheme.dimens.screenHorizontalSpacingRegular,
+                        end = ZcashTheme.dimens.screenHorizontalSpacingRegular
                     )
         )
     }

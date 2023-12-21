@@ -77,8 +77,8 @@ fun Account(
                 Modifier.padding(
                     top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
                     bottom = paddingValues.calculateBottomPadding() + ZcashTheme.dimens.spacingHuge,
-                    start = ZcashTheme.dimens.screenHorizontalSpacing,
-                    end = ZcashTheme.dimens.screenHorizontalSpacing
+                    start = ZcashTheme.dimens.screenHorizontalSpacingRegular,
+                    end = ZcashTheme.dimens.screenHorizontalSpacingRegular
                 )
         )
     }

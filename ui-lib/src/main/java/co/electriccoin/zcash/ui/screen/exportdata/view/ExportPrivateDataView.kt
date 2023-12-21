@@ -70,8 +70,8 @@ fun ExportPrivateData(
                     .padding(
                         top = paddingValues.calculateTopPadding(),
                         bottom = paddingValues.calculateBottomPadding(),
-                        start = ZcashTheme.dimens.screenHorizontalSpacing,
-                        end = ZcashTheme.dimens.screenHorizontalSpacing
+                        start = ZcashTheme.dimens.screenHorizontalSpacingBig,
+                        end = ZcashTheme.dimens.screenHorizontalSpacingBig
                     )
                     .verticalScroll(rememberScrollState())
         )
