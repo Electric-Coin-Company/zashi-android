@@ -2,15 +2,19 @@
 
 package co.electriccoin.zcash.ui.screen.send.view
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -26,10 +30,13 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -176,10 +183,6 @@ fun Send(
             hasCameraFeature = hasCameraFeature,
             modifier =
                 Modifier
-                    .fillMaxHeight()
-                    .verticalScroll(
-                        rememberScrollState()
-                    )
                     .padding(
                         top = paddingValues.calculateTopPadding() + dimens.spacingDefault,
                         bottom = paddingValues.calculateBottomPadding() + dimens.spacingHuge,
@@ -249,6 +252,7 @@ private fun SendMainContent(
                 hasCameraFeature = hasCameraFeature,
                 modifier = modifier
             )
+            // TestSend(modifier)
         }
         (sendStage == SendStage.Confirmation) -> {
             SendConfirmation(
@@ -286,6 +290,7 @@ private fun SendMainContent(
 // TODO [#217]: Need to handle changing of Locale after user input, but before submitting the button.
 // TODO [#288]: TextField component can't do long-press backspace.
 // TODO [#294]: DetektAll failed LongMethod
+@OptIn(ExperimentalFoundationApi::class)
 @Suppress("LongMethod", "LongParameterList", "CyclomaticComplexMethod")
 @Composable
 private fun SendForm(
@@ -300,6 +305,7 @@ private fun SendForm(
     val context = LocalContext.current
     val monetarySeparators = MonetarySeparators.current()
     val allowedCharacters = ZecString.allowedCharacters(monetarySeparators)
+    val focusManager = LocalFocusManager.current
 
     // TODO [#809]: Fix ZEC balance on Send screen
     // TODO [#809]: https://github.com/Electric-Coin-Company/zashi-android/issues/809
@@ -328,7 +334,12 @@ private fun SendForm(
     }
 
     Column(
-        modifier = modifier,
+        modifier =
+            Modifier
+                .imePadding()
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .then(modifier),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Header(
@@ -346,9 +357,13 @@ private fun SendForm(
 
         FormTextField(
             value = recipientAddressString,
-            onValueChange = { recipientAddressString = it },
+            onValueChange = {
+                recipientAddressString = it
+            },
             label = { Text(stringResource(id = R.string.send_to)) },
-            modifier = Modifier.fillMaxWidth(),
+            modifier =
+                Modifier
+                    .fillMaxWidth(),
             trailingIcon =
                 if (hasCameraFeature) {
                     {
@@ -364,7 +379,18 @@ private fun SendForm(
                     }
                 } else {
                     null
-                }
+                },
+            keyboardOptions =
+                KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Next
+                ),
+            keyboardActions =
+                KeyboardActions(
+                    onNext = {
+                        focusManager.moveFocus(FocusDirection.Down)
+                    }
+                )
         )
 
         Spacer(Modifier.size(dimens.spacingSmall))
@@ -377,7 +403,17 @@ private fun SendForm(
                 }
                 amountZecString = newValue.filter { allowedCharacters.contains(it) }
             },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            keyboardOptions =
+                KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Next
+                ),
+            keyboardActions =
+                KeyboardActions(
+                    onNext = {
+                        focusManager.moveFocus(FocusDirection.Down)
+                    }
+                ),
             label = { Text(stringResource(id = R.string.send_amount)) },
             modifier = Modifier.fillMaxWidth()
         )
@@ -393,15 +429,19 @@ private fun SendForm(
                     memoString = it
                 }
             },
+            keyboardOptions =
+                KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Done
+                ),
+            keyboardActions =
+                KeyboardActions(
+                    onNext = {
+                        focusManager.clearFocus(true)
+                    }
+                ),
             label = { Text(stringResource(id = R.string.send_memo)) },
             modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(
-            modifier =
-                Modifier
-                    .fillMaxHeight()
-                    .weight(MINIMAL_WEIGHT)
         )
 
         if (validation.isNotEmpty()) {
@@ -415,6 +455,13 @@ private fun SendForm(
                 modifier = Modifier.fillMaxWidth()
             )
         }
+
+        Spacer(
+            modifier =
+                Modifier
+                    .fillMaxHeight()
+                    .weight(MINIMAL_WEIGHT)
+        )
 
         Spacer(modifier = Modifier.height(dimens.spacingDefault))
 
@@ -448,7 +495,6 @@ private fun SendForm(
             },
             text = stringResource(id = R.string.send_create),
             enabled = sendButtonEnabled,
-            outerPaddingValues = PaddingValues(top = dimens.spacingNone),
             modifier = Modifier.testTag(SendTag.SEND_FORM_BUTTON)
         )
     }

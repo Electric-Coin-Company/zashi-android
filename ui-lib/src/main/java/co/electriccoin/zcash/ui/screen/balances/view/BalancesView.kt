@@ -1,10 +1,14 @@
 package co.electriccoin.zcash.ui.screen.balances.view
 
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -73,12 +77,18 @@ private fun BalancesTopAppBar(onSettings: () -> Unit) {
 }
 
 @Composable
-private fun BalancesMainContent(modifier: Modifier = Modifier) {
-    Box(
-        Modifier
-            .fillMaxSize()
-            .then(modifier),
-        contentAlignment = Alignment.Center
+private fun BalancesMainContent(
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier =
+            Modifier
+                .imePadding()
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .then(modifier),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
     ) {
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 

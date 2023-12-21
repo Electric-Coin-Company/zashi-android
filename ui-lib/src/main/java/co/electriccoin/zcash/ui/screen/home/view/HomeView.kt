@@ -94,9 +94,9 @@ fun Home(
             pageSpacing = 0.dp,
             pageSize = PageSize.Fill,
             pageNestedScrollConnection =
-            PagerDefaults.pageNestedScrollConnection(
-                Orientation.Horizontal
-            ),
+                PagerDefaults.pageNestedScrollConnection(
+                    Orientation.Horizontal
+                ),
             pageContent = { index ->
                 subScreens[index].screenContent()
             },
@@ -104,25 +104,27 @@ fun Home(
                 subScreens[index].title
             },
             beyondBoundsPageCount = 1,
-            modifier = Modifier.constrainAs(pager) {
-                top.linkTo(parent.top)
-                bottom.linkTo(tabRow.top)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-                width = Dimension.fillToConstraints
-                height = Dimension.fillToConstraints
-            }
+            modifier =
+                Modifier.constrainAs(pager) {
+                    top.linkTo(parent.top)
+                    bottom.linkTo(tabRow.top)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                    width = Dimension.fillToConstraints
+                    height = Dimension.fillToConstraints
+                }
         )
 
         Column(
-            modifier = Modifier.constrainAs(tabRow) {
-                top.linkTo(pager.bottom)
-                bottom.linkTo(parent.bottom)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-                width = Dimension.fillToConstraints
-                height = Dimension.wrapContent
-            }
+            modifier =
+                Modifier.constrainAs(tabRow) {
+                    top.linkTo(pager.bottom)
+                    bottom.linkTo(parent.bottom)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                    width = Dimension.fillToConstraints
+                    height = Dimension.wrapContent
+                }
         ) {
             Divider(
                 thickness = DividerDefaults.Thickness,
@@ -136,16 +138,16 @@ fun Home(
                 indicator = { tabPositions ->
                     TabRowDefaults.Indicator(
                         modifier =
-                        Modifier
-                            .tabIndicatorOffset(tabPositions[pagerState.currentPage])
-                            .padding(horizontal = ZcashTheme.dimens.spacingDefault),
+                            Modifier
+                                .tabIndicatorOffset(tabPositions[pagerState.currentPage])
+                                .padding(horizontal = ZcashTheme.dimens.spacingDefault),
                         color = ZcashTheme.colors.complementaryColor
                     )
                 },
                 modifier =
-                Modifier
-                    .navigationBarsPadding()
-                    .padding(all = ZcashTheme.dimens.spacingDefault)
+                    Modifier
+                        .navigationBarsPadding()
+                        .padding(all = ZcashTheme.dimens.spacingDefault)
             ) {
                 subScreens.forEachIndexed { index, item ->
                     val selected = index == pagerState.currentPage
@@ -158,9 +160,9 @@ fun Home(
                             )
                         },
                         modifier =
-                        Modifier
-                            .padding(all = 0.dp)
-                            .testTag(item.testTag),
+                            Modifier
+                                .padding(all = 0.dp)
+                                .testTag(item.testTag),
                         onClick = { coroutineScope.launch { pagerState.animateScrollToPage(index) } },
                     )
                 }

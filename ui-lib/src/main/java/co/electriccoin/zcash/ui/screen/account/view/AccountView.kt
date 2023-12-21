@@ -115,9 +115,7 @@ private fun AccountMainContent(
     Column(
         Modifier
             .fillMaxHeight()
-            .verticalScroll(
-                rememberScrollState()
-            )
+            .verticalScroll(rememberScrollState())
             .then(modifier),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

@@ -4,6 +4,7 @@ package co.electriccoin.zcash.ui.screen.restore.view
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -674,6 +675,7 @@ private fun Warn(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 @Suppress("LongMethod")
 private fun RestoreBirthdayMainContent(
