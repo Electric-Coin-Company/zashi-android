@@ -172,8 +172,8 @@ class SendViewTest : UiTestPrerequisites() {
             composeTestRule.setAmount("123")
             composeTestRule.assertSendEnabled()
 
-            // e.g. 123,
-            composeTestRule.setAmount("123${separators.grouping}")
+            // e.g. 123,456
+            composeTestRule.setAmount("123${separators.grouping}456")
             composeTestRule.assertSendEnabled()
 
             // e.g. 123.

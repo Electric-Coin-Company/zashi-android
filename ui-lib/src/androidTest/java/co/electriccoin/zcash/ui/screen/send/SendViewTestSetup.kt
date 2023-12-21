@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
+import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.sdk.fixture.ZatoshiFixture
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
@@ -95,7 +96,7 @@ class SendViewTestSetup(
 
         ZcashTheme {
             Send(
-                mySpendableBalance = ZatoshiFixture.new(),
+                mySpendableBalance = ZatoshiFixture.new(Zatoshi.MAX_INCLUSIVE),
                 sendStage = sendStage,
                 sendArgumentsWrapper = initialSendArgumentWrapper,
                 onSendStageChange = setSendStage,

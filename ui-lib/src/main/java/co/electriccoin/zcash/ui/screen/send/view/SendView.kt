@@ -33,6 +33,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import cash.z.ecc.android.sdk.ext.ZcashSdk
 import cash.z.ecc.android.sdk.fixture.WalletAddressFixture
 import cash.z.ecc.android.sdk.model.Memo
 import cash.z.ecc.android.sdk.model.MonetarySeparators
@@ -41,6 +42,7 @@ import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.android.sdk.model.ZecSendExt
 import cash.z.ecc.android.sdk.model.ZecString
 import cash.z.ecc.android.sdk.model.ZecStringExt
+import cash.z.ecc.android.sdk.model.fromZecString
 import cash.z.ecc.android.sdk.model.toZecString
 import cash.z.ecc.sdk.fixture.MemoFixture
 import cash.z.ecc.sdk.fixture.ZatoshiFixture
@@ -284,7 +286,7 @@ private fun SendMainContent(
 // TODO [#217]: Need to handle changing of Locale after user input, but before submitting the button.
 // TODO [#288]: TextField component can't do long-press backspace.
 // TODO [#294]: DetektAll failed LongMethod
-@Suppress("LongMethod", "LongParameterList")
+@Suppress("LongMethod", "LongParameterList", "CyclomaticComplexMethod")
 @Composable
 private fun SendForm(
     myBalance: Zatoshi,
@@ -416,6 +418,18 @@ private fun SendForm(
 
         Spacer(modifier = Modifier.height(dimens.spacingDefault))
 
+        // Create a send amount that is continuously checked for validity
+        val sendValueCheck = (Zatoshi.fromZecString(context, amountZecString, monetarySeparators))?.value ?: 0L
+
+        // Continuous amount check while user is typing into the amount field
+        // Note: the check for ABBREVIATION_INDEX goes away once proper address validation is in place.
+        // For now, it just prevents a crash on the confirmation screen.
+        val sendButtonEnabled =
+            amountZecString.isNotBlank() &&
+                sendValueCheck > 0L &&
+                myBalance.value >= (sendValueCheck + ZcashSdk.MINERS_FEE.value) &&
+                recipientAddressString.length > ABBREVIATION_INDEX
+
         PrimaryButton(
             onClick = {
                 val zecSendValidation =
@@ -433,9 +447,7 @@ private fun SendForm(
                 }
             },
             text = stringResource(id = R.string.send_create),
-            // Check for ABBREVIATION_INDEX goes away once proper address validation is in place.
-            // For now, it just prevents a crash on the confirmation screen.
-            enabled = amountZecString.isNotBlank() && recipientAddressString.length > ABBREVIATION_INDEX,
+            enabled = sendButtonEnabled,
             outerPaddingValues = PaddingValues(top = dimens.spacingNone),
             modifier = Modifier.testTag(SendTag.SEND_FORM_BUTTON)
         )

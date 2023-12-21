@@ -6,6 +6,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.test.filters.MediumTest
 import cash.z.ecc.android.sdk.fixture.WalletFixture
+import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.ZcashNetwork
 import cash.z.ecc.sdk.fixture.ZatoshiFixture
 import cash.z.ecc.sdk.fixture.ZecSendFixture
@@ -38,7 +39,7 @@ class SendViewIntegrationTest {
             )
         }
     private val synchronizer = MockSynchronizer.new()
-    private val balance = ZatoshiFixture.new()
+    private val balance = ZatoshiFixture.new(Zatoshi.MAX_INCLUSIVE)
 
     @Test
     @MediumTest
