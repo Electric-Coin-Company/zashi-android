@@ -102,8 +102,8 @@ fun Settings(
                     .padding(
                         top = paddingValues.calculateTopPadding() + dimens.spacingHuge,
                         bottom = paddingValues.calculateBottomPadding(),
-                        start = dimens.screenHorizontalSpacing,
-                        end = dimens.screenHorizontalSpacing
+                        start = dimens.screenHorizontalSpacingBig,
+                        end = dimens.screenHorizontalSpacingBig
                     ),
             onSeedRecovery = onSeedRecovery,
             onDocumentation = onDocumentation,

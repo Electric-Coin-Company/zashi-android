@@ -4,7 +4,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -15,6 +14,7 @@ import androidx.compose.material.icons.filled.BrightnessLow
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -70,8 +70,7 @@ fun Receive(
 ) {
     val (brightness, setBrightness) = rememberSaveable { mutableStateOf(false) }
 
-    // Rework this into Scaffold
-    Column {
+    Scaffold(topBar = {
         ReceiveTopAppBar(
             adjustBrightness = brightness,
             onSettings = onSettings,
@@ -80,19 +79,18 @@ fun Receive(
                 setBrightness(!brightness)
             }
         )
+    }) { paddingValues ->
         ReceiveContents(
             walletAddress = walletAddress,
             onAddressDetails = onAddressDetails,
             adjustBrightness = brightness,
             modifier =
-                Modifier
-                    .fillMaxHeight()
-                    .verticalScroll(rememberScrollState())
-                    .padding(
-                        top = ZcashTheme.dimens.spacingDefault,
-                        start = ZcashTheme.dimens.screenHorizontalSpacing,
-                        end = ZcashTheme.dimens.screenHorizontalSpacing
-                    )
+                Modifier.padding(
+                    top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
+                    bottom = paddingValues.calculateBottomPadding() + ZcashTheme.dimens.spacingHuge,
+                    start = ZcashTheme.dimens.screenHorizontalSpacingRegular,
+                    end = ZcashTheme.dimens.screenHorizontalSpacingRegular
+                )
         )
     }
 }
@@ -144,7 +142,11 @@ private fun ReceiveContents(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier.fillMaxWidth(),
+        modifier =
+            Modifier
+                .fillMaxHeight()
+                .verticalScroll(rememberScrollState())
+                .then(modifier),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         QrCode(
@@ -181,14 +183,12 @@ private fun ReceiveContents(
                     .weight(MINIMAL_WEIGHT)
         )
 
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
         PrimaryButton(
             onClick = onAddressDetails,
             text = stringResource(id = R.string.receive_see_address_details)
         )
-
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingHuge))
     }
 }
 

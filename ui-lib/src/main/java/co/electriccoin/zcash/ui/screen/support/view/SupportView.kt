@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.screen.support.view
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -86,8 +87,8 @@ fun Support(
                 Modifier.padding(
                     top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
                     bottom = paddingValues.calculateBottomPadding(),
-                    start = ZcashTheme.dimens.screenHorizontalSpacing,
-                    end = ZcashTheme.dimens.screenHorizontalSpacing
+                    start = ZcashTheme.dimens.screenHorizontalSpacingRegular,
+                    end = ZcashTheme.dimens.screenHorizontalSpacingRegular
                 )
         )
 
@@ -118,6 +119,7 @@ private fun SupportTopAppBar(onBack: () -> Unit) {
     )
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun SupportMainContent(
     message: String,

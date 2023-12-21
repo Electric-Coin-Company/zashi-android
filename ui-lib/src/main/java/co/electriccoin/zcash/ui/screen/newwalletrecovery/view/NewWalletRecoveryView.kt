@@ -139,7 +139,7 @@ private fun NewWalletRecoveryMainContent(
         TopScreenLogoTitle(
             title = stringResource(R.string.new_wallet_recovery_header),
             logoContentDescription = stringResource(R.string.zcash_logo_content_description),
-            modifier = Modifier.padding(horizontal = ZcashTheme.dimens.screenHorizontalSpacing)
+            modifier = Modifier.padding(horizontal = ZcashTheme.dimens.screenHorizontalSpacingBig)
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
@@ -147,7 +147,7 @@ private fun NewWalletRecoveryMainContent(
         BodySmall(
             text = stringResource(R.string.new_wallet_recovery_description),
             textAlign = TextAlign.Center,
-            modifier = Modifier.padding(horizontal = ZcashTheme.dimens.screenHorizontalSpacing)
+            modifier = Modifier.padding(horizontal = ZcashTheme.dimens.screenHorizontalSpacingBig)
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
@@ -174,8 +174,8 @@ private fun NewWalletRecoveryMainContent(
                 Modifier
                     .padding(
                         bottom = ZcashTheme.dimens.spacingHuge,
-                        start = ZcashTheme.dimens.screenHorizontalSpacing,
-                        end = ZcashTheme.dimens.screenHorizontalSpacing
+                        start = ZcashTheme.dimens.screenHorizontalSpacingBig,
+                        end = ZcashTheme.dimens.screenHorizontalSpacingBig
                     )
         )
     }

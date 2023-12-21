@@ -79,8 +79,8 @@ fun Update(
                         .padding(
                             top = ZcashTheme.dimens.spacingDefault,
                             bottom = ZcashTheme.dimens.spacingHuge,
-                            start = ZcashTheme.dimens.screenHorizontalSpacing,
-                            end = ZcashTheme.dimens.screenHorizontalSpacing
+                            start = ZcashTheme.dimens.screenHorizontalSpacingBig,
+                            end = ZcashTheme.dimens.screenHorizontalSpacingBig
                         )
             )
         }

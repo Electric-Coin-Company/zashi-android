@@ -14,6 +14,8 @@ directly impact users rather than highlighting other key architectural updates.*
 - Re-enabled the possibility of installing different Zashi application build types on the same device simultaneously 
   (i.e., Mainnet, Testnet, Production, Debug)  
 - Send screen form now validates a maximum amount for sending with respect to the available balance
+- Send form now supports software keyboard confirm actions 
+- And a few more miner UI improvements
 
 ## [0.2.0 (505)] - 2023-12-11
 

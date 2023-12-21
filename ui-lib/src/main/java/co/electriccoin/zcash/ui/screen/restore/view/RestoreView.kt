@@ -4,6 +4,7 @@ package co.electriccoin.zcash.ui.screen.restore.view
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -236,8 +237,8 @@ fun RestoreWallet(
                     .padding(
                         top = paddingValues.calculateTopPadding(),
                         bottom = paddingValues.calculateBottomPadding(),
-                        start = ZcashTheme.dimens.screenHorizontalSpacing,
-                        end = ZcashTheme.dimens.screenHorizontalSpacing
+                        start = ZcashTheme.dimens.screenHorizontalSpacingBig,
+                        end = ZcashTheme.dimens.screenHorizontalSpacingBig
                     )
 
             when (currentStage) {
@@ -487,7 +488,7 @@ private fun SeedGridWithText(
                         )
                 )
                 .fillMaxWidth()
-                .defaultMinSize(minHeight = ZcashTheme.dimens.textFieldDefaultHeight)
+                .defaultMinSize(minHeight = ZcashTheme.dimens.textFieldPanelDefaultHeight)
                 .then(modifier)
                 .testTag(RestoreTag.CHIP_LAYOUT)
     ) {
@@ -674,6 +675,7 @@ private fun Warn(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 @Suppress("LongMethod")
 private fun RestoreBirthdayMainContent(

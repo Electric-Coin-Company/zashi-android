@@ -77,8 +77,8 @@ fun Request(
                 Modifier.padding(
                     top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
                     bottom = paddingValues.calculateTopPadding(),
-                    start = ZcashTheme.dimens.screenHorizontalSpacing,
-                    end = ZcashTheme.dimens.screenHorizontalSpacing
+                    start = ZcashTheme.dimens.screenHorizontalSpacingRegular,
+                    end = ZcashTheme.dimens.screenHorizontalSpacingRegular
                 )
         )
     }
