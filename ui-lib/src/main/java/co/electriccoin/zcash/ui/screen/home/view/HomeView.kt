@@ -11,7 +11,6 @@ import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DividerDefaults
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
@@ -24,6 +23,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.NavigationTabText
@@ -85,60 +86,17 @@ fun Home(
 
     val coroutineScope = rememberCoroutineScope()
 
-    Scaffold(
-        bottomBar = {
-            Column {
-                Divider(
-                    thickness = DividerDefaults.Thickness,
-                    color = ZcashTheme.colors.dividerColor
-                )
-                TabRow(
-                    selectedTabIndex = pagerState.currentPage,
-                    // Don't use the predefined divider, as it's fixed position is below the tabs bar
-                    divider = {},
-                    indicator = { tabPositions ->
-                        TabRowDefaults.Indicator(
-                            modifier =
-                                Modifier
-                                    .tabIndicatorOffset(tabPositions[pagerState.currentPage])
-                                    .padding(horizontal = ZcashTheme.dimens.spacingDefault),
-                            color = ZcashTheme.colors.complementaryColor
-                        )
-                    },
-                    modifier =
-                        Modifier
-                            .navigationBarsPadding()
-                            .padding(all = ZcashTheme.dimens.spacingDefault)
-                ) {
-                    subScreens.forEachIndexed { index, item ->
-                        val selected = index == pagerState.currentPage
-                        Tab(
-                            selected = selected,
-                            text = {
-                                NavigationTabText(
-                                    text = item.title,
-                                    selected = selected
-                                )
-                            },
-                            modifier =
-                                Modifier
-                                    .padding(all = 0.dp)
-                                    .testTag(item.testTag),
-                            onClick = { coroutineScope.launch { pagerState.animateScrollToPage(index) } },
-                        )
-                    }
-                }
-            }
-        }
-    ) { paddingValues ->
+    ConstraintLayout {
+        val (pager, tabRow) = createRefs()
+
         HorizontalPager(
             state = pagerState,
             pageSpacing = 0.dp,
             pageSize = PageSize.Fill,
             pageNestedScrollConnection =
-                PagerDefaults.pageNestedScrollConnection(
-                    Orientation.Horizontal
-                ),
+            PagerDefaults.pageNestedScrollConnection(
+                Orientation.Horizontal
+            ),
             pageContent = { index ->
                 subScreens[index].screenContent()
             },
@@ -146,11 +104,67 @@ fun Home(
                 subScreens[index].title
             },
             beyondBoundsPageCount = 1,
-            modifier =
-                Modifier
-                    .padding(
-                        bottom = paddingValues.calculateBottomPadding()
-                    )
+            modifier = Modifier.constrainAs(pager) {
+                top.linkTo(parent.top)
+                bottom.linkTo(tabRow.top)
+                start.linkTo(parent.start)
+                end.linkTo(parent.end)
+                width = Dimension.fillToConstraints
+                height = Dimension.fillToConstraints
+            }
         )
+
+        Column(
+            modifier = Modifier.constrainAs(tabRow) {
+                top.linkTo(pager.bottom)
+                bottom.linkTo(parent.bottom)
+                start.linkTo(parent.start)
+                end.linkTo(parent.end)
+                width = Dimension.fillToConstraints
+                height = Dimension.wrapContent
+            }
+        ) {
+            Divider(
+                thickness = DividerDefaults.Thickness,
+                color = ZcashTheme.colors.dividerColor
+            )
+
+            TabRow(
+                selectedTabIndex = pagerState.currentPage,
+                // Don't use the predefined divider, as it's fixed position is below the tabs bar
+                divider = {},
+                indicator = { tabPositions ->
+                    TabRowDefaults.Indicator(
+                        modifier =
+                        Modifier
+                            .tabIndicatorOffset(tabPositions[pagerState.currentPage])
+                            .padding(horizontal = ZcashTheme.dimens.spacingDefault),
+                        color = ZcashTheme.colors.complementaryColor
+                    )
+                },
+                modifier =
+                Modifier
+                    .navigationBarsPadding()
+                    .padding(all = ZcashTheme.dimens.spacingDefault)
+            ) {
+                subScreens.forEachIndexed { index, item ->
+                    val selected = index == pagerState.currentPage
+                    Tab(
+                        selected = selected,
+                        text = {
+                            NavigationTabText(
+                                text = item.title,
+                                selected = selected
+                            )
+                        },
+                        modifier =
+                        Modifier
+                            .padding(all = 0.dp)
+                            .testTag(item.testTag),
+                        onClick = { coroutineScope.launch { pagerState.animateScrollToPage(index) } },
+                    )
+                }
+            }
+        }
     }
 }
