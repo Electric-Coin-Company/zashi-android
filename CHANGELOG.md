@@ -17,6 +17,11 @@ directly impact users rather than highlighting other key architectural updates.*
 - Send form now supports software keyboard confirm actions 
 - And a few more miner UI improvements
 
+### Fixed
+- Resizing Send screen Form TextFields when focused
+- Hidden Send screen Form TextFields behind the software keyboard when focused
+- Monetary separators issues on the Send screen Form
+
 ## [0.2.0 (505)] - 2023-12-11
 
 ### Added

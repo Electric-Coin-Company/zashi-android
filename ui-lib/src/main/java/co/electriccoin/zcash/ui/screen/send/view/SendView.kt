@@ -53,6 +53,7 @@ import cash.z.ecc.android.sdk.model.fromZecString
 import cash.z.ecc.android.sdk.model.toZecString
 import cash.z.ecc.sdk.fixture.MemoFixture
 import cash.z.ecc.sdk.fixture.ZatoshiFixture
+import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.test.CommonTag
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
@@ -398,9 +399,18 @@ private fun SendForm(
         FormTextField(
             value = amountZecString,
             onValueChange = { newValue ->
-                if (!ZecStringExt.filterContinuous(context, monetarySeparators, newValue)) {
+                val validated =
+                    runCatching {
+                        ZecStringExt.filterContinuous(context, monetarySeparators, newValue)
+                    }.onFailure {
+                        Twig.error(it) { "Failed while filtering incoming characters in filterContinuous" }
+                        return@FormTextField
+                    }.getOrDefault(false)
+
+                if (!validated) {
                     return@FormTextField
                 }
+
                 amountZecString = newValue.filter { allowedCharacters.contains(it) }
             },
             keyboardOptions =
