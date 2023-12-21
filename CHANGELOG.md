@@ -9,6 +9,8 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [0.2.0 (517)] - 2023-12-21
+
 ### Changed
 - Home screen navigation switched from the Side menu to the Bottom Navigation Tabs menu
 - Re-enabled the possibility of installing different Zashi application build types on the same device simultaneously 
