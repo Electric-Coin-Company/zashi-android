@@ -11,6 +11,7 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ### Added
 - Transaction history items now display Memos within the Android Toast, triggered by clicking the item
+- Transaction history items add displaying transaction IDs; the ID element is also clickable
 
 ## [0.2.0 (517)] - 2023-12-21
 
