@@ -104,15 +104,20 @@ fun TitleLarge(
 }
 
 @Composable
+@Suppress("LongParameterList")
 fun Small(
     text: String,
     modifier: Modifier = Modifier,
+    maxLines: Int = Int.MAX_VALUE,
+    overflow: TextOverflow = TextOverflow.Clip,
     textAlign: TextAlign = TextAlign.Start,
     color: Color = MaterialTheme.colorScheme.onBackground,
 ) {
     Text(
         text = text,
         color = color,
+        maxLines = maxLines,
+        overflow = overflow,
         textAlign = textAlign,
         modifier = modifier,
         style = MaterialTheme.typography.bodyMedium,

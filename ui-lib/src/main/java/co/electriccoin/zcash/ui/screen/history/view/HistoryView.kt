@@ -1,19 +1,18 @@
 package co.electriccoin.zcash.ui.screen.history.view
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Cancel
@@ -22,6 +21,8 @@ import androidx.compose.material.icons.outlined.ArrowCircleUp
 import androidx.compose.material.icons.twotone.ArrowCircleDown
 import androidx.compose.material.icons.twotone.ArrowCircleUp
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
+import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -65,7 +66,8 @@ private fun ComposablePreview() {
         GradientSurface {
             History(
                 transactionState = TransactionHistorySyncState.Loading,
-                goBack = {}
+                onBack = {},
+                onItemClick = {}
             )
         }
     }
@@ -86,7 +88,8 @@ private fun ComposableHistoryListPreview() {
                             TransactionOverviewFixture.new(netValue = Zatoshi(300000000)),
                         )
                     ),
-                goBack = {}
+                onBack = {},
+                onItemClick = {}
             )
         }
     }
@@ -103,13 +106,15 @@ val dateFormat: DateFormat by lazy {
 @Composable
 fun History(
     transactionState: TransactionHistorySyncState,
-    goBack: () -> Unit
+    onBack: () -> Unit,
+    onItemClick: (TransactionOverview) -> Unit
 ) {
     Scaffold(topBar = {
-        HistoryTopBar(onBack = goBack)
+        HistoryTopBar(onBack = onBack)
     }) { paddingValues ->
         HistoryMainContent(
             transactionState = transactionState,
+            onItemClick = onItemClick,
             modifier =
                 Modifier
                     .fillMaxHeight()
@@ -142,6 +147,7 @@ private fun HistoryTopBar(onBack: () -> Unit) {
 @Composable
 private fun HistoryMainContent(
     transactionState: TransactionHistorySyncState,
+    onItemClick: (TransactionOverview) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(modifier = modifier.fillMaxSize()) {
@@ -169,7 +175,10 @@ private fun HistoryMainContent(
                                     end = ZcashTheme.dimens.spacingDefault
                                 )
                     )
-                    HistoryList(transactions = transactionState.transactions)
+                    HistoryList(
+                        transactions = transactionState.transactions,
+                        onItemClick = onItemClick
+                    )
                 }
                 // Add progress indicator only in the state of empty transaction
                 if (transactionState.hasNoTransactions()) {
@@ -191,7 +200,10 @@ private fun HistoryMainContent(
                                 .align(alignment = Center)
                     )
                 } else {
-                    HistoryList(transactions = transactionState.transactions)
+                    HistoryList(
+                        transactions = transactionState.transactions,
+                        onItemClick = onItemClick
+                    )
                 }
             }
         }
@@ -199,17 +211,25 @@ private fun HistoryMainContent(
 }
 
 @Composable
-private fun HistoryList(transactions: ImmutableList<TransactionOverview>) {
+private fun HistoryList(
+    transactions: ImmutableList<TransactionOverview>,
+    onItemClick: (TransactionOverview) -> Unit
+) {
     val currency = ZcashCurrency.fromResources(LocalContext.current)
-    LazyColumn(
-        contentPadding = PaddingValues(all = ZcashTheme.dimens.spacingDefault),
-        modifier = Modifier.testTag(HistoryTag.TRANSACTION_LIST)
-    ) {
-        items(transactions) {
+    LazyColumn(modifier = Modifier.testTag(HistoryTag.TRANSACTION_LIST)) {
+        itemsIndexed(transactions) { index, item ->
             HistoryItem(
-                transaction = it,
-                currency = currency
+                transaction = item,
+                currency = currency,
+                onItemClick = onItemClick,
+                modifier = Modifier.testTag(HistoryTag.TRANSACTION_ITEM)
             )
+            if (index < transactions.lastIndex) {
+                Divider(
+                    color = ZcashTheme.colors.dividerColor,
+                    thickness = DividerDefaults.Thickness
+                )
+            }
         }
     }
 }
@@ -218,86 +238,99 @@ private fun HistoryList(transactions: ImmutableList<TransactionOverview>) {
 @Suppress("LongMethod")
 fun HistoryItem(
     transaction: TransactionOverview,
-    currency: ZcashCurrency
+    currency: ZcashCurrency,
+    onItemClick: (TransactionOverview) -> Unit,
+    modifier: Modifier = Modifier
 ) {
+    val transactionTypeText: String
+    val transactionTypeIcon: ImageVector
+    when (transaction.getExtendedState()) {
+        TransactionExtendedState.SENT -> {
+            transactionTypeText = stringResource(id = R.string.history_item_sent)
+            transactionTypeIcon = Icons.TwoTone.ArrowCircleUp
+        }
+        TransactionExtendedState.SENDING -> {
+            transactionTypeText = stringResource(id = R.string.history_item_sending)
+            transactionTypeIcon = Icons.Outlined.ArrowCircleUp
+        }
+        TransactionExtendedState.RECEIVED -> {
+            transactionTypeText = stringResource(id = R.string.history_item_received)
+            transactionTypeIcon = Icons.TwoTone.ArrowCircleDown
+        }
+        TransactionExtendedState.RECEIVING -> {
+            transactionTypeText = stringResource(id = R.string.history_item_receiving)
+            transactionTypeIcon = Icons.Outlined.ArrowCircleDown
+        }
+        TransactionExtendedState.EXPIRED -> {
+            transactionTypeText = stringResource(id = R.string.history_item_expired)
+            transactionTypeIcon = Icons.Filled.Cancel
+        }
+    }
+
     Row(
         modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(vertical = ZcashTheme.dimens.spacingSmall),
+            modifier.then(
+                Modifier
+                    .fillMaxWidth()
+                    .clickable { onItemClick(transaction) }
+                    .padding(
+                        horizontal = ZcashTheme.dimens.spacingDefault,
+                        vertical = ZcashTheme.dimens.spacingDefault
+                    )
+            ),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        val transactionText: String
-        val transactionIcon: ImageVector
-        when (transaction.getExtendedState()) {
-            TransactionExtendedState.SENT -> {
-                transactionText = stringResource(id = R.string.history_item_sent)
-                transactionIcon = Icons.TwoTone.ArrowCircleUp
-            }
-            TransactionExtendedState.SENDING -> {
-                transactionText = stringResource(id = R.string.history_item_sending)
-                transactionIcon = Icons.Outlined.ArrowCircleUp
-            }
-            TransactionExtendedState.RECEIVED -> {
-                transactionText = stringResource(id = R.string.history_item_received)
-                transactionIcon = Icons.TwoTone.ArrowCircleDown
-            }
-            TransactionExtendedState.RECEIVING -> {
-                transactionText = stringResource(id = R.string.history_item_receiving)
-                transactionIcon = Icons.Outlined.ArrowCircleDown
-            }
-            TransactionExtendedState.EXPIRED -> {
-                transactionText = stringResource(id = R.string.history_item_expired)
-                transactionIcon = Icons.Filled.Cancel
-            }
-        }
-
         Image(
-            imageVector = transactionIcon,
-            contentDescription = transactionText,
+            imageVector = transactionTypeIcon,
+            contentDescription = transactionTypeText,
             modifier = Modifier.padding(all = ZcashTheme.dimens.spacingTiny)
         )
+        Spacer(modifier = Modifier.width(ZcashTheme.dimens.spacingTiny))
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Body(
+                        text = transactionTypeText,
+                        color = Color.Black
+                    )
 
-        Column(
-            modifier = Modifier.weight(1f)
-        ) {
-            Body(
-                text = transactionText,
-                color = Color.Black
-            )
+                    val dateString =
+                        transaction.minedHeight?.let {
+                            transaction.blockTimeEpochSeconds?.let { blockTimeEpochSeconds ->
+                                // * 1000 to covert to millis
+                                @Suppress("MagicNumber")
+                                dateFormat.format(blockTimeEpochSeconds.times(1000L))
+                            } ?: stringResource(id = R.string.history_item_date_not_available)
+                        } ?: stringResource(id = R.string.history_item_date_not_available)
+                    // For now, use the same label for the above missing transaction date
 
-            Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingTiny))
+                    Body(
+                        text = dateString,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
 
-            val dateString =
-                transaction.minedHeight?.let {
-                    transaction.blockTimeEpochSeconds?.let { blockTimeEpochSeconds ->
-                        // * 1000 to covert to millis
-                        @Suppress("MagicNumber")
-                        dateFormat.format(blockTimeEpochSeconds.times(1000L))
-                    } ?: stringResource(id = R.string.history_item_date_not_available)
-                } ?: stringResource(id = R.string.history_item_date_not_available)
-            // For now, use the same label for the above missing transaction date
+                Column {
+                    Row(modifier = Modifier.align(alignment = Alignment.End)) {
+                        val zecString =
+                            if (transaction.isSentTransaction) {
+                                "-${transaction.netValue.toZecString()}"
+                            } else {
+                                transaction.netValue.toZecString()
+                            }
+                        Body(text = zecString)
 
-            Body(
-                text = dateString,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
+                        Spacer(modifier = Modifier.width(ZcashTheme.dimens.spacingTiny))
 
-        Column {
-            Row(modifier = Modifier.align(alignment = Alignment.End)) {
-                val zecString =
-                    if (transaction.isSentTransaction) {
-                        "-${transaction.netValue.toZecString()}"
-                    } else {
-                        transaction.netValue.toZecString()
+                        Body(text = currency.name)
                     }
-                Body(text = zecString)
-
-                Spacer(modifier = Modifier.width(ZcashTheme.dimens.spacingTiny))
-
-                Body(text = currency.name)
+                }
             }
         }
     }

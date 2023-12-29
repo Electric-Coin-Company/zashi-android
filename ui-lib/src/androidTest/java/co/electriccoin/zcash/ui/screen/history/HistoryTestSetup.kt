@@ -10,11 +10,17 @@ class HistoryTestSetup(
     private val composeTestRule: ComposeContentTestRule,
     initialHistorySyncState: TransactionHistorySyncState
 ) {
-    private val onBackCount = AtomicInteger(0)
+    private val onBackClickCount = AtomicInteger(0)
+    private val onItemClickCount = AtomicInteger(0)
 
-    fun getOnBackCount(): Int {
+    fun getOnBackClickCount(): Int {
         composeTestRule.waitForIdle()
-        return onBackCount.get()
+        return onBackClickCount.get()
+    }
+
+    fun getOnItemClickCount(): Int {
+        composeTestRule.waitForIdle()
+        return onItemClickCount.get()
     }
 
     init {
@@ -22,8 +28,11 @@ class HistoryTestSetup(
             ZcashTheme {
                 History(
                     transactionState = initialHistorySyncState,
-                    goBack = {
-                        onBackCount.incrementAndGet()
+                    onBack = {
+                        onBackClickCount.incrementAndGet()
+                    },
+                    onItemClick = {
+                        onItemClickCount.incrementAndGet()
                     }
                 )
             }

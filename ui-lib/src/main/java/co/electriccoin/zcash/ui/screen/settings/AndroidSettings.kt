@@ -72,7 +72,9 @@ private fun WrapSettings(
         null == isBackgroundSyncEnabled ||
         null == isKeepScreenOnWhileSyncing
     ) {
-        // Improve this by allowing screen composition and updating it after the data is available
+        // TODO [#1146]: Consider moving CircularScreenProgressIndicator from Android layer to View layer
+        // TODO [#1146]: Improve this by allowing screen composition and updating it after the data is available
+        // TODO [#1146]: https://github.com/Electric-Coin-Company/zashi-android/issues/1146
         CircularScreenProgressIndicator()
     } else {
         Settings(
