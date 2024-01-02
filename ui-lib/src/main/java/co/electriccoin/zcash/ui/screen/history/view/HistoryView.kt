@@ -235,7 +235,6 @@ private fun HistoryList(
                 currency = currency,
                 onItemClick = onItemClick,
                 onIdClick = onTransactionIdClick,
-                modifier = Modifier.testTag(HistoryTag.TRANSACTION_ITEM)
             )
             if (index < transactions.lastIndex) {
                 Divider(
@@ -283,15 +282,13 @@ fun HistoryItem(
 
     Row(
         modifier =
-            modifier.then(
-                Modifier
-                    .fillMaxWidth()
-                    .clickable { onItemClick(transaction) }
-                    .padding(
-                        horizontal = ZcashTheme.dimens.spacingDefault,
-                        vertical = ZcashTheme.dimens.spacingDefault
-                    )
-            ),
+            Modifier
+                .fillMaxWidth()
+                .clickable { onItemClick(transaction) }
+                .padding(
+                    horizontal = ZcashTheme.dimens.spacingDefault,
+                    vertical = ZcashTheme.dimens.spacingDefault
+                ).then(modifier),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
@@ -310,7 +307,8 @@ fun HistoryItem(
                 ) {
                     Body(
                         text = transactionTypeText,
-                        color = Color.Black
+                        color = Color.Black,
+                        modifier = Modifier.testTag(HistoryTag.TRANSACTION_ITEM)
                     )
 
                     val dateString =
