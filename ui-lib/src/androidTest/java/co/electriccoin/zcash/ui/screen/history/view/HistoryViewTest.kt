@@ -2,6 +2,7 @@ package co.electriccoin.zcash.ui.screen.history.view
 
 import androidx.compose.ui.test.assertHeightIsAtLeast
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -105,10 +106,10 @@ class HistoryViewTest {
 
     @Test
     @MediumTest
-    fun back() {
+    fun back_click_test() {
         val testSetup = newTestSetup()
 
-        assertEquals(0, testSetup.getOnBackCount())
+        assertEquals(0, testSetup.getOnBackClickCount())
 
         composeTestRule.onNodeWithContentDescription(
             getStringResource(R.string.history_back_content_description)
@@ -116,7 +117,23 @@ class HistoryViewTest {
             it.performClick()
         }
 
-        assertEquals(1, testSetup.getOnBackCount())
+        assertEquals(1, testSetup.getOnBackClickCount())
+    }
+
+    @Test
+    @MediumTest
+    fun item_click_test() {
+        val testSetup = newTestSetup(TransactionHistorySyncStateFixture.STATE)
+
+        assertEquals(0, testSetup.getOnItemClickCount())
+
+        composeTestRule.onAllNodesWithTag(HistoryTag.TRANSACTION_ITEM).also {
+            TransactionHistorySyncStateFixture.TRANSACTIONS.forEachIndexed { index, _ ->
+                it[index].performClick()
+            }
+        }
+
+        assertEquals(TransactionHistorySyncStateFixture.TRANSACTIONS.size, testSetup.getOnItemClickCount())
     }
 
     private fun newTestSetup(

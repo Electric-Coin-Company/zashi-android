@@ -130,7 +130,6 @@ fun Home(
                 thickness = DividerDefaults.Thickness,
                 color = ZcashTheme.colors.dividerColor
             )
-
             TabRow(
                 selectedTabIndex = pagerState.currentPage,
                 // Don't use the predefined divider, as it's fixed position is below the tabs bar

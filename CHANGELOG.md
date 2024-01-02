@@ -9,6 +9,9 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+### Added
+- Transaction history items now display Memos within the Android Toast, triggered by clicking the item
+
 ## [0.2.0 (517)] - 2023-12-21
 
 ### Changed
