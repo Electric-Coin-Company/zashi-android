@@ -4,6 +4,7 @@
     <string name="history_syncing">Additional transactions may be found after syncing completes…</string>
     <string name="history_empty">No transactions yet</string>
     <string name="history_item_clipboard_tag">Transaction memo</string>
+    <string name="history_id_clipboard_tag">Transaction ID</string>
 
     <string name="history_item_sent">Sent</string>
     <string name="history_item_received">Received</string>

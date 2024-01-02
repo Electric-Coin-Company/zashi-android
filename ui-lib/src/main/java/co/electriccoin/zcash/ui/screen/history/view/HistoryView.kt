@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -49,7 +50,9 @@ import cash.z.ecc.android.sdk.model.toZecString
 import cash.z.ecc.sdk.type.ZcashCurrency
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.Body
+import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.design.component.GradientSurface
+import co.electriccoin.zcash.ui.design.component.Tiny
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.history.HistoryTag
 import co.electriccoin.zcash.ui.screen.history.state.TransactionHistorySyncState
@@ -67,7 +70,8 @@ private fun ComposablePreview() {
             History(
                 transactionState = TransactionHistorySyncState.Loading,
                 onBack = {},
-                onItemClick = {}
+                onItemClick = {},
+                onTransactionIdClick = {}
             )
         }
     }
@@ -89,7 +93,8 @@ private fun ComposableHistoryListPreview() {
                         )
                     ),
                 onBack = {},
-                onItemClick = {}
+                onItemClick = {},
+                onTransactionIdClick = {}
             )
         }
     }
@@ -107,7 +112,8 @@ val dateFormat: DateFormat by lazy {
 fun History(
     transactionState: TransactionHistorySyncState,
     onBack: () -> Unit,
-    onItemClick: (TransactionOverview) -> Unit
+    onItemClick: (TransactionOverview) -> Unit,
+    onTransactionIdClick: (String) -> Unit
 ) {
     Scaffold(topBar = {
         HistoryTopBar(onBack = onBack)
@@ -115,6 +121,7 @@ fun History(
         HistoryMainContent(
             transactionState = transactionState,
             onItemClick = onItemClick,
+            onTransactionIdClick = onTransactionIdClick,
             modifier =
                 Modifier
                     .fillMaxHeight()
@@ -145,15 +152,17 @@ private fun HistoryTopBar(onBack: () -> Unit) {
 }
 
 @Composable
+@Suppress("LongMethod")
 private fun HistoryMainContent(
     transactionState: TransactionHistorySyncState,
     onItemClick: (TransactionOverview) -> Unit,
+    onTransactionIdClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(modifier = modifier.fillMaxSize()) {
         when (transactionState) {
             is TransactionHistorySyncState.Loading -> {
-                CircularProgressIndicator(
+                CircularScreenProgressIndicator(
                     modifier =
                         Modifier
                             .align(alignment = Center)
@@ -177,7 +186,8 @@ private fun HistoryMainContent(
                     )
                     HistoryList(
                         transactions = transactionState.transactions,
-                        onItemClick = onItemClick
+                        onItemClick = onItemClick,
+                        onTransactionIdClick = onTransactionIdClick
                     )
                 }
                 // Add progress indicator only in the state of empty transaction
@@ -202,7 +212,8 @@ private fun HistoryMainContent(
                 } else {
                     HistoryList(
                         transactions = transactionState.transactions,
-                        onItemClick = onItemClick
+                        onItemClick = onItemClick,
+                        onTransactionIdClick = onTransactionIdClick
                     )
                 }
             }
@@ -213,7 +224,8 @@ private fun HistoryMainContent(
 @Composable
 private fun HistoryList(
     transactions: ImmutableList<TransactionOverview>,
-    onItemClick: (TransactionOverview) -> Unit
+    onItemClick: (TransactionOverview) -> Unit,
+    onTransactionIdClick: (String) -> Unit
 ) {
     val currency = ZcashCurrency.fromResources(LocalContext.current)
     LazyColumn(modifier = Modifier.testTag(HistoryTag.TRANSACTION_LIST)) {
@@ -222,7 +234,7 @@ private fun HistoryList(
                 transaction = item,
                 currency = currency,
                 onItemClick = onItemClick,
-                modifier = Modifier.testTag(HistoryTag.TRANSACTION_ITEM)
+                onIdClick = onTransactionIdClick,
             )
             if (index < transactions.lastIndex) {
                 Divider(
@@ -240,6 +252,7 @@ fun HistoryItem(
     transaction: TransactionOverview,
     currency: ZcashCurrency,
     onItemClick: (TransactionOverview) -> Unit,
+    onIdClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val transactionTypeText: String
@@ -269,15 +282,13 @@ fun HistoryItem(
 
     Row(
         modifier =
-            modifier.then(
-                Modifier
-                    .fillMaxWidth()
-                    .clickable { onItemClick(transaction) }
-                    .padding(
-                        horizontal = ZcashTheme.dimens.spacingDefault,
-                        vertical = ZcashTheme.dimens.spacingDefault
-                    )
-            ),
+            Modifier
+                .fillMaxWidth()
+                .clickable { onItemClick(transaction) }
+                .padding(
+                    horizontal = ZcashTheme.dimens.spacingDefault,
+                    vertical = ZcashTheme.dimens.spacingDefault
+                ).then(modifier),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
@@ -296,7 +307,8 @@ fun HistoryItem(
                 ) {
                     Body(
                         text = transactionTypeText,
-                        color = Color.Black
+                        color = Color.Black,
+                        modifier = Modifier.testTag(HistoryTag.TRANSACTION_ITEM)
                     )
 
                     val dateString =
@@ -332,6 +344,19 @@ fun HistoryItem(
                     }
                 }
             }
+            Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingTiny))
+
+            // TODO [#1316]: Provide readable TxId on TransactionOverview
+            // TODO [#1316]: https://github.com/Electric-Coin-Company/zcash-android-wallet-sdk/issues/1316
+            // TODO [#1316]: transaction.rawId.byteArray.toHexReversed()
+            val txId = "TODO [#1316]: SDK: Provide readable TxId"
+            Tiny(
+                text = txId,
+                modifier =
+                    Modifier
+                        .clickable { onIdClick(txId) }
+                        .testTag(HistoryTag.TRANSACTION_ID)
+            )
         }
     }
 }

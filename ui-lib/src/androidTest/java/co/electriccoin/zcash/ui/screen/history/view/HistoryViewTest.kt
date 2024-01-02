@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.screen.history.view
 
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertHeightIsAtLeast
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
@@ -127,13 +128,33 @@ class HistoryViewTest {
 
         assertEquals(0, testSetup.getOnItemClickCount())
 
-        composeTestRule.onAllNodesWithTag(HistoryTag.TRANSACTION_ITEM).also {
+        composeTestRule.onAllNodesWithTag(HistoryTag.TRANSACTION_ITEM, useUnmergedTree = true).also {
+            it.assertCountEquals(TransactionHistorySyncStateFixture.TRANSACTIONS.size)
+
             TransactionHistorySyncStateFixture.TRANSACTIONS.forEachIndexed { index, _ ->
                 it[index].performClick()
             }
         }
 
         assertEquals(TransactionHistorySyncStateFixture.TRANSACTIONS.size, testSetup.getOnItemClickCount())
+    }
+
+    @Test
+    @MediumTest
+    fun transaction_id_click_test() {
+        val testSetup = newTestSetup(TransactionHistorySyncStateFixture.STATE)
+
+        assertEquals(0, testSetup.getOnItemIdClickCount())
+
+        composeTestRule.onAllNodesWithTag(HistoryTag.TRANSACTION_ID).also {
+            it.assertCountEquals(TransactionHistorySyncStateFixture.TRANSACTIONS.size)
+
+            TransactionHistorySyncStateFixture.TRANSACTIONS.forEachIndexed { index, _ ->
+                it[index].performClick()
+            }
+        }
+
+        assertEquals(TransactionHistorySyncStateFixture.TRANSACTIONS.size, testSetup.getOnItemIdClickCount())
     }
 
     private fun newTestSetup(

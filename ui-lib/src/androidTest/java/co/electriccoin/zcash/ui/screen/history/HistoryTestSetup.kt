@@ -12,6 +12,7 @@ class HistoryTestSetup(
 ) {
     private val onBackClickCount = AtomicInteger(0)
     private val onItemClickCount = AtomicInteger(0)
+    private val onItemIdClickCount = AtomicInteger(0)
 
     fun getOnBackClickCount(): Int {
         composeTestRule.waitForIdle()
@@ -21,6 +22,11 @@ class HistoryTestSetup(
     fun getOnItemClickCount(): Int {
         composeTestRule.waitForIdle()
         return onItemClickCount.get()
+    }
+
+    fun getOnItemIdClickCount(): Int {
+        composeTestRule.waitForIdle()
+        return onItemIdClickCount.get()
     }
 
     init {
@@ -33,6 +39,9 @@ class HistoryTestSetup(
                     },
                     onItemClick = {
                         onItemClickCount.incrementAndGet()
+                    },
+                    onTransactionIdClick = {
+                        onItemIdClickCount.incrementAndGet()
                     }
                 )
             }
