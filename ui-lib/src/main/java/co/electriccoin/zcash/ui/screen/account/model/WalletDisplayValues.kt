@@ -39,7 +39,9 @@ data class WalletDisplayValues(
                 walletSnapshot.spendableBalance().toFiatCurrencyState(
                     null,
                     Locale.current.toKotlinLocale(),
-                    MonetarySeparators.current()
+                    // TODO [#1171]: Remove default MonetarySeparators locale
+                    // TODO [#1171]: https://github.com/Electric-Coin-Company/zashi-android/issues/1171
+                    MonetarySeparators.current(java.util.Locale.US)
                 )
             var fiatCurrencyAmountText = getFiatCurrencyRateValue(context, fiatCurrencyAmountState)
 

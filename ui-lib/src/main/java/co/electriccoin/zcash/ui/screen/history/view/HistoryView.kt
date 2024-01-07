@@ -346,10 +346,7 @@ fun HistoryItem(
             }
             Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingTiny))
 
-            // TODO [#1316]: Provide readable TxId on TransactionOverview
-            // TODO [#1316]: https://github.com/Electric-Coin-Company/zcash-android-wallet-sdk/issues/1316
-            // TODO [#1316]: transaction.rawId.byteArray.toHexReversed()
-            val txId = "TODO [#1316]: SDK: Provide readable TxId"
+            val txId = transaction.txIdString()
             Tiny(
                 text = txId,
                 modifier =

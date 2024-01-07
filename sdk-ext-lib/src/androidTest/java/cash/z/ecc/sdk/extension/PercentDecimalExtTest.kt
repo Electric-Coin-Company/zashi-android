@@ -5,6 +5,7 @@ import cash.z.ecc.android.sdk.model.MonetarySeparators
 import cash.z.ecc.android.sdk.model.PercentDecimal
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
+import java.util.Locale
 import kotlin.test.assertEquals
 
 class PercentDecimalExtTest {
@@ -32,7 +33,7 @@ class PercentDecimalExtTest {
         runTest {
             val parsed = PercentDecimal(1f).toPercentageWithDecimal()
 
-            assertEquals("100${MonetarySeparators.current().decimal}00", parsed)
+            assertEquals("100${MonetarySeparators.current(Locale.US).decimal}00", parsed)
         }
 
     @Test
