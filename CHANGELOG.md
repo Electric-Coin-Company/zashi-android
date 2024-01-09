@@ -13,6 +13,9 @@ directly impact users rather than highlighting other key architectural updates.*
 - Transaction history items now display Memos within the Android Toast, triggered by clicking the item
 - Transaction history items add displaying transaction IDs; the ID element is also clickable
 
+### Changed
+- All project dependencies have been updated, including the Zcash SDK dependency
+
 ## [0.2.0 (517)] - 2023-12-21
 
 ### Changed
