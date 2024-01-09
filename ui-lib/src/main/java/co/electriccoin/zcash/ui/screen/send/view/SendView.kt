@@ -72,6 +72,7 @@ import co.electriccoin.zcash.ui.screen.send.ext.valueOrEmptyChar
 import co.electriccoin.zcash.ui.screen.send.model.SendArgumentsWrapper
 import co.electriccoin.zcash.ui.screen.send.model.SendStage
 import kotlinx.coroutines.runBlocking
+import java.util.Locale
 
 @Composable
 @Preview("SendForm")
@@ -304,7 +305,9 @@ private fun SendForm(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    val monetarySeparators = MonetarySeparators.current()
+    // TODO [#1171]: Remove default MonetarySeparators locale
+    // TODO [#1171]: https://github.com/Electric-Coin-Company/zashi-android/issues/1171
+    val monetarySeparators = MonetarySeparators.current(Locale.US)
     val allowedCharacters = ZecString.allowedCharacters(monetarySeparators)
     val focusManager = LocalFocusManager.current
 

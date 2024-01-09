@@ -24,6 +24,8 @@ data class EnvironmentInfo(
 
             return EnvironmentInfo(
                 context.resources.configuration.locales[0],
+                // This MonetarySeparators calling reflects the real separators according to device Locale as its
+                // goal is to represent information about the device, and it's not considered to be used in UI
                 MonetarySeparators.current(),
                 usableStorage
             )

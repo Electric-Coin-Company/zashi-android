@@ -19,8 +19,8 @@ import cash.z.ecc.android.sdk.model.WalletAddresses
 import cash.z.ecc.android.sdk.model.WalletBalance
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.ZcashNetwork
-import cash.z.ecc.android.sdk.model.defaultForNetwork
 import cash.z.ecc.android.sdk.tool.DerivationTool
+import cash.z.ecc.sdk.extension.defaultForNetwork
 import cash.z.ecc.sdk.type.fromResources
 import co.electriccoin.lightwallet.client.model.LightWalletEndpoint
 import co.electriccoin.zcash.global.getInstance

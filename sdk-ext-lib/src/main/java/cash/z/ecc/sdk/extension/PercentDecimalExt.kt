@@ -7,6 +7,7 @@ import cash.z.ecc.android.sdk.model.MonetarySeparators
 import cash.z.ecc.android.sdk.model.PercentDecimal
 import java.math.RoundingMode
 import java.text.DecimalFormat
+import java.util.Locale
 
 @Suppress("MagicNumber")
 fun PercentDecimal.toPercentageWithDecimal(decimalFormat: DecimalFormat = preparePercentDecimalFormat()): String {
@@ -15,7 +16,9 @@ fun PercentDecimal.toPercentageWithDecimal(decimalFormat: DecimalFormat = prepar
 
 private fun preparePercentDecimalFormat(): DecimalFormat =
     DecimalFormat().apply {
-        val monetarySeparators = MonetarySeparators.current()
+        // TODO [#1171]: Remove default MonetarySeparators locale
+        // TODO [#1171]: https://github.com/Electric-Coin-Company/zashi-android/issues/1171
+        val monetarySeparators = MonetarySeparators.current(Locale.US)
         val localizedPattern = "##0${monetarySeparators.decimal}00"
         runCatching {
             applyLocalizedPattern(localizedPattern)

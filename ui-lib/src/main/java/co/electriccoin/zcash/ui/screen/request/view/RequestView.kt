@@ -43,6 +43,7 @@ import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import kotlinx.coroutines.runBlocking
+import java.util.Locale
 
 @Preview("Request")
 @Composable
@@ -112,7 +113,9 @@ private fun RequestMainContent(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    val monetarySeparators = MonetarySeparators.current()
+    // TODO [#1171]: Remove default MonetarySeparators locale
+    // TODO [#1171]: https://github.com/Electric-Coin-Company/zashi-android/issues/1171
+    val monetarySeparators = MonetarySeparators.current(Locale.US)
     val allowedCharacters = ZecString.allowedCharacters(monetarySeparators)
 
     var amountZecString by rememberSaveable { mutableStateOf("") }
