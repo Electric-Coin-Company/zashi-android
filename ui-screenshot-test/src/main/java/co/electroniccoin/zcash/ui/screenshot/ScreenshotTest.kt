@@ -45,7 +45,6 @@ import co.electriccoin.zcash.ui.screen.account.AccountTag
 import co.electriccoin.zcash.ui.screen.home.HomeTag
 import co.electriccoin.zcash.ui.screen.restore.RestoreTag
 import co.electriccoin.zcash.ui.screen.restore.viewmodel.RestoreViewModel
-import co.electriccoin.zcash.ui.screen.send.SendTag
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -521,33 +520,8 @@ private fun sendZecScreenshots(
     // Screenshot: Fulfilled form
     ScreenshotTest.takeScreenshot(tag, "Send 2")
 
-    composeTestRule.onNodeWithTag(SendTag.SEND_FORM_BUTTON).also {
-        it.performClick()
-    }
-
-    /*
-    TODO [#817]: Screenshot test on Send with pseudo-locales problem
-    TODO [#817]: https://github.com/Electric-Coin-Company/zashi-android/issues/817
-    // Screenshot: Confirmation
-    ScreenshotTest.takeScreenshot(tag, "Send 3")
-
-    composeTestRule.onNodeWithText(resContext.getString(R.string.send_confirmation_button)).also {
-        it.performClick()
-    }
-
-    // Screenshot: Sending
-    ScreenshotTest.takeScreenshot(tag, "Send 4")
-
-    // Note: this is potentially a long running waiting for the transaction submit result
-    // Remove this last section of taking screenshot if it turns out to be problematic
-    composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) {
-        composeTestRule.onAllNodesWithText(resContext.getString(R.string.send_in_progress_wait))
-            .fetchSemanticsNodes().isEmpty()
-    }
-
-    // Screenshot: Result
-    ScreenshotTest.takeScreenshot(tag, "Send 5")
-     */
+    // The rest of the Send screens (i.e. Send Confirmation) depends on sufficient available balance which can'
+    // achieve in this kind of the test in a reasonable time thanks to block synchronization
 }
 
 private fun supportScreenshots(
