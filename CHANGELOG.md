@@ -9,6 +9,10 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+### Changed
+- The Not Enough Space screen used for notifying about insufficient free device disk space now provides the light 
+  theme by default
+
 ## [0.2.0 (523)] - 2024-01-09
 
 ### Added
