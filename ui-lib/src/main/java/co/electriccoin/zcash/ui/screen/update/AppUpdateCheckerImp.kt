@@ -49,7 +49,7 @@ class AppUpdateCheckerImp private constructor() : AppUpdateChecker {
                 if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE &&
                     appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
                 ) {
-                    // we force user to update immediately in case of high priority
+                    // We force user to update immediately in case of high priority
                     // or in case of staleness days passed
                     if (isHighPriority(appUpdateInfo.updatePriority()) ||
                         (appUpdateInfo.clientVersionStalenessDays() ?: -1) >= stalenessDays
@@ -58,6 +58,9 @@ class AppUpdateCheckerImp private constructor() : AppUpdateChecker {
                     } else {
                         emitSuccess(this, infoTask.result, UpdateState.Done)
                     }
+                } else {
+                    // Return Done in case of no update available
+                    emitSuccess(this, infoTask.result, UpdateState.Done)
                 }
             }
             awaitClose {

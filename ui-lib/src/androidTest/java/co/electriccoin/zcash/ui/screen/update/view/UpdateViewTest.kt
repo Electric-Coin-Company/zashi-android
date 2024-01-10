@@ -15,7 +15,6 @@ import co.electriccoin.zcash.ui.screen.update.UpdateTag
 import co.electriccoin.zcash.ui.screen.update.model.UpdateInfo
 import co.electriccoin.zcash.ui.screen.update.model.UpdateState
 import co.electriccoin.zcash.ui.test.getStringResource
-import co.electriccoin.zcash.ui.test.getStringResourceWithArgs
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -38,13 +37,15 @@ class UpdateViewTest : UiTestPrerequisites() {
         newTestSetup(updateInfo)
 
         composeTestRule.onNodeWithText(
-            getStringResourceWithArgs(R.string.update_critical_header)
+            text = getStringResource(R.string.update_critical_header),
+            ignoreCase = true
         ).also {
             it.assertExists()
         }
 
         composeTestRule.onNodeWithText(
-            getStringResourceWithArgs(R.string.update_later_disabled_button)
+            text = getStringResource(R.string.update_later_disabled_button),
+            ignoreCase = true
         ).also {
             it.assertExists()
         }
@@ -82,12 +83,16 @@ class UpdateViewTest : UiTestPrerequisites() {
 
         newTestSetup(updateInfo)
 
-        composeTestRule.onNodeWithText(getStringResourceWithArgs(R.string.update_header)).also {
+        composeTestRule.onNodeWithText(
+            text = getStringResource(R.string.update_header),
+            ignoreCase = true
+        ).also {
             it.assertExists()
         }
 
         composeTestRule.onNodeWithText(
-            getStringResourceWithArgs(R.string.update_later_enabled_button)
+            text = getStringResource(R.string.update_later_enabled_button),
+            ignoreCase = true
         ).also {
             it.assertExists()
         }

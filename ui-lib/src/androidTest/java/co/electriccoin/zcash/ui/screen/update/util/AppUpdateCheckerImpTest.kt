@@ -11,7 +11,6 @@ import co.electriccoin.zcash.ui.screen.update.model.UpdateInfo
 import co.electriccoin.zcash.ui.screen.update.model.UpdateState
 import co.electriccoin.zcash.ui.test.getAppContext
 import com.google.android.play.core.install.model.ActivityResult
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
@@ -30,7 +29,6 @@ class AppUpdateCheckerImpTest {
     }
 
     private fun getAppUpdateInfoFlow(): Flow<UpdateInfo> {
-        @Suppress("MagicNumber")
         return updateChecker.newCheckForUpdateAvailabilityFlow(
             context
         )
@@ -38,7 +36,6 @@ class AppUpdateCheckerImpTest {
 
     @Test
     @MediumTest
-    @OptIn(ExperimentalCoroutinesApi::class)
     fun check_for_update_availability_test() =
         runTest {
             assertNotNull(updateChecker)
@@ -56,7 +53,6 @@ class AppUpdateCheckerImpTest {
 
     @Test
     @MediumTest
-    @OptIn(ExperimentalCoroutinesApi::class)
     fun start_update_availability_test() =
         runTest {
             getAppUpdateInfoFlow().onFirst { updateInfo ->
