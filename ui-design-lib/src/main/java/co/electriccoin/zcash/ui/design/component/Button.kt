@@ -42,10 +42,11 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 private fun ButtonComposablePreview() {
     ZcashTheme(forceDarkMode = false) {
         GradientSurface {
-            Column {
+            Column(Modifier.padding(ZcashTheme.dimens.spacingDefault)) {
                 PrimaryButton(onClick = { }, text = "Primary")
                 SecondaryButton(onClick = { }, text = "Secondary")
                 TertiaryButton(onClick = { }, text = "Tertiary")
+                TertiaryButton(onClick = { }, text = "Tertiary", enabled = false)
                 NavigationButton(onClick = { }, text = "Navigation")
                 DangerousButton(onClick = { }, text = "Dangerous")
             }
@@ -165,7 +166,7 @@ fun NavigationButton(
     modifier: Modifier = Modifier,
     outerPaddingValues: PaddingValues =
         PaddingValues(
-            horizontal = ZcashTheme.dimens.spacingDefault,
+            horizontal = ZcashTheme.dimens.spacingNone,
             vertical = ZcashTheme.dimens.spacingSmall
         ),
 ) {
@@ -195,7 +196,7 @@ fun TertiaryButton(
     modifier: Modifier = Modifier,
     outerPaddingValues: PaddingValues =
         PaddingValues(
-            horizontal = ZcashTheme.dimens.spacingDefault,
+            horizontal = ZcashTheme.dimens.spacingNone,
             vertical = ZcashTheme.dimens.spacingSmall
         ),
     enabled: Boolean = true
@@ -208,6 +209,7 @@ fun TertiaryButton(
                 Modifier
                     .fillMaxWidth()
                     .padding(outerPaddingValues)
+                    .defaultMinSize(ZcashTheme.dimens.buttonWidth, ZcashTheme.dimens.buttonHeight)
             ),
         enabled = enabled,
         elevation = ButtonDefaults.buttonElevation(0.dp, 0.dp, 0.dp),
@@ -229,7 +231,7 @@ fun DangerousButton(
     modifier: Modifier = Modifier,
     outerPaddingValues: PaddingValues =
         PaddingValues(
-            horizontal = ZcashTheme.dimens.spacingDefault,
+            horizontal = ZcashTheme.dimens.spacingNone,
             vertical = ZcashTheme.dimens.spacingSmall
         ),
 ) {
@@ -241,6 +243,7 @@ fun DangerousButton(
                 Modifier
                     .fillMaxWidth()
                     .padding(outerPaddingValues)
+                    .defaultMinSize(ZcashTheme.dimens.buttonWidth, ZcashTheme.dimens.buttonHeight)
             ),
         colors = buttonColors(containerColor = ZcashTheme.colors.dangerous)
     ) {
