@@ -29,7 +29,7 @@
             tools:targetApi="29" />
 
         <provider
-            android:name="co.electriccoin.zcash.ui.screen.exportdata.util.ShareFileProvider"
+            android:name="co.electriccoin.zcash.global.ShareFileProvider"
             android:authorities="co.electriccoin.zcash.provider"
             android:exported="false"
             android:grantUriPermissions="true">

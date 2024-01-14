@@ -290,9 +290,6 @@ class ScreenshotTest : UiTestPrerequisites() {
         composeTestRule.navigateInHomeTab(HomeTag.TAB_BALANCES)
         balancesScreenshots(resContext, tag, composeTestRule)
 
-        navigateTo(NavigationTargets.WALLET_ADDRESS_DETAILS)
-        addressDetailsScreenshots(resContext, tag, composeTestRule)
-
         navigateTo(NavigationTargets.HISTORY)
         transactionHistoryScreenshots(resContext, tag, composeTestRule)
 
@@ -419,18 +416,6 @@ private fun settingsScreenshots(
     ScreenshotTest.takeScreenshot(tag, "Settings 1")
 }
 
-private fun addressDetailsScreenshots(
-    resContext: Context,
-    tag: String,
-    composeTestRule: ComposeTestRule
-) {
-    composeTestRule.onNode(hasText(resContext.getString(R.string.wallet_address_title))).also {
-        it.assertExists()
-    }
-
-    ScreenshotTest.takeScreenshot(tag, "Addresses 1")
-}
-
 private fun transactionHistoryScreenshots(
     resContext: Context,
     tag: String,
@@ -468,7 +453,7 @@ private fun receiveZecScreenshots(
 
     composeTestRule.onNode(
         hasContentDescription(
-            value = resContext.getString(R.string.receive_qr_code_content_description),
+            value = resContext.getString(R.string.receive_unified_content_description),
             ignoreCase = true
         )
     ).also {

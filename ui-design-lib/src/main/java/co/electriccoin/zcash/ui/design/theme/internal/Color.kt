@@ -27,6 +27,8 @@ internal object Dark {
     val textCaption = Color(0xFFFFFFFF)
     val textChipIndex = Color(0xFFFFB900)
     val textFieldHint = Color(0xFFB7B7B7)
+    val textDescription = Color(0xFF777777)
+
     val layoutStroke = Color(0xFFFFFFFF)
 
     val primaryButton = Color(0xFFFFFFFF)
@@ -90,10 +92,10 @@ internal object Light {
     val textCaption = Color(0xFF000000)
     val textChipIndex = Color(0xFFEE8592)
     val textFieldHint = Color(0xFFB7B7B7)
+    val textDescription = Color(0xFF777777)
+
     val layoutStroke = Color(0xFF000000)
 
-    // TODO [#159]: The button colors are wrong for light
-    // TODO [#159]: https://github.com/Electric-Coin-Company/zashi-android/issues/159
     val primaryButton = Color(0xFF000000)
     val primaryButtonPressed = Color(0xFF000000)
     val primaryButtonDisabled = Color(0xFF000000)
@@ -117,13 +119,6 @@ internal object Light {
 
     val overlay = Color(0x22000000)
     val highlight = Color(0xFFFFD800)
-
-    // TODO [#159]: The colors are wrong for light theme
-    // TODO [#159]: https://github.com/Electric-Coin-Company/zashi-android/issues/159
-    val addressHighlightBorder = Color(0xFF525252)
-    val addressHighlightUnified = Color(0xFFFFD800)
-    val addressHighlightSapling = Color(0xFF1BBFF6)
-    val addressHighlightTransparent = Color(0xFF97999A)
 
     val dangerous = Color(0xFFEC0008)
     val onDangerous = Color(0xFFFFFFFF)
@@ -179,13 +174,10 @@ internal val DarkExtendedColorPalette =
         progressBackground = Dark.progressBackground,
         chipIndex = Dark.textChipIndex,
         textFieldHint = Dark.textFieldHint,
+        textDescription = Dark.textDescription,
         layoutStroke = Dark.layoutStroke,
         overlay = Dark.overlay,
         highlight = Dark.highlight,
-        addressHighlightBorder = Dark.addressHighlightBorder,
-        addressHighlightUnified = Dark.addressHighlightUnified,
-        addressHighlightSapling = Dark.addressHighlightSapling,
-        addressHighlightTransparent = Dark.addressHighlightTransparent,
         dangerous = Dark.dangerous,
         onDangerous = Dark.onDangerous,
         disabledButtonTextColor = Dark.disabledButtonTextColor,
@@ -213,13 +205,10 @@ internal val LightExtendedColorPalette =
         progressBackground = Light.progressBackground,
         chipIndex = Light.textChipIndex,
         textFieldHint = Light.textFieldHint,
+        textDescription = Light.textDescription,
         layoutStroke = Light.layoutStroke,
         overlay = Light.overlay,
         highlight = Light.highlight,
-        addressHighlightBorder = Light.addressHighlightBorder,
-        addressHighlightUnified = Light.addressHighlightUnified,
-        addressHighlightSapling = Light.addressHighlightSapling,
-        addressHighlightTransparent = Light.addressHighlightTransparent,
         dangerous = Light.dangerous,
         onDangerous = Light.onDangerous,
         disabledButtonTextColor = Light.disabledButtonTextColor,
@@ -249,13 +238,10 @@ internal val LocalExtendedColors =
             progressBackground = Color.Unspecified,
             chipIndex = Color.Unspecified,
             textFieldHint = Color.Unspecified,
+            textDescription = Color.Unspecified,
             layoutStroke = Color.Unspecified,
             overlay = Color.Unspecified,
             highlight = Color.Unspecified,
-            addressHighlightBorder = Color.Unspecified,
-            addressHighlightUnified = Color.Unspecified,
-            addressHighlightSapling = Color.Unspecified,
-            addressHighlightTransparent = Color.Unspecified,
             dangerous = Color.Unspecified,
             onDangerous = Color.Unspecified,
             disabledButtonTextColor = Color.Unspecified,

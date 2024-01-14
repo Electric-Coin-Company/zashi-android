@@ -17,8 +17,8 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
-import co.electriccoin.zcash.ui.screen.exportdata.util.FileShareUtil
 import co.electriccoin.zcash.ui.screen.exportdata.view.ExportPrivateData
+import co.electriccoin.zcash.ui.util.FileShareUtil
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -93,6 +93,7 @@ fun shareData(
                         context = context,
                         network = ZcashNetwork.fromResources(context)
                     ),
+                fileType = FileShareUtil.ZASHI_INTERNAL_DATA_MIME_TYPE,
                 versionInfo = VersionInfo.new(context.applicationContext)
             )
         runCatching {

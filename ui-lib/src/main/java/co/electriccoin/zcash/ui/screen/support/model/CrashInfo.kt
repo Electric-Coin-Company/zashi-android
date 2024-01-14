@@ -37,12 +37,13 @@ private const val MAX_EXCEPTIONS_TO_REPORT = 5
 
 suspend fun CrashInfo.Companion.all(context: Context): List<CrashInfo> {
     val exceptionDirectory = ExceptionPath.getExceptionDirectory(context) ?: return emptyList()
-    val filesList: List<File> = exceptionDirectory.listFilesSuspend().toList()
-    return filesList
-        .mapNotNull {
+    val filesList: List<File>? = exceptionDirectory.listFilesSuspend()?.toList()
+    return filesList?.run {
+        mapNotNull {
             ReportedException.new(it)
         }.sortedBy { it.time }
-        .reversed()
-        .take(MAX_EXCEPTIONS_TO_REPORT)
-        .map { CrashInfo(it.exceptionClassName, it.isUncaught, it.time) }
+            .reversed()
+            .take(MAX_EXCEPTIONS_TO_REPORT)
+            .map { CrashInfo(it.exceptionClassName, it.isUncaught, it.time) }
+    } ?: emptyList()
 }

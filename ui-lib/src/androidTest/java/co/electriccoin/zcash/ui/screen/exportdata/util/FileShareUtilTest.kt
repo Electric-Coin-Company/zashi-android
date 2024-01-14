@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.test.filters.SmallTest
 import co.electriccoin.zcash.ui.fixture.VersionInfoFixture
 import co.electriccoin.zcash.ui.test.getAppContext
+import co.electriccoin.zcash.ui.util.FileShareUtil
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import kotlin.io.path.pathString
@@ -26,6 +27,7 @@ class FileShareUtilTest {
             FileShareUtil.newShareContentIntent(
                 context = getAppContext(),
                 dataFilePath = tempFilePath.pathString,
+                fileType = FileShareUtil.ZASHI_INTERNAL_DATA_MIME_TYPE,
                 versionInfo = VersionInfoFixture.new()
             )
         assertEquals(intent.action, Intent.ACTION_VIEW)

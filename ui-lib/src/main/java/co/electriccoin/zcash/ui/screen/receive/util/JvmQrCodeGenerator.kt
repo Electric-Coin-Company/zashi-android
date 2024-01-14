@@ -8,10 +8,7 @@ object JvmQrCodeGenerator : QrCodeGenerator {
         data: String,
         sizePixels: Int
     ): BooleanArray {
-        val bitMatrix =
-            QRCodeWriter().let {
-                it.encode(data, BarcodeFormat.QR_CODE, sizePixels, sizePixels)
-            }
+        val bitMatrix = QRCodeWriter().encode(data, BarcodeFormat.QR_CODE, sizePixels, sizePixels)
 
         return BooleanArray(sizePixels * sizePixels).apply {
             var booleanArrayPosition = 0
