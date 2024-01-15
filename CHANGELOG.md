@@ -9,11 +9,18 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [0.2.0 (530)] - 2024-01-16
+
 ### Changed
 - The Not Enough Space screen used for notifying about insufficient free device disk space now provides the light 
-  theme by default
-- The App Update screen's user interface was improved to align with the other implemented screens. Its final design 
-  is still in progress.
+theme by default
+- The App Update screen UI was improved to align with the other implemented screens according to the new design. Its 
+final design is still in progress.
+- The Receive screen provides a new UI and features. The Unified and Transparent Zcash addresses are displayed on
+this screen, together with buttons for copying the address and sharing the address's QR code.
+
+### Removed
+- Address Detail screen in favor of the Receive screen
 
 ## [0.2.0 (523)] - 2024-01-09
 
