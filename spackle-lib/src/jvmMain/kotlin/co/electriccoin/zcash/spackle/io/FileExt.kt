@@ -43,7 +43,7 @@ suspend fun File.renameToSuspend(destination: File) =
         renameTo(destination)
     }
 
-suspend fun File.listFilesSuspend() =
+suspend fun File.listFilesSuspend(): Array<out File>? =
     withContext(Dispatchers.IO) {
         listFiles()
     }

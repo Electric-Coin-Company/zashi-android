@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.exportdata.util
+package co.electriccoin.zcash.ui.util
 
 import android.content.Context
 import android.content.Intent
@@ -13,6 +13,7 @@ object FileShareUtil {
     const val SHARE_CONTENT_PERMISSION_FLAGS = Intent.FLAG_GRANT_READ_URI_PERMISSION
 
     const val ZASHI_INTERNAL_DATA_MIME_TYPE = "application/octet-stream" // NON-NLS
+    const val ZASHI_QR_CODE_MIME_TYPE = "image/png" // NON-NLS
 
     const val ZASHI_INTERNAL_DATA_AUTHORITY = "co.electriccoin.zcash.provider" // NON-NLS
     const val ZASHI_INTERNAL_DATA_AUTHORITY_DEBUG = "co.electriccoin.zcash.debug.provider" // NON-NLS
@@ -30,7 +31,8 @@ object FileShareUtil {
     internal fun newShareContentIntent(
         context: Context,
         dataFilePath: String,
-        versionInfo: VersionInfo
+        fileType: String,
+        versionInfo: VersionInfo,
     ): Intent {
         val fileUri =
             FileProvider.getUriForFile(
@@ -43,7 +45,7 @@ object FileShareUtil {
             Intent().apply {
                 action = Intent.ACTION_SEND
                 putExtra(Intent.EXTRA_STREAM, fileUri)
-                type = ZASHI_INTERNAL_DATA_MIME_TYPE
+                type = fileType
             }
 
         val shareDataIntent =

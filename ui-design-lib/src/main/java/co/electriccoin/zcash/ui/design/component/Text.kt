@@ -5,24 +5,46 @@ package co.electriccoin.zcash.ui.design.component
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.AccountBox
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+
+@Preview
+@Composable
+private fun TextComposablePreview() {
+    ZcashTheme(forceDarkMode = false) {
+        GradientSurface {
+            Column {
+                Reference(text = "Test reference text", onClick = {})
+                Reference(text = "User account", imageVector = Icons.Outlined.AccountBox, onClick = {})
+                // Preview the rest of the composable
+            }
+        }
+    }
+}
 
 @Composable
 fun Header(
@@ -36,7 +58,23 @@ fun Header(
         color = color,
         textAlign = textAlign,
         modifier = modifier,
-        style = MaterialTheme.typography.headlineLarge,
+        style = ZcashTheme.typography.secondary.headlineLarge,
+    )
+}
+
+@Composable
+fun SubHeader(
+    text: String,
+    modifier: Modifier = Modifier,
+    textAlign: TextAlign = TextAlign.Start,
+    color: Color = ZcashTheme.colors.onBackgroundHeader,
+) {
+    Text(
+        text = text,
+        color = color,
+        textAlign = textAlign,
+        modifier = modifier,
+        style = ZcashTheme.typography.secondary.headlineSmall,
     )
 }
 
@@ -171,33 +209,46 @@ fun ListHeader(
     )
 }
 
+@Suppress("LongParameterList")
 @Composable
 fun Reference(
     text: String,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    textAlign: TextAlign = TextAlign.Start,
-    onClick: () -> Unit
+    textAlign: TextAlign = TextAlign.Center,
+    imageVector: ImageVector? = null,
+    imageContentDescription: String? = null
 ) {
-    Box(
+    Row(
         modifier =
             Modifier
                 .wrapContentSize()
                 .clip(RoundedCornerShape(ZcashTheme.dimens.topAppBarActionRippleCorner))
                 .clickable { onClick() }
-                .then(modifier)
+                .padding(all = ZcashTheme.dimens.spacingDefault)
+                .then(modifier),
+        verticalAlignment = Alignment.CenterVertically
     ) {
+        imageVector?.let {
+            Icon(
+                imageVector = imageVector,
+                contentDescription = imageContentDescription
+            )
+        }
+        Spacer(modifier = Modifier.padding(ZcashTheme.dimens.spacingTiny))
         Text(
             text = text,
+            textAlign = TextAlign.Center,
             style =
-                MaterialTheme.typography.bodyLarge
+                ZcashTheme.typography.primary.bodyLarge
                     .merge(
                         TextStyle(
                             color = ZcashTheme.colors.reference,
                             textAlign = textAlign,
-                            textDecoration = TextDecoration.Underline
+                            textDecoration = TextDecoration.Underline,
+                            fontWeight = FontWeight.SemiBold
                         )
-                    ),
-            modifier = Modifier.padding(all = ZcashTheme.dimens.spacingDefault)
+                    )
         )
     }
 }
@@ -220,7 +271,10 @@ fun HeaderWithZecIcon(
         style = ZcashTheme.extendedTypography.zecBalance,
         color = MaterialTheme.colorScheme.onBackground,
         maxLines = 1,
-        modifier = Modifier.basicMarquee().then(modifier)
+        modifier =
+            Modifier
+                .basicMarquee()
+                .then(modifier)
     )
 }
 

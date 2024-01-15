@@ -26,7 +26,6 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 @Composable
 internal fun MainActivity.WrapHome(
     onPageChange: (HomeScreenIndex) -> Unit,
-    goAddressDetails: () -> Unit,
     goBack: () -> Unit,
     goHistory: () -> Unit,
     goSettings: () -> Unit,
@@ -36,7 +35,6 @@ internal fun MainActivity.WrapHome(
     WrapHome(
         this,
         onPageChange = onPageChange,
-        goAddressDetails = goAddressDetails,
         goBack = goBack,
         goHistory = goHistory,
         goScan = goScan,
@@ -49,7 +47,6 @@ internal fun MainActivity.WrapHome(
 @Composable
 internal fun WrapHome(
     activity: ComponentActivity,
-    goAddressDetails: () -> Unit,
     goBack: () -> Unit,
     goHistory: () -> Unit,
     goSettings: () -> Unit,
@@ -117,7 +114,6 @@ internal fun WrapHome(
                     WrapReceive(
                         activity = activity,
                         onSettings = goSettings,
-                        onAddressDetails = goAddressDetails,
                     )
                 }
             ),

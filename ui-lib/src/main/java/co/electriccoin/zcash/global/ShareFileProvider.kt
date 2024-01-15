@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.exportdata.util
+package co.electriccoin.zcash.global
 
 import androidx.core.content.FileProvider
 import co.electriccoin.zcash.ui.R

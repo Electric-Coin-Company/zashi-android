@@ -2,9 +2,11 @@ package co.electriccoin.zcash.ui.screen.receive.view
 
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.filters.MediumTest
-import cash.z.ecc.android.sdk.fixture.WalletAddressFixture
-import cash.z.ecc.android.sdk.model.WalletAddress
+import cash.z.ecc.android.sdk.fixture.WalletAddressesFixture
+import cash.z.ecc.android.sdk.model.WalletAddresses
 import co.electriccoin.zcash.test.UiTestPrerequisites
+import co.electriccoin.zcash.ui.common.model.VersionInfo
+import co.electriccoin.zcash.ui.fixture.VersionInfoFixture
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
@@ -18,7 +20,11 @@ class ReceiveViewScreenTimeoutTest : UiTestPrerequisites() {
     @MediumTest
     fun testTimeoutDefaultState() =
         runTest {
-            val testSetup = newTestSetup(WalletAddressFixture.unified())
+            val testSetup =
+                newTestSetup(
+                    WalletAddressesFixture.new(),
+                    VersionInfoFixture.new()
+                )
 
             assertEquals(0, testSetup.getScreenTimeoutCount())
         }
@@ -27,7 +33,12 @@ class ReceiveViewScreenTimeoutTest : UiTestPrerequisites() {
     @MediumTest
     fun testTimeoutOnState() =
         runTest {
-            val testSetup = newTestSetup(WalletAddressFixture.unified())
+            // Using isDebuggable flag to have brightness toggle in the UI
+            val testSetup =
+                newTestSetup(
+                    WalletAddressesFixture.new(),
+                    VersionInfoFixture.new(isDebuggable = true)
+                )
 
             assertEquals(false, testSetup.getOnAdjustBrightness())
             assertEquals(0, testSetup.getScreenTimeoutCount())
@@ -38,5 +49,8 @@ class ReceiveViewScreenTimeoutTest : UiTestPrerequisites() {
             assertEquals(1, testSetup.getScreenTimeoutCount())
         }
 
-    private fun newTestSetup(walletAddress: WalletAddress) = ReceiveViewTestSetup(composeTestRule, walletAddress)
+    private fun newTestSetup(
+        walletAddresses: WalletAddresses,
+        versionInfo: VersionInfo
+    ) = ReceiveViewTestSetup(composeTestRule, walletAddresses, versionInfo)
 }

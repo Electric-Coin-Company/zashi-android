@@ -20,11 +20,9 @@ import co.electriccoin.zcash.ui.NavigationTargets.SCAN
 import co.electriccoin.zcash.ui.NavigationTargets.SEED_RECOVERY
 import co.electriccoin.zcash.ui.NavigationTargets.SETTINGS
 import co.electriccoin.zcash.ui.NavigationTargets.SUPPORT
-import co.electriccoin.zcash.ui.NavigationTargets.WALLET_ADDRESS_DETAILS
 import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
 import co.electriccoin.zcash.ui.configuration.RemoteConfig
 import co.electriccoin.zcash.ui.screen.about.WrapAbout
-import co.electriccoin.zcash.ui.screen.address.WrapWalletAddresses
 import co.electriccoin.zcash.ui.screen.exportdata.WrapExportPrivateData
 import co.electriccoin.zcash.ui.screen.history.WrapHistory
 import co.electriccoin.zcash.ui.screen.home.WrapHome
@@ -51,7 +49,6 @@ internal fun MainActivity.Navigation() {
                 onPageChange = {
                     homeViewModel.screenIndex.value = it
                 },
-                goAddressDetails = { navController.navigateJustOnce(WALLET_ADDRESS_DETAILS) },
                 goBack = { finish() },
                 goHistory = { navController.navigateJustOnce(HISTORY) },
                 goSettings = { navController.navigateJustOnce(SETTINGS) },
@@ -71,13 +68,6 @@ internal fun MainActivity.Navigation() {
             if (ConfigurationEntries.IS_APP_UPDATE_CHECK_ENABLED.getValue(RemoteConfig.current)) {
                 WrapCheckForUpdate()
             }
-        }
-        composable(WALLET_ADDRESS_DETAILS) {
-            WrapWalletAddresses(
-                goBack = {
-                    navController.popBackStackJustOnce(WALLET_ADDRESS_DETAILS)
-                }
-            )
         }
         composable(SETTINGS) {
             WrapSettings(
@@ -201,5 +191,4 @@ object NavigationTargets {
     const val SEND = "send"
     const val SETTINGS = "settings"
     const val SUPPORT = "support"
-    const val WALLET_ADDRESS_DETAILS = "wallet_address_details"
 }

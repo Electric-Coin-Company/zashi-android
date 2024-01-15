@@ -10,7 +10,7 @@
         android:label="@string/app_name">
 
         <provider
-            android:name="co.electriccoin.zcash.ui.screen.exportdata.util.ShareFileProvider"
+            android:name="co.electriccoin.zcash.global.ShareFileProvider"
             android:authorities="co.electriccoin.zcash.debug.provider.testnet"
             android:exported="false"
             android:grantUriPermissions="true"
