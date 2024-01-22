@@ -9,6 +9,10 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+### Added
+- The current balance UI on top of the Account screen has been reworked. It now displays the currently available 
+  balance as well.
+
 ## [0.2.0 (530)] - 2024-01-16
 
 ### Changed
