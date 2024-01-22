@@ -21,6 +21,9 @@ import org.junit.Assert
 import org.junit.Rule
 import org.junit.Test
 
+// TODO [#1194]: Cover Current balances UI widget with tests
+// TODO [#1194]: https://github.com/Electric-Coin-Company/zashi-android/issues/1194
+
 class AccountViewTest : UiTestPrerequisites() {
     @get:Rule
     val composeTestRule = createComposeRule()
