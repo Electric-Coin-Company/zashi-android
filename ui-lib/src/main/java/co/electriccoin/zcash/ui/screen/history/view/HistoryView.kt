@@ -227,7 +227,7 @@ private fun HistoryList(
     onItemClick: (TransactionOverview) -> Unit,
     onTransactionIdClick: (String) -> Unit
 ) {
-    val currency = ZcashCurrency.fromResources(LocalContext.current)
+    val currency = ZcashCurrency.getLocalizedName(LocalContext.current)
     LazyColumn(modifier = Modifier.testTag(HistoryTag.TRANSACTION_LIST)) {
         itemsIndexed(transactions) { index, item ->
             HistoryItem(
@@ -250,7 +250,7 @@ private fun HistoryList(
 @Suppress("LongMethod")
 fun HistoryItem(
     transaction: TransactionOverview,
-    currency: ZcashCurrency,
+    currency: String,
     onItemClick: (TransactionOverview) -> Unit,
     onIdClick: (String) -> Unit,
     modifier: Modifier = Modifier
@@ -340,7 +340,7 @@ fun HistoryItem(
 
                         Spacer(modifier = Modifier.width(ZcashTheme.dimens.spacingTiny))
 
-                        Body(text = currency.name)
+                        Body(text = currency)
                     }
                 }
             }

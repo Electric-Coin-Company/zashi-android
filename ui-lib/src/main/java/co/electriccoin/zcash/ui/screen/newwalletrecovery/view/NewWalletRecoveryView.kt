@@ -117,7 +117,7 @@ private fun NewWalletRecoveryCopyToBufferMenuItem(
         text = stringResource(id = R.string.new_wallet_recovery_copy),
         onClick = onCopyToClipboard,
         textAlign = TextAlign.Center,
-        modifier = modifier
+        modifier = modifier.padding(all = ZcashTheme.dimens.spacingDefault)
     )
 }
 

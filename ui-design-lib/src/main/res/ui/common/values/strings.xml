@@ -1,4 +1,3 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="amount_with_zec_currency_symbol" formatted="true">$<xliff:g id="zec_amount" example="123">%1$s</xliff:g></string>
     <string name="amount_with_fiat_currency_symbol" formatted="true"><xliff:g id="fiat_currency_symbol" example="$">%1$s</xliff:g><xliff:g id="amount" example="123">%2$s</xliff:g></string>
 </resources>

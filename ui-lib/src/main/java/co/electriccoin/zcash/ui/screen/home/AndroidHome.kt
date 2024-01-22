@@ -70,7 +70,7 @@ internal fun WrapHome(
             HomeScreenIndex.ACCOUNT -> goBack()
             HomeScreenIndex.SEND,
             HomeScreenIndex.RECEIVE,
-            HomeScreenIndex.BALANCES -> forceHomePageIndexFlow.tryEmit(ForcePage())
+            HomeScreenIndex.BALANCES -> forceHomePageIndexFlow.tryEmit(ForcePage(HomeScreenIndex.ACCOUNT))
         }
     }
 
@@ -87,6 +87,7 @@ internal fun WrapHome(
                 screenContent = {
                     WrapAccount(
                         activity = activity,
+                        goBalances = { forceHomePageIndexFlow.tryEmit(ForcePage(HomeScreenIndex.BALANCES)) },
                         goHistory = goHistory,
                         goSettings = goSettings,
                     )
@@ -141,7 +142,7 @@ internal fun WrapHome(
  * Wrapper class used to pass forced pages index into the view layer
  */
 class ForcePage(
-    val currentPage: HomeScreenIndex = HomeScreenIndex.ACCOUNT,
+    val currentPage: HomeScreenIndex,
 )
 
 /**

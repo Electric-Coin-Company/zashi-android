@@ -294,7 +294,10 @@ private fun Address(
                 textAlign = TextAlign.Center,
                 imageVector = ImageVector.vectorResource(R.drawable.copy),
                 imageContentDescription = null,
-                modifier = Modifier.wrapContentSize(),
+                modifier =
+                    Modifier
+                        .wrapContentSize()
+                        .padding(all = ZcashTheme.dimens.spacingDefault),
             )
             Reference(
                 text = stringResource(id = R.string.receive_share),
@@ -302,7 +305,10 @@ private fun Address(
                 textAlign = TextAlign.Center,
                 imageVector = ImageVector.vectorResource(R.drawable.share),
                 imageContentDescription = null,
-                modifier = Modifier.wrapContentSize(),
+                modifier =
+                    Modifier
+                        .wrapContentSize()
+                        .padding(all = ZcashTheme.dimens.spacingDefault),
             )
         }
     }

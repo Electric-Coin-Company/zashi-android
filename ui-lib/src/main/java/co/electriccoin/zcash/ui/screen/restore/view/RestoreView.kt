@@ -283,7 +283,7 @@ private fun ClearSeedMenuItem(
         text = stringResource(id = R.string.restore_button_clear),
         onClick = onSeedClear,
         textAlign = TextAlign.Center,
-        modifier = modifier
+        modifier = modifier.padding(all = ZcashTheme.dimens.spacingDefault)
     )
 }
 

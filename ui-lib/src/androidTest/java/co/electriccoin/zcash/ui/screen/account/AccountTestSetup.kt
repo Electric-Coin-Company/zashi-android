@@ -53,6 +53,7 @@ class AccountTestSetup(
             goSettings = {
                 onSettingsCount.incrementAndGet()
             },
+            goBalances = {},
             goHistory = {
                 onHistoryCount.incrementAndGet()
             },
