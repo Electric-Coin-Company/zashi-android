@@ -112,7 +112,7 @@ jobs:
         # Note that this step is not currently used due to #1033
         if: false
         id: auth_google_play
-        uses: google-github-actions/auth@f6de81663f7788d05bd15bcce18f0e57f23f0846
+        uses: google-github-actions/auth@5a50e581162a13f4baa8916d01180d2acbc04363
         with:
           create_credentials_file: true
           project_id: ${{ secrets.GOOGLE_PLAY_CLOUD_PROJECT }}
