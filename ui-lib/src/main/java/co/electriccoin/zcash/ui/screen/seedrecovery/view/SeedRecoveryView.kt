@@ -124,7 +124,7 @@ private fun SeedRecoveryCopyToBufferMenuItem(
         text = stringResource(id = R.string.seed_recovery_copy),
         onClick = onCopyToClipboard,
         textAlign = TextAlign.Center,
-        modifier = modifier
+        modifier = modifier.padding(all = ZcashTheme.dimens.spacingDefault)
     )
 }
 

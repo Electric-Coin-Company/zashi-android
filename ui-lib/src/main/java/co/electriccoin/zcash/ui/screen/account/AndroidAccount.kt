@@ -19,8 +19,9 @@ import co.electriccoin.zcash.ui.screen.update.model.UpdateState
 @Composable
 internal fun WrapAccount(
     activity: ComponentActivity,
-    goSettings: () -> Unit,
     goHistory: () -> Unit,
+    goBalances: () -> Unit,
+    goSettings: () -> Unit,
 ) {
     // Show information about the app update, if available
     val checkUpdateViewModel by activity.viewModels<CheckUpdateViewModel> {
@@ -53,8 +54,9 @@ internal fun WrapAccount(
             isUpdateAvailable = updateAvailable,
             isKeepScreenOnDuringSync = isKeepScreenOnWhileSyncing,
             isFiatConversionEnabled = isFiatConversionEnabled,
+            goBalances = goBalances,
+            goHistory = goHistory,
             goSettings = goSettings,
-            goHistory = goHistory
         )
 
         // For benchmarking purposes

@@ -22,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.model.FiatCurrencyConversionRateState
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.BalanceWidget
 import co.electriccoin.zcash.ui.common.DisableScreenTimeout
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.test.CommonTag
@@ -29,7 +30,6 @@ import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.BodyWithFiatCurrencySymbol
 import co.electriccoin.zcash.ui.design.component.GradientSurface
-import co.electriccoin.zcash.ui.design.component.HeaderWithZecIcon
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
@@ -47,8 +47,9 @@ private fun ComposablePreview() {
                 isUpdateAvailable = false,
                 isKeepScreenOnDuringSync = false,
                 isFiatConversionEnabled = false,
+                goHistory = {},
+                goBalances = {},
                 goSettings = {},
-                goHistory = {}
             )
         }
     }
@@ -61,8 +62,9 @@ fun Account(
     isUpdateAvailable: Boolean,
     isKeepScreenOnDuringSync: Boolean?,
     isFiatConversionEnabled: Boolean,
+    goBalances: () -> Unit,
+    goHistory: () -> Unit,
     goSettings: () -> Unit,
-    goHistory: () -> Unit
 ) {
     Scaffold(topBar = {
         AccountTopAppBar(onSettings = goSettings)
@@ -73,6 +75,7 @@ fun Account(
             isKeepScreenOnDuringSync = isKeepScreenOnDuringSync,
             isFiatConversionEnabled = isFiatConversionEnabled,
             goHistory = goHistory,
+            goBalances = goBalances,
             modifier =
                 Modifier.padding(
                     top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
@@ -109,6 +112,7 @@ private fun AccountMainContent(
     isUpdateAvailable: Boolean,
     isKeepScreenOnDuringSync: Boolean?,
     isFiatConversionEnabled: Boolean,
+    goBalances: () -> Unit,
     goHistory: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -121,7 +125,7 @@ private fun AccountMainContent(
     ) {
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
-        Status(walletSnapshot, isUpdateAvailable, isFiatConversionEnabled)
+        Status(walletSnapshot, isUpdateAvailable, isFiatConversionEnabled, goBalances)
 
         Spacer(
             modifier =
@@ -145,7 +149,8 @@ private fun AccountMainContent(
 private fun Status(
     walletSnapshot: WalletSnapshot,
     updateAvailable: Boolean,
-    isFiatConversionEnabled: Boolean
+    isFiatConversionEnabled: Boolean,
+    goBalances: () -> Unit
 ) {
     val walletDisplayValues =
         WalletDisplayValues.getNextValues(
@@ -161,10 +166,14 @@ private fun Status(
                 .testTag(AccountTag.STATUS_VIEWS),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
         if (walletDisplayValues.zecAmountText.isNotEmpty()) {
-            HeaderWithZecIcon(amount = walletDisplayValues.zecAmountText)
+            BalanceWidget(
+                walletSnapshot = walletSnapshot,
+                isReferenceToBalances = true,
+                onReferenceClick = goBalances
+            )
         }
 
         if (isFiatConversionEnabled) {

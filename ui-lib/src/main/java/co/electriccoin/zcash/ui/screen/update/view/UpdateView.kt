@@ -202,13 +202,14 @@ private fun UpdateContentNormal(
 
         Reference(
             text = stringResource(id = R.string.update_link_text),
+            onClick = {
+                onReference()
+            },
             modifier =
                 Modifier
                     .wrapContentHeight()
-                    .align(Alignment.CenterHorizontally),
-            onClick = {
-                onReference()
-            }
+                    .align(Alignment.CenterHorizontally)
+                    .padding(all = ZcashTheme.dimens.spacingDefault),
         )
     }
 }

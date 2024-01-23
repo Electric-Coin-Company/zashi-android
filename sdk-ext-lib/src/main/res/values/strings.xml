@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="zcash_token_zec">ZEC</string>
+    <string name="zcash_token_taz">TAZ</string>
+</resources>

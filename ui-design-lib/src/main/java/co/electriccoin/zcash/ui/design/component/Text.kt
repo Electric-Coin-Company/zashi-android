@@ -22,29 +22,66 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
-import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 
 @Preview
 @Composable
-private fun TextComposablePreview() {
+private fun ReferenceComposablePreview() {
     ZcashTheme(forceDarkMode = false) {
         GradientSurface {
             Column {
-                Reference(text = "Test reference text", onClick = {})
-                Reference(text = "User account", imageVector = Icons.Outlined.AccountBox, onClick = {})
-                // Preview the rest of the composable
+                Reference(
+                    text = "Test reference text",
+                    onClick = {},
+                    modifier = Modifier.padding(all = ZcashTheme.dimens.spacingDefault)
+                )
+                Reference(
+                    text = "Reference with icon",
+                    imageVector = Icons.Outlined.AccountBox,
+                    onClick = {},
+                    modifier = Modifier.padding(all = ZcashTheme.dimens.spacingDefault)
+                )
+                Reference(
+                    text = "Normal font weight reference",
+                    onClick = {},
+                    fontWeight = FontWeight.Normal,
+                    modifier = Modifier.padding(all = ZcashTheme.dimens.spacingDefault)
+                )
             }
         }
     }
 }
+
+@Preview
+@Composable
+private fun StyledBalanceComposablePreview() {
+    ZcashTheme(forceDarkMode = false) {
+        GradientSurface {
+            Column {
+                StyledBalance(
+                    mainPart = "1,234.567",
+                    secondPart = "89012",
+                    textStyles =
+                        Pair(
+                            ZcashTheme.extendedTypography.zecBalanceStyles.first,
+                            ZcashTheme.extendedTypography.zecBalanceStyles.second
+                        ),
+                    modifier = Modifier
+                )
+            }
+        }
+    }
+}
+
+// Add previews for the rest of the composables
 
 @Composable
 fun Header(
@@ -107,6 +144,7 @@ fun Body(
     maxLines: Int = Int.MAX_VALUE,
     overflow: TextOverflow = TextOverflow.Clip,
     textAlign: TextAlign = TextAlign.Start,
+    textFontWeight: FontWeight = FontWeight.Normal,
     color: Color = MaterialTheme.colorScheme.onBackground,
 ) {
     Text(
@@ -116,7 +154,8 @@ fun Body(
         overflow = overflow,
         textAlign = textAlign,
         modifier = modifier,
-        style = MaterialTheme.typography.bodyLarge,
+        style = ZcashTheme.typography.primary.bodyLarge,
+        fontWeight = textFontWeight
     )
 }
 
@@ -215,6 +254,7 @@ fun Reference(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    fontWeight: FontWeight = FontWeight.SemiBold,
     textAlign: TextAlign = TextAlign.Center,
     imageVector: ImageVector? = null,
     imageContentDescription: String? = null
@@ -225,7 +265,6 @@ fun Reference(
                 .wrapContentSize()
                 .clip(RoundedCornerShape(ZcashTheme.dimens.topAppBarActionRippleCorner))
                 .clickable { onClick() }
-                .padding(all = ZcashTheme.dimens.spacingDefault)
                 .then(modifier),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -246,7 +285,7 @@ fun Reference(
                             color = ZcashTheme.colors.reference,
                             textAlign = textAlign,
                             textDecoration = TextDecoration.Underline,
-                            fontWeight = FontWeight.SemiBold
+                            fontWeight = fontWeight
                         )
                     )
         )
@@ -254,21 +293,37 @@ fun Reference(
 }
 
 /**
- * Pass amount of ZECs you want to display and the component appends ZEC symbol to it. We're using
- * a custom font here, which is Roboto modified to replace the dollar symbol with the ZEC symbol internally.
+ * Pass amount of Zcash tokens you want to display and the component style it according to the design requirements.
  *
- * @param amount of ZECs to be displayed
+ * @param mainPart of Zcash tokens to be displayed in a bigger font style
+ * @param secondPart of Zcash tokens to be displayed in a smaller font style
  * @param modifier to modify the Text UI element as needed
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun HeaderWithZecIcon(
-    amount: String,
+fun StyledBalance(
+    mainPart: String,
+    secondPart: String,
+    textStyles: Pair<TextStyle, TextStyle>,
     modifier: Modifier = Modifier
 ) {
+    val content =
+        buildAnnotatedString {
+            withStyle(
+                style = textStyles.first.toSpanStyle()
+            ) {
+                append(mainPart)
+            }
+            withStyle(
+                style = textStyles.second.toSpanStyle()
+            ) {
+                append(secondPart)
+            }
+        }
+
     Text(
-        text = stringResource(R.string.amount_with_zec_currency_symbol, amount),
-        style = ZcashTheme.extendedTypography.zecBalance,
+        text = content,
+        // fixme color
         color = MaterialTheme.colorScheme.onBackground,
         maxLines = 1,
         modifier =

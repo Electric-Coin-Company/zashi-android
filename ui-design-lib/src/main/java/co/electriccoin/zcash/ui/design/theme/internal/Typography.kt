@@ -3,8 +3,8 @@ package co.electriccoin.zcash.ui.design.theme.internal
 import androidx.compose.material3.Typography
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.googlefonts.Font
@@ -46,11 +46,6 @@ private val ArchivoFontFamily =
         Font(googleFont = ArchivoFont, fontProvider = provider, weight = FontWeight.SemiBold),
         // W700
         Font(googleFont = ArchivoFont, fontProvider = provider, weight = FontWeight.Bold)
-    )
-
-private val Zboto =
-    FontFamily(
-        Font(R.font.zboto, FontWeight.Normal)
     )
 
 // If you change this definition of our Typography, don't forget to check if you use only
@@ -144,9 +139,18 @@ data class Typography(
 )
 
 @Immutable
+data class BalanceTextStyles(
+    val first: TextStyle,
+    val second: TextStyle,
+    val third: TextStyle,
+    val fourth: TextStyle,
+)
+
+@Immutable
 data class ExtendedTypography(
     val listItem: TextStyle,
-    val zecBalance: TextStyle,
+    // Grouping balances text styles to a wrapper class
+    val zecBalanceStyles: BalanceTextStyles,
     val aboutText: TextStyle,
     val buttonText: TextStyle,
     val checkboxText: TextStyle,
@@ -174,11 +178,31 @@ val LocalExtendedTypography =
                 PrimaryTypography.bodyLarge.copy(
                     fontSize = 24.sp
                 ),
-            zecBalance =
-                TextStyle(
-                    fontFamily = Zboto,
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 30.sp
+            // Note: the order here matters, be careful when reordering
+            zecBalanceStyles =
+                BalanceTextStyles(
+                    first =
+                        SecondaryTypography.headlineLarge.copy(
+                            fontSize = 42.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            // Remove font padding to achieve desired design
+                            platformStyle = PlatformTextStyle(includeFontPadding = false),
+                        ),
+                    second =
+                        SecondaryTypography.headlineSmall.copy(
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.SemiBold
+                        ),
+                    third =
+                        PrimaryTypography.bodySmall.copy(
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Bold
+                        ),
+                    fourth =
+                        PrimaryTypography.bodySmall.copy(
+                            fontSize = 8.sp,
+                            fontWeight = FontWeight.Bold
+                        )
                 ),
             aboutText =
                 PrimaryTypography.bodyLarge.copy(
