@@ -80,7 +80,8 @@ internal fun WrapSend(
     // 1. Use a different UI flow entirely
     // 2. Show a pre-filled Send form
     // 3. Go directly to the Confirmation screen
-    val (sendStage, setSendStage) = rememberSaveable { mutableStateOf(SendStage.Form) }
+    val (sendStage, setSendStage) =
+        rememberSaveable(stateSaver = SendStage.Saver) { mutableStateOf(SendStage.Form) }
 
     val (zecSend, setZecSend) = rememberSaveable(stateSaver = ZecSend.Saver) { mutableStateOf(null) }
 
@@ -89,7 +90,7 @@ internal fun WrapSend(
             SendStage.Form -> goBack()
             SendStage.Confirmation -> setSendStage(SendStage.Form)
             SendStage.Sending -> { /* no action - wait until the sending is done */ }
-            SendStage.SendFailure -> setSendStage(SendStage.Form)
+            is SendStage.SendFailure -> setSendStage(SendStage.Form)
             SendStage.SendSuccessful -> {
                 setZecSend(null)
                 setSendStage(SendStage.Form)
@@ -127,7 +128,7 @@ internal fun WrapSend(
                         }
                         .onFailure {
                             Twig.debug { "Transaction submission failed with: $it." }
-                            setSendStage(SendStage.SendFailure)
+                            setSendStage(SendStage.SendFailure(it.localizedMessage ?: ""))
                         }
                 }
             },
