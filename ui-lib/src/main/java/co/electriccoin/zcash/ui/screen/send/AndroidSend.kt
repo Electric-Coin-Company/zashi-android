@@ -14,11 +14,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.model.UnifiedSpendingKey
-import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.sdk.extension.send
 import co.electriccoin.zcash.spackle.Twig
-import co.electriccoin.zcash.ui.common.model.spendableBalance
+import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.screen.send.ext.Saver
@@ -28,11 +27,13 @@ import co.electriccoin.zcash.ui.screen.send.view.Send
 import kotlinx.coroutines.launch
 
 @Composable
+@Suppress("LongParameterList")
 internal fun WrapSend(
     activity: ComponentActivity,
     sendArgumentsWrapper: SendArgumentsWrapper?,
     goToQrScanner: () -> Unit,
     goBack: () -> Unit,
+    goBalances: () -> Unit,
     goSettings: () -> Unit,
 ) {
     val hasCameraFeature = activity.packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)
@@ -41,17 +42,18 @@ internal fun WrapSend(
 
     val synchronizer = walletViewModel.synchronizer.collectAsStateWithLifecycle().value
 
-    val spendableBalance = walletViewModel.walletSnapshot.collectAsStateWithLifecycle().value?.spendableBalance()
+    val walletSnapshot = walletViewModel.walletSnapshot.collectAsStateWithLifecycle().value
 
     val spendingKey = walletViewModel.spendingKey.collectAsStateWithLifecycle().value
 
     WrapSend(
         sendArgumentsWrapper,
         synchronizer,
-        spendableBalance,
+        walletSnapshot,
         spendingKey,
         goToQrScanner,
         goBack,
+        goBalances,
         goSettings,
         hasCameraFeature
     )
@@ -63,10 +65,11 @@ internal fun WrapSend(
 internal fun WrapSend(
     sendArgumentsWrapper: SendArgumentsWrapper?,
     synchronizer: Synchronizer?,
-    spendableBalance: Zatoshi?,
+    walletSnapshot: WalletSnapshot?,
     spendingKey: UnifiedSpendingKey?,
     goToQrScanner: () -> Unit,
     goBack: () -> Unit,
+    goBalances: () -> Unit,
     goSettings: () -> Unit,
     hasCameraFeature: Boolean
 ) {
@@ -99,14 +102,14 @@ internal fun WrapSend(
         onBackAction()
     }
 
-    if (null == synchronizer || null == spendableBalance || null == spendingKey) {
+    if (null == synchronizer || null == walletSnapshot || null == spendingKey) {
         // TODO [#1146]: Consider moving CircularScreenProgressIndicator from Android layer to View layer
         // TODO [#1146]: Improve this by allowing screen composition and updating it after the data is available
         // TODO [#1146]: https://github.com/Electric-Coin-Company/zashi-android/issues/1146
         CircularScreenProgressIndicator()
     } else {
         Send(
-            mySpendableBalance = spendableBalance,
+            walletSnapshot = walletSnapshot,
             sendArgumentsWrapper = sendArgumentsWrapper,
             sendStage = sendStage,
             onSendStageChange = setSendStage,
@@ -129,6 +132,7 @@ internal fun WrapSend(
                 }
             },
             onQrScannerOpen = goToQrScanner,
+            goBalances = goBalances,
             hasCameraFeature = hasCameraFeature
         )
     }

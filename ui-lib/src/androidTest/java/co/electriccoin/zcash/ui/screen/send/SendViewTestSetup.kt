@@ -5,10 +5,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
+import cash.z.ecc.android.sdk.model.WalletBalance
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.ZecSend
-import cash.z.ecc.sdk.fixture.ZatoshiFixture
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 import co.electriccoin.zcash.ui.screen.send.ext.Saver
 import co.electriccoin.zcash.ui.screen.send.model.SendArgumentsWrapper
 import co.electriccoin.zcash.ui.screen.send.model.SendStage
@@ -96,13 +97,24 @@ class SendViewTestSetup(
 
         ZcashTheme {
             Send(
-                mySpendableBalance = ZatoshiFixture.new(Zatoshi.MAX_INCLUSIVE),
+                walletSnapshot =
+                    WalletSnapshotFixture.new(
+                        saplingBalance =
+                            WalletBalance(
+                                total = Zatoshi(Zatoshi.MAX_INCLUSIVE.div(100)),
+                                available = Zatoshi(Zatoshi.MAX_INCLUSIVE.div(100))
+                            )
+                    ),
                 sendStage = sendStage,
                 sendArgumentsWrapper = initialSendArgumentWrapper,
                 onSendStageChange = setSendStage,
                 zecSend = zecSend,
                 onZecSendChange = setZecSend,
                 onBack = onBackAction,
+                goBalances = {
+                    // TODO [#1194]: Cover Current balances UI widget with tests
+                    // TODO [#1194]: https://github.com/Electric-Coin-Company/zashi-android/issues/1194
+                },
                 onSettings = { onSettingsCount.incrementAndGet() },
                 onCreateAndSend = {
                     onCreateCount.incrementAndGet()
