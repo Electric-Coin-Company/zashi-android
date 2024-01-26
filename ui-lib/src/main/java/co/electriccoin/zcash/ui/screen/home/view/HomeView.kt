@@ -132,7 +132,7 @@ fun Home(
             )
             TabRow(
                 selectedTabIndex = pagerState.currentPage,
-                // Don't use the predefined divider, as it's fixed position is below the tabs bar
+                // Don't use the predefined divider, as its fixed position is below the tabs bar
                 divider = {},
                 indicator = { tabPositions ->
                     TabRowDefaults.Indicator(

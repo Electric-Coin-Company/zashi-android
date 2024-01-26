@@ -11,6 +11,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.model.UnifiedSpendingKey
@@ -18,8 +20,10 @@ import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.sdk.extension.send
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
+import co.electriccoin.zcash.ui.common.viewmodel.HomeViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
+import co.electriccoin.zcash.ui.screen.home.HomeScreenIndex
 import co.electriccoin.zcash.ui.screen.send.ext.Saver
 import co.electriccoin.zcash.ui.screen.send.model.SendArgumentsWrapper
 import co.electriccoin.zcash.ui.screen.send.model.SendStage
@@ -46,11 +50,21 @@ internal fun WrapSend(
 
     val spendingKey = walletViewModel.spendingKey.collectAsStateWithLifecycle().value
 
+    val homeViewModel by activity.viewModels<HomeViewModel>()
+
+    val focusManager = LocalFocusManager.current
+
+    if (homeViewModel.screenIndex.collectAsStateWithLifecycle().value != HomeScreenIndex.SEND) {
+        // Clear focus on Send Form text fields
+        focusManager.clearFocus(true)
+    }
+
     WrapSend(
         sendArgumentsWrapper,
         synchronizer,
         walletSnapshot,
         spendingKey,
+        focusManager,
         goToQrScanner,
         goBack,
         goBalances,
@@ -67,6 +81,7 @@ internal fun WrapSend(
     synchronizer: Synchronizer?,
     walletSnapshot: WalletSnapshot?,
     spendingKey: UnifiedSpendingKey?,
+    focusManager: FocusManager,
     goToQrScanner: () -> Unit,
     goBack: () -> Unit,
     goBalances: () -> Unit,
@@ -116,6 +131,7 @@ internal fun WrapSend(
             onSendStageChange = setSendStage,
             zecSend = zecSend,
             onZecSendChange = setZecSend,
+            focusManager = focusManager,
             onBack = onBackAction,
             onSettings = goSettings,
             onCreateAndSend = {

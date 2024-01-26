@@ -29,6 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
@@ -84,6 +85,7 @@ private fun PreviewSendForm() {
         GradientSurface {
             Send(
                 walletSnapshot = WalletSnapshotFixture.new(),
+                focusManager = LocalFocusManager.current,
                 sendArgumentsWrapper = null,
                 sendStage = SendStage.Form,
                 onSendStageChange = {},
@@ -164,6 +166,7 @@ fun Send(
     onSendStageChange: (SendStage) -> Unit,
     zecSend: ZecSend?,
     onZecSendChange: (ZecSend) -> Unit,
+    focusManager: FocusManager,
     onBack: () -> Unit,
     onSettings: () -> Unit,
     onCreateAndSend: (ZecSend) -> Unit,
@@ -182,6 +185,7 @@ fun Send(
             walletSnapshot = walletSnapshot,
             sendArgumentsWrapper = sendArgumentsWrapper,
             onBack = onBack,
+            focusManager = focusManager,
             sendStage = sendStage,
             onSendStageChange = onSendStageChange,
             zecSend = zecSend,
@@ -236,6 +240,7 @@ private fun SendTopAppBar(
 @Composable
 private fun SendMainContent(
     walletSnapshot: WalletSnapshot,
+    focusManager: FocusManager,
     sendArgumentsWrapper: SendArgumentsWrapper?,
     zecSend: ZecSend?,
     onZecSendChange: (ZecSend) -> Unit,
@@ -258,6 +263,7 @@ private fun SendMainContent(
                     onSendStageChange(SendStage.Confirmation)
                     onZecSendChange(it)
                 },
+                focusManager = focusManager,
                 onQrScannerOpen = onQrScannerOpen,
                 goBalances = goBalances,
                 hasCameraFeature = hasCameraFeature,
@@ -306,6 +312,7 @@ private fun SendMainContent(
 @Composable
 private fun SendForm(
     walletSnapshot: WalletSnapshot,
+    focusManager: FocusManager,
     sendArgumentsWrapper: SendArgumentsWrapper?,
     previousZecSend: ZecSend?,
     onCreateZecSend: (ZecSend) -> Unit,
@@ -319,7 +326,6 @@ private fun SendForm(
     // TODO [#1171]: https://github.com/Electric-Coin-Company/zashi-android/issues/1171
     val monetarySeparators = MonetarySeparators.current(Locale.US)
     val allowedCharacters = ZecString.allowedCharacters(monetarySeparators)
-    val focusManager = LocalFocusManager.current
 
     // TODO [#809]: Fix ZEC balance on Send screen
     // TODO [#809]: https://github.com/Electric-Coin-Company/zashi-android/issues/809
