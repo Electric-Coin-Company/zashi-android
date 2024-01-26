@@ -398,7 +398,7 @@ private fun balancesScreenshots(
     // TODO [#1127]: Implement Balances screen
     // TODO [#1127]: https://github.com/Electric-Coin-Company/zashi-android/issues/1127
 
-    composeTestRule.onNodeWithText(resContext.getString(R.string.not_implemented_yet)).also {
+    composeTestRule.onNodeWithText(resContext.getString(R.string.balances_coming_soon)).also {
         it.assertExists()
         ScreenshotTest.takeScreenshot(tag, "Balances 1")
     }
