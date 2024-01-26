@@ -27,7 +27,7 @@ data class WalletDisplayValues(
         internal fun getNextValues(
             context: Context,
             walletSnapshot: WalletSnapshot,
-            updateAvailable: Boolean
+            updateAvailable: Boolean = false
         ): WalletDisplayValues {
             var progress = PercentDecimal.ZERO_PERCENT
             val zecAmountText = walletSnapshot.totalBalance().toZecString()

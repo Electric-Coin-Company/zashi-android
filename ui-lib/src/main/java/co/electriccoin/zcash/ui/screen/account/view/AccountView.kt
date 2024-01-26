@@ -166,8 +166,6 @@ private fun Status(
                 .testTag(AccountTag.STATUS_VIEWS),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
-
         if (walletDisplayValues.zecAmountText.isNotEmpty()) {
             BalanceWidget(
                 walletSnapshot = walletSnapshot,

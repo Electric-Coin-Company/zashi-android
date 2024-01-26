@@ -107,7 +107,7 @@ class SendViewTest : UiTestPrerequisites() {
                     launch {
                         testSetup.getLastZecSend().also {
                             assertNotNull(it)
-                            assertEquals(WalletAddressFixture.unified(), it.destination)
+                            assertEquals(WalletAddressFixture.sapling(), it.destination)
                             assertEquals(Zatoshi(12345678900000), it.amount)
                             assertEquals(ZecRequestFixture.MESSAGE.value, it.memo.value)
                         }
@@ -143,7 +143,7 @@ class SendViewTest : UiTestPrerequisites() {
                     launch {
                         testSetup.getLastZecSend().also {
                             assertNotNull(it)
-                            assertEquals(WalletAddressFixture.unified(), it.destination)
+                            assertEquals(WalletAddressFixture.sapling(), it.destination)
                             assertEquals(Zatoshi(12345678900000), it.amount)
                             assertEquals(ZecRequestFixture.MESSAGE.value, it.memo.value)
                         }
@@ -201,7 +201,7 @@ class SendViewTest : UiTestPrerequisites() {
                     launch {
                         testSetup.getLastZecSend().also {
                             assertNotNull(it)
-                            assertEquals(WalletAddressFixture.unified(), it.destination)
+                            assertEquals(WalletAddressFixture.sapling(), it.destination)
                             assertEquals(Zatoshi(12345678900000), it.amount)
                             assertEquals(ZecRequestFixture.MESSAGE.value, it.memo.value)
                         }
@@ -280,7 +280,7 @@ class SendViewTest : UiTestPrerequisites() {
                     launch {
                         testSetup.getLastZecSend().also {
                             assertNotNull(it)
-                            assertEquals(WalletAddressFixture.unified(), it.destination)
+                            assertEquals(WalletAddressFixture.sapling(), it.destination)
                             assertEquals(Zatoshi(12345600000), it.amount)
                             assertTrue(it.memo.value.isEmpty())
                         }

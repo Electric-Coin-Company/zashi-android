@@ -6,12 +6,13 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.test.filters.MediumTest
 import cash.z.ecc.android.sdk.fixture.WalletFixture
+import cash.z.ecc.android.sdk.model.WalletBalance
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.ZcashNetwork
-import cash.z.ecc.sdk.fixture.ZatoshiFixture
 import cash.z.ecc.sdk.fixture.ZecSendFixture
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.fixture.MockSynchronizer
+import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 import co.electriccoin.zcash.ui.screen.send.WrapSend
 import co.electriccoin.zcash.ui.screen.send.assertOnConfirmation
 import co.electriccoin.zcash.ui.screen.send.assertOnForm
@@ -39,7 +40,14 @@ class SendViewIntegrationTest {
             )
         }
     private val synchronizer = MockSynchronizer.new()
-    private val balance = ZatoshiFixture.new(Zatoshi.MAX_INCLUSIVE)
+    private val walletSnapshot =
+        WalletSnapshotFixture.new(
+            saplingBalance =
+                WalletBalance(
+                    total = Zatoshi(Zatoshi.MAX_INCLUSIVE.div(100)),
+                    available = Zatoshi(Zatoshi.MAX_INCLUSIVE.div(100))
+                )
+        )
 
     @Test
     @MediumTest
@@ -54,10 +62,11 @@ class SendViewIntegrationTest {
             WrapSend(
                 sendArgumentsWrapper = null,
                 synchronizer = synchronizer,
-                spendableBalance = balance,
+                walletSnapshot = walletSnapshot,
                 spendingKey = spendingKey,
                 goToQrScanner = {},
                 goBack = {},
+                goBalances = {},
                 hasCameraFeature = true,
                 goSettings = {}
             )

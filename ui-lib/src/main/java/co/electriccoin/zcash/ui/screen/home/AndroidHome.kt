@@ -102,6 +102,7 @@ internal fun WrapHome(
                         activity = activity,
                         goToQrScanner = goScan,
                         goBack = homeGoBack,
+                        goBalances = { forceHomePageIndexFlow.tryEmit(ForcePage(HomeScreenIndex.BALANCES)) },
                         goSettings = goSettings,
                         sendArgumentsWrapper = sendArgumentsWrapper
                     )

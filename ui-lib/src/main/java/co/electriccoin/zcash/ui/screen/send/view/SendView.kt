@@ -7,10 +7,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -55,6 +53,9 @@ import cash.z.ecc.sdk.fixture.MemoFixture
 import cash.z.ecc.sdk.fixture.ZatoshiFixture
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.BalanceWidget
+import co.electriccoin.zcash.ui.common.model.WalletSnapshot
+import co.electriccoin.zcash.ui.common.model.spendableBalance
 import co.electriccoin.zcash.ui.common.test.CommonTag
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.Body
@@ -65,6 +66,8 @@ import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme.dimens
+import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
+import co.electriccoin.zcash.ui.screen.account.model.WalletDisplayValues
 import co.electriccoin.zcash.ui.screen.send.SendTag
 import co.electriccoin.zcash.ui.screen.send.ext.ABBREVIATION_INDEX
 import co.electriccoin.zcash.ui.screen.send.ext.abbreviated
@@ -80,7 +83,7 @@ private fun PreviewSendForm() {
     ZcashTheme(forceDarkMode = false) {
         GradientSurface {
             Send(
-                mySpendableBalance = ZatoshiFixture.new(),
+                walletSnapshot = WalletSnapshotFixture.new(),
                 sendArgumentsWrapper = null,
                 sendStage = SendStage.Form,
                 onSendStageChange = {},
@@ -90,6 +93,7 @@ private fun PreviewSendForm() {
                 onQrScannerOpen = {},
                 onBack = {},
                 onSettings = {},
+                goBalances = {},
                 hasCameraFeature = true
             )
         }
@@ -153,7 +157,7 @@ private fun PreviewSendConfirmation() {
 @Suppress("LongParameterList")
 @Composable
 fun Send(
-    mySpendableBalance: Zatoshi,
+    walletSnapshot: WalletSnapshot,
     sendArgumentsWrapper: SendArgumentsWrapper?,
     sendStage: SendStage,
     onSendStageChange: (SendStage) -> Unit,
@@ -163,6 +167,7 @@ fun Send(
     onSettings: () -> Unit,
     onCreateAndSend: (ZecSend) -> Unit,
     onQrScannerOpen: () -> Unit,
+    goBalances: () -> Unit,
     hasCameraFeature: Boolean
 ) {
     Scaffold(topBar = {
@@ -173,7 +178,7 @@ fun Send(
         )
     }) { paddingValues ->
         SendMainContent(
-            myBalance = mySpendableBalance,
+            walletSnapshot = walletSnapshot,
             sendArgumentsWrapper = sendArgumentsWrapper,
             onBack = onBack,
             sendStage = sendStage,
@@ -182,6 +187,7 @@ fun Send(
             onZecSendChange = onZecSendChange,
             onSendSubmit = onCreateAndSend,
             onQrScannerOpen = onQrScannerOpen,
+            goBalances = goBalances,
             hasCameraFeature = hasCameraFeature,
             modifier =
                 Modifier
@@ -228,7 +234,7 @@ private fun SendTopAppBar(
 @Suppress("LongParameterList")
 @Composable
 private fun SendMainContent(
-    myBalance: Zatoshi,
+    walletSnapshot: WalletSnapshot,
     sendArgumentsWrapper: SendArgumentsWrapper?,
     zecSend: ZecSend?,
     onZecSendChange: (ZecSend) -> Unit,
@@ -237,13 +243,14 @@ private fun SendMainContent(
     onSendStageChange: (SendStage) -> Unit,
     onSendSubmit: (ZecSend) -> Unit,
     onQrScannerOpen: () -> Unit,
+    goBalances: () -> Unit,
     hasCameraFeature: Boolean,
     modifier: Modifier = Modifier
 ) {
     when {
         (sendStage == SendStage.Form || null == zecSend) -> {
             SendForm(
-                myBalance = myBalance,
+                walletSnapshot = walletSnapshot,
                 sendArgumentsWrapper = sendArgumentsWrapper,
                 previousZecSend = zecSend,
                 onCreateZecSend = {
@@ -251,6 +258,7 @@ private fun SendMainContent(
                     onZecSendChange(it)
                 },
                 onQrScannerOpen = onQrScannerOpen,
+                goBalances = goBalances,
                 hasCameraFeature = hasCameraFeature,
                 modifier = modifier
             )
@@ -296,11 +304,12 @@ private fun SendMainContent(
 @Suppress("LongMethod", "LongParameterList", "CyclomaticComplexMethod")
 @Composable
 private fun SendForm(
-    myBalance: Zatoshi,
+    walletSnapshot: WalletSnapshot,
     sendArgumentsWrapper: SendArgumentsWrapper?,
     previousZecSend: ZecSend?,
     onCreateZecSend: (ZecSend) -> Unit,
     onQrScannerOpen: () -> Unit,
+    goBalances: () -> Unit,
     hasCameraFeature: Boolean,
     modifier: Modifier = Modifier
 ) {
@@ -340,24 +349,28 @@ private fun SendForm(
     Column(
         modifier =
             Modifier
-                .imePadding()
-                .fillMaxSize()
+                .fillMaxHeight()
                 .verticalScroll(rememberScrollState())
                 .then(modifier),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Header(
-            text = stringResource(id = R.string.send_balance, myBalance.toZecString()),
-            textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth()
-        )
-        Body(
-            text = stringResource(id = R.string.send_balance_subtitle),
-            textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth()
-        )
+        val walletDisplayValues =
+            WalletDisplayValues.getNextValues(
+                context = LocalContext.current,
+                walletSnapshot = walletSnapshot
+            )
 
-        Spacer(modifier = Modifier.height(dimens.spacingLarge))
+        Spacer(modifier = Modifier.height(dimens.spacingDefault))
+
+        if (walletDisplayValues.zecAmountText.isNotEmpty()) {
+            BalanceWidget(
+                walletSnapshot = walletSnapshot,
+                isReferenceToBalances = true,
+                onReferenceClick = goBalances
+            )
+        }
+
+        Spacer(modifier = Modifier.height(dimens.spacingXlarge))
 
         FormTextField(
             value = recipientAddressString,
@@ -487,7 +500,7 @@ private fun SendForm(
         val sendButtonEnabled =
             amountZecString.isNotBlank() &&
                 sendValueCheck > 0L &&
-                myBalance.value >= (sendValueCheck + ZcashSdk.MINERS_FEE.value) &&
+                walletSnapshot.spendableBalance().value >= (sendValueCheck + ZcashSdk.MINERS_FEE.value) &&
                 recipientAddressString.length > ABBREVIATION_INDEX
 
         PrimaryButton(

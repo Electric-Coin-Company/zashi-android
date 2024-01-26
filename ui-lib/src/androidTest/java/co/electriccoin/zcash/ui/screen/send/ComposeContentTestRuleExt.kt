@@ -52,7 +52,8 @@ internal fun ComposeContentTestRule.setAmount(amount: String) {
 internal fun ComposeContentTestRule.setValidAddress() {
     onNodeWithText(getStringResource(R.string.send_to)).also {
         it.performTextClearance()
-        it.performTextInput(WalletAddressFixture.UNIFIED_ADDRESS_STRING)
+        // Using sapling address here, as the unified is not available in the fixture. This will change.
+        it.performTextInput(WalletAddressFixture.SAPLING_ADDRESS_STRING)
     }
 }
 

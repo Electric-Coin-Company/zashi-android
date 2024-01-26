@@ -12,6 +12,7 @@ directly impact users rather than highlighting other key architectural updates.*
 ### Added
 - The current balance UI on top of the Account screen has been reworked. It now displays the currently available 
   balance as well.
+- The same current balance UI was also incorporated into the Send Form screen. 
 
 ## [0.2.0 (530)] - 2024-01-16
 

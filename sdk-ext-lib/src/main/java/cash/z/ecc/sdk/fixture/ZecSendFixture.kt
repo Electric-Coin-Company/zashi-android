@@ -7,7 +7,7 @@ import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.ZecSend
 
 object ZecSendFixture {
-    const val ADDRESS: String = WalletAddressFixture.UNIFIED_ADDRESS_STRING
+    const val ADDRESS: String = WalletAddressFixture.SAPLING_ADDRESS_STRING
 
     @Suppress("MagicNumber")
     val AMOUNT = Zatoshi(123)
