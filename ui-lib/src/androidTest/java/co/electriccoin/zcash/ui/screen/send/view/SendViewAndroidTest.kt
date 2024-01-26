@@ -83,7 +83,7 @@ class SendViewAndroidTest : UiTestPrerequisites() {
     fun back_on_send_failure_with_system_navigation() {
         val testSetup =
             newTestSetup(
-                SendStage.SendFailure,
+                SendStage.SendFailure("Test error message"),
                 runBlocking { ZecSendFixture.new() }
             )
 

@@ -71,7 +71,7 @@ class SendViewTestSetup(
     @Suppress("TestFunctionName")
     fun DefaultContent() {
         val (sendStage, setSendStage) =
-            rememberSaveable { mutableStateOf(initialState) }
+            rememberSaveable(stateSaver = SendStage.Saver) { mutableStateOf(initialState) }
 
         lastSendStage = sendStage
 
@@ -81,7 +81,7 @@ class SendViewTestSetup(
                 SendStage.Form -> {}
                 SendStage.Confirmation -> setSendStage(SendStage.Form)
                 SendStage.Sending -> {}
-                SendStage.SendFailure -> setSendStage(SendStage.Form)
+                is SendStage.SendFailure -> setSendStage(SendStage.Form)
                 SendStage.SendSuccessful -> {}
             }
         }

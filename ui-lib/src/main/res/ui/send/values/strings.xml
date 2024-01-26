@@ -18,7 +18,10 @@
     <string name="send_in_progress_wait">Please wait</string>
 
     <string name="send_failure_title">Sending failure</string>
-    <string name="send_failure_amount_address_memo" formatted="true">Sending failed for: <xliff:g id="amount" example="12.345">%1$s</xliff:g> ZEC to <xliff:g id="address" example="zs1g7cqw … mvyzgm">%2$s</xliff:g> with a memo: <xliff:g id="memo" example="for Veronika">%3$s</xliff:g></string>
+    <string name="send_failure_amount_address_memo" formatted="true">Sending failed for:\n<xliff:g id="amount"
+        example="12.345">%1$s</xliff:g> ZEC to <xliff:g id="address" example="zs1g7cqw … mvyzgm">%2$s</xliff:g> with a memo: <xliff:g id="memo" example="for Veronika">%3$s</xliff:g></string>
+    <string name="send_failure_reason" formatted="true">Sending failed with:\n<xliff:g
+        id="reason" example="Insufficient balance">%1$s</xliff:g></string>
     <string name="send_failure_button">Back</string>
 
     <string name="send_successful_title">Sending successful</string>

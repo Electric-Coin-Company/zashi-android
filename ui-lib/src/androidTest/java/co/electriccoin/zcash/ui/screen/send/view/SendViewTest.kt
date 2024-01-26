@@ -378,7 +378,7 @@ class SendViewTest : UiTestPrerequisites() {
     fun back_on_send_failure() {
         val testSetup =
             newTestSetup(
-                SendStage.SendFailure,
+                SendStage.SendFailure("Test error message"),
                 runBlocking { ZecSendFixture.new() }
             )
 
@@ -396,7 +396,7 @@ class SendViewTest : UiTestPrerequisites() {
     fun close_on_send_failure() {
         val testSetup =
             newTestSetup(
-                SendStage.SendFailure,
+                SendStage.SendFailure("Test error message"),
                 runBlocking { ZecSendFixture.new() }
             )
 

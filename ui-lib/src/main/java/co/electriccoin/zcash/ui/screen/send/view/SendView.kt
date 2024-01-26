@@ -130,7 +130,8 @@ private fun PreviewSendFailure() {
                         amount = ZatoshiFixture.new(),
                         memo = MemoFixture.new()
                     ),
-                onDone = {}
+                onDone = {},
+                reason = "Insufficient balance"
             )
         }
     }
@@ -262,7 +263,6 @@ private fun SendMainContent(
                 hasCameraFeature = hasCameraFeature,
                 modifier = modifier
             )
-            // TestSend(modifier)
         }
         (sendStage == SendStage.Confirmation) -> {
             SendConfirmation(
@@ -287,9 +287,10 @@ private fun SendMainContent(
                 modifier = modifier,
             )
         }
-        (sendStage == SendStage.SendFailure) -> {
+        (sendStage is SendStage.SendFailure) -> {
             SendFailure(
                 zecSend = zecSend,
+                reason = sendStage.error,
                 onDone = onBack,
                 modifier = modifier,
             )
@@ -681,7 +682,8 @@ private fun SendSuccessful(
 private fun SendFailure(
     zecSend: ZecSend,
     onDone: () -> Unit,
-    modifier: Modifier = Modifier
+    reason: String,
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier,
@@ -706,6 +708,20 @@ private fun SendFailure(
                 zecSend.amount.toZecString(),
                 zecSend.destination.abbreviated(),
                 zecSend.memo.valueOrEmptyChar()
+            )
+        )
+
+        Spacer(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(dimens.spacingDefault)
+        )
+
+        Body(
+            stringResource(
+                R.string.send_failure_reason,
+                reason,
             )
         )
 
