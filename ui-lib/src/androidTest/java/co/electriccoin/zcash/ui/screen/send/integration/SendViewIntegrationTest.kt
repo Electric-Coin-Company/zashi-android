@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.screen.send.integration
 
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -61,6 +62,7 @@ class SendViewIntegrationTest {
         restorationTester.setContent {
             WrapSend(
                 sendArgumentsWrapper = null,
+                focusManager = LocalFocusManager.current,
                 synchronizer = synchronizer,
                 walletSnapshot = walletSnapshot,
                 spendingKey = spendingKey,
