@@ -12,7 +12,7 @@ directly impact users rather than highlighting other key architectural updates.*
 ### Added
 - The current balance UI on top of the Account screen has been reworked. It now displays the currently available 
   balance as well.
-- The same current balance UI was also incorporated into the Send Form screen. 
+- The same current balance UI was incorporated into the Send and Balances screens. 
 - The Send Error screen now contains a simple text with the reason for failure. The Send screen UI refactoring is 
   still in progress.
 
