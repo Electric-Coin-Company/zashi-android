@@ -9,6 +9,9 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [0.2.0 (541)] - 2024-01-30
+- Update the Zcash SDK dependency to version 2.0.5, which improves the performance of block synchronization
+
 ## [0.2.0 (540)] - 2024-01-27
 
 ### Added
