@@ -71,8 +71,8 @@ private fun StyledBalanceComposablePreview() {
                     secondPart = "89012",
                     textStyles =
                         Pair(
-                            ZcashTheme.extendedTypography.zecBalanceStyles.first,
-                            ZcashTheme.extendedTypography.zecBalanceStyles.second
+                            ZcashTheme.extendedTypography.balanceStyles.first,
+                            ZcashTheme.extendedTypography.balanceStyles.second
                         ),
                     modifier = Modifier
                 )
