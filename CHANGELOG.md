@@ -9,6 +9,10 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+### Fixed
+- Fixed character replacement in Zcash addresses on the Receive screen caused by ligatures in the app's primary font 
+ using the secondary font. This will be revisited once a proper font is added. 
+
 ## [0.2.0 (541)] - 2024-01-30
 - Update the Zcash SDK dependency to version 2.0.5, which improves the performance of block synchronization
 

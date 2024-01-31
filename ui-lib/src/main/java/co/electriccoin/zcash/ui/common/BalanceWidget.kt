@@ -105,8 +105,8 @@ fun BalanceWidget(
                 secondPart = totalBalanceSplit.second,
                 textStyles =
                     Pair(
-                        ZcashTheme.extendedTypography.zecBalanceStyles.first,
-                        ZcashTheme.extendedTypography.zecBalanceStyles.second
+                        ZcashTheme.extendedTypography.balanceStyles.first,
+                        ZcashTheme.extendedTypography.balanceStyles.second
                     )
             )
 
@@ -143,8 +143,8 @@ fun BalanceWidget(
                 secondPart = availableBalanceSplit.second,
                 textStyles =
                     Pair(
-                        ZcashTheme.extendedTypography.zecBalanceStyles.third,
-                        ZcashTheme.extendedTypography.zecBalanceStyles.fourth
+                        ZcashTheme.extendedTypography.balanceStyles.third,
+                        ZcashTheme.extendedTypography.balanceStyles.fourth
                     )
             )
 

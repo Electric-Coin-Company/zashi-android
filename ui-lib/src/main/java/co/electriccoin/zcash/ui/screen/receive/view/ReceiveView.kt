@@ -267,11 +267,9 @@ private fun Address(
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingTiny))
 
-        // TODO [#163]: Ellipsize center of the string
-        // TODO [#163]: https://github.com/Electric-Coin-Company/zashi-android/issues/163
         Text(
             text = walletAddress.address,
-            style = ZcashTheme.typography.primary.bodyLarge,
+            style = ZcashTheme.extendedTypography.addressStyle,
             color = ZcashTheme.colors.textDescription,
             textAlign = TextAlign.Center,
             modifier =

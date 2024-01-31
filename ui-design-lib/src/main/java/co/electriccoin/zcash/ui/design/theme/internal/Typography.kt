@@ -150,7 +150,8 @@ data class BalanceTextStyles(
 data class ExtendedTypography(
     val listItem: TextStyle,
     // Grouping balances text styles to a wrapper class
-    val zecBalanceStyles: BalanceTextStyles,
+    val balanceStyles: BalanceTextStyles,
+    val addressStyle: TextStyle,
     val aboutText: TextStyle,
     val buttonText: TextStyle,
     val checkboxText: TextStyle,
@@ -179,7 +180,7 @@ val LocalExtendedTypography =
                     fontSize = 24.sp
                 ),
             // Note: the order here matters, be careful when reordering
-            zecBalanceStyles =
+            balanceStyles =
                 BalanceTextStyles(
                     first =
                         SecondaryTypography.headlineLarge.copy(
@@ -203,6 +204,11 @@ val LocalExtendedTypography =
                             fontSize = 8.sp,
                             fontWeight = FontWeight.Bold
                         )
+                ),
+            addressStyle =
+                SecondaryTypography.bodyLarge.copy(
+                    // TODO [#1032]: Addresses can be shown with "×" symbols
+                    // TODO [#1032]: https://github.com/Electric-Coin-Company/zashi-android/issues/1032
                 ),
             aboutText =
                 PrimaryTypography.bodyLarge.copy(
