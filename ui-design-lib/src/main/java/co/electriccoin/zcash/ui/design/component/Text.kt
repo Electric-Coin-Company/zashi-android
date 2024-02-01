@@ -346,15 +346,34 @@ fun BodyWithFiatCurrencySymbol(
     )
 }
 
+@Preview
+@Composable
+private fun NavigationTabTextPreview() {
+    ZcashTheme(forceDarkMode = false) {
+        GradientSurface {
+            Column {
+                NavigationTabText(
+                    text = "Account",
+                    selected = false,
+                    modifier = Modifier,
+                    onClick = {}
+                )
+            }
+        }
+    }
+}
+
 @Composable
 fun NavigationTabText(
     text: String,
     selected: Boolean,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Text(
         text = text,
         style = ZcashTheme.extendedTypography.textNavTab,
+        textAlign = TextAlign.Center,
         fontWeight =
             if (selected) {
                 FontWeight.Black
@@ -364,6 +383,10 @@ fun NavigationTabText(
         maxLines = 1,
         overflow = TextOverflow.Visible,
         color = ZcashTheme.colors.tabTextColor,
-        modifier = modifier
+        modifier =
+            Modifier
+                .clip(RoundedCornerShape(ZcashTheme.dimens.topAppBarActionRippleCorner))
+                .clickable { onClick() }
+                .then(modifier)
     )
 }

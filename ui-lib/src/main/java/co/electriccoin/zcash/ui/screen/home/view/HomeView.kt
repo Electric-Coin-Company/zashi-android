@@ -11,7 +11,6 @@ import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DividerDefaults
-import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
@@ -146,23 +145,25 @@ fun Home(
                 modifier =
                     Modifier
                         .navigationBarsPadding()
-                        .padding(all = ZcashTheme.dimens.spacingDefault)
+                        .padding(
+                            horizontal = ZcashTheme.dimens.spacingDefault,
+                            vertical = ZcashTheme.dimens.spacingSmall
+                        )
             ) {
                 subScreens.forEachIndexed { index, item ->
                     val selected = index == pagerState.currentPage
-                    Tab(
+
+                    NavigationTabText(
+                        text = item.title,
                         selected = selected,
-                        text = {
-                            NavigationTabText(
-                                text = item.title,
-                                selected = selected
-                            )
-                        },
+                        onClick = { coroutineScope.launch { pagerState.animateScrollToPage(index) } },
                         modifier =
                             Modifier
-                                .padding(all = 0.dp)
-                                .testTag(item.testTag),
-                        onClick = { coroutineScope.launch { pagerState.animateScrollToPage(index) } },
+                                .padding(
+                                    horizontal = ZcashTheme.dimens.spacingXtiny,
+                                    vertical = ZcashTheme.dimens.spacingDefault
+                                )
+                                .testTag(item.testTag)
                     )
                 }
             }
