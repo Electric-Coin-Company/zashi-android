@@ -71,7 +71,7 @@ internal class MockSynchronizer : CloseableSynchronizer {
     override val transactions: Flow<List<TransactionOverview>>
         get() = TODO("Not yet implemented")
 
-    override val transparentBalances: StateFlow<WalletBalance?>
+    override val transparentBalance: StateFlow<Zatoshi?>
         get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
 
     override fun close() {
@@ -98,7 +98,7 @@ internal class MockSynchronizer : CloseableSynchronizer {
         error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
 
-    override suspend fun getTransparentBalance(tAddr: String): WalletBalance {
+    override suspend fun getTransparentBalance(tAddr: String): Zatoshi {
         error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
 

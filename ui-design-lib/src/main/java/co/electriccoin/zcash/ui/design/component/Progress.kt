@@ -1,13 +1,15 @@
 package co.electriccoin.zcash.ui.design.component
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 
 @Preview
@@ -15,7 +17,10 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 private fun CircularScreenProgressIndicatorComposablePreview() {
     ZcashTheme(forceDarkMode = false) {
         GradientSurface {
-            CircularScreenProgressIndicator()
+            Column {
+                CircularScreenProgressIndicator()
+                CircularSmallProgressIndicator()
+            }
         }
     }
 }
@@ -30,7 +35,22 @@ fun CircularScreenProgressIndicator(modifier: Modifier = Modifier) {
         contentAlignment = Alignment.Center
     ) {
         CircularProgressIndicator(
-            modifier = Modifier.width(ZcashTheme.dimens.circularScreenProgressWidth)
+            color = ZcashTheme.colors.progressBarScreen,
+            modifier =
+                Modifier
+                    .size(ZcashTheme.dimens.circularScreenProgressWidth)
         )
     }
+}
+
+@Composable
+fun CircularSmallProgressIndicator(modifier: Modifier = Modifier) {
+    CircularProgressIndicator(
+        color = ZcashTheme.colors.progressBarSmall,
+        strokeWidth = 2.dp,
+        modifier =
+            Modifier
+                .size(ZcashTheme.dimens.circularSmallProgressWidth)
+                .then(modifier)
+    )
 }

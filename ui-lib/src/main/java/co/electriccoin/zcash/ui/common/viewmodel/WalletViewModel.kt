@@ -378,7 +378,7 @@ private fun Synchronizer.toWalletSnapshot() =
         // 3
         saplingBalances,
         // 4
-        transparentBalances,
+        transparentBalance,
         // 5
         progress,
         // 6
@@ -386,16 +386,16 @@ private fun Synchronizer.toWalletSnapshot() =
     ) { flows ->
         val orchardBalance = flows[2] as WalletBalance?
         val saplingBalance = flows[3] as WalletBalance?
-        val transparentBalance = flows[4] as WalletBalance?
+        val transparentBalance = flows[4] as Zatoshi?
 
         val progressPercentDecimal = flows[5] as PercentDecimal
 
         WalletSnapshot(
             flows[0] as Synchronizer.Status,
             flows[1] as CompactBlockProcessor.ProcessorInfo,
-            orchardBalance ?: WalletBalance(Zatoshi(0), Zatoshi(0)),
-            saplingBalance ?: WalletBalance(Zatoshi(0), Zatoshi(0)),
-            transparentBalance ?: WalletBalance(Zatoshi(0), Zatoshi(0)),
+            orchardBalance ?: WalletBalance(Zatoshi(0), Zatoshi(0), Zatoshi(0)),
+            saplingBalance ?: WalletBalance(Zatoshi(0), Zatoshi(0), Zatoshi(0)),
+            transparentBalance ?: Zatoshi(0),
             progressPercentDecimal,
             flows[6] as SynchronizerError?
         )

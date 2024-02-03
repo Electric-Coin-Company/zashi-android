@@ -6,6 +6,7 @@ import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.test.filters.MediumTest
+import cash.z.ecc.android.sdk.fixture.WalletBalanceFixture
 import cash.z.ecc.android.sdk.fixture.WalletFixture
 import cash.z.ecc.android.sdk.model.WalletBalance
 import cash.z.ecc.android.sdk.model.Zatoshi
@@ -43,11 +44,9 @@ class SendViewIntegrationTest {
     private val synchronizer = MockSynchronizer.new()
     private val walletSnapshot =
         WalletSnapshotFixture.new(
-            saplingBalance =
-                WalletBalance(
-                    total = Zatoshi(Zatoshi.MAX_INCLUSIVE.div(100)),
-                    available = Zatoshi(Zatoshi.MAX_INCLUSIVE.div(100))
-                )
+            saplingBalance = WalletBalanceFixture.new(
+                available = Zatoshi(Zatoshi.MAX_INCLUSIVE.div(100))
+            )
         )
 
     @Test

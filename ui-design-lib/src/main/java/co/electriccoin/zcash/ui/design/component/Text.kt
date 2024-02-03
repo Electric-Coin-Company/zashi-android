@@ -30,7 +30,10 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
+import cash.z.ecc.android.sdk.model.MonetarySeparators
+import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import java.util.Locale
 
 @Preview
 @Composable
@@ -67,12 +70,11 @@ private fun StyledBalanceComposablePreview() {
         GradientSurface {
             Column {
                 StyledBalance(
-                    mainPart = "1,234.567",
-                    secondPart = "89012",
+                    balanceString = "1,234.56789012",
                     textStyles =
                         Pair(
-                            ZcashTheme.extendedTypography.balanceStyles.first,
-                            ZcashTheme.extendedTypography.balanceStyles.second
+                            ZcashTheme.extendedTypography.balanceWidgetStyles.first,
+                            ZcashTheme.extendedTypography.balanceWidgetStyles.second
                         ),
                     modifier = Modifier
                 )
@@ -223,19 +225,6 @@ fun Tiny(
 }
 
 @Composable
-fun ListItem(
-    text: String,
-    modifier: Modifier = Modifier
-) {
-    Text(
-        text = text,
-        style = ZcashTheme.extendedTypography.listItem,
-        color = MaterialTheme.colorScheme.onBackground,
-        modifier = modifier
-    )
-}
-
-@Composable
 fun ListHeader(
     text: String,
     modifier: Modifier = Modifier
@@ -293,44 +282,78 @@ fun Reference(
 }
 
 /**
- * Pass amount of Zcash tokens you want to display and the component style it according to the design requirements.
+ * This accepts string with balance and displays it in the UI component styled according to the design
+ * requirements. The function displays the balance within two parts.
  *
- * @param mainPart of Zcash tokens to be displayed in a bigger font style
- * @param secondPart of Zcash tokens to be displayed in a smaller font style
- * @param modifier to modify the Text UI element as needed
+ * @param balanceString String of Zcash formatted balance
+ * @param textStyles Styles for the first and second part of the balance
+ * @param textColor Optional color to modify the default font color from [textStyles]
+ * @param modifier Modifier to modify the Text UI element as needed
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun StyledBalance(
-    mainPart: String,
-    secondPart: String,
+    balanceString: String,
     textStyles: Pair<TextStyle, TextStyle>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    textColor: Color? = null
 ) {
+    val balanceSplit = splitBalance(balanceString)
+
     val content =
         buildAnnotatedString {
             withStyle(
                 style = textStyles.first.toSpanStyle()
             ) {
-                append(mainPart)
+                append(balanceSplit.first)
             }
             withStyle(
                 style = textStyles.second.toSpanStyle()
             ) {
-                append(secondPart)
+                append(balanceSplit.second)
             }
         }
 
-    Text(
-        text = content,
-        // fixme color
-        color = MaterialTheme.colorScheme.onBackground,
-        maxLines = 1,
-        modifier =
+    if (textColor != null) {
+        Text(
+            text = content,
+            color = textColor,
+            maxLines = 1,
+            modifier =
             Modifier
                 .basicMarquee()
                 .then(modifier)
-    )
+        )
+    } else {
+        Text(
+            text = content,
+            maxLines = 1,
+            modifier =
+            Modifier
+                .basicMarquee()
+                .then(modifier)
+        )
+    }
+}
+
+private fun splitBalance(balance: String): Pair<String, String> {
+    Twig.debug { "Balance before split: $balance" }
+
+    @Suppress("MAGIC_CONSTANT", "MagicNumber")
+    val cutPosition = balance.indexOf(MonetarySeparators.current(Locale.US).decimal) + 4
+    val firstPart =
+        balance.substring(
+            startIndex = 0,
+            endIndex = cutPosition
+        )
+    val secondPart =
+        balance.substring(
+            startIndex = cutPosition
+        )
+
+    Twig.debug { "Balance after split: $firstPart|$secondPart" }
+
+    return Pair(firstPart, secondPart)
 }
 
 @Composable
