@@ -1,5 +1,8 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="balances_title">Balances</string>
-    <string name="balances_coming_soon">Coming soon:\n\nBalances overview,\nTransparent
+    <string name="balances_shielded_spendable">Shielded zec (spendable)</string>
+    <string name="balances_change_pending">Change pending</string>
+    <string name="balances_pending_transactions">Pending transactions</string>
+    <string name="balances_coming_soon">Coming soon:\n\nTransparent
         funds shielding,\nBlock synchronization indicator</string>
 </resources>

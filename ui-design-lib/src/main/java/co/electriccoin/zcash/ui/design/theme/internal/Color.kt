@@ -24,10 +24,11 @@ internal object Dark {
     val textSecondaryButton = Color(0xFF000000)
     val textTertiaryButton = Color.White
     val textNavigationButton = Color.Black
-    val textCaption = Color(0xFFFFFFFF)
+    val textCommon = Color(0xFFFFFFFF)
     val textChipIndex = Color(0xFFFFB900)
     val textFieldHint = Color(0xFFB7B7B7)
     val textDescription = Color(0xFF777777)
+    val textProgress = Color(0xFF8B8A8A)
 
     val layoutStroke = Color(0xFFFFFFFF)
 
@@ -45,20 +46,14 @@ internal object Dark {
     val navigationButton = Color(0xFFFFFFFF)
     val navigationButtonPressed = Color(0xFFFFFFFF)
 
-    val progressStart = Color(0xFFF364CE)
-    val progressEnd = Color(0xFFF8964F)
-    val progressBackground = Color(0xFF929bb3)
+    val progressBarSmall = Color(0xFF8B8A8A)
+    val progressBarScreen = Color(0xFFFFFFFF)
 
     val callout = Color(0xFFFFFFFF)
     val onCallout = Color(0xFFFFFFFF)
 
     val overlay = Color(0x22000000)
     val highlight = Color(0xFFFFD800)
-
-    val addressHighlightBorder = Color(0xFF525252)
-    val addressHighlightUnified = Color(0xFFFFD800)
-    val addressHighlightSapling = Color(0xFF1BBFF6)
-    val addressHighlightTransparent = Color(0xFF97999A)
 
     val dangerous = Color(0xFFEC0008)
     val onDangerous = Color(0xFFFFFFFF)
@@ -76,6 +71,7 @@ internal object Dark {
     val welcomeAnimationColor = Color(0xFF231F20)
     val complementaryColor = Color(0xFFF4B728)
     val dividerColor = Color(0xFFDDDDDD)
+    val darkDividerColor = Color(0xFF000000)
     val tabTextColor = Color(0xFF040404)
 }
 
@@ -89,10 +85,11 @@ internal object Light {
     val textPrimaryButton = Color(0xFFFFFFFF)
     val textSecondaryButton = Color(0xFF000000)
     val textTertiaryButton = Color(0xFF000000)
-    val textCaption = Color(0xFF000000)
+    val textCommon = Color(0xFF000000)
     val textChipIndex = Color(0xFFEE8592)
     val textFieldHint = Color(0xFFB7B7B7)
     val textDescription = Color(0xFF777777)
+    val textProgress = Color(0xFF8B8A8A)
 
     val layoutStroke = Color(0xFF000000)
 
@@ -110,9 +107,8 @@ internal object Light {
     val navigationButton = Color(0xFFFFFFFF)
     val navigationButtonPressed = Color(0xFFFFFFFF)
 
-    val progressStart = Color(0xFFF364CE)
-    val progressEnd = Color(0xFFF8964F)
-    val progressBackground = Color(0xFFFFFFFF)
+    val progressBarSmall = Color(0xFF8B8A8A)
+    val progressBarScreen = Color(0xFF000000)
 
     val callout = Color(0xFFFFFFFF)
     val onCallout = Color(0xFFFFFFFF)
@@ -134,6 +130,7 @@ internal object Light {
     val welcomeAnimationColor = Color(0xFF231F20)
     val complementaryColor = Color(0xFFF4B728)
     val dividerColor = Color(0xFFDDDDDD)
+    val darkDividerColor = Color(0xFF000000)
     val tabTextColor = Color(0xFF040404)
 }
 
@@ -169,12 +166,13 @@ internal val DarkExtendedColorPalette =
         onTertiary = Dark.textTertiaryButton,
         callout = Dark.callout,
         onCallout = Dark.onCallout,
-        progressStart = Dark.progressStart,
-        progressEnd = Dark.progressEnd,
-        progressBackground = Dark.progressBackground,
+        progressBarSmall = Dark.progressBarSmall,
+        progressBarScreen = Dark.progressBarScreen,
         chipIndex = Dark.textChipIndex,
+        textCommon = Dark.textCommon,
         textFieldHint = Dark.textFieldHint,
         textDescription = Dark.textDescription,
+        textPending = Dark.textProgress,
         layoutStroke = Dark.layoutStroke,
         overlay = Dark.overlay,
         highlight = Dark.highlight,
@@ -189,6 +187,7 @@ internal val DarkExtendedColorPalette =
         welcomeAnimationColor = Dark.welcomeAnimationColor,
         complementaryColor = Dark.complementaryColor,
         dividerColor = Dark.dividerColor,
+        darkDividerColor = Dark.darkDividerColor,
         tabTextColor = Dark.tabTextColor,
     )
 
@@ -200,12 +199,13 @@ internal val LightExtendedColorPalette =
         onTertiary = Light.textTertiaryButton,
         callout = Light.callout,
         onCallout = Light.onCallout,
-        progressStart = Light.progressStart,
-        progressEnd = Light.progressEnd,
-        progressBackground = Light.progressBackground,
+        progressBarScreen = Light.progressBarScreen,
+        progressBarSmall = Light.progressBarSmall,
         chipIndex = Light.textChipIndex,
+        textCommon = Light.textCommon,
         textFieldHint = Light.textFieldHint,
         textDescription = Light.textDescription,
+        textPending = Light.textProgress,
         layoutStroke = Light.layoutStroke,
         overlay = Light.overlay,
         highlight = Light.highlight,
@@ -220,7 +220,8 @@ internal val LightExtendedColorPalette =
         welcomeAnimationColor = Light.welcomeAnimationColor,
         complementaryColor = Light.complementaryColor,
         dividerColor = Light.dividerColor,
-        tabTextColor = Dark.tabTextColor,
+        darkDividerColor = Light.darkDividerColor,
+        tabTextColor = Light.tabTextColor,
     )
 
 @Suppress("CompositionLocalAllowlist")
@@ -233,12 +234,13 @@ internal val LocalExtendedColors =
             onTertiary = Color.Unspecified,
             callout = Color.Unspecified,
             onCallout = Color.Unspecified,
-            progressStart = Color.Unspecified,
-            progressEnd = Color.Unspecified,
-            progressBackground = Color.Unspecified,
+            progressBarScreen = Color.Unspecified,
+            progressBarSmall = Color.Unspecified,
             chipIndex = Color.Unspecified,
+            textCommon = Color.Unspecified,
             textFieldHint = Color.Unspecified,
             textDescription = Color.Unspecified,
+            textPending = Color.Unspecified,
             layoutStroke = Color.Unspecified,
             overlay = Color.Unspecified,
             highlight = Color.Unspecified,
@@ -253,6 +255,7 @@ internal val LocalExtendedColors =
             welcomeAnimationColor = Color.Unspecified,
             complementaryColor = Color.Unspecified,
             dividerColor = Color.Unspecified,
+            darkDividerColor = Color.Unspecified,
             tabTextColor = Color.Unspecified
         )
     }

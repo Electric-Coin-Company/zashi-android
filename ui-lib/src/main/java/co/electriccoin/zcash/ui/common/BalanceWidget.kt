@@ -17,12 +17,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
-import cash.z.ecc.android.sdk.model.MonetarySeparators
 import cash.z.ecc.android.sdk.model.WalletBalance
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.toZecString
 import cash.z.ecc.sdk.type.ZcashCurrency
-import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.model.spendableBalance
 import co.electriccoin.zcash.ui.common.model.totalBalance
@@ -33,7 +31,6 @@ import co.electriccoin.zcash.ui.design.component.Reference
 import co.electriccoin.zcash.ui.design.component.StyledBalance
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
-import java.util.Locale
 
 @Preview(device = Devices.PIXEL_2)
 @Composable
@@ -49,7 +46,8 @@ private fun BalanceWidgetPreview() {
                         saplingBalance =
                             WalletBalance(
                                 Zatoshi(1234567891234567),
-                                Zatoshi(123456789)
+                                Zatoshi(123456789),
+                                Zatoshi(123)
                             )
                     ),
                 isReferenceToBalances = true,
@@ -58,26 +56,6 @@ private fun BalanceWidgetPreview() {
             )
         }
     }
-}
-
-fun splitBalance(balance: String): Pair<String, String> {
-    Twig.debug { "Balance before split: $balance" }
-
-    @Suppress("MAGIC_CONSTANT", "MagicNumber")
-    val cutPosition = balance.indexOf(MonetarySeparators.current(Locale.US).decimal) + 4
-    val firstPart =
-        balance.substring(
-            startIndex = 0,
-            endIndex = cutPosition
-        )
-    val secondPart =
-        balance.substring(
-            startIndex = cutPosition
-        )
-
-    Twig.debug { "Balance after split: $firstPart|$secondPart" }
-
-    return Pair(firstPart, secondPart)
 }
 
 @Composable
@@ -95,18 +73,15 @@ fun BalanceWidget(
                 .then(modifier),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        val totalBalanceSplit = splitBalance(walletSnapshot.totalBalance().toZecString())
-
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
             StyledBalance(
-                mainPart = totalBalanceSplit.first,
-                secondPart = totalBalanceSplit.second,
+                balanceString = walletSnapshot.totalBalance().toZecString(),
                 textStyles =
                     Pair(
-                        ZcashTheme.extendedTypography.balanceStyles.first,
-                        ZcashTheme.extendedTypography.balanceStyles.second
+                        ZcashTheme.extendedTypography.balanceWidgetStyles.first,
+                        ZcashTheme.extendedTypography.balanceWidgetStyles.second
                     )
             )
 
@@ -136,15 +111,12 @@ fun BalanceWidget(
 
             Spacer(modifier = Modifier.width(ZcashTheme.dimens.spacingTiny))
 
-            val availableBalanceSplit = splitBalance(walletSnapshot.spendableBalance().toZecString())
-
             StyledBalance(
-                mainPart = availableBalanceSplit.first,
-                secondPart = availableBalanceSplit.second,
+                balanceString = walletSnapshot.spendableBalance().toZecString(),
                 textStyles =
                     Pair(
-                        ZcashTheme.extendedTypography.balanceStyles.third,
-                        ZcashTheme.extendedTypography.balanceStyles.fourth
+                        ZcashTheme.extendedTypography.balanceWidgetStyles.third,
+                        ZcashTheme.extendedTypography.balanceWidgetStyles.fourth
                     )
             )
 

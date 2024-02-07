@@ -30,6 +30,7 @@ data class Dimens(
     val chipStroke: Dp,
     // Progress
     val circularScreenProgressWidth: Dp,
+    val circularSmallProgressWidth: Dp,
     // TopAppBar:
     val topAppBarZcashLogoHeight: Dp,
     val topAppBarActionRippleCorner: Dp,
@@ -37,6 +38,7 @@ data class Dimens(
     val textFieldDefaultHeight: Dp,
     val textFieldPanelDefaultHeight: Dp,
     // Any Layout:
+    val divider: Dp,
     val layoutStroke: Dp,
     // Screen custom spacings:
     val inScreenZcashLogoHeight: Dp,
@@ -64,11 +66,13 @@ private val defaultDimens =
         chipShadowElevation = 4.dp,
         chipStroke = 0.5.dp,
         circularScreenProgressWidth = 48.dp,
+        circularSmallProgressWidth = 14.dp,
         topAppBarZcashLogoHeight = 24.dp,
         topAppBarActionRippleCorner = 28.dp,
         textFieldDefaultHeight = 64.dp,
         textFieldPanelDefaultHeight = 215.dp,
         layoutStroke = 1.dp,
+        divider = 1.dp,
         inScreenZcashLogoHeight = 100.dp,
         inScreenZcashLogoWidth = 60.dp,
         inScreenZcashTextLogoHeight = 30.dp,

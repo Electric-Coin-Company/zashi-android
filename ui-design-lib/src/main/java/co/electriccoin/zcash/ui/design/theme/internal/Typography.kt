@@ -73,8 +73,8 @@ internal val PrimaryTypography =
         bodySmall =
             TextStyle(
                 fontFamily = InterFontFamily,
-                fontWeight = FontWeight.Medium,
-                fontSize = 16.sp
+                fontWeight = FontWeight.Normal,
+                fontSize = 14.sp
             ),
         labelLarge =
             TextStyle(
@@ -139,7 +139,7 @@ data class Typography(
 )
 
 @Immutable
-data class BalanceTextStyles(
+data class BalanceWidgetTextStyles(
     val first: TextStyle,
     val second: TextStyle,
     val third: TextStyle,
@@ -147,10 +147,18 @@ data class BalanceTextStyles(
 )
 
 @Immutable
+data class BalanceSingleTextStyles(
+    val first: TextStyle,
+    val second: TextStyle,
+)
+
+@Immutable
 data class ExtendedTypography(
     val listItem: TextStyle,
-    // Grouping balances text styles to a wrapper class
-    val balanceStyles: BalanceTextStyles,
+    // Grouping balances text styles to a wrapper class for BalanceWidget
+    val balanceWidgetStyles: BalanceWidgetTextStyles,
+    // Grouping balances text styles to a wrapper class for single balance use case
+    val balanceSingleStyles: BalanceSingleTextStyles,
     val addressStyle: TextStyle,
     val aboutText: TextStyle,
     val buttonText: TextStyle,
@@ -180,8 +188,8 @@ val LocalExtendedTypography =
                     fontSize = 24.sp
                 ),
             // Note: the order here matters, be careful when reordering
-            balanceStyles =
-                BalanceTextStyles(
+            balanceWidgetStyles =
+                BalanceWidgetTextStyles(
                     first =
                         SecondaryTypography.headlineLarge.copy(
                             fontSize = 42.sp,
@@ -203,6 +211,19 @@ val LocalExtendedTypography =
                         PrimaryTypography.bodySmall.copy(
                             fontSize = 8.sp,
                             fontWeight = FontWeight.Bold
+                        )
+                ),
+            balanceSingleStyles =
+                BalanceSingleTextStyles(
+                    first =
+                        SecondaryTypography.bodySmall.copy(
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.SemiBold
+                        ),
+                    second =
+                        SecondaryTypography.bodySmall.copy(
+                            fontSize = 8.sp,
+                            fontWeight = FontWeight.SemiBold
                         )
                 ),
             addressStyle =

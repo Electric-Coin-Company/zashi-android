@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
-import cash.z.ecc.android.sdk.model.WalletBalance
+import cash.z.ecc.android.sdk.fixture.WalletBalanceFixture
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.ZecSend
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
@@ -101,8 +101,7 @@ class SendViewTestSetup(
                 walletSnapshot =
                     WalletSnapshotFixture.new(
                         saplingBalance =
-                            WalletBalance(
-                                total = Zatoshi(Zatoshi.MAX_INCLUSIVE.div(100)),
+                            WalletBalanceFixture.new(
                                 available = Zatoshi(Zatoshi.MAX_INCLUSIVE.div(100))
                             )
                     ),
