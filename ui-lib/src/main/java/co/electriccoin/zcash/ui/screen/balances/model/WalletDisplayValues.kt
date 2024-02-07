@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.account.model
+package co.electriccoin.zcash.ui.screen.balances.model
 
 import android.content.Context
 import androidx.compose.ui.text.intl.Locale
@@ -8,7 +8,6 @@ import cash.z.ecc.android.sdk.model.MonetarySeparators
 import cash.z.ecc.android.sdk.model.PercentDecimal
 import cash.z.ecc.android.sdk.model.toFiatCurrencyState
 import cash.z.ecc.android.sdk.model.toZecString
-import cash.z.ecc.sdk.extension.toPercentageWithDecimal
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.model.spendableBalance
@@ -48,47 +47,43 @@ data class WalletDisplayValues(
             when (walletSnapshot.status) {
                 Synchronizer.Status.SYNCING -> {
                     progress = walletSnapshot.progress
-                    // we add "so far" to the amount
+                    // We add "so far" to the amount
                     if (fiatCurrencyAmountState != FiatCurrencyConversionRateState.Unavailable) {
                         fiatCurrencyAmountText =
                             context.getString(
-                                R.string.account_status_syncing_amount_suffix,
+                                R.string.balances_status_syncing_amount_suffix,
                                 fiatCurrencyAmountText
                             )
                     }
-                    statusText =
-                        context.getString(
-                            R.string.account_status_syncing_format,
-                            walletSnapshot.progress.toPercentageWithDecimal()
-                        )
+                    statusText = context.getString(R.string.balances_status_syncing)
                 }
                 Synchronizer.Status.SYNCED -> {
                     statusText =
                         if (updateAvailable) {
-                            context.getString(R.string.account_status_update)
+                            context.getString(R.string.balances_status_update)
                         } else {
-                            context.getString(R.string.account_status_up_to_date)
+                            context.getString(R.string.balances_status_synced)
                         }
                 }
                 Synchronizer.Status.DISCONNECTED -> {
                     statusText =
                         context.getString(
-                            R.string.account_status_error,
-                            context.getString(R.string.account_status_error_connection)
+                            R.string.balances_status_error,
+                            context.getString(R.string.balances_status_error_connection)
                         )
                 }
                 Synchronizer.Status.STOPPED -> {
-                    statusText = context.getString(R.string.account_status_stopped)
+                    statusText = context.getString(R.string.balances_status_stopped)
                 }
             }
 
-            // more detailed error message
+            // More detailed error message
             walletSnapshot.synchronizerError?.let {
                 statusText =
                     context.getString(
-                        R.string.account_status_error,
+                        R.string.balances_status_error,
                         walletSnapshot.synchronizerError.getCauseMessage()
-                            ?: context.getString(R.string.account_status_error_unknown)
+                            ?: context.getString(R.string.balances_status_error_unknown)
                     )
             }
 

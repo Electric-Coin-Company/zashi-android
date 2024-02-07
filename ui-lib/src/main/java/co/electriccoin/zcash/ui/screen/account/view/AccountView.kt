@@ -14,28 +14,23 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import cash.z.ecc.android.sdk.Synchronizer
-import cash.z.ecc.android.sdk.model.FiatCurrencyConversionRateState
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.BalanceWidget
 import co.electriccoin.zcash.ui.common.DisableScreenTimeout
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.test.CommonTag
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
-import co.electriccoin.zcash.ui.design.component.Body
-import co.electriccoin.zcash.ui.design.component.BodyWithFiatCurrencySymbol
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 import co.electriccoin.zcash.ui.screen.account.AccountTag
-import co.electriccoin.zcash.ui.screen.account.model.WalletDisplayValues
 
 @Preview("Account")
 @Composable
@@ -44,9 +39,7 @@ private fun ComposablePreview() {
         GradientSurface {
             Account(
                 walletSnapshot = WalletSnapshotFixture.new(),
-                isUpdateAvailable = false,
-                isKeepScreenOnDuringSync = false,
-                isFiatConversionEnabled = false,
+                isKeepScreenOnWhileSyncing = false,
                 goHistory = {},
                 goBalances = {},
                 goSettings = {},
@@ -55,13 +48,10 @@ private fun ComposablePreview() {
     }
 }
 
-@Suppress("LongParameterList")
 @Composable
 fun Account(
     walletSnapshot: WalletSnapshot,
-    isUpdateAvailable: Boolean,
-    isKeepScreenOnDuringSync: Boolean?,
-    isFiatConversionEnabled: Boolean,
+    isKeepScreenOnWhileSyncing: Boolean?,
     goBalances: () -> Unit,
     goHistory: () -> Unit,
     goSettings: () -> Unit,
@@ -71,9 +61,7 @@ fun Account(
     }) { paddingValues ->
         AccountMainContent(
             walletSnapshot = walletSnapshot,
-            isUpdateAvailable = isUpdateAvailable,
-            isKeepScreenOnDuringSync = isKeepScreenOnDuringSync,
-            isFiatConversionEnabled = isFiatConversionEnabled,
+            isKeepScreenOnWhileSyncing = isKeepScreenOnWhileSyncing,
             goHistory = goHistory,
             goBalances = goBalances,
             modifier =
@@ -105,13 +93,10 @@ private fun AccountTopAppBar(onSettings: () -> Unit) {
     )
 }
 
-@Suppress("LongParameterList")
 @Composable
 private fun AccountMainContent(
     walletSnapshot: WalletSnapshot,
-    isUpdateAvailable: Boolean,
-    isKeepScreenOnDuringSync: Boolean?,
-    isFiatConversionEnabled: Boolean,
+    isKeepScreenOnWhileSyncing: Boolean?,
     goBalances: () -> Unit,
     goHistory: () -> Unit,
     modifier: Modifier = Modifier
@@ -125,7 +110,7 @@ private fun AccountMainContent(
     ) {
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
-        Status(walletSnapshot, isUpdateAvailable, isFiatConversionEnabled, goBalances)
+        BalancesStatus(walletSnapshot, goBalances)
 
         Spacer(
             modifier =
@@ -138,72 +123,29 @@ private fun AccountMainContent(
 
         PrimaryButton(onClick = goHistory, text = stringResource(R.string.account_button_history))
 
-        if (isKeepScreenOnDuringSync == true && walletSnapshot.status == Synchronizer.Status.SYNCING) {
+        if (isKeepScreenOnWhileSyncing == true && walletSnapshot.status == Synchronizer.Status.SYNCING) {
             DisableScreenTimeout()
         }
     }
 }
 
 @Composable
-@Suppress("LongMethod", "MagicNumber")
-private fun Status(
+@Suppress("LongMethod")
+private fun BalancesStatus(
     walletSnapshot: WalletSnapshot,
-    updateAvailable: Boolean,
-    isFiatConversionEnabled: Boolean,
     goBalances: () -> Unit
 ) {
-    val walletDisplayValues =
-        WalletDisplayValues.getNextValues(
-            LocalContext.current,
-            walletSnapshot,
-            updateAvailable
-        )
-
     Column(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .testTag(AccountTag.STATUS_VIEWS),
+                .testTag(AccountTag.BALANCE_VIEWS),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        if (walletDisplayValues.zecAmountText.isNotEmpty()) {
-            BalanceWidget(
-                walletSnapshot = walletSnapshot,
-                isReferenceToBalances = true,
-                onReferenceClick = goBalances
-            )
-        }
-
-        if (isFiatConversionEnabled) {
-            Column(Modifier.testTag(AccountTag.FIAT_CONVERSION)) {
-                Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
-
-                when (walletDisplayValues.fiatCurrencyAmountState) {
-                    is FiatCurrencyConversionRateState.Current -> {
-                        BodyWithFiatCurrencySymbol(
-                            amount = walletDisplayValues.fiatCurrencyAmountText
-                        )
-                    }
-                    is FiatCurrencyConversionRateState.Stale -> {
-                        // Note: we should show information about staleness too
-                        BodyWithFiatCurrencySymbol(
-                            amount = walletDisplayValues.fiatCurrencyAmountText
-                        )
-                    }
-                    is FiatCurrencyConversionRateState.Unavailable -> {
-                        Body(text = walletDisplayValues.fiatCurrencyAmountText)
-                    }
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
-
-        if (walletDisplayValues.statusText.isNotEmpty()) {
-            Body(
-                text = walletDisplayValues.statusText,
-                modifier = Modifier.testTag(AccountTag.SINGLE_LINE_TEXT)
-            )
-        }
+        BalanceWidget(
+            walletSnapshot = walletSnapshot,
+            isReferenceToBalances = true,
+            onReferenceClick = goBalances
+        )
     }
 }

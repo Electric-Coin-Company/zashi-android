@@ -38,26 +38,12 @@ class AccountViewTest : UiTestPrerequisites() {
                 it.assertIsDisplayed()
             }
 
-        composeTestRule.onNodeWithTag(AccountTag.STATUS_VIEWS).also {
-            it.assertIsDisplayed()
-        }
-
-        composeTestRule.onNodeWithTag(AccountTag.FIAT_CONVERSION).also {
+        composeTestRule.onNodeWithTag(AccountTag.BALANCE_VIEWS).also {
             it.assertIsDisplayed()
         }
 
         composeTestRule.onNodeWithText(getStringResource(R.string.account_button_history), ignoreCase = true).also {
             it.assertIsDisplayed()
-        }
-    }
-
-    @Test
-    @MediumTest
-    fun hide_fiat_conversion() {
-        newTestSetup(isShowFiatConversion = false)
-
-        composeTestRule.onNodeWithTag(AccountTag.FIAT_CONVERSION).also {
-            it.assertDoesNotExist()
         }
     }
 
@@ -78,23 +64,20 @@ class AccountViewTest : UiTestPrerequisites() {
     fun hamburger_settings_test() {
         val testSetup = newTestSetup()
 
-        Assert.assertEquals(0, testSetup.getOnReceiveCount())
+        Assert.assertEquals(0, testSetup.getOnSettingsCount())
 
         composeTestRule.clickSettingsTopAppBarMenu()
 
         Assert.assertEquals(1, testSetup.getOnSettingsCount())
     }
 
-    private fun newTestSetup(
-        isShowFiatConversion: Boolean = true,
-        walletSnapshot: WalletSnapshot = WalletSnapshotFixture.new()
-    ) = AccountTestSetup(
-        composeTestRule,
-        walletSnapshot = walletSnapshot,
-        isShowFiatConversion = isShowFiatConversion
-    ).apply {
-        setDefaultContent()
-    }
+    private fun newTestSetup(walletSnapshot: WalletSnapshot = WalletSnapshotFixture.new()) =
+        AccountTestSetup(
+            composeTestRule,
+            walletSnapshot = walletSnapshot,
+        ).apply {
+            setDefaultContent()
+        }
 }
 
 private fun ComposeContentTestRule.clickHistory() {
