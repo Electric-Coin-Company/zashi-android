@@ -320,18 +320,18 @@ fun StyledBalance(
             color = textColor,
             maxLines = 1,
             modifier =
-            Modifier
-                .basicMarquee()
-                .then(modifier)
+                Modifier
+                    .basicMarquee()
+                    .then(modifier)
         )
     } else {
         Text(
             text = content,
             maxLines = 1,
             modifier =
-            Modifier
-                .basicMarquee()
-                .then(modifier)
+                Modifier
+                    .basicMarquee()
+                    .then(modifier)
         )
     }
 }

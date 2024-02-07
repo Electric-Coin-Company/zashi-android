@@ -198,10 +198,11 @@ fun SpendableBalanceRow(walletSnapshot: WalletSnapshot) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             StyledBalance(
                 balanceString = walletSnapshot.spendableBalance().toZecString(),
-                textStyles = Pair(
-                    ZcashTheme.extendedTypography.balanceSingleStyles.first,
-                    ZcashTheme.extendedTypography.balanceSingleStyles.second
-                ),
+                textStyles =
+                    Pair(
+                        ZcashTheme.extendedTypography.balanceSingleStyles.first,
+                        ZcashTheme.extendedTypography.balanceSingleStyles.second
+                    ),
                 textColor = ZcashTheme.colors.textCommon
             )
 
@@ -234,10 +235,11 @@ fun ChangePendingRow(walletSnapshot: WalletSnapshot) {
 
             StyledBalance(
                 balanceString = walletSnapshot.changePendingBalance().toZecString(),
-                textStyles = Pair(
-                    ZcashTheme.extendedTypography.balanceSingleStyles.first,
-                    ZcashTheme.extendedTypography.balanceSingleStyles.second
-                ),
+                textStyles =
+                    Pair(
+                        ZcashTheme.extendedTypography.balanceSingleStyles.first,
+                        ZcashTheme.extendedTypography.balanceSingleStyles.second
+                    ),
                 textColor = ZcashTheme.colors.textPending
             )
 
@@ -269,10 +271,11 @@ fun PendingTransactionsRow(walletSnapshot: WalletSnapshot) {
 
             StyledBalance(
                 balanceString = walletSnapshot.valuePendingBalance().toZecString(),
-                textStyles = Pair(
-                    ZcashTheme.extendedTypography.balanceSingleStyles.first,
-                    ZcashTheme.extendedTypography.balanceSingleStyles.second
-                ),
+                textStyles =
+                    Pair(
+                        ZcashTheme.extendedTypography.balanceSingleStyles.first,
+                        ZcashTheme.extendedTypography.balanceSingleStyles.second
+                    ),
                 textColor = ZcashTheme.colors.textPending
             )
 

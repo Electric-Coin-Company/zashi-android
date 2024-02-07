@@ -98,11 +98,13 @@ class SendViewTestSetup(
 
         ZcashTheme {
             Send(
-                walletSnapshot = WalletSnapshotFixture.new(
-                    saplingBalance = WalletBalanceFixture.new(
-                        available = Zatoshi(Zatoshi.MAX_INCLUSIVE.div(100))
-                    )
-                ),
+                walletSnapshot =
+                    WalletSnapshotFixture.new(
+                        saplingBalance =
+                            WalletBalanceFixture.new(
+                                available = Zatoshi(Zatoshi.MAX_INCLUSIVE.div(100))
+                            )
+                    ),
                 focusManager = LocalFocusManager.current,
                 sendStage = sendStage,
                 sendArgumentsWrapper = initialSendArgumentWrapper,
