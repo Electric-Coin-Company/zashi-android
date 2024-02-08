@@ -125,6 +125,7 @@ fun BodySmall(
     maxLines: Int = Int.MAX_VALUE,
     overflow: TextOverflow = TextOverflow.Clip,
     textAlign: TextAlign = TextAlign.Start,
+    textFontWeight: FontWeight = FontWeight.Normal,
     color: Color = MaterialTheme.colorScheme.onBackground,
 ) {
     Text(
@@ -135,6 +136,7 @@ fun BodySmall(
         textAlign = textAlign,
         modifier = modifier,
         style = MaterialTheme.typography.bodyMedium,
+        fontWeight = textFontWeight
     )
 }
 

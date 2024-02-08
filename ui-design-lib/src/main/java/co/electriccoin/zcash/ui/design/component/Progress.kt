@@ -3,11 +3,15 @@ package co.electriccoin.zcash.ui.design.component
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
@@ -35,7 +39,7 @@ fun CircularScreenProgressIndicator(modifier: Modifier = Modifier) {
         contentAlignment = Alignment.Center
     ) {
         CircularProgressIndicator(
-            color = ZcashTheme.colors.progressBarScreen,
+            color = ZcashTheme.colors.circularProgressBarScreen,
             modifier =
                 Modifier
                     .size(ZcashTheme.dimens.circularScreenProgressWidth)
@@ -46,11 +50,40 @@ fun CircularScreenProgressIndicator(modifier: Modifier = Modifier) {
 @Composable
 fun CircularSmallProgressIndicator(modifier: Modifier = Modifier) {
     CircularProgressIndicator(
-        color = ZcashTheme.colors.progressBarSmall,
+        color = ZcashTheme.colors.circularProgressBarSmall,
         strokeWidth = 2.dp,
         modifier =
             Modifier
                 .size(ZcashTheme.dimens.circularSmallProgressWidth)
+                .then(modifier)
+    )
+}
+
+@Preview
+@Composable
+private fun LinearProgressIndicatorComposablePreview() {
+    ZcashTheme(forceDarkMode = false) {
+        GradientSurface {
+            @Suppress("MagicNumber")
+            LinearProgressIndicator(0.75f)
+        }
+    }
+}
+
+@Composable
+fun LinearProgressIndicator(
+    progress: Float,
+    modifier: Modifier = Modifier
+) {
+    LinearProgressIndicator(
+        progress = progress,
+        color = ZcashTheme.colors.linearProgressBarBackground,
+        trackColor = ZcashTheme.colors.linearProgressBarTrack,
+        strokeCap = StrokeCap.Butt,
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(ZcashTheme.dimens.linearProgressHeight)
                 .then(modifier)
     )
 }

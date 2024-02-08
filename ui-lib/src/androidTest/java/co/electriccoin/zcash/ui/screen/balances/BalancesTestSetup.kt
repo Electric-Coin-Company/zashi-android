@@ -1,39 +1,22 @@
-package co.electriccoin.zcash.ui.screen.account
+package co.electriccoin.zcash.ui.screen.balances
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
-import co.electriccoin.zcash.ui.screen.account.view.Account
+import co.electriccoin.zcash.ui.screen.balances.view.Balances
 import java.util.concurrent.atomic.AtomicInteger
 
-class AccountTestSetup(
+class BalancesTestSetup(
     private val composeTestRule: ComposeContentTestRule,
     private val walletSnapshot: WalletSnapshot,
+    private val isShowFiatConversion: Boolean
 ) {
     private val onSettingsCount = AtomicInteger(0)
-    private val onReceiveCount = AtomicInteger(0)
-    private val onSendCount = AtomicInteger(0)
-    private val onHistoryCount = AtomicInteger(0)
 
     fun getOnSettingsCount(): Int {
         composeTestRule.waitForIdle()
         return onSettingsCount.get()
-    }
-
-    fun getOnReceiveCount(): Int {
-        composeTestRule.waitForIdle()
-        return onReceiveCount.get()
-    }
-
-    fun getOnSendCount(): Int {
-        composeTestRule.waitForIdle()
-        return onSendCount.get()
-    }
-
-    fun getOnHistoryCount(): Int {
-        composeTestRule.waitForIdle()
-        return onHistoryCount.get()
     }
 
     fun getWalletSnapshot(): WalletSnapshot {
@@ -44,16 +27,14 @@ class AccountTestSetup(
     @Composable
     @Suppress("TestFunctionName")
     fun DefaultContent() {
-        Account(
-            walletSnapshot = walletSnapshot,
+        Balances(
+            isFiatConversionEnabled = isShowFiatConversion,
             isKeepScreenOnWhileSyncing = false,
-            goSettings = {
+            isUpdateAvailable = false,
+            onSettings = {
                 onSettingsCount.incrementAndGet()
             },
-            goBalances = {},
-            goHistory = {
-                onHistoryCount.incrementAndGet()
-            },
+            walletSnapshot = walletSnapshot,
         )
     }
 

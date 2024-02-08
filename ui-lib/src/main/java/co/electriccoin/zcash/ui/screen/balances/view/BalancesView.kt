@@ -1,12 +1,12 @@
 package co.electriccoin.zcash.ui.screen.balances.view
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -26,12 +26,17 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import cash.z.ecc.android.sdk.Synchronizer
+import cash.z.ecc.android.sdk.model.FiatCurrencyConversionRateState
 import cash.z.ecc.android.sdk.model.toZecString
+import cash.z.ecc.sdk.extension.toPercentageWithDecimal
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.BalanceWidget
+import co.electriccoin.zcash.ui.common.DisableScreenTimeout
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.model.changePendingBalance
 import co.electriccoin.zcash.ui.common.model.spendableBalance
@@ -39,14 +44,17 @@ import co.electriccoin.zcash.ui.common.model.valuePendingBalance
 import co.electriccoin.zcash.ui.common.test.CommonTag
 import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.BodySmall
+import co.electriccoin.zcash.ui.design.component.BodyWithFiatCurrencySymbol
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.design.component.CircularSmallProgressIndicator
 import co.electriccoin.zcash.ui.design.component.GradientSurface
+import co.electriccoin.zcash.ui.design.component.LinearProgressIndicator
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.StyledBalance
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
-import co.electriccoin.zcash.ui.screen.account.model.WalletDisplayValues
+import co.electriccoin.zcash.ui.screen.balances.BalancesTag
+import co.electriccoin.zcash.ui.screen.balances.model.WalletDisplayValues
 
 @Preview("Balances")
 @Composable
@@ -54,20 +62,23 @@ private fun ComposablePreview() {
     ZcashTheme(forceDarkMode = false) {
         GradientSurface {
             Balances(
-                walletSnapshot = WalletSnapshotFixture.new(),
                 onSettings = {},
+                isFiatConversionEnabled = false,
+                isKeepScreenOnWhileSyncing = false,
+                isUpdateAvailable = false,
+                walletSnapshot = WalletSnapshotFixture.new(),
             )
         }
     }
 }
 
-// TODO [#1127]: Implement Balances screen
-// TODO [#1127]: https://github.com/Electric-Coin-Company/zashi-android/issues/1127
-
 @Composable
 fun Balances(
+    onSettings: () -> Unit,
+    isFiatConversionEnabled: Boolean,
+    isKeepScreenOnWhileSyncing: Boolean?,
+    isUpdateAvailable: Boolean,
     walletSnapshot: WalletSnapshot?,
-    onSettings: () -> Unit
 ) {
     Scaffold(topBar = {
         BalancesTopAppBar(onSettings = onSettings)
@@ -76,6 +87,9 @@ fun Balances(
             CircularScreenProgressIndicator()
         } else {
             BalancesMainContent(
+                isFiatConversionEnabled = isFiatConversionEnabled,
+                isKeepScreenOnWhileSyncing = isKeepScreenOnWhileSyncing,
+                isUpdateAvailable = isUpdateAvailable,
                 walletSnapshot = walletSnapshot,
                 modifier =
                     Modifier.padding(
@@ -110,15 +124,12 @@ private fun BalancesTopAppBar(onSettings: () -> Unit) {
 
 @Composable
 private fun BalancesMainContent(
+    isFiatConversionEnabled: Boolean,
+    isKeepScreenOnWhileSyncing: Boolean?,
+    isUpdateAvailable: Boolean,
     walletSnapshot: WalletSnapshot,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
-    val walletDisplayValues =
-        WalletDisplayValues.getNextValues(
-            LocalContext.current,
-            walletSnapshot
-        )
-
     Column(
         modifier =
             Modifier
@@ -129,13 +140,11 @@ private fun BalancesMainContent(
     ) {
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
-        if (walletDisplayValues.zecAmountText.isNotEmpty()) {
-            BalanceWidget(
-                walletSnapshot = walletSnapshot,
-                isReferenceToBalances = false,
-                onReferenceClick = {}
-            )
-        }
+        BalanceWidget(
+            walletSnapshot = walletSnapshot,
+            isReferenceToBalances = false,
+            onReferenceClick = {}
+        )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingHuge))
 
@@ -146,27 +155,48 @@ private fun BalancesMainContent(
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
-        BalancesOverview(walletSnapshot)
+        BalancesOverview(
+            walletSnapshot = walletSnapshot,
+            isFiatConversionEnabled = isFiatConversionEnabled,
+        )
 
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
 
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(166.dp)
+                    .background(color = ZcashTheme.colors.panelBackgroundColor),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingHuge))
-
             Body(
                 text = stringResource(id = R.string.balances_coming_soon),
                 textAlign = TextAlign.Center
             )
         }
+
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
+
+        Spacer(modifier = Modifier.weight(1f, true))
+
+        SyncStatus(
+            walletSnapshot = walletSnapshot,
+            isUpdateAvailable = isUpdateAvailable,
+        )
+
+        if (isKeepScreenOnWhileSyncing == true && walletSnapshot.status == Synchronizer.Status.SYNCING) {
+            DisableScreenTimeout()
+        }
     }
 }
 
 @Composable
-fun BalancesOverview(walletSnapshot: WalletSnapshot) {
+fun BalancesOverview(
+    walletSnapshot: WalletSnapshot,
+    isFiatConversionEnabled: Boolean,
+) {
     Column {
         SpendableBalanceRow(walletSnapshot)
 
@@ -178,6 +208,36 @@ fun BalancesOverview(walletSnapshot: WalletSnapshot) {
 
         //  aka value pending
         PendingTransactionsRow(walletSnapshot)
+
+        if (isFiatConversionEnabled) {
+            val walletDisplayValues =
+                WalletDisplayValues.getNextValues(
+                    LocalContext.current,
+                    walletSnapshot,
+                    false
+                )
+
+            Column(Modifier.testTag(BalancesTag.FIAT_CONVERSION)) {
+                Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
+
+                when (walletDisplayValues.fiatCurrencyAmountState) {
+                    is FiatCurrencyConversionRateState.Current -> {
+                        BodyWithFiatCurrencySymbol(
+                            amount = walletDisplayValues.fiatCurrencyAmountText
+                        )
+                    }
+                    is FiatCurrencyConversionRateState.Stale -> {
+                        // Note: we should show information about staleness too
+                        BodyWithFiatCurrencySymbol(
+                            amount = walletDisplayValues.fiatCurrencyAmountText
+                        )
+                    }
+                    is FiatCurrencyConversionRateState.Unavailable -> {
+                        Body(text = walletDisplayValues.fiatCurrencyAmountText)
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -287,5 +347,50 @@ fun PendingTransactionsRow(walletSnapshot: WalletSnapshot) {
                 }
             }
         }
+    }
+}
+
+@Composable
+fun SyncStatus(
+    isUpdateAvailable: Boolean,
+    walletSnapshot: WalletSnapshot,
+) {
+    val walletDisplayValues =
+        WalletDisplayValues.getNextValues(
+            LocalContext.current,
+            walletSnapshot,
+            isUpdateAvailable
+        )
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        if (walletDisplayValues.statusText.isNotEmpty()) {
+            BodySmall(
+                text = walletDisplayValues.statusText,
+                modifier = Modifier.testTag(BalancesTag.STATUS)
+            )
+
+            Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
+        }
+
+        BodySmall(
+            text =
+                stringResource(
+                    id = R.string.balances_status_syncing_percentage,
+                    walletSnapshot.progress.toPercentageWithDecimal()
+                ),
+            textFontWeight = FontWeight.Black
+        )
+
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
+
+        LinearProgressIndicator(
+            progress = walletSnapshot.progress.decimal,
+            modifier =
+                Modifier.padding(
+                    horizontal = ZcashTheme.dimens.spacingXlarge
+                )
+        )
     }
 }

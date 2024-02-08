@@ -384,7 +384,7 @@ private fun accountScreenshots(
         composeTestRule.activity.walletViewModel.walletSnapshot.value != null
     }
 
-    composeTestRule.onNodeWithTag(AccountTag.STATUS_VIEWS).also {
+    composeTestRule.onNodeWithTag(AccountTag.BALANCE_VIEWS).also {
         it.assertExists()
         ScreenshotTest.takeScreenshot(tag, "Account 1")
     }

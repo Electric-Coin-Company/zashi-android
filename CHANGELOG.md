@@ -9,10 +9,18 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+### Changed
+- Update the Zcash SDK dependency to version 2.0.6, which adds more details on current balances
+
+### Added
+- The Balances screen now provides details on current balances like Change pending and Pending transactions
+- The screen also adds a new Block synchronization progress bar and status, which were initially part of the Account 
+  screen and redesigned
+
 ### Fixed
 - Fixed character replacement in Zcash addresses on the Receive screen caused by ligatures in the app's primary font 
  using the secondary font. This will be revisited once a proper font is added.
-- Improved spacing of titles of bottom navigation tabs so they work better on smaller screens 
+- Improved spacing of titles of bottom navigation tabs, so they work better on smaller screens 
 
 ## [0.2.0 (541)] - 2024-01-30
 - Update the Zcash SDK dependency to version 2.0.5, which improves the performance of block synchronization

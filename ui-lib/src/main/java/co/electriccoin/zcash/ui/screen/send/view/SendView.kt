@@ -68,7 +68,6 @@ import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme.dimens
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
-import co.electriccoin.zcash.ui.screen.account.model.WalletDisplayValues
 import co.electriccoin.zcash.ui.screen.send.SendTag
 import co.electriccoin.zcash.ui.screen.send.ext.ABBREVIATION_INDEX
 import co.electriccoin.zcash.ui.screen.send.ext.abbreviated
@@ -361,21 +360,13 @@ private fun SendForm(
                 .then(modifier),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        val walletDisplayValues =
-            WalletDisplayValues.getNextValues(
-                context = LocalContext.current,
-                walletSnapshot = walletSnapshot
-            )
-
         Spacer(modifier = Modifier.height(dimens.spacingDefault))
 
-        if (walletDisplayValues.zecAmountText.isNotEmpty()) {
-            BalanceWidget(
-                walletSnapshot = walletSnapshot,
-                isReferenceToBalances = true,
-                onReferenceClick = goBalances
-            )
-        }
+        BalanceWidget(
+            walletSnapshot = walletSnapshot,
+            isReferenceToBalances = true,
+            onReferenceClick = goBalances
+        )
 
         Spacer(modifier = Modifier.height(dimens.spacingXlarge))
 

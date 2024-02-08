@@ -30,7 +30,15 @@ internal object Dark {
     val textDescription = Color(0xFF777777)
     val textProgress = Color(0xFF8B8A8A)
 
+    val aboutTextColor = Color.Unspecified
+    val screenTitleColor = Color(0xFF040404)
+    val welcomeAnimationColor = Color(0xFF231F20)
+    val complementaryColor = Color(0xFFF4B728)
+    val dividerColor = Color(0xFFDDDDDD)
+    val darkDividerColor = Color(0xFF000000)
+    val tabTextColor = Color(0xFF040404)
     val layoutStroke = Color(0xFFFFFFFF)
+    val panelBackgroundColor = Color(0xFFEAEAEA)
 
     val primaryButton = Color(0xFFFFFFFF)
     val primaryButtonPressed = Color(0xFFFFFFFF)
@@ -46,8 +54,10 @@ internal object Dark {
     val navigationButton = Color(0xFFFFFFFF)
     val navigationButtonPressed = Color(0xFFFFFFFF)
 
-    val progressBarSmall = Color(0xFF8B8A8A)
-    val progressBarScreen = Color(0xFFFFFFFF)
+    val circularProgressBarSmall = Color(0xFF8B8A8A)
+    val circularProgressBarScreen = Color(0xFFFFFFFF)
+    val linearProgressBarTrack = Color(0xFFD9D9D9)
+    val linearProgressBarBackground = Light.complementaryColor
 
     val callout = Color(0xFFFFFFFF)
     val onCallout = Color(0xFFFFFFFF)
@@ -64,15 +74,6 @@ internal object Dark {
     val disabledButtonTextColor = Color(0xFFDDDDDD)
 
     val buttonShadowColor = Color(0xFFFFFFFF)
-
-    // Proper values will be added later, see #998
-    val aboutTextColor = Color.Unspecified
-    val screenTitleColor = Color(0xFF040404)
-    val welcomeAnimationColor = Color(0xFF231F20)
-    val complementaryColor = Color(0xFFF4B728)
-    val dividerColor = Color(0xFFDDDDDD)
-    val darkDividerColor = Color(0xFF000000)
-    val tabTextColor = Color(0xFF040404)
 }
 
 internal object Light {
@@ -91,7 +92,15 @@ internal object Light {
     val textDescription = Color(0xFF777777)
     val textProgress = Color(0xFF8B8A8A)
 
+    val screenTitleColor = Color(0xFF040404)
+    val aboutTextColor = Color(0xFF4E4E4E)
+    val welcomeAnimationColor = Color(0xFF231F20)
+    val complementaryColor = Color(0xFFF4B728)
+    val dividerColor = Color(0xFFDDDDDD)
+    val darkDividerColor = Color(0xFF000000)
+    val tabTextColor = Color(0xFF040404)
     val layoutStroke = Color(0xFF000000)
+    val panelBackgroundColor = Color(0xFFEAEAEA)
 
     val primaryButton = Color(0xFF000000)
     val primaryButtonPressed = Color(0xFF000000)
@@ -107,8 +116,10 @@ internal object Light {
     val navigationButton = Color(0xFFFFFFFF)
     val navigationButtonPressed = Color(0xFFFFFFFF)
 
-    val progressBarSmall = Color(0xFF8B8A8A)
-    val progressBarScreen = Color(0xFF000000)
+    val circularProgressBarSmall = Color(0xFF8B8A8A)
+    val circularProgressBarScreen = Color(0xFF000000)
+    val linearProgressBarTrack = Color(0xFFD9D9D9)
+    val linearProgressBarBackground = complementaryColor
 
     val callout = Color(0xFFFFFFFF)
     val onCallout = Color(0xFFFFFFFF)
@@ -124,14 +135,6 @@ internal object Light {
     val disabledButtonColor = Color(0xFFB7B7B7)
     val disabledButtonTextColor = Color(0xFFDDDDDD)
     val buttonShadowColor = Color(0xFF000000)
-
-    val screenTitleColor = Color(0xFF040404)
-    val aboutTextColor = Color(0xFF4E4E4E)
-    val welcomeAnimationColor = Color(0xFF231F20)
-    val complementaryColor = Color(0xFFF4B728)
-    val dividerColor = Color(0xFFDDDDDD)
-    val darkDividerColor = Color(0xFF000000)
-    val tabTextColor = Color(0xFF040404)
 }
 
 internal val DarkColorPalette =
@@ -166,8 +169,10 @@ internal val DarkExtendedColorPalette =
         onTertiary = Dark.textTertiaryButton,
         callout = Dark.callout,
         onCallout = Dark.onCallout,
-        progressBarSmall = Dark.progressBarSmall,
-        progressBarScreen = Dark.progressBarScreen,
+        circularProgressBarSmall = Dark.circularProgressBarSmall,
+        circularProgressBarScreen = Dark.circularProgressBarScreen,
+        linearProgressBarTrack = Dark.linearProgressBarTrack,
+        linearProgressBarBackground = Dark.linearProgressBarBackground,
         chipIndex = Dark.textChipIndex,
         textCommon = Dark.textCommon,
         textFieldHint = Dark.textFieldHint,
@@ -189,6 +194,7 @@ internal val DarkExtendedColorPalette =
         dividerColor = Dark.dividerColor,
         darkDividerColor = Dark.darkDividerColor,
         tabTextColor = Dark.tabTextColor,
+        panelBackgroundColor = Dark.panelBackgroundColor,
     )
 
 internal val LightExtendedColorPalette =
@@ -199,8 +205,10 @@ internal val LightExtendedColorPalette =
         onTertiary = Light.textTertiaryButton,
         callout = Light.callout,
         onCallout = Light.onCallout,
-        progressBarScreen = Light.progressBarScreen,
-        progressBarSmall = Light.progressBarSmall,
+        circularProgressBarScreen = Light.circularProgressBarScreen,
+        circularProgressBarSmall = Light.circularProgressBarSmall,
+        linearProgressBarTrack = Light.linearProgressBarTrack,
+        linearProgressBarBackground = Light.linearProgressBarBackground,
         chipIndex = Light.textChipIndex,
         textCommon = Light.textCommon,
         textFieldHint = Light.textFieldHint,
@@ -222,6 +230,7 @@ internal val LightExtendedColorPalette =
         dividerColor = Light.dividerColor,
         darkDividerColor = Light.darkDividerColor,
         tabTextColor = Light.tabTextColor,
+        panelBackgroundColor = Light.panelBackgroundColor,
     )
 
 @Suppress("CompositionLocalAllowlist")
@@ -234,8 +243,10 @@ internal val LocalExtendedColors =
             onTertiary = Color.Unspecified,
             callout = Color.Unspecified,
             onCallout = Color.Unspecified,
-            progressBarScreen = Color.Unspecified,
-            progressBarSmall = Color.Unspecified,
+            circularProgressBarScreen = Color.Unspecified,
+            circularProgressBarSmall = Color.Unspecified,
+            linearProgressBarTrack = Color.Unspecified,
+            linearProgressBarBackground = Color.Unspecified,
             chipIndex = Color.Unspecified,
             textCommon = Color.Unspecified,
             textFieldHint = Color.Unspecified,
@@ -256,6 +267,7 @@ internal val LocalExtendedColors =
             complementaryColor = Color.Unspecified,
             dividerColor = Color.Unspecified,
             darkDividerColor = Color.Unspecified,
-            tabTextColor = Color.Unspecified
+            tabTextColor = Color.Unspecified,
+            panelBackgroundColor = Color.Unspecified,
         )
     }

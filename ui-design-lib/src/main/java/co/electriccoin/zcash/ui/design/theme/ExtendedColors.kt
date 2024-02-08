@@ -14,8 +14,10 @@ data class ExtendedColors(
     val onTertiary: Color,
     val callout: Color,
     val onCallout: Color,
-    val progressBarSmall: Color,
-    val progressBarScreen: Color,
+    val circularProgressBarSmall: Color,
+    val circularProgressBarScreen: Color,
+    val linearProgressBarTrack: Color,
+    val linearProgressBarBackground: Color,
     val chipIndex: Color,
     val textCommon: Color,
     val textFieldHint: Color,
@@ -37,6 +39,7 @@ data class ExtendedColors(
     val dividerColor: Color,
     val darkDividerColor: Color,
     val tabTextColor: Color,
+    val panelBackgroundColor: Color,
 ) {
     @Composable
     fun surfaceGradient() =
