@@ -246,7 +246,7 @@ fun SmallTopAppBar(
                     modifier =
                         Modifier
                             .wrapContentSize()
-                            .clip(RoundedCornerShape(ZcashTheme.dimens.topAppBarActionRippleCorner))
+                            .clip(RoundedCornerShape(ZcashTheme.dimens.regularRippleEffectCorner))
                             .clickable { onBack?.run { onBack() } }
                 ) {
                     Row(

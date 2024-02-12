@@ -20,12 +20,17 @@ data class WalletSnapshot(
     val synchronizerError: SynchronizerError?
 ) {
     // Note: the wallet is effectively empty if it cannot cover the miner's fee
-    val hasFunds =
+    val hasSaplingFunds =
         saplingBalance.available.value >
             (ZcashSdk.MINERS_FEE.value.toDouble() / Zatoshi.ZATOSHI_PER_ZEC) // 0.00001
     val hasSaplingBalance = saplingBalance.total.value > 0
 
-    val isSendEnabled: Boolean get() = status == Synchronizer.Status.SYNCED && hasFunds
+    // Note: the wallet's transparent balance is effectively empty if it cannot cover the miner's fee
+    val hasTransparentFunds =
+        transparentBalance.value >
+            (ZcashSdk.MINERS_FEE.value.toDouble() / Zatoshi.ZATOSHI_PER_ZEC) // 0.00001
+
+    val isSendEnabled: Boolean get() = status == Synchronizer.Status.SYNCED && hasSaplingFunds
 }
 
 fun WalletSnapshot.totalBalance() = orchardBalance.total + saplingBalance.total + transparentBalance

@@ -247,6 +247,7 @@ fun Reference(
     modifier: Modifier = Modifier,
     fontWeight: FontWeight = FontWeight.SemiBold,
     textAlign: TextAlign = TextAlign.Center,
+    textStyle: TextStyle = ZcashTheme.typography.primary.bodyLarge,
     imageVector: ImageVector? = null,
     imageContentDescription: String? = null
 ) {
@@ -254,7 +255,7 @@ fun Reference(
         modifier =
             Modifier
                 .wrapContentSize()
-                .clip(RoundedCornerShape(ZcashTheme.dimens.topAppBarActionRippleCorner))
+                .clip(RoundedCornerShape(ZcashTheme.dimens.regularRippleEffectCorner))
                 .clickable { onClick() }
                 .then(modifier),
         verticalAlignment = Alignment.CenterVertically
@@ -270,15 +271,14 @@ fun Reference(
             text = text,
             textAlign = TextAlign.Center,
             style =
-                ZcashTheme.typography.primary.bodyLarge
-                    .merge(
-                        TextStyle(
-                            color = ZcashTheme.colors.reference,
-                            textAlign = textAlign,
-                            textDecoration = TextDecoration.Underline,
-                            fontWeight = fontWeight
-                        )
+                textStyle.merge(
+                    TextStyle(
+                        color = ZcashTheme.colors.reference,
+                        textAlign = textAlign,
+                        textDecoration = TextDecoration.Underline,
+                        fontWeight = fontWeight
                     )
+                )
         )
     }
 }
@@ -410,7 +410,7 @@ fun NavigationTabText(
         color = ZcashTheme.colors.tabTextColor,
         modifier =
             Modifier
-                .clip(RoundedCornerShape(ZcashTheme.dimens.topAppBarActionRippleCorner))
+                .clip(RoundedCornerShape(ZcashTheme.dimens.regularRippleEffectCorner))
                 .clickable { onClick() }
                 .then(modifier)
     )

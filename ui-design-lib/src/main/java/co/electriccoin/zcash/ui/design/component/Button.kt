@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -60,14 +61,15 @@ fun PrimaryButton(
     onClick: () -> Unit,
     text: String,
     modifier: Modifier = Modifier,
+    buttonColor: Color = MaterialTheme.colorScheme.primary,
+    enabled: Boolean = true,
+    textColor: Color = MaterialTheme.colorScheme.onPrimary,
+    textStyle: TextStyle = ZcashTheme.extendedTypography.buttonText,
     outerPaddingValues: PaddingValues =
         PaddingValues(
             horizontal = ZcashTheme.dimens.spacingNone,
             vertical = ZcashTheme.dimens.spacingSmall
-        ),
-    enabled: Boolean = true,
-    buttonColor: Color = MaterialTheme.colorScheme.primary,
-    textColor: Color = MaterialTheme.colorScheme.onPrimary,
+        )
 ) {
     Button(
         shape = RectangleShape,
@@ -99,7 +101,7 @@ fun PrimaryButton(
         onClick = onClick,
     ) {
         Text(
-            style = ZcashTheme.extendedTypography.buttonText,
+            style = textStyle,
             textAlign = TextAlign.Center,
             text = text.uppercase(),
             color = textColor
