@@ -9,6 +9,8 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [0.2.0 (554)] - 2024-02-13
+
 ### Changed
 - Update the Zcash SDK dependency to version 2.0.6, which adds more details on current balances
 
