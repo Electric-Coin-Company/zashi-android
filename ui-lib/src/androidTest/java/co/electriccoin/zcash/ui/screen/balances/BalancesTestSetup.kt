@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.screen.balances.model.ShieldState
 import co.electriccoin.zcash.ui.screen.balances.view.Balances
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -28,13 +29,15 @@ class BalancesTestSetup(
     @Suppress("TestFunctionName")
     fun DefaultContent() {
         Balances(
-            isFiatConversionEnabled = isShowFiatConversion,
-            isKeepScreenOnWhileSyncing = false,
-            isUpdateAvailable = false,
             onSettings = {
                 onSettingsCount.incrementAndGet()
             },
+            isFiatConversionEnabled = isShowFiatConversion,
+            isKeepScreenOnWhileSyncing = false,
+            isUpdateAvailable = false,
             walletSnapshot = walletSnapshot,
+            onShielding = {},
+            shieldState = ShieldState.Available
         )
     }
 

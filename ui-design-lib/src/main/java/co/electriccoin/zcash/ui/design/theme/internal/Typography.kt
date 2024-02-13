@@ -103,7 +103,7 @@ internal val SecondaryTypography =
             TextStyle(
                 fontFamily = ArchivoFontFamily,
                 fontWeight = FontWeight.SemiBold,
-                fontSize = 20.sp,
+                fontSize = 18.sp,
                 textAlign = TextAlign.Center
             ),
         bodyLarge =
@@ -162,12 +162,14 @@ data class ExtendedTypography(
     val addressStyle: TextStyle,
     val aboutText: TextStyle,
     val buttonText: TextStyle,
+    val buttonTextSmall: TextStyle,
     val checkboxText: TextStyle,
     val securityWarningText: TextStyle,
     val textFieldHint: TextStyle,
     val textFieldValue: TextStyle,
     val textFieldBirthday: TextStyle,
     val textNavTab: TextStyle,
+    val referenceSmall: TextStyle,
 )
 
 @Suppress("CompositionLocalAllowlist")
@@ -236,9 +238,10 @@ val LocalExtendedTypography =
                     fontSize = 14.sp,
                     lineHeight = 20.sp
                 ),
-            buttonText =
+            buttonText = PrimaryTypography.bodySmall,
+            buttonTextSmall =
                 PrimaryTypography.bodySmall.copy(
-                    fontSize = 14.sp
+                    fontSize = 11.sp
                 ),
             checkboxText =
                 PrimaryTypography.bodyMedium.copy(
@@ -263,5 +266,9 @@ val LocalExtendedTypography =
                 SecondaryTypography.labelSmall.copy(
                     fontSize = 13.sp
                 ),
+            referenceSmall =
+                PrimaryTypography.bodySmall.copy(
+                    fontSize = 13.sp
+                )
         )
     }
