@@ -24,3 +24,4 @@
 # in the projects, so the classes aren't present.  These warnings are safe to suppress.
 -dontwarn kotlinx.serialization.KSerializer
 -dontwarn kotlinx.serialization.Serializable
+-dontwarn kotlinx.serialization.internal.AbstractPolymorphicSerializer
