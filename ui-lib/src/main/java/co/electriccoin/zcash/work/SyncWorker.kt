@@ -84,6 +84,8 @@ class SyncWorker(context: Context, workerParameters: WorkerParameters) : Corouti
                     .setRequiresCharging(true)
                     .build()
 
+            // TODO [#1258]: Consider using flexInterval in BG sync trigger planning
+            // TODO [#1258]: https://github.com/Electric-Coin-Company/zashi-android/issues/1258
             return PeriodicWorkRequestBuilder<SyncWorker>(SYNC_PERIOD.toJavaDuration())
                 .setConstraints(constraints)
                 .setInitialDelay(targetTimeDiff.toJavaDuration())
