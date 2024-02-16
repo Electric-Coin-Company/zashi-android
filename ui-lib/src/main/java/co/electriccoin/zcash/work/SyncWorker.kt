@@ -12,55 +12,117 @@ import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.WalletCoordinator
 import cash.z.ecc.android.sdk.model.PercentDecimal
 import co.electriccoin.zcash.global.getInstance
+import co.electriccoin.zcash.spackle.Twig
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.takeWhile
+import kotlinx.datetime.Clock
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.Instant
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atTime
+import kotlinx.datetime.toInstant
+import kotlinx.datetime.toLocalDateTime
+import kotlinx.datetime.until
+import kotlin.random.Random
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.DurationUnit
+import kotlin.time.toDuration
 import kotlin.time.toJavaDuration
+
+// TODO [#1249]: Add documentation and tests on background syncing
+// TODO [#1249]: https://github.com/Electric-Coin-Company/zashi-android/issues/1249
 
 @Keep
 class SyncWorker(context: Context, workerParameters: WorkerParameters) : CoroutineWorker(context, workerParameters) {
     @OptIn(ExperimentalCoroutinesApi::class)
     override suspend fun doWork(): Result {
-        // Enhancements to this implementation would be:
-        // - Quit early if the synchronizer is null after a timeout period
-        // - Return better status information
+        Twig.debug { "BG Sync: starting..." }
 
         WalletCoordinator.getInstance(applicationContext).synchronizer
             .flatMapLatest {
+                Twig.debug { "BG Sync: synchronizer: $it" }
+
                 it?.status?.combine(it.progress) { status, progress ->
-                    StatusAndProgress(status, progress)
+                    StatusAndProgress(status, progress).also {
+                        Twig.debug { "BG Sync: result: $it" }
+                    }
                 } ?: emptyFlow()
             }
             .takeWhile {
-                it.status != Synchronizer.Status.DISCONNECTED && it.progress.isLessThanHundredPercent()
+                it.status != Synchronizer.Status.DISCONNECTED &&
+                    it.status != Synchronizer.Status.SYNCED
             }
             .collect()
+
+        Twig.debug { "BG Sync: terminating..." }
 
         return Result.success()
     }
 
     companion object {
-        /*
-         * There may be better periods; we have not optimized for this yet.
-         */
-        private val DEFAULT_SYNC_PERIOD = 24.hours
+        private val SYNC_PERIOD = 24.hours
+        private val SYNC_DAY_SHIFT = 1.days // Move to tomorrow
+        private val SYNC_START_TIME_HOURS = 3.hours // Start around 3 a.m. at night
+        private val SYNC_START_TIME_MINUTES = 60.minutes // Randomize with minutes until 4 a.m.
 
         fun newWorkRequest(): PeriodicWorkRequest {
+            val targetTimeDiff = calculateTargetTimeDifference()
+
+            Twig.debug { "BG Sync: necessary trigger delay time: $targetTimeDiff" }
+
             val constraints =
                 Constraints.Builder()
                     .setRequiresStorageNotLow(true)
-                    .setRequiredNetworkType(NetworkType.CONNECTED)
+                    .setRequiredNetworkType(NetworkType.UNMETERED)
+                    .setRequiresCharging(true)
                     .build()
 
-            return PeriodicWorkRequestBuilder<SyncWorker>(DEFAULT_SYNC_PERIOD.toJavaDuration())
+            // TODO [#1258]: Consider using flexInterval in BG sync trigger planning
+            // TODO [#1258]: https://github.com/Electric-Coin-Company/zashi-android/issues/1258
+            return PeriodicWorkRequestBuilder<SyncWorker>(SYNC_PERIOD.toJavaDuration())
                 .setConstraints(constraints)
+                .setInitialDelay(targetTimeDiff.toJavaDuration())
                 .build()
+        }
+
+        private fun calculateTargetTimeDifference(): Duration {
+            val currentTimeZone: TimeZone = TimeZone.currentSystemDefault()
+
+            val now: Instant = Clock.System.now()
+
+            val targetTime =
+                now
+                    .plus(SYNC_DAY_SHIFT)
+                    .toLocalDateTime(currentTimeZone)
+                    .date
+                    .atTime(
+                        hour = SYNC_START_TIME_HOURS.inWholeHours.toInt(),
+                        // Even though the WorkManager will trigger the work approximately at the set time, it's
+                        // better to randomize time in 3-4 a.m. This generates a number between 0 (inclusive) and 60
+                        // (exclusive)
+                        minute = Random.nextInt(0, SYNC_START_TIME_MINUTES.inWholeMinutes.toInt())
+                    )
+
+            Twig.debug { "BG Sync: calculated target time: ${targetTime.time}" }
+
+            return now.until(
+                other = targetTime.toInstant(currentTimeZone),
+                unit = DateTimeUnit.MILLISECOND,
+                timeZone = currentTimeZone
+            ).toDuration(DurationUnit.MILLISECONDS)
         }
     }
 }
 
-private data class StatusAndProgress(val status: Synchronizer.Status, val progress: PercentDecimal)
+// Enhancement to this implementation would be returning a better status information
+private data class StatusAndProgress(
+    val status: Synchronizer.Status,
+    val progress: PercentDecimal
+)
