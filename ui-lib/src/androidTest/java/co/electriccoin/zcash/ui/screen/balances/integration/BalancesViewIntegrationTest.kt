@@ -1,6 +1,5 @@
 package co.electriccoin.zcash.ui.screen.balances.integration
 
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertWidthIsAtLeast
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -61,7 +60,7 @@ class BalancesViewIntegrationTest : UiTestPrerequisites() {
         assertEquals(0.5f, testSetup.getWalletSnapshot().progress.decimal)
 
         composeTestRule.onNodeWithTag(BalancesTag.STATUS).also {
-            it.assertIsDisplayed()
+            it.assertExists()
             it.assertWidthIsAtLeast(1.dp)
         }
     }

@@ -11,13 +11,14 @@ import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
+import co.electriccoin.zcash.ui.screen.scan.model.ScanResult
 import co.electriccoin.zcash.ui.screen.scan.util.SettingsUtil
 import co.electriccoin.zcash.ui.screen.scan.view.Scan
 import kotlinx.coroutines.launch
 
 @Composable
 internal fun MainActivity.WrapScanValidator(
-    onScanValid: (address: String) -> Unit,
+    onScanValid: (address: ScanResult) -> Unit,
     goBack: () -> Unit
 ) {
     WrapScan(
@@ -30,7 +31,7 @@ internal fun MainActivity.WrapScanValidator(
 @Composable
 fun WrapScan(
     activity: ComponentActivity,
-    onScanValid: (address: String) -> Unit,
+    onScanValid: (address: ScanResult) -> Unit,
     goBack: () -> Unit
 ) {
     val walletViewModel by activity.viewModels<WalletViewModel>()
@@ -51,9 +52,10 @@ fun WrapScan(
             onBack = goBack,
             onScanned = { result ->
                 scope.launch {
-                    val isAddressValid = !synchronizer.validateAddress(result).isNotValid
+                    val addressType = synchronizer.validateAddress(result)
+                    val isAddressValid = !addressType.isNotValid
                     if (isAddressValid) {
-                        onScanValid(result)
+                        onScanValid(ScanResult(result, addressType))
                     } else {
                         snackbarHostState.showSnackbar(
                             message = activity.getString(R.string.scan_validation_invalid_address)

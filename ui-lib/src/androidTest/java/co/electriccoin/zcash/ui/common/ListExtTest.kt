@@ -1,6 +1,7 @@
 package co.electriccoin.zcash.ui.common
 
 import androidx.test.filters.SmallTest
+import co.electriccoin.zcash.ui.common.extension.first
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.contains

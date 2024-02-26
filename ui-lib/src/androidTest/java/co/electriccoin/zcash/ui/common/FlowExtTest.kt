@@ -2,6 +2,7 @@ package co.electriccoin.zcash.ui.common
 
 import androidx.test.filters.FlakyTest
 import androidx.test.filters.SmallTest
+import co.electriccoin.zcash.ui.common.extension.throttle
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking

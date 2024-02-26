@@ -8,6 +8,9 @@ import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.filters.MediumTest
 import co.electriccoin.zcash.test.UiTestPrerequisites
+import co.electriccoin.zcash.ui.common.compose.DisableScreenTimeout
+import co.electriccoin.zcash.ui.common.compose.LocalScreenTimeout
+import co.electriccoin.zcash.ui.common.compose.ScreenTimeout
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow

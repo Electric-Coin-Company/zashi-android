@@ -1,7 +1,7 @@
 package co.electriccoin.zcash.ui.screen.restore.model
 
 import cash.z.ecc.android.sdk.model.SeedPhrase
-import co.electriccoin.zcash.ui.common.first
+import co.electriccoin.zcash.ui.common.extension.first
 import java.util.Locale
 
 internal sealed class ParseResult {

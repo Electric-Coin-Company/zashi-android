@@ -28,11 +28,13 @@ import co.electriccoin.zcash.ui.screen.history.WrapHistory
 import co.electriccoin.zcash.ui.screen.home.WrapHome
 import co.electriccoin.zcash.ui.screen.request.WrapRequest
 import co.electriccoin.zcash.ui.screen.scan.WrapScanValidator
+import co.electriccoin.zcash.ui.screen.scan.model.ScanResult
 import co.electriccoin.zcash.ui.screen.seedrecovery.WrapSeedRecovery
 import co.electriccoin.zcash.ui.screen.send.model.SendArgumentsWrapper
 import co.electriccoin.zcash.ui.screen.settings.WrapSettings
 import co.electriccoin.zcash.ui.screen.support.WrapSupport
 import co.electriccoin.zcash.ui.screen.update.WrapCheckForUpdate
+import kotlinx.serialization.json.Json
 
 @Composable
 @Suppress("LongMethod")
@@ -53,11 +55,15 @@ internal fun MainActivity.Navigation() {
                 goHistory = { navController.navigateJustOnce(HISTORY) },
                 goSettings = { navController.navigateJustOnce(SETTINGS) },
                 goScan = { navController.navigateJustOnce(SCAN) },
+                // At this point we only read scan result data
                 sendArgumentsWrapper =
                     SendArgumentsWrapper(
-                        recipientAddress = backStackEntry.savedStateHandle[SEND_RECIPIENT_ADDRESS],
-                        amount = backStackEntry.savedStateHandle[SEND_AMOUNT],
-                        memo = backStackEntry.savedStateHandle[SEND_MEMO]
+                        recipientAddress =
+                            backStackEntry.savedStateHandle.get<String>(SEND_RECIPIENT_ADDRESS)?.let {
+                                Json.decodeFromString<ScanResult>(it).toRecipient()
+                            },
+                        amount = backStackEntry.savedStateHandle.get<String>(SEND_AMOUNT),
+                        memo = backStackEntry.savedStateHandle.get<String>(SEND_MEMO)
                     ),
             )
             // Remove used Send screen parameters passed from the Scan screen if some exist
@@ -120,10 +126,10 @@ internal fun MainActivity.Navigation() {
         }
         composable(SCAN) {
             WrapScanValidator(
-                onScanValid = { result ->
-                    // At this point we only pass recipient address
+                onScanValid = { scanResult ->
+                    // At this point we only pass scan result data to recipient address
                     navController.previousBackStackEntry?.savedStateHandle?.apply {
-                        set(SEND_RECIPIENT_ADDRESS, result)
+                        set(SEND_RECIPIENT_ADDRESS, Json.encodeToString(ScanResult.serializer(), scanResult))
                         set(SEND_AMOUNT, null)
                         set(SEND_MEMO, null)
                     }

@@ -20,8 +20,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import cash.z.ecc.android.sdk.Synchronizer
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.BalanceWidget
-import co.electriccoin.zcash.ui.common.DisableScreenTimeout
+import co.electriccoin.zcash.ui.common.compose.BalanceWidget
+import co.electriccoin.zcash.ui.common.compose.DisableScreenTimeout
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.test.CommonTag
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT

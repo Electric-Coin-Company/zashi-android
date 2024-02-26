@@ -2,7 +2,7 @@ package co.electriccoin.zcash.ui.screen.restore.state
 
 import cash.z.ecc.android.sdk.model.SeedPhrase
 import cash.z.ecc.sdk.model.SeedPhraseValidation
-import co.electriccoin.zcash.ui.common.first
+import co.electriccoin.zcash.ui.common.extension.first
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.MutableStateFlow

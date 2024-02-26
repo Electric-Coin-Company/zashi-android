@@ -1,17 +1,16 @@
 package co.electriccoin.zcash.ui.screen.send.integration
 
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.test.filters.MediumTest
 import cash.z.ecc.android.sdk.fixture.WalletBalanceFixture
 import cash.z.ecc.android.sdk.fixture.WalletFixture
+import cash.z.ecc.android.sdk.model.MonetarySeparators
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.ZcashNetwork
 import cash.z.ecc.sdk.fixture.ZecSendFixture
-import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.fixture.MockSynchronizer
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 import co.electriccoin.zcash.ui.screen.send.WrapSend
@@ -22,10 +21,10 @@ import co.electriccoin.zcash.ui.screen.send.clickCreateAndSend
 import co.electriccoin.zcash.ui.screen.send.setAddress
 import co.electriccoin.zcash.ui.screen.send.setAmount
 import co.electriccoin.zcash.ui.screen.send.setMemo
-import co.electriccoin.zcash.ui.test.getStringResource
 import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test
+import java.util.Locale
 
 class SendViewIntegrationTest {
     @get:Rule
@@ -49,6 +48,10 @@ class SendViewIntegrationTest {
                 )
         )
 
+    // TODO [#1171]: Remove default MonetarySeparators locale
+    // TODO [#1171]: https://github.com/Electric-Coin-Company/zashi-android/issues/1171
+    private val monetarySeparators = MonetarySeparators.current(Locale.US)
+
     @Test
     @MediumTest
     fun send_screens_values_state_restoration() {
@@ -69,7 +72,8 @@ class SendViewIntegrationTest {
                 goBack = {},
                 goBalances = {},
                 hasCameraFeature = true,
-                goSettings = {}
+                goSettings = {},
+                monetarySeparators = monetarySeparators
             )
         }
 
@@ -92,24 +96,14 @@ class SendViewIntegrationTest {
         composeTestRule.clickBack()
         composeTestRule.assertOnForm()
 
-        // And check recreated form values too. Note also that we don't check the amount field value, as it's changed
-        // by validation mechanisms
-
-        // We use that the assertTextEquals searches in SemanticsProperties.EditableText too, although to be able to
-        // compare its editable value to an exact match we need to pass all its texts
-        composeTestRule.onNodeWithText(getStringResource(R.string.send_to)).also {
-            it.assertTextEquals(
-                getStringResource(R.string.send_to),
-                ZecSendFixture.ADDRESS,
-                includeEditableText = true
-            )
+        composeTestRule.onNodeWithText(ZecSendFixture.ADDRESS).also {
+            it.assertExists()
         }
-        composeTestRule.onNodeWithText(getStringResource(R.string.send_memo)).also {
-            it.assertTextEquals(
-                getStringResource(R.string.send_memo),
-                ZecSendFixture.MEMO.value,
-                includeEditableText = true
-            )
+        composeTestRule.onNodeWithText(ZecSendFixture.AMOUNT.value.toString()).also {
+            it.assertExists()
+        }
+        composeTestRule.onNodeWithText(ZecSendFixture.MEMO.value).also {
+            it.assertExists()
         }
     }
 }

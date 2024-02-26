@@ -6,8 +6,8 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.filters.MediumTest
 import cash.z.ecc.sdk.fixture.PersistableWalletFixture
 import co.electriccoin.zcash.test.UiTestPrerequisites
-import co.electriccoin.zcash.ui.common.LocalScreenSecurity
-import co.electriccoin.zcash.ui.common.ScreenSecurity
+import co.electriccoin.zcash.ui.common.compose.LocalScreenSecurity
+import co.electriccoin.zcash.ui.common.compose.ScreenSecurity
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule

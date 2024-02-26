@@ -3,6 +3,7 @@ import com.android.build.api.variant.BuildConfigField
 plugins {
     id("com.android.library")
     kotlin("android")
+    kotlin("plugin.serialization")
     id("secant.android-build-conventions")
     id("wtf.emulator.gradle")
     id("secant.emulator-wtf-conventions")
@@ -99,6 +100,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.guava)
     implementation(libs.kotlinx.datetime)
     implementation(libs.kotlinx.immutable)
+    implementation(libs.kotlinx.serializable.json)
     implementation(libs.zcash.sdk)
     implementation(libs.zcash.sdk.incubator)
     implementation(libs.zcash.bip39)

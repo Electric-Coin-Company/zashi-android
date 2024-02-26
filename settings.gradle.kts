@@ -65,6 +65,7 @@ pluginManagement {
         kotlin("android") version (kotlinVersion) apply (false)
         kotlin("jvm") version (kotlinVersion)
         kotlin("multiplatform") version (kotlinVersion)
+        kotlin("plugin.serialization") version (kotlinVersion)
     }
 }
 
@@ -175,6 +176,7 @@ dependencyResolutionManagement {
             val kotlinxDateTimeVersion = extra["KOTLINX_DATETIME_VERSION"].toString()
             val kotlinxCoroutinesVersion = extra["KOTLINX_COROUTINES_VERSION"].toString()
             val kotlinxImmutableCollectionsVersion = extra["KOTLINX_IMMUTABLE_COLLECTIONS_VERSION"].toString()
+            val kotlinxSerializableJsonVersion = extra["KOTLINX_SERIALIZABLE_JSON_VERSION"].toString()
             val playAppUpdateVersion = extra["PLAY_APP_UPDATE_VERSION"].toString()
             val playAppUpdateKtxVersion = extra["PLAY_APP_UPDATE_KTX_VERSION"].toString()
             val zcashBip39Version = extra["ZCASH_BIP39_VERSION"].toString()
@@ -227,6 +229,7 @@ dependencyResolutionManagement {
             library("kotlinx-coroutines-guava", "org.jetbrains.kotlinx:kotlinx-coroutines-guava:$kotlinxCoroutinesVersion")
             library("kotlinx-datetime", "org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDateTimeVersion")
             library("kotlinx-immutable", "org.jetbrains.kotlinx:kotlinx-collections-immutable:$kotlinxImmutableCollectionsVersion")
+            library("kotlinx-serializable-json", "org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializableJsonVersion")
             library("play-update", "com.google.android.play:app-update:$playAppUpdateVersion")
             library("play-update-ktx", "com.google.android.play:app-update-ktx:$playAppUpdateKtxVersion")
             library("zcash-sdk", "cash.z.ecc.android:zcash-android-sdk:$zcashSdkVersion")

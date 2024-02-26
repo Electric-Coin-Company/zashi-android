@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.common
+package co.electriccoin.zcash.ui.common.extension
 
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers

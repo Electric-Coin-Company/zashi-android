@@ -51,8 +51,8 @@ import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.toZecString
 import cash.z.ecc.sdk.extension.toPercentageWithDecimal
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.BalanceWidget
-import co.electriccoin.zcash.ui.common.DisableScreenTimeout
+import co.electriccoin.zcash.ui.common.compose.BalanceWidget
+import co.electriccoin.zcash.ui.common.compose.DisableScreenTimeout
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.model.changePendingBalance
 import co.electriccoin.zcash.ui.common.model.spendableBalance

@@ -9,10 +9,10 @@ import cash.z.ecc.android.sdk.model.PercentDecimal
 import cash.z.ecc.android.sdk.model.toFiatCurrencyState
 import cash.z.ecc.android.sdk.model.toZecString
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.extension.toKotlinLocale
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.model.spendableBalance
 import co.electriccoin.zcash.ui.common.model.totalBalance
-import co.electriccoin.zcash.ui.common.toKotlinLocale
 
 data class WalletDisplayValues(
     val progress: PercentDecimal,

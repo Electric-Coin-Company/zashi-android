@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.common
+package co.electriccoin.zcash.ui.common.compose
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
@@ -40,19 +40,21 @@ private fun BalanceWidgetPreview() {
             modifier = Modifier.fillMaxWidth()
         ) {
             @Suppress("MagicNumber")
-            BalanceWidget(
-                walletSnapshot =
-                    WalletSnapshotFixture.new(
-                        saplingBalance =
-                            WalletBalance(
-                                Zatoshi(1234567891234567),
-                                Zatoshi(123456789),
-                                Zatoshi(123)
-                            )
-                    ),
-                isReferenceToBalances = true,
-                onReferenceClick = {},
-                modifier = Modifier
+            (
+                BalanceWidget(
+                    walletSnapshot =
+                        WalletSnapshotFixture.new(
+                            saplingBalance =
+                                WalletBalance(
+                                    Zatoshi(1234567891234567),
+                                    Zatoshi(123456789),
+                                    Zatoshi(123)
+                                )
+                        ),
+                    isReferenceToBalances = true,
+                    onReferenceClick = {},
+                    modifier = Modifier
+                )
             )
         }
     }
