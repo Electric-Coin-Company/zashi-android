@@ -14,6 +14,10 @@ directly impact users rather than highlighting other key architectural updates.*
  unmetered connection and is plugged into the power, the background task will start to synchronize blocks randomly 
   between 3 and 4 a.m.
 
+### Changed
+- The Send screen form has changed its UI to align with the Figma design. All the form fields provide validations 
+  and proper UI response.
+
 ## [0.2.0 (554)] - 2024-02-13
 
 ### Changed
