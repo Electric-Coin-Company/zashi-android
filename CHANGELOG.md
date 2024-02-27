@@ -9,6 +9,8 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [0.2.0 (560)] - 2024-02-27
+
 ### Added
 - A periodic background block synchronization has been added. When the device is connected to the internet using an 
  unmetered connection and is plugged into the power, the background task will start to synchronize blocks randomly 
