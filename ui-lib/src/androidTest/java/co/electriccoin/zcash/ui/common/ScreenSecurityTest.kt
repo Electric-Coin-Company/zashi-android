@@ -9,6 +9,11 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.filters.MediumTest
 import androidx.test.filters.SmallTest
 import co.electriccoin.zcash.test.UiTestPrerequisites
+import co.electriccoin.zcash.ui.common.compose.LocalScreenSecurity
+import co.electriccoin.zcash.ui.common.compose.ScreenSecurity
+import co.electriccoin.zcash.ui.common.compose.SecureScreen
+import co.electriccoin.zcash.ui.common.compose.isRunningTest
+import co.electriccoin.zcash.ui.common.compose.shouldSecureScreen
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update

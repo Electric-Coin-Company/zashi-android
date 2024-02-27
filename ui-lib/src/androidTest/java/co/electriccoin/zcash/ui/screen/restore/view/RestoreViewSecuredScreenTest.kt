@@ -7,8 +7,8 @@ import androidx.test.filters.MediumTest
 import cash.z.ecc.android.bip39.Mnemonics
 import cash.z.ecc.android.sdk.model.ZcashNetwork
 import co.electriccoin.zcash.test.UiTestPrerequisites
-import co.electriccoin.zcash.ui.common.LocalScreenSecurity
-import co.electriccoin.zcash.ui.common.ScreenSecurity
+import co.electriccoin.zcash.ui.common.compose.LocalScreenSecurity
+import co.electriccoin.zcash.ui.common.compose.ScreenSecurity
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.restore.state.RestoreState
 import co.electriccoin.zcash.ui.screen.restore.state.WordList

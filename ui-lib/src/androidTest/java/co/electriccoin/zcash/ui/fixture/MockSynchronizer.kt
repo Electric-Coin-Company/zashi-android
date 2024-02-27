@@ -149,9 +149,7 @@ internal class MockSynchronizer : CloseableSynchronizer {
         error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
 
-    override suspend fun validateAddress(address: String): AddressType {
-        error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
-    }
+    override suspend fun validateAddress(address: String): AddressType = AddressType.Unified
 
     override suspend fun validateConsensusBranch(): ConsensusMatchType {
         error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")

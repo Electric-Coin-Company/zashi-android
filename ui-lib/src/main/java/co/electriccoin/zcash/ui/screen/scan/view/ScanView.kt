@@ -94,7 +94,6 @@ private fun PreviewScan() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Scan(
     snackbarHostState: SnackbarHostState,
@@ -182,7 +181,7 @@ private fun ScanTopAppBar(onBack: () -> Unit) {
 }
 
 @OptIn(ExperimentalPermissionsApi::class)
-@Suppress("MagicNumber", "LongMethod", "LongParameterList")
+@Suppress("LongMethod", "LongParameterList")
 @Composable
 private fun ScanMainContent(
     onScanned: (String) -> Unit,
@@ -232,6 +231,8 @@ private fun ScanMainContent(
     val framePossibleSize = remember { mutableStateOf(IntSize.Zero) }
 
     val configuration = LocalConfiguration.current
+
+    @Suppress("MagicNumber")
     val frameActualSize =
         if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             (framePossibleSize.value.height * 0.85).roundToInt()

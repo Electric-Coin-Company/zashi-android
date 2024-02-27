@@ -12,11 +12,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cash.z.ecc.android.sdk.Synchronizer
+import cash.z.ecc.android.sdk.model.MonetarySeparators
 import cash.z.ecc.android.sdk.model.UnifiedSpendingKey
 import cash.z.ecc.android.sdk.model.ZecSend
+import cash.z.ecc.android.sdk.model.toZecString
 import cash.z.ecc.sdk.extension.send
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
@@ -25,10 +28,14 @@ import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.screen.home.HomeScreenIndex
 import co.electriccoin.zcash.ui.screen.send.ext.Saver
+import co.electriccoin.zcash.ui.screen.send.model.AmountState
+import co.electriccoin.zcash.ui.screen.send.model.MemoState
+import co.electriccoin.zcash.ui.screen.send.model.RecipientAddressState
 import co.electriccoin.zcash.ui.screen.send.model.SendArgumentsWrapper
 import co.electriccoin.zcash.ui.screen.send.model.SendStage
 import co.electriccoin.zcash.ui.screen.send.view.Send
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 @Composable
 @Suppress("LongParameterList")
@@ -59,6 +66,10 @@ internal fun WrapSend(
         focusManager.clearFocus(true)
     }
 
+    // TODO [#1171]: Remove default MonetarySeparators locale
+    // TODO [#1171]: https://github.com/Electric-Coin-Company/zashi-android/issues/1171
+    val monetarySeparators = MonetarySeparators.current(Locale.US)
+
     WrapSend(
         sendArgumentsWrapper,
         synchronizer,
@@ -69,11 +80,12 @@ internal fun WrapSend(
         goBack,
         goBalances,
         goSettings,
-        hasCameraFeature
+        hasCameraFeature,
+        monetarySeparators
     )
 }
 
-@Suppress("LongParameterList")
+@Suppress("LongParameterList", "LongMethod", "CyclomaticComplexMethod")
 @VisibleForTesting
 @Composable
 internal fun WrapSend(
@@ -86,9 +98,12 @@ internal fun WrapSend(
     goBack: () -> Unit,
     goBalances: () -> Unit,
     goSettings: () -> Unit,
-    hasCameraFeature: Boolean
+    hasCameraFeature: Boolean,
+    monetarySeparators: MonetarySeparators
 ) {
     val scope = rememberCoroutineScope()
+
+    val context = LocalContext.current
 
     // For now, we're avoiding sub-navigation to keep the navigation logic simple.  But this might
     // change once deep-linking support  is added.  It depends on whether deep linking should do one of:
@@ -100,6 +115,50 @@ internal fun WrapSend(
 
     val (zecSend, setZecSend) = rememberSaveable(stateSaver = ZecSend.Saver) { mutableStateOf(null) }
 
+    // Address computation:
+    val (recipientAddressState, setRecipientAddressState) =
+        rememberSaveable(stateSaver = RecipientAddressState.Saver) {
+            mutableStateOf(RecipientAddressState(zecSend?.destination?.address ?: "", null))
+        }
+    if (sendArgumentsWrapper?.recipientAddress != null) {
+        setRecipientAddressState(
+            RecipientAddressState.new(
+                sendArgumentsWrapper.recipientAddress.address,
+                sendArgumentsWrapper.recipientAddress.type
+            )
+        )
+    }
+
+    // Amount computation:
+    val (amountState, setAmountState) =
+        rememberSaveable(stateSaver = AmountState.Saver) {
+            mutableStateOf(
+                AmountState.new(
+                    context = context,
+                    value = zecSend?.amount?.toZecString() ?: "",
+                    monetarySeparators = monetarySeparators
+                )
+            )
+        }
+    if (sendArgumentsWrapper?.amount != null) {
+        setAmountState(
+            AmountState.new(
+                context = context,
+                value = sendArgumentsWrapper.amount,
+                monetarySeparators = monetarySeparators
+            )
+        )
+    }
+
+    // Memo computation:
+    val (memoState, setMemoState) =
+        rememberSaveable(stateSaver = MemoState.Saver) {
+            mutableStateOf(MemoState.new(zecSend?.memo?.value ?: ""))
+        }
+    if (sendArgumentsWrapper?.memo != null) {
+        setMemoState(MemoState.new(sendArgumentsWrapper.memo))
+    }
+
     val onBackAction = {
         when (sendStage) {
             SendStage.Form -> goBack()
@@ -107,7 +166,12 @@ internal fun WrapSend(
             SendStage.Sending -> { /* no action - wait until the sending is done */ }
             is SendStage.SendFailure -> setSendStage(SendStage.Form)
             SendStage.SendSuccessful -> {
+                // Reset Send.Form values
                 setZecSend(null)
+                setRecipientAddressState(RecipientAddressState.new(""))
+                setAmountState(AmountState.new(context, "", monetarySeparators))
+                setMemoState(MemoState.new(""))
+
                 setSendStage(SendStage.Form)
                 goBack()
             }
@@ -126,7 +190,6 @@ internal fun WrapSend(
     } else {
         Send(
             walletSnapshot = walletSnapshot,
-            sendArgumentsWrapper = sendArgumentsWrapper,
             sendStage = sendStage,
             onSendStageChange = setSendStage,
             zecSend = zecSend,
@@ -134,6 +197,19 @@ internal fun WrapSend(
             focusManager = focusManager,
             onBack = onBackAction,
             onSettings = goSettings,
+            recipientAddressState = recipientAddressState,
+            onRecipientAddressChange = {
+                scope.launch {
+                    setRecipientAddressState(
+                        RecipientAddressState.new(
+                            address = it,
+                            // TODO [#342]: Verify Addresses without Synchronizer
+                            // TODO [#342]: https://github.com/zcash/zcash-android-wallet-sdk/issues/342
+                            type = synchronizer.validateAddress(it)
+                        )
+                    )
+                }
+            },
             onCreateAndSend = {
                 scope.launch {
                     Twig.debug { "Sending transaction" }
@@ -148,6 +224,10 @@ internal fun WrapSend(
                         }
                 }
             },
+            memoState = memoState,
+            setMemoState = setMemoState,
+            amountState = amountState,
+            setAmountState = setAmountState,
             onQrScannerOpen = goToQrScanner,
             goBalances = goBalances,
             hasCameraFeature = hasCameraFeature

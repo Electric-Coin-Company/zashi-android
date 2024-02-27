@@ -32,8 +32,7 @@ class SendViewAndroidTest : UiTestPrerequisites() {
         composeTestRule,
         sendStage,
         zecSend,
-        null,
-        true
+        true,
     ).apply {
         setDefaultContent()
     }

@@ -7,10 +7,10 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.performClick
 import cash.z.ecc.android.sdk.model.WalletAddresses
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.LocalScreenBrightness
-import co.electriccoin.zcash.ui.common.LocalScreenTimeout
-import co.electriccoin.zcash.ui.common.ScreenBrightness
-import co.electriccoin.zcash.ui.common.ScreenTimeout
+import co.electriccoin.zcash.ui.common.compose.LocalScreenBrightness
+import co.electriccoin.zcash.ui.common.compose.LocalScreenTimeout
+import co.electriccoin.zcash.ui.common.compose.ScreenBrightness
+import co.electriccoin.zcash.ui.common.compose.ScreenTimeout
 import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.VersionInfoFixture

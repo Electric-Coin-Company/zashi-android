@@ -28,8 +28,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import cash.z.ecc.android.sdk.model.PersistableWallet
 import cash.z.ecc.sdk.fixture.PersistableWalletFixture
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.SecureScreen
-import co.electriccoin.zcash.ui.common.shouldSecureScreen
+import co.electriccoin.zcash.ui.common.compose.SecureScreen
+import co.electriccoin.zcash.ui.common.compose.shouldSecureScreen
 import co.electriccoin.zcash.ui.common.test.CommonTag.WALLET_BIRTHDAY
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.BodySmall

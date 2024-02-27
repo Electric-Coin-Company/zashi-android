@@ -33,6 +33,7 @@ import cash.z.ecc.android.sdk.model.MonetarySeparators
 import cash.z.ecc.android.sdk.model.SeedPhrase
 import cash.z.ecc.sdk.fixture.MemoFixture
 import cash.z.ecc.sdk.fixture.SeedPhraseFixture
+import cash.z.ecc.sdk.type.ZcashCurrency
 import co.electriccoin.zcash.spackle.FirebaseTestLabUtil
 import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.MainActivity
@@ -485,17 +486,22 @@ private fun sendZecScreenshots(
     // Screenshot: Empty form
     ScreenshotTest.takeScreenshot(tag, "Send 1")
 
-    composeTestRule.onNodeWithText(resContext.getString(R.string.send_amount)).also {
+    composeTestRule.onNodeWithText(
+        resContext.getString(
+            R.string.send_amount_hint,
+            ZcashCurrency.fromResources(resContext).name
+        )
+    ).also {
         val separators = MonetarySeparators.current()
 
         it.performTextInput("0${separators.decimal}123")
     }
 
-    composeTestRule.onNodeWithText(resContext.getString(R.string.send_to)).also {
+    composeTestRule.onNodeWithText(resContext.getString(R.string.send_address_hint)).also {
         it.performTextInput(WalletAddressFixture.UNIFIED_ADDRESS_STRING)
     }
 
-    composeTestRule.onNodeWithText(resContext.getString(R.string.send_memo)).also {
+    composeTestRule.onNodeWithText(resContext.getString(R.string.send_memo_hint)).also {
         it.performTextInput(MemoFixture.MEMO_STRING)
     }
 

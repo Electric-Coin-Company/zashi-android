@@ -3,10 +3,21 @@
     <string name="send_back">Back</string>
     <string name="send_back_content_description">Back</string>
     <string name="send_scan_content_description">Scan</string>
-    <string name="send_to">Who would you like to send ZEC to?</string>
-    <string name="send_amount">How much?</string>
-    <string name="send_memo">Memo</string>
-    <string name="send_create">Send</string>
+    <string name="send_address_label">To:</string>
+    <string name="send_address_hint">Zcash Address</string>
+    <string name="send_address_invalid">Invalid address</string>
+    <string name="send_amount_label">Amount:</string>
+    <string name="send_amount_hint"><xliff:g id="currency" example="ZEC">%1$s</xliff:g> Amount</string>
+    <string name="send_amount_insufficient_balance">Insufficient funds</string>
+    <string name="send_amount_invalid">Invalid amount</string>
+    <string name="send_memo_label">Message</string>
+    <string name="send_memo_hint">Write private message here…</string>
+    <string name="send_memo_bytes_counter">
+        <xliff:g id="typed_bytes" example="12">%1$s</xliff:g>/
+        <xliff:g id="max_bytes" example="500">%2$s</xliff:g>
+    </string>
+    <string name="send_create">Preview</string>
+    <string name="send_fee">(Typical fee &lt; <xliff:g id="fee_amount" example="0.001">%1$s</xliff:g>)</string>
 
     <string name="send_confirmation_amount_and_address_format" formatted="true">Send <xliff:g id="amount" example="12.345">%1$s</xliff:g> ZEC to <xliff:g id="address" example="zs1g7cqw … mvyzgm">%2$s</xliff:g>?</string>
     <string name="send_confirmation_memo_format" formatted="true">Memo: <xliff:g id="memo" example="for Veronika">%1$s</xliff:g></string>

@@ -66,8 +66,8 @@ import cash.z.ecc.android.sdk.model.ZcashNetwork
 import cash.z.ecc.sdk.model.SeedPhraseValidation
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.SecureScreen
-import co.electriccoin.zcash.ui.common.shouldSecureScreen
+import co.electriccoin.zcash.ui.common.compose.SecureScreen
+import co.electriccoin.zcash.ui.common.compose.shouldSecureScreen
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.ChipOnSurface
@@ -488,7 +488,7 @@ private fun SeedGridWithText(
                         )
                 )
                 .fillMaxWidth()
-                .defaultMinSize(minHeight = ZcashTheme.dimens.textFieldPanelDefaultHeight)
+                .defaultMinSize(minHeight = ZcashTheme.dimens.textFieldSeedPanelDefaultHeight)
                 .then(modifier)
                 .testTag(RestoreTag.CHIP_LAYOUT)
     ) {

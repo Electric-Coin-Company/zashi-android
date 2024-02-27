@@ -2,30 +2,30 @@
 
 package co.electriccoin.zcash.ui.screen.send.view
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.QrCodeScanner
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
@@ -35,6 +35,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -46,33 +47,33 @@ import cash.z.ecc.android.sdk.model.MonetarySeparators
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.android.sdk.model.ZecSendExt
-import cash.z.ecc.android.sdk.model.ZecString
-import cash.z.ecc.android.sdk.model.ZecStringExt
-import cash.z.ecc.android.sdk.model.fromZecString
 import cash.z.ecc.android.sdk.model.toZecString
+import cash.z.ecc.android.sdk.type.AddressType
 import cash.z.ecc.sdk.fixture.MemoFixture
 import cash.z.ecc.sdk.fixture.ZatoshiFixture
+import cash.z.ecc.sdk.type.ZcashCurrency
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.BalanceWidget
+import co.electriccoin.zcash.ui.common.compose.BalanceWidget
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.model.spendableBalance
 import co.electriccoin.zcash.ui.common.test.CommonTag
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.Body
+import co.electriccoin.zcash.ui.design.component.BodySmall
 import co.electriccoin.zcash.ui.design.component.FormTextField
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.Header
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
-import co.electriccoin.zcash.ui.design.theme.ZcashTheme.dimens
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 import co.electriccoin.zcash.ui.screen.send.SendTag
-import co.electriccoin.zcash.ui.screen.send.ext.ABBREVIATION_INDEX
 import co.electriccoin.zcash.ui.screen.send.ext.abbreviated
 import co.electriccoin.zcash.ui.screen.send.ext.valueOrEmptyChar
-import co.electriccoin.zcash.ui.screen.send.model.SendArgumentsWrapper
+import co.electriccoin.zcash.ui.screen.send.model.AmountState
+import co.electriccoin.zcash.ui.screen.send.model.MemoState
+import co.electriccoin.zcash.ui.screen.send.model.RecipientAddressState
 import co.electriccoin.zcash.ui.screen.send.model.SendStage
 import kotlinx.coroutines.runBlocking
 import java.util.Locale
@@ -84,18 +85,23 @@ private fun PreviewSendForm() {
         GradientSurface {
             Send(
                 walletSnapshot = WalletSnapshotFixture.new(),
-                focusManager = LocalFocusManager.current,
-                sendArgumentsWrapper = null,
                 sendStage = SendStage.Form,
                 onSendStageChange = {},
                 zecSend = null,
                 onZecSendChange = {},
-                onCreateAndSend = {},
-                onQrScannerOpen = {},
+                focusManager = LocalFocusManager.current,
                 onBack = {},
                 onSettings = {},
+                onCreateAndSend = {},
+                onQrScannerOpen = {},
                 goBalances = {},
-                hasCameraFeature = true
+                hasCameraFeature = true,
+                recipientAddressState = RecipientAddressState("invalid_address", AddressType.Invalid()),
+                onRecipientAddressChange = {},
+                setAmountState = {},
+                amountState = AmountState.Valid(ZatoshiFixture.ZATOSHI_LONG.toString(), ZatoshiFixture.new()),
+                setMemoState = {},
+                memoState = MemoState.new("Test message")
             )
         }
     }
@@ -160,7 +166,6 @@ private fun PreviewSendConfirmation() {
 @Composable
 fun Send(
     walletSnapshot: WalletSnapshot,
-    sendArgumentsWrapper: SendArgumentsWrapper?,
     sendStage: SendStage,
     onSendStageChange: (SendStage) -> Unit,
     zecSend: ZecSend?,
@@ -171,7 +176,13 @@ fun Send(
     onCreateAndSend: (ZecSend) -> Unit,
     onQrScannerOpen: () -> Unit,
     goBalances: () -> Unit,
-    hasCameraFeature: Boolean
+    hasCameraFeature: Boolean,
+    recipientAddressState: RecipientAddressState,
+    onRecipientAddressChange: (String) -> Unit,
+    setAmountState: (AmountState) -> Unit,
+    amountState: AmountState,
+    setMemoState: (MemoState) -> Unit,
+    memoState: MemoState,
 ) {
     Scaffold(topBar = {
         SendTopAppBar(
@@ -182,13 +193,18 @@ fun Send(
     }) { paddingValues ->
         SendMainContent(
             walletSnapshot = walletSnapshot,
-            sendArgumentsWrapper = sendArgumentsWrapper,
             onBack = onBack,
             focusManager = focusManager,
             sendStage = sendStage,
             onSendStageChange = onSendStageChange,
             zecSend = zecSend,
             onZecSendChange = onZecSendChange,
+            recipientAddressState = recipientAddressState,
+            onRecipientAddressChange = onRecipientAddressChange,
+            amountState = amountState,
+            setAmountState = setAmountState,
+            memoState = memoState,
+            setMemoState = setMemoState,
             onSendSubmit = onCreateAndSend,
             onQrScannerOpen = onQrScannerOpen,
             goBalances = goBalances,
@@ -196,10 +212,10 @@ fun Send(
             modifier =
                 Modifier
                     .padding(
-                        top = paddingValues.calculateTopPadding() + dimens.spacingDefault,
-                        bottom = paddingValues.calculateBottomPadding() + dimens.spacingHuge,
-                        start = dimens.screenHorizontalSpacingRegular,
-                        end = dimens.screenHorizontalSpacingRegular
+                        top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
+                        bottom = paddingValues.calculateBottomPadding() + ZcashTheme.dimens.spacingHuge,
+                        start = ZcashTheme.dimens.screenHorizontalSpacingRegular,
+                        end = ZcashTheme.dimens.screenHorizontalSpacingRegular
                     )
         )
     }
@@ -240,24 +256,33 @@ private fun SendTopAppBar(
 private fun SendMainContent(
     walletSnapshot: WalletSnapshot,
     focusManager: FocusManager,
-    sendArgumentsWrapper: SendArgumentsWrapper?,
+    onBack: () -> Unit,
+    goBalances: () -> Unit,
     zecSend: ZecSend?,
     onZecSendChange: (ZecSend) -> Unit,
-    onBack: () -> Unit,
     sendStage: SendStage,
     onSendStageChange: (SendStage) -> Unit,
     onSendSubmit: (ZecSend) -> Unit,
     onQrScannerOpen: () -> Unit,
-    goBalances: () -> Unit,
+    recipientAddressState: RecipientAddressState,
+    onRecipientAddressChange: (String) -> Unit,
     hasCameraFeature: Boolean,
-    modifier: Modifier = Modifier
+    amountState: AmountState,
+    setAmountState: (AmountState) -> Unit,
+    memoState: MemoState,
+    setMemoState: (MemoState) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     when {
         (sendStage == SendStage.Form || null == zecSend) -> {
             SendForm(
                 walletSnapshot = walletSnapshot,
-                sendArgumentsWrapper = sendArgumentsWrapper,
-                previousZecSend = zecSend,
+                recipientAddressState = recipientAddressState,
+                onRecipientAddressChange = onRecipientAddressChange,
+                amountState = amountState,
+                setAmountState = setAmountState,
+                memoState = memoState,
+                setMemoState = setMemoState,
                 onCreateZecSend = {
                     onSendStageChange(SendStage.Confirmation)
                     onZecSendChange(it)
@@ -304,63 +329,46 @@ private fun SendMainContent(
 }
 
 // TODO [#217]: Need to handle changing of Locale after user input, but before submitting the button.
-// TODO [#288]: TextField component can't do long-press backspace.
-// TODO [#294]: DetektAll failed LongMethod
+// TODO [#217]: https://github.com/Electric-Coin-Company/zashi-android/issues/217
+
+// TODO [#1257]: Send.Form TextFields not persisted on a configuration change when the underlying ViewPager is on the
+//  Balances page
+// TODO [#1257]: https://github.com/Electric-Coin-Company/zashi-android/issues/1257
 @OptIn(ExperimentalFoundationApi::class)
-@Suppress("LongMethod", "LongParameterList", "CyclomaticComplexMethod")
+@Suppress("LongMethod", "LongParameterList")
 @Composable
 private fun SendForm(
     walletSnapshot: WalletSnapshot,
     focusManager: FocusManager,
-    sendArgumentsWrapper: SendArgumentsWrapper?,
-    previousZecSend: ZecSend?,
+    recipientAddressState: RecipientAddressState,
+    onRecipientAddressChange: (String) -> Unit,
+    amountState: AmountState,
+    setAmountState: (AmountState) -> Unit,
+    memoState: MemoState,
+    setMemoState: (MemoState) -> Unit,
     onCreateZecSend: (ZecSend) -> Unit,
     onQrScannerOpen: () -> Unit,
     goBalances: () -> Unit,
     hasCameraFeature: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
+
     // TODO [#1171]: Remove default MonetarySeparators locale
     // TODO [#1171]: https://github.com/Electric-Coin-Company/zashi-android/issues/1171
     val monetarySeparators = MonetarySeparators.current(Locale.US)
-    val allowedCharacters = ZecString.allowedCharacters(monetarySeparators)
 
-    // TODO [#809]: Fix ZEC balance on Send screen
-    // TODO [#809]: https://github.com/Electric-Coin-Company/zashi-android/issues/809
-    var amountZecString by rememberSaveable {
-        mutableStateOf(previousZecSend?.amount?.toZecString() ?: "")
-    }
-    var recipientAddressString by rememberSaveable {
-        mutableStateOf(previousZecSend?.destination?.address ?: "")
-    }
-    var memoString by rememberSaveable { mutableStateOf(previousZecSend?.memo?.value ?: "") }
-
-    var validation by rememberSaveable {
-        mutableStateOf<Set<ZecSendExt.ZecSendValidation.Invalid.ValidationError>>(emptySet())
-    }
-
-    // TODO [#826]: SendArgumentsWrapper object properties validation
-    // TODO [#826]: https://github.com/Electric-Coin-Company/zashi-android/issues/826
-    if (sendArgumentsWrapper?.recipientAddress != null) {
-        recipientAddressString = sendArgumentsWrapper.recipientAddress
-    }
-    if (sendArgumentsWrapper?.amount != null) {
-        amountZecString = sendArgumentsWrapper.amount
-    }
-    if (sendArgumentsWrapper?.memo != null) {
-        memoString = sendArgumentsWrapper.memo
-    }
+    val scrollState = rememberScrollState()
 
     Column(
         modifier =
             Modifier
                 .fillMaxHeight()
-                .verticalScroll(rememberScrollState())
+                .verticalScroll(scrollState)
                 .then(modifier),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(dimens.spacingDefault))
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
         BalanceWidget(
             walletSnapshot = walletSnapshot,
@@ -368,17 +376,174 @@ private fun SendForm(
             onReferenceClick = goBalances
         )
 
-        Spacer(modifier = Modifier.height(dimens.spacingXlarge))
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingXlarge))
+
+        // TODO [#1256]: Consider Send.Form TextFields scrolling
+        // TODO [#1256]: https://github.com/Electric-Coin-Company/zashi-android/issues/1256
+
+        SendFormAddressTextField(
+            focusManager = focusManager,
+            hasCameraFeature = hasCameraFeature,
+            onQrScannerOpen = onQrScannerOpen,
+            recipientAddressState = recipientAddressState,
+            setRecipientAddress = onRecipientAddressChange
+        )
+
+        Spacer(Modifier.size(ZcashTheme.dimens.spacingDefault))
+
+        SendFormAmountTextField(
+            amountSate = amountState,
+            setAmountState = setAmountState,
+            monetarySeparators = monetarySeparators,
+            focusManager = focusManager,
+            walletSnapshot = walletSnapshot,
+            imeAction =
+                if (recipientAddressState.type == AddressType.Transparent) {
+                    ImeAction.Done
+                } else {
+                    ImeAction.Next
+                }
+        )
+
+        Spacer(Modifier.size(ZcashTheme.dimens.spacingDefault))
+
+        SendFormMemoTextField(
+            memoState = memoState,
+            setMemoState = setMemoState,
+            focusManager = focusManager,
+            isMemoFieldAvailable = (
+                recipientAddressState.address.isEmpty() ||
+                    recipientAddressState.type is AddressType.Invalid ||
+                    (
+                        recipientAddressState.type is AddressType.Valid &&
+                            recipientAddressState.type !is AddressType.Transparent
+                    )
+            ),
+        )
+
+        Spacer(
+            modifier =
+                Modifier
+                    .fillMaxHeight()
+                    .weight(MINIMAL_WEIGHT)
+        )
+
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
+
+        // Common conditions continuously checked for validity
+        val sendButtonEnabled =
+            recipientAddressState.type !is AddressType.Invalid &&
+                recipientAddressState.address.isNotEmpty() &&
+                amountState is AmountState.Valid &&
+                amountState.value.isNotBlank() &&
+                walletSnapshot.spendableBalance() >= (amountState.zatoshi + ZcashSdk.MINERS_FEE) &&
+                // A valid memo is necessary only for non-transparent recipient
+                (recipientAddressState.type == AddressType.Transparent || memoState is MemoState.Correct)
+
+        Column(
+            modifier = Modifier.padding(horizontal = ZcashTheme.dimens.screenHorizontalSpacingRegular),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            PrimaryButton(
+                onClick = {
+                    // SDK side validations
+                    val zecSendValidation =
+                        ZecSendExt.new(
+                            context = context,
+                            destinationString = recipientAddressState.address,
+                            zecString = amountState.value,
+                            // Take memo for a valid non-transparent receiver only
+                            memoString =
+                                if (recipientAddressState.type == AddressType.Transparent) {
+                                    ""
+                                } else {
+                                    memoState.text
+                                },
+                            monetarySeparators = monetarySeparators
+                        )
+
+                    when (zecSendValidation) {
+                        is ZecSendExt.ZecSendValidation.Valid -> onCreateZecSend(zecSendValidation.zecSend)
+                        is ZecSendExt.ZecSendValidation.Invalid -> {
+                            // We do not expect this validation to fail, so logging is enough here
+                            // An error popup could be reasonable here as well
+                            Twig.warn { "Send failed with: ${zecSendValidation.validationErrors}" }
+                        }
+                    }
+                },
+                text = stringResource(id = R.string.send_create),
+                enabled = sendButtonEnabled,
+                modifier = Modifier.testTag(SendTag.SEND_FORM_BUTTON)
+            )
+
+            Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
+
+            BodySmall(
+                text =
+                    stringResource(
+                        id = R.string.send_fee,
+                        // TODO [#1047]: Representing Zatoshi amount
+                        // TODO [#1047]: https://github.com/Electric-Coin-Company/zashi-android/issues/1047
+                        @Suppress("MagicNumber")
+                        Zatoshi(100_000L).toZecString()
+                    ),
+                textFontWeight = FontWeight.SemiBold
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Suppress("LongMethod")
+@Composable
+fun SendFormAddressTextField(
+    focusManager: FocusManager,
+    hasCameraFeature: Boolean,
+    onQrScannerOpen: () -> Unit,
+    recipientAddressState: RecipientAddressState,
+    setRecipientAddress: (String) -> Unit,
+) {
+    val bringIntoViewRequester = remember { BringIntoViewRequester() }
+
+    Column(
+        modifier =
+            Modifier
+                // Animate error show/hide
+                .animateContentSize()
+                // Scroll TextField above ime keyboard
+                .bringIntoViewRequester(bringIntoViewRequester)
+    ) {
+        Body(text = stringResource(id = R.string.send_address_label))
+
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
+
+        val recipientAddressValue = recipientAddressState.address
+        val recipientAddressError =
+            if (
+                recipientAddressValue.isNotEmpty() &&
+                recipientAddressState.type is AddressType.Invalid
+            ) {
+                stringResource(id = R.string.send_address_invalid)
+            } else {
+                null
+            }
 
         FormTextField(
-            value = recipientAddressString,
+            value = recipientAddressValue,
             onValueChange = {
-                recipientAddressString = it
+                setRecipientAddress(it)
             },
-            label = { Text(stringResource(id = R.string.send_to)) },
             modifier =
                 Modifier
                     .fillMaxWidth(),
+            error = recipientAddressError,
+            placeholder = {
+                Text(
+                    text = stringResource(id = R.string.send_address_hint),
+                    style = ZcashTheme.extendedTypography.textFieldHint,
+                    color = ZcashTheme.colors.textFieldHint
+                )
+            },
             trailingIcon =
                 if (hasCameraFeature) {
                     {
@@ -386,7 +551,7 @@ private fun SendForm(
                             onClick = onQrScannerOpen,
                             content = {
                                 Icon(
-                                    imageVector = Icons.Outlined.QrCodeScanner,
+                                    painter = painterResource(id = R.drawable.qr_code_icon),
                                     contentDescription = stringResource(R.string.send_scan_content_description)
                                 )
                             }
@@ -405,54 +570,152 @@ private fun SendForm(
                     onNext = {
                         focusManager.moveFocus(FocusDirection.Down)
                     }
-                )
+                ),
+            bringIntoViewRequester = bringIntoViewRequester,
         )
+    }
+}
 
-        Spacer(Modifier.size(dimens.spacingSmall))
+@OptIn(ExperimentalFoundationApi::class)
+@Suppress("LongParameterList", "LongMethod")
+@Composable
+fun SendFormAmountTextField(
+    amountSate: AmountState,
+    focusManager: FocusManager,
+    monetarySeparators: MonetarySeparators,
+    setAmountState: (AmountState) -> Unit,
+    walletSnapshot: WalletSnapshot,
+    imeAction: ImeAction,
+) {
+    val context = LocalContext.current
+
+    val zcashCurrency = ZcashCurrency.getLocalizedName(context)
+
+    val amountError =
+        when (amountSate) {
+            is AmountState.Invalid -> {
+                if (amountSate.value.isEmpty()) {
+                    null
+                } else {
+                    stringResource(id = R.string.send_amount_invalid)
+                }
+            }
+            is AmountState.Valid -> {
+                if (walletSnapshot.spendableBalance() < (amountSate.zatoshi + ZcashSdk.MINERS_FEE)) {
+                    stringResource(id = R.string.send_amount_insufficient_balance)
+                } else {
+                    null
+                }
+            }
+        }
+
+    val bringIntoViewRequester = remember { BringIntoViewRequester() }
+
+    Column(
+        modifier =
+            Modifier
+                // Animate error show/hide
+                .animateContentSize()
+                // Scroll TextField above ime keyboard
+                .bringIntoViewRequester(bringIntoViewRequester)
+    ) {
+        Body(text = stringResource(id = R.string.send_amount_label))
+
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
 
         FormTextField(
-            value = amountZecString,
+            value = amountSate.value,
             onValueChange = { newValue ->
-                val validated =
-                    runCatching {
-                        ZecStringExt.filterContinuous(context, monetarySeparators, newValue)
-                    }.onFailure {
-                        Twig.error(it) { "Failed while filtering incoming characters in filterContinuous" }
-                        return@FormTextField
-                    }.getOrDefault(false)
-
-                if (!validated) {
-                    return@FormTextField
-                }
-
-                amountZecString = newValue.filter { allowedCharacters.contains(it) }
+                setAmountState(AmountState.new(context, newValue, monetarySeparators))
+            },
+            modifier = Modifier.fillMaxWidth(),
+            error = amountError,
+            placeholder = {
+                Text(
+                    text =
+                        stringResource(
+                            id = R.string.send_amount_hint,
+                            zcashCurrency
+                        ),
+                    style = ZcashTheme.extendedTypography.textFieldHint,
+                    color = ZcashTheme.colors.textFieldHint
+                )
             },
             keyboardOptions =
                 KeyboardOptions(
                     keyboardType = KeyboardType.Number,
-                    imeAction = ImeAction.Next
+                    imeAction = imeAction
                 ),
             keyboardActions =
                 KeyboardActions(
                     onNext = {
-                        focusManager.moveFocus(FocusDirection.Down)
+                        if (imeAction == ImeAction.Done) {
+                            focusManager.clearFocus(true)
+                        } else {
+                            focusManager.moveFocus(FocusDirection.Down)
+                        }
                     }
                 ),
-            label = { Text(stringResource(id = R.string.send_amount)) },
-            modifier = Modifier.fillMaxWidth()
+            bringIntoViewRequester = bringIntoViewRequester,
         )
+    }
+}
 
-        Spacer(Modifier.size(dimens.spacingSmall))
+// TODO [#1259]: Send.Form screen Memo field stroke bubble style
+// TODO [#1259]: https://github.com/Electric-Coin-Company/zashi-android/issues/1259
+@OptIn(ExperimentalFoundationApi::class)
+@Suppress("LongMethod")
+@Composable
+fun SendFormMemoTextField(
+    focusManager: FocusManager,
+    isMemoFieldAvailable: Boolean,
+    memoState: MemoState,
+    setMemoState: (MemoState) -> Unit,
+) {
+    val bringIntoViewRequester = remember { BringIntoViewRequester() }
 
-        // TODO [#810]: Disable Memo UI field in case of Transparent address
-        // TODO [#810]: https://github.com/Electric-Coin-Company/zashi-android/issues/810
+    Column(
+        modifier =
+            Modifier
+                // Animate error show/hide
+                .animateContentSize()
+                // Scroll TextField above ime keyboard
+                .bringIntoViewRequester(bringIntoViewRequester)
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                painter = painterResource(id = R.drawable.send_papre_plane),
+                contentDescription = null,
+                tint =
+                    if (isMemoFieldAvailable) {
+                        ZcashTheme.colors.textCommon
+                    } else {
+                        ZcashTheme.colors.textDisabled
+                    }
+            )
+
+            Spacer(modifier = Modifier.width(ZcashTheme.dimens.spacingSmall))
+
+            Body(
+                text = stringResource(id = R.string.send_memo_label),
+                color =
+                    if (isMemoFieldAvailable) {
+                        ZcashTheme.colors.textCommon
+                    } else {
+                        ZcashTheme.colors.textDisabled
+                    }
+            )
+        }
+
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
+
         FormTextField(
-            value = memoString,
+            enabled = isMemoFieldAvailable,
+            value = memoState.text,
             onValueChange = {
-                if (Memo.isWithinMaxLength(it)) {
-                    memoString = it
-                }
+                setMemoState(MemoState.new(it))
             },
+            bringIntoViewRequester = bringIntoViewRequester,
             keyboardOptions =
                 KeyboardOptions(
                     keyboardType = KeyboardType.Text,
@@ -464,63 +727,39 @@ private fun SendForm(
                         focusManager.clearFocus(true)
                     }
                 ),
-            label = { Text(stringResource(id = R.string.send_memo)) },
-            modifier = Modifier.fillMaxWidth()
+            placeholder = {
+                Text(
+                    text = stringResource(id = R.string.send_memo_hint),
+                    style = ZcashTheme.extendedTypography.textFieldHint,
+                    color = ZcashTheme.colors.textFieldHint
+                )
+            },
+            modifier = Modifier.fillMaxWidth(),
+            minHeight = ZcashTheme.dimens.textFieldMemoPanelDefaultHeight,
         )
 
-        if (validation.isNotEmpty()) {
-            /*
-             * Note: this is not localized in that it uses the enum constant name and joins the string
-             * without regard for RTL.  This will get resolved once we do proper validation for
-             * the fields.
-             */
-            Text(
-                text = validation.joinToString(", "),
-                modifier = Modifier.fillMaxWidth()
+        if (isMemoFieldAvailable) {
+            Body(
+                text =
+                    stringResource(
+                        id = R.string.send_memo_bytes_counter,
+                        Memo.MAX_MEMO_LENGTH_BYTES - memoState.byteSize,
+                        Memo.MAX_MEMO_LENGTH_BYTES
+                    ),
+                textFontWeight = FontWeight.Bold,
+                color =
+                    if (memoState is MemoState.Correct) {
+                        ZcashTheme.colors.textFieldHint
+                    } else {
+                        ZcashTheme.colors.textFieldError
+                    },
+                textAlign = TextAlign.End,
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(top = ZcashTheme.dimens.spacingTiny)
             )
         }
-
-        Spacer(
-            modifier =
-                Modifier
-                    .fillMaxHeight()
-                    .weight(MINIMAL_WEIGHT)
-        )
-
-        Spacer(modifier = Modifier.height(dimens.spacingDefault))
-
-        // Create a send amount that is continuously checked for validity
-        val sendValueCheck = (Zatoshi.fromZecString(context, amountZecString, monetarySeparators))?.value ?: 0L
-
-        // Continuous amount check while user is typing into the amount field
-        // Note: the check for ABBREVIATION_INDEX goes away once proper address validation is in place.
-        // For now, it just prevents a crash on the confirmation screen.
-        val sendButtonEnabled =
-            amountZecString.isNotBlank() &&
-                sendValueCheck > 0L &&
-                walletSnapshot.spendableBalance().value >= (sendValueCheck + ZcashSdk.MINERS_FEE.value) &&
-                recipientAddressString.length > ABBREVIATION_INDEX
-
-        PrimaryButton(
-            onClick = {
-                val zecSendValidation =
-                    ZecSendExt.new(
-                        context,
-                        recipientAddressString,
-                        amountZecString,
-                        memoString,
-                        monetarySeparators
-                    )
-
-                when (zecSendValidation) {
-                    is ZecSendExt.ZecSendValidation.Valid -> onCreateZecSend(zecSendValidation.zecSend)
-                    is ZecSendExt.ZecSendValidation.Invalid -> validation = zecSendValidation.validationErrors
-                }
-            },
-            text = stringResource(id = R.string.send_create),
-            enabled = sendButtonEnabled,
-            modifier = Modifier.testTag(SendTag.SEND_FORM_BUTTON)
-        )
     }
 }
 
@@ -560,14 +799,14 @@ private fun SendConfirmation(
         PrimaryButton(
             modifier =
                 Modifier
-                    .padding(top = dimens.spacingSmall)
+                    .padding(top = ZcashTheme.dimens.spacingSmall)
                     .testTag(SendTag.SEND_CONFIRMATION_BUTTON),
             onClick = onConfirmation,
             text = stringResource(id = R.string.send_confirmation_button),
-            outerPaddingValues = PaddingValues(top = dimens.spacingSmall)
+            outerPaddingValues = PaddingValues(top = ZcashTheme.dimens.spacingSmall)
         )
 
-        Spacer(modifier = Modifier.height(dimens.spacingDefault))
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
     }
 }
 
@@ -614,7 +853,7 @@ private fun Sending(
         Body(
             modifier =
                 Modifier
-                    .padding(vertical = dimens.spacingSmall)
+                    .padding(vertical = ZcashTheme.dimens.spacingSmall)
                     .fillMaxWidth(),
             text = stringResource(R.string.send_in_progress_wait),
             textAlign = TextAlign.Center,
@@ -642,7 +881,7 @@ private fun SendSuccessful(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .height(dimens.spacingDefault)
+                    .height(ZcashTheme.dimens.spacingDefault)
         )
 
         Body(
@@ -664,14 +903,14 @@ private fun SendSuccessful(
         PrimaryButton(
             modifier =
                 Modifier
-                    .padding(top = dimens.spacingSmall)
+                    .padding(top = ZcashTheme.dimens.spacingSmall)
                     .testTag(SendTag.SEND_SUCCESS_BUTTON),
             text = stringResource(R.string.send_successful_button),
             onClick = onDone,
-            outerPaddingValues = PaddingValues(top = dimens.spacingSmall)
+            outerPaddingValues = PaddingValues(top = ZcashTheme.dimens.spacingSmall)
         )
 
-        Spacer(modifier = Modifier.height(dimens.spacingDefault))
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
     }
 }
 
@@ -696,7 +935,7 @@ private fun SendFailure(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .height(dimens.spacingDefault)
+                    .height(ZcashTheme.dimens.spacingDefault)
         )
 
         Body(
@@ -712,7 +951,7 @@ private fun SendFailure(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .height(dimens.spacingDefault)
+                    .height(ZcashTheme.dimens.spacingDefault)
         )
 
         Body(
@@ -732,13 +971,13 @@ private fun SendFailure(
         PrimaryButton(
             modifier =
                 Modifier
-                    .padding(top = dimens.spacingSmall)
+                    .padding(top = ZcashTheme.dimens.spacingSmall)
                     .testTag(SendTag.SEND_FAILED_BUTTON),
             text = stringResource(R.string.send_failure_button),
             onClick = onDone,
-            outerPaddingValues = PaddingValues(top = dimens.spacingSmall)
+            outerPaddingValues = PaddingValues(top = ZcashTheme.dimens.spacingSmall)
         )
 
-        Spacer(modifier = Modifier.height(dimens.spacingDefault))
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
     }
 }

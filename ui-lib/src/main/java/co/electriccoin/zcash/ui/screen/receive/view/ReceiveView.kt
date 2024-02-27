@@ -42,8 +42,8 @@ import cash.z.ecc.android.sdk.fixture.WalletAddressesFixture
 import cash.z.ecc.android.sdk.model.WalletAddress
 import cash.z.ecc.android.sdk.model.WalletAddresses
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.BrightenScreen
-import co.electriccoin.zcash.ui.common.DisableScreenTimeout
+import co.electriccoin.zcash.ui.common.compose.BrightenScreen
+import co.electriccoin.zcash.ui.common.compose.DisableScreenTimeout
 import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.common.test.CommonTag
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator

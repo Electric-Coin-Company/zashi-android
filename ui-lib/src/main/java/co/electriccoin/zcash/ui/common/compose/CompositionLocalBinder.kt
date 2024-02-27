@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.common
+package co.electriccoin.zcash.ui.common.compose
 
 import android.view.WindowManager
 import androidx.activity.ComponentActivity

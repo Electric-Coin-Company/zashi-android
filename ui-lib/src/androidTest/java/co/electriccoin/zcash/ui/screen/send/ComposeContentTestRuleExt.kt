@@ -10,11 +10,12 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
-import cash.z.ecc.android.sdk.fixture.WalletAddressFixture
-import cash.z.ecc.android.sdk.model.MonetarySeparators
-import cash.z.ecc.sdk.fixture.MemoFixture
+import cash.z.ecc.sdk.fixture.ZecSendFixture
+import cash.z.ecc.sdk.type.ZcashCurrency
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.test.getAppContext
 import co.electriccoin.zcash.ui.test.getStringResource
+import co.electriccoin.zcash.ui.test.getStringResourceWithArgs
 
 internal fun ComposeContentTestRule.clickBack() {
     onNodeWithContentDescription(getStringResource(R.string.send_back_content_description)).also {
@@ -35,44 +36,52 @@ internal fun ComposeContentTestRule.clickScanner() {
 }
 
 internal fun ComposeContentTestRule.setValidAmount() {
-    onNodeWithText(getStringResource(R.string.send_amount)).also {
-        val separators = MonetarySeparators.current()
+    onNodeWithText(
+        getStringResourceWithArgs(
+            R.string.send_amount_hint,
+            ZcashCurrency.fromResources(getAppContext()).name
+        )
+    ).also {
         it.performTextClearance()
-        it.performTextInput("123${separators.decimal}456")
+        it.performTextInput(ZecSendFixture.AMOUNT.value.toString())
     }
 }
 
 internal fun ComposeContentTestRule.setAmount(amount: String) {
-    onNodeWithText(getStringResource(R.string.send_amount)).also {
+    onNodeWithText(
+        getStringResourceWithArgs(
+            R.string.send_amount_hint,
+            ZcashCurrency.fromResources(getAppContext()).name
+        )
+    ).also {
         it.performTextClearance()
         it.performTextInput(amount)
     }
 }
 
 internal fun ComposeContentTestRule.setValidAddress() {
-    onNodeWithText(getStringResource(R.string.send_to)).also {
+    onNodeWithText(getStringResource(R.string.send_address_hint)).also {
         it.performTextClearance()
-        // Using sapling address here, as the unified is not available in the fixture. This will change.
-        it.performTextInput(WalletAddressFixture.SAPLING_ADDRESS_STRING)
+        it.performTextInput(ZecSendFixture.ADDRESS)
     }
 }
 
 internal fun ComposeContentTestRule.setAddress(address: String) {
-    onNodeWithText(getStringResource(R.string.send_to)).also {
+    onNodeWithText(getStringResource(R.string.send_address_hint)).also {
         it.performTextClearance()
         it.performTextInput(address)
     }
 }
 
 internal fun ComposeContentTestRule.setValidMemo() {
-    onNodeWithText(getStringResource(R.string.send_memo)).also {
+    onNodeWithText(getStringResource(R.string.send_memo_hint)).also {
         it.performTextClearance()
-        it.performTextInput(MemoFixture.MEMO_STRING)
+        it.performTextInput(ZecSendFixture.MEMO.value)
     }
 }
 
 internal fun ComposeContentTestRule.setMemo(memo: String) {
-    onNodeWithText(getStringResource(R.string.send_memo)).also {
+    onNodeWithText(getStringResource(R.string.send_memo_hint)).also {
         it.performTextClearance()
         it.performTextInput(memo)
     }

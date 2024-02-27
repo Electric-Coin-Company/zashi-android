@@ -105,7 +105,6 @@ private fun RequestTopAppBar(onBack: () -> Unit) {
 
 // TODO [#215]: Need to add some UI to explain to the user if a request is invalid
 // TODO [#217]: Need to handle changing of Locale after user input, but before submitting the button.
-// TODO [#288]: TextField component can't do long-press backspace.
 @Composable
 private fun RequestMainContent(
     myAddress: WalletAddress.Unified,

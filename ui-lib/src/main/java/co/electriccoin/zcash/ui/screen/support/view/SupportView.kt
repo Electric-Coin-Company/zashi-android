@@ -146,7 +146,7 @@ private fun SupportMainContent(
             modifier =
                 Modifier
                     .fillMaxWidth(),
-            label = { Text(text = stringResource(id = R.string.support_hint)) }
+            placeholder = { Text(text = stringResource(id = R.string.support_hint)) },
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))

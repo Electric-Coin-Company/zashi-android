@@ -6,6 +6,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.test.filters.MediumTest
 import androidx.test.filters.SmallTest
 import co.electriccoin.zcash.test.UiTestPrerequisites
@@ -134,6 +135,7 @@ class SettingsViewTest : UiTestPrerequisites() {
             text = getStringResource(R.string.settings_about),
             ignoreCase = true
         ).also {
+            it.performScrollTo()
             it.performClick()
         }
 
