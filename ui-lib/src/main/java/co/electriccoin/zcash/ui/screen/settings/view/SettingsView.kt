@@ -44,24 +44,22 @@ private fun PreviewSettings() {
     ZcashTheme(forceDarkMode = false) {
         GradientSurface {
             Settings(
-                TroubleshootingParameters(
-                    isEnabled = false,
-                    isBackgroundSyncEnabled = false,
-                    isKeepScreenOnDuringSyncEnabled = false,
-                    isAnalyticsEnabled = false,
-                    isRescanEnabled = false
-                ),
-                onBack = {},
-                onSeedRecovery = {},
-                onDocumentation = {},
-                onPrivacyPolicy = {},
-                onFeedback = {},
-                onExportPrivateData = {},
                 onAbout = {},
+                onAdvancedSettings = {},
+                onBack = {},
+                onFeedback = {},
                 onRescanWallet = {},
                 onBackgroundSyncSettingsChanged = {},
                 onKeepScreenOnDuringSyncSettingsChanged = {},
-                onAnalyticsSettingsChanged = {}
+                onAnalyticsSettingsChanged = {},
+                troubleshootingParameters =
+                    TroubleshootingParameters(
+                        isEnabled = false,
+                        isBackgroundSyncEnabled = false,
+                        isKeepScreenOnDuringSyncEnabled = false,
+                        isAnalyticsEnabled = false,
+                        isRescanEnabled = false
+                    ),
             )
         }
     }
@@ -70,18 +68,15 @@ private fun PreviewSettings() {
 @Composable
 @Suppress("LongParameterList")
 fun Settings(
-    troubleshootingParameters: TroubleshootingParameters,
-    onBack: () -> Unit,
-    onSeedRecovery: () -> Unit,
-    onDocumentation: () -> Unit,
-    onPrivacyPolicy: () -> Unit,
-    onFeedback: () -> Unit,
-    onExportPrivateData: () -> Unit,
     onAbout: () -> Unit,
+    onAdvancedSettings: () -> Unit,
+    onBack: () -> Unit,
+    onFeedback: () -> Unit,
     onRescanWallet: () -> Unit,
     onBackgroundSyncSettingsChanged: (Boolean) -> Unit,
     onKeepScreenOnDuringSyncSettingsChanged: (Boolean) -> Unit,
-    onAnalyticsSettingsChanged: (Boolean) -> Unit
+    onAnalyticsSettingsChanged: (Boolean) -> Unit,
+    troubleshootingParameters: TroubleshootingParameters,
 ) {
     Scaffold(topBar = {
         SettingsTopAppBar(
@@ -105,12 +100,9 @@ fun Settings(
                         start = dimens.screenHorizontalSpacingBig,
                         end = dimens.screenHorizontalSpacingBig
                     ),
-            onSeedRecovery = onSeedRecovery,
-            onDocumentation = onDocumentation,
-            onPrivacyPolicy = onPrivacyPolicy,
-            onFeedback = onFeedback,
-            onExportPrivateData = onExportPrivateData,
             onAbout = onAbout,
+            onAdvancedSettings = onAdvancedSettings,
+            onFeedback = onFeedback,
         )
     }
 }
@@ -227,15 +219,11 @@ private fun TroubleshootingMenu(
 }
 
 @Composable
-@Suppress("LongParameterList", "LongMethod")
 private fun SettingsMainContent(
-    onSeedRecovery: () -> Unit,
-    onDocumentation: () -> Unit,
-    onPrivacyPolicy: () -> Unit,
-    onFeedback: () -> Unit,
-    onExportPrivateData: () -> Unit,
     onAbout: () -> Unit,
-    modifier: Modifier = Modifier
+    onAdvancedSettings: () -> Unit,
+    onFeedback: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Column(
         Modifier
@@ -245,13 +233,6 @@ private fun SettingsMainContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         PrimaryButton(
-            onClick = onSeedRecovery,
-            text = stringResource(R.string.settings_backup_wallet)
-        )
-
-        Spacer(modifier = Modifier.height(dimens.spacingDefault))
-
-        PrimaryButton(
             onClick = onFeedback,
             text = stringResource(R.string.settings_send_us_feedback)
         )
@@ -259,22 +240,8 @@ private fun SettingsMainContent(
         Spacer(modifier = Modifier.height(dimens.spacingDefault))
 
         PrimaryButton(
-            onClick = onPrivacyPolicy,
-            text = stringResource(R.string.settings_privacy_policy)
-        )
-
-        Spacer(modifier = Modifier.height(dimens.spacingDefault))
-
-        PrimaryButton(
-            onClick = onDocumentation,
-            text = stringResource(R.string.settings_documentation)
-        )
-
-        Spacer(modifier = Modifier.height(dimens.spacingDefault))
-
-        PrimaryButton(
-            onClick = onExportPrivateData,
-            text = stringResource(R.string.settings_export_private_data)
+            onClick = onAdvancedSettings,
+            text = stringResource(R.string.settings_advanced_settings)
         )
 
         Spacer(

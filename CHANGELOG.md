@@ -9,6 +9,10 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+### Added
+- Advanced Settings screen that provides more technical options like Export private data, Recovery phrase, or 
+  Choose server
+
 ## [0.2.0 (560)] - 2024-02-27
 
 ### Added
