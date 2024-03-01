@@ -43,6 +43,8 @@ data class ExtendedColors(
     val darkDividerColor: Color,
     val tabTextColor: Color,
     val panelBackgroundColor: Color,
+    val radioButtonColor: Color,
+    val radioButtonTextColor: Color,
 ) {
     @Composable
     fun surfaceGradient() =

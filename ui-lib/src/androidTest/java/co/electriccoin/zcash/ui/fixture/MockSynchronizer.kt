@@ -15,6 +15,8 @@ import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.ZcashNetwork
 import cash.z.ecc.android.sdk.type.AddressType
 import cash.z.ecc.android.sdk.type.ConsensusMatchType
+import cash.z.ecc.android.sdk.type.ServerValidation
+import co.electriccoin.lightwallet.client.model.LightWalletEndpoint
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -152,6 +154,13 @@ internal class MockSynchronizer : CloseableSynchronizer {
     override suspend fun validateAddress(address: String): AddressType = AddressType.Unified
 
     override suspend fun validateConsensusBranch(): ConsensusMatchType {
+        error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
+    }
+
+    override suspend fun validateServerEndpoint(
+        context: Context,
+        endpoint: LightWalletEndpoint
+    ): ServerValidation {
         error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
 
