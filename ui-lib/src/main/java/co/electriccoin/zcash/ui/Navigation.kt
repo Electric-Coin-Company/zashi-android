@@ -1,8 +1,6 @@
 package co.electriccoin.zcash.ui
 
-import android.widget.Toast
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.NavHost
@@ -12,6 +10,7 @@ import co.electriccoin.zcash.ui.NavigationArguments.SEND_AMOUNT
 import co.electriccoin.zcash.ui.NavigationArguments.SEND_MEMO
 import co.electriccoin.zcash.ui.NavigationArguments.SEND_RECIPIENT_ADDRESS
 import co.electriccoin.zcash.ui.NavigationTargets.ABOUT
+import co.electriccoin.zcash.ui.NavigationTargets.ADVANCED_SETTINGS
 import co.electriccoin.zcash.ui.NavigationTargets.EXPORT_PRIVATE_DATA
 import co.electriccoin.zcash.ui.NavigationTargets.HISTORY
 import co.electriccoin.zcash.ui.NavigationTargets.HOME
@@ -23,6 +22,7 @@ import co.electriccoin.zcash.ui.NavigationTargets.SUPPORT
 import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
 import co.electriccoin.zcash.ui.configuration.RemoteConfig
 import co.electriccoin.zcash.ui.screen.about.WrapAbout
+import co.electriccoin.zcash.ui.screen.advancedsettings.WrapAdvancedSettings
 import co.electriccoin.zcash.ui.screen.exportdata.WrapExportPrivateData
 import co.electriccoin.zcash.ui.screen.history.WrapHistory
 import co.electriccoin.zcash.ui.screen.home.WrapHome
@@ -39,7 +39,6 @@ import kotlinx.serialization.json.Json
 @Composable
 @Suppress("LongMethod")
 internal fun MainActivity.Navigation() {
-    val context = LocalContext.current
     val navController =
         rememberNavController().also {
             navControllerForTesting = it
@@ -80,27 +79,31 @@ internal fun MainActivity.Navigation() {
                 goAbout = {
                     navController.navigateJustOnce(ABOUT)
                 },
+                goAdvancedSettings = {
+                    navController.navigateJustOnce(ADVANCED_SETTINGS)
+                },
                 goBack = {
                     navController.popBackStackJustOnce(SETTINGS)
-                },
-                goDocumentation = {
-                    // TODO [#1084]: Documentation screen
-                    // TODO [#1084]: https://github.com/Electric-Coin-Company/zashi-android/issues/1084
-                    Toast.makeText(context, context.getString(R.string.not_implemented_yet), Toast.LENGTH_SHORT).show()
-                },
-                goExportPrivateData = {
-                    navController.navigateJustOnce(EXPORT_PRIVATE_DATA)
                 },
                 goFeedback = {
                     navController.navigateJustOnce(SUPPORT)
                 },
-                goPrivacyPolicy = {
-                    // TODO [#1083]: Privacy Policy screen
-                    // TODO [#1083]: https://github.com/Electric-Coin-Company/zashi-android/issues/1083
-                    Toast.makeText(context, context.getString(R.string.not_implemented_yet), Toast.LENGTH_SHORT).show()
+            )
+        }
+        composable(ADVANCED_SETTINGS) {
+            WrapAdvancedSettings(
+                goBack = {
+                    navController.popBackStackJustOnce(ADVANCED_SETTINGS)
+                },
+                goExportPrivateData = {
+                    navController.navigateJustOnce(EXPORT_PRIVATE_DATA)
                 },
                 goSeedRecovery = {
                     navController.navigateJustOnce(SEED_RECOVERY)
+                },
+                goChooseServer = {
+                    // TODO [#1235]: Create screen for selecting the lightwalletd server
+                    // TODO [#1235]: https://github.com/Electric-Coin-Company/zashi-android/issues/1235
                 }
             )
         }
@@ -187,6 +190,7 @@ object NavigationArguments {
 object NavigationTargets {
     const val ABOUT = "about"
     const val ACCOUNT = "account"
+    const val ADVANCED_SETTINGS = "advanced_settings"
     const val EXPORT_PRIVATE_DATA = "export_private_data"
     const val HISTORY = "history"
     const val HOME = "home"

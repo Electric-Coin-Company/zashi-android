@@ -58,70 +58,19 @@ class SettingsViewTest : UiTestPrerequisites() {
 
     @Test
     @MediumTest
-    fun on_backup_test() {
+    fun on_advanced_settings_test() {
         val testSetup = SettingsViewTestSetup(composeTestRule, TroubleshootingParametersFixture.new())
 
-        assertEquals(0, testSetup.getBackupCount())
+        assertEquals(0, testSetup.getAdvancedSettingsCount())
 
         composeTestRule.onNodeWithText(
-            text = getStringResource(R.string.settings_backup_wallet),
+            text = getStringResource(R.string.settings_advanced_settings),
             ignoreCase = true
         ).also {
             it.performClick()
         }
 
-        assertEquals(1, testSetup.getBackupCount())
-    }
-
-    @Test
-    @MediumTest
-    fun on_documentation_test() {
-        val testSetup = SettingsViewTestSetup(composeTestRule, TroubleshootingParametersFixture.new())
-
-        assertEquals(0, testSetup.getDocumentationCount())
-
-        composeTestRule.onNodeWithText(
-            text = getStringResource(R.string.settings_documentation),
-            ignoreCase = true
-        ).also {
-            it.performClick()
-        }
-
-        assertEquals(1, testSetup.getDocumentationCount())
-    }
-
-    @Test
-    @MediumTest
-    fun on_privacy_policy_test() {
-        val testSetup = SettingsViewTestSetup(composeTestRule, TroubleshootingParametersFixture.new())
-
-        assertEquals(0, testSetup.getPrivacyPolicyCount())
-
-        composeTestRule.onNodeWithText(
-            text = getStringResource(R.string.settings_privacy_policy),
-            ignoreCase = true
-        ).also {
-            it.performClick()
-        }
-
-        assertEquals(1, testSetup.getPrivacyPolicyCount())
-    }
-
-    @Test
-    @MediumTest
-    fun on_export_private_data_test() {
-        val testSetup = SettingsViewTestSetup(composeTestRule, TroubleshootingParametersFixture.new())
-
-        assertEquals(0, testSetup.getExportPrivateDataCount())
-
-        composeTestRule.onNodeWithText(
-            text = getStringResource(R.string.settings_export_private_data),
-            ignoreCase = true
-        ).also {
-            it.performClick()
-        }
-
-        assertEquals(1, testSetup.getExportPrivateDataCount())
+        assertEquals(1, testSetup.getAdvancedSettingsCount())
     }
 
     @Test

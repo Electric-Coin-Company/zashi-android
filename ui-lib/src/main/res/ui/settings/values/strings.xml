@@ -8,11 +8,8 @@
     <string name="settings_troubleshooting_enable_keep_screen_on">Keep screen on during sync</string>
     <string name="settings_troubleshooting_enable_analytics">Report crashes</string>
 
-    <string name="settings_backup_wallet">Recovery phrase</string>
-    <string name="settings_documentation">Documentation</string>
-    <string name="settings_privacy_policy">Privacy policy</string>
     <string name="settings_send_us_feedback">Send us feedback</string>
-    <string name="settings_export_private_data">Export private data</string>
+    <string name="settings_advanced_settings">Advanced</string>
     <string name="settings_about">About</string>
 
 </resources>

@@ -18,39 +18,28 @@ import co.electriccoin.zcash.ui.screen.settings.view.Settings
 import co.electriccoin.zcash.ui.screen.settings.viewmodel.SettingsViewModel
 
 @Composable
-@Suppress("LongParameterList")
 internal fun MainActivity.WrapSettings(
     goAbout: () -> Unit,
+    goAdvancedSettings: () -> Unit,
     goBack: () -> Unit,
-    goDocumentation: () -> Unit,
-    goExportPrivateData: () -> Unit,
     goFeedback: () -> Unit,
-    goPrivacyPolicy: () -> Unit,
-    goSeedRecovery: () -> Unit,
 ) {
     WrapSettings(
         activity = this,
         goAbout = goAbout,
+        goAdvancedSettings = goAdvancedSettings,
         goBack = goBack,
-        goDocumentation = goDocumentation,
-        goExportPrivateData = goExportPrivateData,
         goFeedback = goFeedback,
-        goPrivacyPolicy = goPrivacyPolicy,
-        goSeedRecovery = goSeedRecovery
     )
 }
 
 @Composable
-@Suppress("LongParameterList")
 private fun WrapSettings(
     activity: ComponentActivity,
     goAbout: () -> Unit,
+    goAdvancedSettings: () -> Unit,
     goBack: () -> Unit,
-    goDocumentation: () -> Unit,
-    goExportPrivateData: () -> Unit,
     goFeedback: () -> Unit,
-    goPrivacyPolicy: () -> Unit,
-    goSeedRecovery: () -> Unit,
 ) {
     val walletViewModel by activity.viewModels<WalletViewModel>()
     val settingsViewModel by activity.viewModels<SettingsViewModel>()
@@ -78,20 +67,18 @@ private fun WrapSettings(
         CircularScreenProgressIndicator()
     } else {
         Settings(
-            TroubleshootingParameters(
-                isEnabled = versionInfo.isDebuggable && !versionInfo.isRunningUnderTestService,
-                isBackgroundSyncEnabled = isBackgroundSyncEnabled,
-                isKeepScreenOnDuringSyncEnabled = isKeepScreenOnWhileSyncing,
-                isAnalyticsEnabled = isAnalyticsEnabled,
-                isRescanEnabled = ConfigurationEntries.IS_RESCAN_ENABLED.getValue(RemoteConfig.current),
-            ),
-            onBack = goBack,
-            onSeedRecovery = goSeedRecovery,
-            onDocumentation = goDocumentation,
-            onPrivacyPolicy = goPrivacyPolicy,
-            onFeedback = goFeedback,
             onAbout = goAbout,
-            onExportPrivateData = goExportPrivateData,
+            onAdvancedSettings = goAdvancedSettings,
+            onBack = goBack,
+            onFeedback = goFeedback,
+            troubleshootingParameters =
+                TroubleshootingParameters(
+                    isEnabled = versionInfo.isDebuggable && !versionInfo.isRunningUnderTestService,
+                    isBackgroundSyncEnabled = isBackgroundSyncEnabled,
+                    isKeepScreenOnDuringSyncEnabled = isKeepScreenOnWhileSyncing,
+                    isAnalyticsEnabled = isAnalyticsEnabled,
+                    isRescanEnabled = ConfigurationEntries.IS_RESCAN_ENABLED.getValue(RemoteConfig.current),
+                ),
             onRescanWallet = {
                 walletViewModel.rescanBlockchain()
             },

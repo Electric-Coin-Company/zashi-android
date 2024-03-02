@@ -410,7 +410,9 @@ private fun settingsScreenshots(
     tag: String,
     composeTestRule: ComposeTestRule
 ) {
-    composeTestRule.onNode(hasText(resContext.getString(R.string.settings_backup_wallet), ignoreCase = true)).also {
+    composeTestRule.onNode(
+        hasText(resContext.getString(R.string.settings_send_us_feedback), ignoreCase = true)
+    ).also {
         it.assertExists()
     }
 

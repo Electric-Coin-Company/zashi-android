@@ -11,11 +11,8 @@ class SettingsViewTestSetup(
     private val troubleshootingParameters: TroubleshootingParameters
 ) {
     private val onBackCount = AtomicInteger(0)
-    private val onBackupCount = AtomicInteger(0)
-    private val onDocumentationCount = AtomicInteger(0)
-    private val onPrivacyPolicyCount = AtomicInteger(0)
     private val onFeedbackCount = AtomicInteger(0)
-    private val onExportPrivateData = AtomicInteger(0)
+    private val onAdvancedSettingsCount = AtomicInteger(0)
     private val onAboutCount = AtomicInteger(0)
     private val onRescanCount = AtomicInteger(0)
     private val onBackgroundSyncChangedCount = AtomicInteger(0)
@@ -27,29 +24,14 @@ class SettingsViewTestSetup(
         return onBackCount.get()
     }
 
-    fun getBackupCount(): Int {
-        composeTestRule.waitForIdle()
-        return onBackupCount.get()
-    }
-
-    fun getDocumentationCount(): Int {
-        composeTestRule.waitForIdle()
-        return onDocumentationCount.get()
-    }
-
-    fun getPrivacyPolicyCount(): Int {
-        composeTestRule.waitForIdle()
-        return onPrivacyPolicyCount.get()
-    }
-
     fun getFeedbackCount(): Int {
         composeTestRule.waitForIdle()
         return onFeedbackCount.get()
     }
 
-    fun getExportPrivateDataCount(): Int {
+    fun getAdvancedSettingsCount(): Int {
         composeTestRule.waitForIdle()
-        return onExportPrivateData.get()
+        return onAdvancedSettingsCount.get()
     }
 
     fun getAboutCount(): Int {
@@ -85,20 +67,11 @@ class SettingsViewTestSetup(
                     onBack = {
                         onBackCount.incrementAndGet()
                     },
-                    onSeedRecovery = {
-                        onBackupCount.incrementAndGet()
-                    },
-                    onDocumentation = {
-                        onDocumentationCount.incrementAndGet()
-                    },
-                    onPrivacyPolicy = {
-                        onPrivacyPolicyCount.incrementAndGet()
-                    },
                     onFeedback = {
                         onFeedbackCount.incrementAndGet()
                     },
-                    onExportPrivateData = {
-                        onExportPrivateData.incrementAndGet()
+                    onAdvancedSettings = {
+                        onAdvancedSettingsCount.incrementAndGet()
                     },
                     onAbout = {
                         onAboutCount.incrementAndGet()

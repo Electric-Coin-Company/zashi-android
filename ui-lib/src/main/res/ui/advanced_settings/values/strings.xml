@@ -1,0 +1,9 @@
+<resources>
+    <string name="advanced_settings_back">Back</string>
+    <string name="advanced_settings_back_content_description">Back</string>
+
+    <string name="advanced_settings_backup_wallet">Recovery phrase</string>
+    <string name="advanced_settings_export_private_data">Export private data</string>
+    <string name="advanced_settings_choose_server">Choose a server</string>
+
+</resources>

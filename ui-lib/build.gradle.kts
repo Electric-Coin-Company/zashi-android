@@ -31,6 +31,7 @@ android {
             res.setSrcDirs(
                 setOf(
                     "src/main/res/ui/about",
+                    "src/main/res/ui/advanced_settings",
                     "src/main/res/ui/account",
                     "src/main/res/ui/balances",
                     "src/main/res/ui/common",
