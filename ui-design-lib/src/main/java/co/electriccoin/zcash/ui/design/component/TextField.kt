@@ -64,7 +64,7 @@ fun FormTextField(
     withBorder: Boolean = true,
     bringIntoViewRequester: BringIntoViewRequester? = null,
     minHeight: Dp = ZcashTheme.dimens.textFieldDefaultHeight,
-    testTag: String? = ""
+    testTag: String? = null
 ) {
     val coroutineScope = rememberCoroutineScope()
 

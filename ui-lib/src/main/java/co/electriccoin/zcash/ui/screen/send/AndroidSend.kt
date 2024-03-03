@@ -220,7 +220,7 @@ internal fun WrapSend(
                         }
                         .onFailure {
                             Twig.debug { "Transaction submission failed with: $it." }
-                            setSendStage(SendStage.SendFailure(it.localizedMessage ?: ""))
+                            setSendStage(SendStage.SendFailure(it.message ?: ""))
                         }
                 }
             },

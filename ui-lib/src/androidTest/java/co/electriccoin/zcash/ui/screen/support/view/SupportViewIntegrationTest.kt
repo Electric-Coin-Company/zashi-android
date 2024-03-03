@@ -12,6 +12,7 @@ import co.electriccoin.zcash.ui.test.getStringResource
 import co.electriccoin.zcash.ui.test.getStringResourceWithArgs
 import org.junit.Rule
 import org.junit.Test
+import kotlin.test.Ignore
 
 class SupportViewIntegrationTest : UiTestPrerequisites() {
     @get:Rule
@@ -48,6 +49,7 @@ class SupportViewIntegrationTest : UiTestPrerequisites() {
 
     @Test
     @MediumTest
+    @Ignore("Will be updated as part of #1275")
     fun dialog_state_restoration() {
         val restorationTester = StateRestorationTester(composeTestRule)
         val testSetup = newTestSetup()

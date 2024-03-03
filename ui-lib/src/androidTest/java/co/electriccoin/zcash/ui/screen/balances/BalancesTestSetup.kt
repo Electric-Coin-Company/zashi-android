@@ -35,9 +35,11 @@ class BalancesTestSetup(
             isFiatConversionEnabled = isShowFiatConversion,
             isKeepScreenOnWhileSyncing = false,
             isUpdateAvailable = false,
-            walletSnapshot = walletSnapshot,
             onShielding = {},
-            shieldState = ShieldState.Available
+            shieldState = ShieldState.Available,
+            walletSnapshot = walletSnapshot,
+            isShowingErrorDialog = false,
+            setShowErrorDialog = {}
         )
     }
 

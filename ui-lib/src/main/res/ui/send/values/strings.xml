@@ -16,7 +16,7 @@
         <xliff:g id="typed_bytes" example="12">%1$s</xliff:g>/
         <xliff:g id="max_bytes" example="500">%2$s</xliff:g>
     </string>
-    <string name="send_create">Preview</string>
+    <string name="send_create">Review</string>
     <string name="send_fee">(Typical fee &lt; <xliff:g id="fee_amount" example="0.001">%1$s</xliff:g>)</string>
 
     <string name="send_confirmation_amount_and_address_format" formatted="true">Send <xliff:g id="amount" example="12.345">%1$s</xliff:g> ZEC to <xliff:g id="address" example="zs1g7cqw … mvyzgm">%2$s</xliff:g>?</string>

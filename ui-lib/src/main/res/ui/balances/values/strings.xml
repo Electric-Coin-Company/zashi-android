@@ -4,9 +4,9 @@
     <string name="balances_change_pending">Change pending</string>
     <string name="balances_pending_transactions">Pending transactions</string>
     <string name="balances_transparent_balance">Transparent balance</string>
-    <string name="balances_transparent_balance_help">Zashi uses the latest network upgrade and does not support
-        sending transparent (unshielded) ZEC. Converting your funds will move them to your available balance so you
-        can send or spend them.</string>
+    <string name="balances_transparent_balance_help">In order to better preserve your privacy, Zashi does not
+        support directly spending transparent (unshielded) ZEC. Use the Shield and Consolidate button to shield your
+        transparent funds. This will move the transparent value to your available balance and make it spendable.</string>
     <string name="balances_transparent_balance_help_close">I got it!</string>
     <string name="balances_transparent_help_content_description">Show help</string>
     <string name="balances_transparent_balance_shield">Shield and consolidate funds</string>
@@ -29,4 +29,8 @@
     <string name="balances_status_updating_blockheight">Updating blockheight</string>
     <string name="balances_status_fiat_currency_price_out_of_date" formatted="true"><xliff:g id="fiat_currency" example="USD">%1$s</xliff:g> price out-of-date</string>
     <string name="balances_status_spendable" formatted="true">Fully spendable in <xliff:g id="spendable_time" example="2 minutes">%1$s</xliff:g></string>
+
+    <string name="balances_shielding_dialog_error_title">Failed to shield funds</string>
+    <string name="balances_shielding_dialog_error_text">Error: The attempt to shield the transparent funds failed. Try it again, please.</string>
+    <string name="balances_shielding_dialog_error_btn">OK</string>
 </resources>

@@ -29,18 +29,23 @@ class SupportViewTestSetup(private val composeTestRule: ComposeContentTestRule) 
         return onSendMessage.get()
     }
 
+    // TODO [#1275]: Improve SupportView UI tests
+    // TODO [#1275]: https://github.com/Electric-Coin-Company/zashi-android/issues/1275
+
     @Composable
     @Suppress("TestFunctionName")
     fun DefaultContent() {
         Support(
-            SnackbarHostState(),
+            snackbarHostState = SnackbarHostState(),
             onBack = {
                 onBackCount.incrementAndGet()
             },
             onSend = {
                 onSendCount.incrementAndGet()
                 onSendMessage.set(it)
-            }
+            },
+            isShowingDialog = false,
+            setShowDialog = {}
         )
     }
 

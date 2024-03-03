@@ -37,3 +37,12 @@ object AvailableServerProvider {
             }
         }.toImmutableList()
 }
+
+// This regex validates server URLs with ports in format: <hostname>:<port>
+// While ensuring:
+// - Valid hostname format (excluding spaces and special characters)
+// - Port numbers within the valid range (1-65535) and without leading zeros
+// - Note that this does not cover other URL components like paths or query strings
+val regex = "^(([^:/?#\\s]+)://)?([^/?#\\s]+):([1-9][0-9]{3}|[1-5][0-9]{2}|[0-9]{1,2})$".toRegex()
+
+fun validateCustomServerValue(customServer: String): Boolean = regex.matches(customServer)

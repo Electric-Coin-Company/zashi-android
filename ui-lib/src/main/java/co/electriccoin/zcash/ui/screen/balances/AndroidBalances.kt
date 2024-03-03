@@ -93,6 +93,8 @@ internal fun WrapBalances(
             )
         }
 
+    val (isShowingErrorDialog, setShowErrorDialog) = rememberSaveable { mutableStateOf(false) }
+
     if (null == synchronizer || null == walletSnapshot || null == spendingKey) {
         // TODO [#1146]: Consider moving CircularScreenProgressIndicator from Android layer to View layer
         // TODO [#1146]: Improve this by allowing screen composition and updating it after the data is available
@@ -104,6 +106,8 @@ internal fun WrapBalances(
             isFiatConversionEnabled = isFiatConversionEnabled,
             isKeepScreenOnWhileSyncing = isKeepScreenOnWhileSyncing,
             isUpdateAvailable = isUpdateAvailable,
+            isShowingErrorDialog = isShowingErrorDialog,
+            setShowErrorDialog = setShowErrorDialog,
             onShielding = {
                 scope.launch {
                     setShieldState(ShieldState.Running)
@@ -116,11 +120,12 @@ internal fun WrapBalances(
                             setShieldState(ShieldState.None)
                         }
                         .onFailure {
-                            Twig.info { "Shielding transaction submission failed with: $it" }
+                            Twig.error(it) { "Shielding transaction submission failed with: ${it.message}" }
                             // Adding extra delay before notifying UI for a better UX
                             @Suppress("MagicNumber")
                             delay(1500)
-                            setShieldState(ShieldState.Failed(it.localizedMessage ?: ""))
+                            setShieldState(ShieldState.Failed(it.message ?: ""))
+                            setShowErrorDialog(true)
                         }
                 }
             },

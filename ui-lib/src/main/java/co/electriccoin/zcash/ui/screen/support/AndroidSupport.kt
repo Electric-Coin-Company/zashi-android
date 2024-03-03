@@ -7,8 +7,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
@@ -34,8 +36,12 @@ internal fun WrapSupport(
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
+    val (isShowingDialog, setShowDialog) = rememberSaveable { mutableStateOf(false) }
+
     Support(
-        snackbarHostState,
+        snackbarHostState = snackbarHostState,
+        isShowingDialog = isShowingDialog,
+        setShowDialog = setShowDialog,
         onBack = goBack,
         onSend = { userMessage ->
             val fullMessage = formatMessage(userMessage, supportMessage)
@@ -55,7 +61,7 @@ internal fun WrapSupport(
             runCatching {
                 activity.startActivity(mailIntent)
             }.onSuccess {
-                goBack()
+                setShowDialog(false)
             }.onFailure {
                 scope.launch {
                     snackbarHostState.showSnackbar(
@@ -71,5 +77,5 @@ internal fun WrapSupport(
 private fun formatMessage(
     messageBody: String,
     appInfo: SupportInfo?,
-    supportInfoValues: Set<SupportInfoType> = SupportInfoType.values().toSet()
+    supportInfoValues: Set<SupportInfoType> = SupportInfoType.entries.toSet()
 ): String = "$messageBody\n\n${appInfo?.toSupportString(supportInfoValues) ?: ""}"
