@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.history
+package co.electriccoin.zcash.ui.screen.account
 
 /**
  * These are only used for automated testing.

@@ -1,12 +1,12 @@
-package co.electriccoin.zcash.ui.screen.history.view
+package co.electriccoin.zcash.ui.screen.account.view
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -15,25 +15,16 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.outlined.ArrowCircleDown
 import androidx.compose.material.icons.outlined.ArrowCircleUp
 import androidx.compose.material.icons.twotone.ArrowCircleDown
 import androidx.compose.material.icons.twotone.ArrowCircleUp
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DividerDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
-import androidx.compose.ui.Alignment.Companion.TopCenter
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -54,8 +45,8 @@ import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.Tiny
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
-import co.electriccoin.zcash.ui.screen.history.HistoryTag
-import co.electriccoin.zcash.ui.screen.history.state.TransactionHistorySyncState
+import co.electriccoin.zcash.ui.screen.account.HistoryTag
+import co.electriccoin.zcash.ui.screen.account.state.TransactionHistorySyncState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import java.text.DateFormat
@@ -67,9 +58,8 @@ import java.util.Locale
 private fun ComposablePreview() {
     ZcashTheme(forceDarkMode = false) {
         GradientSurface {
-            History(
+            HistoryContainer(
                 transactionState = TransactionHistorySyncState.Loading,
-                onBack = {},
                 onItemClick = {},
                 onTransactionIdClick = {}
             )
@@ -82,7 +72,7 @@ private fun ComposablePreview() {
 private fun ComposableHistoryListPreview() {
     ZcashTheme(forceDarkMode = false) {
         GradientSurface {
-            History(
+            HistoryContainer(
                 transactionState =
                     TransactionHistorySyncState.Syncing(
                         @Suppress("MagicNumber")
@@ -92,7 +82,6 @@ private fun ComposableHistoryListPreview() {
                             TransactionOverviewFixture.new(netValue = Zatoshi(300000000)),
                         )
                     ),
-                onBack = {},
                 onItemClick = {},
                 onTransactionIdClick = {}
             )
@@ -109,57 +98,22 @@ val dateFormat: DateFormat by lazy {
 }
 
 @Composable
-fun History(
-    transactionState: TransactionHistorySyncState,
-    onBack: () -> Unit,
-    onItemClick: (TransactionOverview) -> Unit,
-    onTransactionIdClick: (String) -> Unit
-) {
-    Scaffold(topBar = {
-        HistoryTopBar(onBack = onBack)
-    }) { paddingValues ->
-        HistoryMainContent(
-            transactionState = transactionState,
-            onItemClick = onItemClick,
-            onTransactionIdClick = onTransactionIdClick,
-            modifier =
-                Modifier
-                    .fillMaxHeight()
-                    .padding(
-                        top = paddingValues.calculateTopPadding(),
-                        bottom = paddingValues.calculateBottomPadding()
-                    )
-        )
-    }
-}
-
-@Composable
-@OptIn(ExperimentalMaterial3Api::class)
-private fun HistoryTopBar(onBack: () -> Unit) {
-    TopAppBar(
-        title = { Text(text = stringResource(id = R.string.history_title)) },
-        navigationIcon = {
-            IconButton(
-                onClick = onBack
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = stringResource(R.string.history_back_content_description)
-                )
-            }
-        }
-    )
-}
-
-@Composable
 @Suppress("LongMethod")
-private fun HistoryMainContent(
+fun HistoryContainer(
     transactionState: TransactionHistorySyncState,
     onItemClick: (TransactionOverview) -> Unit,
     onTransactionIdClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Box(modifier = modifier.fillMaxSize()) {
+    Box(
+        modifier =
+            modifier
+                .then(
+                    Modifier
+                        .fillMaxSize()
+                        .background(ZcashTheme.colors.historyBackgroundColor)
+                )
+    ) {
         when (transactionState) {
             is TransactionHistorySyncState.Loading -> {
                 CircularScreenProgressIndicator(
@@ -170,52 +124,18 @@ private fun HistoryMainContent(
                 )
             }
             is TransactionHistorySyncState.Syncing -> {
-                Column(
-                    modifier = Modifier.align(alignment = TopCenter)
-                ) {
-                    Body(
-                        text = stringResource(id = R.string.history_syncing),
-                        modifier =
-                            Modifier
-                                .padding(
-                                    top = ZcashTheme.dimens.spacingSmall,
-                                    bottom = ZcashTheme.dimens.spacingSmall,
-                                    start = ZcashTheme.dimens.spacingDefault,
-                                    end = ZcashTheme.dimens.spacingDefault
-                                )
-                    )
-                    HistoryList(
-                        transactions = transactionState.transactions,
-                        onItemClick = onItemClick,
-                        onTransactionIdClick = onTransactionIdClick
-                    )
-                }
-                // Add progress indicator only in the state of empty transaction
-                if (transactionState.hasNoTransactions()) {
-                    CircularProgressIndicator(
-                        modifier =
-                            Modifier
-                                .align(alignment = Center)
-                                .testTag(HistoryTag.PROGRESS)
-                    )
-                }
+                HistoryList(
+                    transactions = transactionState.transactions,
+                    onItemClick = onItemClick,
+                    onTransactionIdClick = onTransactionIdClick
+                )
             }
             is TransactionHistorySyncState.Done -> {
-                if (transactionState.hasNoTransactions()) {
-                    Body(
-                        text = stringResource(id = R.string.history_empty),
-                        modifier =
-                            Modifier
-                                .padding(all = ZcashTheme.dimens.spacingDefault)
-                                .align(alignment = Center)
-                    )
-                } else {
-                    HistoryList(
-                        transactions = transactionState.transactions,
-                        onItemClick = onItemClick,
-                        onTransactionIdClick = onTransactionIdClick
-                    )
-                }
+                HistoryList(
+                    transactions = transactionState.transactions,
+                    onItemClick = onItemClick,
+                    onTransactionIdClick = onTransactionIdClick
+                )
             }
         }
     }
@@ -228,20 +148,23 @@ private fun HistoryList(
     onTransactionIdClick: (String) -> Unit
 ) {
     val currency = ZcashCurrency.getLocalizedName(LocalContext.current)
-    LazyColumn(modifier = Modifier.testTag(HistoryTag.TRANSACTION_LIST)) {
-        itemsIndexed(transactions) { index, item ->
+
+    LazyColumn(
+        modifier = Modifier.testTag(HistoryTag.TRANSACTION_LIST)
+    ) {
+        itemsIndexed(transactions) { _, item ->
             HistoryItem(
                 transaction = item,
                 currency = currency,
                 onItemClick = onItemClick,
                 onIdClick = onTransactionIdClick,
             )
-            if (index < transactions.lastIndex) {
-                Divider(
-                    color = ZcashTheme.colors.dividerColor,
-                    thickness = DividerDefaults.Thickness
-                )
-            }
+
+            Divider(
+                color = ZcashTheme.colors.dividerColor,
+                thickness = DividerDefaults.Thickness,
+                modifier = Modifier.padding(horizontal = ZcashTheme.dimens.spacingDefault)
+            )
         }
     }
 }
@@ -282,13 +205,14 @@ fun HistoryItem(
 
     Row(
         modifier =
-            Modifier
-                .fillMaxWidth()
-                .clickable { onItemClick(transaction) }
-                .padding(
-                    horizontal = ZcashTheme.dimens.spacingDefault,
-                    vertical = ZcashTheme.dimens.spacingDefault
-                ).then(modifier),
+            modifier
+                .then(
+                    Modifier
+                        .fillMaxWidth()
+                        .clickable { onItemClick(transaction) }
+                        .background(color = ZcashTheme.colors.historyBackgroundColor)
+                        .padding(all = ZcashTheme.dimens.spacingDefault)
+                ),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(

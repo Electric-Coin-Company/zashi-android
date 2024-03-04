@@ -13,7 +13,6 @@ import co.electriccoin.zcash.ui.NavigationTargets.ABOUT
 import co.electriccoin.zcash.ui.NavigationTargets.ADVANCED_SETTINGS
 import co.electriccoin.zcash.ui.NavigationTargets.CHOOSE_SERVER
 import co.electriccoin.zcash.ui.NavigationTargets.EXPORT_PRIVATE_DATA
-import co.electriccoin.zcash.ui.NavigationTargets.HISTORY
 import co.electriccoin.zcash.ui.NavigationTargets.HOME
 import co.electriccoin.zcash.ui.NavigationTargets.REQUEST
 import co.electriccoin.zcash.ui.NavigationTargets.SCAN
@@ -26,7 +25,6 @@ import co.electriccoin.zcash.ui.screen.about.WrapAbout
 import co.electriccoin.zcash.ui.screen.advancedsettings.WrapAdvancedSettings
 import co.electriccoin.zcash.ui.screen.chooseserver.WrapChooseServer
 import co.electriccoin.zcash.ui.screen.exportdata.WrapExportPrivateData
-import co.electriccoin.zcash.ui.screen.history.WrapHistory
 import co.electriccoin.zcash.ui.screen.home.WrapHome
 import co.electriccoin.zcash.ui.screen.request.WrapRequest
 import co.electriccoin.zcash.ui.screen.scan.WrapScanValidator
@@ -53,7 +51,6 @@ internal fun MainActivity.Navigation() {
                     homeViewModel.screenIndex.value = it
                 },
                 goBack = { finish() },
-                goHistory = { navController.navigateJustOnce(HISTORY) },
                 goSettings = { navController.navigateJustOnce(SETTINGS) },
                 goScan = { navController.navigateJustOnce(SCAN) },
                 // At this point we only read scan result data
@@ -155,9 +152,6 @@ internal fun MainActivity.Navigation() {
                 onConfirm = { navController.popBackStackJustOnce(EXPORT_PRIVATE_DATA) }
             )
         }
-        composable(HISTORY) {
-            WrapHistory(goBack = { navController.navigateUp() })
-        }
     }
 }
 
@@ -200,7 +194,6 @@ object NavigationTargets {
     const val ACCOUNT = "account"
     const val ADVANCED_SETTINGS = "advanced_settings"
     const val EXPORT_PRIVATE_DATA = "export_private_data"
-    const val HISTORY = "history"
     const val HOME = "home"
     const val CHOOSE_SERVER = "choose_server"
     const val RECEIVE = "receive"

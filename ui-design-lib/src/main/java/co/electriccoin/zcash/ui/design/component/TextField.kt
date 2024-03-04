@@ -54,7 +54,7 @@ fun FormTextField(
             unfocusedContainerColor = Color.Transparent,
             disabledContainerColor = ZcashTheme.colors.textDisabled,
             errorContainerColor = Color.Transparent,
-            focusedIndicatorColor = Color.Green,
+            focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
             disabledIndicatorColor = Color.Transparent
         ),

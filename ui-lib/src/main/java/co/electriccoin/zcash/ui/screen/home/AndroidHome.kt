@@ -22,12 +22,10 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 
-@Suppress("LongParameterList")
 @Composable
 internal fun MainActivity.WrapHome(
     onPageChange: (HomeScreenIndex) -> Unit,
     goBack: () -> Unit,
-    goHistory: () -> Unit,
     goSettings: () -> Unit,
     goScan: () -> Unit,
     sendArgumentsWrapper: SendArgumentsWrapper
@@ -36,7 +34,6 @@ internal fun MainActivity.WrapHome(
         this,
         onPageChange = onPageChange,
         goBack = goBack,
-        goHistory = goHistory,
         goScan = goScan,
         goSettings = goSettings,
         sendArgumentsWrapper = sendArgumentsWrapper
@@ -48,7 +45,6 @@ internal fun MainActivity.WrapHome(
 internal fun WrapHome(
     activity: ComponentActivity,
     goBack: () -> Unit,
-    goHistory: () -> Unit,
     goSettings: () -> Unit,
     goScan: () -> Unit,
     onPageChange: (HomeScreenIndex) -> Unit,
@@ -88,7 +84,6 @@ internal fun WrapHome(
                     WrapAccount(
                         activity = activity,
                         goBalances = { forceHomePageIndexFlow.tryEmit(ForcePage(HomeScreenIndex.BALANCES)) },
-                        goHistory = goHistory,
                         goSettings = goSettings,
                     )
                 }

@@ -1,8 +1,8 @@
-package co.electriccoin.zcash.ui.screen.history.fixture
+package co.electriccoin.zcash.ui.screen.account.history.fixture
 
 import cash.z.ecc.android.sdk.fixture.TransactionOverviewFixture
 import cash.z.ecc.android.sdk.model.TransactionOverview
-import co.electriccoin.zcash.ui.screen.history.state.TransactionHistorySyncState
+import co.electriccoin.zcash.ui.screen.account.state.TransactionHistorySyncState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
