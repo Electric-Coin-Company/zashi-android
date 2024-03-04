@@ -16,6 +16,9 @@ directly impact users rather than highlighting other key architectural updates.*
   lightwalletd servers in runtime.
 - The About screen now contains a link to the new Zashi Privacy Policy website
 
+### Fixed
+- Button sizing has been updated to align with the design guidelines and preserve stretching if necessary
+
 ## [0.2.0 (560)] - 2024-02-27
 
 ### Added

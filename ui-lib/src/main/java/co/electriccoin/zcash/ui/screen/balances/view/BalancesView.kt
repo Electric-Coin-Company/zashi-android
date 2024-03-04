@@ -272,6 +272,7 @@ fun TransparentBalancePanel(
                 text = stringResource(R.string.balances_transparent_balance_shield),
                 textStyle = ZcashTheme.extendedTypography.buttonTextSmall,
                 enabled = shieldState == ShieldState.Available,
+                minHeight = ZcashTheme.dimens.buttonHeightSmall,
                 outerPaddingValues =
                     PaddingValues(
                         horizontal = 54.dp,
