@@ -165,6 +165,7 @@ data class ExtendedTypography(
     val buttonTextSmall: TextStyle,
     val checkboxText: TextStyle,
     val securityWarningText: TextStyle,
+    val securityWarningFootnote: TextStyle,
     val textFieldHint: TextStyle,
     val textFieldValue: TextStyle,
     val textFieldBirthday: TextStyle,
@@ -250,7 +251,13 @@ val LocalExtendedTypography =
                 ),
             securityWarningText =
                 PrimaryTypography.bodySmall.copy(
-                    lineHeight = 22.32.sp
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium
+                ),
+            securityWarningFootnote =
+                PrimaryTypography.bodySmall.copy(
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Medium
                 ),
             textFieldHint =
                 PrimaryTypography.bodySmall.copy(

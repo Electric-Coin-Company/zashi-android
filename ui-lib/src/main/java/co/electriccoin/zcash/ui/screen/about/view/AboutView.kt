@@ -5,10 +5,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
@@ -17,6 +19,8 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -30,6 +34,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.VersionInfo
@@ -48,7 +56,9 @@ private fun AboutPreview() {
             About(
                 onBack = {},
                 versionInfo = VersionInfoFixture.new(),
-                configInfo = ConfigInfoFixture.new()
+                configInfo = ConfigInfoFixture.new(),
+                snackbarHostState = SnackbarHostState(),
+                onPrivacyPolicy = {},
             )
         }
     }
@@ -57,18 +67,24 @@ private fun AboutPreview() {
 @Composable
 fun About(
     onBack: () -> Unit,
+    configInfo: ConfigInfo,
+    onPrivacyPolicy: () -> Unit,
+    snackbarHostState: SnackbarHostState,
     versionInfo: VersionInfo,
-    configInfo: ConfigInfo
 ) {
-    Scaffold(topBar = {
-        AboutTopAppBar(
-            onBack = onBack,
-            versionInfo = versionInfo,
-            configInfo = configInfo
-        )
-    }) { paddingValues ->
+    Scaffold(
+        topBar = {
+            AboutTopAppBar(
+                onBack = onBack,
+                versionInfo = versionInfo,
+                configInfo = configInfo
+            )
+        },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+    ) { paddingValues ->
         AboutMainContent(
             versionInfo = versionInfo,
+            onPrivacyPolicy = onPrivacyPolicy,
             modifier =
                 Modifier
                     .fillMaxHeight()
@@ -143,6 +159,7 @@ private fun DebugMenu(
 
 @Composable
 fun AboutMainContent(
+    onPrivacyPolicy: () -> Unit,
     versionInfo: VersionInfo,
     modifier: Modifier = Modifier
 ) {
@@ -187,6 +204,50 @@ fun AboutMainContent(
             text = stringResource(id = R.string.about_description),
             color = ZcashTheme.colors.aboutTextColor,
             style = ZcashTheme.extendedTypography.aboutText
+        )
+
+        PrivacyPolicyLink(onPrivacyPolicy)
+    }
+}
+
+@Composable
+fun PrivacyPolicyLink(onPrivacyPolicy: () -> Unit) {
+    Column {
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
+
+        val textPart1 = stringResource(R.string.about_pp_part_1)
+        val textPart2 = stringResource(R.string.about_pp_part_2)
+        val textPart3 = stringResource(R.string.about_pp_part_3)
+
+        ClickableText(
+            text =
+                buildAnnotatedString {
+                    withStyle(SpanStyle(color = ZcashTheme.colors.aboutTextColor)) {
+                        append(textPart1)
+                    }
+                    withStyle(
+                        SpanStyle(
+                            textDecoration = TextDecoration.Underline,
+                            color = ZcashTheme.colors.aboutTextColor,
+                        )
+                    ) {
+                        append(textPart2)
+                    }
+                    withStyle(SpanStyle(color = ZcashTheme.colors.aboutTextColor)) {
+                        append(textPart3)
+                    }
+                },
+            style = ZcashTheme.extendedTypography.aboutText,
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .testTag(AboutTag.PP_TEXT_TAG),
+            onClick = { letterOffset ->
+                // Call the callback only if user clicked the underlined part
+                if (letterOffset >= textPart1.length && letterOffset <= (textPart1.length + textPart2.length)) {
+                    onPrivacyPolicy()
+                }
+            }
         )
     }
 }

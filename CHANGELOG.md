@@ -14,6 +14,7 @@ directly impact users rather than highlighting other key architectural updates.*
   Choose server
 - A new Server switching screen was added. Its purpose is to enable switching between predefined and custom 
   lightwalletd servers in runtime.
+- The About screen now contains a link to the new Zashi Privacy Policy website
 
 ## [0.2.0 (560)] - 2024-02-27
 

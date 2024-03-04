@@ -1,6 +1,5 @@
 package co.electriccoin.zcash.ui.screen.securitywarning.view
 
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
@@ -34,12 +33,8 @@ class SecurityWarningViewTestSetup(private val composeTestRule: ComposeContentTe
     @Suppress("TestFunctionName")
     fun DefaultContent() {
         SecurityWarning(
-            SnackbarHostState(),
             onBack = {
                 onBackCount.incrementAndGet()
-            },
-            onPrivacyPolicy = {
-                // Not tested yet. UI testing of clicking on an AnnotatedString Text part is complicated.
             },
             onAcknowledged = {
                 onAcknowledged.getAndSet(it)
