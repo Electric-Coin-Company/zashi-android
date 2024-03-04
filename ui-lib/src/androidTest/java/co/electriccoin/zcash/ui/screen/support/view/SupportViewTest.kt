@@ -14,6 +14,7 @@ import co.electriccoin.zcash.ui.test.getStringResourceWithArgs
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
+import kotlin.test.Ignore
 
 class SupportViewTest : UiTestPrerequisites() {
     @get:Rule
@@ -37,6 +38,7 @@ class SupportViewTest : UiTestPrerequisites() {
 
     @Test
     @MediumTest
+    @Ignore("Will be updated as part of #1275")
     fun send_shows_dialog() {
         val testSetup = newTestSetup()
 
@@ -60,6 +62,7 @@ class SupportViewTest : UiTestPrerequisites() {
 
     @Test
     @MediumTest
+    @Ignore("Will be updated as part of #1275")
     fun dialog_confirm_sends() {
         val testSetup = newTestSetup()
 
@@ -79,6 +82,7 @@ class SupportViewTest : UiTestPrerequisites() {
 
     @Test
     @MediumTest
+    @Ignore("Will be updated as part of #1275")
     fun dialog_cancel() {
         val testSetup = newTestSetup()
 

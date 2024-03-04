@@ -5,10 +5,18 @@
     <string name="choose_server_title">Server</string>
     <string name="choose_server_custom">custom</string>
     <string name="choose_server_custom_delimiter">:</string>
-    <string name="choose_server_textfield_value"><xliff:g id="host" example="example.com">%1$s</xliff:g>:<xliff:g
+    <string name="choose_server_textfield_value"><xliff:g id="hostname" example="example.com">%1$s</xliff:g>:<xliff:g
         id="port" example="508">%2$d</xliff:g></string>
-    <string name="choose_server_textfield_hint">&lt;host&gt;:&lt;port&gt;</string>
-    <string name="choose_server_textfield_error">Invalid server</string>
+    <string name="choose_server_textfield_hint">&lt;hostname&gt;:&lt;port&gt;</string>
     <string name="choose_server_save">Save</string>
-    <string name="choose_server_saved">Server successfully set</string>
+
+    <string name="choose_server_validation_dialog_error_title">Invalid server endpoint</string>
+    <string name="choose_server_validation_dialog_error_text">Error: The attempt to switch endpoints failed.
+        Check that the hostname and port are correct, and are formatted as &lt;hostname&gt;:&lt;port&gt;.</string>
+    <string name="choose_server_validation_dialog_error_btn">OK</string>
+
+    <string name="choose_server_save_success_dialog_title">Server saved</string>
+    <string name="choose_server_save_success_dialog_text">The selected server endpoint has been
+        successfully saved.</string>
+    <string name="choose_server_save_success_dialog_btn">OK</string>
 </resources>

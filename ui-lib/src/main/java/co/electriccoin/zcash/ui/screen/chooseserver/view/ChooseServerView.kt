@@ -12,11 +12,8 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -36,6 +33,7 @@ import cash.z.ecc.sdk.extension.isValid
 import cash.z.ecc.sdk.fixture.PersistableWalletFixture
 import co.electriccoin.lightwallet.client.model.LightWalletEndpoint
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.design.component.AppAlertDialog
 import co.electriccoin.zcash.ui.design.component.FormTextField
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
@@ -44,6 +42,7 @@ import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.SubHeader
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.chooseserver.ChooseServerTag
+import co.electriccoin.zcash.ui.screen.chooseserver.validateCustomServerValue
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
@@ -56,9 +55,12 @@ private fun PreviewChooseServer() {
                 availableServers = emptyList<LightWalletEndpoint>().toImmutableList(),
                 onBack = {},
                 onServerChange = {},
-                snackbarHostState = SnackbarHostState(),
                 validationResult = ServerValidation.Valid,
                 wallet = PersistableWalletFixture.new(),
+                isShowingErrorDialog = false,
+                setShowErrorDialog = {},
+                isShowingSuccessDialog = false,
+                setShowSuccessDialog = {},
             )
         }
     }
@@ -70,15 +72,17 @@ fun ChooseServer(
     availableServers: ImmutableList<LightWalletEndpoint>,
     onBack: () -> Unit,
     onServerChange: (LightWalletEndpoint) -> Unit,
-    snackbarHostState: SnackbarHostState,
     validationResult: ServerValidation,
     wallet: PersistableWallet,
+    isShowingErrorDialog: Boolean,
+    setShowErrorDialog: (Boolean) -> Unit,
+    isShowingSuccessDialog: Boolean,
+    setShowSuccessDialog: (Boolean) -> Unit,
 ) {
     Scaffold(
         topBar = {
             ChooseServerTopAppBar(onBack = onBack)
-        },
-        snackbarHost = { SnackbarHost(snackbarHostState) }
+        }
     ) { paddingValues ->
         ChooseServerMainContent(
             modifier =
@@ -95,9 +99,22 @@ fun ChooseServer(
                     .fillMaxWidth(),
             availableServers = availableServers,
             onServerChange = onServerChange,
+            setShowErrorDialog = setShowErrorDialog,
             validationResult = validationResult,
             wallet = wallet,
         )
+
+        // Show validation popups
+        if (isShowingErrorDialog) {
+            ValidationErrorDialog(
+                validationResult = validationResult,
+                onDone = { setShowErrorDialog(false) }
+            )
+        } else if (isShowingSuccessDialog) {
+            SaveSuccessDialog(
+                onDone = { setShowSuccessDialog(false) }
+            )
+        }
     }
 }
 
@@ -113,16 +130,20 @@ private fun ChooseServerTopAppBar(onBack: () -> Unit) {
 }
 
 @Composable
-@Suppress("LongMethod")
+@Suppress("LongMethod", "LongParameterList")
 private fun ChooseServerMainContent(
     availableServers: ImmutableList<LightWalletEndpoint>,
     onServerChange: (LightWalletEndpoint) -> Unit,
     validationResult: ServerValidation,
     wallet: PersistableWallet,
     modifier: Modifier = Modifier,
+    setShowErrorDialog: (Boolean) -> Unit,
 ) {
     val options =
         availableServers.toMutableList().apply {
+            // Note that this comparison could lead to a match with any predefined server endpoint even though the user
+            // previously pasted it as a custom one, which is fine for now and will be addressed when a dynamic
+            //  server list obtaining is implemented.
             if (contains(wallet.endpoint)) {
                 // We define the custom server as secured by default
                 add(LightWalletEndpoint("", -1, true))
@@ -150,24 +171,6 @@ private fun ChooseServerMainContent(
             mutableStateOf(initialCustomServerValue)
         }
 
-    val (customServerError, setCustomServerError) =
-        rememberSaveable {
-            mutableStateOf<String?>(null)
-        }
-
-    val context = LocalContext.current
-
-    LaunchedEffect(key1 = validationResult) {
-        when (validationResult) {
-            is ServerValidation.InValid -> {
-                setCustomServerError(context.getString(R.string.choose_server_textfield_error))
-            }
-            else -> {
-                // Expected state: do nothing
-            }
-        }
-    }
-
     Column(modifier = modifier) {
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
 
@@ -183,8 +186,6 @@ private fun ChooseServerMainContent(
             options = options,
             selectedOption = selectedOption,
             setSelectedOption = setSelectedOption,
-            customServerError = customServerError,
-            setCustomServerError = setCustomServerError,
             customServerValue = customServerValue,
             setCustomServerValue = setCustomServerValue,
             modifier = Modifier.fillMaxWidth()
@@ -202,8 +203,8 @@ private fun ChooseServerMainContent(
                     onServerChange(it)
                 }
             },
+            setShowErrorDialog = setShowErrorDialog,
             selectedOption = selectedOption,
-            setCustomServerError = setCustomServerError,
             modifier = Modifier.padding(horizontal = ZcashTheme.dimens.spacingXlarge)
         )
 
@@ -216,8 +217,6 @@ private fun ChooseServerMainContent(
 @Suppress("LongParameterList")
 fun ServerList(
     options: ImmutableList<LightWalletEndpoint>,
-    customServerError: String?,
-    setCustomServerError: (String?) -> Unit,
     customServerValue: String,
     setCustomServerValue: (String) -> Unit,
     selectedOption: Int,
@@ -248,13 +247,11 @@ fun ServerList(
                         FormTextField(
                             value = customServerValue,
                             onValueChange = {
-                                setCustomServerError(null)
                                 setCustomServerValue(it)
                             },
                             placeholder = {
                                 Text(text = stringResource(R.string.choose_server_textfield_hint))
                             },
-                            error = customServerError,
                             keyboardActions =
                                 KeyboardActions(
                                     onDone = {
@@ -307,14 +304,6 @@ fun LabeledRadioButton(
     )
 }
 
-// This regex validates server URLs with ports while ensuring:
-// - Valid hostname format (excluding spaces and special characters)
-// - Port numbers within the valid range (1-65535) and without leading zeros
-// - Note that this does not cover other URL components like paths or query strings
-val regex = "^(([^:/?#\\s]+)://)?([^/?#\\s]+):([1-9][0-9]{3}|[1-5][0-9]{2}|[0-9]{1,2})$".toRegex()
-
-fun validateCustomServerValue(customServer: String): Boolean = regex.matches(customServer)
-
 @Composable
 @Suppress("LongParameterList")
 fun SaveButton(
@@ -323,8 +312,8 @@ fun SaveButton(
     onServerChange: (LightWalletEndpoint) -> Unit,
     options: ImmutableList<LightWalletEndpoint>,
     selectedOption: Int,
-    setCustomServerError: (String?) -> Unit,
     modifier: Modifier = Modifier,
+    setShowErrorDialog: (Boolean) -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -336,7 +325,7 @@ fun SaveButton(
             val selectedServer =
                 if (selectedOption == options.lastIndex) {
                     if (!validateCustomServerValue(customServerValue)) {
-                        setCustomServerError(context.getString(R.string.choose_server_textfield_error))
+                        setShowErrorDialog(true)
                         return@PrimaryButton
                     }
 
@@ -350,5 +339,33 @@ fun SaveButton(
             onServerChange(selectedServer)
         },
         modifier = modifier
+    )
+}
+
+@Composable
+@Suppress("UNUSED_PARAMETER")
+fun ValidationErrorDialog(
+    validationResult: ServerValidation,
+    onDone: () -> Unit
+) {
+    // Once we ensure that the [validationResult] contains a localized message, we can leverage it for the UI prompt
+
+    AppAlertDialog(
+        title = stringResource(id = R.string.choose_server_validation_dialog_error_title),
+        text = stringResource(id = R.string.choose_server_validation_dialog_error_text),
+        confirmButtonText = stringResource(id = R.string.choose_server_validation_dialog_error_btn),
+        onConfirmButtonClick = onDone
+    )
+}
+
+@Composable
+fun SaveSuccessDialog(onDone: () -> Unit) {
+    Twig.info { "Succeed with saving the selected endpoint" }
+
+    AppAlertDialog(
+        title = stringResource(id = R.string.choose_server_save_success_dialog_title),
+        text = stringResource(id = R.string.choose_server_save_success_dialog_text),
+        confirmButtonText = stringResource(id = R.string.choose_server_save_success_dialog_btn),
+        onConfirmButtonClick = onDone
     )
 }

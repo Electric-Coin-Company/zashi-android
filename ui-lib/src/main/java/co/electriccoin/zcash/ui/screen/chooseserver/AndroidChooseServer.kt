@@ -3,13 +3,12 @@
 package co.electriccoin.zcash.ui.screen.chooseserver
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cash.z.ecc.android.sdk.Synchronizer
@@ -19,7 +18,6 @@ import cash.z.ecc.android.sdk.model.ZcashNetwork
 import cash.z.ecc.android.sdk.type.ServerValidation
 import cash.z.ecc.sdk.type.fromResources
 import co.electriccoin.zcash.ui.MainActivity
-import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.viewmodel.SecretState
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.screen.chooseserver.view.ChooseServer
@@ -65,8 +63,6 @@ private fun WrapChooseServer(
 
         val scope = rememberCoroutineScope()
 
-        val snackbarHostState = remember { SnackbarHostState() }
-
         var validationResult: ServerValidation by remember { mutableStateOf(ServerValidation.Valid) }
 
         val onCheckedBack = {
@@ -76,6 +72,9 @@ private fun WrapChooseServer(
         }
 
         BackHandler { onCheckedBack() }
+
+        val (isShowingErrorDialog, setShowErrorDialog) = rememberSaveable { mutableStateOf(false) }
+        val (isShowingSuccessDialog, setShowSuccessDialog) = rememberSaveable { mutableStateOf(false) }
 
         ChooseServer(
             availableServers = AvailableServerProvider.toList(ZcashNetwork.fromResources(activity)),
@@ -100,13 +99,12 @@ private fun WrapChooseServer(
 
                             onWalletPersist(newWallet)
 
-                            snackbarHostState.showSnackbar(
-                                message = activity.getString(R.string.choose_server_saved),
-                                duration = SnackbarDuration.Short
-                            )
+                            setShowSuccessDialog(true)
                         }
                         is ServerValidation.InValid -> {
                             Twig.error { "Choose Server: Failed to validate the new endpoint: $newEndpoint" }
+
+                            setShowErrorDialog(true)
                         }
                         else -> {
                             // Should not happen
@@ -115,9 +113,12 @@ private fun WrapChooseServer(
                     }
                 }
             },
-            snackbarHostState = snackbarHostState,
             validationResult = validationResult,
             wallet = wallet,
+            isShowingErrorDialog = isShowingErrorDialog,
+            setShowErrorDialog = setShowErrorDialog,
+            isShowingSuccessDialog = isShowingSuccessDialog,
+            setShowSuccessDialog = setShowSuccessDialog
         )
     }
 }

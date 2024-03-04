@@ -58,6 +58,7 @@ import co.electriccoin.zcash.ui.common.model.changePendingBalance
 import co.electriccoin.zcash.ui.common.model.spendableBalance
 import co.electriccoin.zcash.ui.common.model.valuePendingBalance
 import co.electriccoin.zcash.ui.common.test.CommonTag
+import co.electriccoin.zcash.ui.design.component.AppAlertDialog
 import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.BodySmall
 import co.electriccoin.zcash.ui.design.component.BodyWithFiatCurrencySymbol
@@ -86,8 +87,10 @@ private fun ComposablePreview() {
                 isKeepScreenOnWhileSyncing = false,
                 isUpdateAvailable = false,
                 onShielding = {},
-                walletSnapshot = WalletSnapshotFixture.new(),
                 shieldState = ShieldState.Available,
+                walletSnapshot = WalletSnapshotFixture.new(),
+                isShowingErrorDialog = false,
+                setShowErrorDialog = {},
             )
         }
     }
@@ -100,6 +103,8 @@ fun Balances(
     isFiatConversionEnabled: Boolean,
     isKeepScreenOnWhileSyncing: Boolean?,
     isUpdateAvailable: Boolean,
+    isShowingErrorDialog: Boolean,
+    setShowErrorDialog: (Boolean) -> Unit,
     onShielding: () -> Unit,
     shieldState: ShieldState,
     walletSnapshot: WalletSnapshot?,
@@ -125,8 +130,32 @@ fun Balances(
                         end = ZcashTheme.dimens.screenHorizontalSpacingRegular
                     ),
             )
+
+            // Show shielding error popup
+            if (isShowingErrorDialog) {
+                ShieldingErrorDialog(
+                    shieldState = shieldState,
+                    onDone = { setShowErrorDialog(false) }
+                )
+            }
         }
     }
+}
+
+@Composable
+@Suppress("UNUSED_PARAMETER")
+fun ShieldingErrorDialog(
+    shieldState: ShieldState,
+    onDone: () -> Unit
+) {
+    // Once we ensure that the [shieldState] contains a localized message, we can leverage it for the UI prompt
+
+    AppAlertDialog(
+        title = stringResource(id = R.string.balances_shielding_dialog_error_title),
+        text = stringResource(id = R.string.balances_shielding_dialog_error_text),
+        confirmButtonText = stringResource(id = R.string.balances_shielding_dialog_error_btn),
+        onConfirmButtonClick = onDone
+    )
 }
 
 @Composable
@@ -219,11 +248,6 @@ fun TransparentBalancePanel(
     walletSnapshot: WalletSnapshot,
 ) {
     var showHelpPanel by rememberSaveable { mutableStateOf(false) }
-
-    // TODO [#1242]: Create error popup UI
-    // TODO [#1242]: https://github.com/Electric-Coin-Company/zashi-android/issues/1242
-    // if (shieldState is ShieldState.Failed) {
-    // }
 
     Box(
         modifier =

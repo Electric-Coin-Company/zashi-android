@@ -11,7 +11,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -25,15 +24,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
+import co.electriccoin.zcash.ui.design.component.AppAlertDialog
 import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.FormTextField
 import co.electriccoin.zcash.ui.design.component.GradientSurface
-import co.electriccoin.zcash.ui.design.component.NavigationButton
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 
@@ -43,9 +41,11 @@ private fun PreviewSupport() {
     ZcashTheme(forceDarkMode = false) {
         GradientSurface {
             Support(
+                snackbarHostState = SnackbarHostState(),
                 onBack = {},
                 onSend = {},
-                snackbarHostState = SnackbarHostState()
+                isShowingDialog = false,
+                setShowDialog = {}
             )
         }
     }
@@ -66,12 +66,13 @@ private fun PreviewSupportPopup() {
 
 @Composable
 fun Support(
-    snackbarHostState: SnackbarHostState,
+    isShowingDialog: Boolean,
+    setShowDialog: (Boolean) -> Unit,
     onBack: () -> Unit,
-    onSend: (String) -> Unit
+    onSend: (String) -> Unit,
+    snackbarHostState: SnackbarHostState,
 ) {
     val (message, setMessage) = rememberSaveable { mutableStateOf("") }
-    val (isShowingDialog, setShowDialog) = rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -176,25 +177,17 @@ private fun SupportConfirmationDialog(
     onConfirm: () -> Unit,
     onDismiss: () -> Unit
 ) {
-    AlertDialog(
-        shape = RectangleShape,
+    AppAlertDialog(
+        onConfirmButtonClick = onConfirm,
+        confirmButtonText = stringResource(id = R.string.support_confirmation_dialog_ok),
+        dismissButtonText = stringResource(id = R.string.support_confirmation_dialog_cancel),
+        onDismissButtonClick = onDismiss,
         onDismissRequest = onDismiss,
-        title = {
-        },
-        confirmButton = {
-            NavigationButton(
-                onClick = onConfirm,
-                text = stringResource(id = R.string.support_confirmation_dialog_ok)
+        title = stringResource(id = R.string.support_confirmation_dialog_title),
+        text =
+            stringResource(
+                id = R.string.support_confirmation_explanation,
+                stringResource(id = R.string.app_name)
             )
-        },
-        dismissButton = {
-            NavigationButton(
-                onClick = onDismiss,
-                text = stringResource(id = R.string.support_confirmation_dialog_cancel)
-            )
-        },
-        text = {
-            Text(stringResource(id = R.string.support_confirmation_explanation, stringResource(id = R.string.app_name)))
-        }
     )
 }
