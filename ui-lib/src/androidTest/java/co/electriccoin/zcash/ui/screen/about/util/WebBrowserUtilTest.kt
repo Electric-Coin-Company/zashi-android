@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.securitywarning.util
+package co.electriccoin.zcash.ui.screen.about.util
 
 import android.content.Intent
 import androidx.test.filters.SmallTest

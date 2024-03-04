@@ -44,11 +44,6 @@ class SecurityWarningViewTest : UiTestPrerequisites() {
             it.assertHasClickAction()
             it.assertIsNotEnabled()
         }
-
-        composeTestRule.onNodeWithTag(SecurityScreenTag.WARNING_TEXT_TAG).also {
-            it.assertExists()
-            it.assertIsDisplayed()
-        }
     }
 
     @Test

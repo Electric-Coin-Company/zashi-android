@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.securitywarning.util
+package co.electriccoin.zcash.ui.screen.about.util
 
 import android.content.Intent
 import android.net.Uri
@@ -9,7 +9,7 @@ object WebBrowserUtil {
             Intent.FLAG_ACTIVITY_NEW_TASK or
             Intent.FLAG_ACTIVITY_MULTIPLE_TASK
 
-    const val ZCASH_PRIVACY_POLICY_URI = "https://z.cash/privacy-policy/" // NON-NLS
+    const val ZCASH_PRIVACY_POLICY_URI = "https://electriccoin.co/zashi-privacy-policy/" // NON-NLS
 
     /**
      * Returns new action view app intent. We assume the a web browser app is installed.

@@ -12,4 +12,9 @@
         shielded wallet that keeps your transaction history and wallet balance private. Built by Zcashers, for
         Zcashers. Developed and maintained by Electric Coin Co., the inventor of Zcash, Zashi features a built-in
         user-feedback mechanism to enable more features, more quickly.</string>
+
+    <string name="about_pp_part_1">See our Privacy Policy\u0020</string>
+    <string name="about_pp_part_2">here</string>
+    <string name="about_pp_part_3">.</string>
+    <string name="about_unable_to_web_browser">Unable to find a web browser app.</string>
 </resources>
