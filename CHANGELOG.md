@@ -12,6 +12,8 @@ directly impact users rather than highlighting other key architectural updates.*
 ### Added
 - Advanced Settings screen that provides more technical options like Export private data, Recovery phrase, or 
   Choose server
+- A new Server switching screen was added. Its purpose is to enable switching between predefined and custom 
+  lightwalletd servers in runtime.
 
 ## [0.2.0 (560)] - 2024-02-27
 

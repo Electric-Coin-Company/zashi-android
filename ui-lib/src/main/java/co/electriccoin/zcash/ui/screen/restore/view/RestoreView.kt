@@ -715,12 +715,20 @@ private fun RestoreBirthdayMainContent(
                 val filteredHeightString = heightString.filter { it.isDigit() }
                 setHeight(filteredHeightString)
             },
+            colors =
+                TextFieldDefaults.colors(
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
+                    disabledContainerColor = ZcashTheme.colors.textDisabled,
+                    errorContainerColor = Color.Transparent,
+                    focusedIndicatorColor = ZcashTheme.colors.darkDividerColor,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent
+                ),
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .padding(ZcashTheme.dimens.spacingTiny)
-                    .focusRequester(focusRequester)
-                    .testTag(RestoreTag.BIRTHDAY_TEXT_FIELD),
+                    .focusRequester(focusRequester),
             textStyle = ZcashTheme.extendedTypography.textFieldBirthday,
             keyboardOptions =
                 KeyboardOptions(
@@ -731,6 +739,7 @@ private fun RestoreBirthdayMainContent(
                 ),
             keyboardActions = KeyboardActions(onAny = {}),
             withBorder = false,
+            testTag = RestoreTag.BIRTHDAY_TEXT_FIELD
         )
 
         Spacer(

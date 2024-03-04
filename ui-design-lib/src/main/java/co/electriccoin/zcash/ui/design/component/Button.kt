@@ -7,12 +7,16 @@ import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonDefaults.buttonColors
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,6 +40,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 
 @Preview
@@ -45,6 +50,7 @@ private fun ButtonComposablePreview() {
         GradientSurface {
             Column(Modifier.padding(ZcashTheme.dimens.spacingDefault)) {
                 PrimaryButton(onClick = { }, text = "Primary")
+                PrimaryButton(onClick = { }, text = "Primary", showProgressBar = true)
                 SecondaryButton(onClick = { }, text = "Secondary")
                 TertiaryButton(onClick = { }, text = "Tertiary")
                 TertiaryButton(onClick = { }, text = "Tertiary", enabled = false)
@@ -56,13 +62,14 @@ private fun ButtonComposablePreview() {
 }
 
 @Composable
-@Suppress("LongParameterList")
+@Suppress("LongParameterList", "LongMethod")
 fun PrimaryButton(
     onClick: () -> Unit,
     text: String,
     modifier: Modifier = Modifier,
-    buttonColor: Color = MaterialTheme.colorScheme.primary,
     enabled: Boolean = true,
+    showProgressBar: Boolean = false,
+    buttonColor: Color = MaterialTheme.colorScheme.primary,
     textColor: Color = MaterialTheme.colorScheme.onPrimary,
     textStyle: TextStyle = ZcashTheme.extendedTypography.buttonText,
     outerPaddingValues: PaddingValues =
@@ -100,12 +107,52 @@ fun PrimaryButton(
             ),
         onClick = onClick,
     ) {
-        Text(
-            style = textStyle,
-            textAlign = TextAlign.Center,
-            text = text.uppercase(),
-            color = textColor
-        )
+        ConstraintLayout(
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            val (title, spacer, progress) = createRefs()
+
+            Text(
+                style = textStyle,
+                textAlign = TextAlign.Center,
+                text = text.uppercase(),
+                color = textColor,
+                modifier =
+                    Modifier.constrainAs(title) {
+                        top.linkTo(parent.top)
+                        bottom.linkTo(parent.bottom)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    }
+            )
+
+            if (showProgressBar) {
+                Spacer(
+                    modifier =
+                        Modifier
+                            .width(12.dp)
+                            .constrainAs(spacer) {
+                                top.linkTo(parent.top)
+                                bottom.linkTo(parent.bottom)
+                                start.linkTo(title.end)
+                                end.linkTo(progress.start)
+                            }
+                )
+
+                CircularProgressIndicator(
+                    color = Color.White,
+                    strokeWidth = 2.dp,
+                    modifier =
+                        Modifier
+                            .size(18.dp)
+                            .constrainAs(progress) {
+                                top.linkTo(parent.top)
+                                bottom.linkTo(parent.bottom)
+                                start.linkTo(spacer.end)
+                            }
+                )
+            }
+        }
     }
 }
 

@@ -11,6 +11,7 @@ import co.electriccoin.zcash.ui.NavigationArguments.SEND_MEMO
 import co.electriccoin.zcash.ui.NavigationArguments.SEND_RECIPIENT_ADDRESS
 import co.electriccoin.zcash.ui.NavigationTargets.ABOUT
 import co.electriccoin.zcash.ui.NavigationTargets.ADVANCED_SETTINGS
+import co.electriccoin.zcash.ui.NavigationTargets.CHOOSE_SERVER
 import co.electriccoin.zcash.ui.NavigationTargets.EXPORT_PRIVATE_DATA
 import co.electriccoin.zcash.ui.NavigationTargets.HISTORY
 import co.electriccoin.zcash.ui.NavigationTargets.HOME
@@ -23,6 +24,7 @@ import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
 import co.electriccoin.zcash.ui.configuration.RemoteConfig
 import co.electriccoin.zcash.ui.screen.about.WrapAbout
 import co.electriccoin.zcash.ui.screen.advancedsettings.WrapAdvancedSettings
+import co.electriccoin.zcash.ui.screen.chooseserver.WrapChooseServer
 import co.electriccoin.zcash.ui.screen.exportdata.WrapExportPrivateData
 import co.electriccoin.zcash.ui.screen.history.WrapHistory
 import co.electriccoin.zcash.ui.screen.home.WrapHome
@@ -102,8 +104,14 @@ internal fun MainActivity.Navigation() {
                     navController.navigateJustOnce(SEED_RECOVERY)
                 },
                 goChooseServer = {
-                    // TODO [#1235]: Create screen for selecting the lightwalletd server
-                    // TODO [#1235]: https://github.com/Electric-Coin-Company/zashi-android/issues/1235
+                    navController.navigateJustOnce(CHOOSE_SERVER)
+                }
+            )
+        }
+        composable(CHOOSE_SERVER) {
+            WrapChooseServer(
+                goBack = {
+                    navController.popBackStackJustOnce(CHOOSE_SERVER)
                 }
             )
         }
@@ -194,6 +202,7 @@ object NavigationTargets {
     const val EXPORT_PRIVATE_DATA = "export_private_data"
     const val HISTORY = "history"
     const val HOME = "home"
+    const val CHOOSE_SERVER = "choose_server"
     const val RECEIVE = "receive"
     const val REQUEST = "request"
     const val SCAN = "scan"

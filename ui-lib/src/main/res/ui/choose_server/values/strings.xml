@@ -1,0 +1,14 @@
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="choose_server_back">Back</string>
+    <string name="choose_server_back_content_description">Back</string>
+
+    <string name="choose_server_title">Server</string>
+    <string name="choose_server_custom">custom</string>
+    <string name="choose_server_custom_delimiter">:</string>
+    <string name="choose_server_textfield_value"><xliff:g id="host" example="example.com">%1$s</xliff:g>:<xliff:g
+        id="port" example="508">%2$d</xliff:g></string>
+    <string name="choose_server_textfield_hint">&lt;host&gt;:&lt;port&gt;</string>
+    <string name="choose_server_textfield_error">Invalid server</string>
+    <string name="choose_server_save">Save</string>
+    <string name="choose_server_saved">Server successfully set</string>
+</resources>

@@ -34,3 +34,8 @@ val LightWalletEndpoint.Companion.Testnet
             DEFAULT_PORT,
             isSecure = true
         )
+
+const val MIN_PORT_NUMBER = 1
+const val MAX_PORT_NUMBER = 65535
+
+fun LightWalletEndpoint.isValid() = host.isNotBlank() && port in MIN_PORT_NUMBER..MAX_PORT_NUMBER

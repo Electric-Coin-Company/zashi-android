@@ -170,6 +170,7 @@ data class ExtendedTypography(
     val textFieldBirthday: TextStyle,
     val textNavTab: TextStyle,
     val referenceSmall: TextStyle,
+    val radioButton: TextStyle,
 )
 
 @Suppress("CompositionLocalAllowlist")
@@ -269,6 +270,11 @@ val LocalExtendedTypography =
             referenceSmall =
                 PrimaryTypography.bodySmall.copy(
                     fontSize = 13.sp
+                ),
+            radioButton =
+                PrimaryTypography.bodySmall.copy(
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold
                 )
         )
     }

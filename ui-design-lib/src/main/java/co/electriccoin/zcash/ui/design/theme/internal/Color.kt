@@ -56,6 +56,9 @@ internal object Dark {
     val navigationButton = Color(0xFFFFFFFF)
     val navigationButtonPressed = Color(0xFFFFFFFF)
 
+    val radioButtonColor = Color(0xFF070707)
+    val radioButtonTextColor = Color(0xFF4E4E4E)
+
     val circularProgressBarSmall = Color(0xFF8B8A8A)
     val circularProgressBarScreen = Color(0xFFFFFFFF)
     val linearProgressBarTrack = Color(0xFFD9D9D9)
@@ -119,6 +122,9 @@ internal object Light {
 
     val navigationButton = Color(0xFFFFFFFF)
     val navigationButtonPressed = Color(0xFFFFFFFF)
+
+    val radioButtonColor = Color(0xFF070707)
+    val radioButtonTextColor = Color(0xFF4E4E4E)
 
     val circularProgressBarSmall = Color(0xFF8B8A8A)
     val circularProgressBarScreen = Color(0xFF000000)
@@ -202,6 +208,8 @@ internal val DarkExtendedColorPalette =
         darkDividerColor = Dark.darkDividerColor,
         tabTextColor = Dark.tabTextColor,
         panelBackgroundColor = Dark.panelBackgroundColor,
+        radioButtonColor = Dark.radioButtonColor,
+        radioButtonTextColor = Dark.radioButtonTextColor,
     )
 
 internal val LightExtendedColorPalette =
@@ -241,6 +249,8 @@ internal val LightExtendedColorPalette =
         darkDividerColor = Light.darkDividerColor,
         tabTextColor = Light.tabTextColor,
         panelBackgroundColor = Light.panelBackgroundColor,
+        radioButtonColor = Dark.radioButtonColor,
+        radioButtonTextColor = Dark.radioButtonTextColor,
     )
 
 @Suppress("CompositionLocalAllowlist")
@@ -282,5 +292,7 @@ internal val LocalExtendedColors =
             darkDividerColor = Color.Unspecified,
             tabTextColor = Color.Unspecified,
             panelBackgroundColor = Color.Unspecified,
+            radioButtonColor = Color.Unspecified,
+            radioButtonTextColor = Color.Unspecified,
         )
     }
