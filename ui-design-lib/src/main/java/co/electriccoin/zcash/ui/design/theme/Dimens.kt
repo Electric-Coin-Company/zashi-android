@@ -25,6 +25,7 @@ data class Dimens(
     val buttonShadowSpread: Dp,
     val buttonWidth: Dp,
     val buttonHeight: Dp,
+    val buttonHeightSmall: Dp,
     // Chip
     val chipShadowElevation: Dp,
     val chipStroke: Dp,
@@ -65,7 +66,8 @@ private val defaultDimens =
         buttonShadowOffsetY = 20.dp,
         buttonShadowSpread = 10.dp,
         buttonWidth = 244.dp,
-        buttonHeight = 70.dp,
+        buttonHeight = 56.dp,
+        buttonHeightSmall = 38.dp,
         chipShadowElevation = 4.dp,
         chipStroke = 0.5.dp,
         circularScreenProgressWidth = 48.dp,

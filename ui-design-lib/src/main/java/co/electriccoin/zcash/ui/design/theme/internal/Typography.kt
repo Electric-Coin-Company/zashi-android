@@ -240,10 +240,14 @@ val LocalExtendedTypography =
                     fontSize = 14.sp,
                     lineHeight = 20.sp
                 ),
-            buttonText = PrimaryTypography.bodySmall,
+            buttonText =
+                PrimaryTypography.bodySmall.copy(
+                    fontWeight = FontWeight.Medium
+                ),
             buttonTextSmall =
                 PrimaryTypography.bodySmall.copy(
-                    fontSize = 11.sp
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Medium
                 ),
             checkboxText =
                 PrimaryTypography.bodyMedium.copy(
