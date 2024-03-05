@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.history.state
+package co.electriccoin.zcash.ui.screen.account.state
 
 import cash.z.ecc.android.sdk.model.TransactionOverview
 import kotlinx.collections.immutable.ImmutableList

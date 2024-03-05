@@ -368,7 +368,7 @@ private fun SendForm(
                 .then(modifier),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
 
         BalanceWidget(
             walletSnapshot = walletSnapshot,

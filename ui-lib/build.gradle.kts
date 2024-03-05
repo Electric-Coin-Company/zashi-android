@@ -36,7 +36,6 @@ android {
                     "src/main/res/ui/balances",
                     "src/main/res/ui/common",
                     "src/main/res/ui/export_data",
-                    "src/main/res/ui/history",
                     "src/main/res/ui/home",
                     "src/main/res/ui/choose_server",
                     "src/main/res/ui/new_wallet_recovery",

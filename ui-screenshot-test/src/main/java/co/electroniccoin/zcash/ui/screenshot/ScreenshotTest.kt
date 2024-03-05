@@ -291,9 +291,6 @@ class ScreenshotTest : UiTestPrerequisites() {
         composeTestRule.navigateInHomeTab(HomeTag.TAB_BALANCES)
         balancesScreenshots(resContext, tag, composeTestRule)
 
-        navigateTo(NavigationTargets.HISTORY)
-        transactionHistoryScreenshots(resContext, tag, composeTestRule)
-
         navigateTo(NavigationTargets.SETTINGS)
         settingsScreenshots(resContext, tag, composeTestRule)
 
@@ -417,18 +414,6 @@ private fun settingsScreenshots(
     }
 
     ScreenshotTest.takeScreenshot(tag, "Settings 1")
-}
-
-private fun transactionHistoryScreenshots(
-    resContext: Context,
-    tag: String,
-    composeTestRule: ComposeTestRule
-) {
-    composeTestRule.onNode(hasText(resContext.getString(R.string.history_title))).also {
-        it.assertExists()
-    }
-
-    ScreenshotTest.takeScreenshot(tag, "Transaction History 1")
 }
 
 // This screen is not currently navigable from the app

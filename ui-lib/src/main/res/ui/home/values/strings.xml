@@ -1,6 +1,4 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="home_button_history">Transaction History</string>
-
     <string name="home_tab_account">Account</string>
     <string name="home_tab_send">Send</string>
     <string name="home_tab_receive">Receive</string>

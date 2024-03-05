@@ -16,6 +16,9 @@ directly impact users rather than highlighting other key architectural updates.*
   lightwalletd servers in runtime.
 - The About screen now contains a link to the new Zashi Privacy Policy website
 
+### Changed
+- The Transaction History UI has been incorporated into the Account screen
+
 ### Fixed
 - Button sizing has been updated to align with the design guidelines and preserve stretching if necessary
 
