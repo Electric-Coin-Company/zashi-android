@@ -298,9 +298,10 @@ fun StyledBalance(
     balanceString: String,
     textStyles: Pair<TextStyle, TextStyle>,
     modifier: Modifier = Modifier,
-    textColor: Color? = null
+    textColor: Color? = null,
+    prefix: String? = null
 ) {
-    val balanceSplit = splitBalance(balanceString)
+    val balanceSplit = splitBalance(balanceString, prefix)
 
     val content =
         buildAnnotatedString {
@@ -338,16 +339,20 @@ fun StyledBalance(
     }
 }
 
-private fun splitBalance(balance: String): Pair<String, String> {
-    Twig.debug { "Balance before split: $balance" }
+private fun splitBalance(
+    balance: String,
+    prefix: String?
+): Pair<String, String> {
+    Twig.debug { "Balance before split: $balance, prefix: $prefix" }
 
     @Suppress("MAGIC_CONSTANT", "MagicNumber")
     val cutPosition = balance.indexOf(MonetarySeparators.current(Locale.US).decimal) + 4
     val firstPart =
-        balance.substring(
-            startIndex = 0,
-            endIndex = cutPosition
-        )
+        (prefix ?: "") +
+            balance.substring(
+                startIndex = 0,
+                endIndex = cutPosition
+            )
     val secondPart =
         balance.substring(
             startIndex = cutPosition

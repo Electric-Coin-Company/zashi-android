@@ -10,7 +10,7 @@
     <string name="balances_transparent_balance_help_close">I got it!</string>
     <string name="balances_transparent_help_content_description">Show help</string>
     <string name="balances_transparent_balance_shield">Shield and consolidate funds</string>
-    <string name="balances_transparent_balance_fee">(Typical fee &lt; <xliff:g id="fee_amount" example="0.001">%1$s
+    <string name="balances_transparent_balance_fee">(Typical Fee &lt; <xliff:g id="fee_amount" example="0.001">%1$s
     </xliff:g>)</string>
 
     <string name="balances_status_syncing" formatted="true">Syncing…</string>

@@ -1,11 +1,17 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="history_item_clipboard_tag">Transaction memo</string>
-    <string name="history_id_clipboard_tag">Transaction ID</string>
 
-    <string name="history_item_sent">Sent</string>
-    <string name="history_item_received">Received</string>
-    <string name="history_item_sending">Sending</string>
-    <string name="history_item_receiving">Receiving</string>
-    <string name="history_item_expired">Expired</string>
-    <string name="history_item_date_not_available">Date not available</string>
+    <string name="account_history_empty">No transaction history</string>
+
+    <string name="account_history_item_sent">Sent</string>
+    <string name="account_history_item_received">Received</string>
+    <string name="account_history_item_sending">Sending…</string>
+    <string name="account_history_item_receiving">Receiving…</string>
+    <string name="account_history_item_receive_failed">Receive failed</string>
+    <string name="account_history_item_send_failed">Send failed</string>
+    <string name="account_history_item_shielded">Shielded transaction</string>
+    <string name="account_history_item_sent_prefix">-</string>
+    <string name="account_history_item_received_prefix">+</string>
+
+    <string name="account_history_item_clipboard_tag">Transaction memo</string>
+    <string name="account_history_id_clipboard_tag">Transaction ID</string>
 </resources>

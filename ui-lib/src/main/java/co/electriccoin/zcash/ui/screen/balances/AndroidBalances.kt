@@ -114,7 +114,12 @@ internal fun WrapBalances(
 
                     Twig.debug { "Shielding transparent funds" }
                     // Using empty string for memo to clear the default memo prefix value defined in the SDK
-                    runCatching { synchronizer.shieldFunds(spendingKey, "") }
+                    runCatching {
+                        // TODO [#1285]: Adopt proposal API
+                        // TODO [#1285]: https://github.com/Electric-Coin-Company/zashi-android/issues/1285
+                        @Suppress("deprecation")
+                        synchronizer.shieldFunds(spendingKey, "")
+                    }
                         .onSuccess {
                             Twig.info { "Shielding transaction id:$it submitted successfully" }
                             setShieldState(ShieldState.None)

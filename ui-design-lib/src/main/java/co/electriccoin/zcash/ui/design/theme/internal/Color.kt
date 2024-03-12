@@ -32,7 +32,7 @@ internal object Dark {
     val textDescription = Color(0xFF777777)
     val textProgress = Color(0xFF8B8A8A)
 
-    val aboutTextColor = Color.Unspecified
+    val aboutTextColor = Color(0xFF4E4E4E)
     val screenTitleColor = Color(0xFF040404)
     val welcomeAnimationColor = Color(0xFF231F20)
     val complementaryColor = Color(0xFFF4B728)
@@ -70,7 +70,7 @@ internal object Dark {
     val overlay = Color(0x22000000)
     val highlight = Color(0xFFFFD800)
 
-    val dangerous = Color(0xFFEC0008)
+    val dangerous = Color(0xFFFF0B0B)
     val onDangerous = Color(0xFFFFFFFF)
 
     val reference = Color(0xFFFFFFFF)
@@ -81,6 +81,7 @@ internal object Dark {
     val buttonShadowColor = Color(0xFFFFFFFF)
 
     val historyBackgroundColor = Color(0xFFF6F6F6)
+    val historySendColor = Color(0xFFF40202)
 }
 
 internal object Light {
@@ -139,7 +140,7 @@ internal object Light {
     val overlay = Color(0x22000000)
     val highlight = Color(0xFFFFD800)
 
-    val dangerous = Color(0xFFEC0008)
+    val dangerous = Color(0xFFFF0B0B)
     val onDangerous = Color(0xFFFFFFFF)
 
     val reference = Color(0xFF000000)
@@ -149,6 +150,7 @@ internal object Light {
     val buttonShadowColor = Color(0xFF000000)
 
     val historyBackgroundColor = Color(0xFFF6F6F6)
+    val historySendColor = Color(0xFFF40202)
 }
 
 internal val DarkColorPalette =
@@ -215,6 +217,7 @@ internal val DarkExtendedColorPalette =
         radioButtonColor = Dark.radioButtonColor,
         radioButtonTextColor = Dark.radioButtonTextColor,
         historyBackgroundColor = Dark.historyBackgroundColor,
+        historySendColor = Dark.historySendColor,
     )
 
 internal val LightExtendedColorPalette =
@@ -254,9 +257,10 @@ internal val LightExtendedColorPalette =
         darkDividerColor = Light.darkDividerColor,
         tabTextColor = Light.tabTextColor,
         panelBackgroundColor = Light.panelBackgroundColor,
-        radioButtonColor = Dark.radioButtonColor,
-        radioButtonTextColor = Dark.radioButtonTextColor,
-        historyBackgroundColor = Dark.historyBackgroundColor,
+        radioButtonColor = Light.radioButtonColor,
+        radioButtonTextColor = Light.radioButtonTextColor,
+        historyBackgroundColor = Light.historyBackgroundColor,
+        historySendColor = Light.historySendColor,
     )
 
 @Suppress("CompositionLocalAllowlist")
@@ -301,5 +305,6 @@ internal val LocalExtendedColors =
             radioButtonColor = Color.Unspecified,
             radioButtonTextColor = Color.Unspecified,
             historyBackgroundColor = Color.Unspecified,
+            historySendColor = Color.Unspecified,
         )
     }

@@ -6,10 +6,12 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.googlefonts.Font
 import androidx.compose.ui.text.googlefonts.GoogleFont
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.sp
 import co.electriccoin.zcash.ui.design.R
 
@@ -153,6 +155,17 @@ data class BalanceSingleTextStyles(
 )
 
 @Immutable
+data class TransactionItemTextStyles(
+    val titleRegular: TextStyle,
+    val titleRunning: TextStyle,
+    val titleFailed: TextStyle,
+    val addressCollapsed: TextStyle,
+    val valueFirstPart: TextStyle,
+    val valueSecondPart: TextStyle,
+    val date: TextStyle,
+)
+
+@Immutable
 data class ExtendedTypography(
     val listItem: TextStyle,
     // Grouping balances text styles to a wrapper class for BalanceWidget
@@ -172,6 +185,8 @@ data class ExtendedTypography(
     val textNavTab: TextStyle,
     val referenceSmall: TextStyle,
     val radioButton: TextStyle,
+    // Grouping transaction item text styles to a wrapper class
+    val transactionItemStyles: TransactionItemTextStyles,
 )
 
 @Suppress("CompositionLocalAllowlist")
@@ -231,10 +246,7 @@ val LocalExtendedTypography =
                         )
                 ),
             addressStyle =
-                SecondaryTypography.bodyLarge.copy(
-                    // TODO [#1032]: Addresses can be shown with "×" symbols
-                    // TODO [#1032]: https://github.com/Electric-Coin-Company/zashi-android/issues/1032
-                ),
+                SecondaryTypography.bodyLarge.copy(),
             aboutText =
                 PrimaryTypography.bodyLarge.copy(
                     fontSize = 14.sp,
@@ -286,6 +298,42 @@ val LocalExtendedTypography =
                 PrimaryTypography.bodySmall.copy(
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold
-                )
+                ),
+            transactionItemStyles =
+                TransactionItemTextStyles(
+                    titleRegular =
+                        PrimaryTypography.bodySmall.copy(
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Bold
+                        ),
+                    titleRunning =
+                        PrimaryTypography.bodySmall.copy(
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.ExtraBold,
+                            fontStyle = FontStyle.Italic
+                        ),
+                    titleFailed =
+                        PrimaryTypography.bodySmall.copy(
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.ExtraBold,
+                            textDecoration = TextDecoration.LineThrough
+                        ),
+                    addressCollapsed =
+                        SecondaryTypography.bodySmall.copy(
+                            fontSize = 13.sp
+                        ),
+                    valueFirstPart =
+                        PrimaryTypography.bodySmall.copy(
+                            fontSize = 13.sp
+                        ),
+                    valueSecondPart =
+                        PrimaryTypography.bodySmall.copy(
+                            fontSize = 8.sp
+                        ),
+                    date =
+                        PrimaryTypography.bodySmall.copy(
+                            fontSize = 13.sp
+                        ),
+                ),
         )
     }

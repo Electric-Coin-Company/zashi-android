@@ -1,6 +1,5 @@
 package co.electriccoin.zcash.ui.screen.account.state
 
-import cash.z.ecc.android.sdk.model.TransactionOverview
 import kotlinx.collections.immutable.ImmutableList
 
 sealed class TransactionHistorySyncState {
@@ -8,13 +7,13 @@ sealed class TransactionHistorySyncState {
         override fun toString() = "Loading" // NON-NLS
     }
 
-    data class Syncing(val transactions: ImmutableList<TransactionOverview>) : TransactionHistorySyncState() {
+    data class Syncing(val transactions: ImmutableList<TransactionOverviewExt>) : TransactionHistorySyncState() {
         fun hasNoTransactions(): Boolean {
             return transactions.isEmpty()
         }
     }
 
-    data class Done(val transactions: ImmutableList<TransactionOverview>) : TransactionHistorySyncState() {
+    data class Done(val transactions: ImmutableList<TransactionOverviewExt>) : TransactionHistorySyncState() {
         fun hasNoTransactions(): Boolean {
             return transactions.isEmpty()
         }

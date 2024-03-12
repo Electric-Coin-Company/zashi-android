@@ -50,14 +50,14 @@ internal fun WrapAccount(
             transactionState = transactionHistoryState,
             onItemClick = { tx ->
                 Twig.debug { "Transaction item clicked - querying memos..." }
-                val memos = synchronizer?.getMemos(tx)
+                val memos = synchronizer?.getMemos(tx.overview)
                 scope.launch {
                     memos?.toList()?.let {
                         val merged = it.joinToString().ifEmpty { "-" }
                         Twig.info { "Transaction memos: count: ${it.size}, contains: $merged" }
                         ClipboardManagerUtil.copyToClipboard(
                             activity.applicationContext,
-                            activity.getString(R.string.history_item_clipboard_tag),
+                            activity.getString(R.string.account_history_item_clipboard_tag),
                             merged
                         )
                     }
@@ -67,7 +67,7 @@ internal fun WrapAccount(
                 Twig.debug { "Transaction ID clicked: $txId" }
                 ClipboardManagerUtil.copyToClipboard(
                     activity.applicationContext,
-                    activity.getString(R.string.history_id_clipboard_tag),
+                    activity.getString(R.string.account_history_id_clipboard_tag),
                     txId
                 )
             },
