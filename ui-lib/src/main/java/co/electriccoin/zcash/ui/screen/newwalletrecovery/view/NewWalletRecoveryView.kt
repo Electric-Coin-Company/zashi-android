@@ -52,7 +52,6 @@ import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.TopScreenLogoTitle
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.VersionInfoFixture
-import co.electriccoin.zcash.ui.screen.about.view.AboutTag
 import kotlinx.collections.immutable.toPersistentList
 
 @Preview(name = "NewWalletRecovery", device = Devices.PIXEL_4)
@@ -129,7 +128,7 @@ private fun NewWalletRecoveryTopAppBar(
 @Composable
 private fun DebugMenu(onCopyToClipboard: () -> Unit) {
     Column(
-        modifier = Modifier.testTag(AboutTag.DEBUG_MENU_TAG)
+        modifier = Modifier.testTag(NewWalletRecoveryTag.DEBUG_MENU_TAG)
     ) {
         var expanded by rememberSaveable { mutableStateOf(false) }
         IconButton(onClick = { expanded = true }) {
@@ -153,6 +152,7 @@ private fun DebugMenu(onCopyToClipboard: () -> Unit) {
 }
 
 @Composable
+@Suppress("LongParameterList")
 private fun NewWalletRecoveryMainContent(
     wallet: PersistableWallet,
     onSeedCopy: () -> Unit,

@@ -9,6 +9,7 @@ import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.common.compose.LocalScreenSecurity
 import co.electriccoin.zcash.ui.common.compose.ScreenSecurity
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.fixture.VersionInfoFixture
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
@@ -46,7 +47,8 @@ class SeedRecoveryViewsSecuredScreenTest : UiTestPrerequisites() {
                             onBack = {},
                             onSeedCopy = {},
                             onBirthdayCopy = {},
-                            onDone = {}
+                            onDone = {},
+                            versionInfo = VersionInfoFixture.new()
                         )
                     }
                 }

@@ -1,8 +1,8 @@
-package co.electriccoin.zcash.ui.screen.newwalletrecovery.view
+package co.electriccoin.zcash.ui.screen.seedrecovery.view
 
 /**
  * These are only used for automated testing.
  */
-object NewWalletRecoveryTag {
+object SeedRecoveryTag {
     const val DEBUG_MENU_TAG = "debug_menu"
 }
