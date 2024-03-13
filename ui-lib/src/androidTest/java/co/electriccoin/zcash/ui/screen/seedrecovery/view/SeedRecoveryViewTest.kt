@@ -11,6 +11,7 @@ import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.test.CommonTag.WALLET_BIRTHDAY
 import co.electriccoin.zcash.ui.design.component.CommonTag
+import co.electriccoin.zcash.ui.fixture.VersionInfoFixture
 import co.electriccoin.zcash.ui.test.getStringResource
 import org.junit.Rule
 import kotlin.test.Test
@@ -21,7 +22,10 @@ class SeedRecoveryViewTest : UiTestPrerequisites() {
     val composeTestRule = createComposeRule()
 
     private fun newTestSetup(): SeedRecoveryTestSetup {
-        return SeedRecoveryTestSetup(composeTestRule).apply {
+        return SeedRecoveryTestSetup(
+            composeTestRule,
+            VersionInfoFixture.new()
+        ).apply {
             setDefaultContent()
         }
     }
@@ -31,7 +35,6 @@ class SeedRecoveryViewTest : UiTestPrerequisites() {
     fun default_ui_state_test() {
         val testSetup = newTestSetup()
 
-        assertEquals(0, testSetup.getOnSeedCopyCount())
         assertEquals(0, testSetup.getOnBirthdayCopyCount())
         assertEquals(0, testSetup.getOnCompleteCount())
         assertEquals(0, testSetup.getOnBackCount())
@@ -40,10 +43,6 @@ class SeedRecoveryViewTest : UiTestPrerequisites() {
             .also {
                 it.assertExists()
             }
-
-        composeTestRule.onNodeWithText(getStringResource(R.string.seed_recovery_copy)).also {
-            it.assertExists()
-        }
 
         composeTestRule.onNodeWithContentDescription(
             label = getStringResource(R.string.zcash_logo_content_description)
@@ -75,7 +74,6 @@ class SeedRecoveryViewTest : UiTestPrerequisites() {
                 it.assertExists()
             }
 
-        assertEquals(0, testSetup.getOnSeedCopyCount())
         assertEquals(0, testSetup.getOnBirthdayCopyCount())
         assertEquals(0, testSetup.getOnCompleteCount())
         assertEquals(0, testSetup.getOnBackCount())
@@ -98,35 +96,6 @@ class SeedRecoveryViewTest : UiTestPrerequisites() {
 
     @Test
     @MediumTest
-    fun copy_seed_to_clipboard_from_app_bar_test() {
-        val testSetup = newTestSetup()
-
-        assertEquals(0, testSetup.getOnSeedCopyCount())
-
-        composeTestRule.onNodeWithText(getStringResource(R.string.seed_recovery_copy)).also { menuButton ->
-            menuButton.performClick()
-        }
-
-        assertEquals(1, testSetup.getOnSeedCopyCount())
-    }
-
-    @Test
-    @MediumTest
-    fun copy_seed_to_clipboard_content_test() {
-        val testSetup = newTestSetup()
-
-        assertEquals(0, testSetup.getOnSeedCopyCount())
-
-        composeTestRule.onNodeWithTag(CommonTag.CHIP_LAYOUT).also {
-            it.performScrollTo()
-            it.performClick()
-        }
-
-        assertEquals(1, testSetup.getOnSeedCopyCount())
-    }
-
-    @Test
-    @MediumTest
     fun copy_birthday_to_clipboard_content_test() {
         val testSetup = newTestSetup()
 
@@ -145,7 +114,6 @@ class SeedRecoveryViewTest : UiTestPrerequisites() {
     fun click_finish_test() {
         val testSetup = newTestSetup()
 
-        assertEquals(0, testSetup.getOnSeedCopyCount())
         assertEquals(0, testSetup.getOnBirthdayCopyCount())
         assertEquals(0, testSetup.getOnCompleteCount())
 
@@ -157,7 +125,6 @@ class SeedRecoveryViewTest : UiTestPrerequisites() {
             it.performClick()
         }
 
-        assertEquals(0, testSetup.getOnSeedCopyCount())
         assertEquals(0, testSetup.getOnBirthdayCopyCount())
         assertEquals(1, testSetup.getOnCompleteCount())
     }

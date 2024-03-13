@@ -7,6 +7,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.spackle.ClipboardManagerUtil
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.common.viewmodel.SecretState
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
@@ -26,6 +27,8 @@ private fun WrapSeedRecovery(
     goBack: () -> Unit,
     onDone: () -> Unit
 ) {
+    val versionInfo = VersionInfo.new(activity.applicationContext)
+
     val walletViewModel by activity.viewModels<WalletViewModel>()
 
     val persistableWallet =
@@ -62,7 +65,8 @@ private fun WrapSeedRecovery(
                     persistableWallet.birthday?.value.toString()
                 )
             },
-            onDone = onDone
+            onDone = onDone,
+            versionInfo = versionInfo,
         )
     }
 }
