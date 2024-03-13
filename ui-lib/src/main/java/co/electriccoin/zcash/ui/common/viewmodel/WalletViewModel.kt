@@ -35,6 +35,7 @@ import co.electriccoin.zcash.ui.preference.EncryptedPreferenceSingleton
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
 import co.electriccoin.zcash.ui.preference.StandardPreferenceSingleton
 import co.electriccoin.zcash.ui.screen.account.state.TransactionHistorySyncState
+import co.electriccoin.zcash.ui.screen.account.state.TransactionOverviewExt
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -48,6 +49,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
@@ -183,13 +185,22 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
     val transactionHistoryState =
         synchronizer
             .filterNotNull()
-            .flatMapLatest {
-                it.transactions
-                    .combine(it.status) { transactions: List<TransactionOverview>, status: Synchronizer.Status ->
+            .flatMapLatest { synchronizer ->
+                synchronizer.transactions
+                    .combine(synchronizer.status) {
+                            transactions: List<TransactionOverview>, status: Synchronizer.Status ->
+                        val enhancedTransactions =
+                            transactions.map {
+                                if (it.isSentTransaction) {
+                                    TransactionOverviewExt(it, synchronizer.getRecipients(it).firstOrNull())
+                                } else {
+                                    TransactionOverviewExt(it, null)
+                                }
+                            }
                         if (status.isSyncing()) {
-                            TransactionHistorySyncState.Syncing(transactions.toPersistentList())
+                            TransactionHistorySyncState.Syncing(enhancedTransactions.toPersistentList())
                         } else {
-                            TransactionHistorySyncState.Done(transactions.toPersistentList())
+                            TransactionHistorySyncState.Done(enhancedTransactions.toPersistentList())
                         }
                     }
             }

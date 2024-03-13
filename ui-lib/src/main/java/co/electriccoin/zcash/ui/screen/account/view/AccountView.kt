@@ -17,7 +17,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.fixture.TransactionOverviewFixture
-import cash.z.ecc.android.sdk.model.TransactionOverview
 import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.BalanceWidget
@@ -30,6 +29,7 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 import co.electriccoin.zcash.ui.screen.account.AccountTag
 import co.electriccoin.zcash.ui.screen.account.state.TransactionHistorySyncState
+import co.electriccoin.zcash.ui.screen.account.state.TransactionOverviewExt
 import kotlinx.collections.immutable.persistentListOf
 
 @Preview("Account No History")
@@ -64,9 +64,18 @@ private fun HistoryListComposablePreview() {
                     TransactionHistorySyncState.Syncing(
                         @Suppress("MagicNumber")
                         persistentListOf(
-                            TransactionOverviewFixture.new(netValue = Zatoshi(100000000)),
-                            TransactionOverviewFixture.new(netValue = Zatoshi(200000000)),
-                            TransactionOverviewFixture.new(netValue = Zatoshi(300000000)),
+                            TransactionOverviewExt(
+                                TransactionOverviewFixture.new(netValue = Zatoshi(100000000)),
+                                null
+                            ),
+                            TransactionOverviewExt(
+                                TransactionOverviewFixture.new(netValue = Zatoshi(200000000)),
+                                null
+                            ),
+                            TransactionOverviewExt(
+                                TransactionOverviewFixture.new(netValue = Zatoshi(300000000)),
+                                null
+                            ),
                         )
                     ),
                 onItemClick = {},
@@ -82,7 +91,7 @@ fun Account(
     goBalances: () -> Unit,
     goSettings: () -> Unit,
     isKeepScreenOnWhileSyncing: Boolean?,
-    onItemClick: (TransactionOverview) -> Unit,
+    onItemClick: (TransactionOverviewExt) -> Unit,
     onTransactionIdClick: (String) -> Unit,
     transactionState: TransactionHistorySyncState,
     walletSnapshot: WalletSnapshot,
@@ -131,7 +140,7 @@ private fun AccountMainContent(
     walletSnapshot: WalletSnapshot,
     isKeepScreenOnWhileSyncing: Boolean?,
     goBalances: () -> Unit,
-    onItemClick: (TransactionOverview) -> Unit,
+    onItemClick: (TransactionOverviewExt) -> Unit,
     onTransactionIdClick: (String) -> Unit,
     transactionState: TransactionHistorySyncState,
     modifier: Modifier = Modifier

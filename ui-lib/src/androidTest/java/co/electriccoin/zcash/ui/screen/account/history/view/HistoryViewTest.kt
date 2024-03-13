@@ -110,7 +110,7 @@ class HistoryViewTest {
 
         assertEquals(0, testSetup.getOnItemClickCount())
 
-        composeTestRule.onAllNodesWithTag(HistoryTag.TRANSACTION_ITEM, useUnmergedTree = true).also {
+        composeTestRule.onAllNodesWithTag(HistoryTag.TRANSACTION_ITEM_TITLE, useUnmergedTree = true).also {
             it.assertCountEquals(TransactionHistorySyncStateFixture.TRANSACTIONS.size)
 
             TransactionHistorySyncStateFixture.TRANSACTIONS.forEachIndexed { index, _ ->

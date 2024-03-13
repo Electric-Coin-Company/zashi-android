@@ -7,8 +7,10 @@ import cash.z.ecc.android.sdk.block.processor.CompactBlockProcessor
 import cash.z.ecc.android.sdk.model.Account
 import cash.z.ecc.android.sdk.model.BlockHeight
 import cash.z.ecc.android.sdk.model.PercentDecimal
+import cash.z.ecc.android.sdk.model.Proposal
 import cash.z.ecc.android.sdk.model.TransactionOverview
 import cash.z.ecc.android.sdk.model.TransactionRecipient
+import cash.z.ecc.android.sdk.model.TransactionSubmitResult
 import cash.z.ecc.android.sdk.model.UnifiedSpendingKey
 import cash.z.ecc.android.sdk.model.WalletBalance
 import cash.z.ecc.android.sdk.model.Zatoshi
@@ -80,6 +82,13 @@ internal class MockSynchronizer : CloseableSynchronizer {
         error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
 
+    override suspend fun createProposedTransactions(
+        proposal: Proposal,
+        usk: UnifiedSpendingKey
+    ): Flow<TransactionSubmitResult> {
+        error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} yet.")
+    }
+
     override fun getMemos(transactionOverview: TransactionOverview): Flow<String> {
         error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
@@ -120,6 +129,24 @@ internal class MockSynchronizer : CloseableSynchronizer {
         error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
 
+    override suspend fun proposeShielding(
+        account: Account,
+        shieldingThreshold: Zatoshi,
+        memo: String,
+        transparentReceiver: String?
+    ): Proposal? {
+        error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} yet.")
+    }
+
+    override suspend fun proposeTransfer(
+        account: Account,
+        recipient: String,
+        amount: Zatoshi,
+        memo: String
+    ): Proposal {
+        error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} yet.")
+    }
+
     override suspend fun quickRewind() {
         error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
@@ -135,6 +162,13 @@ internal class MockSynchronizer : CloseableSynchronizer {
         error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
 
+    @Deprecated(
+        "Upcoming SDK 2.1 will create multiple transactions at once for some recipients.",
+        replaceWith =
+            ReplaceWith(
+                "createProposedTransactions(proposeTransfer(usk.account, toAddress, amount, memo), usk)"
+            )
+    )
     override suspend fun sendToAddress(
         usk: UnifiedSpendingKey,
         amount: Zatoshi,
@@ -144,6 +178,13 @@ internal class MockSynchronizer : CloseableSynchronizer {
         return 1
     }
 
+    @Deprecated(
+        "Upcoming SDK 2.1 will create multiple transactions at once for some recipients.",
+        replaceWith =
+            ReplaceWith(
+                "proposeShielding(usk.account, shieldingThreshold, memo)?.let { createProposedTransactions(it, usk) }"
+            )
+    )
     override suspend fun shieldFunds(
         usk: UnifiedSpendingKey,
         memo: String
