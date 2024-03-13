@@ -22,6 +22,9 @@ directly impact users rather than highlighting other key architectural updates.*
 ### Fixed
 - Button sizing has been updated to align with the design guidelines and preserve stretching if necessary
 
+### Removed
+- The seed copy feature from the New wallet recovery and Seed recovery screens has been removed for security reasons
+
 ## [0.2.0 (560)] - 2024-02-27
 
 ### Added
