@@ -6,6 +6,7 @@ import cash.z.ecc.android.sdk.model.PersistableWallet
 import co.electriccoin.zcash.spackle.ClipboardManagerUtil
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.screen.newwalletrecovery.view.NewWalletRecovery
 
 @Composable
@@ -22,6 +23,8 @@ private fun WrapNewWalletRecovery(
     persistableWallet: PersistableWallet,
     onBackupComplete: () -> Unit
 ) {
+    val versionInfo = VersionInfo.new(activity.applicationContext)
+
     NewWalletRecovery(
         persistableWallet,
         onSeedCopy = {
@@ -38,6 +41,7 @@ private fun WrapNewWalletRecovery(
                 persistableWallet.birthday?.value.toString()
             )
         },
-        onComplete = onBackupComplete
+        onComplete = onBackupComplete,
+        versionInfo = versionInfo
     )
 }

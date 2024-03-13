@@ -38,8 +38,9 @@ private fun ComposablePreview() {
 @Composable
 fun ChipGrid(
     wordList: ImmutableList<String>,
+    onGridClick: () -> Unit,
     modifier: Modifier = Modifier,
-    onGridClick: () -> Unit
+    allowCopy: Boolean = false,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
 
@@ -51,13 +52,20 @@ fun ChipGrid(
             modifier =
                 Modifier
                     .wrapContentWidth()
-                    .clickable(
-                        interactionSource = interactionSource,
-                        // Disable ripple
-                        indication = null,
-                        onClick = onGridClick
-                    )
                     .testTag(CommonTag.CHIP_LAYOUT)
+                    .then(
+                        if (allowCopy) {
+                            Modifier
+                                .clickable(
+                                    interactionSource = interactionSource,
+                                    // Disable ripple
+                                    indication = null,
+                                    onClick = onGridClick
+                                )
+                        } else {
+                            Modifier
+                        }
+                    )
         ) {
             wordList.chunked(CHIP_GRID_COLUMN_SIZE).forEachIndexed { chunkIndex, chunk ->
                 // TODO [#1043]: Correctly align numbers and words on Recovery screen

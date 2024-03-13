@@ -15,9 +15,20 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -30,16 +41,18 @@ import cash.z.ecc.sdk.fixture.PersistableWalletFixture
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.SecureScreen
 import co.electriccoin.zcash.ui.common.compose.shouldSecureScreen
+import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.common.test.CommonTag.WALLET_BIRTHDAY
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.BodySmall
 import co.electriccoin.zcash.ui.design.component.ChipGrid
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
-import co.electriccoin.zcash.ui.design.component.Reference
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.TopScreenLogoTitle
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.fixture.VersionInfoFixture
+import co.electriccoin.zcash.ui.screen.about.view.AboutTag
 import kotlinx.collections.immutable.toPersistentList
 
 @Preview(name = "NewWalletRecovery", device = Devices.PIXEL_4)
@@ -52,6 +65,7 @@ private fun ComposablePreview() {
                 onSeedCopy = {},
                 onBirthdayCopy = {},
                 onComplete = {},
+                versionInfo = VersionInfoFixture.new(),
             )
         }
     }
@@ -69,11 +83,13 @@ fun NewWalletRecovery(
     onSeedCopy: () -> Unit,
     onBirthdayCopy: () -> Unit,
     onComplete: () -> Unit,
+    versionInfo: VersionInfo,
 ) {
     Scaffold(
         topBar = {
             NewWalletRecoveryTopAppBar(
                 onSeedCopy = onSeedCopy,
+                versionInfo = versionInfo,
             )
         }
     ) { paddingValues ->
@@ -82,6 +98,7 @@ fun NewWalletRecovery(
             onComplete = onComplete,
             onSeedCopy = onSeedCopy,
             onBirthdayCopy = onBirthdayCopy,
+            versionInfo = versionInfo,
             // Horizontal paddings will be part of each UI element to minimize a possible truncation on very
             // small screens
             modifier =
@@ -95,30 +112,44 @@ fun NewWalletRecovery(
 
 @Composable
 private fun NewWalletRecoveryTopAppBar(
+    versionInfo: VersionInfo,
     modifier: Modifier = Modifier,
     onSeedCopy: () -> Unit
 ) {
     SmallTopAppBar(
         modifier = modifier,
         regularActions = {
-            NewWalletRecoveryCopyToBufferMenuItem(
-                onCopyToClipboard = onSeedCopy
-            )
+            if (versionInfo.isDebuggable && !versionInfo.isRunningUnderTestService) {
+                DebugMenu(onCopyToClipboard = onSeedCopy)
+            }
         }
     )
 }
 
 @Composable
-private fun NewWalletRecoveryCopyToBufferMenuItem(
-    modifier: Modifier = Modifier,
-    onCopyToClipboard: () -> Unit,
-) {
-    Reference(
-        text = stringResource(id = R.string.new_wallet_recovery_copy),
-        onClick = onCopyToClipboard,
-        textAlign = TextAlign.Center,
-        modifier = modifier.padding(all = ZcashTheme.dimens.spacingDefault)
-    )
+private fun DebugMenu(onCopyToClipboard: () -> Unit) {
+    Column(
+        modifier = Modifier.testTag(AboutTag.DEBUG_MENU_TAG)
+    ) {
+        var expanded by rememberSaveable { mutableStateOf(false) }
+        IconButton(onClick = { expanded = true }) {
+            Icon(Icons.Default.MoreVert, contentDescription = null)
+        }
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            DropdownMenuItem(
+                text = {
+                    Text(stringResource(id = R.string.new_wallet_recovery_copy))
+                },
+                onClick = {
+                    onCopyToClipboard()
+                    expanded = false
+                }
+            )
+        }
+    }
 }
 
 @Composable
@@ -127,6 +158,7 @@ private fun NewWalletRecoveryMainContent(
     onSeedCopy: () -> Unit,
     onBirthdayCopy: () -> Unit,
     onComplete: () -> Unit,
+    versionInfo: VersionInfo,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -156,6 +188,7 @@ private fun NewWalletRecoveryMainContent(
             persistableWallet = wallet,
             onSeedCopy = onSeedCopy,
             onBirthdayCopy = onBirthdayCopy,
+            versionInfo = versionInfo
         )
 
         Spacer(
@@ -187,6 +220,7 @@ private fun NewWalletRecoverySeedPhrase(
     persistableWallet: PersistableWallet,
     onSeedCopy: () -> Unit,
     onBirthdayCopy: () -> Unit,
+    versionInfo: VersionInfo,
 ) {
     if (shouldSecureScreen) {
         SecureScreen()
@@ -195,7 +229,8 @@ private fun NewWalletRecoverySeedPhrase(
     Column {
         ChipGrid(
             wordList = persistableWallet.seedPhrase.split.toPersistentList(),
-            onGridClick = onSeedCopy
+            onGridClick = onSeedCopy,
+            allowCopy = versionInfo.isDebuggable && !versionInfo.isRunningUnderTestService,
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
