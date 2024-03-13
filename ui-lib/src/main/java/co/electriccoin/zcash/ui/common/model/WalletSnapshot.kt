@@ -2,7 +2,6 @@ package co.electriccoin.zcash.ui.common.model
 
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.block.processor.CompactBlockProcessor
-import cash.z.ecc.android.sdk.ext.ZcashSdk
 import cash.z.ecc.android.sdk.model.PercentDecimal
 import cash.z.ecc.android.sdk.model.WalletBalance
 import cash.z.ecc.android.sdk.model.Zatoshi
@@ -19,16 +18,17 @@ data class WalletSnapshot(
     val progress: PercentDecimal,
     val synchronizerError: SynchronizerError?
 ) {
+    // Note that both [hasSaplingFunds] and [hasTransparentFunds] checks are not entirely correct - they do not
+    // calculate the resulting fee using the new Proposal API. It's fine for now, but it's subject to improvement
+    // later once we figure out how to handle it in such cases.
+
     // Note: the wallet is effectively empty if it cannot cover the miner's fee
-    val hasSaplingFunds =
-        saplingBalance.available.value >
-            (ZcashSdk.MINERS_FEE.value.toDouble() / Zatoshi.ZATOSHI_PER_ZEC) // 0.00001
-    val hasSaplingBalance = saplingBalance.total.value > 0
+    val hasSaplingFunds = saplingBalance.available.value > 0L
+
+    val hasSaplingBalance = saplingBalance.total.value > 0L
 
     // Note: the wallet's transparent balance is effectively empty if it cannot cover the miner's fee
-    val hasTransparentFunds =
-        transparentBalance.value >
-            (ZcashSdk.MINERS_FEE.value.toDouble() / Zatoshi.ZATOSHI_PER_ZEC) // 0.00001
+    val hasTransparentFunds = transparentBalance.value > 0L
 
     val isSendEnabled: Boolean get() = status == Synchronizer.Status.SYNCED && hasSaplingFunds
 }

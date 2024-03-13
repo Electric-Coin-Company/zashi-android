@@ -40,7 +40,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import cash.z.ecc.android.sdk.ext.ZcashSdk
 import cash.z.ecc.android.sdk.fixture.WalletAddressFixture
 import cash.z.ecc.android.sdk.model.Memo
 import cash.z.ecc.android.sdk.model.MonetarySeparators
@@ -436,7 +435,7 @@ private fun SendForm(
                 recipientAddressState.address.isNotEmpty() &&
                 amountState is AmountState.Valid &&
                 amountState.value.isNotBlank() &&
-                walletSnapshot.spendableBalance() >= (amountState.zatoshi + ZcashSdk.MINERS_FEE) &&
+                walletSnapshot.spendableBalance() >= amountState.zatoshi &&
                 // A valid memo is necessary only for non-transparent recipient
                 (recipientAddressState.type == AddressType.Transparent || memoState is MemoState.Correct)
 
@@ -601,7 +600,7 @@ fun SendFormAmountTextField(
                 }
             }
             is AmountState.Valid -> {
-                if (walletSnapshot.spendableBalance() < (amountSate.zatoshi + ZcashSdk.MINERS_FEE)) {
+                if (walletSnapshot.spendableBalance() < amountSate.zatoshi) {
                     stringResource(id = R.string.send_amount_insufficient_balance)
                 } else {
                     null
