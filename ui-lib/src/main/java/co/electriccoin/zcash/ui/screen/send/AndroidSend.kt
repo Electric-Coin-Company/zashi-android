@@ -19,8 +19,8 @@ import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.model.MonetarySeparators
 import cash.z.ecc.android.sdk.model.UnifiedSpendingKey
 import cash.z.ecc.android.sdk.model.ZecSend
+import cash.z.ecc.android.sdk.model.proposeSend
 import cash.z.ecc.android.sdk.model.toZecString
-import cash.z.ecc.sdk.extension.send
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.viewmodel.HomeViewModel
@@ -193,7 +193,25 @@ internal fun WrapSend(
             sendStage = sendStage,
             onSendStageChange = setSendStage,
             zecSend = zecSend,
-            onZecSendChange = setZecSend,
+            onCreateZecSend = { newZecSend ->
+                scope.launch {
+                    Twig.debug { "Getting send transaction proposal" }
+                    runCatching {
+                        synchronizer.proposeSend(spendingKey.account, newZecSend)
+                    }
+                        .onSuccess { proposal ->
+                            Twig.debug { "Transaction proposal successful: ${proposal.toPrettyString()}" }
+                            setSendStage(SendStage.Confirmation)
+                            setZecSend(newZecSend.copy(proposal = proposal))
+                        }
+                        .onFailure {
+                            Twig.error(it) { "Transaction proposal failed" }
+                            // TODO [#1161]: Remove Send-Success and rework Send-Failure
+                            // TODO [#1161]: https://github.com/Electric-Coin-Company/zashi-android/issues/1161
+                            setSendStage(SendStage.SendFailure(it.message ?: ""))
+                        }
+                }
+            },
             focusManager = focusManager,
             onBack = onBackAction,
             onSettings = goSettings,
@@ -210,16 +228,26 @@ internal fun WrapSend(
                     )
                 }
             },
-            onCreateAndSend = {
+            onCreateAndSend = { newZecSend ->
                 scope.launch {
                     Twig.debug { "Sending transaction" }
-                    runCatching { synchronizer.send(spendingKey, it) }
+                    // TODO [#1294]: Add Send.Multiple-Trx-Failed screen
+                    // TODO [#1294]: Note that the following processing is not entirely correct and will be reworked
+                    // TODO [#1294]: https://github.com/Electric-Coin-Company/zashi-android/issues/1294
+                    runCatching {
+                        // The not-null assertion operator is necessary here even if we check its nullability before
+                        // due to: "Smart cast to 'Proposal' is impossible, because 'zecSend.proposal' is a public API
+                        // property declared in different module
+                        // See more details on the Kotlin forum
+                        checkNotNull(newZecSend.proposal)
+                        synchronizer.createProposedTransactions(newZecSend.proposal!!, spendingKey)
+                    }
                         .onSuccess {
                             setSendStage(SendStage.SendSuccessful)
                             Twig.debug { "Transaction id:$it submitted successfully" }
                         }
                         .onFailure {
-                            Twig.debug { "Transaction submission failed with: $it." }
+                            Twig.error(it) { "Transaction submission failed" }
                             setSendStage(SendStage.SendFailure(it.message ?: ""))
                         }
                 }

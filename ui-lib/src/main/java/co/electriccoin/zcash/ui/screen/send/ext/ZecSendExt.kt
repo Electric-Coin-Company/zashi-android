@@ -2,6 +2,7 @@ package co.electriccoin.zcash.ui.screen.send.ext
 
 import androidx.compose.runtime.saveable.mapSaver
 import cash.z.ecc.android.sdk.model.Memo
+import cash.z.ecc.android.sdk.model.Proposal
 import cash.z.ecc.android.sdk.model.WalletAddress
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.ZecSend
@@ -10,6 +11,7 @@ import kotlinx.coroutines.runBlocking
 private const val KEY_ADDRESS = "address" // $NON-NLS
 private const val KEY_AMOUNT = "amount" // $NON-NLS
 private const val KEY_MEMO = "memo" // $NON-NLS
+private const val KEY_PROPOSAL = "proposal" // $NON-NLS
 
 // Using a custom saver instead of Parcelize, to avoid adding an Android-specific API to
 // the ZecSend class
@@ -27,7 +29,11 @@ internal val ZecSend.Companion.Saver
                         val address = runBlocking { WalletAddress.Unified.new(it[KEY_ADDRESS] as String) }
                         val amount = Zatoshi(it[KEY_AMOUNT] as Long)
                         val memo = Memo(it[KEY_MEMO] as String)
-                        ZecSend(address, amount, memo)
+                        val proposal =
+                            it[KEY_PROPOSAL]?.let { data ->
+                                Proposal.fromByteArray(data as ByteArray)
+                            }
+                        ZecSend(address, amount, memo, proposal)
                     }
                 }
             )
@@ -38,4 +44,7 @@ private fun ZecSend.toSaverMap() =
         put(KEY_ADDRESS, destination.address)
         put(KEY_AMOUNT, amount.value)
         put(KEY_MEMO, memo.value)
+        proposal?.let {
+            put(KEY_PROPOSAL, it.toByteArray())
+        }
     }

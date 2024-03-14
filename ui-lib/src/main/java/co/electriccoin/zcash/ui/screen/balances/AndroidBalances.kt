@@ -11,6 +11,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.model.UnifiedSpendingKey
+import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.viewmodel.CheckUpdateViewModel
@@ -59,9 +60,11 @@ internal fun WrapBalances(
     )
 }
 
+const val DEFAULT_SHIELDING_THRESHOLD = 100000L
+
 @Composable
 @VisibleForTesting
-@Suppress("LongParameterList")
+@Suppress("LongParameterList", "LongMethod")
 internal fun WrapBalances(
     goSettings: () -> Unit,
     checkUpdateViewModel: CheckUpdateViewModel,
@@ -95,6 +98,17 @@ internal fun WrapBalances(
 
     val (isShowingErrorDialog, setShowErrorDialog) = rememberSaveable { mutableStateOf(false) }
 
+    suspend fun showShieldingError(error: Throwable?) {
+        Twig.error { "Shielding proposal failed with: $error" }
+
+        // Adding the extra delay before notifying UI for a better UX
+        @Suppress("MagicNumber")
+        delay(1500)
+
+        setShieldState(ShieldState.Failed(error?.message ?: ""))
+        setShowErrorDialog(true)
+    }
+
     if (null == synchronizer || null == walletSnapshot || null == spendingKey) {
         // TODO [#1146]: Consider moving CircularScreenProgressIndicator from Android layer to View layer
         // TODO [#1146]: Improve this by allowing screen composition and updating it after the data is available
@@ -113,25 +127,41 @@ internal fun WrapBalances(
                     setShieldState(ShieldState.Running)
 
                     Twig.debug { "Shielding transparent funds" }
-                    // Using empty string for memo to clear the default memo prefix value defined in the SDK
+
                     runCatching {
-                        // TODO [#1285]: Adopt proposal API
-                        // TODO [#1285]: https://github.com/Electric-Coin-Company/zashi-android/issues/1285
-                        @Suppress("deprecation")
-                        synchronizer.shieldFunds(spendingKey, "")
+                        synchronizer.proposeShielding(
+                            account = spendingKey.account,
+                            shieldingThreshold = Zatoshi(DEFAULT_SHIELDING_THRESHOLD),
+                            // Using empty string for memo to clear the default memo prefix value defined in the SDK
+                            memo = "",
+                            // Using null will select whichever of the account's trans. receivers has funds to shield
+                            transparentReceiver = null
+                        )
+                    }.onSuccess { newProposal ->
+                        Twig.debug { "Shielding proposal result: ${newProposal?.toPrettyString()}" }
+
+                        if (newProposal == null) {
+                            showShieldingError(null)
+                        } else {
+                            // TODO [#1294]: Add Send.Multiple-Trx-Failed screen
+                            // TODO [#1294]: Note that the following processing is not entirely correct and will be
+                            //  reworked
+                            // TODO [#1294]: https://github.com/Electric-Coin-Company/zashi-android/issues/1294
+                            runCatching {
+                                synchronizer.createProposedTransactions(
+                                    proposal = newProposal,
+                                    usk = spendingKey
+                                )
+                            }.onSuccess {
+                                Twig.debug { "Shielding transaction event" }
+                                setShieldState(ShieldState.None)
+                            }.onFailure {
+                                showShieldingError(null)
+                            }
+                        }
+                    }.onFailure {
+                        showShieldingError(it)
                     }
-                        .onSuccess {
-                            Twig.info { "Shielding transaction id:$it submitted successfully" }
-                            setShieldState(ShieldState.None)
-                        }
-                        .onFailure {
-                            Twig.error(it) { "Shielding transaction submission failed with: ${it.message}" }
-                            // Adding extra delay before notifying UI for a better UX
-                            @Suppress("MagicNumber")
-                            delay(1500)
-                            setShieldState(ShieldState.Failed(it.message ?: ""))
-                            setShowErrorDialog(true)
-                        }
                 }
             },
             shieldState = shieldState,

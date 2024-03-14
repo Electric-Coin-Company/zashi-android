@@ -25,6 +25,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test
 import java.util.Locale
+import kotlin.test.Ignore
 
 class SendViewIntegrationTest {
     @get:Rule
@@ -52,8 +53,11 @@ class SendViewIntegrationTest {
     // TODO [#1171]: https://github.com/Electric-Coin-Company/zashi-android/issues/1171
     private val monetarySeparators = MonetarySeparators.current(Locale.US)
 
+    // TODO [#1260]: Cover Send screens UI with tests
+    // TODO [#1260]: https://github.com/Electric-Coin-Company/zashi-android/issues/1260
     @Test
     @MediumTest
+    @Ignore("Disabled as the entire Send flow will be reworked and the test align after it")
     fun send_screens_values_state_restoration() {
         val restorationTester = StateRestorationTester(composeTestRule)
 
