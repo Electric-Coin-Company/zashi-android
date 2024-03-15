@@ -40,7 +40,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import cash.z.ecc.android.sdk.ext.ZcashSdk
 import cash.z.ecc.android.sdk.fixture.WalletAddressFixture
 import cash.z.ecc.android.sdk.model.Memo
 import cash.z.ecc.android.sdk.model.MonetarySeparators
@@ -88,7 +87,7 @@ private fun PreviewSendForm() {
                 sendStage = SendStage.Form,
                 onSendStageChange = {},
                 zecSend = null,
-                onZecSendChange = {},
+                onCreateZecSend = {},
                 focusManager = LocalFocusManager.current,
                 onBack = {},
                 onSettings = {},
@@ -117,7 +116,8 @@ private fun PreviewSendSuccessful() {
                     ZecSend(
                         destination = runBlocking { WalletAddressFixture.sapling() },
                         amount = ZatoshiFixture.new(),
-                        memo = MemoFixture.new()
+                        memo = MemoFixture.new(),
+                        proposal = null,
                     ),
                 onDone = {}
             )
@@ -135,7 +135,8 @@ private fun PreviewSendFailure() {
                     ZecSend(
                         destination = runBlocking { WalletAddressFixture.sapling() },
                         amount = ZatoshiFixture.new(),
-                        memo = MemoFixture.new()
+                        memo = MemoFixture.new(),
+                        proposal = null,
                     ),
                 onDone = {},
                 reason = "Insufficient balance"
@@ -154,7 +155,8 @@ private fun PreviewSendConfirmation() {
                     ZecSend(
                         destination = runBlocking { WalletAddressFixture.sapling() },
                         amount = ZatoshiFixture.new(),
-                        memo = MemoFixture.new()
+                        memo = MemoFixture.new(),
+                        proposal = null,
                     ),
                 onConfirmation = {}
             )
@@ -169,7 +171,7 @@ fun Send(
     sendStage: SendStage,
     onSendStageChange: (SendStage) -> Unit,
     zecSend: ZecSend?,
-    onZecSendChange: (ZecSend) -> Unit,
+    onCreateZecSend: (ZecSend) -> Unit,
     focusManager: FocusManager,
     onBack: () -> Unit,
     onSettings: () -> Unit,
@@ -198,7 +200,7 @@ fun Send(
             sendStage = sendStage,
             onSendStageChange = onSendStageChange,
             zecSend = zecSend,
-            onZecSendChange = onZecSendChange,
+            onCreateZecSend = onCreateZecSend,
             recipientAddressState = recipientAddressState,
             onRecipientAddressChange = onRecipientAddressChange,
             amountState = amountState,
@@ -259,7 +261,7 @@ private fun SendMainContent(
     onBack: () -> Unit,
     goBalances: () -> Unit,
     zecSend: ZecSend?,
-    onZecSendChange: (ZecSend) -> Unit,
+    onCreateZecSend: (ZecSend) -> Unit,
     sendStage: SendStage,
     onSendStageChange: (SendStage) -> Unit,
     onSendSubmit: (ZecSend) -> Unit,
@@ -283,10 +285,7 @@ private fun SendMainContent(
                 setAmountState = setAmountState,
                 memoState = memoState,
                 setMemoState = setMemoState,
-                onCreateZecSend = {
-                    onSendStageChange(SendStage.Confirmation)
-                    onZecSendChange(it)
-                },
+                onCreateZecSend = onCreateZecSend,
                 focusManager = focusManager,
                 onQrScannerOpen = onQrScannerOpen,
                 goBalances = goBalances,
@@ -334,7 +333,6 @@ private fun SendMainContent(
 // TODO [#1257]: Send.Form TextFields not persisted on a configuration change when the underlying ViewPager is on the
 //  Balances page
 // TODO [#1257]: https://github.com/Electric-Coin-Company/zashi-android/issues/1257
-@OptIn(ExperimentalFoundationApi::class)
 @Suppress("LongMethod", "LongParameterList")
 @Composable
 private fun SendForm(
@@ -436,7 +434,7 @@ private fun SendForm(
                 recipientAddressState.address.isNotEmpty() &&
                 amountState is AmountState.Valid &&
                 amountState.value.isNotBlank() &&
-                walletSnapshot.spendableBalance() >= (amountState.zatoshi + ZcashSdk.MINERS_FEE) &&
+                walletSnapshot.spendableBalance() >= amountState.zatoshi &&
                 // A valid memo is necessary only for non-transparent recipient
                 (recipientAddressState.type == AddressType.Transparent || memoState is MemoState.Correct)
 
@@ -601,7 +599,7 @@ fun SendFormAmountTextField(
                 }
             }
             is AmountState.Valid -> {
-                if (walletSnapshot.spendableBalance() < (amountSate.zatoshi + ZcashSdk.MINERS_FEE)) {
+                if (walletSnapshot.spendableBalance() < amountSate.zatoshi) {
                     stringResource(id = R.string.send_amount_insufficient_balance)
                 } else {
                     null
@@ -775,8 +773,13 @@ private fun SendConfirmation(
     ) {
         Body(
             stringResource(
-                R.string.send_confirmation_amount_and_address_format,
+                R.string.send_confirmation_amount_format,
                 zecSend.amount.toZecString(),
+            )
+        )
+        Body(
+            stringResource(
+                R.string.send_confirmation_address_format,
                 zecSend.destination.abbreviated()
             )
         )
@@ -785,6 +788,19 @@ private fun SendConfirmation(
                 stringResource(
                     R.string.send_confirmation_memo_format,
                     zecSend.memo.value
+                )
+            )
+        }
+        if (zecSend.proposal != null) {
+            // The not-null assertion operator is necessary here even if we check its nullability before
+            // due to: "Smart cast to 'Proposal' is impossible, because 'zecSend.proposal' is a public API
+            // property declared in different module
+            // See more details on the Kotlin forum
+            checkNotNull(zecSend.proposal)
+            Body(
+                stringResource(
+                    R.string.send_confirmation_fee_format,
+                    zecSend.proposal!!.totalFeeRequired().toZecString()
                 )
             )
         }

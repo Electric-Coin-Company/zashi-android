@@ -19,8 +19,10 @@
     <string name="send_create">Review</string>
     <string name="send_fee">(Typical Fee &lt; <xliff:g id="fee_amount" example="0.001">%1$s</xliff:g>)</string>
 
-    <string name="send_confirmation_amount_and_address_format" formatted="true">Send <xliff:g id="amount" example="12.345">%1$s</xliff:g> ZEC to <xliff:g id="address" example="zs1g7cqw … mvyzgm">%2$s</xliff:g>?</string>
+    <string name="send_confirmation_amount_format" formatted="true">Send: <xliff:g id="amount" example="12.345">%1$s</xliff:g> ZEC</string>
+    <string name="send_confirmation_address_format" formatted="true">To: <xliff:g id="address" example="zs1g7cqw … mvyzgm">%1$s</xliff:g>?</string>
     <string name="send_confirmation_memo_format" formatted="true">Memo: <xliff:g id="memo" example="for Veronika">%1$s</xliff:g></string>
+    <string name="send_confirmation_fee_format" formatted="true">Fee: <xliff:g id="fee" example="0.0001">%1$s</xliff:g></string>
     <string name="send_confirmation_abbreviated_address_format" formatted="true"><xliff:g id="first_five" example="zs1g7">%1$s</xliff:g>…<xliff:g id="last_five" example="mvyzg">%2$s</xliff:g></string>
     <string name="send_confirmation_button">Press to send ZEC</string>
 
