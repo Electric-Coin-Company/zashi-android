@@ -146,7 +146,8 @@ private fun ExportPrivateDataContent(
         PrimaryButton(
             onClick = onConfirm,
             text = stringResource(R.string.export_data_confirm).uppercase(),
-            enabled = checkedState.value
+            enabled = checkedState.value,
+            modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(Modifier.height(ZcashTheme.dimens.spacingHuge))

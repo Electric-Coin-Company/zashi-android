@@ -222,7 +222,7 @@ fun Tiny(
         overflow = overflow,
         textAlign = textAlign,
         modifier = modifier,
-        style = MaterialTheme.typography.labelSmall,
+        style = MaterialTheme.typography.bodySmall,
     )
 }
 

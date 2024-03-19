@@ -234,14 +234,16 @@ private fun SettingsMainContent(
     ) {
         PrimaryButton(
             onClick = onFeedback,
-            text = stringResource(R.string.settings_send_us_feedback)
+            text = stringResource(R.string.settings_send_us_feedback),
+            modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(dimens.spacingDefault))
 
         PrimaryButton(
             onClick = onAdvancedSettings,
-            text = stringResource(R.string.settings_advanced_settings)
+            text = stringResource(R.string.settings_advanced_settings),
+            modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(
@@ -255,7 +257,8 @@ private fun SettingsMainContent(
 
         PrimaryButton(
             onClick = onAbout,
-            text = stringResource(R.string.settings_about)
+            text = stringResource(R.string.settings_about),
+            modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(dimens.spacingHuge))

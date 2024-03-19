@@ -138,7 +138,8 @@ private fun SecurityWarningContent(
         PrimaryButton(
             onClick = onConfirm,
             text = stringResource(R.string.security_warning_confirm).uppercase(),
-            enabled = checkedState.value
+            enabled = checkedState.value,
+            modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingHuge))

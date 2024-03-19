@@ -45,6 +45,7 @@ internal fun WrapSend(
     goToQrScanner: () -> Unit,
     goBack: () -> Unit,
     goBalances: () -> Unit,
+    goSendConfirmation: (ZecSend) -> Unit,
     goSettings: () -> Unit,
 ) {
     val hasCameraFeature = activity.packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)
@@ -80,12 +81,13 @@ internal fun WrapSend(
         goBack,
         goBalances,
         goSettings,
+        goSendConfirmation,
         hasCameraFeature,
         monetarySeparators
     )
 }
 
-@Suppress("LongParameterList", "LongMethod", "CyclomaticComplexMethod")
+@Suppress("LongParameterList", "LongMethod")
 @VisibleForTesting
 @Composable
 internal fun WrapSend(
@@ -98,6 +100,7 @@ internal fun WrapSend(
     goBack: () -> Unit,
     goBalances: () -> Unit,
     goSettings: () -> Unit,
+    goSendConfirmation: (ZecSend) -> Unit,
     hasCameraFeature: Boolean,
     monetarySeparators: MonetarySeparators
 ) {
@@ -105,11 +108,6 @@ internal fun WrapSend(
 
     val context = LocalContext.current
 
-    // For now, we're avoiding sub-navigation to keep the navigation logic simple.  But this might
-    // change once deep-linking support  is added.  It depends on whether deep linking should do one of:
-    // 1. Use a different UI flow entirely
-    // 2. Show a pre-filled Send form
-    // 3. Go directly to the Confirmation screen
     val (sendStage, setSendStage) =
         rememberSaveable(stateSaver = SendStage.Saver) { mutableStateOf(SendStage.Form) }
 
@@ -140,41 +138,18 @@ internal fun WrapSend(
                 )
             )
         }
-    if (sendArgumentsWrapper?.amount != null) {
-        setAmountState(
-            AmountState.new(
-                context = context,
-                value = sendArgumentsWrapper.amount,
-                monetarySeparators = monetarySeparators
-            )
-        )
-    }
 
     // Memo computation:
     val (memoState, setMemoState) =
         rememberSaveable(stateSaver = MemoState.Saver) {
             mutableStateOf(MemoState.new(zecSend?.memo?.value ?: ""))
         }
-    if (sendArgumentsWrapper?.memo != null) {
-        setMemoState(MemoState.new(sendArgumentsWrapper.memo))
-    }
 
     val onBackAction = {
         when (sendStage) {
             SendStage.Form -> goBack()
-            SendStage.Confirmation -> setSendStage(SendStage.Form)
-            SendStage.Sending -> { /* no action - wait until the sending is done */ }
+            SendStage.Proposing -> { /* no action - wait until the sending is done */ }
             is SendStage.SendFailure -> setSendStage(SendStage.Form)
-            SendStage.SendSuccessful -> {
-                // Reset Send.Form values
-                setZecSend(null)
-                setRecipientAddressState(RecipientAddressState.new(""))
-                setAmountState(AmountState.new(context, "", monetarySeparators))
-                setMemoState(MemoState.new(""))
-
-                setSendStage(SendStage.Form)
-                goBack()
-            }
         }
     }
 
@@ -191,25 +166,23 @@ internal fun WrapSend(
         Send(
             walletSnapshot = walletSnapshot,
             sendStage = sendStage,
-            onSendStageChange = setSendStage,
             zecSend = zecSend,
             onCreateZecSend = { newZecSend ->
                 scope.launch {
                     Twig.debug { "Getting send transaction proposal" }
                     runCatching {
                         synchronizer.proposeSend(spendingKey.account, newZecSend)
+                    }.onSuccess { proposal ->
+                        Twig.debug { "Transaction proposal successful: ${proposal.toPrettyString()}" }
+                        val enrichedZecSend = newZecSend.copy(proposal = proposal)
+                        setZecSend(enrichedZecSend)
+                        goSendConfirmation(enrichedZecSend)
+                    }.onFailure {
+                        Twig.error(it) { "Transaction proposal failed" }
+                        // TODO [#1161]: Remove Send-Success and rework Send-Failure
+                        // TODO [#1161]: https://github.com/Electric-Coin-Company/zashi-android/issues/1161
+                        setSendStage(SendStage.SendFailure(it.message ?: ""))
                     }
-                        .onSuccess { proposal ->
-                            Twig.debug { "Transaction proposal successful: ${proposal.toPrettyString()}" }
-                            setSendStage(SendStage.Confirmation)
-                            setZecSend(newZecSend.copy(proposal = proposal))
-                        }
-                        .onFailure {
-                            Twig.error(it) { "Transaction proposal failed" }
-                            // TODO [#1161]: Remove Send-Success and rework Send-Failure
-                            // TODO [#1161]: https://github.com/Electric-Coin-Company/zashi-android/issues/1161
-                            setSendStage(SendStage.SendFailure(it.message ?: ""))
-                        }
                 }
             },
             focusManager = focusManager,
@@ -226,30 +199,6 @@ internal fun WrapSend(
                             type = synchronizer.validateAddress(it)
                         )
                     )
-                }
-            },
-            onCreateAndSend = { newZecSend ->
-                scope.launch {
-                    Twig.debug { "Sending transaction" }
-                    // TODO [#1294]: Add Send.Multiple-Trx-Failed screen
-                    // TODO [#1294]: Note that the following processing is not entirely correct and will be reworked
-                    // TODO [#1294]: https://github.com/Electric-Coin-Company/zashi-android/issues/1294
-                    runCatching {
-                        // The not-null assertion operator is necessary here even if we check its nullability before
-                        // due to: "Smart cast to 'Proposal' is impossible, because 'zecSend.proposal' is a public API
-                        // property declared in different module
-                        // See more details on the Kotlin forum
-                        checkNotNull(newZecSend.proposal)
-                        synchronizer.createProposedTransactions(newZecSend.proposal!!, spendingKey)
-                    }
-                        .onSuccess {
-                            setSendStage(SendStage.SendSuccessful)
-                            Twig.debug { "Transaction id:$it submitted successfully" }
-                        }
-                        .onFailure {
-                            Twig.error(it) { "Transaction submission failed" }
-                            setSendStage(SendStage.SendFailure(it.message ?: ""))
-                        }
                 }
             },
             memoState = memoState,

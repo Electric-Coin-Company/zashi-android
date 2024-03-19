@@ -13,6 +13,7 @@ import androidx.compose.ui.test.performTextInput
 import cash.z.ecc.sdk.fixture.ZecSendFixture
 import cash.z.ecc.sdk.type.ZcashCurrency
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.screen.sendconfirmation.SendConfirmationTag
 import co.electriccoin.zcash.ui.test.getAppContext
 import co.electriccoin.zcash.ui.test.getStringResource
 import co.electriccoin.zcash.ui.test.getStringResourceWithArgs
@@ -94,8 +95,8 @@ internal fun ComposeContentTestRule.clickCreateAndSend() {
     }
 }
 
-internal fun ComposeContentTestRule.clickConfirmation() {
-    onNodeWithTag(SendTag.SEND_CONFIRMATION_BUTTON).also {
+internal fun ComposeContentTestRule.dismissFailureDialog() {
+    onNodeWithText(getStringResource(R.string.send_dialog_error_btn)).also {
         it.performClick()
     }
 }
@@ -107,25 +108,13 @@ internal fun ComposeContentTestRule.assertOnForm() {
 }
 
 internal fun ComposeContentTestRule.assertOnConfirmation() {
-    onNodeWithTag(SendTag.SEND_CONFIRMATION_BUTTON).also {
-        it.assertExists()
-    }
-}
-
-internal fun ComposeContentTestRule.assertOnSending() {
-    onNodeWithText(getStringResource(R.string.send_in_progress_wait)).also {
-        it.assertExists()
-    }
-}
-
-internal fun ComposeContentTestRule.assertOnSendSuccessful() {
-    onNodeWithText(getStringResource(R.string.send_successful_title)).also {
+    onNodeWithTag(SendConfirmationTag.SEND_CONFIRMATION_SEND_BUTTON).also {
         it.assertExists()
     }
 }
 
 internal fun ComposeContentTestRule.assertOnSendFailure() {
-    onNodeWithText(getStringResource(R.string.send_failure_title)).also {
+    onNodeWithText(getStringResource(R.string.send_dialog_error_title)).also {
         it.assertExists()
     }
 }

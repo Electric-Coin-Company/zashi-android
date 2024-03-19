@@ -1,0 +1,15 @@
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
+    <string name="send_stage_confirmation_title">Confirmation</string>
+    <string name="send_confirmation_amount">Amount:</string>
+    <string name="send_confirmation_address">To:</string>
+    <string name="send_confirmation_memo">Message</string>
+    <string name="send_confirmation_fee">Fee:</string>
+    <string name="send_confirmation_send_button">Send</string>
+    <string name="send_confirmation_back_button">Go Back</string>
+
+    <string name="send_confirmation_dialog_error_title">Failed to send funds</string>
+    <string name="send_confirmation_dialog_error_text">Error: The attempt to send funds failed. Try it again, please.</string>
+    <string name="send_confirmation_dialog_error_btn">OK</string>
+
+</resources>

@@ -165,7 +165,8 @@ private fun SupportMainContent(
 
         PrimaryButton(
             onClick = { setShowDialog(true) },
-            text = stringResource(id = R.string.support_send)
+            text = stringResource(id = R.string.support_send),
+            modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingHuge))

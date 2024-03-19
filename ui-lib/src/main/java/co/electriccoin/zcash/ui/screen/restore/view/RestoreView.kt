@@ -397,7 +397,8 @@ private fun RestoreSeedMainContent(
             onClick = goNext,
             enabled = isSeedValid,
             text = stringResource(id = R.string.restore_seed_button_next),
-            outerPaddingValues = PaddingValues(top = ZcashTheme.dimens.spacingSmall)
+            outerPaddingValues = PaddingValues(top = ZcashTheme.dimens.spacingSmall),
+            modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingHuge))
@@ -771,7 +772,8 @@ private fun RestoreBirthdayMainContent(
                 onDone()
             },
             text = stringResource(R.string.restore_birthday_button_restore),
-            enabled = isBirthdayValid
+            enabled = isBirthdayValid,
+            modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingHuge))

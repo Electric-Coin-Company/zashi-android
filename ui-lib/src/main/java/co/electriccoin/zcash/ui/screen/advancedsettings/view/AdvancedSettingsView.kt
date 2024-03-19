@@ -3,6 +3,7 @@ package co.electriccoin.zcash.ui.screen.advancedsettings.view
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -97,21 +98,24 @@ private fun AdvancedSettingsMainContent(
     ) {
         PrimaryButton(
             onClick = onSeedRecovery,
-            text = stringResource(R.string.advanced_settings_backup_wallet)
+            text = stringResource(R.string.advanced_settings_backup_wallet),
+            modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(dimens.spacingDefault))
 
         PrimaryButton(
             onClick = onExportPrivateData,
-            text = stringResource(R.string.advanced_settings_export_private_data)
+            text = stringResource(R.string.advanced_settings_export_private_data),
+            modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(dimens.spacingDefault))
 
         PrimaryButton(
             onClick = onChooseServer,
-            text = stringResource(R.string.advanced_settings_choose_server)
+            text = stringResource(R.string.advanced_settings_choose_server),
+            modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(dimens.spacingHuge))

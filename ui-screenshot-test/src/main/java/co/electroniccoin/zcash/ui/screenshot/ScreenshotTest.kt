@@ -466,7 +466,7 @@ private fun sendZecScreenshots(
         composeTestRule.activity.walletViewModel.walletSnapshot.value != null
     }
 
-    composeTestRule.onNode(hasText(resContext.getString(R.string.send_title))).also {
+    composeTestRule.onNode(hasText(resContext.getString(R.string.send_stage_send_title))).also {
         it.assertExists()
     }
 

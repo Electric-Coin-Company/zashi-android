@@ -220,6 +220,7 @@ private fun SeedRecoveryMainContent(
                         start = ZcashTheme.dimens.screenHorizontalSpacingBig,
                         end = ZcashTheme.dimens.screenHorizontalSpacingBig
                     )
+                    .fillMaxWidth()
         )
     }
 }
