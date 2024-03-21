@@ -80,7 +80,6 @@ private fun PreviewSendForm() {
             Send(
                 walletSnapshot = WalletSnapshotFixture.new(),
                 sendStage = SendStage.Form,
-                zecSend = null,
                 onCreateZecSend = {},
                 focusManager = LocalFocusManager.current,
                 onBack = {},
@@ -120,7 +119,6 @@ private fun PreviewSendFailure() {
 fun Send(
     walletSnapshot: WalletSnapshot,
     sendStage: SendStage,
-    zecSend: ZecSend?,
     onCreateZecSend: (ZecSend) -> Unit,
     focusManager: FocusManager,
     onBack: () -> Unit,
@@ -143,7 +141,6 @@ fun Send(
             onBack = onBack,
             focusManager = focusManager,
             sendStage = sendStage,
-            zecSend = zecSend,
             onCreateZecSend = onCreateZecSend,
             recipientAddressState = recipientAddressState,
             onRecipientAddressChange = onRecipientAddressChange,
@@ -191,7 +188,6 @@ private fun SendMainContent(
     focusManager: FocusManager,
     onBack: () -> Unit,
     goBalances: () -> Unit,
-    zecSend: ZecSend?,
     onCreateZecSend: (ZecSend) -> Unit,
     sendStage: SendStage,
     onQrScannerOpen: () -> Unit,
@@ -204,32 +200,30 @@ private fun SendMainContent(
     setMemoState: (MemoState) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    when {
-        // For now, we merge [SendStage.Form] and [SendStage.Proposing] into one stage. We could eventually display a
-        // loader if calling the Proposal API takes longer than expected
-        (sendStage == SendStage.Form || sendStage == SendStage.Proposing || null == zecSend) -> {
-            SendForm(
-                walletSnapshot = walletSnapshot,
-                recipientAddressState = recipientAddressState,
-                onRecipientAddressChange = onRecipientAddressChange,
-                amountState = amountState,
-                setAmountState = setAmountState,
-                memoState = memoState,
-                setMemoState = setMemoState,
-                onCreateZecSend = onCreateZecSend,
-                focusManager = focusManager,
-                onQrScannerOpen = onQrScannerOpen,
-                goBalances = goBalances,
-                hasCameraFeature = hasCameraFeature,
-                modifier = modifier
-            )
-        }
-        (sendStage is SendStage.SendFailure) -> {
-            SendFailure(
-                reason = sendStage.error,
-                onDone = onBack,
-            )
-        }
+    // For now, we merge [SendStage.Form] and [SendStage.Proposing] into one stage. We could eventually display a
+    // loader if calling the Proposal API takes longer than expected
+
+    SendForm(
+        walletSnapshot = walletSnapshot,
+        recipientAddressState = recipientAddressState,
+        onRecipientAddressChange = onRecipientAddressChange,
+        amountState = amountState,
+        setAmountState = setAmountState,
+        memoState = memoState,
+        setMemoState = setMemoState,
+        onCreateZecSend = onCreateZecSend,
+        focusManager = focusManager,
+        onQrScannerOpen = onQrScannerOpen,
+        goBalances = goBalances,
+        hasCameraFeature = hasCameraFeature,
+        modifier = modifier
+    )
+
+    if (sendStage is SendStage.SendFailure) {
+        SendFailure(
+            reason = sendStage.error,
+            onDone = onBack
+        )
     }
 }
 

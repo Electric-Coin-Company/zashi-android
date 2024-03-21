@@ -72,8 +72,8 @@ internal fun WrapSendConfirmation(
             SendConfirmationStage.Sending -> { /* no action - wait until the sending is done */ }
             is SendConfirmationStage.Failure -> setStage(SendConfirmationStage.Confirmation)
             is SendConfirmationStage.MultipleTrxFailure -> {
-                // TODO [#1161]: Remove Send-Success and rework Send-Failure
-                // TODO [#1161]: https://github.com/Electric-Coin-Company/zashi-android/issues/1161
+                // TODO [#1294]: Add Send.Multiple-Trx-Failed screen
+                // TODO [#1294]: https://github.com/Electric-Coin-Company/zashi-android/issues/1294
                 setStage(SendConfirmationStage.Confirmation)
             }
         }

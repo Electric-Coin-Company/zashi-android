@@ -166,7 +166,6 @@ internal fun WrapSend(
         Send(
             walletSnapshot = walletSnapshot,
             sendStage = sendStage,
-            zecSend = zecSend,
             onCreateZecSend = { newZecSend ->
                 scope.launch {
                     Twig.debug { "Getting send transaction proposal" }
@@ -179,8 +178,6 @@ internal fun WrapSend(
                         goSendConfirmation(enrichedZecSend)
                     }.onFailure {
                         Twig.error(it) { "Transaction proposal failed" }
-                        // TODO [#1161]: Remove Send-Success and rework Send-Failure
-                        // TODO [#1161]: https://github.com/Electric-Coin-Company/zashi-android/issues/1161
                         setSendStage(SendStage.SendFailure(it.message ?: ""))
                     }
                 }

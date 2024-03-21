@@ -158,7 +158,7 @@ internal fun WrapBalances(
                                 Twig.debug { "Shielding transaction event" }
                                 setShieldState(ShieldState.None)
                             }.onFailure {
-                                showShieldingError(null)
+                                showShieldingError(it)
                             }
                         }
                     }.onFailure {
