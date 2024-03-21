@@ -3,6 +3,7 @@ package co.electriccoin.zcash.ui.screen.request.view
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -161,7 +162,8 @@ private fun RequestMainContent(
                 onCreateAndSend(ZecRequest(myAddress, zatoshi!!, ZecRequestMessage(message)))
             },
             text = stringResource(id = R.string.request_create),
-            enabled = null != zatoshi
+            enabled = null != zatoshi,
+            modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingHuge))

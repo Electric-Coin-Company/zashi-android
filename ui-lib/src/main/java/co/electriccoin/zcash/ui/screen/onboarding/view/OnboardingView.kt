@@ -200,7 +200,8 @@ private fun OnboardingMainContent(
 
             PrimaryButton(
                 onClick = onCreateWallet,
-                text = stringResource(R.string.onboarding_create_new_wallet)
+                text = stringResource(R.string.onboarding_create_new_wallet),
+                modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))

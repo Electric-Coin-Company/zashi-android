@@ -36,6 +36,7 @@ import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
 import co.electriccoin.zcash.ui.preference.StandardPreferenceSingleton
 import co.electriccoin.zcash.ui.screen.account.state.TransactionHistorySyncState
 import co.electriccoin.zcash.ui.screen.account.state.TransactionOverviewExt
+import co.electriccoin.zcash.ui.screen.account.state.getSortHeight
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -186,23 +187,32 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
         synchronizer
             .filterNotNull()
             .flatMapLatest { synchronizer ->
-                synchronizer.transactions
-                    .combine(synchronizer.status) {
-                            transactions: List<TransactionOverview>, status: Synchronizer.Status ->
-                        val enhancedTransactions =
-                            transactions.map {
+                combine(
+                    synchronizer.transactions,
+                    synchronizer.status,
+                    synchronizer.networkHeight.filterNotNull()
+                ) {
+                        transactions: List<TransactionOverview>,
+                        status: Synchronizer.Status,
+                        networkHeight: BlockHeight ->
+                    val enhancedTransactions =
+                        transactions
+                            .sortedByDescending {
+                                it.getSortHeight(networkHeight)
+                            }
+                            .map {
                                 if (it.isSentTransaction) {
                                     TransactionOverviewExt(it, synchronizer.getRecipients(it).firstOrNull())
                                 } else {
                                     TransactionOverviewExt(it, null)
                                 }
                             }
-                        if (status.isSyncing()) {
-                            TransactionHistorySyncState.Syncing(enhancedTransactions.toPersistentList())
-                        } else {
-                            TransactionHistorySyncState.Done(enhancedTransactions.toPersistentList())
-                        }
+                    if (status.isSyncing()) {
+                        TransactionHistorySyncState.Syncing(enhancedTransactions.toPersistentList())
+                    } else {
+                        TransactionHistorySyncState.Done(enhancedTransactions.toPersistentList())
                     }
+                }
             }
             .stateIn(
                 scope = viewModelScope,

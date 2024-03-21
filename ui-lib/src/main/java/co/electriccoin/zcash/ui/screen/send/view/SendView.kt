@@ -5,7 +5,6 @@ package co.electriccoin.zcash.ui.screen.send.view
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -40,7 +39,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import cash.z.ecc.android.sdk.fixture.WalletAddressFixture
 import cash.z.ecc.android.sdk.model.Memo
 import cash.z.ecc.android.sdk.model.MonetarySeparators
 import cash.z.ecc.android.sdk.model.Zatoshi
@@ -48,7 +46,6 @@ import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.android.sdk.model.ZecSendExt
 import cash.z.ecc.android.sdk.model.toZecString
 import cash.z.ecc.android.sdk.type.AddressType
-import cash.z.ecc.sdk.fixture.MemoFixture
 import cash.z.ecc.sdk.fixture.ZatoshiFixture
 import cash.z.ecc.sdk.type.ZcashCurrency
 import co.electriccoin.zcash.spackle.Twig
@@ -58,23 +55,21 @@ import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.model.spendableBalance
 import co.electriccoin.zcash.ui.common.test.CommonTag
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
+import co.electriccoin.zcash.ui.design.component.AppAlertDialog
 import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.BodySmall
 import co.electriccoin.zcash.ui.design.component.FormTextField
 import co.electriccoin.zcash.ui.design.component.GradientSurface
-import co.electriccoin.zcash.ui.design.component.Header
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
+import co.electriccoin.zcash.ui.design.component.Small
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 import co.electriccoin.zcash.ui.screen.send.SendTag
-import co.electriccoin.zcash.ui.screen.send.ext.abbreviated
-import co.electriccoin.zcash.ui.screen.send.ext.valueOrEmptyChar
 import co.electriccoin.zcash.ui.screen.send.model.AmountState
 import co.electriccoin.zcash.ui.screen.send.model.MemoState
 import co.electriccoin.zcash.ui.screen.send.model.RecipientAddressState
 import co.electriccoin.zcash.ui.screen.send.model.SendStage
-import kotlinx.coroutines.runBlocking
 import java.util.Locale
 
 @Composable
@@ -85,13 +80,11 @@ private fun PreviewSendForm() {
             Send(
                 walletSnapshot = WalletSnapshotFixture.new(),
                 sendStage = SendStage.Form,
-                onSendStageChange = {},
                 zecSend = null,
                 onCreateZecSend = {},
                 focusManager = LocalFocusManager.current,
                 onBack = {},
                 onSettings = {},
-                onCreateAndSend = {},
                 onQrScannerOpen = {},
                 goBalances = {},
                 hasCameraFeature = true,
@@ -107,37 +100,11 @@ private fun PreviewSendForm() {
 }
 
 @Composable
-@Preview("SendSuccessful")
-private fun PreviewSendSuccessful() {
-    ZcashTheme(forceDarkMode = false) {
-        GradientSurface {
-            SendSuccessful(
-                zecSend =
-                    ZecSend(
-                        destination = runBlocking { WalletAddressFixture.sapling() },
-                        amount = ZatoshiFixture.new(),
-                        memo = MemoFixture.new(),
-                        proposal = null,
-                    ),
-                onDone = {}
-            )
-        }
-    }
-}
-
-@Composable
 @Preview("SendFailure")
 private fun PreviewSendFailure() {
     ZcashTheme(forceDarkMode = false) {
         GradientSurface {
             SendFailure(
-                zecSend =
-                    ZecSend(
-                        destination = runBlocking { WalletAddressFixture.sapling() },
-                        amount = ZatoshiFixture.new(),
-                        memo = MemoFixture.new(),
-                        proposal = null,
-                    ),
                 onDone = {},
                 reason = "Insufficient balance"
             )
@@ -145,37 +112,19 @@ private fun PreviewSendFailure() {
     }
 }
 
-@Composable
-@Preview("SendConfirmation")
-private fun PreviewSendConfirmation() {
-    ZcashTheme(forceDarkMode = false) {
-        GradientSurface {
-            SendConfirmation(
-                zecSend =
-                    ZecSend(
-                        destination = runBlocking { WalletAddressFixture.sapling() },
-                        amount = ZatoshiFixture.new(),
-                        memo = MemoFixture.new(),
-                        proposal = null,
-                    ),
-                onConfirmation = {}
-            )
-        }
-    }
-}
+// TODO [#1260]: Cover Send screens UI with tests
+// TODO [#1260]: https://github.com/Electric-Coin-Company/zashi-android/issues/1260
 
 @Suppress("LongParameterList")
 @Composable
 fun Send(
     walletSnapshot: WalletSnapshot,
     sendStage: SendStage,
-    onSendStageChange: (SendStage) -> Unit,
     zecSend: ZecSend?,
     onCreateZecSend: (ZecSend) -> Unit,
     focusManager: FocusManager,
     onBack: () -> Unit,
     onSettings: () -> Unit,
-    onCreateAndSend: (ZecSend) -> Unit,
     onQrScannerOpen: () -> Unit,
     goBalances: () -> Unit,
     hasCameraFeature: Boolean,
@@ -187,18 +136,13 @@ fun Send(
     memoState: MemoState,
 ) {
     Scaffold(topBar = {
-        SendTopAppBar(
-            onBack = onBack,
-            onSettings = onSettings,
-            showBackNavigationButton = (sendStage != SendStage.Sending && sendStage != SendStage.Form)
-        )
+        SendTopAppBar(onSettings = onSettings)
     }) { paddingValues ->
         SendMainContent(
             walletSnapshot = walletSnapshot,
             onBack = onBack,
             focusManager = focusManager,
             sendStage = sendStage,
-            onSendStageChange = onSendStageChange,
             zecSend = zecSend,
             onCreateZecSend = onCreateZecSend,
             recipientAddressState = recipientAddressState,
@@ -207,7 +151,6 @@ fun Send(
             setAmountState = setAmountState,
             memoState = memoState,
             setMemoState = setMemoState,
-            onSendSubmit = onCreateAndSend,
             onQrScannerOpen = onQrScannerOpen,
             goBalances = goBalances,
             hasCameraFeature = hasCameraFeature,
@@ -224,21 +167,9 @@ fun Send(
 }
 
 @Composable
-private fun SendTopAppBar(
-    onBack: () -> Unit,
-    onSettings: () -> Unit,
-    showBackNavigationButton: Boolean = true
-) {
+private fun SendTopAppBar(onSettings: () -> Unit) {
     SmallTopAppBar(
-        titleText = stringResource(id = R.string.send_title),
-        onBack = onBack,
-        backText =
-            if (showBackNavigationButton) {
-                stringResource(id = R.string.send_back)
-            } else {
-                null
-            },
-        backContentDescriptionText = stringResource(id = R.string.send_back_content_description),
+        titleText = stringResource(id = R.string.send_stage_send_title),
         hamburgerMenuActions = {
             IconButton(
                 onClick = onSettings,
@@ -263,8 +194,6 @@ private fun SendMainContent(
     zecSend: ZecSend?,
     onCreateZecSend: (ZecSend) -> Unit,
     sendStage: SendStage,
-    onSendStageChange: (SendStage) -> Unit,
-    onSendSubmit: (ZecSend) -> Unit,
     onQrScannerOpen: () -> Unit,
     recipientAddressState: RecipientAddressState,
     onRecipientAddressChange: (String) -> Unit,
@@ -276,7 +205,9 @@ private fun SendMainContent(
     modifier: Modifier = Modifier,
 ) {
     when {
-        (sendStage == SendStage.Form || null == zecSend) -> {
+        // For now, we merge [SendStage.Form] and [SendStage.Proposing] into one stage. We could eventually display a
+        // loader if calling the Proposal API takes longer than expected
+        (sendStage == SendStage.Form || sendStage == SendStage.Proposing || null == zecSend) -> {
             SendForm(
                 walletSnapshot = walletSnapshot,
                 recipientAddressState = recipientAddressState,
@@ -293,39 +224,16 @@ private fun SendMainContent(
                 modifier = modifier
             )
         }
-        (sendStage == SendStage.Confirmation) -> {
-            SendConfirmation(
-                zecSend = zecSend,
-                onConfirmation = {
-                    onSendStageChange(SendStage.Sending)
-                    onSendSubmit(zecSend)
-                },
-                modifier = modifier
-            )
-        }
-        (sendStage == SendStage.Sending) -> {
-            Sending(
-                zecSend = zecSend,
-                modifier = modifier
-            )
-        }
-        (sendStage == SendStage.SendSuccessful) -> {
-            SendSuccessful(
-                zecSend = zecSend,
-                onDone = onBack,
-                modifier = modifier,
-            )
-        }
         (sendStage is SendStage.SendFailure) -> {
             SendFailure(
-                zecSend = zecSend,
                 reason = sendStage.error,
                 onDone = onBack,
-                modifier = modifier,
             )
         }
     }
 }
+
+const val DEFAULT_LESS_THAN_FEE = 100_000L
 
 // TODO [#217]: Need to handle changing of Locale after user input, but before submitting the button.
 // TODO [#217]: https://github.com/Electric-Coin-Company/zashi-android/issues/217
@@ -471,7 +379,10 @@ private fun SendForm(
                 },
                 text = stringResource(id = R.string.send_create),
                 enabled = sendButtonEnabled,
-                modifier = Modifier.testTag(SendTag.SEND_FORM_BUTTON)
+                modifier =
+                    Modifier
+                        .testTag(SendTag.SEND_FORM_BUTTON)
+                        .fillMaxWidth()
             )
 
             Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
@@ -482,8 +393,7 @@ private fun SendForm(
                         id = R.string.send_fee,
                         // TODO [#1047]: Representing Zatoshi amount
                         // TODO [#1047]: https://github.com/Electric-Coin-Company/zashi-android/issues/1047
-                        @Suppress("MagicNumber")
-                        Zatoshi(100_000L).toZecString()
+                        Zatoshi(DEFAULT_LESS_THAN_FEE).toZecString()
                     ),
                 textFontWeight = FontWeight.SemiBold
             )
@@ -511,7 +421,7 @@ fun SendFormAddressTextField(
                 // Scroll TextField above ime keyboard
                 .bringIntoViewRequester(bringIntoViewRequester)
     ) {
-        Body(text = stringResource(id = R.string.send_address_label))
+        Small(text = stringResource(id = R.string.send_address_label))
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
 
@@ -617,7 +527,7 @@ fun SendFormAmountTextField(
                 // Scroll TextField above ime keyboard
                 .bringIntoViewRequester(bringIntoViewRequester)
     ) {
-        Body(text = stringResource(id = R.string.send_amount_label))
+        Small(text = stringResource(id = R.string.send_amount_label))
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
 
@@ -682,7 +592,7 @@ fun SendFormMemoTextField(
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
-                painter = painterResource(id = R.drawable.send_papre_plane),
+                painter = painterResource(id = R.drawable.send_paper_plane),
                 contentDescription = null,
                 tint =
                     if (isMemoFieldAvailable) {
@@ -694,7 +604,7 @@ fun SendFormMemoTextField(
 
             Spacer(modifier = Modifier.width(ZcashTheme.dimens.spacingSmall))
 
-            Body(
+            Small(
                 text = stringResource(id = R.string.send_memo_label),
                 color =
                     if (isMemoFieldAvailable) {
@@ -709,7 +619,12 @@ fun SendFormMemoTextField(
 
         FormTextField(
             enabled = isMemoFieldAvailable,
-            value = memoState.text,
+            value =
+                if (isMemoFieldAvailable) {
+                    memoState.text
+                } else {
+                    ""
+                },
             onValueChange = {
                 setMemoState(MemoState.new(it))
             },
@@ -762,238 +677,17 @@ fun SendFormMemoTextField(
 }
 
 @Composable
-private fun SendConfirmation(
-    zecSend: ZecSend,
-    onConfirmation: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Body(
-            stringResource(
-                R.string.send_confirmation_amount_format,
-                zecSend.amount.toZecString(),
-            )
-        )
-        Body(
-            stringResource(
-                R.string.send_confirmation_address_format,
-                zecSend.destination.abbreviated()
-            )
-        )
-        if (zecSend.memo.value.isNotEmpty()) {
-            Body(
-                stringResource(
-                    R.string.send_confirmation_memo_format,
-                    zecSend.memo.value
-                )
-            )
-        }
-        if (zecSend.proposal != null) {
-            // The not-null assertion operator is necessary here even if we check its nullability before
-            // due to: "Smart cast to 'Proposal' is impossible, because 'zecSend.proposal' is a public API
-            // property declared in different module
-            // See more details on the Kotlin forum
-            checkNotNull(zecSend.proposal)
-            Body(
-                stringResource(
-                    R.string.send_confirmation_fee_format,
-                    zecSend.proposal!!.totalFeeRequired().toZecString()
-                )
-            )
-        }
-
-        Spacer(
-            modifier =
-                Modifier
-                    .fillMaxHeight()
-                    .weight(MINIMAL_WEIGHT)
-        )
-
-        PrimaryButton(
-            modifier =
-                Modifier
-                    .padding(top = ZcashTheme.dimens.spacingSmall)
-                    .testTag(SendTag.SEND_CONFIRMATION_BUTTON),
-            onClick = onConfirmation,
-            text = stringResource(id = R.string.send_confirmation_button),
-            outerPaddingValues = PaddingValues(top = ZcashTheme.dimens.spacingSmall)
-        )
-
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
-    }
-}
-
-@Composable
-private fun Sending(
-    zecSend: ZecSend,
-    modifier: Modifier = Modifier
-) {
-    Column(modifier) {
-        Header(
-            text =
-                stringResource(
-                    R.string.send_in_progress_amount_format,
-                    zecSend.amount.toZecString()
-                ),
-            textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Body(
-            text = zecSend.destination.abbreviated(),
-            textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        if (zecSend.memo.value.isNotEmpty()) {
-            Body(
-                stringResource(
-                    R.string.send_in_progress_memo_format,
-                    zecSend.memo.value
-                ),
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
-
-        Spacer(
-            modifier =
-                Modifier
-                    .fillMaxHeight()
-                    .weight(MINIMAL_WEIGHT)
-        )
-
-        Body(
-            modifier =
-                Modifier
-                    .padding(vertical = ZcashTheme.dimens.spacingSmall)
-                    .fillMaxWidth(),
-            text = stringResource(R.string.send_in_progress_wait),
-            textAlign = TextAlign.Center,
-        )
-    }
-}
-
-@Composable
-private fun SendSuccessful(
-    zecSend: ZecSend,
-    onDone: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Header(
-            text = stringResource(R.string.send_successful_title),
-            textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .height(ZcashTheme.dimens.spacingDefault)
-        )
-
-        Body(
-            stringResource(
-                R.string.send_successful_amount_address_memo,
-                zecSend.amount.toZecString(),
-                zecSend.destination.abbreviated(),
-                zecSend.memo.valueOrEmptyChar()
-            )
-        )
-
-        Spacer(
-            modifier =
-                Modifier
-                    .fillMaxHeight()
-                    .weight(MINIMAL_WEIGHT)
-        )
-
-        PrimaryButton(
-            modifier =
-                Modifier
-                    .padding(top = ZcashTheme.dimens.spacingSmall)
-                    .testTag(SendTag.SEND_SUCCESS_BUTTON),
-            text = stringResource(R.string.send_successful_button),
-            onClick = onDone,
-            outerPaddingValues = PaddingValues(top = ZcashTheme.dimens.spacingSmall)
-        )
-
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
-    }
-}
-
-@Composable
+@Suppress("UNUSED_PARAMETER")
 private fun SendFailure(
-    zecSend: ZecSend,
     onDone: () -> Unit,
     reason: String,
-    modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Header(
-            text = stringResource(R.string.send_failure_title),
-            textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth()
-        )
+    // Once we ensure that the [reason] contains a localized message, we can leverage it for the UI prompt
 
-        Spacer(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .height(ZcashTheme.dimens.spacingDefault)
-        )
-
-        Body(
-            stringResource(
-                R.string.send_failure_amount_address_memo,
-                zecSend.amount.toZecString(),
-                zecSend.destination.abbreviated(),
-                zecSend.memo.valueOrEmptyChar()
-            )
-        )
-
-        Spacer(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .height(ZcashTheme.dimens.spacingDefault)
-        )
-
-        Body(
-            stringResource(
-                R.string.send_failure_reason,
-                reason,
-            )
-        )
-
-        Spacer(
-            modifier =
-                Modifier
-                    .fillMaxHeight()
-                    .weight(MINIMAL_WEIGHT)
-        )
-
-        PrimaryButton(
-            modifier =
-                Modifier
-                    .padding(top = ZcashTheme.dimens.spacingSmall)
-                    .testTag(SendTag.SEND_FAILED_BUTTON),
-            text = stringResource(R.string.send_failure_button),
-            onClick = onDone,
-            outerPaddingValues = PaddingValues(top = ZcashTheme.dimens.spacingSmall)
-        )
-
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
-    }
+    AppAlertDialog(
+        title = stringResource(id = R.string.send_dialog_error_title),
+        text = stringResource(id = R.string.send_dialog_error_text),
+        confirmButtonText = stringResource(id = R.string.send_dialog_error_btn),
+        onConfirmButtonClick = onDone
+    )
 }

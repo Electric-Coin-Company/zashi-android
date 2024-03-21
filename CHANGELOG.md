@@ -15,9 +15,13 @@ directly impact users rather than highlighting other key architectural updates.*
 - A new Server switching screen was added. Its purpose is to enable switching between predefined and custom 
   lightwalletd servers in runtime.
 - The About screen now contains a link to the new Zashi Privacy Policy website
+- The Send Confirmation screen has been reworked according to the new design
 
 ### Changed
 - The Transaction History UI has been incorporated into the Account screen
+- Reworked Send screens flow and their look (e.g., Send Failure screen is now a modal dialog instead of a separate 
+  screen)
+- The sending and shielding funds logic has been connected to the new Proposal API from the Zcash SDK
 
 ### Fixed
 - Button sizing has been updated to align with the design guidelines and preserve stretching if necessary

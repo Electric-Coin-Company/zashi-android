@@ -8,6 +8,7 @@ import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.res.stringResource
+import cash.z.ecc.android.sdk.model.ZecSend
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.viewmodel.HomeViewModel
@@ -23,11 +24,13 @@ import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 
 @Composable
+@Suppress("LongParameterList")
 internal fun MainActivity.WrapHome(
     onPageChange: (HomeScreenIndex) -> Unit,
     goBack: () -> Unit,
     goSettings: () -> Unit,
     goScan: () -> Unit,
+    goSendConfirmation: (ZecSend) -> Unit,
     sendArgumentsWrapper: SendArgumentsWrapper
 ) {
     WrapHome(
@@ -35,6 +38,7 @@ internal fun MainActivity.WrapHome(
         onPageChange = onPageChange,
         goBack = goBack,
         goScan = goScan,
+        goSendConfirmation = goSendConfirmation,
         goSettings = goSettings,
         sendArgumentsWrapper = sendArgumentsWrapper
     )
@@ -47,6 +51,7 @@ internal fun WrapHome(
     goBack: () -> Unit,
     goSettings: () -> Unit,
     goScan: () -> Unit,
+    goSendConfirmation: (ZecSend) -> Unit,
     onPageChange: (HomeScreenIndex) -> Unit,
     sendArgumentsWrapper: SendArgumentsWrapper
 ) {
@@ -98,6 +103,7 @@ internal fun WrapHome(
                         goToQrScanner = goScan,
                         goBack = homeGoBack,
                         goBalances = { forceHomePageIndexFlow.tryEmit(ForcePage(HomeScreenIndex.BALANCES)) },
+                        goSendConfirmation = goSendConfirmation,
                         goSettings = goSettings,
                         sendArgumentsWrapper = sendArgumentsWrapper
                     )

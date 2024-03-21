@@ -21,7 +21,6 @@ import co.electriccoin.zcash.ui.screen.send.model.RecipientAddressState
 import co.electriccoin.zcash.ui.screen.send.model.SendStage
 import co.electriccoin.zcash.ui.screen.send.view.Send
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.update
 import java.util.Locale
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -91,10 +90,8 @@ class SendViewTestSetup(
             onBackCount.incrementAndGet()
             when (sendStage) {
                 SendStage.Form -> {}
-                SendStage.Confirmation -> setSendStage(SendStage.Form)
-                SendStage.Sending -> {}
+                SendStage.Proposing -> {}
                 is SendStage.SendFailure -> setSendStage(SendStage.Form)
-                SendStage.SendSuccessful -> {}
             }
         }
 
@@ -119,17 +116,11 @@ class SendViewTestSetup(
                             )
                     ),
                 sendStage = sendStage,
-                onSendStageChange = setSendStage,
                 onCreateZecSend = setZecSend,
                 zecSend = zecSend,
                 focusManager = LocalFocusManager.current,
                 onBack = onBackAction,
                 onSettings = { onSettingsCount.incrementAndGet() },
-                onCreateAndSend = {
-                    onCreateCount.incrementAndGet()
-                    lastZecSend = it
-                    mutableActionExecuted.update { true }
-                },
                 onQrScannerOpen = {
                     onScannerCount.incrementAndGet()
                 },

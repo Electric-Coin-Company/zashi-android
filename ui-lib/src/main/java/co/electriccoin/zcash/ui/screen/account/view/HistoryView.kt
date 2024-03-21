@@ -352,9 +352,8 @@ fun HistoryItem(
                         // * 1000 to covert to millis
                         @Suppress("MagicNumber")
                         dateFormat.format(blockTimeEpochSeconds.times(1000))
-                    } ?: "-"
-                } ?: "-"
-            // For now, use the same label for the above missing transaction date
+                    } ?: ""
+                } ?: ""
 
             Text(
                 text = dateString,

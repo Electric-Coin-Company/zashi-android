@@ -1,5 +1,5 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="send_title">Send</string>
+    <string name="send_stage_send_title">Send</string>
     <string name="send_back">Back</string>
     <string name="send_back_content_description">Back</string>
     <string name="send_scan_content_description">Scan</string>
@@ -19,26 +19,10 @@
     <string name="send_create">Review</string>
     <string name="send_fee">(Typical Fee &lt; <xliff:g id="fee_amount" example="0.001">%1$s</xliff:g>)</string>
 
-    <string name="send_confirmation_amount_format" formatted="true">Send: <xliff:g id="amount" example="12.345">%1$s</xliff:g> ZEC</string>
-    <string name="send_confirmation_address_format" formatted="true">To: <xliff:g id="address" example="zs1g7cqw … mvyzgm">%1$s</xliff:g>?</string>
-    <string name="send_confirmation_memo_format" formatted="true">Memo: <xliff:g id="memo" example="for Veronika">%1$s</xliff:g></string>
-    <string name="send_confirmation_fee_format" formatted="true">Fee: <xliff:g id="fee" example="0.0001">%1$s</xliff:g></string>
-    <string name="send_confirmation_abbreviated_address_format" formatted="true"><xliff:g id="first_five" example="zs1g7">%1$s</xliff:g>…<xliff:g id="last_five" example="mvyzg">%2$s</xliff:g></string>
-    <string name="send_confirmation_button">Press to send ZEC</string>
+    <string name="send_dialog_error_title">Failed to send funds</string>
+    <string name="send_dialog_error_text">Error: The attempt to send funds failed. Try it again, please.</string>
+    <string name="send_dialog_error_btn">OK</string>
 
-    <string name="send_in_progress_amount_format" formatted="true">Sending <xliff:g id="amount" example="12.345">%1$s</xliff:g> ZEC to</string>
-    <string name="send_in_progress_memo_format" formatted="true">with a memo: <xliff:g id="memo" example="for Veronika">%1$s</xliff:g></string>
-    <string name="send_in_progress_wait">Please wait</string>
-
-    <string name="send_failure_title">Sending failure</string>
-    <string name="send_failure_amount_address_memo" formatted="true">Sending failed for:\n<xliff:g id="amount"
-        example="12.345">%1$s</xliff:g> ZEC to <xliff:g id="address" example="zs1g7cqw … mvyzgm">%2$s</xliff:g> with a memo: <xliff:g id="memo" example="for Veronika">%3$s</xliff:g></string>
-    <string name="send_failure_reason" formatted="true">Sending failed with:\n<xliff:g
-        id="reason" example="Insufficient balance">%1$s</xliff:g></string>
-    <string name="send_failure_button">Back</string>
-
-    <string name="send_successful_title">Sending successful</string>
-    <string name="send_successful_amount_address_memo" formatted="true">Sending succeeded for: <xliff:g id="amount" example="12.345">%1$s</xliff:g> ZEC to <xliff:g id="address" example="zs1g7cqw … mvyzgm">%2$s</xliff:g> with a memo: <xliff:g id="memo" example="for Veronika">%3$s</xliff:g></string>
-    <string name="send_successful_button">Close</string>
+    <string name="send_abbreviated_address_format" formatted="true"><xliff:g id="first_five" example="zs1g7">%1$s</xliff:g>…<xliff:g id="last_five" example="mvyzg">%2$s</xliff:g></string>
 
 </resources>

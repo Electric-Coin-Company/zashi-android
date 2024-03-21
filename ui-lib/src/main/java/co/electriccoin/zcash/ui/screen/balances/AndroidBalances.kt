@@ -151,7 +151,9 @@ internal fun WrapBalances(
                                 synchronizer.createProposedTransactions(
                                     proposal = newProposal,
                                     usk = spendingKey
-                                )
+                                ).collect {
+                                    Twig.info { "Printing only for now. Will be reworked. Result: $it" }
+                                }
                             }.onSuccess {
                                 Twig.debug { "Shielding transaction event" }
                                 setShieldState(ShieldState.None)

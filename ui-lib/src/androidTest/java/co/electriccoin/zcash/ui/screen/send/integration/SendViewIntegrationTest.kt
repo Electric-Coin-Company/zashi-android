@@ -77,7 +77,8 @@ class SendViewIntegrationTest {
                 goBalances = {},
                 hasCameraFeature = true,
                 goSettings = {},
-                monetarySeparators = monetarySeparators
+                monetarySeparators = monetarySeparators,
+                goSendConfirmation = {}
             )
         }
 

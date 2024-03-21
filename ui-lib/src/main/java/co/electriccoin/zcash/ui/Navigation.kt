@@ -6,9 +6,11 @@ import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import co.electriccoin.zcash.ui.NavigationArguments.SEND_AMOUNT
-import co.electriccoin.zcash.ui.NavigationArguments.SEND_MEMO
-import co.electriccoin.zcash.ui.NavigationArguments.SEND_RECIPIENT_ADDRESS
+import co.electriccoin.zcash.ui.NavigationArguments.SEND_CONFIRM_AMOUNT
+import co.electriccoin.zcash.ui.NavigationArguments.SEND_CONFIRM_MEMO
+import co.electriccoin.zcash.ui.NavigationArguments.SEND_CONFIRM_PROPOSAL
+import co.electriccoin.zcash.ui.NavigationArguments.SEND_CONFIRM_RECIPIENT_ADDRESS
+import co.electriccoin.zcash.ui.NavigationArguments.SEND_SCAN_RECIPIENT_ADDRESS
 import co.electriccoin.zcash.ui.NavigationTargets.ABOUT
 import co.electriccoin.zcash.ui.NavigationTargets.ADVANCED_SETTINGS
 import co.electriccoin.zcash.ui.NavigationTargets.CHOOSE_SERVER
@@ -17,10 +19,16 @@ import co.electriccoin.zcash.ui.NavigationTargets.HOME
 import co.electriccoin.zcash.ui.NavigationTargets.REQUEST
 import co.electriccoin.zcash.ui.NavigationTargets.SCAN
 import co.electriccoin.zcash.ui.NavigationTargets.SEED_RECOVERY
+import co.electriccoin.zcash.ui.NavigationTargets.SEND_CONFIRMATION
 import co.electriccoin.zcash.ui.NavigationTargets.SETTINGS
 import co.electriccoin.zcash.ui.NavigationTargets.SUPPORT
+import co.electriccoin.zcash.ui.common.model.SerializableAddress
 import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
 import co.electriccoin.zcash.ui.configuration.RemoteConfig
+import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.enterTransition
+import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.exitTransition
+import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.popEnterTransition
+import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.popExitTransition
 import co.electriccoin.zcash.ui.screen.about.WrapAbout
 import co.electriccoin.zcash.ui.screen.advancedsettings.WrapAdvancedSettings
 import co.electriccoin.zcash.ui.screen.chooseserver.WrapChooseServer
@@ -28,13 +36,18 @@ import co.electriccoin.zcash.ui.screen.exportdata.WrapExportPrivateData
 import co.electriccoin.zcash.ui.screen.home.WrapHome
 import co.electriccoin.zcash.ui.screen.request.WrapRequest
 import co.electriccoin.zcash.ui.screen.scan.WrapScanValidator
-import co.electriccoin.zcash.ui.screen.scan.model.ScanResult
 import co.electriccoin.zcash.ui.screen.seedrecovery.WrapSeedRecovery
+import co.electriccoin.zcash.ui.screen.send.ext.toSerializableAddress
 import co.electriccoin.zcash.ui.screen.send.model.SendArgumentsWrapper
+import co.electriccoin.zcash.ui.screen.sendconfirmation.WrapSendConfirmation
+import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SendConfirmationArgsWrapper
 import co.electriccoin.zcash.ui.screen.settings.WrapSettings
 import co.electriccoin.zcash.ui.screen.support.WrapSupport
 import co.electriccoin.zcash.ui.screen.update.WrapCheckForUpdate
 import kotlinx.serialization.json.Json
+
+// TODO [#1297]: Consider: Navigation passing complex data arguments different way
+// TODO [#1297]: https://github.com/Electric-Coin-Company/zashi-android/issues/1297
 
 @Composable
 @Suppress("LongMethod")
@@ -44,30 +57,47 @@ internal fun MainActivity.Navigation() {
             navControllerForTesting = it
         }
 
-    NavHost(navController = navController, startDestination = HOME) {
+    NavHost(
+        navController = navController,
+        startDestination = HOME,
+        enterTransition = { enterTransition() },
+        exitTransition = { exitTransition() },
+        popEnterTransition = { popEnterTransition() },
+        popExitTransition = { popExitTransition() }
+    ) {
         composable(HOME) { backStackEntry ->
             WrapHome(
                 onPageChange = {
                     homeViewModel.screenIndex.value = it
                 },
                 goBack = { finish() },
-                goSettings = { navController.navigateJustOnce(SETTINGS) },
                 goScan = { navController.navigateJustOnce(SCAN) },
+                goSendConfirmation = { zecSend ->
+                    navController.currentBackStackEntry?.savedStateHandle?.let { handle ->
+                        handle[SEND_CONFIRM_RECIPIENT_ADDRESS] =
+                            Json.encodeToString(
+                                serializer = SerializableAddress.serializer(),
+                                value = zecSend.destination.toSerializableAddress()
+                            )
+                        handle[SEND_CONFIRM_AMOUNT] = zecSend.amount.value
+                        handle[SEND_CONFIRM_MEMO] = zecSend.memo.value
+                        handle[SEND_CONFIRM_PROPOSAL] = zecSend.proposal?.toByteArray()
+                    }
+                    navController.navigateJustOnce(SEND_CONFIRMATION)
+                },
+                goSettings = { navController.navigateJustOnce(SETTINGS) },
                 // At this point we only read scan result data
                 sendArgumentsWrapper =
                     SendArgumentsWrapper(
                         recipientAddress =
-                            backStackEntry.savedStateHandle.get<String>(SEND_RECIPIENT_ADDRESS)?.let {
-                                Json.decodeFromString<ScanResult>(it).toRecipient()
+                            backStackEntry.savedStateHandle.get<String>(SEND_SCAN_RECIPIENT_ADDRESS)?.let {
+                                Json.decodeFromString<SerializableAddress>(it).toRecipient()
                             },
-                        amount = backStackEntry.savedStateHandle.get<String>(SEND_AMOUNT),
-                        memo = backStackEntry.savedStateHandle.get<String>(SEND_MEMO)
-                    ),
+                    ).also {
+                        // Remove Send screen arguments passed from the Scan screen if some exist after we use them
+                        backStackEntry.savedStateHandle.remove<String>(SEND_SCAN_RECIPIENT_ADDRESS)
+                    },
             )
-            // Remove used Send screen parameters passed from the Scan screen if some exist
-            backStackEntry.savedStateHandle.remove<String>(SEND_RECIPIENT_ADDRESS)
-            backStackEntry.savedStateHandle.remove<String>(SEND_AMOUNT)
-            backStackEntry.savedStateHandle.remove<String>(SEND_MEMO)
 
             if (ConfigurationEntries.IS_APP_UPDATE_CHECK_ENABLED.getValue(RemoteConfig.current)) {
                 WrapCheckForUpdate()
@@ -135,11 +165,11 @@ internal fun MainActivity.Navigation() {
         composable(SCAN) {
             WrapScanValidator(
                 onScanValid = { scanResult ->
-                    // At this point we only pass scan result data to recipient address
                     navController.previousBackStackEntry?.savedStateHandle?.apply {
-                        set(SEND_RECIPIENT_ADDRESS, Json.encodeToString(ScanResult.serializer(), scanResult))
-                        set(SEND_AMOUNT, null)
-                        set(SEND_MEMO, null)
+                        set(
+                            SEND_SCAN_RECIPIENT_ADDRESS,
+                            Json.encodeToString(SerializableAddress.serializer(), scanResult)
+                        )
                     }
                     navController.popBackStackJustOnce(SCAN)
                 },
@@ -151,6 +181,23 @@ internal fun MainActivity.Navigation() {
                 goBack = { navController.popBackStackJustOnce(EXPORT_PRIVATE_DATA) },
                 onConfirm = { navController.popBackStackJustOnce(EXPORT_PRIVATE_DATA) }
             )
+        }
+        composable(route = SEND_CONFIRMATION) {
+            navController.previousBackStackEntry?.let { backStackEntry ->
+                WrapSendConfirmation(
+                    goBack = { navController.popBackStackJustOnce(SEND_CONFIRMATION) },
+                    goHome = { navController.navigateJustOnce(HOME) },
+                    arguments =
+                        SendConfirmationArgsWrapper.fromSavedStateHandle(backStackEntry.savedStateHandle).also {
+                            // Remove SendConfirmation screen arguments passed from the Send screen if some exist
+                            // after we use them
+                            backStackEntry.savedStateHandle.remove<String>(SEND_CONFIRM_RECIPIENT_ADDRESS)
+                            backStackEntry.savedStateHandle.remove<Long>(SEND_CONFIRM_AMOUNT)
+                            backStackEntry.savedStateHandle.remove<String>(SEND_CONFIRM_MEMO)
+                            backStackEntry.savedStateHandle.remove<ByteArray>(SEND_CONFIRM_PROPOSAL)
+                        }
+                )
+            }
         }
     }
 }
@@ -184,23 +231,24 @@ private fun NavHostController.popBackStackJustOnce(currentRouteToBePopped: Strin
 }
 
 object NavigationArguments {
-    const val SEND_RECIPIENT_ADDRESS = "send_recipient_address"
-    const val SEND_AMOUNT = "send_amount"
-    const val SEND_MEMO = "send_memo"
+    const val SEND_SCAN_RECIPIENT_ADDRESS = "send_scan_recipient_address"
+
+    const val SEND_CONFIRM_RECIPIENT_ADDRESS = "send_confirm_recipient_address"
+    const val SEND_CONFIRM_AMOUNT = "send_confirm_amount"
+    const val SEND_CONFIRM_MEMO = "send_confirm_memo"
+    const val SEND_CONFIRM_PROPOSAL = "send_confirm_proposal"
 }
 
 object NavigationTargets {
     const val ABOUT = "about"
-    const val ACCOUNT = "account"
     const val ADVANCED_SETTINGS = "advanced_settings"
     const val EXPORT_PRIVATE_DATA = "export_private_data"
     const val HOME = "home"
     const val CHOOSE_SERVER = "choose_server"
-    const val RECEIVE = "receive"
     const val REQUEST = "request"
     const val SCAN = "scan"
     const val SEED_RECOVERY = "seed_recovery"
-    const val SEND = "send"
+    const val SEND_CONFIRMATION = "send_confirmation"
     const val SETTINGS = "settings"
     const val SUPPORT = "support"
 }

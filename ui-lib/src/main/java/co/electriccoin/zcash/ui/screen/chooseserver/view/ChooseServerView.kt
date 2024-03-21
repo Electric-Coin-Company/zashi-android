@@ -338,7 +338,10 @@ fun SaveButton(
 
             onServerChange(selectedServer)
         },
-        modifier = modifier
+        modifier =
+            modifier.then(
+                Modifier.fillMaxWidth()
+            )
     )
 }
 

@@ -61,7 +61,6 @@ private fun BalanceWidgetPreview() {
 }
 
 @Composable
-@Suppress("LongMethod")
 fun BalanceWidget(
     walletSnapshot: WalletSnapshot,
     isReferenceToBalances: Boolean,
@@ -75,25 +74,7 @@ fun BalanceWidget(
                 .then(modifier),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            StyledBalance(
-                balanceString = walletSnapshot.totalBalance().toZecString(),
-                textStyles =
-                    Pair(
-                        ZcashTheme.extendedTypography.balanceWidgetStyles.first,
-                        ZcashTheme.extendedTypography.balanceWidgetStyles.second
-                    )
-            )
-
-            Spacer(modifier = Modifier.width(ZcashTheme.dimens.spacingSmall))
-
-            Image(
-                painter = painterResource(id = R.drawable.ic_zcash_zec_icon),
-                contentDescription = null,
-            )
-        }
+        BalanceWidgetBigLineOnly(text = walletSnapshot.totalBalance().toZecString())
 
         Row(
             verticalAlignment = Alignment.CenterVertically
@@ -129,5 +110,32 @@ fun BalanceWidget(
                 textFontWeight = FontWeight.Bold
             )
         }
+    }
+}
+
+@Composable
+fun BalanceWidgetBigLineOnly(
+    text: String,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        StyledBalance(
+            balanceString = text,
+            textStyles =
+                Pair(
+                    ZcashTheme.extendedTypography.balanceWidgetStyles.first,
+                    ZcashTheme.extendedTypography.balanceWidgetStyles.second
+                )
+        )
+
+        Spacer(modifier = Modifier.width(ZcashTheme.dimens.spacingSmall))
+
+        Image(
+            painter = painterResource(id = R.drawable.ic_zcash_zec_icon),
+            contentDescription = null,
+        )
     }
 }

@@ -6,7 +6,6 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.performClick
 import androidx.test.filters.MediumTest
 import cash.z.ecc.android.sdk.ext.collectWith
 import cash.z.ecc.android.sdk.fixture.WalletAddressFixture
@@ -20,20 +19,17 @@ import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.fixture.SendArgumentsWrapperFixture
 import co.electriccoin.zcash.ui.screen.send.SendTag
-import co.electriccoin.zcash.ui.screen.send.SendTag.SEND_FAILED_BUTTON
 import co.electriccoin.zcash.ui.screen.send.SendViewTestSetup
 import co.electriccoin.zcash.ui.screen.send.assertOnConfirmation
 import co.electriccoin.zcash.ui.screen.send.assertOnForm
 import co.electriccoin.zcash.ui.screen.send.assertOnSendFailure
-import co.electriccoin.zcash.ui.screen.send.assertOnSendSuccessful
-import co.electriccoin.zcash.ui.screen.send.assertOnSending
 import co.electriccoin.zcash.ui.screen.send.assertSendDisabled
 import co.electriccoin.zcash.ui.screen.send.assertSendEnabled
 import co.electriccoin.zcash.ui.screen.send.clickBack
-import co.electriccoin.zcash.ui.screen.send.clickConfirmation
 import co.electriccoin.zcash.ui.screen.send.clickCreateAndSend
 import co.electriccoin.zcash.ui.screen.send.clickScanner
 import co.electriccoin.zcash.ui.screen.send.clickSettingsTopAppBarMenu
+import co.electriccoin.zcash.ui.screen.send.dismissFailureDialog
 import co.electriccoin.zcash.ui.screen.send.model.SendStage
 import co.electriccoin.zcash.ui.screen.send.setAmount
 import co.electriccoin.zcash.ui.screen.send.setMemo
@@ -95,7 +91,6 @@ class SendViewTest : UiTestPrerequisites() {
             composeTestRule.setValidAddress()
             composeTestRule.clickCreateAndSend()
             composeTestRule.assertOnConfirmation()
-            composeTestRule.clickConfirmation()
 
             launch {
                 testSetup.mutableActionExecuted.collectWith(this) {
@@ -132,7 +127,6 @@ class SendViewTest : UiTestPrerequisites() {
 
             composeTestRule.clickCreateAndSend()
             composeTestRule.assertOnConfirmation()
-            composeTestRule.clickConfirmation()
 
             launch {
                 testSetup.mutableActionExecuted.collectWith(this) {
@@ -191,7 +185,6 @@ class SendViewTest : UiTestPrerequisites() {
 
             composeTestRule.clickCreateAndSend()
             composeTestRule.assertOnConfirmation()
-            composeTestRule.clickConfirmation()
 
             launch {
                 testSetup.mutableActionExecuted.collectWith(this) {
@@ -273,7 +266,6 @@ class SendViewTest : UiTestPrerequisites() {
 
             composeTestRule.clickCreateAndSend()
             composeTestRule.assertOnConfirmation()
-            composeTestRule.clickConfirmation()
 
             launch {
                 testSetup.mutableActionExecuted.collectWith(this) {
@@ -326,60 +318,6 @@ class SendViewTest : UiTestPrerequisites() {
 
     @Test
     @MediumTest
-    fun back_on_sending_disabled_check() {
-        newTestSetup(
-            SendStage.Confirmation,
-            runBlocking { ZecSendFixture.new() }
-        )
-
-        composeTestRule.assertOnConfirmation()
-        composeTestRule.clickConfirmation()
-        composeTestRule.assertOnSending()
-
-        composeTestRule.onNodeWithContentDescription(getStringResource(R.string.send_back_content_description)).also {
-            it.assertDoesNotExist()
-        }
-    }
-
-    @Test
-    @MediumTest
-    fun back_on_send_successful() {
-        val testSetup =
-            newTestSetup(
-                SendStage.SendSuccessful,
-                runBlocking { ZecSendFixture.new() }
-            )
-
-        assertEquals(0, testSetup.getOnBackCount())
-
-        composeTestRule.assertOnSendSuccessful()
-        composeTestRule.clickBack()
-
-        assertEquals(1, testSetup.getOnBackCount())
-    }
-
-    @Test
-    @MediumTest
-    fun close_on_send_successful() {
-        val testSetup =
-            newTestSetup(
-                SendStage.SendSuccessful,
-                runBlocking { ZecSendFixture.new() }
-            )
-
-        assertEquals(0, testSetup.getOnBackCount())
-
-        composeTestRule.assertOnSendSuccessful()
-        composeTestRule.onNodeWithText(getStringResource(R.string.send_successful_button), ignoreCase = true).also {
-            it.assertExists()
-            it.performClick()
-        }
-
-        assertEquals(1, testSetup.getOnBackCount())
-    }
-
-    @Test
-    @MediumTest
     fun back_on_send_failure() {
         val testSetup =
             newTestSetup(
@@ -390,7 +328,9 @@ class SendViewTest : UiTestPrerequisites() {
         assertEquals(0, testSetup.getOnBackCount())
 
         composeTestRule.assertOnSendFailure()
-        composeTestRule.clickBack()
+
+        composeTestRule.dismissFailureDialog()
+
         composeTestRule.assertOnForm()
 
         assertEquals(1, testSetup.getOnBackCount())
@@ -408,10 +348,9 @@ class SendViewTest : UiTestPrerequisites() {
         assertEquals(0, testSetup.getOnBackCount())
 
         composeTestRule.assertOnSendFailure()
-        composeTestRule.onNodeWithTag(SEND_FAILED_BUTTON).also {
-            it.assertExists()
-            it.performClick()
-        }
+
+        composeTestRule.dismissFailureDialog()
+
         composeTestRule.assertOnForm()
 
         assertEquals(1, testSetup.getOnBackCount())
@@ -448,20 +387,6 @@ class SendViewTest : UiTestPrerequisites() {
             it.assertTextEquals(
                 getStringResource(R.string.send_address_hint),
                 SendArgumentsWrapperFixture.RECIPIENT_ADDRESS.address,
-                includeEditableText = true
-            )
-        }
-        composeTestRule.onNodeWithText(getStringResource(R.string.send_amount_hint)).also {
-            it.assertTextEquals(
-                getStringResource(R.string.send_amount_hint),
-                SendArgumentsWrapperFixture.amountToFixtureZecString(SendArgumentsWrapperFixture.AMOUNT)!!,
-                includeEditableText = true
-            )
-        }
-        composeTestRule.onNodeWithText(getStringResource(R.string.send_memo_hint)).also {
-            it.assertTextEquals(
-                getStringResource(R.string.send_memo_hint),
-                SendArgumentsWrapperFixture.MEMO,
                 includeEditableText = true
             )
         }

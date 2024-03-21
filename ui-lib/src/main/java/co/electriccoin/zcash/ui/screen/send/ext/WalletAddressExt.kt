@@ -6,7 +6,9 @@ import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import cash.z.ecc.android.sdk.model.WalletAddress
+import cash.z.ecc.android.sdk.type.AddressType
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.model.SerializableAddress
 
 /**
  * How far into the address will be abbreviation look forwards and backwards.
@@ -26,5 +28,16 @@ internal fun WalletAddress.abbreviated(context: Context): String {
     val firstFive = address.substring(0, ABBREVIATION_INDEX)
     val lastFive = address.substring(address.length - ABBREVIATION_INDEX, address.length)
 
-    return context.getString(R.string.send_confirmation_abbreviated_address_format, firstFive, lastFive)
+    return context.getString(R.string.send_abbreviated_address_format, firstFive, lastFive)
 }
+
+internal fun WalletAddress.toSerializableAddress() =
+    SerializableAddress(
+        address = address,
+        type =
+            when (this) {
+                is WalletAddress.Unified -> AddressType.Unified
+                is WalletAddress.Sapling -> AddressType.Shielded
+                is WalletAddress.Transparent -> AddressType.Transparent
+            }
+    )

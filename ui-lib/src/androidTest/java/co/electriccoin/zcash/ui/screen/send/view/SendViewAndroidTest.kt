@@ -7,12 +7,10 @@ import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.sdk.fixture.ZecSendFixture
 import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.screen.send.SendViewTestSetup
-import co.electriccoin.zcash.ui.screen.send.assertOnConfirmation
 import co.electriccoin.zcash.ui.screen.send.assertOnForm
 import co.electriccoin.zcash.ui.screen.send.assertOnSendFailure
-import co.electriccoin.zcash.ui.screen.send.assertOnSendSuccessful
-import co.electriccoin.zcash.ui.screen.send.assertOnSending
-import co.electriccoin.zcash.ui.screen.send.clickConfirmation
+import co.electriccoin.zcash.ui.screen.send.clickCreateAndSend
+import co.electriccoin.zcash.ui.screen.send.dismissFailureDialog
 import co.electriccoin.zcash.ui.screen.send.model.SendStage
 import kotlinx.coroutines.runBlocking
 import org.junit.Rule
@@ -42,37 +40,18 @@ class SendViewAndroidTest : UiTestPrerequisites() {
     fun back_on_sending_with_system_navigation_disabled_check() {
         val testSetup =
             newTestSetup(
-                SendStage.Confirmation,
+                SendStage.Form,
                 runBlocking { ZecSendFixture.new() }
             )
 
         assertEquals(0, testSetup.getOnBackCount())
 
-        composeTestRule.assertOnConfirmation()
-        composeTestRule.clickConfirmation()
-        composeTestRule.assertOnSending()
+        composeTestRule.assertOnForm()
+        composeTestRule.clickCreateAndSend()
 
         Espresso.pressBack()
 
-        composeTestRule.assertOnSending()
-
-        assertEquals(1, testSetup.getOnBackCount())
-    }
-
-    @Test
-    @MediumTest
-    fun back_on_send_successful_with_system_navigation() {
-        val testSetup =
-            newTestSetup(
-                SendStage.SendSuccessful,
-                runBlocking { ZecSendFixture.new() }
-            )
-
-        assertEquals(0, testSetup.getOnBackCount())
-
-        composeTestRule.assertOnSendSuccessful()
-
-        Espresso.pressBack()
+        composeTestRule.assertOnForm()
 
         assertEquals(1, testSetup.getOnBackCount())
     }
@@ -90,7 +69,7 @@ class SendViewAndroidTest : UiTestPrerequisites() {
 
         composeTestRule.assertOnSendFailure()
 
-        Espresso.pressBack()
+        composeTestRule.dismissFailureDialog()
 
         composeTestRule.assertOnForm()
 

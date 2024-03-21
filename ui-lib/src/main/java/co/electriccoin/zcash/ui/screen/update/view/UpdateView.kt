@@ -149,9 +149,12 @@ private fun UpdateBottomAppBar(
         PrimaryButton(
             onClick = { onDownload(UpdateState.Running) },
             text = stringResource(R.string.update_download_button),
-            modifier = Modifier.testTag(UpdateTag.BTN_DOWNLOAD),
+            modifier =
+                Modifier
+                    .testTag(UpdateTag.BTN_DOWNLOAD)
+                    .fillMaxWidth(),
             enabled = updateInfo.state != UpdateState.Running,
-            outerPaddingValues = PaddingValues(all = ZcashTheme.dimens.spacingNone)
+            outerPaddingValues = PaddingValues(all = ZcashTheme.dimens.spacingNone),
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))

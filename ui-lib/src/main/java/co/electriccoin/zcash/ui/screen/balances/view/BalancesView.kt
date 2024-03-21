@@ -78,7 +78,7 @@ import co.electriccoin.zcash.ui.screen.balances.model.WalletDisplayValues
 
 @Preview("Balances")
 @Composable
-private fun ComposablePreview() {
+private fun ComposableBalancesPreview() {
     ZcashTheme(forceDarkMode = false) {
         GradientSurface {
             Balances(
@@ -90,6 +90,26 @@ private fun ComposablePreview() {
                 shieldState = ShieldState.Available,
                 walletSnapshot = WalletSnapshotFixture.new(),
                 isShowingErrorDialog = false,
+                setShowErrorDialog = {},
+            )
+        }
+    }
+}
+
+@Preview("BalancesShieldFailure")
+@Composable
+private fun ComposableBalancesShieldFailurePreview() {
+    ZcashTheme(forceDarkMode = false) {
+        GradientSurface {
+            Balances(
+                onSettings = {},
+                isFiatConversionEnabled = false,
+                isKeepScreenOnWhileSyncing = false,
+                isUpdateAvailable = false,
+                onShielding = {},
+                shieldState = ShieldState.Available,
+                walletSnapshot = WalletSnapshotFixture.new(),
+                isShowingErrorDialog = true,
                 setShowErrorDialog = {},
             )
         }
@@ -273,6 +293,7 @@ fun TransparentBalancePanel(
                 textStyle = ZcashTheme.extendedTypography.buttonTextSmall,
                 enabled = shieldState == ShieldState.Available,
                 minHeight = ZcashTheme.dimens.buttonHeightSmall,
+                modifier = Modifier.fillMaxWidth(),
                 outerPaddingValues =
                     PaddingValues(
                         horizontal = 54.dp,

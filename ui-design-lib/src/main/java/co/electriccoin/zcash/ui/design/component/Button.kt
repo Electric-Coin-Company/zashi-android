@@ -7,6 +7,7 @@ import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -57,6 +58,12 @@ private fun ButtonComposablePreview() {
                 TertiaryButton(onClick = { }, text = "Tertiary", enabled = false)
                 NavigationButton(onClick = { }, text = "Navigation")
                 DangerousButton(onClick = { }, text = "Dangerous")
+                @Suppress("MagicNumber")
+                Row {
+                    PrimaryButton(onClick = { }, text = "Button 1", modifier = Modifier.weight(0.5f))
+                    Spacer(modifier = Modifier.width(24.dp))
+                    PrimaryButton(onClick = { }, text = "Button 2", modifier = Modifier.weight(0.5f))
+                }
             }
         }
     }
@@ -80,7 +87,7 @@ fun PrimaryButton(
             horizontal = ZcashTheme.dimens.spacingNone,
             vertical = ZcashTheme.dimens.spacingSmall
         ),
-    contentPaddingValues: PaddingValues = PaddingValues(all = 16.dp)
+    contentPaddingValues: PaddingValues = PaddingValues(all = 14.dp)
 ) {
     Button(
         shape = RectangleShape,
@@ -104,7 +111,6 @@ fun PrimaryButton(
                         translationY = ZcashTheme.dimens.buttonShadowOffsetX + 6.dp
                     )
                     .defaultMinSize(minWidth, minHeight)
-                    .fillMaxWidth()
                     .border(1.dp, Color.Black)
             ),
         colors =

@@ -210,6 +210,7 @@ private fun NewWalletRecoveryMainContent(
                         start = ZcashTheme.dimens.screenHorizontalSpacingBig,
                         end = ZcashTheme.dimens.screenHorizontalSpacingBig
                     )
+                    .fillMaxWidth()
         )
     }
 }

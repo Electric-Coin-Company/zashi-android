@@ -253,7 +253,7 @@ val LocalExtendedTypography =
                     lineHeight = 20.sp
                 ),
             buttonText =
-                PrimaryTypography.bodySmall.copy(
+                PrimaryTypography.bodyMedium.copy(
                     fontWeight = FontWeight.Medium
                 ),
             buttonTextSmall =
