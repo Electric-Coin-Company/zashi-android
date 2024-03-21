@@ -117,7 +117,6 @@ class SendViewTestSetup(
                     ),
                 sendStage = sendStage,
                 onCreateZecSend = setZecSend,
-                zecSend = zecSend,
                 focusManager = LocalFocusManager.current,
                 onBack = onBackAction,
                 onSettings = { onSettingsCount.incrementAndGet() },

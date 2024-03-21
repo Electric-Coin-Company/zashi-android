@@ -126,7 +126,7 @@ private fun SendConfirmationMainContent(
     modifier: Modifier = Modifier,
 ) {
     when (stage) {
-        SendConfirmationStage.Confirmation -> {
+        SendConfirmationStage.Confirmation, SendConfirmationStage.Sending, is SendConfirmationStage.Failure -> {
             SendConfirmationContent(
                 zecSend = zecSend,
                 onBack = onBack,
@@ -134,28 +134,19 @@ private fun SendConfirmationMainContent(
                     onStageChange(SendConfirmationStage.Sending)
                     onSendSubmit(zecSend)
                 },
-                isSending = false,
+                isSending = stage == SendConfirmationStage.Sending,
                 modifier = modifier
             )
-        }
-        SendConfirmationStage.Sending -> {
-            SendConfirmationContent(
-                zecSend = zecSend,
-                onBack = onBack,
-                onConfirmation = {},
-                isSending = true,
-                modifier = modifier
-            )
-        }
-        is SendConfirmationStage.Failure -> {
-            SendFailure(
-                onDone = onBack,
-                reason = stage.error,
-            )
+            if (stage is SendConfirmationStage.Failure) {
+                SendFailure(
+                    onDone = onBack,
+                    reason = stage.error,
+                )
+            }
         }
         is SendConfirmationStage.MultipleTrxFailure -> {
-            // TODO [#1161]: Remove Send-Success and rework Send-Failure
-            // TODO [#1161]: https://github.com/Electric-Coin-Company/zashi-android/issues/1161
+            // TODO [#1294]: Add Send.Multiple-Trx-Failed screen
+            // TODO [#1294]: https://github.com/Electric-Coin-Company/zashi-android/issues/1294
             SendFailure(
                 onDone = onBack,
                 reason = stage.error,

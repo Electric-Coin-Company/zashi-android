@@ -16,6 +16,7 @@ directly impact users rather than highlighting other key architectural updates.*
   lightwalletd servers in runtime.
 - The About screen now contains a link to the new Zashi Privacy Policy website
 - The Send Confirmation screen has been reworked according to the new design
+- Transitions between screens are now animated with a simple slide animation
 
 ### Changed
 - The Transaction History UI has been incorporated into the Account screen
