@@ -9,6 +9,9 @@ import co.electriccoin.zcash.spackle.io.listFilesSuspend
 import kotlinx.datetime.Instant
 import java.io.File
 
+// TODO [#1301]: Localize support text content
+// TODO [#1301]: https://github.com/Electric-Coin-Company/zashi-android/issues/1301
+
 data class CrashInfo(val exceptionClassName: String, val isUncaught: Boolean, val timestamp: Instant) {
     fun toSupportString() =
         buildString {
@@ -24,11 +27,15 @@ data class CrashInfo(val exceptionClassName: String, val isUncaught: Boolean, va
 }
 
 fun List<CrashInfo>.toCrashSupportString() =
-    buildString {
-        // Using the header "Exceptions" instead of "Crashes" to reduce risk of alarming users
-        appendLine("Exceptions:")
-        this@toCrashSupportString.forEach {
-            appendLine(it.toSupportString())
+    if (isEmpty()) {
+        ""
+    } else {
+        buildString {
+            // Using the header "Exceptions" instead of "Crashes" to reduce risk of alarming users
+            appendLine("Exceptions:")
+            this@toCrashSupportString.forEach {
+                appendLine(it.toSupportString())
+            }
         }
     }
 

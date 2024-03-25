@@ -2,59 +2,91 @@
 
 package co.electriccoin.zcash.ui.screen.sendconfirmation
 
+import android.content.Context
+import android.content.Intent
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.viewModels
 import androidx.annotation.VisibleForTesting
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cash.z.ecc.android.sdk.Synchronizer
+import cash.z.ecc.android.sdk.model.TransactionSubmitResult
 import cash.z.ecc.android.sdk.model.UnifiedSpendingKey
 import cash.z.ecc.android.sdk.model.ZecSend
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.MainActivity
+import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.screen.send.ext.Saver
-import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SendConfirmationArgsWrapper
+import co.electriccoin.zcash.ui.screen.sendconfirmation.ext.toSupportString
+import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SendConfirmationArguments
 import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SendConfirmationStage
+import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SubmitResult
 import co.electriccoin.zcash.ui.screen.sendconfirmation.view.SendConfirmation
+import co.electriccoin.zcash.ui.screen.sendconfirmation.viewmodel.SendConfirmationViewModel
+import co.electriccoin.zcash.ui.screen.support.model.SupportInfo
+import co.electriccoin.zcash.ui.screen.support.model.SupportInfoType
+import co.electriccoin.zcash.ui.screen.support.viewmodel.SupportViewModel
+import co.electriccoin.zcash.ui.util.EmailUtil
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 
 @Composable
 internal fun MainActivity.WrapSendConfirmation(
-    goBack: () -> Unit,
+    goBack: (clearForm: Boolean) -> Unit,
     goHome: () -> Unit,
-    arguments: SendConfirmationArgsWrapper
+    arguments: SendConfirmationArguments
 ) {
-    val walletViewModel by this.viewModels<WalletViewModel>()
+    val walletViewModel by viewModels<WalletViewModel>()
+
+    val sendViewModel by viewModels<SendConfirmationViewModel>()
+
+    val viewModel by viewModels<SupportViewModel>()
 
     val synchronizer = walletViewModel.synchronizer.collectAsStateWithLifecycle().value
 
     val spendingKey = walletViewModel.spendingKey.collectAsStateWithLifecycle().value
 
+    val supportMessage = viewModel.supportInfo.collectAsStateWithLifecycle().value
+
     WrapSendConfirmation(
-        arguments,
-        synchronizer,
-        spendingKey,
-        goBack,
-        goHome,
+        activity = this,
+        arguments = arguments,
+        goBack = goBack,
+        goHome = goHome,
+        sendViewModel = sendViewModel,
+        spendingKey = spendingKey,
+        supportMessage = supportMessage,
+        synchronizer = synchronizer,
     )
 }
 
 @VisibleForTesting
 @Composable
+@Suppress("LongParameterList", "LongMethod")
 internal fun WrapSendConfirmation(
-    arguments: SendConfirmationArgsWrapper,
-    synchronizer: Synchronizer?,
-    spendingKey: UnifiedSpendingKey?,
-    goBack: () -> Unit,
+    activity: ComponentActivity,
+    arguments: SendConfirmationArguments,
+    goBack: (clearForm: Boolean) -> Unit,
     goHome: () -> Unit,
+    sendViewModel: SendConfirmationViewModel,
+    spendingKey: UnifiedSpendingKey?,
+    supportMessage: SupportInfo?,
+    synchronizer: Synchronizer?,
 ) {
     val scope = rememberCoroutineScope()
+
+    val snackbarHostState = remember { SnackbarHostState() }
 
     val zecSend by rememberSaveable(stateSaver = ZecSend.Saver) { mutableStateOf(arguments.toZecSend()) }
 
@@ -66,16 +98,15 @@ internal fun WrapSendConfirmation(
             mutableStateOf(SendConfirmationStage.Confirmation)
         }
 
+    val submissionResults = sendViewModel.submissions.collectAsState().value.toImmutableList()
+
     val onBackAction = {
         when (stage) {
-            SendConfirmationStage.Confirmation -> goBack()
+            SendConfirmationStage.Confirmation -> goBack(false)
             SendConfirmationStage.Sending -> { /* no action - wait until the sending is done */ }
             is SendConfirmationStage.Failure -> setStage(SendConfirmationStage.Confirmation)
-            is SendConfirmationStage.MultipleTrxFailure -> {
-                // TODO [#1294]: Add Send.Multiple-Trx-Failed screen
-                // TODO [#1294]: https://github.com/Electric-Coin-Company/zashi-android/issues/1294
-                setStage(SendConfirmationStage.Confirmation)
-            }
+            is SendConfirmationStage.MultipleTrxFailure -> { /* no action - wait until report the result */ }
+            is SendConfirmationStage.MultipleTrxFailureReported -> goBack(true)
         }
     }
 
@@ -93,34 +124,82 @@ internal fun WrapSendConfirmation(
             stage = stage,
             onStageChange = setStage,
             zecSend = zecSend!!,
+            submissionResults = submissionResults,
+            snackbarHostState = snackbarHostState,
             onBack = onBackAction,
+            onContactSupport = {
+                val fullMessage =
+                    formatMessage(
+                        context = activity,
+                        appInfo = supportMessage,
+                        submissionResults = submissionResults
+                    )
+
+                val mailIntent =
+                    EmailUtil.newMailActivityIntent(
+                        activity.getString(R.string.support_email_address),
+                        activity.getString(R.string.app_name),
+                        fullMessage
+                    ).apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    }
+
+                runCatching {
+                    activity.startActivity(mailIntent)
+                }.onSuccess {
+                    setStage(SendConfirmationStage.MultipleTrxFailureReported)
+                }.onFailure {
+                    setStage(SendConfirmationStage.MultipleTrxFailureReported)
+                    scope.launch {
+                        snackbarHostState.showSnackbar(
+                            message = activity.getString(R.string.send_confirmation_multiple_report_unable_open_email)
+                        )
+                    }
+                }
+            },
             onCreateAndSend = { newZecSend ->
                 scope.launch {
-                    Twig.debug { "Sending transactions" }
-                    // TODO [#1294]: Add Send.Multiple-Trx-Failed screen
-                    // TODO [#1294]: Note that the following processing is not entirely correct and will be reworked
-                    // TODO [#1294]: https://github.com/Electric-Coin-Company/zashi-android/issues/1294
-                    runCatching {
-                        // The not-null assertion operator is necessary here even if we check its nullability before
-                        // due to: "Smart cast to 'Proposal' is impossible, because 'zecSend.proposal' is a public API
-                        // property declared in different module
-                        // See more details on the Kotlin forum
-                        checkNotNull(newZecSend.proposal)
-                        synchronizer.createProposedTransactions(newZecSend.proposal!!, spendingKey).collect {
-                            Twig.info { "Printing only for now. Will be reworked. Result: $it" }
-                        }
-                    }
-                        .onSuccess {
-                            Twig.debug { "Transaction submitted successfully" }
+                    Twig.debug { "Sending transactions..." }
+
+                    // The not-null assertion operator is necessary here even if we check its nullability before
+                    // due to property is declared in different module. See more details on the Kotlin forum
+                    checkNotNull(newZecSend.proposal)
+
+                    val result =
+                        sendViewModel.runSending(
+                            synchronizer = synchronizer,
+                            spendingKey = spendingKey,
+                            proposal = newZecSend.proposal!!
+                        )
+                    when (result) {
+                        SubmitResult.Success -> {
                             setStage(SendConfirmationStage.Confirmation)
                             goHome()
                         }
-                        .onFailure {
-                            Twig.error(it) { "Transaction submission failed" }
-                            setStage(SendConfirmationStage.Failure(it.message ?: ""))
+                        is SubmitResult.SimpleTrxFailure -> {
+                            setStage(SendConfirmationStage.Failure(result.errorDescription))
                         }
+                        is SubmitResult.MultipleTrxFailure -> {
+                            setStage(SendConfirmationStage.MultipleTrxFailure)
+                        }
+                    }
                 }
             }
         )
     }
 }
+
+private fun formatMessage(
+    context: Context,
+    appInfo: SupportInfo?,
+    supportInfoValues: Set<SupportInfoType> = SupportInfoType.entries.toSet(),
+    submissionResults: ImmutableList<TransactionSubmitResult>
+): String =
+    buildString {
+        appendLine(context.getString(R.string.send_confirmation_multiple_report_text))
+        appendLine()
+        append(appInfo?.toSupportString(supportInfoValues) ?: "")
+        if (submissionResults.isNotEmpty()) {
+            append(submissionResults.toSupportString(context))
+        }
+    }

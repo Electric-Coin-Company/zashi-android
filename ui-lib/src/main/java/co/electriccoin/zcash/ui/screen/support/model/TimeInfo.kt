@@ -9,6 +9,9 @@ import java.util.Date
 import java.util.Locale
 import kotlin.time.Duration.Companion.milliseconds
 
+// TODO [#1301]: Localize support text content
+// TODO [#1301]: https://github.com/Electric-Coin-Company/zashi-android/issues/1301
+
 data class TimeInfo(
     val currentTime: Instant,
     val rebootTime: Instant,

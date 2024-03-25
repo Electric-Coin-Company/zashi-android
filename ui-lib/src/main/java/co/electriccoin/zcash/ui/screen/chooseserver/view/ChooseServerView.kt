@@ -205,7 +205,7 @@ private fun ChooseServerMainContent(
             },
             setShowErrorDialog = setShowErrorDialog,
             selectedOption = selectedOption,
-            modifier = Modifier.padding(horizontal = ZcashTheme.dimens.spacingXlarge)
+            modifier = Modifier.padding(horizontal = ZcashTheme.dimens.spacingUpLarge)
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingHuge))

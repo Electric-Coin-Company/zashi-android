@@ -5,6 +5,9 @@ import cash.z.ecc.android.sdk.model.MonetarySeparators
 import co.electriccoin.zcash.global.StorageChecker
 import java.util.Locale
 
+// TODO [#1301]: Localize support text content
+// TODO [#1301]: https://github.com/Electric-Coin-Company/zashi-android/issues/1301
+
 data class EnvironmentInfo(
     val locale: Locale,
     val monetarySeparators: MonetarySeparators,

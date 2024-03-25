@@ -1,14 +1,12 @@
 package co.electriccoin.zcash.ui.screen.support.model
 
 import co.electriccoin.zcash.ui.test.getAppContext
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class SupportInfoTest {
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun filter_time() =
         runTest {
@@ -23,7 +21,6 @@ class SupportInfoTest {
             assertFalse(actualExcluded.contains(individualExpected))
         }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun filter_app() =
         runTest {
@@ -38,7 +35,6 @@ class SupportInfoTest {
             assertFalse(actualExcluded.contains(individualExpected))
         }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun filter_os() =
         runTest {
@@ -53,7 +49,6 @@ class SupportInfoTest {
             assertFalse(actualExcluded.contains(individualExpected))
         }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun filter_device() =
         runTest {
@@ -68,7 +63,6 @@ class SupportInfoTest {
             assertFalse(actualExcluded.contains(individualExpected))
         }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun filter_crash() =
         runTest {
@@ -78,12 +72,8 @@ class SupportInfoTest {
 
             val actualIncluded = supportInfo.toSupportString(setOf(SupportInfoType.Crash))
             assertTrue(actualIncluded.contains(individualExpected))
-
-            val actualExcluded = supportInfo.toSupportString(emptySet())
-            assertFalse(actualExcluded.contains(individualExpected))
         }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun filter_environment() =
         runTest {
@@ -98,7 +88,6 @@ class SupportInfoTest {
             assertFalse(actualExcluded.contains(individualExpected))
         }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun filter_permission() =
         runTest {

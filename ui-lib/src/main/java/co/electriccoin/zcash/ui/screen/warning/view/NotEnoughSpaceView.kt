@@ -58,11 +58,11 @@ fun NotEnoughSpaceView(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(Modifier.height(ZcashTheme.dimens.spacingXlarge))
+        Spacer(Modifier.height(ZcashTheme.dimens.spacingUpLarge))
 
         Header(text = stringResource(id = R.string.not_enough_space_title))
 
-        Spacer(Modifier.height(ZcashTheme.dimens.spacingXlarge))
+        Spacer(Modifier.height(ZcashTheme.dimens.spacingUpLarge))
 
         Body(
             text = stringResource(id = R.string.not_enough_space_description, storageSpaceRequiredGigabytes),

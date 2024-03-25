@@ -104,8 +104,8 @@ internal val SecondaryTypography =
         headlineSmall =
             TextStyle(
                 fontFamily = ArchivoFontFamily,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                fontSize = 16.sp,
                 textAlign = TextAlign.Center
             ),
         bodyLarge =

@@ -11,12 +11,14 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ### Added
 - Advanced Settings screen that provides more technical options like Export private data, Recovery phrase, or 
-  Choose server
-- A new Server switching screen was added. Its purpose is to enable switching between predefined and custom 
+  Choose server has been added
+- A new Server switching screen has been added. Its purpose is to enable switching between predefined and custom 
   lightwalletd servers in runtime.
 - The About screen now contains a link to the new Zashi Privacy Policy website
 - The Send Confirmation screen has been reworked according to the new design
 - Transitions between screens are now animated with a simple slide animation
+- Proposal API from the Zcash SDK has been integrated together with handling error states for multi-transaction 
+  submission
 
 ### Changed
 - The Transaction History UI has been incorporated into the Account screen

@@ -17,7 +17,8 @@ data class Dimens(
     val spacingMid: Dp,
     val spacingDefault: Dp,
     val spacingLarge: Dp,
-    val spacingXlarge: Dp,
+    val spacingUpLarge: Dp,
+    val spacingBig: Dp,
     val spacingHuge: Dp,
     // List of custom spacings:
     // Button:
@@ -62,7 +63,8 @@ private val defaultDimens =
         spacingMid = 12.dp,
         spacingDefault = 16.dp,
         spacingLarge = 24.dp,
-        spacingXlarge = 32.dp,
+        spacingUpLarge = 32.dp,
+        spacingBig = 48.dp,
         spacingHuge = 64.dp,
         buttonShadowOffsetX = 20.dp,
         buttonShadowOffsetY = 20.dp,

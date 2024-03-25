@@ -315,7 +315,7 @@ fun TransparentBalancePanel(
                 textFontWeight = FontWeight.SemiBold
             )
 
-            Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingXlarge))
+            Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingUpLarge))
         }
 
         if (showHelpPanel) {
@@ -611,7 +611,7 @@ fun SyncStatus(
             progress = walletSnapshot.progress.decimal,
             modifier =
                 Modifier.padding(
-                    horizontal = ZcashTheme.dimens.spacingXlarge
+                    horizontal = ZcashTheme.dimens.spacingUpLarge
                 )
         )
     }

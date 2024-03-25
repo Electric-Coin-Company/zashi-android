@@ -1,4 +1,5 @@
-Note: Contact Support will fail on some devices without an app to handle email, such as an Android TV device.  See issue #386
+Note: Contact Support will fail and display an error message on some devices without an app to handle email, such as an 
+Android TV device.
 
 # Check Support Email Contents
 1. If using a test device or emulator, be sure to configure a default email app.  For example, try opening the Gmail app and confirm that it shows your inbox.

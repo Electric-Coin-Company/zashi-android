@@ -31,7 +31,7 @@ import co.electriccoin.zcash.ui.screen.send.ext.Saver
 import co.electriccoin.zcash.ui.screen.send.model.AmountState
 import co.electriccoin.zcash.ui.screen.send.model.MemoState
 import co.electriccoin.zcash.ui.screen.send.model.RecipientAddressState
-import co.electriccoin.zcash.ui.screen.send.model.SendArgumentsWrapper
+import co.electriccoin.zcash.ui.screen.send.model.SendArguments
 import co.electriccoin.zcash.ui.screen.send.model.SendStage
 import co.electriccoin.zcash.ui.screen.send.view.Send
 import kotlinx.coroutines.launch
@@ -41,7 +41,7 @@ import java.util.Locale
 @Suppress("LongParameterList")
 internal fun WrapSend(
     activity: ComponentActivity,
-    sendArgumentsWrapper: SendArgumentsWrapper?,
+    sendArguments: SendArguments?,
     goToQrScanner: () -> Unit,
     goBack: () -> Unit,
     goBalances: () -> Unit,
@@ -72,7 +72,7 @@ internal fun WrapSend(
     val monetarySeparators = MonetarySeparators.current(Locale.US)
 
     WrapSend(
-        sendArgumentsWrapper,
+        sendArguments,
         synchronizer,
         walletSnapshot,
         spendingKey,
@@ -91,7 +91,7 @@ internal fun WrapSend(
 @VisibleForTesting
 @Composable
 internal fun WrapSend(
-    sendArgumentsWrapper: SendArgumentsWrapper?,
+    sendArguments: SendArguments?,
     synchronizer: Synchronizer?,
     walletSnapshot: WalletSnapshot?,
     spendingKey: UnifiedSpendingKey?,
@@ -116,13 +116,13 @@ internal fun WrapSend(
     // Address computation:
     val (recipientAddressState, setRecipientAddressState) =
         rememberSaveable(stateSaver = RecipientAddressState.Saver) {
-            mutableStateOf(RecipientAddressState(zecSend?.destination?.address ?: "", null))
+            mutableStateOf(RecipientAddressState.new(zecSend?.destination?.address ?: "", null))
         }
-    if (sendArgumentsWrapper?.recipientAddress != null) {
+    if (sendArguments?.recipientAddress != null) {
         setRecipientAddressState(
             RecipientAddressState.new(
-                sendArgumentsWrapper.recipientAddress.address,
-                sendArgumentsWrapper.recipientAddress.type
+                sendArguments.recipientAddress.address,
+                sendArguments.recipientAddress.type
             )
         )
     }
@@ -144,6 +144,15 @@ internal fun WrapSend(
         rememberSaveable(stateSaver = MemoState.Saver) {
             mutableStateOf(MemoState.new(zecSend?.memo?.value ?: ""))
         }
+
+    // Clearing form if required form the previous navigation destination
+    if (sendArguments?.clearForm == true) {
+        setSendStage(SendStage.Form)
+        setZecSend(null)
+        setRecipientAddressState(RecipientAddressState.new("", null))
+        setAmountState(AmountState.new(context, "", monetarySeparators))
+        setMemoState(MemoState.new(""))
+    }
 
     val onBackAction = {
         when (sendStage) {

@@ -16,9 +16,9 @@ import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.screen.support.model.SupportInfo
 import co.electriccoin.zcash.ui.screen.support.model.SupportInfoType
-import co.electriccoin.zcash.ui.screen.support.util.EmailUtil
 import co.electriccoin.zcash.ui.screen.support.view.Support
 import co.electriccoin.zcash.ui.screen.support.viewmodel.SupportViewModel
+import co.electriccoin.zcash.ui.util.EmailUtil
 import kotlinx.coroutines.launch
 
 @Composable
@@ -55,14 +55,12 @@ internal fun WrapSupport(
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 }
 
-            // TODO [#386]: This should only fail if there's no email app, e.g. on a TV device
-            // TODO [#386]: https://github.com/Electric-Coin-Company/zashi-android/issues/386
-
             runCatching {
                 activity.startActivity(mailIntent)
             }.onSuccess {
                 setShowDialog(false)
             }.onFailure {
+                setShowDialog(false)
                 scope.launch {
                     snackbarHostState.showSnackbar(
                         message = activity.getString(R.string.support_unable_to_open_email)

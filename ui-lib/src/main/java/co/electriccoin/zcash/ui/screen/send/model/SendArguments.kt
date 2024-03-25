@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.screen.send.model
 
-data class SendArgumentsWrapper(
+data class SendArguments(
     val recipientAddress: RecipientAddressState? = null,
+    val clearForm: Boolean = false,
 )

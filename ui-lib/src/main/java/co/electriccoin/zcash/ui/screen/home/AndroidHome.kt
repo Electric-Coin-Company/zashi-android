@@ -18,7 +18,7 @@ import co.electriccoin.zcash.ui.screen.home.model.TabItem
 import co.electriccoin.zcash.ui.screen.home.view.Home
 import co.electriccoin.zcash.ui.screen.receive.WrapReceive
 import co.electriccoin.zcash.ui.screen.send.WrapSend
-import co.electriccoin.zcash.ui.screen.send.model.SendArgumentsWrapper
+import co.electriccoin.zcash.ui.screen.send.model.SendArguments
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -31,7 +31,7 @@ internal fun MainActivity.WrapHome(
     goSettings: () -> Unit,
     goScan: () -> Unit,
     goSendConfirmation: (ZecSend) -> Unit,
-    sendArgumentsWrapper: SendArgumentsWrapper
+    sendArguments: SendArguments
 ) {
     WrapHome(
         this,
@@ -40,7 +40,7 @@ internal fun MainActivity.WrapHome(
         goScan = goScan,
         goSendConfirmation = goSendConfirmation,
         goSettings = goSettings,
-        sendArgumentsWrapper = sendArgumentsWrapper
+        sendArguments = sendArguments
     )
 }
 
@@ -53,7 +53,7 @@ internal fun WrapHome(
     goScan: () -> Unit,
     goSendConfirmation: (ZecSend) -> Unit,
     onPageChange: (HomeScreenIndex) -> Unit,
-    sendArgumentsWrapper: SendArgumentsWrapper
+    sendArguments: SendArguments
 ) {
     val homeViewModel by activity.viewModels<HomeViewModel>()
 
@@ -105,7 +105,7 @@ internal fun WrapHome(
                         goBalances = { forceHomePageIndexFlow.tryEmit(ForcePage(HomeScreenIndex.BALANCES)) },
                         goSendConfirmation = goSendConfirmation,
                         goSettings = goSettings,
-                        sendArgumentsWrapper = sendArgumentsWrapper
+                        sendArguments = sendArguments
                     )
                 }
             ),

@@ -4,7 +4,7 @@ import cash.z.ecc.android.sdk.fixture.WalletFixture
 import cash.z.ecc.android.sdk.model.ZcashNetwork
 import cash.z.ecc.android.sdk.type.AddressType
 import co.electriccoin.zcash.ui.common.model.SerializableAddress
-import co.electriccoin.zcash.ui.screen.send.model.SendArgumentsWrapper
+import co.electriccoin.zcash.ui.screen.send.model.SendArguments
 
 internal object SendArgumentsWrapperFixture {
     val RECIPIENT_ADDRESS =
@@ -14,7 +14,7 @@ internal object SendArgumentsWrapperFixture {
         )
 
     fun new(recipientAddress: SerializableAddress? = RECIPIENT_ADDRESS) =
-        SendArgumentsWrapper(
+        SendArguments(
             recipientAddress = recipientAddress?.toRecipient(),
         )
 }

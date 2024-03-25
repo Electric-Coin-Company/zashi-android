@@ -9,7 +9,7 @@ import co.electriccoin.zcash.ui.NavigationArguments
 import co.electriccoin.zcash.ui.common.model.SerializableAddress
 import kotlinx.serialization.json.Json
 
-data class SendConfirmationArgsWrapper(
+data class SendConfirmationArguments(
     val address: SerializableAddress?,
     val amount: Long?,
     val memo: String?,
@@ -17,7 +17,7 @@ data class SendConfirmationArgsWrapper(
 ) {
     companion object {
         internal fun fromSavedStateHandle(savedStateHandle: SavedStateHandle) =
-            SendConfirmationArgsWrapper(
+            SendConfirmationArguments(
                 address =
                     savedStateHandle.get<String>(NavigationArguments.SEND_CONFIRM_RECIPIENT_ADDRESS)?.let {
                         Json.decodeFromString<SerializableAddress>(it)
@@ -40,7 +40,7 @@ data class SendConfirmationArgsWrapper(
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as SendConfirmationArgsWrapper
+        other as SendConfirmationArguments
 
         if (amount != other.amount) return false
         if (memo != other.memo) return false

@@ -5,4 +5,6 @@
     <string name="not_implemented_yet">Not implemented yet.</string>
     <string name="settings_menu_content_description">Open Settings</string>
     <string name="balance_widget_available">Available Balance:</string>
+    <!-- This is replaced by a resource overlay via app/build.gradle.kts -->
+    <string name="support_email_address" />
 </resources>
