@@ -6,6 +6,7 @@ import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import co.electriccoin.zcash.ui.NavigationArguments.MULTIPLE_SUBMISSION_CLEAR_FORM
 import co.electriccoin.zcash.ui.NavigationArguments.SEND_CONFIRM_AMOUNT
 import co.electriccoin.zcash.ui.NavigationArguments.SEND_CONFIRM_MEMO
 import co.electriccoin.zcash.ui.NavigationArguments.SEND_CONFIRM_PROPOSAL
@@ -38,9 +39,9 @@ import co.electriccoin.zcash.ui.screen.request.WrapRequest
 import co.electriccoin.zcash.ui.screen.scan.WrapScanValidator
 import co.electriccoin.zcash.ui.screen.seedrecovery.WrapSeedRecovery
 import co.electriccoin.zcash.ui.screen.send.ext.toSerializableAddress
-import co.electriccoin.zcash.ui.screen.send.model.SendArgumentsWrapper
+import co.electriccoin.zcash.ui.screen.send.model.SendArguments
 import co.electriccoin.zcash.ui.screen.sendconfirmation.WrapSendConfirmation
-import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SendConfirmationArgsWrapper
+import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SendConfirmationArguments
 import co.electriccoin.zcash.ui.screen.settings.WrapSettings
 import co.electriccoin.zcash.ui.screen.support.WrapSupport
 import co.electriccoin.zcash.ui.screen.update.WrapCheckForUpdate
@@ -65,13 +66,13 @@ internal fun MainActivity.Navigation() {
         popEnterTransition = { popEnterTransition() },
         popExitTransition = { popExitTransition() }
     ) {
-        composable(HOME) { backStackEntry ->
+        composable(HOME) { backStack ->
             WrapHome(
+                goBack = { finish() },
+                goScan = { navController.navigateJustOnce(SCAN) },
                 onPageChange = {
                     homeViewModel.screenIndex.value = it
                 },
-                goBack = { finish() },
-                goScan = { navController.navigateJustOnce(SCAN) },
                 goSendConfirmation = { zecSend ->
                     navController.currentBackStackEntry?.savedStateHandle?.let { handle ->
                         handle[SEND_CONFIRM_RECIPIENT_ADDRESS] =
@@ -86,16 +87,18 @@ internal fun MainActivity.Navigation() {
                     navController.navigateJustOnce(SEND_CONFIRMATION)
                 },
                 goSettings = { navController.navigateJustOnce(SETTINGS) },
-                // At this point we only read scan result data
-                sendArgumentsWrapper =
-                    SendArgumentsWrapper(
+                sendArguments =
+                    SendArguments(
                         recipientAddress =
-                            backStackEntry.savedStateHandle.get<String>(SEND_SCAN_RECIPIENT_ADDRESS)?.let {
+                            backStack.savedStateHandle.get<String>(SEND_SCAN_RECIPIENT_ADDRESS)?.let {
                                 Json.decodeFromString<SerializableAddress>(it).toRecipient()
                             },
+                        clearForm = backStack.savedStateHandle.get<Boolean>(MULTIPLE_SUBMISSION_CLEAR_FORM) ?: false
                     ).also {
-                        // Remove Send screen arguments passed from the Scan screen if some exist after we use them
-                        backStackEntry.savedStateHandle.remove<String>(SEND_SCAN_RECIPIENT_ADDRESS)
+                        // Remove Send screen arguments passed from the Scan or MultipleSubmissionFailure screens if
+                        // some exist after we use them
+                        backStack.savedStateHandle.remove<String>(SEND_SCAN_RECIPIENT_ADDRESS)
+                        backStack.savedStateHandle.remove<Boolean>(MULTIPLE_SUBMISSION_CLEAR_FORM)
                     },
             )
 
@@ -185,10 +188,15 @@ internal fun MainActivity.Navigation() {
         composable(route = SEND_CONFIRMATION) {
             navController.previousBackStackEntry?.let { backStackEntry ->
                 WrapSendConfirmation(
-                    goBack = { navController.popBackStackJustOnce(SEND_CONFIRMATION) },
+                    goBack = { clearForm ->
+                        navController.previousBackStackEntry?.savedStateHandle?.apply {
+                            set(MULTIPLE_SUBMISSION_CLEAR_FORM, clearForm)
+                        }
+                        navController.popBackStackJustOnce(SEND_CONFIRMATION)
+                    },
                     goHome = { navController.navigateJustOnce(HOME) },
                     arguments =
-                        SendConfirmationArgsWrapper.fromSavedStateHandle(backStackEntry.savedStateHandle).also {
+                        SendConfirmationArguments.fromSavedStateHandle(backStackEntry.savedStateHandle).also {
                             // Remove SendConfirmation screen arguments passed from the Send screen if some exist
                             // after we use them
                             backStackEntry.savedStateHandle.remove<String>(SEND_CONFIRM_RECIPIENT_ADDRESS)
@@ -237,6 +245,8 @@ object NavigationArguments {
     const val SEND_CONFIRM_AMOUNT = "send_confirm_amount"
     const val SEND_CONFIRM_MEMO = "send_confirm_memo"
     const val SEND_CONFIRM_PROPOSAL = "send_confirm_proposal"
+
+    const val MULTIPLE_SUBMISSION_CLEAR_FORM = "multiple_submission_clear_form"
 }
 
 object NavigationTargets {

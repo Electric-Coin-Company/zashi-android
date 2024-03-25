@@ -7,7 +7,8 @@ import co.electriccoin.zcash.spackle.versionCodeCompat
 data class AppInfo(val versionName: String, val versionCode: Long, val gitSha: String) {
     fun toSupportString() =
         buildString {
-            appendLine("App version: $versionName ($versionCode) $gitSha")
+            // [versionName] contains [versionCode]
+            appendLine("App version: $versionName $gitSha")
         }
 
     companion object {

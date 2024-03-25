@@ -6,6 +6,9 @@ import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import co.electriccoin.zcash.spackle.getPackageInfoCompatSuspend
 
+// TODO [#1301]: Localize support text content
+// TODO [#1301]: https://github.com/Electric-Coin-Company/zashi-android/issues/1301
+
 data class PermissionInfo(val permissionName: String, val permissionStatus: PermissionStatus) {
     fun toSupportString() =
         buildString {

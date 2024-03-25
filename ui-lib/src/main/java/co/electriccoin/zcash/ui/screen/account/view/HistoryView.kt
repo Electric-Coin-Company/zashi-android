@@ -165,7 +165,7 @@ private fun HistoryList(
 ) {
     if (transactions.isEmpty()) {
         Column {
-            Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingXlarge))
+            Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingUpLarge))
 
             Text(
                 modifier = Modifier.fillMaxWidth(),

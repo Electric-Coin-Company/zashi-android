@@ -1,6 +1,7 @@
 package co.electriccoin.zcash.ui.screen.support.util
 
 import androidx.test.filters.SmallTest
+import co.electriccoin.zcash.ui.util.EmailUtil
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

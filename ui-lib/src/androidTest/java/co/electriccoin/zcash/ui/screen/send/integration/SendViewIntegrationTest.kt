@@ -67,7 +67,7 @@ class SendViewIntegrationTest {
 
         restorationTester.setContent {
             WrapSend(
-                sendArgumentsWrapper = null,
+                sendArguments = null,
                 focusManager = LocalFocusManager.current,
                 synchronizer = synchronizer,
                 walletSnapshot = walletSnapshot,
