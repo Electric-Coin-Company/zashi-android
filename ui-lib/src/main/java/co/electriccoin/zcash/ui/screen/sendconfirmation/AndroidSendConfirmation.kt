@@ -17,6 +17,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import cash.z.ecc.android.sdk.SdkSynchronizer
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.model.TransactionSubmitResult
 import cash.z.ecc.android.sdk.model.UnifiedSpendingKey
@@ -174,6 +175,9 @@ internal fun WrapSendConfirmation(
                     when (result) {
                         SubmitResult.Success -> {
                             setStage(SendConfirmationStage.Confirmation)
+                            // Triggering transaction history refreshing to be notified about the newly created
+                            // transaction asap
+                            (synchronizer as SdkSynchronizer).refreshTransactions()
                             goHome()
                         }
                         is SubmitResult.SimpleTrxFailure -> {
