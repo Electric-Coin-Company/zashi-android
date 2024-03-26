@@ -1,13 +1,16 @@
 package co.electriccoin.zcash.ui
 
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import cash.z.ecc.android.sdk.model.ZecSend
 import co.electriccoin.zcash.ui.NavigationArguments.MULTIPLE_SUBMISSION_CLEAR_FORM
 import co.electriccoin.zcash.ui.NavigationArguments.SEND_CONFIRM_AMOUNT
+import co.electriccoin.zcash.ui.NavigationArguments.SEND_CONFIRM_INITIAL_STAGE
 import co.electriccoin.zcash.ui.NavigationArguments.SEND_CONFIRM_MEMO
 import co.electriccoin.zcash.ui.NavigationArguments.SEND_CONFIRM_PROPOSAL
 import co.electriccoin.zcash.ui.NavigationArguments.SEND_CONFIRM_RECIPIENT_ADDRESS
@@ -42,6 +45,7 @@ import co.electriccoin.zcash.ui.screen.send.ext.toSerializableAddress
 import co.electriccoin.zcash.ui.screen.send.model.SendArguments
 import co.electriccoin.zcash.ui.screen.sendconfirmation.WrapSendConfirmation
 import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SendConfirmationArguments
+import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SendConfirmationStage
 import co.electriccoin.zcash.ui.screen.settings.WrapSettings
 import co.electriccoin.zcash.ui.screen.support.WrapSupport
 import co.electriccoin.zcash.ui.screen.update.WrapCheckForUpdate
@@ -75,18 +79,19 @@ internal fun MainActivity.Navigation() {
                 },
                 goSendConfirmation = { zecSend ->
                     navController.currentBackStackEntry?.savedStateHandle?.let { handle ->
-                        handle[SEND_CONFIRM_RECIPIENT_ADDRESS] =
-                            Json.encodeToString(
-                                serializer = SerializableAddress.serializer(),
-                                value = zecSend.destination.toSerializableAddress()
-                            )
-                        handle[SEND_CONFIRM_AMOUNT] = zecSend.amount.value
-                        handle[SEND_CONFIRM_MEMO] = zecSend.memo.value
-                        handle[SEND_CONFIRM_PROPOSAL] = zecSend.proposal?.toByteArray()
+                        fillInHandleForConfirmation(handle, zecSend, SendConfirmationStage.Confirmation)
                     }
                     navController.navigateJustOnce(SEND_CONFIRMATION)
                 },
                 goSettings = { navController.navigateJustOnce(SETTINGS) },
+                goMultiTrxSubmissionFailure = {
+                    // Ultimately we could approach reworking the MultipleTrxFailure screen into a separate
+                    // navigation endpoint
+                    navController.currentBackStackEntry?.savedStateHandle?.let { handle ->
+                        fillInHandleForConfirmation(handle, null, SendConfirmationStage.MultipleTrxFailure)
+                    }
+                    navController.navigateJustOnce(SEND_CONFIRMATION)
+                },
                 sendArguments =
                     SendArguments(
                         recipientAddress =
@@ -195,19 +200,29 @@ internal fun MainActivity.Navigation() {
                         navController.popBackStackJustOnce(SEND_CONFIRMATION)
                     },
                     goHome = { navController.navigateJustOnce(HOME) },
-                    arguments =
-                        SendConfirmationArguments.fromSavedStateHandle(backStackEntry.savedStateHandle).also {
-                            // Remove SendConfirmation screen arguments passed from the Send screen if some exist
-                            // after we use them
-                            backStackEntry.savedStateHandle.remove<String>(SEND_CONFIRM_RECIPIENT_ADDRESS)
-                            backStackEntry.savedStateHandle.remove<Long>(SEND_CONFIRM_AMOUNT)
-                            backStackEntry.savedStateHandle.remove<String>(SEND_CONFIRM_MEMO)
-                            backStackEntry.savedStateHandle.remove<ByteArray>(SEND_CONFIRM_PROPOSAL)
-                        }
+                    arguments = SendConfirmationArguments.fromSavedStateHandle(backStackEntry.savedStateHandle)
                 )
             }
         }
     }
+}
+
+private fun fillInHandleForConfirmation(
+    handle: SavedStateHandle,
+    zecSend: ZecSend?,
+    initialStage: SendConfirmationStage
+) {
+    if (zecSend != null) {
+        handle[SEND_CONFIRM_RECIPIENT_ADDRESS] =
+            Json.encodeToString(
+                serializer = SerializableAddress.serializer(),
+                value = zecSend.destination.toSerializableAddress()
+            )
+        handle[SEND_CONFIRM_AMOUNT] = zecSend.amount.value
+        handle[SEND_CONFIRM_MEMO] = zecSend.memo.value
+        handle[SEND_CONFIRM_PROPOSAL] = zecSend.proposal?.toByteArray()
+    }
+    handle[SEND_CONFIRM_INITIAL_STAGE] = initialStage.toStringName()
 }
 
 private fun NavHostController.navigateJustOnce(
@@ -245,6 +260,7 @@ object NavigationArguments {
     const val SEND_CONFIRM_AMOUNT = "send_confirm_amount"
     const val SEND_CONFIRM_MEMO = "send_confirm_memo"
     const val SEND_CONFIRM_PROPOSAL = "send_confirm_proposal"
+    const val SEND_CONFIRM_INITIAL_STAGE = "send_confirm_initial_stage"
 
     const val MULTIPLE_SUBMISSION_CLEAR_FORM = "multiple_submission_clear_form"
 }

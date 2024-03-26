@@ -9,6 +9,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import cash.z.ecc.android.sdk.SdkSynchronizer
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.model.UnifiedSpendingKey
 import cash.z.ecc.android.sdk.model.Zatoshi
@@ -21,6 +22,8 @@ import co.electriccoin.zcash.ui.configuration.RemoteConfig
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.screen.balances.model.ShieldState
 import co.electriccoin.zcash.ui.screen.balances.view.Balances
+import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SubmitResult
+import co.electriccoin.zcash.ui.screen.sendconfirmation.viewmodel.CreateTransactionsViewModel
 import co.electriccoin.zcash.ui.screen.settings.viewmodel.SettingsViewModel
 import co.electriccoin.zcash.ui.screen.update.AppUpdateCheckerImp
 import co.electriccoin.zcash.ui.screen.update.model.UpdateState
@@ -32,8 +35,11 @@ import org.jetbrains.annotations.VisibleForTesting
 internal fun WrapBalances(
     activity: ComponentActivity,
     goSettings: () -> Unit,
+    goMultiTrxSubmissionFailure: () -> Unit,
 ) {
     val walletViewModel by activity.viewModels<WalletViewModel>()
+
+    val createTransactionsViewModel by activity.viewModels<CreateTransactionsViewModel>()
 
     val synchronizer = walletViewModel.synchronizer.collectAsStateWithLifecycle().value
 
@@ -51,8 +57,10 @@ internal fun WrapBalances(
     val settingsViewModel by activity.viewModels<SettingsViewModel>()
 
     WrapBalances(
-        goSettings = goSettings,
         checkUpdateViewModel = checkUpdateViewModel,
+        createTransactionsViewModel = createTransactionsViewModel,
+        goSettings = goSettings,
+        goMultiTrxSubmissionFailure = goMultiTrxSubmissionFailure,
         spendingKey = spendingKey,
         settingsViewModel = settingsViewModel,
         synchronizer = synchronizer,
@@ -66,8 +74,10 @@ const val DEFAULT_SHIELDING_THRESHOLD = 100000L
 @VisibleForTesting
 @Suppress("LongParameterList", "LongMethod")
 internal fun WrapBalances(
-    goSettings: () -> Unit,
     checkUpdateViewModel: CheckUpdateViewModel,
+    createTransactionsViewModel: CreateTransactionsViewModel,
+    goSettings: () -> Unit,
+    goMultiTrxSubmissionFailure: () -> Unit,
     settingsViewModel: SettingsViewModel,
     spendingKey: UnifiedSpendingKey?,
     synchronizer: Synchronizer?,
@@ -98,14 +108,14 @@ internal fun WrapBalances(
 
     val (isShowingErrorDialog, setShowErrorDialog) = rememberSaveable { mutableStateOf(false) }
 
-    suspend fun showShieldingError(error: Throwable?) {
-        Twig.error { "Shielding proposal failed with: $error" }
+    suspend fun showShieldingError(errorMessage: String?) {
+        Twig.error { "Shielding proposal failed with: $errorMessage" }
 
         // Adding the extra delay before notifying UI for a better UX
         @Suppress("MagicNumber")
         delay(1500)
 
-        setShieldState(ShieldState.Failed(error?.message ?: ""))
+        setShieldState(ShieldState.Failed(errorMessage ?: ""))
         setShowErrorDialog(true)
     }
 
@@ -143,26 +153,35 @@ internal fun WrapBalances(
                         if (newProposal == null) {
                             showShieldingError(null)
                         } else {
-                            // TODO [#1294]: Add Send.Multiple-Trx-Failed screen
-                            // TODO [#1294]: Note that the following processing is not entirely correct and will be
-                            //  reworked
-                            // TODO [#1294]: https://github.com/Electric-Coin-Company/zashi-android/issues/1294
-                            runCatching {
-                                synchronizer.createProposedTransactions(
-                                    proposal = newProposal,
-                                    usk = spendingKey
-                                ).collect {
-                                    Twig.info { "Printing only for now. Will be reworked. Result: $it" }
+                            val result =
+                                createTransactionsViewModel.runCreateTransactions(
+                                    synchronizer = synchronizer,
+                                    spendingKey = spendingKey,
+                                    proposal = newProposal
+                                )
+                            when (result) {
+                                SubmitResult.Success -> {
+                                    Twig.info { "Shielding transaction done successfully" }
+                                    setShieldState(ShieldState.None)
+                                    // Triggering transaction history refresh to be notified about the newly created
+                                    // transaction asap
+                                    (synchronizer as SdkSynchronizer).refreshTransactions()
+
+                                    // We could consider notifying UI with a change to emphasize the shielding action
+                                    // was successful, or we could switch the selected tab to Account
                                 }
-                            }.onSuccess {
-                                Twig.debug { "Shielding transaction event" }
-                                setShieldState(ShieldState.None)
-                            }.onFailure {
-                                showShieldingError(it)
+                                is SubmitResult.SimpleTrxFailure -> {
+                                    Twig.warn { "Shielding transaction failed" }
+                                    showShieldingError(result.errorDescription)
+                                }
+                                is SubmitResult.MultipleTrxFailure -> {
+                                    Twig.warn { "Shielding failed with multi-transactions-submission-error handling" }
+                                    goMultiTrxSubmissionFailure()
+                                }
                             }
                         }
                     }.onFailure {
-                        showShieldingError(it)
+                        showShieldingError(it.message)
                     }
                 }
             },

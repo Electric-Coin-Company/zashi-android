@@ -29,6 +29,7 @@ internal fun MainActivity.WrapHome(
     onPageChange: (HomeScreenIndex) -> Unit,
     goBack: () -> Unit,
     goSettings: () -> Unit,
+    goMultiTrxSubmissionFailure: () -> Unit,
     goScan: () -> Unit,
     goSendConfirmation: (ZecSend) -> Unit,
     sendArguments: SendArguments
@@ -40,6 +41,7 @@ internal fun MainActivity.WrapHome(
         goScan = goScan,
         goSendConfirmation = goSendConfirmation,
         goSettings = goSettings,
+        goMultiTrxSubmissionFailure = goMultiTrxSubmissionFailure,
         sendArguments = sendArguments
     )
 }
@@ -50,6 +52,7 @@ internal fun WrapHome(
     activity: ComponentActivity,
     goBack: () -> Unit,
     goSettings: () -> Unit,
+    goMultiTrxSubmissionFailure: () -> Unit,
     goScan: () -> Unit,
     goSendConfirmation: (ZecSend) -> Unit,
     onPageChange: (HomeScreenIndex) -> Unit,
@@ -127,7 +130,8 @@ internal fun WrapHome(
                 screenContent = {
                     WrapBalances(
                         activity = activity,
-                        goSettings = goSettings
+                        goSettings = goSettings,
+                        goMultiTrxSubmissionFailure = goMultiTrxSubmissionFailure
                     )
                 }
             )

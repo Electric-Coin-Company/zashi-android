@@ -14,6 +14,7 @@ data class SendConfirmationArguments(
     val amount: Long?,
     val memo: String?,
     val proposal: ByteArray?,
+    val initialStage: SendConfirmationStage?,
 ) {
     companion object {
         internal fun fromSavedStateHandle(savedStateHandle: SavedStateHandle) =
@@ -25,8 +26,22 @@ data class SendConfirmationArguments(
                 amount = savedStateHandle.get<Long>(NavigationArguments.SEND_CONFIRM_AMOUNT),
                 memo = savedStateHandle.get<String>(NavigationArguments.SEND_CONFIRM_MEMO),
                 proposal = savedStateHandle.get<ByteArray>(NavigationArguments.SEND_CONFIRM_PROPOSAL),
-            )
+                initialStage =
+                    SendConfirmationStage
+                        .fromStringName(savedStateHandle.get<String>(NavigationArguments.SEND_CONFIRM_INITIAL_STAGE))
+            ).also {
+                // Remove SendConfirmation screen arguments passed from the other screens if some exist
+                savedStateHandle.remove<String>(NavigationArguments.SEND_CONFIRM_RECIPIENT_ADDRESS)
+                savedStateHandle.remove<Long>(NavigationArguments.SEND_CONFIRM_AMOUNT)
+                savedStateHandle.remove<String>(NavigationArguments.SEND_CONFIRM_MEMO)
+                savedStateHandle.remove<ByteArray>(NavigationArguments.SEND_CONFIRM_PROPOSAL)
+                savedStateHandle.remove<String>(NavigationArguments.SEND_CONFIRM_INITIAL_STAGE)
+            }
     }
+
+    internal fun hasValidZecSend() =
+        this.address != null &&
+            this.amount != null
 
     internal fun toZecSend() =
         ZecSend(

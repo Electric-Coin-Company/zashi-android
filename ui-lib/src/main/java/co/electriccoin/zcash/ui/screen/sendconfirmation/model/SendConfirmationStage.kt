@@ -7,11 +7,21 @@ sealed class SendConfirmationStage {
 
     data object Sending : SendConfirmationStage()
 
-    data class Failure(val error: String) : SendConfirmationStage()
+    data class Failure(val error: String?) : SendConfirmationStage()
 
     data object MultipleTrxFailure : SendConfirmationStage()
 
     data object MultipleTrxFailureReported : SendConfirmationStage()
+
+    fun toStringName(): String {
+        return when (this) {
+            Confirmation -> TYPE_CONFIRMATION
+            is Failure -> TYPE_FAILURE
+            MultipleTrxFailure -> TYPE_MULTIPLE_TRX_FAILURE
+            MultipleTrxFailureReported -> TYPE_MULTIPLE_TRX_FAILURE_REPORTED
+            Sending -> TYPE_SENDING
+        }
+    }
 
     companion object {
         private const val TYPE_CONFIRMATION = "confirmation" // $NON-NLS
@@ -52,13 +62,25 @@ sealed class SendConfirmationStage {
                 Sending -> saverMap[KEY_TYPE] = TYPE_SENDING
                 is Failure -> {
                     saverMap[KEY_TYPE] = TYPE_FAILURE
-                    saverMap[KEY_ERROR] = this.error
+                    saverMap[KEY_ERROR] = this.error ?: ""
                 }
                 is MultipleTrxFailure -> saverMap[KEY_TYPE] = TYPE_MULTIPLE_TRX_FAILURE
                 is MultipleTrxFailureReported -> saverMap[KEY_TYPE] = TYPE_MULTIPLE_TRX_FAILURE_REPORTED
             }
 
             return saverMap
+        }
+
+        fun fromStringName(stringName: String?): SendConfirmationStage {
+            return when (stringName) {
+                TYPE_CONFIRMATION -> Confirmation
+                TYPE_SENDING -> Sending
+                // Add the String error parameter storing and retrieving
+                TYPE_FAILURE -> Failure(null)
+                TYPE_MULTIPLE_TRX_FAILURE -> MultipleTrxFailure
+                TYPE_MULTIPLE_TRX_FAILURE_REPORTED -> MultipleTrxFailureReported
+                else -> Confirmation
+            }
         }
     }
 }

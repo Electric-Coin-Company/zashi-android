@@ -33,7 +33,7 @@ import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SendConfirmationAr
 import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SendConfirmationStage
 import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SubmitResult
 import co.electriccoin.zcash.ui.screen.sendconfirmation.view.SendConfirmation
-import co.electriccoin.zcash.ui.screen.sendconfirmation.viewmodel.SendConfirmationViewModel
+import co.electriccoin.zcash.ui.screen.sendconfirmation.viewmodel.CreateTransactionsViewModel
 import co.electriccoin.zcash.ui.screen.support.model.SupportInfo
 import co.electriccoin.zcash.ui.screen.support.model.SupportInfoType
 import co.electriccoin.zcash.ui.screen.support.viewmodel.SupportViewModel
@@ -50,7 +50,7 @@ internal fun MainActivity.WrapSendConfirmation(
 ) {
     val walletViewModel by viewModels<WalletViewModel>()
 
-    val sendViewModel by viewModels<SendConfirmationViewModel>()
+    val createTransactionsViewModel by viewModels<CreateTransactionsViewModel>()
 
     val viewModel by viewModels<SupportViewModel>()
 
@@ -65,7 +65,7 @@ internal fun MainActivity.WrapSendConfirmation(
         arguments = arguments,
         goBack = goBack,
         goHome = goHome,
-        sendViewModel = sendViewModel,
+        createTransactionsViewModel = createTransactionsViewModel,
         spendingKey = spendingKey,
         supportMessage = supportMessage,
         synchronizer = synchronizer,
@@ -80,7 +80,7 @@ internal fun WrapSendConfirmation(
     arguments: SendConfirmationArguments,
     goBack: (clearForm: Boolean) -> Unit,
     goHome: () -> Unit,
-    sendViewModel: SendConfirmationViewModel,
+    createTransactionsViewModel: CreateTransactionsViewModel,
     spendingKey: UnifiedSpendingKey?,
     supportMessage: SupportInfo?,
     synchronizer: Synchronizer?,
@@ -89,17 +89,22 @@ internal fun WrapSendConfirmation(
 
     val snackbarHostState = remember { SnackbarHostState() }
 
-    val zecSend by rememberSaveable(stateSaver = ZecSend.Saver) { mutableStateOf(arguments.toZecSend()) }
-
-    // Because of the [zecSend] has the same Saver as on the Send screen, we do not expect this to be ever null
-    checkNotNull(zecSend)
+    val zecSend by rememberSaveable(stateSaver = ZecSend.Saver) {
+        mutableStateOf(
+            if (arguments.hasValidZecSend()) {
+                arguments.toZecSend()
+            } else {
+                null
+            }
+        )
+    }
 
     val (stage, setStage) =
         rememberSaveable(stateSaver = SendConfirmationStage.Saver) {
-            mutableStateOf(SendConfirmationStage.Confirmation)
+            mutableStateOf(arguments.initialStage ?: SendConfirmationStage.Confirmation)
         }
 
-    val submissionResults = sendViewModel.submissions.collectAsState().value.toImmutableList()
+    val submissionResults = createTransactionsViewModel.submissions.collectAsState().value.toImmutableList()
 
     val onBackAction = {
         when (stage) {
@@ -124,7 +129,7 @@ internal fun WrapSendConfirmation(
         SendConfirmation(
             stage = stage,
             onStageChange = setStage,
-            zecSend = zecSend!!,
+            zecSend = zecSend,
             submissionResults = submissionResults,
             snackbarHostState = snackbarHostState,
             onBack = onBackAction,
@@ -167,7 +172,7 @@ internal fun WrapSendConfirmation(
                     checkNotNull(newZecSend.proposal)
 
                     val result =
-                        sendViewModel.runSending(
+                        createTransactionsViewModel.runCreateTransactions(
                             synchronizer = synchronizer,
                             spendingKey = spendingKey,
                             proposal = newZecSend.proposal!!

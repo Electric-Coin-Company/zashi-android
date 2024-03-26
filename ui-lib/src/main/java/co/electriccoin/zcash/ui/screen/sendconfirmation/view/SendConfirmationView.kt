@@ -134,7 +134,7 @@ fun SendConfirmation(
     snackbarHostState: SnackbarHostState,
     stage: SendConfirmationStage,
     submissionResults: ImmutableList<TransactionSubmitResult>,
-    zecSend: ZecSend,
+    zecSend: ZecSend?,
 ) {
     Scaffold(
         topBar = { SendConfirmationTopAppBar(onBack, stage) },
@@ -197,11 +197,14 @@ private fun SendConfirmationMainContent(
     onStageChange: (SendConfirmationStage) -> Unit,
     stage: SendConfirmationStage,
     submissionResults: ImmutableList<TransactionSubmitResult>,
-    zecSend: ZecSend,
+    zecSend: ZecSend?,
     modifier: Modifier = Modifier,
 ) {
     when (stage) {
         SendConfirmationStage.Confirmation, SendConfirmationStage.Sending, is SendConfirmationStage.Failure -> {
+            if (zecSend == null) {
+                error("Unexpected ZecSend value: $zecSend")
+            }
             SendConfirmationContent(
                 zecSend = zecSend,
                 onBack = onBack,
@@ -371,7 +374,7 @@ fun SendConfirmationActionButtons(
 @Suppress("UNUSED_PARAMETER")
 private fun SendFailure(
     onDone: () -> Unit,
-    reason: String,
+    reason: String?,
 ) {
     // Once we ensure that the [reason] contains a localized message, we can leverage it for the UI prompt
 
