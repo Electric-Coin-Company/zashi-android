@@ -11,10 +11,8 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import kotlin.time.Duration
-import kotlin.time.ExperimentalTime
 import kotlin.time.TimeSource
 
-@OptIn(ExperimentalTime::class)
 fun <T> Flow<T>.throttle(
     duration: Duration,
     timeSource: TimeSource = TimeSource.Monotonic
