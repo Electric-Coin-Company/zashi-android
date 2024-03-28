@@ -14,19 +14,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -38,20 +32,22 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import cash.z.ecc.android.sdk.fixture.TransactionOverviewFixture
+import cash.z.ecc.android.sdk.model.FirstClassByteArray
 import cash.z.ecc.android.sdk.model.TransactionOverview
 import cash.z.ecc.android.sdk.model.TransactionRecipient
 import cash.z.ecc.android.sdk.model.TransactionState
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.toZecString
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
+import co.electriccoin.zcash.ui.design.component.CircularMidProgressIndicator
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.StyledBalance
 import co.electriccoin.zcash.ui.design.component.Tiny
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.account.HistoryTag
-import co.electriccoin.zcash.ui.screen.account.state.TransactionHistorySyncState
-import co.electriccoin.zcash.ui.screen.account.state.TransactionOverviewExt
+import co.electriccoin.zcash.ui.screen.account.model.HistoryItemExpandableState
+import co.electriccoin.zcash.ui.screen.account.model.TransactionUi
+import co.electriccoin.zcash.ui.screen.account.model.TransactionUiState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import java.text.DateFormat
@@ -64,9 +60,8 @@ private fun ComposablePreview() {
     ZcashTheme(forceDarkMode = false) {
         GradientSurface {
             HistoryContainer(
-                transactionState = TransactionHistorySyncState.Loading,
-                onItemClick = {},
-                onTransactionIdClick = {}
+                transactionState = TransactionUiState.Loading,
+                onTransactionItemAction = {}
             )
         }
     }
@@ -77,27 +72,30 @@ private fun ComposablePreview() {
 private fun ComposableHistoryListPreview() {
     ZcashTheme(forceDarkMode = false) {
         GradientSurface {
+            @Suppress("MagicNumber")
             HistoryContainer(
                 transactionState =
-                    TransactionHistorySyncState.Syncing(
-                        @Suppress("MagicNumber")
-                        persistentListOf(
-                            TransactionOverviewExt(
-                                TransactionOverviewFixture.new(netValue = Zatoshi(100000000)),
-                                null
-                            ),
-                            TransactionOverviewExt(
-                                TransactionOverviewFixture.new(netValue = Zatoshi(200000000)),
-                                null
-                            ),
-                            TransactionOverviewExt(
-                                TransactionOverviewFixture.new(netValue = Zatoshi(300000000)),
-                                null
-                            ),
-                        )
+                    TransactionUiState.Prepared(
+                        transactions =
+                            persistentListOf(
+                                TransactionUi(
+                                    TransactionOverviewFixture.new(netValue = Zatoshi(100000000)),
+                                    null,
+                                    HistoryItemExpandableState.EXPANDED
+                                ),
+                                TransactionUi(
+                                    TransactionOverviewFixture.new(netValue = Zatoshi(200000000)),
+                                    null,
+                                    HistoryItemExpandableState.COLLAPSED
+                                ),
+                                TransactionUi(
+                                    TransactionOverviewFixture.new(netValue = Zatoshi(300000000)),
+                                    null,
+                                    HistoryItemExpandableState.COLLAPSED
+                                ),
+                            )
                     ),
-                onItemClick = {},
-                onTransactionIdClick = {}
+                onTransactionItemAction = {}
             )
         }
     }
@@ -114,11 +112,9 @@ val dateFormat: DateFormat by lazy {
 }
 
 @Composable
-@Suppress("LongMethod")
-fun HistoryContainer(
-    transactionState: TransactionHistorySyncState,
-    onItemClick: (TransactionOverviewExt) -> Unit,
-    onTransactionIdClick: (String) -> Unit,
+internal fun HistoryContainer(
+    transactionState: TransactionUiState,
+    onTransactionItemAction: (TransactionItemAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -131,27 +127,37 @@ fun HistoryContainer(
                 )
     ) {
         when (transactionState) {
-            is TransactionHistorySyncState.Loading -> {
-                CircularScreenProgressIndicator(
-                    modifier =
-                        Modifier
-                            .align(alignment = Center)
-                            .testTag(HistoryTag.PROGRESS)
-                )
+            TransactionUiState.Loading, TransactionUiState.Syncing -> {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingUpLarge))
+                    CircularMidProgressIndicator(
+                        modifier = Modifier.testTag(HistoryTag.PROGRESS),
+                    )
+                }
             }
-            is TransactionHistorySyncState.Syncing -> {
-                HistoryList(
-                    transactions = transactionState.transactions,
-                    onItemClick = onItemClick,
-                    onTransactionIdClick = onTransactionIdClick
-                )
-            }
-            is TransactionHistorySyncState.Done -> {
-                HistoryList(
-                    transactions = transactionState.transactions,
-                    onItemClick = onItemClick,
-                    onTransactionIdClick = onTransactionIdClick
-                )
+            is TransactionUiState.Prepared -> {
+                if (transactionState.transactions.isEmpty()) {
+                    Column {
+                        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingUpLarge))
+                        Text(
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.Center,
+                            text = stringResource(id = R.string.account_history_empty),
+                            style = ZcashTheme.extendedTypography.transactionItemStyles.titleRegular,
+                            color = ZcashTheme.colors.textCommon,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
+                } else {
+                    HistoryList(
+                        transactions = transactionState.transactions,
+                        onAction = onTransactionItemAction,
+                    )
+                }
             }
         }
     }
@@ -159,60 +165,53 @@ fun HistoryContainer(
 
 @Composable
 private fun HistoryList(
-    transactions: ImmutableList<TransactionOverviewExt>,
-    onItemClick: (TransactionOverviewExt) -> Unit,
-    onTransactionIdClick: (String) -> Unit
+    transactions: ImmutableList<TransactionUi>,
+    onAction: (TransactionItemAction) -> Unit
 ) {
-    if (transactions.isEmpty()) {
-        Column {
-            Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingUpLarge))
-
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center,
-                text = stringResource(id = R.string.account_history_empty),
-                style = ZcashTheme.extendedTypography.transactionItemStyles.titleRegular,
-                color = ZcashTheme.colors.textCommon,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
+    LazyColumn(
+        modifier = Modifier.testTag(HistoryTag.TRANSACTION_LIST)
+    ) {
+        items(transactions.size) { index ->
+            HistoryItem(
+                transaction = transactions[index],
+                onAction = onAction
             )
-        }
-    } else {
-        LazyColumn(
-            modifier = Modifier.testTag(HistoryTag.TRANSACTION_LIST)
-        ) {
-            itemsIndexed(transactions) { _, item ->
-                HistoryItem(
-                    transaction = item,
-                    onItemClick = onItemClick,
-                    onIdClick = onTransactionIdClick,
-                )
 
-                Divider(
-                    color = ZcashTheme.colors.dividerColor,
-                    thickness = DividerDefaults.Thickness,
-                    modifier = Modifier.padding(horizontal = ZcashTheme.dimens.spacingDefault)
-                )
-            }
+            Divider(
+                color = ZcashTheme.colors.dividerColor,
+                thickness = DividerDefaults.Thickness,
+                modifier = Modifier.padding(horizontal = ZcashTheme.dimens.spacingDefault)
+            )
         }
     }
 }
 
-private enum class ItemExpandedState {
-    COLLAPSED,
-    EXPANDED,
-    EXPANDED_ADDRESS,
-    EXPANDED_ID
+@Composable
+@Preview("History List Item")
+private fun ComposableHistoryListItemPreview() {
+    ZcashTheme(forceDarkMode = false) {
+        GradientSurface {
+            @Suppress("MagicNumber")
+            HistoryItem(
+                onAction = {},
+                transaction =
+                    TransactionUi(
+                        TransactionOverviewFixture.new(netValue = Zatoshi(100000000)),
+                        recipient = null,
+                        expandableState = HistoryItemExpandableState.EXPANDED
+                    )
+            )
+        }
+    }
 }
 
 const val ADDRESS_IN_TITLE_WIDTH_RATIO = 0.5f
 
 @Composable
 @Suppress("LongMethod", "CyclomaticComplexMethod")
-fun HistoryItem(
-    transaction: TransactionOverviewExt,
-    onItemClick: (TransactionOverviewExt) -> Unit,
-    onIdClick: (String) -> Unit,
+private fun HistoryItem(
+    transaction: TransactionUi,
+    onAction: (TransactionItemAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val typeText: String
@@ -259,10 +258,6 @@ fun HistoryItem(
         }
     }
 
-    var expandedState: ItemExpandedState by rememberSaveable {
-        mutableStateOf(ItemExpandedState.COLLAPSED)
-    }
-
     Row(
         modifier =
             modifier
@@ -270,10 +265,14 @@ fun HistoryItem(
                     Modifier
                         .background(color = ZcashTheme.colors.historyBackgroundColor)
                         .clickable {
-                            if (expandedState == ItemExpandedState.COLLAPSED) {
-                                expandedState = ItemExpandedState.EXPANDED
+                            if (transaction.expandableState <= HistoryItemExpandableState.COLLAPSED) {
+                                onAction(
+                                    TransactionItemAction.ExpandableStateChange(
+                                        transaction.overview.rawId,
+                                        HistoryItemExpandableState.EXPANDED
+                                    )
+                                )
                             }
-                            onItemClick(transaction)
                         }
                         .padding(all = ZcashTheme.dimens.spacingLarge)
                         .animateContentSize()
@@ -363,7 +362,7 @@ fun HistoryItem(
                 overflow = TextOverflow.Ellipsis,
             )
 
-            if (expandedState >= ItemExpandedState.EXPANDED) {
+            if (transaction.expandableState == HistoryItemExpandableState.EXPANDED) {
                 Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
                 val txId = transaction.overview.txIdString()
@@ -371,15 +370,54 @@ fun HistoryItem(
                     text = txId,
                     modifier =
                         Modifier
-                            .clickable { onIdClick(txId) }
+                            .clickable { onAction(TransactionItemAction.IdClick(txId)) }
                             .testTag(HistoryTag.TRANSACTION_ID)
+                )
+
+                Spacer(modifier = (Modifier.height(ZcashTheme.dimens.spacingDefault)))
+
+                // TODO [#1162]: Will be reworked
+                // TODO [#1162]: Expandable transaction history item
+                // TODO [#1162]: https://github.com/Electric-Coin-Company/zashi-android/issues/1162
+                Tiny(
+                    text = "Tap to copy message",
+                    modifier = Modifier.clickable { onAction(TransactionItemAction.MemoClick(transaction.overview)) }
+                )
+
+                Spacer(modifier = (Modifier.height(ZcashTheme.dimens.spacingDefault)))
+
+                Tiny(
+                    text = stringResource(id = R.string.account_history_item_collapse_transaction),
+                    modifier =
+                        Modifier
+                            .clickable {
+                                if (transaction.expandableState >= HistoryItemExpandableState.EXPANDED) {
+                                    onAction(
+                                        TransactionItemAction.ExpandableStateChange(
+                                            transaction.overview.rawId,
+                                            HistoryItemExpandableState.COLLAPSED
+                                        )
+                                    )
+                                }
+                            }
                 )
             }
         }
     }
 }
 
-enum class TransactionExtendedState {
+internal sealed class TransactionItemAction {
+    data class IdClick(val id: String) : TransactionItemAction()
+
+    data class ExpandableStateChange(
+        val txId: FirstClassByteArray,
+        val newState: HistoryItemExpandableState
+    ) : TransactionItemAction()
+
+    data class MemoClick(val overview: TransactionOverview) : TransactionItemAction()
+}
+
+internal enum class TransactionExtendedState {
     SENT,
     SENDING,
     SEND_FAILED,

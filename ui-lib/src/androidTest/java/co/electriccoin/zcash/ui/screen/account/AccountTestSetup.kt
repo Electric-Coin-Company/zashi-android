@@ -4,8 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
-import co.electriccoin.zcash.ui.screen.account.history.fixture.TransactionHistorySyncStateFixture
-import co.electriccoin.zcash.ui.screen.account.state.TransactionHistorySyncState
+import co.electriccoin.zcash.ui.screen.account.history.fixture.TransactionHistoryUiStateFixture
+import co.electriccoin.zcash.ui.screen.account.model.TransactionUiState
 import co.electriccoin.zcash.ui.screen.account.view.Account
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -16,7 +16,7 @@ class AccountTestSetup(
     // TODO [#1282]: Update AccountView Tests #1282
     // TODO [#1282]: https://github.com/Electric-Coin-Company/zashi-android/issues/1282
 
-    val initialHistorySyncState: TransactionHistorySyncState = TransactionHistorySyncStateFixture.new()
+    val initialTransactionState: TransactionUiState = TransactionHistoryUiStateFixture.new()
 
     private val onSettingsCount = AtomicInteger(0)
     private val onReceiveCount = AtomicInteger(0)
@@ -64,13 +64,10 @@ class AccountTestSetup(
                 onSettingsCount.incrementAndGet()
             },
             goBalances = {},
-            transactionState = initialHistorySyncState,
-            onItemClick = {
+            transactionsUiState = initialTransactionState,
+            onTransactionItemAction = {
                 onItemClickCount.incrementAndGet()
             },
-            onTransactionIdClick = {
-                onItemIdClickCount.incrementAndGet()
-            }
         )
     }
 

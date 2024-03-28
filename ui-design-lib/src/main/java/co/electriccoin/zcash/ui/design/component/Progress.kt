@@ -23,7 +23,7 @@ private fun CircularScreenProgressIndicatorComposablePreview() {
         GradientSurface {
             Column {
                 CircularScreenProgressIndicator()
-                CircularSmallProgressIndicator()
+                CircularMidProgressIndicator()
             }
         }
     }
@@ -45,6 +45,18 @@ fun CircularScreenProgressIndicator(modifier: Modifier = Modifier) {
                     .size(ZcashTheme.dimens.circularScreenProgressWidth)
         )
     }
+}
+
+@Composable
+fun CircularMidProgressIndicator(modifier: Modifier = Modifier) {
+    CircularProgressIndicator(
+        color = ZcashTheme.colors.circularProgressBarScreen,
+        strokeWidth = 3.dp,
+        modifier =
+            Modifier
+                .size(ZcashTheme.dimens.circularMidProgressWidth)
+                .then(modifier)
+    )
 }
 
 @Composable

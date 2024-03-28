@@ -11,7 +11,8 @@ import androidx.test.filters.MediumTest
 import co.electriccoin.zcash.ui.screen.account.HistoryTag
 import co.electriccoin.zcash.ui.screen.account.history.HistoryTestSetup
 import co.electriccoin.zcash.ui.screen.account.history.fixture.TransactionHistorySyncStateFixture
-import co.electriccoin.zcash.ui.screen.account.state.TransactionHistorySyncState
+import co.electriccoin.zcash.ui.screen.account.history.fixture.TransactionHistoryUiStateFixture
+import co.electriccoin.zcash.ui.screen.account.model.TransactionUiState
 import kotlinx.collections.immutable.persistentListOf
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -26,7 +27,7 @@ class HistoryViewTest {
     @Test
     @MediumTest
     fun check_loading_state() {
-        newTestSetup(TransactionHistorySyncState.Loading)
+        newTestSetup(TransactionUiState.Loading)
 
         composeTestRule.onNodeWithTag(HistoryTag.PROGRESS).also {
             it.assertExists()
@@ -37,9 +38,9 @@ class HistoryViewTest {
     @MediumTest
     fun check_syncing_state() {
         newTestSetup(
-            TransactionHistorySyncStateFixture.new(
-                state = TransactionHistorySyncStateFixture.STATE,
-                transactions = TransactionHistorySyncStateFixture.TRANSACTIONS
+            TransactionHistoryUiStateFixture.new(
+                state = TransactionUiState.Prepared(persistentListOf()),
+                transactions = TransactionHistoryUiStateFixture.TRANSACTIONS
             )
         )
 
@@ -60,9 +61,9 @@ class HistoryViewTest {
     @MediumTest
     fun check_done_state_no_transactions() {
         newTestSetup(
-            TransactionHistorySyncStateFixture.new(
-                state = TransactionHistorySyncState.Done(persistentListOf()),
-                transactions = persistentListOf()
+            TransactionHistoryUiStateFixture.new(
+                state = TransactionUiState.Prepared(persistentListOf()),
+                transactions = TransactionHistoryUiStateFixture.TRANSACTIONS
             )
         )
         // composeTestRule.onNodeWithText(getStringResource(R.string.history_syncing)).also {
@@ -83,9 +84,9 @@ class HistoryViewTest {
     @MediumTest
     fun check_done_state_with_transactions() {
         newTestSetup(
-            TransactionHistorySyncStateFixture.new(
-                state = TransactionHistorySyncState.Done(persistentListOf()),
-                transactions = TransactionHistorySyncStateFixture.TRANSACTIONS
+            TransactionHistoryUiStateFixture.new(
+                state = TransactionUiState.Prepared(persistentListOf()),
+                transactions = TransactionHistoryUiStateFixture.TRANSACTIONS
             )
         )
         // composeTestRule.onNodeWithText(getStringResource(R.string.history_syncing)).also {
@@ -106,7 +107,7 @@ class HistoryViewTest {
     @Test
     @MediumTest
     fun item_click_test() {
-        val testSetup = newTestSetup(TransactionHistorySyncStateFixture.STATE)
+        val testSetup = newTestSetup(TransactionHistoryUiStateFixture.STATE)
 
         assertEquals(0, testSetup.getOnItemClickCount())
 
@@ -124,7 +125,7 @@ class HistoryViewTest {
     @Test
     @MediumTest
     fun transaction_id_click_test() {
-        val testSetup = newTestSetup(TransactionHistorySyncStateFixture.STATE)
+        val testSetup = newTestSetup(TransactionHistoryUiStateFixture.STATE)
 
         assertEquals(0, testSetup.getOnItemIdClickCount())
 
@@ -140,11 +141,11 @@ class HistoryViewTest {
     }
 
     private fun newTestSetup(
-        transactionHistorySyncState: TransactionHistorySyncState = TransactionHistorySyncStateFixture.new()
+        transactionHistorySyncState: TransactionUiState = TransactionHistoryUiStateFixture.new()
     ): HistoryTestSetup {
         return HistoryTestSetup(
             composeTestRule = composeTestRule,
-            initialHistorySyncState = transactionHistorySyncState
+            initialHistoryUiState = transactionHistorySyncState
         )
     }
 }

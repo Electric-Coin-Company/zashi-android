@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.account.state
+package co.electriccoin.zcash.ui.screen.account.ext
 
 import cash.z.ecc.android.sdk.model.BlockHeight
 import cash.z.ecc.android.sdk.model.TransactionOverview

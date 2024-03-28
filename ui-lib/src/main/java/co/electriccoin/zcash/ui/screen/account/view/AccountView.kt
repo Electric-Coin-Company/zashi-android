@@ -28,8 +28,9 @@ import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 import co.electriccoin.zcash.ui.screen.account.AccountTag
-import co.electriccoin.zcash.ui.screen.account.state.TransactionHistorySyncState
-import co.electriccoin.zcash.ui.screen.account.state.TransactionOverviewExt
+import co.electriccoin.zcash.ui.screen.account.model.HistoryItemExpandableState
+import co.electriccoin.zcash.ui.screen.account.model.TransactionUi
+import co.electriccoin.zcash.ui.screen.account.model.TransactionUiState
 import kotlinx.collections.immutable.persistentListOf
 
 @Preview("Account No History")
@@ -42,9 +43,8 @@ private fun HistoryLoadingComposablePreview() {
                 isKeepScreenOnWhileSyncing = false,
                 goBalances = {},
                 goSettings = {},
-                transactionState = TransactionHistorySyncState.Loading,
-                onItemClick = {},
-                onTransactionIdClick = {}
+                transactionsUiState = TransactionUiState.Loading,
+                onTransactionItemAction = {}
             )
         }
     }
@@ -55,31 +55,34 @@ private fun HistoryLoadingComposablePreview() {
 private fun HistoryListComposablePreview() {
     ZcashTheme(forceDarkMode = false) {
         GradientSurface {
+            @Suppress("MagicNumber")
             Account(
                 walletSnapshot = WalletSnapshotFixture.new(),
                 isKeepScreenOnWhileSyncing = false,
                 goBalances = {},
                 goSettings = {},
-                transactionState =
-                    TransactionHistorySyncState.Syncing(
-                        @Suppress("MagicNumber")
-                        persistentListOf(
-                            TransactionOverviewExt(
-                                TransactionOverviewFixture.new(netValue = Zatoshi(100000000)),
-                                null
-                            ),
-                            TransactionOverviewExt(
-                                TransactionOverviewFixture.new(netValue = Zatoshi(200000000)),
-                                null
-                            ),
-                            TransactionOverviewExt(
-                                TransactionOverviewFixture.new(netValue = Zatoshi(300000000)),
-                                null
-                            ),
-                        )
+                transactionsUiState =
+                    TransactionUiState.Prepared(
+                        transactions =
+                            persistentListOf(
+                                TransactionUi(
+                                    TransactionOverviewFixture.new(netValue = Zatoshi(100000000)),
+                                    null,
+                                    HistoryItemExpandableState.EXPANDED
+                                ),
+                                TransactionUi(
+                                    TransactionOverviewFixture.new(netValue = Zatoshi(200000000)),
+                                    null,
+                                    HistoryItemExpandableState.COLLAPSED
+                                ),
+                                TransactionUi(
+                                    TransactionOverviewFixture.new(netValue = Zatoshi(300000000)),
+                                    null,
+                                    HistoryItemExpandableState.COLLAPSED
+                                ),
+                            )
                     ),
-                onItemClick = {},
-                onTransactionIdClick = {}
+                onTransactionItemAction = {},
             )
         }
     }
@@ -87,13 +90,12 @@ private fun HistoryListComposablePreview() {
 
 @Composable
 @Suppress("LongParameterList")
-fun Account(
+internal fun Account(
     goBalances: () -> Unit,
     goSettings: () -> Unit,
     isKeepScreenOnWhileSyncing: Boolean?,
-    onItemClick: (TransactionOverviewExt) -> Unit,
-    onTransactionIdClick: (String) -> Unit,
-    transactionState: TransactionHistorySyncState,
+    onTransactionItemAction: (TransactionItemAction) -> Unit,
+    transactionsUiState: TransactionUiState,
     walletSnapshot: WalletSnapshot,
 ) {
     Scaffold(topBar = {
@@ -103,9 +105,8 @@ fun Account(
             walletSnapshot = walletSnapshot,
             isKeepScreenOnWhileSyncing = isKeepScreenOnWhileSyncing,
             goBalances = goBalances,
-            transactionState = transactionState,
-            onItemClick = onItemClick,
-            onTransactionIdClick = onTransactionIdClick,
+            transactionState = transactionsUiState,
+            onTransactionItemAction = onTransactionItemAction,
             modifier =
                 Modifier.padding(
                     top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
@@ -140,9 +141,8 @@ private fun AccountMainContent(
     walletSnapshot: WalletSnapshot,
     isKeepScreenOnWhileSyncing: Boolean?,
     goBalances: () -> Unit,
-    onItemClick: (TransactionOverviewExt) -> Unit,
-    onTransactionIdClick: (String) -> Unit,
-    transactionState: TransactionHistorySyncState,
+    onTransactionItemAction: (TransactionItemAction) -> Unit,
+    transactionState: TransactionUiState,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -163,8 +163,7 @@ private fun AccountMainContent(
 
         HistoryContainer(
             transactionState = transactionState,
-            onItemClick = onItemClick,
-            onTransactionIdClick = onTransactionIdClick,
+            onTransactionItemAction = onTransactionItemAction,
         )
 
         if (isKeepScreenOnWhileSyncing == true && walletSnapshot.status == Synchronizer.Status.SYNCING) {
