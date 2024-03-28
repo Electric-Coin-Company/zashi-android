@@ -2,13 +2,13 @@ package co.electriccoin.zcash.ui.screen.account.history
 
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
-import co.electriccoin.zcash.ui.screen.account.state.TransactionHistorySyncState
+import co.electriccoin.zcash.ui.screen.account.model.TransactionUiState
 import co.electriccoin.zcash.ui.screen.account.view.HistoryContainer
 import java.util.concurrent.atomic.AtomicInteger
 
 class HistoryTestSetup(
     private val composeTestRule: ComposeContentTestRule,
-    initialHistorySyncState: TransactionHistorySyncState
+    initialHistoryUiState: TransactionUiState
 ) {
     private val onItemClickCount = AtomicInteger(0)
     private val onItemIdClickCount = AtomicInteger(0)
@@ -27,11 +27,8 @@ class HistoryTestSetup(
         composeTestRule.setContent {
             ZcashTheme {
                 HistoryContainer(
-                    transactionState = initialHistorySyncState,
-                    onItemClick = {
-                        onItemClickCount.incrementAndGet()
-                    },
-                    onTransactionIdClick = {
+                    transactionState = initialHistoryUiState,
+                    onTransactionItemAction = {
                         onItemIdClickCount.incrementAndGet()
                     }
                 )

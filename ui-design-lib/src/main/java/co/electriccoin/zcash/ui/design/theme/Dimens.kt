@@ -33,6 +33,7 @@ data class Dimens(
     val chipStroke: Dp,
     // Progress
     val circularScreenProgressWidth: Dp,
+    val circularMidProgressWidth: Dp,
     val circularSmallProgressWidth: Dp,
     val linearProgressHeight: Dp,
     // TopAppBar:
@@ -75,6 +76,7 @@ private val defaultDimens =
         chipShadowElevation = 4.dp,
         chipStroke = 0.5.dp,
         circularScreenProgressWidth = 48.dp,
+        circularMidProgressWidth = 22.dp,
         circularSmallProgressWidth = 14.dp,
         linearProgressHeight = 14.dp,
         topAppBarZcashLogoHeight = 24.dp,

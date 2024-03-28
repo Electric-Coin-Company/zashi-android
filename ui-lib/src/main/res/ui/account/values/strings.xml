@@ -11,6 +11,7 @@
     <string name="account_history_item_shielded">Shielded transaction</string>
     <string name="account_history_item_sent_prefix">-</string>
     <string name="account_history_item_received_prefix">+</string>
+    <string name="account_history_item_collapse_transaction">Collapse transaction</string>
 
     <string name="account_history_item_clipboard_tag">Transaction memo</string>
     <string name="account_history_id_clipboard_tag">Transaction ID</string>

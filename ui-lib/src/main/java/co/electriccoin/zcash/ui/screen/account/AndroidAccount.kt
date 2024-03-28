@@ -13,6 +13,8 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.screen.account.view.Account
+import co.electriccoin.zcash.ui.screen.account.view.TransactionItemAction
+import co.electriccoin.zcash.ui.screen.account.viewmodel.TransactionHistoryViewModel
 import co.electriccoin.zcash.ui.screen.settings.viewmodel.SettingsViewModel
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
@@ -26,9 +28,12 @@ internal fun WrapAccount(
     val scope = rememberCoroutineScope()
 
     val walletViewModel by activity.viewModels<WalletViewModel>()
-    val walletSnapshot = walletViewModel.walletSnapshot.collectAsStateWithLifecycle().value
+
+    val transactionHistoryViewModel by activity.viewModels<TransactionHistoryViewModel>()
 
     val settingsViewModel by activity.viewModels<SettingsViewModel>()
+
+    val walletSnapshot = walletViewModel.walletSnapshot.collectAsStateWithLifecycle().value
 
     val isKeepScreenOnWhileSyncing = settingsViewModel.isKeepScreenOnWhileSyncing.collectAsStateWithLifecycle().value
 
@@ -36,7 +41,11 @@ internal fun WrapAccount(
 
     val transactionHistoryState = walletViewModel.transactionHistoryState.collectAsStateWithLifecycle().value
 
-    Twig.info { "Current transaction history state: $transactionHistoryState" }
+    val transactionsUiState = transactionHistoryViewModel.transactionUiState.collectAsStateWithLifecycle().value
+
+    Twig.info { "Current transaction history state: $transactionsUiState" }
+
+    transactionHistoryViewModel.processTransactionState(transactionHistoryState)
 
     if (null == walletSnapshot) {
         // TODO [#1146]: Consider moving CircularScreenProgressIndicator from Android layer to View layer
@@ -47,29 +56,36 @@ internal fun WrapAccount(
         Account(
             walletSnapshot = walletSnapshot,
             isKeepScreenOnWhileSyncing = isKeepScreenOnWhileSyncing,
-            transactionState = transactionHistoryState,
-            onItemClick = { tx ->
-                Twig.debug { "Transaction item clicked - querying memos..." }
-                val memos = synchronizer?.getMemos(tx.overview)
-                scope.launch {
-                    memos?.toList()?.let {
-                        val merged = it.joinToString().ifEmpty { "-" }
-                        Twig.info { "Transaction memos: count: ${it.size}, contains: $merged" }
+            transactionsUiState = transactionsUiState,
+            onTransactionItemAction = { action ->
+                when (action) {
+                    is TransactionItemAction.IdClick -> {
+                        Twig.info { "Transaction ID clicked: ${action.id}" }
                         ClipboardManagerUtil.copyToClipboard(
                             activity.applicationContext,
-                            activity.getString(R.string.account_history_item_clipboard_tag),
-                            merged
+                            activity.getString(R.string.account_history_id_clipboard_tag),
+                            action.id
                         )
                     }
+                    is TransactionItemAction.MemoClick -> {
+                        Twig.info { "Transaction item clicked - querying memos..." }
+                        val memos = synchronizer?.getMemos(action.overview)
+                        scope.launch {
+                            memos?.toList()?.let {
+                                val merged = it.joinToString().ifEmpty { "-" }
+                                Twig.info { "Transaction memos: count: ${it.size}, contains: $merged" }
+                                ClipboardManagerUtil.copyToClipboard(
+                                    activity.applicationContext,
+                                    activity.getString(R.string.account_history_item_clipboard_tag),
+                                    merged
+                                )
+                            }
+                        }
+                    }
+                    is TransactionItemAction.ExpandableStateChange -> {
+                        transactionHistoryViewModel.updateTransactionItemState(action.txId, action.newState)
+                    }
                 }
-            },
-            onTransactionIdClick = { txId ->
-                Twig.debug { "Transaction ID clicked: $txId" }
-                ClipboardManagerUtil.copyToClipboard(
-                    activity.applicationContext,
-                    activity.getString(R.string.account_history_id_clipboard_tag),
-                    txId
-                )
             },
             goBalances = goBalances,
             goSettings = goSettings,

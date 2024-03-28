@@ -34,9 +34,9 @@ import co.electriccoin.zcash.ui.preference.EncryptedPreferenceKeys
 import co.electriccoin.zcash.ui.preference.EncryptedPreferenceSingleton
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
 import co.electriccoin.zcash.ui.preference.StandardPreferenceSingleton
+import co.electriccoin.zcash.ui.screen.account.ext.TransactionOverviewExt
+import co.electriccoin.zcash.ui.screen.account.ext.getSortHeight
 import co.electriccoin.zcash.ui.screen.account.state.TransactionHistorySyncState
-import co.electriccoin.zcash.ui.screen.account.state.TransactionOverviewExt
-import co.electriccoin.zcash.ui.screen.account.state.getSortHeight
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
