@@ -10,12 +10,12 @@ import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SubmitResult
 import kotlinx.coroutines.flow.MutableStateFlow
 
-class SendConfirmationViewModel(application: Application) : AndroidViewModel(application) {
+class CreateTransactionsViewModel(application: Application) : AndroidViewModel(application) {
     // Technically this value will not survive process dead, but will survive all possible configuration changes
     // Possible solution would be storing the value within [SavedStateHandle]
     val submissions: MutableStateFlow<List<TransactionSubmitResult>> = MutableStateFlow(emptyList())
 
-    suspend fun runSending(
+    suspend fun runCreateTransactions(
         synchronizer: Synchronizer,
         spendingKey: UnifiedSpendingKey,
         proposal: Proposal
