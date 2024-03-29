@@ -487,8 +487,8 @@ private fun HistoryItemExpandedPart(
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
-        if (!transaction.messages.isNullOrEmpty()) {
-            HistoryItemMessagePart(transaction.messages.toPersistentList(), onAction)
+        if (transaction.messages.containsValidMemo()) {
+            HistoryItemMessagePart(transaction.messages!!.toPersistentList(), onAction)
 
             Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
         }
@@ -521,6 +521,10 @@ private fun HistoryItemExpandedPart(
                     .padding(all = ZcashTheme.dimens.spacingTiny)
         )
     }
+}
+
+private fun List<String>?.containsValidMemo(): Boolean {
+    return !isNullOrEmpty() && find { it.isNotEmpty() } != null
 }
 
 const val EXPANDED_TRANSACTION_ID_WIDTH_RATIO = 0.75f
