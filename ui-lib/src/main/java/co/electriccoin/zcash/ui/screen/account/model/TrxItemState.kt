@@ -1,8 +1,9 @@
 package co.electriccoin.zcash.ui.screen.account.model
 
-enum class HistoryItemExpandableState {
+enum class TrxItemState {
     COLLAPSED,
     EXPANDED,
     EXPANDED_ADDRESS,
-    EXPANDED_ID
+    EXPANDED_ID,
+    EXPANDED_ALL,
 }

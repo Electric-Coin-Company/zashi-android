@@ -24,6 +24,7 @@ internal object Dark {
     val textSecondaryButton = Color(0xFF000000)
     val textTertiaryButton = Color.White
     val textCommon = Color(0xFFFFFFFF)
+    val textMedium = Color(0xFF353535)
     val textDisabled = Color(0xFFB7B7B7)
     val textChipIndex = Color(0xFFFFB900)
     val textFieldFrame = Color(0xFF231F20)
@@ -43,18 +44,8 @@ internal object Dark {
     val panelBackgroundColor = Color(0xFFEAEAEA)
 
     val primaryButton = Color(0xFFFFFFFF)
-    val primaryButtonPressed = Color(0xFFFFFFFF)
-    val primaryButtonDisabled = Color(0xFFFFFFFF)
-
     val secondaryButton = Color(0xFFFFFFFF)
-    val secondaryButtonPressed = Color(0xFFFFFFFF)
-    val secondaryButtonDisabled = Color(0xFFFFFFFF)
-
     val tertiaryButton = Color.Transparent
-    val tertiaryButtonPressed = Color(0xFFFFFFFF)
-
-    val navigationButton = Color(0xFFFFFFFF)
-    val navigationButtonPressed = Color(0xFFFFFFFF)
 
     val radioButtonColor = Color(0xFF070707)
     val radioButtonTextColor = Color(0xFF4E4E4E)
@@ -94,6 +85,7 @@ internal object Light {
     val textSecondaryButton = Color(0xFF000000)
     val textTertiaryButton = Color(0xFF000000)
     val textCommon = Color(0xFF000000)
+    val textMedium = Color(0xFF353535)
     val textDisabled = Color(0xFFB7B7B7)
     val textFieldFrame = Color(0xFF231F20)
     val textFieldError = Color(0xFFCD0002)
@@ -113,18 +105,8 @@ internal object Light {
     val panelBackgroundColor = Color(0xFFEAEAEA)
 
     val primaryButton = Color(0xFF000000)
-    val primaryButtonPressed = Color(0xFF000000)
-    val primaryButtonDisabled = Color(0xFF000000)
-
     val secondaryButton = Color(0xFFFFFFFF)
-    val secondaryButtonPressed = Color(0xFFFFFFFF)
-    val secondaryButtonDisabled = Color(0xFFFFFFFF)
-
     val tertiaryButton = Color.Transparent
-    val tertiaryButtonPressed = Color(0xFFFFFFFF)
-
-    val navigationButton = Color(0xFFFFFFFF)
-    val navigationButtonPressed = Color(0xFFFFFFFF)
 
     val radioButtonColor = Color(0xFF070707)
     val radioButtonTextColor = Color(0xFF4E4E4E)
@@ -191,6 +173,7 @@ internal val DarkExtendedColorPalette =
         linearProgressBarBackground = Dark.linearProgressBarBackground,
         chipIndex = Dark.textChipIndex,
         textCommon = Dark.textCommon,
+        textMedium = Dark.textMedium,
         textDisabled = Dark.textDisabled,
         textFieldFrame = Dark.textFieldFrame,
         textFieldError = Dark.textFieldError,
@@ -234,6 +217,7 @@ internal val LightExtendedColorPalette =
         linearProgressBarBackground = Light.linearProgressBarBackground,
         chipIndex = Light.textChipIndex,
         textCommon = Light.textCommon,
+        textMedium = Dark.textMedium,
         textDisabled = Light.textDisabled,
         textFieldFrame = Light.textFieldFrame,
         textFieldError = Light.textFieldError,
@@ -279,6 +263,7 @@ internal val LocalExtendedColors =
             linearProgressBarBackground = Color.Unspecified,
             chipIndex = Color.Unspecified,
             textCommon = Color.Unspecified,
+            textMedium = Color.Unspecified,
             textDisabled = Color.Unspecified,
             textFieldHint = Color.Unspecified,
             textFieldError = Color.Unspecified,

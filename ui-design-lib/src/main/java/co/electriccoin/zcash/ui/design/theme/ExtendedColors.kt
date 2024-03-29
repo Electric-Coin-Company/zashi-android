@@ -20,6 +20,7 @@ data class ExtendedColors(
     val linearProgressBarBackground: Color,
     val chipIndex: Color,
     val textCommon: Color,
+    val textMedium: Color,
     val textDisabled: Color,
     val textFieldHint: Color,
     val textFieldError: Color,

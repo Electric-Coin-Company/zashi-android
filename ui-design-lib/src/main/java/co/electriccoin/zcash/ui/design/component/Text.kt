@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountBox
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,6 +31,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import cash.z.ecc.android.sdk.model.MonetarySeparators
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
@@ -227,16 +229,41 @@ fun Tiny(
 }
 
 @Composable
-fun ListHeader(
+@Suppress("LongParameterList")
+fun TextWithIcon(
     text: String,
-    modifier: Modifier = Modifier
+    imageVector: ImageVector,
+    modifier: Modifier = Modifier,
+    imageContentDescription: String? = null,
+    maxLines: Int = Int.MAX_VALUE,
+    overflow: TextOverflow = TextOverflow.Clip,
+    textAlign: TextAlign = TextAlign.Start,
+    style: TextStyle = LocalTextStyle.current,
+    color: Color = MaterialTheme.colorScheme.onBackground,
 ) {
-    Text(
-        text = text,
-        style = ZcashTheme.extendedTypography.listItem,
-        color = ZcashTheme.colors.onBackgroundHeader,
-        modifier = modifier
-    )
+    Row(
+        modifier =
+            Modifier
+                .wrapContentSize()
+                .then(modifier),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = imageVector,
+            contentDescription = imageContentDescription
+        )
+
+        Spacer(modifier = Modifier.padding(3.dp))
+
+        Text(
+            text = text,
+            color = color,
+            maxLines = maxLines,
+            overflow = overflow,
+            textAlign = textAlign,
+            style = style,
+        )
+    }
 }
 
 @Suppress("LongParameterList")

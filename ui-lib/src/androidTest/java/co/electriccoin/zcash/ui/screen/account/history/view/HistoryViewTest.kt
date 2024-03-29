@@ -140,12 +140,10 @@ class HistoryViewTest {
         assertEquals(TransactionHistorySyncStateFixture.TRANSACTIONS.size, testSetup.getOnItemIdClickCount())
     }
 
-    private fun newTestSetup(
-        transactionHistorySyncState: TransactionUiState = TransactionHistoryUiStateFixture.new()
-    ): HistoryTestSetup {
+    private fun newTestSetup(state: TransactionUiState = TransactionHistoryUiStateFixture.new()): HistoryTestSetup {
         return HistoryTestSetup(
             composeTestRule = composeTestRule,
-            initialHistoryUiState = transactionHistorySyncState
+            initialHistoryUiState = state
         )
     }
 }
