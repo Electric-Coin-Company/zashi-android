@@ -162,12 +162,13 @@ data class TransactionItemTextStyles(
     val addressCollapsed: TextStyle,
     val valueFirstPart: TextStyle,
     val valueSecondPart: TextStyle,
-    val date: TextStyle,
+    val content: TextStyle,
+    val contentMedium: TextStyle,
+    val contentUnderline: TextStyle,
 )
 
 @Immutable
 data class ExtendedTypography(
-    val listItem: TextStyle,
     // Grouping balances text styles to a wrapper class for BalanceWidget
     val balanceWidgetStyles: BalanceWidgetTextStyles,
     // Grouping balances text styles to a wrapper class for single balance use case
@@ -202,10 +203,6 @@ val LocalTypographies =
 val LocalExtendedTypography =
     staticCompositionLocalOf {
         ExtendedTypography(
-            listItem =
-                PrimaryTypography.bodyLarge.copy(
-                    fontSize = 24.sp
-                ),
             // Note: the order here matters, be careful when reordering
             balanceWidgetStyles =
                 BalanceWidgetTextStyles(
@@ -330,9 +327,20 @@ val LocalExtendedTypography =
                         PrimaryTypography.bodySmall.copy(
                             fontSize = 8.sp
                         ),
-                    date =
+                    content =
                         PrimaryTypography.bodySmall.copy(
                             fontSize = 13.sp
+                        ),
+                    contentMedium =
+                        PrimaryTypography.bodySmall.copy(
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Medium
+                        ),
+                    contentUnderline =
+                        PrimaryTypography.bodySmall.copy(
+                            fontSize = 13.sp,
+                            fontStyle = FontStyle.Italic,
+                            textDecoration = TextDecoration.Underline
                         ),
                 ),
         )

@@ -47,6 +47,7 @@ data class Dimens(
     val layoutStroke: Dp,
     val regularRippleEffectCorner: Dp,
     val smallRippleEffectCorner: Dp,
+    val tinyRippleEffectCorner: Dp,
     // Screen custom spacings:
     val inScreenZcashLogoHeight: Dp,
     val inScreenZcashLogoWidth: Dp,
@@ -87,6 +88,7 @@ private val defaultDimens =
         divider = 1.dp,
         regularRippleEffectCorner = 28.dp,
         smallRippleEffectCorner = 10.dp,
+        tinyRippleEffectCorner = 8.dp,
         inScreenZcashLogoHeight = 100.dp,
         inScreenZcashLogoWidth = 60.dp,
         inScreenZcashTextLogoHeight = 30.dp,

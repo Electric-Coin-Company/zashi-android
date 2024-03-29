@@ -16,8 +16,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import cash.z.ecc.android.sdk.Synchronizer
-import cash.z.ecc.android.sdk.fixture.TransactionOverviewFixture
-import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.BalanceWidget
 import co.electriccoin.zcash.ui.common.compose.DisableScreenTimeout
@@ -28,10 +26,8 @@ import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 import co.electriccoin.zcash.ui.screen.account.AccountTag
-import co.electriccoin.zcash.ui.screen.account.model.HistoryItemExpandableState
-import co.electriccoin.zcash.ui.screen.account.model.TransactionUi
+import co.electriccoin.zcash.ui.screen.account.fixture.TransactionsFixture
 import co.electriccoin.zcash.ui.screen.account.model.TransactionUiState
-import kotlinx.collections.immutable.persistentListOf
 
 @Preview("Account No History")
 @Composable
@@ -61,27 +57,7 @@ private fun HistoryListComposablePreview() {
                 isKeepScreenOnWhileSyncing = false,
                 goBalances = {},
                 goSettings = {},
-                transactionsUiState =
-                    TransactionUiState.Prepared(
-                        transactions =
-                            persistentListOf(
-                                TransactionUi(
-                                    TransactionOverviewFixture.new(netValue = Zatoshi(100000000)),
-                                    null,
-                                    HistoryItemExpandableState.EXPANDED
-                                ),
-                                TransactionUi(
-                                    TransactionOverviewFixture.new(netValue = Zatoshi(200000000)),
-                                    null,
-                                    HistoryItemExpandableState.COLLAPSED
-                                ),
-                                TransactionUi(
-                                    TransactionOverviewFixture.new(netValue = Zatoshi(300000000)),
-                                    null,
-                                    HistoryItemExpandableState.COLLAPSED
-                                ),
-                            )
-                    ),
+                transactionsUiState = TransactionUiState.Prepared(transactions = TransactionsFixture.new()),
                 onTransactionItemAction = {},
             )
         }
@@ -94,7 +70,7 @@ internal fun Account(
     goBalances: () -> Unit,
     goSettings: () -> Unit,
     isKeepScreenOnWhileSyncing: Boolean?,
-    onTransactionItemAction: (TransactionItemAction) -> Unit,
+    onTransactionItemAction: (TrxItemAction) -> Unit,
     transactionsUiState: TransactionUiState,
     walletSnapshot: WalletSnapshot,
 ) {
@@ -141,7 +117,7 @@ private fun AccountMainContent(
     walletSnapshot: WalletSnapshot,
     isKeepScreenOnWhileSyncing: Boolean?,
     goBalances: () -> Unit,
-    onTransactionItemAction: (TransactionItemAction) -> Unit,
+    onTransactionItemAction: (TrxItemAction) -> Unit,
     transactionState: TransactionUiState,
     modifier: Modifier = Modifier
 ) {

@@ -7,16 +7,19 @@ import co.electriccoin.zcash.ui.screen.account.ext.TransactionOverviewExt
 data class TransactionUi(
     val overview: TransactionOverview,
     val recipient: TransactionRecipient?,
-    val expandableState: HistoryItemExpandableState
+    val expandableState: TrxItemState,
+    val messages: List<String>?
 ) {
     companion object {
         fun new(
             data: TransactionOverviewExt,
-            expandableState: HistoryItemExpandableState
+            expandableState: TrxItemState,
+            messages: List<String>?
         ) = TransactionUi(
             overview = data.overview,
             recipient = data.recipient,
-            expandableState = expandableState
+            expandableState = expandableState,
+            messages = messages
         )
     }
 }
