@@ -9,8 +9,6 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
-## [0.2.0 (583)] - 2024-03-29
-
 ### Added
 - Advanced Settings screen that provides more technical options like Export private data, Recovery phrase, or 
   Choose server has been added
@@ -28,6 +26,7 @@ directly impact users rather than highlighting other key architectural updates.*
 - Reworked Send screens flow and their look (e.g., Send Failure screen is now a modal dialog instead of a separate 
   screen)
 - The sending and shielding funds logic has been connected to the new Proposal API from the Zcash SDK
+- The error dialog contains an error description now. It's useful for tracking down the failure cause.
 
 ### Fixed
 - Button sizing has been updated to align with the design guidelines and preserve stretching if necessary

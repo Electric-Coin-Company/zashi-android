@@ -34,6 +34,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -93,19 +94,6 @@ private fun PreviewSendForm() {
                 amountState = AmountState.Valid(ZatoshiFixture.ZATOSHI_LONG.toString(), ZatoshiFixture.new()),
                 setMemoState = {},
                 memoState = MemoState.new("Test message")
-            )
-        }
-    }
-}
-
-@Composable
-@Preview("SendFailure")
-private fun PreviewSendFailure() {
-    ZcashTheme(forceDarkMode = false) {
-        GradientSurface {
-            SendFailure(
-                onDone = {},
-                reason = "Insufficient balance"
             )
         }
     }
@@ -671,17 +659,44 @@ fun SendFormMemoTextField(
 }
 
 @Composable
-@Suppress("UNUSED_PARAMETER")
+@Preview("SendFailure")
+private fun PreviewSendFailure() {
+    ZcashTheme(forceDarkMode = false) {
+        GradientSurface {
+            SendFailure(
+                onDone = {},
+                reason = "Insufficient balance"
+            )
+        }
+    }
+}
+
+@Composable
 private fun SendFailure(
     onDone: () -> Unit,
     reason: String,
+    modifier: Modifier = Modifier
 ) {
-    // Once we ensure that the [reason] contains a localized message, we can leverage it for the UI prompt
+    // TODO [#1276]: Once we ensure that the reason contains a localized message, we can leverage it for the UI prompt
+    // TODO [#1276]: Consider adding support for a specific exception in AppAlertDialog
+    // TODO [#1276]: https://github.com/Electric-Coin-Company/zashi-android/issues/1276
 
     AppAlertDialog(
         title = stringResource(id = R.string.send_dialog_error_title),
-        text = stringResource(id = R.string.send_dialog_error_text),
+        text = {
+            Column {
+                Text(text = stringResource(id = R.string.send_dialog_error_text))
+
+                Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
+
+                Text(
+                    text = reason,
+                    fontStyle = FontStyle.Italic
+                )
+            }
+        },
         confirmButtonText = stringResource(id = R.string.send_dialog_error_btn),
-        onConfirmButtonClick = onDone
+        onConfirmButtonClick = onDone,
+        modifier = modifier
     )
 }

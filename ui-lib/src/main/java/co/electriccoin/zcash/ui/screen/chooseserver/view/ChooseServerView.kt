@@ -22,6 +22,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -105,9 +106,9 @@ fun ChooseServer(
         )
 
         // Show validation popups
-        if (isShowingErrorDialog) {
+        if (isShowingErrorDialog && validationResult is ServerValidation.InValid) {
             ValidationErrorDialog(
-                validationResult = validationResult,
+                reason = validationResult.reason.message,
                 onDone = { setShowErrorDialog(false) }
             )
         } else if (isShowingSuccessDialog) {
@@ -346,16 +347,30 @@ fun SaveButton(
 }
 
 @Composable
-@Suppress("UNUSED_PARAMETER")
 fun ValidationErrorDialog(
-    validationResult: ServerValidation,
+    reason: String?,
     onDone: () -> Unit
 ) {
-    // Once we ensure that the [validationResult] contains a localized message, we can leverage it for the UI prompt
+    // TODO [#1276]: Once we ensure that the reason contains a localized message, we can leverage it for the UI prompt
+    // TODO [#1276]: Consider adding support for a specific exception in AppAlertDialog
+    // TODO [#1276]: https://github.com/Electric-Coin-Company/zashi-android/issues/1276
 
     AppAlertDialog(
         title = stringResource(id = R.string.choose_server_validation_dialog_error_title),
-        text = stringResource(id = R.string.choose_server_validation_dialog_error_text),
+        text = {
+            Column {
+                Text(text = stringResource(id = R.string.choose_server_validation_dialog_error_text))
+
+                if (!reason.isNullOrEmpty()) {
+                    Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
+
+                    Text(
+                        text = reason,
+                        fontStyle = FontStyle.Italic
+                    )
+                }
+            }
+        },
         confirmButtonText = stringResource(id = R.string.choose_server_validation_dialog_error_btn),
         onConfirmButtonClick = onDone
     )

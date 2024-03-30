@@ -26,6 +26,7 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,6 +42,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -152,9 +154,9 @@ fun Balances(
             )
 
             // Show shielding error popup
-            if (isShowingErrorDialog) {
+            if (isShowingErrorDialog && shieldState is ShieldState.Failed) {
                 ShieldingErrorDialog(
-                    shieldState = shieldState,
+                    reason = shieldState.error,
                     onDone = { setShowErrorDialog(false) }
                 )
             }
@@ -163,16 +165,30 @@ fun Balances(
 }
 
 @Composable
-@Suppress("UNUSED_PARAMETER")
 fun ShieldingErrorDialog(
-    shieldState: ShieldState,
+    reason: String,
     onDone: () -> Unit
 ) {
-    // Once we ensure that the [shieldState] contains a localized message, we can leverage it for the UI prompt
+    // TODO [#1276]: Once we ensure that reason contains a localized message, we can leverage it for the UI prompt
+    // TODO [#1276]: Consider adding support for a specific exception in AppAlertDialog
+    // TODO [#1276]: https://github.com/Electric-Coin-Company/zashi-android/issues/1276
 
     AppAlertDialog(
         title = stringResource(id = R.string.balances_shielding_dialog_error_title),
-        text = stringResource(id = R.string.balances_shielding_dialog_error_text),
+        text = {
+            Column {
+                Text(text = stringResource(id = R.string.balances_shielding_dialog_error_text))
+
+                if (reason.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
+
+                    Text(
+                        text = reason,
+                        fontStyle = FontStyle.Italic
+                    )
+                }
+            }
+        },
         confirmButtonText = stringResource(id = R.string.balances_shielding_dialog_error_btn),
         onConfirmButtonClick = onDone
     )
@@ -351,6 +367,7 @@ fun TransparentBalanceRow(
                     Modifier
                         .clip(RoundedCornerShape(ZcashTheme.dimens.smallRippleEffectCorner))
                         .clickable { onHelpClick() }
+                        .padding(end = ZcashTheme.dimens.spacingXtiny)
             ) {
                 BodySmall(text = stringResource(id = R.string.balances_transparent_balance).uppercase())
 

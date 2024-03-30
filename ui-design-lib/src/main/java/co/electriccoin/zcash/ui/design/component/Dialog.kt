@@ -57,7 +57,7 @@ fun AppAlertDialog(
     onDismissButtonClick: (() -> Unit)? = null,
     icon: ImageVector? = null,
     title: String? = null,
-    text: String? = null,
+    text: @Composable (() -> Unit)? = null,
     properties: DialogProperties = DialogProperties()
 ) {
     AlertDialog(
@@ -82,9 +82,37 @@ fun AppAlertDialog(
             }
         },
         title = title?.let { { Text(text = title) } },
-        text = text?.let { { Text(text = text) } },
+        text = text,
         icon = icon?.let { { Icon(imageVector = icon, null) } },
         properties = properties,
         modifier = modifier,
+    )
+}
+
+@Composable
+@Suppress("LongParameterList")
+fun AppAlertDialog(
+    modifier: Modifier = Modifier,
+    onDismissRequest: (() -> Unit)? = null,
+    confirmButtonText: String? = null,
+    onConfirmButtonClick: (() -> Unit)? = null,
+    dismissButtonText: String? = null,
+    onDismissButtonClick: (() -> Unit)? = null,
+    icon: ImageVector? = null,
+    title: String? = null,
+    text: String? = null,
+    properties: DialogProperties = DialogProperties()
+) {
+    AppAlertDialog(
+        onDismissRequest = onDismissRequest?.let { onDismissRequest } ?: {},
+        modifier = modifier,
+        confirmButtonText = confirmButtonText,
+        title = title,
+        text = { text?.let { Text(text = text) } },
+        icon = icon,
+        properties = properties,
+        onConfirmButtonClick = onConfirmButtonClick,
+        dismissButtonText = dismissButtonText,
+        onDismissButtonClick = onDismissButtonClick
     )
 }
