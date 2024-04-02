@@ -22,6 +22,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,6 +30,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -57,19 +59,6 @@ import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SendConfirmationSt
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.runBlocking
-
-@Composable
-@Preview("SendConfirmationFailure")
-private fun PreviewSendConfirmationFailure() {
-    ZcashTheme(forceDarkMode = false) {
-        GradientSurface {
-            SendFailure(
-                onDone = {},
-                reason = "Failed due to network error"
-            )
-        }
-    }
-}
 
 @Composable
 @Preview("SendConfirmation")
@@ -371,16 +360,45 @@ fun SendConfirmationActionButtons(
 }
 
 @Composable
-@Suppress("UNUSED_PARAMETER")
+@Preview("SendConfirmationFailure")
+private fun PreviewSendConfirmationFailure() {
+    ZcashTheme(forceDarkMode = false) {
+        GradientSurface {
+            SendFailure(
+                onDone = {},
+                reason = "Failed due to network error"
+            )
+        }
+    }
+}
+
+@Composable
 private fun SendFailure(
     onDone: () -> Unit,
     reason: String?,
 ) {
-    // Once we ensure that the [reason] contains a localized message, we can leverage it for the UI prompt
+    // TODO [#1276]: Once we ensure that the reason contains a localized message, we can leverage it for the UI prompt
+    // TODO [#1276]: Consider adding support for a specific exception in AppAlertDialog
+    // TODO [#1276]: https://github.com/Electric-Coin-Company/zashi-android/issues/1276
 
     AppAlertDialog(
         title = stringResource(id = R.string.send_confirmation_dialog_error_title),
-        text = stringResource(id = R.string.send_confirmation_dialog_error_text),
+        text = {
+            Column(
+                Modifier.verticalScroll(rememberScrollState())
+            ) {
+                Text(text = stringResource(id = R.string.send_confirmation_dialog_error_text))
+
+                if (!reason.isNullOrEmpty()) {
+                    Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
+
+                    Text(
+                        text = reason,
+                        fontStyle = FontStyle.Italic
+                    )
+                }
+            }
+        },
         confirmButtonText = stringResource(id = R.string.send_confirmation_dialog_error_btn),
         onConfirmButtonClick = onDone
     )

@@ -35,7 +35,13 @@ class CreateTransactionsViewModel(application: Application) : AndroidViewModel(a
                     // The first transaction submission failed - user might just be able to re-submit the transaction
                     // proposal. Simple error pop up is fine then
                     SubmitResult.SimpleTrxFailure(
-                        (submitResults[0] as TransactionSubmitResult.Failure).description ?: ""
+                        errorDescription =
+                            buildString {
+                                val result = (submitResults[0] as TransactionSubmitResult.Failure)
+                                appendLine("Error code: ${result.code}")
+                                appendLine("Is gRPC error: ${result.grpcError}")
+                                appendLine(result.description ?: "")
+                            }
                     )
                 } else {
                     // Any subsequent transaction submission failed - user needs to resolve this manually. Multiple
