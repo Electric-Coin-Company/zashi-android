@@ -42,6 +42,7 @@ import cash.z.ecc.android.sdk.model.FirstClassByteArray
 import cash.z.ecc.android.sdk.model.TransactionOverview
 import cash.z.ecc.android.sdk.model.TransactionRecipient
 import cash.z.ecc.android.sdk.model.TransactionState
+import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.toZecString
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.CircularMidProgressIndicator
@@ -55,6 +56,7 @@ import co.electriccoin.zcash.ui.screen.account.fixture.TransactionsFixture
 import co.electriccoin.zcash.ui.screen.account.model.TransactionUi
 import co.electriccoin.zcash.ui.screen.account.model.TransactionUiState
 import co.electriccoin.zcash.ui.screen.account.model.TrxItemState
+import co.electriccoin.zcash.ui.screen.send.view.DEFAULT_LESS_THAN_FEE
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toPersistentList
 import java.text.DateFormat
@@ -214,7 +216,7 @@ private fun HistoryItem(
         TransactionExtendedState.SEND_FAILED -> {
             typeText = stringResource(id = R.string.account_history_item_send_failed)
             typeIcon = ImageVector.vectorResource(R.drawable.ic_trx_send_icon)
-            textColor = ZcashTheme.colors.dangerous
+            textColor = ZcashTheme.colors.historyRedColor
             textStyle = ZcashTheme.extendedTypography.transactionItemStyles.titleFailed
         }
 
@@ -233,7 +235,7 @@ private fun HistoryItem(
         TransactionExtendedState.RECEIVE_FAILED -> {
             typeText = stringResource(id = R.string.account_history_item_receive_failed)
             typeIcon = ImageVector.vectorResource(R.drawable.ic_trx_receive_icon)
-            textColor = ZcashTheme.colors.dangerous
+            textColor = ZcashTheme.colors.historyRedColor
             textStyle = ZcashTheme.extendedTypography.transactionItemStyles.titleFailed
         }
     }
@@ -338,19 +340,31 @@ private fun HistoryItemCollapsedMainPart(
 
         Spacer(modifier = Modifier.weight(1f))
 
+        val valueTextStyle: TextStyle
+        val valueTextColor: Color
+        if (transaction.overview.getExtendedState().isFailed()) {
+            valueTextStyle = ZcashTheme.extendedTypography.transactionItemStyles.contentLineThrough
+            valueTextColor = ZcashTheme.colors.historyRedColor
+        } else {
+            valueTextStyle = ZcashTheme.extendedTypography.transactionItemStyles.valueFirstPart
+            valueTextColor =
+                if (transaction.overview.isSentTransaction) {
+                    ZcashTheme.colors.historyRedColor
+                } else {
+                    ZcashTheme.colors.textCommon
+                }
+        }
+
+        // TODO [#1047]: Representing Zatoshi amount
+        // TODO [#1047]: https://github.com/Electric-Coin-Company/zashi-android/issues/1047
         StyledBalance(
             balanceString = transaction.overview.netValue.toZecString(),
             textStyles =
                 Pair(
-                    first = ZcashTheme.extendedTypography.transactionItemStyles.valueFirstPart,
+                    first = valueTextStyle,
                     second = ZcashTheme.extendedTypography.transactionItemStyles.valueSecondPart
                 ),
-            textColor =
-                if (transaction.overview.isSentTransaction) {
-                    ZcashTheme.colors.historySendColor
-                } else {
-                    ZcashTheme.colors.textCommon
-                },
+            textColor = valueTextColor,
             prefix =
                 if (transaction.overview.isSentTransaction) {
                     stringResource(id = R.string.account_history_item_sent_prefix)
@@ -446,7 +460,7 @@ private fun HistoryItemExpandedAddressPart(
             text = stringResource(id = R.string.account_history_item_tap_to_copy),
             style = ZcashTheme.extendedTypography.transactionItemStyles.content,
             color = ZcashTheme.colors.textDescription,
-            imageVector = ImageVector.vectorResource(R.drawable.ic_trx_copy),
+            iconVector = ImageVector.vectorResource(R.drawable.ic_trx_copy),
             modifier =
                 Modifier
                     .clip(RoundedCornerShape(ZcashTheme.dimens.regularRippleEffectCorner))
@@ -488,7 +502,11 @@ private fun HistoryItemExpandedPart(
 ) {
     Column(modifier = modifier) {
         if (transaction.messages.containsValidMemo()) {
-            HistoryItemMessagePart(transaction.messages!!.toPersistentList(), onAction)
+            HistoryItemMessagePart(
+                messages = transaction.messages!!.toPersistentList(),
+                state = transaction.overview.getExtendedState(),
+                onAction = onAction
+            )
 
             Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
         }
@@ -500,11 +518,15 @@ private fun HistoryItemExpandedPart(
 
         Spacer(modifier = (Modifier.height(ZcashTheme.dimens.spacingDefault)))
 
+        HistoryItemTransactionFeePart(fee = transaction.overview.feePaid)
+
+        Spacer(modifier = (Modifier.height(ZcashTheme.dimens.spacingLarge)))
+
         TextWithIcon(
             text = stringResource(id = R.string.account_history_item_collapse_transaction),
             style = ZcashTheme.extendedTypography.transactionItemStyles.contentUnderline,
             color = ZcashTheme.colors.textDescription,
-            imageVector = ImageVector.vectorResource(id = R.drawable.ic_trx_collapse),
+            iconVector = ImageVector.vectorResource(id = R.drawable.ic_trx_collapse),
             modifier =
                 Modifier
                     .clip(RoundedCornerShape(ZcashTheme.dimens.regularRippleEffectCorner))
@@ -567,7 +589,7 @@ private fun HistoryItemTransactionIdPart(
                 text = stringResource(id = R.string.account_history_item_tap_to_copy),
                 style = ZcashTheme.extendedTypography.transactionItemStyles.content,
                 color = ZcashTheme.colors.textDescription,
-                imageVector = ImageVector.vectorResource(R.drawable.ic_trx_copy),
+                iconVector = ImageVector.vectorResource(R.drawable.ic_trx_copy),
                 modifier =
                     Modifier
                         .clip(RoundedCornerShape(ZcashTheme.dimens.regularRippleEffectCorner))
@@ -618,12 +640,65 @@ private fun HistoryItemTransactionIdPart(
 }
 
 @Composable
-private fun HistoryItemMessagePart(
-    messages: ImmutableList<String>,
-    onAction: (TrxItemAction) -> Unit,
+private fun HistoryItemTransactionFeePart(
+    fee: Zatoshi?,
     modifier: Modifier = Modifier
 ) {
+    Column(modifier = modifier) {
+        Text(
+            text = stringResource(id = R.string.account_history_item_transaction_fee),
+            style = ZcashTheme.extendedTypography.transactionItemStyles.content,
+            color = ZcashTheme.colors.textDescription,
+        )
+
+        Spacer(modifier = Modifier.width(ZcashTheme.dimens.spacingSmall))
+
+        if (fee == null) {
+            Text(
+                text =
+                    stringResource(
+                        id = R.string.account_history_item_transaction_fee_typical,
+                        Zatoshi(DEFAULT_LESS_THAN_FEE).toZecString()
+                    ),
+                style = ZcashTheme.extendedTypography.transactionItemStyles.feeFirstPart,
+                color = ZcashTheme.colors.textDescription,
+            )
+        } else {
+            // TODO [#1047]: Representing Zatoshi amount
+            // TODO [#1047]: https://github.com/Electric-Coin-Company/zashi-android/issues/1047
+            StyledBalance(
+                balanceString = fee.toZecString(),
+                textStyles =
+                    Pair(
+                        first = ZcashTheme.extendedTypography.transactionItemStyles.feeFirstPart,
+                        second = ZcashTheme.extendedTypography.transactionItemStyles.feeSecondPart
+                    ),
+                textColor = ZcashTheme.colors.textDescription
+            )
+        }
+    }
+}
+
+@Composable
+private fun HistoryItemMessagePart(
+    messages: ImmutableList<String>,
+    state: TransactionExtendedState,
+    onAction: (TrxItemAction) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    // TODO [#1315]: Proper more messages in transaction displaying
+    // TODO [#1315]: https://github.com/Electric-Coin-Company/zashi-android/issues/1315
     val composedMessage = messages.joinToString(separator = "\n\n")
+
+    val textStyle: TextStyle
+    val textColor: Color
+    if (state.isFailed()) {
+        textStyle = ZcashTheme.extendedTypography.transactionItemStyles.contentLineThrough
+        textColor = ZcashTheme.colors.historyRedColor
+    } else {
+        textStyle = ZcashTheme.extendedTypography.transactionItemStyles.content
+        textColor = ZcashTheme.colors.textCommon
+    }
 
     Column(modifier = modifier.then(Modifier.fillMaxWidth())) {
         Text(
@@ -642,8 +717,8 @@ private fun HistoryItemMessagePart(
         ) {
             Text(
                 text = composedMessage,
-                style = ZcashTheme.extendedTypography.transactionItemStyles.content,
-                color = ZcashTheme.colors.textCommon,
+                style = textStyle,
+                color = textColor,
                 modifier = Modifier.padding(all = ZcashTheme.dimens.spacingMid)
             )
         }
@@ -654,7 +729,7 @@ private fun HistoryItemMessagePart(
             text = stringResource(id = R.string.account_history_item_tap_to_copy),
             style = ZcashTheme.extendedTypography.transactionItemStyles.content,
             color = ZcashTheme.colors.textDescription,
-            imageVector = ImageVector.vectorResource(R.drawable.ic_trx_copy),
+            iconVector = ImageVector.vectorResource(R.drawable.ic_trx_copy),
             modifier =
                 Modifier
                     .clip(RoundedCornerShape(ZcashTheme.dimens.regularRippleEffectCorner))
@@ -683,7 +758,9 @@ internal enum class TransactionExtendedState {
     SEND_FAILED,
     RECEIVED,
     RECEIVING,
-    RECEIVE_FAILED,
+    RECEIVE_FAILED;
+
+    fun isFailed(): Boolean = this == SEND_FAILED || this == RECEIVE_FAILED
 }
 
 private fun TransactionOverview.getExtendedState(): TransactionExtendedState {

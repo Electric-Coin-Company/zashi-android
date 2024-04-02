@@ -15,6 +15,9 @@
     <string name="account_history_item_message">Message</string>
     <string name="account_history_item_collapse_transaction">Collapse transaction</string>
     <string name="account_history_item_transaction_id">Transaction ID</string>
+    <string name="account_history_item_transaction_fee">Transaction Fee</string>
+    <string name="account_history_item_transaction_fee_typical">Typical Fee &lt; <xliff:g id="fee_amount"
+        example="0.001">%1$s</xliff:g></string>
 
     <string name="account_history_memo_clipboard_tag">Transaction message</string>
     <string name="account_history_id_clipboard_tag">Transaction ID</string>

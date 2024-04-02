@@ -57,7 +57,6 @@ private fun ButtonComposablePreview() {
                 TertiaryButton(onClick = { }, text = "Tertiary")
                 TertiaryButton(onClick = { }, text = "Tertiary", enabled = false)
                 NavigationButton(onClick = { }, text = "Navigation")
-                DangerousButton(onClick = { }, text = "Dangerous")
                 @Suppress("MagicNumber")
                 Row {
                     PrimaryButton(onClick = { }, text = "Button 1", modifier = Modifier.weight(0.5f))
@@ -288,38 +287,6 @@ fun TertiaryButton(
             textAlign = TextAlign.Center,
             text = text,
             color = ZcashTheme.colors.onTertiary
-        )
-    }
-}
-
-@Composable
-fun DangerousButton(
-    onClick: () -> Unit,
-    text: String,
-    modifier: Modifier = Modifier,
-    outerPaddingValues: PaddingValues =
-        PaddingValues(
-            horizontal = ZcashTheme.dimens.spacingNone,
-            vertical = ZcashTheme.dimens.spacingSmall
-        ),
-) {
-    Button(
-        shape = RectangleShape,
-        onClick = onClick,
-        modifier =
-            modifier.then(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(outerPaddingValues)
-                    .defaultMinSize(ZcashTheme.dimens.buttonWidth, ZcashTheme.dimens.buttonHeight)
-            ),
-        colors = buttonColors(containerColor = ZcashTheme.colors.dangerous)
-    ) {
-        Text(
-            style = MaterialTheme.typography.labelLarge,
-            textAlign = TextAlign.Center,
-            text = text,
-            color = ZcashTheme.colors.onDangerous
         )
     }
 }
