@@ -358,7 +358,9 @@ fun ValidationErrorDialog(
     AppAlertDialog(
         title = stringResource(id = R.string.choose_server_validation_dialog_error_title),
         text = {
-            Column {
+            Column(
+                Modifier.verticalScroll(rememberScrollState())
+            ) {
                 Text(text = stringResource(id = R.string.choose_server_validation_dialog_error_text))
 
                 if (!reason.isNullOrEmpty()) {

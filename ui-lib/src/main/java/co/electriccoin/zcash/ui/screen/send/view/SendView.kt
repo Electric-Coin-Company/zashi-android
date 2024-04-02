@@ -684,7 +684,9 @@ private fun SendFailure(
     AppAlertDialog(
         title = stringResource(id = R.string.send_dialog_error_title),
         text = {
-            Column {
+            Column(
+                Modifier.verticalScroll(rememberScrollState())
+            ) {
                 Text(text = stringResource(id = R.string.send_dialog_error_text))
 
                 Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))

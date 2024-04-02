@@ -176,7 +176,9 @@ fun ShieldingErrorDialog(
     AppAlertDialog(
         title = stringResource(id = R.string.balances_shielding_dialog_error_title),
         text = {
-            Column {
+            Column(
+                Modifier.verticalScroll(rememberScrollState())
+            ) {
                 Text(text = stringResource(id = R.string.balances_shielding_dialog_error_text))
 
                 if (reason.isNotEmpty()) {

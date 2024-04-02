@@ -384,7 +384,9 @@ private fun SendFailure(
     AppAlertDialog(
         title = stringResource(id = R.string.send_confirmation_dialog_error_title),
         text = {
-            Column {
+            Column(
+                Modifier.verticalScroll(rememberScrollState())
+            ) {
                 Text(text = stringResource(id = R.string.send_confirmation_dialog_error_text))
 
                 if (!reason.isNullOrEmpty()) {
