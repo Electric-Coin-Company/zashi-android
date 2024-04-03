@@ -53,6 +53,7 @@ import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.BalanceWidget
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
+import co.electriccoin.zcash.ui.common.model.canSpend
 import co.electriccoin.zcash.ui.common.model.spendableBalance
 import co.electriccoin.zcash.ui.common.test.CommonTag
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
@@ -324,7 +325,7 @@ private fun SendForm(
                 recipientAddressState.address.isNotEmpty() &&
                 amountState is AmountState.Valid &&
                 amountState.value.isNotBlank() &&
-                walletSnapshot.spendableBalance() >= amountState.zatoshi &&
+                walletSnapshot.canSpend(amountState.zatoshi) &&
                 // A valid memo is necessary only for non-transparent recipient
                 (recipientAddressState.type == AddressType.Transparent || memoState is MemoState.Correct)
 
