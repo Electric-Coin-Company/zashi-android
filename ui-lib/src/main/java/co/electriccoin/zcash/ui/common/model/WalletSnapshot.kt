@@ -18,20 +18,25 @@ data class WalletSnapshot(
     val progress: PercentDecimal,
     val synchronizerError: SynchronizerError?
 ) {
-    // Note that both [hasSaplingFunds] and [hasTransparentFunds] checks are not entirely correct - they do not
-    // calculate the resulting fee using the new Proposal API. It's fine for now, but it's subject to improvement
-    // later once we figure out how to handle it in such cases.
+    // Note: the wallet's transparent balance is effectively empty if it cannot cover the miner's fee
+    val hasTransparentFunds = transparentBalance.value > 0L
 
     // Note: the wallet is effectively empty if it cannot cover the miner's fee
     val hasSaplingFunds = saplingBalance.available.value > 0L
 
     val hasSaplingBalance = saplingBalance.total.value > 0L
 
-    // Note: the wallet's transparent balance is effectively empty if it cannot cover the miner's fee
-    val hasTransparentFunds = transparentBalance.value > 0L
+    // Note: the wallet is effectively empty if it cannot cover the miner's fee
+    val hasOrchardFunds = orchardBalance.available.value > 0L
 
-    val isSendEnabled: Boolean get() = status == Synchronizer.Status.SYNCED && hasSaplingFunds
+    val hasOrchardBalance = orchardBalance.total.value > 0L
+
+    val isSendEnabled: Boolean get() = hasSaplingFunds && hasOrchardFunds
 }
+
+// Note this check is not entirely correct - it does not calculate the resulting fee using the new Proposal API. It's
+// fine for now, but it's subject to improvement later once we figure out how to handle it in such cases.
+fun WalletSnapshot.canSpend(amount: Zatoshi): Boolean = spendableBalance() >= amount
 
 fun WalletSnapshot.totalBalance() = orchardBalance.total + saplingBalance.total + transparentBalance
 
