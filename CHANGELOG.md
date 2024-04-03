@@ -21,7 +21,7 @@ directly impact users rather than highlighting other key architectural updates.*
   submission
 
 ### Changed
-- The Transaction History UI has been incorporated into the Account screen and partly reworked according to the 
+- The Transaction History UI has been incorporated into the Account screen and completely reworked according to the 
   design guidelines
 - Reworked Send screens flow and their look (e.g., Send Failure screen is now a modal dialog instead of a separate 
   screen)

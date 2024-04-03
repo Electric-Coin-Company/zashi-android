@@ -165,6 +165,9 @@ data class TransactionItemTextStyles(
     val content: TextStyle,
     val contentMedium: TextStyle,
     val contentUnderline: TextStyle,
+    val contentLineThrough: TextStyle,
+    val feeFirstPart: TextStyle,
+    val feeSecondPart: TextStyle,
 )
 
 @Immutable
@@ -341,6 +344,21 @@ val LocalExtendedTypography =
                             fontSize = 13.sp,
                             fontStyle = FontStyle.Italic,
                             textDecoration = TextDecoration.Underline
+                        ),
+                    contentLineThrough =
+                        PrimaryTypography.bodySmall.copy(
+                            fontSize = 13.sp,
+                            textDecoration = TextDecoration.LineThrough
+                        ),
+                    feeFirstPart =
+                        PrimaryTypography.bodySmall.copy(
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.SemiBold
+                        ),
+                    feeSecondPart =
+                        PrimaryTypography.bodySmall.copy(
+                            fontSize = 8.sp,
+                            fontWeight = FontWeight.SemiBold
                         ),
                 ),
         )

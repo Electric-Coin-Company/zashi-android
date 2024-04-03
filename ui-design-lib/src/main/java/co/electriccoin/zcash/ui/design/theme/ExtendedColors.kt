@@ -30,8 +30,6 @@ data class ExtendedColors(
     val layoutStroke: Color,
     val overlay: Color,
     val highlight: Color,
-    val dangerous: Color,
-    val onDangerous: Color,
     val reference: Color,
     val disabledButtonColor: Color,
     val disabledButtonTextColor: Color,
@@ -47,7 +45,7 @@ data class ExtendedColors(
     val radioButtonColor: Color,
     val radioButtonTextColor: Color,
     val historyBackgroundColor: Color,
-    val historySendColor: Color,
+    val historyRedColor: Color,
 ) {
     @Composable
     fun surfaceGradient() =

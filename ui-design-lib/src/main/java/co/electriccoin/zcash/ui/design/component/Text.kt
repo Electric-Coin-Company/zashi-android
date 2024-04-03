@@ -3,6 +3,7 @@
 package co.electriccoin.zcash.ui.design.component
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -232,9 +233,9 @@ fun Tiny(
 @Suppress("LongParameterList")
 fun TextWithIcon(
     text: String,
-    imageVector: ImageVector,
+    iconVector: ImageVector,
     modifier: Modifier = Modifier,
-    imageContentDescription: String? = null,
+    iconContentDescription: String? = null,
     maxLines: Int = Int.MAX_VALUE,
     overflow: TextOverflow = TextOverflow.Clip,
     textAlign: TextAlign = TextAlign.Start,
@@ -248,9 +249,9 @@ fun TextWithIcon(
                 .then(modifier),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(
-            imageVector = imageVector,
-            contentDescription = imageContentDescription
+        Image(
+            imageVector = iconVector,
+            contentDescription = iconContentDescription
         )
 
         Spacer(modifier = Modifier.padding(3.dp))
