@@ -294,6 +294,7 @@ private fun RestoreSeedTopAppBar(
     modifier: Modifier = Modifier,
 ) {
     SmallTopAppBar(
+        modifier = modifier,
         backText = stringResource(id = R.string.restore_back).uppercase(),
         backContentDescriptionText = stringResource(R.string.restore_back_content_description),
         onBack = onBack,
@@ -302,7 +303,6 @@ private fun RestoreSeedTopAppBar(
                 onSeedClear = onClear
             )
         },
-        modifier = modifier,
     )
 }
 
@@ -312,10 +312,10 @@ private fun RestoreSeedBirthdayTopAppBar(
     modifier: Modifier = Modifier,
 ) {
     SmallTopAppBar(
+        modifier = modifier,
         backText = stringResource(id = R.string.restore_back).uppercase(),
         backContentDescriptionText = stringResource(R.string.restore_back_content_description),
         onBack = onBack,
-        modifier = modifier
     )
 }
 

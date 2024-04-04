@@ -39,7 +39,7 @@ class HistoryViewTest {
     fun check_syncing_state() {
         newTestSetup(
             TransactionHistoryUiStateFixture.new(
-                state = TransactionUiState.Prepared(persistentListOf()),
+                state = TransactionUiState.Syncing(persistentListOf()),
                 transactions = TransactionHistoryUiStateFixture.TRANSACTIONS
             )
         )
@@ -62,7 +62,7 @@ class HistoryViewTest {
     fun check_done_state_no_transactions() {
         newTestSetup(
             TransactionHistoryUiStateFixture.new(
-                state = TransactionUiState.Prepared(persistentListOf()),
+                state = TransactionUiState.Syncing(persistentListOf()),
                 transactions = TransactionHistoryUiStateFixture.TRANSACTIONS
             )
         )
@@ -85,7 +85,7 @@ class HistoryViewTest {
     fun check_done_state_with_transactions() {
         newTestSetup(
             TransactionHistoryUiStateFixture.new(
-                state = TransactionUiState.Prepared(persistentListOf()),
+                state = TransactionUiState.Syncing(persistentListOf()),
                 transactions = TransactionHistoryUiStateFixture.TRANSACTIONS
             )
         )

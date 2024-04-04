@@ -54,6 +54,7 @@ internal object Dark {
     val circularProgressBarScreen = Color(0xFFFFFFFF)
     val linearProgressBarTrack = Color(0xFFD9D9D9)
     val linearProgressBarBackground = Light.complementaryColor
+    val restoringTopAppBarColor = Color(0xFF8A8888)
 
     val callout = Color(0xFFFFFFFF)
     val onCallout = Color(0xFFFFFFFF)
@@ -112,6 +113,7 @@ internal object Light {
     val circularProgressBarScreen = Color(0xFF000000)
     val linearProgressBarTrack = Color(0xFFD9D9D9)
     val linearProgressBarBackground = complementaryColor
+    val restoringTopAppBarColor = Color(0xFF8A8888)
 
     val callout = Color(0xFFFFFFFF)
     val onCallout = Color(0xFFFFFFFF)
@@ -165,6 +167,7 @@ internal val DarkExtendedColorPalette =
         circularProgressBarScreen = Dark.circularProgressBarScreen,
         linearProgressBarTrack = Dark.linearProgressBarTrack,
         linearProgressBarBackground = Dark.linearProgressBarBackground,
+        restoringTopAppBarColor = Dark.restoringTopAppBarColor,
         chipIndex = Dark.textChipIndex,
         textCommon = Dark.textCommon,
         textMedium = Dark.textMedium,
@@ -207,6 +210,7 @@ internal val LightExtendedColorPalette =
         circularProgressBarSmall = Light.circularProgressBarSmall,
         linearProgressBarTrack = Light.linearProgressBarTrack,
         linearProgressBarBackground = Light.linearProgressBarBackground,
+        restoringTopAppBarColor = Light.restoringTopAppBarColor,
         chipIndex = Light.textChipIndex,
         textCommon = Light.textCommon,
         textMedium = Dark.textMedium,
@@ -251,6 +255,7 @@ internal val LocalExtendedColors =
             circularProgressBarSmall = Color.Unspecified,
             linearProgressBarTrack = Color.Unspecified,
             linearProgressBarBackground = Color.Unspecified,
+            restoringTopAppBarColor = Color.Unspecified,
             chipIndex = Color.Unspecified,
             textCommon = Color.Unspecified,
             textMedium = Color.Unspecified,

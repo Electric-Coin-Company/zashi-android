@@ -2,6 +2,7 @@ package co.electriccoin.zcash.ui.screen.balances
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
+import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.balances.model.ShieldState
@@ -33,13 +34,13 @@ class BalancesTestSetup(
                 onSettingsCount.incrementAndGet()
             },
             isFiatConversionEnabled = isShowFiatConversion,
-            isKeepScreenOnWhileSyncing = false,
             isUpdateAvailable = false,
+            isShowingErrorDialog = false,
+            setShowErrorDialog = {},
             onShielding = {},
             shieldState = ShieldState.Available,
             walletSnapshot = walletSnapshot,
-            isShowingErrorDialog = false,
-            setShowErrorDialog = {}
+            walletRestoringState = WalletRestoringState.NONE
         )
     }
 

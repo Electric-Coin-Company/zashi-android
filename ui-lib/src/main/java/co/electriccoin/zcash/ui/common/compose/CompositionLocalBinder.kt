@@ -15,7 +15,7 @@ fun ComponentActivity.BindCompLocalProvider(content: @Composable () -> Unit) {
     val screenSecurity = ScreenSecurity()
     observeScreenSecurityFlag(screenSecurity)
 
-    val screenBrightness = ScreenBrightness()
+    val screenBrightness = ScreenBrightness
     observeScreenBrightnessFlag(screenBrightness)
 
     val screenTimeout = ScreenTimeout()
@@ -46,19 +46,21 @@ private fun ComponentActivity.observeScreenSecurityFlag(screenSecurity: ScreenSe
 }
 
 private fun ComponentActivity.observeScreenBrightnessFlag(screenBrightness: ScreenBrightness) {
-    screenBrightness.referenceCount.map { it > 0 }.collectWith(lifecycleScope) { maxBrightness ->
-        if (maxBrightness) {
-            window.attributes =
-                window.attributes.apply {
-                    this.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_FULL
-                }
-        } else {
-            window.attributes =
-                window.attributes.apply {
-                    this.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
-                }
+    screenBrightness.referenceSwitch
+        .map { it == ScreenBrightnessState.FULL }
+        .collectWith(lifecycleScope) { maxBrightness ->
+            if (maxBrightness) {
+                window.attributes =
+                    window.attributes.apply {
+                        this.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_FULL
+                    }
+            } else {
+                window.attributes =
+                    window.attributes.apply {
+                        this.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
+                    }
+            }
         }
-    }
 }
 
 private fun ComponentActivity.observeScreenTimeoutFlag(screenTimeout: ScreenTimeout) {

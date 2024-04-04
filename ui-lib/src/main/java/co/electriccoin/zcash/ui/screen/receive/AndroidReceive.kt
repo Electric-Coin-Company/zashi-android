@@ -16,9 +16,11 @@ import co.electriccoin.zcash.spackle.ClipboardManagerUtil
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.spackle.getInternalCacheDirSuspend
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.compose.ScreenBrightnessState
 import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.receive.view.Receive
+import co.electriccoin.zcash.ui.screen.settings.viewmodel.ScreenBrightnessViewModel
 import co.electriccoin.zcash.ui.util.FileShareUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
@@ -33,8 +35,15 @@ internal fun WrapReceive(
     activity: ComponentActivity,
     onSettings: () -> Unit,
 ) {
-    val viewModel by activity.viewModels<WalletViewModel>()
-    val walletAddresses = viewModel.addresses.collectAsStateWithLifecycle().value
+    val walletViewModel by activity.viewModels<WalletViewModel>()
+
+    val brightnessViewModel by activity.viewModels<ScreenBrightnessViewModel>()
+
+    val screenBrightnessState = brightnessViewModel.screenBrightnessState.collectAsStateWithLifecycle().value
+
+    val walletAddresses = walletViewModel.addresses.collectAsStateWithLifecycle().value
+
+    val walletRestoringState = walletViewModel.walletRestoringState.collectAsStateWithLifecycle().value
 
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -42,9 +51,13 @@ internal fun WrapReceive(
     val versionInfo = VersionInfo.new(activity.applicationContext)
 
     Receive(
-        walletAddress = walletAddresses,
-        snackbarHostState = snackbarHostState,
-        onAdjustBrightness = { /* Just for testing purposes */ },
+        screenBrightnessState = screenBrightnessState,
+        onAdjustBrightness = {
+            when (it) {
+                ScreenBrightnessState.NORMAL -> brightnessViewModel.restoreBrightness()
+                ScreenBrightnessState.FULL -> brightnessViewModel.fullBrightness()
+            }
+        },
         onAddrCopyToClipboard = { address ->
             ClipboardManagerUtil.copyToClipboard(
                 activity.applicationContext,
@@ -72,7 +85,10 @@ internal fun WrapReceive(
             }
         },
         onSettings = onSettings,
-        versionInfo = versionInfo
+        snackbarHostState = snackbarHostState,
+        versionInfo = versionInfo,
+        walletAddress = walletAddresses,
+        walletRestoringState = walletRestoringState,
     )
 }
 

@@ -44,6 +44,7 @@ import cash.z.ecc.sdk.fixture.MemoFixture
 import cash.z.ecc.sdk.fixture.ZatoshiFixture
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.BalanceWidgetBigLineOnly
+import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.AppAlertDialog
 import co.electriccoin.zcash.ui.design.component.Body
@@ -124,9 +125,16 @@ fun SendConfirmation(
     stage: SendConfirmationStage,
     submissionResults: ImmutableList<TransactionSubmitResult>,
     zecSend: ZecSend?,
+    walletRestoringState: WalletRestoringState,
 ) {
     Scaffold(
-        topBar = { SendConfirmationTopAppBar(onBack, stage) },
+        topBar = {
+            SendConfirmationTopAppBar(
+                onBack = onBack,
+                stage = stage,
+                showRestoring = walletRestoringState == WalletRestoringState.RESTORING,
+            )
+        },
         snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { paddingValues ->
         SendConfirmationMainContent(
@@ -152,26 +160,49 @@ fun SendConfirmation(
 @Composable
 private fun SendConfirmationTopAppBar(
     onBack: () -> Unit,
-    stage: SendConfirmationStage
+    stage: SendConfirmationStage,
+    showRestoring: Boolean
 ) {
     when (stage) {
         SendConfirmationStage.Confirmation,
         SendConfirmationStage.Sending,
         is SendConfirmationStage.Failure -> {
-            SmallTopAppBar(titleText = stringResource(id = R.string.send_stage_confirmation_title))
+            SmallTopAppBar(
+                restoringLabel =
+                    if (showRestoring) {
+                        stringResource(id = R.string.restoring_wallet_label)
+                    } else {
+                        null
+                    },
+                titleText = stringResource(id = R.string.send_stage_confirmation_title),
+            )
         }
         SendConfirmationStage.MultipleTrxFailure -> {
-            SmallTopAppBar(titleText = stringResource(id = R.string.send_confirmation_multiple_error_title))
+            SmallTopAppBar(
+                restoringLabel =
+                    if (showRestoring) {
+                        stringResource(id = R.string.restoring_wallet_label)
+                    } else {
+                        null
+                    },
+                titleText = stringResource(id = R.string.send_confirmation_multiple_error_title),
+            )
         }
         SendConfirmationStage.MultipleTrxFailureReported -> {
             SmallTopAppBar(
+                restoringLabel =
+                    if (showRestoring) {
+                        stringResource(id = R.string.restoring_wallet_label)
+                    } else {
+                        null
+                    },
                 titleText = stringResource(id = R.string.send_confirmation_multiple_error_title),
                 backText = stringResource(id = R.string.send_confirmation_multiple_error_back),
                 backContentDescriptionText =
                     stringResource(
                         id = R.string.send_confirmation_multiple_error_back_content_description
                     ),
-                onBack = onBack
+                onBack = onBack,
             )
         }
     }

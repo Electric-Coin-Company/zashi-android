@@ -74,9 +74,6 @@ internal fun MainActivity.Navigation() {
             WrapHome(
                 goBack = { finish() },
                 goScan = { navController.navigateJustOnce(SCAN) },
-                onPageChange = {
-                    homeViewModel.screenIndex.value = it
-                },
                 goSendConfirmation = { zecSend ->
                     navController.currentBackStackEntry?.savedStateHandle?.let { handle ->
                         fillInHandleForConfirmation(handle, zecSend, SendConfirmationStage.Confirmation)
@@ -140,7 +137,7 @@ internal fun MainActivity.Navigation() {
                 },
                 goChooseServer = {
                     navController.navigateJustOnce(CHOOSE_SERVER)
-                }
+                },
             )
         }
         composable(CHOOSE_SERVER) {
@@ -157,7 +154,7 @@ internal fun MainActivity.Navigation() {
                 },
                 onDone = {
                     navController.popBackStackJustOnce(SEED_RECOVERY)
-                }
+                },
             )
         }
         composable(REQUEST) {

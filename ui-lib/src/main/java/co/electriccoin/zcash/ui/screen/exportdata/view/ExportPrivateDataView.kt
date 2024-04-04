@@ -23,6 +23,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.CheckBox
@@ -42,6 +43,7 @@ private fun ExportPrivateDataPreview() {
                 onBack = {},
                 onAgree = {},
                 onConfirm = {},
+                walletRestoringState = WalletRestoringState.NONE,
             )
         }
     }
@@ -56,9 +58,15 @@ fun ExportPrivateData(
     onBack: () -> Unit,
     onAgree: (Boolean) -> Unit,
     onConfirm: () -> Unit,
+    walletRestoringState: WalletRestoringState,
 ) {
     Scaffold(
-        topBar = { ExportPrivateDataTopAppBar(onBack = onBack) },
+        topBar = {
+            ExportPrivateDataTopAppBar(
+                onBack = onBack,
+                showRestoring = walletRestoringState == WalletRestoringState.RESTORING,
+            )
+        },
         snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { paddingValues ->
         ExportPrivateDataContent(
@@ -79,8 +87,17 @@ fun ExportPrivateData(
 }
 
 @Composable
-private fun ExportPrivateDataTopAppBar(onBack: () -> Unit) {
+private fun ExportPrivateDataTopAppBar(
+    onBack: () -> Unit,
+    showRestoring: Boolean
+) {
     SmallTopAppBar(
+        restoringLabel =
+            if (showRestoring) {
+                stringResource(id = R.string.restoring_wallet_label)
+            } else {
+                null
+            },
         backText = stringResource(R.string.export_data_back).uppercase(),
         backContentDescriptionText = stringResource(R.string.export_data_back_content_description),
         onBack = onBack,

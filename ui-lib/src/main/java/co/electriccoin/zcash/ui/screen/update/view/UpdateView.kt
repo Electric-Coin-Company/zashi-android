@@ -131,7 +131,7 @@ private fun UpdateTopAppBar(updateInfo: UpdateInfo) {
                         R.string.update_header
                     }
                 }
-            )
+            ),
     )
 }
 

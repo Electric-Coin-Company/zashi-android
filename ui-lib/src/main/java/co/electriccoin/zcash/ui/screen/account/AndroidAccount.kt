@@ -12,6 +12,7 @@ import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.internal.Twig
 import co.electriccoin.zcash.spackle.ClipboardManagerUtil
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
@@ -19,7 +20,6 @@ import co.electriccoin.zcash.ui.screen.account.model.TransactionUiState
 import co.electriccoin.zcash.ui.screen.account.view.Account
 import co.electriccoin.zcash.ui.screen.account.view.TrxItemAction
 import co.electriccoin.zcash.ui.screen.account.viewmodel.TransactionHistoryViewModel
-import co.electriccoin.zcash.ui.screen.settings.viewmodel.SettingsViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.jetbrains.annotations.VisibleForTesting
@@ -36,11 +36,7 @@ internal fun WrapAccount(
 
     val transactionHistoryViewModel by activity.viewModels<TransactionHistoryViewModel>()
 
-    val settingsViewModel by activity.viewModels<SettingsViewModel>()
-
     val walletSnapshot = walletViewModel.walletSnapshot.collectAsStateWithLifecycle().value
-
-    val isKeepScreenOnWhileSyncing = settingsViewModel.isKeepScreenOnWhileSyncing.collectAsStateWithLifecycle().value
 
     val synchronizer = walletViewModel.synchronizer.collectAsStateWithLifecycle().value
 
@@ -50,16 +46,18 @@ internal fun WrapAccount(
         transactionHistoryViewModel.processTransactionState(value)
     }
 
+    val walletRestoringState = walletViewModel.walletRestoringState.collectAsStateWithLifecycle().value
+
     WrapAccount(
         context = activity.applicationContext,
         goBalances = goBalances,
         goSettings = goSettings,
-        isKeepScreenOnWhileSyncing = isKeepScreenOnWhileSyncing,
         scope = scope,
         synchronizer = synchronizer,
         transactionHistoryViewModel = transactionHistoryViewModel,
         transactionsUiState = transactionsUiState,
         walletSnapshot = walletSnapshot,
+        walletRestoringState = walletRestoringState
     )
 
     // For benchmarking purposes
@@ -78,7 +76,7 @@ internal fun WrapAccount(
     synchronizer: Synchronizer?,
     transactionHistoryViewModel: TransactionHistoryViewModel,
     walletSnapshot: WalletSnapshot?,
-    isKeepScreenOnWhileSyncing: Boolean?,
+    walletRestoringState: WalletRestoringState,
 ) {
     if (null == synchronizer || null == walletSnapshot) {
         // TODO [#1146]: Consider moving CircularScreenProgressIndicator from Android layer to View layer
@@ -88,7 +86,6 @@ internal fun WrapAccount(
     } else {
         Account(
             walletSnapshot = walletSnapshot,
-            isKeepScreenOnWhileSyncing = isKeepScreenOnWhileSyncing,
             transactionsUiState = transactionsUiState,
             onTransactionItemAction = { action ->
                 when (action) {
@@ -130,6 +127,7 @@ internal fun WrapAccount(
             },
             goBalances = goBalances,
             goSettings = goSettings,
+            walletRestoringState = walletRestoringState
         )
     }
 }

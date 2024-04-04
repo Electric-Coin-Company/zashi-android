@@ -41,6 +41,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.VersionInfo
+import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
@@ -55,29 +56,33 @@ private fun AboutPreview() {
         GradientSurface {
             About(
                 onBack = {},
-                versionInfo = VersionInfoFixture.new(),
                 configInfo = ConfigInfoFixture.new(),
-                snackbarHostState = SnackbarHostState(),
                 onPrivacyPolicy = {},
+                snackbarHostState = SnackbarHostState(),
+                versionInfo = VersionInfoFixture.new(),
+                walletRestoringState = WalletRestoringState.NONE,
             )
         }
     }
 }
 
 @Composable
+@Suppress("LongParameterList")
 fun About(
     onBack: () -> Unit,
     configInfo: ConfigInfo,
     onPrivacyPolicy: () -> Unit,
     snackbarHostState: SnackbarHostState,
     versionInfo: VersionInfo,
+    walletRestoringState: WalletRestoringState,
 ) {
     Scaffold(
         topBar = {
             AboutTopAppBar(
                 onBack = onBack,
                 versionInfo = versionInfo,
-                configInfo = configInfo
+                configInfo = configInfo,
+                showRestoring = walletRestoringState == WalletRestoringState.RESTORING,
             )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -105,9 +110,16 @@ fun About(
 private fun AboutTopAppBar(
     onBack: () -> Unit,
     versionInfo: VersionInfo,
-    configInfo: ConfigInfo
+    configInfo: ConfigInfo,
+    showRestoring: Boolean
 ) {
     SmallTopAppBar(
+        restoringLabel =
+            if (showRestoring) {
+                stringResource(id = R.string.restoring_wallet_label)
+            } else {
+                null
+            },
         titleText = stringResource(id = R.string.about_title).uppercase(),
         backText = stringResource(id = R.string.about_back).uppercase(),
         backContentDescriptionText = stringResource(R.string.about_back_content_description),
@@ -116,7 +128,7 @@ private fun AboutTopAppBar(
             if (versionInfo.isDebuggable && !versionInfo.isRunningUnderTestService) {
                 DebugMenu(versionInfo, configInfo)
             }
-        }
+        },
     )
 }
 

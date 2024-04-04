@@ -5,7 +5,13 @@ import kotlinx.collections.immutable.ImmutableList
 sealed interface TransactionUiState {
     data object Loading : TransactionUiState
 
-    data object Syncing : TransactionUiState
+    data object SyncingEmpty : TransactionUiState
 
-    data class Prepared(val transactions: ImmutableList<TransactionUi>) : TransactionUiState
+    data object DoneEmpty : TransactionUiState
+
+    sealed class Prepared(open val transactions: ImmutableList<TransactionUi>) : TransactionUiState
+
+    data class Syncing(override val transactions: ImmutableList<TransactionUi>) : Prepared(transactions)
+
+    data class Done(override val transactions: ImmutableList<TransactionUi>) : Prepared(transactions)
 }

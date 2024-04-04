@@ -1,3 +1,5 @@
+@file:Suppress("TooManyFunctions")
+
 package co.electriccoin.zcash.ui.design.component
 
 import androidx.compose.foundation.Image
@@ -7,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -34,7 +37,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.internal.SecondaryTypography
@@ -51,10 +57,52 @@ private fun TopAppBarTextComposablePreview() {
 
 @Preview
 @Composable
+private fun TopAppBarTextRestoringComposablePreview() {
+    ZcashTheme(forceDarkMode = false) {
+        GradientSurface {
+            SmallTopAppBar(
+                titleText = "Screen A",
+                backText = "Back",
+                restoringLabel = "[RESTORING YOUR WALLET…]"
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun TopAppBarTextRestoringLongComposablePreview() {
+    ZcashTheme(forceDarkMode = false) {
+        GradientSurface {
+            SmallTopAppBar(
+                titleText = "Screen A",
+                backText = "Back",
+                restoringLabel = "[RESTORING YOUR WALLET LONG TEXT…]"
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
 private fun TopAppBarLogoComposablePreview() {
     ZcashTheme(forceDarkMode = false) {
         GradientSurface {
             SmallTopAppBar(showTitleLogo = true, backText = "Back")
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun TopAppBarLogoRestoringComposablePreview() {
+    ZcashTheme(forceDarkMode = false) {
+        GradientSurface {
+            SmallTopAppBar(
+                showTitleLogo = true,
+                backText = "Back",
+                restoringLabel = "[RESTORING YOUR WALLET…]"
+            )
         }
     }
 }
@@ -213,10 +261,11 @@ private fun TopBarOneVisibleActionMenuExample(
 }
 
 @Composable
-@Suppress("LongParameterList")
+@Suppress("LongParameterList", "LongMethod")
 @OptIn(ExperimentalMaterial3Api::class)
 fun SmallTopAppBar(
     modifier: Modifier = Modifier,
+    restoringLabel: String? = null,
     titleText: String? = null,
     showTitleLogo: Boolean = false,
     backText: String? = null,
@@ -227,17 +276,40 @@ fun SmallTopAppBar(
 ) {
     CenterAlignedTopAppBar(
         title = {
-            if (titleText != null) {
-                Text(
-                    text = titleText.uppercase(),
-                    style = SecondaryTypography.headlineSmall
-                )
-            } else if (showTitleLogo) {
-                Icon(
-                    painter = painterResource(id = R.drawable.zashi_text_logo),
-                    contentDescription = null,
-                    modifier = Modifier.height(ZcashTheme.dimens.topAppBarZcashLogoHeight)
-                )
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                var restoringSpacerHeight: Dp = 0.dp
+
+                if (titleText != null) {
+                    Text(
+                        text = titleText.uppercase(),
+                        style = SecondaryTypography.headlineSmall
+                    )
+                    restoringSpacerHeight = ZcashTheme.dimens.spacingTiny
+                } else if (showTitleLogo) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.zashi_text_logo),
+                        contentDescription = null,
+                        modifier = Modifier.height(ZcashTheme.dimens.topAppBarZcashLogoHeight)
+                    )
+                    restoringSpacerHeight = ZcashTheme.dimens.spacingSmall
+                }
+
+                if (restoringLabel != null) {
+                    Spacer(modifier = Modifier.height(restoringSpacerHeight))
+
+                    @Suppress("MagicNumber")
+                    Text(
+                        text = restoringLabel.uppercase(),
+                        style = ZcashTheme.extendedTypography.restoringTopAppBarStyle,
+                        color = ZcashTheme.colors.restoringTopAppBarColor,
+                        modifier = Modifier.fillMaxWidth(0.75f),
+                        textAlign = TextAlign.Center,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
             }
         },
         navigationIcon = {

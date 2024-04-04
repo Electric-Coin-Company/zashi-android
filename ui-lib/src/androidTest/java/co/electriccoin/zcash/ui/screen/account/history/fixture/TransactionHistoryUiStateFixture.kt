@@ -7,16 +7,16 @@ import kotlinx.collections.immutable.ImmutableList
 
 internal object TransactionHistoryUiStateFixture {
     val TRANSACTIONS = TransactionsFixture.new()
-    val STATE = TransactionUiState.Prepared(TRANSACTIONS)
+    val STATE = TransactionUiState.Done(TRANSACTIONS)
 
     fun new(
         transactions: ImmutableList<TransactionUi> = TRANSACTIONS,
         state: TransactionUiState = STATE
     ) = when (state) {
         is TransactionUiState.Loading -> state
-        is TransactionUiState.Syncing -> state
-        is TransactionUiState.Prepared -> {
-            state.copy(transactions)
-        }
+        is TransactionUiState.Syncing -> state.copy(transactions)
+        is TransactionUiState.Done -> state.copy(transactions)
+        TransactionUiState.DoneEmpty -> state
+        TransactionUiState.SyncingEmpty -> state
     }
 }

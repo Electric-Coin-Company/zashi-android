@@ -42,6 +42,7 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.SecureScreen
 import co.electriccoin.zcash.ui.common.compose.shouldSecureScreen
 import co.electriccoin.zcash.ui.common.model.VersionInfo
+import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.test.CommonTag.WALLET_BIRTHDAY
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.BodySmall
@@ -66,6 +67,7 @@ private fun ComposablePreview() {
                 onDone = {},
                 onSeedCopy = {},
                 versionInfo = VersionInfoFixture.new(),
+                walletRestoringState = WalletRestoringState.NONE,
             )
         }
     }
@@ -86,6 +88,7 @@ fun SeedRecovery(
     onDone: () -> Unit,
     onSeedCopy: () -> Unit,
     versionInfo: VersionInfo,
+    walletRestoringState: WalletRestoringState,
 ) {
     Scaffold(
         topBar = {
@@ -93,6 +96,7 @@ fun SeedRecovery(
                 onBack = onBack,
                 onSeedCopy = onSeedCopy,
                 versionInfo = versionInfo,
+                showRestoring = walletRestoringState == WalletRestoringState.RESTORING,
             )
         }
     ) { paddingValues ->
@@ -118,9 +122,16 @@ private fun SeedRecoveryTopAppBar(
     onBack: () -> Unit,
     onSeedCopy: () -> Unit,
     versionInfo: VersionInfo,
+    showRestoring: Boolean,
     modifier: Modifier = Modifier,
 ) {
     SmallTopAppBar(
+        restoringLabel =
+            if (showRestoring) {
+                stringResource(id = R.string.restoring_wallet_label)
+            } else {
+                null
+            },
         modifier = modifier,
         backText = stringResource(id = R.string.seed_recovery_back).uppercase(),
         backContentDescriptionText = stringResource(R.string.seed_recovery_back_content_description),
@@ -131,7 +142,7 @@ private fun SeedRecoveryTopAppBar(
                     onCopyToClipboard = onSeedCopy
                 )
             }
-        }
+        },
     )
 }
 

@@ -14,6 +14,7 @@ import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.model.UnifiedSpendingKey
 import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.spackle.Twig
+import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.viewmodel.CheckUpdateViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
@@ -24,7 +25,6 @@ import co.electriccoin.zcash.ui.screen.balances.model.ShieldState
 import co.electriccoin.zcash.ui.screen.balances.view.Balances
 import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SubmitResult
 import co.electriccoin.zcash.ui.screen.sendconfirmation.viewmodel.CreateTransactionsViewModel
-import co.electriccoin.zcash.ui.screen.settings.viewmodel.SettingsViewModel
 import co.electriccoin.zcash.ui.screen.update.AppUpdateCheckerImp
 import co.electriccoin.zcash.ui.screen.update.model.UpdateState
 import kotlinx.coroutines.delay
@@ -47,6 +47,8 @@ internal fun WrapBalances(
 
     val spendingKey = walletViewModel.spendingKey.collectAsStateWithLifecycle().value
 
+    val walletRestoringState = walletViewModel.walletRestoringState.collectAsStateWithLifecycle().value
+
     val checkUpdateViewModel by activity.viewModels<CheckUpdateViewModel> {
         CheckUpdateViewModel.CheckUpdateViewModelFactory(
             activity.application,
@@ -54,17 +56,15 @@ internal fun WrapBalances(
         )
     }
 
-    val settingsViewModel by activity.viewModels<SettingsViewModel>()
-
     WrapBalances(
         checkUpdateViewModel = checkUpdateViewModel,
         createTransactionsViewModel = createTransactionsViewModel,
         goSettings = goSettings,
         goMultiTrxSubmissionFailure = goMultiTrxSubmissionFailure,
         spendingKey = spendingKey,
-        settingsViewModel = settingsViewModel,
         synchronizer = synchronizer,
-        walletSnapshot = walletSnapshot
+        walletSnapshot = walletSnapshot,
+        walletRestoringState = walletRestoringState,
     )
 }
 
@@ -78,10 +78,10 @@ internal fun WrapBalances(
     createTransactionsViewModel: CreateTransactionsViewModel,
     goSettings: () -> Unit,
     goMultiTrxSubmissionFailure: () -> Unit,
-    settingsViewModel: SettingsViewModel,
     spendingKey: UnifiedSpendingKey?,
     synchronizer: Synchronizer?,
     walletSnapshot: WalletSnapshot?,
+    walletRestoringState: WalletRestoringState,
 ) {
     val scope = rememberCoroutineScope()
 
@@ -90,8 +90,6 @@ internal fun WrapBalances(
         checkUpdateViewModel.updateInfo.collectAsStateWithLifecycle().value.let {
             it?.appUpdateInfo != null && it.state == UpdateState.Prepared
         }
-
-    val isKeepScreenOnWhileSyncing = settingsViewModel.isKeepScreenOnWhileSyncing.collectAsStateWithLifecycle().value
 
     val isFiatConversionEnabled = ConfigurationEntries.IS_FIAT_CONVERSION_ENABLED.getValue(RemoteConfig.current)
 
@@ -128,7 +126,6 @@ internal fun WrapBalances(
         Balances(
             onSettings = goSettings,
             isFiatConversionEnabled = isFiatConversionEnabled,
-            isKeepScreenOnWhileSyncing = isKeepScreenOnWhileSyncing,
             isUpdateAvailable = isUpdateAvailable,
             isShowingErrorDialog = isShowingErrorDialog,
             setShowErrorDialog = setShowErrorDialog,
@@ -187,6 +184,7 @@ internal fun WrapBalances(
             },
             shieldState = shieldState,
             walletSnapshot = walletSnapshot,
+            walletRestoringState = walletRestoringState,
         )
     }
 }

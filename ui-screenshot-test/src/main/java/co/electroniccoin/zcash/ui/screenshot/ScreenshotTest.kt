@@ -507,7 +507,7 @@ private fun supportScreenshots(
     tag: String,
     composeTestRule: ComposeTestRule
 ) {
-    composeTestRule.onNode(hasText(resContext.getString(R.string.support_header))).also {
+    composeTestRule.onNode(hasText(resContext.getString(R.string.support_header).uppercase())).also {
         it.assertExists()
     }
 

@@ -52,6 +52,7 @@ import cash.z.ecc.sdk.type.ZcashCurrency
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.BalanceWidget
+import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.model.canSpend
 import co.electriccoin.zcash.ui.common.model.spendableBalance
@@ -94,7 +95,8 @@ private fun PreviewSendForm() {
                 setAmountState = {},
                 amountState = AmountState.Valid(ZatoshiFixture.ZATOSHI_LONG.toString(), ZatoshiFixture.new()),
                 setMemoState = {},
-                memoState = MemoState.new("Test message")
+                memoState = MemoState.new("Test message"),
+                walletRestoringState = WalletRestoringState.NONE
             )
         }
     }
@@ -106,7 +108,6 @@ private fun PreviewSendForm() {
 @Suppress("LongParameterList")
 @Composable
 fun Send(
-    walletSnapshot: WalletSnapshot,
     sendStage: SendStage,
     onCreateZecSend: (ZecSend) -> Unit,
     focusManager: FocusManager,
@@ -121,9 +122,14 @@ fun Send(
     amountState: AmountState,
     setMemoState: (MemoState) -> Unit,
     memoState: MemoState,
+    walletRestoringState: WalletRestoringState,
+    walletSnapshot: WalletSnapshot,
 ) {
     Scaffold(topBar = {
-        SendTopAppBar(onSettings = onSettings)
+        SendTopAppBar(
+            showRestoring = walletRestoringState == WalletRestoringState.RESTORING,
+            onSettings = onSettings
+        )
     }) { paddingValues ->
         SendMainContent(
             walletSnapshot = walletSnapshot,
@@ -153,8 +159,17 @@ fun Send(
 }
 
 @Composable
-private fun SendTopAppBar(onSettings: () -> Unit) {
+private fun SendTopAppBar(
+    onSettings: () -> Unit,
+    showRestoring: Boolean
+) {
     SmallTopAppBar(
+        restoringLabel =
+            if (showRestoring) {
+                stringResource(id = R.string.restoring_wallet_label)
+            } else {
+                null
+            },
         titleText = stringResource(id = R.string.send_stage_send_title),
         hamburgerMenuActions = {
             IconButton(
@@ -166,7 +181,7 @@ private fun SendTopAppBar(onSettings: () -> Unit) {
                     contentDescription = stringResource(id = R.string.settings_menu_content_description)
                 )
             }
-        }
+        },
     )
 }
 

@@ -25,6 +25,7 @@ import cash.z.ecc.android.sdk.model.ZecSend
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.screen.send.ext.Saver
@@ -52,13 +53,15 @@ internal fun MainActivity.WrapSendConfirmation(
 
     val createTransactionsViewModel by viewModels<CreateTransactionsViewModel>()
 
-    val viewModel by viewModels<SupportViewModel>()
+    val supportViewModel by viewModels<SupportViewModel>()
 
     val synchronizer = walletViewModel.synchronizer.collectAsStateWithLifecycle().value
 
     val spendingKey = walletViewModel.spendingKey.collectAsStateWithLifecycle().value
 
-    val supportMessage = viewModel.supportInfo.collectAsStateWithLifecycle().value
+    val supportMessage = supportViewModel.supportInfo.collectAsStateWithLifecycle().value
+
+    val walletRestoringState = walletViewModel.walletRestoringState.collectAsStateWithLifecycle().value
 
     WrapSendConfirmation(
         activity = this,
@@ -69,6 +72,7 @@ internal fun MainActivity.WrapSendConfirmation(
         spendingKey = spendingKey,
         supportMessage = supportMessage,
         synchronizer = synchronizer,
+        walletRestoringState = walletRestoringState,
     )
 }
 
@@ -84,6 +88,7 @@ internal fun WrapSendConfirmation(
     spendingKey: UnifiedSpendingKey?,
     supportMessage: SupportInfo?,
     synchronizer: Synchronizer?,
+    walletRestoringState: WalletRestoringState
 ) {
     val scope = rememberCoroutineScope()
 
@@ -193,7 +198,8 @@ internal fun WrapSendConfirmation(
                         }
                     }
                 }
-            }
+            },
+            walletRestoringState = walletRestoringState
         )
     }
 }

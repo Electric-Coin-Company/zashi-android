@@ -20,6 +20,7 @@ import co.electriccoin.zcash.spackle.FirebaseTestLabUtil
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.common.model.OnboardingState
 import co.electriccoin.zcash.ui.common.model.VersionInfo
+import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.onboarding.view.ShortOnboarding
 import co.electriccoin.zcash.ui.screen.onboarding.viewmodel.OnboardingViewModel
@@ -117,4 +118,5 @@ internal fun persistExistingWalletWithSeedPhrase(
             walletInitMode = WalletInitMode.RestoreWallet
         )
     walletViewModel.persistExistingWallet(restoredWallet)
+    walletViewModel.persistWalletRestoringState(WalletRestoringState.RESTORING)
 }

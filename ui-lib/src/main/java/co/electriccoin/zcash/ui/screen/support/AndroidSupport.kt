@@ -14,6 +14,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.model.WalletRestoringState
+import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.support.model.SupportInfo
 import co.electriccoin.zcash.ui.screen.support.model.SupportInfoType
 import co.electriccoin.zcash.ui.screen.support.view.Support
@@ -23,17 +25,31 @@ import kotlinx.coroutines.launch
 
 @Composable
 internal fun MainActivity.WrapSupport(goBack: () -> Unit) {
-    WrapSupport(this, goBack)
+    val supportViewModel by viewModels<SupportViewModel>()
+
+    val walletViewModel by viewModels<WalletViewModel>()
+
+    val supportInfo = supportViewModel.supportInfo.collectAsStateWithLifecycle().value
+
+    val walletRestoringState = walletViewModel.walletRestoringState.collectAsStateWithLifecycle().value
+
+    WrapSupport(
+        activity = this,
+        goBack = goBack,
+        supportInfo = supportInfo,
+        walletRestoringState = walletRestoringState
+    )
 }
 
 @Composable
 internal fun WrapSupport(
     activity: ComponentActivity,
-    goBack: () -> Unit
+    goBack: () -> Unit,
+    supportInfo: SupportInfo?,
+    walletRestoringState: WalletRestoringState,
 ) {
-    val viewModel by activity.viewModels<SupportViewModel>()
-    val supportMessage = viewModel.supportInfo.collectAsStateWithLifecycle().value
     val snackbarHostState = remember { SnackbarHostState() }
+
     val scope = rememberCoroutineScope()
 
     val (isShowingDialog, setShowDialog) = rememberSaveable { mutableStateOf(false) }
@@ -44,7 +60,7 @@ internal fun WrapSupport(
         setShowDialog = setShowDialog,
         onBack = goBack,
         onSend = { userMessage ->
-            val fullMessage = formatMessage(userMessage, supportMessage)
+            val fullMessage = formatMessage(userMessage, supportInfo)
 
             val mailIntent =
                 EmailUtil.newMailActivityIntent(
@@ -67,7 +83,8 @@ internal fun WrapSupport(
                     )
                 }
             }
-        }
+        },
+        walletRestoringState = walletRestoringState
     )
 }
 

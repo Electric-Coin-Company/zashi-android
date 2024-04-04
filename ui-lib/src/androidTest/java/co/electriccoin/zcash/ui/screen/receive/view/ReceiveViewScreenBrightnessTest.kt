@@ -5,6 +5,7 @@ import androidx.test.filters.MediumTest
 import cash.z.ecc.android.sdk.fixture.WalletAddressesFixture
 import cash.z.ecc.android.sdk.model.WalletAddresses
 import co.electriccoin.zcash.test.UiTestPrerequisites
+import co.electriccoin.zcash.ui.common.compose.ScreenBrightnessState
 import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.fixture.VersionInfoFixture
 import kotlinx.coroutines.test.runTest
@@ -27,7 +28,7 @@ class ReceiveViewScreenBrightnessTest : UiTestPrerequisites() {
                     VersionInfoFixture.new(isDebuggable = true)
                 )
 
-            assertEquals(0, testSetup.getScreenBrightnessCount())
+            assertEquals(ScreenBrightnessState.NORMAL, testSetup.getScreenBrightness())
         }
 
     @Test
@@ -41,13 +42,11 @@ class ReceiveViewScreenBrightnessTest : UiTestPrerequisites() {
                     VersionInfoFixture.new(isDebuggable = true)
                 )
 
-            assertEquals(false, testSetup.getOnAdjustBrightness())
-            assertEquals(0, testSetup.getScreenBrightnessCount())
+            assertEquals(ScreenBrightnessState.NORMAL, testSetup.getOnAdjustBrightness())
 
             composeTestRule.clickAdjustBrightness()
 
-            assertEquals(true, testSetup.getOnAdjustBrightness())
-            assertEquals(1, testSetup.getScreenBrightnessCount())
+            assertEquals(ScreenBrightnessState.FULL, testSetup.getOnAdjustBrightness())
         }
 
     private fun newTestSetup(

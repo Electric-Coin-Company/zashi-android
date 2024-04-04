@@ -28,6 +28,7 @@ import cash.z.ecc.sdk.type.fromResources
 import co.electriccoin.zcash.spackle.FirebaseTestLabUtil
 import co.electriccoin.zcash.ui.common.compose.BindCompLocalProvider
 import co.electriccoin.zcash.ui.common.model.OnboardingState
+import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.viewmodel.HomeViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.SecretState
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
@@ -53,7 +54,7 @@ import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
 class MainActivity : ComponentActivity() {
-    val homeViewModel by viewModels<HomeViewModel>()
+    private val homeViewModel by viewModels<HomeViewModel>()
 
     val walletViewModel by viewModels<WalletViewModel>()
 
@@ -173,6 +174,7 @@ class MainActivity : ComponentActivity() {
                                     )
                                 } else {
                                     walletViewModel.persistNewWallet()
+                                    walletViewModel.persistWalletRestoringState(WalletRestoringState.INITIATING)
                                 }
                             }
                         )

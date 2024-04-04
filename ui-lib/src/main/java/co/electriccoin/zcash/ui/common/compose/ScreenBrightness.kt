@@ -6,28 +6,32 @@ import androidx.compose.runtime.compositionLocalOf
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.flow.updateAndGet
 
-class ScreenBrightness {
-    private val mutableReferenceCount: MutableStateFlow<Int> = MutableStateFlow(0)
-
-    val referenceCount = mutableReferenceCount.asStateFlow()
-
-    fun fullBrightness() {
-        mutableReferenceCount.update { it + 1 }
-    }
-
-    fun restoreBrightness() {
-        val after = mutableReferenceCount.updateAndGet { it - 1 }
-
-        if (after < 0) {
-            error("Released brightness reference count too many times")
+sealed class ScreenBrightnessState {
+    fun getChange(): ScreenBrightnessState {
+        return when (this) {
+            NORMAL -> FULL
+            FULL -> NORMAL
         }
     }
+
+    data object FULL : ScreenBrightnessState()
+
+    data object NORMAL : ScreenBrightnessState()
+}
+
+object ScreenBrightness {
+    private val mutableSwitch: MutableStateFlow<ScreenBrightnessState> = MutableStateFlow(ScreenBrightnessState.NORMAL)
+
+    val referenceSwitch = mutableSwitch.asStateFlow()
+
+    fun fullBrightness() = mutableSwitch.update { ScreenBrightnessState.FULL }
+
+    fun restoreBrightness() = mutableSwitch.update { ScreenBrightnessState.NORMAL }
 }
 
 @Suppress("CompositionLocalAllowlist")
-val LocalScreenBrightness = compositionLocalOf { ScreenBrightness() }
+val LocalScreenBrightness = compositionLocalOf { ScreenBrightness }
 
 @Composable
 fun BrightenScreen() {
@@ -36,4 +40,10 @@ fun BrightenScreen() {
         screenBrightness.fullBrightness()
         onDispose { screenBrightness.restoreBrightness() }
     }
+}
+
+@Composable
+fun RestoreScreenBrightness() {
+    val screenBrightness = LocalScreenBrightness.current
+    screenBrightness.restoreBrightness()
 }

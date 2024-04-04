@@ -10,12 +10,13 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.LocalScreenBrightness
 import co.electriccoin.zcash.ui.common.compose.LocalScreenTimeout
 import co.electriccoin.zcash.ui.common.compose.ScreenBrightness
+import co.electriccoin.zcash.ui.common.compose.ScreenBrightnessState
 import co.electriccoin.zcash.ui.common.compose.ScreenTimeout
 import co.electriccoin.zcash.ui.common.model.VersionInfo
+import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.VersionInfoFixture
 import co.electriccoin.zcash.ui.test.getStringResource
-import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 
 class ReceiveViewTestSetup(
@@ -25,17 +26,17 @@ class ReceiveViewTestSetup(
 ) {
     private val onSettingsCount = AtomicInteger(0)
     private val onAddressDetailsCount = AtomicInteger(0)
-    private val screenBrightness = ScreenBrightness()
+    private val screenBrightness = ScreenBrightness
     private val screenTimeout = ScreenTimeout()
-    private val onAdjustBrightness = AtomicBoolean(false)
+    private var onAdjustBrightness: ScreenBrightnessState = ScreenBrightnessState.NORMAL
 
-    fun getScreenBrightnessCount() = screenBrightness.referenceCount.value
+    fun getScreenBrightness() = screenBrightness.referenceSwitch.value
 
     fun getScreenTimeoutCount() = screenTimeout.referenceCount.value
 
-    fun getOnAdjustBrightness(): Boolean {
+    fun getOnAdjustBrightness(): ScreenBrightnessState {
         composeTestRule.waitForIdle()
-        return onAdjustBrightness.get()
+        return onAdjustBrightness
     }
 
     fun getOnSettingsCount(): Int {
@@ -63,11 +64,14 @@ class ReceiveViewTestSetup(
                                 onSettingsCount.getAndIncrement()
                             },
                             onAdjustBrightness = {
-                                onAdjustBrightness.getAndSet(it)
+                                onAdjustBrightness = onAdjustBrightness.getChange()
+                                screenTimeout.disableScreenTimeout()
                             },
                             onAddrCopyToClipboard = {},
                             onQrImageShare = {},
-                            versionInfo = versionInfo
+                            screenBrightnessState = ScreenBrightnessState.NORMAL,
+                            versionInfo = versionInfo,
+                            walletRestoringState = WalletRestoringState.NONE
                         )
                     }
                 }

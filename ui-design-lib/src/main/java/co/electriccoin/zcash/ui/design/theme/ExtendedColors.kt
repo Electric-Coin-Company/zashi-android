@@ -18,6 +18,7 @@ data class ExtendedColors(
     val circularProgressBarScreen: Color,
     val linearProgressBarTrack: Color,
     val linearProgressBarBackground: Color,
+    val restoringTopAppBarColor: Color,
     val chipIndex: Color,
     val textCommon: Color,
     val textMedium: Color,

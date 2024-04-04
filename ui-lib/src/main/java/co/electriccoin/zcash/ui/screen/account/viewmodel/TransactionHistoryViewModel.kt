@@ -8,6 +8,7 @@ import cash.z.ecc.android.sdk.internal.Twig
 import cash.z.ecc.android.sdk.model.FirstClassByteArray
 import cash.z.ecc.android.sdk.model.TransactionOverview
 import co.electriccoin.zcash.ui.common.ANDROID_STATE_FLOW_TIMEOUT
+import co.electriccoin.zcash.ui.screen.account.ext.TransactionOverviewExt
 import co.electriccoin.zcash.ui.screen.account.model.TransactionUi
 import co.electriccoin.zcash.ui.screen.account.model.TransactionUiState
 import co.electriccoin.zcash.ui.screen.account.model.TrxItemState
@@ -19,19 +20,23 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.toList
 
 class TransactionHistoryViewModel(application: Application) : AndroidViewModel(application) {
+    private val state: MutableStateFlow<State> = MutableStateFlow(State.LOADING)
+
     private val transactions: MutableStateFlow<ImmutableList<TransactionUi>> = MutableStateFlow(persistentListOf())
 
     val transactionUiState: StateFlow<TransactionUiState> =
-        transactions.map {
-            if (it.isEmpty()) {
-                TransactionUiState.Syncing
-            } else {
-                TransactionUiState.Prepared(it)
+        state.combine(transactions) { state: State, transactions: ImmutableList<TransactionUi> ->
+            when (state) {
+                State.LOADING -> TransactionUiState.Loading
+                State.SYNCING -> TransactionUiState.Syncing(transactions)
+                State.SYNCING_EMPTY -> TransactionUiState.SyncingEmpty
+                State.DONE -> TransactionUiState.Done(transactions)
+                State.DONE_EMPTY -> TransactionUiState.DoneEmpty
             }
         }.stateIn(
             viewModelScope,
@@ -40,26 +45,49 @@ class TransactionHistoryViewModel(application: Application) : AndroidViewModel(a
         )
 
     fun processTransactionState(dataState: TransactionHistorySyncState) {
-        transactions.value =
-            when (dataState) {
-                TransactionHistorySyncState.Loading -> persistentListOf()
-                is TransactionHistorySyncState.Prepared -> {
-                    dataState.transactions.map { data ->
-                        val existingTransaction =
-                            transactions.value.find {
-                                data.overview.rawId == it.overview.rawId
-                            }
-                        TransactionUi.new(
-                            data = data,
-                            expandableState = existingTransaction?.expandableState ?: TrxItemState.COLLAPSED,
-                            messages = existingTransaction?.messages,
-                        )
-                    }.toPersistentList()
+        when (dataState) {
+            TransactionHistorySyncState.Loading -> {
+                state.value = State.LOADING
+                transactions.value = persistentListOf()
+            }
+            is TransactionHistorySyncState.Syncing -> {
+                if (dataState.transactions.isEmpty()) {
+                    state.value = State.SYNCING_EMPTY
+                } else {
+                    state.value = State.SYNCING
+                    transactions.value =
+                        dataState.transactions
+                            .map { data -> getOrUpdateTransactionItem(data) }
+                            .toPersistentList()
                 }
             }
+            is TransactionHistorySyncState.Done -> {
+                if (dataState.transactions.isEmpty()) {
+                    state.value = State.DONE_EMPTY
+                } else {
+                    state.value = State.DONE
+                    transactions.value =
+                        dataState.transactions
+                            .map { data -> getOrUpdateTransactionItem(data) }
+                            .toPersistentList()
+                }
+            }
+        }
     }
 
-    private fun updateTransaction(newTransaction: TransactionUi) {
+    private fun getOrUpdateTransactionItem(data: TransactionOverviewExt): TransactionUi {
+        val existingTransaction =
+            transactions.value.find {
+                data.overview.rawId == it.overview.rawId
+            }
+        return TransactionUi.new(
+            data = data,
+            expandableState = existingTransaction?.expandableState ?: TrxItemState.COLLAPSED,
+            messages = existingTransaction?.messages,
+        )
+    }
+
+    private fun updateTransactionInList(newTransaction: TransactionUi) {
         transactions.value =
             transactions.value.map { item ->
                 if (item.overview.rawId == newTransaction.overview.rawId) {
@@ -87,7 +115,7 @@ class TransactionHistoryViewModel(application: Application) : AndroidViewModel(a
                 val messages = loadMessageForTransaction(synchronizer, updated.overview)
                 updatedWithMessages = updated.copy(messages = messages)
             }
-            updateTransaction(updatedWithMessages)
+            updateTransactionInList(updatedWithMessages)
         } else {
             Twig.warn { "Transaction not found" }
         }
@@ -100,4 +128,12 @@ class TransactionHistoryViewModel(application: Application) : AndroidViewModel(a
         synchronizer.getMemos(overview).toList().also {
             Twig.info { "Transaction messages count: ${it.size}" }
         }
+}
+
+private enum class State {
+    LOADING,
+    SYNCING,
+    SYNCING_EMPTY,
+    DONE,
+    DONE_EMPTY,
 }

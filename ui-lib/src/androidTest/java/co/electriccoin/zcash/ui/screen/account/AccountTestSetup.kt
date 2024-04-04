@@ -2,6 +2,7 @@ package co.electriccoin.zcash.ui.screen.account
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
+import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.account.history.fixture.TransactionHistoryUiStateFixture
@@ -58,8 +59,6 @@ class AccountTestSetup(
     @Suppress("TestFunctionName")
     fun DefaultContent() {
         Account(
-            walletSnapshot = walletSnapshot,
-            isKeepScreenOnWhileSyncing = false,
             goSettings = {
                 onSettingsCount.incrementAndGet()
             },
@@ -68,6 +67,8 @@ class AccountTestSetup(
             onTransactionItemAction = {
                 onItemClickCount.incrementAndGet()
             },
+            walletSnapshot = walletSnapshot,
+            walletRestoringState = WalletRestoringState.NONE,
         )
     }
 

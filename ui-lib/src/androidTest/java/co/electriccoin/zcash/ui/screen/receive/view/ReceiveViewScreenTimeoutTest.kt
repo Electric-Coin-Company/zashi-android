@@ -40,12 +40,10 @@ class ReceiveViewScreenTimeoutTest : UiTestPrerequisites() {
                     VersionInfoFixture.new(isDebuggable = true)
                 )
 
-            assertEquals(false, testSetup.getOnAdjustBrightness())
             assertEquals(0, testSetup.getScreenTimeoutCount())
 
             composeTestRule.clickAdjustBrightness()
 
-            assertEquals(true, testSetup.getOnAdjustBrightness())
             assertEquals(1, testSetup.getScreenTimeoutCount())
         }
 
