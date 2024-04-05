@@ -47,14 +47,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.model.FiatCurrencyConversionRateState
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.toZecString
 import cash.z.ecc.sdk.extension.toPercentageWithDecimal
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.BalanceWidget
-import co.electriccoin.zcash.ui.common.compose.DisableScreenTimeout
+import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.model.changePendingBalance
 import co.electriccoin.zcash.ui.common.model.spendableBalance
@@ -86,13 +85,13 @@ private fun ComposableBalancesPreview() {
             Balances(
                 onSettings = {},
                 isFiatConversionEnabled = false,
-                isKeepScreenOnWhileSyncing = false,
                 isUpdateAvailable = false,
+                isShowingErrorDialog = false,
+                setShowErrorDialog = {},
                 onShielding = {},
                 shieldState = ShieldState.Available,
                 walletSnapshot = WalletSnapshotFixture.new(),
-                isShowingErrorDialog = false,
-                setShowErrorDialog = {},
+                walletRestoringState = WalletRestoringState.NONE,
             )
         }
     }
@@ -106,13 +105,13 @@ private fun ComposableBalancesShieldFailurePreview() {
             Balances(
                 onSettings = {},
                 isFiatConversionEnabled = false,
-                isKeepScreenOnWhileSyncing = false,
                 isUpdateAvailable = false,
+                isShowingErrorDialog = true,
+                setShowErrorDialog = {},
                 onShielding = {},
                 shieldState = ShieldState.Available,
                 walletSnapshot = WalletSnapshotFixture.new(),
-                isShowingErrorDialog = true,
-                setShowErrorDialog = {},
+                walletRestoringState = WalletRestoringState.NONE,
             )
         }
     }
@@ -123,23 +122,25 @@ private fun ComposableBalancesShieldFailurePreview() {
 fun Balances(
     onSettings: () -> Unit,
     isFiatConversionEnabled: Boolean,
-    isKeepScreenOnWhileSyncing: Boolean?,
     isUpdateAvailable: Boolean,
     isShowingErrorDialog: Boolean,
     setShowErrorDialog: (Boolean) -> Unit,
     onShielding: () -> Unit,
     shieldState: ShieldState,
     walletSnapshot: WalletSnapshot?,
+    walletRestoringState: WalletRestoringState,
 ) {
     Scaffold(topBar = {
-        BalancesTopAppBar(onSettings = onSettings)
+        BalancesTopAppBar(
+            showRestoring = walletRestoringState == WalletRestoringState.RESTORING,
+            onSettings = onSettings
+        )
     }) { paddingValues ->
         if (null == walletSnapshot) {
             CircularScreenProgressIndicator()
         } else {
             BalancesMainContent(
                 isFiatConversionEnabled = isFiatConversionEnabled,
-                isKeepScreenOnWhileSyncing = isKeepScreenOnWhileSyncing,
                 isUpdateAvailable = isUpdateAvailable,
                 onShielding = onShielding,
                 walletSnapshot = walletSnapshot,
@@ -197,10 +198,19 @@ fun ShieldingErrorDialog(
 }
 
 @Composable
-private fun BalancesTopAppBar(onSettings: () -> Unit) {
+private fun BalancesTopAppBar(
+    onSettings: () -> Unit,
+    showRestoring: Boolean
+) {
     SmallTopAppBar(
-        showTitleLogo = false,
+        restoringLabel =
+            if (showRestoring) {
+                stringResource(id = R.string.restoring_wallet_label)
+            } else {
+                null
+            },
         titleText = stringResource(id = R.string.balances_title),
+        showTitleLogo = false,
         hamburgerMenuActions = {
             IconButton(
                 onClick = onSettings,
@@ -211,7 +221,7 @@ private fun BalancesTopAppBar(onSettings: () -> Unit) {
                     contentDescription = stringResource(id = R.string.settings_menu_content_description)
                 )
             }
-        }
+        },
     )
 }
 
@@ -219,7 +229,6 @@ private fun BalancesTopAppBar(onSettings: () -> Unit) {
 @Composable
 private fun BalancesMainContent(
     isFiatConversionEnabled: Boolean,
-    isKeepScreenOnWhileSyncing: Boolean?,
     isUpdateAvailable: Boolean,
     onShielding: () -> Unit,
     walletSnapshot: WalletSnapshot,
@@ -272,10 +281,6 @@ private fun BalancesMainContent(
             walletSnapshot = walletSnapshot,
             isUpdateAvailable = isUpdateAvailable,
         )
-
-        if (isKeepScreenOnWhileSyncing == true && walletSnapshot.status == Synchronizer.Status.SYNCING) {
-            DisableScreenTimeout()
-        }
     }
 }
 

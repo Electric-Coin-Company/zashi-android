@@ -12,6 +12,7 @@ import cash.z.ecc.android.sdk.model.MonetarySeparators
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.android.sdk.type.AddressType
+import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 import co.electriccoin.zcash.ui.screen.send.ext.Saver
@@ -137,6 +138,7 @@ class SendViewTestSetup(
                 setAmountState = {},
                 memoState = MemoState.new(""),
                 setMemoState = {},
+                walletRestoringState = WalletRestoringState.NONE
             )
         }
     }

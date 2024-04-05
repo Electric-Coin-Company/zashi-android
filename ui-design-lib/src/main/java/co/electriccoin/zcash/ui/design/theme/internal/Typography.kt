@@ -191,6 +191,7 @@ data class ExtendedTypography(
     val radioButton: TextStyle,
     // Grouping transaction item text styles to a wrapper class
     val transactionItemStyles: TransactionItemTextStyles,
+    val restoringTopAppBarStyle: TextStyle,
 )
 
 @Suppress("CompositionLocalAllowlist")
@@ -361,5 +362,10 @@ val LocalExtendedTypography =
                             fontWeight = FontWeight.SemiBold
                         ),
                 ),
+            restoringTopAppBarStyle =
+                SecondaryTypography.labelMedium.copy(
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
         )
     }

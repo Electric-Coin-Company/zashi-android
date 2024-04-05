@@ -4,6 +4,7 @@ import co.electriccoin.zcash.preference.model.entry.BooleanPreferenceDefault
 import co.electriccoin.zcash.preference.model.entry.IntegerPreferenceDefault
 import co.electriccoin.zcash.preference.model.entry.PreferenceKey
 import co.electriccoin.zcash.ui.common.model.OnboardingState
+import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 
 object StandardPreferenceKeys {
     /**
@@ -13,6 +14,16 @@ object StandardPreferenceKeys {
         IntegerPreferenceDefault(
             PreferenceKey("onboarding_state"),
             OnboardingState.NONE.toNumber()
+        )
+
+    /**
+     * State defining whether the current block synchronization run is in the restoring state or a subsequent
+     * synchronization state.
+     */
+    val WALLET_RESTORING_STATE =
+        IntegerPreferenceDefault(
+            PreferenceKey("wallet_restoring_state"),
+            WalletRestoringState.RESTORING.toNumber()
         )
 
     // Default to true until https://github.com/Electric-Coin-Company/zashi-android/issues/304

@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.common.model.VersionInfo
+import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
 import co.electriccoin.zcash.ui.configuration.RemoteConfig
@@ -24,40 +25,47 @@ internal fun MainActivity.WrapSettings(
     goBack: () -> Unit,
     goFeedback: () -> Unit,
 ) {
+    val walletViewModel by viewModels<WalletViewModel>()
+
+    val settingsViewModel by viewModels<SettingsViewModel>()
+
+    val walletRestoringState = walletViewModel.walletRestoringState.collectAsStateWithLifecycle().value
+
     WrapSettings(
         activity = this,
         goAbout = goAbout,
         goAdvancedSettings = goAdvancedSettings,
         goBack = goBack,
         goFeedback = goFeedback,
+        settingsViewModel = settingsViewModel,
+        walletViewModel = walletViewModel,
+        walletRestoringState = walletRestoringState
     )
 }
 
 @Composable
+@Suppress("LongParameterList")
 private fun WrapSettings(
     activity: ComponentActivity,
     goAbout: () -> Unit,
     goAdvancedSettings: () -> Unit,
     goBack: () -> Unit,
     goFeedback: () -> Unit,
+    settingsViewModel: SettingsViewModel,
+    walletViewModel: WalletViewModel,
+    walletRestoringState: WalletRestoringState,
 ) {
-    val walletViewModel by activity.viewModels<WalletViewModel>()
-    val settingsViewModel by activity.viewModels<SettingsViewModel>()
-
-    val versionInfo = VersionInfo.new(activity.applicationContext)
-
-    val synchronizer = walletViewModel.synchronizer.collectAsStateWithLifecycle().value
     val isBackgroundSyncEnabled = settingsViewModel.isBackgroundSync.collectAsStateWithLifecycle().value
     val isKeepScreenOnWhileSyncing = settingsViewModel.isKeepScreenOnWhileSyncing.collectAsStateWithLifecycle().value
     val isAnalyticsEnabled = settingsViewModel.isAnalyticsEnabled.collectAsStateWithLifecycle().value
+
+    val versionInfo = VersionInfo.new(activity.applicationContext)
 
     BackHandler {
         goBack()
     }
 
-    @Suppress("ComplexCondition")
-    if (null == synchronizer ||
-        null == isAnalyticsEnabled ||
+    if (null == isAnalyticsEnabled ||
         null == isBackgroundSyncEnabled ||
         null == isKeepScreenOnWhileSyncing
     ) {
@@ -90,7 +98,8 @@ private fun WrapSettings(
             },
             onAnalyticsSettingsChanged = {
                 settingsViewModel.setAnalyticsEnabled(it)
-            }
+            },
+            walletRestoringState = walletRestoringState
         )
     }
 }

@@ -24,10 +24,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import cash.z.ecc.android.sdk.Synchronizer
 import co.electriccoin.zcash.spackle.Twig
+import co.electriccoin.zcash.ui.common.compose.DisableScreenTimeout
+import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.NavigationTabText
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 import co.electriccoin.zcash.ui.screen.home.ForcePage
 import co.electriccoin.zcash.ui.screen.home.HomeScreenIndex
 import co.electriccoin.zcash.ui.screen.home.model.TabItem
@@ -42,9 +46,11 @@ private fun ComposablePreview() {
     ZcashTheme(forceDarkMode = false) {
         GradientSurface {
             Home(
-                subScreens = persistentListOf(),
+                isKeepScreenOnWhileSyncing = false,
                 forcePage = null,
-                onPageChange = {}
+                onPageChange = {},
+                subScreens = persistentListOf(),
+                walletSnapshot = WalletSnapshotFixture.new(),
             )
         }
     }
@@ -54,9 +60,11 @@ private fun ComposablePreview() {
 @Suppress("LongMethod")
 @Composable
 fun Home(
-    subScreens: ImmutableList<TabItem>,
+    isKeepScreenOnWhileSyncing: Boolean?,
     forcePage: ForcePage?,
     onPageChange: (HomeScreenIndex) -> Unit,
+    subScreens: ImmutableList<TabItem>,
+    walletSnapshot: WalletSnapshot?,
 ) {
     val pagerState =
         rememberPagerState(
@@ -168,5 +176,11 @@ fun Home(
                 }
             }
         }
+    }
+
+    if (isKeepScreenOnWhileSyncing == true &&
+        walletSnapshot?.status == Synchronizer.Status.SYNCING
+    ) {
+        DisableScreenTimeout()
     }
 }

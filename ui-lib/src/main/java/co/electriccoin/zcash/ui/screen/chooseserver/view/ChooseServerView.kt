@@ -34,6 +34,7 @@ import cash.z.ecc.sdk.extension.isValid
 import cash.z.ecc.sdk.fixture.PersistableWalletFixture
 import co.electriccoin.lightwallet.client.model.LightWalletEndpoint
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.design.component.AppAlertDialog
 import co.electriccoin.zcash.ui.design.component.FormTextField
 import co.electriccoin.zcash.ui.design.component.GradientSurface
@@ -62,6 +63,7 @@ private fun PreviewChooseServer() {
                 setShowErrorDialog = {},
                 isShowingSuccessDialog = false,
                 setShowSuccessDialog = {},
+                walletRestoringState = WalletRestoringState.NONE,
             )
         }
     }
@@ -79,10 +81,14 @@ fun ChooseServer(
     setShowErrorDialog: (Boolean) -> Unit,
     isShowingSuccessDialog: Boolean,
     setShowSuccessDialog: (Boolean) -> Unit,
+    walletRestoringState: WalletRestoringState,
 ) {
     Scaffold(
         topBar = {
-            ChooseServerTopAppBar(onBack = onBack)
+            ChooseServerTopAppBar(
+                onBack = onBack,
+                showRestoring = walletRestoringState == WalletRestoringState.RESTORING,
+            )
         }
     ) { paddingValues ->
         ChooseServerMainContent(
@@ -120,13 +126,22 @@ fun ChooseServer(
 }
 
 @Composable
-private fun ChooseServerTopAppBar(onBack: () -> Unit) {
+private fun ChooseServerTopAppBar(
+    onBack: () -> Unit,
+    showRestoring: Boolean
+) {
     SmallTopAppBar(
+        restoringLabel =
+            if (showRestoring) {
+                stringResource(id = R.string.restoring_wallet_label)
+            } else {
+                null
+            },
+        modifier = Modifier.testTag(ChooseServerTag.CHOOSE_SERVER_TOP_APP_BAR),
+        showTitleLogo = true,
         backText = stringResource(id = R.string.choose_server_back).uppercase(),
         backContentDescriptionText = stringResource(R.string.choose_server_back_content_description),
         onBack = onBack,
-        showTitleLogo = true,
-        modifier = Modifier.testTag(ChooseServerTag.CHOOSE_SERVER_TOP_APP_BAR)
     )
 }
 

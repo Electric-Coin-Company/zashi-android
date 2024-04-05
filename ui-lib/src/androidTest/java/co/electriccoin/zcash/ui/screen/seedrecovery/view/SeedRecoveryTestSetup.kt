@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import cash.z.ecc.sdk.fixture.PersistableWalletFixture
 import co.electriccoin.zcash.ui.common.model.VersionInfo
+import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -39,10 +40,11 @@ class SeedRecoveryTestSetup(
             SeedRecovery(
                 PersistableWalletFixture.new(),
                 onBack = { onBackCount.incrementAndGet() },
-                onSeedCopy = { /* Not tested - debug mode feature only */ },
                 onBirthdayCopy = { onBirthdayCopyCount.incrementAndGet() },
                 onDone = { onCompleteCallbackCount.incrementAndGet() },
+                onSeedCopy = { /* Not tested - debug mode feature only */ },
                 versionInfo = versionInfo,
+                walletRestoringState = WalletRestoringState.NONE,
             )
         }
     }

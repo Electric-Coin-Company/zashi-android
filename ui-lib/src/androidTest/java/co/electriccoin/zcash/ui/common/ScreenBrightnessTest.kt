@@ -11,8 +11,8 @@ import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.common.compose.BrightenScreen
 import co.electriccoin.zcash.ui.common.compose.LocalScreenBrightness
 import co.electriccoin.zcash.ui.common.compose.ScreenBrightness
+import co.electriccoin.zcash.ui.common.compose.ScreenBrightnessState
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.test.runTest
@@ -20,7 +20,6 @@ import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertEquals
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class ScreenBrightnessTest : UiTestPrerequisites() {
     @get:Rule
     val composeTestRule = createComposeRule()
@@ -31,19 +30,19 @@ class ScreenBrightnessTest : UiTestPrerequisites() {
         runTest {
             val testSetup = TestSetup(composeTestRule)
 
-            assertEquals(1, testSetup.getSecureBrightnessCount())
+            assertEquals(ScreenBrightnessState.FULL, testSetup.getSecureBrightnessCount())
 
             testSetup.mutableScreenBrightnessFlag.update { false }
             composeTestRule.awaitIdle()
-            assertEquals(0, testSetup.getSecureBrightnessCount())
+            assertEquals(ScreenBrightnessState.NORMAL, testSetup.getSecureBrightnessCount())
         }
 
     private class TestSetup(composeTestRule: ComposeContentTestRule) {
         val mutableScreenBrightnessFlag = MutableStateFlow(true)
 
-        private val screenBrightness = ScreenBrightness()
+        private val screenBrightness = ScreenBrightness
 
-        fun getSecureBrightnessCount() = screenBrightness.referenceCount.value
+        fun getSecureBrightnessCount() = screenBrightness.referenceSwitch.value
 
         init {
             runTest {

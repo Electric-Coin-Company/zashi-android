@@ -22,6 +22,7 @@ import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.android.sdk.model.proposeSend
 import cash.z.ecc.android.sdk.model.toZecString
 import co.electriccoin.zcash.spackle.Twig
+import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.viewmodel.HomeViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
@@ -48,9 +49,9 @@ internal fun WrapSend(
     goSendConfirmation: (ZecSend) -> Unit,
     goSettings: () -> Unit,
 ) {
-    val hasCameraFeature = activity.packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)
-
     val walletViewModel by activity.viewModels<WalletViewModel>()
+
+    val hasCameraFeature = activity.packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)
 
     val synchronizer = walletViewModel.synchronizer.collectAsStateWithLifecycle().value
 
@@ -71,6 +72,8 @@ internal fun WrapSend(
     // TODO [#1171]: https://github.com/Electric-Coin-Company/zashi-android/issues/1171
     val monetarySeparators = MonetarySeparators.current(Locale.US)
 
+    val walletRestoringState = walletViewModel.walletRestoringState.collectAsStateWithLifecycle().value
+
     WrapSend(
         sendArguments,
         synchronizer,
@@ -83,7 +86,8 @@ internal fun WrapSend(
         goSettings,
         goSendConfirmation,
         hasCameraFeature,
-        monetarySeparators
+        monetarySeparators,
+        walletRestoringState
     )
 }
 
@@ -102,7 +106,8 @@ internal fun WrapSend(
     goSettings: () -> Unit,
     goSendConfirmation: (ZecSend) -> Unit,
     hasCameraFeature: Boolean,
-    monetarySeparators: MonetarySeparators
+    monetarySeparators: MonetarySeparators,
+    walletRestoringState: WalletRestoringState,
 ) {
     val scope = rememberCoroutineScope()
 
@@ -213,7 +218,8 @@ internal fun WrapSend(
             setAmountState = setAmountState,
             onQrScannerOpen = goToQrScanner,
             goBalances = goBalances,
-            hasCameraFeature = hasCameraFeature
+            hasCameraFeature = hasCameraFeature,
+            walletRestoringState = walletRestoringState
         )
     }
 }

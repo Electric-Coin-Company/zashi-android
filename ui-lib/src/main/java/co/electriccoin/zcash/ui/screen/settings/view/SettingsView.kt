@@ -29,6 +29,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
@@ -60,6 +61,7 @@ private fun PreviewSettings() {
                         isAnalyticsEnabled = false,
                         isRescanEnabled = false
                     ),
+                walletRestoringState = WalletRestoringState.NONE,
             )
         }
     }
@@ -77,6 +79,7 @@ fun Settings(
     onKeepScreenOnDuringSyncSettingsChanged: (Boolean) -> Unit,
     onAnalyticsSettingsChanged: (Boolean) -> Unit,
     troubleshootingParameters: TroubleshootingParameters,
+    walletRestoringState: WalletRestoringState,
 ) {
     Scaffold(topBar = {
         SettingsTopAppBar(
@@ -86,6 +89,7 @@ fun Settings(
             onAnalyticsSettingsChanged = onAnalyticsSettingsChanged,
             onRescanWallet = onRescanWallet,
             onBack = onBack,
+            showRestoring = walletRestoringState == WalletRestoringState.RESTORING,
         )
     }) { paddingValues ->
         SettingsMainContent(
@@ -116,12 +120,20 @@ private fun SettingsTopAppBar(
     onAnalyticsSettingsChanged: (Boolean) -> Unit,
     onRescanWallet: () -> Unit,
     onBack: () -> Unit,
+    showRestoring: Boolean
 ) {
     SmallTopAppBar(
+        restoringLabel =
+            if (showRestoring) {
+                stringResource(id = R.string.restoring_wallet_label)
+            } else {
+                null
+            },
+        modifier = Modifier.testTag(SettingsTag.SETTINGS_TOP_APP_BAR),
+        showTitleLogo = true,
         backText = stringResource(id = R.string.settings_back).uppercase(),
         backContentDescriptionText = stringResource(R.string.settings_back_content_description),
         onBack = onBack,
-        showTitleLogo = true,
         regularActions = {
             if (troubleshootingParameters.isEnabled) {
                 TroubleshootingMenu(
@@ -133,7 +145,6 @@ private fun SettingsTopAppBar(
                 )
             }
         },
-        modifier = Modifier.testTag(SettingsTag.SETTINGS_TOP_APP_BAR)
     )
 }
 

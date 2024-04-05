@@ -164,7 +164,7 @@ private fun OnboardingMainContent(
                 if (isDebugMenuEnabled) {
                     DebugMenu(onFixtureWallet)
                 }
-            }
+            },
         )
         Column(
             modifier = modifier,

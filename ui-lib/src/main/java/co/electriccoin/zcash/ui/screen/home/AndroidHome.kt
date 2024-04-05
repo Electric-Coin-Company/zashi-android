@@ -8,10 +8,16 @@ import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cash.z.ecc.android.sdk.model.ZecSend
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.compose.RestoreScreenBrightness
+import co.electriccoin.zcash.ui.common.model.WalletRestoringState
+import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.viewmodel.HomeViewModel
+import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
+import co.electriccoin.zcash.ui.common.viewmodel.isSynced
 import co.electriccoin.zcash.ui.screen.account.WrapAccount
 import co.electriccoin.zcash.ui.screen.balances.WrapBalances
 import co.electriccoin.zcash.ui.screen.home.model.TabItem
@@ -19,6 +25,7 @@ import co.electriccoin.zcash.ui.screen.home.view.Home
 import co.electriccoin.zcash.ui.screen.receive.WrapReceive
 import co.electriccoin.zcash.ui.screen.send.WrapSend
 import co.electriccoin.zcash.ui.screen.send.model.SendArguments
+import co.electriccoin.zcash.ui.screen.settings.viewmodel.SettingsViewModel
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -26,7 +33,6 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 @Composable
 @Suppress("LongParameterList")
 internal fun MainActivity.WrapHome(
-    onPageChange: (HomeScreenIndex) -> Unit,
     goBack: () -> Unit,
     goSettings: () -> Unit,
     goMultiTrxSubmissionFailure: () -> Unit,
@@ -34,15 +40,39 @@ internal fun MainActivity.WrapHome(
     goSendConfirmation: (ZecSend) -> Unit,
     sendArguments: SendArguments
 ) {
+    val homeViewModel by viewModels<HomeViewModel>()
+
+    val walletViewModel by viewModels<WalletViewModel>()
+
+    val settingsViewModel by viewModels<SettingsViewModel>()
+
+    val homeScreenIndex = homeViewModel.screenIndex.collectAsStateWithLifecycle().value
+
+    val isKeepScreenOnWhileSyncing = settingsViewModel.isKeepScreenOnWhileSyncing.collectAsStateWithLifecycle().value
+
+    val walletSnapshot = walletViewModel.walletSnapshot.collectAsStateWithLifecycle().value
+
+    val walletRestoringState = walletViewModel.walletRestoringState.collectAsStateWithLifecycle().value
+
+    // Once the wallet is fully synced and still in restoring state, persist the new state
+    if (walletSnapshot?.status?.isSynced() == true && walletRestoringState.isRunningRestoring()) {
+        walletViewModel.persistWalletRestoringState(WalletRestoringState.SYNCING)
+    }
+
     WrapHome(
         this,
-        onPageChange = onPageChange,
         goBack = goBack,
         goScan = goScan,
         goSendConfirmation = goSendConfirmation,
         goSettings = goSettings,
         goMultiTrxSubmissionFailure = goMultiTrxSubmissionFailure,
-        sendArguments = sendArguments
+        homeScreenIndex = homeScreenIndex,
+        isKeepScreenOnWhileSyncing = isKeepScreenOnWhileSyncing,
+        onPageChange = {
+            homeViewModel.screenIndex.value = it
+        },
+        sendArguments = sendArguments,
+        walletSnapshot = walletSnapshot
     )
 }
 
@@ -55,11 +85,12 @@ internal fun WrapHome(
     goMultiTrxSubmissionFailure: () -> Unit,
     goScan: () -> Unit,
     goSendConfirmation: (ZecSend) -> Unit,
+    homeScreenIndex: HomeScreenIndex,
+    isKeepScreenOnWhileSyncing: Boolean?,
     onPageChange: (HomeScreenIndex) -> Unit,
-    sendArguments: SendArguments
+    sendArguments: SendArguments,
+    walletSnapshot: WalletSnapshot?,
 ) {
-    val homeViewModel by activity.viewModels<HomeViewModel>()
-
     // Flow for propagating the new page index to the pager in the view layer
     val forceHomePageIndexFlow: MutableSharedFlow<ForcePage?> =
         MutableSharedFlow(
@@ -70,7 +101,7 @@ internal fun WrapHome(
     val forceIndex = forceHomePageIndexFlow.collectAsState(initial = null).value
 
     val homeGoBack: () -> Unit = {
-        when (homeViewModel.screenIndex.value) {
+        when (homeScreenIndex) {
             HomeScreenIndex.ACCOUNT -> goBack()
             HomeScreenIndex.SEND,
             HomeScreenIndex.RECEIVE,
@@ -80,6 +111,11 @@ internal fun WrapHome(
 
     BackHandler {
         homeGoBack()
+    }
+
+    // Reset the screen brightness for all pages except Receive which maintain the screen brightness by itself
+    if (homeScreenIndex != HomeScreenIndex.RECEIVE) {
+        RestoreScreenBrightness()
     }
 
     val tabs =
@@ -92,7 +128,7 @@ internal fun WrapHome(
                     WrapAccount(
                         activity = activity,
                         goBalances = { forceHomePageIndexFlow.tryEmit(ForcePage(HomeScreenIndex.BALANCES)) },
-                        goSettings = goSettings,
+                        goSettings = goSettings
                     )
                 }
             ),
@@ -119,7 +155,7 @@ internal fun WrapHome(
                 screenContent = {
                     WrapReceive(
                         activity = activity,
-                        onSettings = goSettings,
+                        onSettings = goSettings
                     )
                 }
             ),
@@ -140,7 +176,9 @@ internal fun WrapHome(
     Home(
         subScreens = tabs,
         forcePage = forceIndex,
-        onPageChange = onPageChange
+        isKeepScreenOnWhileSyncing = isKeepScreenOnWhileSyncing,
+        onPageChange = onPageChange,
+        walletSnapshot = walletSnapshot
     )
 }
 

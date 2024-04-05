@@ -45,6 +45,7 @@ import cash.z.ecc.android.sdk.model.TransactionState
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.toZecString
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.design.component.CircularMidProgressIndicator
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.StyledBalance
@@ -70,7 +71,8 @@ private fun ComposablePreview() {
         GradientSurface {
             HistoryContainer(
                 transactionState = TransactionUiState.Loading,
-                onTransactionItemAction = {}
+                onTransactionItemAction = {},
+                walletRestoringState = WalletRestoringState.SYNCING
             )
         }
     }
@@ -82,8 +84,9 @@ private fun ComposableHistoryListPreview() {
     ZcashTheme(forceDarkMode = false) {
         GradientSurface {
             HistoryContainer(
-                transactionState = TransactionUiState.Prepared(transactions = TransactionsFixture.new()),
-                onTransactionItemAction = {}
+                transactionState = TransactionUiState.Done(transactions = TransactionsFixture.new()),
+                onTransactionItemAction = {},
+                walletRestoringState = WalletRestoringState.NONE
             )
         }
     }
@@ -102,7 +105,8 @@ private val dateFormat: DateFormat by lazy {
 internal fun HistoryContainer(
     transactionState: TransactionUiState,
     onTransactionItemAction: (TrxItemAction) -> Unit,
-    modifier: Modifier = Modifier
+    walletRestoringState: WalletRestoringState,
+    modifier: Modifier = Modifier,
 ) {
     Box(
         modifier =
@@ -114,39 +118,58 @@ internal fun HistoryContainer(
                 )
     ) {
         when (transactionState) {
-            TransactionUiState.Loading, TransactionUiState.Syncing -> {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingUpLarge))
-                    CircularMidProgressIndicator(
-                        modifier = Modifier.testTag(HistoryTag.PROGRESS),
-                    )
+            TransactionUiState.Loading -> {
+                LoadingTransactionHistory()
+            }
+            TransactionUiState.SyncingEmpty -> {
+                if (walletRestoringState == WalletRestoringState.INITIATING) {
+                    // In case we are syncing a new wallet, it's empty
+                    EmptyTransactionHistory()
+                } else {
+                    // Intentionally leaving the UI empty otherwise
                 }
             }
             is TransactionUiState.Prepared -> {
-                if (transactionState.transactions.isEmpty()) {
-                    Column {
-                        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingUpLarge))
-                        Text(
-                            modifier = Modifier.fillMaxWidth(),
-                            textAlign = TextAlign.Center,
-                            text = stringResource(id = R.string.account_history_empty),
-                            style = ZcashTheme.extendedTypography.transactionItemStyles.titleRegular,
-                            color = ZcashTheme.colors.textCommon,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-                    }
-                } else {
-                    HistoryList(
-                        transactions = transactionState.transactions,
-                        onAction = onTransactionItemAction,
-                    )
-                }
+                HistoryList(
+                    transactions = transactionState.transactions,
+                    onAction = onTransactionItemAction,
+                )
+            }
+            is TransactionUiState.DoneEmpty -> {
+                EmptyTransactionHistory()
             }
         }
+    }
+}
+
+@Composable
+private fun LoadingTransactionHistory() {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingUpLarge))
+
+        CircularMidProgressIndicator(
+            modifier = Modifier.testTag(HistoryTag.PROGRESS),
+        )
+    }
+}
+
+@Composable
+private fun EmptyTransactionHistory() {
+    Column {
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingUpLarge))
+
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Center,
+            text = stringResource(id = R.string.account_history_empty),
+            style = ZcashTheme.extendedTypography.transactionItemStyles.titleRegular,
+            color = ZcashTheme.colors.textCommon,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
     }
 }
 

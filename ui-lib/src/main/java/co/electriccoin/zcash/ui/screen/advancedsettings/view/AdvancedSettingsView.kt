@@ -16,6 +16,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
@@ -34,8 +35,9 @@ private fun PreviewAdvancedSettings() {
             AdvancedSettings(
                 onBack = {},
                 onExportPrivateData = {},
-                onSeedRecovery = {},
                 onChooseServer = {},
+                onSeedRecovery = {},
+                walletRestoringState = WalletRestoringState.NONE,
             )
         }
     }
@@ -47,10 +49,12 @@ fun AdvancedSettings(
     onExportPrivateData: () -> Unit,
     onChooseServer: () -> Unit,
     onSeedRecovery: () -> Unit,
+    walletRestoringState: WalletRestoringState,
 ) {
     Scaffold(topBar = {
         AdvancedSettingsTopAppBar(
             onBack = onBack,
+            showRestoring = walletRestoringState == WalletRestoringState.RESTORING,
         )
     }) { paddingValues ->
         AdvancedSettingsMainContent(
@@ -73,13 +77,22 @@ fun AdvancedSettings(
 }
 
 @Composable
-private fun AdvancedSettingsTopAppBar(onBack: () -> Unit) {
+private fun AdvancedSettingsTopAppBar(
+    onBack: () -> Unit,
+    showRestoring: Boolean
+) {
     SmallTopAppBar(
+        restoringLabel =
+            if (showRestoring) {
+                stringResource(id = R.string.restoring_wallet_label)
+            } else {
+                null
+            },
+        modifier = Modifier.testTag(AdvancedSettingsTag.ADVANCED_SETTINGS_TOP_APP_BAR),
+        showTitleLogo = true,
         backText = stringResource(id = R.string.advanced_settings_back).uppercase(),
         backContentDescriptionText = stringResource(R.string.advanced_settings_back_content_description),
         onBack = onBack,
-        showTitleLogo = true,
-        modifier = Modifier.testTag(AdvancedSettingsTag.ADVANCED_SETTINGS_TOP_APP_BAR)
     )
 }
 

@@ -19,6 +19,8 @@ directly impact users rather than highlighting other key architectural updates.*
 - Transitions between screens are now animated with a simple slide animation
 - Proposal API from the Zcash SDK has been integrated together with handling error states for multi-transaction 
   submission
+- New Restoring Your Wallet label has been added to all post-onboarding screens to notify users about the current 
+  state of the wallet-restoring process.   
 
 ### Changed
 - The Transaction History UI has been incorporated into the Account screen and completely reworked according to the 

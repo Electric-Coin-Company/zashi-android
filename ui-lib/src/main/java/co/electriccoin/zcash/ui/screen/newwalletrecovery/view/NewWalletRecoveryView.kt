@@ -121,7 +121,7 @@ private fun NewWalletRecoveryTopAppBar(
             if (versionInfo.isDebuggable && !versionInfo.isRunningUnderTestService) {
                 DebugMenu(onCopyToClipboard = onSeedCopy)
             }
-        }
+        },
     )
 }
 

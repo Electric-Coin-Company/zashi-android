@@ -15,10 +15,9 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import cash.z.ecc.android.sdk.Synchronizer
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.BalanceWidget
-import co.electriccoin.zcash.ui.common.compose.DisableScreenTimeout
+import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.test.CommonTag
 import co.electriccoin.zcash.ui.design.component.GradientSurface
@@ -36,11 +35,11 @@ private fun HistoryLoadingComposablePreview() {
         GradientSurface {
             Account(
                 walletSnapshot = WalletSnapshotFixture.new(),
-                isKeepScreenOnWhileSyncing = false,
                 goBalances = {},
                 goSettings = {},
                 transactionsUiState = TransactionUiState.Loading,
-                onTransactionItemAction = {}
+                onTransactionItemAction = {},
+                walletRestoringState = WalletRestoringState.SYNCING
             )
         }
     }
@@ -54,11 +53,11 @@ private fun HistoryListComposablePreview() {
             @Suppress("MagicNumber")
             Account(
                 walletSnapshot = WalletSnapshotFixture.new(),
-                isKeepScreenOnWhileSyncing = false,
                 goBalances = {},
                 goSettings = {},
-                transactionsUiState = TransactionUiState.Prepared(transactions = TransactionsFixture.new()),
+                transactionsUiState = TransactionUiState.Done(transactions = TransactionsFixture.new()),
                 onTransactionItemAction = {},
+                walletRestoringState = WalletRestoringState.NONE
             )
         }
     }
@@ -69,19 +68,22 @@ private fun HistoryListComposablePreview() {
 internal fun Account(
     goBalances: () -> Unit,
     goSettings: () -> Unit,
-    isKeepScreenOnWhileSyncing: Boolean?,
     onTransactionItemAction: (TrxItemAction) -> Unit,
     transactionsUiState: TransactionUiState,
+    walletRestoringState: WalletRestoringState,
     walletSnapshot: WalletSnapshot,
 ) {
     Scaffold(topBar = {
-        AccountTopAppBar(onSettings = goSettings)
+        AccountTopAppBar(
+            showRestoring = walletRestoringState == WalletRestoringState.RESTORING,
+            onSettings = goSettings
+        )
     }) { paddingValues ->
         AccountMainContent(
             walletSnapshot = walletSnapshot,
-            isKeepScreenOnWhileSyncing = isKeepScreenOnWhileSyncing,
             goBalances = goBalances,
             transactionState = transactionsUiState,
+            walletRestoringState = walletRestoringState,
             onTransactionItemAction = onTransactionItemAction,
             modifier =
                 Modifier.padding(
@@ -94,8 +96,17 @@ internal fun Account(
 }
 
 @Composable
-private fun AccountTopAppBar(onSettings: () -> Unit) {
+private fun AccountTopAppBar(
+    onSettings: () -> Unit,
+    showRestoring: Boolean
+) {
     SmallTopAppBar(
+        restoringLabel =
+            if (showRestoring) {
+                stringResource(id = R.string.restoring_wallet_label)
+            } else {
+                null
+            },
         showTitleLogo = true,
         hamburgerMenuActions = {
             IconButton(
@@ -115,11 +126,11 @@ private fun AccountTopAppBar(onSettings: () -> Unit) {
 @Suppress("LongParameterList")
 private fun AccountMainContent(
     walletSnapshot: WalletSnapshot,
-    isKeepScreenOnWhileSyncing: Boolean?,
     goBalances: () -> Unit,
     onTransactionItemAction: (TrxItemAction) -> Unit,
     transactionState: TransactionUiState,
-    modifier: Modifier = Modifier
+    walletRestoringState: WalletRestoringState,
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier,
@@ -139,12 +150,9 @@ private fun AccountMainContent(
 
         HistoryContainer(
             transactionState = transactionState,
+            walletRestoringState = walletRestoringState,
             onTransactionItemAction = onTransactionItemAction,
         )
-
-        if (isKeepScreenOnWhileSyncing == true && walletSnapshot.status == Synchronizer.Status.SYNCING) {
-            DisableScreenTimeout()
-        }
     }
 }
 

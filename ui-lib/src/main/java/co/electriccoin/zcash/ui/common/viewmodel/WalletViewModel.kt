@@ -29,6 +29,7 @@ import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.common.extension.throttle
 import co.electriccoin.zcash.ui.common.model.OnboardingState
+import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.preference.EncryptedPreferenceKeys
 import co.electriccoin.zcash.ui.preference.EncryptedPreferenceSingleton
@@ -96,6 +97,23 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
             viewModelScope,
             SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
             null
+        )
+
+    /**
+     * A flow of the wallet block synchronization state.
+     */
+    val walletRestoringState: StateFlow<WalletRestoringState> =
+        flow {
+            val preferenceProvider = StandardPreferenceSingleton.getInstance(application)
+            emitAll(
+                StandardPreferenceKeys.WALLET_RESTORING_STATE.observe(preferenceProvider).map { persistedNumber ->
+                    WalletRestoringState.fromNumber(persistedNumber)
+                }
+            )
+        }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+            WalletRestoringState.NONE
         )
 
     /**
@@ -289,11 +307,27 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     /**
+     * Asynchronously notes that the wallet has completed the initial wallet restoring block synchronization run.
+     *
+     * Note that in the current SDK implementation, we don't have any information about the block synchronization
+     * state from the SDK, and thus, we need to note the wallet restoring state here on the client side.
+     */
+    fun persistWalletRestoringState(walletRestoringState: WalletRestoringState) {
+        val application = getApplication<Application>()
+
+        viewModelScope.launch {
+            val preferenceProvider = StandardPreferenceSingleton.getInstance(application)
+            StandardPreferenceKeys.WALLET_RESTORING_STATE.putValue(preferenceProvider, walletRestoringState.toNumber())
+        }
+    }
+
+    /**
      * This method only has an effect if the synchronizer currently is loaded.
      */
     fun rescanBlockchain() {
         viewModelScope.launch {
             walletCoordinator.rescanBlockchain()
+            persistWalletRestoringState(WalletRestoringState.RESTORING)
         }
     }
 
@@ -435,4 +469,6 @@ private fun Synchronizer.toWalletSnapshot() =
         )
     }
 
-private fun Synchronizer.Status.isSyncing() = this == Synchronizer.Status.SYNCING
+fun Synchronizer.Status.isSyncing() = this == Synchronizer.Status.SYNCING
+
+fun Synchronizer.Status.isSynced() = this == Synchronizer.Status.SYNCED

@@ -13,9 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.BrightnessHigh
-import androidx.compose.material.icons.filled.BrightnessLow
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -23,9 +20,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
@@ -44,7 +39,9 @@ import cash.z.ecc.android.sdk.model.WalletAddresses
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.BrightenScreen
 import co.electriccoin.zcash.ui.common.compose.DisableScreenTimeout
+import co.electriccoin.zcash.ui.common.compose.ScreenBrightnessState
 import co.electriccoin.zcash.ui.common.model.VersionInfo
+import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.test.CommonTag
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.design.component.GradientSurface
@@ -64,13 +61,15 @@ private fun ComposablePreview() {
     ZcashTheme(forceDarkMode = false) {
         GradientSurface {
             Receive(
+                screenBrightnessState = ScreenBrightnessState.NORMAL,
                 walletAddress = runBlocking { WalletAddressesFixture.new() },
                 snackbarHostState = SnackbarHostState(),
                 onSettings = {},
                 onAdjustBrightness = {},
                 onAddrCopyToClipboard = {},
                 onQrImageShare = {},
-                versionInfo = VersionInfoFixture.new()
+                versionInfo = VersionInfoFixture.new(),
+                walletRestoringState = WalletRestoringState.NONE
             )
         }
     }
@@ -79,25 +78,24 @@ private fun ComposablePreview() {
 @Suppress("LongParameterList")
 @Composable
 fun Receive(
+    screenBrightnessState: ScreenBrightnessState,
     walletAddress: WalletAddresses?,
     snackbarHostState: SnackbarHostState,
     onSettings: () -> Unit,
-    onAdjustBrightness: (Boolean) -> Unit,
+    onAdjustBrightness: (ScreenBrightnessState) -> Unit,
     onAddrCopyToClipboard: (String) -> Unit,
     onQrImageShare: (ImageBitmap) -> Unit,
     versionInfo: VersionInfo,
+    walletRestoringState: WalletRestoringState,
 ) {
-    val (brightness, setBrightness) = rememberSaveable { mutableStateOf(false) }
-
     Scaffold(
         topBar = {
             ReceiveTopAppBar(
-                adjustBrightness = brightness,
                 onSettings = onSettings,
                 onBrightness = {
-                    onAdjustBrightness(!brightness)
-                    setBrightness(!brightness)
+                    onAdjustBrightness(screenBrightnessState.getChange())
                 },
+                showRestoring = walletRestoringState == WalletRestoringState.RESTORING,
                 versionInfo = versionInfo,
             )
         },
@@ -110,7 +108,7 @@ fun Receive(
                 walletAddress = walletAddress,
                 onAddressCopyToClipboard = onAddrCopyToClipboard,
                 onQrImageShare = onQrImageShare,
-                adjustBrightness = brightness,
+                screenBrightnessState = screenBrightnessState,
                 versionInfo = versionInfo,
                 modifier =
                     Modifier.padding(
@@ -126,30 +124,19 @@ fun Receive(
 
 @Composable
 private fun ReceiveTopAppBar(
-    adjustBrightness: Boolean,
     onSettings: () -> Unit,
     onBrightness: () -> Unit,
-    versionInfo: VersionInfo
+    versionInfo: VersionInfo,
+    showRestoring: Boolean
 ) {
     SmallTopAppBar(
+        restoringLabel =
+            if (showRestoring) {
+                stringResource(id = R.string.restoring_wallet_label)
+            } else {
+                null
+            },
         titleText = stringResource(id = R.string.receive_title),
-        regularActions = {
-            if (versionInfo.isDebuggable) {
-                IconButton(
-                    onClick = onBrightness
-                ) {
-                    Icon(
-                        imageVector =
-                            if (adjustBrightness) {
-                                Icons.Default.BrightnessLow
-                            } else {
-                                Icons.Default.BrightnessHigh
-                            },
-                        contentDescription = stringResource(R.string.receive_brightness_content_description)
-                    )
-                }
-            }
-        },
         hamburgerMenuActions = {
             IconButton(
                 onClick = onSettings,
@@ -160,7 +147,19 @@ private fun ReceiveTopAppBar(
                     contentDescription = stringResource(id = R.string.settings_menu_content_description)
                 )
             }
-        }
+        },
+        regularActions = {
+            if (versionInfo.isDebuggable) {
+                IconButton(
+                    onClick = onBrightness
+                ) {
+                    Image(
+                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_adjust_brightness),
+                        contentDescription = stringResource(R.string.receive_brightness_content_description)
+                    )
+                }
+            }
+        },
     )
 }
 
@@ -170,7 +169,7 @@ private fun ReceiveContents(
     walletAddress: WalletAddresses,
     onAddressCopyToClipboard: (String) -> Unit,
     onQrImageShare: (ImageBitmap) -> Unit,
-    adjustBrightness: Boolean,
+    screenBrightnessState: ScreenBrightnessState,
     versionInfo: VersionInfo,
     modifier: Modifier = Modifier,
 ) {
@@ -182,7 +181,7 @@ private fun ReceiveContents(
                 .then(modifier),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        if (adjustBrightness) {
+        if (screenBrightnessState == ScreenBrightnessState.FULL) {
             BrightenScreen()
             DisableScreenTimeout()
         }

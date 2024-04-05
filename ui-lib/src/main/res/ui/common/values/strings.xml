@@ -7,4 +7,5 @@
     <string name="balance_widget_available">Available Balance:</string>
     <!-- This is replaced by a resource overlay via app/build.gradle.kts -->
     <string name="support_email_address" />
+    <string name="restoring_wallet_label">[Restoring Your Wallet…]</string>
 </resources>
