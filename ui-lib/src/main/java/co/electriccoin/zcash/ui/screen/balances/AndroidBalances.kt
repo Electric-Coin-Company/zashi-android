@@ -8,12 +8,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cash.z.ecc.android.sdk.SdkSynchronizer
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.model.UnifiedSpendingKey
 import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.spackle.Twig
+import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.viewmodel.CheckUpdateViewModel
@@ -85,6 +87,8 @@ internal fun WrapBalances(
 ) {
     val scope = rememberCoroutineScope()
 
+    val context = LocalContext.current
+
     // To show information about the app update, if available
     val isUpdateAvailable =
         checkUpdateViewModel.updateInfo.collectAsStateWithLifecycle().value.let {
@@ -94,15 +98,10 @@ internal fun WrapBalances(
     val isFiatConversionEnabled = ConfigurationEntries.IS_FIAT_CONVERSION_ENABLED.getValue(RemoteConfig.current)
 
     val (shieldState, setShieldState) =
-        rememberSaveable(stateSaver = ShieldState.Saver) {
-            mutableStateOf(
-                if (walletSnapshot?.hasTransparentFunds == true) {
-                    ShieldState.Available
-                } else {
-                    ShieldState.None
-                }
-            )
-        }
+        rememberSaveable(stateSaver = ShieldState.Saver) { mutableStateOf(ShieldState.None) }
+
+    // Keep the state always up-to-date with the latest transparent balance
+    setShieldState(updateTransparentBalanceState(shieldState, walletSnapshot))
 
     val (isShowingErrorDialog, setShowErrorDialog) = rememberSaveable { mutableStateOf(false) }
 
@@ -145,10 +144,12 @@ internal fun WrapBalances(
                             transparentReceiver = null
                         )
                     }.onSuccess { newProposal ->
-                        Twig.debug { "Shielding proposal result: ${newProposal?.toPrettyString()}" }
+                        Twig.info { "Shielding proposal result: ${newProposal?.toPrettyString()}" }
 
                         if (newProposal == null) {
-                            showShieldingError(null)
+                            showShieldingError(
+                                context.getString(R.string.balances_shielding_dialog_error_below_threshold)
+                            )
                         } else {
                             val result =
                                 createTransactionsViewModel.runCreateTransactions(
@@ -159,7 +160,7 @@ internal fun WrapBalances(
                             when (result) {
                                 SubmitResult.Success -> {
                                     Twig.info { "Shielding transaction done successfully" }
-                                    setShieldState(ShieldState.None)
+                                    setShieldState(ShieldState.Shielded)
                                     // Triggering transaction history refresh to be notified about the newly created
                                     // transaction asap
                                     (synchronizer as SdkSynchronizer).refreshTransactions()
@@ -186,5 +187,23 @@ internal fun WrapBalances(
             walletSnapshot = walletSnapshot,
             walletRestoringState = walletRestoringState,
         )
+    }
+}
+
+fun updateTransparentBalanceState(
+    currentShieldState: ShieldState,
+    walletSnapshot: WalletSnapshot?
+): ShieldState {
+    return when {
+        (walletSnapshot == null) -> {
+            currentShieldState
+        }
+        (
+            walletSnapshot.transparentBalance >= Zatoshi(DEFAULT_SHIELDING_THRESHOLD) &&
+                currentShieldState.isEnabled()
+        ) -> ShieldState.Available
+        else -> {
+            currentShieldState
+        }
     }
 }
