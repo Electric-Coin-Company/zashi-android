@@ -27,10 +27,13 @@ import co.electriccoin.lightwallet.client.model.LightWalletEndpoint
 import co.electriccoin.zcash.global.getInstance
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.ANDROID_STATE_FLOW_TIMEOUT
+import co.electriccoin.zcash.ui.common.compose.BalanceState
 import co.electriccoin.zcash.ui.common.extension.throttle
 import co.electriccoin.zcash.ui.common.model.OnboardingState
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
+import co.electriccoin.zcash.ui.common.model.spendableBalance
+import co.electriccoin.zcash.ui.common.model.totalBalance
 import co.electriccoin.zcash.ui.preference.EncryptedPreferenceKeys
 import co.electriccoin.zcash.ui.preference.EncryptedPreferenceSingleton
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
@@ -236,6 +239,43 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
                 initialValue = TransactionHistorySyncState.Loading
+            )
+
+    /**
+     * A flow of the wallet balances state used for the UI layer. It combines [WalletSnapshot] with
+     * [WalletRestoringState] and provides the correct [BalanceState] UI state.
+     */
+    val balanceState: StateFlow<BalanceState> =
+        walletSnapshot
+            .filterNotNull()
+            .combine(walletRestoringState) {
+                    walletSnapshot: WalletSnapshot, walletRestoringState: WalletRestoringState ->
+                when (walletRestoringState) {
+                    WalletRestoringState.NONE -> BalanceState.None
+                    WalletRestoringState.INITIATING ->
+                        BalanceState.Available(
+                            totalBalance = walletSnapshot.totalBalance(),
+                            spendableBalance = walletSnapshot.spendableBalance()
+                        )
+                    WalletRestoringState.RESTORING, WalletRestoringState.SYNCING -> {
+                        if (walletSnapshot.spendableBalance().value == 0L &&
+                            walletSnapshot.totalBalance().value > 0L
+                        ) {
+                            BalanceState.Loading(
+                                totalBalance = walletSnapshot.totalBalance()
+                            )
+                        } else {
+                            BalanceState.Available(
+                                totalBalance = walletSnapshot.totalBalance(),
+                                spendableBalance = walletSnapshot.spendableBalance()
+                            )
+                        }
+                    }
+                }
+            }.stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+                BalanceState.None
             )
 
     /**

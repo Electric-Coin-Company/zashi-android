@@ -14,6 +14,7 @@ import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.android.sdk.type.AddressType
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.fixture.BalanceStateFixture
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 import co.electriccoin.zcash.ui.screen.send.ext.Saver
 import co.electriccoin.zcash.ui.screen.send.model.AmountState
@@ -109,13 +110,7 @@ class SendViewTestSetup(
             // TODO [#1260]: Cover Send.Form screen UI with tests
             // TODO [#1260]: https://github.com/Electric-Coin-Company/zashi-android/issues/1260
             Send(
-                walletSnapshot =
-                    WalletSnapshotFixture.new(
-                        saplingBalance =
-                            WalletBalanceFixture.new(
-                                available = Zatoshi(Zatoshi.MAX_INCLUSIVE.div(100))
-                            )
-                    ),
+                balanceState = BalanceStateFixture.new(),
                 sendStage = sendStage,
                 onCreateZecSend = setZecSend,
                 focusManager = LocalFocusManager.current,
@@ -134,11 +129,18 @@ class SendViewTestSetup(
                     // TODO [#1260]: Cover Send.Form screen UI with tests
                     // TODO [#1260]: https://github.com/Electric-Coin-Company/zashi-android/issues/1260
                 },
-                amountState = AmountState.new(context, "", monetarySeparators),
                 setAmountState = {},
-                memoState = MemoState.new(""),
+                amountState = AmountState.new(context, "", monetarySeparators),
                 setMemoState = {},
-                walletRestoringState = WalletRestoringState.NONE
+                memoState = MemoState.new(""),
+                walletRestoringState = WalletRestoringState.NONE,
+                walletSnapshot =
+                    WalletSnapshotFixture.new(
+                        saplingBalance =
+                            WalletBalanceFixture.new(
+                                available = Zatoshi(Zatoshi.MAX_INCLUSIVE.div(100))
+                            )
+                    ),
             )
         }
     }

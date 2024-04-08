@@ -51,9 +51,10 @@ internal object Dark {
     val radioButtonTextColor = Color(0xFF4E4E4E)
 
     val circularProgressBarSmall = Color(0xFF8B8A8A)
+    val circularProgressBarSmallDark = textBodyOnBackground
     val circularProgressBarScreen = Color(0xFFFFFFFF)
     val linearProgressBarTrack = Color(0xFFD9D9D9)
-    val linearProgressBarBackground = Light.complementaryColor
+    val linearProgressBarBackground = complementaryColor
     val restoringTopAppBarColor = Color(0xFF8A8888)
 
     val callout = Color(0xFFFFFFFF)
@@ -111,6 +112,7 @@ internal object Light {
 
     val circularProgressBarSmall = Color(0xFF8B8A8A)
     val circularProgressBarScreen = Color(0xFF000000)
+    val circularProgressBarSmallDark = textBodyOnBackground
     val linearProgressBarTrack = Color(0xFFD9D9D9)
     val linearProgressBarBackground = complementaryColor
     val restoringTopAppBarColor = Color(0xFF8A8888)
@@ -164,6 +166,7 @@ internal val DarkExtendedColorPalette =
         callout = Dark.callout,
         onCallout = Dark.onCallout,
         circularProgressBarSmall = Dark.circularProgressBarSmall,
+        circularProgressBarSmallDark = Dark.circularProgressBarSmallDark,
         circularProgressBarScreen = Dark.circularProgressBarScreen,
         linearProgressBarTrack = Dark.linearProgressBarTrack,
         linearProgressBarBackground = Dark.linearProgressBarBackground,
@@ -208,12 +211,13 @@ internal val LightExtendedColorPalette =
         onCallout = Light.onCallout,
         circularProgressBarScreen = Light.circularProgressBarScreen,
         circularProgressBarSmall = Light.circularProgressBarSmall,
+        circularProgressBarSmallDark = Light.circularProgressBarSmallDark,
         linearProgressBarTrack = Light.linearProgressBarTrack,
         linearProgressBarBackground = Light.linearProgressBarBackground,
         restoringTopAppBarColor = Light.restoringTopAppBarColor,
         chipIndex = Light.textChipIndex,
         textCommon = Light.textCommon,
-        textMedium = Dark.textMedium,
+        textMedium = Light.textMedium,
         textDisabled = Light.textDisabled,
         textFieldFrame = Light.textFieldFrame,
         textFieldError = Light.textFieldError,
@@ -253,6 +257,7 @@ internal val LocalExtendedColors =
             onCallout = Color.Unspecified,
             circularProgressBarScreen = Color.Unspecified,
             circularProgressBarSmall = Color.Unspecified,
+            circularProgressBarSmallDark = Color.Unspecified,
             linearProgressBarTrack = Color.Unspecified,
             linearProgressBarBackground = Color.Unspecified,
             restoringTopAppBarColor = Color.Unspecified,

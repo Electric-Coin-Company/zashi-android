@@ -51,6 +51,7 @@ import cash.z.ecc.sdk.fixture.ZatoshiFixture
 import cash.z.ecc.sdk.type.ZcashCurrency
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.compose.BalanceState
 import co.electriccoin.zcash.ui.common.compose.BalanceWidget
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
@@ -67,6 +68,7 @@ import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.Small
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.fixture.BalanceStateFixture
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 import co.electriccoin.zcash.ui.screen.send.SendTag
 import co.electriccoin.zcash.ui.screen.send.model.AmountState
@@ -81,7 +83,6 @@ private fun PreviewSendForm() {
     ZcashTheme(forceDarkMode = false) {
         GradientSurface {
             Send(
-                walletSnapshot = WalletSnapshotFixture.new(),
                 sendStage = SendStage.Form,
                 onCreateZecSend = {},
                 focusManager = LocalFocusManager.current,
@@ -96,7 +97,9 @@ private fun PreviewSendForm() {
                 amountState = AmountState.Valid(ZatoshiFixture.ZATOSHI_LONG.toString(), ZatoshiFixture.new()),
                 setMemoState = {},
                 memoState = MemoState.new("Test message"),
-                walletRestoringState = WalletRestoringState.NONE
+                walletRestoringState = WalletRestoringState.NONE,
+                walletSnapshot = WalletSnapshotFixture.new(),
+                balanceState = BalanceStateFixture.new()
             )
         }
     }
@@ -108,6 +111,7 @@ private fun PreviewSendForm() {
 @Suppress("LongParameterList")
 @Composable
 fun Send(
+    balanceState: BalanceState,
     sendStage: SendStage,
     onCreateZecSend: (ZecSend) -> Unit,
     focusManager: FocusManager,
@@ -132,6 +136,7 @@ fun Send(
         )
     }) { paddingValues ->
         SendMainContent(
+            balanceState = balanceState,
             walletSnapshot = walletSnapshot,
             onBack = onBack,
             focusManager = focusManager,
@@ -188,6 +193,7 @@ private fun SendTopAppBar(
 @Suppress("LongParameterList")
 @Composable
 private fun SendMainContent(
+    balanceState: BalanceState,
     walletSnapshot: WalletSnapshot,
     focusManager: FocusManager,
     onBack: () -> Unit,
@@ -208,6 +214,7 @@ private fun SendMainContent(
     // loader if calling the Proposal API takes longer than expected
 
     SendForm(
+        balanceState = balanceState,
         walletSnapshot = walletSnapshot,
         recipientAddressState = recipientAddressState,
         onRecipientAddressChange = onRecipientAddressChange,
@@ -242,6 +249,7 @@ const val DEFAULT_LESS_THAN_FEE = 100_000L
 @Suppress("LongMethod", "LongParameterList")
 @Composable
 private fun SendForm(
+    balanceState: BalanceState,
     walletSnapshot: WalletSnapshot,
     focusManager: FocusManager,
     recipientAddressState: RecipientAddressState,
@@ -275,7 +283,7 @@ private fun SendForm(
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
 
         BalanceWidget(
-            walletSnapshot = walletSnapshot,
+            balanceState = balanceState,
             isReferenceToBalances = true,
             onReferenceClick = goBalances
         )

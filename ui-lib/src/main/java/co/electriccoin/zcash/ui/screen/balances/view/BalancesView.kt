@@ -52,6 +52,7 @@ import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.toZecString
 import cash.z.ecc.sdk.extension.toPercentageWithDecimal
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.compose.BalanceState
 import co.electriccoin.zcash.ui.common.compose.BalanceWidget
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
@@ -72,6 +73,7 @@ import co.electriccoin.zcash.ui.design.component.Reference
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.StyledBalance
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.fixture.BalanceStateFixture
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 import co.electriccoin.zcash.ui.screen.balances.BalancesTag
 import co.electriccoin.zcash.ui.screen.balances.model.ShieldState
@@ -92,6 +94,7 @@ private fun ComposableBalancesPreview() {
                 shieldState = ShieldState.Available,
                 walletSnapshot = WalletSnapshotFixture.new(),
                 walletRestoringState = WalletRestoringState.NONE,
+                balanceState = BalanceStateFixture.new()
             )
         }
     }
@@ -112,6 +115,7 @@ private fun ComposableBalancesShieldFailurePreview() {
                 shieldState = ShieldState.Available,
                 walletSnapshot = WalletSnapshotFixture.new(),
                 walletRestoringState = WalletRestoringState.NONE,
+                balanceState = BalanceStateFixture.new()
             )
         }
     }
@@ -129,6 +133,7 @@ fun Balances(
     shieldState: ShieldState,
     walletSnapshot: WalletSnapshot?,
     walletRestoringState: WalletRestoringState,
+    balanceState: BalanceState,
 ) {
     Scaffold(topBar = {
         BalancesTopAppBar(
@@ -140,6 +145,7 @@ fun Balances(
             CircularScreenProgressIndicator()
         } else {
             BalancesMainContent(
+                balanceState = balanceState,
                 isFiatConversionEnabled = isFiatConversionEnabled,
                 isUpdateAvailable = isUpdateAvailable,
                 onShielding = onShielding,
@@ -228,6 +234,7 @@ private fun BalancesTopAppBar(
 @Suppress("LongParameterList")
 @Composable
 private fun BalancesMainContent(
+    balanceState: BalanceState,
     isFiatConversionEnabled: Boolean,
     isUpdateAvailable: Boolean,
     onShielding: () -> Unit,
@@ -246,7 +253,7 @@ private fun BalancesMainContent(
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
 
         BalanceWidget(
-            walletSnapshot = walletSnapshot,
+            balanceState = balanceState,
             isReferenceToBalances = false,
             onReferenceClick = {}
         )

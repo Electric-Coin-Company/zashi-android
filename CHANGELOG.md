@@ -29,6 +29,8 @@ directly impact users rather than highlighting other key architectural updates.*
   screen)
 - The sending and shielding funds logic has been connected to the new Proposal API from the Zcash SDK
 - The error dialog contains an error description now. It's useful for tracking down the failure cause.
+- A small circular progress indicator is displayed when the app runs block synchronization, and the available balance 
+  is zero instead of reflecting a result value.
 
 ### Fixed
 - Button sizing has been updated to align with the design guidelines and preserve stretching if necessary

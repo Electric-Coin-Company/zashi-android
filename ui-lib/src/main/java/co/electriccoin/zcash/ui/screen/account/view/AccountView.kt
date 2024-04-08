@@ -15,15 +15,16 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.compose.BalanceState
 import co.electriccoin.zcash.ui.common.compose.BalanceWidget
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
-import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.test.CommonTag
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
-import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
+import co.electriccoin.zcash.ui.fixture.BalanceStateFixture
 import co.electriccoin.zcash.ui.screen.account.AccountTag
 import co.electriccoin.zcash.ui.screen.account.fixture.TransactionsFixture
 import co.electriccoin.zcash.ui.screen.account.model.TransactionUiState
@@ -34,12 +35,12 @@ private fun HistoryLoadingComposablePreview() {
     ZcashTheme(forceDarkMode = false) {
         GradientSurface {
             Account(
-                walletSnapshot = WalletSnapshotFixture.new(),
                 goBalances = {},
                 goSettings = {},
-                transactionsUiState = TransactionUiState.Loading,
                 onTransactionItemAction = {},
-                walletRestoringState = WalletRestoringState.SYNCING
+                transactionsUiState = TransactionUiState.Loading,
+                walletRestoringState = WalletRestoringState.SYNCING,
+                balanceState = BalanceStateFixture.new()
             )
         }
     }
@@ -52,12 +53,12 @@ private fun HistoryListComposablePreview() {
         GradientSurface {
             @Suppress("MagicNumber")
             Account(
-                walletSnapshot = WalletSnapshotFixture.new(),
                 goBalances = {},
                 goSettings = {},
-                transactionsUiState = TransactionUiState.Done(transactions = TransactionsFixture.new()),
                 onTransactionItemAction = {},
-                walletRestoringState = WalletRestoringState.NONE
+                transactionsUiState = TransactionUiState.Done(transactions = TransactionsFixture.new()),
+                walletRestoringState = WalletRestoringState.NONE,
+                balanceState = BalanceState.Available(Zatoshi(123_000_000L), Zatoshi(123_000_000L))
             )
         }
     }
@@ -66,12 +67,12 @@ private fun HistoryListComposablePreview() {
 @Composable
 @Suppress("LongParameterList")
 internal fun Account(
+    balanceState: BalanceState,
     goBalances: () -> Unit,
     goSettings: () -> Unit,
     onTransactionItemAction: (TrxItemAction) -> Unit,
     transactionsUiState: TransactionUiState,
     walletRestoringState: WalletRestoringState,
-    walletSnapshot: WalletSnapshot,
 ) {
     Scaffold(topBar = {
         AccountTopAppBar(
@@ -80,7 +81,7 @@ internal fun Account(
         )
     }) { paddingValues ->
         AccountMainContent(
-            walletSnapshot = walletSnapshot,
+            balanceState = balanceState,
             goBalances = goBalances,
             transactionState = transactionsUiState,
             walletRestoringState = walletRestoringState,
@@ -125,7 +126,7 @@ private fun AccountTopAppBar(
 @Composable
 @Suppress("LongParameterList")
 private fun AccountMainContent(
-    walletSnapshot: WalletSnapshot,
+    balanceState: BalanceState,
     goBalances: () -> Unit,
     onTransactionItemAction: (TrxItemAction) -> Unit,
     transactionState: TransactionUiState,
@@ -139,7 +140,7 @@ private fun AccountMainContent(
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
 
         BalancesStatus(
-            walletSnapshot = walletSnapshot,
+            balanceState = balanceState,
             goBalances = goBalances,
             modifier =
                 Modifier
@@ -158,9 +159,9 @@ private fun AccountMainContent(
 
 @Composable
 private fun BalancesStatus(
-    walletSnapshot: WalletSnapshot,
+    balanceState: BalanceState,
     goBalances: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier =
@@ -172,7 +173,7 @@ private fun BalancesStatus(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         BalanceWidget(
-            walletSnapshot = walletSnapshot,
+            balanceState = balanceState,
             isReferenceToBalances = true,
             onReferenceClick = goBalances
         )

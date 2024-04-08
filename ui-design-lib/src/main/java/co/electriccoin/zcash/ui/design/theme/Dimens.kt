@@ -12,6 +12,7 @@ data class Dimens(
     // Default spacings:
     val spacingNone: Dp,
     val spacingXtiny: Dp,
+    val spacingMin: Dp,
     val spacingTiny: Dp,
     val spacingSmall: Dp,
     val spacingMid: Dp,
@@ -61,6 +62,7 @@ private val defaultDimens =
         spacingNone = 0.dp,
         spacingXtiny = 2.dp,
         spacingTiny = 4.dp,
+        spacingMin = 6.dp,
         spacingSmall = 8.dp,
         spacingMid = 12.dp,
         spacingDefault = 16.dp,

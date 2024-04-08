@@ -11,6 +11,7 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -60,9 +61,12 @@ fun CircularMidProgressIndicator(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun CircularSmallProgressIndicator(modifier: Modifier = Modifier) {
+fun CircularSmallProgressIndicator(
+    modifier: Modifier = Modifier,
+    color: Color = ZcashTheme.colors.circularProgressBarSmall,
+) {
     CircularProgressIndicator(
-        color = ZcashTheme.colors.circularProgressBarSmall,
+        color = color,
         strokeWidth = 2.dp,
         modifier =
             Modifier

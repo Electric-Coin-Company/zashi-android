@@ -12,8 +12,8 @@ import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.internal.Twig
 import co.electriccoin.zcash.spackle.ClipboardManagerUtil
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.compose.BalanceState
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
-import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.screen.account.model.TransactionUiState
@@ -36,8 +36,6 @@ internal fun WrapAccount(
 
     val transactionHistoryViewModel by activity.viewModels<TransactionHistoryViewModel>()
 
-    val walletSnapshot = walletViewModel.walletSnapshot.collectAsStateWithLifecycle().value
-
     val synchronizer = walletViewModel.synchronizer.collectAsStateWithLifecycle().value
 
     val transactionsUiState = transactionHistoryViewModel.transactionUiState.collectAsStateWithLifecycle().value
@@ -48,7 +46,10 @@ internal fun WrapAccount(
 
     val walletRestoringState = walletViewModel.walletRestoringState.collectAsStateWithLifecycle().value
 
+    val balanceState = walletViewModel.balanceState.collectAsStateWithLifecycle().value
+
     WrapAccount(
+        balanceState = balanceState,
         context = activity.applicationContext,
         goBalances = goBalances,
         goSettings = goSettings,
@@ -56,7 +57,6 @@ internal fun WrapAccount(
         synchronizer = synchronizer,
         transactionHistoryViewModel = transactionHistoryViewModel,
         transactionsUiState = transactionsUiState,
-        walletSnapshot = walletSnapshot,
         walletRestoringState = walletRestoringState
     )
 
@@ -68,6 +68,7 @@ internal fun WrapAccount(
 @VisibleForTesting
 @Suppress("LongParameterList")
 internal fun WrapAccount(
+    balanceState: BalanceState,
     context: Context,
     scope: CoroutineScope,
     goBalances: () -> Unit,
@@ -75,17 +76,16 @@ internal fun WrapAccount(
     transactionsUiState: TransactionUiState,
     synchronizer: Synchronizer?,
     transactionHistoryViewModel: TransactionHistoryViewModel,
-    walletSnapshot: WalletSnapshot?,
     walletRestoringState: WalletRestoringState,
 ) {
-    if (null == synchronizer || null == walletSnapshot) {
+    if (null == synchronizer) {
         // TODO [#1146]: Consider moving CircularScreenProgressIndicator from Android layer to View layer
         // TODO [#1146]: Improve this by allowing screen composition and updating it after the data is available
         // TODO [#1146]: https://github.com/Electric-Coin-Company/zashi-android/issues/1146
         CircularScreenProgressIndicator()
     } else {
         Account(
-            walletSnapshot = walletSnapshot,
+            balanceState = balanceState,
             transactionsUiState = transactionsUiState,
             onTransactionItemAction = { action ->
                 when (action) {
