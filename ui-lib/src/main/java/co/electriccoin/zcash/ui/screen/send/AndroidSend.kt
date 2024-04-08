@@ -22,6 +22,7 @@ import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.android.sdk.model.proposeSend
 import cash.z.ecc.android.sdk.model.toZecString
 import co.electriccoin.zcash.spackle.Twig
+import co.electriccoin.zcash.ui.common.compose.BalanceState
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.viewmodel.HomeViewModel
@@ -74,20 +75,23 @@ internal fun WrapSend(
 
     val walletRestoringState = walletViewModel.walletRestoringState.collectAsStateWithLifecycle().value
 
+    val balanceState = walletViewModel.balanceState.collectAsStateWithLifecycle().value
+
     WrapSend(
-        sendArguments,
-        synchronizer,
-        walletSnapshot,
-        spendingKey,
-        focusManager,
-        goToQrScanner,
-        goBack,
-        goBalances,
-        goSettings,
-        goSendConfirmation,
-        hasCameraFeature,
-        monetarySeparators,
-        walletRestoringState
+        balanceState = balanceState,
+        sendArguments = sendArguments,
+        synchronizer = synchronizer,
+        walletSnapshot = walletSnapshot,
+        spendingKey = spendingKey,
+        focusManager = focusManager,
+        goToQrScanner = goToQrScanner,
+        goBack = goBack,
+        goBalances = goBalances,
+        goSettings = goSettings,
+        goSendConfirmation = goSendConfirmation,
+        hasCameraFeature = hasCameraFeature,
+        monetarySeparators = monetarySeparators,
+        walletRestoringState = walletRestoringState
     )
 }
 
@@ -95,6 +99,7 @@ internal fun WrapSend(
 @VisibleForTesting
 @Composable
 internal fun WrapSend(
+    balanceState: BalanceState,
     sendArguments: SendArguments?,
     synchronizer: Synchronizer?,
     walletSnapshot: WalletSnapshot?,
@@ -178,7 +183,7 @@ internal fun WrapSend(
         CircularScreenProgressIndicator()
     } else {
         Send(
-            walletSnapshot = walletSnapshot,
+            balanceState = balanceState,
             sendStage = sendStage,
             onCreateZecSend = { newZecSend ->
                 scope.launch {
@@ -219,7 +224,8 @@ internal fun WrapSend(
             onQrScannerOpen = goToQrScanner,
             goBalances = goBalances,
             hasCameraFeature = hasCameraFeature,
-            walletRestoringState = walletRestoringState
+            walletRestoringState = walletRestoringState,
+            walletSnapshot = walletSnapshot,
         )
     }
 }

@@ -5,6 +5,7 @@ import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.fixture.BalanceStateFixture
 import co.electriccoin.zcash.ui.screen.balances.model.ShieldState
 import co.electriccoin.zcash.ui.screen.balances.view.Balances
 import java.util.concurrent.atomic.AtomicInteger
@@ -30,6 +31,7 @@ class BalancesTestSetup(
     @Suppress("TestFunctionName")
     fun DefaultContent() {
         Balances(
+            balanceState = BalanceStateFixture.new(),
             onSettings = {
                 onSettingsCount.incrementAndGet()
             },
@@ -40,7 +42,7 @@ class BalancesTestSetup(
             onShielding = {},
             shieldState = ShieldState.Available,
             walletSnapshot = walletSnapshot,
-            walletRestoringState = WalletRestoringState.NONE
+            walletRestoringState = WalletRestoringState.NONE,
         )
     }
 

@@ -16,6 +16,7 @@ import cash.z.ecc.android.sdk.model.UnifiedSpendingKey
 import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.compose.BalanceState
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.viewmodel.CheckUpdateViewModel
@@ -58,7 +59,10 @@ internal fun WrapBalances(
         )
     }
 
+    val balanceState = walletViewModel.balanceState.collectAsStateWithLifecycle().value
+
     WrapBalances(
+        balanceState = balanceState,
         checkUpdateViewModel = checkUpdateViewModel,
         createTransactionsViewModel = createTransactionsViewModel,
         goSettings = goSettings,
@@ -76,6 +80,7 @@ const val DEFAULT_SHIELDING_THRESHOLD = 100000L
 @VisibleForTesting
 @Suppress("LongParameterList", "LongMethod")
 internal fun WrapBalances(
+    balanceState: BalanceState,
     checkUpdateViewModel: CheckUpdateViewModel,
     createTransactionsViewModel: CreateTransactionsViewModel,
     goSettings: () -> Unit,
@@ -123,6 +128,7 @@ internal fun WrapBalances(
         CircularScreenProgressIndicator()
     } else {
         Balances(
+            balanceState = balanceState,
             onSettings = goSettings,
             isFiatConversionEnabled = isFiatConversionEnabled,
             isUpdateAvailable = isUpdateAvailable,

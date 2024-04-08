@@ -15,6 +15,7 @@ data class ExtendedColors(
     val callout: Color,
     val onCallout: Color,
     val circularProgressBarSmall: Color,
+    val circularProgressBarSmallDark: Color,
     val circularProgressBarScreen: Color,
     val linearProgressBarTrack: Color,
     val linearProgressBarBackground: Color,

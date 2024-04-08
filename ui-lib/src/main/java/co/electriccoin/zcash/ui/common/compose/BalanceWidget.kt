@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.common.compose
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,20 +18,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
-import cash.z.ecc.android.sdk.model.WalletBalance
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.toZecString
 import cash.z.ecc.sdk.type.ZcashCurrency
-import co.electriccoin.zcash.ui.common.model.WalletSnapshot
-import co.electriccoin.zcash.ui.common.model.spendableBalance
-import co.electriccoin.zcash.ui.common.model.totalBalance
 import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.component.Body
+import co.electriccoin.zcash.ui.design.component.CircularSmallProgressIndicator
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.Reference
 import co.electriccoin.zcash.ui.design.component.StyledBalance
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
-import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 
 @Preview(device = Devices.PIXEL_2)
 @Composable
@@ -42,14 +39,10 @@ private fun BalanceWidgetPreview() {
             @Suppress("MagicNumber")
             (
                 BalanceWidget(
-                    walletSnapshot =
-                        WalletSnapshotFixture.new(
-                            saplingBalance =
-                                WalletBalance(
-                                    Zatoshi(1234567891234567),
-                                    Zatoshi(123456789),
-                                    Zatoshi(123)
-                                )
+                    balanceState =
+                        BalanceState.Available(
+                            totalBalance = Zatoshi(1234567891234567L),
+                            spendableBalance = Zatoshi(1234567891234567L)
                         ),
                     isReferenceToBalances = true,
                     onReferenceClick = {},
@@ -60,9 +53,35 @@ private fun BalanceWidgetPreview() {
     }
 }
 
+@Preview(device = Devices.PIXEL_2)
+@Composable
+private fun BalanceWidgetNotAvailableYetPreview() {
+    ZcashTheme(forceDarkMode = false) {
+        GradientSurface(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            @Suppress("MagicNumber")
+            BalanceWidget(
+                balanceState = BalanceState.Loading(Zatoshi(0L)),
+                isReferenceToBalances = true,
+                onReferenceClick = {},
+                modifier = Modifier
+            )
+        }
+    }
+}
+
+sealed class BalanceState(open val totalBalance: Zatoshi) {
+    data object None : BalanceState(Zatoshi(0L))
+
+    data class Loading(override val totalBalance: Zatoshi) : BalanceState(totalBalance)
+
+    data class Available(override val totalBalance: Zatoshi, val spendableBalance: Zatoshi) : BalanceState(totalBalance)
+}
+
 @Composable
 fun BalanceWidget(
-    walletSnapshot: WalletSnapshot,
+    balanceState: BalanceState,
     isReferenceToBalances: Boolean,
     onReferenceClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -74,10 +93,11 @@ fun BalanceWidget(
                 .then(modifier),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        BalanceWidgetBigLineOnly(text = walletSnapshot.totalBalance().toZecString())
+        BalanceWidgetBigLineOnly(text = balanceState.totalBalance.toZecString())
 
         Row(
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.animateContentSize()
         ) {
             if (isReferenceToBalances) {
                 Reference(
@@ -94,16 +114,23 @@ fun BalanceWidget(
 
             Spacer(modifier = Modifier.width(ZcashTheme.dimens.spacingTiny))
 
-            StyledBalance(
-                balanceString = walletSnapshot.spendableBalance().toZecString(),
-                textStyles =
-                    Pair(
-                        ZcashTheme.extendedTypography.balanceWidgetStyles.third,
-                        ZcashTheme.extendedTypography.balanceWidgetStyles.fourth
+            when (balanceState) {
+                BalanceState.None, is BalanceState.Loading -> {
+                    CircularSmallProgressIndicator(color = ZcashTheme.colors.circularProgressBarSmallDark)
+                }
+                is BalanceState.Available -> {
+                    StyledBalance(
+                        balanceString = balanceState.spendableBalance.toZecString(),
+                        textStyles =
+                            Pair(
+                                ZcashTheme.extendedTypography.balanceWidgetStyles.third,
+                                ZcashTheme.extendedTypography.balanceWidgetStyles.fourth
+                            )
                     )
-            )
+                }
+            }
 
-            Spacer(modifier = Modifier.width(ZcashTheme.dimens.spacingTiny))
+            Spacer(modifier = Modifier.width(ZcashTheme.dimens.spacingMin))
 
             Body(
                 text = ZcashCurrency.getLocalizedName(LocalContext.current),
