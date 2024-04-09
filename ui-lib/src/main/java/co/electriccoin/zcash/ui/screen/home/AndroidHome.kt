@@ -13,6 +13,7 @@ import cash.z.ecc.android.sdk.model.ZecSend
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.RestoreScreenBrightness
+import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.viewmodel.HomeViewModel
@@ -25,7 +26,6 @@ import co.electriccoin.zcash.ui.screen.home.view.Home
 import co.electriccoin.zcash.ui.screen.receive.WrapReceive
 import co.electriccoin.zcash.ui.screen.send.WrapSend
 import co.electriccoin.zcash.ui.screen.send.model.SendArguments
-import co.electriccoin.zcash.ui.screen.settings.viewmodel.SettingsViewModel
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -44,11 +44,16 @@ internal fun MainActivity.WrapHome(
 
     val walletViewModel by viewModels<WalletViewModel>()
 
-    val settingsViewModel by viewModels<SettingsViewModel>()
-
     val homeScreenIndex = homeViewModel.screenIndex.collectAsStateWithLifecycle().value
 
-    val isKeepScreenOnWhileSyncing = settingsViewModel.isKeepScreenOnWhileSyncing.collectAsStateWithLifecycle().value
+    val isKeepScreenOnWhileSyncing = homeViewModel.isKeepScreenOnWhileSyncing.collectAsStateWithLifecycle().value
+
+    // Detailed sync status info is used if set in configuration or if the app is built as debuggable
+    // (i.e. mainly in development)
+    val isDetailedSyncStatus =
+        homeViewModel.isDetailedSyncStatus.collectAsStateWithLifecycle().value.run {
+            this ?: false || VersionInfo.new(this@WrapHome).isDebuggable
+        }
 
     val walletSnapshot = walletViewModel.walletSnapshot.collectAsStateWithLifecycle().value
 
@@ -67,6 +72,7 @@ internal fun MainActivity.WrapHome(
         goSettings = goSettings,
         goMultiTrxSubmissionFailure = goMultiTrxSubmissionFailure,
         homeScreenIndex = homeScreenIndex,
+        isDetailedSyncStatus = isDetailedSyncStatus,
         isKeepScreenOnWhileSyncing = isKeepScreenOnWhileSyncing,
         onPageChange = {
             homeViewModel.screenIndex.value = it
@@ -86,6 +92,7 @@ internal fun WrapHome(
     goScan: () -> Unit,
     goSendConfirmation: (ZecSend) -> Unit,
     homeScreenIndex: HomeScreenIndex,
+    isDetailedSyncStatus: Boolean,
     isKeepScreenOnWhileSyncing: Boolean?,
     onPageChange: (HomeScreenIndex) -> Unit,
     sendArguments: SendArguments,
@@ -166,6 +173,7 @@ internal fun WrapHome(
                 screenContent = {
                     WrapBalances(
                         activity = activity,
+                        isDetailedSyncStatus = isDetailedSyncStatus,
                         goSettings = goSettings,
                         goMultiTrxSubmissionFailure = goMultiTrxSubmissionFailure
                     )

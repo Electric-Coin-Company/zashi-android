@@ -18,17 +18,12 @@
     <string name="balances_status_syncing_percentage" formatted="true"><xliff:g id="synced_percent" example="50.25">
         %1$s</xliff:g>%%</string> <!-- double %% for escaping -->
     <string name="balances_status_synced">Synced</string>
-    <string name="balances_status_sending_format" formatted="true">Sending <xliff:g id="sending_amount" example=".023">%1$s</xliff:g></string>
-    <string name="balances_status_receiving_format" formatted="true">Receiving <xliff:g id="receiving_amount" example=".023">%1$s</xliff:g> ZEC</string>
-    <string name="balances_status_shielding_format" formatted="true">Shielding <xliff:g id="shielding_amount" example=".023">%1$s</xliff:g> ZEC</string>
-    <string name="balances_status_update">Please Update via Play Store</string>
-    <string name="balances_status_error" formatted="true">Error: <xliff:g id="error_type" example="Lost connection">%1$s</xliff:g></string>
-    <string name="balances_status_error_connection">Disconnected</string>
-    <string name="balances_status_error_unknown">Unknown cause</string>
+    <string name="balances_status_update">Please update <xliff:g id="app_name" example="Zashi">%1$s</xliff:g> using Google Play</string>
+    <string name="balances_status_error_simple"><xliff:g id="app_name" example="Zashi">%1$s</xliff:g> encountered an error while syncing, attempting to resolve…</string>
+    <string name="balances_status_error_detailed" formatted="true">Error: <xliff:g id="error_type" example="Lost connection">%1$s</xliff:g></string>
+    <string name="balances_status_error_detailed_connection">Disconnected</string>
+    <string name="balances_status_error_detailed_unknown">Unknown cause</string>
     <string name="balances_status_stopped">Synchronizer stopped</string>
-    <string name="balances_status_updating_blockheight">Updating blockheight</string>
-    <string name="balances_status_fiat_currency_price_out_of_date" formatted="true"><xliff:g id="fiat_currency" example="USD">%1$s</xliff:g> price out-of-date</string>
-    <string name="balances_status_spendable" formatted="true">Fully spendable in <xliff:g id="spendable_time" example="2 minutes">%1$s</xliff:g></string>
 
     <string name="balances_shielding_dialog_error_title">Failed to shield funds</string>
     <string name="balances_shielding_dialog_error_text">Error: The attempt to shield the transparent funds failed. Try it again, please.</string>

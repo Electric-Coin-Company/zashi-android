@@ -35,6 +35,7 @@ class BalancesTestSetup(
             onSettings = {
                 onSettingsCount.incrementAndGet()
             },
+            isDetailedStatus = false,
             isFiatConversionEnabled = isShowFiatConversion,
             isUpdateAvailable = false,
             isShowingErrorDialog = false,
