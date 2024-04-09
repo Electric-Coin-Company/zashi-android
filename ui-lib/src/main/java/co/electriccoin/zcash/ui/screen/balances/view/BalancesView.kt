@@ -86,6 +86,7 @@ private fun ComposableBalancesPreview() {
         GradientSurface {
             Balances(
                 onSettings = {},
+                isDetailedStatus = false,
                 isFiatConversionEnabled = false,
                 isUpdateAvailable = false,
                 isShowingErrorDialog = false,
@@ -94,7 +95,7 @@ private fun ComposableBalancesPreview() {
                 shieldState = ShieldState.Available,
                 walletSnapshot = WalletSnapshotFixture.new(),
                 walletRestoringState = WalletRestoringState.NONE,
-                balanceState = BalanceStateFixture.new()
+                balanceState = BalanceStateFixture.new(),
             )
         }
     }
@@ -107,6 +108,7 @@ private fun ComposableBalancesShieldFailurePreview() {
         GradientSurface {
             Balances(
                 onSettings = {},
+                isDetailedStatus = false,
                 isFiatConversionEnabled = false,
                 isUpdateAvailable = false,
                 isShowingErrorDialog = true,
@@ -115,7 +117,7 @@ private fun ComposableBalancesShieldFailurePreview() {
                 shieldState = ShieldState.Available,
                 walletSnapshot = WalletSnapshotFixture.new(),
                 walletRestoringState = WalletRestoringState.NONE,
-                balanceState = BalanceStateFixture.new()
+                balanceState = BalanceStateFixture.new(),
             )
         }
     }
@@ -125,6 +127,7 @@ private fun ComposableBalancesShieldFailurePreview() {
 @Composable
 fun Balances(
     onSettings: () -> Unit,
+    isDetailedStatus: Boolean,
     isFiatConversionEnabled: Boolean,
     isUpdateAvailable: Boolean,
     isShowingErrorDialog: Boolean,
@@ -146,6 +149,7 @@ fun Balances(
         } else {
             BalancesMainContent(
                 balanceState = balanceState,
+                isDetailedStatus = isDetailedStatus,
                 isFiatConversionEnabled = isFiatConversionEnabled,
                 isUpdateAvailable = isUpdateAvailable,
                 onShielding = onShielding,
@@ -235,6 +239,7 @@ private fun BalancesTopAppBar(
 @Composable
 private fun BalancesMainContent(
     balanceState: BalanceState,
+    isDetailedStatus: Boolean,
     isFiatConversionEnabled: Boolean,
     isUpdateAvailable: Boolean,
     onShielding: () -> Unit,
@@ -287,6 +292,7 @@ private fun BalancesMainContent(
         SyncStatus(
             walletSnapshot = walletSnapshot,
             isUpdateAvailable = isUpdateAvailable,
+            isDetailedStatus = isDetailedStatus,
         )
     }
 }
@@ -465,9 +471,10 @@ fun BalancesOverview(
         if (isFiatConversionEnabled) {
             val walletDisplayValues =
                 WalletDisplayValues.getNextValues(
-                    LocalContext.current,
-                    walletSnapshot,
-                    false
+                    context = LocalContext.current,
+                    walletSnapshot = walletSnapshot,
+                    isUpdateAvailable = false,
+                    isDetailedStatus = false
                 )
 
             Column(Modifier.testTag(BalancesTag.FIAT_CONVERSION)) {
@@ -606,13 +613,15 @@ fun PendingTransactionsRow(walletSnapshot: WalletSnapshot) {
 @Composable
 fun SyncStatus(
     isUpdateAvailable: Boolean,
+    isDetailedStatus: Boolean,
     walletSnapshot: WalletSnapshot,
 ) {
     val walletDisplayValues =
         WalletDisplayValues.getNextValues(
-            LocalContext.current,
-            walletSnapshot,
-            isUpdateAvailable
+            context = LocalContext.current,
+            walletSnapshot = walletSnapshot,
+            isUpdateAvailable = isUpdateAvailable,
+            isDetailedStatus = isDetailedStatus
         )
 
     Column(
@@ -621,7 +630,8 @@ fun SyncStatus(
         if (walletDisplayValues.statusText.isNotEmpty()) {
             BodySmall(
                 text = walletDisplayValues.statusText,
-                modifier = Modifier.testTag(BalancesTag.STATUS)
+                modifier = Modifier.testTag(BalancesTag.STATUS),
+                textAlign = TextAlign.Center
             )
 
             Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))

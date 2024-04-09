@@ -26,12 +26,13 @@ object StandardPreferenceKeys {
             WalletRestoringState.RESTORING.toNumber()
         )
 
-    // Default to true until https://github.com/Electric-Coin-Company/zashi-android/issues/304
     val IS_ANALYTICS_ENABLED = BooleanPreferenceDefault(PreferenceKey("is_analytics_enabled"), true)
 
     val IS_BACKGROUND_SYNC_ENABLED = BooleanPreferenceDefault(PreferenceKey("is_background_sync_enabled"), true)
 
     val IS_KEEP_SCREEN_ON_DURING_SYNC = BooleanPreferenceDefault(PreferenceKey("is_keep_screen_on_during_sync"), true)
+
+    val IS_DETAILED_SYNC_STATUS = BooleanPreferenceDefault(PreferenceKey("is_detailed_sync_status"), false)
 
     /**
      * The fiat currency that the user prefers.

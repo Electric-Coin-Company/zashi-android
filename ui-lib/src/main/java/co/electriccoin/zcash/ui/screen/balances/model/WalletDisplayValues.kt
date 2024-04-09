@@ -26,7 +26,8 @@ data class WalletDisplayValues(
         internal fun getNextValues(
             context: Context,
             walletSnapshot: WalletSnapshot,
-            updateAvailable: Boolean = false
+            isUpdateAvailable: Boolean = false,
+            isDetailedStatus: Boolean = false,
         ): WalletDisplayValues {
             var progress = PercentDecimal.ZERO_PERCENT
             val zecAmountText = walletSnapshot.totalBalance().toZecString()
@@ -59,32 +60,47 @@ data class WalletDisplayValues(
                 }
                 Synchronizer.Status.SYNCED -> {
                     statusText =
-                        if (updateAvailable) {
-                            context.getString(R.string.balances_status_update)
+                        if (isUpdateAvailable) {
+                            context.getString(
+                                R.string.balances_status_update,
+                                context.getString(R.string.app_name)
+                            )
                         } else {
                             context.getString(R.string.balances_status_synced)
                         }
                 }
                 Synchronizer.Status.DISCONNECTED -> {
-                    statusText =
-                        context.getString(
-                            R.string.balances_status_error,
-                            context.getString(R.string.balances_status_error_connection)
-                        )
+                    if (isDetailedStatus) {
+                        statusText =
+                            context.getString(
+                                R.string.balances_status_error_detailed,
+                                context.getString(R.string.balances_status_error_detailed_connection)
+                            )
+                    } else {
+                        statusText = context.getString(R.string.balances_status_error_simple)
+                    }
                 }
                 Synchronizer.Status.STOPPED -> {
-                    statusText = context.getString(R.string.balances_status_stopped)
+                    if (isDetailedStatus) {
+                        statusText = context.getString(R.string.balances_status_stopped)
+                    } else {
+                        statusText = context.getString(R.string.balances_status_syncing)
+                    }
                 }
             }
 
             // More detailed error message
             walletSnapshot.synchronizerError?.let {
-                statusText =
-                    context.getString(
-                        R.string.balances_status_error,
-                        walletSnapshot.synchronizerError.getCauseMessage()
-                            ?: context.getString(R.string.balances_status_error_unknown)
-                    )
+                if (isDetailedStatus) {
+                    statusText =
+                        context.getString(
+                            R.string.balances_status_error_detailed,
+                            walletSnapshot.synchronizerError.getCauseMessage()
+                                ?: context.getString(R.string.balances_status_error_detailed_unknown)
+                        )
+                } else {
+                    statusText = context.getString(R.string.balances_status_error_simple)
+                }
             }
 
             return WalletDisplayValues(

@@ -37,6 +37,7 @@ import org.jetbrains.annotations.VisibleForTesting
 @Composable
 internal fun WrapBalances(
     activity: ComponentActivity,
+    isDetailedSyncStatus: Boolean,
     goSettings: () -> Unit,
     goMultiTrxSubmissionFailure: () -> Unit,
 ) {
@@ -63,10 +64,11 @@ internal fun WrapBalances(
 
     WrapBalances(
         balanceState = balanceState,
-        checkUpdateViewModel = checkUpdateViewModel,
         createTransactionsViewModel = createTransactionsViewModel,
+        checkUpdateViewModel = checkUpdateViewModel,
         goSettings = goSettings,
         goMultiTrxSubmissionFailure = goMultiTrxSubmissionFailure,
+        isDetailedSyncStatus = isDetailedSyncStatus,
         spendingKey = spendingKey,
         synchronizer = synchronizer,
         walletSnapshot = walletSnapshot,
@@ -85,6 +87,7 @@ internal fun WrapBalances(
     createTransactionsViewModel: CreateTransactionsViewModel,
     goSettings: () -> Unit,
     goMultiTrxSubmissionFailure: () -> Unit,
+    isDetailedSyncStatus: Boolean,
     spendingKey: UnifiedSpendingKey?,
     synchronizer: Synchronizer?,
     walletSnapshot: WalletSnapshot?,
@@ -129,10 +132,11 @@ internal fun WrapBalances(
     } else {
         Balances(
             balanceState = balanceState,
-            onSettings = goSettings,
             isFiatConversionEnabled = isFiatConversionEnabled,
             isUpdateAvailable = isUpdateAvailable,
             isShowingErrorDialog = isShowingErrorDialog,
+            isDetailedStatus = isDetailedSyncStatus,
+            onSettings = goSettings,
             setShowErrorDialog = setShowErrorDialog,
             onShielding = {
                 scope.launch {

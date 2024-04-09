@@ -319,10 +319,6 @@ private fun RestoreSeedBirthdayTopAppBar(
     )
 }
 
-// TODO [#672]: Implement custom seed phrase pasting for wallet import
-// TODO [#672]: https://github.com/Electric-Coin-Company/zashi-android/issues/672
-// TODO [#1060]: https://github.com/Electric-Coin-Company/zashi-android/issues/1060
-
 @OptIn(ExperimentalComposeUiApi::class)
 @Suppress("UNUSED_PARAMETER", "LongParameterList", "LongMethod")
 @Composable

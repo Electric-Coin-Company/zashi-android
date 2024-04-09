@@ -31,6 +31,7 @@ directly impact users rather than highlighting other key architectural updates.*
 - The error dialog contains an error description now. It's useful for tracking down the failure cause.
 - A small circular progress indicator is displayed when the app runs block synchronization, and the available balance 
   is zero instead of reflecting a result value.
+- Block synchronization statuses have been simplified to Syncing, Synced, and Error states only
 
 ### Fixed
 - Button sizing has been updated to align with the design guidelines and preserve stretching if necessary
