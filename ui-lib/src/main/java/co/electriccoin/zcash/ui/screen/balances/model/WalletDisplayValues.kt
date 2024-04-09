@@ -77,7 +77,11 @@ data class WalletDisplayValues(
                                 context.getString(R.string.balances_status_error_detailed_connection)
                             )
                     } else {
-                        statusText = context.getString(R.string.balances_status_error_simple)
+                        statusText =
+                            context.getString(
+                                R.string.balances_status_error_simple,
+                                context.getString(R.string.app_name)
+                            )
                     }
                 }
                 Synchronizer.Status.STOPPED -> {
@@ -99,7 +103,11 @@ data class WalletDisplayValues(
                                 ?: context.getString(R.string.balances_status_error_detailed_unknown)
                         )
                 } else {
-                    statusText = context.getString(R.string.balances_status_error_simple)
+                    statusText =
+                        context.getString(
+                            R.string.balances_status_error_simple,
+                            context.getString(R.string.app_name)
+                        )
                 }
             }
 
