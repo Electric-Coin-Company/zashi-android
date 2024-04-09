@@ -9,7 +9,7 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
-## [0.2.0 (593)] - 2024-04-09
+## [0.2.0 (594)] - 2024-04-09
 
 ### Added
 - Advanced Settings screen that provides more technical options like Export private data, Recovery phrase, or 
