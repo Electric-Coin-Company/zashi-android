@@ -48,9 +48,10 @@ class CreateTransactionsViewModel(application: Application) : AndroidViewModel(a
                     // transaction failure screen presented
                     SubmitResult.MultipleTrxFailure
                 }
+            } else {
+                // All transaction submissions were successful
+                SubmitResult.Success
             }
-            // All transaction submissions were successful
-            SubmitResult.Success
         }.onSuccess {
             Twig.debug { "Transactions submitted successfully" }
         }.onFailure {
