@@ -69,6 +69,7 @@ import co.electriccoin.zcash.ui.design.component.CircularSmallProgressIndicator
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.Reference
+import co.electriccoin.zcash.ui.design.component.Small
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.StyledBalance
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
@@ -161,6 +162,7 @@ fun Balances(
                         start = ZcashTheme.dimens.screenHorizontalSpacingRegular,
                         end = ZcashTheme.dimens.screenHorizontalSpacingRegular
                     ),
+                walletRestoringState = walletRestoringState
             )
 
             // Show shielding error popup
@@ -245,6 +247,7 @@ private fun BalancesMainContent(
     walletSnapshot: WalletSnapshot,
     shieldState: ShieldState,
     modifier: Modifier = Modifier,
+    walletRestoringState: WalletRestoringState,
 ) {
     Column(
         modifier =
@@ -284,9 +287,24 @@ private fun BalancesMainContent(
             walletSnapshot = walletSnapshot,
         )
 
+        Spacer(modifier = Modifier.weight(1f, true))
+
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
-        Spacer(modifier = Modifier.weight(1f, true))
+        if (walletRestoringState == WalletRestoringState.RESTORING) {
+            Small(
+                text = stringResource(id = R.string.balances_status_restoring_text),
+                textFontWeight = FontWeight.Medium,
+                color = ZcashTheme.colors.textFieldWarning,
+                textAlign = TextAlign.Center,
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = ZcashTheme.dimens.spacingDefault)
+            )
+
+            Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
+        }
 
         SynchronizationStatus(
             walletSnapshot = walletSnapshot,
