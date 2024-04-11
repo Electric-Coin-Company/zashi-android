@@ -9,8 +9,6 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
-## [0.2.0 (594)] - 2024-04-09
-
 ### Added
 - Advanced Settings screen that provides more technical options like Export private data, Recovery phrase, or 
   Choose server has been added
@@ -21,8 +19,8 @@ directly impact users rather than highlighting other key architectural updates.*
 - Transitions between screens are now animated with a simple slide animation
 - Proposal API from the Zcash SDK has been integrated together with handling error states for multi-transaction 
   submission
-- New Restoring Your Wallet label has been added to all post-onboarding screens to notify users about the current 
-  state of the wallet-restoring process.   
+- New Restoring Your Wallet label and Synchronization widget have been added to all post-onboarding screens to notify 
+  users about the current state of the wallet-restoring process
 
 ### Changed
 - The Transaction History UI has been incorporated into the Account screen and completely reworked according to the 

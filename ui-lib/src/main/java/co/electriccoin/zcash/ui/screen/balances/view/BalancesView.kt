@@ -246,8 +246,8 @@ private fun BalancesMainContent(
     onShielding: () -> Unit,
     walletSnapshot: WalletSnapshot,
     shieldState: ShieldState,
-    modifier: Modifier = Modifier,
     walletRestoringState: WalletRestoringState,
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier =
