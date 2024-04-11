@@ -50,10 +50,10 @@ import androidx.compose.ui.unit.dp
 import cash.z.ecc.android.sdk.model.FiatCurrencyConversionRateState
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.toZecString
-import cash.z.ecc.sdk.extension.toPercentageWithDecimal
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.BalanceState
 import co.electriccoin.zcash.ui.common.compose.BalanceWidget
+import co.electriccoin.zcash.ui.common.compose.SynchronizationStatus
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.model.changePendingBalance
@@ -67,7 +67,6 @@ import co.electriccoin.zcash.ui.design.component.BodyWithFiatCurrencySymbol
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.design.component.CircularSmallProgressIndicator
 import co.electriccoin.zcash.ui.design.component.GradientSurface
-import co.electriccoin.zcash.ui.design.component.LinearProgressIndicator
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.Reference
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
@@ -289,10 +288,11 @@ private fun BalancesMainContent(
 
         Spacer(modifier = Modifier.weight(1f, true))
 
-        SyncStatus(
+        SynchronizationStatus(
             walletSnapshot = walletSnapshot,
             isUpdateAvailable = isUpdateAvailable,
             isDetailedStatus = isDetailedStatus,
+            testTag = BalancesTag.STATUS
         )
     }
 }
@@ -607,53 +607,5 @@ fun PendingTransactionsRow(walletSnapshot: WalletSnapshot) {
                 }
             }
         }
-    }
-}
-
-@Composable
-fun SyncStatus(
-    isUpdateAvailable: Boolean,
-    isDetailedStatus: Boolean,
-    walletSnapshot: WalletSnapshot,
-) {
-    val walletDisplayValues =
-        WalletDisplayValues.getNextValues(
-            context = LocalContext.current,
-            walletSnapshot = walletSnapshot,
-            isUpdateAvailable = isUpdateAvailable,
-            isDetailedStatus = isDetailedStatus
-        )
-
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        if (walletDisplayValues.statusText.isNotEmpty()) {
-            BodySmall(
-                text = walletDisplayValues.statusText,
-                modifier = Modifier.testTag(BalancesTag.STATUS),
-                textAlign = TextAlign.Center
-            )
-
-            Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
-        }
-
-        BodySmall(
-            text =
-                stringResource(
-                    id = R.string.balances_status_syncing_percentage,
-                    walletSnapshot.progress.toPercentageWithDecimal()
-                ),
-            textFontWeight = FontWeight.Black
-        )
-
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
-
-        LinearProgressIndicator(
-            progress = walletSnapshot.progress.decimal,
-            modifier =
-                Modifier.padding(
-                    horizontal = ZcashTheme.dimens.spacingUpLarge
-                )
-        )
     }
 }

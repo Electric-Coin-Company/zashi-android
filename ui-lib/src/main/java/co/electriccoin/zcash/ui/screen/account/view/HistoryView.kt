@@ -45,18 +45,22 @@ import cash.z.ecc.android.sdk.model.TransactionState
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.toZecString
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.compose.SynchronizationStatus
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
+import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.design.component.CircularMidProgressIndicator
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.StyledBalance
 import co.electriccoin.zcash.ui.design.component.TextWithIcon
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 import co.electriccoin.zcash.ui.screen.account.HistoryTag
 import co.electriccoin.zcash.ui.screen.account.fixture.TransactionUiFixture
 import co.electriccoin.zcash.ui.screen.account.fixture.TransactionsFixture
 import co.electriccoin.zcash.ui.screen.account.model.TransactionUi
 import co.electriccoin.zcash.ui.screen.account.model.TransactionUiState
 import co.electriccoin.zcash.ui.screen.account.model.TrxItemState
+import co.electriccoin.zcash.ui.screen.balances.BalancesTag
 import co.electriccoin.zcash.ui.screen.send.view.DEFAULT_LESS_THAN_FEE
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toPersistentList
@@ -70,9 +74,10 @@ private fun ComposablePreview() {
     ZcashTheme(forceDarkMode = false) {
         GradientSurface {
             HistoryContainer(
-                transactionState = TransactionUiState.Loading,
                 onTransactionItemAction = {},
-                walletRestoringState = WalletRestoringState.SYNCING
+                transactionState = TransactionUiState.Loading,
+                walletRestoringState = WalletRestoringState.SYNCING,
+                walletSnapshot = WalletSnapshotFixture.new()
             )
         }
     }
@@ -86,7 +91,8 @@ private fun ComposableHistoryListPreview() {
             HistoryContainer(
                 transactionState = TransactionUiState.Done(transactions = TransactionsFixture.new()),
                 onTransactionItemAction = {},
-                walletRestoringState = WalletRestoringState.NONE
+                walletRestoringState = WalletRestoringState.RESTORING,
+                walletSnapshot = WalletSnapshotFixture.new()
             )
         }
     }
@@ -103,12 +109,13 @@ private val dateFormat: DateFormat by lazy {
 
 @Composable
 internal fun HistoryContainer(
-    transactionState: TransactionUiState,
     onTransactionItemAction: (TrxItemAction) -> Unit,
+    transactionState: TransactionUiState,
     walletRestoringState: WalletRestoringState,
+    walletSnapshot: WalletSnapshot,
     modifier: Modifier = Modifier,
 ) {
-    Box(
+    Column(
         modifier =
             modifier
                 .then(
@@ -117,6 +124,24 @@ internal fun HistoryContainer(
                         .background(ZcashTheme.colors.historyBackgroundColor)
                 )
     ) {
+        if (walletRestoringState == WalletRestoringState.RESTORING) {
+            Column(
+                modifier = Modifier.background(color = ZcashTheme.colors.historySyncingColor)
+            ) {
+                Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
+
+                // Do not show the app update information and the detailed sync status in the restoring status
+                // on Account screen
+                SynchronizationStatus(
+                    isDetailedStatus = false,
+                    isUpdateAvailable = false,
+                    testTag = BalancesTag.STATUS,
+                    walletSnapshot = walletSnapshot,
+                )
+
+                Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
+            }
+        }
         when (transactionState) {
             TransactionUiState.Loading -> {
                 LoadingTransactionHistory()

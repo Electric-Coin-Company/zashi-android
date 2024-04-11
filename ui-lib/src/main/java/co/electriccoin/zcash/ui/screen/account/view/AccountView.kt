@@ -20,11 +20,13 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.BalanceState
 import co.electriccoin.zcash.ui.common.compose.BalanceWidget
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
+import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.test.CommonTag
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.BalanceStateFixture
+import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 import co.electriccoin.zcash.ui.screen.account.AccountTag
 import co.electriccoin.zcash.ui.screen.account.fixture.TransactionsFixture
 import co.electriccoin.zcash.ui.screen.account.model.TransactionUiState
@@ -40,7 +42,8 @@ private fun HistoryLoadingComposablePreview() {
                 onTransactionItemAction = {},
                 transactionsUiState = TransactionUiState.Loading,
                 walletRestoringState = WalletRestoringState.SYNCING,
-                balanceState = BalanceStateFixture.new()
+                balanceState = BalanceStateFixture.new(),
+                walletSnapshot = WalletSnapshotFixture.new(),
             )
         }
     }
@@ -55,10 +58,11 @@ private fun HistoryListComposablePreview() {
             Account(
                 goBalances = {},
                 goSettings = {},
+                balanceState = BalanceState.Available(Zatoshi(123_000_000L), Zatoshi(123_000_000L)),
                 onTransactionItemAction = {},
                 transactionsUiState = TransactionUiState.Done(transactions = TransactionsFixture.new()),
                 walletRestoringState = WalletRestoringState.NONE,
-                balanceState = BalanceState.Available(Zatoshi(123_000_000L), Zatoshi(123_000_000L))
+                walletSnapshot = WalletSnapshotFixture.new(),
             )
         }
     }
@@ -73,6 +77,7 @@ internal fun Account(
     onTransactionItemAction: (TrxItemAction) -> Unit,
     transactionsUiState: TransactionUiState,
     walletRestoringState: WalletRestoringState,
+    walletSnapshot: WalletSnapshot,
 ) {
     Scaffold(topBar = {
         AccountTopAppBar(
@@ -83,9 +88,10 @@ internal fun Account(
         AccountMainContent(
             balanceState = balanceState,
             goBalances = goBalances,
+            onTransactionItemAction = onTransactionItemAction,
             transactionState = transactionsUiState,
             walletRestoringState = walletRestoringState,
-            onTransactionItemAction = onTransactionItemAction,
+            walletSnapshot = walletSnapshot,
             modifier =
                 Modifier.padding(
                     top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
@@ -131,6 +137,7 @@ private fun AccountMainContent(
     onTransactionItemAction: (TrxItemAction) -> Unit,
     transactionState: TransactionUiState,
     walletRestoringState: WalletRestoringState,
+    walletSnapshot: WalletSnapshot,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -150,9 +157,10 @@ private fun AccountMainContent(
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingUpLarge))
 
         HistoryContainer(
+            onTransactionItemAction = onTransactionItemAction,
             transactionState = transactionState,
             walletRestoringState = walletRestoringState,
-            onTransactionItemAction = onTransactionItemAction,
+            walletSnapshot = walletSnapshot,
         )
     }
 }

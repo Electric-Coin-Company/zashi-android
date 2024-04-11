@@ -72,6 +72,7 @@ internal object Dark {
 
     val historyBackgroundColor = Color(0xFFF6F6F6)
     val historyRedColor = Color(0xFFF40202)
+    val historySyncingColor = panelBackgroundColor
 }
 
 internal object Light {
@@ -131,6 +132,7 @@ internal object Light {
 
     val historyBackgroundColor = Color(0xFFF6F6F6)
     val historyRedColor = Color(0xFFF40202)
+    val historySyncingColor = Dark.panelBackgroundColor
 }
 
 internal val DarkColorPalette =
@@ -199,6 +201,7 @@ internal val DarkExtendedColorPalette =
         radioButtonTextColor = Dark.radioButtonTextColor,
         historyBackgroundColor = Dark.historyBackgroundColor,
         historyRedColor = Dark.historyRedColor,
+        historySyncingColor = Dark.historySyncingColor,
     )
 
 internal val LightExtendedColorPalette =
@@ -243,6 +246,7 @@ internal val LightExtendedColorPalette =
         radioButtonTextColor = Light.radioButtonTextColor,
         historyBackgroundColor = Light.historyBackgroundColor,
         historyRedColor = Light.historyRedColor,
+        historySyncingColor = Light.historySyncingColor,
     )
 
 @Suppress("CompositionLocalAllowlist")
@@ -289,5 +293,6 @@ internal val LocalExtendedColors =
             radioButtonTextColor = Color.Unspecified,
             historyBackgroundColor = Color.Unspecified,
             historyRedColor = Color.Unspecified,
+            historySyncingColor = Color.Unspecified,
         )
     }

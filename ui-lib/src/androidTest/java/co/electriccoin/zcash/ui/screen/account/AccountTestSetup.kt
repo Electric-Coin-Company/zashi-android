@@ -6,6 +6,7 @@ import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.BalanceStateFixture
+import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 import co.electriccoin.zcash.ui.screen.account.history.fixture.TransactionHistoryUiStateFixture
 import co.electriccoin.zcash.ui.screen.account.model.TransactionUiState
 import co.electriccoin.zcash.ui.screen.account.view.Account
@@ -70,6 +71,7 @@ class AccountTestSetup(
                 onItemClickCount.incrementAndGet()
             },
             walletRestoringState = WalletRestoringState.NONE,
+            walletSnapshot = WalletSnapshotFixture.new()
         )
     }
 

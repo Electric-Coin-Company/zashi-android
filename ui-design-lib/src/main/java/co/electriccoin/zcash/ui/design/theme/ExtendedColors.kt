@@ -48,6 +48,7 @@ data class ExtendedColors(
     val radioButtonTextColor: Color,
     val historyBackgroundColor: Color,
     val historyRedColor: Color,
+    val historySyncingColor: Color,
 ) {
     @Composable
     fun surfaceGradient() =

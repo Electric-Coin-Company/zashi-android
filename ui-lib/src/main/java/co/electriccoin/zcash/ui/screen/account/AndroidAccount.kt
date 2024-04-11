@@ -14,6 +14,7 @@ import co.electriccoin.zcash.spackle.ClipboardManagerUtil
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.BalanceState
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
+import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.screen.account.model.TransactionUiState
@@ -48,6 +49,8 @@ internal fun WrapAccount(
 
     val balanceState = walletViewModel.balanceState.collectAsStateWithLifecycle().value
 
+    val walletSnapshot = walletViewModel.walletSnapshot.collectAsStateWithLifecycle().value
+
     WrapAccount(
         balanceState = balanceState,
         context = activity.applicationContext,
@@ -57,7 +60,8 @@ internal fun WrapAccount(
         synchronizer = synchronizer,
         transactionHistoryViewModel = transactionHistoryViewModel,
         transactionsUiState = transactionsUiState,
-        walletRestoringState = walletRestoringState
+        walletRestoringState = walletRestoringState,
+        walletSnapshot = walletSnapshot
     )
 
     // For benchmarking purposes
@@ -77,8 +81,9 @@ internal fun WrapAccount(
     synchronizer: Synchronizer?,
     transactionHistoryViewModel: TransactionHistoryViewModel,
     walletRestoringState: WalletRestoringState,
+    walletSnapshot: WalletSnapshot?
 ) {
-    if (null == synchronizer) {
+    if (null == synchronizer || null == walletSnapshot) {
         // TODO [#1146]: Consider moving CircularScreenProgressIndicator from Android layer to View layer
         // TODO [#1146]: Improve this by allowing screen composition and updating it after the data is available
         // TODO [#1146]: https://github.com/Electric-Coin-Company/zashi-android/issues/1146
@@ -127,7 +132,8 @@ internal fun WrapAccount(
             },
             goBalances = goBalances,
             goSettings = goSettings,
-            walletRestoringState = walletRestoringState
+            walletRestoringState = walletRestoringState,
+            walletSnapshot = walletSnapshot
         )
     }
 }
