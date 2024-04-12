@@ -23,7 +23,8 @@
     <string name="balances_status_error_detailed" formatted="true">Error: <xliff:g id="error_type" example="Lost connection">%1$s</xliff:g></string>
     <string name="balances_status_error_detailed_connection">Disconnected</string>
     <string name="balances_status_error_detailed_unknown">Unknown cause</string>
-    <string name="balances_status_stopped">Synchronizer stopped</string>
+    <string name="balances_status_detailed_stopped">Synchronizer stopped</string>
+    <string name="balances_status_restoring_text">The restore process can take several hours on lower-powered devices, and even on powerful devices is likely to take more than an hour.</string>
 
     <string name="balances_shielding_dialog_error_title">Failed to shield funds</string>
     <string name="balances_shielding_dialog_error_text">Error: The attempt to shield the transparent funds failed. Try it again, please.</string>

@@ -3,6 +3,7 @@ package co.electriccoin.zcash.ui.screen.account.history
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 import co.electriccoin.zcash.ui.screen.account.model.TransactionUiState
 import co.electriccoin.zcash.ui.screen.account.view.HistoryContainer
 import java.util.concurrent.atomic.AtomicInteger
@@ -32,7 +33,8 @@ class HistoryTestSetup(
                     onTransactionItemAction = {
                         onItemIdClickCount.incrementAndGet()
                     },
-                    walletRestoringState = WalletRestoringState.NONE
+                    walletRestoringState = WalletRestoringState.NONE,
+                    walletSnapshot = WalletSnapshotFixture.new()
                 )
             }
         }

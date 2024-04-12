@@ -86,7 +86,7 @@ data class WalletDisplayValues(
                 }
                 Synchronizer.Status.STOPPED -> {
                     if (isDetailedStatus) {
-                        statusText = context.getString(R.string.balances_status_stopped)
+                        statusText = context.getString(R.string.balances_status_detailed_stopped)
                     } else {
                         statusText = context.getString(R.string.balances_status_syncing)
                     }

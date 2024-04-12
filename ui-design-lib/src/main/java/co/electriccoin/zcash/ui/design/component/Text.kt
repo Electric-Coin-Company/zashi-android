@@ -192,6 +192,7 @@ fun TitleLarge(
 fun Small(
     text: String,
     modifier: Modifier = Modifier,
+    textFontWeight: FontWeight = FontWeight.Normal,
     maxLines: Int = Int.MAX_VALUE,
     overflow: TextOverflow = TextOverflow.Clip,
     textAlign: TextAlign = TextAlign.Start,
@@ -200,6 +201,7 @@ fun Small(
     Text(
         text = text,
         color = color,
+        fontWeight = textFontWeight,
         maxLines = maxLines,
         overflow = overflow,
         textAlign = textAlign,
