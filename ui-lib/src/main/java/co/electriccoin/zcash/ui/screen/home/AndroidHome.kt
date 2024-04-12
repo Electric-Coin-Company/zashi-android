@@ -6,7 +6,12 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cash.z.ecc.android.sdk.model.ZecSend
@@ -28,6 +33,7 @@ import co.electriccoin.zcash.ui.screen.send.WrapSend
 import co.electriccoin.zcash.ui.screen.send.model.SendArguments
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 
 @Composable
@@ -48,6 +54,8 @@ internal fun MainActivity.WrapHome(
 
     val isKeepScreenOnWhileSyncing = homeViewModel.isKeepScreenOnWhileSyncing.collectAsStateWithLifecycle().value
 
+    val isRestoringInitialWarningSeen = homeViewModel.isRestoringInitialWarningSeen.collectAsStateWithLifecycle().value
+
     // Detailed sync status info is used if set in configuration or if the app is built as debuggable
     // (i.e. mainly in development)
     val isDetailedSyncStatus =
@@ -64,6 +72,24 @@ internal fun MainActivity.WrapHome(
         walletViewModel.persistWalletRestoringState(WalletRestoringState.SYNCING)
     }
 
+    var isShowingRestoreInitDialog by rememberSaveable { mutableStateOf(false) }
+    val setShowingRestoreInitDialog = {
+        homeViewModel.setRestoringInitialWarningSeen()
+        isShowingRestoreInitDialog = false
+    }
+
+    // Show initial restoring warn dialog
+    isRestoringInitialWarningSeen?.let { restoringWarningSeen ->
+        if (!restoringWarningSeen && walletRestoringState == WalletRestoringState.RESTORING) {
+            LaunchedEffect(key1 = isShowingRestoreInitDialog) {
+                // Adding an extra little delay before displaying the dialog for a better UX
+                @Suppress("MagicNumber")
+                delay(1500)
+                isShowingRestoreInitDialog = true
+            }
+        }
+    }
+
     WrapHome(
         this,
         goBack = goBack,
@@ -74,10 +100,12 @@ internal fun MainActivity.WrapHome(
         homeScreenIndex = homeScreenIndex,
         isDetailedSyncStatus = isDetailedSyncStatus,
         isKeepScreenOnWhileSyncing = isKeepScreenOnWhileSyncing,
+        isShowingRestoreInitDialog = isShowingRestoreInitDialog,
         onPageChange = {
             homeViewModel.screenIndex.value = it
         },
         sendArguments = sendArguments,
+        setShowingRestoreInitDialog = setShowingRestoreInitDialog,
         walletSnapshot = walletSnapshot
     )
 }
@@ -94,8 +122,10 @@ internal fun WrapHome(
     homeScreenIndex: HomeScreenIndex,
     isDetailedSyncStatus: Boolean,
     isKeepScreenOnWhileSyncing: Boolean?,
+    isShowingRestoreInitDialog: Boolean,
     onPageChange: (HomeScreenIndex) -> Unit,
     sendArguments: SendArguments,
+    setShowingRestoreInitDialog: () -> Unit,
     walletSnapshot: WalletSnapshot?,
 ) {
     // Flow for propagating the new page index to the pager in the view layer
@@ -185,7 +215,9 @@ internal fun WrapHome(
         subScreens = tabs,
         forcePage = forceIndex,
         isKeepScreenOnWhileSyncing = isKeepScreenOnWhileSyncing,
+        isShowingRestoreInitDialog = isShowingRestoreInitDialog,
         onPageChange = onPageChange,
+        setShowingRestoreInitDialog = setShowingRestoreInitDialog,
         walletSnapshot = walletSnapshot
     )
 }

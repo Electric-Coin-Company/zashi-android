@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 class HomeViewModel(application: Application) : AndroidViewModel(application) {
     /**
@@ -42,6 +43,16 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     val isDetailedSyncStatus: StateFlow<Boolean?> =
         booleanStateFlow(StandardPreferenceKeys.IS_DETAILED_SYNC_STATUS)
 
+    /**
+     * A flow of whether the app presented the user with an initial restoring dialog
+     */
+    val isRestoringInitialWarningSeen: StateFlow<Boolean?> =
+        booleanStateFlow(StandardPreferenceKeys.IS_RESTORING_INITIAL_WARNING_SEEN)
+
+    fun setRestoringInitialWarningSeen() {
+        setBooleanPreference(StandardPreferenceKeys.IS_RESTORING_INITIAL_WARNING_SEEN, true)
+    }
+
     private fun booleanStateFlow(default: BooleanPreferenceDefault): StateFlow<Boolean?> =
         flow<Boolean?> {
             val preferenceProvider = StandardPreferenceSingleton.getInstance(getApplication())
@@ -59,4 +70,14 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
                 SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT.inWholeMilliseconds),
                 null
             )
+
+    private fun setBooleanPreference(
+        default: BooleanPreferenceDefault,
+        newState: Boolean
+    ) {
+        viewModelScope.launch {
+            val prefs = StandardPreferenceSingleton.getInstance(getApplication())
+            default.putValue(prefs, newState)
+        }
+    }
 }
