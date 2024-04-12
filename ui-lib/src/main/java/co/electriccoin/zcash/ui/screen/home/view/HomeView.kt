@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PageSize
 import androidx.compose.foundation.pager.PagerDefaults
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DividerDefaults
@@ -20,14 +21,17 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import cash.z.ecc.android.sdk.Synchronizer
 import co.electriccoin.zcash.spackle.Twig
+import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.DisableScreenTimeout
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
+import co.electriccoin.zcash.ui.design.component.AppAlertDialog
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.NavigationTabText
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
@@ -46,9 +50,11 @@ private fun ComposablePreview() {
     ZcashTheme(forceDarkMode = false) {
         GradientSurface {
             Home(
-                isKeepScreenOnWhileSyncing = false,
                 forcePage = null,
+                isKeepScreenOnWhileSyncing = false,
+                isShowingRestoreInitDialog = false,
                 onPageChange = {},
+                setShowingRestoreInitDialog = {},
                 subScreens = persistentListOf(),
                 walletSnapshot = WalletSnapshotFixture.new(),
             )
@@ -57,12 +63,14 @@ private fun ComposablePreview() {
 }
 
 @OptIn(ExperimentalFoundationApi::class)
-@Suppress("LongMethod")
+@Suppress("LongParameterList")
 @Composable
 fun Home(
-    isKeepScreenOnWhileSyncing: Boolean?,
     forcePage: ForcePage?,
+    isKeepScreenOnWhileSyncing: Boolean?,
+    isShowingRestoreInitDialog: Boolean,
     onPageChange: (HomeScreenIndex) -> Unit,
+    setShowingRestoreInitDialog: () -> Unit,
     subScreens: ImmutableList<TabItem>,
     walletSnapshot: WalletSnapshot?,
 ) {
@@ -91,6 +99,29 @@ fun Home(
         }
     }
 
+    HomeContent(
+        pagerState = pagerState,
+        subScreens = subScreens,
+    )
+
+    if (isShowingRestoreInitDialog) {
+        HomeRestoringInitialDialog(setShowingRestoreInitDialog)
+    }
+
+    if (isKeepScreenOnWhileSyncing == true &&
+        walletSnapshot?.status == Synchronizer.Status.SYNCING
+    ) {
+        DisableScreenTimeout()
+    }
+}
+
+@Composable
+@Suppress("LongMethod")
+@OptIn(ExperimentalFoundationApi::class)
+fun HomeContent(
+    pagerState: PagerState,
+    subScreens: ImmutableList<TabItem>
+) {
     val coroutineScope = rememberCoroutineScope()
 
     ConstraintLayout {
@@ -177,10 +208,14 @@ fun Home(
             }
         }
     }
+}
 
-    if (isKeepScreenOnWhileSyncing == true &&
-        walletSnapshot?.status == Synchronizer.Status.SYNCING
-    ) {
-        DisableScreenTimeout()
-    }
+@Composable
+fun HomeRestoringInitialDialog(setShowingRestoreInitDialog: () -> Unit) {
+    AppAlertDialog(
+        title = stringResource(id = R.string.restoring_initial_dialog_title),
+        text = stringResource(id = R.string.restoring_initial_dialog_description),
+        confirmButtonText = stringResource(id = R.string.restoring_initial_dialog_positive_button),
+        onConfirmButtonClick = setShowingRestoreInitDialog
+    )
 }

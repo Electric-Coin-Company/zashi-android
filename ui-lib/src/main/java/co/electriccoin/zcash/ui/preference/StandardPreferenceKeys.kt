@@ -34,6 +34,9 @@ object StandardPreferenceKeys {
 
     val IS_DETAILED_SYNC_STATUS = BooleanPreferenceDefault(PreferenceKey("is_detailed_sync_status"), false)
 
+    val IS_RESTORING_INITIAL_WARNING_SEEN =
+        BooleanPreferenceDefault(PreferenceKey("IS_RESTORING_INITIAL_WARNING_SEEN"), false)
+
     /**
      * The fiat currency that the user prefers.
      */
