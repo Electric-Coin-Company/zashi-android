@@ -250,7 +250,7 @@ dependencyResolutionManagement {
             library("androidx-test-orchestrator", "androidx.test:orchestrator:$androidxTestOrchestratorVersion")
             library("androidx-test-runner", "androidx.test:runner:$androidxTestRunnerVersion")
             library("androidx-test-services","androidx.test.services:test-services:$androidxTestServices")
-            library("androidx-uiAutomator", "androidx.test.uiautomator:uiautomator-v18:$androidxUiAutomatorVersion")
+            library("androidx-uiAutomator", "androidx.test.uiautomator:uiautomator:$androidxUiAutomatorVersion")
             library("kotlinx-coroutines-test", "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinxCoroutinesVersion")
             // Bundles
             bundle(
