@@ -125,6 +125,13 @@ jobs:
           echo "home=${HOME}" >> "$GITHUB_ENV"
       - name: Export Signing Key
         env:
+          # The upload key must be exported using `base64 -w 0 <filename.jks>` for use
+          # as a Github Secrets value; if the key is exported with standard wrapping,
+          # it will fail to import correctly.
+          # NOTE: This is the upload signing key, which may be replaced at will, not
+          # the application signing key which is escrowed by Google and may only be
+          # replaced once a year (and has a bunch of additional hassles associated with
+          # replacing it.)
           SIGNING_KEYSTORE_BASE_64: ${{ secrets.UPLOAD_KEYSTORE_BASE_64 }}
           SIGNING_KEY_PATH: ${{ format('{0}/release.jks', env.home) }}
         shell: bash
