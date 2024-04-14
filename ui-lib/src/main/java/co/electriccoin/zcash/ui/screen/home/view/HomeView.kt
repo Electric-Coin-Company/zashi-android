@@ -10,8 +10,8 @@ import androidx.compose.foundation.pager.PageSize
 import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DividerDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
@@ -133,7 +133,8 @@ fun HomeContent(
             pageSize = PageSize.Fill,
             pageNestedScrollConnection =
                 PagerDefaults.pageNestedScrollConnection(
-                    Orientation.Horizontal
+                    state = pagerState,
+                    orientation = Orientation.Horizontal
                 ),
             pageContent = { index ->
                 subScreens[index].screenContent()
@@ -164,7 +165,7 @@ fun HomeContent(
                     height = Dimension.wrapContent
                 }
         ) {
-            Divider(
+            HorizontalDivider(
                 thickness = DividerDefaults.Thickness,
                 color = ZcashTheme.colors.dividerColor
             )
@@ -173,7 +174,7 @@ fun HomeContent(
                 // Don't use the predefined divider, as its fixed position is below the tabs bar
                 divider = {},
                 indicator = { tabPositions ->
-                    TabRowDefaults.Indicator(
+                    TabRowDefaults.SecondaryIndicator(
                         modifier =
                             Modifier
                                 .tabIndicatorOffset(tabPositions[pagerState.currentPage])

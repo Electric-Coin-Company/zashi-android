@@ -20,7 +20,7 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.design.component.BodySmall
 import co.electriccoin.zcash.ui.design.component.GradientSurface
-import co.electriccoin.zcash.ui.design.component.LinearProgressIndicator
+import co.electriccoin.zcash.ui.design.component.SmallLinearProgressIndicator
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 import co.electriccoin.zcash.ui.screen.balances.model.WalletDisplayValues
@@ -82,7 +82,7 @@ fun SynchronizationStatus(
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
 
-        LinearProgressIndicator(
+        SmallLinearProgressIndicator(
             progress = walletSnapshot.progress.decimal,
             modifier =
                 Modifier.padding(
