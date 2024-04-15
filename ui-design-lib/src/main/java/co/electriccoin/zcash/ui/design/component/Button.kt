@@ -344,6 +344,9 @@ fun Modifier.shadow(
 
 private enum class ButtonState { Pressed, Idle }
 
+// TODO [#1346]: Rework not-recommended composed{}
+// TODO [#1346]: https://github.com/Electric-Coin-Company/zashi-android/issues/1346
+@Suppress("ModifierComposed")
 fun Modifier.translationClick(
     translationX: Dp = 0.dp,
     translationY: Dp = 0.dp

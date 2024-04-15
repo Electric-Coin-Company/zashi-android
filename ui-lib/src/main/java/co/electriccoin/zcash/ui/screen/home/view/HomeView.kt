@@ -17,7 +17,9 @@ import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -81,14 +83,19 @@ fun Home(
             pageCount = { subScreens.size }
         )
 
+    // Using [rememberUpdatedState] to ensure that always the latest lambda is captured
+    // And to avoid Detekt warning: Lambda parameters in a @Composable that are referenced directly inside of
+    // restarting effects can cause issues or unpredictable behavior.
+    val currentOnPageChange = rememberUpdatedState(newValue = onPageChange)
+
     // Listening for the current page change
-    LaunchedEffect(pagerState) {
+    LaunchedEffect(pagerState, currentOnPageChange) {
         snapshotFlow {
             pagerState.currentPage
         }.distinctUntilChanged()
             .collect { page ->
                 Twig.info { "Current pager page: $page" }
-                onPageChange(HomeScreenIndex.fromIndex(page))
+                currentOnPageChange.value(HomeScreenIndex.fromIndex(page))
             }
     }
 
