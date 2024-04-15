@@ -175,7 +175,7 @@ fun com.android.build.gradle.BaseExtension.configureBaseExtension() {
         )
     }
 
-    if (this is CommonExtension<*, *, *, *, *>) {
+    if (this is CommonExtension<*, *, *, *, *, *>) {
         kotlinOptions {
             jvmTarget = project.property("ANDROID_JVM_TARGET").toString()
             allWarningsAsErrors = project.property("ZCASH_IS_TREAT_WARNINGS_AS_ERRORS").toString().toBoolean()
@@ -191,7 +191,7 @@ fun com.android.build.gradle.BaseExtension.configureBaseExtension() {
     }
 }
 
-fun CommonExtension<*, *, *, *, *>.kotlinOptions(block: KotlinJvmOptions.() -> Unit) {
+fun CommonExtension<*, *, *, *, *, *>.kotlinOptions(block: KotlinJvmOptions.() -> Unit) {
     (this as ExtensionAware).extensions.configure("kotlinOptions", block)
 }
 

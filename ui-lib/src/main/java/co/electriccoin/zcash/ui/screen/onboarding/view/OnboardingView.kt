@@ -29,6 +29,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -263,9 +264,14 @@ fun AnimatedImage(
         }
     }
 
-    LaunchedEffect(Unit) {
+    // Using [rememberUpdatedState] to ensure that always the latest lambda is captured
+    // And to avoid Detekt warning: Lambda parameters in a @Composable that are referenced directly inside of
+    // restarting effects can cause issues or unpredictable behavior.
+    val currentSetWelcomeAnimVisibility = rememberUpdatedState(newValue = setWelcomeAnimVisibility)
+
+    LaunchedEffect(currentSetWelcomeAnimVisibility) {
         delay(AnimationConstants.INITIAL_DELAY)
-        setWelcomeAnimVisibility(false)
+        currentSetWelcomeAnimVisibility.value(false)
     }
 }
 

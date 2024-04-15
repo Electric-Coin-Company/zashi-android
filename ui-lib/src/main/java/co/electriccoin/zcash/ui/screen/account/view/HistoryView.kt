@@ -19,8 +19,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DividerDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -213,7 +213,7 @@ private fun HistoryList(
                 onAction = onAction
             )
 
-            Divider(
+            HorizontalDivider(
                 color = ZcashTheme.colors.dividerColor,
                 thickness = DividerDefaults.Thickness,
                 modifier = Modifier.padding(horizontal = ZcashTheme.dimens.spacingDefault)
@@ -464,10 +464,7 @@ private fun HistoryItemCollapsedAddressPart(
                     color = ZcashTheme.colors.textDescription,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    modifier =
-                        Modifier
-                            .fillMaxWidth(ADDRESS_IN_TITLE_WIDTH_RATIO)
-                            .then(clickModifier)
+                    modifier = Modifier.fillMaxWidth(ADDRESS_IN_TITLE_WIDTH_RATIO).then(clickModifier)
                 )
             }
         }

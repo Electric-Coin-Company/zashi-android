@@ -21,7 +21,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -36,6 +36,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -172,7 +173,7 @@ private fun ScanTopAppBar(onBack: () -> Unit) {
                 onClick = onBack
             ) {
                 Icon(
-                    imageVector = Icons.Filled.ArrowBack,
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = stringResource(R.string.scan_back_content_description)
                 )
             }
@@ -279,16 +280,23 @@ private fun ScanMainContent(
             }
             ScanState.Failed -> {
                 onScanStateChanged(ScanState.Failed)
-                LaunchedEffect(key1 = true) {
+
+                // Using [rememberUpdatedState] to ensure that always the latest lambda is captured
+                // And to avoid Detekt warning: Lambda parameters in a @Composable that are referenced directly inside
+                // of restarting effects can cause issues or unpredictable behavior.
+                val currentOnScanStateChanged = rememberUpdatedState(newValue = onScanStateChanged)
+                val currentOnBack = rememberUpdatedState(newValue = onBack)
+
+                LaunchedEffect(currentOnScanStateChanged, currentOnBack) {
                     setScanState(ScanState.Failed)
-                    onScanStateChanged(ScanState.Failed)
+                    currentOnScanStateChanged.value(ScanState.Failed)
                     val snackbarResult =
                         snackbarHostState.showSnackbar(
                             message = context.getString(R.string.scan_setup_failed),
                             actionLabel = context.getString(R.string.scan_setup_back)
                         )
                     if (snackbarResult == SnackbarResult.ActionPerformed) {
-                        onBack()
+                        currentOnBack.value()
                     }
                 }
             }

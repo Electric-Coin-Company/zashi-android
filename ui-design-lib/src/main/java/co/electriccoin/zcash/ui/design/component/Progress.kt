@@ -81,18 +81,18 @@ private fun LinearProgressIndicatorComposablePreview() {
     ZcashTheme(forceDarkMode = false) {
         GradientSurface {
             @Suppress("MagicNumber")
-            LinearProgressIndicator(0.75f)
+            SmallLinearProgressIndicator(0.75f)
         }
     }
 }
 
 @Composable
-fun LinearProgressIndicator(
+fun SmallLinearProgressIndicator(
     progress: Float,
     modifier: Modifier = Modifier
 ) {
     LinearProgressIndicator(
-        progress = progress,
+        progress = { progress },
         color = ZcashTheme.colors.linearProgressBarBackground,
         trackColor = ZcashTheme.colors.linearProgressBarTrack,
         strokeCap = StrokeCap.Butt,

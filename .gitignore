@@ -10,6 +10,7 @@ syntax: glob
 .idea/tasks.xml
 .idea/workspace.xml
 .idea/deploymentTargetSelector.xml
+.idea/migrations.xml
 .settings
 *.iml
 bin/

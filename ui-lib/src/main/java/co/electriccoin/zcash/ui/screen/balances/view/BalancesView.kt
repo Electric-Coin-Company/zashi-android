@@ -22,7 +22,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -267,7 +267,7 @@ private fun BalancesMainContent(
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingHuge))
 
-        Divider(
+        HorizontalDivider(
             color = ZcashTheme.colors.darkDividerColor,
             thickness = ZcashTheme.dimens.divider
         )
