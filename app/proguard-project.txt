@@ -9,6 +9,9 @@
 # Generate the combined proguard configuration for debugging.
 -printconfiguration build/outputs/proguard-config.txt
 
+# This is generated automatically by the Android Gradle plugin.
+-dontwarn com.google.j2objc.annotations.ReflectionSupport
+-dontwarn com.google.j2objc.annotations.RetainedWith
 -dontwarn androidx.compose.ui.util.MathHelpersKt
 -dontwarn com.google.common.util.concurrent.ListenableFuture
 -dontwarn com.google.errorprone.annotations.InlineMe
