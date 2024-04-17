@@ -86,7 +86,7 @@ fun PrimaryButton(
             horizontal = ZcashTheme.dimens.spacingNone,
             vertical = ZcashTheme.dimens.spacingSmall
         ),
-    contentPaddingValues: PaddingValues = PaddingValues(all = 15.5.dp)
+    contentPaddingValues: PaddingValues = PaddingValues(all = 16.5.dp)
 ) {
     Button(
         shape = RectangleShape,
