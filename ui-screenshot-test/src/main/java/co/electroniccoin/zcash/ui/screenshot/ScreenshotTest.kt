@@ -416,20 +416,6 @@ private fun settingsScreenshots(
     ScreenshotTest.takeScreenshot(tag, "Settings 1")
 }
 
-// This screen is not currently navigable from the app
-@Suppress("UnusedPrivateMember")
-private fun requestZecScreenshots(
-    resContext: Context,
-    tag: String,
-    composeTestRule: ComposeTestRule
-) {
-    composeTestRule.onNode(hasText(resContext.getString(R.string.request_title))).also {
-        it.assertExists()
-    }
-
-    ScreenshotTest.takeScreenshot(tag, "Request 1")
-}
-
 private fun receiveZecScreenshots(
     resContext: Context,
     tag: String,

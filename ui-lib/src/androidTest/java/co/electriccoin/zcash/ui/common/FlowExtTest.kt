@@ -11,12 +11,10 @@ import org.junit.Test
 import kotlin.test.assertTrue
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
-import kotlin.time.ExperimentalTime
 import kotlin.time.TimeMark
 import kotlin.time.TimeSource
 
 class FlowExtTest {
-    @OptIn(ExperimentalTime::class)
     @Test
     @SmallTest
     fun throttle_one_sec() =
@@ -40,7 +38,6 @@ class FlowExtTest {
             }
         }
 
-    @OptIn(ExperimentalTime::class)
     private fun raceConditionTest(duration: Duration): Boolean =
         runBlocking {
             val flow = (0..1000).asFlow().throttle(duration)
