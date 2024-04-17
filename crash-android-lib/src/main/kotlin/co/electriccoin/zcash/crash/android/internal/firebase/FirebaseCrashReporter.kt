@@ -69,7 +69,12 @@ private class FirebaseCrashReporterImpl(
 ) : CrashReporter {
     @AnyThread
     override fun reportCaughtException(exception: Throwable) {
-        firebaseCrashlytics.recordException(exception)
+        error(
+            "Although most of the sensitive model objects implement custom [toString] methods to redact information" +
+                " if they were to be logged (which includes exceptions), we're encouraged to disable caught exception" +
+                " reporting to the remote Crashlytics service due to its security risk. Use the the local variant of" +
+                " the reporter to report caught exception - [LocalCrashReporter]."
+        )
     }
 
     override fun enable() {
