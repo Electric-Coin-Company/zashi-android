@@ -6,13 +6,12 @@ pluginManagement {
 
         val googleGroups = listOf(
             "androidx.navigation",
-            "com.android.tools",
+            "com.android",
             "com.google.testing.platform"
         )
         val googleRegexes = listOf(
-            "androidx.*",
-            "com\\.android.*",
-            "com\\.android\\.tools.*"
+            "androidx\\..*",
+            "com\\.android(\\.|\\:).*"
         )
         val wtfGroups = listOf("wtf.emulator")
 
@@ -80,7 +79,7 @@ dependencyResolutionManagement {
         val googleGroups = listOf(
             "androidx.benchmark",
             "androidx.navigation",
-            "com.android.tools",
+            "com.android",
             "com.google.android.datatransport",
             "com.google.android.gms",
             "com.google.android.material",
@@ -90,9 +89,8 @@ dependencyResolutionManagement {
             "com.google.android.apps.common.testing.accessibility.framework"
         )
         val googleRegexes = listOf(
-            "androidx.*",
-            "com\\.android.*",
-            "com\\.android\\.tools.*"
+            "androidx\\..*",
+            "com\\.android(\\.|\\:).*",
         )
         val wtfGroups = listOf("wtf.emulator")
 
