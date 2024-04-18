@@ -41,7 +41,6 @@ android {
                     "src/main/res/ui/new_wallet_recovery",
                     "src/main/res/ui/onboarding",
                     "src/main/res/ui/receive",
-                    "src/main/res/ui/request",
                     "src/main/res/ui/restore",
                     "src/main/res/ui/scan",
                     "src/main/res/ui/seed_recovery",

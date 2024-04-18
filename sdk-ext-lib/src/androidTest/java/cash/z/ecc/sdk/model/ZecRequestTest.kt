@@ -7,13 +7,14 @@ import cash.z.ecc.sdk.fixture.Zip321UriBuildFixture
 import cash.z.ecc.sdk.fixture.Zip321UriParseFixture
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
-import org.junit.Ignore
-import org.junit.Test
+import kotlin.test.Ignore
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
+@Ignore("Disabled until the issue #397 is addressed")
 class ZecRequestTest {
     companion object {
         private const val URI: String = "zcash:tmXuTnE11JojToagTqxXUn6KvdxDE3iLKbp?amount=1&message=Hello%20world!"

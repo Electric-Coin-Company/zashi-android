@@ -20,7 +20,6 @@ import co.electriccoin.zcash.ui.NavigationTargets.ADVANCED_SETTINGS
 import co.electriccoin.zcash.ui.NavigationTargets.CHOOSE_SERVER
 import co.electriccoin.zcash.ui.NavigationTargets.EXPORT_PRIVATE_DATA
 import co.electriccoin.zcash.ui.NavigationTargets.HOME
-import co.electriccoin.zcash.ui.NavigationTargets.REQUEST
 import co.electriccoin.zcash.ui.NavigationTargets.SCAN
 import co.electriccoin.zcash.ui.NavigationTargets.SEED_RECOVERY
 import co.electriccoin.zcash.ui.NavigationTargets.SEND_CONFIRMATION
@@ -38,7 +37,6 @@ import co.electriccoin.zcash.ui.screen.advancedsettings.WrapAdvancedSettings
 import co.electriccoin.zcash.ui.screen.chooseserver.WrapChooseServer
 import co.electriccoin.zcash.ui.screen.exportdata.WrapExportPrivateData
 import co.electriccoin.zcash.ui.screen.home.WrapHome
-import co.electriccoin.zcash.ui.screen.request.WrapRequest
 import co.electriccoin.zcash.ui.screen.scan.WrapScanValidator
 import co.electriccoin.zcash.ui.screen.seedrecovery.WrapSeedRecovery
 import co.electriccoin.zcash.ui.screen.send.ext.toSerializableAddress
@@ -157,9 +155,6 @@ internal fun MainActivity.Navigation() {
                 },
             )
         }
-        composable(REQUEST) {
-            WrapRequest(goBack = { navController.popBackStackJustOnce(REQUEST) })
-        }
         composable(SUPPORT) {
             // Pop back stack won't be right if we deep link into support
             WrapSupport(goBack = { navController.popBackStackJustOnce(SUPPORT) })
@@ -268,7 +263,6 @@ object NavigationTargets {
     const val EXPORT_PRIVATE_DATA = "export_private_data"
     const val HOME = "home"
     const val CHOOSE_SERVER = "choose_server"
-    const val REQUEST = "request"
     const val SCAN = "scan"
     const val SEED_RECOVERY = "seed_recovery"
     const val SEND_CONFIRMATION = "send_confirmation"

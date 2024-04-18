@@ -2,21 +2,20 @@ package cash.z.ecc.sdk.model
 
 import cash.z.ecc.android.sdk.model.WalletAddress
 import cash.z.ecc.android.sdk.model.Zatoshi
-import cash.z.ecc.sdk.fixture.Zip321UriBuildFixture
-import cash.z.ecc.sdk.fixture.Zip321UriParseFixture
 
 data class ZecRequest(val address: WalletAddress.Unified, val amount: Zatoshi, val message: ZecRequestMessage) {
     // TODO [#397]: Waiting for an implementation of Uri parser in SDK project
     // TODO [#397]: https://github.com/Electric-Coin-Company/zcash-android-wallet-sdk/issues/397
     suspend fun toUri(): String {
-        return Zip321UriBuildFixture.new(this)
+        TODO("Not implemented yet: Issue #397")
     }
 
     companion object {
         // TODO [#397]: Waiting for an implementation of Uri parser in SDK project
         // TODO [#397]: https://github.com/Electric-Coin-Company/zcash-android-wallet-sdk/issues/397
+        @Suppress("UNUSED_PARAMETER")
         suspend fun fromUri(uriString: String): ZecRequest {
-            return Zip321UriParseFixture.new(uriString)
+            TODO("Not implemented yet: Issue #397")
         }
     }
 }
