@@ -98,12 +98,10 @@ private fun ComposableHistoryListPreview() {
     }
 }
 
-// TODO [#1171]: Remove default MonetarySeparators locale
-// TODO [#1171]: https://github.com/Electric-Coin-Company/zashi-android/issues/1171
 private val dateFormat: DateFormat by lazy {
     SimpleDateFormat(
         "yyyy-MM-dd HH:mm:ss",
-        Locale.US
+        Locale.getDefault()
     )
 }
 
