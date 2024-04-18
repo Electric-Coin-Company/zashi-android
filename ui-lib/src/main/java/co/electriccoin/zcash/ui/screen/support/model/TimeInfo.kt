@@ -23,7 +23,7 @@ data class TimeInfo(
     fun toSupportString() =
         buildString {
             // Use a slightly more human friendly format instead of ISO, since this will appear in the emails that
-            // users see
+            // users see. The fixed Locale.US is intended.
             val dateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm:ss a", Locale.US) // $NON-NLS-1$
 
             appendLine("Current time: ${dateFormat.formatInstant(currentTime)}")
