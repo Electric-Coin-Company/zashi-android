@@ -79,9 +79,7 @@ class SendViewTestSetup(
     fun DefaultContent() {
         val context = LocalContext.current
 
-        // TODO [#1171]: Remove default MonetarySeparators locale
-        // TODO [#1171]: https://github.com/Electric-Coin-Company/zashi-android/issues/1171
-        val monetarySeparators = MonetarySeparators.current(Locale.US)
+        val monetarySeparators = MonetarySeparators.current(Locale.getDefault())
 
         val (sendStage, setSendStage) =
             rememberSaveable(stateSaver = SendStage.Saver) { mutableStateOf(initialState) }
