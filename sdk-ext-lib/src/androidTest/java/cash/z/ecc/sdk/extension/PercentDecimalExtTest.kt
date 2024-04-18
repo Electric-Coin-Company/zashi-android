@@ -33,7 +33,7 @@ class PercentDecimalExtTest {
         runTest {
             val parsed = PercentDecimal(1f).toPercentageWithDecimal()
 
-            assertEquals("100${MonetarySeparators.current(Locale.US).decimal}00", parsed)
+            assertEquals("100${MonetarySeparators.current(Locale.getDefault()).decimal}00", parsed)
         }
 
     @Test
