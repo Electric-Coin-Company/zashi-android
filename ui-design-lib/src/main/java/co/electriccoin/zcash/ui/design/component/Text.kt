@@ -375,8 +375,8 @@ private fun splitBalance(
 ): Pair<String, String> {
     Twig.debug { "Balance before split: $balance, prefix: $prefix" }
 
-    @Suppress("MAGIC_CONSTANT", "MagicNumber")
-    val cutPosition = balance.indexOf(MonetarySeparators.current(Locale.US).decimal) + 4
+    @Suppress("MagicNumber")
+    val cutPosition = balance.indexOf(MonetarySeparators.current(Locale.getDefault()).decimal) + 4
     val firstPart =
         (prefix ?: "") +
             balance.substring(

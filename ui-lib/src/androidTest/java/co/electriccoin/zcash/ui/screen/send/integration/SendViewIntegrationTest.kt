@@ -51,9 +51,7 @@ class SendViewIntegrationTest {
                 )
         )
 
-    // TODO [#1171]: Remove default MonetarySeparators locale
-    // TODO [#1171]: https://github.com/Electric-Coin-Company/zashi-android/issues/1171
-    private val monetarySeparators = MonetarySeparators.current(Locale.US)
+    private val monetarySeparators = MonetarySeparators.current(Locale.getDefault())
 
     // TODO [#1260]: Cover Send screens UI with tests
     // TODO [#1260]: https://github.com/Electric-Coin-Company/zashi-android/issues/1260

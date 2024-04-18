@@ -251,6 +251,7 @@ androidComponents {
             ".readme",
         ))
 
+        // The fixed Locale.US is intended
         if (variant.name.lowercase(Locale.US).contains("release")) {
             variant.packaging.resources.excludes.addAll(listOf(
                 "**/*.kotlin_metadata",

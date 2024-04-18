@@ -30,7 +30,7 @@ internal sealed class ParseResult {
             completeWordList: Set<String>,
             rawInput: String
         ): ParseResult {
-            // Note: This assumes the word list is English words
+            // Note: This assumes the word list is English words, thus the Locale.US is intended.
             val trimmed = rawInput.lowercase(Locale.US).trim()
 
             if (trimmed.isBlank()) {
