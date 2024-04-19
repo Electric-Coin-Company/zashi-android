@@ -1,6 +1,7 @@
 package co.electriccoin.zcash.configuration.test
 
 import co.electriccoin.zcash.configuration.model.entry.ConfigKey
+import co.electriccoin.zcash.configuration.model.exception.ConfigurationParseException
 import co.electriccoin.zcash.configuration.model.map.Configuration
 import kotlinx.datetime.Instant
 
@@ -13,31 +14,35 @@ import kotlinx.datetime.Instant
 class MockConfiguration(private val configurationMapping: Map<String, String> = emptyMap()) : Configuration {
     override val updatedAt: Instant? = null
 
+    @Throws(ConfigurationParseException::class)
     override fun getBoolean(
         key: ConfigKey,
         defaultValue: Boolean
     ) = configurationMapping[key.key]?.let {
         try {
             it.toBooleanStrict()
-        } catch (
-            @Suppress("SwallowedException") e: IllegalArgumentException
-        ) {
-            // In the future, log coercion failure as this could mean someone made an error in the remote config console
-            defaultValue
+        } catch (e: IllegalArgumentException) {
+            throw ConfigurationParseException(
+                "Failed while parsing String value to Boolean. This could mean " +
+                    "someone made an error in the remote config console",
+                e
+            )
         }
     } ?: defaultValue
 
+    @Throws(ConfigurationParseException::class)
     override fun getInt(
         key: ConfigKey,
         defaultValue: Int
     ) = configurationMapping[key.key]?.let {
         try {
             it.toInt()
-        } catch (
-            @Suppress("SwallowedException") e: NumberFormatException
-        ) {
-            // In the future, log coercion failure as this could mean someone made an error in the remote config console
-            defaultValue
+        } catch (e: IllegalArgumentException) {
+            throw ConfigurationParseException(
+                "Failed while parsing String value to Int. This could mean " +
+                    "someone made an error in the remote config console",
+                e
+            )
         }
     } ?: defaultValue
 
