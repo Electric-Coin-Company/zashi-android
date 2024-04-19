@@ -4,9 +4,11 @@
     <string name="balances_change_pending">Change pending</string>
     <string name="balances_pending_transactions">Pending transactions</string>
     <string name="balances_transparent_balance">Transparent balance</string>
-    <string name="balances_transparent_balance_help">In order to better preserve your privacy, Zashi does not
-        support directly spending transparent (unshielded) ZEC. Use the Shield and Consolidate button to shield your
-        transparent funds. This will move the transparent value to your available balance and make it spendable.</string>
+    <string name="balances_transparent_balance_help" formatted="true">
+        <xliff:g id="app_name" example="Zashi">%1$s</xliff:g> uses the latest network upgrade and does not
+        support sending transparent (unshielded) <xliff:g id="currency" example="ZEC">%2$s</xliff:g>. Use the Shield
+        and Consolidate button to shield your funds, which will add to your available balance and make your <xliff:g
+        id="currency" example="ZEC">%2$s</xliff:g> spendable.</string>
     <string name="balances_transparent_balance_help_close">I got it!</string>
     <string name="balances_transparent_help_content_description">Show help</string>
     <string name="balances_transparent_balance_shield">Shield and consolidate funds</string>
