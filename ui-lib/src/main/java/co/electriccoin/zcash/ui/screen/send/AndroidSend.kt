@@ -8,6 +8,7 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.viewModels
 import androidx.annotation.VisibleForTesting
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -21,6 +22,7 @@ import cash.z.ecc.android.sdk.model.UnifiedSpendingKey
 import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.android.sdk.model.proposeSend
 import cash.z.ecc.android.sdk.model.toZecString
+import cash.z.ecc.android.sdk.type.AddressType
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.compose.BalanceState
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
@@ -95,7 +97,7 @@ internal fun WrapSend(
     )
 }
 
-@Suppress("LongParameterList", "LongMethod")
+@Suppress("LongParameterList", "LongMethod", "CyclomaticComplexMethod")
 @VisibleForTesting
 @Composable
 internal fun WrapSend(
@@ -140,14 +142,28 @@ internal fun WrapSend(
     // Amount computation:
     val (amountState, setAmountState) =
         rememberSaveable(stateSaver = AmountState.Saver) {
+            // Default amount state
             mutableStateOf(
                 AmountState.new(
                     context = context,
                     value = zecSend?.amount?.toZecString() ?: "",
-                    monetarySeparators = monetarySeparators
+                    monetarySeparators = monetarySeparators,
+                    isTransparentRecipient = recipientAddressState.type?.let { it == AddressType.Transparent } ?: false
                 )
             )
         }
+    // New amount state based on the recipient address type (e.g. shielded supports zero funds sending and
+    // transparent not)
+    LaunchedEffect(key1 = recipientAddressState) {
+        setAmountState(
+            AmountState.new(
+                context = context,
+                isTransparentRecipient = recipientAddressState.type?.let { it == AddressType.Transparent } ?: false,
+                monetarySeparators = monetarySeparators,
+                value = amountState.value
+            )
+        )
+    }
 
     // Memo computation:
     val (memoState, setMemoState) =
@@ -155,12 +171,12 @@ internal fun WrapSend(
             mutableStateOf(MemoState.new(zecSend?.memo?.value ?: ""))
         }
 
-    // Clearing form if required form the previous navigation destination
+    // Clearing form from the previous navigation destination if required
     if (sendArguments?.clearForm == true) {
         setSendStage(SendStage.Form)
         setZecSend(null)
         setRecipientAddressState(RecipientAddressState.new("", null))
-        setAmountState(AmountState.new(context, "", monetarySeparators))
+        setAmountState(AmountState.new(context, monetarySeparators, "", false))
         setMemoState(MemoState.new(""))
     }
 

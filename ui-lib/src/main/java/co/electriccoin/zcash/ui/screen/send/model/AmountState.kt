@@ -23,8 +23,9 @@ sealed class AmountState(
     companion object {
         fun new(
             context: Context,
+            monetarySeparators: MonetarySeparators,
             value: String,
-            monetarySeparators: MonetarySeparators
+            isTransparentRecipient: Boolean
         ): AmountState {
             // Validate raw input string
             val validated =
@@ -41,11 +42,11 @@ sealed class AmountState(
             // Convert the input to Zatoshi type-safe amount representation
             val zatoshi = (Zatoshi.fromZecString(context, value, monetarySeparators))
 
-            // Note that the 0 funds sending is supported for sending a memo-only transaction
-            return if (zatoshi == null) {
-                Invalid(value)
-            } else {
-                Valid(value, zatoshi)
+            // Note that the zero funds sending is supported for sending a memo-only shielded transaction
+            return when {
+                (zatoshi == null) -> Invalid(value)
+                (zatoshi.value == 0L && isTransparentRecipient) -> Invalid(value)
+                else -> Valid(value, zatoshi)
             }
         }
 

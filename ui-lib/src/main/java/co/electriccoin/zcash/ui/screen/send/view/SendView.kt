@@ -264,8 +264,6 @@ private fun SendForm(
     hasCameraFeature: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    val context = LocalContext.current
-
     // TODO [#1171]: Remove default MonetarySeparators locale
     // TODO [#1171]: https://github.com/Electric-Coin-Company/zashi-android/issues/1171
     val monetarySeparators = MonetarySeparators.current(Locale.US)
@@ -305,16 +303,17 @@ private fun SendForm(
 
         SendFormAmountTextField(
             amountSate = amountState,
-            setAmountState = setAmountState,
-            monetarySeparators = monetarySeparators,
             focusManager = focusManager,
-            walletSnapshot = walletSnapshot,
             imeAction =
                 if (recipientAddressState.type == AddressType.Transparent) {
                     ImeAction.Done
                 } else {
                     ImeAction.Next
-                }
+                },
+            isTransparentRecipient = recipientAddressState.type?.let { it == AddressType.Transparent } ?: false,
+            monetarySeparators = monetarySeparators,
+            setAmountState = setAmountState,
+            walletSnapshot = walletSnapshot,
         )
 
         Spacer(Modifier.size(ZcashTheme.dimens.spacingDefault))
@@ -342,68 +341,83 @@ private fun SendForm(
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
-        // Common conditions continuously checked for validity
-        val sendButtonEnabled =
-            recipientAddressState.type !is AddressType.Invalid &&
-                recipientAddressState.address.isNotEmpty() &&
-                amountState is AmountState.Valid &&
-                amountState.value.isNotBlank() &&
-                walletSnapshot.canSpend(amountState.zatoshi) &&
-                // A valid memo is necessary only for non-transparent recipient
-                (recipientAddressState.type == AddressType.Transparent || memoState is MemoState.Correct)
+        SendButton(amountState, memoState, monetarySeparators, onCreateZecSend, recipientAddressState, walletSnapshot)
+    }
+}
 
-        Column(
-            modifier = Modifier.padding(horizontal = ZcashTheme.dimens.screenHorizontalSpacingRegular),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            PrimaryButton(
-                onClick = {
-                    // SDK side validations
-                    val zecSendValidation =
-                        ZecSendExt.new(
-                            context = context,
-                            destinationString = recipientAddressState.address,
-                            zecString = amountState.value,
-                            // Take memo for a valid non-transparent receiver only
-                            memoString =
-                                if (recipientAddressState.type == AddressType.Transparent) {
-                                    ""
-                                } else {
-                                    memoState.text
-                                },
-                            monetarySeparators = monetarySeparators
-                        )
+@Composable
+@Suppress("LongParameterList")
+fun SendButton(
+    amountState: AmountState,
+    memoState: MemoState,
+    monetarySeparators: MonetarySeparators,
+    onCreateZecSend: (ZecSend) -> Unit,
+    recipientAddressState: RecipientAddressState,
+    walletSnapshot: WalletSnapshot,
+) {
+    val context = LocalContext.current
 
-                    when (zecSendValidation) {
-                        is ZecSendExt.ZecSendValidation.Valid -> onCreateZecSend(zecSendValidation.zecSend)
-                        is ZecSendExt.ZecSendValidation.Invalid -> {
-                            // We do not expect this validation to fail, so logging is enough here
-                            // An error popup could be reasonable here as well
-                            Twig.warn { "Send failed with: ${zecSendValidation.validationErrors}" }
-                        }
+    // Common conditions continuously checked for validity
+    val sendButtonEnabled =
+        recipientAddressState.type !is AddressType.Invalid &&
+            recipientAddressState.address.isNotEmpty() &&
+            amountState is AmountState.Valid &&
+            amountState.value.isNotBlank() &&
+            walletSnapshot.canSpend(amountState.zatoshi) &&
+            // A valid memo is necessary only for non-transparent recipient
+            (recipientAddressState.type == AddressType.Transparent || memoState is MemoState.Correct)
+
+    Column(
+        modifier = Modifier.padding(horizontal = ZcashTheme.dimens.screenHorizontalSpacingRegular),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        PrimaryButton(
+            onClick = {
+                // SDK side validations
+                val zecSendValidation =
+                    ZecSendExt.new(
+                        context = context,
+                        destinationString = recipientAddressState.address,
+                        zecString = amountState.value,
+                        // Take memo for a valid non-transparent receiver only
+                        memoString =
+                            if (recipientAddressState.type == AddressType.Transparent) {
+                                ""
+                            } else {
+                                memoState.text
+                            },
+                        monetarySeparators = monetarySeparators
+                    )
+
+                when (zecSendValidation) {
+                    is ZecSendExt.ZecSendValidation.Valid -> onCreateZecSend(zecSendValidation.zecSend)
+                    is ZecSendExt.ZecSendValidation.Invalid -> {
+                        // We do not expect this validation to fail, so logging is enough here
+                        // An error popup could be reasonable here as well
+                        Twig.warn { "Send failed with: ${zecSendValidation.validationErrors}" }
                     }
-                },
-                text = stringResource(id = R.string.send_create),
-                enabled = sendButtonEnabled,
-                modifier =
-                    Modifier
-                        .testTag(SendTag.SEND_FORM_BUTTON)
-                        .fillMaxWidth()
-            )
+                }
+            },
+            text = stringResource(id = R.string.send_create),
+            enabled = sendButtonEnabled,
+            modifier =
+                Modifier
+                    .testTag(SendTag.SEND_FORM_BUTTON)
+                    .fillMaxWidth()
+        )
 
-            Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
-            BodySmall(
-                text =
-                    stringResource(
-                        id = R.string.send_fee,
-                        // TODO [#1047]: Representing Zatoshi amount
-                        // TODO [#1047]: https://github.com/Electric-Coin-Company/zashi-android/issues/1047
-                        Zatoshi(DEFAULT_LESS_THAN_FEE).toZecString()
-                    ),
-                textFontWeight = FontWeight.SemiBold
-            )
-        }
+        BodySmall(
+            text =
+                stringResource(
+                    id = R.string.send_fee,
+                    // TODO [#1047]: Representing Zatoshi amount
+                    // TODO [#1047]: https://github.com/Electric-Coin-Company/zashi-android/issues/1047
+                    Zatoshi(DEFAULT_LESS_THAN_FEE).toZecString()
+                ),
+            textFontWeight = FontWeight.SemiBold
+        )
     }
 }
 
@@ -496,10 +510,11 @@ fun SendFormAddressTextField(
 fun SendFormAmountTextField(
     amountSate: AmountState,
     focusManager: FocusManager,
+    imeAction: ImeAction,
+    isTransparentRecipient: Boolean,
     monetarySeparators: MonetarySeparators,
     setAmountState: (AmountState) -> Unit,
     walletSnapshot: WalletSnapshot,
-    imeAction: ImeAction,
 ) {
     val context = LocalContext.current
 
@@ -540,7 +555,14 @@ fun SendFormAmountTextField(
         FormTextField(
             value = amountSate.value,
             onValueChange = { newValue ->
-                setAmountState(AmountState.new(context, newValue, monetarySeparators))
+                setAmountState(
+                    AmountState.new(
+                        context = context,
+                        value = newValue,
+                        monetarySeparators = monetarySeparators,
+                        isTransparentRecipient = isTransparentRecipient
+                    )
+                )
             },
             modifier = Modifier.fillMaxWidth(),
             error = amountError,
