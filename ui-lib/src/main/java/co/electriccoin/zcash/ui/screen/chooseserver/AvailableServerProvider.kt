@@ -22,6 +22,10 @@ object AvailableServerProvider {
     private const val HOST_SA = "sa.lightwalletd.com" // NON-NLS
     private const val HOST_EU = "eu.lightwalletd.com" // NON-NLS
     private const val HOST_AI = "ai.lightwalletd.com" // NON-NLS
+    private const val HOST_ZR_GLOBAL = "zec.rocks" // NON-NLS
+    private const val HOST_ZR_SA = "sa.zec.rocks" // NON-NLS
+    private const val HOST_ZR_EU = "eu.zec.rocks" // NON-NLS
+    private const val HOST_ZR_AP = "ap.zec.rocks" // NON-NLS
     private const val PORT = 443
 
     fun toList(network: ZcashNetwork) =
@@ -32,6 +36,10 @@ object AvailableServerProvider {
                 add(LightWalletEndpoint(HOST_SA, PORT, true))
                 add(LightWalletEndpoint(HOST_EU, PORT, true))
                 add(LightWalletEndpoint(HOST_AI, PORT, true))
+                add(LightWalletEndpoint(HOST_ZR_GLOBAL, PORT, true))
+                add(LightWalletEndpoint(HOST_ZR_SA, PORT, true))
+                add(LightWalletEndpoint(HOST_ZR_EU, PORT, true))
+                add(LightWalletEndpoint(HOST_ZR_AP, PORT, true))
             } else {
                 add(LightWalletEndpoint.Testnet)
             }
