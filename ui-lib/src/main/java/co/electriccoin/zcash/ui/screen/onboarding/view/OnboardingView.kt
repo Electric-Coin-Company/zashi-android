@@ -115,7 +115,7 @@ fun ShortOnboarding(
                         Modifier
                             .padding(
                                 top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingHuge,
-                                bottom = paddingValues.calculateBottomPadding(),
+                                bottom = paddingValues.calculateBottomPadding() + ZcashTheme.dimens.spacingDefault,
                                 start = ZcashTheme.dimens.screenHorizontalSpacingBig,
                                 end = ZcashTheme.dimens.screenHorizontalSpacingBig
                             )
@@ -168,7 +168,7 @@ private fun OnboardingMainContent(
             },
         )
         Column(
-            modifier = modifier,
+            modifier = modifier.then(Modifier.verticalScroll(rememberScrollState())),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Image(
