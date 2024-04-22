@@ -2,9 +2,7 @@ package co.electriccoin.zcash.ui.integration.test.screen.scan.view
 
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -14,6 +12,7 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.integration.test.common.IntegrationTestingActivity
 import co.electriccoin.zcash.ui.integration.test.common.getPermissionPositiveButtonUiObject
 import co.electriccoin.zcash.ui.integration.test.common.getStringResource
+import co.electriccoin.zcash.ui.integration.test.common.getStringResourceWithArgs
 import co.electriccoin.zcash.ui.integration.test.common.waitForDeviceIdle
 import co.electriccoin.zcash.ui.screen.scan.ScanTag
 import co.electriccoin.zcash.ui.screen.scan.model.ScanState
@@ -71,19 +70,8 @@ class ScanViewTest : UiTestPrerequisites() {
 
         testSetup.grantPermission()
 
-        composeTestRule.onNodeWithContentDescription(
-            getStringResource(R.string.scan_back_content_description)
-        ).also {
+        composeTestRule.onNodeWithText(getStringResource(R.string.scan_cancel_button).uppercase()).also {
             it.assertIsDisplayed()
-        }
-
-        composeTestRule.onNodeWithText(getStringResource(R.string.scan_hint)).also {
-            it.assertIsDisplayed()
-        }
-
-        composeTestRule.onNodeWithTag(ScanTag.TEXT_STATE).also {
-            it.assertIsDisplayed()
-            it.assertTextEquals(getStringResource(R.string.scan_state_scanning))
         }
 
         composeTestRule.onNodeWithTag(ScanTag.QR_FRAME).also {
@@ -109,21 +97,17 @@ class ScanViewTest : UiTestPrerequisites() {
 
         assertEquals(ScanState.Permission, testSetup.getScanState())
 
-        composeTestRule.onNodeWithTag(ScanTag.QR_FRAME).also {
-            it.assertDoesNotExist()
-        }
-
         composeTestRule.onNodeWithTag(ScanTag.CAMERA_VIEW).also {
             it.assertDoesNotExist()
         }
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.scan_hint)).also {
+        composeTestRule.onNodeWithText(
+            getStringResourceWithArgs(
+                resId = R.string.scan_state_permission,
+                getStringResource(R.string.app_name)
+            )
+        ).also {
             it.assertIsDisplayed()
-        }
-
-        composeTestRule.onNodeWithTag(ScanTag.TEXT_STATE).also {
-            it.assertIsDisplayed()
-            it.assertTextEquals(getStringResource(R.string.scan_state_permission))
         }
 
         composeTestRule.onNodeWithText(getStringResource(R.string.scan_settings_button), ignoreCase = true).also {

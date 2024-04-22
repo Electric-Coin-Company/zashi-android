@@ -9,6 +9,9 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+### Changed
+- The Scan QR code screen has been reworked to align with the rest of the screens
+
 ### Fixed
 - Sending zero funds is allowed only for shielded recipient address type
 - The Balances widget loader has been improved to better handle cases, like a wallet with only transparent funds

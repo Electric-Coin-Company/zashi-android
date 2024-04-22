@@ -43,6 +43,8 @@ internal object Dark {
     val tabTextColor = Color(0xFF040404)
     val layoutStroke = Color(0xFFFFFFFF)
     val panelBackgroundColor = Color(0xFFEAEAEA)
+    val cameraDisabledBackgroundColor = Color(0xFF5E5C5C)
+    val cameraDisabledFrameColor = Color(0xFFFFFFFF)
 
     val primaryButton = Color(0xFFFFFFFF)
     val secondaryButton = Color(0xFFFFFFFF)
@@ -56,7 +58,6 @@ internal object Dark {
     val circularProgressBarScreen = Color(0xFFFFFFFF)
     val linearProgressBarTrack = Color(0xFFD9D9D9)
     val linearProgressBarBackground = complementaryColor
-    val restoringTopAppBarColor = Color(0xFF8A8888)
 
     val callout = Color(0xFFFFFFFF)
     val onCallout = Color(0xFFFFFFFF)
@@ -74,6 +75,9 @@ internal object Dark {
     val historyBackgroundColor = Color(0xFFF6F6F6)
     val historyRedColor = textFieldWarning
     val historySyncingColor = panelBackgroundColor
+
+    val topAppBarColors = DarkTopAppBarColors()
+    val transparentTopAppBarColors = TransparentTopAppBarColors()
 }
 
 internal object Light {
@@ -105,6 +109,8 @@ internal object Light {
     val tabTextColor = Color(0xFF040404)
     val layoutStroke = Color(0xFF000000)
     val panelBackgroundColor = Color(0xFFEAEAEA)
+    val cameraDisabledBackgroundColor = Color(0xFF5E5C5C)
+    val cameraDisabledFrameColor = Color(0xFFFFFFFF)
 
     val primaryButton = Color(0xFF000000)
     val secondaryButton = Color(0xFFFFFFFF)
@@ -118,7 +124,6 @@ internal object Light {
     val circularProgressBarSmallDark = textBodyOnBackground
     val linearProgressBarTrack = Color(0xFFD9D9D9)
     val linearProgressBarBackground = complementaryColor
-    val restoringTopAppBarColor = Color(0xFF8A8888)
 
     val callout = Color(0xFFFFFFFF)
     val onCallout = Color(0xFFFFFFFF)
@@ -135,6 +140,9 @@ internal object Light {
     val historyBackgroundColor = Color(0xFFF6F6F6)
     val historyRedColor = textFieldWarning
     val historySyncingColor = Dark.panelBackgroundColor
+
+    val topAppBarColors = LightTopAppBarColors()
+    val transparentTopAppBarColors = TransparentTopAppBarColors()
 }
 
 internal val DarkColorPalette =
@@ -174,7 +182,6 @@ internal val DarkExtendedColorPalette =
         circularProgressBarScreen = Dark.circularProgressBarScreen,
         linearProgressBarTrack = Dark.linearProgressBarTrack,
         linearProgressBarBackground = Dark.linearProgressBarBackground,
-        restoringTopAppBarColor = Dark.restoringTopAppBarColor,
         chipIndex = Dark.textChipIndex,
         textCommon = Dark.textCommon,
         textMedium = Dark.textMedium,
@@ -200,11 +207,15 @@ internal val DarkExtendedColorPalette =
         darkDividerColor = Dark.darkDividerColor,
         tabTextColor = Dark.tabTextColor,
         panelBackgroundColor = Dark.panelBackgroundColor,
+        cameraDisabledBackgroundColor = Dark.cameraDisabledBackgroundColor,
+        cameraDisabledFrameColor = Dark.cameraDisabledFrameColor,
         radioButtonColor = Dark.radioButtonColor,
         radioButtonTextColor = Dark.radioButtonTextColor,
         historyBackgroundColor = Dark.historyBackgroundColor,
         historyRedColor = Dark.historyRedColor,
         historySyncingColor = Dark.historySyncingColor,
+        topAppBarColors = Dark.topAppBarColors,
+        transparentTopAppBarColors = Dark.transparentTopAppBarColors
     )
 
 internal val LightExtendedColorPalette =
@@ -220,7 +231,6 @@ internal val LightExtendedColorPalette =
         circularProgressBarSmallDark = Light.circularProgressBarSmallDark,
         linearProgressBarTrack = Light.linearProgressBarTrack,
         linearProgressBarBackground = Light.linearProgressBarBackground,
-        restoringTopAppBarColor = Light.restoringTopAppBarColor,
         chipIndex = Light.textChipIndex,
         textCommon = Light.textCommon,
         textMedium = Light.textMedium,
@@ -246,11 +256,15 @@ internal val LightExtendedColorPalette =
         darkDividerColor = Light.darkDividerColor,
         tabTextColor = Light.tabTextColor,
         panelBackgroundColor = Light.panelBackgroundColor,
+        cameraDisabledBackgroundColor = Light.cameraDisabledBackgroundColor,
+        cameraDisabledFrameColor = Light.cameraDisabledFrameColor,
         radioButtonColor = Light.radioButtonColor,
         radioButtonTextColor = Light.radioButtonTextColor,
         historyBackgroundColor = Light.historyBackgroundColor,
         historyRedColor = Light.historyRedColor,
         historySyncingColor = Light.historySyncingColor,
+        topAppBarColors = Light.topAppBarColors,
+        transparentTopAppBarColors = Light.transparentTopAppBarColors
     )
 
 @Suppress("CompositionLocalAllowlist")
@@ -268,7 +282,6 @@ internal val LocalExtendedColors =
             circularProgressBarSmallDark = Color.Unspecified,
             linearProgressBarTrack = Color.Unspecified,
             linearProgressBarBackground = Color.Unspecified,
-            restoringTopAppBarColor = Color.Unspecified,
             chipIndex = Color.Unspecified,
             textCommon = Color.Unspecified,
             textMedium = Color.Unspecified,
@@ -294,10 +307,14 @@ internal val LocalExtendedColors =
             darkDividerColor = Color.Unspecified,
             tabTextColor = Color.Unspecified,
             panelBackgroundColor = Color.Unspecified,
+            cameraDisabledBackgroundColor = Color.Unspecified,
+            cameraDisabledFrameColor = Color.Unspecified,
             radioButtonColor = Color.Unspecified,
             radioButtonTextColor = Color.Unspecified,
             historyBackgroundColor = Color.Unspecified,
             historyRedColor = Color.Unspecified,
             historySyncingColor = Color.Unspecified,
+            topAppBarColors = DefaultTopAppBarColors(),
+            transparentTopAppBarColors = DefaultTopAppBarColors(),
         )
     }
