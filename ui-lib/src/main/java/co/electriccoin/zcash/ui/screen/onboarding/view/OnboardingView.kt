@@ -205,7 +205,7 @@ private fun OnboardingMainContent(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
+            Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
             SecondaryButton(
                 onImportWallet,
@@ -242,7 +242,7 @@ fun AnimatedImage(
                     modifier =
                         Modifier
                             .fillMaxHeight()
-                            .height(screenHeight.overallScreenHeight()),
+                            .height(screenHeight.overallScreenHeight() + ZcashTheme.dimens.spacingHuge),
                     contentDescription = null
                 )
                 Image(
