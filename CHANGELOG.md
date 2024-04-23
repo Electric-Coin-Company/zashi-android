@@ -11,6 +11,7 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ### Fixed
 - Sending zero funds is allowed only for shielded recipient address type
+- The Balances widget loader has been improved to better handle cases, like a wallet with only transparent funds
 
 ## [0.2.0 (609)] - 2024-04-18
 

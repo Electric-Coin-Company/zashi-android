@@ -32,6 +32,7 @@ import co.electriccoin.zcash.ui.common.extension.throttle
 import co.electriccoin.zcash.ui.common.model.OnboardingState
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
+import co.electriccoin.zcash.ui.common.model.hasChangePending
 import co.electriccoin.zcash.ui.common.model.spendableBalance
 import co.electriccoin.zcash.ui.common.model.totalBalance
 import co.electriccoin.zcash.ui.preference.EncryptedPreferenceKeys
@@ -242,34 +243,32 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
             )
 
     /**
-     * A flow of the wallet balances state used for the UI layer. It combines [WalletSnapshot] with
-     * [WalletRestoringState] and provides the correct [BalanceState] UI state.
+     * A flow of the wallet balances state used for the UI layer. It's computed form [WalletSnapshot]'s properties
+     * and provides the result [BalanceState] UI state.
      */
     val balanceState: StateFlow<BalanceState> =
         walletSnapshot
             .filterNotNull()
-            .combine(walletRestoringState) {
-                    walletSnapshot: WalletSnapshot, walletRestoringState: WalletRestoringState ->
-                when (walletRestoringState) {
-                    WalletRestoringState.NONE -> BalanceState.None
-                    WalletRestoringState.INITIATING ->
-                        BalanceState.Available(
-                            totalBalance = walletSnapshot.totalBalance(),
-                            spendableBalance = walletSnapshot.spendableBalance()
+            .map { snapshot ->
+                when {
+                    // Show the loader only under these conditions:
+                    // - Available balance is currently zero
+                    // - Wallet has some ChangePending in progress
+                    // - And Total balance is non-zero
+                    (
+                        snapshot.spendableBalance().value == 0L &&
+                            snapshot.hasChangePending() &&
+                            snapshot.totalBalance().value > 0L
+                    ) -> {
+                        BalanceState.Loading(
+                            totalBalance = snapshot.totalBalance()
                         )
-                    WalletRestoringState.RESTORING, WalletRestoringState.SYNCING -> {
-                        if (walletSnapshot.spendableBalance().value == 0L &&
-                            walletSnapshot.totalBalance().value > 0L
-                        ) {
-                            BalanceState.Loading(
-                                totalBalance = walletSnapshot.totalBalance()
-                            )
-                        } else {
-                            BalanceState.Available(
-                                totalBalance = walletSnapshot.totalBalance(),
-                                spendableBalance = walletSnapshot.spendableBalance()
-                            )
-                        }
+                    }
+                    else -> {
+                        BalanceState.Available(
+                            totalBalance = snapshot.totalBalance(),
+                            spendableBalance = snapshot.spendableBalance()
+                        )
                     }
                 }
             }.stateIn(

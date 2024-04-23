@@ -34,6 +34,8 @@ data class WalletSnapshot(
     val isSendEnabled: Boolean get() = hasSaplingFunds && hasOrchardFunds
 }
 
+// TODO [#1370]: WalletSnapshot.canSpend() calculation limitation
+// TODO [#1370]: https://github.com/Electric-Coin-Company/zashi-android/issues/1370
 // Note this check is not entirely correct - it does not calculate the resulting fee using the new Proposal API. It's
 // fine for now, but it's subject to improvement later once we figure out how to handle it in such cases.
 fun WalletSnapshot.canSpend(amount: Zatoshi): Boolean = spendableBalance() >= amount
@@ -48,5 +50,9 @@ fun WalletSnapshot.spendableBalance() = orchardBalance.available + saplingBalanc
 // Note that summing both values could be confusing, and we might prefer dividing them in the future
 fun WalletSnapshot.changePendingBalance() = orchardBalance.changePending + saplingBalance.changePending
 
+fun WalletSnapshot.hasChangePending() = changePendingBalance().value > 0L
+
 // Note that summing both values could be confusing, and we might prefer dividing them in the future
 fun WalletSnapshot.valuePendingBalance() = orchardBalance.valuePending + saplingBalance.valuePending
+
+fun WalletSnapshot.hasValuePending() = valuePendingBalance().value > 0L

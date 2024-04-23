@@ -57,6 +57,8 @@ import co.electriccoin.zcash.ui.common.compose.SynchronizationStatus
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.model.changePendingBalance
+import co.electriccoin.zcash.ui.common.model.hasChangePending
+import co.electriccoin.zcash.ui.common.model.hasValuePending
 import co.electriccoin.zcash.ui.common.model.spendableBalance
 import co.electriccoin.zcash.ui.common.model.valuePendingBalance
 import co.electriccoin.zcash.ui.common.test.CommonTag
@@ -569,8 +571,6 @@ fun ChangePendingRow(walletSnapshot: WalletSnapshot) {
         )
 
         Row(verticalAlignment = Alignment.CenterVertically) {
-            val changePendingHasValue = walletSnapshot.changePendingBalance().value > 0L
-
             StyledBalance(
                 balanceString = walletSnapshot.changePendingBalance().toZecString(),
                 textStyles =
@@ -584,7 +584,7 @@ fun ChangePendingRow(walletSnapshot: WalletSnapshot) {
             Spacer(modifier = Modifier.width(12.dp))
 
             Box(Modifier.width(ZcashTheme.dimens.circularSmallProgressWidth)) {
-                if (changePendingHasValue) {
+                if (walletSnapshot.hasChangePending()) {
                     CircularSmallProgressIndicator()
                 }
             }
@@ -605,8 +605,6 @@ fun PendingTransactionsRow(walletSnapshot: WalletSnapshot) {
         )
 
         Row(verticalAlignment = Alignment.CenterVertically) {
-            val valuePendingHasValue = walletSnapshot.valuePendingBalance().value > 0L
-
             StyledBalance(
                 balanceString = walletSnapshot.valuePendingBalance().toZecString(),
                 textStyles =
@@ -620,7 +618,7 @@ fun PendingTransactionsRow(walletSnapshot: WalletSnapshot) {
             Spacer(modifier = Modifier.width(12.dp))
 
             Box(Modifier.width(ZcashTheme.dimens.circularSmallProgressWidth)) {
-                if (valuePendingHasValue) {
+                if (walletSnapshot.hasValuePending()) {
                     CircularSmallProgressIndicator()
                 }
             }
