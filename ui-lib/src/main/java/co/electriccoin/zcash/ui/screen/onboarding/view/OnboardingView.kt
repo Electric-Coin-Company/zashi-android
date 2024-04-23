@@ -115,7 +115,7 @@ fun ShortOnboarding(
                         Modifier
                             .padding(
                                 top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingHuge,
-                                bottom = paddingValues.calculateBottomPadding(),
+                                bottom = paddingValues.calculateBottomPadding() + ZcashTheme.dimens.spacingDefault,
                                 start = ZcashTheme.dimens.screenHorizontalSpacingBig,
                                 end = ZcashTheme.dimens.screenHorizontalSpacingBig
                             )
@@ -168,7 +168,7 @@ private fun OnboardingMainContent(
             },
         )
         Column(
-            modifier = modifier,
+            modifier = modifier.then(Modifier.verticalScroll(rememberScrollState())),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Image(
@@ -205,7 +205,7 @@ private fun OnboardingMainContent(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
+            Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
             SecondaryButton(
                 onImportWallet,
@@ -242,7 +242,7 @@ fun AnimatedImage(
                     modifier =
                         Modifier
                             .fillMaxHeight()
-                            .height(screenHeight.overallScreenHeight()),
+                            .height(screenHeight.overallScreenHeight() + ZcashTheme.dimens.spacingHuge),
                     contentDescription = null
                 )
                 Image(
