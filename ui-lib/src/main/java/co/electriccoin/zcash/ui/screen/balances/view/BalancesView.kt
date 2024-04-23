@@ -47,6 +47,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import cash.z.ecc.android.sdk.ext.convertZatoshiToZecString
 import cash.z.ecc.android.sdk.model.FiatCurrencyConversionRateState
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.toZecString
@@ -318,6 +319,8 @@ private fun BalancesMainContent(
     }
 }
 
+const val DEFAULT_LESS_THAN_FEE = 100_000L
+
 @Composable
 fun TransparentBalancePanel(
     onShielding: () -> Unit,
@@ -366,8 +369,7 @@ fun TransparentBalancePanel(
                         id = R.string.balances_transparent_balance_fee,
                         // TODO [#1047]: Representing Zatoshi amount
                         // TODO [#1047]: https://github.com/Electric-Coin-Company/zashi-android/issues/1047
-                        @Suppress("MagicNumber")
-                        Zatoshi(100_000L).toZecString()
+                        Zatoshi(DEFAULT_LESS_THAN_FEE).convertZatoshiToZecString(maxDecimals = 3)
                     ),
                 textFontWeight = FontWeight.SemiBold
             )
