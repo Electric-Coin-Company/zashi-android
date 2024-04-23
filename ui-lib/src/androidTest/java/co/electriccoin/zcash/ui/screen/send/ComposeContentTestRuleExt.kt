@@ -18,12 +18,6 @@ import co.electriccoin.zcash.ui.test.getAppContext
 import co.electriccoin.zcash.ui.test.getStringResource
 import co.electriccoin.zcash.ui.test.getStringResourceWithArgs
 
-internal fun ComposeContentTestRule.clickBack() {
-    onNodeWithContentDescription(getStringResource(R.string.send_back_content_description)).also {
-        it.performClick()
-    }
-}
-
 internal fun ComposeContentTestRule.clickSettingsTopAppBarMenu() {
     onNodeWithContentDescription(getStringResource(R.string.settings_menu_content_description)).also {
         it.performClick()

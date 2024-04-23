@@ -25,7 +25,6 @@ import co.electriccoin.zcash.ui.screen.send.assertOnForm
 import co.electriccoin.zcash.ui.screen.send.assertOnSendFailure
 import co.electriccoin.zcash.ui.screen.send.assertSendDisabled
 import co.electriccoin.zcash.ui.screen.send.assertSendEnabled
-import co.electriccoin.zcash.ui.screen.send.clickBack
 import co.electriccoin.zcash.ui.screen.send.clickCreateAndSend
 import co.electriccoin.zcash.ui.screen.send.clickScanner
 import co.electriccoin.zcash.ui.screen.send.clickSettingsTopAppBarMenu
@@ -310,7 +309,6 @@ class SendViewTest : UiTestPrerequisites() {
         composeTestRule.setValidAddress()
         composeTestRule.clickCreateAndSend()
         composeTestRule.assertOnConfirmation()
-        composeTestRule.clickBack()
         composeTestRule.assertOnForm()
 
         assertEquals(1, testSetup.getOnBackCount())

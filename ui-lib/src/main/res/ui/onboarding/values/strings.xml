@@ -2,7 +2,7 @@
     <string name="app_name">zcash-ui</string>
 
     <string name="onboarding_header">A no-frills wallet for sending and receiving Zcash (ZEC)</string>
-    <string name="onboarding_information">We need to create a new wallet or restore an existing one. Select your path:</string>
+
     <string name="onboarding_create_new_wallet">Create New Wallet</string>
     <string name="onboarding_import_existing_wallet">Restore Existing Wallet</string>
 

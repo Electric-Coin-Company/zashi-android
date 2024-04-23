@@ -54,7 +54,7 @@ fun NotEnoughSpaceView(
     ) {
         Image(
             painter = painterResource(id = R.drawable.not_enough_space),
-            contentDescription = stringResource(id = R.string.not_enough_space_logo_content_description),
+            contentDescription = null,
             modifier = Modifier.fillMaxWidth()
         )
 

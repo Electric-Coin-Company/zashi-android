@@ -18,7 +18,6 @@ import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 import co.electriccoin.zcash.ui.screen.send.WrapSend
 import co.electriccoin.zcash.ui.screen.send.assertOnConfirmation
 import co.electriccoin.zcash.ui.screen.send.assertOnForm
-import co.electriccoin.zcash.ui.screen.send.clickBack
 import co.electriccoin.zcash.ui.screen.send.clickCreateAndSend
 import co.electriccoin.zcash.ui.screen.send.setAddress
 import co.electriccoin.zcash.ui.screen.send.setAmount
@@ -100,7 +99,6 @@ class SendViewIntegrationTest {
         composeTestRule.assertOnConfirmation()
 
         // Move back to form
-        composeTestRule.clickBack()
         composeTestRule.assertOnForm()
 
         composeTestRule.onNodeWithText(ZecSendFixture.ADDRESS).also {

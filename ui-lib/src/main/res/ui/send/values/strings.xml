@@ -1,7 +1,5 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="send_stage_send_title">Send</string>
-    <string name="send_back">Back</string>
-    <string name="send_back_content_description">Back</string>
     <string name="send_scan_content_description">Scan</string>
     <string name="send_address_label">To:</string>
     <string name="send_address_hint">Zcash Address</string>
