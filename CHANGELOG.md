@@ -9,6 +9,9 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+### Fixed
+- Sending zero funds is allowed only for shielded recipient address type
+
 ## [0.2.0 (609)] - 2024-04-18
 
 ### Added

@@ -128,7 +128,7 @@ class SendViewTestSetup(
                     // TODO [#1260]: https://github.com/Electric-Coin-Company/zashi-android/issues/1260
                 },
                 setAmountState = {},
-                amountState = AmountState.new(context, "", monetarySeparators),
+                amountState = AmountState.new(context, monetarySeparators, "", false),
                 setMemoState = {},
                 memoState = MemoState.new(""),
                 walletRestoringState = WalletRestoringState.NONE,
