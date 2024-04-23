@@ -2,7 +2,6 @@
     <string name="fiat_currency_conversion_rate_unavailable">Unavailable</string>
     <string name="empty_char">-</string>
     <string name="zcash_logo_content_description">Zcash logo</string>
-    <string name="not_implemented_yet">Not implemented yet.</string>
     <string name="settings_menu_content_description">Open Settings</string>
     <string name="balance_widget_available">Available Balance:</string>
     <!-- This is replaced by a resource overlay via app/build.gradle.kts -->
