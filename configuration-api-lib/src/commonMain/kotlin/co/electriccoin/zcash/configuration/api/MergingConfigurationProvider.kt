@@ -40,6 +40,8 @@ private data class MergingConfiguration(private val configurations: PersistentLi
         return null != configurations.firstWithKey(key)
     }
 
+    // TODO [#1373]: Catch and log Configuration Key Coercion Failures
+    // TODO [#1373]: https://github.com/Electric-Coin-Company/zashi-android/issues/1373
     override fun getBoolean(
         key: ConfigKey,
         defaultValue: Boolean
@@ -49,6 +51,8 @@ private data class MergingConfiguration(private val configurations: PersistentLi
         } ?: defaultValue
     }
 
+    // TODO [#1373]: Catch and log Configuration Key Coercion Failures
+    // TODO [#1373]: https://github.com/Electric-Coin-Company/zashi-android/issues/1373
     override fun getInt(
         key: ConfigKey,
         defaultValue: Int
