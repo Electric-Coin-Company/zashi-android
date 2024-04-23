@@ -97,6 +97,7 @@ tasks {
             "ZCASH_EMULATOR_WTF_API_KEY" to "",
 
             "IS_MINIFY_ENABLED" to "true",
+            "NDK_DEBUG_SYMBOL_LEVEL" to "symbol_table",
 
             "ZCASH_RELEASE_APP_NAME" to "Zashi",
             "ZCASH_RELEASE_PACKAGE_NAME" to "co.electriccoin.zcash",

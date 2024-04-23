@@ -93,7 +93,7 @@ android {
         releaseKeystorePassword,
         releaseKeyAlias,
         releaseKeyAliasPassword
-    ).all { !it.isNullOrBlank() }
+    ).all { it.isNotBlank() }
 
     signingConfigs {
         if (isReleaseSigningConfigured) {
@@ -120,6 +120,8 @@ android {
         getByName("release").apply {
             isMinifyEnabled = project.property("IS_MINIFY_ENABLED").toString().toBoolean()
             isShrinkResources = project.property("IS_MINIFY_ENABLED").toString().toBoolean()
+            ndk.debugSymbolLevel = project.property("NDK_DEBUG_SYMBOL_LEVEL").toString()
+
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-project.txt"
