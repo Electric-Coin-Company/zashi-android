@@ -50,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import cash.z.ecc.android.sdk.model.FiatCurrencyConversionRateState
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.toZecString
+import cash.z.ecc.sdk.type.ZcashCurrency
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.BalanceState
 import co.electriccoin.zcash.ui.common.compose.BalanceWidget
@@ -453,8 +454,15 @@ fun TransparentBalanceHelpPanel(onHideHelpPanel: () -> Unit) {
     ) {
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
+        val appName = stringResource(id = R.string.app_name)
+        val currencyName = ZcashCurrency.getLocalizedName(LocalContext.current)
         BodySmall(
-            text = stringResource(id = R.string.balances_transparent_balance_help),
+            text =
+                stringResource(
+                    id = R.string.balances_transparent_balance_help,
+                    appName,
+                    currencyName
+                ),
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(horizontal = ZcashTheme.dimens.spacingDefault)
         )
