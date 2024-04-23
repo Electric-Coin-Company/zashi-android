@@ -4,6 +4,7 @@ package co.electriccoin.zcash.ui.screen.send.view
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -24,11 +25,16 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
@@ -75,6 +81,7 @@ import co.electriccoin.zcash.ui.screen.send.model.AmountState
 import co.electriccoin.zcash.ui.screen.send.model.MemoState
 import co.electriccoin.zcash.ui.screen.send.model.RecipientAddressState
 import co.electriccoin.zcash.ui.screen.send.model.SendStage
+import kotlinx.coroutines.launch
 import java.util.Locale
 
 @Composable
@@ -270,6 +277,8 @@ private fun SendForm(
 
     val scrollState = rememberScrollState()
 
+    val (scrollToFeePixels, setScrollToFeePixels) = rememberSaveable { mutableIntStateOf(0) }
+
     Column(
         modifier =
             Modifier
@@ -330,6 +339,8 @@ private fun SendForm(
                             recipientAddressState.type !is AddressType.Transparent
                     )
             ),
+            scrollState = scrollState,
+            scrollTo = scrollToFeePixels
         )
 
         Spacer(
@@ -341,7 +352,15 @@ private fun SendForm(
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
-        SendButton(amountState, memoState, monetarySeparators, onCreateZecSend, recipientAddressState, walletSnapshot)
+        SendButton(
+            amountState = amountState,
+            memoState = memoState,
+            monetarySeparators = monetarySeparators,
+            onCreateZecSend = onCreateZecSend,
+            recipientAddressState = recipientAddressState,
+            walletSnapshot = walletSnapshot,
+            setScrollToFeePixels = setScrollToFeePixels
+        )
     }
 }
 
@@ -353,6 +372,7 @@ fun SendButton(
     monetarySeparators: MonetarySeparators,
     onCreateZecSend: (ZecSend) -> Unit,
     recipientAddressState: RecipientAddressState,
+    setScrollToFeePixels: (Int) -> Unit,
     walletSnapshot: WalletSnapshot,
 ) {
     val context = LocalContext.current
@@ -416,7 +436,11 @@ fun SendButton(
                     // TODO [#1047]: https://github.com/Electric-Coin-Company/zashi-android/issues/1047
                     Zatoshi(DEFAULT_LESS_THAN_FEE).toZecString()
                 ),
-            textFontWeight = FontWeight.SemiBold
+            textFontWeight = FontWeight.SemiBold,
+            modifier =
+                Modifier.onGloballyPositioned {
+                    setScrollToFeePixels(it.positionInRoot().y.toInt())
+                }
         )
     }
 }
@@ -584,12 +608,11 @@ fun SendFormAmountTextField(
                 ),
             keyboardActions =
                 KeyboardActions(
+                    onDone = {
+                        focusManager.clearFocus(true)
+                    },
                     onNext = {
-                        if (imeAction == ImeAction.Done) {
-                            focusManager.clearFocus(true)
-                        } else {
-                            focusManager.moveFocus(FocusDirection.Down)
-                        }
+                        focusManager.moveFocus(FocusDirection.Down)
                     }
                 ),
             bringIntoViewRequester = bringIntoViewRequester,
@@ -600,14 +623,18 @@ fun SendFormAmountTextField(
 // TODO [#1259]: Send.Form screen Memo field stroke bubble style
 // TODO [#1259]: https://github.com/Electric-Coin-Company/zashi-android/issues/1259
 @OptIn(ExperimentalFoundationApi::class)
-@Suppress("LongMethod")
+@Suppress("LongMethod", "LongParameterList")
 @Composable
 fun SendFormMemoTextField(
     focusManager: FocusManager,
     isMemoFieldAvailable: Boolean,
     memoState: MemoState,
     setMemoState: (MemoState) -> Unit,
+    scrollState: ScrollState,
+    scrollTo: Int
 ) {
+    val scope = rememberCoroutineScope()
+
     val bringIntoViewRequester = remember { BringIntoViewRequester() }
 
     Column(
@@ -664,8 +691,14 @@ fun SendFormMemoTextField(
                 ),
             keyboardActions =
                 KeyboardActions(
-                    onNext = {
+                    onDone = {
                         focusManager.clearFocus(true)
+                        // Scroll down to make sure the Send button is visible on small screens
+                        if (scrollTo > 0) {
+                            scope.launch {
+                                scrollState.animateScrollTo(scrollTo)
+                            }
+                        }
                     }
                 ),
             placeholder = {

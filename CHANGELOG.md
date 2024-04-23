@@ -11,6 +11,7 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ### Changed
 - The Scan QR code screen has been reworked to align with the rest of the screens
+- The Send Form screen scrolls to the Send button on very small devices after the memo is typed
 
 ### Fixed
 - Sending zero funds is allowed only for shielded recipient address type
