@@ -9,6 +9,8 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [1.0 (628)] - 2024-04-23
+
 ### Changed
 - The Scan QR code screen has been reworked to align with the rest of the screens
 - The Send Form screen scrolls to the Send button on very small devices after the memo is typed
