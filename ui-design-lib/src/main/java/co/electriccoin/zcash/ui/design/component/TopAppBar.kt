@@ -2,7 +2,6 @@
 
 package co.electriccoin.zcash.ui.design.component
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -44,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.internal.SecondaryTypography
+import co.electriccoin.zcash.ui.design.theme.internal.TopAppBarColors
 
 @Preview
 @Composable
@@ -265,14 +265,15 @@ private fun TopBarOneVisibleActionMenuExample(
 @OptIn(ExperimentalMaterial3Api::class)
 fun SmallTopAppBar(
     modifier: Modifier = Modifier,
-    restoringLabel: String? = null,
-    titleText: String? = null,
-    showTitleLogo: Boolean = false,
-    backText: String? = null,
     backContentDescriptionText: String? = null,
-    onBack: (() -> Unit)? = null,
+    backText: String? = null,
+    colors: TopAppBarColors = ZcashTheme.colors.topAppBarColors,
     hamburgerMenuActions: (@Composable RowScope.() -> Unit)? = null,
+    onBack: (() -> Unit)? = null,
     regularActions: (@Composable RowScope.() -> Unit)? = null,
+    restoringLabel: String? = null,
+    showTitleLogo: Boolean = false,
+    titleText: String? = null,
 ) {
     CenterAlignedTopAppBar(
         title = {
@@ -284,13 +285,15 @@ fun SmallTopAppBar(
                 if (titleText != null) {
                     Text(
                         text = titleText.uppercase(),
-                        style = SecondaryTypography.headlineSmall
+                        style = SecondaryTypography.headlineSmall,
+                        color = colors.titleColor,
                     )
                     restoringSpacerHeight = ZcashTheme.dimens.spacingTiny
                 } else if (showTitleLogo) {
                     Icon(
                         painter = painterResource(id = R.drawable.zashi_text_logo),
                         contentDescription = null,
+                        tint = colors.titleColor,
                         modifier = Modifier.height(ZcashTheme.dimens.topAppBarZcashLogoHeight)
                     )
                     restoringSpacerHeight = ZcashTheme.dimens.spacingSmall
@@ -303,7 +306,7 @@ fun SmallTopAppBar(
                     Text(
                         text = restoringLabel.uppercase(),
                         style = ZcashTheme.extendedTypography.restoringTopAppBarStyle,
-                        color = ZcashTheme.colors.restoringTopAppBarColor,
+                        color = colors.subTitleColor,
                         modifier = Modifier.fillMaxWidth(0.75f),
                         textAlign = TextAlign.Center,
                         maxLines = 1,
@@ -325,9 +328,10 @@ fun SmallTopAppBar(
                         modifier = Modifier.padding(all = ZcashTheme.dimens.spacingDefault),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Image(
+                        Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = backContentDescriptionText
+                            contentDescription = backContentDescriptionText,
+                            tint = colors.navigationColor,
                         )
                         Spacer(modifier = Modifier.size(size = ZcashTheme.dimens.spacingSmall))
                         Text(text = backText.uppercase())
@@ -339,6 +343,7 @@ fun SmallTopAppBar(
             regularActions?.invoke(this)
             hamburgerMenuActions?.invoke(this)
         },
+        colors = colors.toMaterialTopAppBarColors(),
         modifier =
             Modifier
                 .testTag(CommonTag.TOP_APP_BAR)

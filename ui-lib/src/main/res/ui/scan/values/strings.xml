@@ -1,20 +1,18 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="scan_header">Scan a Zcash QR</string>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="scan_back">Back</string>
     <string name="scan_back_content_description">Back</string>
     <string name="scan_preview_content_description">Camera</string>
 
-    <string name="scan_hint">You can scan any Zcash QR code.</string>
-
-    <string name="scan_settings_button">Enable camera permission</string>
+    <string name="scan_cancel_button">Cancel</string>
+    <string name="scan_settings_button">Open Settings</string>
     <string name="scan_settings_open_failed">Unable to launch Settings app.</string>
 
-    <string name="scan_setup_failed">Unable to run QR scanner.</string>
-    <string name="scan_setup_back">Back</string>
+    <string name="scan_state_permission">
+        <xliff:g id="app_name" example="Zashi">%1$s</xliff:g> does not have access to your camera. Please go to your
+        system settings and authorize <xliff:g id="app_name" example="Zashi">%1$s</xliff:g>.
+    </string>
+    <string name="scan_state_failed">Camera initialization failed. Try it again, please.</string>
+    <string name="scan_address_validation_failed">This QR code is not a valid Zcash Address.</string>
 
-    <string name="scan_state_permission">Permission for camera is necessary.</string>
-    <string name="scan_state_scanning">Scanning…</string>
-    <string name="scan_state_failed">Scanning failed.</string>
-
-    <string name="scan_validation_invalid_address">Invalid Zcash address scanned.</string>
+    <string name="scan_torch_content_description">Camera torch toggle</string>
 </resources>

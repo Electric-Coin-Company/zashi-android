@@ -1,15 +1,21 @@
 package co.electriccoin.zcash.ui.screen.scan
 
-import androidx.activity.ComponentActivity
+import android.content.Context
 import androidx.activity.viewModels
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import cash.z.ecc.android.sdk.Synchronizer
+import cash.z.ecc.android.sdk.type.AddressType
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.SerializableAddress
+import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.screen.scan.util.SettingsUtil
@@ -21,25 +27,34 @@ internal fun MainActivity.WrapScanValidator(
     onScanValid: (address: SerializableAddress) -> Unit,
     goBack: () -> Unit
 ) {
+    val walletViewModel by viewModels<WalletViewModel>()
+
+    val synchronizer = walletViewModel.synchronizer.collectAsStateWithLifecycle().value
+
+    val walletRestoringState = walletViewModel.walletRestoringState.collectAsStateWithLifecycle().value
+
     WrapScan(
-        this,
+        context = this,
         onScanValid = onScanValid,
-        goBack = goBack
+        goBack = goBack,
+        synchronizer = synchronizer,
+        walletRestoringState = walletRestoringState
     )
 }
 
 @Composable
 fun WrapScan(
-    activity: ComponentActivity,
+    context: Context,
+    goBack: () -> Unit,
     onScanValid: (address: SerializableAddress) -> Unit,
-    goBack: () -> Unit
+    synchronizer: Synchronizer?,
+    walletRestoringState: WalletRestoringState,
 ) {
-    val walletViewModel by activity.viewModels<WalletViewModel>()
-
-    val synchronizer = walletViewModel.synchronizer.collectAsStateWithLifecycle().value
+    val scope = rememberCoroutineScope()
 
     val snackbarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
+
+    var addressValidationResult by remember { mutableStateOf<AddressType?>(null) }
 
     if (synchronizer == null) {
         // TODO [#1146]: Consider moving CircularScreenProgressIndicator from Android layer to View layer
@@ -49,34 +64,32 @@ fun WrapScan(
     } else {
         Scan(
             snackbarHostState = snackbarHostState,
+            addressValidationResult = addressValidationResult,
             onBack = goBack,
             onScanned = { result ->
                 scope.launch {
-                    val addressType = synchronizer.validateAddress(result)
-                    val isAddressValid = !addressType.isNotValid
+                    addressValidationResult = synchronizer.validateAddress(result)
+                    val isAddressValid = addressValidationResult?.let { !it.isNotValid } ?: false
                     if (isAddressValid) {
-                        onScanValid(SerializableAddress(result, addressType))
-                    } else {
-                        snackbarHostState.showSnackbar(
-                            message = activity.getString(R.string.scan_validation_invalid_address)
-                        )
+                        onScanValid(SerializableAddress(result, addressValidationResult!!))
                     }
                 }
             },
             onOpenSettings = {
                 runCatching {
-                    activity.startActivity(SettingsUtil.newSettingsIntent(activity.packageName))
+                    context.startActivity(SettingsUtil.newSettingsIntent(context.packageName))
                 }.onFailure {
                     // This case should not really happen, as the Settings app should be available on every
                     // Android device, but we need to handle it somehow.
                     scope.launch {
                         snackbarHostState.showSnackbar(
-                            message = activity.getString(R.string.scan_settings_open_failed)
+                            message = context.getString(R.string.scan_settings_open_failed)
                         )
                     }
                 }
             },
-            onScanStateChanged = {}
+            onScanStateChanged = {},
+            walletRestoringState = walletRestoringState,
         )
     }
 }

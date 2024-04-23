@@ -183,7 +183,7 @@ fun SecondaryButton(
             horizontal = ZcashTheme.dimens.spacingNone,
             vertical = ZcashTheme.dimens.spacingSmall
         ),
-    contentPaddingValues: PaddingValues = PaddingValues(all = 16.dp)
+    contentPaddingValues: PaddingValues = PaddingValues(all = 16.5.dp)
 ) {
     Button(
         shape = RectangleShape,
@@ -195,7 +195,8 @@ fun SecondaryButton(
                     .padding(outerPaddingValues)
                     .shadow(
                         contentColor = textColor,
-                        strokeColor = textColor,
+                        strokeColor = buttonColor,
+                        strokeWidth = 1.dp,
                         offsetX = ZcashTheme.dimens.buttonShadowOffsetX,
                         offsetY = ZcashTheme.dimens.buttonShadowOffsetY,
                         spread = ZcashTheme.dimens.buttonShadowSpread,

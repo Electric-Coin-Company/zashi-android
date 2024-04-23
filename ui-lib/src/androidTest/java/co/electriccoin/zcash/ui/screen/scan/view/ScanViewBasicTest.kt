@@ -2,7 +2,6 @@ package co.electriccoin.zcash.ui.screen.scan.view
 
 import android.Manifest
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
@@ -33,12 +32,12 @@ class ScanViewBasicTest : UiTestPrerequisites() {
 
     @Test
     @MediumTest
-    fun back() {
+    fun cancel() {
         val testSetup = newTestSetup()
 
         assertEquals(0, testSetup.getOnBackCount())
 
-        composeTestRule.onNodeWithContentDescription(getStringResource(R.string.scan_back_content_description)).also {
+        composeTestRule.onNodeWithText(getStringResource(R.string.scan_cancel_button).uppercase()).also {
             it.performClick()
         }
 
@@ -52,7 +51,7 @@ class ScanViewBasicTest : UiTestPrerequisites() {
 
         // Permission granted ui items (visible):
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.scan_header)).also {
+        composeTestRule.onNodeWithText(getStringResource(R.string.scan_cancel_button).uppercase()).also {
             it.assertIsDisplayed()
         }
 
@@ -62,12 +61,7 @@ class ScanViewBasicTest : UiTestPrerequisites() {
             it.assertIsDisplayed()
         }
 
-        composeTestRule.onNodeWithTag(ScanTag.TEXT_STATE).also {
-            it.assertIsDisplayed()
-            it.assertTextEquals(getStringResource(R.string.scan_state_scanning))
-        }
-
-        composeTestRule.onNodeWithText(getStringResource(R.string.scan_hint)).also {
+        composeTestRule.onNodeWithContentDescription(getStringResource(R.string.scan_torch_content_description)).also {
             it.assertIsDisplayed()
         }
 

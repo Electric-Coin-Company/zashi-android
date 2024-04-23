@@ -3,6 +3,8 @@ package co.electriccoin.zcash.ui.screen.scan.view
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
+import cash.z.ecc.android.sdk.type.AddressType
+import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.scan.model.ScanState
 import java.util.concurrent.atomic.AtomicInteger
@@ -36,7 +38,9 @@ class ScanViewBasicTestSetup(
             onOpenSettings = {},
             onScanStateChanged = {
                 scanState.set(it)
-            }
+            },
+            walletRestoringState = WalletRestoringState.NONE,
+            addressValidationResult = AddressType.Shielded
         )
     }
 
