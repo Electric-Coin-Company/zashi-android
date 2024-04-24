@@ -9,6 +9,13 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [1.0 (630)] - 2024-04-24
+
+### Changed
+- We have added more server options for increased coverage and reliability
+- If you experience issues with the Zcash Lightwalletd Mainnet server selected by default, please switch to one of 
+  the Ywallet servers: https://status.zcash-infra.com/
+
 ## [1.0 (628)] - 2024-04-23
 
 ### Changed
