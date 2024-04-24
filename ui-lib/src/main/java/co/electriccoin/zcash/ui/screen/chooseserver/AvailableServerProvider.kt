@@ -18,20 +18,40 @@ object AvailableServerProvider {
     // Mainnet: mainnet.lightwalletd.com | 9067
     // Testnet: lightwalletd.testnet.electriccoin.co | 9067
 
-    private const val HOST_NA = "na.lightwalletd.com" // NON-NLS
-    private const val HOST_SA = "sa.lightwalletd.com" // NON-NLS
-    private const val HOST_EU = "eu.lightwalletd.com" // NON-NLS
-    private const val HOST_AI = "ai.lightwalletd.com" // NON-NLS
-    private const val PORT = 443
+    private const val NH_HOST_NA = "na.lightwalletd.com" // NON-NLS
+    private const val NH_HOST_SA = "sa.lightwalletd.com" // NON-NLS
+    private const val NH_HOST_EU = "eu.lightwalletd.com" // NON-NLS
+    private const val NH_HOST_AI = "ai.lightwalletd.com" // NON-NLS
+    private const val NH_PORT = 443
+
+    private const val YW_HOST_1 = "lwd1.zcash-infra.com" // NON-NLS
+    private const val YW_HOST_2 = "lwd2.zcash-infra.com" // NON-NLS
+    private const val YW_HOST_3 = "lwd3.zcash-infra.com" // NON-NLS
+    private const val YW_HOST_4 = "lwd4.zcash-infra.com" // NON-NLS
+    private const val YW_HOST_5 = "lwd5.zcash-infra.com" // NON-NLS
+    private const val YW_HOST_6 = "lwd6.zcash-infra.com" // NON-NLS
+    private const val YW_HOST_7 = "lwd7.zcash-infra.com" // NON-NLS
+    private const val YW_HOST_8 = "lwd8.zcash-infra.com" // NON-NLS
+    private const val YW_PORT = 9067
 
     fun toList(network: ZcashNetwork) =
         buildList {
             if (network == ZcashNetwork.Mainnet) {
                 add(LightWalletEndpoint.Mainnet)
-                add(LightWalletEndpoint(HOST_NA, PORT, true))
-                add(LightWalletEndpoint(HOST_SA, PORT, true))
-                add(LightWalletEndpoint(HOST_EU, PORT, true))
-                add(LightWalletEndpoint(HOST_AI, PORT, true))
+
+                add(LightWalletEndpoint(YW_HOST_1, YW_PORT, true))
+                add(LightWalletEndpoint(YW_HOST_2, YW_PORT, true))
+                add(LightWalletEndpoint(YW_HOST_3, YW_PORT, true))
+                add(LightWalletEndpoint(YW_HOST_4, YW_PORT, true))
+                add(LightWalletEndpoint(YW_HOST_5, YW_PORT, true))
+                add(LightWalletEndpoint(YW_HOST_6, YW_PORT, true))
+                add(LightWalletEndpoint(YW_HOST_7, YW_PORT, true))
+                add(LightWalletEndpoint(YW_HOST_8, YW_PORT, true))
+
+                add(LightWalletEndpoint(NH_HOST_NA, NH_PORT, true))
+                add(LightWalletEndpoint(NH_HOST_SA, NH_PORT, true))
+                add(LightWalletEndpoint(NH_HOST_EU, NH_PORT, true))
+                add(LightWalletEndpoint(NH_HOST_AI, NH_PORT, true))
             } else {
                 add(LightWalletEndpoint.Testnet)
             }

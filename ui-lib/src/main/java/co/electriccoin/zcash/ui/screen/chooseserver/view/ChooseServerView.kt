@@ -145,6 +145,8 @@ private fun ChooseServerTopAppBar(
     )
 }
 
+const val CUSTOM_SERVER_OPTION_INDEX = 1
+
 @Composable
 @Suppress("LongMethod", "LongParameterList")
 private fun ChooseServerMainContent(
@@ -162,10 +164,10 @@ private fun ChooseServerMainContent(
             //  server list obtaining is implemented.
             if (contains(wallet.endpoint)) {
                 // We define the custom server as secured by default
-                add(LightWalletEndpoint("", -1, true))
+                add(CUSTOM_SERVER_OPTION_INDEX, LightWalletEndpoint("", -1, true))
             } else {
                 // Adding previously chosen custom endpoint
-                add(wallet.endpoint)
+                add(CUSTOM_SERVER_OPTION_INDEX, wallet.endpoint)
             }
         }.toImmutableList()
 
@@ -175,9 +177,13 @@ private fun ChooseServerMainContent(
         }
 
     val initialCustomServerValue =
-        options.last().run {
-            if (options.last().isValid()) {
-                stringResource(R.string.choose_server_textfield_value, options.last().host, options.last().port)
+        options[CUSTOM_SERVER_OPTION_INDEX].run {
+            if (options[CUSTOM_SERVER_OPTION_INDEX].isValid()) {
+                stringResource(
+                    R.string.choose_server_textfield_value,
+                    options[CUSTOM_SERVER_OPTION_INDEX].host,
+                    options[CUSTOM_SERVER_OPTION_INDEX].port
+                )
             } else {
                 ""
             }
@@ -243,7 +249,7 @@ fun ServerList(
         options.forEachIndexed { index, endpoint ->
             val isSelected = index == selectedOption
 
-            if (index == options.lastIndex) {
+            if (index == CUSTOM_SERVER_OPTION_INDEX) {
                 Column(
                     modifier = Modifier.animateContentSize()
                 ) {
@@ -284,6 +290,8 @@ fun ServerList(
                                     .fillMaxWidth()
                                     .padding(horizontal = ZcashTheme.dimens.spacingSmall)
                         )
+
+                        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
                     }
                 }
             } else {
@@ -339,7 +347,7 @@ fun SaveButton(
         text = stringResource(id = R.string.choose_server_save),
         onClick = {
             val selectedServer =
-                if (selectedOption == options.lastIndex) {
+                if (selectedOption == CUSTOM_SERVER_OPTION_INDEX) {
                     if (!validateCustomServerValue(customServerValue)) {
                         setShowErrorDialog(true)
                         return@PrimaryButton
