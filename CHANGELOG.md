@@ -9,6 +9,11 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [1.0 (638)] - 2024-04-26
+
+### Fixed
+- Default server selection option
+
 ## [1.0 (636)] - 2024-04-26
 
 ### Changed
