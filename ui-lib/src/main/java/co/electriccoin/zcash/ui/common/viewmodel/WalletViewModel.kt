@@ -21,9 +21,7 @@ import cash.z.ecc.android.sdk.model.WalletBalance
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.ZcashNetwork
 import cash.z.ecc.android.sdk.tool.DerivationTool
-import cash.z.ecc.sdk.extension.defaultForNetwork
 import cash.z.ecc.sdk.type.fromResources
-import co.electriccoin.lightwallet.client.model.LightWalletEndpoint
 import co.electriccoin.zcash.global.getInstance
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.ANDROID_STATE_FLOW_TIMEOUT
@@ -42,6 +40,7 @@ import co.electriccoin.zcash.ui.preference.StandardPreferenceSingleton
 import co.electriccoin.zcash.ui.screen.account.ext.TransactionOverviewExt
 import co.electriccoin.zcash.ui.screen.account.ext.getSortHeight
 import co.electriccoin.zcash.ui.screen.account.state.TransactionHistorySyncState
+import co.electriccoin.zcash.ui.screen.chooseserver.AvailableServerProvider
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -295,7 +294,7 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
                 PersistableWallet.new(
                     application = application,
                     zcashNetwork = zcashNetwork,
-                    endpoint = LightWalletEndpoint.defaultForNetwork(zcashNetwork),
+                    endpoint = AvailableServerProvider.getDefaultServer(zcashNetwork),
                     walletInitMode = WalletInitMode.NewWallet
                 )
             persistWallet(newWallet)
