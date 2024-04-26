@@ -1,7 +1,10 @@
+@file:Suppress("TooManyFunctions")
+
 package co.electriccoin.zcash.ui.screen.chooseserver.view
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,6 +14,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.DividerDefaults
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,7 +31,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import cash.z.ecc.android.sdk.internal.Twig
 import cash.z.ecc.android.sdk.model.PersistableWallet
@@ -41,7 +46,6 @@ import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.RadioButton
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
-import co.electriccoin.zcash.ui.design.component.SubHeader
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.chooseserver.ChooseServerTag
 import co.electriccoin.zcash.ui.screen.chooseserver.validateCustomServerValue
@@ -70,7 +74,7 @@ private fun PreviewChooseServer() {
 }
 
 @Composable
-@Suppress("LongParameterList")
+@Suppress("LongMethod", "LongParameterList")
 fun ChooseServer(
     availableServers: ImmutableList<LightWalletEndpoint>,
     onBack: () -> Unit,
@@ -82,80 +86,6 @@ fun ChooseServer(
     isShowingSuccessDialog: Boolean,
     setShowSuccessDialog: (Boolean) -> Unit,
     walletRestoringState: WalletRestoringState,
-) {
-    Scaffold(
-        topBar = {
-            ChooseServerTopAppBar(
-                onBack = onBack,
-                showRestoring = walletRestoringState == WalletRestoringState.RESTORING,
-            )
-        }
-    ) { paddingValues ->
-        ChooseServerMainContent(
-            modifier =
-                Modifier
-                    .verticalScroll(
-                        rememberScrollState()
-                    )
-                    .padding(
-                        top = paddingValues.calculateTopPadding(),
-                        bottom = paddingValues.calculateBottomPadding(),
-                        start = ZcashTheme.dimens.screenHorizontalSpacingRegular,
-                        end = ZcashTheme.dimens.screenHorizontalSpacingRegular
-                    )
-                    .fillMaxWidth(),
-            availableServers = availableServers,
-            onServerChange = onServerChange,
-            setShowErrorDialog = setShowErrorDialog,
-            validationResult = validationResult,
-            wallet = wallet,
-        )
-
-        // Show validation popups
-        if (isShowingErrorDialog && validationResult is ServerValidation.InValid) {
-            ValidationErrorDialog(
-                reason = validationResult.reason.message,
-                onDone = { setShowErrorDialog(false) }
-            )
-        } else if (isShowingSuccessDialog) {
-            SaveSuccessDialog(
-                onDone = { setShowSuccessDialog(false) }
-            )
-        }
-    }
-}
-
-@Composable
-private fun ChooseServerTopAppBar(
-    onBack: () -> Unit,
-    showRestoring: Boolean
-) {
-    SmallTopAppBar(
-        restoringLabel =
-            if (showRestoring) {
-                stringResource(id = R.string.restoring_wallet_label)
-            } else {
-                null
-            },
-        modifier = Modifier.testTag(ChooseServerTag.CHOOSE_SERVER_TOP_APP_BAR),
-        showTitleLogo = true,
-        backText = stringResource(id = R.string.choose_server_back).uppercase(),
-        backContentDescriptionText = stringResource(R.string.choose_server_back_content_description),
-        onBack = onBack,
-    )
-}
-
-const val CUSTOM_SERVER_OPTION_INDEX = 1
-
-@Composable
-@Suppress("LongMethod", "LongParameterList")
-private fun ChooseServerMainContent(
-    availableServers: ImmutableList<LightWalletEndpoint>,
-    onServerChange: (LightWalletEndpoint) -> Unit,
-    validationResult: ServerValidation,
-    wallet: PersistableWallet,
-    modifier: Modifier = Modifier,
-    setShowErrorDialog: (Boolean) -> Unit,
 ) {
     val options =
         availableServers.toMutableList().apply {
@@ -193,27 +123,84 @@ private fun ChooseServerMainContent(
             mutableStateOf(initialCustomServerValue)
         }
 
-    Column(modifier = modifier) {
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
-
-        SubHeader(
-            text = stringResource(id = R.string.choose_server_title),
-            textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
-
-        ServerList(
+    Scaffold(
+        topBar = {
+            ChooseServerTopAppBar(
+                onBack = onBack,
+                showRestoring = walletRestoringState == WalletRestoringState.RESTORING,
+            )
+        },
+        bottomBar = {
+            ChooseServerBottomBar(
+                customServerValue = customServerValue,
+                onServerChange = onServerChange,
+                options = options,
+                selectedOption = selectedOption,
+                setShowErrorDialog = setShowErrorDialog,
+                validationResult = validationResult,
+                wallet = wallet
+            )
+        }
+    ) { paddingValues ->
+        ChooseServerMainContent(
+            customServerValue = customServerValue,
+            modifier =
+                Modifier
+                    .verticalScroll(
+                        rememberScrollState()
+                    )
+                    .padding(
+                        top = paddingValues.calculateTopPadding(),
+                        bottom = paddingValues.calculateBottomPadding(),
+                        start = ZcashTheme.dimens.screenHorizontalSpacingRegular,
+                        end = ZcashTheme.dimens.screenHorizontalSpacingRegular
+                    )
+                    .fillMaxWidth(),
             options = options,
             selectedOption = selectedOption,
-            setSelectedOption = setSelectedOption,
-            customServerValue = customServerValue,
             setCustomServerValue = setCustomServerValue,
-            modifier = Modifier.fillMaxWidth()
+            setSelectedOption = setSelectedOption,
         )
 
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
+        // Show validation popups
+        if (isShowingErrorDialog && validationResult is ServerValidation.InValid) {
+            ValidationErrorDialog(
+                reason = validationResult.reason.message,
+                onDone = { setShowErrorDialog(false) }
+            )
+        } else if (isShowingSuccessDialog) {
+            SaveSuccessDialog(
+                onDone = { setShowSuccessDialog(false) }
+            )
+        }
+    }
+}
+
+@Composable
+@Suppress("LongParameterList")
+fun ChooseServerBottomBar(
+    customServerValue: String,
+    onServerChange: (LightWalletEndpoint) -> Unit,
+    options: ImmutableList<LightWalletEndpoint>,
+    selectedOption: Int,
+    setShowErrorDialog: (Boolean) -> Unit,
+    validationResult: ServerValidation,
+    wallet: PersistableWallet,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier =
+            modifier.then(
+                Modifier
+                    .background(MaterialTheme.colorScheme.surface)
+            )
+    ) {
+        HorizontalDivider(
+            thickness = DividerDefaults.Thickness,
+            color = ZcashTheme.colors.dividerColor
+        )
+
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
 
         SaveButton(
             enabled = validationResult != ServerValidation.Running,
@@ -227,10 +214,59 @@ private fun ChooseServerMainContent(
             },
             setShowErrorDialog = setShowErrorDialog,
             selectedOption = selectedOption,
-            modifier = Modifier.padding(horizontal = ZcashTheme.dimens.spacingUpLarge)
+            modifier = Modifier.padding(horizontal = ZcashTheme.dimens.screenHorizontalSpacingBig)
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingHuge))
+    }
+}
+
+@Composable
+private fun ChooseServerTopAppBar(
+    onBack: () -> Unit,
+    showRestoring: Boolean
+) {
+    SmallTopAppBar(
+        titleText = stringResource(id = R.string.choose_server_title),
+        restoringLabel =
+            if (showRestoring) {
+                stringResource(id = R.string.restoring_wallet_label)
+            } else {
+                null
+            },
+        modifier = Modifier.testTag(ChooseServerTag.CHOOSE_SERVER_TOP_APP_BAR),
+        showTitleLogo = true,
+        backText = stringResource(id = R.string.choose_server_back).uppercase(),
+        backContentDescriptionText = stringResource(R.string.choose_server_back_content_description),
+        onBack = onBack,
+    )
+}
+
+const val CUSTOM_SERVER_OPTION_INDEX = 1
+
+@Composable
+@Suppress("LongParameterList")
+private fun ChooseServerMainContent(
+    customServerValue: String,
+    options: ImmutableList<LightWalletEndpoint>,
+    selectedOption: Int,
+    setCustomServerValue: (String) -> Unit,
+    setSelectedOption: (Int) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier = modifier) {
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
+
+        ServerList(
+            options = options,
+            selectedOption = selectedOption,
+            setSelectedOption = setSelectedOption,
+            customServerValue = customServerValue,
+            setCustomServerValue = setCustomServerValue,
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
     }
 }
 

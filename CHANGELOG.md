@@ -9,6 +9,10 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+### Changed
+- We have added one more group of server options (zec.rocks) for increased coverage and reliability
+- zec.rocks:443 is now default wallet option
+
 ## [1.0 (630)] - 2024-04-24
 
 ### Changed
