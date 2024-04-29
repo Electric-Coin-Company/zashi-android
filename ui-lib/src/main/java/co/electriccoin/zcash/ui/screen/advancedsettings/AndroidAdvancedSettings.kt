@@ -14,9 +14,10 @@ import co.electriccoin.zcash.ui.screen.advancedsettings.view.AdvancedSettings
 @Composable
 internal fun MainActivity.WrapAdvancedSettings(
     goBack: () -> Unit,
+    goDeleteWallet: () -> Unit,
     goExportPrivateData: () -> Unit,
-    goSeedRecovery: () -> Unit,
     goChooseServer: () -> Unit,
+    goSeedRecovery: () -> Unit,
 ) {
     val walletViewModel by viewModels<WalletViewModel>()
 
@@ -24,19 +25,22 @@ internal fun MainActivity.WrapAdvancedSettings(
 
     WrapAdvancedSettings(
         goBack = goBack,
+        goDeleteWallet = goDeleteWallet,
         goExportPrivateData = goExportPrivateData,
         goChooseServer = goChooseServer,
         goSeedRecovery = goSeedRecovery,
-        walletRestoringState = walletRestoringState
+        walletRestoringState = walletRestoringState,
     )
 }
 
 @Composable
+@Suppress("LongParameterList")
 private fun WrapAdvancedSettings(
     goBack: () -> Unit,
     goExportPrivateData: () -> Unit,
     goChooseServer: () -> Unit,
     goSeedRecovery: () -> Unit,
+    goDeleteWallet: () -> Unit,
     walletRestoringState: WalletRestoringState,
 ) {
     BackHandler {
@@ -45,9 +49,10 @@ private fun WrapAdvancedSettings(
 
     AdvancedSettings(
         onBack = goBack,
-        onSeedRecovery = goSeedRecovery,
+        onDeleteWallet = goDeleteWallet,
         onExportPrivateData = goExportPrivateData,
         onChooseServer = goChooseServer,
+        onSeedRecovery = goSeedRecovery,
         walletRestoringState = walletRestoringState,
     )
 }

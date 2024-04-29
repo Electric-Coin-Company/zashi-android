@@ -14,4 +14,6 @@ interface PreferenceProvider {
     suspend fun getString(key: PreferenceKey): String?
 
     fun observe(key: PreferenceKey): Flow<String?>
+
+    suspend fun clearPreferences(): Boolean
 }

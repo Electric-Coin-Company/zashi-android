@@ -182,7 +182,7 @@ data class ExtendedTypography(
     val buttonTextSmall: TextStyle,
     val checkboxText: TextStyle,
     val securityWarningText: TextStyle,
-    val securityWarningFootnote: TextStyle,
+    val footnote: TextStyle,
     val textFieldHint: TextStyle,
     val textFieldValue: TextStyle,
     val textFieldBirthday: TextStyle,
@@ -192,6 +192,7 @@ data class ExtendedTypography(
     // Grouping transaction item text styles to a wrapper class
     val transactionItemStyles: TransactionItemTextStyles,
     val restoringTopAppBarStyle: TextStyle,
+    val deleteWalletWarnStyle: TextStyle,
 )
 
 @Suppress("CompositionLocalAllowlist")
@@ -271,7 +272,7 @@ val LocalExtendedTypography =
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium
                 ),
-            securityWarningFootnote =
+            footnote =
                 PrimaryTypography.bodySmall.copy(
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Medium
@@ -366,6 +367,10 @@ val LocalExtendedTypography =
                 SecondaryTypography.labelMedium.copy(
                     fontSize = 12.sp,
                     fontWeight = FontWeight.SemiBold
+                ),
+            deleteWalletWarnStyle =
+                PrimaryTypography.bodyLarge.copy(
+                    fontWeight = FontWeight.Bold
                 )
         )
     }

@@ -2,6 +2,7 @@ package co.electriccoin.zcash.ui.screen.advancedsettings.view
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -9,14 +10,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
+import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
@@ -34,6 +38,7 @@ private fun PreviewAdvancedSettings() {
         GradientSurface {
             AdvancedSettings(
                 onBack = {},
+                onDeleteWallet = {},
                 onExportPrivateData = {},
                 onChooseServer = {},
                 onSeedRecovery = {},
@@ -44,8 +49,10 @@ private fun PreviewAdvancedSettings() {
 }
 
 @Composable
+@Suppress("LongParameterList")
 fun AdvancedSettings(
     onBack: () -> Unit,
+    onDeleteWallet: () -> Unit,
     onExportPrivateData: () -> Unit,
     onChooseServer: () -> Unit,
     onSeedRecovery: () -> Unit,
@@ -69,6 +76,7 @@ fun AdvancedSettings(
                         start = dimens.screenHorizontalSpacingBig,
                         end = dimens.screenHorizontalSpacingBig
                     ),
+            onDeleteWallet = onDeleteWallet,
             onExportPrivateData = onExportPrivateData,
             onSeedRecovery = onSeedRecovery,
             onChooseServer = onChooseServer,
@@ -98,9 +106,10 @@ private fun AdvancedSettingsTopAppBar(
 
 @Composable
 private fun AdvancedSettingsMainContent(
-    onSeedRecovery: () -> Unit,
+    onDeleteWallet: () -> Unit,
     onExportPrivateData: () -> Unit,
     onChooseServer: () -> Unit,
+    onSeedRecovery: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -129,6 +138,33 @@ private fun AdvancedSettingsMainContent(
             onClick = onChooseServer,
             text = stringResource(R.string.advanced_settings_choose_server),
             modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(
+            modifier =
+                Modifier
+                    .fillMaxHeight()
+                    .weight(MINIMAL_WEIGHT)
+        )
+
+        Spacer(modifier = Modifier.height(dimens.spacingDefault))
+
+        PrimaryButton(
+            onClick = onDeleteWallet,
+            text =
+                stringResource(
+                    R.string.advanced_settings_delete_wallet,
+                    stringResource(id = R.string.app_name)
+                ),
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(dimens.spacingDefault))
+
+        Text(
+            text = stringResource(id = R.string.advanced_settings_delete_wallet_footnote),
+            style = ZcashTheme.extendedTypography.footnote,
+            textAlign = TextAlign.Center
         )
 
         Spacer(modifier = Modifier.height(dimens.spacingHuge))

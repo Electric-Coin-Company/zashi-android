@@ -389,6 +389,63 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
             }
         }
     }
+
+    private fun clearAppStateFlow(): Flow<Boolean> =
+        callbackFlow {
+            val application = getApplication<Application>()
+
+            viewModelScope.launch {
+                val standardPrefsCleared =
+                    StandardPreferenceSingleton
+                        .getInstance(application)
+                        .clearPreferences()
+                val encryptedPrefsCleared =
+                    EncryptedPreferenceSingleton
+                        .getInstance(application)
+                        .clearPreferences()
+
+                Twig.info { "Both preferences cleared: ${standardPrefsCleared && encryptedPrefsCleared}" }
+
+                trySend(standardPrefsCleared && encryptedPrefsCleared)
+            }
+
+            awaitClose {
+                // Nothing to close here
+            }
+        }
+
+    fun deleteWalletFlow(): Flow<Boolean> =
+        callbackFlow {
+            Twig.info { "Delete wallet: Requested" }
+
+            val synchronizer = synchronizer.value
+            if (null != synchronizer) {
+                viewModelScope.launch {
+                    (synchronizer as SdkSynchronizer).closeFlow().collect {
+                        Twig.info { "Delete wallet: SDK closed" }
+
+                        walletCoordinator.deleteSdkDataFlow().collect { isSdkErased ->
+                            Twig.info { "Delete wallet: Erase SDK result: $isSdkErased" }
+                            if (!isSdkErased) {
+                                trySend(false)
+                            }
+
+                            clearAppStateFlow().collect { isAppErased ->
+                                Twig.info { "Delete wallet: Erase SDK result: $isAppErased" }
+                                if (!isAppErased) {
+                                    trySend(false)
+                                } else {
+                                    trySend(true)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            awaitClose {
+                // Nothing to close
+            }
+        }
 }
 
 /**
