@@ -21,6 +21,9 @@ directly impact users rather than highlighting other key architectural updates.*
 - Concatenation of the messages on a multi-messages transaction has been removed and will be addressed using a new 
   design
 
+### Fixed
+- A few more minor UI improvements
+
 ## [1.0 (638)] - 2024-04-26
 
 ### Fixed
