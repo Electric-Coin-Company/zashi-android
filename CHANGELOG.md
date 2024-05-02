@@ -11,7 +11,8 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ### Added
 - Delete Zashi feature has been added. It's accessible from the Advanced settings screen. It removes the wallet 
-  secrets from Zashi and resets its state. 
+  secrets from Zashi and resets its state.
+- Transaction messages are now checked and removed in case of duplicity  
 
 ### Changed
 - We've improved the visibility logic of the little loader that is part of the Balances widget

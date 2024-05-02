@@ -545,8 +545,13 @@ private fun HistoryItemExpandedPart(
 ) {
     Column(modifier = modifier) {
         if (transaction.messages.containsValidMemo()) {
+            // Filter out identical messages on a multi-messages transaction that could be created, e.g., using
+            // YWallet, which tends to balance orchard and sapling pools, including by splitting a payment equally
+            // across both pools.
+            val uniqueMessages = transaction.messages!!.deduplicateMemos()
+
             HistoryItemMessagePart(
-                messages = transaction.messages!!.toPersistentList(),
+                messages = uniqueMessages.toPersistentList(),
                 state = transaction.overview.getExtendedState(),
                 onAction = onAction
             )
@@ -590,6 +595,10 @@ private fun HistoryItemExpandedPart(
 
 private fun List<String>?.containsValidMemo(): Boolean {
     return !isNullOrEmpty() && find { it.isNotEmpty() } != null
+}
+
+private fun List<String>.deduplicateMemos(): List<String> {
+    return distinct()
 }
 
 const val EXPANDED_TRANSACTION_ID_WIDTH_RATIO = 0.75f
