@@ -59,6 +59,16 @@ class AndroidPreferenceProvider(
             sharedPreferences.getString(key.key, null)
         }
 
+    @SuppressLint("ApplySharedPref")
+    override suspend fun clearPreferences() =
+        withContext(dispatcher) {
+            val editor = sharedPreferences.edit()
+
+            editor.clear()
+
+            return@withContext editor.commit()
+        }
+
     override fun observe(key: PreferenceKey): Flow<String?> =
         callbackFlow<Unit> {
             val listener =

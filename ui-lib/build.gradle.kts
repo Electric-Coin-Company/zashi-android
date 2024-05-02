@@ -35,6 +35,7 @@ android {
                     "src/main/res/ui/account",
                     "src/main/res/ui/balances",
                     "src/main/res/ui/common",
+                    "src/main/res/ui/delete_wallet",
                     "src/main/res/ui/export_data",
                     "src/main/res/ui/home",
                     "src/main/res/ui/choose_server",

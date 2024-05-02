@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.securitywarning.view
+package co.electriccoin.zcash.ui.screen.deletewallet.view
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -17,54 +19,50 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.model.VersionInfo
+import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
+import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.CheckBox
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.TopScreenLogoTitle
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
-import co.electriccoin.zcash.ui.fixture.VersionInfoFixture
 
-@Preview("Security Warning")
+@Preview("Delete Wallet")
 @Composable
-private fun SecurityWarningPreview() {
+private fun ExportPrivateDataPreview() {
     ZcashTheme(forceDarkMode = false) {
         GradientSurface {
-            SecurityWarning(
-                versionInfo = VersionInfoFixture.new(),
+            DeleteWallet(
+                snackbarHostState = SnackbarHostState(),
                 onBack = {},
-                onAcknowledged = {},
                 onConfirm = {},
+                walletRestoringState = WalletRestoringState.NONE,
             )
         }
     }
 }
 
-// TODO [#998]: Check and enhance screen dark mode
-// TODO [#998]: https://github.com/Electric-Coin-Company/zashi-android/issues/998
-
 @Composable
-@Suppress("LongParameterList")
-fun SecurityWarning(
-    versionInfo: VersionInfo,
+fun DeleteWallet(
+    snackbarHostState: SnackbarHostState,
     onBack: () -> Unit,
-    onAcknowledged: (Boolean) -> Unit,
     onConfirm: () -> Unit,
+    walletRestoringState: WalletRestoringState,
 ) {
     Scaffold(
-        topBar = { SecurityWarningTopAppBar(onBack = onBack) },
+        topBar = {
+            DeleteWalletDataTopAppBar(
+                onBack = onBack,
+                showRestoring = walletRestoringState == WalletRestoringState.RESTORING,
+            )
+        },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { paddingValues ->
-        SecurityWarningContent(
-            versionInfo = versionInfo,
-            onAcknowledged = onAcknowledged,
+        DeleteWalletContent(
             onConfirm = onConfirm,
             modifier =
                 Modifier
@@ -81,37 +79,57 @@ fun SecurityWarning(
 }
 
 @Composable
-private fun SecurityWarningTopAppBar(onBack: () -> Unit) {
+private fun DeleteWalletDataTopAppBar(
+    onBack: () -> Unit,
+    showRestoring: Boolean
+) {
     SmallTopAppBar(
-        backText = stringResource(R.string.security_warning_back).uppercase(),
-        backContentDescriptionText = stringResource(R.string.security_warning_back_content_description),
+        restoringLabel =
+            if (showRestoring) {
+                stringResource(id = R.string.restoring_wallet_label)
+            } else {
+                null
+            },
+        backText = stringResource(R.string.delete_wallet_back).uppercase(),
+        backContentDescriptionText = stringResource(R.string.delete_wallet_back_content_description),
         onBack = onBack,
     )
 }
 
 @Composable
-private fun SecurityWarningContent(
-    versionInfo: VersionInfo,
-    onAcknowledged: (Boolean) -> Unit,
+private fun DeleteWalletContent(
     onConfirm: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val appName = stringResource(id = R.string.app_name)
+
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         TopScreenLogoTitle(
-            title = stringResource(R.string.security_warning_header),
+            title = stringResource(R.string.delete_wallet_title, appName),
             logoContentDescription = stringResource(R.string.zcash_logo_content_description)
         )
 
-        Spacer(Modifier.height(ZcashTheme.dimens.spacingLarge))
+        Spacer(Modifier.height(ZcashTheme.dimens.spacingBig))
 
-        SecurityWarningContentText(
-            versionInfo = versionInfo
+        Text(
+            text = stringResource(R.string.delete_wallet_text_1),
+            style = ZcashTheme.extendedTypography.deleteWalletWarnStyle
         )
 
-        Spacer(Modifier.height(ZcashTheme.dimens.spacingLarge))
+        Spacer(Modifier.height(ZcashTheme.dimens.spacingUpLarge))
+
+        Body(
+            text =
+                stringResource(
+                    R.string.delete_wallet_text_2,
+                    appName
+                )
+        )
+
+        Spacer(Modifier.height(ZcashTheme.dimens.spacingDefault))
 
         val checkedState = rememberSaveable { mutableStateOf(false) }
         CheckBox(
@@ -122,10 +140,8 @@ private fun SecurityWarningContent(
             checked = checkedState.value,
             onCheckedChange = {
                 checkedState.value = it
-                onAcknowledged(it)
             },
-            text = stringResource(R.string.security_warning_acknowledge),
-            checkBoxTestTag = SecurityScreenTag.ACKNOWLEDGE_CHECKBOX_TAG
+            text = stringResource(R.string.delete_wallet_acknowledge),
         )
 
         Spacer(
@@ -135,40 +151,15 @@ private fun SecurityWarningContent(
                     .weight(MINIMAL_WEIGHT)
         )
 
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
+
         PrimaryButton(
             onClick = onConfirm,
-            text = stringResource(R.string.security_warning_confirm).uppercase(),
+            text = stringResource(R.string.delete_wallet_button, appName).uppercase(),
             enabled = checkedState.value,
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingHuge))
-    }
-}
-
-@Composable
-fun SecurityWarningContentText(versionInfo: VersionInfo) {
-    Column {
-        Text(
-            text = stringResource(id = R.string.security_warning_text, versionInfo.versionName),
-            style = ZcashTheme.extendedTypography.securityWarningText
-        )
-
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
-
-        val textPart1 = stringResource(R.string.security_warning_text_footnote_part_1)
-        val textPart2 = stringResource(R.string.security_warning_text_footnote_part_2)
-
-        Text(
-            text =
-                buildAnnotatedString {
-                    withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
-                        append(textPart1)
-                    }
-                    append(textPart2)
-                },
-            style = ZcashTheme.extendedTypography.footnote,
-            modifier = Modifier.fillMaxWidth()
-        )
+        Spacer(Modifier.height(ZcashTheme.dimens.spacingHuge))
     }
 }
