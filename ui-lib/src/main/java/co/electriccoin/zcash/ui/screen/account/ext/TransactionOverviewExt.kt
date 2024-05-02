@@ -3,10 +3,12 @@ package co.electriccoin.zcash.ui.screen.account.ext
 import cash.z.ecc.android.sdk.model.BlockHeight
 import cash.z.ecc.android.sdk.model.TransactionOverview
 import cash.z.ecc.android.sdk.model.TransactionRecipient
+import cash.z.ecc.android.sdk.type.AddressType
 
 data class TransactionOverviewExt(
     val overview: TransactionOverview,
-    val recipient: TransactionRecipient?
+    val recipient: TransactionRecipient?,
+    val recipientAddressType: AddressType?
 )
 
 fun TransactionOverview.getSortHeight(networkHeight: BlockHeight): BlockHeight {
