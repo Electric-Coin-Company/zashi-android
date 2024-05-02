@@ -31,6 +31,7 @@ import co.electriccoin.zcash.ui.common.model.OnboardingState
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.model.hasChangePending
+import co.electriccoin.zcash.ui.common.model.hasValuePending
 import co.electriccoin.zcash.ui.common.model.spendableBalance
 import co.electriccoin.zcash.ui.common.model.totalBalance
 import co.electriccoin.zcash.ui.preference.EncryptedPreferenceKeys
@@ -251,13 +252,12 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
             .map { snapshot ->
                 when {
                     // Show the loader only under these conditions:
-                    // - Available balance is currently zero
-                    // - Wallet has some ChangePending in progress
-                    // - And Total balance is non-zero
+                    // - Available balance is currently zero AND total balance is non-zero
+                    // - And wallet has some ChangePending or ValuePending in progress
                     (
                         snapshot.spendableBalance().value == 0L &&
-                            snapshot.hasChangePending() &&
-                            snapshot.totalBalance().value > 0L
+                            snapshot.totalBalance().value > 0L &&
+                            (snapshot.hasChangePending() || snapshot.hasValuePending())
                     ) -> {
                         BalanceState.Loading(
                             totalBalance = snapshot.totalBalance()
