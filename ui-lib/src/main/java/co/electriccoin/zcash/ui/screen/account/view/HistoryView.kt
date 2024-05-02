@@ -729,10 +729,6 @@ private fun HistoryItemMessagePart(
     onAction: (TrxItemAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    // TODO [#1315]: Proper more messages in transaction displaying
-    // TODO [#1315]: https://github.com/Electric-Coin-Company/zashi-android/issues/1315
-    val composedMessage = messages.joinToString(separator = "\n\n")
-
     val textStyle: TextStyle
     val textColor: Color
     if (state.isFailed()) {
@@ -758,8 +754,11 @@ private fun HistoryItemMessagePart(
                     .fillMaxWidth()
                     .border(width = 1.dp, color = ZcashTheme.colors.textFieldFrame)
         ) {
+            // TODO [#1315]: Proper more messages in transaction displaying
+            // TODO [#1315]: Note we display the first one only for now
+            // TODO [#1315]: https://github.com/Electric-Coin-Company/zashi-android/issues/1315
             Text(
-                text = composedMessage,
+                text = messages[0],
                 style = textStyle,
                 color = textColor,
                 modifier = Modifier.padding(all = ZcashTheme.dimens.spacingMid)
@@ -776,7 +775,7 @@ private fun HistoryItemMessagePart(
             modifier =
                 Modifier
                     .clip(RoundedCornerShape(ZcashTheme.dimens.regularRippleEffectCorner))
-                    .clickable { onAction(TrxItemAction.MessageClick(composedMessage)) }
+                    .clickable { onAction(TrxItemAction.MessageClick(messages[0])) }
                     .padding(all = ZcashTheme.dimens.spacingTiny)
         )
     }

@@ -16,6 +16,10 @@ directly impact users rather than highlighting other key architectural updates.*
 ### Changed
 - We've improved the visibility logic of the little loader that is part of the Balances widget
 
+### Removed
+- Concatenation of the messages on a multi-messages transaction has been removed and will be addressed using a new 
+  design
+
 ## [1.0 (638)] - 2024-04-26
 
 ### Fixed
