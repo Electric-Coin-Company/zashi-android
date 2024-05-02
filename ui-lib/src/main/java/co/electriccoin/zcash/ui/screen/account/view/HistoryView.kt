@@ -127,7 +127,7 @@ internal fun HistoryContainer(
             Column(
                 modifier = Modifier.background(color = ZcashTheme.colors.historySyncingColor)
             ) {
-                Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
+                Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
                 // Do not show the app update information and the detailed sync status in the restoring status
                 // on Account screen
@@ -138,7 +138,7 @@ internal fun HistoryContainer(
                     walletSnapshot = walletSnapshot,
                 )
 
-                Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
+                Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
             }
         }
         when (transactionState) {
