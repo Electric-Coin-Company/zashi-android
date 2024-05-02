@@ -219,6 +219,8 @@ fun AboutMainContent(
         )
 
         PrivacyPolicyLink(onPrivacyPolicy)
+
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingHuge))
     }
 }
 
