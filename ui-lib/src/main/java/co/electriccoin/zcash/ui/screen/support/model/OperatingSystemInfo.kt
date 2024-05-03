@@ -9,10 +9,11 @@ import co.electriccoin.zcash.spackle.AndroidApiVersion
 data class OperatingSystemInfo(val sdkInt: Int, val isPreview: Boolean) {
     fun toSupportString() =
         buildString {
+            appendLine("Platform: Android")
             if (isPreview) {
-                appendLine("Android API: $sdkInt (preview)")
+                appendLine("System API: $sdkInt (preview)")
             } else {
-                appendLine("Android API: $sdkInt")
+                appendLine("System API: $sdkInt")
             }
         }
 
