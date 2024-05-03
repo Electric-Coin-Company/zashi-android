@@ -5,7 +5,7 @@
 
     <string name="restore_title">Enter secret recovery phrase</string>
     <string name="restore_seed_instructions">Enter your 24-word seed phrase to restore the associated wallet.</string>
-    <string name="restore_seed_hint">Enter private seed here…</string>
+    <string name="restore_seed_hint">privacy dignity freedom …</string>
     <string name="restore_seed_button_next">Next</string>
 
     <string name="restore_seed_warning_suggestions">This word is not in the seed phrase dictionary.  Please select the correct one from the suggestions.</string>
