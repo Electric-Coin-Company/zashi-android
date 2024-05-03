@@ -16,6 +16,7 @@ import cash.z.ecc.android.sdk.model.FiatCurrency
 import cash.z.ecc.android.sdk.model.PercentDecimal
 import cash.z.ecc.android.sdk.model.PersistableWallet
 import cash.z.ecc.android.sdk.model.TransactionOverview
+import cash.z.ecc.android.sdk.model.TransactionRecipient
 import cash.z.ecc.android.sdk.model.WalletAddresses
 import cash.z.ecc.android.sdk.model.WalletBalance
 import cash.z.ecc.android.sdk.model.Zatoshi
@@ -224,9 +225,24 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
                             }
                             .map {
                                 if (it.isSentTransaction) {
-                                    TransactionOverviewExt(it, synchronizer.getRecipients(it).firstOrNull())
+                                    val recipient = synchronizer.getRecipients(it).firstOrNull()
+                                    TransactionOverviewExt(
+                                        overview = it,
+                                        recipient = recipient,
+                                        recipientAddressType =
+                                            if (recipient != null && (recipient is TransactionRecipient.Address)) {
+                                                synchronizer.validateAddress(recipient.addressValue)
+                                            } else {
+                                                null
+                                            }
+                                    )
                                 } else {
-                                    TransactionOverviewExt(it, null)
+                                    // Note that recipients can only be queried for sent transactions
+                                    TransactionOverviewExt(
+                                        overview = it,
+                                        recipient = null,
+                                        recipientAddressType = null
+                                    )
                                 }
                             }
                     if (status.isSyncing()) {

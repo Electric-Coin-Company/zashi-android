@@ -163,6 +163,7 @@ data class TransactionItemTextStyles(
     val valueFirstPart: TextStyle,
     val valueSecondPart: TextStyle,
     val content: TextStyle,
+    val contentItalic: TextStyle,
     val contentMedium: TextStyle,
     val contentUnderline: TextStyle,
     val contentLineThrough: TextStyle,
@@ -335,6 +336,11 @@ val LocalExtendedTypography =
                     content =
                         PrimaryTypography.bodySmall.copy(
                             fontSize = 13.sp
+                        ),
+                    contentItalic =
+                        PrimaryTypography.bodySmall.copy(
+                            fontSize = 13.sp,
+                            fontStyle = FontStyle.Italic
                         ),
                     contentMedium =
                         PrimaryTypography.bodySmall.copy(

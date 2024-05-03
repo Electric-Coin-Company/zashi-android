@@ -44,6 +44,7 @@ import cash.z.ecc.android.sdk.model.TransactionRecipient
 import cash.z.ecc.android.sdk.model.TransactionState
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.toZecString
+import cash.z.ecc.android.sdk.type.AddressType
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.SynchronizationStatus
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
@@ -557,6 +558,17 @@ private fun HistoryItemExpandedPart(
             )
 
             Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
+        } else if (transaction.recipientAddressType == null ||
+            transaction.recipientAddressType == AddressType.Shielded
+        ) {
+            Text(
+                text = stringResource(id = R.string.account_history_item_no_message),
+                style = ZcashTheme.extendedTypography.transactionItemStyles.contentItalic,
+                color = ZcashTheme.colors.textCommon,
+                modifier = Modifier.fillMaxWidth(EXPANDED_TRANSACTION_WIDTH_RATIO)
+            )
+
+            Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
         }
 
         HistoryItemTransactionIdPart(
@@ -601,8 +613,8 @@ private fun List<String>.deduplicateMemos(): List<String> {
     return distinct()
 }
 
-const val EXPANDED_TRANSACTION_ID_WIDTH_RATIO = 0.75f
-const val COLLAPSED_TRANSACTION_ID_WIDTH_RATIO = 0.5f
+const val EXPANDED_TRANSACTION_WIDTH_RATIO = 0.75f
+const val COLLAPSED_TRANSACTION_WIDTH_RATIO = 0.5f
 
 @Composable
 @Suppress("LongMethod")
@@ -631,7 +643,7 @@ private fun HistoryItemTransactionIdPart(
                 color = ZcashTheme.colors.textCommon,
                 modifier =
                     Modifier
-                        .fillMaxWidth(EXPANDED_TRANSACTION_ID_WIDTH_RATIO)
+                        .fillMaxWidth(EXPANDED_TRANSACTION_WIDTH_RATIO)
                         .testTag(HistoryTag.TRANSACTION_ID)
             )
 
@@ -683,7 +695,7 @@ private fun HistoryItemTransactionIdPart(
                     overflow = TextOverflow.Ellipsis,
                     modifier =
                         Modifier
-                            .fillMaxWidth(COLLAPSED_TRANSACTION_ID_WIDTH_RATIO)
+                            .fillMaxWidth(COLLAPSED_TRANSACTION_WIDTH_RATIO)
                             .testTag(HistoryTag.TRANSACTION_ID)
                 )
             }
