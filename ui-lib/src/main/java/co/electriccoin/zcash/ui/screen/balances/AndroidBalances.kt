@@ -110,7 +110,7 @@ internal fun WrapBalances(
         rememberSaveable(stateSaver = ShieldState.Saver) { mutableStateOf(ShieldState.None) }
 
     // Keep the state always up-to-date with the latest transparent balance
-    setShieldState(updateTransparentBalanceState(shieldState, walletSnapshot, walletRestoringState))
+    setShieldState(updateTransparentBalanceState(shieldState, walletSnapshot))
 
     val (isShowingErrorDialog, setShowErrorDialog) = rememberSaveable { mutableStateOf(false) }
 
@@ -210,19 +210,12 @@ internal fun WrapBalances(
 
 fun updateTransparentBalanceState(
     currentShieldState: ShieldState,
-    walletSnapshot: WalletSnapshot?,
-    walletRestoringState: WalletRestoringState
+    walletSnapshot: WalletSnapshot?
 ): ShieldState {
     return when {
         (walletSnapshot == null) -> currentShieldState
-        // Shielding while restoring the wallet is not allowed
-        (walletRestoringState == WalletRestoringState.RESTORING) -> currentShieldState
-        (
-            walletSnapshot.transparentBalance >= Zatoshi(DEFAULT_SHIELDING_THRESHOLD) &&
-                currentShieldState.isEnabled()
-        ) -> ShieldState.Available
-        else -> {
-            currentShieldState
-        }
+        (walletSnapshot.transparentBalance >= Zatoshi(DEFAULT_SHIELDING_THRESHOLD) && currentShieldState.isEnabled()) ->
+            ShieldState.Available
+        else -> currentShieldState
     }
 }
