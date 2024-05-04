@@ -78,7 +78,7 @@ internal fun MainActivity.WrapSendConfirmation(
 
 @VisibleForTesting
 @Composable
-@Suppress("LongParameterList", "LongMethod")
+@Suppress("LongParameterList", "LongMethod", "CyclomaticComplexMethod")
 internal fun WrapSendConfirmation(
     activity: ComponentActivity,
     arguments: SendConfirmationArguments,
@@ -182,12 +182,17 @@ internal fun WrapSendConfirmation(
                             spendingKey = spendingKey,
                             proposal = newZecSend.proposal!!
                         )
+
+                    // Triggering the transaction history and balances refresh to be notified immediately
+                    // about the wallet's updated state
+                    (synchronizer as SdkSynchronizer).run {
+                        refreshTransactions()
+                        refreshAllBalances()
+                    }
+
                     when (result) {
                         SubmitResult.Success -> {
                             setStage(SendConfirmationStage.Confirmation)
-                            // Triggering transaction history refreshing to be notified about the newly created
-                            // transaction asap
-                            (synchronizer as SdkSynchronizer).refreshTransactions()
                             goHome()
                         }
                         is SubmitResult.SimpleTrxFailure -> {
