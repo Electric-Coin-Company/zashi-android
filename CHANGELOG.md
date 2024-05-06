@@ -22,6 +22,7 @@ directly impact users rather than highlighting other key architectural updates.*
   design
 
 ### Fixed
+- Transparent funds shielding action has been improved to address the latest user feedback  
 - A few more minor UI improvements
 
 ## [1.0 (638)] - 2024-04-26

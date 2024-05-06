@@ -2,6 +2,7 @@
 
 package co.electriccoin.zcash.ui.screen.balances
 
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
@@ -113,6 +114,11 @@ internal fun WrapBalances(
 
     val (isShowingErrorDialog, setShowErrorDialog) = rememberSaveable { mutableStateOf(false) }
 
+    fun showShieldingSuccess() {
+        setShieldState(ShieldState.Shielded)
+        Toast.makeText(context, context.getString(R.string.balances_shielding_successful), Toast.LENGTH_LONG).show()
+    }
+
     suspend fun showShieldingError(errorMessage: String?) {
         Twig.error { "Shielding proposal failed with: $errorMessage" }
 
@@ -167,16 +173,18 @@ internal fun WrapBalances(
                                     spendingKey = spendingKey,
                                     proposal = newProposal
                                 )
+
+                            // Triggering the transaction history and balances refresh to be notified immediately
+                            // about the wallet's updated state
+                            (synchronizer as SdkSynchronizer).run {
+                                refreshTransactions()
+                                refreshAllBalances()
+                            }
+
                             when (result) {
                                 SubmitResult.Success -> {
                                     Twig.info { "Shielding transaction done successfully" }
-                                    setShieldState(ShieldState.Shielded)
-                                    // Triggering transaction history refresh to be notified about the newly created
-                                    // transaction asap
-                                    (synchronizer as SdkSynchronizer).refreshTransactions()
-
-                                    // We could consider notifying UI with a change to emphasize the shielding action
-                                    // was successful, or we could switch the selected tab to Account
+                                    showShieldingSuccess()
                                 }
                                 is SubmitResult.SimpleTrxFailure -> {
                                     Twig.warn { "Shielding transaction failed" }
@@ -205,15 +213,9 @@ fun updateTransparentBalanceState(
     walletSnapshot: WalletSnapshot?
 ): ShieldState {
     return when {
-        (walletSnapshot == null) -> {
-            currentShieldState
-        }
-        (
-            walletSnapshot.transparentBalance >= Zatoshi(DEFAULT_SHIELDING_THRESHOLD) &&
-                currentShieldState.isEnabled()
-        ) -> ShieldState.Available
-        else -> {
-            currentShieldState
-        }
+        (walletSnapshot == null) -> currentShieldState
+        (walletSnapshot.transparentBalance >= Zatoshi(DEFAULT_SHIELDING_THRESHOLD) && currentShieldState.isEnabled()) ->
+            ShieldState.Available
+        else -> currentShieldState
     }
 }
