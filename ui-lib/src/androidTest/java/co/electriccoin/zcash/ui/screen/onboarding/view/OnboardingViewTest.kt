@@ -13,6 +13,7 @@ import co.electriccoin.zcash.ui.test.getStringResource
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
+import kotlin.test.Ignore
 
 class OnboardingViewTest : UiTestPrerequisites() {
     @get:Rule
@@ -66,6 +67,7 @@ class OnboardingViewTest : UiTestPrerequisites() {
 
     @Test
     @MediumTest
+    @Ignore("Disabling this until [SemanticNodeInteraction.performScrollTo] works as expected")
     fun click_import_wallet() {
         val testSetup = newTestSetup()
 

@@ -1,70 +1,60 @@
 package co.electriccoin.zcash.ui.design.util
 
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.navigationBarsIgnoringVisibility
+import androidx.compose.foundation.layout.statusBarsIgnoringVisibility
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.spackle.Twig
-import kotlin.math.roundToInt
 
 /**
- * This operation performs calculation of the screen height together with remembering its result for a further calls.
+ * This operation performs calculation of the screen height.
  *
- * @param cacheKey The cache defining key. Use a different one for recalculation.
- *
- * @return Wrapper object of the calculated heights in density pixels.
+ * @return [ScreenHeight] a wrapper object of the calculated heights in density pixels.
  */
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun screenHeight(cacheKey: Any = true): ScreenHeight {
-    val density = LocalDensity.current
+fun screenHeight(): ScreenHeight {
     val configuration = LocalConfiguration.current
-    val statusBars = WindowInsets.statusBars
-    val navigationBars = WindowInsets.navigationBars
 
-    val cachedResult =
-        remember(cacheKey) {
-            val contentHeightPx = with(density) { configuration.screenHeightDp.dp.roundToPx() }
-            Twig.debug { "Screen content height in pixels: $contentHeightPx" }
+    val statusBars = WindowInsets.statusBarsIgnoringVisibility.asPaddingValues().calculateTopPadding()
+    Twig.debug { "Screen height: Status bar height raw: $statusBars" }
 
-            // TODO [#1382]: Analyse zero status and navigation bars height
-            // TODO [#1382]: https://github.com/Electric-Coin-Company/zashi-android/issues/1382
-            val statusBarHeight =
-                statusBars.getTop(density).dp.run {
-                    if (value <= 0f) {
-                        48.dp
-                    } else {
-                        this
-                    }
-                }
-            Twig.debug { "Status bar height: $statusBarHeight" }
+    val navigationBars = WindowInsets.navigationBarsIgnoringVisibility.asPaddingValues().calculateBottomPadding()
+    Twig.debug { "Screen height: Navigation bar height raw: $navigationBars" }
 
-            val navigationBarHeight =
-                navigationBars.getBottom(density).dp.run {
-                    if (value <= 0f) {
-                        88.dp
-                    } else {
-                        this
-                    }
-                }
-            Twig.debug { "Navigation bar height: $navigationBarHeight" }
+    val contentHeight = configuration.screenHeightDp.dp
+    Twig.debug { "Screen height: Screen content height: $contentHeight" }
 
-            val contentHeight = (contentHeightPx / density.density.roundToInt()).dp
-            Twig.debug { "Screen content height in dps: $contentHeight" }
-
-            ScreenHeight(
-                contentHeight = contentHeight,
-                systemStatusBarHeight = statusBarHeight,
-                systemNavigationBarHeight = navigationBarHeight,
-            )
+    val statusBarHeight =
+        statusBars.run {
+            if (value <= 0f) {
+                24.dp
+            } else {
+                this
+            }
         }
-    Twig.debug { "Screen total height: $cachedResult" }
+    Twig.debug { "Screen height: Status bar height: $statusBarHeight" }
 
-    return cachedResult
+    val navigationBarHeight =
+        navigationBars.run {
+            if (value <= 0f) {
+                88.dp
+            } else {
+                this
+            }
+        }
+    Twig.debug { "Screen height: Navigation bar height: $navigationBarHeight" }
+
+    return ScreenHeight(
+        contentHeight = contentHeight,
+        systemStatusBarHeight = statusBarHeight,
+        systemNavigationBarHeight = navigationBarHeight
+    )
 }
 
 data class ScreenHeight(
@@ -74,13 +64,13 @@ data class ScreenHeight(
 ) {
     fun overallScreenHeight(): Dp {
         return (contentHeight + systemBarsHeight()).also {
-            Twig.debug { "Screen overall height: $it" }
+            Twig.debug { "Screen height: Overall height: $it" }
         }
     }
 
     fun systemBarsHeight(): Dp {
         return (systemStatusBarHeight + systemNavigationBarHeight).also {
-            Twig.debug { "System bars height: $this" }
+            Twig.debug { "Screen height: System bars height: $it" }
         }
     }
 }
