@@ -1,6 +1,8 @@
 package co.electriccoin.zcash.ui.common.viewmodel
 
+import android.app.Activity
 import android.app.Application
+import android.content.Intent
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.android.bip39.Mnemonics
@@ -25,6 +27,7 @@ import cash.z.ecc.android.sdk.tool.DerivationTool
 import cash.z.ecc.sdk.type.fromResources
 import co.electriccoin.zcash.global.getInstance
 import co.electriccoin.zcash.spackle.Twig
+import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.common.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.common.compose.BalanceState
 import co.electriccoin.zcash.ui.common.extension.throttle
@@ -430,7 +433,7 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
             }
         }
 
-    fun deleteWalletFlow(): Flow<Boolean> =
+    fun deleteWalletFlow(activity: Activity): Flow<Boolean> =
         callbackFlow {
             Twig.info { "Delete wallet: Requested" }
 
@@ -447,11 +450,15 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
                             }
 
                             clearAppStateFlow().collect { isAppErased ->
-                                Twig.info { "Delete wallet: Erase SDK result: $isAppErased" }
+                                Twig.info { "Delete wallet: Erase App result: $isAppErased" }
                                 if (!isAppErased) {
                                     trySend(false)
                                 } else {
                                     trySend(true)
+                                    activity.run {
+                                        finish()
+                                        startActivity(Intent(this, MainActivity::class.java))
+                                    }
                                 }
                             }
                         }

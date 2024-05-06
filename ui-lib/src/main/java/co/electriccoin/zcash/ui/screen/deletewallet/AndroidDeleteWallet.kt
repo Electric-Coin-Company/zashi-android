@@ -1,6 +1,6 @@
 package co.electriccoin.zcash.ui.screen.deletewallet
 
-import android.content.Context
+import android.app.Activity
 import androidx.activity.compose.BackHandler
 import androidx.activity.viewModels
 import androidx.compose.material3.SnackbarHostState
@@ -23,7 +23,7 @@ internal fun MainActivity.WrapDeleteWallet(goBack: () -> Unit) {
     val walletRestoringState = walletViewModel.walletRestoringState.collectAsStateWithLifecycle().value
 
     WrapDeleteWallet(
-        this,
+        activity = this,
         goBack = goBack,
         walletRestoringState = walletRestoringState,
         walletViewModel = walletViewModel,
@@ -32,7 +32,7 @@ internal fun MainActivity.WrapDeleteWallet(goBack: () -> Unit) {
 
 @Composable
 internal fun WrapDeleteWallet(
-    context: Context,
+    activity: Activity,
     goBack: () -> Unit,
     walletRestoringState: WalletRestoringState,
     walletViewModel: WalletViewModel,
@@ -50,14 +50,14 @@ internal fun WrapDeleteWallet(
         onBack = goBack,
         onConfirm = {
             scope.launch {
-                walletViewModel.deleteWalletFlow().collect { isWalletDeleted ->
+                walletViewModel.deleteWalletFlow(activity).collect { isWalletDeleted ->
                     if (isWalletDeleted) {
                         Twig.info { "Wallet deleted successfully" }
                         // The app flows move to the Onboarding screens reactively
                     } else {
                         Twig.error { "Wallet deletion failed" }
                         snackbarHostState.showSnackbar(
-                            message = context.getString(R.string.delete_wallet_failed)
+                            message = activity.getString(R.string.delete_wallet_failed)
                         )
                     }
                 }
