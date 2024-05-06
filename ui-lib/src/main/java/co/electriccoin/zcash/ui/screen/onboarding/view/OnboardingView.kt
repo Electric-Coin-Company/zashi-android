@@ -113,13 +113,13 @@ fun ShortOnboarding(
                     onFixtureWallet = onFixtureWallet,
                     modifier =
                         Modifier
+                            .height(screenHeight.overallScreenHeight())
                             .padding(
                                 top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingHuge,
-                                bottom = paddingValues.calculateBottomPadding() + ZcashTheme.dimens.spacingDefault,
+                                bottom = paddingValues.calculateBottomPadding() + ZcashTheme.dimens.spacingBig,
                                 start = ZcashTheme.dimens.screenHorizontalSpacingBig,
                                 end = ZcashTheme.dimens.screenHorizontalSpacingBig
                             )
-                            .height(screenHeight.contentHeight - paddingValues.calculateBottomPadding())
                 )
             }
         }
