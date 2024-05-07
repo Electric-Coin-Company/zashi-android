@@ -32,6 +32,7 @@ internal object Dark {
     val textFieldWarning = Color(0xFFF40202)
     val textFieldHint = Color(0xFFB7B7B7)
     val textDescription = Color(0xFF777777)
+    val textDescriptionDark = Color(0xFF4D4D4D)
     val textProgress = Color(0xFF8B8A8A)
 
     val aboutTextColor = Color(0xFF4E4E4E)
@@ -98,6 +99,7 @@ internal object Light {
     val textFieldHint = Color(0xFFB7B7B7)
     val textChipIndex = Color(0xFFEE8592)
     val textDescription = Color(0xFF777777)
+    val textDescriptionDark = Color(0xFF4D4D4D)
     val textProgress = Color(0xFF8B8A8A)
 
     val screenTitleColor = Color(0xFF040404)
@@ -191,6 +193,7 @@ internal val DarkExtendedColorPalette =
         textFieldWarning = Dark.textFieldWarning,
         textFieldHint = Dark.textFieldHint,
         textDescription = Dark.textDescription,
+        textDescriptionDark = Dark.textDescriptionDark,
         textPending = Dark.textProgress,
         layoutStroke = Dark.layoutStroke,
         overlay = Dark.overlay,
@@ -240,6 +243,7 @@ internal val LightExtendedColorPalette =
         textFieldWarning = Light.textFieldWarning,
         textFieldHint = Light.textFieldHint,
         textDescription = Light.textDescription,
+        textDescriptionDark = Light.textDescriptionDark,
         textPending = Light.textProgress,
         layoutStroke = Light.layoutStroke,
         overlay = Light.overlay,
@@ -291,6 +295,7 @@ internal val LocalExtendedColors =
             textFieldWarning = Color.Unspecified,
             textFieldFrame = Color.Unspecified,
             textDescription = Color.Unspecified,
+            textDescriptionDark = Color.Unspecified,
             textPending = Color.Unspecified,
             layoutStroke = Color.Unspecified,
             overlay = Color.Unspecified,

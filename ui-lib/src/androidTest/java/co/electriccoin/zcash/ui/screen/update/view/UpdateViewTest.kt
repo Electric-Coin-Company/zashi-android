@@ -6,6 +6,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.test.filters.MediumTest
 import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.R
@@ -147,6 +148,7 @@ class UpdateViewTest : UiTestPrerequisites() {
 
         composeTestRule.onNodeWithText(getStringResource(R.string.update_link_text)).also {
             it.assertExists()
+            it.performScrollTo()
             it.performClick()
         }
 

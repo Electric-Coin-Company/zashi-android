@@ -278,6 +278,7 @@ fun Reference(
     fontWeight: FontWeight = FontWeight.SemiBold,
     textAlign: TextAlign = TextAlign.Center,
     textStyle: TextStyle = ZcashTheme.typography.primary.bodyLarge,
+    color: Color = ZcashTheme.colors.reference,
     imageVector: ImageVector? = null,
     imageContentDescription: String? = null
 ) {
@@ -303,7 +304,7 @@ fun Reference(
             style =
                 textStyle.merge(
                     TextStyle(
-                        color = ZcashTheme.colors.reference,
+                        color = color,
                         textAlign = textAlign,
                         textDecoration = TextDecoration.Underline,
                         fontWeight = fontWeight

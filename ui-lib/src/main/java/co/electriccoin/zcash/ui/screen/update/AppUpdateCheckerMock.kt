@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.integration.test.screen.update.viewmodel
+package co.electriccoin.zcash.ui.screen.update
 
 import android.app.Activity
 import android.content.Context
@@ -6,7 +6,6 @@ import androidx.activity.ComponentActivity
 import co.electriccoin.zcash.spackle.getPackageInfoCompat
 import co.electriccoin.zcash.spackle.versionCodeCompat
 import co.electriccoin.zcash.ui.fixture.UpdateInfoFixture
-import co.electriccoin.zcash.ui.screen.update.AppUpdateChecker
 import co.electriccoin.zcash.ui.screen.update.model.UpdateInfo
 import co.electriccoin.zcash.ui.screen.update.model.UpdateState
 import com.google.android.play.core.appupdate.AppUpdateInfo
@@ -26,13 +25,13 @@ class AppUpdateCheckerMock private constructor() : AppUpdateChecker {
 
         fun new() = AppUpdateCheckerMock()
 
-        // used mostly for tests
+        // Used mostly for tests
         val resultUpdateInfo =
             UpdateInfoFixture.new(
                 appUpdateInfo = null,
                 state = UpdateState.Prepared,
-                priority = AppUpdateChecker.Priority.HIGH,
-                force = true
+                priority = AppUpdateChecker.Priority.LOW,
+                force = false
             )
     }
 
@@ -52,7 +51,7 @@ class AppUpdateCheckerMock private constructor() : AppUpdateChecker {
 
             val appUpdateInfoTask = fakeAppUpdateManager.appUpdateInfo
 
-            // to simulate a real-world situation
+            // To simulate a real-world situation
             delay(100.milliseconds)
 
             appUpdateInfoTask.addOnCompleteListener { infoTask ->
@@ -83,8 +82,8 @@ class AppUpdateCheckerMock private constructor() : AppUpdateChecker {
         appUpdateInfo: AppUpdateInfo
     ): Flow<Int> =
         flow {
-            // to simulate a real-world situation
-            delay(100.milliseconds)
+            // To simulate a real-world situation
+            delay(2000.milliseconds)
             emit(Activity.RESULT_OK)
         }
 }

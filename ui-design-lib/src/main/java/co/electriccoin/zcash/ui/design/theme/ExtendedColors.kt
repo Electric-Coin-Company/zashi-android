@@ -29,6 +29,7 @@ data class ExtendedColors(
     val textFieldWarning: Color,
     val textFieldFrame: Color,
     val textDescription: Color,
+    val textDescriptionDark: Color,
     val textPending: Color,
     val layoutStroke: Color,
     val overlay: Color,
