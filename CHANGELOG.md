@@ -9,6 +9,8 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [1.0 (650)] - 2024-05-07
+
 ### Added
 - Delete Zashi feature has been added. It's accessible from the Advanced settings screen. It removes the wallet 
   secrets from Zashi and resets its state.
