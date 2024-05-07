@@ -16,6 +16,7 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ### Changed
 - We've improved the visibility logic of the little loader that is part of the Balances widget
+- The App-Update screen UI has been reworked to align with the latest design guidelines
 
 ### Removed
 - Concatenation of the messages on a multi-messages transaction has been removed and will be addressed using a new 

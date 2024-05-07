@@ -245,6 +245,8 @@ abstract class PublishToGooglePlay @Inject constructor(
                 track,
                 Track().setReleases(
                     listOf(TrackRelease()
+                        // TODO [#1440]: Provide a way to inject in-app-update information
+                        // TODO [#1440]: https://github.com/Electric-Coin-Company/zashi-android/issues/1440
                         .setName(versionName)
                         .setVersionCodes(bundleVersionCodes)
                         .setStatus(status)

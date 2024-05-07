@@ -194,6 +194,7 @@ data class ExtendedTypography(
     val transactionItemStyles: TransactionItemTextStyles,
     val restoringTopAppBarStyle: TextStyle,
     val deleteWalletWarnStyle: TextStyle,
+    val updateTitleStyle: TextStyle,
 )
 
 @Suppress("CompositionLocalAllowlist")
@@ -376,6 +377,10 @@ val LocalExtendedTypography =
                 ),
             deleteWalletWarnStyle =
                 PrimaryTypography.bodyLarge.copy(
+                    fontWeight = FontWeight.Bold
+                ),
+            updateTitleStyle =
+                PrimaryTypography.titleLarge.copy(
                     fontWeight = FontWeight.Bold
                 )
         )
