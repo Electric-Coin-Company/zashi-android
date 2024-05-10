@@ -127,6 +127,19 @@ private fun ComposableBalancesShieldFailurePreview() {
     }
 }
 
+@Preview("BalancesShieldErrorDialog")
+@Composable
+private fun ComposableBalancesShieldErrorDialogPreview() {
+    ZcashTheme(forceDarkMode = false) {
+        GradientSurface {
+            ShieldingErrorDialog(
+                reason = "Test Error Text",
+                onDone = {}
+            )
+        }
+    }
+}
+
 @Suppress("LongParameterList")
 @Composable
 fun Balances(

@@ -41,4 +41,33 @@ object StandardPreferenceKeys {
      * The fiat currency that the user prefers.
      */
     val PREFERRED_FIAT_CURRENCY = FiatCurrencyPreferenceDefault(PreferenceKey("preferred_fiat_currency_code"))
+
+    /**
+     * Screens or flows protected by required authentication
+     */
+    val IS_APP_ACCESS_AUTHENTICATION =
+        BooleanPreferenceDefault(
+            PreferenceKey("IS_APP_ACCESS_AUTHENTICATION"),
+            false
+        )
+    val IS_DELETE_WALLET_AUTHENTICATION =
+        BooleanPreferenceDefault(
+            PreferenceKey("IS_DELETE_WALLET_AUTHENTICATION"),
+            true
+        )
+    val IS_EXPORT_PRIVATE_DATA_AUTHENTICATION =
+        BooleanPreferenceDefault(
+            PreferenceKey("IS_EXPORT_PRIVATE_DATA_AUTHENTICATION"),
+            true
+        )
+    val IS_SEED_AUTHENTICATION =
+        BooleanPreferenceDefault(
+            PreferenceKey("IS_SEED_AUTHENTICATION"),
+            true
+        )
+    val IS_SEND_FUNDS_AUTHENTICATION =
+        BooleanPreferenceDefault(
+            PreferenceKey("IS_SEND_FUNDS_AUTHENTICATION"),
+            true
+        )
 }

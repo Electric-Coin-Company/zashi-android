@@ -37,7 +37,6 @@ import androidx.compose.ui.unit.dp
 import cash.z.ecc.android.sdk.fixture.WalletAddressFixture
 import cash.z.ecc.android.sdk.model.FirstClassByteArray
 import cash.z.ecc.android.sdk.model.TransactionSubmitResult
-import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.android.sdk.model.toZecString
 import cash.z.ecc.sdk.fixture.MemoFixture
@@ -119,12 +118,11 @@ private fun PreviewSendMultipleTransactionFailure() {
 fun SendConfirmation(
     onBack: () -> Unit,
     onContactSupport: () -> Unit,
-    onCreateAndSend: (ZecSend) -> Unit,
-    onStageChange: (SendConfirmationStage) -> Unit,
+    onConfirmation: () -> Unit,
     snackbarHostState: SnackbarHostState,
     stage: SendConfirmationStage,
     submissionResults: ImmutableList<TransactionSubmitResult>,
-    zecSend: ZecSend?,
+    zecSend: ZecSend,
     walletRestoringState: WalletRestoringState,
 ) {
     Scaffold(
@@ -140,8 +138,7 @@ fun SendConfirmation(
         SendConfirmationMainContent(
             onBack = onBack,
             onContactSupport = onContactSupport,
-            onSendSubmit = onCreateAndSend,
-            onStageChange = onStageChange,
+            onConfirmation = onConfirmation,
             stage = stage,
             submissionResults = submissionResults,
             zecSend = zecSend,
@@ -213,25 +210,18 @@ private fun SendConfirmationTopAppBar(
 private fun SendConfirmationMainContent(
     onBack: () -> Unit,
     onContactSupport: () -> Unit,
-    onSendSubmit: (ZecSend) -> Unit,
-    onStageChange: (SendConfirmationStage) -> Unit,
+    onConfirmation: () -> Unit,
     stage: SendConfirmationStage,
     submissionResults: ImmutableList<TransactionSubmitResult>,
-    zecSend: ZecSend?,
+    zecSend: ZecSend,
     modifier: Modifier = Modifier,
 ) {
     when (stage) {
         SendConfirmationStage.Confirmation, SendConfirmationStage.Sending, is SendConfirmationStage.Failure -> {
-            if (zecSend == null) {
-                error("Unexpected ZecSend value: $zecSend")
-            }
             SendConfirmationContent(
                 zecSend = zecSend,
                 onBack = onBack,
-                onConfirmation = {
-                    onStageChange(SendConfirmationStage.Sending)
-                    onSendSubmit(zecSend)
-                },
+                onConfirmation = onConfirmation,
                 isSending = stage == SendConfirmationStage.Sending,
                 modifier = modifier
             )
@@ -251,8 +241,6 @@ private fun SendConfirmationMainContent(
         }
     }
 }
-
-const val DEFAULT_LESS_THAN_FEE = 100_000L
 
 @Composable
 @Suppress("LongMethod")
@@ -291,17 +279,10 @@ private fun SendConfirmationContent(
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingTiny))
 
         StyledBalance(
-            balanceString =
-                if (zecSend.proposal == null) {
-                    Zatoshi(DEFAULT_LESS_THAN_FEE).toZecString()
-                } else {
-                    // The not-null assertion operator is necessary here even if we check its nullability before
-                    // due to: "Smart cast to 'Proposal' is impossible, because 'zecSend.proposal' is a public API
-                    // property declared in different module
-                    // See more details on the Kotlin forum
-                    checkNotNull(zecSend.proposal)
-                    zecSend.proposal!!.totalFeeRequired().toZecString()
-                },
+            // The not-null assertion operator is necessary here even if we check its nullability before
+            // due to: "Smart cast to 'Proposal' is impossible, because 'zecSend.proposal' is a public API
+            // property declared in different module. See more details on the Kotlin forum.
+            balanceString = zecSend.proposal!!.totalFeeRequired().toZecString(),
             textStyles =
                 Pair(
                     ZcashTheme.extendedTypography.balanceSingleStyles.first,

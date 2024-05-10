@@ -16,7 +16,7 @@ import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertEquals
 
-class SeedRecoveryViewsSecuredScreenTest : UiTestPrerequisites() {
+class SeedRecoveryRecoveryViewsSecuredScreenTest : UiTestPrerequisites() {
     @get:Rule
     val composeTestRule = createComposeRule()
 

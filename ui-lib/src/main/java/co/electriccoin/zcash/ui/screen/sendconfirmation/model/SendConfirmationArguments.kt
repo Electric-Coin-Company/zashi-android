@@ -39,10 +39,6 @@ data class SendConfirmationArguments(
             }
     }
 
-    internal fun hasValidZecSend() =
-        this.address != null &&
-            this.amount != null
-
     internal fun toZecSend() =
         ZecSend(
             destination = address?.toWalletAddress() ?: error("Address null"),

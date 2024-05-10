@@ -21,7 +21,7 @@ import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.chooseserver.AvailableServerProvider
-import co.electriccoin.zcash.ui.screen.onboarding.view.ShortOnboarding
+import co.electriccoin.zcash.ui.screen.onboarding.view.Onboarding
 import co.electriccoin.zcash.ui.screen.onboarding.viewmodel.OnboardingViewModel
 import co.electriccoin.zcash.ui.screen.restore.WrapRestore
 
@@ -40,10 +40,10 @@ internal fun WrapOnboarding(activity: ComponentActivity) {
 
     // TODO [#383]: https://github.com/Electric-Coin-Company/zashi-android/issues/383
     // TODO [#383]: Refactoring of UI state retention into rememberSaveable fields
+
     if (!onboardingViewModel.isImporting.collectAsStateWithLifecycle().value) {
         val onCreateWallet = {
             walletViewModel.persistOnboardingState(OnboardingState.NEEDS_WARN)
-            onboardingViewModel.setShowWelcomeAnimation(false)
         }
         val onImportWallet = {
             // In the case of the app currently being messed with by the robo test runner on
@@ -60,8 +60,6 @@ internal fun WrapOnboarding(activity: ComponentActivity) {
             } else {
                 onboardingViewModel.setIsImporting(true)
             }
-
-            onboardingViewModel.setShowWelcomeAnimation(false)
         }
 
         val onFixtureWallet: (String) -> Unit = { seed ->
@@ -73,10 +71,7 @@ internal fun WrapOnboarding(activity: ComponentActivity) {
             )
         }
 
-        val showWelcomeAnimation = onboardingViewModel.showWelcomeAnimation.collectAsStateWithLifecycle().value
-
-        ShortOnboarding(
-            showWelcomeAnim = showWelcomeAnimation,
+        Onboarding(
             isDebugMenuEnabled = versionInfo.isDebuggable && !versionInfo.isRunningUnderTestService,
             onImportWallet = onImportWallet,
             onCreateWallet = onCreateWallet,

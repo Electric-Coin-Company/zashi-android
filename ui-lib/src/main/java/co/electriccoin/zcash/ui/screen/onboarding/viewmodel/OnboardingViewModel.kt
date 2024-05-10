@@ -21,14 +21,7 @@ class OnboardingViewModel(
         savedStateHandle[KEY_IS_IMPORTING] = isImporting
     }
 
-    val showWelcomeAnimation = savedStateHandle.getStateFlow(KEY_SHOW_WELCOME_ANIMATION, true)
-
-    fun setShowWelcomeAnimation(setShowWelcomeAnimation: Boolean) {
-        savedStateHandle[KEY_SHOW_WELCOME_ANIMATION] = setShowWelcomeAnimation
-    }
-
     companion object {
         private const val KEY_IS_IMPORTING = "is_importing" // $NON-NLS
-        private const val KEY_SHOW_WELCOME_ANIMATION = "show_welcome_animation" // $NON-NLS
     }
 }

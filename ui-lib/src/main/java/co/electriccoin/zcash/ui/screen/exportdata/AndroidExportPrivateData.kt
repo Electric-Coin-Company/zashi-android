@@ -2,6 +2,7 @@ package co.electriccoin.zcash.ui.screen.exportdata
 
 import android.content.Context
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.viewModels
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -38,7 +39,7 @@ internal fun MainActivity.WrapExportPrivateData(
 
     WrapExportPrivateData(
         this,
-        onBack = goBack,
+        goBack = goBack,
         onShare = onConfirm,
         synchronizer = synchronizer,
         walletRestoringState = walletRestoringState,
@@ -48,11 +49,15 @@ internal fun MainActivity.WrapExportPrivateData(
 @Composable
 internal fun WrapExportPrivateData(
     activity: ComponentActivity,
-    onBack: () -> Unit,
+    goBack: () -> Unit,
     onShare: () -> Unit,
     synchronizer: Synchronizer?,
     walletRestoringState: WalletRestoringState,
 ) {
+    BackHandler {
+        goBack()
+    }
+
     if (synchronizer == null) {
         // TODO [#1146]: Consider moving CircularScreenProgressIndicator from Android layer to View layer
         // TODO [#1146]: Improve this by allowing screen composition and updating it after the data is available
@@ -64,7 +69,7 @@ internal fun WrapExportPrivateData(
 
         ExportPrivateData(
             snackbarHostState = snackbarHostState,
-            onBack = onBack,
+            onBack = goBack,
             onAgree = {
                 // Needed for UI testing only
             },

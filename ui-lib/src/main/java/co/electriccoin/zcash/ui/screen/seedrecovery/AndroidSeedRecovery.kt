@@ -1,6 +1,7 @@
 package co.electriccoin.zcash.ui.screen.seedrecovery
 
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -48,6 +49,10 @@ private fun WrapSeedRecovery(
     synchronizer: Synchronizer?,
     secretState: SecretState,
 ) {
+    BackHandler {
+        goBack()
+    }
+
     val versionInfo = VersionInfo.new(activity.applicationContext)
 
     val persistableWallet =

@@ -1,7 +1,11 @@
 package co.electriccoin.zcash.ui
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.NavHost
@@ -35,6 +39,8 @@ import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.popEnterTransit
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.popExitTransition
 import co.electriccoin.zcash.ui.screen.about.WrapAbout
 import co.electriccoin.zcash.ui.screen.advancedsettings.WrapAdvancedSettings
+import co.electriccoin.zcash.ui.screen.authentication.AuthenticationUseCase
+import co.electriccoin.zcash.ui.screen.authentication.WrapAuthentication
 import co.electriccoin.zcash.ui.screen.chooseserver.WrapChooseServer
 import co.electriccoin.zcash.ui.screen.deletewallet.WrapDeleteWallet
 import co.electriccoin.zcash.ui.screen.exportdata.WrapExportPrivateData
@@ -49,18 +55,31 @@ import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SendConfirmationSt
 import co.electriccoin.zcash.ui.screen.settings.WrapSettings
 import co.electriccoin.zcash.ui.screen.support.WrapSupport
 import co.electriccoin.zcash.ui.screen.update.WrapCheckForUpdate
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 
 // TODO [#1297]: Consider: Navigation passing complex data arguments different way
 // TODO [#1297]: https://github.com/Electric-Coin-Company/zashi-android/issues/1297
 
 @Composable
-@Suppress("LongMethod")
+@Suppress("LongMethod", "UNUSED_VARIABLE")
 internal fun MainActivity.Navigation() {
     val navController =
         rememberNavController().also {
             navControllerForTesting = it
         }
+
+    // Helper properties for triggering the system security UI from callbacks
+    val (exportPrivateDataAuthentication, setExportPrivateDataAuthentication) =
+        rememberSaveable { mutableStateOf(false) }
+    val (seedRecoveryAuthentication, setSeedRecoveryAuthentication) =
+        rememberSaveable { mutableStateOf(false) }
+    val (deleteWalletAuthentication, setDeleteWalletAuthentication) =
+        rememberSaveable { mutableStateOf(false) }
+    val (sendConfirmationAuthentication, setSendConfirmationAuthentication) =
+        rememberSaveable { mutableStateOf(false) }
 
     NavHost(
         navController = navController,
@@ -130,18 +149,60 @@ internal fun MainActivity.Navigation() {
                     navController.popBackStackJustOnce(ADVANCED_SETTINGS)
                 },
                 goExportPrivateData = {
-                    navController.navigateJustOnce(EXPORT_PRIVATE_DATA)
+                    navController.checkProtectedDestination(
+                        scope = lifecycleScope,
+                        propertyToCheck = authenticationViewModel.isExportPrivateDataAuthenticationRequired,
+                        setCheckedProperty = setExportPrivateDataAuthentication,
+                        unProtectedDestination = EXPORT_PRIVATE_DATA
+                    )
                 },
                 goSeedRecovery = {
-                    navController.navigateJustOnce(SEED_RECOVERY)
+                    navController.checkProtectedDestination(
+                        scope = lifecycleScope,
+                        propertyToCheck = authenticationViewModel.isSeedAuthenticationRequired,
+                        setCheckedProperty = setSeedRecoveryAuthentication,
+                        unProtectedDestination = SEED_RECOVERY
+                    )
                 },
                 goChooseServer = {
                     navController.navigateJustOnce(CHOOSE_SERVER)
                 },
                 goDeleteWallet = {
-                    navController.navigateJustOnce(DELETE_WALLET)
+                    navController.checkProtectedDestination(
+                        scope = lifecycleScope,
+                        propertyToCheck = authenticationViewModel.isDeleteWalletAuthenticationRequired,
+                        setCheckedProperty = setDeleteWalletAuthentication,
+                        unProtectedDestination = DELETE_WALLET
+                    )
                 },
             )
+
+            when {
+                deleteWalletAuthentication -> {
+                    ShowSystemAuthentication(
+                        navHostController = navController,
+                        protectedDestination = DELETE_WALLET,
+                        protectedUseCase = AuthenticationUseCase.DeleteWallet,
+                        setCheckedProperty = setDeleteWalletAuthentication
+                    )
+                }
+                exportPrivateDataAuthentication -> {
+                    ShowSystemAuthentication(
+                        navHostController = navController,
+                        protectedDestination = EXPORT_PRIVATE_DATA,
+                        protectedUseCase = AuthenticationUseCase.ExportPrivateData,
+                        setCheckedProperty = setExportPrivateDataAuthentication
+                    )
+                }
+                seedRecoveryAuthentication -> {
+                    ShowSystemAuthentication(
+                        navHostController = navController,
+                        protectedDestination = SEED_RECOVERY,
+                        protectedUseCase = AuthenticationUseCase.SeedRecovery,
+                        setCheckedProperty = setSeedRecoveryAuthentication
+                    )
+                }
+            }
         }
         composable(CHOOSE_SERVER) {
             WrapChooseServer(
@@ -153,9 +214,11 @@ internal fun MainActivity.Navigation() {
         composable(SEED_RECOVERY) {
             WrapSeedRecovery(
                 goBack = {
+                    setSeedRecoveryAuthentication(false)
                     navController.popBackStackJustOnce(SEED_RECOVERY)
                 },
                 onDone = {
+                    setSeedRecoveryAuthentication(false)
                     navController.popBackStackJustOnce(SEED_RECOVERY)
                 },
             )
@@ -165,7 +228,12 @@ internal fun MainActivity.Navigation() {
             WrapSupport(goBack = { navController.popBackStackJustOnce(SUPPORT) })
         }
         composable(DELETE_WALLET) {
-            WrapDeleteWallet(goBack = { navController.popBackStackJustOnce(DELETE_WALLET) })
+            WrapDeleteWallet(
+                goBack = {
+                    setDeleteWalletAuthentication(false)
+                    navController.popBackStackJustOnce(DELETE_WALLET)
+                }
+            )
         }
         composable(ABOUT) {
             WrapAbout(goBack = { navController.popBackStackJustOnce(ABOUT) })
@@ -186,8 +254,14 @@ internal fun MainActivity.Navigation() {
         }
         composable(EXPORT_PRIVATE_DATA) {
             WrapExportPrivateData(
-                goBack = { navController.popBackStackJustOnce(EXPORT_PRIVATE_DATA) },
-                onConfirm = { navController.popBackStackJustOnce(EXPORT_PRIVATE_DATA) }
+                goBack = {
+                    setExportPrivateDataAuthentication(false)
+                    navController.popBackStackJustOnce(EXPORT_PRIVATE_DATA)
+                },
+                onConfirm = {
+                    setExportPrivateDataAuthentication(false)
+                    navController.popBackStackJustOnce(EXPORT_PRIVATE_DATA)
+                }
             )
         }
         composable(route = SEND_CONFIRMATION) {
@@ -200,10 +274,58 @@ internal fun MainActivity.Navigation() {
                         navController.popBackStackJustOnce(SEND_CONFIRMATION)
                     },
                     goHome = { navController.navigateJustOnce(HOME) },
+                    goSupport = { navController.navigateJustOnce(SUPPORT) },
                     arguments = SendConfirmationArguments.fromSavedStateHandle(backStackEntry.savedStateHandle)
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun MainActivity.ShowSystemAuthentication(
+    navHostController: NavHostController,
+    protectedDestination: String,
+    protectedUseCase: AuthenticationUseCase,
+    setCheckedProperty: (Boolean) -> Unit,
+) {
+    WrapAuthentication(
+        goSupport = {
+            setCheckedProperty(false)
+            navHostController.navigateJustOnce(SUPPORT)
+        },
+        onSuccess = {
+            navHostController.navigateJustOnce(protectedDestination)
+        },
+        onCancel = {
+            setCheckedProperty(false)
+        },
+        onFailed = {
+            setCheckedProperty(false)
+        },
+        useCase = protectedUseCase
+    )
+}
+
+/**
+ * Check and trigger authentication if required, navigate to the destination otherwise
+ */
+private fun NavHostController.checkProtectedDestination(
+    scope: LifecycleCoroutineScope,
+    propertyToCheck: StateFlow<Boolean?>,
+    setCheckedProperty: (Boolean) -> Unit,
+    unProtectedDestination: String
+) {
+    scope.launch {
+        propertyToCheck
+            .filterNotNull()
+            .collect { isProtected ->
+                if (isProtected) {
+                    setCheckedProperty(true)
+                } else {
+                    navigateJustOnce(unProtectedDestination)
+                }
+            }
     }
 }
 
