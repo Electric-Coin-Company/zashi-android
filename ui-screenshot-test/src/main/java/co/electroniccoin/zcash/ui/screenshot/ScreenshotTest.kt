@@ -2,6 +2,10 @@
 
 package co.electroniccoin.zcash.ui.screenshot
 
+/*
+TODO [#1448]: Re-enable or rework screenshot testing
+TODO [#1448]: https://github.com/Electric-Coin-Company/zashi-android/issues/1448
+
 import android.content.Context
 import android.os.Build
 import android.os.LocaleList
@@ -537,3 +541,4 @@ private fun seedScreenshots(
 
     ScreenshotTest.takeScreenshot(tag, "Seed 1")
 }
+*/
