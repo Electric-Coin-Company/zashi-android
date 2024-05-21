@@ -106,7 +106,7 @@ class AuthenticationViewModel(
     }
 
     fun authenticate(
-        activity: AppCompatActivity,
+        activity: MainActivity,
         initialAuthSystemWindowDelay: Duration = DEFAULT_INITIAL_DELAY.milliseconds,
         useCase: AuthenticationUseCase
     ) {
@@ -142,7 +142,7 @@ class AuthenticationViewModel(
                         errorString: CharSequence
                     ) {
                         super.onAuthenticationError(errorCode, errorString)
-                        Twig.error { "Authentication error: $errorCode: $errorString" }
+                        Twig.warn { "Authentication error: $errorCode: $errorString" }
 
                         // Note that we process most of the following authentication errors the same. A potential
                         // improvement in the future could be let user take a different action for a different error.
@@ -180,8 +180,6 @@ class AuthenticationViewModel(
                             BiometricPrompt.ERROR_HW_NOT_PRESENT,
                             // The user pressed the negative button
                             BiometricPrompt.ERROR_NEGATIVE_BUTTON,
-                            // The device does not have pin, pattern, or password set up
-                            BiometricPrompt.ERROR_NO_DEVICE_CREDENTIAL,
                             // A security vulnerability has been discovered with one or more hardware sensors. The
                             // affected sensor(s) are unavailable until a security update has addressed the issue
                             BiometricPrompt.ERROR_SECURITY_UPDATE_REQUIRED -> {
@@ -204,6 +202,11 @@ class AuthenticationViewModel(
                             BiometricPrompt.ERROR_CANCELED -> {
                                 // We could consider splitting ERROR_CANCELED from ERROR_USER_CANCELED
                                 authenticationResult.value = AuthenticationResult.Canceled
+                            }
+                            // The device does not have pin, pattern, or password set up
+                            BiometricPrompt.ERROR_NO_DEVICE_CREDENTIAL -> {
+                                // Allow unauthenticated access if no authentication method is available on the device
+                                authenticationResult.value = AuthenticationResult.Success
                             }
                         }
                     }
@@ -299,7 +302,7 @@ class AuthenticationViewModel(
                 BiometricSupportResult.ErrorHwUnavailable
             }
             BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> {
-                Twig.error {
+                Twig.warn {
                     "Auth canAuthenticate BIOMETRIC_ERROR_NONE_ENROLLED: Prompts the user to create " +
                         "credentials that your app accepts."
                 }
