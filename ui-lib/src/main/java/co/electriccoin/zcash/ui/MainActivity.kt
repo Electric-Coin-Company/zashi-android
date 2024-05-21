@@ -64,7 +64,6 @@ import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
 class MainActivity : AppCompatActivity() {
-
     private val homeViewModel by viewModels<HomeViewModel>()
 
     val walletViewModel by viewModels<WalletViewModel>()

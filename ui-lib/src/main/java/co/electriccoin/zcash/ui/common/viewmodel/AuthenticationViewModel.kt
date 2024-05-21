@@ -2,7 +2,6 @@ package co.electriccoin.zcash.ui.common.viewmodel
 
 import android.annotation.SuppressLint
 import android.app.Application
-import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricManager.Authenticators
 import androidx.biometric.BiometricPrompt
@@ -12,7 +11,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import co.electriccoin.zcash.preference.model.entry.BooleanPreferenceDefault
+import co.electriccoin.zcash.spackle.AndroidApiVersion
 import co.electriccoin.zcash.spackle.Twig
+import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
@@ -42,9 +43,19 @@ class AuthenticationViewModel(
     private lateinit var biometricPrompt: BiometricPrompt
     private lateinit var promptInfo: BiometricPrompt.PromptInfo
 
+    // This provides [allowedAuthenticators] on the current user device according to Android Compatibility Definition
+    // Document (CDD). See https://source.android.com/docs/compatibility/cdd
     private val allowedAuthenticators: Int =
-        Authenticators.BIOMETRIC_STRONG or
-            Authenticators.DEVICE_CREDENTIAL
+        when {
+            // Android SDK version == 27
+            (AndroidApiVersion.isExactlyO) -> Authenticators.BIOMETRIC_STRONG or Authenticators.DEVICE_CREDENTIAL
+            // Android SDK version >= 30
+            (AndroidApiVersion.isAtLeastR) -> Authenticators.BIOMETRIC_STRONG or Authenticators.DEVICE_CREDENTIAL
+            // Android SDK version == 28 || 29
+            (AndroidApiVersion.isExactlyP || AndroidApiVersion.isExactlyQ) ->
+                Authenticators.BIOMETRIC_WEAK or Authenticators.DEVICE_CREDENTIAL
+            else -> error("Unsupported Android SDK version")
+        }
 
     /**
      * Welcome animation display state
