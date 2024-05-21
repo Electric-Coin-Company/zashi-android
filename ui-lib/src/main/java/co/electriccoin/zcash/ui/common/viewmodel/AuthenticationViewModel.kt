@@ -129,7 +129,7 @@ class AuthenticationViewModel(
                 // No action needed, let user proceed to the authentication steps
             }
             else -> {
-                // Otherwise biometric authentication might not be available, but the user still can use the
+                // Otherwise biometric authentication might not be available, but users still can use the
                 // device credential authentication path
             }
         }

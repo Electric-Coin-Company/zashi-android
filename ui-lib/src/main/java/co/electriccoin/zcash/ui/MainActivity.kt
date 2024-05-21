@@ -145,7 +145,7 @@ class MainActivity : AppCompatActivity() {
                                 MainContent()
                             }
 
-                            AuthenticationForContent()
+                            AuthenticationForAppAccess()
                         }
                     }
                 }
@@ -158,7 +158,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     @Composable
-    private fun AuthenticationForContent() {
+    private fun AuthenticationForAppAccess() {
         val authState = authenticationViewModel.appAccessAuthenticationResultState.collectAsStateWithLifecycle().value
         val animateAppAccess = authenticationViewModel.showWelcomeAnimation.collectAsStateWithLifecycle().value
 

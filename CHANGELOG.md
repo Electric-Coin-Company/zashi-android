@@ -12,8 +12,8 @@ directly impact users rather than highlighting other key architectural updates.*
 ### Added
 - Zashi now provides system biometric or device credential (pattern, pin, or password) authentication for these use 
   cases: Send funds, Recovery Phrase, Export Private Data, and Delete Wallet. 
-- The app entry animation has been reworked to apply on every app access point, i.e. it will be when returned to an 
-  already set up app, too.
+- The app entry animation has been reworked to apply on every app access point, i.e. it will be displayed when 
+  users return to an already set up app as well.
 
 ## [1.0 (650)] - 2024-05-07
 

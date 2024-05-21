@@ -2,6 +2,16 @@
 
 package co.electroniccoin.zcash.ui.screenshot
 
+import org.junit.Test
+
+// NOTE: this is just a placeholder test to satisfy this module test settings and will be removed once the below
+// issue is resolved
+class ScreenshotTest {
+    @Test
+    fun placeholderTest() {
+        assert(true)
+    }
+}
 /*
 TODO [#1448]: Re-enable or rework screenshot testing
 TODO [#1448]: https://github.com/Electric-Coin-Company/zashi-android/issues/1448

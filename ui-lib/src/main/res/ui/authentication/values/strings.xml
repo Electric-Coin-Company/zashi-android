@@ -25,8 +25,7 @@
 
     <string name="authentication_failed_title">Authentication failed</string>
     <string name="authentication_failed_text">
-        Authentication (e.g. fingerprint, face, or credential) was presented but not recognized as belonging to the
-        you. Retry the authentication, or contact the support team for help.
+        Authentication was presented but not recognized. Retry authentication, or contact the support team for help.
     </string>
     <string name="authentication_failed_button_retry">Retry</string>
     <string name="authentication_failed_button_support">Contact Support</string>

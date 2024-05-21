@@ -64,7 +64,7 @@ import kotlinx.serialization.json.Json
 // TODO [#1297]: https://github.com/Electric-Coin-Company/zashi-android/issues/1297
 
 @Composable
-@Suppress("LongMethod", "UNUSED_VARIABLE")
+@Suppress("LongMethod")
 internal fun MainActivity.Navigation() {
     val navController =
         rememberNavController().also {
@@ -77,8 +77,6 @@ internal fun MainActivity.Navigation() {
     val (seedRecoveryAuthentication, setSeedRecoveryAuthentication) =
         rememberSaveable { mutableStateOf(false) }
     val (deleteWalletAuthentication, setDeleteWalletAuthentication) =
-        rememberSaveable { mutableStateOf(false) }
-    val (sendConfirmationAuthentication, setSendConfirmationAuthentication) =
         rememberSaveable { mutableStateOf(false) }
 
     NavHost(
