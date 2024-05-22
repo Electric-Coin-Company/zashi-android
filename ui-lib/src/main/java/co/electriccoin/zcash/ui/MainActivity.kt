@@ -4,15 +4,16 @@ import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.os.SystemClock
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.annotation.VisibleForTesting
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -26,24 +27,33 @@ import cash.z.ecc.android.sdk.model.SeedPhrase
 import cash.z.ecc.android.sdk.model.ZcashNetwork
 import cash.z.ecc.sdk.type.fromResources
 import co.electriccoin.zcash.spackle.FirebaseTestLabUtil
+import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.compose.BindCompLocalProvider
 import co.electriccoin.zcash.ui.common.model.OnboardingState
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
+import co.electriccoin.zcash.ui.common.viewmodel.AuthenticationUIState
+import co.electriccoin.zcash.ui.common.viewmodel.AuthenticationViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.HomeViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.SecretState
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.configuration.RemoteConfig
+import co.electriccoin.zcash.ui.design.component.AnimationConstants
 import co.electriccoin.zcash.ui.design.component.ConfigurationOverride
 import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.Override
+import co.electriccoin.zcash.ui.design.component.WelcomeAnimationAutostart
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.screen.authentication.AuthenticationUseCase
+import co.electriccoin.zcash.ui.screen.authentication.WrapAuthentication
 import co.electriccoin.zcash.ui.screen.newwalletrecovery.WrapNewWalletRecovery
 import co.electriccoin.zcash.ui.screen.onboarding.WrapOnboarding
 import co.electriccoin.zcash.ui.screen.onboarding.persistExistingWalletWithSeedPhrase
 import co.electriccoin.zcash.ui.screen.securitywarning.WrapSecurityWarning
+import co.electriccoin.zcash.ui.screen.support.WrapSupport
 import co.electriccoin.zcash.ui.screen.warning.WrapNotEnoughSpace
 import co.electriccoin.zcash.ui.screen.warning.viewmodel.StorageCheckViewModel
 import co.electriccoin.zcash.work.WorkIds
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
@@ -53,13 +63,17 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
     private val homeViewModel by viewModels<HomeViewModel>()
 
     val walletViewModel by viewModels<WalletViewModel>()
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     val storageCheckViewModel by viewModels<StorageCheckViewModel>()
+
+    internal val authenticationViewModel by viewModels<AuthenticationViewModel> {
+        AuthenticationViewModel.AuthenticationViewModelFactory(application)
+    }
 
     lateinit var navControllerForTesting: NavHostController
 
@@ -130,6 +144,8 @@ class MainActivity : ComponentActivity() {
                             } else {
                                 MainContent()
                             }
+
+                            AuthenticationForAppAccess()
                         }
                     }
                 }
@@ -138,6 +154,67 @@ class MainActivity : ComponentActivity() {
             // Force collection to improve performance; sync can start happening while
             // the user is going through the backup flow.
             walletViewModel.synchronizer.collectAsStateWithLifecycle()
+        }
+    }
+
+    @Composable
+    private fun AuthenticationForAppAccess() {
+        val authState = authenticationViewModel.appAccessAuthenticationResultState.collectAsStateWithLifecycle().value
+        val animateAppAccess = authenticationViewModel.showWelcomeAnimation.collectAsStateWithLifecycle().value
+
+        when (authState) {
+            AuthenticationUIState.Initial -> {
+                Twig.debug { "Authentication initial state" }
+                // Wait for the state update
+            }
+            AuthenticationUIState.NotRequired -> {
+                Twig.debug { "App access authentication NOT required - welcome animation only" }
+                if (animateAppAccess) {
+                    WelcomeAnimationAutostart(
+                        delay = AnimationConstants.INITIAL_DELAY.milliseconds
+                    )
+                    // Wait until the welcome animation finishes then mark it was shown
+                    LaunchedEffect(key1 = authenticationViewModel.showWelcomeAnimation) {
+                        delay(AnimationConstants.together())
+                        authenticationViewModel.setWelcomeAnimationDisplayed()
+                    }
+                }
+            }
+            AuthenticationUIState.Required -> {
+                Twig.debug { "App access authentication required" }
+
+                // Check and trigger app access authentication if required
+                // Note that the Welcome animation is part of its logic
+                WrapAuthentication(
+                    goSupport = {
+                        authenticationViewModel.appAccessAuthentication.value = AuthenticationUIState.SupportedRequired
+                    },
+                    onSuccess = {
+                        lifecycleScope.launch {
+                            // Wait until the welcome animation finishes, then mark it as presented to the user
+                            delay((AnimationConstants.together()).milliseconds)
+                            authenticationViewModel.appAccessAuthentication.value = AuthenticationUIState.Successful
+                        }
+                    },
+                    onCancel = {
+                        finish()
+                    },
+                    onFailed = {
+                        // No subsequent action required. User is prompted with an explanation dialog.
+                    },
+                    useCase = AuthenticationUseCase.AppAccess
+                )
+            }
+            AuthenticationUIState.SupportedRequired -> {
+                Twig.debug { "Authentication support required" }
+                WrapSupport(
+                    goBack = { finish() }
+                )
+            }
+            AuthenticationUIState.Successful -> {
+                Twig.debug { "Authentication successful - entering the app" }
+                // No action is needed - the main app content is laid out now
+            }
         }
     }
 

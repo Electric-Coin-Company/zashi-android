@@ -144,6 +144,7 @@ dependencyResolutionManagement {
             val androidxActivityVersion = extra["ANDROIDX_ACTIVITY_VERSION"].toString()
             val androidxAnnotationVersion = extra["ANDROIDX_ANNOTATION_VERSION"].toString()
             val androidxAppcompatVersion = extra["ANDROIDX_APPCOMPAT_VERSION"].toString()
+            val androidxBiometricVersion = extra["ANDROIDX_BIOMETRIC_VERSION"].toString()
             val androidxCameraVersion = extra["ANDROIDX_CAMERA_VERSION"].toString()
             val androidxComposeCompilerVersion = extra["ANDROIDX_COMPOSE_COMPILER_VERSION"].toString()
             val androidxComposeMaterial3Version = extra["ANDROIDX_COMPOSE_MATERIAL3_VERSION"].toString()
@@ -192,6 +193,8 @@ dependencyResolutionManagement {
             library("androidx-activity-compose", "androidx.activity:activity-compose:$androidxActivityVersion")
             library("androidx-annotation", "androidx.annotation:annotation:$androidxAnnotationVersion")
             library("androidx-appcompat", "androidx.appcompat:appcompat:$androidxAppcompatVersion")
+            library("androidx-biometric", "androidx.biometric:biometric:$androidxBiometricVersion")
+            library("androidx-biometric-ktx", "androidx.biometric:biometric-ktx:$androidxBiometricVersion")
             library("androidx-camera", "androidx.camera:camera-camera2:$androidxCameraVersion")
             library("androidx-camera-lifecycle", "androidx.camera:camera-lifecycle:$androidxCameraVersion")
             library("androidx-camera-view", "androidx.camera:camera-view:$androidxCameraVersion")
@@ -251,6 +254,13 @@ dependencyResolutionManagement {
             library("androidx-uiAutomator", "androidx.test.uiautomator:uiautomator:$androidxUiAutomatorVersion")
             library("kotlinx-coroutines-test", "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinxCoroutinesVersion")
             // Bundles
+            bundle(
+                "androidx-biometric",
+                listOf(
+                    "androidx-biometric",
+                    "androidx-biometric-ktx",
+                )
+            )
             bundle(
                 "androidx-camera",
                 listOf(

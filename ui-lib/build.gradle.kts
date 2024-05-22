@@ -33,6 +33,7 @@ android {
                     "src/main/res/ui/about",
                     "src/main/res/ui/advanced_settings",
                     "src/main/res/ui/account",
+                    "src/main/res/ui/authentication",
                     "src/main/res/ui/balances",
                     "src/main/res/ui/common",
                     "src/main/res/ui/delete_wallet",
@@ -92,6 +93,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.livedata)
     implementation(libs.androidx.splash)
     implementation(libs.androidx.workmanager)
+    implementation(libs.bundles.androidx.biometric)
     implementation(libs.bundles.androidx.camera)
     implementation(libs.bundles.androidx.compose.core)
     implementation(libs.bundles.androidx.compose.extended)

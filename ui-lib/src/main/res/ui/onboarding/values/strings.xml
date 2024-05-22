@@ -5,6 +5,4 @@
 
     <string name="onboarding_create_new_wallet">Create New Wallet</string>
     <string name="onboarding_import_existing_wallet">Restore Existing Wallet</string>
-
-    <string name="zcash_logo_with_hi_text_content_description">Zcash logo with text Hi</string>
 </resources>

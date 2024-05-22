@@ -3,7 +3,7 @@ package co.electriccoin.zcash.ui.screen.onboarding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
-import co.electriccoin.zcash.ui.screen.onboarding.view.ShortOnboarding
+import co.electriccoin.zcash.ui.screen.onboarding.view.Onboarding
 import java.util.concurrent.atomic.AtomicInteger
 
 class OnboardingTestSetup(
@@ -26,9 +26,7 @@ class OnboardingTestSetup(
     @Suppress("TestFunctionName")
     fun DefaultContent() {
         ZcashTheme {
-            ShortOnboarding(
-                // It's fine to test the screen UI after the welcome animation
-                showWelcomeAnim = false,
+            Onboarding(
                 // Debug only UI state does not need to be tested
                 isDebugMenuEnabled = false,
                 onImportWallet = { onImportWalletCallbackCount.incrementAndGet() },

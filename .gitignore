@@ -11,6 +11,7 @@ syntax: glob
 .idea/workspace.xml
 .idea/deploymentTargetSelector.xml
 .idea/migrations.xml
+.idea/studiobot.xml
 .settings
 *.iml
 bin/
