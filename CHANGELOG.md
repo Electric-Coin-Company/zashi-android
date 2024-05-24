@@ -9,6 +9,8 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [1.1 (655)] - 2024-05-24
+
 ### Added
 - Zashi now provides system biometric or device credential (pattern, pin, or password) authentication for these use 
   cases: Send funds, Recovery Phrase, Export Private Data, and Delete Wallet. 
