@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,6 +21,7 @@ import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.BalanceState
 import co.electriccoin.zcash.ui.common.compose.BalanceWidget
+import co.electriccoin.zcash.ui.common.compose.StatusDialog
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.test.CommonTag
@@ -30,6 +33,7 @@ import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 import co.electriccoin.zcash.ui.screen.account.AccountTag
 import co.electriccoin.zcash.ui.screen.account.fixture.TransactionsFixture
 import co.electriccoin.zcash.ui.screen.account.model.TransactionUiState
+import co.electriccoin.zcash.ui.screen.balances.model.StatusAction
 
 @Preview("Account No History")
 @Composable
@@ -37,12 +41,16 @@ private fun HistoryLoadingComposablePreview() {
     ZcashTheme(forceDarkMode = false) {
         GradientSurface {
             Account(
+                balanceState = BalanceStateFixture.new(),
                 goBalances = {},
                 goSettings = {},
+                hideStatusDialog = {},
+                showStatusDialog = null,
+                onStatusClick = {},
                 onTransactionItemAction = {},
+                snackbarHostState = SnackbarHostState(),
                 transactionsUiState = TransactionUiState.Loading,
                 walletRestoringState = WalletRestoringState.SYNCING,
-                balanceState = BalanceStateFixture.new(),
                 walletSnapshot = WalletSnapshotFixture.new(),
             )
         }
@@ -56,10 +64,14 @@ private fun HistoryListComposablePreview() {
         GradientSurface {
             @Suppress("MagicNumber")
             Account(
+                balanceState = BalanceState.Available(Zatoshi(123_000_000L), Zatoshi(123_000_000L)),
                 goBalances = {},
                 goSettings = {},
-                balanceState = BalanceState.Available(Zatoshi(123_000_000L), Zatoshi(123_000_000L)),
+                hideStatusDialog = {},
+                showStatusDialog = null,
+                onStatusClick = {},
                 onTransactionItemAction = {},
+                snackbarHostState = SnackbarHostState(),
                 transactionsUiState = TransactionUiState.Done(transactions = TransactionsFixture.new()),
                 walletRestoringState = WalletRestoringState.NONE,
                 walletSnapshot = WalletSnapshotFixture.new(),
@@ -74,20 +86,30 @@ internal fun Account(
     balanceState: BalanceState,
     goBalances: () -> Unit,
     goSettings: () -> Unit,
+    hideStatusDialog: () -> Unit,
+    showStatusDialog: StatusAction.Detailed?,
+    onStatusClick: (StatusAction) -> Unit,
     onTransactionItemAction: (TrxItemAction) -> Unit,
+    snackbarHostState: SnackbarHostState,
     transactionsUiState: TransactionUiState,
     walletRestoringState: WalletRestoringState,
     walletSnapshot: WalletSnapshot,
 ) {
-    Scaffold(topBar = {
-        AccountTopAppBar(
-            showRestoring = walletRestoringState == WalletRestoringState.RESTORING,
-            onSettings = goSettings
-        )
-    }) { paddingValues ->
+    Scaffold(
+        topBar = {
+            AccountTopAppBar(
+                showRestoring = walletRestoringState == WalletRestoringState.RESTORING,
+                onSettings = goSettings
+            )
+        },
+        snackbarHost = {
+            SnackbarHost(snackbarHostState)
+        },
+    ) { paddingValues ->
         AccountMainContent(
             balanceState = balanceState,
             goBalances = goBalances,
+            onStatusClick = onStatusClick,
             onTransactionItemAction = onTransactionItemAction,
             transactionState = transactionsUiState,
             walletRestoringState = walletRestoringState,
@@ -99,6 +121,14 @@ internal fun Account(
                     // underlying transaction history composable
                 )
         )
+
+        // Show synchronization status popup
+        if (showStatusDialog != null) {
+            StatusDialog(
+                statusAction = showStatusDialog,
+                onDone = hideStatusDialog
+            )
+        }
     }
 }
 
@@ -135,6 +165,7 @@ private fun AccountMainContent(
     balanceState: BalanceState,
     goBalances: () -> Unit,
     onTransactionItemAction: (TrxItemAction) -> Unit,
+    onStatusClick: (StatusAction) -> Unit,
     transactionState: TransactionUiState,
     walletRestoringState: WalletRestoringState,
     walletSnapshot: WalletSnapshot,
@@ -157,6 +188,7 @@ private fun AccountMainContent(
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingUpLarge))
 
         HistoryContainer(
+            onStatusClick = onStatusClick,
             onTransactionItemAction = onTransactionItemAction,
             transactionState = transactionState,
             walletRestoringState = walletRestoringState,

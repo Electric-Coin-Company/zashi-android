@@ -234,7 +234,7 @@ private fun UpdateContentContent(
                 } else {
                     ImageVector.vectorResource(R.drawable.ic_zashi_logo_update_available)
                 },
-            contentDescription = stringResource(id = R.string.update_image_content_description)
+            contentDescription = null
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingBig))

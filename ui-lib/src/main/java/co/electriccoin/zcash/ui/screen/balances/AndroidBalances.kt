@@ -2,11 +2,14 @@
 
 package co.electriccoin.zcash.ui.screen.balances
 
+import android.content.Context
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.platform.LocalContext
@@ -26,11 +29,14 @@ import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
 import co.electriccoin.zcash.ui.configuration.RemoteConfig
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.screen.balances.model.ShieldState
+import co.electriccoin.zcash.ui.screen.balances.model.StatusAction
 import co.electriccoin.zcash.ui.screen.balances.view.Balances
 import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SubmitResult
 import co.electriccoin.zcash.ui.screen.sendconfirmation.viewmodel.CreateTransactionsViewModel
 import co.electriccoin.zcash.ui.screen.update.AppUpdateCheckerImp
 import co.electriccoin.zcash.ui.screen.update.model.UpdateState
+import co.electriccoin.zcash.ui.util.PlayStoreUtil
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.annotations.VisibleForTesting
@@ -38,7 +44,6 @@ import org.jetbrains.annotations.VisibleForTesting
 @Composable
 internal fun WrapBalances(
     activity: ComponentActivity,
-    isDetailedSyncStatus: Boolean,
     goSettings: () -> Unit,
     goMultiTrxSubmissionFailure: () -> Unit,
 ) {
@@ -69,7 +74,6 @@ internal fun WrapBalances(
         checkUpdateViewModel = checkUpdateViewModel,
         goSettings = goSettings,
         goMultiTrxSubmissionFailure = goMultiTrxSubmissionFailure,
-        isDetailedSyncStatus = isDetailedSyncStatus,
         spendingKey = spendingKey,
         synchronizer = synchronizer,
         walletSnapshot = walletSnapshot,
@@ -81,14 +85,14 @@ const val DEFAULT_SHIELDING_THRESHOLD = 100000L
 
 @Composable
 @VisibleForTesting
-@Suppress("LongParameterList", "LongMethod")
+// This function should be refactored into smaller chunks
+@Suppress("LongParameterList", "LongMethod", "CyclomaticComplexMethod")
 internal fun WrapBalances(
     balanceState: BalanceState,
     checkUpdateViewModel: CheckUpdateViewModel,
     createTransactionsViewModel: CreateTransactionsViewModel,
     goSettings: () -> Unit,
     goMultiTrxSubmissionFailure: () -> Unit,
-    isDetailedSyncStatus: Boolean,
     spendingKey: UnifiedSpendingKey?,
     synchronizer: Synchronizer?,
     walletSnapshot: WalletSnapshot?,
@@ -97,6 +101,8 @@ internal fun WrapBalances(
     val scope = rememberCoroutineScope()
 
     val context = LocalContext.current
+
+    val snackbarHostState = remember { SnackbarHostState() }
 
     // To show information about the app update, if available
     val isUpdateAvailable =
@@ -130,6 +136,10 @@ internal fun WrapBalances(
         setShowErrorDialog(true)
     }
 
+    // We could also improve this by `rememberSaveable` to preserve the dialog after a configuration change. But the
+    // dialog dismissing in such cases is not critical, and it would require creating StatusAction custom Saver
+    val showStatusDialog = remember { mutableStateOf<StatusAction.Detailed?>(null) }
+
     if (null == synchronizer || null == walletSnapshot || null == spendingKey) {
         // TODO [#1146]: Consider moving CircularScreenProgressIndicator from Android layer to View layer
         // TODO [#1146]: Improve this by allowing screen composition and updating it after the data is available
@@ -140,10 +150,12 @@ internal fun WrapBalances(
             balanceState = balanceState,
             isFiatConversionEnabled = isFiatConversionEnabled,
             isUpdateAvailable = isUpdateAvailable,
-            isShowingErrorDialog = isShowingErrorDialog,
-            isDetailedStatus = isDetailedSyncStatus,
             onSettings = goSettings,
+            isShowingErrorDialog = isShowingErrorDialog,
             setShowErrorDialog = setShowErrorDialog,
+            showStatusDialog = showStatusDialog.value,
+            hideStatusDialog = { showStatusDialog.value = null },
+            snackbarHostState = snackbarHostState,
             onShielding = {
                 scope.launch {
                     setShieldState(ShieldState.Running)
@@ -201,6 +213,21 @@ internal fun WrapBalances(
                     }
                 }
             },
+            onStatusClick = { status ->
+                when (status) {
+                    is StatusAction.Detailed -> showStatusDialog.value = status
+                    StatusAction.AppUpdate -> {
+                        openPlayStoreAppSite(
+                            context = context,
+                            snackbarHostState = snackbarHostState,
+                            scope = scope
+                        )
+                    }
+                    else -> {
+                        // No action required
+                    }
+                }
+            },
             shieldState = shieldState,
             walletSnapshot = walletSnapshot,
             walletRestoringState = walletRestoringState,
@@ -208,7 +235,7 @@ internal fun WrapBalances(
     }
 }
 
-fun updateTransparentBalanceState(
+private fun updateTransparentBalanceState(
     currentShieldState: ShieldState,
     walletSnapshot: WalletSnapshot?
 ): ShieldState {
@@ -217,5 +244,22 @@ fun updateTransparentBalanceState(
         (walletSnapshot.transparentBalance >= Zatoshi(DEFAULT_SHIELDING_THRESHOLD) && currentShieldState.isEnabled()) ->
             ShieldState.Available
         else -> currentShieldState
+    }
+}
+
+private fun openPlayStoreAppSite(
+    context: Context,
+    snackbarHostState: SnackbarHostState,
+    scope: CoroutineScope
+) {
+    val storeIntent = PlayStoreUtil.newActivityIntent(context)
+    runCatching {
+        context.startActivity(storeIntent)
+    }.onFailure {
+        scope.launch {
+            snackbarHostState.showSnackbar(
+                message = context.getString(R.string.unable_to_open_play_store)
+            )
+        }
     }
 }

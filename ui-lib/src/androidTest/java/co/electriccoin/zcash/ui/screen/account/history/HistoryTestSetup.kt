@@ -30,6 +30,7 @@ class HistoryTestSetup(
             ZcashTheme {
                 HistoryContainer(
                     transactionState = initialHistoryUiState,
+                    onStatusClick = {},
                     onTransactionItemAction = {
                         onItemIdClickCount.incrementAndGet()
                     },

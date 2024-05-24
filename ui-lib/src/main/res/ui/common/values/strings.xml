@@ -7,4 +7,5 @@
     <!-- This is replaced by a resource overlay via app/build.gradle.kts -->
     <string name="support_email_address" />
     <string name="restoring_wallet_label">[Restoring Your Wallet…]</string>
+    <string name="unable_to_open_play_store">Unable to launch Google Play store app…</string>
 </resources>

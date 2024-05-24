@@ -3,6 +3,7 @@ package co.electriccoin.zcash.ui.screen.update.util
 import android.content.Intent
 import androidx.test.filters.SmallTest
 import co.electriccoin.zcash.ui.test.getAppContext
+import co.electriccoin.zcash.ui.util.PlayStoreUtil
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Test

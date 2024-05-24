@@ -26,6 +26,8 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -55,6 +57,7 @@ import cash.z.ecc.sdk.type.ZcashCurrency
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.BalanceState
 import co.electriccoin.zcash.ui.common.compose.BalanceWidget
+import co.electriccoin.zcash.ui.common.compose.StatusDialog
 import co.electriccoin.zcash.ui.common.compose.SynchronizationStatus
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
@@ -81,6 +84,7 @@ import co.electriccoin.zcash.ui.fixture.BalanceStateFixture
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 import co.electriccoin.zcash.ui.screen.balances.BalancesTag
 import co.electriccoin.zcash.ui.screen.balances.model.ShieldState
+import co.electriccoin.zcash.ui.screen.balances.model.StatusAction
 import co.electriccoin.zcash.ui.screen.balances.model.WalletDisplayValues
 
 @Preview("Balances")
@@ -89,17 +93,20 @@ private fun ComposableBalancesPreview() {
     ZcashTheme(forceDarkMode = false) {
         GradientSurface {
             Balances(
-                onSettings = {},
-                isDetailedStatus = false,
+                balanceState = BalanceStateFixture.new(),
                 isFiatConversionEnabled = false,
                 isUpdateAvailable = false,
                 isShowingErrorDialog = false,
+                hideStatusDialog = {},
+                showStatusDialog = null,
                 setShowErrorDialog = {},
+                onSettings = {},
                 onShielding = {},
+                onStatusClick = {},
                 shieldState = ShieldState.Available,
+                snackbarHostState = SnackbarHostState(),
                 walletSnapshot = WalletSnapshotFixture.new(),
                 walletRestoringState = WalletRestoringState.NONE,
-                balanceState = BalanceStateFixture.new(),
             )
         }
     }
@@ -111,17 +118,20 @@ private fun ComposableBalancesShieldFailurePreview() {
     ZcashTheme(forceDarkMode = false) {
         GradientSurface {
             Balances(
-                onSettings = {},
-                isDetailedStatus = false,
+                balanceState = BalanceStateFixture.new(),
                 isFiatConversionEnabled = false,
                 isUpdateAvailable = false,
                 isShowingErrorDialog = true,
+                hideStatusDialog = {},
+                showStatusDialog = null,
                 setShowErrorDialog = {},
+                onSettings = {},
                 onShielding = {},
+                onStatusClick = {},
                 shieldState = ShieldState.Available,
+                snackbarHostState = SnackbarHostState(),
                 walletSnapshot = WalletSnapshotFixture.new(),
                 walletRestoringState = WalletRestoringState.NONE,
-                balanceState = BalanceStateFixture.new(),
             )
         }
     }
@@ -143,33 +153,41 @@ private fun ComposableBalancesShieldErrorDialogPreview() {
 @Suppress("LongParameterList")
 @Composable
 fun Balances(
-    onSettings: () -> Unit,
-    isDetailedStatus: Boolean,
+    balanceState: BalanceState,
     isFiatConversionEnabled: Boolean,
     isUpdateAvailable: Boolean,
     isShowingErrorDialog: Boolean,
+    hideStatusDialog: () -> Unit,
+    showStatusDialog: StatusAction.Detailed?,
     setShowErrorDialog: (Boolean) -> Unit,
+    onSettings: () -> Unit,
     onShielding: () -> Unit,
+    onStatusClick: (StatusAction) -> Unit,
     shieldState: ShieldState,
+    snackbarHostState: SnackbarHostState,
     walletSnapshot: WalletSnapshot?,
     walletRestoringState: WalletRestoringState,
-    balanceState: BalanceState,
 ) {
-    Scaffold(topBar = {
-        BalancesTopAppBar(
-            showRestoring = walletRestoringState == WalletRestoringState.RESTORING,
-            onSettings = onSettings
-        )
-    }) { paddingValues ->
+    Scaffold(
+        topBar = {
+            BalancesTopAppBar(
+                showRestoring = walletRestoringState == WalletRestoringState.RESTORING,
+                onSettings = onSettings
+            )
+        },
+        snackbarHost = {
+            SnackbarHost(snackbarHostState)
+        },
+    ) { paddingValues ->
         if (null == walletSnapshot) {
             CircularScreenProgressIndicator()
         } else {
             BalancesMainContent(
                 balanceState = balanceState,
-                isDetailedStatus = isDetailedStatus,
                 isFiatConversionEnabled = isFiatConversionEnabled,
                 isUpdateAvailable = isUpdateAvailable,
                 onShielding = onShielding,
+                onStatusClick = onStatusClick,
                 walletSnapshot = walletSnapshot,
                 shieldState = shieldState,
                 modifier =
@@ -181,6 +199,14 @@ fun Balances(
                     ),
                 walletRestoringState = walletRestoringState
             )
+
+            // Show synchronization status popup
+            if (showStatusDialog != null) {
+                StatusDialog(
+                    statusAction = showStatusDialog,
+                    onDone = hideStatusDialog
+                )
+            }
 
             // Show shielding error popup
             if (isShowingErrorDialog && shieldState is ShieldState.Failed) {
@@ -257,10 +283,10 @@ private fun BalancesTopAppBar(
 @Composable
 private fun BalancesMainContent(
     balanceState: BalanceState,
-    isDetailedStatus: Boolean,
     isFiatConversionEnabled: Boolean,
     isUpdateAvailable: Boolean,
     onShielding: () -> Unit,
+    onStatusClick: (StatusAction) -> Unit,
     walletSnapshot: WalletSnapshot,
     shieldState: ShieldState,
     walletRestoringState: WalletRestoringState,
@@ -282,7 +308,7 @@ private fun BalancesMainContent(
             onReferenceClick = {}
         )
 
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingHuge))
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingUpLarge))
 
         HorizontalDivider(
             color = ZcashTheme.colors.darkDividerColor,
@@ -304,11 +330,9 @@ private fun BalancesMainContent(
             walletSnapshot = walletSnapshot,
         )
 
-        Spacer(modifier = Modifier.weight(1f, true))
-
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
-
         if (walletRestoringState == WalletRestoringState.RESTORING) {
+            Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
+
             Small(
                 text = stringResource(id = R.string.balances_status_restoring_text),
                 textFontWeight = FontWeight.Medium,
@@ -317,17 +341,20 @@ private fun BalancesMainContent(
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = ZcashTheme.dimens.spacingDefault)
+                        .padding(horizontal = ZcashTheme.dimens.spacingSmall)
             )
 
             Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
+        } else {
+            Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingUpLarge))
         }
 
         SynchronizationStatus(
-            walletSnapshot = walletSnapshot,
             isUpdateAvailable = isUpdateAvailable,
-            isDetailedStatus = isDetailedStatus,
-            testTag = BalancesTag.STATUS
+            onStatusClick = onStatusClick,
+            testTag = BalancesTag.STATUS,
+            walletSnapshot = walletSnapshot,
+            modifier = Modifier.animateContentSize()
         )
     }
 }
@@ -517,7 +544,6 @@ fun BalancesOverview(
                     context = LocalContext.current,
                     walletSnapshot = walletSnapshot,
                     isUpdateAvailable = false,
-                    isDetailedStatus = false
                 )
 
             Column(Modifier.testTag(BalancesTag.FIAT_CONVERSION)) {

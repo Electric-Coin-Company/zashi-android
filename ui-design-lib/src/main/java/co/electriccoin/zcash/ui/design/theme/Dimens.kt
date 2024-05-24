@@ -11,6 +11,7 @@ import androidx.compose.ui.unit.dp
 data class Dimens(
     // Default spacings:
     val spacingNone: Dp,
+    val spacingMini: Dp,
     val spacingXtiny: Dp,
     val spacingMin: Dp,
     val spacingTiny: Dp,
@@ -61,6 +62,7 @@ data class Dimens(
 private val defaultDimens =
     Dimens(
         spacingNone = 0.dp,
+        spacingMini = 1.dp,
         spacingXtiny = 2.dp,
         spacingTiny = 4.dp,
         spacingMin = 6.dp,
