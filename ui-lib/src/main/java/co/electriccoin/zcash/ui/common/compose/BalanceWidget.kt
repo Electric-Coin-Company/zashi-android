@@ -80,6 +80,7 @@ sealed class BalanceState(open val totalBalance: Zatoshi) {
 }
 
 @Composable
+@Suppress("LongMethod")
 fun BalanceWidget(
     balanceState: BalanceState,
     isReferenceToBalances: Boolean,
@@ -104,11 +105,22 @@ fun BalanceWidget(
                     text = stringResource(id = co.electriccoin.zcash.ui.R.string.balance_widget_available),
                     onClick = onReferenceClick,
                     fontWeight = FontWeight.Normal,
-                    modifier = Modifier.padding(all = ZcashTheme.dimens.spacingTiny)
+                    modifier =
+                        Modifier
+                            .padding(
+                                vertical = ZcashTheme.dimens.spacingSmall,
+                                horizontal = ZcashTheme.dimens.spacingMini,
+                            )
                 )
             } else {
                 Body(
                     text = stringResource(id = co.electriccoin.zcash.ui.R.string.balance_widget_available),
+                    modifier =
+                        Modifier
+                            .padding(
+                                vertical = ZcashTheme.dimens.spacingSmall,
+                                horizontal = ZcashTheme.dimens.spacingMini,
+                            )
                 )
             }
 

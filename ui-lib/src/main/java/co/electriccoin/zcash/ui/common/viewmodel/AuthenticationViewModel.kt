@@ -185,8 +185,6 @@ class AuthenticationViewModel(
                             // Biometric authentication is disabled until the user unlocks with their device credential
                             // (i.e. PIN, pattern, or password).
                             BiometricPrompt.ERROR_LOCKOUT_PERMANENT,
-                            // The user does not have any biometrics enrolled
-                            BiometricPrompt.ERROR_NO_BIOMETRICS,
                             // The device does not have the required authentication hardware
                             BiometricPrompt.ERROR_HW_NOT_PRESENT,
                             // The user pressed the negative button
@@ -214,9 +212,12 @@ class AuthenticationViewModel(
                                 // We could consider splitting ERROR_CANCELED from ERROR_USER_CANCELED
                                 authenticationResult.value = AuthenticationResult.Canceled
                             }
+                            // The user does not have any biometrics enrolled
+                            BiometricPrompt.ERROR_NO_BIOMETRICS,
                             // The device does not have pin, pattern, or password set up
                             BiometricPrompt.ERROR_NO_DEVICE_CREDENTIAL -> {
                                 // Allow unauthenticated access if no authentication method is available on the device
+                                // These 2 errors can come for a different Android SDK versions, but they mean the same
                                 authenticationResult.value = AuthenticationResult.Success
                             }
                         }
@@ -346,7 +347,7 @@ class AuthenticationViewModel(
             }
             else -> {
                 Twig.error { "Unexpected biometric framework status" }
-                BiometricSupportResult.StatusExpected
+                BiometricSupportResult.StatusUnexpected
             }
         }
     }
@@ -411,5 +412,5 @@ private sealed class BiometricSupportResult {
 
     data object StatusUnknown : BiometricSupportResult()
 
-    data object StatusExpected : BiometricSupportResult()
+    data object StatusUnexpected : BiometricSupportResult()
 }

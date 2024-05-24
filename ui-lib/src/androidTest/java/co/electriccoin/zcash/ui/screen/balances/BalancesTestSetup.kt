@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.screen.balances
 
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
@@ -35,7 +36,10 @@ class BalancesTestSetup(
             onSettings = {
                 onSettingsCount.incrementAndGet()
             },
-            isDetailedStatus = false,
+            hideStatusDialog = {},
+            showStatusDialog = null,
+            onStatusClick = {},
+            snackbarHostState = SnackbarHostState(),
             isFiatConversionEnabled = isShowFiatConversion,
             isUpdateAvailable = false,
             isShowingErrorDialog = false,

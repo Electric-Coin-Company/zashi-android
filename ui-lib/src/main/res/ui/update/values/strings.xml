@@ -2,7 +2,6 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="update_header">Update available</string>
     <string name="update_critical_header">Update required</string>
-    <string name="update_image_content_description"></string>
     <string name="update_title_available"><xliff:g id="app_name" example="Zcash">%1$s</xliff:g> here.</string>
     <string name="update_title_required">It\'s not you, it\'s me.</string>
     <string name="update_description_required">
@@ -17,5 +16,4 @@
     <string name="update_download_button">Update</string>
     <string name="update_later_enabled_button">Remind me later</string>
     <string name="update_later_disabled_button">(required)</string>
-    <string name="update_unable_to_open_play_store">Unable to launch Google Play store app.</string>
 </resources>

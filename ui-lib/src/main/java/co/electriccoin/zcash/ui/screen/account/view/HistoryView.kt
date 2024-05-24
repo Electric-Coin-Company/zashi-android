@@ -62,6 +62,7 @@ import co.electriccoin.zcash.ui.screen.account.model.TransactionUi
 import co.electriccoin.zcash.ui.screen.account.model.TransactionUiState
 import co.electriccoin.zcash.ui.screen.account.model.TrxItemState
 import co.electriccoin.zcash.ui.screen.balances.BalancesTag
+import co.electriccoin.zcash.ui.screen.balances.model.StatusAction
 import co.electriccoin.zcash.ui.screen.send.view.DEFAULT_LESS_THAN_FEE
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toPersistentList
@@ -76,6 +77,7 @@ private fun ComposablePreview() {
         GradientSurface {
             HistoryContainer(
                 onTransactionItemAction = {},
+                onStatusClick = {},
                 transactionState = TransactionUiState.Loading,
                 walletRestoringState = WalletRestoringState.SYNCING,
                 walletSnapshot = WalletSnapshotFixture.new()
@@ -92,6 +94,7 @@ private fun ComposableHistoryListPreview() {
             HistoryContainer(
                 transactionState = TransactionUiState.Done(transactions = TransactionsFixture.new()),
                 onTransactionItemAction = {},
+                onStatusClick = {},
                 walletRestoringState = WalletRestoringState.RESTORING,
                 walletSnapshot = WalletSnapshotFixture.new()
             )
@@ -107,7 +110,9 @@ private val dateFormat: DateFormat by lazy {
 }
 
 @Composable
+@Suppress("LongParameterList")
 internal fun HistoryContainer(
+    onStatusClick: (StatusAction) -> Unit,
     onTransactionItemAction: (TrxItemAction) -> Unit,
     transactionState: TransactionUiState,
     walletRestoringState: WalletRestoringState,
@@ -127,15 +132,19 @@ internal fun HistoryContainer(
             Column(
                 modifier = Modifier.background(color = ZcashTheme.colors.historySyncingColor)
             ) {
-                Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
+                Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
 
-                // Do not show the app update information and the detailed sync status in the restoring status
-                // on Account screen
+                // Do not calculate and use the app update information here, as the sync bar won't be displayed after
+                // the wallet is fully restored
                 SynchronizationStatus(
-                    isDetailedStatus = false,
                     isUpdateAvailable = false,
+                    onStatusClick = onStatusClick,
                     testTag = BalancesTag.STATUS,
                     walletSnapshot = walletSnapshot,
+                    modifier =
+                        Modifier
+                            .padding(horizontal = ZcashTheme.dimens.spacingDefault)
+                            .animateContentSize()
                 )
 
                 Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))

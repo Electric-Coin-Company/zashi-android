@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.screen.account
 
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
@@ -70,6 +71,10 @@ class AccountTestSetup(
             onTransactionItemAction = {
                 onItemClickCount.incrementAndGet()
             },
+            hideStatusDialog = {},
+            showStatusDialog = null,
+            onStatusClick = {},
+            snackbarHostState = SnackbarHostState(),
             walletRestoringState = WalletRestoringState.NONE,
             walletSnapshot = WalletSnapshotFixture.new()
         )

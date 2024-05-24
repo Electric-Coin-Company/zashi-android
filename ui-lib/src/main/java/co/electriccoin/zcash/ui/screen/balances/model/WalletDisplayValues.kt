@@ -18,20 +18,22 @@ data class WalletDisplayValues(
     val progress: PercentDecimal,
     val zecAmountText: String,
     val statusText: String,
+    val statusAction: StatusAction = StatusAction.None,
     val fiatCurrencyAmountState: FiatCurrencyConversionRateState,
     val fiatCurrencyAmountText: String
 ) {
     companion object {
-        @Suppress("MagicNumber", "LongMethod")
+        @Suppress("LongMethod")
         internal fun getNextValues(
             context: Context,
             walletSnapshot: WalletSnapshot,
             isUpdateAvailable: Boolean = false,
-            isDetailedStatus: Boolean = false,
         ): WalletDisplayValues {
             var progress = PercentDecimal.ZERO_PERCENT
             val zecAmountText = walletSnapshot.totalBalance().toZecString()
             var statusText = ""
+            var statusAction: StatusAction = StatusAction.None
+
             // TODO [#578]: Provide Zatoshi -> USD fiat currency formatting
             // TODO [#578]: https://github.com/Electric-Coin-Company/zcash-android-wallet-sdk/issues/578
             // We'll ideally provide a "fresh" currencyConversion object here
@@ -55,69 +57,87 @@ data class WalletDisplayValues(
                             )
                     }
                     statusText = context.getString(R.string.balances_status_syncing)
+                    statusAction = StatusAction.Syncing
                 }
                 Synchronizer.Status.SYNCED -> {
-                    statusText =
-                        if (isUpdateAvailable) {
+                    if (isUpdateAvailable) {
+                        statusText =
                             context.getString(
                                 R.string.balances_status_update,
                                 context.getString(R.string.app_name)
                             )
-                        } else {
-                            context.getString(R.string.balances_status_synced)
-                        }
+                        statusAction = StatusAction.AppUpdate
+                    } else {
+                        statusText = context.getString(R.string.balances_status_synced)
+                        statusAction = StatusAction.Synced
+                    }
                 }
                 Synchronizer.Status.DISCONNECTED -> {
-                    if (isDetailedStatus) {
-                        statusText =
-                            context.getString(
-                                R.string.balances_status_error_detailed,
-                                context.getString(R.string.balances_status_error_detailed_connection)
-                            )
-                    } else {
-                        statusText =
-                            context.getString(
-                                R.string.balances_status_error_simple,
-                                context.getString(R.string.app_name)
-                            )
-                    }
-                }
-                Synchronizer.Status.STOPPED -> {
-                    if (isDetailedStatus) {
-                        statusText = context.getString(R.string.balances_status_detailed_stopped)
-                    } else {
-                        statusText = context.getString(R.string.balances_status_syncing)
-                    }
-                }
-            }
-
-            // More detailed error message
-            walletSnapshot.synchronizerError?.let {
-                if (isDetailedStatus) {
-                    statusText =
-                        context.getString(
-                            R.string.balances_status_error_detailed,
-                            walletSnapshot.synchronizerError.getCauseMessage()
-                                ?: context.getString(R.string.balances_status_error_detailed_unknown)
-                        )
-                } else {
                     statusText =
                         context.getString(
                             R.string.balances_status_error_simple,
                             context.getString(R.string.app_name)
                         )
+                    statusAction =
+                        StatusAction.Disconnected(
+                            details = context.getString(R.string.balances_status_error_dialog_connection)
+                        )
                 }
+                Synchronizer.Status.STOPPED -> {
+                    statusText = context.getString(R.string.balances_status_syncing)
+                    statusAction =
+                        StatusAction.Stopped(
+                            details = context.getString(R.string.balances_status_dialog_stopped)
+                        )
+                }
+            }
+
+            // More detailed error message
+            walletSnapshot.synchronizerError?.let {
+                statusText =
+                    context.getString(
+                        R.string.balances_status_error_simple,
+                        context.getString(R.string.app_name)
+                    )
+                statusAction =
+                    StatusAction.Error(
+                        details =
+                            context.getString(
+                                R.string.balances_status_error_dialog_cause,
+                                walletSnapshot.synchronizerError.getCauseMessage()
+                                    ?: context.getString(R.string.balances_status_error_dialog_unknown)
+                            )
+                    )
             }
 
             return WalletDisplayValues(
                 progress = progress,
                 zecAmountText = zecAmountText,
+                statusAction = statusAction,
                 statusText = statusText,
                 fiatCurrencyAmountState = fiatCurrencyAmountState,
                 fiatCurrencyAmountText = fiatCurrencyAmountText
             )
         }
     }
+}
+
+sealed class StatusAction {
+    data object None : StatusAction()
+
+    data object Syncing : StatusAction()
+
+    data object Synced : StatusAction()
+
+    data object AppUpdate : StatusAction()
+
+    sealed class Detailed(open val details: String) : StatusAction()
+
+    data class Disconnected(override val details: String) : Detailed(details)
+
+    data class Stopped(override val details: String) : Detailed(details)
+
+    data class Error(override val details: String) : Detailed(details)
 }
 
 private fun getFiatCurrencyRateValue(

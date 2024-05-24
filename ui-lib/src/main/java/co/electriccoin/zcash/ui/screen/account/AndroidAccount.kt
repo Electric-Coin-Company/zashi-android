@@ -5,7 +5,10 @@ package co.electriccoin.zcash.ui.screen.account
 import android.content.Context
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cash.z.ecc.android.sdk.Synchronizer
@@ -21,6 +24,8 @@ import co.electriccoin.zcash.ui.screen.account.model.TransactionUiState
 import co.electriccoin.zcash.ui.screen.account.view.Account
 import co.electriccoin.zcash.ui.screen.account.view.TrxItemAction
 import co.electriccoin.zcash.ui.screen.account.viewmodel.TransactionHistoryViewModel
+import co.electriccoin.zcash.ui.screen.balances.model.StatusAction
+import co.electriccoin.zcash.ui.util.PlayStoreUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.jetbrains.annotations.VisibleForTesting
@@ -31,8 +36,6 @@ internal fun WrapAccount(
     goBalances: () -> Unit,
     goSettings: () -> Unit,
 ) {
-    val scope = rememberCoroutineScope()
-
     val walletViewModel by activity.viewModels<WalletViewModel>()
 
     val transactionHistoryViewModel by activity.viewModels<TransactionHistoryViewModel>()
@@ -56,7 +59,6 @@ internal fun WrapAccount(
         context = activity.applicationContext,
         goBalances = goBalances,
         goSettings = goSettings,
-        scope = scope,
         synchronizer = synchronizer,
         transactionHistoryViewModel = transactionHistoryViewModel,
         transactionsUiState = transactionsUiState,
@@ -70,11 +72,10 @@ internal fun WrapAccount(
 
 @Composable
 @VisibleForTesting
-@Suppress("LongParameterList")
+@Suppress("LongParameterList", "LongMethod")
 internal fun WrapAccount(
     balanceState: BalanceState,
     context: Context,
-    scope: CoroutineScope,
     goBalances: () -> Unit,
     goSettings: () -> Unit,
     transactionsUiState: TransactionUiState,
@@ -83,6 +84,14 @@ internal fun WrapAccount(
     walletRestoringState: WalletRestoringState,
     walletSnapshot: WalletSnapshot?
 ) {
+    val scope = rememberCoroutineScope()
+
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    // We could also improve this by `rememberSaveable` to preserve the dialog after a configuration change. But the
+    // dialog dismissing in such cases is not critical, and it would require creating StatusAction custom Saver
+    val showStatusDialog = remember { mutableStateOf<StatusAction.Detailed?>(null) }
+
     if (null == synchronizer || null == walletSnapshot) {
         // TODO [#1146]: Consider moving CircularScreenProgressIndicator from Android layer to View layer
         // TODO [#1146]: Improve this by allowing screen composition and updating it after the data is available
@@ -92,6 +101,23 @@ internal fun WrapAccount(
         Account(
             balanceState = balanceState,
             transactionsUiState = transactionsUiState,
+            showStatusDialog = showStatusDialog.value,
+            hideStatusDialog = { showStatusDialog.value = null },
+            onStatusClick = { status ->
+                when (status) {
+                    is StatusAction.Detailed -> showStatusDialog.value = status
+                    StatusAction.AppUpdate -> {
+                        openPlayStoreAppSite(
+                            context = context,
+                            snackbarHostState = snackbarHostState,
+                            scope = scope
+                        )
+                    }
+                    else -> {
+                        // No action required
+                    }
+                }
+            },
             onTransactionItemAction = { action ->
                 when (action) {
                     is TrxItemAction.TransactionIdClick -> {
@@ -132,8 +158,26 @@ internal fun WrapAccount(
             },
             goBalances = goBalances,
             goSettings = goSettings,
+            snackbarHostState = snackbarHostState,
             walletRestoringState = walletRestoringState,
             walletSnapshot = walletSnapshot
         )
+    }
+}
+
+private fun openPlayStoreAppSite(
+    context: Context,
+    snackbarHostState: SnackbarHostState,
+    scope: CoroutineScope
+) {
+    val storeIntent = PlayStoreUtil.newActivityIntent(context)
+    runCatching {
+        context.startActivity(storeIntent)
+    }.onFailure {
+        scope.launch {
+            snackbarHostState.showSnackbar(
+                message = context.getString(R.string.unable_to_open_play_store)
+            )
+        }
     }
 }

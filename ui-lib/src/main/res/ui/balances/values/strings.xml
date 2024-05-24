@@ -22,13 +22,22 @@
     <string name="balances_status_synced">Synced</string>
     <string name="balances_status_update">Please update <xliff:g id="app_name" example="Zashi">%1$s</xliff:g> using Google Play</string>
     <string name="balances_status_error_simple"><xliff:g id="app_name" example="Zashi">%1$s</xliff:g> encountered an error while syncing, attempting to resolve…</string>
-    <string name="balances_status_error_detailed" formatted="true">Error: <xliff:g id="error_type" example="Lost connection">%1$s</xliff:g></string>
-    <string name="balances_status_error_detailed_connection">Disconnected</string>
-    <string name="balances_status_error_detailed_unknown">Unknown cause</string>
-    <string name="balances_status_detailed_stopped">Synchronizer stopped</string>
     <string name="balances_status_restoring_text">The restore process can take several hours on lower-powered devices, and even on powerful devices is likely to take more than an hour.</string>
 
     <string name="balances_shielding_successful">Shielding has been successfully submitted</string>
+
+    <string name="balances_status_error_dialog_title">Error</string>
+    <string name="balances_status_error_dialog_connection">
+        Disconnected. Please check your internet connection.
+    </string>
+    <string name="balances_status_error_dialog_cause" formatted="true">
+        Error: <xliff:g id="error_cause" example="Block scanning problem">%1$s</xliff:g>
+    </string>
+    <string name="balances_status_error_dialog_unknown">
+        Unknown cause. Please contact our support team if the problem persists.
+    </string>
+    <string name="balances_status_dialog_stopped">Synchronization is stopped. It will resume soon.</string>
+    <string name="balances_status_dialog_button">OK</string>
 
     <string name="balances_shielding_dialog_error_title">Failed to shield funds</string>
     <string name="balances_shielding_dialog_error_text">Error: The attempt to shield the transparent funds failed. Try it again, please.</string>

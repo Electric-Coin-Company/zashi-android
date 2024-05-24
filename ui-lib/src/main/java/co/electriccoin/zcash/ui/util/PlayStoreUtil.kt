@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.update.util
+package co.electriccoin.zcash.ui.util
 
 import android.content.Context
 import android.content.Intent

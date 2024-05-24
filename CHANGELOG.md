@@ -14,6 +14,14 @@ directly impact users rather than highlighting other key architectural updates.*
   cases: Send funds, Recovery Phrase, Export Private Data, and Delete Wallet. 
 - The app entry animation has been reworked to apply on every app access point, i.e. it will be displayed when 
   users return to an already set up app as well.
+- Synchronizer status details are now available to users by pressing the simple status view placed above the
+  synchronization progress bar. The details are displayed within a dialog window on the Balances and Account screens.
+  This view also occasionally presents information about a possible Zashi app update available on Google Play. The 
+  app redirects users to the Google Play Zashi page by pressing the view.
+
+### Changed
+- The app dialog window has now a bit more rounded corners
+- A few more minor UI improvements
 
 ## [1.0 (650)] - 2024-05-07
 

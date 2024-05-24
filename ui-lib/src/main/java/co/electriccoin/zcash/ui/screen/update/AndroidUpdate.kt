@@ -16,9 +16,9 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.viewmodel.CheckUpdateViewModel
 import co.electriccoin.zcash.ui.screen.update.model.UpdateInfo
 import co.electriccoin.zcash.ui.screen.update.model.UpdateState
-import co.electriccoin.zcash.ui.screen.update.util.PlayStoreUtil
 import co.electriccoin.zcash.ui.screen.update.view.Update
 import co.electriccoin.zcash.ui.screen.update.viewmodel.UpdateViewModel
+import co.electriccoin.zcash.ui.util.PlayStoreUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -111,7 +111,7 @@ internal fun WrapUpdate(
         },
         onLater = onLaterAction,
         onReference = {
-            openPlayStoreAppPage(
+            openPlayStoreAppSite(
                 activity.applicationContext,
                 snackbarHostState,
                 scope
@@ -120,7 +120,7 @@ internal fun WrapUpdate(
     )
 }
 
-fun openPlayStoreAppPage(
+private fun openPlayStoreAppSite(
     context: Context,
     snackbarHostState: SnackbarHostState,
     scope: CoroutineScope
@@ -131,7 +131,7 @@ fun openPlayStoreAppPage(
     }.onFailure {
         scope.launch {
             snackbarHostState.showSnackbar(
-                message = context.getString(R.string.update_unable_to_open_play_store)
+                message = context.getString(R.string.unable_to_open_play_store)
             )
         }
     }
