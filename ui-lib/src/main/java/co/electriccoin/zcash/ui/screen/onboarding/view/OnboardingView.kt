@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,7 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import cash.z.ecc.android.sdk.fixture.WalletFixture
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
-import co.electriccoin.zcash.ui.design.component.GradientSurface
+import co.electriccoin.zcash.ui.design.component.GridBgScaffold
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.SecondaryButton
 import co.electriccoin.zcash.ui.design.component.TitleLarge
@@ -35,14 +34,12 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 @Composable
 private fun OnboardingComposablePreview() {
     ZcashTheme(forceDarkMode = false) {
-        GradientSurface {
-            Onboarding(
-                isDebugMenuEnabled = true,
-                onImportWallet = {},
-                onCreateWallet = {},
-                onFixtureWallet = {}
-            )
-        }
+        Onboarding(
+            isDebugMenuEnabled = true,
+            onImportWallet = {},
+            onCreateWallet = {},
+            onFixtureWallet = {}
+        )
     }
 }
 
@@ -63,7 +60,7 @@ fun Onboarding(
     onCreateWallet: () -> Unit,
     onFixtureWallet: (String) -> Unit
 ) {
-    Scaffold { paddingValues ->
+    GridBgScaffold { paddingValues ->
         OnboardingMainContent(
             isDebugMenuEnabled = isDebugMenuEnabled,
             onCreateWallet = onCreateWallet,

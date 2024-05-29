@@ -50,8 +50,8 @@ fun FormTextField(
     keyboardOptions: KeyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
     colors: TextFieldColors =
         TextFieldDefaults.colors(
-            focusedContainerColor = Color.Transparent,
-            unfocusedContainerColor = Color.Transparent,
+            focusedContainerColor = ZcashTheme.colors.backgroundColor,
+            unfocusedContainerColor = ZcashTheme.colors.backgroundColor,
             disabledContainerColor = ZcashTheme.colors.textDisabled,
             errorContainerColor = Color.Transparent,
             focusedIndicatorColor = Color.Transparent,
@@ -120,7 +120,7 @@ fun FormTextField(
 
             BodySmall(
                 text = error,
-                color = ZcashTheme.colors.textFieldError,
+                color = ZcashTheme.colors.textFieldWarning,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )

@@ -49,8 +49,8 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.SynchronizationStatus
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
+import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.CircularMidProgressIndicator
-import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.StyledBalance
 import co.electriccoin.zcash.ui.design.component.TextWithIcon
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
@@ -74,15 +74,13 @@ import java.util.Locale
 @Preview("History")
 private fun ComposablePreview() {
     ZcashTheme(forceDarkMode = false) {
-        GradientSurface {
-            HistoryContainer(
-                onTransactionItemAction = {},
-                onStatusClick = {},
-                transactionState = TransactionUiState.Loading,
-                walletRestoringState = WalletRestoringState.SYNCING,
-                walletSnapshot = WalletSnapshotFixture.new()
-            )
-        }
+        HistoryContainer(
+            onTransactionItemAction = {},
+            onStatusClick = {},
+            transactionState = TransactionUiState.Loading,
+            walletRestoringState = WalletRestoringState.SYNCING,
+            walletSnapshot = WalletSnapshotFixture.new()
+        )
     }
 }
 
@@ -90,15 +88,13 @@ private fun ComposablePreview() {
 @Preview("History List")
 private fun ComposableHistoryListPreview() {
     ZcashTheme(forceDarkMode = false) {
-        GradientSurface {
-            HistoryContainer(
-                transactionState = TransactionUiState.Done(transactions = TransactionsFixture.new()),
-                onTransactionItemAction = {},
-                onStatusClick = {},
-                walletRestoringState = WalletRestoringState.RESTORING,
-                walletSnapshot = WalletSnapshotFixture.new()
-            )
-        }
+        HistoryContainer(
+            transactionState = TransactionUiState.Done(transactions = TransactionsFixture.new()),
+            onTransactionItemAction = {},
+            onStatusClick = {},
+            walletRestoringState = WalletRestoringState.RESTORING,
+            walletSnapshot = WalletSnapshotFixture.new()
+        )
     }
 }
 
@@ -234,7 +230,7 @@ private fun HistoryList(
 @Preview("History List Item")
 private fun ComposableHistoryListItemPreview() {
     ZcashTheme(forceDarkMode = false) {
-        GradientSurface {
+        BlankSurface {
             HistoryItem(
                 onAction = {},
                 transaction = TransactionUiFixture.new()
@@ -773,7 +769,7 @@ private fun HistoryItemMessagePart(
         Text(
             text = stringResource(id = R.string.account_history_item_message),
             style = ZcashTheme.extendedTypography.transactionItemStyles.contentMedium,
-            color = ZcashTheme.colors.textMedium
+            color = ZcashTheme.colors.textCommon
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))

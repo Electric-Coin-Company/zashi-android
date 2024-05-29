@@ -16,7 +16,6 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -31,7 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
-import co.electriccoin.zcash.ui.design.component.GradientSurface
+import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
@@ -43,27 +42,25 @@ import co.electriccoin.zcash.ui.screen.settings.model.TroubleshootingParameters
 @Composable
 private fun PreviewSettings() {
     ZcashTheme(forceDarkMode = false) {
-        GradientSurface {
-            Settings(
-                onAbout = {},
-                onAdvancedSettings = {},
-                onBack = {},
-                onFeedback = {},
-                onRescanWallet = {},
-                onBackgroundSyncSettingsChanged = {},
-                onKeepScreenOnDuringSyncSettingsChanged = {},
-                onAnalyticsSettingsChanged = {},
-                troubleshootingParameters =
-                    TroubleshootingParameters(
-                        isEnabled = false,
-                        isBackgroundSyncEnabled = false,
-                        isKeepScreenOnDuringSyncEnabled = false,
-                        isAnalyticsEnabled = false,
-                        isRescanEnabled = false
-                    ),
-                walletRestoringState = WalletRestoringState.NONE,
-            )
-        }
+        Settings(
+            onAbout = {},
+            onAdvancedSettings = {},
+            onBack = {},
+            onFeedback = {},
+            onRescanWallet = {},
+            onBackgroundSyncSettingsChanged = {},
+            onKeepScreenOnDuringSyncSettingsChanged = {},
+            onAnalyticsSettingsChanged = {},
+            troubleshootingParameters =
+                TroubleshootingParameters(
+                    isEnabled = false,
+                    isBackgroundSyncEnabled = false,
+                    isKeepScreenOnDuringSyncEnabled = false,
+                    isAnalyticsEnabled = false,
+                    isRescanEnabled = false
+                ),
+            walletRestoringState = WalletRestoringState.NONE,
+        )
     }
 }
 
@@ -81,7 +78,7 @@ fun Settings(
     troubleshootingParameters: TroubleshootingParameters,
     walletRestoringState: WalletRestoringState,
 ) {
-    Scaffold(topBar = {
+    BlankBgScaffold(topBar = {
         SettingsTopAppBar(
             troubleshootingParameters = troubleshootingParameters,
             onBackgroundSyncSettingsChanged = onBackgroundSyncSettingsChanged,

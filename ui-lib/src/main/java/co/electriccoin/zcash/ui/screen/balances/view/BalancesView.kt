@@ -25,7 +25,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -68,12 +67,13 @@ import co.electriccoin.zcash.ui.common.model.spendableBalance
 import co.electriccoin.zcash.ui.common.model.valuePendingBalance
 import co.electriccoin.zcash.ui.common.test.CommonTag
 import co.electriccoin.zcash.ui.design.component.AppAlertDialog
+import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
+import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.BodySmall
 import co.electriccoin.zcash.ui.design.component.BodyWithFiatCurrencySymbol
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.design.component.CircularSmallProgressIndicator
-import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.Reference
 import co.electriccoin.zcash.ui.design.component.Small
@@ -91,24 +91,22 @@ import co.electriccoin.zcash.ui.screen.balances.model.WalletDisplayValues
 @Composable
 private fun ComposableBalancesPreview() {
     ZcashTheme(forceDarkMode = false) {
-        GradientSurface {
-            Balances(
-                balanceState = BalanceStateFixture.new(),
-                isFiatConversionEnabled = false,
-                isUpdateAvailable = false,
-                isShowingErrorDialog = false,
-                hideStatusDialog = {},
-                showStatusDialog = null,
-                setShowErrorDialog = {},
-                onSettings = {},
-                onShielding = {},
-                onStatusClick = {},
-                shieldState = ShieldState.Available,
-                snackbarHostState = SnackbarHostState(),
-                walletSnapshot = WalletSnapshotFixture.new(),
-                walletRestoringState = WalletRestoringState.NONE,
-            )
-        }
+        Balances(
+            balanceState = BalanceStateFixture.new(),
+            isFiatConversionEnabled = false,
+            isUpdateAvailable = false,
+            isShowingErrorDialog = false,
+            hideStatusDialog = {},
+            showStatusDialog = null,
+            setShowErrorDialog = {},
+            onSettings = {},
+            onShielding = {},
+            onStatusClick = {},
+            shieldState = ShieldState.Available,
+            snackbarHostState = SnackbarHostState(),
+            walletSnapshot = WalletSnapshotFixture.new(),
+            walletRestoringState = WalletRestoringState.NONE,
+        )
     }
 }
 
@@ -116,24 +114,22 @@ private fun ComposableBalancesPreview() {
 @Composable
 private fun ComposableBalancesShieldFailurePreview() {
     ZcashTheme(forceDarkMode = false) {
-        GradientSurface {
-            Balances(
-                balanceState = BalanceStateFixture.new(),
-                isFiatConversionEnabled = false,
-                isUpdateAvailable = false,
-                isShowingErrorDialog = true,
-                hideStatusDialog = {},
-                showStatusDialog = null,
-                setShowErrorDialog = {},
-                onSettings = {},
-                onShielding = {},
-                onStatusClick = {},
-                shieldState = ShieldState.Available,
-                snackbarHostState = SnackbarHostState(),
-                walletSnapshot = WalletSnapshotFixture.new(),
-                walletRestoringState = WalletRestoringState.NONE,
-            )
-        }
+        Balances(
+            balanceState = BalanceStateFixture.new(),
+            isFiatConversionEnabled = false,
+            isUpdateAvailable = false,
+            isShowingErrorDialog = true,
+            hideStatusDialog = {},
+            showStatusDialog = null,
+            setShowErrorDialog = {},
+            onSettings = {},
+            onShielding = {},
+            onStatusClick = {},
+            shieldState = ShieldState.Available,
+            snackbarHostState = SnackbarHostState(),
+            walletSnapshot = WalletSnapshotFixture.new(),
+            walletRestoringState = WalletRestoringState.NONE,
+        )
     }
 }
 
@@ -141,7 +137,7 @@ private fun ComposableBalancesShieldFailurePreview() {
 @Composable
 private fun ComposableBalancesShieldErrorDialogPreview() {
     ZcashTheme(forceDarkMode = false) {
-        GradientSurface {
+        BlankSurface {
             ShieldingErrorDialog(
                 reason = "Test Error Text",
                 onDone = {}
@@ -168,7 +164,7 @@ fun Balances(
     walletSnapshot: WalletSnapshot?,
     walletRestoringState: WalletRestoringState,
 ) {
-    Scaffold(
+    BlankBgScaffold(
         topBar = {
             BalancesTopAppBar(
                 showRestoring = walletRestoringState == WalletRestoringState.RESTORING,
@@ -470,7 +466,7 @@ fun TransparentBalanceRow(
                         ZcashTheme.extendedTypography.balanceSingleStyles.first,
                         ZcashTheme.extendedTypography.balanceSingleStyles.second
                     ),
-                textColor = ZcashTheme.colors.textPending
+                textColor = ZcashTheme.colors.textDescriptionDark
             )
 
             Spacer(modifier = Modifier.width(ZcashTheme.dimens.spacingTiny))
@@ -627,7 +623,7 @@ fun ChangePendingRow(walletSnapshot: WalletSnapshot) {
                         ZcashTheme.extendedTypography.balanceSingleStyles.first,
                         ZcashTheme.extendedTypography.balanceSingleStyles.second
                     ),
-                textColor = ZcashTheme.colors.textPending
+                textColor = ZcashTheme.colors.textDescriptionDark
             )
 
             Spacer(modifier = Modifier.width(12.dp))
@@ -661,7 +657,7 @@ fun PendingTransactionsRow(walletSnapshot: WalletSnapshot) {
                         ZcashTheme.extendedTypography.balanceSingleStyles.first,
                         ZcashTheme.extendedTypography.balanceSingleStyles.second
                     ),
-                textColor = ZcashTheme.colors.textPending
+                textColor = ZcashTheme.colors.textDescriptionDark
             )
 
             Spacer(modifier = Modifier.width(12.dp))

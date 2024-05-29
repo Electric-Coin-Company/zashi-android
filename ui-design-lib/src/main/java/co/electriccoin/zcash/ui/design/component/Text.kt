@@ -42,7 +42,7 @@ import java.util.Locale
 @Composable
 private fun ReferenceComposablePreview() {
     ZcashTheme(forceDarkMode = false) {
-        GradientSurface {
+        BlankSurface {
             Column {
                 Reference(
                     text = "Test reference text",
@@ -70,7 +70,7 @@ private fun ReferenceComposablePreview() {
 @Composable
 private fun StyledBalanceComposablePreview() {
     ZcashTheme(forceDarkMode = false) {
-        GradientSurface {
+        BlankSurface {
             Column {
                 StyledBalance(
                     balanceString = "1,234.56789012",
@@ -411,7 +411,7 @@ fun BodyWithFiatCurrencySymbol(
 @Composable
 private fun NavigationTabTextPreview() {
     ZcashTheme(forceDarkMode = false) {
-        GradientSurface {
+        BlankSurface {
             Column {
                 NavigationTabText(
                     text = "Account",
@@ -443,7 +443,7 @@ fun NavigationTabText(
             },
         maxLines = 1,
         overflow = TextOverflow.Visible,
-        color = ZcashTheme.colors.tabTextColor,
+        color = ZcashTheme.colors.textCommon,
         modifier =
             Modifier
                 .clip(RoundedCornerShape(ZcashTheme.dimens.regularRippleEffectCorner))

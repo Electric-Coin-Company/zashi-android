@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -21,7 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
-import co.electriccoin.zcash.ui.design.component.GradientSurface
+import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
@@ -35,16 +34,14 @@ import co.electriccoin.zcash.ui.screen.advancedsettings.AdvancedSettingsTag
 @Composable
 private fun PreviewAdvancedSettings() {
     ZcashTheme(forceDarkMode = false) {
-        GradientSurface {
-            AdvancedSettings(
-                onBack = {},
-                onDeleteWallet = {},
-                onExportPrivateData = {},
-                onChooseServer = {},
-                onSeedRecovery = {},
-                walletRestoringState = WalletRestoringState.NONE,
-            )
-        }
+        AdvancedSettings(
+            onBack = {},
+            onDeleteWallet = {},
+            onExportPrivateData = {},
+            onChooseServer = {},
+            onSeedRecovery = {},
+            walletRestoringState = WalletRestoringState.NONE
+        )
     }
 }
 
@@ -58,12 +55,14 @@ fun AdvancedSettings(
     onSeedRecovery: () -> Unit,
     walletRestoringState: WalletRestoringState,
 ) {
-    Scaffold(topBar = {
-        AdvancedSettingsTopAppBar(
-            onBack = onBack,
-            showRestoring = walletRestoringState == WalletRestoringState.RESTORING,
-        )
-    }) { paddingValues ->
+    BlankBgScaffold(
+        topBar = {
+            AdvancedSettingsTopAppBar(
+                onBack = onBack,
+                showRestoring = walletRestoringState == WalletRestoringState.RESTORING,
+            )
+        }
+    ) { paddingValues ->
         AdvancedSettingsMainContent(
             modifier =
                 Modifier

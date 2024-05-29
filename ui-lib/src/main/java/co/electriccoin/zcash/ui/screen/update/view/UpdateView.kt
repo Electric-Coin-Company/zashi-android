@@ -15,7 +15,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -31,10 +30,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.Body
-import co.electriccoin.zcash.ui.design.component.GradientSurface
+import co.electriccoin.zcash.ui.design.component.GridBgScaffold
+import co.electriccoin.zcash.ui.design.component.GridBgSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.Reference
-import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.UpdateInfoFixture
 import co.electriccoin.zcash.ui.screen.update.UpdateTag
@@ -45,15 +44,13 @@ import co.electriccoin.zcash.ui.screen.update.model.UpdateState
 @Composable
 private fun PreviewUpdate() {
     ZcashTheme(forceDarkMode = false) {
-        GradientSurface {
-            Update(
-                snackbarHostState = SnackbarHostState(),
-                UpdateInfoFixture.new(appUpdateInfo = null),
-                onDownload = {},
-                onLater = {},
-                onReference = {}
-            )
-        }
+        Update(
+            snackbarHostState = SnackbarHostState(),
+            UpdateInfoFixture.new(appUpdateInfo = null),
+            onDownload = {},
+            onLater = {},
+            onReference = {}
+        )
     }
 }
 
@@ -65,7 +62,7 @@ fun Update(
     onLater: () -> Unit,
     onReference: () -> Unit
 ) {
-    Scaffold(
+    GridBgScaffold(
         topBar = {
             UpdateTopAppBar(updateInfo = updateInfo)
         },
@@ -81,7 +78,7 @@ fun Update(
             )
         }
     ) { paddingValues ->
-        UpdateContentContent(
+        UpdateContent(
             onReference = onReference,
             updateInfo = updateInfo,
             modifier =
@@ -118,7 +115,7 @@ fun UpdateOverlayRunning(updateInfo: UpdateInfo) {
 
 @Composable
 private fun UpdateTopAppBar(updateInfo: UpdateInfo) {
-    SmallTopAppBar(
+    GridBgSmallTopAppBar(
         titleText =
             stringResource(
                 updateInfo.isForce.let { force ->
@@ -207,7 +204,7 @@ private fun UpdateBottomAppBar(
 
 @Composable
 @Suppress("LongMethod")
-private fun UpdateContentContent(
+private fun UpdateContent(
     onReference: () -> Unit,
     updateInfo: UpdateInfo,
     modifier: Modifier = Modifier,

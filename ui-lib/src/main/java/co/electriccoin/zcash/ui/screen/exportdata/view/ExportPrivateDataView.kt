@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -27,9 +26,9 @@ import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.CheckBox
-import co.electriccoin.zcash.ui.design.component.GradientSurface
+import co.electriccoin.zcash.ui.design.component.GridBgScaffold
+import co.electriccoin.zcash.ui.design.component.GridBgSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
-import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.TopScreenLogoTitle
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 
@@ -37,15 +36,13 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 @Composable
 private fun ExportPrivateDataPreview() {
     ZcashTheme(forceDarkMode = false) {
-        GradientSurface {
-            ExportPrivateData(
-                snackbarHostState = SnackbarHostState(),
-                onBack = {},
-                onAgree = {},
-                onConfirm = {},
-                walletRestoringState = WalletRestoringState.NONE,
-            )
-        }
+        ExportPrivateData(
+            snackbarHostState = SnackbarHostState(),
+            onBack = {},
+            onAgree = {},
+            onConfirm = {},
+            walletRestoringState = WalletRestoringState.NONE,
+        )
     }
 }
 
@@ -60,7 +57,7 @@ fun ExportPrivateData(
     onConfirm: () -> Unit,
     walletRestoringState: WalletRestoringState,
 ) {
-    Scaffold(
+    GridBgScaffold(
         topBar = {
             ExportPrivateDataTopAppBar(
                 onBack = onBack,
@@ -91,7 +88,7 @@ private fun ExportPrivateDataTopAppBar(
     onBack: () -> Unit,
     showRestoring: Boolean
 ) {
-    SmallTopAppBar(
+    GridBgSmallTopAppBar(
         restoringLabel =
             if (showRestoring) {
                 stringResource(id = R.string.restoring_wallet_label)

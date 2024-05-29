@@ -60,7 +60,7 @@ import cash.z.ecc.android.sdk.type.AddressType
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
-import co.electriccoin.zcash.ui.design.component.GradientSurface
+import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.SecondaryButton
 import co.electriccoin.zcash.ui.design.component.Small
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
@@ -84,7 +84,7 @@ import kotlin.math.roundToInt
 @Composable
 private fun PreviewScan() {
     ZcashTheme(forceDarkMode = false) {
-        GradientSurface {
+        BlankSurface {
             Scan(
                 snackbarHostState = SnackbarHostState(),
                 onBack = {},

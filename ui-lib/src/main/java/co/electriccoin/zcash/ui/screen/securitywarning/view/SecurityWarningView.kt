@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -26,9 +25,9 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.CheckBox
-import co.electriccoin.zcash.ui.design.component.GradientSurface
+import co.electriccoin.zcash.ui.design.component.GridBgScaffold
+import co.electriccoin.zcash.ui.design.component.GridBgSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
-import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.TopScreenLogoTitle
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.VersionInfoFixture
@@ -37,14 +36,12 @@ import co.electriccoin.zcash.ui.fixture.VersionInfoFixture
 @Composable
 private fun SecurityWarningPreview() {
     ZcashTheme(forceDarkMode = false) {
-        GradientSurface {
-            SecurityWarning(
-                versionInfo = VersionInfoFixture.new(),
-                onBack = {},
-                onAcknowledged = {},
-                onConfirm = {},
-            )
-        }
+        SecurityWarning(
+            versionInfo = VersionInfoFixture.new(),
+            onBack = {},
+            onAcknowledged = {},
+            onConfirm = {},
+        )
     }
 }
 
@@ -59,7 +56,7 @@ fun SecurityWarning(
     onAcknowledged: (Boolean) -> Unit,
     onConfirm: () -> Unit,
 ) {
-    Scaffold(
+    GridBgScaffold(
         topBar = { SecurityWarningTopAppBar(onBack = onBack) },
     ) { paddingValues ->
         SecurityWarningContent(
@@ -82,7 +79,7 @@ fun SecurityWarning(
 
 @Composable
 private fun SecurityWarningTopAppBar(onBack: () -> Unit) {
-    SmallTopAppBar(
+    GridBgSmallTopAppBar(
         backText = stringResource(R.string.security_warning_back).uppercase(),
         backContentDescriptionText = stringResource(R.string.security_warning_back_content_description),
         onBack = onBack,

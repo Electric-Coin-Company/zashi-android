@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -48,14 +47,12 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 @Composable
 private fun ButtonComposablePreview() {
     ZcashTheme(forceDarkMode = false) {
-        GradientSurface {
+        BlankSurface {
             Column(Modifier.padding(ZcashTheme.dimens.spacingDefault)) {
                 PrimaryButton(onClick = { }, text = "Primary")
                 PrimaryButton(onClick = { }, text = "Primary...", showProgressBar = true)
                 PrimaryButton(onClick = { }, text = "Primary Small", minHeight = ZcashTheme.dimens.buttonHeightSmall)
                 SecondaryButton(onClick = { }, text = "Secondary")
-                TertiaryButton(onClick = { }, text = "Tertiary")
-                TertiaryButton(onClick = { }, text = "Tertiary", enabled = false)
                 NavigationButton(onClick = { }, text = "Navigation")
                 @Suppress("MagicNumber")
                 Row {
@@ -253,41 +250,6 @@ fun NavigationButton(
             textAlign = TextAlign.Center,
             text = text,
             color = MaterialTheme.colorScheme.onSecondary
-        )
-    }
-}
-
-@Composable
-fun TertiaryButton(
-    onClick: () -> Unit,
-    text: String,
-    modifier: Modifier = Modifier,
-    outerPaddingValues: PaddingValues =
-        PaddingValues(
-            horizontal = ZcashTheme.dimens.spacingNone,
-            vertical = ZcashTheme.dimens.spacingSmall
-        ),
-    enabled: Boolean = true
-) {
-    Button(
-        shape = RectangleShape,
-        onClick = onClick,
-        modifier =
-            modifier.then(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(outerPaddingValues)
-                    .defaultMinSize(ZcashTheme.dimens.buttonWidth, ZcashTheme.dimens.buttonHeight)
-            ),
-        enabled = enabled,
-        elevation = ButtonDefaults.buttonElevation(0.dp, 0.dp, 0.dp),
-        colors = buttonColors(containerColor = ZcashTheme.colors.tertiary)
-    ) {
-        Text(
-            style = MaterialTheme.typography.labelLarge,
-            textAlign = TextAlign.Center,
-            text = text,
-            color = ZcashTheme.colors.onTertiary
         )
     }
 }

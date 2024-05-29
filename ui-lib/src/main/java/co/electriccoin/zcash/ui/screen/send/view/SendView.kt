@@ -22,7 +22,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableIntStateOf
@@ -66,10 +65,11 @@ import co.electriccoin.zcash.ui.common.model.spendableBalance
 import co.electriccoin.zcash.ui.common.test.CommonTag
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.AppAlertDialog
+import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
+import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.BodySmall
 import co.electriccoin.zcash.ui.design.component.FormTextField
-import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.Small
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
@@ -88,27 +88,25 @@ import java.util.Locale
 @Preview("SendForm")
 private fun PreviewSendForm() {
     ZcashTheme(forceDarkMode = false) {
-        GradientSurface {
-            Send(
-                sendStage = SendStage.Form,
-                onCreateZecSend = {},
-                focusManager = LocalFocusManager.current,
-                onBack = {},
-                onSettings = {},
-                onQrScannerOpen = {},
-                goBalances = {},
-                hasCameraFeature = true,
-                recipientAddressState = RecipientAddressState("invalid_address", AddressType.Invalid()),
-                onRecipientAddressChange = {},
-                setAmountState = {},
-                amountState = AmountState.Valid(ZatoshiFixture.ZATOSHI_LONG.toString(), ZatoshiFixture.new()),
-                setMemoState = {},
-                memoState = MemoState.new("Test message"),
-                walletRestoringState = WalletRestoringState.NONE,
-                walletSnapshot = WalletSnapshotFixture.new(),
-                balanceState = BalanceStateFixture.new()
-            )
-        }
+        Send(
+            sendStage = SendStage.Form,
+            onCreateZecSend = {},
+            focusManager = LocalFocusManager.current,
+            onBack = {},
+            onSettings = {},
+            onQrScannerOpen = {},
+            goBalances = {},
+            hasCameraFeature = true,
+            recipientAddressState = RecipientAddressState("invalid_address", AddressType.Invalid()),
+            onRecipientAddressChange = {},
+            setAmountState = {},
+            amountState = AmountState.Valid(ZatoshiFixture.ZATOSHI_LONG.toString(), ZatoshiFixture.new()),
+            setMemoState = {},
+            memoState = MemoState.new("Test message"),
+            walletRestoringState = WalletRestoringState.NONE,
+            walletSnapshot = WalletSnapshotFixture.new(),
+            balanceState = BalanceStateFixture.new()
+        )
     }
 }
 
@@ -136,7 +134,7 @@ fun Send(
     walletRestoringState: WalletRestoringState,
     walletSnapshot: WalletSnapshot,
 ) {
-    Scaffold(topBar = {
+    BlankBgScaffold(topBar = {
         SendTopAppBar(
             showRestoring = walletRestoringState == WalletRestoringState.RESTORING,
             onSettings = onSettings
@@ -725,7 +723,7 @@ fun SendFormMemoTextField(
                     if (memoState is MemoState.Correct) {
                         ZcashTheme.colors.textFieldHint
                     } else {
-                        ZcashTheme.colors.textFieldError
+                        ZcashTheme.colors.textFieldWarning
                     },
                 textAlign = TextAlign.End,
                 modifier =
@@ -741,7 +739,7 @@ fun SendFormMemoTextField(
 @Preview("SendFailure")
 private fun PreviewSendFailure() {
     ZcashTheme(forceDarkMode = false) {
-        GradientSurface {
+        BlankSurface {
             SendFailure(
                 onDone = {},
                 reason = "Insufficient balance"

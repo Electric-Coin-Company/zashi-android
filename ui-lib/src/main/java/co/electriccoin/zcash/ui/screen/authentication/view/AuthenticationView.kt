@@ -14,7 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.viewmodel.AuthenticationResult
 import co.electriccoin.zcash.ui.design.component.AppAlertDialog
-import co.electriccoin.zcash.ui.design.component.GradientSurface
+import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.WelcomeAnimation
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 
@@ -22,7 +22,7 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 @Composable
 private fun PreviewAppAccessAuthentication() {
     ZcashTheme(forceDarkMode = false) {
-        GradientSurface {
+        BlankSurface {
             AppAccessAuthentication(
                 welcomeAnimVisibility = true
             )
@@ -34,7 +34,7 @@ private fun PreviewAppAccessAuthentication() {
 @Composable
 private fun PreviewErrorAuthentication() {
     ZcashTheme(forceDarkMode = false) {
-        GradientSurface {
+        BlankSurface {
             AuthenticationErrorDialog(
                 onDismiss = {},
                 onRetry = {},

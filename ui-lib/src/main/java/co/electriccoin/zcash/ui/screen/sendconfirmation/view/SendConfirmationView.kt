@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -46,8 +45,9 @@ import co.electriccoin.zcash.ui.common.compose.BalanceWidgetBigLineOnly
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.AppAlertDialog
+import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
+import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.Body
-import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.Small
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
@@ -64,20 +64,18 @@ import kotlinx.coroutines.runBlocking
 @Preview("SendConfirmation")
 private fun PreviewSendConfirmation() {
     ZcashTheme(forceDarkMode = false) {
-        GradientSurface {
-            SendConfirmationContent(
-                zecSend =
-                    ZecSend(
-                        destination = runBlocking { WalletAddressFixture.sapling() },
-                        amount = ZatoshiFixture.new(),
-                        memo = MemoFixture.new(),
-                        proposal = null,
-                    ),
-                onConfirmation = {},
-                onBack = {},
-                isSending = false
-            )
-        }
+        SendConfirmationContent(
+            zecSend =
+                ZecSend(
+                    destination = runBlocking { WalletAddressFixture.sapling() },
+                    amount = ZatoshiFixture.new(),
+                    memo = MemoFixture.new(),
+                    proposal = null,
+                ),
+            onConfirmation = {},
+            onBack = {},
+            isSending = false
+        )
     }
 }
 
@@ -85,28 +83,26 @@ private fun PreviewSendConfirmation() {
 @Preview("SendMultipleTransactionFailure")
 private fun PreviewSendMultipleTransactionFailure() {
     ZcashTheme(forceDarkMode = false) {
-        GradientSurface {
-            @Suppress("MagicNumber")
-            MultipleSubmissionFailure(
-                onContactSupport = {},
-                // Rework this into a test fixture
-                submissionResults =
-                    persistentListOf(
-                        TransactionSubmitResult.Failure(
-                            FirstClassByteArray("test_transaction_id_1".toByteArray()),
-                            true,
-                            123,
-                            "test transaction id failure"
-                        ),
-                        TransactionSubmitResult.NotAttempted(
-                            FirstClassByteArray("test_transaction_id_2".toByteArray())
-                        ),
-                        TransactionSubmitResult.NotAttempted(
-                            FirstClassByteArray("test_transaction_id_3".toByteArray())
-                        )
+        @Suppress("MagicNumber")
+        MultipleSubmissionFailure(
+            onContactSupport = {},
+            // Rework this into a test fixture
+            submissionResults =
+                persistentListOf(
+                    TransactionSubmitResult.Failure(
+                        FirstClassByteArray("test_transaction_id_1".toByteArray()),
+                        true,
+                        123,
+                        "test transaction id failure"
+                    ),
+                    TransactionSubmitResult.NotAttempted(
+                        FirstClassByteArray("test_transaction_id_2".toByteArray())
+                    ),
+                    TransactionSubmitResult.NotAttempted(
+                        FirstClassByteArray("test_transaction_id_3".toByteArray())
                     )
-            )
-        }
+                )
+        )
     }
 }
 
@@ -125,7 +121,7 @@ fun SendConfirmation(
     zecSend: ZecSend,
     walletRestoringState: WalletRestoringState,
 ) {
-    Scaffold(
+    BlankBgScaffold(
         topBar = {
             SendConfirmationTopAppBar(
                 onBack = onBack,
@@ -375,7 +371,7 @@ fun SendConfirmationActionButtons(
 @Preview("SendConfirmationFailure")
 private fun PreviewSendConfirmationFailure() {
     ZcashTheme(forceDarkMode = false) {
-        GradientSurface {
+        BlankSurface {
             SendFailure(
                 onDone = {},
                 reason = "Failed due to network error"
