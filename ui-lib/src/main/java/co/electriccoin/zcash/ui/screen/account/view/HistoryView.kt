@@ -243,7 +243,7 @@ private fun ComposableHistoryListItemPreview() {
 @Preview("Multiple History List Items")
 private fun ComposableHistoryListItemsPreview() {
     ZcashTheme(forceDarkMode = false) {
-        GradientSurface {
+        BlankSurface {
             HistoryItem(
                 onAction = {},
                 transaction =
@@ -638,7 +638,7 @@ private fun HistoryItemExpandedPart(
 }
 
 private fun List<String>?.containsValidMemo(): Boolean {
-    return !isNullOrEmpty() && find { it.isNotEmpty() } != null
+    return !isNullOrEmpty() && any { it.isNotEmpty() }
 }
 
 private fun List<String>.deduplicateMemos(): List<String> {
