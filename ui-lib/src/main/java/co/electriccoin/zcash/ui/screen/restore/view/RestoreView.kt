@@ -25,7 +25,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -42,7 +41,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -72,10 +70,10 @@ import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.ChipOnSurface
 import co.electriccoin.zcash.ui.design.component.FormTextField
-import co.electriccoin.zcash.ui.design.component.GradientSurface
+import co.electriccoin.zcash.ui.design.component.GridBgScaffold
+import co.electriccoin.zcash.ui.design.component.GridBgSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.Reference
-import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.TopScreenLogoTitle
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.restore.RestoreTag
@@ -92,31 +90,29 @@ import kotlinx.coroutines.launch
 @Composable
 private fun PreviewRestoreSeed() {
     ZcashTheme(forceDarkMode = false) {
-        GradientSurface {
-            RestoreWallet(
-                ZcashNetwork.Mainnet,
-                restoreState = RestoreState(RestoreStage.Seed),
-                completeWordList =
-                    persistentHashSetOf(
-                        "abandon",
-                        "ability",
-                        "able",
-                        "about",
-                        "above",
-                        "absent",
-                        "absorb",
-                        "abstract",
-                        "rib",
-                        "ribbon"
-                    ),
-                userWordList = WordList(listOf("abandon", "absorb")),
-                restoreHeight = null,
-                setRestoreHeight = {},
-                onBack = {},
-                paste = { "" },
-                onFinished = {}
-            )
-        }
+        RestoreWallet(
+            ZcashNetwork.Mainnet,
+            restoreState = RestoreState(RestoreStage.Seed),
+            completeWordList =
+                persistentHashSetOf(
+                    "abandon",
+                    "ability",
+                    "able",
+                    "about",
+                    "above",
+                    "absent",
+                    "absorb",
+                    "abstract",
+                    "rib",
+                    "ribbon"
+                ),
+            userWordList = WordList(listOf("abandon", "absorb")),
+            restoreHeight = null,
+            setRestoreHeight = {},
+            onBack = {},
+            paste = { "" },
+            onFinished = {}
+        )
     }
 }
 
@@ -184,7 +180,7 @@ fun RestoreWallet(
         }
     }
 
-    Scaffold(
+    GridBgScaffold(
         modifier = Modifier.navigationBarsPadding(),
         topBar = {
             when (currentStage) {
@@ -293,7 +289,7 @@ private fun RestoreSeedTopAppBar(
     onClear: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    SmallTopAppBar(
+    GridBgSmallTopAppBar(
         modifier = modifier,
         backText = stringResource(id = R.string.restore_back).uppercase(),
         backContentDescriptionText = stringResource(R.string.restore_back_content_description),
@@ -311,7 +307,7 @@ private fun RestoreSeedBirthdayTopAppBar(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    SmallTopAppBar(
+    GridBgSmallTopAppBar(
         modifier = modifier,
         backText = stringResource(id = R.string.restore_back).uppercase(),
         backContentDescriptionText = stringResource(R.string.restore_back_content_description),
@@ -319,7 +315,6 @@ private fun RestoreSeedBirthdayTopAppBar(
     )
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Suppress("UNUSED_PARAMETER", "LongParameterList", "LongMethod")
 @Composable
 private fun RestoreSeedMainContent(

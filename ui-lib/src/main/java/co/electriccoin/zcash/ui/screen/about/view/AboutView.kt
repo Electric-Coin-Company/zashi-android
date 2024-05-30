@@ -18,7 +18,6 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -42,7 +41,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
-import co.electriccoin.zcash.ui.design.component.GradientSurface
+import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.ConfigInfoFixture
@@ -53,16 +52,14 @@ import co.electriccoin.zcash.ui.screen.support.model.ConfigInfo
 @Composable
 private fun AboutPreview() {
     ZcashTheme(forceDarkMode = false) {
-        GradientSurface {
-            About(
-                onBack = {},
-                configInfo = ConfigInfoFixture.new(),
-                onPrivacyPolicy = {},
-                snackbarHostState = SnackbarHostState(),
-                versionInfo = VersionInfoFixture.new(),
-                walletRestoringState = WalletRestoringState.NONE,
-            )
-        }
+        About(
+            onBack = {},
+            configInfo = ConfigInfoFixture.new(),
+            onPrivacyPolicy = {},
+            snackbarHostState = SnackbarHostState(),
+            versionInfo = VersionInfoFixture.new(),
+            walletRestoringState = WalletRestoringState.NONE
+        )
     }
 }
 
@@ -76,7 +73,7 @@ fun About(
     versionInfo: VersionInfo,
     walletRestoringState: WalletRestoringState,
 ) {
-    Scaffold(
+    BlankBgScaffold(
         topBar = {
             AboutTopAppBar(
                 onBack = onBack,
@@ -214,7 +211,7 @@ fun AboutMainContent(
 
         Text(
             text = stringResource(id = R.string.about_description),
-            color = ZcashTheme.colors.aboutTextColor,
+            color = ZcashTheme.colors.textDescriptionDark,
             style = ZcashTheme.extendedTypography.aboutText
         )
 
@@ -236,18 +233,18 @@ fun PrivacyPolicyLink(onPrivacyPolicy: () -> Unit) {
         ClickableText(
             text =
                 buildAnnotatedString {
-                    withStyle(SpanStyle(color = ZcashTheme.colors.aboutTextColor)) {
+                    withStyle(SpanStyle(color = ZcashTheme.colors.textDescriptionDark)) {
                         append(textPart1)
                     }
                     withStyle(
                         SpanStyle(
                             textDecoration = TextDecoration.Underline,
-                            color = ZcashTheme.colors.aboutTextColor,
+                            color = ZcashTheme.colors.textDescriptionDark,
                         )
                     ) {
                         append(textPart2)
                     }
-                    withStyle(SpanStyle(color = ZcashTheme.colors.aboutTextColor)) {
+                    withStyle(SpanStyle(color = ZcashTheme.colors.textDescriptionDark)) {
                         append(textPart3)
                     }
                 },

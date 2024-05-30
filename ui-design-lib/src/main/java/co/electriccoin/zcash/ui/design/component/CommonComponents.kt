@@ -18,7 +18,7 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 @Composable
 private fun TopScreenLogoRegularComposablePreview() {
     ZcashTheme(forceDarkMode = false) {
-        GradientSurface {
+        BlankSurface {
             TopScreenLogoTitle(
                 title = "Test screen title",
                 logoContentDescription = "Test logo content description"
@@ -31,7 +31,7 @@ private fun TopScreenLogoRegularComposablePreview() {
 @Composable
 private fun TopScreenLogoLongComposablePreview() {
     ZcashTheme(forceDarkMode = false) {
-        GradientSurface {
+        BlankSurface {
             TopScreenLogoTitle(
                 title = "Test screen title which is very very long and can overflow the allowed title length",
                 logoContentDescription = "Test logo content description"

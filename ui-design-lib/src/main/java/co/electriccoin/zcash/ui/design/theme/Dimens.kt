@@ -30,6 +30,9 @@ data class Dimens(
     val buttonWidth: Dp,
     val buttonHeight: Dp,
     val buttonHeightSmall: Dp,
+    // Screen background grid
+    val gridCellSize: Dp,
+    val gridLineWidth: Dp,
     // Chip
     val chipShadowElevation: Dp,
     val chipStroke: Dp,
@@ -79,6 +82,8 @@ private val defaultDimens =
         buttonWidth = 244.dp,
         buttonHeight = 56.dp,
         buttonHeightSmall = 38.dp,
+        gridCellSize = 14.dp,
+        gridLineWidth = 1.dp,
         chipShadowElevation = 4.dp,
         chipStroke = 0.5.dp,
         circularScreenProgressWidth = 48.dp,

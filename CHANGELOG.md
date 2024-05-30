@@ -9,6 +9,12 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+### Added
+- Grid pattern background has been added to several screens
+
+### Changed
+- The color palette used across the app has been reworked to align with the updated design document
+
 ## [1.1 (655)] - 2024-05-24
 
 ### Added

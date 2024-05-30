@@ -25,8 +25,8 @@ import cash.z.ecc.sdk.extension.toPercentageWithDecimal
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.design.component.AppAlertDialog
+import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.BodySmall
-import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.SmallLinearProgressIndicator
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
@@ -37,7 +37,7 @@ import co.electriccoin.zcash.ui.screen.balances.model.WalletDisplayValues
 @Composable
 private fun BalanceWidgetPreview() {
     ZcashTheme(forceDarkMode = false) {
-        GradientSurface(
+        BlankSurface(
             modifier = Modifier.fillMaxWidth()
         ) {
             SynchronizationStatus(

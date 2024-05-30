@@ -2,7 +2,6 @@ package co.electriccoin.zcash.ui.screen.warning.view
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,7 +18,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.Body
-import co.electriccoin.zcash.ui.design.component.GradientSurface
+import co.electriccoin.zcash.ui.design.component.GridBgColumn
 import co.electriccoin.zcash.ui.design.component.Header
 import co.electriccoin.zcash.ui.design.component.Small
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
@@ -28,12 +27,10 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 @Composable
 private fun NotEnoughSpacePreview() {
     ZcashTheme(forceDarkMode = false) {
-        GradientSurface {
-            NotEnoughSpaceView(
-                storageSpaceRequiredGigabytes = 1,
-                spaceRequiredToContinueMegabytes = 300
-            )
-        }
+        NotEnoughSpaceView(
+            storageSpaceRequiredGigabytes = 1,
+            spaceRequiredToContinueMegabytes = 300
+        )
     }
 }
 
@@ -42,7 +39,7 @@ fun NotEnoughSpaceView(
     storageSpaceRequiredGigabytes: Int,
     spaceRequiredToContinueMegabytes: Int
 ) {
-    Column(
+    GridBgColumn(
         Modifier
             .fillMaxSize()
             .padding(ZcashTheme.dimens.screenHorizontalSpacingRegular)

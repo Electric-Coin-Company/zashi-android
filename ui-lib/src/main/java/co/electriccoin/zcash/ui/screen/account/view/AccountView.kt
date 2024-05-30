@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -25,7 +24,7 @@ import co.electriccoin.zcash.ui.common.compose.StatusDialog
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.test.CommonTag
-import co.electriccoin.zcash.ui.design.component.GradientSurface
+import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.BalanceStateFixture
@@ -39,21 +38,19 @@ import co.electriccoin.zcash.ui.screen.balances.model.StatusAction
 @Composable
 private fun HistoryLoadingComposablePreview() {
     ZcashTheme(forceDarkMode = false) {
-        GradientSurface {
-            Account(
-                balanceState = BalanceStateFixture.new(),
-                goBalances = {},
-                goSettings = {},
-                hideStatusDialog = {},
-                showStatusDialog = null,
-                onStatusClick = {},
-                onTransactionItemAction = {},
-                snackbarHostState = SnackbarHostState(),
-                transactionsUiState = TransactionUiState.Loading,
-                walletRestoringState = WalletRestoringState.SYNCING,
-                walletSnapshot = WalletSnapshotFixture.new(),
-            )
-        }
+        Account(
+            balanceState = BalanceStateFixture.new(),
+            goBalances = {},
+            goSettings = {},
+            hideStatusDialog = {},
+            showStatusDialog = null,
+            onStatusClick = {},
+            onTransactionItemAction = {},
+            snackbarHostState = SnackbarHostState(),
+            transactionsUiState = TransactionUiState.Loading,
+            walletRestoringState = WalletRestoringState.SYNCING,
+            walletSnapshot = WalletSnapshotFixture.new(),
+        )
     }
 }
 
@@ -61,22 +58,24 @@ private fun HistoryLoadingComposablePreview() {
 @Preview("Account History List")
 private fun HistoryListComposablePreview() {
     ZcashTheme(forceDarkMode = false) {
-        GradientSurface {
-            @Suppress("MagicNumber")
-            Account(
-                balanceState = BalanceState.Available(Zatoshi(123_000_000L), Zatoshi(123_000_000L)),
-                goBalances = {},
-                goSettings = {},
-                hideStatusDialog = {},
-                showStatusDialog = null,
-                onStatusClick = {},
-                onTransactionItemAction = {},
-                snackbarHostState = SnackbarHostState(),
-                transactionsUiState = TransactionUiState.Done(transactions = TransactionsFixture.new()),
-                walletRestoringState = WalletRestoringState.NONE,
-                walletSnapshot = WalletSnapshotFixture.new(),
-            )
-        }
+        @Suppress("MagicNumber")
+        Account(
+            balanceState =
+                BalanceState.Available(
+                    Zatoshi(123_000_000L),
+                    Zatoshi(123_000_000L)
+                ),
+            goBalances = {},
+            goSettings = {},
+            hideStatusDialog = {},
+            showStatusDialog = null,
+            onStatusClick = {},
+            onTransactionItemAction = {},
+            snackbarHostState = SnackbarHostState(),
+            transactionsUiState = TransactionUiState.Done(transactions = TransactionsFixture.new()),
+            walletRestoringState = WalletRestoringState.NONE,
+            walletSnapshot = WalletSnapshotFixture.new(),
+        )
     }
 }
 
@@ -95,7 +94,7 @@ internal fun Account(
     walletRestoringState: WalletRestoringState,
     walletSnapshot: WalletSnapshot,
 ) {
-    Scaffold(
+    BlankBgScaffold(
         topBar = {
             AccountTopAppBar(
                 showRestoring = walletRestoringState == WalletRestoringState.RESTORING,

@@ -21,7 +21,6 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -34,7 +33,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import cash.z.ecc.android.sdk.model.PersistableWallet
 import cash.z.ecc.sdk.fixture.PersistableWalletFixture
@@ -46,27 +44,25 @@ import co.electriccoin.zcash.ui.common.test.CommonTag.WALLET_BIRTHDAY
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.BodySmall
 import co.electriccoin.zcash.ui.design.component.ChipGrid
-import co.electriccoin.zcash.ui.design.component.GradientSurface
+import co.electriccoin.zcash.ui.design.component.GridBgScaffold
+import co.electriccoin.zcash.ui.design.component.GridBgSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
-import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.TopScreenLogoTitle
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.VersionInfoFixture
 import kotlinx.collections.immutable.toPersistentList
 
-@Preview(name = "NewWalletRecovery", device = Devices.PIXEL_4)
+@Preview(name = "NewWalletRecovery")
 @Composable
 private fun ComposablePreview() {
     ZcashTheme(forceDarkMode = false) {
-        GradientSurface {
-            NewWalletRecovery(
-                PersistableWalletFixture.new(),
-                onSeedCopy = {},
-                onBirthdayCopy = {},
-                onComplete = {},
-                versionInfo = VersionInfoFixture.new(),
-            )
-        }
+        NewWalletRecovery(
+            PersistableWalletFixture.new(),
+            onSeedCopy = {},
+            onBirthdayCopy = {},
+            onComplete = {},
+            versionInfo = VersionInfoFixture.new(),
+        )
     }
 }
 
@@ -84,7 +80,7 @@ fun NewWalletRecovery(
     onComplete: () -> Unit,
     versionInfo: VersionInfo,
 ) {
-    Scaffold(
+    GridBgScaffold(
         topBar = {
             NewWalletRecoveryTopAppBar(
                 onSeedCopy = onSeedCopy,
@@ -115,7 +111,7 @@ private fun NewWalletRecoveryTopAppBar(
     modifier: Modifier = Modifier,
     onSeedCopy: () -> Unit
 ) {
-    SmallTopAppBar(
+    GridBgSmallTopAppBar(
         modifier = modifier,
         regularActions = {
             if (versionInfo.isDebuggable && !versionInfo.isRunningUnderTestService) {

@@ -15,7 +15,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -43,8 +42,8 @@ import co.electriccoin.zcash.ui.common.compose.ScreenBrightnessState
 import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.test.CommonTag
+import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
-import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.Reference
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.SubHeader
@@ -59,19 +58,17 @@ import kotlin.math.roundToInt
 @Composable
 private fun ComposablePreview() {
     ZcashTheme(forceDarkMode = false) {
-        GradientSurface {
-            Receive(
-                screenBrightnessState = ScreenBrightnessState.NORMAL,
-                walletAddress = runBlocking { WalletAddressesFixture.new() },
-                snackbarHostState = SnackbarHostState(),
-                onSettings = {},
-                onAdjustBrightness = {},
-                onAddrCopyToClipboard = {},
-                onQrImageShare = {},
-                versionInfo = VersionInfoFixture.new(),
-                walletRestoringState = WalletRestoringState.NONE
-            )
-        }
+        Receive(
+            screenBrightnessState = ScreenBrightnessState.NORMAL,
+            walletAddress = runBlocking { WalletAddressesFixture.new() },
+            snackbarHostState = SnackbarHostState(),
+            onSettings = {},
+            onAdjustBrightness = {},
+            onAddrCopyToClipboard = {},
+            onQrImageShare = {},
+            versionInfo = VersionInfoFixture.new(),
+            walletRestoringState = WalletRestoringState.NONE
+        )
     }
 }
 
@@ -88,7 +85,7 @@ fun Receive(
     versionInfo: VersionInfo,
     walletRestoringState: WalletRestoringState,
 ) {
-    Scaffold(
+    BlankBgScaffold(
         topBar = {
             ReceiveTopAppBar(
                 onSettings = onSettings,

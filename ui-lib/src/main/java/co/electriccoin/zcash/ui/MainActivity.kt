@@ -38,8 +38,8 @@ import co.electriccoin.zcash.ui.common.viewmodel.SecretState
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.configuration.RemoteConfig
 import co.electriccoin.zcash.ui.design.component.AnimationConstants
+import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.ConfigurationOverride
-import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.Override
 import co.electriccoin.zcash.ui.design.component.WelcomeAnimationAutostart
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
@@ -132,7 +132,7 @@ class MainActivity : AppCompatActivity() {
         setContent {
             Override(configurationOverrideFlow) {
                 ZcashTheme {
-                    GradientSurface(
+                    BlankSurface(
                         Modifier
                             .fillMaxWidth()
                             .fillMaxHeight()

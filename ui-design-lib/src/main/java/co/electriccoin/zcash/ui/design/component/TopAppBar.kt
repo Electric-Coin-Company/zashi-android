@@ -33,6 +33,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -49,7 +50,7 @@ import co.electriccoin.zcash.ui.design.theme.internal.TopAppBarColors
 @Composable
 private fun TopAppBarTextComposablePreview() {
     ZcashTheme(forceDarkMode = false) {
-        GradientSurface {
+        BlankSurface {
             SmallTopAppBar(titleText = "Screen A", backText = "Back")
         }
     }
@@ -59,7 +60,7 @@ private fun TopAppBarTextComposablePreview() {
 @Composable
 private fun TopAppBarTextRestoringComposablePreview() {
     ZcashTheme(forceDarkMode = false) {
-        GradientSurface {
+        BlankSurface {
             SmallTopAppBar(
                 titleText = "Screen A",
                 backText = "Back",
@@ -73,7 +74,7 @@ private fun TopAppBarTextRestoringComposablePreview() {
 @Composable
 private fun TopAppBarTextRestoringLongComposablePreview() {
     ZcashTheme(forceDarkMode = false) {
-        GradientSurface {
+        BlankSurface {
             SmallTopAppBar(
                 titleText = "Screen A",
                 backText = "Back",
@@ -87,7 +88,7 @@ private fun TopAppBarTextRestoringLongComposablePreview() {
 @Composable
 private fun TopAppBarLogoComposablePreview() {
     ZcashTheme(forceDarkMode = false) {
-        GradientSurface {
+        BlankSurface {
             SmallTopAppBar(showTitleLogo = true, backText = "Back")
         }
     }
@@ -97,7 +98,7 @@ private fun TopAppBarLogoComposablePreview() {
 @Composable
 private fun TopAppBarLogoRestoringComposablePreview() {
     ZcashTheme(forceDarkMode = false) {
-        GradientSurface {
+        BlankSurface {
             SmallTopAppBar(
                 showTitleLogo = true,
                 backText = "Back",
@@ -111,7 +112,7 @@ private fun TopAppBarLogoRestoringComposablePreview() {
 @Composable
 private fun TopAppBarRegularMenuComposablePreview() {
     ZcashTheme(forceDarkMode = false) {
-        GradientSurface {
+        BlankSurface {
             SmallTopAppBar(
                 titleText = "Screen B",
                 regularActions = {
@@ -129,7 +130,7 @@ private fun TopAppBarRegularMenuComposablePreview() {
 @Composable
 private fun TopAppBarOneVisibleActionMenuComposablePreview() {
     ZcashTheme(forceDarkMode = false) {
-        GradientSurface {
+        BlankSurface {
             SmallTopAppBar(
                 titleText = "Screen C",
                 backText = "Back",
@@ -147,7 +148,7 @@ private fun TopAppBarOneVisibleActionMenuComposablePreview() {
 @Composable
 private fun TopAppBarHamburgerMenuComposablePreview() {
     ZcashTheme(forceDarkMode = false) {
-        GradientSurface {
+        BlankSurface {
             SmallTopAppBar(
                 titleText = "Screen D",
                 backText = "Back",
@@ -165,7 +166,7 @@ private fun TopAppBarHamburgerMenuComposablePreview() {
 @Composable
 private fun TopAppBarHamburgerPlusActionComposablePreview() {
     ZcashTheme(forceDarkMode = false) {
-        GradientSurface {
+        BlankSurface {
             SmallTopAppBar(
                 titleText = "Screen E",
                 hamburgerMenuActions = {
@@ -257,6 +258,42 @@ private fun TopBarOneVisibleActionMenuExample(
         onClick = actionCallback,
         textAlign = TextAlign.Center,
         modifier = modifier.padding(all = ZcashTheme.dimens.spacingDefault)
+    )
+}
+
+@Composable
+@Suppress("LongParameterList")
+fun GridBgSmallTopAppBar(
+    modifier: Modifier = Modifier,
+    backContentDescriptionText: String? = null,
+    backText: String? = null,
+    colors: TopAppBarColors = ZcashTheme.colors.topAppBarColors,
+    hamburgerMenuActions: (@Composable RowScope.() -> Unit)? = null,
+    onBack: (() -> Unit)? = null,
+    regularActions: (@Composable RowScope.() -> Unit)? = null,
+    restoringLabel: String? = null,
+    showTitleLogo: Boolean = false,
+    titleText: String? = null,
+) {
+    SmallTopAppBar(
+        modifier =
+            modifier.then(
+                Modifier.gridBackground(
+                    backgroundColor = ZcashTheme.colors.backgroundColor,
+                    gridSize = ZcashTheme.dimens.gridCellSize,
+                    gridColor = ZcashTheme.colors.gridColor,
+                    gridLineWidth = ZcashTheme.dimens.gridLineWidth
+                )
+            ),
+        backContentDescriptionText = backContentDescriptionText,
+        backText = backText,
+        colors = colors.copyColors(containerColor = Color.Transparent),
+        hamburgerMenuActions = hamburgerMenuActions,
+        onBack = onBack,
+        regularActions = regularActions,
+        restoringLabel = restoringLabel,
+        showTitleLogo = showTitleLogo,
+        titleText = titleText
     )
 }
 

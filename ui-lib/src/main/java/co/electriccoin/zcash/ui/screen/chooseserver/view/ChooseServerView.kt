@@ -17,7 +17,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableIntStateOf
@@ -41,8 +40,8 @@ import co.electriccoin.lightwallet.client.model.LightWalletEndpoint
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.design.component.AppAlertDialog
+import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.FormTextField
-import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.RadioButton
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
@@ -56,20 +55,18 @@ import kotlinx.collections.immutable.toImmutableList
 @Composable
 private fun PreviewChooseServer() {
     ZcashTheme(forceDarkMode = false) {
-        GradientSurface {
-            ChooseServer(
-                availableServers = emptyList<LightWalletEndpoint>().toImmutableList(),
-                onBack = {},
-                onServerChange = {},
-                validationResult = ServerValidation.Valid,
-                wallet = PersistableWalletFixture.new(),
-                isShowingErrorDialog = false,
-                setShowErrorDialog = {},
-                isShowingSuccessDialog = false,
-                setShowSuccessDialog = {},
-                walletRestoringState = WalletRestoringState.NONE,
-            )
-        }
+        ChooseServer(
+            availableServers = emptyList<LightWalletEndpoint>().toImmutableList(),
+            onBack = {},
+            onServerChange = {},
+            validationResult = ServerValidation.Valid,
+            wallet = PersistableWalletFixture.new(),
+            isShowingErrorDialog = false,
+            setShowErrorDialog = {},
+            isShowingSuccessDialog = false,
+            setShowSuccessDialog = {},
+            walletRestoringState = WalletRestoringState.NONE,
+        )
     }
 }
 
@@ -123,7 +120,7 @@ fun ChooseServer(
             mutableStateOf(initialCustomServerValue)
         }
 
-    Scaffold(
+    BlankBgScaffold(
         topBar = {
             ChooseServerTopAppBar(
                 onBack = onBack,

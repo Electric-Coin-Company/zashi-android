@@ -21,7 +21,6 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -47,9 +46,9 @@ import co.electriccoin.zcash.ui.common.test.CommonTag.WALLET_BIRTHDAY
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.BodySmall
 import co.electriccoin.zcash.ui.design.component.ChipGrid
-import co.electriccoin.zcash.ui.design.component.GradientSurface
+import co.electriccoin.zcash.ui.design.component.GridBgScaffold
+import co.electriccoin.zcash.ui.design.component.GridBgSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
-import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.TopScreenLogoTitle
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.VersionInfoFixture
@@ -59,17 +58,15 @@ import kotlinx.collections.immutable.toPersistentList
 @Composable
 private fun ComposablePreview() {
     ZcashTheme(forceDarkMode = false) {
-        GradientSurface {
-            SeedRecovery(
-                PersistableWalletFixture.new(),
-                onBack = {},
-                onBirthdayCopy = {},
-                onDone = {},
-                onSeedCopy = {},
-                versionInfo = VersionInfoFixture.new(),
-                walletRestoringState = WalletRestoringState.NONE,
-            )
-        }
+        SeedRecovery(
+            PersistableWalletFixture.new(),
+            onBack = {},
+            onBirthdayCopy = {},
+            onDone = {},
+            onSeedCopy = {},
+            versionInfo = VersionInfoFixture.new(),
+            walletRestoringState = WalletRestoringState.NONE,
+        )
     }
 }
 
@@ -90,7 +87,7 @@ fun SeedRecovery(
     versionInfo: VersionInfo,
     walletRestoringState: WalletRestoringState,
 ) {
-    Scaffold(
+    GridBgScaffold(
         topBar = {
             SeedRecoveryTopAppBar(
                 onBack = onBack,
@@ -125,7 +122,7 @@ private fun SeedRecoveryTopAppBar(
     showRestoring: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    SmallTopAppBar(
+    GridBgSmallTopAppBar(
         restoringLabel =
             if (showRestoring) {
                 stringResource(id = R.string.restoring_wallet_label)

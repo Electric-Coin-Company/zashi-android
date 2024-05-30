@@ -22,9 +22,9 @@ import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.toZecString
 import cash.z.ecc.sdk.type.ZcashCurrency
 import co.electriccoin.zcash.ui.design.R
+import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.CircularSmallProgressIndicator
-import co.electriccoin.zcash.ui.design.component.GradientSurface
 import co.electriccoin.zcash.ui.design.component.Reference
 import co.electriccoin.zcash.ui.design.component.StyledBalance
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
@@ -33,7 +33,7 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 @Composable
 private fun BalanceWidgetPreview() {
     ZcashTheme(forceDarkMode = false) {
-        GradientSurface(
+        BlankSurface(
             modifier = Modifier.fillMaxWidth()
         ) {
             @Suppress("MagicNumber")
@@ -57,7 +57,7 @@ private fun BalanceWidgetPreview() {
 @Composable
 private fun BalanceWidgetNotAvailableYetPreview() {
     ZcashTheme(forceDarkMode = false) {
-        GradientSurface(
+        BlankSurface(
             modifier = Modifier.fillMaxWidth()
         ) {
             @Suppress("MagicNumber")

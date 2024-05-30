@@ -23,6 +23,14 @@ interface TopAppBarColors {
             titleContentColor = titleColor,
             actionIconContentColor = actionColor
         )
+
+    fun copyColors(
+        containerColor: Color = this.containerColor,
+        navigationColor: Color = this.navigationColor,
+        titleColor: Color = this.titleColor,
+        subTitleColor: Color = this.subTitleColor,
+        actionColor: Color = this.actionColor,
+    ): TopAppBarColors
 }
 
 @Immutable
@@ -32,7 +40,21 @@ internal data class DefaultTopAppBarColors(
     override val titleColor: Color = Color.Unspecified,
     override val subTitleColor: Color = Color.Unspecified,
     override val actionColor: Color = Color.Unspecified,
-) : TopAppBarColors
+) : TopAppBarColors {
+    override fun copyColors(
+        containerColor: Color,
+        navigationColor: Color,
+        titleColor: Color,
+        subTitleColor: Color,
+        actionColor: Color
+    ) = this.copy(
+        containerColor = containerColor,
+        navigationColor = navigationColor,
+        titleColor = titleColor,
+        subTitleColor = subTitleColor,
+        actionColor = actionColor
+    )
+}
 
 @Immutable
 internal data class LightTopAppBarColors(
@@ -41,7 +63,21 @@ internal data class LightTopAppBarColors(
     override val titleColor: Color = Color(0xFF000000),
     override val subTitleColor: Color = Color(0xFF8A8888),
     override val actionColor: Color = Color(0xFF000000),
-) : TopAppBarColors
+) : TopAppBarColors {
+    override fun copyColors(
+        containerColor: Color,
+        navigationColor: Color,
+        titleColor: Color,
+        subTitleColor: Color,
+        actionColor: Color
+    ) = this.copy(
+        containerColor = containerColor,
+        navigationColor = navigationColor,
+        titleColor = titleColor,
+        subTitleColor = subTitleColor,
+        actionColor = actionColor
+    )
+}
 
 @Immutable
 internal data class DarkTopAppBarColors(
@@ -50,7 +86,21 @@ internal data class DarkTopAppBarColors(
     override val titleColor: Color = Color(0xFFFFFFFF),
     override val subTitleColor: Color = Color(0xFF8A8888),
     override val actionColor: Color = Color(0xFFFFFFFF),
-) : TopAppBarColors
+) : TopAppBarColors {
+    override fun copyColors(
+        containerColor: Color,
+        navigationColor: Color,
+        titleColor: Color,
+        subTitleColor: Color,
+        actionColor: Color
+    ) = this.copy(
+        containerColor = containerColor,
+        navigationColor = navigationColor,
+        titleColor = titleColor,
+        subTitleColor = subTitleColor,
+        actionColor = actionColor
+    )
+}
 
 @Immutable
 internal data class TransparentTopAppBarColors(
@@ -59,4 +109,18 @@ internal data class TransparentTopAppBarColors(
     override val titleColor: Color = Color(0xFFFFFFFF),
     override val subTitleColor: Color = Color(0xFFFFFFFF),
     override val actionColor: Color = Color(0xFFFFFFFF),
-) : TopAppBarColors
+) : TopAppBarColors {
+    override fun copyColors(
+        containerColor: Color,
+        navigationColor: Color,
+        titleColor: Color,
+        subTitleColor: Color,
+        actionColor: Color
+    ) = this.copy(
+        containerColor = containerColor,
+        navigationColor = navigationColor,
+        titleColor = titleColor,
+        subTitleColor = subTitleColor,
+        actionColor = actionColor
+    )
+}
