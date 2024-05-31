@@ -201,7 +201,11 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
         synchronizer
             .filterNotNull()
             .map {
-                WalletAddresses.new(it)
+                runCatching {
+                    WalletAddresses.new(it)
+                }.onFailure {
+                    Twig.warn { "Wait until the SDK starts providing the addresses" }
+                }.getOrNull()
             }.stateIn(
                 viewModelScope,
                 SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),

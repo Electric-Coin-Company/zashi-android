@@ -16,6 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import cash.z.ecc.android.sdk.SdkSynchronizer
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.model.Proposal
@@ -44,6 +45,7 @@ import co.electriccoin.zcash.ui.screen.support.viewmodel.SupportViewModel
 import co.electriccoin.zcash.ui.util.EmailUtil
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 
@@ -76,10 +78,11 @@ internal fun MainActivity.WrapSendConfirmation(
         activity = this,
         arguments = arguments,
         authenticationViewModel = authenticationViewModel,
+        createTransactionsViewModel = createTransactionsViewModel,
         goBack = goBack,
         goHome = goHome,
         goSupport = goSupport,
-        createTransactionsViewModel = createTransactionsViewModel,
+        lifecycleScope = this.lifecycleScope,
         spendingKey = spendingKey,
         supportMessage = supportMessage,
         synchronizer = synchronizer,
@@ -94,10 +97,11 @@ internal fun WrapSendConfirmation(
     activity: MainActivity,
     arguments: SendConfirmationArguments,
     authenticationViewModel: AuthenticationViewModel,
+    createTransactionsViewModel: CreateTransactionsViewModel,
     goBack: (clearForm: Boolean) -> Unit,
     goHome: () -> Unit,
     goSupport: () -> Unit,
-    createTransactionsViewModel: CreateTransactionsViewModel,
+    lifecycleScope: CoroutineScope,
     spendingKey: UnifiedSpendingKey?,
     supportMessage: SupportInfo?,
     synchronizer: Synchronizer?,
@@ -179,7 +183,7 @@ internal fun WrapSendConfirmation(
             },
             onConfirmation = {
                 // Check and trigger authentication if required, or just submit transactions otherwise
-                scope.launch {
+                lifecycleScope.launch {
                     authenticationViewModel.isSendFundsAuthenticationRequired
                         .filterNotNull()
                         .collect { isProtected ->
@@ -211,7 +215,7 @@ internal fun WrapSendConfirmation(
                     goSupport()
                 },
                 onSuccess = {
-                    scope.launch {
+                    lifecycleScope.launch {
                         runSendFundsAction(
                             createTransactionsViewModel = createTransactionsViewModel,
                             goHome = goHome,
