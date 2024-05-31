@@ -5,9 +5,7 @@ package co.electriccoin.zcash.ui.screen.account.view
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -50,6 +48,7 @@ import co.electriccoin.zcash.ui.common.compose.SynchronizationStatus
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.design.component.BlankSurface
+import co.electriccoin.zcash.ui.design.component.BubbleMessage
 import co.electriccoin.zcash.ui.design.component.CircularMidProgressIndicator
 import co.electriccoin.zcash.ui.design.component.StyledBalance
 import co.electriccoin.zcash.ui.design.component.TextWithIcon
@@ -234,6 +233,19 @@ private fun ComposableHistoryListItemPreview() {
             HistoryItem(
                 onAction = {},
                 transaction = TransactionUiFixture.new()
+            )
+        }
+    }
+}
+
+@Composable
+@Preview("History List Item Expanded")
+private fun ComposableHistoryListItemExpandedPreview() {
+    ZcashTheme(forceDarkMode = false) {
+        BlankSurface {
+            HistoryItem(
+                onAction = {},
+                transaction = TransactionUiFixture.new(expandableState = TrxItemState.EXPANDED)
             )
         }
     }
@@ -774,11 +786,9 @@ private fun HistoryItemMessagePart(
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
 
-        Box(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .border(width = 1.dp, color = ZcashTheme.colors.textFieldFrame)
+        BubbleMessage(
+            modifier = Modifier.fillMaxWidth(),
+            backgroundColor = ZcashTheme.colors.dividerColor
         ) {
             // TODO [#1315]: Proper more messages in transaction displaying
             // TODO [#1315]: Note we display the first one only for now

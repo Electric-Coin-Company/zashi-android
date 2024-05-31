@@ -30,6 +30,7 @@ directly impact users rather than highlighting other key architectural updates.*
 ### Changed
 - The app dialog window has now a bit more rounded corners
 - A few more minor UI improvements
+- New bubble message style for send text field and transaction history items
 
 ## [1.0 (650)] - 2024-05-07
 
