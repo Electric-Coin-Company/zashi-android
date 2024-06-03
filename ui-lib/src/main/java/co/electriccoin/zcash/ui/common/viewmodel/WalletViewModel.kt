@@ -220,11 +220,11 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
                 combine(
                     synchronizer.transactions,
                     synchronizer.status,
-                    synchronizer.networkHeight.filterNotNull()
+                    synchronizer.networkHeight
                 ) {
                         transactions: List<TransactionOverview>,
                         status: Synchronizer.Status,
-                        networkHeight: BlockHeight ->
+                        networkHeight: BlockHeight? ->
                     val enhancedTransactions =
                         transactions
                             .sortedByDescending {

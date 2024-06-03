@@ -16,7 +16,6 @@ import androidx.navigation.compose.rememberNavController
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.model.ZecSend
 import co.electriccoin.zcash.spackle.Twig
-
 import co.electriccoin.zcash.ui.NavigationArguments.MULTIPLE_SUBMISSION_CLEAR_FORM
 import co.electriccoin.zcash.ui.NavigationArguments.SEND_CONFIRM_AMOUNT
 import co.electriccoin.zcash.ui.NavigationArguments.SEND_CONFIRM_INITIAL_STAGE

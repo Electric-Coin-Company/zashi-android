@@ -11,7 +11,13 @@ data class TransactionOverviewExt(
     val recipientAddressType: AddressType?
 )
 
-fun TransactionOverview.getSortHeight(networkHeight: BlockHeight): BlockHeight {
+/**
+ * This extension provides the best height that can currently be offered.
+ *
+ * @return It returns a height for the transaction list sorting in this order:
+ * [minedHeight] -> [expiryHeight] -> [networkHeight] -> null
+ */
+fun TransactionOverview.getSortHeight(networkHeight: BlockHeight?): BlockHeight? {
     // Non-null assertion operator is necessary here as the smart cast to is impossible because `minedHeight` and
     // `expiryHeight` are declared in a different module
     return when {
