@@ -8,4 +8,11 @@
     <string name="support_email_address" />
     <string name="restoring_wallet_label">[Restoring Your Wallet…]</string>
     <string name="unable_to_open_play_store">Unable to launch Google Play store app…</string>
+
+    <string name="server_disconnected_dialog_title">Caution</string>
+    <string name="server_disconnected_dialog_message">The server you\'re presently connected to is experiencing
+        difficulties. For better performance, navigate to Advanced Settings and choose a different server. Please
+        also check your device connection.</string>
+    <string name="server_disconnected_dialog_switch_btn">Switch Server</string>
+    <string name="server_disconnected_dialog_ignore_btn">Ignore</string>
 </resources>

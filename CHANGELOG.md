@@ -11,6 +11,9 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ### Added
 - Grid pattern background has been added to several screens
+- A new disconnected dialog reminder has been added to inform users about possible server issues
+- The transaction history list will be displayed when the app has server connection issues. Such a list might have a 
+  slightly different order.
 
 ### Changed
 - The color palette used across the app has been reworked to align with the updated design document
