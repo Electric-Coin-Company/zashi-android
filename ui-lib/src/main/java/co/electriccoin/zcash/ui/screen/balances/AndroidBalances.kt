@@ -4,7 +4,6 @@ package co.electriccoin.zcash.ui.screen.balances
 
 import android.content.Context
 import android.widget.Toast
-import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -14,11 +13,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import cash.z.ecc.android.sdk.SdkSynchronizer
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.model.UnifiedSpendingKey
 import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.spackle.Twig
+import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.BalanceState
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
@@ -43,7 +44,7 @@ import org.jetbrains.annotations.VisibleForTesting
 
 @Composable
 internal fun WrapBalances(
-    activity: ComponentActivity,
+    activity: MainActivity,
     goSettings: () -> Unit,
     goMultiTrxSubmissionFailure: () -> Unit,
 ) {
@@ -74,6 +75,7 @@ internal fun WrapBalances(
         checkUpdateViewModel = checkUpdateViewModel,
         goSettings = goSettings,
         goMultiTrxSubmissionFailure = goMultiTrxSubmissionFailure,
+        lifecycleScope = activity.lifecycleScope,
         spendingKey = spendingKey,
         synchronizer = synchronizer,
         walletSnapshot = walletSnapshot,
@@ -93,6 +95,7 @@ internal fun WrapBalances(
     createTransactionsViewModel: CreateTransactionsViewModel,
     goSettings: () -> Unit,
     goMultiTrxSubmissionFailure: () -> Unit,
+    lifecycleScope: CoroutineScope,
     spendingKey: UnifiedSpendingKey?,
     synchronizer: Synchronizer?,
     walletSnapshot: WalletSnapshot?,
@@ -157,7 +160,7 @@ internal fun WrapBalances(
             hideStatusDialog = { showStatusDialog.value = null },
             snackbarHostState = snackbarHostState,
             onShielding = {
-                scope.launch {
+                lifecycleScope.launch {
                     setShieldState(ShieldState.Running)
 
                     Twig.debug { "Shielding transparent funds" }

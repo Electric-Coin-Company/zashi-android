@@ -15,6 +15,10 @@ directly impact users rather than highlighting other key architectural updates.*
 ### Changed
 - The color palette used across the app has been reworked to align with the updated design document
 
+### Fixed
+- An updated snapshot Zcash SDK version has been adopted to improve unstable lightwalletd communication
+- Transaction submission has been slightly refactored to improve its stability
+
 ## [1.1 (655)] - 2024-05-24
 
 ### Added
