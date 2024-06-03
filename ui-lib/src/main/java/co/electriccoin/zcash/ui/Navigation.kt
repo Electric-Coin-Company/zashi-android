@@ -5,13 +5,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.model.ZecSend
+import co.electriccoin.zcash.spackle.Twig
+
 import co.electriccoin.zcash.ui.NavigationArguments.MULTIPLE_SUBMISSION_CLEAR_FORM
 import co.electriccoin.zcash.ui.NavigationArguments.SEND_CONFIRM_AMOUNT
 import co.electriccoin.zcash.ui.NavigationArguments.SEND_CONFIRM_INITIAL_STAGE
@@ -43,6 +48,7 @@ import co.electriccoin.zcash.ui.screen.authentication.AuthenticationUseCase
 import co.electriccoin.zcash.ui.screen.authentication.WrapAuthentication
 import co.electriccoin.zcash.ui.screen.chooseserver.WrapChooseServer
 import co.electriccoin.zcash.ui.screen.deletewallet.WrapDeleteWallet
+import co.electriccoin.zcash.ui.screen.disconnected.WrapDisconnected
 import co.electriccoin.zcash.ui.screen.exportdata.WrapExportPrivateData
 import co.electriccoin.zcash.ui.screen.home.WrapHome
 import co.electriccoin.zcash.ui.screen.scan.WrapScanValidator
@@ -88,42 +94,7 @@ internal fun MainActivity.Navigation() {
         popExitTransition = { popExitTransition() }
     ) {
         composable(HOME) { backStack ->
-            WrapHome(
-                goBack = { finish() },
-                goScan = { navController.navigateJustOnce(SCAN) },
-                goSendConfirmation = { zecSend ->
-                    navController.currentBackStackEntry?.savedStateHandle?.let { handle ->
-                        fillInHandleForConfirmation(handle, zecSend, SendConfirmationStage.Confirmation)
-                    }
-                    navController.navigateJustOnce(SEND_CONFIRMATION)
-                },
-                goSettings = { navController.navigateJustOnce(SETTINGS) },
-                goMultiTrxSubmissionFailure = {
-                    // Ultimately we could approach reworking the MultipleTrxFailure screen into a separate
-                    // navigation endpoint
-                    navController.currentBackStackEntry?.savedStateHandle?.let { handle ->
-                        fillInHandleForConfirmation(handle, null, SendConfirmationStage.MultipleTrxFailure)
-                    }
-                    navController.navigateJustOnce(SEND_CONFIRMATION)
-                },
-                sendArguments =
-                    SendArguments(
-                        recipientAddress =
-                            backStack.savedStateHandle.get<String>(SEND_SCAN_RECIPIENT_ADDRESS)?.let {
-                                Json.decodeFromString<SerializableAddress>(it).toRecipient()
-                            },
-                        clearForm = backStack.savedStateHandle.get<Boolean>(MULTIPLE_SUBMISSION_CLEAR_FORM) ?: false
-                    ).also {
-                        // Remove Send screen arguments passed from the Scan or MultipleSubmissionFailure screens if
-                        // some exist after we use them
-                        backStack.savedStateHandle.remove<String>(SEND_SCAN_RECIPIENT_ADDRESS)
-                        backStack.savedStateHandle.remove<Boolean>(MULTIPLE_SUBMISSION_CLEAR_FORM)
-                    },
-            )
-
-            if (ConfigurationEntries.IS_APP_UPDATE_CHECK_ENABLED.getValue(RemoteConfig.current)) {
-                WrapCheckForUpdate()
-            }
+            NavigationHome(navController, backStack)
         }
         composable(SETTINGS) {
             WrapSettings(
@@ -277,6 +248,65 @@ internal fun MainActivity.Navigation() {
                 )
             }
         }
+    }
+}
+
+/**
+ * This is the Home screens sub-navigation. We could consider creating a separate sub-navigation graph.
+ */
+@Composable
+private fun MainActivity.NavigationHome(
+    navController: NavHostController,
+    backStack: NavBackStackEntry
+) {
+    WrapHome(
+        goBack = { finish() },
+        goScan = { navController.navigateJustOnce(SCAN) },
+        goSendConfirmation = { zecSend ->
+            navController.currentBackStackEntry?.savedStateHandle?.let { handle ->
+                fillInHandleForConfirmation(handle, zecSend, SendConfirmationStage.Confirmation)
+            }
+            navController.navigateJustOnce(SEND_CONFIRMATION)
+        },
+        goSettings = { navController.navigateJustOnce(SETTINGS) },
+        goMultiTrxSubmissionFailure = {
+            // Ultimately we could approach reworking the MultipleTrxFailure screen into a separate
+            // navigation endpoint
+            navController.currentBackStackEntry?.savedStateHandle?.let { handle ->
+                fillInHandleForConfirmation(handle, null, SendConfirmationStage.MultipleTrxFailure)
+            }
+            navController.navigateJustOnce(SEND_CONFIRMATION)
+        },
+        sendArguments =
+            SendArguments(
+                recipientAddress =
+                    backStack.savedStateHandle.get<String>(SEND_SCAN_RECIPIENT_ADDRESS)?.let {
+                        Json.decodeFromString<SerializableAddress>(it).toRecipient()
+                    },
+                clearForm = backStack.savedStateHandle.get<Boolean>(MULTIPLE_SUBMISSION_CLEAR_FORM) ?: false
+            ).also {
+                // Remove Send screen arguments passed from the Scan or MultipleSubmissionFailure screens if
+                // some exist after we use them
+                backStack.savedStateHandle.remove<String>(SEND_SCAN_RECIPIENT_ADDRESS)
+                backStack.savedStateHandle.remove<Boolean>(MULTIPLE_SUBMISSION_CLEAR_FORM)
+            },
+    )
+
+    val sdkStatus = walletViewModel.walletSnapshot.collectAsStateWithLifecycle().value?.status
+
+    if (Synchronizer.Status.DISCONNECTED == sdkStatus) {
+        Twig.info { "Disconnected state received from Synchronizer" }
+
+        WrapDisconnected(
+            goChooseServer = {
+                navController.navigateJustOnce(CHOOSE_SERVER)
+            },
+            onIgnore = {
+                // Keep the current navigation location
+            }
+        )
+    } else if (ConfigurationEntries.IS_APP_UPDATE_CHECK_ENABLED.getValue(RemoteConfig.current)) {
+        WrapCheckForUpdate()
     }
 }
 
