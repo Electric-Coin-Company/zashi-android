@@ -32,6 +32,7 @@ import co.electriccoin.zcash.ui.common.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.common.compose.BalanceState
 import co.electriccoin.zcash.ui.common.extension.throttle
 import co.electriccoin.zcash.ui.common.model.OnboardingState
+import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.model.hasChangePending
@@ -123,6 +124,32 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
             SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
             WalletRestoringState.NONE
         )
+
+    /**
+     * A flow of the wallet current state information that should be displayed in screens top app bar.
+     */
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val walletStateInformation: StateFlow<TopAppBarSubTitleState> =
+        synchronizer
+            .filterNotNull()
+            .flatMapLatest { synchronizer ->
+                combine(
+                    synchronizer.status,
+                    walletRestoringState
+                ) { status: Synchronizer.Status?, walletRestoringState: WalletRestoringState ->
+                    if (Synchronizer.Status.DISCONNECTED == status) {
+                        TopAppBarSubTitleState.Disconnected
+                    } else if (WalletRestoringState.RESTORING == walletRestoringState) {
+                        TopAppBarSubTitleState.Restoring
+                    } else {
+                        TopAppBarSubTitleState.None
+                    }
+                }
+            }.stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+                TopAppBarSubTitleState.None
+            )
 
     /**
      * A flow of the wallet onboarding state.

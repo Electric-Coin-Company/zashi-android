@@ -40,8 +40,8 @@ import cash.z.ecc.sdk.fixture.PersistableWalletFixture
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.SecureScreen
 import co.electriccoin.zcash.ui.common.compose.shouldSecureScreen
+import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.VersionInfo
-import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.test.CommonTag.WALLET_BIRTHDAY
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.BodySmall
@@ -65,7 +65,7 @@ private fun ComposablePreview() {
             onDone = {},
             onSeedCopy = {},
             versionInfo = VersionInfoFixture.new(),
-            walletRestoringState = WalletRestoringState.NONE,
+            topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )
     }
 }
@@ -84,8 +84,8 @@ fun SeedRecovery(
     onBirthdayCopy: () -> Unit,
     onDone: () -> Unit,
     onSeedCopy: () -> Unit,
+    topAppBarSubTitleState: TopAppBarSubTitleState,
     versionInfo: VersionInfo,
-    walletRestoringState: WalletRestoringState,
 ) {
     GridBgScaffold(
         topBar = {
@@ -93,7 +93,7 @@ fun SeedRecovery(
                 onBack = onBack,
                 onSeedCopy = onSeedCopy,
                 versionInfo = versionInfo,
-                showRestoring = walletRestoringState == WalletRestoringState.RESTORING,
+                subTitleState = topAppBarSubTitleState,
             )
         }
     ) { paddingValues ->
@@ -118,16 +118,16 @@ fun SeedRecovery(
 private fun SeedRecoveryTopAppBar(
     onBack: () -> Unit,
     onSeedCopy: () -> Unit,
+    subTitleState: TopAppBarSubTitleState,
     versionInfo: VersionInfo,
-    showRestoring: Boolean,
     modifier: Modifier = Modifier,
 ) {
     GridBgSmallTopAppBar(
-        restoringLabel =
-            if (showRestoring) {
-                stringResource(id = R.string.restoring_wallet_label)
-            } else {
-                null
+        subTitle =
+            when (subTitleState) {
+                TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
+                TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
+                TopAppBarSubTitleState.None -> null
             },
         modifier = modifier,
         backText = stringResource(id = R.string.seed_recovery_back).uppercase(),

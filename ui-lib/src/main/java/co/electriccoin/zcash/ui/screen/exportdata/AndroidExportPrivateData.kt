@@ -15,8 +15,8 @@ import cash.z.ecc.android.sdk.model.ZcashNetwork
 import cash.z.ecc.sdk.type.fromResources
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.VersionInfo
-import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.screen.exportdata.view.ExportPrivateData
@@ -35,14 +35,14 @@ internal fun MainActivity.WrapExportPrivateData(
 
     val synchronizer = walletViewModel.synchronizer.collectAsStateWithLifecycle().value
 
-    val walletRestoringState = walletViewModel.walletRestoringState.collectAsStateWithLifecycle().value
+    val walletState = walletViewModel.walletStateInformation.collectAsStateWithLifecycle().value
 
     WrapExportPrivateData(
         this,
         goBack = goBack,
         onShare = onConfirm,
         synchronizer = synchronizer,
-        walletRestoringState = walletRestoringState,
+        topAppBarSubTitleState = walletState,
     )
 }
 
@@ -52,7 +52,7 @@ internal fun WrapExportPrivateData(
     goBack: () -> Unit,
     onShare: () -> Unit,
     synchronizer: Synchronizer?,
-    walletRestoringState: WalletRestoringState,
+    topAppBarSubTitleState: TopAppBarSubTitleState,
 ) {
     BackHandler {
         goBack()
@@ -86,7 +86,7 @@ internal fun WrapExportPrivateData(
                     }
                 }
             },
-            walletRestoringState = walletRestoringState
+            topAppBarSubTitleState = topAppBarSubTitleState,
         )
     }
 }

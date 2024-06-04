@@ -58,7 +58,7 @@ import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.BalanceState
 import co.electriccoin.zcash.ui.common.compose.BalanceWidget
-import co.electriccoin.zcash.ui.common.model.WalletRestoringState
+import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.model.canSpend
 import co.electriccoin.zcash.ui.common.model.spendableBalance
@@ -103,7 +103,7 @@ private fun PreviewSendForm() {
             amountState = AmountState.Valid(ZatoshiFixture.ZATOSHI_LONG.toString(), ZatoshiFixture.new()),
             setMemoState = {},
             memoState = MemoState.new("Test message"),
-            walletRestoringState = WalletRestoringState.NONE,
+            topAppBarSubTitleState = TopAppBarSubTitleState.None,
             walletSnapshot = WalletSnapshotFixture.new(),
             balanceState = BalanceStateFixture.new()
         )
@@ -131,12 +131,12 @@ fun Send(
     amountState: AmountState,
     setMemoState: (MemoState) -> Unit,
     memoState: MemoState,
-    walletRestoringState: WalletRestoringState,
+    topAppBarSubTitleState: TopAppBarSubTitleState,
     walletSnapshot: WalletSnapshot,
 ) {
     BlankBgScaffold(topBar = {
         SendTopAppBar(
-            showRestoring = walletRestoringState == WalletRestoringState.RESTORING,
+            subTitleState = topAppBarSubTitleState,
             onSettings = onSettings
         )
     }) { paddingValues ->
@@ -171,14 +171,14 @@ fun Send(
 @Composable
 private fun SendTopAppBar(
     onSettings: () -> Unit,
-    showRestoring: Boolean
+    subTitleState: TopAppBarSubTitleState
 ) {
     SmallTopAppBar(
-        restoringLabel =
-            if (showRestoring) {
-                stringResource(id = R.string.restoring_wallet_label)
-            } else {
-                null
+        subTitle =
+            when (subTitleState) {
+                TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
+                TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
+                TopAppBarSubTitleState.None -> null
             },
         titleText = stringResource(id = R.string.send_stage_send_title),
         hamburgerMenuActions = {

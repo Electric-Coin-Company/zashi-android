@@ -3,7 +3,7 @@ package co.electriccoin.zcash.ui.screen.exportdata.view
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
-import co.electriccoin.zcash.ui.common.model.WalletRestoringState
+import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
@@ -44,7 +44,7 @@ class ExportPrivateDataViewTestSetup(private val composeTestRule: ComposeContent
             onConfirm = {
                 onConfirmCount.incrementAndGet()
             },
-            walletRestoringState = WalletRestoringState.NONE
+            topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )
     }
 

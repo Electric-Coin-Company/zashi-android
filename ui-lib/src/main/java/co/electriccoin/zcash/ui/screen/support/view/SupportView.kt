@@ -28,7 +28,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.model.WalletRestoringState
+import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.AppAlertDialog
 import co.electriccoin.zcash.ui.design.component.BlankSurface
@@ -50,7 +50,7 @@ private fun PreviewSupport() {
                 onBack = {},
                 onSend = {},
                 snackbarHostState = SnackbarHostState(),
-                walletRestoringState = WalletRestoringState.NONE
+                topAppBarSubTitleState = TopAppBarSubTitleState.None,
             )
         }
     }
@@ -75,7 +75,7 @@ fun Support(
     onBack: () -> Unit,
     onSend: (String) -> Unit,
     snackbarHostState: SnackbarHostState,
-    walletRestoringState: WalletRestoringState,
+    topAppBarSubTitleState: TopAppBarSubTitleState,
 ) {
     val (message, setMessage) = rememberSaveable { mutableStateOf("") }
 
@@ -83,7 +83,7 @@ fun Support(
         topBar = {
             SupportTopAppBar(
                 onBack = onBack,
-                showRestoring = walletRestoringState == WalletRestoringState.RESTORING,
+                subTitleState = topAppBarSubTitleState,
             )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) }
@@ -113,14 +113,14 @@ fun Support(
 @Composable
 private fun SupportTopAppBar(
     onBack: () -> Unit,
-    showRestoring: Boolean
+    subTitleState: TopAppBarSubTitleState
 ) {
     GridBgSmallTopAppBar(
-        restoringLabel =
-            if (showRestoring) {
-                stringResource(id = R.string.restoring_wallet_label)
-            } else {
-                null
+        subTitle =
+            when (subTitleState) {
+                TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
+                TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
+                TopAppBarSubTitleState.None -> null
             },
         titleText = stringResource(id = R.string.support_header),
         backText = stringResource(id = R.string.support_back).uppercase(),

@@ -21,6 +21,7 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.BalanceState
 import co.electriccoin.zcash.ui.common.compose.BalanceWidget
 import co.electriccoin.zcash.ui.common.compose.StatusDialog
+import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.test.CommonTag
@@ -47,6 +48,7 @@ private fun HistoryLoadingComposablePreview() {
             onStatusClick = {},
             onTransactionItemAction = {},
             snackbarHostState = SnackbarHostState(),
+            topAppBarSubTitleState = TopAppBarSubTitleState.None,
             transactionsUiState = TransactionUiState.Loading,
             walletRestoringState = WalletRestoringState.SYNCING,
             walletSnapshot = WalletSnapshotFixture.new(),
@@ -72,6 +74,7 @@ private fun HistoryListComposablePreview() {
             onStatusClick = {},
             onTransactionItemAction = {},
             snackbarHostState = SnackbarHostState(),
+            topAppBarSubTitleState = TopAppBarSubTitleState.None,
             transactionsUiState = TransactionUiState.Done(transactions = TransactionsFixture.new()),
             walletRestoringState = WalletRestoringState.NONE,
             walletSnapshot = WalletSnapshotFixture.new(),
@@ -90,6 +93,7 @@ internal fun Account(
     onStatusClick: (StatusAction) -> Unit,
     onTransactionItemAction: (TrxItemAction) -> Unit,
     snackbarHostState: SnackbarHostState,
+    topAppBarSubTitleState: TopAppBarSubTitleState,
     transactionsUiState: TransactionUiState,
     walletRestoringState: WalletRestoringState,
     walletSnapshot: WalletSnapshot,
@@ -97,8 +101,8 @@ internal fun Account(
     BlankBgScaffold(
         topBar = {
             AccountTopAppBar(
-                showRestoring = walletRestoringState == WalletRestoringState.RESTORING,
-                onSettings = goSettings
+                onSettings = goSettings,
+                subTitleState = topAppBarSubTitleState,
             )
         },
         snackbarHost = {
@@ -111,7 +115,7 @@ internal fun Account(
             onStatusClick = onStatusClick,
             onTransactionItemAction = onTransactionItemAction,
             transactionState = transactionsUiState,
-            walletRestoringState = walletRestoringState,
+            isWalletRestoringState = walletRestoringState,
             walletSnapshot = walletSnapshot,
             modifier =
                 Modifier.padding(
@@ -134,14 +138,14 @@ internal fun Account(
 @Composable
 private fun AccountTopAppBar(
     onSettings: () -> Unit,
-    showRestoring: Boolean
+    subTitleState: TopAppBarSubTitleState
 ) {
     SmallTopAppBar(
-        restoringLabel =
-            if (showRestoring) {
-                stringResource(id = R.string.restoring_wallet_label)
-            } else {
-                null
+        subTitle =
+            when (subTitleState) {
+                TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
+                TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
+                TopAppBarSubTitleState.None -> null
             },
         showTitleLogo = true,
         hamburgerMenuActions = {
@@ -166,7 +170,7 @@ private fun AccountMainContent(
     onTransactionItemAction: (TrxItemAction) -> Unit,
     onStatusClick: (StatusAction) -> Unit,
     transactionState: TransactionUiState,
-    walletRestoringState: WalletRestoringState,
+    isWalletRestoringState: WalletRestoringState,
     walletSnapshot: WalletSnapshot,
     modifier: Modifier = Modifier,
 ) {
@@ -190,7 +194,7 @@ private fun AccountMainContent(
             onStatusClick = onStatusClick,
             onTransactionItemAction = onTransactionItemAction,
             transactionState = transactionState,
-            walletRestoringState = walletRestoringState,
+            walletRestoringState = isWalletRestoringState,
             walletSnapshot = walletSnapshot,
         )
     }

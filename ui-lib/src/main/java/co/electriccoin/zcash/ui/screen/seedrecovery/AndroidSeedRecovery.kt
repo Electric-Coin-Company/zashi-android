@@ -9,8 +9,8 @@ import cash.z.ecc.android.sdk.Synchronizer
 import co.electriccoin.zcash.spackle.ClipboardManagerUtil
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.VersionInfo
-import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.viewmodel.SecretState
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
@@ -27,7 +27,7 @@ internal fun MainActivity.WrapSeedRecovery(
 
     val secretState = walletViewModel.secretState.collectAsStateWithLifecycle().value
 
-    val walletRestoringState = walletViewModel.walletRestoringState.collectAsStateWithLifecycle().value
+    val walletState = walletViewModel.walletStateInformation.collectAsStateWithLifecycle().value
 
     WrapSeedRecovery(
         activity = this,
@@ -35,7 +35,7 @@ internal fun MainActivity.WrapSeedRecovery(
         onDone = onDone,
         secretState = secretState,
         synchronizer = synchronizer,
-        walletRestoringState = walletRestoringState
+        topAppBarSubTitleState = walletState
     )
 }
 
@@ -45,7 +45,7 @@ private fun WrapSeedRecovery(
     activity: ComponentActivity,
     goBack: () -> Unit,
     onDone: () -> Unit,
-    walletRestoringState: WalletRestoringState,
+    topAppBarSubTitleState: TopAppBarSubTitleState,
     synchronizer: Synchronizer?,
     secretState: SecretState,
 ) {
@@ -86,8 +86,8 @@ private fun WrapSeedRecovery(
                 )
             },
             onDone = onDone,
+            topAppBarSubTitleState = topAppBarSubTitleState,
             versionInfo = versionInfo,
-            walletRestoringState = walletRestoringState
         )
     }
 }

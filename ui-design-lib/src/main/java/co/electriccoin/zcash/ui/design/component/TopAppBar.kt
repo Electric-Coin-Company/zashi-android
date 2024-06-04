@@ -64,7 +64,7 @@ private fun TopAppBarTextRestoringComposablePreview() {
             SmallTopAppBar(
                 titleText = "Screen A",
                 backText = "Back",
-                restoringLabel = "[RESTORING YOUR WALLET…]"
+                subTitle = "[RESTORING YOUR WALLET…]"
             )
         }
     }
@@ -78,7 +78,7 @@ private fun TopAppBarTextRestoringLongComposablePreview() {
             SmallTopAppBar(
                 titleText = "Screen A",
                 backText = "Back",
-                restoringLabel = "[RESTORING YOUR WALLET LONG TEXT…]"
+                subTitle = "[RESTORING YOUR WALLET LONG TEXT…]"
             )
         }
     }
@@ -102,7 +102,7 @@ private fun TopAppBarLogoRestoringComposablePreview() {
             SmallTopAppBar(
                 showTitleLogo = true,
                 backText = "Back",
-                restoringLabel = "[RESTORING YOUR WALLET…]"
+                subTitle = "[RESTORING YOUR WALLET…]"
             )
         }
     }
@@ -271,7 +271,7 @@ fun GridBgSmallTopAppBar(
     hamburgerMenuActions: (@Composable RowScope.() -> Unit)? = null,
     onBack: (() -> Unit)? = null,
     regularActions: (@Composable RowScope.() -> Unit)? = null,
-    restoringLabel: String? = null,
+    subTitle: String? = null,
     showTitleLogo: Boolean = false,
     titleText: String? = null,
 ) {
@@ -291,7 +291,7 @@ fun GridBgSmallTopAppBar(
         hamburgerMenuActions = hamburgerMenuActions,
         onBack = onBack,
         regularActions = regularActions,
-        restoringLabel = restoringLabel,
+        subTitle = subTitle,
         showTitleLogo = showTitleLogo,
         titleText = titleText
     )
@@ -308,7 +308,7 @@ fun SmallTopAppBar(
     hamburgerMenuActions: (@Composable RowScope.() -> Unit)? = null,
     onBack: (() -> Unit)? = null,
     regularActions: (@Composable RowScope.() -> Unit)? = null,
-    restoringLabel: String? = null,
+    subTitle: String? = null,
     showTitleLogo: Boolean = false,
     titleText: String? = null,
 ) {
@@ -336,12 +336,12 @@ fun SmallTopAppBar(
                     restoringSpacerHeight = ZcashTheme.dimens.spacingSmall
                 }
 
-                if (restoringLabel != null) {
+                if (subTitle != null) {
                     Spacer(modifier = Modifier.height(restoringSpacerHeight))
 
                     @Suppress("MagicNumber")
                     Text(
-                        text = restoringLabel.uppercase(),
+                        text = subTitle.uppercase(),
                         style = ZcashTheme.extendedTypography.restoringTopAppBarStyle,
                         color = colors.subTitleColor,
                         modifier = Modifier.fillMaxWidth(0.75f),

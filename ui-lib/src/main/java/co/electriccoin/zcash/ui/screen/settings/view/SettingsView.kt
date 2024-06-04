@@ -28,7 +28,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.model.WalletRestoringState
+import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
@@ -59,7 +59,7 @@ private fun PreviewSettings() {
                     isAnalyticsEnabled = false,
                     isRescanEnabled = false
                 ),
-            walletRestoringState = WalletRestoringState.NONE,
+            topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )
     }
 }
@@ -76,7 +76,7 @@ fun Settings(
     onKeepScreenOnDuringSyncSettingsChanged: (Boolean) -> Unit,
     onAnalyticsSettingsChanged: (Boolean) -> Unit,
     troubleshootingParameters: TroubleshootingParameters,
-    walletRestoringState: WalletRestoringState,
+    topAppBarSubTitleState: TopAppBarSubTitleState,
 ) {
     BlankBgScaffold(topBar = {
         SettingsTopAppBar(
@@ -86,7 +86,7 @@ fun Settings(
             onAnalyticsSettingsChanged = onAnalyticsSettingsChanged,
             onRescanWallet = onRescanWallet,
             onBack = onBack,
-            showRestoring = walletRestoringState == WalletRestoringState.RESTORING,
+            subTitleState = topAppBarSubTitleState,
         )
     }) { paddingValues ->
         SettingsMainContent(
@@ -111,20 +111,20 @@ fun Settings(
 @Composable
 @Suppress("LongParameterList")
 private fun SettingsTopAppBar(
-    troubleshootingParameters: TroubleshootingParameters,
     onBackgroundSyncSettingsChanged: (Boolean) -> Unit,
     onKeepScreenOnDuringSyncSettingsChanged: (Boolean) -> Unit,
     onAnalyticsSettingsChanged: (Boolean) -> Unit,
     onRescanWallet: () -> Unit,
     onBack: () -> Unit,
-    showRestoring: Boolean
+    subTitleState: TopAppBarSubTitleState,
+    troubleshootingParameters: TroubleshootingParameters,
 ) {
     SmallTopAppBar(
-        restoringLabel =
-            if (showRestoring) {
-                stringResource(id = R.string.restoring_wallet_label)
-            } else {
-                null
+        subTitle =
+            when (subTitleState) {
+                TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
+                TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
+                TopAppBarSubTitleState.None -> null
             },
         modifier = Modifier.testTag(SettingsTag.SETTINGS_TOP_APP_BAR),
         showTitleLogo = true,
