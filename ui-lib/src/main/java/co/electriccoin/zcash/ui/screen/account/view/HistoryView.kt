@@ -36,6 +36,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import cash.z.ecc.android.sdk.fixture.TransactionOverviewFixture
 import cash.z.ecc.android.sdk.model.FirstClassByteArray
 import cash.z.ecc.android.sdk.model.TransactionOverview
 import cash.z.ecc.android.sdk.model.TransactionRecipient
@@ -48,6 +49,7 @@ import co.electriccoin.zcash.ui.common.compose.SynchronizationStatus
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.design.component.BlankSurface
+import co.electriccoin.zcash.ui.design.component.BubbleArrowAlignment
 import co.electriccoin.zcash.ui.design.component.BubbleMessage
 import co.electriccoin.zcash.ui.design.component.CircularMidProgressIndicator
 import co.electriccoin.zcash.ui.design.component.StyledBalance
@@ -243,10 +245,24 @@ private fun ComposableHistoryListItemPreview() {
 private fun ComposableHistoryListItemExpandedPreview() {
     ZcashTheme(forceDarkMode = false) {
         BlankSurface {
-            HistoryItem(
-                onAction = {},
-                transaction = TransactionUiFixture.new(expandableState = TrxItemState.EXPANDED)
-            )
+            Column {
+                HistoryItem(
+                    onAction = {},
+                    transaction =
+                        TransactionUiFixture.new(
+                            overview = TransactionOverviewFixture.new().copy(isSentTransaction = true),
+                            expandableState = TrxItemState.EXPANDED
+                        )
+                )
+                HistoryItem(
+                    onAction = {},
+                    transaction =
+                        TransactionUiFixture.new(
+                            overview = TransactionOverviewFixture.new().copy(isSentTransaction = false),
+                            expandableState = TrxItemState.EXPANDED
+                        )
+                )
+            }
         }
     }
 }
@@ -480,7 +496,10 @@ private fun HistoryItemCollapsedAddressPart(
                     color = ZcashTheme.colors.textDescription,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.fillMaxWidth(ADDRESS_IN_TITLE_WIDTH_RATIO).then(clickModifier)
+                    modifier =
+                        Modifier
+                            .fillMaxWidth(ADDRESS_IN_TITLE_WIDTH_RATIO)
+                            .then(clickModifier)
                 )
             }
         }
@@ -571,6 +590,7 @@ private fun HistoryItemExpandedPart(
             HistoryItemMessagePart(
                 messages = uniqueMessages.toPersistentList(),
                 state = transaction.overview.getExtendedState(),
+                isSentTransaction = transaction.overview.isSentTransaction,
                 onAction = onAction
             )
 
@@ -764,6 +784,7 @@ private fun HistoryItemTransactionFeePart(
 private fun HistoryItemMessagePart(
     messages: ImmutableList<String>,
     state: TransactionExtendedState,
+    isSentTransaction: Boolean,
     onAction: (TrxItemAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -786,9 +807,17 @@ private fun HistoryItemMessagePart(
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
 
+        val (messageBackground, arrowAlignment) =
+            if (isSentTransaction) {
+                Color.Transparent to BubbleArrowAlignment.BottomLeft
+            } else {
+                ZcashTheme.colors.dividerColor to BubbleArrowAlignment.BottomRight
+            }
+
         BubbleMessage(
             modifier = Modifier.fillMaxWidth(),
-            backgroundColor = ZcashTheme.colors.dividerColor
+            backgroundColor = messageBackground,
+            arrowAlignment = arrowAlignment
         ) {
             // TODO [#1315]: Proper more messages in transaction displaying
             // TODO [#1315]: Note we display the first one only for now
