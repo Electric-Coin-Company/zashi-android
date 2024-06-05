@@ -9,6 +9,8 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [1.1.1 (660)] - 2024-06-05
+
 ### Added
 - Grid pattern background has been added to several screens
 - A new disconnected dialog reminder has been added to inform users about possible server issues
