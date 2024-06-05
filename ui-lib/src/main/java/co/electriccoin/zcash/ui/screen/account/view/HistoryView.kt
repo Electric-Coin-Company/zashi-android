@@ -31,6 +31,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
@@ -485,7 +486,10 @@ private fun HistoryItemCollapsedAddressPart(
                     color = ZcashTheme.colors.textDescription,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.fillMaxWidth(ADDRESS_IN_TITLE_WIDTH_RATIO).then(clickModifier)
+                    modifier =
+                        Modifier
+                            .fillMaxWidth(ADDRESS_IN_TITLE_WIDTH_RATIO)
+                            .then(clickModifier)
                 )
             }
         }
@@ -561,6 +565,7 @@ private fun HistoryItemDatePart(
 }
 
 @Composable
+@Suppress("LongMethod")
 private fun HistoryItemExpandedPart(
     onAction: (TrxItemAction) -> Unit,
     transaction: TransactionUi,
@@ -569,7 +574,11 @@ private fun HistoryItemExpandedPart(
     Column(modifier = modifier) {
         if (transaction.messages.containsValidMemo()) {
             Text(
-                text = stringResource(id = R.string.account_history_item_message),
+                text =
+                    pluralStringResource(
+                        id = R.plurals.account_history_item_message,
+                        count = transaction.messages!!.size
+                    ),
                 style = ZcashTheme.extendedTypography.transactionItemStyles.contentMedium,
                 color = ZcashTheme.colors.textCommon
             )
@@ -579,7 +588,7 @@ private fun HistoryItemExpandedPart(
             // Filter out identical messages on a multi-messages transaction that could be created, e.g., using
             // YWallet, which tends to balance orchard and sapling pools, including by splitting a payment equally
             // across both pools.
-            val uniqueMessages = transaction.messages!!.deduplicateMemos()
+            val uniqueMessages = transaction.messages.deduplicateMemos()
 
             uniqueMessages.forEach { message ->
                 HistoryItemMessagePart(
