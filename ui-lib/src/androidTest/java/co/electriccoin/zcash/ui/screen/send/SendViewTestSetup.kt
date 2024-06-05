@@ -12,7 +12,7 @@ import cash.z.ecc.android.sdk.model.MonetarySeparators
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.android.sdk.type.AddressType
-import co.electriccoin.zcash.ui.common.model.WalletRestoringState
+import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.BalanceStateFixture
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
@@ -131,7 +131,7 @@ class SendViewTestSetup(
                 amountState = AmountState.new(context, monetarySeparators, "", false),
                 setMemoState = {},
                 memoState = MemoState.new(""),
-                walletRestoringState = WalletRestoringState.NONE,
+                topAppBarSubTitleState = TopAppBarSubTitleState.None,
                 walletSnapshot =
                     WalletSnapshotFixture.new(
                         saplingBalance =

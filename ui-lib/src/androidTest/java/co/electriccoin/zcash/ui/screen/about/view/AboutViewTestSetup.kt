@@ -2,8 +2,8 @@ package co.electriccoin.zcash.ui.screen.about.view
 
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
+import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.VersionInfo
-import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.support.model.ConfigInfo
 import java.util.concurrent.atomic.AtomicInteger
@@ -28,8 +28,8 @@ class AboutViewTestSetup(
                     configInfo = configInfo,
                     onPrivacyPolicy = {},
                     snackbarHostState = SnackbarHostState(),
+                    topAppBarSubTitleState = TopAppBarSubTitleState.None,
                     versionInfo = versionInfo,
-                    walletRestoringState = WalletRestoringState.NONE
                 )
             }
         }

@@ -8,7 +8,7 @@ import cash.z.ecc.sdk.fixture.PersistableWalletFixture
 import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.common.compose.LocalScreenSecurity
 import co.electriccoin.zcash.ui.common.compose.ScreenSecurity
-import co.electriccoin.zcash.ui.common.model.WalletRestoringState
+import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.VersionInfoFixture
 import kotlinx.coroutines.test.runTest
@@ -49,8 +49,8 @@ class SeedRecoveryRecoveryViewsSecuredScreenTest : UiTestPrerequisites() {
                             onBirthdayCopy = {},
                             onDone = {},
                             onSeedCopy = {},
+                            topAppBarSubTitleState = TopAppBarSubTitleState.None,
                             versionInfo = VersionInfoFixture.new(),
-                            walletRestoringState = WalletRestoringState.NONE
                         )
                     }
                 }

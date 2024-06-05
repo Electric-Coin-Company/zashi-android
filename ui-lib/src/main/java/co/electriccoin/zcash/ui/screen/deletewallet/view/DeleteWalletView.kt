@@ -20,7 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.model.WalletRestoringState
+import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.CheckBox
@@ -38,7 +38,7 @@ private fun ExportPrivateDataPreview() {
             snackbarHostState = SnackbarHostState(),
             onBack = {},
             onConfirm = {},
-            walletRestoringState = WalletRestoringState.NONE,
+            topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )
     }
 }
@@ -48,13 +48,13 @@ fun DeleteWallet(
     snackbarHostState: SnackbarHostState,
     onBack: () -> Unit,
     onConfirm: () -> Unit,
-    walletRestoringState: WalletRestoringState,
+    topAppBarSubTitleState: TopAppBarSubTitleState,
 ) {
     GridBgScaffold(
         topBar = {
             DeleteWalletDataTopAppBar(
                 onBack = onBack,
-                showRestoring = walletRestoringState == WalletRestoringState.RESTORING,
+                subTitleState = topAppBarSubTitleState,
             )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -78,14 +78,14 @@ fun DeleteWallet(
 @Composable
 private fun DeleteWalletDataTopAppBar(
     onBack: () -> Unit,
-    showRestoring: Boolean
+    subTitleState: TopAppBarSubTitleState
 ) {
     GridBgSmallTopAppBar(
-        restoringLabel =
-            if (showRestoring) {
-                stringResource(id = R.string.restoring_wallet_label)
-            } else {
-                null
+        subTitle =
+            when (subTitleState) {
+                TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
+                TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
+                TopAppBarSubTitleState.None -> null
             },
         backText = stringResource(R.string.delete_wallet_back).uppercase(),
         backContentDescriptionText = stringResource(R.string.delete_wallet_back_content_description),

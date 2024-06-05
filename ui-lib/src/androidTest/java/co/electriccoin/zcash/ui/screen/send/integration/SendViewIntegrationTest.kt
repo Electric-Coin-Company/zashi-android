@@ -11,7 +11,7 @@ import cash.z.ecc.android.sdk.model.MonetarySeparators
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.ZcashNetwork
 import cash.z.ecc.sdk.fixture.ZecSendFixture
-import co.electriccoin.zcash.ui.common.model.WalletRestoringState
+import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.fixture.BalanceStateFixture
 import co.electriccoin.zcash.ui.fixture.MockSynchronizer
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
@@ -79,7 +79,7 @@ class SendViewIntegrationTest {
                 goSendConfirmation = {},
                 hasCameraFeature = true,
                 monetarySeparators = monetarySeparators,
-                walletRestoringState = WalletRestoringState.NONE,
+                topAppBarSubTitleState = TopAppBarSubTitleState.None,
             )
         }
 

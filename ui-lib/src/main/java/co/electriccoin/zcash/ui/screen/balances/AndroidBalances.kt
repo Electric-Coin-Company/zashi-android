@@ -22,6 +22,7 @@ import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.BalanceState
+import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.viewmodel.CheckUpdateViewModel
@@ -60,6 +61,8 @@ internal fun WrapBalances(
 
     val walletRestoringState = walletViewModel.walletRestoringState.collectAsStateWithLifecycle().value
 
+    val walletState = walletViewModel.walletStateInformation.collectAsStateWithLifecycle().value
+
     val checkUpdateViewModel by activity.viewModels<CheckUpdateViewModel> {
         CheckUpdateViewModel.CheckUpdateViewModelFactory(
             activity.application,
@@ -78,6 +81,7 @@ internal fun WrapBalances(
         lifecycleScope = activity.lifecycleScope,
         spendingKey = spendingKey,
         synchronizer = synchronizer,
+        topAppBarSubTitleState = walletState,
         walletSnapshot = walletSnapshot,
         walletRestoringState = walletRestoringState,
     )
@@ -98,6 +102,7 @@ internal fun WrapBalances(
     lifecycleScope: CoroutineScope,
     spendingKey: UnifiedSpendingKey?,
     synchronizer: Synchronizer?,
+    topAppBarSubTitleState: TopAppBarSubTitleState,
     walletSnapshot: WalletSnapshot?,
     walletRestoringState: WalletRestoringState,
 ) {
@@ -232,6 +237,7 @@ internal fun WrapBalances(
                 }
             },
             shieldState = shieldState,
+            topAppBarSubTitleState = topAppBarSubTitleState,
             walletSnapshot = walletSnapshot,
             walletRestoringState = walletRestoringState,
         )

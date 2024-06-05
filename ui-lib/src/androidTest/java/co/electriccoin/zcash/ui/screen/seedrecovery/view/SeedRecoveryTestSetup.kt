@@ -3,8 +3,8 @@ package co.electriccoin.zcash.ui.screen.seedrecovery.view
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import cash.z.ecc.sdk.fixture.PersistableWalletFixture
+import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.VersionInfo
-import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -43,8 +43,8 @@ class SeedRecoveryTestSetup(
                 onBirthdayCopy = { onBirthdayCopyCount.incrementAndGet() },
                 onDone = { onCompleteCallbackCount.incrementAndGet() },
                 onSeedCopy = { /* Not tested - debug mode feature only */ },
+                topAppBarSubTitleState = TopAppBarSubTitleState.None,
                 versionInfo = versionInfo,
-                walletRestoringState = WalletRestoringState.NONE,
             )
         }
     }

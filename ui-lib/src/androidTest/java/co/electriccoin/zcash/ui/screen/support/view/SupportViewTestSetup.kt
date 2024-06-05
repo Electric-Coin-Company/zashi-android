@@ -3,7 +3,7 @@ package co.electriccoin.zcash.ui.screen.support.view
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
-import co.electriccoin.zcash.ui.common.model.WalletRestoringState
+import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicReference
@@ -47,7 +47,7 @@ class SupportViewTestSetup(private val composeTestRule: ComposeContentTestRule) 
                 onSendMessage.set(it)
             },
             snackbarHostState = SnackbarHostState(),
-            walletRestoringState = WalletRestoringState.NONE
+            topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )
     }
 

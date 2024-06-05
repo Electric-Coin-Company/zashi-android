@@ -59,7 +59,7 @@ import androidx.core.content.ContextCompat
 import cash.z.ecc.android.sdk.type.AddressType
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.model.WalletRestoringState
+import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.SecondaryButton
 import co.electriccoin.zcash.ui.design.component.Small
@@ -91,7 +91,7 @@ private fun PreviewScan() {
                 onScanned = {},
                 onOpenSettings = {},
                 onScanStateChanged = {},
-                walletRestoringState = WalletRestoringState.NONE,
+                topAppBarSubTitleState = TopAppBarSubTitleState.None,
                 addressValidationResult = AddressType.Transparent,
             )
         }
@@ -107,7 +107,7 @@ fun Scan(
     onScanned: (String) -> Unit,
     onOpenSettings: () -> Unit,
     onScanStateChanged: (ScanState) -> Unit,
-    walletRestoringState: WalletRestoringState,
+    topAppBarSubTitleState: TopAppBarSubTitleState,
     addressValidationResult: AddressType?
 ) {
     val permissionState =
@@ -155,7 +155,7 @@ fun Scan(
             ScanTopAppBar(
                 onBack = onBack,
                 showBack = scanState != ScanState.Scanning,
-                showRestoring = walletRestoringState == WalletRestoringState.RESTORING,
+                subTitleState = topAppBarSubTitleState,
             )
         }
     }
@@ -226,14 +226,14 @@ fun ScanBottomItems(
 private fun ScanTopAppBar(
     onBack: () -> Unit,
     showBack: Boolean,
-    showRestoring: Boolean,
+    subTitleState: TopAppBarSubTitleState
 ) {
     SmallTopAppBar(
-        restoringLabel =
-            if (showRestoring) {
-                stringResource(id = R.string.restoring_wallet_label)
-            } else {
-                null
+        subTitle =
+            when (subTitleState) {
+                TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
+                TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
+                TopAppBarSubTitleState.None -> null
             },
         backText =
             if (showBack) {

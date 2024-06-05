@@ -12,6 +12,8 @@ directly impact users rather than highlighting other key architectural updates.*
 ### Added
 - Grid pattern background has been added to several screens
 - A new disconnected dialog reminder has been added to inform users about possible server issues
+- When the app is experiencing such server connection issues, a new DISCONNECTED label will be displayed below the 
+  screen title
 - The transaction history list will be displayed when the app has server connection issues. Such a list might have a 
   slightly different order.
 
