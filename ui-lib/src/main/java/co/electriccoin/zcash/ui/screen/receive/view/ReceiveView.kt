@@ -109,11 +109,10 @@ private fun ReceiveTopAppBar(
     versionInfo: VersionInfo,
 ) {
     SmallTopAppBar(
-        subTitle =
-        when (subTitleState) {
+        subTitle = when (subTitleState) {
             TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
-        TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
-            TopAppBarSubTitleState.None ->null
+            TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
+            TopAppBarSubTitleState.None -> null
         },
         titleText = stringResource(id = R.string.receive_title),
         hamburgerMenuActions = {
