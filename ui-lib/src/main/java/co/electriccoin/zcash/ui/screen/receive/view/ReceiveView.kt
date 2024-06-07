@@ -45,8 +45,8 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.BrightenScreen
 import co.electriccoin.zcash.ui.common.compose.DisableScreenTimeout
 import co.electriccoin.zcash.ui.common.compose.ScreenBrightnessState
+import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.VersionInfo
-import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.test.CommonTag
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
@@ -70,8 +70,8 @@ fun Receive(
     onAdjustBrightness: (ScreenBrightnessState) -> Unit,
     onAddrCopyToClipboard: (String) -> Unit,
     onQrImageShare: (ImageBitmap) -> Unit,
+    topAppBarSubTitleState: TopAppBarSubTitleState,
     versionInfo: VersionInfo,
-    walletRestoringState: WalletRestoringState,
 ) {
     BlankBgScaffold(
         topBar = {
@@ -80,7 +80,7 @@ fun Receive(
                 onBrightness = {
                     onAdjustBrightness(screenBrightnessState.getChange())
                 },
-                showRestoring = walletRestoringState == WalletRestoringState.RESTORING,
+                subTitleState = topAppBarSubTitleState,
                 versionInfo = versionInfo,
             )
         },
@@ -105,15 +105,15 @@ fun Receive(
 private fun ReceiveTopAppBar(
     onSettings: () -> Unit,
     onBrightness: () -> Unit,
+    subTitleState: TopAppBarSubTitleState,
     versionInfo: VersionInfo,
-    showRestoring: Boolean
 ) {
     SmallTopAppBar(
-        restoringLabel =
-        if (showRestoring) {
-            stringResource(id = R.string.restoring_wallet_label)
-        } else {
-            null
+        subTitle =
+        when (subTitleState) {
+            TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
+        TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
+            TopAppBarSubTitleState.None ->null
         },
         titleText = stringResource(id = R.string.receive_title),
         hamburgerMenuActions = {
@@ -344,7 +344,7 @@ private fun ComposablePreview() = ZcashTheme(forceDarkMode = false) {
         onAddrCopyToClipboard = {},
         onQrImageShare = {},
         versionInfo = VersionInfoFixture.new(),
-        walletRestoringState = WalletRestoringState.NONE
+        topAppBarSubTitleState = TopAppBarSubTitleState.None,
     )
 }
 

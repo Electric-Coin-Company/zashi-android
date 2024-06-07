@@ -25,7 +25,7 @@ import cash.z.ecc.android.sdk.model.toZecString
 import cash.z.ecc.android.sdk.type.AddressType
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.compose.BalanceState
-import co.electriccoin.zcash.ui.common.model.WalletRestoringState
+import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.viewmodel.HomeViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
@@ -75,7 +75,7 @@ internal fun WrapSend(
     // TODO [#1171]: https://github.com/Electric-Coin-Company/zashi-android/issues/1171
     val monetarySeparators = MonetarySeparators.current(Locale.US)
 
-    val walletRestoringState = walletViewModel.walletRestoringState.collectAsStateWithLifecycle().value
+    val walletState = walletViewModel.walletStateInformation.collectAsStateWithLifecycle().value
 
     val balanceState = walletViewModel.balanceState.collectAsStateWithLifecycle().value
 
@@ -93,7 +93,7 @@ internal fun WrapSend(
         goSendConfirmation = goSendConfirmation,
         hasCameraFeature = hasCameraFeature,
         monetarySeparators = monetarySeparators,
-        walletRestoringState = walletRestoringState
+        topAppBarSubTitleState = walletState,
     )
 }
 
@@ -102,10 +102,6 @@ internal fun WrapSend(
 @Composable
 internal fun WrapSend(
     balanceState: BalanceState,
-    sendArguments: SendArguments?,
-    synchronizer: Synchronizer?,
-    walletSnapshot: WalletSnapshot?,
-    spendingKey: UnifiedSpendingKey?,
     focusManager: FocusManager,
     goToQrScanner: () -> Unit,
     goBack: () -> Unit,
@@ -114,7 +110,11 @@ internal fun WrapSend(
     goSendConfirmation: (ZecSend) -> Unit,
     hasCameraFeature: Boolean,
     monetarySeparators: MonetarySeparators,
-    walletRestoringState: WalletRestoringState,
+    sendArguments: SendArguments?,
+    spendingKey: UnifiedSpendingKey?,
+    synchronizer: Synchronizer?,
+    topAppBarSubTitleState: TopAppBarSubTitleState,
+    walletSnapshot: WalletSnapshot?,
 ) {
     val scope = rememberCoroutineScope()
 
@@ -240,7 +240,7 @@ internal fun WrapSend(
             onQrScannerOpen = goToQrScanner,
             goBalances = goBalances,
             hasCameraFeature = hasCameraFeature,
-            walletRestoringState = walletRestoringState,
+            topAppBarSubTitleState = topAppBarSubTitleState,
             walletSnapshot = walletSnapshot,
         )
     }

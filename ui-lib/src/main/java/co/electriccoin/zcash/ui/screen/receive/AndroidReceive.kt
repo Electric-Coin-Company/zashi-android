@@ -43,7 +43,7 @@ internal fun WrapReceive(
 
     val walletAddresses = walletViewModel.addresses.collectAsStateWithLifecycle().value
 
-    val walletRestoringState = walletViewModel.walletRestoringState.collectAsStateWithLifecycle().value
+    val walletState = walletViewModel.walletStateInformation.collectAsStateWithLifecycle().value
 
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -86,9 +86,9 @@ internal fun WrapReceive(
         },
         onSettings = onSettings,
         snackbarHostState = snackbarHostState,
+        topAppBarSubTitleState = walletState,
         versionInfo = versionInfo,
         walletAddress = walletAddresses,
-        walletRestoringState = walletRestoringState,
     )
 }
 

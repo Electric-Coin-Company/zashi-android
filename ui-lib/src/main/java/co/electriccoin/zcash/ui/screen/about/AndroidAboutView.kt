@@ -14,8 +14,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.configuration.AndroidConfigurationFactory
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.VersionInfo
-import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.about.util.WebBrowserUtil
 import co.electriccoin.zcash.ui.screen.about.view.About
@@ -27,12 +27,12 @@ import kotlinx.coroutines.launch
 internal fun MainActivity.WrapAbout(goBack: () -> Unit) {
     val walletViewModel by viewModels<WalletViewModel>()
 
-    val walletRestoringState = walletViewModel.walletRestoringState.collectAsStateWithLifecycle().value
+    val walletState = walletViewModel.walletStateInformation.collectAsStateWithLifecycle().value
 
     WrapAbout(
         activity = this,
         goBack = goBack,
-        walletRestoringState = walletRestoringState
+        topAppBarSubTitleState = walletState
     )
 }
 
@@ -40,7 +40,7 @@ internal fun MainActivity.WrapAbout(goBack: () -> Unit) {
 internal fun WrapAbout(
     activity: ComponentActivity,
     goBack: () -> Unit,
-    walletRestoringState: WalletRestoringState,
+    topAppBarSubTitleState: TopAppBarSubTitleState,
 ) {
     val configInfo = ConfigInfo.new(AndroidConfigurationFactory.getInstance(activity.applicationContext))
     val versionInfo = VersionInfo.new(activity.applicationContext)
@@ -66,7 +66,7 @@ internal fun WrapAbout(
             )
         },
         snackbarHostState = snackbarHostState,
-        walletRestoringState = walletRestoringState,
+        topAppBarSubTitleState = topAppBarSubTitleState,
     )
 }
 

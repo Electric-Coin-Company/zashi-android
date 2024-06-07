@@ -16,6 +16,7 @@ import cash.z.ecc.android.sdk.internal.Twig
 import co.electriccoin.zcash.spackle.ClipboardManagerUtil
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.BalanceState
+import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
@@ -50,6 +51,8 @@ internal fun WrapAccount(
 
     val walletRestoringState = walletViewModel.walletRestoringState.collectAsStateWithLifecycle().value
 
+    val walletState = walletViewModel.walletStateInformation.collectAsStateWithLifecycle().value
+
     val balanceState = walletViewModel.balanceState.collectAsStateWithLifecycle().value
 
     val walletSnapshot = walletViewModel.walletSnapshot.collectAsStateWithLifecycle().value
@@ -60,6 +63,7 @@ internal fun WrapAccount(
         goBalances = goBalances,
         goSettings = goSettings,
         synchronizer = synchronizer,
+        topAppBarSubTitleState = walletState,
         transactionHistoryViewModel = transactionHistoryViewModel,
         transactionsUiState = transactionsUiState,
         walletRestoringState = walletRestoringState,
@@ -80,6 +84,7 @@ internal fun WrapAccount(
     goSettings: () -> Unit,
     transactionsUiState: TransactionUiState,
     synchronizer: Synchronizer?,
+    topAppBarSubTitleState: TopAppBarSubTitleState,
     transactionHistoryViewModel: TransactionHistoryViewModel,
     walletRestoringState: WalletRestoringState,
     walletSnapshot: WalletSnapshot?
@@ -159,6 +164,7 @@ internal fun WrapAccount(
             goBalances = goBalances,
             goSettings = goSettings,
             snackbarHostState = snackbarHostState,
+            topAppBarSubTitleState = topAppBarSubTitleState,
             walletRestoringState = walletRestoringState,
             walletSnapshot = walletSnapshot
         )

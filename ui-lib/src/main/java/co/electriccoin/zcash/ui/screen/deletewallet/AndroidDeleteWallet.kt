@@ -11,7 +11,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.model.WalletRestoringState
+import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.deletewallet.view.DeleteWallet
 import kotlinx.coroutines.launch
@@ -20,12 +20,12 @@ import kotlinx.coroutines.launch
 internal fun MainActivity.WrapDeleteWallet(goBack: () -> Unit) {
     val walletViewModel by viewModels<WalletViewModel>()
 
-    val walletRestoringState = walletViewModel.walletRestoringState.collectAsStateWithLifecycle().value
+    val walletState = walletViewModel.walletStateInformation.collectAsStateWithLifecycle().value
 
     WrapDeleteWallet(
         activity = this,
         goBack = goBack,
-        walletRestoringState = walletRestoringState,
+        topAppBarSubTitleState = walletState,
         walletViewModel = walletViewModel,
     )
 }
@@ -34,7 +34,7 @@ internal fun MainActivity.WrapDeleteWallet(goBack: () -> Unit) {
 internal fun WrapDeleteWallet(
     activity: Activity,
     goBack: () -> Unit,
-    walletRestoringState: WalletRestoringState,
+    topAppBarSubTitleState: TopAppBarSubTitleState,
     walletViewModel: WalletViewModel,
 ) {
     val scope = rememberCoroutineScope()
@@ -63,6 +63,6 @@ internal fun WrapDeleteWallet(
                 }
             }
         },
-        walletRestoringState = walletRestoringState
+        topAppBarSubTitleState = topAppBarSubTitleState,
     )
 }

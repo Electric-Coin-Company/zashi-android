@@ -19,7 +19,7 @@ import cash.z.ecc.android.sdk.model.ZcashNetwork
 import cash.z.ecc.android.sdk.type.ServerValidation
 import cash.z.ecc.sdk.type.fromResources
 import co.electriccoin.zcash.ui.MainActivity
-import co.electriccoin.zcash.ui.common.model.WalletRestoringState
+import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.viewmodel.SecretState
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
@@ -34,7 +34,7 @@ internal fun MainActivity.WrapChooseServer(goBack: () -> Unit) {
 
     val synchronizer = walletViewModel.synchronizer.collectAsStateWithLifecycle().value
 
-    val walletRestoringState = walletViewModel.walletRestoringState.collectAsStateWithLifecycle().value
+    val walletState = walletViewModel.walletStateInformation.collectAsStateWithLifecycle().value
 
     WrapChooseServer(
         activity = this,
@@ -47,7 +47,7 @@ internal fun MainActivity.WrapChooseServer(goBack: () -> Unit) {
         onWalletPersist = {
             walletViewModel.persistExistingWallet(it)
         },
-        walletRestoringState = walletRestoringState
+        topAppBarSubTitleState = walletState
     )
 }
 
@@ -60,7 +60,7 @@ private fun WrapChooseServer(
     onWalletPersist: (PersistableWallet) -> Unit,
     secretState: SecretState,
     synchronizer: Synchronizer?,
-    walletRestoringState: WalletRestoringState,
+    topAppBarSubTitleState: TopAppBarSubTitleState,
 ) {
     if (synchronizer == null || secretState !is SecretState.Ready) {
         // TODO [#1146]: Consider moving CircularScreenProgressIndicator from Android layer to View layer
@@ -128,7 +128,7 @@ private fun WrapChooseServer(
             setShowErrorDialog = setShowErrorDialog,
             isShowingSuccessDialog = isShowingSuccessDialog,
             setShowSuccessDialog = setShowSuccessDialog,
-            walletRestoringState = walletRestoringState
+            topAppBarSubTitleState = topAppBarSubTitleState,
         )
     }
 }

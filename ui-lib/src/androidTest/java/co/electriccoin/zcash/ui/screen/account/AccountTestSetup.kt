@@ -3,6 +3,7 @@ package co.electriccoin.zcash.ui.screen.account
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
+import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
@@ -75,8 +76,9 @@ class AccountTestSetup(
             showStatusDialog = null,
             onStatusClick = {},
             snackbarHostState = SnackbarHostState(),
+            topAppBarSubTitleState = TopAppBarSubTitleState.None,
             walletRestoringState = WalletRestoringState.NONE,
-            walletSnapshot = WalletSnapshotFixture.new()
+            walletSnapshot = WalletSnapshotFixture.new(),
         )
     }
 

@@ -9,11 +9,22 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [1.1.1 (660)] - 2024-06-05
+
 ### Added
 - Grid pattern background has been added to several screens
+- A new disconnected dialog reminder has been added to inform users about possible server issues
+- When the app is experiencing such server connection issues, a new DISCONNECTED label will be displayed below the 
+  screen title
+- The transaction history list will be displayed when the app has server connection issues. Such a list might have a 
+  slightly different order.
 
 ### Changed
 - The color palette used across the app has been reworked to align with the updated design document
+
+### Fixed
+- An updated snapshot Zcash SDK version has been adopted to improve unstable lightwalletd communication
+- Transaction submission has been slightly refactored to improve its stability
 
 ## [1.1 (655)] - 2024-05-24
 
