@@ -592,7 +592,7 @@ fun SpendableBalanceRow(walletSnapshot: WalletSnapshot) {
                         ZcashTheme.extendedTypography.balanceSingleStyles.first,
                         ZcashTheme.extendedTypography.balanceSingleStyles.second
                     ),
-                textColor = ZcashTheme.colors.textCommon
+                textColor = ZcashTheme.colors.textPrimary
             )
 
             Spacer(modifier = Modifier.width(12.dp))

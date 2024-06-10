@@ -680,7 +680,7 @@ fun SendFormMemoTextField(
                 contentDescription = null,
                 tint =
                     if (isMemoFieldAvailable) {
-                        ZcashTheme.colors.textCommon
+                        ZcashTheme.colors.textPrimary
                     } else {
                         ZcashTheme.colors.textDisabled
                     }
@@ -692,7 +692,7 @@ fun SendFormMemoTextField(
                 text = stringResource(id = R.string.send_memo_label),
                 color =
                     if (isMemoFieldAvailable) {
-                        ZcashTheme.colors.textCommon
+                        ZcashTheme.colors.textPrimary
                     } else {
                         ZcashTheme.colors.textDisabled
                     }

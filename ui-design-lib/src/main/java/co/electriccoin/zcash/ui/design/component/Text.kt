@@ -93,7 +93,7 @@ fun Header(
     text: String,
     modifier: Modifier = Modifier,
     textAlign: TextAlign = TextAlign.Start,
-    color: Color = ZcashTheme.colors.onBackgroundHeader,
+    color: Color = ZcashTheme.colors.textPrimary,
 ) {
     Text(
         text = text,
@@ -109,7 +109,7 @@ fun SubHeader(
     text: String,
     modifier: Modifier = Modifier,
     textAlign: TextAlign = TextAlign.Start,
-    color: Color = ZcashTheme.colors.onBackgroundHeader,
+    color: Color = ZcashTheme.colors.textPrimary,
 ) {
     Text(
         text = text,
@@ -443,7 +443,7 @@ fun NavigationTabText(
             },
         maxLines = 1,
         overflow = TextOverflow.Visible,
-        color = ZcashTheme.colors.textCommon,
+        color = ZcashTheme.colors.textPrimary,
         modifier =
             Modifier
                 .clip(RoundedCornerShape(ZcashTheme.dimens.regularRippleEffectCorner))

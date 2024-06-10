@@ -8,18 +8,15 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import co.electriccoin.zcash.ui.design.theme.ExtendedColors
 
-// TODO [#998]: Check and enhance screen dark mode
-// TODO [#998]: https://github.com/Electric-Coin-Company/zashi-android/issues/998
-
 internal object Dark {
-    val backgroundColor = Color(0xFF231F20)
+    val primaryColor = Color(0xFF231F20)
+    val secondaryColor = Color(0xFFFFFFFF)
+
+    val backgroundColor = primaryColor
     val gridColor = Color(0xFF272727)
 
-    val textHeaderOnBackground = Color(0xFFFFFFFF)
-    val textBodyOnBackground = Color(0xFFFFFFFF)
-    val textPrimaryButton = Color(0xFF000000)
-    val textSecondaryButton = Color(0xFF000000)
-    val textCommon = Color(0xFFFFFFFF)
+    val textPrimary = secondaryColor
+    val textSecondary = primaryColor
     val textDisabled = Color(0xFFB7B7B7)
     val textFieldFrame = Color(0xFF231F20)
     val textFieldWarning = Color(0xFFF40202)
@@ -36,14 +33,16 @@ internal object Dark {
     val cameraDisabledBackgroundColor = Color(0xFF5E5C5C)
     val cameraDisabledFrameColor = Color(0xFFFFFFFF)
 
-    val primaryButton = Color(0xFFFFFFFF)
-    val secondaryButton = Color(0xFFFFFFFF)
+    val textPrimaryButton = Color(0xFFFFFFFF)
+    val textSecondaryButton = Color(0xFFFFFFFF)
+    val primaryButton = Color(0xFF181716)
+    val secondaryButton = Color(0xFF181716)
 
     val radioButtonColor = Color(0xFF070707)
     val radioButtonTextColor = Color(0xFF4E4E4E)
 
     val circularProgressBarSmall = Color(0xFF8B8A8A)
-    val circularProgressBarSmallDark = textBodyOnBackground
+    val circularProgressBarSmallDark = textPrimary
     val circularProgressBarScreen = Color(0xFFFFFFFF)
     val linearProgressBarTrack = Color(0xFFD9D9D9)
     val linearProgressBarBackground = complementaryColor
@@ -64,14 +63,14 @@ internal object Dark {
 }
 
 internal object Light {
-    val backgroundColor = Color(0xFFFFFFFF)
+    val primaryColor = Color(0xFFFFFFFF)
+    val secondaryColor = Color(0xFF000000)
+
+    val backgroundColor = primaryColor
     val gridColor = Color(0xFFFBFBFB)
 
-    val textHeaderOnBackground = Color(0xFF000000)
-    val textBodyOnBackground = Color(0xFF000000)
-    val textPrimaryButton = Color(0xFFFFFFFF)
-    val textSecondaryButton = Color(0xFF000000)
-    val textCommon = Color(0xFF000000)
+    val textPrimary = secondaryColor
+    val textSecondary = primaryColor
     val textDisabled = Color(0xFFB7B7B7)
     val textFieldFrame = Color(0xFF231F20)
     val textFieldWarning = Color(0xFFF40202)
@@ -88,24 +87,21 @@ internal object Light {
     val cameraDisabledBackgroundColor = Color(0xFF5E5C5C)
     val cameraDisabledFrameColor = Color(0xFFFFFFFF)
 
-    val primaryButton = Color(0xFF000000)
-    val secondaryButton = Color(0xFFFFFFFF)
+    val primaryButtonColors = LightPrimaryButtonColors()
+    val secondaryButtonColors = LightSecondaryButtonColors()
 
     val radioButtonColor = Color(0xFF070707)
     val radioButtonTextColor = Color(0xFF4E4E4E)
 
     val circularProgressBarSmall = Color(0xFF8B8A8A)
     val circularProgressBarScreen = Color(0xFF000000)
-    val circularProgressBarSmallDark = textBodyOnBackground
+    val circularProgressBarSmallDark = textPrimary
     val linearProgressBarTrack = Color(0xFFD9D9D9)
     val linearProgressBarBackground = complementaryColor
 
     val overlay = Color(0x22000000)
 
     val reference = Color(0xFF000000)
-
-    val disabledButtonColor = Color(0xFFB7B7B7)
-    val disabledButtonTextColor = Color(0xFFDDDDDD)
 
     val historyBackgroundColor = Color(0xFFF6F6F6)
     val historyRedColor = textFieldWarning
@@ -117,39 +113,41 @@ internal object Light {
 
 internal val DarkColorPalette =
     darkColorScheme(
-        primary = Dark.primaryButton,
-        secondary = Dark.secondaryButton,
-        onPrimary = Dark.textPrimaryButton,
-        onSecondary = Dark.textSecondaryButton,
+        primary = Dark.primaryColor,
+        secondary = Dark.secondaryColor,
+        onPrimary = Dark.textPrimary,
+        onSecondary = Dark.textSecondary,
         surface = Dark.backgroundColor,
-        onSurface = Dark.textBodyOnBackground,
+        onSurface = Dark.textPrimary,
         background = Dark.backgroundColor,
-        onBackground = Dark.textBodyOnBackground,
+        onBackground = Dark.textPrimary,
     )
 
 internal val LightColorPalette =
     lightColorScheme(
-        primary = Light.primaryButton,
-        secondary = Light.secondaryButton,
-        onPrimary = Light.textPrimaryButton,
-        onSecondary = Light.textSecondaryButton,
+        primary = Light.primaryColor,
+        secondary = Light.secondaryColor,
+        onPrimary = Light.textPrimary,
+        onSecondary = Light.textSecondary,
         surface = Light.backgroundColor,
-        onSurface = Light.textBodyOnBackground,
+        onSurface = Light.textPrimary,
         background = Light.backgroundColor,
-        onBackground = Light.textBodyOnBackground,
+        onBackground = Light.textPrimary,
     )
 
 internal val DarkExtendedColorPalette =
     ExtendedColors(
+        primaryColor = Dark.primaryColor,
+        secondaryColor = Dark.secondaryColor,
         backgroundColor = Dark.backgroundColor,
         gridColor = Dark.gridColor,
-        onBackgroundHeader = Dark.textHeaderOnBackground,
         circularProgressBarSmall = Dark.circularProgressBarSmall,
         circularProgressBarSmallDark = Dark.circularProgressBarSmallDark,
         circularProgressBarScreen = Dark.circularProgressBarScreen,
         linearProgressBarTrack = Dark.linearProgressBarTrack,
         linearProgressBarBackground = Dark.linearProgressBarBackground,
-        textCommon = Dark.textCommon,
+        textPrimary = Dark.textPrimary,
+        textSecondary = Dark.textSecondary,
         textDisabled = Dark.textDisabled,
         textFieldFrame = Dark.textFieldFrame,
         textFieldWarning = Dark.textFieldWarning,
@@ -158,8 +156,6 @@ internal val DarkExtendedColorPalette =
         textDescriptionDark = Dark.textDescriptionDark,
         layoutStroke = Dark.layoutStroke,
         overlay = Dark.overlay,
-        disabledButtonTextColor = Dark.disabledButtonTextColor,
-        disabledButtonColor = Dark.disabledButtonColor,
         reference = Dark.reference,
         welcomeAnimationColor = Dark.welcomeAnimationColor,
         complementaryColor = Dark.complementaryColor,
@@ -174,20 +170,24 @@ internal val DarkExtendedColorPalette =
         historyRedColor = Dark.historyRedColor,
         historySyncingColor = Dark.historySyncingColor,
         topAppBarColors = Dark.topAppBarColors,
-        transparentTopAppBarColors = Dark.transparentTopAppBarColors
+        transparentTopAppBarColors = Dark.transparentTopAppBarColors,
+        primaryButtonColors = DarkPrimaryButtonColors(),
+        secondaryButtonColors = DarkSecondaryButtonColors(),
     )
 
 internal val LightExtendedColorPalette =
     ExtendedColors(
+        primaryColor = Light.primaryColor,
+        secondaryColor = Light.secondaryColor,
         backgroundColor = Light.backgroundColor,
         gridColor = Light.gridColor,
-        onBackgroundHeader = Light.textHeaderOnBackground,
         circularProgressBarScreen = Light.circularProgressBarScreen,
         circularProgressBarSmall = Light.circularProgressBarSmall,
         circularProgressBarSmallDark = Light.circularProgressBarSmallDark,
         linearProgressBarTrack = Light.linearProgressBarTrack,
         linearProgressBarBackground = Light.linearProgressBarBackground,
-        textCommon = Light.textCommon,
+        textPrimary = Light.textPrimary,
+        textSecondary = Light.textSecondary,
         textDisabled = Light.textDisabled,
         textFieldFrame = Light.textFieldFrame,
         textFieldWarning = Light.textFieldWarning,
@@ -196,8 +196,6 @@ internal val LightExtendedColorPalette =
         textDescriptionDark = Light.textDescriptionDark,
         layoutStroke = Light.layoutStroke,
         overlay = Light.overlay,
-        disabledButtonTextColor = Light.disabledButtonTextColor,
-        disabledButtonColor = Light.disabledButtonColor,
         reference = Light.reference,
         welcomeAnimationColor = Light.welcomeAnimationColor,
         complementaryColor = Light.complementaryColor,
@@ -212,22 +210,26 @@ internal val LightExtendedColorPalette =
         historyRedColor = Light.historyRedColor,
         historySyncingColor = Light.historySyncingColor,
         topAppBarColors = Light.topAppBarColors,
-        transparentTopAppBarColors = Light.transparentTopAppBarColors
+        transparentTopAppBarColors = Light.transparentTopAppBarColors,
+        primaryButtonColors = LightPrimaryButtonColors(),
+        secondaryButtonColors = LightSecondaryButtonColors(),
     )
 
 @Suppress("CompositionLocalAllowlist")
 internal val LocalExtendedColors =
     staticCompositionLocalOf {
         ExtendedColors(
+            primaryColor = Color.Unspecified,
+            secondaryColor = Color.Unspecified,
             backgroundColor = Color.Unspecified,
             gridColor = Color.Unspecified,
-            onBackgroundHeader = Color.Unspecified,
             circularProgressBarScreen = Color.Unspecified,
             circularProgressBarSmall = Color.Unspecified,
             circularProgressBarSmallDark = Color.Unspecified,
             linearProgressBarTrack = Color.Unspecified,
             linearProgressBarBackground = Color.Unspecified,
-            textCommon = Color.Unspecified,
+            textPrimary = Color.Unspecified,
+            textSecondary = Color.Unspecified,
             textDisabled = Color.Unspecified,
             textFieldHint = Color.Unspecified,
             textFieldWarning = Color.Unspecified,
@@ -236,8 +238,6 @@ internal val LocalExtendedColors =
             textDescriptionDark = Color.Unspecified,
             layoutStroke = Color.Unspecified,
             overlay = Color.Unspecified,
-            disabledButtonTextColor = Color.Unspecified,
-            disabledButtonColor = Color.Unspecified,
             reference = Color.Unspecified,
             welcomeAnimationColor = Color.Unspecified,
             complementaryColor = Color.Unspecified,
@@ -253,5 +253,7 @@ internal val LocalExtendedColors =
             historySyncingColor = Color.Unspecified,
             topAppBarColors = DefaultTopAppBarColors(),
             transparentTopAppBarColors = DefaultTopAppBarColors(),
+            primaryButtonColors = DefaultButtonColors(),
+            secondaryButtonColors = DefaultButtonColors(),
         )
     }
