@@ -17,6 +17,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -43,8 +44,18 @@ private fun OnboardingComposablePreview() {
     }
 }
 
-// TODO [#998]: Check and enhance screen dark mode
-// TODO [#998]: https://github.com/Electric-Coin-Company/zashi-android/issues/998
+@Preview("Onboarding")
+@Composable
+private fun OnboardingComposableDarkPreview() {
+    ZcashTheme(forceDarkMode = true) {
+        Onboarding(
+            isDebugMenuEnabled = true,
+            onImportWallet = {},
+            onCreateWallet = {},
+            onFixtureWallet = {}
+        )
+    }
+}
 
 // TODO [#1001]: Screens in landscape mode
 // TODO [#1001]: https://github.com/Electric-Coin-Company/zashi-android/issues/1001
@@ -108,16 +119,18 @@ private fun OnboardingMainContent(
         }
 
         Image(
-            painterResource(id = co.electriccoin.zcash.ui.design.R.drawable.zashi_logo_without_text),
-            stringResource(R.string.zcash_logo_content_description),
+            painter = painterResource(id = co.electriccoin.zcash.ui.design.R.drawable.zashi_logo_without_text),
+            colorFilter = ColorFilter.tint(color = ZcashTheme.colors.secondaryColor),
+            contentDescription = stringResource(R.string.zcash_logo_content_description),
             modifier = imageModifier
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
         Image(
-            painterResource(id = co.electriccoin.zcash.ui.design.R.drawable.zashi_text_logo),
-            ""
+            painter = painterResource(id = co.electriccoin.zcash.ui.design.R.drawable.zashi_text_logo),
+            colorFilter = ColorFilter.tint(color = ZcashTheme.colors.secondaryColor),
+            contentDescription = null,
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingUpLarge))
