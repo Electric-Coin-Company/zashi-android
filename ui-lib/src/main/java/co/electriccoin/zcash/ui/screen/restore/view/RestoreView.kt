@@ -6,7 +6,6 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -21,6 +20,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -88,7 +88,7 @@ import kotlinx.coroutines.launch
 
 @Preview("Restore Seed")
 @Composable
-private fun PreviewRestoreSeed() {
+private fun RestoreSeedPreview() {
     ZcashTheme(forceDarkMode = false) {
         RestoreWallet(
             ZcashNetwork.Mainnet,
@@ -106,6 +106,36 @@ private fun PreviewRestoreSeed() {
                     "rib",
                     "ribbon"
                 ),
+            userWordList = WordList(listOf("abandon", "absorb")),
+            restoreHeight = null,
+            setRestoreHeight = {},
+            onBack = {},
+            paste = { "" },
+            onFinished = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun RestoreSeedDarkPreview() {
+    ZcashTheme(forceDarkMode = true) {
+        RestoreWallet(
+            ZcashNetwork.Mainnet,
+            restoreState = RestoreState(RestoreStage.Seed),
+            completeWordList =
+            persistentHashSetOf(
+                "abandon",
+                "ability",
+                "able",
+                "about",
+                "above",
+                "absent",
+                "absorb",
+                "abstract",
+                "rib",
+                "ribbon"
+            ),
             userWordList = WordList(listOf("abandon", "absorb")),
             restoreHeight = null,
             setRestoreHeight = {},
@@ -215,11 +245,11 @@ fun RestoreWallet(
                         parseResult = parseResult,
                         setText = { text = it },
                         modifier =
-                            Modifier
-                                .imePadding()
-                                .navigationBarsPadding()
-                                .animateContentSize()
-                                .fillMaxWidth()
+                        Modifier
+                            .imePadding()
+                            .navigationBarsPadding()
+                            .animateContentSize()
+                            .fillMaxWidth()
                     )
                 }
                 RestoreStage.Birthday -> {
@@ -260,9 +290,9 @@ fun RestoreWallet(
                         setRestoreHeight = setRestoreHeight,
                         onDone = onFinished,
                         modifier =
-                            commonModifier
-                                .imePadding()
-                                .navigationBarsPadding()
+                        commonModifier
+                            .imePadding()
+                            .navigationBarsPadding()
                     )
                 }
             }
@@ -527,13 +557,14 @@ private fun SeedGridWithText(
             isError = parseResult is ParseResult.Warn,
             colors =
                 TextFieldDefaults.colors(
-                    focusedContainerColor = Color.Transparent,
-                    unfocusedContainerColor = Color.Transparent,
+                    cursorColor = ZcashTheme.colors.textPrimary,
                     disabledContainerColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent,
                     errorContainerColor = Color.Transparent,
+                    focusedContainerColor = Color.Transparent,
                     focusedIndicatorColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent,
-                    disabledIndicatorColor = Color.Transparent
                 )
         )
     }
@@ -619,10 +650,8 @@ private fun Autocomplete(
             items(it) {
                 ChipOnSurface(
                     text = it,
-                    modifier =
-                        Modifier
-                            .testTag(RestoreTag.AUTOCOMPLETE_ITEM)
-                            .clickable { onSuggestionSelected(it) }
+                    onClick = { onSuggestionSelected(it) },
+                    modifier = Modifier.testTag(RestoreTag.AUTOCOMPLETE_ITEM)
                 )
             }
         }
@@ -636,21 +665,23 @@ private fun Warn(
 ) {
     if (parseResult is ParseResult.Warn) {
         Surface(
+            shape = RoundedCornerShape(size = ZcashTheme.dimens.tinyRippleEffectCorner),
             modifier =
                 modifier.then(
                     Modifier.border(
                         border =
                             BorderStroke(
                                 width = ZcashTheme.dimens.chipStroke,
-                                color = ZcashTheme.colors.layoutStroke
-                            )
+                                color = ZcashTheme.colors.layoutStrokeSecondary
+                            ),
+                        shape = RoundedCornerShape(size = ZcashTheme.dimens.tinyRippleEffectCorner),
                     )
                 ),
-            shape = RectangleShape,
-            color = MaterialTheme.colorScheme.secondary,
+            color = ZcashTheme.colors.primaryColor,
             shadowElevation = ZcashTheme.dimens.chipShadowElevation
         ) {
             Text(
+                color = ZcashTheme.colors.textPrimary,
                 modifier =
                     Modifier
                         .fillMaxWidth()

@@ -25,6 +25,7 @@ data class ExtendedColors(
     val textFieldFrame: Color,
     val textDescriptionDark: Color,
     val layoutStroke: Color,
+    val layoutStrokeSecondary: Color,
     val overlay: Color,
     val reference: Color,
     val primaryButtonColors: ButtonColors,
