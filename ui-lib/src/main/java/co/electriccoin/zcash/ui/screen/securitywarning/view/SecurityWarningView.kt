@@ -1,6 +1,7 @@
 package co.electriccoin.zcash.ui.screen.securitywarning.view
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,15 +25,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
-import co.electriccoin.zcash.ui.design.component.CheckBox
 import co.electriccoin.zcash.ui.design.component.GridBgScaffold
 import co.electriccoin.zcash.ui.design.component.GridBgSmallTopAppBar
+import co.electriccoin.zcash.ui.design.component.LabeledCheckBox
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.TopScreenLogoTitle
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.VersionInfoFixture
 
-@Preview("Security Warning")
+@Preview
 @Composable
 private fun SecurityWarningPreview() {
     ZcashTheme(forceDarkMode = false) {
@@ -44,12 +45,20 @@ private fun SecurityWarningPreview() {
         )
     }
 }
-
-// TODO [#998]: Check and enhance screen dark mode
-// TODO [#998]: https://github.com/Electric-Coin-Company/zashi-android/issues/998
+@Preview
+@Composable
+private fun SecurityWarningDarkPreview() {
+    ZcashTheme(forceDarkMode = true) {
+        SecurityWarning(
+            versionInfo = VersionInfoFixture.new(),
+            onBack = {},
+            onAcknowledged = {},
+            onConfirm = {},
+        )
+    }
+}
 
 @Composable
-@Suppress("LongParameterList")
 fun SecurityWarning(
     versionInfo: VersionInfo,
     onBack: () -> Unit,
@@ -64,15 +73,15 @@ fun SecurityWarning(
             onAcknowledged = onAcknowledged,
             onConfirm = onConfirm,
             modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(
-                        top = paddingValues.calculateTopPadding(),
-                        bottom = paddingValues.calculateBottomPadding(),
-                        start = ZcashTheme.dimens.screenHorizontalSpacingBig,
-                        end = ZcashTheme.dimens.screenHorizontalSpacingBig
-                    )
-                    .verticalScroll(rememberScrollState())
+            Modifier
+                .fillMaxSize()
+                .padding(
+                    top = paddingValues.calculateTopPadding(),
+                    bottom = paddingValues.calculateBottomPadding(),
+                    start = ZcashTheme.dimens.screenHorizontalSpacingBig,
+                    end = ZcashTheme.dimens.screenHorizontalSpacingBig
+                )
+                .verticalScroll(rememberScrollState())
         )
     }
 }
@@ -111,25 +120,23 @@ private fun SecurityWarningContent(
         Spacer(Modifier.height(ZcashTheme.dimens.spacingLarge))
 
         val checkedState = rememberSaveable { mutableStateOf(false) }
-        CheckBox(
-            modifier =
-                Modifier
-                    .align(Alignment.Start)
-                    .fillMaxWidth(),
-            checked = checkedState.value,
-            onCheckedChange = {
-                checkedState.value = it
-                onAcknowledged(it)
-            },
-            text = stringResource(R.string.security_warning_acknowledge),
-            checkBoxTestTag = SecurityScreenTag.ACKNOWLEDGE_CHECKBOX_TAG
-        )
+        Row(Modifier.fillMaxWidth()) {
+            LabeledCheckBox(
+                checked = checkedState.value,
+                onCheckedChange = {
+                    checkedState.value = it
+                    onAcknowledged(it)
+                },
+                text = stringResource(R.string.security_warning_acknowledge),
+                checkBoxTestTag = SecurityScreenTag.ACKNOWLEDGE_CHECKBOX_TAG
+            )
+        }
 
         Spacer(
             modifier =
-                Modifier
-                    .fillMaxHeight()
-                    .weight(MINIMAL_WEIGHT)
+            Modifier
+                .fillMaxHeight()
+                .weight(MINIMAL_WEIGHT)
         )
 
         PrimaryButton(
@@ -148,6 +155,7 @@ fun SecurityWarningContentText(versionInfo: VersionInfo) {
     Column {
         Text(
             text = stringResource(id = R.string.security_warning_text, versionInfo.versionName),
+            color = ZcashTheme.colors.textPrimary,
             style = ZcashTheme.extendedTypography.securityWarningText
         )
 
@@ -164,6 +172,7 @@ fun SecurityWarningContentText(versionInfo: VersionInfo) {
                     }
                     append(textPart2)
                 },
+            color = ZcashTheme.colors.textPrimary,
             style = ZcashTheme.extendedTypography.footnote,
             modifier = Modifier.fillMaxWidth()
         )
