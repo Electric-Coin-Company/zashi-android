@@ -24,7 +24,7 @@ internal object Dark {
     val textDescription = Color(0xFF777777)
     val textDescriptionDark = Color(0xFF4D4D4D)
 
-    val welcomeAnimationColor = Color(0xFF231F20)
+    val welcomeAnimationColor = Color(0xFF181716)
     val complementaryColor = Color(0xFFF4B728)
     val dividerColor = Color(0xFFDDDDDD)
     val darkDividerColor = Color(0xFF000000)
@@ -33,10 +33,8 @@ internal object Dark {
     val cameraDisabledBackgroundColor = Color(0xFF5E5C5C)
     val cameraDisabledFrameColor = Color(0xFFFFFFFF)
 
-    val textPrimaryButton = Color(0xFFFFFFFF)
-    val textSecondaryButton = Color(0xFFFFFFFF)
-    val primaryButton = Color(0xFF181716)
-    val secondaryButton = Color(0xFF181716)
+    val primaryButtonColors = DarkPrimaryButtonColors()
+    val secondaryButtonColors = DarkSecondaryButtonColors()
 
     val radioButtonColor = Color(0xFF070707)
     val radioButtonTextColor = Color(0xFF4E4E4E)
@@ -48,11 +46,7 @@ internal object Dark {
     val linearProgressBarBackground = complementaryColor
 
     val overlay = Color(0x22000000)
-
     val reference = Color(0xFFFFFFFF)
-
-    val disabledButtonColor = Color(0xFFB7B7B7)
-    val disabledButtonTextColor = Color(0xFFDDDDDD)
 
     val historyBackgroundColor = Color(0xFFF6F6F6)
     val historyRedColor = textFieldWarning
@@ -171,8 +165,8 @@ internal val DarkExtendedColorPalette =
         historySyncingColor = Dark.historySyncingColor,
         topAppBarColors = Dark.topAppBarColors,
         transparentTopAppBarColors = Dark.transparentTopAppBarColors,
-        primaryButtonColors = DarkPrimaryButtonColors(),
-        secondaryButtonColors = DarkSecondaryButtonColors(),
+        primaryButtonColors = Dark.primaryButtonColors,
+        secondaryButtonColors = Dark.secondaryButtonColors,
     )
 
 internal val LightExtendedColorPalette =
@@ -211,8 +205,8 @@ internal val LightExtendedColorPalette =
         historySyncingColor = Light.historySyncingColor,
         topAppBarColors = Light.topAppBarColors,
         transparentTopAppBarColors = Light.transparentTopAppBarColors,
-        primaryButtonColors = LightPrimaryButtonColors(),
-        secondaryButtonColors = LightSecondaryButtonColors(),
+        primaryButtonColors = Light.primaryButtonColors,
+        secondaryButtonColors = Light.secondaryButtonColors,
     )
 
 @Suppress("CompositionLocalAllowlist")
