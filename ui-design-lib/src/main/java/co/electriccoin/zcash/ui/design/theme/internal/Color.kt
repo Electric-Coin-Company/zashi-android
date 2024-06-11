@@ -27,7 +27,7 @@ internal object Dark {
     val welcomeAnimationColor = Color(0xFF181716)
     val complementaryColor = Color(0xFFF4B728)
     val dividerColor = Color(0xFFDDDDDD)
-    val darkDividerColor = Color(0xFF000000)
+    val darkDividerColor = Color(0xFFFFFFFF)
     val layoutStroke = Color(0xFFFFFFFF)
     val layoutStrokeSecondary = Color(0xFFDDDDDD)
     val panelBackgroundColor = Color(0xFFF6F6F6)
@@ -109,7 +109,8 @@ internal object Light {
 
 internal val DarkColorPalette =
     darkColorScheme(
-        primary = Dark.primaryColor,
+        // Our colors intentionally use a different naming than the ones from MaterialTheme
+        primary = Dark.textPrimary,
         secondary = Dark.secondaryColor,
         onPrimary = Dark.textPrimary,
         onSecondary = Dark.textSecondary,
@@ -121,7 +122,8 @@ internal val DarkColorPalette =
 
 internal val LightColorPalette =
     lightColorScheme(
-        primary = Light.primaryColor,
+        // Our colors intentionally use a different naming than the ones from MaterialTheme
+        primary = Light.textPrimary,
         secondary = Light.secondaryColor,
         onPrimary = Light.textPrimary,
         onSecondary = Light.textSecondary,

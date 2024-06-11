@@ -24,7 +24,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -45,7 +44,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -740,9 +738,10 @@ private fun RestoreBirthdayMainContent(
             },
             colors =
                 TextFieldDefaults.colors(
+                    cursorColor = ZcashTheme.colors.textPrimary,
                     focusedContainerColor = Color.Transparent,
                     unfocusedContainerColor = Color.Transparent,
-                    disabledContainerColor = ZcashTheme.colors.textDisabled,
+                    disabledContainerColor = Color.Transparent,
                     errorContainerColor = Color.Transparent,
                     focusedIndicatorColor = ZcashTheme.colors.darkDividerColor,
                     unfocusedIndicatorColor = Color.Transparent,
