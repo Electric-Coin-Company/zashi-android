@@ -55,7 +55,7 @@ fun Chip(
     Text(
         text = text,
         style = MaterialTheme.typography.bodyLarge,
-        color = MaterialTheme.colorScheme.onSecondary,
+        color = ZcashTheme.colors.textPrimary,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
         modifier = modifier.then(Modifier.testTag(CommonTag.CHIP))
@@ -71,7 +71,7 @@ fun ChipIndexed(
     Text(
         text = "${index.value + 1}. $text",
         style = MaterialTheme.typography.bodyLarge,
-        color = MaterialTheme.colorScheme.onSecondary,
+        color = ZcashTheme.colors.textPrimary,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
         modifier = modifier.then(Modifier.testTag(CommonTag.CHIP))
@@ -95,13 +95,13 @@ fun ChipOnSurface(
                             color = ZcashTheme.colors.layoutStroke
                         )
                 ),
-        color = MaterialTheme.colorScheme.secondary,
+        color = ZcashTheme.colors.secondaryColor,
         shadowElevation = ZcashTheme.dimens.chipShadowElevation,
     ) {
         Text(
             text = text,
             style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSecondary,
+            color = ZcashTheme.colors.textSecondary,
             modifier =
                 Modifier
                     .padding(

@@ -6,7 +6,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.waitForUpOrCancellation
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -20,7 +19,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -71,18 +69,6 @@ private fun ButtonComposablePreview() {
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                Row(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .background(color = Color.Gray),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    NavigationButton(onClick = { }, text = "Navigation")
-                }
-
-                Spacer(modifier = Modifier.height(24.dp))
-
                 @Suppress("MagicNumber")
                 Row {
                     PrimaryButton(onClick = { }, text = "Button 1", modifier = Modifier.weight(0.5f))
@@ -115,18 +101,6 @@ private fun ButtonComposableDarkPreview() {
                 Spacer(modifier = Modifier.height(24.dp))
 
                 PrimaryButton(onClick = { }, text = "Primary loading", showProgressBar = true)
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                Row(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .background(color = Color.Gray),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    NavigationButton(onClick = { }, text = "Navigation")
-                }
 
                 Spacer(modifier = Modifier.height(24.dp))
 
@@ -352,36 +326,6 @@ fun SecondaryButton(
                 } else {
                     buttonColors.disabledTextColor
                 }
-        )
-    }
-}
-
-@Composable
-fun NavigationButton(
-    onClick: () -> Unit,
-    text: String,
-    modifier: Modifier = Modifier,
-    outerPaddingValues: PaddingValues =
-        PaddingValues(
-            horizontal = ZcashTheme.dimens.spacingNone,
-            vertical = ZcashTheme.dimens.spacingSmall
-        ),
-) {
-    Button(
-        shape = RectangleShape,
-        onClick = onClick,
-        modifier =
-            modifier.then(
-                Modifier
-                    .padding(outerPaddingValues)
-            ),
-        colors = buttonColors(containerColor = ZcashTheme.colors.primaryColor)
-    ) {
-        Text(
-            style = MaterialTheme.typography.labelLarge,
-            textAlign = TextAlign.Center,
-            text = text,
-            color = ZcashTheme.colors.textPrimary
         )
     }
 }

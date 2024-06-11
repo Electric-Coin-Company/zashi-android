@@ -52,9 +52,9 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.VersionInfoFixture
 import kotlinx.collections.immutable.toPersistentList
 
-@Preview(name = "NewWalletRecovery")
+@Preview
 @Composable
-private fun ComposablePreview() {
+private fun NewWalletRecoveryPreview() {
     ZcashTheme(forceDarkMode = false) {
         NewWalletRecovery(
             PersistableWalletFixture.new(),
@@ -66,8 +66,19 @@ private fun ComposablePreview() {
     }
 }
 
-// TODO [#998]: Check and enhance screen dark mode
-// TODO [#998]: https://github.com/Electric-Coin-Company/zashi-android/issues/998
+@Preview
+@Composable
+private fun NewWalletRecoveryDarkPreview() {
+    ZcashTheme(forceDarkMode = true) {
+        NewWalletRecovery(
+            PersistableWalletFixture.new(),
+            onSeedCopy = {},
+            onBirthdayCopy = {},
+            onComplete = {},
+            versionInfo = VersionInfoFixture.new(),
+        )
+    }
+}
 
 /**
  * @param onComplete Callback when the user has confirmed viewing the seed phrase.
