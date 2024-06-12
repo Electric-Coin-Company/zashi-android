@@ -22,7 +22,7 @@ internal object Dark {
     val textFieldWarning = Color(0xFFF40202)
     val textFieldHint = Color(0xFFB7B7B7)
     val textDescription = Color(0xFF777777)
-    val textDescriptionDark = Color(0xFF4D4D4D)
+    val textDescriptionDark = Color(0xFFFFFFFF)
 
     val welcomeAnimationColor = Color(0xFF181716)
     val complementaryColor = Color(0xFFF4B728)
