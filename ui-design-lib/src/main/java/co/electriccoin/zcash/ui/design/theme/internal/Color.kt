@@ -37,9 +37,6 @@ internal object Dark {
     val primaryButtonColors = DarkPrimaryButtonColors()
     val secondaryButtonColors = DarkSecondaryButtonColors()
 
-    val radioButtonColor = Color(0xFF070707)
-    val radioButtonTextColor = Color(0xFF4E4E4E)
-
     val circularProgressBarSmall = Color(0xFF8B8A8A)
     val circularProgressBarSmallDark = textPrimary
     val circularProgressBarScreen = Color(0xFFFFFFFF)
@@ -85,9 +82,6 @@ internal object Light {
 
     val primaryButtonColors = LightPrimaryButtonColors()
     val secondaryButtonColors = LightSecondaryButtonColors()
-
-    val radioButtonColor = Color(0xFF070707)
-    val radioButtonTextColor = Color(0xFF4E4E4E)
 
     val circularProgressBarSmall = Color(0xFF8B8A8A)
     val circularProgressBarScreen = Color(0xFF000000)
@@ -163,8 +157,6 @@ internal val DarkExtendedColorPalette =
         panelBackgroundColor = Dark.panelBackgroundColor,
         cameraDisabledBackgroundColor = Dark.cameraDisabledBackgroundColor,
         cameraDisabledFrameColor = Dark.cameraDisabledFrameColor,
-        radioButtonColor = Dark.radioButtonColor,
-        radioButtonTextColor = Dark.radioButtonTextColor,
         historyBackgroundColor = Dark.historyBackgroundColor,
         historyRedColor = Dark.historyRedColor,
         historySyncingColor = Dark.historySyncingColor,
@@ -204,8 +196,6 @@ internal val LightExtendedColorPalette =
         panelBackgroundColor = Light.panelBackgroundColor,
         cameraDisabledBackgroundColor = Light.cameraDisabledBackgroundColor,
         cameraDisabledFrameColor = Light.cameraDisabledFrameColor,
-        radioButtonColor = Light.radioButtonColor,
-        radioButtonTextColor = Light.radioButtonTextColor,
         historyBackgroundColor = Light.historyBackgroundColor,
         historyRedColor = Light.historyRedColor,
         historySyncingColor = Light.historySyncingColor,
@@ -247,8 +237,6 @@ internal val LocalExtendedColors =
             panelBackgroundColor = Color.Unspecified,
             cameraDisabledBackgroundColor = Color.Unspecified,
             cameraDisabledFrameColor = Color.Unspecified,
-            radioButtonColor = Color.Unspecified,
-            radioButtonTextColor = Color.Unspecified,
             historyBackgroundColor = Color.Unspecified,
             historyRedColor = Color.Unspecified,
             historySyncingColor = Color.Unspecified,

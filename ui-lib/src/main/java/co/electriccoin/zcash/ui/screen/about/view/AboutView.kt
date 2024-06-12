@@ -186,9 +186,10 @@ fun AboutMainContent(
                 painter = painterResource(id = co.electriccoin.zcash.ui.design.R.drawable.zashi_logo_without_text),
                 colorFilter = ColorFilter.tint(color = ZcashTheme.colors.secondaryColor),
                 contentDescription = null,
-                modifier = Modifier
-                    .height(ZcashTheme.dimens.inScreenZcashLogoHeight)
-                    .width(ZcashTheme.dimens.inScreenZcashLogoWidth)
+                modifier =
+                    Modifier
+                        .height(ZcashTheme.dimens.inScreenZcashLogoHeight)
+                        .width(ZcashTheme.dimens.inScreenZcashLogoWidth)
             )
             Spacer(modifier = Modifier.width(ZcashTheme.dimens.spacingDefault))
             Image(

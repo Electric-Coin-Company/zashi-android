@@ -37,8 +37,6 @@ data class ExtendedColors(
     val panelBackgroundColor: Color,
     val cameraDisabledBackgroundColor: Color,
     val cameraDisabledFrameColor: Color,
-    val radioButtonColor: Color,
-    val radioButtonTextColor: Color,
     val historyBackgroundColor: Color,
     val historyRedColor: Color,
     val historySyncingColor: Color,
