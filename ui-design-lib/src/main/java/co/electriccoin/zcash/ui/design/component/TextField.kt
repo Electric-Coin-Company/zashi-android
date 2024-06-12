@@ -50,9 +50,10 @@ fun FormTextField(
     keyboardOptions: KeyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
     colors: TextFieldColors =
         TextFieldDefaults.colors(
-            focusedContainerColor = ZcashTheme.colors.backgroundColor,
-            unfocusedContainerColor = ZcashTheme.colors.backgroundColor,
-            disabledContainerColor = ZcashTheme.colors.textDisabled,
+            cursorColor = ZcashTheme.colors.textPrimary,
+            focusedContainerColor = Color.Transparent,
+            unfocusedContainerColor = Color.Transparent,
+            disabledContainerColor = Color.Transparent,
             errorContainerColor = Color.Transparent,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
