@@ -69,6 +69,7 @@ fun WelcomeAnimationAutostart(
 private const val LOGO_RELATIVE_LOCATION = 0.2f
 
 @Composable
+@Suppress("LongMethod")
 fun WelcomeAnimation(
     animationState: Boolean,
     modifier: Modifier = Modifier,

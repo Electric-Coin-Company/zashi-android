@@ -129,7 +129,7 @@ fun BodySmall(
     overflow: TextOverflow = TextOverflow.Clip,
     textAlign: TextAlign = TextAlign.Start,
     textFontWeight: FontWeight = FontWeight.Normal,
-    color: Color = MaterialTheme.colorScheme.onBackground,
+    color: Color = ZcashTheme.colors.textPrimary,
 ) {
     Text(
         text = text,
@@ -152,7 +152,7 @@ fun Body(
     overflow: TextOverflow = TextOverflow.Clip,
     textAlign: TextAlign = TextAlign.Start,
     textFontWeight: FontWeight = FontWeight.Normal,
-    color: Color = MaterialTheme.colorScheme.onBackground,
+    color: Color = ZcashTheme.colors.textPrimary,
 ) {
     Text(
         text = text,
@@ -174,7 +174,7 @@ fun TitleLarge(
     maxLines: Int = Int.MAX_VALUE,
     overflow: TextOverflow = TextOverflow.Clip,
     textAlign: TextAlign = TextAlign.Start,
-    color: Color = MaterialTheme.colorScheme.onBackground,
+    color: Color = ZcashTheme.colors.textPrimary,
 ) {
     Text(
         text = text,
@@ -196,7 +196,7 @@ fun Small(
     maxLines: Int = Int.MAX_VALUE,
     overflow: TextOverflow = TextOverflow.Clip,
     textAlign: TextAlign = TextAlign.Start,
-    color: Color = MaterialTheme.colorScheme.onBackground,
+    color: Color = ZcashTheme.colors.textPrimary,
 ) {
     Text(
         text = text,
@@ -218,7 +218,7 @@ fun Tiny(
     maxLines: Int = Int.MAX_VALUE,
     overflow: TextOverflow = TextOverflow.Clip,
     textAlign: TextAlign = TextAlign.Start,
-    color: Color = MaterialTheme.colorScheme.onBackground,
+    color: Color = ZcashTheme.colors.textPrimary,
 ) {
     Text(
         text = text,
@@ -242,7 +242,7 @@ fun TextWithIcon(
     overflow: TextOverflow = TextOverflow.Clip,
     textAlign: TextAlign = TextAlign.Start,
     style: TextStyle = LocalTextStyle.current,
-    color: Color = MaterialTheme.colorScheme.onBackground,
+    color: Color = ZcashTheme.colors.textPrimary,
 ) {
     Row(
         modifier =
@@ -402,7 +402,7 @@ fun BodyWithFiatCurrencySymbol(
     Text(
         text = amount,
         style = MaterialTheme.typography.bodyLarge,
-        color = MaterialTheme.colorScheme.onBackground,
+        color = ZcashTheme.colors.textPrimary,
         modifier = modifier
     )
 }

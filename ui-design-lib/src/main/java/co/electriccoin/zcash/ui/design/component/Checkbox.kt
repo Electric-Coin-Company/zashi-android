@@ -73,43 +73,46 @@ fun LabeledCheckBox(
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier.then(
-            Modifier
-                .wrapContentSize()
-                .clip(RoundedCornerShape(ZcashTheme.dimens.regularRippleEffectCorner))
-                .clickable {
-                    setCheckedState(!checkedState)
-                    onCheckedChange(!checkedState)
-                }
-                // Setting just the end padding, the start one is taken from the checkbox
-                .padding(end = ZcashTheme.dimens.spacingMid)
-        )
+        modifier =
+            modifier.then(
+                Modifier
+                    .wrapContentSize()
+                    .clip(RoundedCornerShape(ZcashTheme.dimens.regularRippleEffectCorner))
+                    .clickable {
+                        setCheckedState(!checkedState)
+                        onCheckedChange(!checkedState)
+                    }
+                    // Setting just the end padding, the start one is taken from the checkbox
+                    .padding(end = ZcashTheme.dimens.spacingMid)
+            )
     ) {
         Checkbox(
             checked = checkedState,
-            colors = CheckboxDefaults.colors(
-                checkedColor = ZcashTheme.colors.secondaryColor,
-                uncheckedColor = ZcashTheme.colors.secondaryColor,
-                checkmarkColor = ZcashTheme.colors.primaryColor,
-            ),
+            colors =
+                CheckboxDefaults.colors(
+                    checkedColor = ZcashTheme.colors.secondaryColor,
+                    uncheckedColor = ZcashTheme.colors.secondaryColor,
+                    checkmarkColor = ZcashTheme.colors.primaryColor,
+                ),
             onCheckedChange = {
                 setCheckedState(it)
                 onCheckedChange(it)
             },
             enabled = true,
-            modifier = Modifier
-                .padding(
-                    top = ZcashTheme.dimens.spacingTiny,
-                    bottom = ZcashTheme.dimens.spacingTiny,
-                    end = ZcashTheme.dimens.spacingTiny
-                )
-                .then(
-                    if (checkBoxTestTag != null) {
-                        Modifier.testTag(checkBoxTestTag)
-                    } else {
-                        Modifier
-                    }
-                )
+            modifier =
+                Modifier
+                    .padding(
+                        top = ZcashTheme.dimens.spacingTiny,
+                        bottom = ZcashTheme.dimens.spacingTiny,
+                        end = ZcashTheme.dimens.spacingTiny
+                    )
+                    .then(
+                        if (checkBoxTestTag != null) {
+                            Modifier.testTag(checkBoxTestTag)
+                        } else {
+                            Modifier
+                        }
+                    )
         )
         Text(
             text = AnnotatedString(text),

@@ -37,7 +37,6 @@ private fun ChipGridPreview() {
     }
 }
 
-
 @Preview
 @Composable
 private fun ChipGridDarkPreview() {

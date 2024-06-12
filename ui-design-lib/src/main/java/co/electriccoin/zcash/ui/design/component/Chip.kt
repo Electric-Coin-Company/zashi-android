@@ -43,7 +43,10 @@ private fun ComposableChipIndexedPreview() {
 private fun ComposableLongChipPreview() {
     ZcashTheme(forceDarkMode = false) {
         Box(modifier = Modifier.padding(all = 12.dp)) {
-            ChipIndexed(Index(1), "a_very_long_seed_word_that_does_not_fit_into_the_chip_and_thus_needs_to_be_truncated")
+            ChipIndexed(
+                Index(1),
+                "a_very_long_seed_word_that_does_not_fit_into_the_chip_and_thus_needs_to_be_truncated"
+            )
         }
     }
 }
@@ -108,17 +111,17 @@ fun ChipOnSurface(
     Surface(
         shape = RoundedCornerShape(size = ZcashTheme.dimens.regularRippleEffectCorner),
         modifier =
-        modifier
-            .padding(horizontal = ZcashTheme.dimens.spacingTiny)
-            .border(
-                border =
-                BorderStroke(
-                    width = ZcashTheme.dimens.chipStroke,
-                    color = ZcashTheme.colors.layoutStrokeSecondary
-                ),
-                shape = RoundedCornerShape(size = ZcashTheme.dimens.regularRippleEffectCorner),
-            )
-            .clickable { onClick() },
+            modifier
+                .padding(horizontal = ZcashTheme.dimens.spacingTiny)
+                .border(
+                    border =
+                        BorderStroke(
+                            width = ZcashTheme.dimens.chipStroke,
+                            color = ZcashTheme.colors.layoutStrokeSecondary
+                        ),
+                    shape = RoundedCornerShape(size = ZcashTheme.dimens.regularRippleEffectCorner),
+                )
+                .clickable { onClick() },
         color = ZcashTheme.colors.primaryColor,
         shadowElevation = ZcashTheme.dimens.chipShadowElevation,
     ) {

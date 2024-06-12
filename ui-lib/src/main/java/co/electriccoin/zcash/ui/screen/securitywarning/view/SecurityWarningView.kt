@@ -45,6 +45,7 @@ private fun SecurityWarningPreview() {
         )
     }
 }
+
 @Preview
 @Composable
 private fun SecurityWarningDarkPreview() {
@@ -73,15 +74,15 @@ fun SecurityWarning(
             onAcknowledged = onAcknowledged,
             onConfirm = onConfirm,
             modifier =
-            Modifier
-                .fillMaxSize()
-                .padding(
-                    top = paddingValues.calculateTopPadding(),
-                    bottom = paddingValues.calculateBottomPadding(),
-                    start = ZcashTheme.dimens.screenHorizontalSpacingBig,
-                    end = ZcashTheme.dimens.screenHorizontalSpacingBig
-                )
-                .verticalScroll(rememberScrollState())
+                Modifier
+                    .fillMaxSize()
+                    .padding(
+                        top = paddingValues.calculateTopPadding(),
+                        bottom = paddingValues.calculateBottomPadding(),
+                        start = ZcashTheme.dimens.screenHorizontalSpacingBig,
+                        end = ZcashTheme.dimens.screenHorizontalSpacingBig
+                    )
+                    .verticalScroll(rememberScrollState())
         )
     }
 }
@@ -134,9 +135,9 @@ private fun SecurityWarningContent(
 
         Spacer(
             modifier =
-            Modifier
-                .fillMaxHeight()
-                .weight(MINIMAL_WEIGHT)
+                Modifier
+                    .fillMaxHeight()
+                    .weight(MINIMAL_WEIGHT)
         )
 
         PrimaryButton(

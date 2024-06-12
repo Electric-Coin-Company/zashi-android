@@ -122,18 +122,18 @@ private fun RestoreSeedDarkPreview() {
             ZcashNetwork.Mainnet,
             restoreState = RestoreState(RestoreStage.Seed),
             completeWordList =
-            persistentHashSetOf(
-                "abandon",
-                "ability",
-                "able",
-                "about",
-                "above",
-                "absent",
-                "absorb",
-                "abstract",
-                "rib",
-                "ribbon"
-            ),
+                persistentHashSetOf(
+                    "abandon",
+                    "ability",
+                    "able",
+                    "about",
+                    "above",
+                    "absent",
+                    "absorb",
+                    "abstract",
+                    "rib",
+                    "ribbon"
+                ),
             userWordList = WordList(listOf("abandon", "absorb")),
             restoreHeight = null,
             setRestoreHeight = {},
@@ -243,11 +243,11 @@ fun RestoreWallet(
                         parseResult = parseResult,
                         setText = { text = it },
                         modifier =
-                        Modifier
-                            .imePadding()
-                            .navigationBarsPadding()
-                            .animateContentSize()
-                            .fillMaxWidth()
+                            Modifier
+                                .imePadding()
+                                .navigationBarsPadding()
+                                .animateContentSize()
+                                .fillMaxWidth()
                     )
                 }
                 RestoreStage.Birthday -> {
@@ -288,9 +288,9 @@ fun RestoreWallet(
                         setRestoreHeight = setRestoreHeight,
                         onDone = onFinished,
                         modifier =
-                        commonModifier
-                            .imePadding()
-                            .navigationBarsPadding()
+                            commonModifier
+                                .imePadding()
+                                .navigationBarsPadding()
                     )
                 }
             }
