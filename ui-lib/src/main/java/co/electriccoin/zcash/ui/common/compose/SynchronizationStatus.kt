@@ -113,7 +113,10 @@ fun StatusDialog(
             Column(
                 Modifier.verticalScroll(rememberScrollState())
             ) {
-                Text(text = statusAction.details)
+                Text(
+                    text = statusAction.details,
+                    color = ZcashTheme.colors.textPrimary,
+                )
             }
         },
         confirmButtonText = stringResource(id = R.string.balances_status_dialog_button),

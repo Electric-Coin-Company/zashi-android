@@ -806,13 +806,17 @@ private fun SendFailure(
             Column(
                 Modifier.verticalScroll(rememberScrollState())
             ) {
-                Text(text = stringResource(id = R.string.send_dialog_error_text))
+                Text(
+                    text = stringResource(id = R.string.send_dialog_error_text),
+                    color = ZcashTheme.colors.textPrimary,
+                )
 
                 Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
                 Text(
                     text = reason,
-                    fontStyle = FontStyle.Italic
+                    fontStyle = FontStyle.Italic,
+                    color = ZcashTheme.colors.textPrimary,
                 )
             }
         },

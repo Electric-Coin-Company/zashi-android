@@ -107,6 +107,8 @@ fun AppAlertDialog(
         text = text,
         icon = icon?.let { { Icon(imageVector = icon, null) } },
         properties = properties,
+        titleContentColor = ZcashTheme.colors.textPrimary,
+        textContentColor = ZcashTheme.colors.textPrimary,
         modifier = modifier,
     )
 }
