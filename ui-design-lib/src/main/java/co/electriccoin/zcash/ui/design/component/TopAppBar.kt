@@ -58,6 +58,16 @@ private fun TopAppBarTextComposablePreview() {
 
 @Preview
 @Composable
+private fun TopAppBarTextDarkComposablePreview() {
+    ZcashTheme(forceDarkMode = true) {
+        BlankSurface {
+            SmallTopAppBar(titleText = "Screen A", backText = "Back")
+        }
+    }
+}
+
+@Preview
+@Composable
 private fun TopAppBarTextRestoringComposablePreview() {
     ZcashTheme(forceDarkMode = false) {
         BlankSurface {
@@ -98,6 +108,20 @@ private fun TopAppBarLogoComposablePreview() {
 @Composable
 private fun TopAppBarLogoRestoringComposablePreview() {
     ZcashTheme(forceDarkMode = false) {
+        BlankSurface {
+            SmallTopAppBar(
+                showTitleLogo = true,
+                backText = "Back",
+                subTitle = "[RESTORING YOUR WALLET…]"
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun TopAppBarLogoRestoringDarkComposablePreview() {
+    ZcashTheme(forceDarkMode = true) {
         BlankSurface {
             SmallTopAppBar(
                 showTitleLogo = true,
