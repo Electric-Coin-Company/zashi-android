@@ -23,6 +23,7 @@ internal object Dark {
     val textFieldHint = Color(0xFFB7B7B7)
     val textDescription = Color(0xFF777777)
     val textDescriptionDark = Color(0xFFFFFFFF)
+    val reference = Color(0xFFFFFFFF)
 
     val welcomeAnimationColor = Color(0xFF181716)
     val complementaryColor = Color(0xFFF4B728)
@@ -44,7 +45,7 @@ internal object Dark {
     val linearProgressBarBackground = complementaryColor
 
     val overlay = Color(0x22000000)
-    val reference = Color(0xFFFFFFFF)
+    val overlayProgressBar = Color(0xFFFFFFFF)
 
     val historyBackgroundColor = Color(0xFFF6F6F6)
     val historyRedColor = textFieldWarning
@@ -69,6 +70,7 @@ internal object Light {
     val textFieldHint = Color(0xFFB7B7B7)
     val textDescription = Color(0xFF777777)
     val textDescriptionDark = Color(0xFF4D4D4D)
+    val reference = Color(0xFF000000)
 
     val welcomeAnimationColor = Color(0xFF231F20)
     val complementaryColor = Color(0xFFF4B728)
@@ -90,8 +92,7 @@ internal object Light {
     val linearProgressBarBackground = complementaryColor
 
     val overlay = Color(0x22000000)
-
-    val reference = Color(0xFF000000)
+    val overlayProgressBar = Color(0xFFFFFFFF)
 
     val historyBackgroundColor = Color(0xFFF6F6F6)
     val historyRedColor = textFieldWarning
@@ -149,6 +150,7 @@ internal val DarkExtendedColorPalette =
         layoutStroke = Dark.layoutStroke,
         layoutStrokeSecondary = Dark.layoutStrokeSecondary,
         overlay = Dark.overlay,
+        overlayProgressBar = Dark.overlayProgressBar,
         reference = Dark.reference,
         welcomeAnimationColor = Dark.welcomeAnimationColor,
         complementaryColor = Dark.complementaryColor,
@@ -188,6 +190,7 @@ internal val LightExtendedColorPalette =
         layoutStroke = Light.layoutStroke,
         layoutStrokeSecondary = Light.layoutStrokeSecondary,
         overlay = Light.overlay,
+        overlayProgressBar = Light.overlayProgressBar,
         reference = Light.reference,
         welcomeAnimationColor = Light.welcomeAnimationColor,
         complementaryColor = Light.complementaryColor,
@@ -229,6 +232,7 @@ internal val LocalExtendedColors =
             layoutStroke = Color.Unspecified,
             layoutStrokeSecondary = Color.Unspecified,
             overlay = Color.Unspecified,
+            overlayProgressBar = Color.Unspecified,
             reference = Color.Unspecified,
             welcomeAnimationColor = Color.Unspecified,
             complementaryColor = Color.Unspecified,

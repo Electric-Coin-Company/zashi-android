@@ -27,6 +27,7 @@ data class ExtendedColors(
     val layoutStroke: Color,
     val layoutStrokeSecondary: Color,
     val overlay: Color,
+    val overlayProgressBar: Color,
     val reference: Color,
     val primaryButtonColors: ButtonColors,
     val secondaryButtonColors: ButtonColors,
