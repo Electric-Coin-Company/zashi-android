@@ -57,8 +57,8 @@ internal val PrimaryTypography =
         headlineLarge =
             TextStyle(
                 fontFamily = InterFontFamily,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 30.sp
+                fontWeight = FontWeight.Bold,
+                fontSize = 22.sp
             ),
         titleSmall =
             TextStyle(

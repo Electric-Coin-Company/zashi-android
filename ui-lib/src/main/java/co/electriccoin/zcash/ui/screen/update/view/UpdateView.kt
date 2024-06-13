@@ -227,7 +227,7 @@ private fun UpdateContent(
         Image(
             imageVector =
                 if (updateInfo.isForce) {
-                    ImageVector.vectorResource(R.drawable.ic_zashi_logo_update_required)
+                    ImageVector.vectorResource(R.drawable.ic_zashi_logo_sign_warn)
                 } else {
                     ImageVector.vectorResource(R.drawable.ic_zashi_logo_update_available)
                 },

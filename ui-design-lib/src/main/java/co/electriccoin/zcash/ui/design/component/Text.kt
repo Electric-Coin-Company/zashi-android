@@ -100,7 +100,7 @@ fun Header(
         color = color,
         textAlign = textAlign,
         modifier = modifier,
-        style = ZcashTheme.typography.secondary.headlineLarge,
+        style = ZcashTheme.typography.primary.headlineLarge,
     )
 }
 

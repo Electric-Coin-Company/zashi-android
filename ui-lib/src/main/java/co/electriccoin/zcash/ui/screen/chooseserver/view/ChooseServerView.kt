@@ -352,10 +352,12 @@ fun ServerList(
                     LabeledRadioButton(
                         endpoint = endpoint,
                         changeClick = { setSelectedOption(index) },
-                        name = stringResource(
-                            id = R.string.choose_server_full_server_name,
-                            endpoint.host, endpoint.port
-                        ),
+                        name =
+                            stringResource(
+                                id = R.string.choose_server_full_server_name,
+                                endpoint.host,
+                                endpoint.port
+                            ),
                         selected = isSelected,
                         modifier = Modifier.fillMaxWidth()
                     )

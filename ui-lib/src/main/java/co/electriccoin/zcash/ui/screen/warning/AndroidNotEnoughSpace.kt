@@ -2,27 +2,85 @@
 
 package co.electriccoin.zcash.ui.screen.warning
 
-import androidx.activity.ComponentActivity
+import android.content.Context
+import androidx.activity.compose.BackHandler
 import androidx.activity.viewModels
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.ui.MainActivity
+import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
+import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.warning.view.NotEnoughSpaceView
 import co.electriccoin.zcash.ui.screen.warning.viewmodel.StorageCheckViewModel
+import co.electriccoin.zcash.ui.util.SettingsUtil
+import kotlinx.coroutines.launch
 
 @Composable
-fun MainActivity.WrapNotEnoughSpace() {
-    WrapNotEnoughSpace(this)
+fun MainActivity.WrapNotEnoughSpace(
+    goPrevious: () -> Unit,
+    goSettings: () -> Unit
+) {
+    val walletViewModel by viewModels<WalletViewModel>()
+
+    val storageCheckViewModel by viewModels<StorageCheckViewModel>()
+
+    val walletState = walletViewModel.walletStateInformation.collectAsStateWithLifecycle().value
+
+    val isEnoughFreeSpace = storageCheckViewModel.isEnoughSpace.collectAsStateWithLifecycle().value
+    if (isEnoughFreeSpace == true) {
+        goPrevious()
+    }
+
+    val requiredStorageSpaceGigabytes = storageCheckViewModel.requiredStorageSpaceGigabytes
+    val spaceAvailableMegabytes = storageCheckViewModel.spaceAvailableMegabytes.collectAsStateWithLifecycle()
+
+    BackHandler {
+        finish()
+    }
+
+    WrapNotEnoughFreeSpace(
+        context = this,
+        goSettings = goSettings,
+        spaceAvailableMegabytes = spaceAvailableMegabytes.value ?: 0,
+        requiredStorageSpaceGigabytes = requiredStorageSpaceGigabytes,
+        walletState = walletState,
+    )
 }
 
 @Composable
-private fun WrapNotEnoughSpace(activity: ComponentActivity) {
-    val storageCheckViewModel by activity.viewModels<StorageCheckViewModel>()
-    val spaceRequiredToContinue by storageCheckViewModel.spaceRequiredToContinueMegabytes.collectAsStateWithLifecycle()
+private fun WrapNotEnoughFreeSpace(
+    context: Context,
+    goSettings: () -> Unit,
+    requiredStorageSpaceGigabytes: Int,
+    spaceAvailableMegabytes: Int,
+    walletState: TopAppBarSubTitleState,
+) {
+    val scope = rememberCoroutineScope()
+
+    val snackbarHostState = remember { SnackbarHostState() }
 
     NotEnoughSpaceView(
-        storageSpaceRequiredGigabytes = storageCheckViewModel.requiredStorageSpaceGigabytes,
-        spaceRequiredToContinueMegabytes = spaceRequiredToContinue ?: 0
+        onSettings = goSettings,
+        onSystemSettings = {
+            runCatching {
+                context.startActivity(SettingsUtil.newStorageSettingsIntent())
+            }.onFailure {
+                // This case should not really happen, as the Settings app should be available on every
+                // Android device, but we rather handle it.
+                scope.launch {
+                    snackbarHostState.showSnackbar(
+                        message = context.getString(R.string.not_enough_space_settings_open_failed)
+                    )
+                }
+            }
+        },
+        snackbarHostState = snackbarHostState,
+        storageSpaceRequiredGigabytes = requiredStorageSpaceGigabytes,
+        spaceAvailableMegabytes = spaceAvailableMegabytes,
+        topAppBarSubTitleState = walletState,
     )
 }
