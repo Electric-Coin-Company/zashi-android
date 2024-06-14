@@ -15,7 +15,7 @@ import cash.z.ecc.android.sdk.type.AddressType
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.SerializableAddress
-import co.electriccoin.zcash.ui.common.model.WalletRestoringState
+import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.screen.scan.util.SettingsUtil
@@ -31,14 +31,14 @@ internal fun MainActivity.WrapScanValidator(
 
     val synchronizer = walletViewModel.synchronizer.collectAsStateWithLifecycle().value
 
-    val walletRestoringState = walletViewModel.walletRestoringState.collectAsStateWithLifecycle().value
+    val walletState = walletViewModel.walletStateInformation.collectAsStateWithLifecycle().value
 
     WrapScan(
         context = this,
         onScanValid = onScanValid,
         goBack = goBack,
         synchronizer = synchronizer,
-        walletRestoringState = walletRestoringState
+        topAppBarSubTitleState = walletState,
     )
 }
 
@@ -48,7 +48,7 @@ fun WrapScan(
     goBack: () -> Unit,
     onScanValid: (address: SerializableAddress) -> Unit,
     synchronizer: Synchronizer?,
-    walletRestoringState: WalletRestoringState,
+    topAppBarSubTitleState: TopAppBarSubTitleState,
 ) {
     val scope = rememberCoroutineScope()
 
@@ -89,7 +89,7 @@ fun WrapScan(
                 }
             },
             onScanStateChanged = {},
-            walletRestoringState = walletRestoringState,
+            topAppBarSubTitleState = topAppBarSubTitleState,
         )
     }
 }

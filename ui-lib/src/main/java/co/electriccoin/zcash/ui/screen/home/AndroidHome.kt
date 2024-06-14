@@ -2,7 +2,6 @@
 
 package co.electriccoin.zcash.ui.screen.home
 
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
@@ -104,7 +103,7 @@ internal fun MainActivity.WrapHome(
 @Suppress("LongParameterList", "LongMethod")
 @Composable
 internal fun WrapHome(
-    activity: ComponentActivity,
+    activity: MainActivity,
     goBack: () -> Unit,
     goSettings: () -> Unit,
     goMultiTrxSubmissionFailure: () -> Unit,

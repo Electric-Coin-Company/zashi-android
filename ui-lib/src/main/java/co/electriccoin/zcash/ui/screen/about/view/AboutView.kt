@@ -39,8 +39,8 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.VersionInfo
-import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
@@ -57,8 +57,8 @@ private fun AboutPreview() {
             configInfo = ConfigInfoFixture.new(),
             onPrivacyPolicy = {},
             snackbarHostState = SnackbarHostState(),
+            topAppBarSubTitleState = TopAppBarSubTitleState.None,
             versionInfo = VersionInfoFixture.new(),
-            walletRestoringState = WalletRestoringState.NONE
         )
     }
 }
@@ -70,8 +70,8 @@ fun About(
     configInfo: ConfigInfo,
     onPrivacyPolicy: () -> Unit,
     snackbarHostState: SnackbarHostState,
+    topAppBarSubTitleState: TopAppBarSubTitleState,
     versionInfo: VersionInfo,
-    walletRestoringState: WalletRestoringState,
 ) {
     BlankBgScaffold(
         topBar = {
@@ -79,7 +79,7 @@ fun About(
                 onBack = onBack,
                 versionInfo = versionInfo,
                 configInfo = configInfo,
-                showRestoring = walletRestoringState == WalletRestoringState.RESTORING,
+                subTitleState = topAppBarSubTitleState,
             )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -108,14 +108,14 @@ private fun AboutTopAppBar(
     onBack: () -> Unit,
     versionInfo: VersionInfo,
     configInfo: ConfigInfo,
-    showRestoring: Boolean
+    subTitleState: TopAppBarSubTitleState
 ) {
     SmallTopAppBar(
-        restoringLabel =
-            if (showRestoring) {
-                stringResource(id = R.string.restoring_wallet_label)
-            } else {
-                null
+        subTitle =
+            when (subTitleState) {
+                TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
+                TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
+                TopAppBarSubTitleState.None -> null
             },
         titleText = stringResource(id = R.string.about_title).uppercase(),
         backText = stringResource(id = R.string.about_back).uppercase(),

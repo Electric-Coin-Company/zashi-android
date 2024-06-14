@@ -18,7 +18,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.model.WalletRestoringState
+import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
@@ -40,7 +40,7 @@ private fun PreviewAdvancedSettings() {
             onExportPrivateData = {},
             onChooseServer = {},
             onSeedRecovery = {},
-            walletRestoringState = WalletRestoringState.NONE
+            topAppBarSubTitleState = TopAppBarSubTitleState.None
         )
     }
 }
@@ -53,13 +53,13 @@ fun AdvancedSettings(
     onExportPrivateData: () -> Unit,
     onChooseServer: () -> Unit,
     onSeedRecovery: () -> Unit,
-    walletRestoringState: WalletRestoringState,
+    topAppBarSubTitleState: TopAppBarSubTitleState,
 ) {
     BlankBgScaffold(
         topBar = {
             AdvancedSettingsTopAppBar(
                 onBack = onBack,
-                showRestoring = walletRestoringState == WalletRestoringState.RESTORING,
+                subTitleState = topAppBarSubTitleState,
             )
         }
     ) { paddingValues ->
@@ -86,14 +86,14 @@ fun AdvancedSettings(
 @Composable
 private fun AdvancedSettingsTopAppBar(
     onBack: () -> Unit,
-    showRestoring: Boolean
+    subTitleState: TopAppBarSubTitleState
 ) {
     SmallTopAppBar(
-        restoringLabel =
-            if (showRestoring) {
-                stringResource(id = R.string.restoring_wallet_label)
-            } else {
-                null
+        subTitle =
+            when (subTitleState) {
+                TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
+                TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
+                TopAppBarSubTitleState.None -> null
             },
         modifier = Modifier.testTag(AdvancedSettingsTag.ADVANCED_SETTINGS_TOP_APP_BAR),
         showTitleLogo = true,

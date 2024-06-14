@@ -12,8 +12,8 @@ import co.electriccoin.zcash.ui.common.compose.LocalScreenTimeout
 import co.electriccoin.zcash.ui.common.compose.ScreenBrightness
 import co.electriccoin.zcash.ui.common.compose.ScreenBrightnessState
 import co.electriccoin.zcash.ui.common.compose.ScreenTimeout
+import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.VersionInfo
-import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.VersionInfoFixture
 import co.electriccoin.zcash.ui.test.getStringResource
@@ -70,8 +70,8 @@ class ReceiveViewTestSetup(
                             onAddrCopyToClipboard = {},
                             onQrImageShare = {},
                             screenBrightnessState = ScreenBrightnessState.NORMAL,
+                            topAppBarSubTitleState = TopAppBarSubTitleState.None,
                             versionInfo = versionInfo,
-                            walletRestoringState = WalletRestoringState.NONE
                         )
                     }
                 }

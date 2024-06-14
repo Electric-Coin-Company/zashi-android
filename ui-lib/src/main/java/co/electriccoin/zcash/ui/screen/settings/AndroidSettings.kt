@@ -6,8 +6,8 @@ import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.ui.MainActivity
+import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.VersionInfo
-import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
 import co.electriccoin.zcash.ui.configuration.RemoteConfig
@@ -27,7 +27,7 @@ internal fun MainActivity.WrapSettings(
 
     val settingsViewModel by viewModels<SettingsViewModel>()
 
-    val walletRestoringState = walletViewModel.walletRestoringState.collectAsStateWithLifecycle().value
+    val walletState = walletViewModel.walletStateInformation.collectAsStateWithLifecycle().value
 
     WrapSettings(
         activity = this,
@@ -36,8 +36,8 @@ internal fun MainActivity.WrapSettings(
         goBack = goBack,
         goFeedback = goFeedback,
         settingsViewModel = settingsViewModel,
+        topAppBarSubTitleState = walletState,
         walletViewModel = walletViewModel,
-        walletRestoringState = walletRestoringState
     )
 }
 
@@ -50,8 +50,8 @@ private fun WrapSettings(
     goBack: () -> Unit,
     goFeedback: () -> Unit,
     settingsViewModel: SettingsViewModel,
+    topAppBarSubTitleState: TopAppBarSubTitleState,
     walletViewModel: WalletViewModel,
-    walletRestoringState: WalletRestoringState,
 ) {
     val isBackgroundSyncEnabled = settingsViewModel.isBackgroundSync.collectAsStateWithLifecycle().value
     val isKeepScreenOnWhileSyncing = settingsViewModel.isKeepScreenOnWhileSyncing.collectAsStateWithLifecycle().value
@@ -97,7 +97,7 @@ private fun WrapSettings(
             onAnalyticsSettingsChanged = {
                 settingsViewModel.setAnalyticsEnabled(it)
             },
-            walletRestoringState = walletRestoringState
+            topAppBarSubTitleState = topAppBarSubTitleState,
         )
     }
 }

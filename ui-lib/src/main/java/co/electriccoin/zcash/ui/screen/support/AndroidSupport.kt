@@ -14,7 +14,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.model.WalletRestoringState
+import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.support.model.SupportInfo
 import co.electriccoin.zcash.ui.screen.support.model.SupportInfoType
@@ -31,13 +31,13 @@ internal fun MainActivity.WrapSupport(goBack: () -> Unit) {
 
     val supportInfo = supportViewModel.supportInfo.collectAsStateWithLifecycle().value
 
-    val walletRestoringState = walletViewModel.walletRestoringState.collectAsStateWithLifecycle().value
+    val walletState = walletViewModel.walletStateInformation.collectAsStateWithLifecycle().value
 
     WrapSupport(
         activity = this,
         goBack = goBack,
         supportInfo = supportInfo,
-        walletRestoringState = walletRestoringState
+        topAppBarSubTitleState = walletState
     )
 }
 
@@ -46,7 +46,7 @@ internal fun WrapSupport(
     activity: ComponentActivity,
     goBack: () -> Unit,
     supportInfo: SupportInfo?,
-    walletRestoringState: WalletRestoringState,
+    topAppBarSubTitleState: TopAppBarSubTitleState,
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -84,7 +84,7 @@ internal fun WrapSupport(
                 }
             }
         },
-        walletRestoringState = walletRestoringState
+        topAppBarSubTitleState = topAppBarSubTitleState,
     )
 }
 

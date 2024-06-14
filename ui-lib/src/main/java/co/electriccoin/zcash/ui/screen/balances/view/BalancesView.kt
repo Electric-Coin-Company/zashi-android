@@ -58,6 +58,7 @@ import co.electriccoin.zcash.ui.common.compose.BalanceState
 import co.electriccoin.zcash.ui.common.compose.BalanceWidget
 import co.electriccoin.zcash.ui.common.compose.StatusDialog
 import co.electriccoin.zcash.ui.common.compose.SynchronizationStatus
+import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.model.changePendingBalance
@@ -104,6 +105,7 @@ private fun ComposableBalancesPreview() {
             onStatusClick = {},
             shieldState = ShieldState.Available,
             snackbarHostState = SnackbarHostState(),
+            topAppBarSubTitleState = TopAppBarSubTitleState.None,
             walletSnapshot = WalletSnapshotFixture.new(),
             walletRestoringState = WalletRestoringState.NONE,
         )
@@ -127,6 +129,7 @@ private fun ComposableBalancesShieldFailurePreview() {
             onStatusClick = {},
             shieldState = ShieldState.Available,
             snackbarHostState = SnackbarHostState(),
+            topAppBarSubTitleState = TopAppBarSubTitleState.None,
             walletSnapshot = WalletSnapshotFixture.new(),
             walletRestoringState = WalletRestoringState.NONE,
         )
@@ -161,14 +164,15 @@ fun Balances(
     onStatusClick: (StatusAction) -> Unit,
     shieldState: ShieldState,
     snackbarHostState: SnackbarHostState,
+    topAppBarSubTitleState: TopAppBarSubTitleState,
     walletSnapshot: WalletSnapshot?,
     walletRestoringState: WalletRestoringState,
 ) {
     BlankBgScaffold(
         topBar = {
             BalancesTopAppBar(
-                showRestoring = walletRestoringState == WalletRestoringState.RESTORING,
-                onSettings = onSettings
+                onSettings = onSettings,
+                subTitleState = topAppBarSubTitleState,
             )
         },
         snackbarHost = {
@@ -250,14 +254,14 @@ fun ShieldingErrorDialog(
 @Composable
 private fun BalancesTopAppBar(
     onSettings: () -> Unit,
-    showRestoring: Boolean
+    subTitleState: TopAppBarSubTitleState
 ) {
     SmallTopAppBar(
-        restoringLabel =
-            if (showRestoring) {
-                stringResource(id = R.string.restoring_wallet_label)
-            } else {
-                null
+        subTitle =
+            when (subTitleState) {
+                TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
+                TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
+                TopAppBarSubTitleState.None -> null
             },
         titleText = stringResource(id = R.string.balances_title),
         showTitleLogo = false,

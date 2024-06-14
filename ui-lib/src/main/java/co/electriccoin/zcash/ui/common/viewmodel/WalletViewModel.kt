@@ -32,6 +32,7 @@ import co.electriccoin.zcash.ui.common.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.common.compose.BalanceState
 import co.electriccoin.zcash.ui.common.extension.throttle
 import co.electriccoin.zcash.ui.common.model.OnboardingState
+import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.model.hasChangePending
@@ -125,6 +126,32 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
         )
 
     /**
+     * A flow of the wallet current state information that should be displayed in screens top app bar.
+     */
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val walletStateInformation: StateFlow<TopAppBarSubTitleState> =
+        synchronizer
+            .filterNotNull()
+            .flatMapLatest { synchronizer ->
+                combine(
+                    synchronizer.status,
+                    walletRestoringState
+                ) { status: Synchronizer.Status?, walletRestoringState: WalletRestoringState ->
+                    if (Synchronizer.Status.DISCONNECTED == status) {
+                        TopAppBarSubTitleState.Disconnected
+                    } else if (WalletRestoringState.RESTORING == walletRestoringState) {
+                        TopAppBarSubTitleState.Restoring
+                    } else {
+                        TopAppBarSubTitleState.None
+                    }
+                }
+            }.stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+                TopAppBarSubTitleState.None
+            )
+
+    /**
      * A flow of the wallet onboarding state.
      */
     private val onboardingState =
@@ -201,7 +228,11 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
         synchronizer
             .filterNotNull()
             .map {
-                WalletAddresses.new(it)
+                runCatching {
+                    WalletAddresses.new(it)
+                }.onFailure {
+                    Twig.warn { "Wait until the SDK starts providing the addresses" }
+                }.getOrNull()
             }.stateIn(
                 viewModelScope,
                 SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
@@ -216,11 +247,11 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
                 combine(
                     synchronizer.transactions,
                     synchronizer.status,
-                    synchronizer.networkHeight.filterNotNull()
+                    synchronizer.networkHeight
                 ) {
                         transactions: List<TransactionOverview>,
                         status: Synchronizer.Status,
-                        networkHeight: BlockHeight ->
+                        networkHeight: BlockHeight? ->
                     val enhancedTransactions =
                         transactions
                             .sortedByDescending {

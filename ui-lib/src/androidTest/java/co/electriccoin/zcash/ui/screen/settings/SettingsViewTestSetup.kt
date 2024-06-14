@@ -1,7 +1,7 @@
 package co.electriccoin.zcash.ui.screen.settings
 
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
-import co.electriccoin.zcash.ui.common.model.WalletRestoringState
+import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.settings.model.TroubleshootingParameters
 import co.electriccoin.zcash.ui.screen.settings.view.Settings
@@ -89,7 +89,7 @@ class SettingsViewTestSetup(
                     onAnalyticsSettingsChanged = {
                         onAnalyticsChangedCount.incrementAndGet()
                     },
-                    walletRestoringState = WalletRestoringState.NONE
+                    topAppBarSubTitleState = TopAppBarSubTitleState.None,
                 )
             }
         }

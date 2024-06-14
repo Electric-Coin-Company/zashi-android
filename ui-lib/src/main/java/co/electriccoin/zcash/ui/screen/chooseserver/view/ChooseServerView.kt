@@ -38,7 +38,7 @@ import cash.z.ecc.sdk.extension.isValid
 import cash.z.ecc.sdk.fixture.PersistableWalletFixture
 import co.electriccoin.lightwallet.client.model.LightWalletEndpoint
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.model.WalletRestoringState
+import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.component.AppAlertDialog
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.FormTextField
@@ -65,7 +65,7 @@ private fun PreviewChooseServer() {
             setShowErrorDialog = {},
             isShowingSuccessDialog = false,
             setShowSuccessDialog = {},
-            walletRestoringState = WalletRestoringState.NONE,
+            topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )
     }
 }
@@ -82,7 +82,7 @@ fun ChooseServer(
     setShowErrorDialog: (Boolean) -> Unit,
     isShowingSuccessDialog: Boolean,
     setShowSuccessDialog: (Boolean) -> Unit,
-    walletRestoringState: WalletRestoringState,
+    topAppBarSubTitleState: TopAppBarSubTitleState,
 ) {
     val options =
         availableServers.toMutableList().apply {
@@ -124,7 +124,7 @@ fun ChooseServer(
         topBar = {
             ChooseServerTopAppBar(
                 onBack = onBack,
-                showRestoring = walletRestoringState == WalletRestoringState.RESTORING,
+                subTitleState = topAppBarSubTitleState,
             )
         },
         bottomBar = {
@@ -221,15 +221,15 @@ fun ChooseServerBottomBar(
 @Composable
 private fun ChooseServerTopAppBar(
     onBack: () -> Unit,
-    showRestoring: Boolean
+    subTitleState: TopAppBarSubTitleState
 ) {
     SmallTopAppBar(
         titleText = stringResource(id = R.string.choose_server_title),
-        restoringLabel =
-            if (showRestoring) {
-                stringResource(id = R.string.restoring_wallet_label)
-            } else {
-                null
+        subTitle =
+            when (subTitleState) {
+                TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
+                TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
+                TopAppBarSubTitleState.None -> null
             },
         modifier = Modifier.testTag(ChooseServerTag.CHOOSE_SERVER_TOP_APP_BAR),
         showTitleLogo = true,
