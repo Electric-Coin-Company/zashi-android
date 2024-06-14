@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalFoundationApi::class)
+
 package co.electriccoin.zcash.ui.design.component
 
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -8,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -19,23 +22,52 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalFoundationApi::class)
+@Preview
+@Composable
+private fun PagerTabsPreview() {
+    ZcashTheme(forceDarkMode = false) {
+        BlankSurface {
+            PagerTabs(
+                pagerState = rememberPagerState { 2 },
+                tabs = persistentListOf("First", "Second"),
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun PagerTabsDarkPreview() {
+    ZcashTheme(forceDarkMode = true) {
+        BlankSurface {
+            PagerTabs(
+                pagerState = rememberPagerState { 2 },
+                tabs = persistentListOf("First", "Second"),
+            )
+        }
+    }
+}
+
 @Composable
 fun PagerTabs(
-    modifier: Modifier,
     pagerState: PagerState,
-    tabs: List<String>,
+    tabs: ImmutableList<String>,
+    modifier: Modifier = Modifier,
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     onTabSelected: (index: Int) -> Unit = {},
 ) {
     TabRow(
-        modifier = modifier
-            .padding(horizontal = ZcashTheme.dimens.screenHorizontalSpacingBig)
-            .border(ZcashTheme.dimens.spacingTiny, ZcashTheme.colors.layoutStroke),
+        modifier =
+            modifier
+                .padding(horizontal = ZcashTheme.dimens.screenHorizontalSpacingBig)
+                .border(ZcashTheme.dimens.spacingTiny, ZcashTheme.colors.layoutStroke),
         selectedTabIndex = pagerState.currentPage,
         divider = {},
         indicator = {},
@@ -62,26 +94,29 @@ private fun PagerTab(
     onClick: () -> Unit,
 ) {
     Tab(
-        modifier = Modifier
-            .fillMaxWidth(),
+        modifier =
+            Modifier
+                .fillMaxWidth(),
         selected = selected,
         onClick = onClick,
         selectedContentColor = Color.Transparent,
         unselectedContentColor = ZcashTheme.colors.layoutStroke
     ) {
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    if (selected) Color.Transparent else ZcashTheme.colors.layoutStroke
-                )
-                .padding(vertical = ZcashTheme.dimens.spacingMid, horizontal = ZcashTheme.dimens.spacingXtiny),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(
+                        if (selected) Color.Transparent else ZcashTheme.colors.layoutStroke
+                    )
+                    .padding(vertical = ZcashTheme.dimens.spacingMid, horizontal = ZcashTheme.dimens.spacingXtiny),
             contentAlignment = Alignment.Center,
         ) {
             Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = ZcashTheme.dimens.spacingXtiny),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = ZcashTheme.dimens.spacingXtiny),
                 text = title,
                 color = if (selected) ZcashTheme.colors.textCommon else MaterialTheme.colorScheme.onPrimary,
                 style = ZcashTheme.extendedTypography.restoringTopAppBarStyle,
