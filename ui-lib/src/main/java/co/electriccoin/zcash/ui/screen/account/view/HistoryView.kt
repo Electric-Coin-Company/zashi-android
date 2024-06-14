@@ -269,6 +269,7 @@ private fun ComposableHistoryListItemExpandedPreview() {
 }
 
 @Preview("Multiple History List Items")
+@Composable
 private fun ComposableHistoryListItemsPreview() {
     ZcashTheme(forceDarkMode = false) {
         BlankSurface {
@@ -621,7 +622,6 @@ private fun HistoryItemExpandedPart(
                 HistoryItemMessagePart(
                     message = message,
                     state = transaction.overview.getExtendedState(),
-                    isSentTransaction = transaction.overview.isSentTransaction,
                     onAction = onAction
                 )
                 Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
@@ -815,7 +815,6 @@ private fun HistoryItemTransactionFeePart(
 private fun HistoryItemMessagePart(
     message: String,
     state: TransactionExtendedState,
-    isSentTransaction: Boolean,
     onAction: (TrxItemAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -830,16 +829,8 @@ private fun HistoryItemMessagePart(
     }
 
     Column(modifier = modifier.then(Modifier.fillMaxWidth())) {
-        Text(
-            text = stringResource(id = R.string.account_history_item_message),
-            style = ZcashTheme.extendedTypography.transactionItemStyles.contentMedium,
-            color = ZcashTheme.colors.textCommon
-        )
-
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
-
         val (messageBackground, arrowAlignment) =
-            if (isSentTransaction) {
+            if (state.isSendType()) {
                 Color.Transparent to BubbleArrowAlignment.BottomLeft
             } else {
                 ZcashTheme.colors.dividerColor to BubbleArrowAlignment.BottomRight
@@ -896,6 +887,8 @@ internal enum class TransactionExtendedState {
     RECEIVE_FAILED;
 
     fun isFailed(): Boolean = this == SEND_FAILED || this == RECEIVE_FAILED
+
+    fun isSendType(): Boolean = this == SENDING || this == SENT || this == SEND_FAILED
 }
 
 private fun TransactionOverview.getExtendedState(): TransactionExtendedState {
