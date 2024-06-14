@@ -32,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalContext
@@ -69,6 +70,8 @@ import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.BodySmall
+import co.electriccoin.zcash.ui.design.component.BubbleArrowAlignment
+import co.electriccoin.zcash.ui.design.component.BubbleMessage
 import co.electriccoin.zcash.ui.design.component.FormTextField
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.Small
@@ -98,6 +101,36 @@ private fun PreviewSendForm() {
             goBalances = {},
             hasCameraFeature = true,
             recipientAddressState = RecipientAddressState("invalid_address", AddressType.Invalid()),
+            onRecipientAddressChange = {},
+            setAmountState = {},
+            amountState = AmountState.Valid(ZatoshiFixture.ZATOSHI_LONG.toString(), ZatoshiFixture.new()),
+            setMemoState = {},
+            memoState = MemoState.new("Test message"),
+            topAppBarSubTitleState = TopAppBarSubTitleState.None,
+            walletSnapshot = WalletSnapshotFixture.new(),
+            balanceState = BalanceStateFixture.new()
+        )
+    }
+}
+
+@Composable
+@Preview
+private fun SendFormTransparentAddressPreview() {
+    ZcashTheme(forceDarkMode = false) {
+        Send(
+            sendStage = SendStage.Form,
+            onCreateZecSend = {},
+            focusManager = LocalFocusManager.current,
+            onBack = {},
+            onSettings = {},
+            onQrScannerOpen = {},
+            goBalances = {},
+            hasCameraFeature = true,
+            recipientAddressState =
+                RecipientAddressState(
+                    address = "tmCxJG72RWN66xwPtNgu4iKHpyysGrc7rEg",
+                    type = AddressType.Transparent
+                ),
             onRecipientAddressChange = {},
             setAmountState = {},
             amountState = AmountState.Valid(ZatoshiFixture.ZATOSHI_LONG.toString(), ZatoshiFixture.new()),
@@ -618,8 +651,6 @@ fun SendFormAmountTextField(
     }
 }
 
-// TODO [#1259]: Send.Form screen Memo field stroke bubble style
-// TODO [#1259]: https://github.com/Electric-Coin-Company/zashi-android/issues/1259
 @OptIn(ExperimentalFoundationApi::class)
 @Suppress("LongMethod", "LongParameterList")
 @Composable
@@ -670,45 +701,56 @@ fun SendFormMemoTextField(
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
 
-        FormTextField(
-            enabled = isMemoFieldAvailable,
-            value =
+        BubbleMessage(
+            arrowAlignment = BubbleArrowAlignment.BottomLeft,
+            backgroundColor =
                 if (isMemoFieldAvailable) {
-                    memoState.text
+                    Color.Transparent
                 } else {
-                    ""
+                    ZcashTheme.colors.textDisabled
+                }
+        ) {
+            FormTextField(
+                enabled = isMemoFieldAvailable,
+                value =
+                    if (isMemoFieldAvailable) {
+                        memoState.text
+                    } else {
+                        ""
+                    },
+                onValueChange = {
+                    setMemoState(MemoState.new(it))
                 },
-            onValueChange = {
-                setMemoState(MemoState.new(it))
-            },
-            bringIntoViewRequester = bringIntoViewRequester,
-            keyboardOptions =
-                KeyboardOptions(
-                    keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Done
-                ),
-            keyboardActions =
-                KeyboardActions(
-                    onDone = {
-                        focusManager.clearFocus(true)
-                        // Scroll down to make sure the Send button is visible on small screens
-                        if (scrollTo > 0) {
-                            scope.launch {
-                                scrollState.animateScrollTo(scrollTo)
+                bringIntoViewRequester = bringIntoViewRequester,
+                keyboardOptions =
+                    KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Done
+                    ),
+                keyboardActions =
+                    KeyboardActions(
+                        onDone = {
+                            focusManager.clearFocus(true)
+                            // Scroll down to make sure the Send button is visible on small screens
+                            if (scrollTo > 0) {
+                                scope.launch {
+                                    scrollState.animateScrollTo(scrollTo)
+                                }
                             }
                         }
-                    }
-                ),
-            placeholder = {
-                Text(
-                    text = stringResource(id = R.string.send_memo_hint),
-                    style = ZcashTheme.extendedTypography.textFieldHint,
-                    color = ZcashTheme.colors.textFieldHint
-                )
-            },
-            modifier = Modifier.fillMaxWidth(),
-            minHeight = ZcashTheme.dimens.textFieldMemoPanelDefaultHeight,
-        )
+                    ),
+                placeholder = {
+                    Text(
+                        text = stringResource(id = R.string.send_memo_hint),
+                        style = ZcashTheme.extendedTypography.textFieldHint,
+                        color = ZcashTheme.colors.textFieldHint
+                    )
+                },
+                modifier = Modifier.fillMaxWidth(),
+                minHeight = ZcashTheme.dimens.textFieldMemoPanelDefaultHeight,
+                withBorder = false
+            )
+        }
 
         if (isMemoFieldAvailable) {
             Body(

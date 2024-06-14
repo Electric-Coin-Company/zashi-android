@@ -5,9 +5,7 @@ package co.electriccoin.zcash.ui.screen.account.view
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -39,6 +37,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import cash.z.ecc.android.sdk.fixture.TransactionOverviewFixture
 import cash.z.ecc.android.sdk.model.FirstClassByteArray
 import cash.z.ecc.android.sdk.model.TransactionOverview
 import cash.z.ecc.android.sdk.model.TransactionRecipient
@@ -51,6 +50,8 @@ import co.electriccoin.zcash.ui.common.compose.SynchronizationStatus
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.design.component.BlankSurface
+import co.electriccoin.zcash.ui.design.component.BubbleArrowAlignment
+import co.electriccoin.zcash.ui.design.component.BubbleMessage
 import co.electriccoin.zcash.ui.design.component.CircularMidProgressIndicator
 import co.electriccoin.zcash.ui.design.component.StyledBalance
 import co.electriccoin.zcash.ui.design.component.TextWithIcon
@@ -241,7 +242,34 @@ private fun ComposableHistoryListItemPreview() {
 }
 
 @Composable
+@Preview("History List Item Expanded")
+private fun ComposableHistoryListItemExpandedPreview() {
+    ZcashTheme(forceDarkMode = false) {
+        BlankSurface {
+            Column {
+                HistoryItem(
+                    onAction = {},
+                    transaction =
+                        TransactionUiFixture.new(
+                            overview = TransactionOverviewFixture.new().copy(isSentTransaction = true),
+                            expandableState = TrxItemState.EXPANDED
+                        )
+                )
+                HistoryItem(
+                    onAction = {},
+                    transaction =
+                        TransactionUiFixture.new(
+                            overview = TransactionOverviewFixture.new().copy(isSentTransaction = false),
+                            expandableState = TrxItemState.EXPANDED
+                        )
+                )
+            }
+        }
+    }
+}
+
 @Preview("Multiple History List Items")
+@Composable
 private fun ComposableHistoryListItemsPreview() {
     ZcashTheme(forceDarkMode = false) {
         BlankSurface {
@@ -596,7 +624,6 @@ private fun HistoryItemExpandedPart(
                     state = transaction.overview.getExtendedState(),
                     onAction = onAction
                 )
-
                 Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
             }
         } else if (transaction.recipientAddressType == null ||
@@ -802,11 +829,17 @@ private fun HistoryItemMessagePart(
     }
 
     Column(modifier = modifier.then(Modifier.fillMaxWidth())) {
-        Box(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .border(width = 1.dp, color = ZcashTheme.colors.textFieldFrame)
+        val (messageBackground, arrowAlignment) =
+            if (state.isSendType()) {
+                Color.Transparent to BubbleArrowAlignment.BottomLeft
+            } else {
+                ZcashTheme.colors.dividerColor to BubbleArrowAlignment.BottomRight
+            }
+
+        BubbleMessage(
+            modifier = Modifier.fillMaxWidth(),
+            backgroundColor = messageBackground,
+            arrowAlignment = arrowAlignment
         ) {
             Text(
                 text = message,
@@ -854,6 +887,8 @@ internal enum class TransactionExtendedState {
     RECEIVE_FAILED;
 
     fun isFailed(): Boolean = this == SEND_FAILED || this == RECEIVE_FAILED
+
+    fun isSendType(): Boolean = this == SENDING || this == SENT || this == SEND_FAILED
 }
 
 private fun TransactionOverview.getExtendedState(): TransactionExtendedState {
