@@ -32,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalContext
@@ -100,6 +101,36 @@ private fun PreviewSendForm() {
             goBalances = {},
             hasCameraFeature = true,
             recipientAddressState = RecipientAddressState("invalid_address", AddressType.Invalid()),
+            onRecipientAddressChange = {},
+            setAmountState = {},
+            amountState = AmountState.Valid(ZatoshiFixture.ZATOSHI_LONG.toString(), ZatoshiFixture.new()),
+            setMemoState = {},
+            memoState = MemoState.new("Test message"),
+            topAppBarSubTitleState = TopAppBarSubTitleState.None,
+            walletSnapshot = WalletSnapshotFixture.new(),
+            balanceState = BalanceStateFixture.new()
+        )
+    }
+}
+
+@Composable
+@Preview
+private fun SendFormTransparentAddressPreview() {
+    ZcashTheme(forceDarkMode = false) {
+        Send(
+            sendStage = SendStage.Form,
+            onCreateZecSend = {},
+            focusManager = LocalFocusManager.current,
+            onBack = {},
+            onSettings = {},
+            onQrScannerOpen = {},
+            goBalances = {},
+            hasCameraFeature = true,
+            recipientAddressState =
+                RecipientAddressState(
+                    address = "tmCxJG72RWN66xwPtNgu4iKHpyysGrc7rEg",
+                    type = AddressType.Transparent
+                ),
             onRecipientAddressChange = {},
             setAmountState = {},
             amountState = AmountState.Valid(ZatoshiFixture.ZATOSHI_LONG.toString(), ZatoshiFixture.new()),
@@ -670,7 +701,15 @@ fun SendFormMemoTextField(
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
 
-        BubbleMessage(arrowAlignment = BubbleArrowAlignment.BottomLeft) {
+        BubbleMessage(
+            arrowAlignment = BubbleArrowAlignment.BottomLeft,
+            backgroundColor =
+                if (isMemoFieldAvailable) {
+                    Color.Transparent
+                } else {
+                    ZcashTheme.colors.textDisabled
+                }
+        ) {
             FormTextField(
                 enabled = isMemoFieldAvailable,
                 value =
