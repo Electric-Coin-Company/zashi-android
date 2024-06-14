@@ -31,6 +31,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
@@ -65,7 +66,7 @@ import co.electriccoin.zcash.ui.screen.balances.BalancesTag
 import co.electriccoin.zcash.ui.screen.balances.model.StatusAction
 import co.electriccoin.zcash.ui.screen.send.view.DEFAULT_LESS_THAN_FEE
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.toPersistentList
+import kotlinx.collections.immutable.persistentListOf
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -234,6 +235,23 @@ private fun ComposableHistoryListItemPreview() {
             HistoryItem(
                 onAction = {},
                 transaction = TransactionUiFixture.new()
+            )
+        }
+    }
+}
+
+@Composable
+@Preview("Multiple History List Items")
+private fun ComposableHistoryListItemsPreview() {
+    ZcashTheme(forceDarkMode = false) {
+        BlankSurface {
+            HistoryItem(
+                onAction = {},
+                transaction =
+                    TransactionUiFixture.new(
+                        messages = persistentListOf("Message 1", "Message 2", "Message 3"),
+                        expandableState = TrxItemState.EXPANDED
+                    )
             )
         }
     }
@@ -468,7 +486,10 @@ private fun HistoryItemCollapsedAddressPart(
                     color = ZcashTheme.colors.textDescription,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.fillMaxWidth(ADDRESS_IN_TITLE_WIDTH_RATIO).then(clickModifier)
+                    modifier =
+                        Modifier
+                            .fillMaxWidth(ADDRESS_IN_TITLE_WIDTH_RATIO)
+                            .then(clickModifier)
                 )
             }
         }
@@ -544,6 +565,7 @@ private fun HistoryItemDatePart(
 }
 
 @Composable
+@Suppress("LongMethod")
 private fun HistoryItemExpandedPart(
     onAction: (TrxItemAction) -> Unit,
     transaction: TransactionUi,
@@ -551,18 +573,32 @@ private fun HistoryItemExpandedPart(
 ) {
     Column(modifier = modifier) {
         if (transaction.messages.containsValidMemo()) {
+            Text(
+                text =
+                    pluralStringResource(
+                        id = R.plurals.account_history_item_message,
+                        count = transaction.messages!!.size
+                    ),
+                style = ZcashTheme.extendedTypography.transactionItemStyles.contentMedium,
+                color = ZcashTheme.colors.textCommon
+            )
+
+            Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
+
             // Filter out identical messages on a multi-messages transaction that could be created, e.g., using
             // YWallet, which tends to balance orchard and sapling pools, including by splitting a payment equally
             // across both pools.
-            val uniqueMessages = transaction.messages!!.deduplicateMemos()
+            val uniqueMessages = transaction.messages.deduplicateMemos()
 
-            HistoryItemMessagePart(
-                messages = uniqueMessages.toPersistentList(),
-                state = transaction.overview.getExtendedState(),
-                onAction = onAction
-            )
+            uniqueMessages.forEach { message ->
+                HistoryItemMessagePart(
+                    message = message,
+                    state = transaction.overview.getExtendedState(),
+                    onAction = onAction
+                )
 
-            Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
+                Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
+            }
         } else if (transaction.recipientAddressType == null ||
             transaction.recipientAddressType == AddressType.Shielded
         ) {
@@ -611,7 +647,7 @@ private fun HistoryItemExpandedPart(
 }
 
 private fun List<String>?.containsValidMemo(): Boolean {
-    return !isNullOrEmpty() && find { it.isNotEmpty() } != null
+    return !isNullOrEmpty() && any { it.isNotEmpty() }
 }
 
 private fun List<String>.deduplicateMemos(): List<String> {
@@ -750,7 +786,7 @@ private fun HistoryItemTransactionFeePart(
 
 @Composable
 private fun HistoryItemMessagePart(
-    messages: ImmutableList<String>,
+    message: String,
     state: TransactionExtendedState,
     onAction: (TrxItemAction) -> Unit,
     modifier: Modifier = Modifier,
@@ -766,25 +802,14 @@ private fun HistoryItemMessagePart(
     }
 
     Column(modifier = modifier.then(Modifier.fillMaxWidth())) {
-        Text(
-            text = stringResource(id = R.string.account_history_item_message),
-            style = ZcashTheme.extendedTypography.transactionItemStyles.contentMedium,
-            color = ZcashTheme.colors.textCommon
-        )
-
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
-
         Box(
             modifier =
                 Modifier
                     .fillMaxWidth()
                     .border(width = 1.dp, color = ZcashTheme.colors.textFieldFrame)
         ) {
-            // TODO [#1315]: Proper more messages in transaction displaying
-            // TODO [#1315]: Note we display the first one only for now
-            // TODO [#1315]: https://github.com/Electric-Coin-Company/zashi-android/issues/1315
             Text(
-                text = messages[0],
+                text = message,
                 style = textStyle,
                 color = textColor,
                 modifier = Modifier.padding(all = ZcashTheme.dimens.spacingMid)
@@ -801,7 +826,7 @@ private fun HistoryItemMessagePart(
             modifier =
                 Modifier
                     .clip(RoundedCornerShape(ZcashTheme.dimens.regularRippleEffectCorner))
-                    .clickable { onAction(TrxItemAction.MessageClick(messages[0])) }
+                    .clickable { onAction(TrxItemAction.MessageClick(message)) }
                     .padding(all = ZcashTheme.dimens.spacingTiny)
         )
     }

@@ -41,6 +41,7 @@ directly impact users rather than highlighting other key architectural updates.*
 ### Changed
 - The app dialog window has now a bit more rounded corners
 - A few more minor UI improvements
+- Display all messages within transaction history record when it is expanded
 
 ## [1.0 (650)] - 2024-05-07
 
