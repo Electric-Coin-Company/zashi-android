@@ -19,7 +19,7 @@ internal object Dark {
     val textSecondary = primaryColor
     val textDisabled = Color(0xFFB7B7B7)
     val textFieldFrame = Color(0xFFFFFFFF)
-    val textFieldWarning = Color(0xFFF40202)
+    val textFieldWarning = Color(0xFFFE5858)
     val textFieldHint = Color(0xFFB7B7B7)
     val textDescription = Color(0xFF777777)
     val textDescriptionDark = Color(0xFFFFFFFF)
@@ -27,21 +27,26 @@ internal object Dark {
 
     val welcomeAnimationColor = Color(0xFF181716)
     val complementaryColor = Color(0xFFF4B728)
-    val dividerColor = Color(0xFFDDDDDD)
-    val darkDividerColor = Color(0xFFFFFFFF)
+
+    val primaryDividerColor = Color(0xFF4D4D4D)
+    val secondaryDividerColor = Color(0xFFFFFFFF)
+    val tertiaryDividerColor = Color(0xFF4D4D4D)
+
+    val panelBackgroundColor = Color(0xFF262324)
+    val panelBackgroundColorActive = Color(0xFF000000)
+
     val layoutStroke = Color(0xFFFFFFFF)
     val layoutStrokeSecondary = Color(0xFFDDDDDD)
-    val panelBackgroundColor = Color(0xFFF6F6F6)
     val cameraDisabledBackgroundColor = Color(0xFF5E5C5C)
     val cameraDisabledFrameColor = Color(0xFFFFFFFF)
 
     val primaryButtonColors = DarkPrimaryButtonColors()
     val secondaryButtonColors = DarkSecondaryButtonColors()
 
-    val circularProgressBarSmall = Color(0xFF8B8A8A)
-    val circularProgressBarSmallDark = textPrimary
+    val circularProgressBarSmall = Color(0xFFFFFFFF)
+    val circularProgressBarSmallDark = Color(0xFFFFFFFF)
     val circularProgressBarScreen = Color(0xFFFFFFFF)
-    val linearProgressBarTrack = Color(0xFFD9D9D9)
+    val linearProgressBarTrack = Color(0xFFDDDDDD)
     val linearProgressBarBackground = complementaryColor
 
     val overlay = Color(0x22000000)
@@ -74,11 +79,16 @@ internal object Light {
 
     val welcomeAnimationColor = Color(0xFF231F20)
     val complementaryColor = Color(0xFFF4B728)
-    val dividerColor = Color(0xFFDDDDDD)
-    val darkDividerColor = Color(0xFF000000)
+
+    val primaryDividerColor = Color(0xFFDDDDDD)
+    val secondaryDividerColor = Color(0xFF000000)
+    val tertiaryDividerColor = Color(0xFF000000)
+
+    val panelBackgroundColor = Color(0xFFEBEBEB)
+    val panelBackgroundColorActive = Color(0xFFFFFFFF)
+
     val layoutStroke = Color(0xFF000000)
     val layoutStrokeSecondary = Color(0xFFDDDDDD)
-    val panelBackgroundColor = Color(0xFFEBEBEB)
     val cameraDisabledBackgroundColor = Color(0xFF5E5C5C)
     val cameraDisabledFrameColor = Color(0xFFFFFFFF)
 
@@ -86,9 +96,9 @@ internal object Light {
     val secondaryButtonColors = LightSecondaryButtonColors()
 
     val circularProgressBarSmall = Color(0xFF8B8A8A)
-    val circularProgressBarScreen = Color(0xFF000000)
     val circularProgressBarSmallDark = textPrimary
-    val linearProgressBarTrack = Color(0xFFD9D9D9)
+    val circularProgressBarScreen = Color(0xFF000000)
+    val linearProgressBarTrack = Color(0xFFDDDDDD)
     val linearProgressBarBackground = complementaryColor
 
     val overlay = Color(0x22000000)
@@ -154,9 +164,11 @@ internal val DarkExtendedColorPalette =
         reference = Dark.reference,
         welcomeAnimationColor = Dark.welcomeAnimationColor,
         complementaryColor = Dark.complementaryColor,
-        dividerColor = Dark.dividerColor,
-        darkDividerColor = Dark.darkDividerColor,
+        primaryDividerColor = Dark.primaryDividerColor,
+        secondaryDividerColor = Dark.secondaryDividerColor,
+        tertiaryDividerColor = Dark.tertiaryDividerColor,
         panelBackgroundColor = Dark.panelBackgroundColor,
+        panelBackgroundColorActive = Dark.panelBackgroundColorActive,
         cameraDisabledBackgroundColor = Dark.cameraDisabledBackgroundColor,
         cameraDisabledFrameColor = Dark.cameraDisabledFrameColor,
         historyBackgroundColor = Dark.historyBackgroundColor,
@@ -194,9 +206,11 @@ internal val LightExtendedColorPalette =
         reference = Light.reference,
         welcomeAnimationColor = Light.welcomeAnimationColor,
         complementaryColor = Light.complementaryColor,
-        dividerColor = Light.dividerColor,
-        darkDividerColor = Light.darkDividerColor,
+        primaryDividerColor = Light.primaryDividerColor,
+        secondaryDividerColor = Light.secondaryDividerColor,
+        tertiaryDividerColor = Light.tertiaryDividerColor,
         panelBackgroundColor = Light.panelBackgroundColor,
+        panelBackgroundColorActive = Light.panelBackgroundColorActive,
         cameraDisabledBackgroundColor = Light.cameraDisabledBackgroundColor,
         cameraDisabledFrameColor = Light.cameraDisabledFrameColor,
         historyBackgroundColor = Light.historyBackgroundColor,
@@ -236,9 +250,11 @@ internal val LocalExtendedColors =
             reference = Color.Unspecified,
             welcomeAnimationColor = Color.Unspecified,
             complementaryColor = Color.Unspecified,
-            dividerColor = Color.Unspecified,
-            darkDividerColor = Color.Unspecified,
+            primaryDividerColor = Color.Unspecified,
+            secondaryDividerColor = Color.Unspecified,
+            tertiaryDividerColor = Color.Unspecified,
             panelBackgroundColor = Color.Unspecified,
+            panelBackgroundColorActive = Color.Unspecified,
             cameraDisabledBackgroundColor = Color.Unspecified,
             cameraDisabledFrameColor = Color.Unspecified,
             historyBackgroundColor = Color.Unspecified,

@@ -194,7 +194,7 @@ private fun UpdateBottomAppBar(
     ) {
         HorizontalDivider(
             thickness = DividerDefaults.Thickness,
-            color = ZcashTheme.colors.dividerColor
+            color = ZcashTheme.colors.primaryDividerColor
         )
 
         Column(

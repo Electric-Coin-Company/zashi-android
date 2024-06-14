@@ -326,7 +326,7 @@ private fun SendForm(
             onReferenceClick = goBalances
         )
 
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingUpLarge))
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
 
         // TODO [#1256]: Consider Send.Form TextFields scrolling
         // TODO [#1256]: https://github.com/Electric-Coin-Company/zashi-android/issues/1256

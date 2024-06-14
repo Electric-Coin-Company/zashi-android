@@ -220,7 +220,7 @@ private fun HistoryList(
             )
 
             HorizontalDivider(
-                color = ZcashTheme.colors.dividerColor,
+                color = ZcashTheme.colors.primaryDividerColor,
                 thickness = DividerDefaults.Thickness,
                 modifier = Modifier.padding(horizontal = ZcashTheme.dimens.spacingDefault)
             )

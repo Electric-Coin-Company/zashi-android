@@ -36,7 +36,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -88,7 +87,7 @@ import co.electriccoin.zcash.ui.screen.balances.model.ShieldState
 import co.electriccoin.zcash.ui.screen.balances.model.StatusAction
 import co.electriccoin.zcash.ui.screen.balances.model.WalletDisplayValues
 
-@Preview("Balances")
+@Preview
 @Composable
 private fun ComposableBalancesPreview() {
     ZcashTheme(forceDarkMode = false) {
@@ -112,10 +111,10 @@ private fun ComposableBalancesPreview() {
     }
 }
 
-@Preview("BalancesShieldFailure")
+@Preview
 @Composable
-private fun ComposableBalancesShieldFailurePreview() {
-    ZcashTheme(forceDarkMode = false) {
+private fun ComposableBalancesShieldDarkPreview() {
+    ZcashTheme(forceDarkMode = true) {
         Balances(
             balanceState = BalanceStateFixture.new(),
             isFiatConversionEnabled = false,
@@ -312,10 +311,10 @@ private fun BalancesMainContent(
             onReferenceClick = {}
         )
 
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingUpLarge))
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
 
         HorizontalDivider(
-            color = ZcashTheme.colors.darkDividerColor,
+            color = ZcashTheme.colors.tertiaryDividerColor,
             thickness = ZcashTheme.dimens.divider
         )
 
@@ -494,7 +493,7 @@ fun TransparentBalanceHelpPanel(onHideHelpPanel: () -> Unit) {
         modifier =
             Modifier
                 .padding(all = ZcashTheme.dimens.spacingDefault)
-                .background(color = Color.White)
+                .background(color = ZcashTheme.colors.panelBackgroundColorActive)
                 .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

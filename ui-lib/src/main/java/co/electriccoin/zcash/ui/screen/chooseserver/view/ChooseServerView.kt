@@ -194,7 +194,7 @@ fun ChooseServerBottomBar(
     ) {
         HorizontalDivider(
             thickness = DividerDefaults.Thickness,
-            color = ZcashTheme.colors.dividerColor
+            color = ZcashTheme.colors.primaryDividerColor
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))

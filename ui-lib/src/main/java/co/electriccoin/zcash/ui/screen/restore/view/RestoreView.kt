@@ -84,7 +84,7 @@ import kotlinx.collections.immutable.ImmutableSet
 import kotlinx.collections.immutable.persistentHashSetOf
 import kotlinx.coroutines.launch
 
-@Preview("Restore Seed")
+@Preview
 @Composable
 private fun RestoreSeedPreview() {
     ZcashTheme(forceDarkMode = false) {
@@ -144,10 +144,40 @@ private fun RestoreSeedDarkPreview() {
     }
 }
 
-@Preview("Restore Seed Birthday")
+@Preview
 @Composable
-private fun PreviewRestoreBirthday() {
+private fun RestoreBirthdayPreview() {
     ZcashTheme(forceDarkMode = false) {
+        RestoreWallet(
+            ZcashNetwork.Mainnet,
+            restoreState = RestoreState(RestoreStage.Birthday),
+            completeWordList =
+                persistentHashSetOf(
+                    "abandon",
+                    "ability",
+                    "able",
+                    "about",
+                    "above",
+                    "absent",
+                    "absorb",
+                    "abstract",
+                    "rib",
+                    "ribbon"
+                ),
+            userWordList = WordList(listOf("abandon", "absorb")),
+            restoreHeight = null,
+            setRestoreHeight = {},
+            onBack = {},
+            paste = { "" },
+            onFinished = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun RestoreBirthdayDarkPreview() {
+    ZcashTheme(forceDarkMode = true) {
         RestoreWallet(
             ZcashNetwork.Mainnet,
             restoreState = RestoreState(RestoreStage.Birthday),
@@ -743,7 +773,7 @@ private fun RestoreBirthdayMainContent(
                     unfocusedContainerColor = Color.Transparent,
                     disabledContainerColor = Color.Transparent,
                     errorContainerColor = Color.Transparent,
-                    focusedIndicatorColor = ZcashTheme.colors.darkDividerColor,
+                    focusedIndicatorColor = ZcashTheme.colors.secondaryDividerColor,
                     unfocusedIndicatorColor = Color.Transparent,
                     disabledIndicatorColor = Color.Transparent
                 ),

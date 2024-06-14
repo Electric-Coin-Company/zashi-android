@@ -58,7 +58,31 @@ import co.electriccoin.zcash.ui.screen.sendconfirmation.SendConfirmationTag
 import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SendConfirmationStage
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.runBlocking
+
+@Composable
+@Preview("SendConfirmation")
+private fun SendConfirmationPreview() {
+    ZcashTheme(forceDarkMode = false) {
+        SendConfirmation(
+            snackbarHostState = SnackbarHostState(),
+            zecSend =
+                ZecSend(
+                    destination = runBlocking { WalletAddressFixture.sapling() },
+                    amount = ZatoshiFixture.new(),
+                    memo = MemoFixture.new(),
+                    proposal = null,
+                ),
+            onConfirmation = {},
+            onBack = {},
+            stage = SendConfirmationStage.Confirmation,
+            topAppBarSubTitleState = TopAppBarSubTitleState.None,
+            onContactSupport = {},
+            submissionResults = emptyList<TransactionSubmitResult>().toImmutableList()
+        )
+    }
+}
 
 @Composable
 @Preview("SendConfirmation")
