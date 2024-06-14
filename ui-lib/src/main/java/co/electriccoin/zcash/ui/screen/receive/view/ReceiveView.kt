@@ -96,7 +96,11 @@ fun Receive(
                 onQrImageShare = onQrImageShare,
                 screenBrightnessState = screenBrightnessState,
                 versionInfo = versionInfo,
-                modifier = Modifier.padding(paddingValues),
+                modifier =
+                    Modifier.padding(
+                        top = paddingValues.calculateTopPadding()
+                        // We intentionally do not set the rest paddings, those are set by the underlying composable
+                    ),
             )
         }
     }
@@ -173,6 +177,8 @@ private fun ReceiveContents(
     Column(
         modifier = modifier,
     ) {
+        Spacer(Modifier.height(ZcashTheme.dimens.spacingDefault))
+
         PagerTabs(
             modifier = Modifier.fillMaxWidth(),
             pagerState = pagerState,
@@ -218,7 +224,10 @@ private fun AddressPage(
         modifier =
             modifier
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = ZcashTheme.dimens.screenHorizontalSpacingRegular),
+                .padding(
+                    horizontal = ZcashTheme.dimens.screenHorizontalSpacingRegular,
+                    vertical = ZcashTheme.dimens.spacingDefault,
+                ),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         QrCode(walletAddress, onAddressCopyToClipboard, onQrImageShare)
