@@ -833,7 +833,7 @@ private fun HistoryItemMessagePart(
             if (state.isSendType()) {
                 Color.Transparent to BubbleArrowAlignment.BottomLeft
             } else {
-                ZcashTheme.colors.dividerColor to BubbleArrowAlignment.BottomRight
+                ZcashTheme.colors.primaryDividerColor to BubbleArrowAlignment.BottomRight
             }
 
         BubbleMessage(

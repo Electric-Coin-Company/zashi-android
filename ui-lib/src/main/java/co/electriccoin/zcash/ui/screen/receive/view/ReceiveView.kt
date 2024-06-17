@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -28,6 +29,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalDensity
@@ -60,6 +63,40 @@ import co.electriccoin.zcash.ui.screen.receive.util.JvmQrCodeGenerator
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.runBlocking
 import kotlin.math.roundToInt
+
+@Preview
+@Composable
+private fun ReceivePreview() =
+    ZcashTheme(forceDarkMode = false) {
+        Receive(
+            screenBrightnessState = ScreenBrightnessState.NORMAL,
+            walletAddress = runBlocking { WalletAddressesFixture.new() },
+            snackbarHostState = SnackbarHostState(),
+            onSettings = {},
+            onAdjustBrightness = {},
+            onAddrCopyToClipboard = {},
+            onQrImageShare = {},
+            versionInfo = VersionInfoFixture.new(),
+            topAppBarSubTitleState = TopAppBarSubTitleState.None,
+        )
+    }
+
+@Preview
+@Composable
+private fun ReceiveDarkPreview() =
+    ZcashTheme(forceDarkMode = true) {
+        Receive(
+            screenBrightnessState = ScreenBrightnessState.NORMAL,
+            walletAddress = runBlocking { WalletAddressesFixture.new() },
+            snackbarHostState = SnackbarHostState(),
+            onSettings = {},
+            onAdjustBrightness = {},
+            onAddrCopyToClipboard = {},
+            onQrImageShare = {},
+            versionInfo = VersionInfoFixture.new(),
+            topAppBarSubTitleState = TopAppBarSubTitleState.None,
+        )
+    }
 
 @Suppress("LongParameterList")
 @Composable
@@ -139,7 +176,8 @@ private fun ReceiveTopAppBar(
                 ) {
                     Image(
                         imageVector = ImageVector.vectorResource(id = R.drawable.ic_adjust_brightness),
-                        contentDescription = stringResource(R.string.receive_brightness_content_description)
+                        colorFilter = ColorFilter.tint(color = ZcashTheme.colors.secondaryColor),
+                        contentDescription = stringResource(R.string.receive_brightness_content_description),
                     )
                 }
             }
@@ -180,7 +218,10 @@ private fun ReceiveContents(
         Spacer(Modifier.height(ZcashTheme.dimens.spacingDefault))
 
         PagerTabs(
-            modifier = Modifier.fillMaxWidth(),
+            modifier =
+                Modifier
+                    .padding(horizontal = ZcashTheme.dimens.screenHorizontalSpacingRegular)
+                    .fillMaxWidth(),
             pagerState = pagerState,
             tabs =
                 state.map {
@@ -265,10 +306,10 @@ private fun ColumnScope.QrCode(
                     is WalletAddress.Transparent -> R.string.receive_transparent_content_description
                 }
             ),
-        modifier = Modifier.align(Alignment.CenterHorizontally),
+        modifier =
+            Modifier
+                .align(Alignment.CenterHorizontally),
     )
-
-    Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingTiny))
 
     Text(
         text = walletAddress.address,
@@ -278,12 +319,14 @@ private fun ColumnScope.QrCode(
         modifier =
             Modifier
                 .align(Alignment.CenterHorizontally)
+                .clip(RoundedCornerShape(ZcashTheme.dimens.regularRippleEffectCorner))
                 .clickable { onAddressCopyToClipboard(walletAddress.address) }
-                .padding(horizontal = ZcashTheme.dimens.spacingLarge)
+                .padding(
+                    horizontal = ZcashTheme.dimens.spacingLarge,
+                    vertical = ZcashTheme.dimens.spacingSmall
+                )
                 .fillMaxWidth(),
     )
-
-    Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
 
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -345,22 +388,5 @@ private fun QrCode(
                 .then(modifier)
     )
 }
-
-@Preview
-@Composable
-private fun ComposablePreview() =
-    ZcashTheme(forceDarkMode = false) {
-        Receive(
-            screenBrightnessState = ScreenBrightnessState.NORMAL,
-            walletAddress = runBlocking { WalletAddressesFixture.new() },
-            snackbarHostState = SnackbarHostState(),
-            onSettings = {},
-            onAdjustBrightness = {},
-            onAddrCopyToClipboard = {},
-            onQrImageShare = {},
-            versionInfo = VersionInfoFixture.new(),
-            topAppBarSubTitleState = TopAppBarSubTitleState.None,
-        )
-    }
 
 private val DEFAULT_QR_CODE_SIZE = 320.dp

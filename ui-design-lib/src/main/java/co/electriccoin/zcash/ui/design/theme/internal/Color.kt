@@ -21,7 +21,7 @@ internal object Dark {
     val textFieldFrame = Color(0xFFFFFFFF)
     val textFieldWarning = Color(0xFFFE5858)
     val textFieldHint = Color(0xFFB7B7B7)
-    val textDescription = Color(0xFF777777)
+    val textDescription = Color(0xFFC1C1C1)
     val textDescriptionDark = Color(0xFFFFFFFF)
     val reference = Color(0xFFFFFFFF)
 

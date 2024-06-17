@@ -32,7 +32,7 @@ private const val COMPONENT_MIN_WIDTH = ARROW_WIDTH * 3
 @Composable
 private fun BubbleWithTextPreview() {
     ZcashTheme {
-        BubbleMessage(backgroundColor = ZcashTheme.colors.dividerColor) {
+        BubbleMessage(backgroundColor = ZcashTheme.colors.primaryDividerColor) {
             Text(
                 text = "TextTextTextText",
                 fontSize = 16.sp,
