@@ -535,7 +535,8 @@ fun SendFormAddressTextField(
                             content = {
                                 Icon(
                                     painter = painterResource(id = R.drawable.qr_code_icon),
-                                    contentDescription = stringResource(R.string.send_scan_content_description)
+                                    contentDescription = stringResource(R.string.send_scan_content_description),
+                                    tint = ZcashTheme.colors.secondaryColor,
                                 )
                             }
                         )

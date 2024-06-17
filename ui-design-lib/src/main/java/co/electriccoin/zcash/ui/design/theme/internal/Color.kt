@@ -17,7 +17,7 @@ internal object Dark {
 
     val textPrimary = secondaryColor
     val textSecondary = primaryColor
-    val textDisabled = Color(0xFFB7B7B7)
+    val textDisabled = Color(0xFF4D4D4D)
     val textFieldFrame = Color(0xFFFFFFFF)
     val textFieldWarning = Color(0xFFFE5858)
     val textFieldHint = Color(0xFFB7B7B7)
