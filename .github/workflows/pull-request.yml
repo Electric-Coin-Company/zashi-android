@@ -37,7 +37,7 @@ jobs:
       # https://github.com/gradle/wrapper-validation-action/issues/40
       - name: Gradle Wrapper Validation
         timeout-minutes: 1
-        uses: gradle/wrapper-validation-action@26ffd686eccbbcbf168186b5363c8ee8edbe39f6
+        uses: gradle/wrapper-validation-action@9ba54b687bf0f59b62abbf91e0d60de082e8ebc4
 
   check_firebase_secrets:
     runs-on: ubuntu-latest
