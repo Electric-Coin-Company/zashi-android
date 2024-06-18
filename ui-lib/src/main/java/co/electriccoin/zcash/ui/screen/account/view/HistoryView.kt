@@ -3,6 +3,7 @@
 package co.electriccoin.zcash.ui.screen.account.view
 
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -27,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
@@ -359,7 +361,9 @@ private fun HistoryItem(
     ) {
         Image(
             imageVector = typeIcon,
-            contentDescription = typeText
+            colorFilter = ColorFilter.tint(color = ZcashTheme.colors.secondaryColor),
+            contentDescription = typeText,
+            modifier = Modifier.padding(top = ZcashTheme.dimens.spacingTiny)
         )
 
         Spacer(modifier = Modifier.width(ZcashTheme.dimens.spacingDefault))
@@ -559,6 +563,7 @@ private fun HistoryItemExpandedAddressPart(
             style = ZcashTheme.extendedTypography.transactionItemStyles.content,
             color = ZcashTheme.colors.textDescription,
             iconVector = ImageVector.vectorResource(R.drawable.ic_trx_copy),
+            iconTintColor = ZcashTheme.colors.secondaryColor,
             modifier =
                 Modifier
                     .clip(RoundedCornerShape(ZcashTheme.dimens.regularRippleEffectCorner))
@@ -722,6 +727,7 @@ private fun HistoryItemTransactionIdPart(
                 style = ZcashTheme.extendedTypography.transactionItemStyles.content,
                 color = ZcashTheme.colors.textDescription,
                 iconVector = ImageVector.vectorResource(R.drawable.ic_trx_copy),
+                iconTintColor = ZcashTheme.colors.secondaryColor,
                 modifier =
                     Modifier
                         .clip(RoundedCornerShape(ZcashTheme.dimens.regularRippleEffectCorner))
@@ -829,16 +835,23 @@ private fun HistoryItemMessagePart(
     }
 
     Column(modifier = modifier.then(Modifier.fillMaxWidth())) {
-        val (messageBackground, arrowAlignment) =
-            if (state.isSendType()) {
-                Color.Transparent to BubbleArrowAlignment.BottomLeft
-            } else {
-                ZcashTheme.colors.primaryDividerColor to BubbleArrowAlignment.BottomRight
-            }
+        val bubbleBackgroundColor: Color
+        val bubbleStroke: BorderStroke
+        val arrowAlignment: BubbleArrowAlignment
+        if (state.isSendType()) {
+            bubbleBackgroundColor = Color.Transparent
+            bubbleStroke = BorderStroke(1.dp, ZcashTheme.colors.textFieldFrame)
+            arrowAlignment = BubbleArrowAlignment.BottomLeft
+        } else {
+            bubbleBackgroundColor = ZcashTheme.colors.historyMessageBubbleColor
+            bubbleStroke = BorderStroke(1.dp, ZcashTheme.colors.historyMessageBubbleStrokeColor)
+            arrowAlignment = BubbleArrowAlignment.BottomRight
+        }
 
         BubbleMessage(
             modifier = Modifier.fillMaxWidth(),
-            backgroundColor = messageBackground,
+            backgroundColor = bubbleBackgroundColor,
+            borderStroke = bubbleStroke,
             arrowAlignment = arrowAlignment
         ) {
             Text(
@@ -856,6 +869,7 @@ private fun HistoryItemMessagePart(
             style = ZcashTheme.extendedTypography.transactionItemStyles.content,
             color = ZcashTheme.colors.textDescription,
             iconVector = ImageVector.vectorResource(R.drawable.ic_trx_copy),
+            iconTintColor = ZcashTheme.colors.secondaryColor,
             modifier =
                 Modifier
                     .clip(RoundedCornerShape(ZcashTheme.dimens.regularRippleEffectCorner))

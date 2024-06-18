@@ -53,9 +53,11 @@ internal object Dark {
     val overlay = Color(0x22000000)
     val overlayProgressBar = Color(0xFFFFFFFF)
 
-    val historyBackgroundColor = Color(0xFFF6F6F6)
+    val historyBackgroundColor = Color(0xFF262324)
     val historyRedColor = textFieldWarning
-    val historySyncingColor = panelBackgroundColor
+    val historySyncingColor = Color(0xFF181716)
+    val historyMessageBubbleColor = Color(0xFF000000)
+    val historyMessageBubbleStrokeColor = Color(0xFF000000)
 
     val topAppBarColors = DarkTopAppBarColors()
     val transparentTopAppBarColors = TransparentTopAppBarColors()
@@ -108,7 +110,9 @@ internal object Light {
 
     val historyBackgroundColor = Color(0xFFF6F6F6)
     val historyRedColor = textFieldWarning
-    val historySyncingColor = panelBackgroundColor
+    val historySyncingColor = Color(0xFFEBEBEB)
+    val historyMessageBubbleColor = Color(0xFFDDDDDD)
+    val historyMessageBubbleStrokeColor = Color(0xFF000000)
 
     val topAppBarColors = LightTopAppBarColors()
     val transparentTopAppBarColors = TransparentTopAppBarColors()
@@ -176,6 +180,8 @@ internal val DarkExtendedColorPalette =
         historyBackgroundColor = Dark.historyBackgroundColor,
         historyRedColor = Dark.historyRedColor,
         historySyncingColor = Dark.historySyncingColor,
+        historyMessageBubbleColor = Dark.historyMessageBubbleColor,
+        historyMessageBubbleStrokeColor = Dark.historyMessageBubbleStrokeColor,
         topAppBarColors = Dark.topAppBarColors,
         transparentTopAppBarColors = Dark.transparentTopAppBarColors,
         primaryButtonColors = Dark.primaryButtonColors,
@@ -219,6 +225,8 @@ internal val LightExtendedColorPalette =
         historyBackgroundColor = Light.historyBackgroundColor,
         historyRedColor = Light.historyRedColor,
         historySyncingColor = Light.historySyncingColor,
+        historyMessageBubbleColor = Light.historyMessageBubbleColor,
+        historyMessageBubbleStrokeColor = Light.historyMessageBubbleStrokeColor,
         topAppBarColors = Light.topAppBarColors,
         transparentTopAppBarColors = Light.transparentTopAppBarColors,
         primaryButtonColors = Light.primaryButtonColors,
@@ -264,6 +272,8 @@ internal val LocalExtendedColors =
             historyBackgroundColor = Color.Unspecified,
             historyRedColor = Color.Unspecified,
             historySyncingColor = Color.Unspecified,
+            historyMessageBubbleColor = Color.Unspecified,
+            historyMessageBubbleStrokeColor = Color.Unspecified,
             topAppBarColors = DefaultTopAppBarColors(),
             transparentTopAppBarColors = DefaultTopAppBarColors(),
             primaryButtonColors = DefaultButtonColors(),

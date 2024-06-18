@@ -42,6 +42,8 @@ data class ExtendedColors(
     val cameraDisabledBackgroundColor: Color,
     val cameraDisabledFrameColor: Color,
     val historyBackgroundColor: Color,
+    val historyMessageBubbleColor: Color,
+    val historyMessageBubbleStrokeColor: Color,
     val historyRedColor: Color,
     val historySyncingColor: Color,
     val topAppBarColors: TopAppBarColors,

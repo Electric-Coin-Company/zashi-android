@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -234,10 +235,11 @@ fun Tiny(
 @Composable
 @Suppress("LongParameterList")
 fun TextWithIcon(
-    text: String,
     iconVector: ImageVector,
+    text: String,
     modifier: Modifier = Modifier,
     iconContentDescription: String? = null,
+    iconTintColor: Color? = null,
     maxLines: Int = Int.MAX_VALUE,
     overflow: TextOverflow = TextOverflow.Clip,
     textAlign: TextAlign = TextAlign.Start,
@@ -251,10 +253,18 @@ fun TextWithIcon(
                 .then(modifier),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Image(
-            imageVector = iconVector,
-            contentDescription = iconContentDescription
-        )
+        if (iconTintColor != null) {
+            Image(
+                imageVector = iconVector,
+                colorFilter = ColorFilter.tint(color = iconTintColor),
+                contentDescription = iconContentDescription,
+            )
+        } else {
+            Image(
+                imageVector = iconVector,
+                contentDescription = iconContentDescription
+            )
+        }
 
         Spacer(modifier = Modifier.padding(3.dp))
 
