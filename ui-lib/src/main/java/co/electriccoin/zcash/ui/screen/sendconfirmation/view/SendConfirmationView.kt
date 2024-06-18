@@ -62,8 +62,8 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.runBlocking
 
+@Preview
 @Composable
-@Preview("SendConfirmation")
 private fun SendConfirmationPreview() {
     ZcashTheme(forceDarkMode = false) {
         SendConfirmation(
@@ -78,6 +78,75 @@ private fun SendConfirmationPreview() {
             onConfirmation = {},
             onBack = {},
             stage = SendConfirmationStage.Confirmation,
+            topAppBarSubTitleState = TopAppBarSubTitleState.None,
+            onContactSupport = {},
+            submissionResults = emptyList<TransactionSubmitResult>().toImmutableList()
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun SendConfirmationDarkPreview() {
+    ZcashTheme(forceDarkMode = true) {
+        SendConfirmation(
+            snackbarHostState = SnackbarHostState(),
+            zecSend =
+                ZecSend(
+                    destination = runBlocking { WalletAddressFixture.sapling() },
+                    amount = ZatoshiFixture.new(),
+                    memo = MemoFixture.new(),
+                    proposal = null,
+                ),
+            onConfirmation = {},
+            onBack = {},
+            stage = SendConfirmationStage.Confirmation,
+            topAppBarSubTitleState = TopAppBarSubTitleState.None,
+            onContactSupport = {},
+            submissionResults = emptyList<TransactionSubmitResult>().toImmutableList()
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun SendMultipleErrorPreview() {
+    ZcashTheme(forceDarkMode = false) {
+        SendConfirmation(
+            snackbarHostState = SnackbarHostState(),
+            zecSend =
+                ZecSend(
+                    destination = runBlocking { WalletAddressFixture.sapling() },
+                    amount = ZatoshiFixture.new(),
+                    memo = MemoFixture.new(),
+                    proposal = null,
+                ),
+            onConfirmation = {},
+            onBack = {},
+            stage = SendConfirmationStage.MultipleTrxFailure,
+            topAppBarSubTitleState = TopAppBarSubTitleState.None,
+            onContactSupport = {},
+            submissionResults = emptyList<TransactionSubmitResult>().toImmutableList()
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun SendMultipleErrorDarkPreview() {
+    ZcashTheme(forceDarkMode = true) {
+        SendConfirmation(
+            snackbarHostState = SnackbarHostState(),
+            zecSend =
+                ZecSend(
+                    destination = runBlocking { WalletAddressFixture.sapling() },
+                    amount = ZatoshiFixture.new(),
+                    memo = MemoFixture.new(),
+                    proposal = null,
+                ),
+            onConfirmation = {},
+            onBack = {},
+            stage = SendConfirmationStage.MultipleTrxFailure,
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
             onContactSupport = {},
             submissionResults = emptyList<TransactionSubmitResult>().toImmutableList()
@@ -104,10 +173,37 @@ private fun PreviewSendConfirmation() {
     }
 }
 
+@Preview
 @Composable
-@Preview("SendMultipleTransactionFailure")
-private fun PreviewSendMultipleTransactionFailure() {
+private fun SendMultipleTransactionFailurePreview() {
     ZcashTheme(forceDarkMode = false) {
+        @Suppress("MagicNumber")
+        MultipleSubmissionFailure(
+            onContactSupport = {},
+            // Rework this into a test fixture
+            submissionResults =
+                persistentListOf(
+                    TransactionSubmitResult.Failure(
+                        FirstClassByteArray("test_transaction_id_1".toByteArray()),
+                        true,
+                        123,
+                        "test transaction id failure"
+                    ),
+                    TransactionSubmitResult.NotAttempted(
+                        FirstClassByteArray("test_transaction_id_2".toByteArray())
+                    ),
+                    TransactionSubmitResult.NotAttempted(
+                        FirstClassByteArray("test_transaction_id_3".toByteArray())
+                    )
+                )
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun SendMultipleTransactionFailureDarkPreview() {
+    ZcashTheme(forceDarkMode = true) {
         @Suppress("MagicNumber")
         MultipleSubmissionFailure(
             onContactSupport = {},
@@ -448,7 +544,7 @@ fun MultipleSubmissionFailure(
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
 
         Image(
-            imageVector = ImageVector.vectorResource(R.drawable.zashi_logo_sign),
+            imageVector = ImageVector.vectorResource(R.drawable.ic_zashi_logo_sign_warn),
             colorFilter = ColorFilter.tint(color = ZcashTheme.colors.secondaryColor),
             contentDescription = null,
         )

@@ -47,9 +47,6 @@ private fun ExportPrivateDataPreview() {
     }
 }
 
-// TODO [#998]: Check and enhance screen dark mode
-// TODO [#998]: https://github.com/Electric-Coin-Company/zashi-android/issues/998
-
 @Composable
 fun ExportPrivateData(
     snackbarHostState: SnackbarHostState,
