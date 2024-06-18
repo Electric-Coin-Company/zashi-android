@@ -37,8 +37,8 @@ internal object Dark {
 
     val layoutStroke = Color(0xFFFFFFFF)
     val layoutStrokeSecondary = Color(0xFFDDDDDD)
-    val cameraDisabledBackgroundColor = Color(0xFF5E5C5C)
-    val cameraDisabledFrameColor = Color(0xFFFFFFFF)
+    val cameraDisabledBackgroundColor = Color(0xFF000000)
+    val cameraDisabledFrameColor = Color(0xFF5E5C5C)
 
     val primaryButtonColors = DarkPrimaryButtonColors()
     val secondaryButtonColors = DarkSecondaryButtonColors()
