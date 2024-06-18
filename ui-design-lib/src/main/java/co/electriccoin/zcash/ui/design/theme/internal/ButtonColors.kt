@@ -63,6 +63,21 @@ internal data class LightSecondaryButtonColors(
     override val shadowDisabledStrokeColor: Color = Color(0xFF000000),
 ) : ButtonColors
 
+// Currently the same as Light-Primary version
+@Immutable
+internal data class LightTertiaryButtonColors(
+    override val containerColor: Color = Color(0xFF000000),
+    override val disabledContainerColor: Color = Color(0xFFB7B7B7),
+    override val shadowColor: Color = Color(0xFFFFFFFF),
+    override val disabledShadowColor: Color = Color(0xFFFFFFFF),
+    override val textColor: Color = Color(0xFFFFFFFF),
+    override val disabledTextColor: Color = Color(0xFFDDDDDD),
+    override val strokeColor: Color = Color(0xFF000000),
+    override val disabledStrokeColor: Color = Color(0xFF000000),
+    override val shadowStrokeColor: Color = Color(0xFF000000),
+    override val shadowDisabledStrokeColor: Color = Color(0xFF000000),
+) : ButtonColors
+
 // DARK THEME BUTTONS:
 
 @Immutable
@@ -90,5 +105,19 @@ internal data class DarkSecondaryButtonColors(
     override val strokeColor: Color = Color(0xFFFFFFFF),
     override val disabledStrokeColor: Color = Color(0xFF000000),
     override val shadowStrokeColor: Color = Color(0xFFFFFFFF),
+    override val shadowDisabledStrokeColor: Color = Color(0xFF000000),
+) : ButtonColors
+
+@Immutable
+internal data class DarkTertiaryButtonColors(
+    override val containerColor: Color = Color(0xFFFFFFFF),
+    override val disabledContainerColor: Color = Color(0xFFFFFFFF),
+    override val shadowColor: Color = Color(0xFF000000),
+    override val disabledShadowColor: Color = Color(0xFFFFFFFF),
+    override val textColor: Color = Color(0xFF000000),
+    override val disabledTextColor: Color = Color(0xFFDDDDDD),
+    override val strokeColor: Color = Color(0xFF000000),
+    override val disabledStrokeColor: Color = Color(0xFF000000),
+    override val shadowStrokeColor: Color = Color(0xFFE6E7E8),
     override val shadowDisabledStrokeColor: Color = Color(0xFF000000),
 ) : ButtonColors

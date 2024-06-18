@@ -42,6 +42,7 @@ internal object Dark {
 
     val primaryButtonColors = DarkPrimaryButtonColors()
     val secondaryButtonColors = DarkSecondaryButtonColors()
+    val tertiaryButtonColors = DarkTertiaryButtonColors()
 
     val circularProgressBarSmall = Color(0xFFFFFFFF)
     val circularProgressBarSmallDark = Color(0xFFFFFFFF)
@@ -94,6 +95,7 @@ internal object Light {
 
     val primaryButtonColors = LightPrimaryButtonColors()
     val secondaryButtonColors = LightSecondaryButtonColors()
+    val tertiaryButtonColors = LightTertiaryButtonColors()
 
     val circularProgressBarSmall = Color(0xFF8B8A8A)
     val circularProgressBarSmallDark = textPrimary
@@ -178,6 +180,7 @@ internal val DarkExtendedColorPalette =
         transparentTopAppBarColors = Dark.transparentTopAppBarColors,
         primaryButtonColors = Dark.primaryButtonColors,
         secondaryButtonColors = Dark.secondaryButtonColors,
+        tertiaryButtonColors = Dark.tertiaryButtonColors,
     )
 
 internal val LightExtendedColorPalette =
@@ -220,6 +223,7 @@ internal val LightExtendedColorPalette =
         transparentTopAppBarColors = Light.transparentTopAppBarColors,
         primaryButtonColors = Light.primaryButtonColors,
         secondaryButtonColors = Light.secondaryButtonColors,
+        tertiaryButtonColors = Light.tertiaryButtonColors,
     )
 
 @Suppress("CompositionLocalAllowlist")
@@ -264,5 +268,6 @@ internal val LocalExtendedColors =
             transparentTopAppBarColors = DefaultTopAppBarColors(),
             primaryButtonColors = DefaultButtonColors(),
             secondaryButtonColors = DefaultButtonColors(),
+            tertiaryButtonColors = DefaultButtonColors(),
         )
     }

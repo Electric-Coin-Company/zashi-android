@@ -31,6 +31,7 @@ data class ExtendedColors(
     val reference: Color,
     val primaryButtonColors: ButtonColors,
     val secondaryButtonColors: ButtonColors,
+    val tertiaryButtonColors: ButtonColors,
     val welcomeAnimationColor: Color,
     val complementaryColor: Color,
     val primaryDividerColor: Color,

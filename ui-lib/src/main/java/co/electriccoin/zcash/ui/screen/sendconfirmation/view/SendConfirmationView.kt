@@ -49,6 +49,7 @@ import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.BubbleArrowAlignment
 import co.electriccoin.zcash.ui.design.component.BubbleMessage
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
+import co.electriccoin.zcash.ui.design.component.SecondaryButton
 import co.electriccoin.zcash.ui.design.component.Small
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.StyledBalance
@@ -360,6 +361,7 @@ fun SendConfirmationActionButtons(
             enabled = !isSending,
             showProgressBar = isSending,
             minHeight = ZcashTheme.dimens.buttonHeightSmall,
+            buttonColors = ZcashTheme.colors.tertiaryButtonColors,
             modifier =
                 Modifier
                     .testTag(SendConfirmationTag.SEND_CONFIRMATION_SEND_BUTTON)
@@ -368,7 +370,7 @@ fun SendConfirmationActionButtons(
 
         Spacer(modifier = Modifier.width(ZcashTheme.dimens.spacingLarge))
 
-        PrimaryButton(
+        SecondaryButton(
             text = stringResource(R.string.send_confirmation_back_button),
             onClick = onBack,
             enabled = !isSending,
