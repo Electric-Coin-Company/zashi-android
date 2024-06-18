@@ -12,6 +12,10 @@ directly impact users rather than highlighting other key architectural updates.*
 ### Added
 - New bubble message style for the Send and Transaction history item text components
 - Display all messages within the transaction history record when it is expanded
+- The Dark mode is now officially supported by the entire app UI
+
+### Changed
+- The Not Enough Free Space screen UI has been slightly refactored to align with the latest design guidelines
 
 ## [1.1.1 (660)] - 2024-06-05
 
