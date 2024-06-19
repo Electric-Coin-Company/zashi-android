@@ -82,7 +82,7 @@ fun NotEnoughSpaceView(
         snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { paddingValues ->
         NotEnoughSpaceMainContent(
-            onSystemStettings = onSystemSettings,
+            onSystemSettings = onSystemSettings,
             spaceRequiredToContinueMegabytes = spaceAvailableMegabytes,
             storageSpaceRequiredGigabytes = storageSpaceRequiredGigabytes,
             modifier =
@@ -126,7 +126,7 @@ private fun NotEnoughSpaceTopAppBar(
 
 @Composable
 private fun NotEnoughSpaceMainContent(
-    onSystemStettings: () -> Unit,
+    onSystemSettings: () -> Unit,
     spaceRequiredToContinueMegabytes: Int,
     storageSpaceRequiredGigabytes: Int,
     modifier: Modifier = Modifier
@@ -184,7 +184,7 @@ private fun NotEnoughSpaceMainContent(
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
         PrimaryButton(
-            onClick = onSystemStettings,
+            onClick = onSystemSettings,
             text = stringResource(R.string.not_enough_space_system_settings_btn),
         )
 

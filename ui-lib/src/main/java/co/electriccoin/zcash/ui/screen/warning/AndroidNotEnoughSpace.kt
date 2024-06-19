@@ -2,13 +2,13 @@
 
 package co.electriccoin.zcash.ui.screen.warning
 
-import android.content.Context
 import androidx.activity.compose.BackHandler
 import androidx.activity.viewModels
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
@@ -43,7 +43,6 @@ fun MainActivity.WrapNotEnoughSpace(
     }
 
     WrapNotEnoughFreeSpace(
-        context = this,
         goSettings = goSettings,
         spaceAvailableMegabytes = spaceAvailableMegabytes.value ?: 0,
         requiredStorageSpaceGigabytes = requiredStorageSpaceGigabytes,
@@ -53,12 +52,13 @@ fun MainActivity.WrapNotEnoughSpace(
 
 @Composable
 private fun WrapNotEnoughFreeSpace(
-    context: Context,
     goSettings: () -> Unit,
     requiredStorageSpaceGigabytes: Int,
     spaceAvailableMegabytes: Int,
     walletState: TopAppBarSubTitleState,
 ) {
+    val context = LocalContext.current
+
     val scope = rememberCoroutineScope()
 
     val snackbarHostState = remember { SnackbarHostState() }

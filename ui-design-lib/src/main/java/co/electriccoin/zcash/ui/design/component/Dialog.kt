@@ -176,11 +176,7 @@ private fun NavigationButton(
 ) {
     Button(
         onClick = onClick,
-        modifier =
-            modifier.then(
-                Modifier
-                    .padding(outerPaddingValues)
-            ),
+        modifier = modifier.padding(outerPaddingValues),
         colors = buttonColors(containerColor = ZcashTheme.colors.primaryColor)
     ) {
         Text(
