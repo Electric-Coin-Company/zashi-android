@@ -29,7 +29,7 @@ class QrCodeAnalyzer(
             if (image.format in supportedImageFormats) {
                 val bytes = image.planes.first().buffer.toByteArray()
 
-                Twig.debug {
+                Twig.verbose {
                     "Scan result: " +
                         "Frame: $framePosition, " +
                         "Info: ${image.imageInfo}, " +
@@ -62,7 +62,7 @@ class QrCodeAnalyzer(
                         (binaryBmp.height * 0.4).toInt()
                     )
 
-                Twig.debug {
+                Twig.verbose {
                     "Scan result cropped: " +
                         "Image width: ${binaryBitmapCropped.width}, " +
                         "Image height: ${binaryBitmapCropped.height}"

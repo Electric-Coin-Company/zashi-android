@@ -4,6 +4,7 @@ import android.content.Intent
 import android.provider.Settings
 import androidx.test.filters.SmallTest
 import co.electriccoin.zcash.ui.test.getAppContext
+import co.electriccoin.zcash.ui.util.SettingsUtil
 import org.junit.Test
 import kotlin.test.assertContains
 import kotlin.test.assertEquals

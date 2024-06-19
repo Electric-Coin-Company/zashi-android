@@ -188,7 +188,7 @@ private fun AccountMainContent(
                     .padding(horizontal = ZcashTheme.dimens.screenHorizontalSpacingRegular)
         )
 
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingUpLarge))
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
 
         HistoryContainer(
             onStatusClick = onStatusClick,

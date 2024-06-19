@@ -1,6 +1,7 @@
 package co.electriccoin.zcash.ui
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.lifecycle.LifecycleCoroutineScope
@@ -29,6 +30,7 @@ import co.electriccoin.zcash.ui.NavigationTargets.CHOOSE_SERVER
 import co.electriccoin.zcash.ui.NavigationTargets.DELETE_WALLET
 import co.electriccoin.zcash.ui.NavigationTargets.EXPORT_PRIVATE_DATA
 import co.electriccoin.zcash.ui.NavigationTargets.HOME
+import co.electriccoin.zcash.ui.NavigationTargets.NOT_ENOUGH_SPACE
 import co.electriccoin.zcash.ui.NavigationTargets.SCAN
 import co.electriccoin.zcash.ui.NavigationTargets.SEED_RECOVERY
 import co.electriccoin.zcash.ui.NavigationTargets.SEND_CONFIRMATION
@@ -60,6 +62,7 @@ import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SendConfirmationSt
 import co.electriccoin.zcash.ui.screen.settings.WrapSettings
 import co.electriccoin.zcash.ui.screen.support.WrapSupport
 import co.electriccoin.zcash.ui.screen.update.WrapCheckForUpdate
+import co.electriccoin.zcash.ui.screen.warning.WrapNotEnoughSpace
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
@@ -247,6 +250,12 @@ internal fun MainActivity.Navigation() {
                 )
             }
         }
+        composable(NOT_ENOUGH_SPACE) {
+            WrapNotEnoughSpace(
+                goPrevious = { navController.popBackStackJustOnce(NOT_ENOUGH_SPACE) },
+                goSettings = { navController.navigateJustOnce(SETTINGS) }
+            )
+        }
     }
 }
 
@@ -291,11 +300,15 @@ private fun MainActivity.NavigationHome(
             },
     )
 
+    val isEnoughSpace by storageCheckViewModel.isEnoughSpace.collectAsStateWithLifecycle()
+
     val sdkStatus = walletViewModel.walletSnapshot.collectAsStateWithLifecycle().value?.status
 
-    if (Synchronizer.Status.DISCONNECTED == sdkStatus) {
+    if (isEnoughSpace == false) {
+        Twig.info { "Not enough free space" }
+        navController.navigateJustOnce(NOT_ENOUGH_SPACE)
+    } else if (Synchronizer.Status.DISCONNECTED == sdkStatus) {
         Twig.info { "Disconnected state received from Synchronizer" }
-
         WrapDisconnected(
             goChooseServer = {
                 navController.navigateJustOnce(CHOOSE_SERVER)
@@ -305,6 +318,7 @@ private fun MainActivity.NavigationHome(
             }
         )
     } else if (ConfigurationEntries.IS_APP_UPDATE_CHECK_ENABLED.getValue(RemoteConfig.current)) {
+        Twig.info { "App update available" }
         WrapCheckForUpdate()
     }
 }
@@ -421,6 +435,7 @@ object NavigationTargets {
     const val EXPORT_PRIVATE_DATA = "export_private_data"
     const val HOME = "home"
     const val CHOOSE_SERVER = "choose_server"
+    const val NOT_ENOUGH_SPACE = "not_enough_space"
     const val SCAN = "scan"
     const val SEED_RECOVERY = "seed_recovery"
     const val SEND_CONFIRMATION = "send_confirmation"

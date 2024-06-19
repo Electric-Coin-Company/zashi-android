@@ -28,6 +28,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -183,14 +184,17 @@ fun AboutMainContent(
         ) {
             Image(
                 painter = painterResource(id = co.electriccoin.zcash.ui.design.R.drawable.zashi_logo_without_text),
+                colorFilter = ColorFilter.tint(color = ZcashTheme.colors.secondaryColor),
                 contentDescription = null,
-                Modifier
-                    .height(ZcashTheme.dimens.inScreenZcashLogoHeight)
-                    .width(ZcashTheme.dimens.inScreenZcashLogoWidth)
+                modifier =
+                    Modifier
+                        .height(ZcashTheme.dimens.inScreenZcashLogoHeight)
+                        .width(ZcashTheme.dimens.inScreenZcashLogoWidth)
             )
             Spacer(modifier = Modifier.width(ZcashTheme.dimens.spacingDefault))
             Image(
                 painter = painterResource(id = co.electriccoin.zcash.ui.design.R.drawable.zashi_text_logo),
+                colorFilter = ColorFilter.tint(color = ZcashTheme.colors.secondaryColor),
                 contentDescription = null,
                 modifier = Modifier.height(ZcashTheme.dimens.inScreenZcashTextLogoHeight)
             )

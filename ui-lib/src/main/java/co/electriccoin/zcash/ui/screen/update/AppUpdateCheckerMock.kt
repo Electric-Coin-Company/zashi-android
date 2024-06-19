@@ -83,7 +83,7 @@ class AppUpdateCheckerMock private constructor() : AppUpdateChecker {
     ): Flow<Int> =
         flow {
             // To simulate a real-world situation
-            delay(2000.milliseconds)
+            delay(4000.milliseconds)
             emit(Activity.RESULT_OK)
         }
 }

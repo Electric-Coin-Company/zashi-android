@@ -173,7 +173,7 @@ fun HomeContent(
         ) {
             HorizontalDivider(
                 thickness = DividerDefaults.Thickness,
-                color = ZcashTheme.colors.dividerColor
+                color = ZcashTheme.colors.primaryDividerColor
             )
             TabRow(
                 selectedTabIndex = pagerState.currentPage,

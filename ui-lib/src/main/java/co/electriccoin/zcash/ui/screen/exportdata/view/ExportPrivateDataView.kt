@@ -1,6 +1,7 @@
 package co.electriccoin.zcash.ui.screen.exportdata.view
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,9 +26,9 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.Body
-import co.electriccoin.zcash.ui.design.component.CheckBox
 import co.electriccoin.zcash.ui.design.component.GridBgScaffold
 import co.electriccoin.zcash.ui.design.component.GridBgSmallTopAppBar
+import co.electriccoin.zcash.ui.design.component.LabeledCheckBox
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.TopScreenLogoTitle
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
@@ -45,9 +46,6 @@ private fun ExportPrivateDataPreview() {
         )
     }
 }
-
-// TODO [#998]: Check and enhance screen dark mode
-// TODO [#998]: https://github.com/Electric-Coin-Company/zashi-android/issues/998
 
 @Composable
 fun ExportPrivateData(
@@ -134,19 +132,17 @@ private fun ExportPrivateDataContent(
         Spacer(Modifier.height(ZcashTheme.dimens.spacingDefault))
 
         val checkedState = rememberSaveable { mutableStateOf(false) }
-        CheckBox(
-            modifier =
-                Modifier
-                    .align(Alignment.Start)
-                    .fillMaxWidth(),
-            checked = checkedState.value,
-            onCheckedChange = {
-                checkedState.value = it
-                onAgree(it)
-            },
-            text = stringResource(R.string.export_data_agree),
-            checkBoxTestTag = ExportPrivateDataScreenTag.AGREE_CHECKBOX_TAG
-        )
+        Row(Modifier.fillMaxWidth()) {
+            LabeledCheckBox(
+                checked = checkedState.value,
+                onCheckedChange = {
+                    checkedState.value = it
+                    onAgree(it)
+                },
+                text = stringResource(R.string.export_data_agree),
+                checkBoxTestTag = ExportPrivateDataScreenTag.AGREE_CHECKBOX_TAG
+            )
+        }
 
         Spacer(
             modifier =

@@ -1,14 +1,19 @@
 package co.electriccoin.zcash.ui.design.component
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
@@ -32,6 +37,20 @@ private fun LightAlertDialogComposablePreview() {
 
 @Preview
 @Composable
+private fun NoButtonAlertDialogComposablePreview() {
+    ZcashTheme(forceDarkMode = false) {
+        AppAlertDialog(
+            title = "Light popup",
+            text =
+                "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Temporibus autem quibusdam et aut " +
+                    "officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et " +
+                    "molestiae non recusandae. Duis condimentum augue id magna semper rutrum.",
+        )
+    }
+}
+
+@Preview
+@Composable
 private fun DarkAlertDialogComposablePreview() {
     ZcashTheme(forceDarkMode = true) {
         AppAlertDialog(
@@ -40,6 +59,8 @@ private fun DarkAlertDialogComposablePreview() {
                 "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Temporibus autem quibusdam et aut " +
                     "officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et " +
                     "molestiae non recusandae. Duis condimentum augue id magna semper rutrum.",
+            confirmButtonText = "OK",
+            dismissButtonText = "Cancel"
         )
     }
 }
@@ -86,6 +107,8 @@ fun AppAlertDialog(
         text = text,
         icon = icon?.let { { Icon(imageVector = icon, null) } },
         properties = properties,
+        titleContentColor = ZcashTheme.colors.textPrimary,
+        textContentColor = ZcashTheme.colors.textPrimary,
         modifier = modifier,
     )
 }
@@ -116,4 +139,51 @@ fun AppAlertDialog(
         dismissButtonText = dismissButtonText,
         onDismissButtonClick = onDismissButtonClick
     )
+}
+
+@Preview
+@Composable
+private fun NavigationButtonPreview() {
+    ZcashTheme(forceDarkMode = false) {
+        NavigationButton(
+            onClick = {},
+            text = "Test button",
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun NavigationButtonDarkPreview() {
+    ZcashTheme(forceDarkMode = true) {
+        NavigationButton(
+            onClick = {},
+            text = "Dark button",
+        )
+    }
+}
+
+@Composable
+private fun NavigationButton(
+    onClick: () -> Unit,
+    text: String,
+    modifier: Modifier = Modifier,
+    outerPaddingValues: PaddingValues =
+        PaddingValues(
+            horizontal = ZcashTheme.dimens.spacingNone,
+            vertical = ZcashTheme.dimens.spacingSmall
+        ),
+) {
+    Button(
+        onClick = onClick,
+        modifier = modifier.padding(outerPaddingValues),
+        colors = buttonColors(containerColor = ZcashTheme.colors.primaryColor)
+    ) {
+        Text(
+            style = MaterialTheme.typography.labelLarge,
+            textAlign = TextAlign.Center,
+            text = text,
+            color = ZcashTheme.colors.textPrimary
+        )
+    }
 }

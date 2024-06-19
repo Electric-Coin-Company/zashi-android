@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
@@ -64,10 +63,7 @@ fun PagerTabs(
     onTabSelected: (index: Int) -> Unit = {},
 ) {
     TabRow(
-        modifier =
-            modifier
-                .padding(horizontal = ZcashTheme.dimens.screenHorizontalSpacingBig)
-                .border(ZcashTheme.dimens.spacingTiny, ZcashTheme.colors.layoutStroke),
+        modifier = modifier.border(ZcashTheme.dimens.spacingTiny, ZcashTheme.colors.layoutStroke),
         selectedTabIndex = pagerState.currentPage,
         divider = {},
         indicator = {},
@@ -118,7 +114,7 @@ private fun PagerTab(
                         .fillMaxWidth()
                         .padding(horizontal = ZcashTheme.dimens.spacingXtiny),
                 text = title,
-                color = if (selected) ZcashTheme.colors.textCommon else MaterialTheme.colorScheme.onPrimary,
+                color = if (selected) ZcashTheme.colors.textPrimary else ZcashTheme.colors.textSecondary,
                 style = ZcashTheme.extendedTypography.restoringTopAppBarStyle,
                 textAlign = TextAlign.Center,
                 maxLines = 2,

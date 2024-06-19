@@ -17,6 +17,8 @@ object AndroidQrCodeImageGenerator : QrCodeImageGenerator {
     }
 }
 
+// TODO [#1473]: Dark mode QR codes for Receive screen
+// TODO [#1473]: https://github.com/Electric-Coin-Company/zashi-android/issues/1473
 private fun BooleanArray.toBlackAndWhiteColorArray() =
     IntArray(size) {
         if (this[it]) {

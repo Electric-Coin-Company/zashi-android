@@ -2,6 +2,7 @@ package co.electriccoin.zcash.ui.design.component
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.waitForUpOrCancellation
@@ -11,13 +12,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -42,6 +43,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.theme.internal.ButtonColors
 
 @Preview
 @Composable
@@ -49,11 +51,59 @@ private fun ButtonComposablePreview() {
     ZcashTheme(forceDarkMode = false) {
         BlankSurface {
             Column(Modifier.padding(ZcashTheme.dimens.spacingDefault)) {
-                PrimaryButton(onClick = { }, text = "Primary")
-                PrimaryButton(onClick = { }, text = "Primary...", showProgressBar = true)
-                PrimaryButton(onClick = { }, text = "Primary Small", minHeight = ZcashTheme.dimens.buttonHeightSmall)
-                SecondaryButton(onClick = { }, text = "Secondary")
-                NavigationButton(onClick = { }, text = "Navigation")
+                Column(
+                    modifier =
+                        Modifier
+                            .background(color = Color.Gray)
+                            .padding(all = 24.dp)
+                ) {
+                    PrimaryButton(onClick = { }, text = "Primary Basic")
+                    PrimaryButton(onClick = { }, text = "Primary Disabled", enabled = false)
+                    SecondaryButton(onClick = { }, text = "Secondary Basic")
+                    SecondaryButton(onClick = { }, text = "Secondary Disabled", enabled = false)
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                PrimaryButton(onClick = { }, text = "Primary loading", showProgressBar = true)
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                @Suppress("MagicNumber")
+                Row {
+                    PrimaryButton(onClick = { }, text = "Button 1", modifier = Modifier.weight(0.5f))
+                    Spacer(modifier = Modifier.width(24.dp))
+                    PrimaryButton(onClick = { }, text = "Button 2", modifier = Modifier.weight(0.5f))
+                }
+            }
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun ButtonComposableDarkPreview() {
+    ZcashTheme(forceDarkMode = true) {
+        BlankSurface {
+            Column(Modifier.padding(ZcashTheme.dimens.spacingDefault)) {
+                Column(
+                    modifier =
+                        Modifier
+                            .background(color = Color.Gray)
+                            .padding(all = 24.dp)
+                ) {
+                    PrimaryButton(onClick = { }, text = "Primary Basic")
+                    PrimaryButton(onClick = { }, text = "Primary Disabled", enabled = false)
+                    SecondaryButton(onClick = { }, text = "Secondary Basic")
+                    SecondaryButton(onClick = { }, text = "Secondary Disabled", enabled = false)
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                PrimaryButton(onClick = { }, text = "Primary loading", showProgressBar = true)
+
+                Spacer(modifier = Modifier.height(24.dp))
+
                 @Suppress("MagicNumber")
                 Row {
                     PrimaryButton(onClick = { }, text = "Button 1", modifier = Modifier.weight(0.5f))
@@ -75,8 +125,7 @@ fun PrimaryButton(
     minHeight: Dp = ZcashTheme.dimens.buttonHeight,
     enabled: Boolean = true,
     showProgressBar: Boolean = false,
-    buttonColor: Color = MaterialTheme.colorScheme.primary,
-    textColor: Color = MaterialTheme.colorScheme.onPrimary,
+    buttonColors: ButtonColors = ZcashTheme.colors.primaryButtonColors,
     textStyle: TextStyle = ZcashTheme.extendedTypography.buttonText,
     outerPaddingValues: PaddingValues =
         PaddingValues(
@@ -94,37 +143,66 @@ fun PrimaryButton(
                 Modifier
                     .padding(outerPaddingValues)
                     .shadow(
-                        contentColor = textColor,
-                        strokeColor = buttonColor,
+                        contentColor =
+                            if (enabled) {
+                                buttonColors.shadowColor
+                            } else {
+                                buttonColors.disabledShadowColor
+                            },
+                        strokeColor =
+                            if (enabled) {
+                                buttonColors.shadowStrokeColor
+                            } else {
+                                buttonColors.shadowDisabledStrokeColor
+                            },
                         strokeWidth = 1.dp,
                         offsetX = ZcashTheme.dimens.buttonShadowOffsetX,
                         offsetY = ZcashTheme.dimens.buttonShadowOffsetY,
                         spread = ZcashTheme.dimens.buttonShadowSpread,
                     )
-                    .translationClick(
-                        // + 6dp to exactly cover the bottom shadow
-                        translationX = ZcashTheme.dimens.buttonShadowOffsetX + 6.dp,
-                        translationY = ZcashTheme.dimens.buttonShadowOffsetX + 6.dp
+                    .then(
+                        if (enabled) {
+                            Modifier.translationClick(
+                                // + 6dp to exactly cover the bottom shadow
+                                translationX = ZcashTheme.dimens.buttonShadowOffsetX + 6.dp,
+                                translationY = ZcashTheme.dimens.buttonShadowOffsetX + 6.dp
+                            )
+                        } else {
+                            Modifier
+                        }
                     )
                     .defaultMinSize(minWidth, minHeight)
-                    .border(1.dp, Color.Black)
+                    .border(
+                        width = 1.dp,
+                        color =
+                            if (enabled) {
+                                buttonColors.strokeColor
+                            } else {
+                                buttonColors.disabledStrokeColor
+                            }
+                    )
             ),
         colors =
             buttonColors(
-                containerColor = buttonColor,
-                disabledContainerColor = ZcashTheme.colors.disabledButtonColor,
-                disabledContentColor = ZcashTheme.colors.disabledButtonTextColor
+                containerColor = buttonColors.containerColor,
+                disabledContainerColor = buttonColors.disabledContainerColor,
+                disabledContentColor = buttonColors.disabledContainerColor,
             ),
         onClick = onClick,
     ) {
-        ConstraintLayout {
+        ConstraintLayout(modifier = Modifier.fillMaxWidth()) {
             val (title, spacer, progress) = createRefs()
 
             Text(
                 style = textStyle,
                 textAlign = TextAlign.Center,
                 text = text.uppercase(),
-                color = textColor,
+                color =
+                    if (enabled) {
+                        buttonColors.textColor
+                    } else {
+                        buttonColors.disabledTextColor
+                    },
                 modifier =
                     Modifier.constrainAs(title) {
                         top.linkTo(parent.top)
@@ -165,7 +243,7 @@ fun PrimaryButton(
 }
 
 @Composable
-@Suppress("LongParameterList")
+@Suppress("LongParameterList", "LongMethod")
 fun SecondaryButton(
     onClick: () -> Unit,
     text: String,
@@ -173,8 +251,7 @@ fun SecondaryButton(
     minWidth: Dp = ZcashTheme.dimens.buttonWidth,
     minHeight: Dp = ZcashTheme.dimens.buttonHeight,
     enabled: Boolean = true,
-    buttonColor: Color = MaterialTheme.colorScheme.secondary,
-    textColor: Color = MaterialTheme.colorScheme.onSecondary,
+    buttonColors: ButtonColors = ZcashTheme.colors.secondaryButtonColors,
     outerPaddingValues: PaddingValues =
         PaddingValues(
             horizontal = ZcashTheme.dimens.spacingNone,
@@ -191,27 +268,51 @@ fun SecondaryButton(
                 Modifier
                     .padding(outerPaddingValues)
                     .shadow(
-                        contentColor = textColor,
-                        strokeColor = buttonColor,
+                        contentColor =
+                            if (enabled) {
+                                buttonColors.shadowColor
+                            } else {
+                                buttonColors.disabledShadowColor
+                            },
+                        strokeColor =
+                            if (enabled) {
+                                buttonColors.shadowStrokeColor
+                            } else {
+                                buttonColors.shadowDisabledStrokeColor
+                            },
                         strokeWidth = 1.dp,
                         offsetX = ZcashTheme.dimens.buttonShadowOffsetX,
                         offsetY = ZcashTheme.dimens.buttonShadowOffsetY,
                         spread = ZcashTheme.dimens.buttonShadowSpread,
                     )
-                    .translationClick(
-                        // + 6dp to exactly cover the bottom shadow
-                        translationX = ZcashTheme.dimens.buttonShadowOffsetX + 6.dp,
-                        translationY = ZcashTheme.dimens.buttonShadowOffsetX + 6.dp
+                    .then(
+                        if (enabled) {
+                            Modifier.translationClick(
+                                // + 6dp to exactly cover the bottom shadow
+                                translationX = ZcashTheme.dimens.buttonShadowOffsetX + 6.dp,
+                                translationY = ZcashTheme.dimens.buttonShadowOffsetX + 6.dp
+                            )
+                        } else {
+                            Modifier
+                        }
                     )
                     .defaultMinSize(minWidth, minHeight)
                     .fillMaxWidth()
-                    .border(1.dp, Color.Black)
+                    .border(
+                        width = 1.dp,
+                        color =
+                            if (enabled) {
+                                buttonColors.strokeColor
+                            } else {
+                                buttonColors.disabledStrokeColor
+                            }
+                    )
             ),
         colors =
             buttonColors(
-                containerColor = buttonColor,
-                disabledContainerColor = ZcashTheme.colors.disabledButtonColor,
-                disabledContentColor = ZcashTheme.colors.disabledButtonTextColor
+                containerColor = buttonColors.containerColor,
+                disabledContainerColor = buttonColors.disabledContainerColor,
+                disabledContentColor = buttonColors.disabledContainerColor
             ),
         onClick = onClick,
     ) {
@@ -219,37 +320,12 @@ fun SecondaryButton(
             style = ZcashTheme.extendedTypography.buttonText,
             textAlign = TextAlign.Center,
             text = text.uppercase(),
-            color = textColor
-        )
-    }
-}
-
-@Composable
-fun NavigationButton(
-    onClick: () -> Unit,
-    text: String,
-    modifier: Modifier = Modifier,
-    outerPaddingValues: PaddingValues =
-        PaddingValues(
-            horizontal = ZcashTheme.dimens.spacingNone,
-            vertical = ZcashTheme.dimens.spacingSmall
-        ),
-) {
-    Button(
-        shape = RectangleShape,
-        onClick = onClick,
-        modifier =
-            modifier.then(
-                Modifier
-                    .padding(outerPaddingValues)
-            ),
-        colors = buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
-    ) {
-        Text(
-            style = MaterialTheme.typography.labelLarge,
-            textAlign = TextAlign.Center,
-            text = text,
-            color = MaterialTheme.colorScheme.onSecondary
+            color =
+                if (enabled) {
+                    buttonColors.textColor
+                } else {
+                    buttonColors.disabledTextColor
+                }
         )
     }
 }

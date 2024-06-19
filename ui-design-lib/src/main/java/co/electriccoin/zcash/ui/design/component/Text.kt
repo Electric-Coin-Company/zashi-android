@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -93,14 +94,14 @@ fun Header(
     text: String,
     modifier: Modifier = Modifier,
     textAlign: TextAlign = TextAlign.Start,
-    color: Color = ZcashTheme.colors.onBackgroundHeader,
+    color: Color = ZcashTheme.colors.textPrimary,
 ) {
     Text(
         text = text,
         color = color,
         textAlign = textAlign,
         modifier = modifier,
-        style = ZcashTheme.typography.secondary.headlineLarge,
+        style = ZcashTheme.typography.primary.headlineLarge,
     )
 }
 
@@ -109,7 +110,7 @@ fun SubHeader(
     text: String,
     modifier: Modifier = Modifier,
     textAlign: TextAlign = TextAlign.Start,
-    color: Color = ZcashTheme.colors.onBackgroundHeader,
+    color: Color = ZcashTheme.colors.textPrimary,
 ) {
     Text(
         text = text,
@@ -129,7 +130,7 @@ fun BodySmall(
     overflow: TextOverflow = TextOverflow.Clip,
     textAlign: TextAlign = TextAlign.Start,
     textFontWeight: FontWeight = FontWeight.Normal,
-    color: Color = MaterialTheme.colorScheme.onBackground,
+    color: Color = ZcashTheme.colors.textPrimary,
 ) {
     Text(
         text = text,
@@ -152,7 +153,7 @@ fun Body(
     overflow: TextOverflow = TextOverflow.Clip,
     textAlign: TextAlign = TextAlign.Start,
     textFontWeight: FontWeight = FontWeight.Normal,
-    color: Color = MaterialTheme.colorScheme.onBackground,
+    color: Color = ZcashTheme.colors.textPrimary,
 ) {
     Text(
         text = text,
@@ -174,7 +175,7 @@ fun TitleLarge(
     maxLines: Int = Int.MAX_VALUE,
     overflow: TextOverflow = TextOverflow.Clip,
     textAlign: TextAlign = TextAlign.Start,
-    color: Color = MaterialTheme.colorScheme.onBackground,
+    color: Color = ZcashTheme.colors.textPrimary,
 ) {
     Text(
         text = text,
@@ -196,7 +197,7 @@ fun Small(
     maxLines: Int = Int.MAX_VALUE,
     overflow: TextOverflow = TextOverflow.Clip,
     textAlign: TextAlign = TextAlign.Start,
-    color: Color = MaterialTheme.colorScheme.onBackground,
+    color: Color = ZcashTheme.colors.textPrimary,
 ) {
     Text(
         text = text,
@@ -218,7 +219,7 @@ fun Tiny(
     maxLines: Int = Int.MAX_VALUE,
     overflow: TextOverflow = TextOverflow.Clip,
     textAlign: TextAlign = TextAlign.Start,
-    color: Color = MaterialTheme.colorScheme.onBackground,
+    color: Color = ZcashTheme.colors.textPrimary,
 ) {
     Text(
         text = text,
@@ -234,15 +235,16 @@ fun Tiny(
 @Composable
 @Suppress("LongParameterList")
 fun TextWithIcon(
-    text: String,
     iconVector: ImageVector,
+    text: String,
     modifier: Modifier = Modifier,
     iconContentDescription: String? = null,
+    iconTintColor: Color? = null,
     maxLines: Int = Int.MAX_VALUE,
     overflow: TextOverflow = TextOverflow.Clip,
     textAlign: TextAlign = TextAlign.Start,
     style: TextStyle = LocalTextStyle.current,
-    color: Color = MaterialTheme.colorScheme.onBackground,
+    color: Color = ZcashTheme.colors.textPrimary,
 ) {
     Row(
         modifier =
@@ -251,10 +253,18 @@ fun TextWithIcon(
                 .then(modifier),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Image(
-            imageVector = iconVector,
-            contentDescription = iconContentDescription
-        )
+        if (iconTintColor != null) {
+            Image(
+                imageVector = iconVector,
+                colorFilter = ColorFilter.tint(color = iconTintColor),
+                contentDescription = iconContentDescription,
+            )
+        } else {
+            Image(
+                imageVector = iconVector,
+                contentDescription = iconContentDescription
+            )
+        }
 
         Spacer(modifier = Modifier.padding(3.dp))
 
@@ -402,7 +412,7 @@ fun BodyWithFiatCurrencySymbol(
     Text(
         text = amount,
         style = MaterialTheme.typography.bodyLarge,
-        color = MaterialTheme.colorScheme.onBackground,
+        color = ZcashTheme.colors.textPrimary,
         modifier = modifier
     )
 }
@@ -443,7 +453,7 @@ fun NavigationTabText(
             },
         maxLines = 1,
         overflow = TextOverflow.Visible,
-        color = ZcashTheme.colors.textCommon,
+        color = ZcashTheme.colors.textPrimary,
         modifier =
             Modifier
                 .clip(RoundedCornerShape(ZcashTheme.dimens.regularRippleEffectCorner))

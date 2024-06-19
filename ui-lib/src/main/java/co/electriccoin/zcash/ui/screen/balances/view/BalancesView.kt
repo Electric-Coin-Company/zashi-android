@@ -36,7 +36,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -88,7 +87,7 @@ import co.electriccoin.zcash.ui.screen.balances.model.ShieldState
 import co.electriccoin.zcash.ui.screen.balances.model.StatusAction
 import co.electriccoin.zcash.ui.screen.balances.model.WalletDisplayValues
 
-@Preview("Balances")
+@Preview
 @Composable
 private fun ComposableBalancesPreview() {
     ZcashTheme(forceDarkMode = false) {
@@ -112,10 +111,10 @@ private fun ComposableBalancesPreview() {
     }
 }
 
-@Preview("BalancesShieldFailure")
+@Preview
 @Composable
-private fun ComposableBalancesShieldFailurePreview() {
-    ZcashTheme(forceDarkMode = false) {
+private fun ComposableBalancesShieldDarkPreview() {
+    ZcashTheme(forceDarkMode = true) {
         Balances(
             balanceState = BalanceStateFixture.new(),
             isFiatConversionEnabled = false,
@@ -234,14 +233,18 @@ fun ShieldingErrorDialog(
             Column(
                 Modifier.verticalScroll(rememberScrollState())
             ) {
-                Text(text = stringResource(id = R.string.balances_shielding_dialog_error_text))
+                Text(
+                    text = stringResource(id = R.string.balances_shielding_dialog_error_text),
+                    color = ZcashTheme.colors.textPrimary,
+                )
 
                 if (reason.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
                     Text(
                         text = reason,
-                        fontStyle = FontStyle.Italic
+                        fontStyle = FontStyle.Italic,
+                        color = ZcashTheme.colors.textPrimary,
                     )
                 }
             }
@@ -308,10 +311,10 @@ private fun BalancesMainContent(
             onReferenceClick = {}
         )
 
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingUpLarge))
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
 
         HorizontalDivider(
-            color = ZcashTheme.colors.darkDividerColor,
+            color = ZcashTheme.colors.tertiaryDividerColor,
             thickness = ZcashTheme.dimens.divider
         )
 
@@ -490,7 +493,7 @@ fun TransparentBalanceHelpPanel(onHideHelpPanel: () -> Unit) {
         modifier =
             Modifier
                 .padding(all = ZcashTheme.dimens.spacingDefault)
-                .background(color = Color.White)
+                .background(color = ZcashTheme.colors.panelBackgroundColorActive)
                 .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -592,7 +595,7 @@ fun SpendableBalanceRow(walletSnapshot: WalletSnapshot) {
                         ZcashTheme.extendedTypography.balanceSingleStyles.first,
                         ZcashTheme.extendedTypography.balanceSingleStyles.second
                     ),
-                textColor = ZcashTheme.colors.textCommon
+                textColor = ZcashTheme.colors.textPrimary
             )
 
             Spacer(modifier = Modifier.width(12.dp))

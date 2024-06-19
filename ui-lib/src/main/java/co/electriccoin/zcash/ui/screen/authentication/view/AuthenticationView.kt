@@ -30,10 +30,25 @@ private fun PreviewAppAccessAuthentication() {
     }
 }
 
-@Preview("Error Authentication")
+@Preview
 @Composable
-private fun PreviewErrorAuthentication() {
+private fun ErrorAuthenticationPreview() {
     ZcashTheme(forceDarkMode = false) {
+        BlankSurface {
+            AuthenticationErrorDialog(
+                onDismiss = {},
+                onRetry = {},
+                onSupport = {},
+                reason = AuthenticationResult.Error(errorCode = -1, errorMessage = "Test Error Message")
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun ErrorAuthenticationDarkPreview() {
+    ZcashTheme(forceDarkMode = true) {
         BlankSurface {
             AuthenticationErrorDialog(
                 onDismiss = {},
@@ -69,7 +84,10 @@ fun AuthenticationErrorDialog(
             Column(
                 Modifier.verticalScroll(rememberScrollState())
             ) {
-                Text(text = stringResource(id = R.string.authentication_error_text))
+                Text(
+                    text = stringResource(id = R.string.authentication_error_text),
+                    color = ZcashTheme.colors.textPrimary,
+                )
 
                 Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
@@ -80,7 +98,8 @@ fun AuthenticationErrorDialog(
                             reason.errorCode,
                             reason.errorMessage,
                         ),
-                    fontStyle = FontStyle.Italic
+                    fontStyle = FontStyle.Italic,
+                    color = ZcashTheme.colors.textPrimary,
                 )
             }
         },
@@ -102,7 +121,10 @@ fun AuthenticationFailedDialog(
         title = stringResource(id = R.string.authentication_failed_title),
         text = {
             Column(Modifier.verticalScroll(rememberScrollState())) {
-                Text(text = stringResource(id = R.string.authentication_failed_text))
+                Text(
+                    text = stringResource(id = R.string.authentication_failed_text),
+                    color = ZcashTheme.colors.textPrimary,
+                )
             }
         },
         confirmButtonText = stringResource(id = R.string.authentication_failed_button_retry),

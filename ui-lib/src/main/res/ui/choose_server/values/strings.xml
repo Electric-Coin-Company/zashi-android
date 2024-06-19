@@ -3,10 +3,13 @@
     <string name="choose_server_back_content_description">Back</string>
 
     <string name="choose_server_title">Server</string>
+    <string name="choose_server_default_label">default: <xliff:g id="server" example="example.com:123">%1$s</xliff:g></string>
     <string name="choose_server_custom">custom</string>
     <string name="choose_server_custom_delimiter">:</string>
-    <string name="choose_server_textfield_value"><xliff:g id="hostname" example="example.com">%1$s</xliff:g>:<xliff:g
-        id="port" example="508">%2$d</xliff:g></string>
+    <string name="choose_server_full_server_name">
+        <xliff:g id="hostname" example="example.com">%1$s</xliff:g>:
+        <xliff:g id="port" example="508">%2$d</xliff:g>
+    </string>
     <string name="choose_server_textfield_hint">&lt;hostname&gt;:&lt;port&gt;</string>
     <string name="choose_server_save">Save</string>
 

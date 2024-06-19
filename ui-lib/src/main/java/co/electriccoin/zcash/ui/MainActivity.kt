@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.Lifecycle
@@ -50,7 +49,6 @@ import co.electriccoin.zcash.ui.screen.onboarding.WrapOnboarding
 import co.electriccoin.zcash.ui.screen.onboarding.persistExistingWalletWithSeedPhrase
 import co.electriccoin.zcash.ui.screen.securitywarning.WrapSecurityWarning
 import co.electriccoin.zcash.ui.screen.support.WrapSupport
-import co.electriccoin.zcash.ui.screen.warning.WrapNotEnoughSpace
 import co.electriccoin.zcash.ui.screen.warning.viewmodel.StorageCheckViewModel
 import co.electriccoin.zcash.work.WorkIds
 import kotlinx.coroutines.delay
@@ -68,7 +66,6 @@ class MainActivity : AppCompatActivity() {
 
     val walletViewModel by viewModels<WalletViewModel>()
 
-    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     val storageCheckViewModel by viewModels<StorageCheckViewModel>()
 
     internal val authenticationViewModel by viewModels<AuthenticationViewModel> {
@@ -138,13 +135,7 @@ class MainActivity : AppCompatActivity() {
                             .fillMaxHeight()
                     ) {
                         BindCompLocalProvider {
-                            val isEnoughSpace by storageCheckViewModel.isEnoughSpace.collectAsStateWithLifecycle()
-                            if (isEnoughSpace == false) {
-                                WrapNotEnoughSpace()
-                            } else {
-                                MainContent()
-                            }
-
+                            MainContent()
                             AuthenticationForAppAccess()
                         }
                     }

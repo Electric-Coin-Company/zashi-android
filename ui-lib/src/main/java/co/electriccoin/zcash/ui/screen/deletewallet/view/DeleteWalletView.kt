@@ -1,6 +1,7 @@
 package co.electriccoin.zcash.ui.screen.deletewallet.view
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,9 +24,9 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.Body
-import co.electriccoin.zcash.ui.design.component.CheckBox
 import co.electriccoin.zcash.ui.design.component.GridBgScaffold
 import co.electriccoin.zcash.ui.design.component.GridBgSmallTopAppBar
+import co.electriccoin.zcash.ui.design.component.LabeledCheckBox
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.TopScreenLogoTitle
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
@@ -129,17 +130,15 @@ private fun DeleteWalletContent(
         Spacer(Modifier.height(ZcashTheme.dimens.spacingDefault))
 
         val checkedState = rememberSaveable { mutableStateOf(false) }
-        CheckBox(
-            modifier =
-                Modifier
-                    .align(Alignment.Start)
-                    .fillMaxWidth(),
-            checked = checkedState.value,
-            onCheckedChange = {
-                checkedState.value = it
-            },
-            text = stringResource(R.string.delete_wallet_acknowledge),
-        )
+        Row(Modifier.fillMaxWidth()) {
+            LabeledCheckBox(
+                checked = checkedState.value,
+                onCheckedChange = {
+                    checkedState.value = it
+                },
+                text = stringResource(R.string.delete_wallet_acknowledge),
+            )
+        }
 
         Spacer(
             modifier =

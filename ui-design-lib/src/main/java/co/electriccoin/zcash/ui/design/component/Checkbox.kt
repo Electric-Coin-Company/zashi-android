@@ -1,15 +1,19 @@
 package co.electriccoin.zcash.ui.design.component
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.ClickableText
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
@@ -17,60 +21,102 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 
 @Preview
 @Composable
-private fun ComposablePreview() {
-    val checkBoxState = remember { mutableStateOf(false) }
+private fun LabeledCheckboxPreview() {
     ZcashTheme(forceDarkMode = false) {
-        CheckBox(
-            onCheckedChange = { checkBoxState.value = it },
-            text = "test",
-            checked = checkBoxState.value,
-            checkBoxTestTag = null
-        )
+        BlankSurface {
+            Row {
+                LabeledCheckBox(
+                    onCheckedChange = {},
+                    text = "Checkbox",
+                    checked = false
+                )
+                LabeledCheckBox(
+                    onCheckedChange = {},
+                    text = "Checkbox",
+                    checked = true
+                )
+            }
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun LabeledCheckboxDarkPreview() {
+    ZcashTheme(forceDarkMode = true) {
+        BlankSurface {
+            Row {
+                LabeledCheckBox(
+                    onCheckedChange = {},
+                    text = "Checkbox",
+                    checked = false
+                )
+                LabeledCheckBox(
+                    onCheckedChange = {},
+                    text = "Checkbox",
+                    checked = true
+                )
+            }
+        }
     }
 }
 
 @Composable
-fun CheckBox(
+fun LabeledCheckBox(
     onCheckedChange: (Boolean) -> Unit,
     text: String,
     modifier: Modifier = Modifier,
     checked: Boolean = false,
     checkBoxTestTag: String? = null
 ) {
+    val (checkedState, setCheckedState) = rememberSaveable { mutableStateOf(checked) }
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
-    ) {
-        val checkBoxModifier =
-            Modifier
-                .padding(
-                    top = ZcashTheme.dimens.spacingTiny,
-                    bottom = ZcashTheme.dimens.spacingTiny,
-                    end = ZcashTheme.dimens.spacingTiny
-                )
-                .then(
-                    if (checkBoxTestTag != null) {
-                        Modifier.testTag(checkBoxTestTag)
-                    } else {
-                        Modifier
+        modifier =
+            modifier.then(
+                Modifier
+                    .wrapContentSize()
+                    .clip(RoundedCornerShape(ZcashTheme.dimens.regularRippleEffectCorner))
+                    .clickable {
+                        setCheckedState(!checkedState)
+                        onCheckedChange(!checkedState)
                     }
-                )
-        val (checkedState, setCheckedState) = rememberSaveable { mutableStateOf(checked) }
+                    // Setting just the end padding, the start one is taken from the checkbox
+                    .padding(end = ZcashTheme.dimens.spacingMid)
+            )
+    ) {
         Checkbox(
             checked = checkedState,
+            colors =
+                CheckboxDefaults.colors(
+                    checkedColor = ZcashTheme.colors.secondaryColor,
+                    uncheckedColor = ZcashTheme.colors.secondaryColor,
+                    checkmarkColor = ZcashTheme.colors.primaryColor,
+                ),
             onCheckedChange = {
                 setCheckedState(it)
                 onCheckedChange(it)
             },
             enabled = true,
-            modifier = checkBoxModifier
+            modifier =
+                Modifier
+                    .padding(
+                        top = ZcashTheme.dimens.spacingTiny,
+                        bottom = ZcashTheme.dimens.spacingTiny,
+                        end = ZcashTheme.dimens.spacingTiny
+                    )
+                    .then(
+                        if (checkBoxTestTag != null) {
+                            Modifier.testTag(checkBoxTestTag)
+                        } else {
+                            Modifier
+                        }
+                    )
         )
-        ClickableText(
-            onClick = {
-                setCheckedState(!checkedState)
-                onCheckedChange(!checkedState)
-            },
+        Text(
             text = AnnotatedString(text),
+            color = ZcashTheme.colors.textPrimary,
             style = ZcashTheme.extendedTypography.checkboxText
         )
     }

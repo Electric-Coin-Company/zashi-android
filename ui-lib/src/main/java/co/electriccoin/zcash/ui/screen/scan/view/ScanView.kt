@@ -80,10 +80,28 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.guava.await
 import kotlin.math.roundToInt
 
-@Preview("Scan")
+@Preview
 @Composable
-private fun PreviewScan() {
+private fun ScanPreview() {
     ZcashTheme(forceDarkMode = false) {
+        BlankSurface {
+            Scan(
+                snackbarHostState = SnackbarHostState(),
+                onBack = {},
+                onScanned = {},
+                onOpenSettings = {},
+                onScanStateChanged = {},
+                topAppBarSubTitleState = TopAppBarSubTitleState.None,
+                addressValidationResult = AddressType.Transparent,
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun ScanDarkPreview() {
+    ZcashTheme(forceDarkMode = true) {
         BlankSurface {
             Scan(
                 snackbarHostState = SnackbarHostState(),

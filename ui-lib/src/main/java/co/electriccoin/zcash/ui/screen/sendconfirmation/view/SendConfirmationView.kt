@@ -4,7 +4,6 @@ package co.electriccoin.zcash.ui.screen.sendconfirmation.view
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,7 +16,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Icon
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -25,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -50,6 +49,7 @@ import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.BubbleArrowAlignment
 import co.electriccoin.zcash.ui.design.component.BubbleMessage
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
+import co.electriccoin.zcash.ui.design.component.SecondaryButton
 import co.electriccoin.zcash.ui.design.component.Small
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.StyledBalance
@@ -59,7 +59,100 @@ import co.electriccoin.zcash.ui.screen.sendconfirmation.SendConfirmationTag
 import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SendConfirmationStage
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.runBlocking
+
+@Preview
+@Composable
+private fun SendConfirmationPreview() {
+    ZcashTheme(forceDarkMode = false) {
+        SendConfirmation(
+            snackbarHostState = SnackbarHostState(),
+            zecSend =
+                ZecSend(
+                    destination = runBlocking { WalletAddressFixture.sapling() },
+                    amount = ZatoshiFixture.new(),
+                    memo = MemoFixture.new(),
+                    proposal = null,
+                ),
+            onConfirmation = {},
+            onBack = {},
+            stage = SendConfirmationStage.Confirmation,
+            topAppBarSubTitleState = TopAppBarSubTitleState.None,
+            onContactSupport = {},
+            submissionResults = emptyList<TransactionSubmitResult>().toImmutableList()
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun SendConfirmationDarkPreview() {
+    ZcashTheme(forceDarkMode = true) {
+        SendConfirmation(
+            snackbarHostState = SnackbarHostState(),
+            zecSend =
+                ZecSend(
+                    destination = runBlocking { WalletAddressFixture.sapling() },
+                    amount = ZatoshiFixture.new(),
+                    memo = MemoFixture.new(),
+                    proposal = null,
+                ),
+            onConfirmation = {},
+            onBack = {},
+            stage = SendConfirmationStage.Confirmation,
+            topAppBarSubTitleState = TopAppBarSubTitleState.None,
+            onContactSupport = {},
+            submissionResults = emptyList<TransactionSubmitResult>().toImmutableList()
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun SendMultipleErrorPreview() {
+    ZcashTheme(forceDarkMode = false) {
+        SendConfirmation(
+            snackbarHostState = SnackbarHostState(),
+            zecSend =
+                ZecSend(
+                    destination = runBlocking { WalletAddressFixture.sapling() },
+                    amount = ZatoshiFixture.new(),
+                    memo = MemoFixture.new(),
+                    proposal = null,
+                ),
+            onConfirmation = {},
+            onBack = {},
+            stage = SendConfirmationStage.MultipleTrxFailure,
+            topAppBarSubTitleState = TopAppBarSubTitleState.None,
+            onContactSupport = {},
+            submissionResults = emptyList<TransactionSubmitResult>().toImmutableList()
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun SendMultipleErrorDarkPreview() {
+    ZcashTheme(forceDarkMode = true) {
+        SendConfirmation(
+            snackbarHostState = SnackbarHostState(),
+            zecSend =
+                ZecSend(
+                    destination = runBlocking { WalletAddressFixture.sapling() },
+                    amount = ZatoshiFixture.new(),
+                    memo = MemoFixture.new(),
+                    proposal = null,
+                ),
+            onConfirmation = {},
+            onBack = {},
+            stage = SendConfirmationStage.MultipleTrxFailure,
+            topAppBarSubTitleState = TopAppBarSubTitleState.None,
+            onContactSupport = {},
+            submissionResults = emptyList<TransactionSubmitResult>().toImmutableList()
+        )
+    }
+}
 
 @Composable
 @Preview("SendConfirmation")
@@ -80,10 +173,37 @@ private fun PreviewSendConfirmation() {
     }
 }
 
+@Preview
 @Composable
-@Preview("SendMultipleTransactionFailure")
-private fun PreviewSendMultipleTransactionFailure() {
+private fun SendMultipleTransactionFailurePreview() {
     ZcashTheme(forceDarkMode = false) {
+        @Suppress("MagicNumber")
+        MultipleSubmissionFailure(
+            onContactSupport = {},
+            // Rework this into a test fixture
+            submissionResults =
+                persistentListOf(
+                    TransactionSubmitResult.Failure(
+                        FirstClassByteArray("test_transaction_id_1".toByteArray()),
+                        true,
+                        123,
+                        "test transaction id failure"
+                    ),
+                    TransactionSubmitResult.NotAttempted(
+                        FirstClassByteArray("test_transaction_id_2".toByteArray())
+                    ),
+                    TransactionSubmitResult.NotAttempted(
+                        FirstClassByteArray("test_transaction_id_3".toByteArray())
+                    )
+                )
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun SendMultipleTransactionFailureDarkPreview() {
+    ZcashTheme(forceDarkMode = true) {
         @Suppress("MagicNumber")
         MultipleSubmissionFailure(
             onContactSupport = {},
@@ -337,6 +457,7 @@ fun SendConfirmationActionButtons(
             enabled = !isSending,
             showProgressBar = isSending,
             minHeight = ZcashTheme.dimens.buttonHeightSmall,
+            buttonColors = ZcashTheme.colors.tertiaryButtonColors,
             modifier =
                 Modifier
                     .testTag(SendConfirmationTag.SEND_CONFIRMATION_SEND_BUTTON)
@@ -345,7 +466,7 @@ fun SendConfirmationActionButtons(
 
         Spacer(modifier = Modifier.width(ZcashTheme.dimens.spacingLarge))
 
-        PrimaryButton(
+        SecondaryButton(
             text = stringResource(R.string.send_confirmation_back_button),
             onClick = onBack,
             enabled = !isSending,
@@ -386,14 +507,18 @@ private fun SendFailure(
             Column(
                 Modifier.verticalScroll(rememberScrollState())
             ) {
-                Text(text = stringResource(id = R.string.send_confirmation_dialog_error_text))
+                Text(
+                    text = stringResource(id = R.string.send_confirmation_dialog_error_text),
+                    color = ZcashTheme.colors.textPrimary,
+                )
 
                 if (!reason.isNullOrEmpty()) {
                     Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
                     Text(
                         text = reason,
-                        fontStyle = FontStyle.Italic
+                        fontStyle = FontStyle.Italic,
+                        color = ZcashTheme.colors.textPrimary,
                     )
                 }
             }
@@ -418,19 +543,11 @@ fun MultipleSubmissionFailure(
     ) {
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
 
-        Box(
-            contentAlignment = Alignment.BottomEnd
-        ) {
-            Image(
-                imageVector = ImageVector.vectorResource(R.drawable.zashi_logo_sign),
-                contentDescription = null,
-            )
-            Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.ic_alert_circle_fill),
-                contentDescription = null,
-                modifier = Modifier.padding(bottom = ZcashTheme.dimens.spacingMid)
-            )
-        }
+        Image(
+            imageVector = ImageVector.vectorResource(R.drawable.ic_zashi_logo_sign_warn),
+            colorFilter = ColorFilter.tint(color = ZcashTheme.colors.secondaryColor),
+            contentDescription = null,
+        )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingBig))
 

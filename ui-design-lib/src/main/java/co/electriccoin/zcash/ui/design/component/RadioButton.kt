@@ -19,14 +19,43 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 
 @Preview
 @Composable
-private fun ComposablePreview() {
+private fun RadioButtonPreview() {
     ZcashTheme(forceDarkMode = false) {
-        RadioButton(
-            text = "test",
-            selected = true,
-            onClick = {},
-            modifier = Modifier
-        )
+        BlankBgColumn {
+            RadioButton(
+                text = "test",
+                selected = false,
+                onClick = {},
+                modifier = Modifier
+            )
+            RadioButton(
+                text = "test",
+                selected = true,
+                onClick = {},
+                modifier = Modifier
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun RadioButtonDarkPreview() {
+    ZcashTheme(forceDarkMode = true) {
+        BlankBgColumn {
+            RadioButton(
+                text = "Dark test",
+                selected = false,
+                onClick = {},
+                modifier = Modifier
+            )
+            RadioButton(
+                text = "Dark test",
+                selected = true,
+                onClick = {},
+                modifier = Modifier
+            )
+        }
     }
 }
 
@@ -59,14 +88,14 @@ fun RadioButton(
             onClick = onClick,
             colors =
                 RadioButtonDefaults.colors(
-                    selectedColor = ZcashTheme.colors.radioButtonColor,
-                    unselectedColor = ZcashTheme.colors.radioButtonColor,
+                    selectedColor = ZcashTheme.colors.secondaryColor,
+                    unselectedColor = ZcashTheme.colors.secondaryColor,
                 )
         )
         Text(
             text = text,
             style = ZcashTheme.extendedTypography.radioButton,
-            color = ZcashTheme.colors.radioButtonTextColor,
+            color = ZcashTheme.colors.textPrimary,
             modifier =
                 Modifier.padding(
                     top = 16.dp,

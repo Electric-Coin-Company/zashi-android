@@ -2,11 +2,14 @@ package co.electriccoin.zcash.ui.screen.update.view
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -19,8 +22,10 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -32,6 +37,7 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.GridBgScaffold
 import co.electriccoin.zcash.ui.design.component.GridBgSmallTopAppBar
+import co.electriccoin.zcash.ui.design.component.Header
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.Reference
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
@@ -40,13 +46,55 @@ import co.electriccoin.zcash.ui.screen.update.UpdateTag
 import co.electriccoin.zcash.ui.screen.update.model.UpdateInfo
 import co.electriccoin.zcash.ui.screen.update.model.UpdateState
 
-@Preview("Update")
+@Preview
 @Composable
-private fun PreviewUpdate() {
+private fun UpdatePreview() {
     ZcashTheme(forceDarkMode = false) {
         Update(
             snackbarHostState = SnackbarHostState(),
             UpdateInfoFixture.new(appUpdateInfo = null),
+            onDownload = {},
+            onLater = {},
+            onReference = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun UpdateRequiredPreview() {
+    ZcashTheme(forceDarkMode = false) {
+        Update(
+            snackbarHostState = SnackbarHostState(),
+            UpdateInfoFixture.new(force = true),
+            onDownload = {},
+            onLater = {},
+            onReference = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun UpdateAvailableDarkPreview() {
+    ZcashTheme(forceDarkMode = true) {
+        Update(
+            snackbarHostState = SnackbarHostState(),
+            UpdateInfoFixture.new(appUpdateInfo = null),
+            onDownload = {},
+            onLater = {},
+            onReference = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun UpdateRequiredDarkPreview() {
+    ZcashTheme(forceDarkMode = true) {
+        Update(
+            snackbarHostState = SnackbarHostState(),
+            UpdateInfoFixture.new(force = true),
             onDownload = {},
             onLater = {},
             onReference = {}
@@ -101,14 +149,17 @@ fun UpdateOverlayRunning(updateInfo: UpdateInfo) {
     if (updateInfo.state == UpdateState.Running) {
         Column(
             Modifier
-                .background(ZcashTheme.colors.overlay.copy(0.5f))
-                .fillMaxWidth()
-                .fillMaxHeight()
+                .background(ZcashTheme.colors.overlay.copy(0.65f))
+                .fillMaxSize()
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null // Set indication to null to disable ripple effect
+                ) {}
                 .testTag(UpdateTag.PROGRESSBAR_DOWNLOADING),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            CircularProgressIndicator()
+            CircularProgressIndicator(color = ZcashTheme.colors.overlayProgressBar)
         }
     }
 }
@@ -143,7 +194,7 @@ private fun UpdateBottomAppBar(
     ) {
         HorizontalDivider(
             thickness = DividerDefaults.Thickness,
-            color = ZcashTheme.colors.dividerColor
+            color = ZcashTheme.colors.primaryDividerColor
         )
 
         Column(
@@ -176,6 +227,7 @@ private fun UpdateBottomAppBar(
                     textAlign = TextAlign.Center,
                     style = ZcashTheme.typography.primary.bodyLarge,
                     fontWeight = FontWeight.SemiBold,
+                    color = ZcashTheme.colors.textPrimary,
                     modifier =
                         Modifier
                             .padding(all = ZcashTheme.dimens.spacingDefault)
@@ -227,23 +279,23 @@ private fun UpdateContent(
         Image(
             imageVector =
                 if (updateInfo.isForce) {
-                    ImageVector.vectorResource(R.drawable.ic_zashi_logo_update_required)
+                    ImageVector.vectorResource(R.drawable.ic_zashi_logo_sign_warn)
                 } else {
                     ImageVector.vectorResource(R.drawable.ic_zashi_logo_update_available)
                 },
+            colorFilter = ColorFilter.tint(color = ZcashTheme.colors.secondaryColor),
             contentDescription = null
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingBig))
 
-        Text(
+        Header(
             text =
                 if (updateInfo.isForce) {
                     stringResource(id = R.string.update_title_required)
                 } else {
                     stringResource(id = R.string.update_title_available, appName)
                 },
-            style = ZcashTheme.extendedTypography.updateTitleStyle,
             textAlign = TextAlign.Center
         )
 

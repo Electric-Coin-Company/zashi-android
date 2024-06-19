@@ -326,7 +326,7 @@ private fun SendForm(
             onReferenceClick = goBalances
         )
 
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingUpLarge))
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
 
         // TODO [#1256]: Consider Send.Form TextFields scrolling
         // TODO [#1256]: https://github.com/Electric-Coin-Company/zashi-android/issues/1256
@@ -535,7 +535,8 @@ fun SendFormAddressTextField(
                             content = {
                                 Icon(
                                     painter = painterResource(id = R.drawable.qr_code_icon),
-                                    contentDescription = stringResource(R.string.send_scan_content_description)
+                                    contentDescription = stringResource(R.string.send_scan_content_description),
+                                    tint = ZcashTheme.colors.secondaryColor,
                                 )
                             }
                         )
@@ -680,7 +681,7 @@ fun SendFormMemoTextField(
                 contentDescription = null,
                 tint =
                     if (isMemoFieldAvailable) {
-                        ZcashTheme.colors.textCommon
+                        ZcashTheme.colors.textPrimary
                     } else {
                         ZcashTheme.colors.textDisabled
                     }
@@ -692,7 +693,7 @@ fun SendFormMemoTextField(
                 text = stringResource(id = R.string.send_memo_label),
                 color =
                     if (isMemoFieldAvailable) {
-                        ZcashTheme.colors.textCommon
+                        ZcashTheme.colors.textPrimary
                     } else {
                         ZcashTheme.colors.textDisabled
                     }
@@ -806,13 +807,17 @@ private fun SendFailure(
             Column(
                 Modifier.verticalScroll(rememberScrollState())
             ) {
-                Text(text = stringResource(id = R.string.send_dialog_error_text))
+                Text(
+                    text = stringResource(id = R.string.send_dialog_error_text),
+                    color = ZcashTheme.colors.textPrimary,
+                )
 
                 Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
                 Text(
                     text = reason,
-                    fontStyle = FontStyle.Italic
+                    fontStyle = FontStyle.Italic,
+                    color = ZcashTheme.colors.textPrimary,
                 )
             }
         },

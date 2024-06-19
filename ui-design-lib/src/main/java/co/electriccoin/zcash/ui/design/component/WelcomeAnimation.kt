@@ -24,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -68,6 +69,7 @@ fun WelcomeAnimationAutostart(
 private const val LOGO_RELATIVE_LOCATION = 0.2f
 
 @Composable
+@Suppress("LongMethod")
 fun WelcomeAnimation(
     animationState: Boolean,
     modifier: Modifier = Modifier,
@@ -111,6 +113,7 @@ fun WelcomeAnimation(
                     Image(
                         painter = painterResource(id = R.drawable.chart_line),
                         contentScale = ContentScale.FillBounds,
+                        colorFilter = ColorFilter.tint(color = ZcashTheme.colors.welcomeAnimationColor),
                         contentDescription = null,
                     )
                 }

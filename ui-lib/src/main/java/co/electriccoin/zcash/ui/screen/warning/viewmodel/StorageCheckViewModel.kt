@@ -29,4 +29,12 @@ class StorageCheckViewModel : ViewModel() {
                 SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
                 null
             )
+
+    val spaceAvailableMegabytes =
+        flow { emit(StorageChecker.checkAvailableStorageMegabytes()) }
+            .stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+                null
+            )
 }

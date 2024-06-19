@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.scan.util
+package co.electriccoin.zcash.ui.util
 
 import android.content.Intent
 import android.net.Uri
@@ -23,6 +23,17 @@ object SettingsUtil {
         return Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
             addCategory(Intent.CATEGORY_DEFAULT)
             data = Uri.parse("$SETTINGS_URI_PREFIX$packageName")
+            flags = FLAGS
+        }
+    }
+
+    /**
+     * Returns an intent to the system Storage Settings page.
+     *
+     * @return Intent for launching the system Settings app
+     */
+    internal fun newStorageSettingsIntent(): Intent {
+        return Intent(Settings.ACTION_INTERNAL_STORAGE_SETTINGS).apply {
             flags = FLAGS
         }
     }

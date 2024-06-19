@@ -26,12 +26,27 @@ const val CHIP_GRID_COLUMN_SIZE = 12
 
 @Preview
 @Composable
-private fun ComposablePreview() {
+private fun ChipGridPreview() {
     ZcashTheme(forceDarkMode = false) {
-        ChipGrid(
-            SeedPhrase.new(WalletFixture.Alice.seedPhrase).split.toPersistentList(),
-            onGridClick = {}
-        )
+        BlankSurface {
+            ChipGrid(
+                SeedPhrase.new(WalletFixture.Alice.seedPhrase).split.toPersistentList(),
+                onGridClick = {}
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun ChipGridDarkPreview() {
+    ZcashTheme(forceDarkMode = true) {
+        BlankSurface {
+            ChipGrid(
+                SeedPhrase.new(WalletFixture.Alice.seedPhrase).split.toPersistentList(),
+                onGridClick = {}
+            )
+        }
     }
 }
 

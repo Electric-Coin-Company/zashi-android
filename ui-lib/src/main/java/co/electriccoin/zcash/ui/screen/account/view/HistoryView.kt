@@ -3,6 +3,7 @@
 package co.electriccoin.zcash.ui.screen.account.view
 
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -27,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
@@ -197,7 +199,7 @@ private fun EmptyTransactionHistory() {
             textAlign = TextAlign.Center,
             text = stringResource(id = R.string.account_history_empty),
             style = ZcashTheme.extendedTypography.transactionItemStyles.titleRegular,
-            color = ZcashTheme.colors.textCommon,
+            color = ZcashTheme.colors.textPrimary,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
@@ -220,7 +222,7 @@ private fun HistoryList(
             )
 
             HorizontalDivider(
-                color = ZcashTheme.colors.dividerColor,
+                color = ZcashTheme.colors.primaryDividerColor,
                 thickness = DividerDefaults.Thickness,
                 modifier = Modifier.padding(horizontal = ZcashTheme.dimens.spacingDefault)
             )
@@ -359,7 +361,9 @@ private fun HistoryItem(
     ) {
         Image(
             imageVector = typeIcon,
-            contentDescription = typeText
+            colorFilter = ColorFilter.tint(color = ZcashTheme.colors.secondaryColor),
+            contentDescription = typeText,
+            modifier = Modifier.padding(top = ZcashTheme.dimens.spacingTiny)
         )
 
         Spacer(modifier = Modifier.width(ZcashTheme.dimens.spacingDefault))
@@ -449,7 +453,7 @@ private fun HistoryItemCollapsedMainPart(
                 if (transaction.overview.isSentTransaction) {
                     ZcashTheme.colors.historyRedColor
                 } else {
-                    ZcashTheme.colors.textCommon
+                    ZcashTheme.colors.textPrimary
                 }
         }
 
@@ -546,7 +550,7 @@ private fun HistoryItemExpandedAddressPart(
         Text(
             text = recipient.addressValue,
             style = ZcashTheme.extendedTypography.transactionItemStyles.content,
-            color = ZcashTheme.colors.textCommon,
+            color = ZcashTheme.colors.textPrimary,
             modifier =
                 Modifier
                     .fillMaxWidth(EXPANDED_ADDRESS_WIDTH_RATIO)
@@ -559,6 +563,7 @@ private fun HistoryItemExpandedAddressPart(
             style = ZcashTheme.extendedTypography.transactionItemStyles.content,
             color = ZcashTheme.colors.textDescription,
             iconVector = ImageVector.vectorResource(R.drawable.ic_trx_copy),
+            iconTintColor = ZcashTheme.colors.secondaryColor,
             modifier =
                 Modifier
                     .clip(RoundedCornerShape(ZcashTheme.dimens.regularRippleEffectCorner))
@@ -608,7 +613,7 @@ private fun HistoryItemExpandedPart(
                         count = transaction.messages!!.size
                     ),
                 style = ZcashTheme.extendedTypography.transactionItemStyles.contentMedium,
-                color = ZcashTheme.colors.textCommon
+                color = ZcashTheme.colors.textPrimary
             )
 
             Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
@@ -632,7 +637,7 @@ private fun HistoryItemExpandedPart(
             Text(
                 text = stringResource(id = R.string.account_history_item_no_message),
                 style = ZcashTheme.extendedTypography.transactionItemStyles.contentItalic,
-                color = ZcashTheme.colors.textCommon,
+                color = ZcashTheme.colors.textPrimary,
                 modifier = Modifier.fillMaxWidth(EXPANDED_TRANSACTION_WIDTH_RATIO)
             )
 
@@ -708,7 +713,7 @@ private fun HistoryItemTransactionIdPart(
             Text(
                 text = txIdString,
                 style = ZcashTheme.extendedTypography.transactionItemStyles.content,
-                color = ZcashTheme.colors.textCommon,
+                color = ZcashTheme.colors.textPrimary,
                 modifier =
                     Modifier
                         .fillMaxWidth(EXPANDED_TRANSACTION_WIDTH_RATIO)
@@ -722,6 +727,7 @@ private fun HistoryItemTransactionIdPart(
                 style = ZcashTheme.extendedTypography.transactionItemStyles.content,
                 color = ZcashTheme.colors.textDescription,
                 iconVector = ImageVector.vectorResource(R.drawable.ic_trx_copy),
+                iconTintColor = ZcashTheme.colors.secondaryColor,
                 modifier =
                     Modifier
                         .clip(RoundedCornerShape(ZcashTheme.dimens.regularRippleEffectCorner))
@@ -825,20 +831,27 @@ private fun HistoryItemMessagePart(
         textColor = ZcashTheme.colors.historyRedColor
     } else {
         textStyle = ZcashTheme.extendedTypography.transactionItemStyles.content
-        textColor = ZcashTheme.colors.textCommon
+        textColor = ZcashTheme.colors.textPrimary
     }
 
     Column(modifier = modifier.then(Modifier.fillMaxWidth())) {
-        val (messageBackground, arrowAlignment) =
-            if (state.isSendType()) {
-                Color.Transparent to BubbleArrowAlignment.BottomLeft
-            } else {
-                ZcashTheme.colors.dividerColor to BubbleArrowAlignment.BottomRight
-            }
+        val bubbleBackgroundColor: Color
+        val bubbleStroke: BorderStroke
+        val arrowAlignment: BubbleArrowAlignment
+        if (state.isSendType()) {
+            bubbleBackgroundColor = Color.Transparent
+            bubbleStroke = BorderStroke(1.dp, ZcashTheme.colors.textFieldFrame)
+            arrowAlignment = BubbleArrowAlignment.BottomLeft
+        } else {
+            bubbleBackgroundColor = ZcashTheme.colors.historyMessageBubbleColor
+            bubbleStroke = BorderStroke(1.dp, ZcashTheme.colors.historyMessageBubbleStrokeColor)
+            arrowAlignment = BubbleArrowAlignment.BottomRight
+        }
 
         BubbleMessage(
             modifier = Modifier.fillMaxWidth(),
-            backgroundColor = messageBackground,
+            backgroundColor = bubbleBackgroundColor,
+            borderStroke = bubbleStroke,
             arrowAlignment = arrowAlignment
         ) {
             Text(
@@ -856,6 +869,7 @@ private fun HistoryItemMessagePart(
             style = ZcashTheme.extendedTypography.transactionItemStyles.content,
             color = ZcashTheme.colors.textDescription,
             iconVector = ImageVector.vectorResource(R.drawable.ic_trx_copy),
+            iconTintColor = ZcashTheme.colors.secondaryColor,
             modifier =
                 Modifier
                     .clip(RoundedCornerShape(ZcashTheme.dimens.regularRippleEffectCorner))

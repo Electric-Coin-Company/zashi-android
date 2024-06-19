@@ -57,8 +57,8 @@ internal val PrimaryTypography =
         headlineLarge =
             TextStyle(
                 fontFamily = InterFontFamily,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 30.sp
+                fontWeight = FontWeight.Bold,
+                fontSize = 22.sp
             ),
         titleSmall =
             TextStyle(
@@ -194,7 +194,6 @@ data class ExtendedTypography(
     val transactionItemStyles: TransactionItemTextStyles,
     val restoringTopAppBarStyle: TextStyle,
     val deleteWalletWarnStyle: TextStyle,
-    val updateTitleStyle: TextStyle,
 )
 
 @Suppress("CompositionLocalAllowlist")
@@ -379,9 +378,5 @@ val LocalExtendedTypography =
                 PrimaryTypography.bodyLarge.copy(
                     fontWeight = FontWeight.Bold
                 ),
-            updateTitleStyle =
-                PrimaryTypography.titleLarge.copy(
-                    fontWeight = FontWeight.Bold
-                )
         )
     }

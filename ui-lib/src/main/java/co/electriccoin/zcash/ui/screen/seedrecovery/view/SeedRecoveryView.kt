@@ -70,9 +70,6 @@ private fun ComposablePreview() {
     }
 }
 
-// TODO [#998]: Check and enhance screen dark mode
-// TODO [#998]: https://github.com/Electric-Coin-Company/zashi-android/issues/998
-
 /**
  * @param onDone Callback when the user has confirmed viewing the seed phrase.
  */

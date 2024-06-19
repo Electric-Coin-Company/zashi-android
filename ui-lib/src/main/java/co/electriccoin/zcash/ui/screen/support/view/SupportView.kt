@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -39,10 +40,27 @@ import co.electriccoin.zcash.ui.design.component.GridBgSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 
-@Preview("Support")
+@Preview
 @Composable
-private fun PreviewSupport() {
+private fun SupportPreview() {
     ZcashTheme(forceDarkMode = false) {
+        BlankSurface {
+            Support(
+                isShowingDialog = false,
+                setShowDialog = {},
+                onBack = {},
+                onSend = {},
+                snackbarHostState = SnackbarHostState(),
+                topAppBarSubTitleState = TopAppBarSubTitleState.None,
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun SupportDarkPreview() {
+    ZcashTheme(forceDarkMode = true) {
         BlankSurface {
             Support(
                 isShowingDialog = false,
@@ -152,6 +170,7 @@ private fun SupportMainContent(
 
         Image(
             imageVector = ImageVector.vectorResource(R.drawable.zashi_logo_sign),
+            colorFilter = ColorFilter.tint(color = ZcashTheme.colors.secondaryColor),
             contentDescription = null,
         )
 
@@ -185,6 +204,8 @@ private fun SupportMainContent(
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
 
+        // TODO [#1467]: Support screen - keep button above keyboard
+        // TODO [#1467]: https://github.com/Electric-Coin-Company/zashi-android/issues/1467
         PrimaryButton(
             onClick = { setShowDialog(true) },
             text = stringResource(id = R.string.support_send),

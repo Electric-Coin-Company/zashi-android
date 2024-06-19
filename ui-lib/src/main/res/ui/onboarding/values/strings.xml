@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">zcash-ui</string>
+    <string name="app_name">zashi-ui</string>
 
     <string name="onboarding_header">A no-frills wallet for sending and receiving Zcash (ZEC)</string>
 

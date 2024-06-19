@@ -107,7 +107,7 @@ fun ChooseServer(
         options[CUSTOM_SERVER_OPTION_INDEX].run {
             if (options[CUSTOM_SERVER_OPTION_INDEX].isValid()) {
                 stringResource(
-                    R.string.choose_server_textfield_value,
+                    R.string.choose_server_full_server_name,
                     options[CUSTOM_SERVER_OPTION_INDEX].host,
                     options[CUSTOM_SERVER_OPTION_INDEX].port
                 )
@@ -194,7 +194,7 @@ fun ChooseServerBottomBar(
     ) {
         HorizontalDivider(
             thickness = DividerDefaults.Thickness,
-            color = ZcashTheme.colors.dividerColor
+            color = ZcashTheme.colors.primaryDividerColor
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
@@ -239,6 +239,8 @@ private fun ChooseServerTopAppBar(
     )
 }
 
+// When changing the following constants, be aware that they should not be the same
+const val DEFAULT_SERVER_OPTION_INDEX = 0
 const val CUSTOM_SERVER_OPTION_INDEX = 1
 
 @Composable
@@ -269,7 +271,7 @@ private fun ChooseServerMainContent(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-@Suppress("LongParameterList")
+@Suppress("LongParameterList", "LongMethod")
 fun ServerList(
     options: ImmutableList<LightWalletEndpoint>,
     customServerValue: String,
@@ -282,59 +284,84 @@ fun ServerList(
         options.forEachIndexed { index, endpoint ->
             val isSelected = index == selectedOption
 
-            if (index == CUSTOM_SERVER_OPTION_INDEX) {
-                Column(
-                    modifier = Modifier.animateContentSize()
-                ) {
+            when (index) {
+                DEFAULT_SERVER_OPTION_INDEX -> {
                     LabeledRadioButton(
                         endpoint = endpoint,
                         changeClick = { setSelectedOption(index) },
-                        name = stringResource(id = R.string.choose_server_custom),
+                        name =
+                            stringResource(
+                                id = R.string.choose_server_default_label,
+                                stringResource(
+                                    id = R.string.choose_server_full_server_name,
+                                    endpoint.host,
+                                    endpoint.port
+                                )
+                            ),
                         selected = isSelected,
                         modifier = Modifier.fillMaxWidth()
                     )
-
-                    if (isSelected) {
-                        val focusManager = LocalFocusManager.current
-
-                        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
-
-                        FormTextField(
-                            value = customServerValue,
-                            onValueChange = {
-                                setCustomServerValue(it)
-                            },
-                            placeholder = {
-                                Text(text = stringResource(R.string.choose_server_textfield_hint))
-                            },
-                            keyboardActions =
-                                KeyboardActions(
-                                    onDone = {
-                                        focusManager.clearFocus(true)
-                                    }
-                                ),
-                            keyboardOptions =
-                                KeyboardOptions(
-                                    keyboardType = KeyboardType.Uri,
-                                    imeAction = ImeAction.Done
-                                ),
-                            modifier =
-                                Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = ZcashTheme.dimens.spacingSmall)
+                }
+                CUSTOM_SERVER_OPTION_INDEX -> {
+                    Column(
+                        modifier = Modifier.animateContentSize()
+                    ) {
+                        LabeledRadioButton(
+                            endpoint = endpoint,
+                            changeClick = { setSelectedOption(index) },
+                            name = stringResource(id = R.string.choose_server_custom),
+                            selected = isSelected,
+                            modifier = Modifier.fillMaxWidth()
                         )
 
-                        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
+                        if (isSelected) {
+                            val focusManager = LocalFocusManager.current
+
+                            Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
+
+                            FormTextField(
+                                value = customServerValue,
+                                onValueChange = {
+                                    setCustomServerValue(it)
+                                },
+                                placeholder = {
+                                    Text(text = stringResource(R.string.choose_server_textfield_hint))
+                                },
+                                keyboardActions =
+                                    KeyboardActions(
+                                        onDone = {
+                                            focusManager.clearFocus(true)
+                                        }
+                                    ),
+                                keyboardOptions =
+                                    KeyboardOptions(
+                                        keyboardType = KeyboardType.Uri,
+                                        imeAction = ImeAction.Done
+                                    ),
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = ZcashTheme.dimens.spacingSmall)
+                            )
+
+                            Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
+                        }
                     }
                 }
-            } else {
-                LabeledRadioButton(
-                    endpoint = endpoint,
-                    changeClick = { setSelectedOption(index) },
-                    name = stringResource(id = R.string.choose_server_textfield_value, endpoint.host, endpoint.port),
-                    selected = isSelected,
-                    modifier = Modifier.fillMaxWidth()
-                )
+                else -> {
+                    LabeledRadioButton(
+                        endpoint = endpoint,
+                        changeClick = { setSelectedOption(index) },
+                        name =
+                            stringResource(
+                                id = R.string.choose_server_full_server_name,
+                                endpoint.host,
+                                endpoint.port
+                            ),
+                        selected = isSelected,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
             }
         }
     }
@@ -357,7 +384,7 @@ fun LabeledRadioButton(
         text = name,
         selected = selected,
         onClick = { changeClick(endpoint) },
-        modifier = modifier
+        modifier = modifier,
     )
 }
 

@@ -48,7 +48,10 @@ fun ServerDisconnectedDialog(
             Column(
                 Modifier.verticalScroll(rememberScrollState())
             ) {
-                Text(text = stringResource(id = R.string.server_disconnected_dialog_message))
+                Text(
+                    text = stringResource(id = R.string.server_disconnected_dialog_message),
+                    color = ZcashTheme.colors.textPrimary,
+                )
             }
         },
         confirmButtonText = stringResource(id = R.string.server_disconnected_dialog_switch_btn),

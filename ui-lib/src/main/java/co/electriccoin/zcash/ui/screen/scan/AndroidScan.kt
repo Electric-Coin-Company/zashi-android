@@ -18,8 +18,8 @@ import co.electriccoin.zcash.ui.common.model.SerializableAddress
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
-import co.electriccoin.zcash.ui.screen.scan.util.SettingsUtil
 import co.electriccoin.zcash.ui.screen.scan.view.Scan
+import co.electriccoin.zcash.ui.util.SettingsUtil
 import kotlinx.coroutines.launch
 
 @Composable
@@ -80,7 +80,7 @@ fun WrapScan(
                     context.startActivity(SettingsUtil.newSettingsIntent(context.packageName))
                 }.onFailure {
                     // This case should not really happen, as the Settings app should be available on every
-                    // Android device, but we need to handle it somehow.
+                    // Android device, but rather handle it.
                     scope.launch {
                         snackbarHostState.showSnackbar(
                             message = context.getString(R.string.scan_settings_open_failed)
