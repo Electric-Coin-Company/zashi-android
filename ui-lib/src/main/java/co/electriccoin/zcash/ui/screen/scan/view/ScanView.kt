@@ -103,7 +103,7 @@ private fun ScanPreview() {
                 onOpenSettings = {},
                 onScanStateChanged = {},
                 topAppBarSubTitleState = TopAppBarSubTitleState.None,
-                addressValidationResult = AddressType.Transparent,
+                addressValidationResult = AddressType.Invalid(),
             )
         }
     }
@@ -397,7 +397,7 @@ private fun ScanMainContent(
         )
 
     ConstraintLayout(modifier = modifier) {
-        val (frame, bottomItems) = createRefs()
+        val (frame, bottomItems, bottomAnchor) = createRefs()
 
         when (scanState) {
             ScanState.Permission -> {
@@ -482,7 +482,7 @@ private fun ScanMainContent(
                 Modifier
                     .constrainAs(frame) {
                         top.linkTo(parent.top)
-                        bottom.linkTo(bottomItems.top)
+                        bottom.linkTo(bottomAnchor.top)
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
                         width = Dimension.fillToConstraints
@@ -498,6 +498,15 @@ private fun ScanMainContent(
                 isScanning = scanState == ScanState.Scanning
             )
         }
+
+        Spacer(
+            modifier =
+                Modifier
+                    .height(240.dp)
+                    .constrainAs(bottomAnchor) {
+                        bottom.linkTo(parent.bottom)
+                    },
+        )
 
         Box(
             modifier =
