@@ -17,6 +17,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -313,7 +314,7 @@ data class FramePosition(
 }
 
 @OptIn(ExperimentalPermissionsApi::class)
-@Suppress("LongMethod", "LongParameterList", "CyclomaticComplexMethod")
+@Suppress("LongMethod", "LongParameterList", "CyclomaticComplexMethod", "MagicNumber")
 @Composable
 private fun ScanMainContent(
     addressValidationResult: AddressType?,
@@ -502,7 +503,7 @@ private fun ScanMainContent(
         Spacer(
             modifier =
                 Modifier
-                    .height(240.dp)
+                    .fillMaxHeight(.28f)
                     .constrainAs(bottomAnchor) {
                         bottom.linkTo(parent.bottom)
                     },
