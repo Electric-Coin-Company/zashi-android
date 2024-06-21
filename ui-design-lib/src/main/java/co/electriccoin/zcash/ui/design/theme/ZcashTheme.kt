@@ -4,7 +4,6 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import co.electriccoin.zcash.ui.design.BuildConfig
 import co.electriccoin.zcash.ui.design.theme.internal.DarkColorPalette
 import co.electriccoin.zcash.ui.design.theme.internal.DarkExtendedColorPalette
 import co.electriccoin.zcash.ui.design.theme.internal.ExtendedTypography
@@ -27,9 +26,7 @@ fun ZcashTheme(
     forceDarkMode: Boolean = false,
     content: @Composable () -> Unit
 ) {
-    // forceDarkMode takes precedence, then decides, based on the globally defined Gradle property
-    // IS_APP_DARK_MODE_ENABLED, whether the device's system dark mode is on or off.
-    val useDarkMode = forceDarkMode || (BuildConfig.IS_APP_DARK_MODE_ENABLED && isSystemInDarkTheme())
+    val useDarkMode = forceDarkMode || isSystemInDarkTheme()
 
     val baseColors =
         if (useDarkMode) {
