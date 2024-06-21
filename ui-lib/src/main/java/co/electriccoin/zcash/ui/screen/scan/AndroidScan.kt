@@ -75,6 +75,9 @@ fun WrapScan(
                     }
                 }
             },
+            onScanError = {
+                addressValidationResult = AddressType.Invalid()
+            },
             onOpenSettings = {
                 runCatching {
                     context.startActivity(SettingsUtil.newSettingsIntent(context.packageName))

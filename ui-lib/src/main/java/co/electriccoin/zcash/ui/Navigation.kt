@@ -318,7 +318,6 @@ private fun MainActivity.NavigationHome(
             }
         )
     } else if (ConfigurationEntries.IS_APP_UPDATE_CHECK_ENABLED.getValue(RemoteConfig.current)) {
-        Twig.info { "App update available" }
         WrapCheckForUpdate()
     }
 }

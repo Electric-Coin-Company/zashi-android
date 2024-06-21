@@ -3,6 +3,8 @@ package co.electriccoin.zcash.ui.screen.scan.view
 import android.Manifest
 import android.content.Context
 import android.view.ViewGroup
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraControl
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
@@ -15,6 +17,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -29,9 +32,13 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -44,6 +51,7 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -67,9 +75,11 @@ import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.scan.ScanTag
 import co.electriccoin.zcash.ui.screen.scan.model.ScanState
+import co.electriccoin.zcash.ui.screen.scan.util.ImageUriToQrCodeConverter
 import co.electriccoin.zcash.ui.screen.scan.util.QrCodeAnalyzer
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
+import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
@@ -78,6 +88,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.guava.await
+import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 @Preview
@@ -89,10 +100,11 @@ private fun ScanPreview() {
                 snackbarHostState = SnackbarHostState(),
                 onBack = {},
                 onScanned = {},
+                onScanError = {},
                 onOpenSettings = {},
                 onScanStateChanged = {},
                 topAppBarSubTitleState = TopAppBarSubTitleState.None,
-                addressValidationResult = AddressType.Transparent,
+                addressValidationResult = AddressType.Invalid(),
             )
         }
     }
@@ -107,6 +119,7 @@ private fun ScanDarkPreview() {
                 snackbarHostState = SnackbarHostState(),
                 onBack = {},
                 onScanned = {},
+                onScanError = {},
                 onOpenSettings = {},
                 onScanStateChanged = {},
                 topAppBarSubTitleState = TopAppBarSubTitleState.None,
@@ -118,30 +131,48 @@ private fun ScanDarkPreview() {
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-@Suppress("LongParameterList", "UnusedMaterial3ScaffoldPaddingParameter")
+@Suppress("LongParameterList", "UnusedMaterial3ScaffoldPaddingParameter", "LongMethod")
 fun Scan(
     snackbarHostState: SnackbarHostState,
     onBack: () -> Unit,
     onScanned: (String) -> Unit,
+    onScanError: () -> Unit,
     onOpenSettings: () -> Unit,
     onScanStateChanged: (ScanState) -> Unit,
     topAppBarSubTitleState: TopAppBarSubTitleState,
     addressValidationResult: AddressType?
 ) {
     val permissionState =
-        rememberPermissionState(
-            Manifest.permission.CAMERA
-        )
+        if (LocalInspectionMode.current) {
+            remember {
+                object : PermissionState {
+                    override val permission = Manifest.permission.CAMERA
+                    override val status = PermissionStatus.Granted
+
+                    override fun launchPermissionRequest() = Unit
+                }
+            }
+        } else {
+            rememberPermissionState(
+                Manifest.permission.CAMERA
+            )
+        }
 
     val (scanState, setScanState) =
-        rememberSaveable {
-            mutableStateOf(
-                if (permissionState.status.isGranted) {
-                    ScanState.Scanning
-                } else {
-                    ScanState.Permission
-                }
-            )
+        if (LocalInspectionMode.current) {
+            remember {
+                mutableStateOf(ScanState.Scanning)
+            }
+        } else {
+            rememberSaveable {
+                mutableStateOf(
+                    if (permissionState.status.isGranted) {
+                        ScanState.Scanning
+                    } else {
+                        ScanState.Permission
+                    }
+                )
+            }
         }
 
     Scaffold(
@@ -151,6 +182,7 @@ fun Scan(
             ScanMainContent(
                 addressValidationResult = addressValidationResult,
                 onScanned = onScanned,
+                onScanError = onScanError,
                 onOpenSettings = onOpenSettings,
                 onBack = onBack,
                 onScanStateChanged = onScanStateChanged,
@@ -282,11 +314,12 @@ data class FramePosition(
 }
 
 @OptIn(ExperimentalPermissionsApi::class)
-@Suppress("LongMethod", "LongParameterList")
+@Suppress("LongMethod", "LongParameterList", "CyclomaticComplexMethod", "MagicNumber")
 @Composable
 private fun ScanMainContent(
     addressValidationResult: AddressType?,
     onScanned: (String) -> Unit,
+    onScanError: () -> Unit,
     onOpenSettings: () -> Unit,
     onBack: () -> Unit,
     onScanStateChanged: (ScanState) -> Unit,
@@ -317,9 +350,13 @@ private fun ScanMainContent(
     }
 
     // Calculate the best frame size for the current device screen
-    val framePossibleSize = remember { mutableStateOf(IntSize.Zero) }
+    var framePossibleSize by remember { mutableStateOf(IntSize.Zero) }
 
-    val frameActualSize = (framePossibleSize.value.width * FRAME_SIZE_RATIO).roundToInt()
+    val frameActualSize by remember {
+        derivedStateOf {
+            (framePossibleSize.width * FRAME_SIZE_RATIO).roundToInt()
+        }
+    }
 
     val density = LocalDensity.current
 
@@ -327,34 +364,60 @@ private fun ScanMainContent(
 
     val framePosition =
         FramePosition(
-            left = (framePossibleSize.value.width - frameActualSize) / 2f,
-            top = (framePossibleSize.value.height - frameActualSize) / 2f,
-            right = (framePossibleSize.value.width - frameActualSize) / 2f + frameActualSize,
-            bottom = (framePossibleSize.value.height - frameActualSize) / 2f + frameActualSize,
+            left = (framePossibleSize.width - frameActualSize) / 2f,
+            top = (framePossibleSize.height - frameActualSize) / 2f,
+            right = (framePossibleSize.width - frameActualSize) / 2f + frameActualSize,
+            bottom = (framePossibleSize.height - frameActualSize) / 2f + frameActualSize,
             screenHeight = with(density) { configuration.screenHeightDp.dp.roundToPx() },
             screenWidth = with(density) { configuration.screenWidthDp.dp.roundToPx() }
         )
 
     val (isTorchOn, setIsTorchOn) = rememberSaveable { mutableStateOf(false) }
 
+    val convertImageUriToQrCode by remember { mutableStateOf(ImageUriToQrCodeConverter()) }
+
+    val scope = rememberCoroutineScope()
+
+    val context = LocalContext.current
+
+    val galleryLauncher =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.GetContent(),
+            onResult = { uri ->
+                uri?.let {
+                    scope.launch {
+                        val qrCode = convertImageUriToQrCode(context = context, uri = uri)
+                        if (qrCode == null) {
+                            onScanError()
+                        } else {
+                            onScanned(qrCode)
+                        }
+                    }
+                }
+            }
+        )
+
     ConstraintLayout(modifier = modifier) {
-        val (frame, bottomItems) = createRefs()
+        val (frame, bottomItems, bottomAnchor) = createRefs()
 
         when (scanState) {
             ScanState.Permission -> {
                 // Keep initial ui state
                 onScanStateChanged(ScanState.Permission)
             }
+
             ScanState.Scanning -> {
                 onScanStateChanged(ScanState.Scanning)
 
-                ScanCameraView(
-                    framePosition = framePosition,
-                    isTorchOn = isTorchOn,
-                    onScanned = onScanned,
-                    permissionState = permissionState,
-                    setScanState = setScanState,
-                )
+                if (!LocalInspectionMode.current) {
+                    ScanCameraView(
+                        framePosition = framePosition,
+                        isTorchOn = isTorchOn,
+                        onScanned = onScanned,
+                        permissionState = permissionState,
+                        setScanState = setScanState,
+                    )
+                }
 
                 Canvas(modifier = Modifier.fillMaxSize()) {
                     clipRect(
@@ -368,7 +431,23 @@ private fun ScanMainContent(
                     }
                 }
 
-                Image(
+                ImageButton(
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_gallery),
+                    contentDescription = stringResource(id = R.string.gallery_content_description),
+                    modifier =
+                        Modifier
+                            .offset(
+                                x =
+                                    with(density) {
+                                        framePosition.left.toDp() - ZcashTheme.dimens.spacingMid
+                                    },
+                                y = with(density) { framePosition.bottom.toDp() }
+                            ),
+                ) {
+                    galleryLauncher.launch("image/*")
+                }
+
+                ImageButton(
                     imageVector =
                         if (isTorchOn) {
                             ImageVector.vectorResource(R.drawable.ic_torch_off)
@@ -388,16 +467,12 @@ private fun ScanMainContent(
                                         )
                                     },
                                 y = with(density) { framePosition.bottom.toDp() }
-                            )
-                            .clip(RoundedCornerShape(ZcashTheme.dimens.regularRippleEffectCorner))
-                            .clickable { setIsTorchOn(!isTorchOn) }
-                            .padding(ZcashTheme.dimens.spacingDefault)
-                            .size(
-                                width = ZcashTheme.dimens.cameraTorchButton,
-                                height = ZcashTheme.dimens.cameraTorchButton
-                            )
-                )
+                            ),
+                ) {
+                    setIsTorchOn(!isTorchOn)
+                }
             }
+
             ScanState.Failed -> {
                 onScanStateChanged(ScanState.Failed)
             }
@@ -408,14 +483,14 @@ private fun ScanMainContent(
                 Modifier
                     .constrainAs(frame) {
                         top.linkTo(parent.top)
-                        bottom.linkTo(bottomItems.top)
+                        bottom.linkTo(bottomAnchor.top)
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
                         width = Dimension.fillToConstraints
                         height = Dimension.fillToConstraints
                     }
                     .onSizeChanged { coordinates ->
-                        framePossibleSize.value = coordinates
+                        framePossibleSize = coordinates
                     },
             contentAlignment = Alignment.Center
         ) {
@@ -424,6 +499,15 @@ private fun ScanMainContent(
                 isScanning = scanState == ScanState.Scanning
             )
         }
+
+        Spacer(
+            modifier =
+                Modifier
+                    .fillMaxHeight(.28f)
+                    .constrainAs(bottomAnchor) {
+                        bottom.linkTo(parent.bottom)
+                    },
+        )
 
         Box(
             modifier =
@@ -448,6 +532,28 @@ private fun ScanMainContent(
 }
 
 @Composable
+private fun ImageButton(
+    imageVector: ImageVector,
+    contentDescription: String,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
+    Image(
+        imageVector = imageVector,
+        contentDescription = contentDescription,
+        modifier =
+            modifier
+                .clip(RoundedCornerShape(ZcashTheme.dimens.regularRippleEffectCorner))
+                .clickable { onClick() }
+                .padding(ZcashTheme.dimens.spacingDefault)
+                .size(
+                    width = ZcashTheme.dimens.cameraTorchButton,
+                    height = ZcashTheme.dimens.cameraTorchButton
+                )
+    )
+}
+
+@Composable
 fun ScanFrame(
     frameSize: Int,
     isScanning: Boolean,
@@ -457,18 +563,15 @@ fun ScanFrame(
     Box(
         modifier =
             modifier
-                .then(
-                    Modifier
-                        .size(with(LocalDensity.current) { frameSize.toDp() })
-                        .background(
-                            if (isScanning) {
-                                Color.Transparent
-                            } else {
-                                ZcashTheme.colors.cameraDisabledFrameColor
-                            }
-                        )
-                        .testTag(ScanTag.QR_FRAME)
+                .size(with(LocalDensity.current) { frameSize.toDp() })
+                .background(
+                    if (isScanning) {
+                        Color.Transparent
+                    } else {
+                        ZcashTheme.colors.cameraDisabledFrameColor
+                    }
                 )
+                .testTag(ScanTag.QR_FRAME)
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(R.drawable.ic_scan_corner),

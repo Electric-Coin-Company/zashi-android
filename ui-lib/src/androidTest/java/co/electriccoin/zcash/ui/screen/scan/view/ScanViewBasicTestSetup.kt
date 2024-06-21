@@ -35,6 +35,7 @@ class ScanViewBasicTestSetup(
                 onBackCount.incrementAndGet()
             },
             onScanned = {},
+            onScanError = {},
             onOpenSettings = {},
             onScanStateChanged = {
                 scanState.set(it)
