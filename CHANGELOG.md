@@ -9,6 +9,8 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [1.1.2 (671)] - 2024-06-21
+
 ### Added
 - New bubble message style for the Send and Transaction history item text components
 - Display all messages within the transaction history record when it is expanded
