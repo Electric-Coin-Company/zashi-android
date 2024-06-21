@@ -272,7 +272,6 @@ dependencyResolutionManagement {
             bundle(
                 "androidx-compose-core",
                 listOf(
-                    "androidx-compose-compiler",
                     "androidx-compose-foundation",
                     "androidx-compose-material3",
                     "androidx-compose-tooling",

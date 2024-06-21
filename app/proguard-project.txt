@@ -28,3 +28,6 @@
 -dontwarn kotlinx.serialization.KSerializer
 -dontwarn kotlinx.serialization.Serializable
 -dontwarn kotlinx.serialization.internal.AbstractPolymorphicSerializer
+
+-keep class java.util.concurrent.*
+-keep class java.util.*
