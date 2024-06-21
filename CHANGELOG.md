@@ -9,6 +9,11 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [1.1.2 (673)] - 2024-06-21
+
+### Fixed
+- Conditional developer Dark mode switcher has been removed
+
 ## [1.1.2 (671)] - 2024-06-21
 
 ### Added
