@@ -12,6 +12,7 @@ syntax: glob
 .idea/deploymentTargetSelector.xml
 .idea/migrations.xml
 .idea/studiobot.xml
+.idea/material_theme_project_new.xml
 .settings
 *.iml
 bin/

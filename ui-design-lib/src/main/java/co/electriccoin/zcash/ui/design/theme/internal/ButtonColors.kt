@@ -111,7 +111,7 @@ internal data class DarkSecondaryButtonColors(
 @Immutable
 internal data class DarkTertiaryButtonColors(
     override val containerColor: Color = Color(0xFFFFFFFF),
-    override val disabledContainerColor: Color = Color(0xFFFFFFFF),
+    override val disabledContainerColor: Color = Color(0xFFB7B7B7),
     override val shadowColor: Color = Color(0xFF000000),
     override val disabledShadowColor: Color = Color(0xFFFFFFFF),
     override val textColor: Color = Color(0xFF000000),

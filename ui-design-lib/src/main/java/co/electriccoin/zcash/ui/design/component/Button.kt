@@ -44,6 +44,8 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.internal.ButtonColors
+import co.electriccoin.zcash.ui.design.theme.internal.DarkTertiaryButtonColors
+import co.electriccoin.zcash.ui.design.theme.internal.LightTertiaryButtonColors
 
 @Preview
 @Composable
@@ -61,6 +63,18 @@ private fun ButtonComposablePreview() {
                     PrimaryButton(onClick = { }, text = "Primary Disabled", enabled = false)
                     SecondaryButton(onClick = { }, text = "Secondary Basic")
                     SecondaryButton(onClick = { }, text = "Secondary Disabled", enabled = false)
+                    PrimaryButton(
+                        onClick = { },
+                        text = "Tertiary Colors Basic",
+                        buttonColors = LightTertiaryButtonColors()
+                    )
+                    PrimaryButton(
+                        onClick = { },
+                        text = "Tertiary Colors Disabled",
+                        enabled = false,
+                        showProgressBar = true,
+                        buttonColors = LightTertiaryButtonColors()
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))
@@ -96,6 +110,18 @@ private fun ButtonComposableDarkPreview() {
                     PrimaryButton(onClick = { }, text = "Primary Disabled", enabled = false)
                     SecondaryButton(onClick = { }, text = "Secondary Basic")
                     SecondaryButton(onClick = { }, text = "Secondary Disabled", enabled = false)
+                    PrimaryButton(
+                        onClick = { },
+                        text = "Tertiary Colors Basic",
+                        buttonColors = DarkTertiaryButtonColors()
+                    )
+                    PrimaryButton(
+                        onClick = { },
+                        text = "Tertiary Colors Disabled",
+                        enabled = false,
+                        showProgressBar = true,
+                        buttonColors = DarkTertiaryButtonColors()
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))
