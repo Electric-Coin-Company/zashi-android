@@ -28,3 +28,8 @@
 -dontwarn kotlinx.serialization.KSerializer
 -dontwarn kotlinx.serialization.Serializable
 -dontwarn kotlinx.serialization.internal.AbstractPolymorphicSerializer
+
+-keepclassmembers class java.util.concurrent.ConcurrentHashMap { *; }
+-keepclassmembers class java.util.IntSummaryStatistics { *; }
+-keepclassmembers class java.util.LongSummaryStatistics { *; }
+-keepclassmembers class java.util.DoubleSummaryStatistics { *; }
