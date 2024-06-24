@@ -9,6 +9,12 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [1.1.2 (676)] - 2024-06-24
+
+### Fixed
+- Disabled Tertiary button container color has been changed to distinguish between the button's disabled container 
+  color and the circular loading bar
+
 ## [1.1.2 (673)] - 2024-06-21
 
 ### Fixed
