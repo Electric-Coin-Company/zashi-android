@@ -54,17 +54,17 @@ pluginManagement {
         val androidGradlePluginVersion = extra["ANDROID_GRADLE_PLUGIN_VERSION"].toString()
         val kotlinVersion = extra["KOTLIN_VERSION"].toString()
 
-        id("com.android.application") version (androidGradlePluginVersion) apply (false)
-        id("com.android.library") version (androidGradlePluginVersion) apply (false)
-        id("com.android.test") version (androidGradlePluginVersion) apply (false)
-        id("com.github.ben-manes.versions") version (extra["GRADLE_VERSIONS_PLUGIN_VERSION"].toString()) apply (false)
-        id("com.osacky.fulladle") version (extra["FULLADLE_VERSION"].toString()) apply (false)
-        id("org.jetbrains.kotlinx.kover") version (extra["KOVER_VERSION"].toString()) apply (false)
-        id("wtf.emulator.gradle") version (extra["EMULATOR_WTF_GRADLE_PLUGIN_VERSION"].toString()) apply (false)
-        kotlin("android") version (kotlinVersion) apply (false)
-        kotlin("jvm") version (kotlinVersion)
-        kotlin("multiplatform") version (kotlinVersion)
-        kotlin("plugin.serialization") version (kotlinVersion)
+        id("com.android.application") version (androidGradlePluginVersion) apply false
+        id("com.android.library") version (androidGradlePluginVersion) apply false
+        id("com.android.test") version (androidGradlePluginVersion) apply false
+        id("com.github.ben-manes.versions") version (extra["GRADLE_VERSIONS_PLUGIN_VERSION"].toString()) apply false
+        id("com.osacky.fulladle") version (extra["FULLADLE_VERSION"].toString()) apply false
+        id("org.jetbrains.kotlinx.kover") version (extra["KOVER_VERSION"].toString()) apply false
+        id("wtf.emulator.gradle") version (extra["EMULATOR_WTF_GRADLE_PLUGIN_VERSION"].toString()) apply false
+        kotlin("android") version (kotlinVersion) apply false
+        kotlin("jvm") version (kotlinVersion) apply false
+        kotlin("multiplatform") version (kotlinVersion) apply false
+        kotlin("plugin.serialization") version (kotlinVersion) apply false
     }
 }
 
