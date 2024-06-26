@@ -45,10 +45,13 @@ import cash.z.ecc.android.sdk.model.TransactionOverview
 import cash.z.ecc.android.sdk.model.TransactionRecipient
 import cash.z.ecc.android.sdk.model.TransactionState
 import cash.z.ecc.android.sdk.model.Zatoshi
-import cash.z.ecc.android.sdk.model.toZecString
 import cash.z.ecc.android.sdk.type.AddressType
+import cash.z.ecc.sdk.extension.DEFAULT_FEE
+import cash.z.ecc.sdk.extension.toZecStringAbbreviated
+import cash.z.ecc.sdk.extension.toZecStringFull
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.SynchronizationStatus
+import co.electriccoin.zcash.ui.common.extension.asZecAmountTriple
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.design.component.BlankSurface
@@ -67,7 +70,6 @@ import co.electriccoin.zcash.ui.screen.account.model.TransactionUiState
 import co.electriccoin.zcash.ui.screen.account.model.TrxItemState
 import co.electriccoin.zcash.ui.screen.balances.BalancesTag
 import co.electriccoin.zcash.ui.screen.balances.model.StatusAction
-import co.electriccoin.zcash.ui.screen.send.view.DEFAULT_LESS_THAN_FEE
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import java.text.DateFormat
@@ -398,7 +400,7 @@ private fun HistoryItem(
 
                 HistoryItemDatePart(transaction)
 
-                if (transaction.expandableState >= TrxItemState.EXPANDED) {
+                if (transaction.expandableState.isInAnyExtendedState()) {
                     Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
                     HistoryItemExpandedPart(onAction, transaction)
@@ -457,22 +459,28 @@ private fun HistoryItemCollapsedMainPart(
                 }
         }
 
-        // TODO [#1047]: Representing Zatoshi amount
-        // TODO [#1047]: https://github.com/Electric-Coin-Company/zashi-android/issues/1047
+        val prefix =
+            if (transaction.overview.isSentTransaction) {
+                stringResource(id = R.string.account_history_item_sent_prefix)
+            } else {
+                stringResource(id = R.string.account_history_item_received_prefix)
+            }
+
         StyledBalance(
-            balanceString = transaction.overview.netValue.toZecString(),
+            balanceParts =
+                if (transaction.expandableState.isInAnyExtendedState()) {
+                    transaction.overview.netValue.toZecStringFull().asZecAmountTriple(prefix)
+                } else {
+                    transaction.overview.netValue.toZecStringAbbreviated(
+                        suffix = stringResource(id = R.string.etc)
+                    ).asZecAmountTriple(prefix)
+                },
             textStyles =
                 Pair(
                     first = valueTextStyle,
                     second = ZcashTheme.extendedTypography.transactionItemStyles.valueSecondPart
                 ),
             textColor = valueTextColor,
-            prefix =
-                if (transaction.overview.isSentTransaction) {
-                    stringResource(id = R.string.account_history_item_sent_prefix)
-                } else {
-                    stringResource(id = R.string.account_history_item_received_prefix)
-                }
         )
     }
 }
@@ -708,7 +716,7 @@ private fun HistoryItemTransactionIdPart(
                 color = ZcashTheme.colors.textDescription,
             )
 
-            Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingXtiny))
+            Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingTiny))
 
             Text(
                 text = txIdString,
@@ -789,23 +797,21 @@ private fun HistoryItemTransactionFeePart(
             color = ZcashTheme.colors.textDescription,
         )
 
-        Spacer(modifier = Modifier.width(ZcashTheme.dimens.spacingSmall))
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingTiny))
 
         if (fee == null) {
             Text(
                 text =
                     stringResource(
                         id = R.string.account_history_item_transaction_fee_typical,
-                        Zatoshi(DEFAULT_LESS_THAN_FEE).toZecString()
+                        DEFAULT_FEE
                     ),
                 style = ZcashTheme.extendedTypography.transactionItemStyles.feeFirstPart,
                 color = ZcashTheme.colors.textDescription,
             )
         } else {
-            // TODO [#1047]: Representing Zatoshi amount
-            // TODO [#1047]: https://github.com/Electric-Coin-Company/zashi-android/issues/1047
             StyledBalance(
-                balanceString = fee.toZecString(),
+                balanceParts = fee.toZecStringFull().asZecAmountTriple(),
                 textStyles =
                     Pair(
                         first = ZcashTheme.extendedTypography.transactionItemStyles.feeFirstPart,

@@ -47,16 +47,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import cash.z.ecc.android.sdk.ext.convertZatoshiToZecString
 import cash.z.ecc.android.sdk.model.FiatCurrencyConversionRateState
-import cash.z.ecc.android.sdk.model.Zatoshi
-import cash.z.ecc.android.sdk.model.toZecString
+import cash.z.ecc.sdk.extension.DEFAULT_FEE
+import cash.z.ecc.sdk.extension.toZecStringFull
 import cash.z.ecc.sdk.type.ZcashCurrency
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.BalanceState
 import co.electriccoin.zcash.ui.common.compose.BalanceWidget
 import co.electriccoin.zcash.ui.common.compose.StatusDialog
 import co.electriccoin.zcash.ui.common.compose.SynchronizationStatus
+import co.electriccoin.zcash.ui.common.extension.asZecAmountTriple
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
@@ -410,9 +410,7 @@ fun TransparentBalancePanel(
                 text =
                     stringResource(
                         id = R.string.balances_transparent_balance_fee,
-                        // TODO [#1047]: Representing Zatoshi amount
-                        // TODO [#1047]: https://github.com/Electric-Coin-Company/zashi-android/issues/1047
-                        Zatoshi(DEFAULT_LESS_THAN_FEE).convertZatoshiToZecString(maxDecimals = 3)
+                        DEFAULT_FEE
                     ),
                 textFontWeight = FontWeight.SemiBold
             )
@@ -467,7 +465,7 @@ fun TransparentBalanceRow(
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             StyledBalance(
-                balanceString = walletSnapshot.transparentBalance.toZecString(),
+                balanceParts = walletSnapshot.transparentBalance.toZecStringFull().asZecAmountTriple(),
                 textStyles =
                     Pair(
                         ZcashTheme.extendedTypography.balanceSingleStyles.first,
@@ -589,7 +587,7 @@ fun SpendableBalanceRow(walletSnapshot: WalletSnapshot) {
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             StyledBalance(
-                balanceString = walletSnapshot.spendableBalance().toZecString(),
+                balanceParts = walletSnapshot.spendableBalance().toZecStringFull().asZecAmountTriple(),
                 textStyles =
                     Pair(
                         ZcashTheme.extendedTypography.balanceSingleStyles.first,
@@ -624,7 +622,7 @@ fun ChangePendingRow(walletSnapshot: WalletSnapshot) {
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             StyledBalance(
-                balanceString = walletSnapshot.changePendingBalance().toZecString(),
+                balanceParts = walletSnapshot.changePendingBalance().toZecStringFull().asZecAmountTriple(),
                 textStyles =
                     Pair(
                         ZcashTheme.extendedTypography.balanceSingleStyles.first,
@@ -658,7 +656,7 @@ fun PendingTransactionsRow(walletSnapshot: WalletSnapshot) {
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             StyledBalance(
-                balanceString = walletSnapshot.valuePendingBalance().toZecString(),
+                balanceParts = walletSnapshot.valuePendingBalance().toZecStringFull().asZecAmountTriple(),
                 textStyles =
                     Pair(
                         ZcashTheme.extendedTypography.balanceSingleStyles.first,

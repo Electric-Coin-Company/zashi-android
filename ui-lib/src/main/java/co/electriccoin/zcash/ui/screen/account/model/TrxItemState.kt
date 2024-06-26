@@ -5,5 +5,7 @@ enum class TrxItemState {
     EXPANDED,
     EXPANDED_ADDRESS,
     EXPANDED_ID,
-    EXPANDED_ALL,
+    EXPANDED_ALL;
+
+    fun isInAnyExtendedState() = this >= EXPANDED
 }

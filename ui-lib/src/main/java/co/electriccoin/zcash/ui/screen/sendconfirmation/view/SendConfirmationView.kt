@@ -35,11 +35,12 @@ import cash.z.ecc.android.sdk.fixture.WalletAddressFixture
 import cash.z.ecc.android.sdk.model.FirstClassByteArray
 import cash.z.ecc.android.sdk.model.TransactionSubmitResult
 import cash.z.ecc.android.sdk.model.ZecSend
-import cash.z.ecc.android.sdk.model.toZecString
+import cash.z.ecc.sdk.extension.toZecStringFull
 import cash.z.ecc.sdk.fixture.MemoFixture
 import cash.z.ecc.sdk.fixture.ZatoshiFixture
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.BalanceWidgetBigLineOnly
+import co.electriccoin.zcash.ui.common.extension.asZecAmountTriple
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.AppAlertDialog
@@ -370,7 +371,7 @@ private fun SendConfirmationContent(
 
         Small(stringResource(R.string.send_confirmation_amount))
 
-        BalanceWidgetBigLineOnly(text = zecSend.amount.toZecString())
+        BalanceWidgetBigLineOnly(parts = zecSend.amount.toZecStringFull().asZecAmountTriple())
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
@@ -390,7 +391,7 @@ private fun SendConfirmationContent(
             // The not-null assertion operator is necessary here even if we check its nullability before
             // due to: "Smart cast to 'Proposal' is impossible, because 'zecSend.proposal' is a public API
             // property declared in different module. See more details on the Kotlin forum.
-            balanceString = zecSend.proposal!!.totalFeeRequired().toZecString(),
+            balanceParts = zecSend.proposal!!.totalFeeRequired().toZecStringFull().asZecAmountTriple(),
             textStyles =
                 Pair(
                     ZcashTheme.extendedTypography.balanceSingleStyles.first,

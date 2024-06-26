@@ -46,13 +46,12 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import cash.z.ecc.android.sdk.ext.convertZatoshiToZecString
 import cash.z.ecc.android.sdk.model.Memo
 import cash.z.ecc.android.sdk.model.MonetarySeparators
-import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.android.sdk.model.ZecSendExt
 import cash.z.ecc.android.sdk.type.AddressType
+import cash.z.ecc.sdk.extension.DEFAULT_FEE
 import cash.z.ecc.sdk.fixture.ZatoshiFixture
 import cash.z.ecc.sdk.type.ZcashCurrency
 import co.electriccoin.zcash.spackle.Twig
@@ -276,8 +275,6 @@ private fun SendMainContent(
     }
 }
 
-const val DEFAULT_LESS_THAN_FEE = 100_000L
-
 // TODO [#217]: Need to handle changing of Locale after user input, but before submitting the button.
 // TODO [#217]: https://github.com/Electric-Coin-Company/zashi-android/issues/217
 
@@ -463,9 +460,7 @@ fun SendButton(
             text =
                 stringResource(
                     id = R.string.send_fee,
-                    // TODO [#1047]: Representing Zatoshi amount
-                    // TODO [#1047]: https://github.com/Electric-Coin-Company/zashi-android/issues/1047
-                    Zatoshi(DEFAULT_LESS_THAN_FEE).convertZatoshiToZecString(maxDecimals = 3)
+                    DEFAULT_FEE
                 ),
             textFontWeight = FontWeight.SemiBold,
             modifier =
