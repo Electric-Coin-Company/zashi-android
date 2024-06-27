@@ -472,7 +472,7 @@ private fun HistoryItemCollapsedMainPart(
                     transaction.overview.netValue.toZecStringFull().asZecAmountTriple(prefix)
                 } else {
                     transaction.overview.netValue.toZecStringAbbreviated(
-                        suffix = stringResource(id = R.string.etc)
+                        suffix = stringResource(id = R.string.general_etc)
                     ).asZecAmountTriple(prefix)
                 },
             textStyles =

@@ -1,4 +1,7 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <!-- This is replaced by a resource overlay via app/build.gradle.kts -->
+    <string name="app_name">zashi-ui</string>
+
     <string name="fiat_currency_conversion_rate_unavailable">Unavailable</string>
     <string name="empty_char">-</string>
     <string name="zcash_logo_content_description">Zcash logo</string>
@@ -17,4 +20,6 @@
         device connection, and/or navigate to Advanced Settings to choose a different server.</string>
     <string name="server_disconnected_dialog_switch_btn">Switch Server</string>
     <string name="server_disconnected_dialog_ignore_btn">Ignore</string>
+
+    <string name="general_etc">…</string>
 </resources>
