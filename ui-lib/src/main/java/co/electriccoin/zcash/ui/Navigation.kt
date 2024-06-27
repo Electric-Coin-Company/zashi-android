@@ -13,7 +13,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.model.ZecSend
 import co.electriccoin.zcash.spackle.Twig
@@ -36,6 +35,7 @@ import co.electriccoin.zcash.ui.NavigationTargets.SEED_RECOVERY
 import co.electriccoin.zcash.ui.NavigationTargets.SEND_CONFIRMATION
 import co.electriccoin.zcash.ui.NavigationTargets.SETTINGS
 import co.electriccoin.zcash.ui.NavigationTargets.SUPPORT
+import co.electriccoin.zcash.ui.common.compose.LocalNavController
 import co.electriccoin.zcash.ui.common.model.SerializableAddress
 import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
 import co.electriccoin.zcash.ui.configuration.RemoteConfig
@@ -74,10 +74,7 @@ import kotlinx.serialization.json.Json
 @Composable
 @Suppress("LongMethod")
 internal fun MainActivity.Navigation() {
-    val navController =
-        rememberNavController().also {
-            navControllerForTesting = it
-        }
+    val navController = LocalNavController.current
 
     // Helper properties for triggering the system security UI from callbacks
     val (exportPrivateDataAuthentication, setExportPrivateDataAuthentication) =
@@ -268,7 +265,6 @@ private fun MainActivity.NavigationHome(
     backStack: NavBackStackEntry
 ) {
     WrapHome(
-        goBack = { finish() },
         goScan = { navController.navigateJustOnce(SCAN) },
         goSendConfirmation = { zecSend ->
             navController.currentBackStackEntry?.savedStateHandle?.let { handle ->

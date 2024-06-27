@@ -1,14 +1,13 @@
 package co.electriccoin.zcash.ui.screen.seedrecovery
 
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cash.z.ecc.android.sdk.Synchronizer
 import co.electriccoin.zcash.spackle.ClipboardManagerUtil
-import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.compose.LocalActivity
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.common.viewmodel.SecretState
@@ -17,11 +16,13 @@ import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.screen.seedrecovery.view.SeedRecovery
 
 @Composable
-internal fun MainActivity.WrapSeedRecovery(
+internal fun WrapSeedRecovery(
     goBack: () -> Unit,
     onDone: () -> Unit,
 ) {
-    val walletViewModel by viewModels<WalletViewModel>()
+    val activity = LocalActivity.current
+
+    val walletViewModel by activity.viewModels<WalletViewModel>()
 
     val synchronizer = walletViewModel.synchronizer.collectAsStateWithLifecycle().value
 
@@ -30,7 +31,6 @@ internal fun MainActivity.WrapSeedRecovery(
     val walletState = walletViewModel.walletStateInformation.collectAsStateWithLifecycle().value
 
     WrapSeedRecovery(
-        activity = this,
         goBack = goBack,
         onDone = onDone,
         secretState = secretState,
@@ -42,13 +42,14 @@ internal fun MainActivity.WrapSeedRecovery(
 @Composable
 @Suppress("LongParameterList")
 private fun WrapSeedRecovery(
-    activity: ComponentActivity,
     goBack: () -> Unit,
     onDone: () -> Unit,
     topAppBarSubTitleState: TopAppBarSubTitleState,
     synchronizer: Synchronizer?,
     secretState: SecretState,
 ) {
+    val activity = LocalActivity.current
+
     BackHandler {
         goBack()
     }

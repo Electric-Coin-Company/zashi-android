@@ -1,7 +1,6 @@
 package co.electriccoin.zcash.ui.screen.exportdata
 
 import android.content.Context
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.viewModels
 import androidx.compose.material3.SnackbarHostState
@@ -15,6 +14,7 @@ import cash.z.ecc.android.sdk.model.ZcashNetwork
 import cash.z.ecc.sdk.type.fromResources
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.compose.LocalActivity
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
@@ -38,7 +38,6 @@ internal fun MainActivity.WrapExportPrivateData(
     val walletState = walletViewModel.walletStateInformation.collectAsStateWithLifecycle().value
 
     WrapExportPrivateData(
-        this,
         goBack = goBack,
         onShare = onConfirm,
         synchronizer = synchronizer,
@@ -48,12 +47,13 @@ internal fun MainActivity.WrapExportPrivateData(
 
 @Composable
 internal fun WrapExportPrivateData(
-    activity: ComponentActivity,
     goBack: () -> Unit,
     onShare: () -> Unit,
     synchronizer: Synchronizer?,
     topAppBarSubTitleState: TopAppBarSubTitleState,
 ) {
+    val activity = LocalActivity.current
+
     BackHandler {
         goBack()
     }

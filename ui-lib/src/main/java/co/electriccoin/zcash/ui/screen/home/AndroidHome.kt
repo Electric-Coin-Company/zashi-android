@@ -4,18 +4,23 @@ package co.electriccoin.zcash.ui.screen.home
 
 import androidx.activity.compose.BackHandler
 import androidx.activity.viewModels
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cash.z.ecc.android.sdk.model.ZecSend
-import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.compose.LocalActivity
 import co.electriccoin.zcash.ui.common.compose.RestoreScreenBrightness
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
@@ -30,25 +35,23 @@ import co.electriccoin.zcash.ui.screen.receive.WrapReceive
 import co.electriccoin.zcash.ui.screen.send.WrapSend
 import co.electriccoin.zcash.ui.screen.send.model.SendArguments
 import kotlinx.collections.immutable.persistentListOf
-import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.launch
 
 @Composable
 @Suppress("LongParameterList")
-internal fun MainActivity.WrapHome(
-    goBack: () -> Unit,
+internal fun WrapHome(
     goSettings: () -> Unit,
     goMultiTrxSubmissionFailure: () -> Unit,
     goScan: () -> Unit,
     goSendConfirmation: (ZecSend) -> Unit,
     sendArguments: SendArguments
 ) {
-    val homeViewModel by viewModels<HomeViewModel>()
+    val activity = LocalActivity.current
 
-    val walletViewModel by viewModels<WalletViewModel>()
+    val homeViewModel by activity.viewModels<HomeViewModel>()
 
-    val homeScreenIndex = homeViewModel.screenIndex.collectAsStateWithLifecycle().value
+    val walletViewModel by activity.viewModels<WalletViewModel>()
 
     val isKeepScreenOnWhileSyncing = homeViewModel.isKeepScreenOnWhileSyncing.collectAsStateWithLifecycle().value
 
@@ -82,56 +85,58 @@ internal fun MainActivity.WrapHome(
     }
 
     WrapHome(
-        this,
-        goBack = goBack,
         goScan = goScan,
         goSendConfirmation = goSendConfirmation,
         goSettings = goSettings,
         goMultiTrxSubmissionFailure = goMultiTrxSubmissionFailure,
-        homeScreenIndex = homeScreenIndex,
         isKeepScreenOnWhileSyncing = isKeepScreenOnWhileSyncing,
         isShowingRestoreInitDialog = isShowingRestoreInitDialog,
-        onPageChange = {
-            homeViewModel.screenIndex.value = it
-        },
         sendArguments = sendArguments,
         setShowingRestoreInitDialog = setShowingRestoreInitDialog,
         walletSnapshot = walletSnapshot
     )
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Suppress("LongParameterList", "LongMethod")
 @Composable
 internal fun WrapHome(
-    activity: MainActivity,
-    goBack: () -> Unit,
     goSettings: () -> Unit,
     goMultiTrxSubmissionFailure: () -> Unit,
     goScan: () -> Unit,
     goSendConfirmation: (ZecSend) -> Unit,
-    homeScreenIndex: HomeScreenIndex,
     isKeepScreenOnWhileSyncing: Boolean?,
     isShowingRestoreInitDialog: Boolean,
-    onPageChange: (HomeScreenIndex) -> Unit,
     sendArguments: SendArguments,
     setShowingRestoreInitDialog: () -> Unit,
     walletSnapshot: WalletSnapshot?,
 ) {
-    // Flow for propagating the new page index to the pager in the view layer
-    val forceHomePageIndexFlow: MutableSharedFlow<ForcePage?> =
-        MutableSharedFlow(
-            Int.MAX_VALUE,
-            Int.MAX_VALUE,
-            BufferOverflow.SUSPEND
-        )
-    val forceIndex = forceHomePageIndexFlow.collectAsState(initial = null).value
+    val focusManager = LocalFocusManager.current
 
-    val homeGoBack: () -> Unit = {
-        when (homeScreenIndex) {
-            HomeScreenIndex.ACCOUNT -> goBack()
-            HomeScreenIndex.SEND,
-            HomeScreenIndex.RECEIVE,
-            HomeScreenIndex.BALANCES -> forceHomePageIndexFlow.tryEmit(ForcePage(HomeScreenIndex.ACCOUNT))
+    val activity = LocalActivity.current
+
+    val scope = rememberCoroutineScope()
+
+    val pagerState =
+        rememberPagerState(
+            initialPage = 0,
+            initialPageOffsetFraction = 0f,
+            pageCount = { 4 }
+        )
+
+    val homeGoBack: () -> Unit by remember(pagerState.currentPage, scope) {
+        derivedStateOf {
+            {
+                when (pagerState.currentPage) {
+                    HomeScreenIndex.ACCOUNT.pageIndex -> activity.finish()
+                    HomeScreenIndex.SEND.pageIndex,
+                    HomeScreenIndex.RECEIVE.pageIndex,
+                    HomeScreenIndex.BALANCES.pageIndex ->
+                        scope.launch {
+                            pagerState.animateScrollToPage(HomeScreenIndex.ACCOUNT.pageIndex)
+                        }
+                }
+            }
         }
     }
 
@@ -140,7 +145,7 @@ internal fun WrapHome(
     }
 
     // Reset the screen brightness for all pages except Receive which maintain the screen brightness by itself
-    if (homeScreenIndex != HomeScreenIndex.RECEIVE) {
+    if (pagerState.currentPage != HomeScreenIndex.RECEIVE.pageIndex) {
         RestoreScreenBrightness()
     }
 
@@ -152,8 +157,11 @@ internal fun WrapHome(
                 testTag = HomeTag.TAB_ACCOUNT,
                 screenContent = {
                     WrapAccount(
-                        activity = activity,
-                        goBalances = { forceHomePageIndexFlow.tryEmit(ForcePage(HomeScreenIndex.BALANCES)) },
+                        goBalances = {
+                            scope.launch {
+                                pagerState.animateScrollToPage(HomeScreenIndex.BALANCES.pageIndex)
+                            }
+                        },
                         goSettings = goSettings
                     )
                 }
@@ -164,10 +172,13 @@ internal fun WrapHome(
                 testTag = HomeTag.TAB_SEND,
                 screenContent = {
                     WrapSend(
-                        activity = activity,
                         goToQrScanner = goScan,
                         goBack = homeGoBack,
-                        goBalances = { forceHomePageIndexFlow.tryEmit(ForcePage(HomeScreenIndex.BALANCES)) },
+                        goBalances = {
+                            scope.launch {
+                                pagerState.animateScrollToPage(HomeScreenIndex.BALANCES.pageIndex)
+                            }
+                        },
                         goSendConfirmation = goSendConfirmation,
                         goSettings = goSettings,
                         sendArguments = sendArguments
@@ -179,10 +190,7 @@ internal fun WrapHome(
                 title = stringResource(id = R.string.home_tab_receive),
                 testTag = HomeTag.TAB_RECEIVE,
                 screenContent = {
-                    WrapReceive(
-                        activity = activity,
-                        onSettings = goSettings
-                    )
+                    WrapReceive(onSettings = goSettings)
                 }
             ),
             TabItem(
@@ -191,7 +199,6 @@ internal fun WrapHome(
                 testTag = HomeTag.TAB_BALANCES,
                 screenContent = {
                     WrapBalances(
-                        activity = activity,
                         goSettings = goSettings,
                         goMultiTrxSubmissionFailure = goMultiTrxSubmissionFailure
                     )
@@ -201,33 +208,27 @@ internal fun WrapHome(
 
     Home(
         subScreens = tabs,
-        forcePage = forceIndex,
         isKeepScreenOnWhileSyncing = isKeepScreenOnWhileSyncing,
         isShowingRestoreInitDialog = isShowingRestoreInitDialog,
-        onPageChange = onPageChange,
         setShowingRestoreInitDialog = setShowingRestoreInitDialog,
-        walletSnapshot = walletSnapshot
+        walletSnapshot = walletSnapshot,
+        pagerState = pagerState,
     )
-}
 
-/**
- * Wrapper class used to pass forced pages index into the view layer
- */
-class ForcePage(
-    val currentPage: HomeScreenIndex,
-)
+    LaunchedEffect(pagerState.currentPage) {
+        if (pagerState.currentPage != HomeScreenIndex.SEND.pageIndex) {
+            focusManager.clearFocus(true)
+        }
+    }
+}
 
 /**
  * Enum of the Home screen sub-screens
  */
-enum class HomeScreenIndex {
-    // WARN: Be careful when re-ordering these, as the ordinal number states for their order
-    ACCOUNT,
-    SEND,
-    RECEIVE,
-    BALANCES, ;
-
-    companion object {
-        fun fromIndex(index: Int) = entries[index]
-    }
+@Suppress("MagicNumber")
+enum class HomeScreenIndex(val pageIndex: Int) {
+    ACCOUNT(0),
+    SEND(1),
+    RECEIVE(2),
+    BALANCES(3)
 }

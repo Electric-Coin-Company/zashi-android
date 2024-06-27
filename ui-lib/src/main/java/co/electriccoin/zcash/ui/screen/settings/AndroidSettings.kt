@@ -1,12 +1,10 @@
 package co.electriccoin.zcash.ui.screen.settings
 
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import co.electriccoin.zcash.ui.MainActivity
-import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
+import co.electriccoin.zcash.ui.common.compose.LocalActivity
 import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
@@ -17,42 +15,20 @@ import co.electriccoin.zcash.ui.screen.settings.view.Settings
 import co.electriccoin.zcash.ui.screen.settings.viewmodel.SettingsViewModel
 
 @Composable
-internal fun MainActivity.WrapSettings(
+internal fun WrapSettings(
     goAbout: () -> Unit,
     goAdvancedSettings: () -> Unit,
     goBack: () -> Unit,
     goFeedback: () -> Unit,
 ) {
-    val walletViewModel by viewModels<WalletViewModel>()
+    val activity = LocalActivity.current
 
-    val settingsViewModel by viewModels<SettingsViewModel>()
+    val walletViewModel by activity.viewModels<WalletViewModel>()
+
+    val settingsViewModel by activity.viewModels<SettingsViewModel>()
 
     val walletState = walletViewModel.walletStateInformation.collectAsStateWithLifecycle().value
 
-    WrapSettings(
-        activity = this,
-        goAbout = goAbout,
-        goAdvancedSettings = goAdvancedSettings,
-        goBack = goBack,
-        goFeedback = goFeedback,
-        settingsViewModel = settingsViewModel,
-        topAppBarSubTitleState = walletState,
-        walletViewModel = walletViewModel,
-    )
-}
-
-@Composable
-@Suppress("LongParameterList")
-private fun WrapSettings(
-    activity: ComponentActivity,
-    goAbout: () -> Unit,
-    goAdvancedSettings: () -> Unit,
-    goBack: () -> Unit,
-    goFeedback: () -> Unit,
-    settingsViewModel: SettingsViewModel,
-    topAppBarSubTitleState: TopAppBarSubTitleState,
-    walletViewModel: WalletViewModel,
-) {
     val isBackgroundSyncEnabled = settingsViewModel.isBackgroundSync.collectAsStateWithLifecycle().value
     val isKeepScreenOnWhileSyncing = settingsViewModel.isKeepScreenOnWhileSyncing.collectAsStateWithLifecycle().value
     val isAnalyticsEnabled = settingsViewModel.isAnalyticsEnabled.collectAsStateWithLifecycle().value
@@ -97,7 +73,7 @@ private fun WrapSettings(
             onAnalyticsSettingsChanged = {
                 settingsViewModel.setAnalyticsEnabled(it)
             },
-            topAppBarSubTitleState = topAppBarSubTitleState,
+            topAppBarSubTitleState = walletState,
         )
     }
 }

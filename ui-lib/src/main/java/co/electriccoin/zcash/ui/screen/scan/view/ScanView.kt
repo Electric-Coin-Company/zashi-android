@@ -1,7 +1,6 @@
 package co.electriccoin.zcash.ui.screen.scan.view
 
 import android.Manifest
-import android.content.Context
 import android.view.ViewGroup
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -696,7 +695,6 @@ fun ScanCameraView(
         )
 
         imageAnalysis.qrCodeFlow(
-            context = context,
             framePosition = framePosition,
         ).collectAsState(initial = null).value?.let {
             onScanned(it)
@@ -707,11 +705,10 @@ fun ScanCameraView(
 // Using callbackFlow because QrCodeAnalyzer has a non-suspending callback which makes
 // a basic flow builder not work here.
 @Composable
-fun ImageAnalysis.qrCodeFlow(
-    context: Context,
-    framePosition: FramePosition,
-): Flow<String> =
-    remember {
+fun ImageAnalysis.qrCodeFlow(framePosition: FramePosition): Flow<String> {
+    val context = LocalContext.current
+
+    return remember {
         callbackFlow {
             setAnalyzer(
                 ContextCompat.getMainExecutor(context),
@@ -732,3 +729,4 @@ fun ImageAnalysis.qrCodeFlow(
             }
         }
     }
+}

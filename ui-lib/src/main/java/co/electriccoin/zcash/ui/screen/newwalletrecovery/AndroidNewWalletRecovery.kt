@@ -1,28 +1,20 @@
 package co.electriccoin.zcash.ui.screen.newwalletrecovery
 
-import androidx.activity.ComponentActivity
 import androidx.compose.runtime.Composable
 import cash.z.ecc.android.sdk.model.PersistableWallet
 import co.electriccoin.zcash.spackle.ClipboardManagerUtil
-import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.compose.LocalActivity
 import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.screen.newwalletrecovery.view.NewWalletRecovery
 
 @Composable
-fun MainActivity.WrapNewWalletRecovery(
+fun WrapNewWalletRecovery(
     persistableWallet: PersistableWallet,
     onBackupComplete: () -> Unit
 ) {
-    WrapNewWalletRecovery(this, persistableWallet, onBackupComplete)
-}
+    val activity = LocalActivity.current
 
-@Composable
-private fun WrapNewWalletRecovery(
-    activity: ComponentActivity,
-    persistableWallet: PersistableWallet,
-    onBackupComplete: () -> Unit
-) {
     val versionInfo = VersionInfo.new(activity.applicationContext)
 
     NewWalletRecovery(

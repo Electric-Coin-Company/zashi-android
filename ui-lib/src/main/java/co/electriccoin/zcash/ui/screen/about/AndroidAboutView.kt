@@ -3,7 +3,7 @@
 package co.electriccoin.zcash.ui.screen.about
 
 import android.content.Context
-import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.viewModels
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -12,9 +12,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.configuration.AndroidConfigurationFactory
-import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
+import co.electriccoin.zcash.ui.common.compose.LocalActivity
 import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.about.util.WebBrowserUtil
@@ -24,24 +23,17 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
-internal fun MainActivity.WrapAbout(goBack: () -> Unit) {
-    val walletViewModel by viewModels<WalletViewModel>()
+internal fun WrapAbout(goBack: () -> Unit) {
+    val activity = LocalActivity.current
+
+    val walletViewModel by activity.viewModels<WalletViewModel>()
 
     val walletState = walletViewModel.walletStateInformation.collectAsStateWithLifecycle().value
 
-    WrapAbout(
-        activity = this,
-        goBack = goBack,
-        topAppBarSubTitleState = walletState
-    )
-}
+    BackHandler {
+        goBack()
+    }
 
-@Composable
-internal fun WrapAbout(
-    activity: ComponentActivity,
-    goBack: () -> Unit,
-    topAppBarSubTitleState: TopAppBarSubTitleState,
-) {
     val configInfo = ConfigInfo.new(AndroidConfigurationFactory.getInstance(activity.applicationContext))
     val versionInfo = VersionInfo.new(activity.applicationContext)
 
@@ -66,7 +58,7 @@ internal fun WrapAbout(
             )
         },
         snackbarHostState = snackbarHostState,
-        topAppBarSubTitleState = topAppBarSubTitleState,
+        topAppBarSubTitleState = walletState,
     )
 }
 

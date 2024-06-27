@@ -4,7 +4,6 @@ package co.electriccoin.zcash.ui.screen.receive
 
 import android.content.Context
 import android.graphics.Bitmap
-import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -16,6 +15,7 @@ import co.electriccoin.zcash.spackle.ClipboardManagerUtil
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.spackle.getInternalCacheDirSuspend
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.compose.LocalActivity
 import co.electriccoin.zcash.ui.common.compose.ScreenBrightnessState
 import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
@@ -31,10 +31,9 @@ import kotlinx.coroutines.withContext
 import java.io.File
 
 @Composable
-internal fun WrapReceive(
-    activity: ComponentActivity,
-    onSettings: () -> Unit,
-) {
+internal fun WrapReceive(onSettings: () -> Unit) {
+    val activity = LocalActivity.current
+
     val walletViewModel by activity.viewModels<WalletViewModel>()
 
     val brightnessViewModel by activity.viewModels<ScreenBrightnessViewModel>()

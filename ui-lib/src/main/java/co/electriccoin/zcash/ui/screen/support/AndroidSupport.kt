@@ -3,8 +3,9 @@
 package co.electriccoin.zcash.ui.screen.support
 
 import android.content.Intent
-import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.viewModels
+import androidx.annotation.VisibleForTesting
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -12,8 +13,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.compose.LocalActivity
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.support.model.SupportInfo
@@ -24,30 +25,37 @@ import co.electriccoin.zcash.ui.util.EmailUtil
 import kotlinx.coroutines.launch
 
 @Composable
-internal fun MainActivity.WrapSupport(goBack: () -> Unit) {
-    val supportViewModel by viewModels<SupportViewModel>()
+internal fun WrapSupport(goBack: () -> Unit) {
+    val activity = LocalActivity.current
 
-    val walletViewModel by viewModels<WalletViewModel>()
+    val supportViewModel by activity.viewModels<SupportViewModel>()
+
+    val walletViewModel by activity.viewModels<WalletViewModel>()
 
     val supportInfo = supportViewModel.supportInfo.collectAsStateWithLifecycle().value
 
     val walletState = walletViewModel.walletStateInformation.collectAsStateWithLifecycle().value
 
+    BackHandler {
+        goBack()
+    }
+
     WrapSupport(
-        activity = this,
         goBack = goBack,
         supportInfo = supportInfo,
         topAppBarSubTitleState = walletState
     )
 }
 
+@VisibleForTesting
 @Composable
 internal fun WrapSupport(
-    activity: ComponentActivity,
     goBack: () -> Unit,
     supportInfo: SupportInfo?,
     topAppBarSubTitleState: TopAppBarSubTitleState,
 ) {
+    val activity = LocalActivity.current
+
     val snackbarHostState = remember { SnackbarHostState() }
 
     val scope = rememberCoroutineScope()
