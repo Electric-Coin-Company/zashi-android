@@ -3,7 +3,6 @@
 package co.electriccoin.zcash.ui.screen.onboarding
 
 import android.content.Context
-import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -15,7 +14,7 @@ import cash.z.ecc.android.sdk.model.SeedPhrase
 import cash.z.ecc.android.sdk.model.ZcashNetwork
 import cash.z.ecc.sdk.type.fromResources
 import co.electriccoin.zcash.spackle.FirebaseTestLabUtil
-import co.electriccoin.zcash.ui.MainActivity
+import co.electriccoin.zcash.ui.common.compose.LocalActivity
 import co.electriccoin.zcash.ui.common.model.OnboardingState
 import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
@@ -25,14 +24,10 @@ import co.electriccoin.zcash.ui.screen.onboarding.view.Onboarding
 import co.electriccoin.zcash.ui.screen.onboarding.viewmodel.OnboardingViewModel
 import co.electriccoin.zcash.ui.screen.restore.WrapRestore
 
-@Composable
-internal fun MainActivity.WrapOnboarding() {
-    WrapOnboarding(this)
-}
-
 @Suppress("LongMethod")
 @Composable
-internal fun WrapOnboarding(activity: ComponentActivity) {
+internal fun WrapOnboarding() {
+    val activity = LocalActivity.current
     val walletViewModel by activity.viewModels<WalletViewModel>()
     val onboardingViewModel by activity.viewModels<OnboardingViewModel>()
 

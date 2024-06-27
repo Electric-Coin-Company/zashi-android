@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.screen.securitywarning
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import co.electriccoin.zcash.configuration.AndroidConfigurationFactory
@@ -13,6 +14,10 @@ internal fun WrapSecurityWarning(
     onConfirm: () -> Unit
 ) {
     val activity = LocalActivity.current
+
+    BackHandler {
+        onBack()
+    }
 
     SecurityWarning(
         versionInfo = VersionInfo.new(activity.applicationContext),
