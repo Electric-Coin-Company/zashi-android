@@ -5,7 +5,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import cash.z.ecc.android.sdk.fixture.WalletBalanceFixture
 import cash.z.ecc.android.sdk.model.MonetarySeparators
@@ -69,11 +68,6 @@ class SendViewTestSetup(
         return lastZecSend
     }
 
-    fun getLastSendStage(): SendStage? {
-        composeTestRule.waitForIdle()
-        return lastSendStage
-    }
-
     @Composable
     @Suppress("TestFunctionName")
     fun DefaultContent() {
@@ -111,7 +105,6 @@ class SendViewTestSetup(
                 balanceState = BalanceStateFixture.new(),
                 sendStage = sendStage,
                 onCreateZecSend = setZecSend,
-                focusManager = LocalFocusManager.current,
                 onBack = onBackAction,
                 onSettings = { onSettingsCount.incrementAndGet() },
                 onQrScannerOpen = {
