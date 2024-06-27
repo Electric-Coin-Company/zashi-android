@@ -19,14 +19,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import cash.z.ecc.android.sdk.model.Zatoshi
-import cash.z.ecc.android.sdk.model.toZecString
+import cash.z.ecc.sdk.extension.toZecStringFull
 import cash.z.ecc.sdk.type.ZcashCurrency
+import co.electriccoin.zcash.ui.common.extension.asZecAmountTriple
 import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.CircularSmallProgressIndicator
 import co.electriccoin.zcash.ui.design.component.Reference
 import co.electriccoin.zcash.ui.design.component.StyledBalance
+import co.electriccoin.zcash.ui.design.component.ZecAmountTriple
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 
 @Preview(device = Devices.PIXEL_2)
@@ -94,7 +96,7 @@ fun BalanceWidget(
                 .then(modifier),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        BalanceWidgetBigLineOnly(text = balanceState.totalBalance.toZecString())
+        BalanceWidgetBigLineOnly(parts = balanceState.totalBalance.toZecStringFull().asZecAmountTriple())
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -132,7 +134,7 @@ fun BalanceWidget(
                 }
                 is BalanceState.Available -> {
                     StyledBalance(
-                        balanceString = balanceState.spendableBalance.toZecString(),
+                        balanceParts = balanceState.spendableBalance.toZecStringFull().asZecAmountTriple(),
                         textStyles =
                             Pair(
                                 ZcashTheme.extendedTypography.balanceWidgetStyles.third,
@@ -154,7 +156,7 @@ fun BalanceWidget(
 
 @Composable
 fun BalanceWidgetBigLineOnly(
-    text: String,
+    parts: ZecAmountTriple,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -162,7 +164,7 @@ fun BalanceWidgetBigLineOnly(
         verticalAlignment = Alignment.CenterVertically
     ) {
         StyledBalance(
-            balanceString = text,
+            balanceParts = parts,
             textStyles =
                 Pair(
                     ZcashTheme.extendedTypography.balanceWidgetStyles.first,
