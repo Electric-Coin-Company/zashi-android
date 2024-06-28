@@ -71,6 +71,9 @@ Start by making sure the command line with Gradle works first, because **all the
 1. Reboot your computer, which will ensure that Gradle and Kotlin daemons are completely killed and relaunched
 1. Delete the global Gradle cache under `~/.gradle/caches`
 1. If adding a new dependency or updating a dependency, a warning that a dependency cannot be found may indicate the Maven repository restrictions need adjusting
+1. If included build (like buildSrc) contains different kotlin version (embedded from gradle) than other modules 
+   then Android Studio will not use gradle wrapper version specified in project. Running configurations or using 
+   terminal works as expected. [link](https://github.com/Electric-Coin-Company/zashi-android/issues/1495)
 
 ## Gradle Tasks
 A variety of Gradle tasks are set up within the project, and these tasks are also accessible in Android Studio as run configurations.
