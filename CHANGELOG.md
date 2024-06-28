@@ -12,6 +12,9 @@ directly impact users rather than highlighting other key architectural updates.*
 ### Added
 - Proper ZEC amount abbreviation has been added across the entire app as described by the design document
 
+### Fixed
+- The app authentication now correctly handles authentication success after a previous failed state 
+
 ## [1.1.2 (676)] - 2024-06-24
 
 ### Fixed

@@ -341,7 +341,7 @@ private fun MainActivity.ShowSystemAuthentication(
             setCheckedProperty(false)
         },
         onFailed = {
-            setCheckedProperty(false)
+            // No action needed
         },
         useCase = protectedUseCase
     )

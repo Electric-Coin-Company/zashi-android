@@ -234,7 +234,7 @@ class AuthenticationViewModel(
                      */
                     override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                         super.onAuthenticationSucceeded(result)
-                        Twig.info { "Authentication successful: $result" }
+                        Twig.info { "Authentication successful" }
                         authenticationResult.value = AuthenticationResult.Success
                     }
 

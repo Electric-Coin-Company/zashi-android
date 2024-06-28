@@ -140,7 +140,8 @@ private fun WrapDeleteWalletAuth(
             Twig.warn { "Authentication result: failed" }
             authenticationViewModel.resetAuthenticationResult()
             onFailed()
-            Toast.makeText(activity, activity.getString(R.string.authentication_toast_failed), Toast.LENGTH_LONG).show()
+            Toast.makeText(activity, activity.getString(R.string.authentication_toast_failed), Toast.LENGTH_SHORT)
+                .show()
         }
         is AuthenticationResult.Error -> {
             Twig.error {
@@ -212,7 +213,7 @@ private fun WrapAppExportPrivateDataAuth(
             Twig.warn { "Authentication result: failed" }
             authenticationViewModel.resetAuthenticationResult()
             onFailed()
-            Toast.makeText(activity, stringResource(id = R.string.authentication_toast_failed), Toast.LENGTH_LONG)
+            Toast.makeText(activity, stringResource(id = R.string.authentication_toast_failed), Toast.LENGTH_SHORT)
                 .show()
         }
         is AuthenticationResult.Error -> {
@@ -285,7 +286,7 @@ private fun WrapSeedRecoveryAuth(
             Twig.warn { "Authentication result: failed" }
             authenticationViewModel.resetAuthenticationResult()
             onFailed()
-            Toast.makeText(activity, stringResource(id = R.string.authentication_toast_failed), Toast.LENGTH_LONG)
+            Toast.makeText(activity, stringResource(id = R.string.authentication_toast_failed), Toast.LENGTH_SHORT)
                 .show()
         }
         is AuthenticationResult.Error -> {
@@ -359,7 +360,7 @@ private fun WrapSendFundsAuth(
             Twig.warn { "Authentication result: failed" }
             authenticationViewModel.resetAuthenticationResult()
             onFailed()
-            Toast.makeText(activity, stringResource(id = R.string.authentication_toast_failed), Toast.LENGTH_LONG)
+            Toast.makeText(activity, stringResource(id = R.string.authentication_toast_failed), Toast.LENGTH_SHORT)
                 .show()
         }
         is AuthenticationResult.Error -> {
@@ -432,7 +433,7 @@ private fun WrapAppAccessAuth(
         AuthenticationResult.Canceled -> {
             Twig.info { "Authentication result: canceled: shutting down" }
             authenticationViewModel.resetAuthenticationResult()
-            Toast.makeText(activity, stringResource(id = R.string.authentication_toast_canceled), Toast.LENGTH_LONG)
+            Toast.makeText(activity, stringResource(id = R.string.authentication_toast_canceled), Toast.LENGTH_SHORT)
                 .show()
             onCancel()
         }

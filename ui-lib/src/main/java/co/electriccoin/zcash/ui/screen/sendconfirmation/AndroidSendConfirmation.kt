@@ -228,12 +228,13 @@ internal fun WrapSendConfirmation(
                             synchronizer = synchronizer,
                         )
                     }
+                    sendFundsAuthentication.value = false
                 },
                 onCancel = {
                     sendFundsAuthentication.value = false
                 },
                 onFailed = {
-                    sendFundsAuthentication.value = false
+                    // No action needed
                 },
                 useCase = AuthenticationUseCase.SendFunds
             )
