@@ -9,6 +9,9 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+### Fixed
+- The app navigation has been improved to always behave the same for system, gesture, or top app bar back navigation actions.
+
 ### Added
 - Proper ZEC amount abbreviation has been added across the entire app as described by the design document
 
