@@ -1,6 +1,6 @@
 package co.electriccoin.zcash.ui.screen.scan
 
-import android.content.Context
+import androidx.activity.compose.BackHandler
 import androidx.activity.viewModels
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -9,6 +9,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.type.AddressType
@@ -33,8 +34,11 @@ internal fun MainActivity.WrapScanValidator(
 
     val walletState = walletViewModel.walletStateInformation.collectAsStateWithLifecycle().value
 
+    BackHandler {
+        goBack()
+    }
+
     WrapScan(
-        context = this,
         onScanValid = onScanValid,
         goBack = goBack,
         synchronizer = synchronizer,
@@ -44,12 +48,13 @@ internal fun MainActivity.WrapScanValidator(
 
 @Composable
 fun WrapScan(
-    context: Context,
     goBack: () -> Unit,
     onScanValid: (address: SerializableAddress) -> Unit,
     synchronizer: Synchronizer?,
     topAppBarSubTitleState: TopAppBarSubTitleState,
 ) {
+    val context = LocalContext.current
+
     val scope = rememberCoroutineScope()
 
     val snackbarHostState = remember { SnackbarHostState() }

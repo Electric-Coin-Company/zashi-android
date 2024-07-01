@@ -5,13 +5,15 @@ import androidx.activity.ComponentActivity
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.compose.rememberNavController
 import cash.z.ecc.android.sdk.ext.collectWith
 import co.electriccoin.zcash.spackle.EmulatorWtfUtil
 import co.electriccoin.zcash.spackle.FirebaseTestLabUtil
+import co.electriccoin.zcash.ui.MainActivity
 import kotlinx.coroutines.flow.map
 
 @Composable
-fun ComponentActivity.BindCompLocalProvider(content: @Composable () -> Unit) {
+fun MainActivity.BindCompLocalProvider(content: @Composable () -> Unit) {
     val screenSecurity = ScreenSecurity()
     observeScreenSecurityFlag(screenSecurity)
 
@@ -20,10 +22,18 @@ fun ComponentActivity.BindCompLocalProvider(content: @Composable () -> Unit) {
 
     val screenTimeout = ScreenTimeout()
     observeScreenTimeoutFlag(screenTimeout)
+
+    val navController =
+        rememberNavController().also {
+            navControllerForTesting = it
+        }
+
     CompositionLocalProvider(
         LocalScreenSecurity provides screenSecurity,
         LocalScreenBrightness provides screenBrightness,
         LocalScreenTimeout provides screenTimeout,
+        LocalNavController provides navController,
+        LocalActivity provides this,
         content = content
     )
 }

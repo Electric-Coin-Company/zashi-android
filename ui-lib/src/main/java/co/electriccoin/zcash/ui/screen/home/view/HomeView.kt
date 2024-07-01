@@ -16,10 +16,7 @@ import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -28,7 +25,6 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import cash.z.ecc.android.sdk.Synchronizer
-import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.DisableScreenTimeout
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
@@ -37,24 +33,20 @@ import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.NavigationTabText
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
-import co.electriccoin.zcash.ui.screen.home.ForcePage
-import co.electriccoin.zcash.ui.screen.home.HomeScreenIndex
 import co.electriccoin.zcash.ui.screen.home.model.TabItem
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalFoundationApi::class)
 @Preview("Home")
 @Composable
 private fun ComposablePreview() {
     ZcashTheme(forceDarkMode = false) {
         BlankSurface {
             Home(
-                forcePage = null,
                 isKeepScreenOnWhileSyncing = false,
                 isShowingRestoreInitDialog = false,
-                onPageChange = {},
                 setShowingRestoreInitDialog = {},
                 subScreens = persistentListOf(),
                 walletSnapshot = WalletSnapshotFixture.new(),
@@ -67,44 +59,18 @@ private fun ComposablePreview() {
 @Suppress("LongParameterList")
 @Composable
 fun Home(
-    forcePage: ForcePage?,
     isKeepScreenOnWhileSyncing: Boolean?,
     isShowingRestoreInitDialog: Boolean,
-    onPageChange: (HomeScreenIndex) -> Unit,
     setShowingRestoreInitDialog: () -> Unit,
     subScreens: ImmutableList<TabItem>,
     walletSnapshot: WalletSnapshot?,
-) {
-    val pagerState =
+    pagerState: PagerState =
         rememberPagerState(
             initialPage = 0,
             initialPageOffsetFraction = 0f,
             pageCount = { subScreens.size }
         )
-
-    // Using [rememberUpdatedState] to ensure that always the latest lambda is captured
-    // And to avoid Detekt warning: Lambda parameters in a @Composable that are referenced directly inside of
-    // restarting effects can cause issues or unpredictable behavior.
-    val currentOnPageChange = rememberUpdatedState(newValue = onPageChange)
-
-    // Listening for the current page change
-    LaunchedEffect(pagerState, currentOnPageChange) {
-        snapshotFlow {
-            pagerState.currentPage
-        }.distinctUntilChanged()
-            .collect { page ->
-                Twig.info { "Current pager page: $page" }
-                currentOnPageChange.value(HomeScreenIndex.fromIndex(page))
-            }
-    }
-
-    // Force page change e.g. when system back navigation event detected
-    forcePage?.let {
-        LaunchedEffect(forcePage) {
-            pagerState.animateScrollToPage(forcePage.currentPage.ordinal)
-        }
-    }
-
+) {
     HomeContent(
         pagerState = pagerState,
         subScreens = subScreens,
@@ -124,7 +90,7 @@ fun Home(
 @Composable
 @Suppress("LongMethod")
 @OptIn(ExperimentalFoundationApi::class)
-fun HomeContent(
+private fun HomeContent(
     pagerState: PagerState,
     subScreens: ImmutableList<TabItem>
 ) {

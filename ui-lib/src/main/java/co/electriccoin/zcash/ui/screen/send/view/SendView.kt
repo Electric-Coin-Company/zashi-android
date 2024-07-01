@@ -31,7 +31,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
-import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
@@ -93,7 +92,6 @@ private fun PreviewSendForm() {
         Send(
             sendStage = SendStage.Form,
             onCreateZecSend = {},
-            focusManager = LocalFocusManager.current,
             onBack = {},
             onSettings = {},
             onQrScannerOpen = {},
@@ -119,7 +117,6 @@ private fun SendFormTransparentAddressPreview() {
         Send(
             sendStage = SendStage.Form,
             onCreateZecSend = {},
-            focusManager = LocalFocusManager.current,
             onBack = {},
             onSettings = {},
             onQrScannerOpen = {},
@@ -151,7 +148,6 @@ fun Send(
     balanceState: BalanceState,
     sendStage: SendStage,
     onCreateZecSend: (ZecSend) -> Unit,
-    focusManager: FocusManager,
     onBack: () -> Unit,
     onSettings: () -> Unit,
     onQrScannerOpen: () -> Unit,
@@ -176,7 +172,6 @@ fun Send(
             balanceState = balanceState,
             walletSnapshot = walletSnapshot,
             onBack = onBack,
-            focusManager = focusManager,
             sendStage = sendStage,
             onCreateZecSend = onCreateZecSend,
             recipientAddressState = recipientAddressState,
@@ -232,7 +227,6 @@ private fun SendTopAppBar(
 private fun SendMainContent(
     balanceState: BalanceState,
     walletSnapshot: WalletSnapshot,
-    focusManager: FocusManager,
     onBack: () -> Unit,
     goBalances: () -> Unit,
     onCreateZecSend: (ZecSend) -> Unit,
@@ -260,7 +254,6 @@ private fun SendMainContent(
         memoState = memoState,
         setMemoState = setMemoState,
         onCreateZecSend = onCreateZecSend,
-        focusManager = focusManager,
         onQrScannerOpen = onQrScannerOpen,
         goBalances = goBalances,
         hasCameraFeature = hasCameraFeature,
@@ -286,7 +279,6 @@ private fun SendMainContent(
 private fun SendForm(
     balanceState: BalanceState,
     walletSnapshot: WalletSnapshot,
-    focusManager: FocusManager,
     recipientAddressState: RecipientAddressState,
     onRecipientAddressChange: (String) -> Unit,
     amountState: AmountState,
@@ -329,7 +321,6 @@ private fun SendForm(
         // TODO [#1256]: https://github.com/Electric-Coin-Company/zashi-android/issues/1256
 
         SendFormAddressTextField(
-            focusManager = focusManager,
             hasCameraFeature = hasCameraFeature,
             onQrScannerOpen = onQrScannerOpen,
             recipientAddressState = recipientAddressState,
@@ -340,7 +331,6 @@ private fun SendForm(
 
         SendFormAmountTextField(
             amountSate = amountState,
-            focusManager = focusManager,
             imeAction =
                 if (recipientAddressState.type == AddressType.Transparent) {
                     ImeAction.Done
@@ -358,7 +348,6 @@ private fun SendForm(
         SendFormMemoTextField(
             memoState = memoState,
             setMemoState = setMemoState,
-            focusManager = focusManager,
             isMemoFieldAvailable = (
                 recipientAddressState.address.isEmpty() ||
                     recipientAddressState.type is AddressType.Invalid ||
@@ -475,12 +464,13 @@ fun SendButton(
 @Suppress("LongMethod")
 @Composable
 fun SendFormAddressTextField(
-    focusManager: FocusManager,
     hasCameraFeature: Boolean,
     onQrScannerOpen: () -> Unit,
     recipientAddressState: RecipientAddressState,
     setRecipientAddress: (String) -> Unit,
 ) {
+    val focusManager = LocalFocusManager.current
+
     val bringIntoViewRequester = remember { BringIntoViewRequester() }
 
     Column(
@@ -560,13 +550,14 @@ fun SendFormAddressTextField(
 @Composable
 fun SendFormAmountTextField(
     amountSate: AmountState,
-    focusManager: FocusManager,
     imeAction: ImeAction,
     isTransparentRecipient: Boolean,
     monetarySeparators: MonetarySeparators,
     setAmountState: (AmountState) -> Unit,
     walletSnapshot: WalletSnapshot,
 ) {
+    val focusManager = LocalFocusManager.current
+
     val context = LocalContext.current
 
     val zcashCurrency = ZcashCurrency.getLocalizedName(context)
@@ -580,6 +571,7 @@ fun SendFormAmountTextField(
                     stringResource(id = R.string.send_amount_invalid)
                 }
             }
+
             is AmountState.Valid -> {
                 if (walletSnapshot.spendableBalance() < amountSate.zatoshi) {
                     stringResource(id = R.string.send_amount_insufficient_balance)
@@ -651,13 +643,14 @@ fun SendFormAmountTextField(
 @Suppress("LongMethod", "LongParameterList")
 @Composable
 fun SendFormMemoTextField(
-    focusManager: FocusManager,
     isMemoFieldAvailable: Boolean,
     memoState: MemoState,
     setMemoState: (MemoState) -> Unit,
     scrollState: ScrollState,
     scrollTo: Int
 ) {
+    val focusManager = LocalFocusManager.current
+
     val scope = rememberCoroutineScope()
 
     val bringIntoViewRequester = remember { BringIntoViewRequester() }

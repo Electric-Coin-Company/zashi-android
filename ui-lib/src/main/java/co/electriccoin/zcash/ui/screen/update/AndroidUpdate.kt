@@ -1,7 +1,6 @@
 package co.electriccoin.zcash.ui.screen.update
 
 import android.content.Context
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.viewModels
 import androidx.annotation.VisibleForTesting
@@ -11,8 +10,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.compose.LocalActivity
 import co.electriccoin.zcash.ui.common.viewmodel.CheckUpdateViewModel
 import co.electriccoin.zcash.ui.screen.update.model.UpdateInfo
 import co.electriccoin.zcash.ui.screen.update.model.UpdateState
@@ -23,12 +22,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
-internal fun MainActivity.WrapCheckForUpdate() {
-    WrapCheckForUpdate(this)
-}
+internal fun WrapCheckForUpdate() {
+    val activity = LocalActivity.current
 
-@Composable
-private fun WrapCheckForUpdate(activity: ComponentActivity) {
     // TODO [#403]: Manual testing of already implemented in-app update mechanisms
     // TODO [#403]: https://github.com/Electric-Coin-Company/zashi-android/issues/403
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
@@ -43,7 +39,7 @@ private fun WrapCheckForUpdate(activity: ComponentActivity) {
 
     updateInfo?.let {
         if (it.appUpdateInfo != null && it.state == UpdateState.Prepared) {
-            WrapUpdate(activity, updateInfo)
+            WrapUpdate(updateInfo)
         }
     }
 
@@ -56,10 +52,9 @@ private fun WrapCheckForUpdate(activity: ComponentActivity) {
 
 @VisibleForTesting
 @Composable
-internal fun WrapUpdate(
-    activity: ComponentActivity,
-    inputUpdateInfo: UpdateInfo
-) {
+internal fun WrapUpdate(inputUpdateInfo: UpdateInfo) {
+    val activity = LocalActivity.current
+
     val viewModel by activity.viewModels<UpdateViewModel> {
         UpdateViewModel.UpdateViewModelFactory(
             activity.application,
@@ -78,10 +73,12 @@ internal fun WrapUpdate(
             // just return as we are already in Home compose
             return
         }
+
         UpdateState.Failed -> {
             // we need to refresh AppUpdateInfo object, as it can be used only once
             viewModel.checkForAppUpdate()
         }
+
         UpdateState.Prepared, UpdateState.Running -> {
             // valid stages
         }

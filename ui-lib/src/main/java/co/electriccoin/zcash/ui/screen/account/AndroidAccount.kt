@@ -3,19 +3,20 @@
 package co.electriccoin.zcash.ui.screen.account
 
 import android.content.Context
-import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.internal.Twig
 import co.electriccoin.zcash.spackle.ClipboardManagerUtil
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.BalanceState
+import co.electriccoin.zcash.ui.common.compose.LocalActivity
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
@@ -33,10 +34,11 @@ import org.jetbrains.annotations.VisibleForTesting
 
 @Composable
 internal fun WrapAccount(
-    activity: ComponentActivity,
     goBalances: () -> Unit,
     goSettings: () -> Unit,
 ) {
+    val activity = LocalActivity.current
+
     val walletViewModel by activity.viewModels<WalletViewModel>()
 
     val transactionHistoryViewModel by activity.viewModels<TransactionHistoryViewModel>()
@@ -59,7 +61,6 @@ internal fun WrapAccount(
 
     WrapAccount(
         balanceState = balanceState,
-        context = activity.applicationContext,
         goBalances = goBalances,
         goSettings = goSettings,
         synchronizer = synchronizer,
@@ -79,7 +80,6 @@ internal fun WrapAccount(
 @Suppress("LongParameterList", "LongMethod")
 internal fun WrapAccount(
     balanceState: BalanceState,
-    context: Context,
     goBalances: () -> Unit,
     goSettings: () -> Unit,
     transactionsUiState: TransactionUiState,
@@ -89,6 +89,8 @@ internal fun WrapAccount(
     walletRestoringState: WalletRestoringState,
     walletSnapshot: WalletSnapshot?
 ) {
+    val context = LocalContext.current
+
     val scope = rememberCoroutineScope()
 
     val snackbarHostState = remember { SnackbarHostState() }

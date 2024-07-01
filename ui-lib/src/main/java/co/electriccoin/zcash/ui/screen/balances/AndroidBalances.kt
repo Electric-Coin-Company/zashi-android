@@ -19,9 +19,9 @@ import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.model.UnifiedSpendingKey
 import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.spackle.Twig
-import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.BalanceState
+import co.electriccoin.zcash.ui.common.compose.LocalActivity
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
@@ -45,10 +45,11 @@ import org.jetbrains.annotations.VisibleForTesting
 
 @Composable
 internal fun WrapBalances(
-    activity: MainActivity,
     goSettings: () -> Unit,
     goMultiTrxSubmissionFailure: () -> Unit,
 ) {
+    val activity = LocalActivity.current
+
     val walletViewModel by activity.viewModels<WalletViewModel>()
 
     val createTransactionsViewModel by activity.viewModels<CreateTransactionsViewModel>()
@@ -89,9 +90,9 @@ internal fun WrapBalances(
 
 const val DEFAULT_SHIELDING_THRESHOLD = 100000L
 
+// This function should be refactored into smaller chunks
 @Composable
 @VisibleForTesting
-// This function should be refactored into smaller chunks
 @Suppress("LongParameterList", "LongMethod", "CyclomaticComplexMethod")
 internal fun WrapBalances(
     balanceState: BalanceState,

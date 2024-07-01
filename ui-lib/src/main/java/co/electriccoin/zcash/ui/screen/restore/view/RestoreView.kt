@@ -2,6 +2,7 @@
 
 package co.electriccoin.zcash.ui.screen.restore.view
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -229,6 +230,11 @@ fun RestoreWallet(
     val currentStage = restoreState.current.collectAsStateWithLifecycle().value
 
     var isSeedValid by rememberSaveable { mutableStateOf(false) }
+
+    BackHandler {
+        onBack()
+    }
+
     // To avoid unnecessary recompositions that this flow produces
     SideEffect {
         scope.launch {
