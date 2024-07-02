@@ -23,6 +23,7 @@ import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
+import co.electriccoin.zcash.ui.design.component.TopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme.dimens
 import co.electriccoin.zcash.ui.screen.advancedsettings.AdvancedSettingsTag
@@ -97,9 +98,13 @@ private fun AdvancedSettingsTopAppBar(
             },
         modifier = Modifier.testTag(AdvancedSettingsTag.ADVANCED_SETTINGS_TOP_APP_BAR),
         showTitleLogo = true,
-        backText = stringResource(id = R.string.advanced_settings_back).uppercase(),
-        backContentDescriptionText = stringResource(R.string.advanced_settings_back_content_description),
-        onBack = onBack,
+        navigationAction = {
+            TopAppBarBackNavigation(
+                backText = stringResource(id = R.string.back_navigation).uppercase(),
+                backContentDescriptionText = stringResource(R.string.back_navigation_content_description),
+                onBack = onBack
+            )
+        }
     )
 }
 

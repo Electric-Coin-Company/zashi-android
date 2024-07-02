@@ -79,6 +79,7 @@ import co.electriccoin.zcash.ui.design.component.Reference
 import co.electriccoin.zcash.ui.design.component.Small
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.StyledBalance
+import co.electriccoin.zcash.ui.design.component.TopAppBarHideBalancesNavigation
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.BalanceStateFixture
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
@@ -94,11 +95,13 @@ private fun ComposableBalancesPreview() {
         Balances(
             balanceState = BalanceStateFixture.new(),
             isFiatConversionEnabled = false,
+            isHideBalances = false,
             isUpdateAvailable = false,
             isShowingErrorDialog = false,
             hideStatusDialog = {},
             showStatusDialog = null,
             setShowErrorDialog = {},
+            onHideBalances = {},
             onSettings = {},
             onShielding = {},
             onStatusClick = {},
@@ -118,11 +121,13 @@ private fun ComposableBalancesShieldDarkPreview() {
         Balances(
             balanceState = BalanceStateFixture.new(),
             isFiatConversionEnabled = false,
+            isHideBalances = false,
             isUpdateAvailable = false,
             isShowingErrorDialog = true,
             hideStatusDialog = {},
             showStatusDialog = null,
             setShowErrorDialog = {},
+            onHideBalances = {},
             onSettings = {},
             onShielding = {},
             onStatusClick = {},
@@ -153,14 +158,16 @@ private fun ComposableBalancesShieldErrorDialogPreview() {
 fun Balances(
     balanceState: BalanceState,
     isFiatConversionEnabled: Boolean,
+    isHideBalances: Boolean,
     isUpdateAvailable: Boolean,
     isShowingErrorDialog: Boolean,
     hideStatusDialog: () -> Unit,
-    showStatusDialog: StatusAction.Detailed?,
-    setShowErrorDialog: (Boolean) -> Unit,
+    onHideBalances: (Boolean) -> Unit,
     onSettings: () -> Unit,
     onShielding: () -> Unit,
     onStatusClick: (StatusAction) -> Unit,
+    showStatusDialog: StatusAction.Detailed?,
+    setShowErrorDialog: (Boolean) -> Unit,
     shieldState: ShieldState,
     snackbarHostState: SnackbarHostState,
     topAppBarSubTitleState: TopAppBarSubTitleState,
@@ -170,6 +177,8 @@ fun Balances(
     BlankBgScaffold(
         topBar = {
             BalancesTopAppBar(
+                isHideBalances = isHideBalances,
+                onHideBalances = onHideBalances,
                 onSettings = onSettings,
                 subTitleState = topAppBarSubTitleState,
             )
@@ -184,6 +193,7 @@ fun Balances(
             BalancesMainContent(
                 balanceState = balanceState,
                 isFiatConversionEnabled = isFiatConversionEnabled,
+                isHideBalances = isHideBalances,
                 isUpdateAvailable = isUpdateAvailable,
                 onShielding = onShielding,
                 onStatusClick = onStatusClick,
@@ -256,6 +266,8 @@ fun ShieldingErrorDialog(
 
 @Composable
 private fun BalancesTopAppBar(
+    isHideBalances: Boolean,
+    onHideBalances: (Boolean) -> Unit,
     onSettings: () -> Unit,
     subTitleState: TopAppBarSubTitleState
 ) {
@@ -279,6 +291,21 @@ private fun BalancesTopAppBar(
                 )
             }
         },
+        navigationAction = {
+            TopAppBarHideBalancesNavigation(
+                contentDescription = stringResource(id = R.string.hide_balances_content_description),
+                iconVector =
+                    ImageVector.vectorResource(
+                        if (isHideBalances) {
+                            R.drawable.ic_hide_balances_on
+                        } else {
+                            R.drawable.ic_hide_balances_off
+                        }
+                    ),
+                onClick = { onHideBalances(!isHideBalances) },
+                modifier = Modifier.testTag(CommonTag.HIDE_BALANCES_TOP_BAR_BUTTON)
+            )
+        },
     )
 }
 
@@ -287,6 +314,7 @@ private fun BalancesTopAppBar(
 private fun BalancesMainContent(
     balanceState: BalanceState,
     isFiatConversionEnabled: Boolean,
+    isHideBalances: Boolean,
     isUpdateAvailable: Boolean,
     onShielding: () -> Unit,
     onStatusClick: (StatusAction) -> Unit,
@@ -307,6 +335,7 @@ private fun BalancesMainContent(
 
         BalanceWidget(
             balanceState = balanceState,
+            isHideBalances = isHideBalances,
             isReferenceToBalances = false,
             onReferenceClick = {}
         )
@@ -321,13 +350,15 @@ private fun BalancesMainContent(
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
         BalancesOverview(
-            walletSnapshot = walletSnapshot,
             isFiatConversionEnabled = isFiatConversionEnabled,
+            isHideBalances = isHideBalances,
+            walletSnapshot = walletSnapshot,
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
 
         TransparentBalancePanel(
+            isHideBalances = isHideBalances,
             onShielding = onShielding,
             shieldState = shieldState,
             walletSnapshot = walletSnapshot,
@@ -366,6 +397,7 @@ const val DEFAULT_LESS_THAN_FEE = 100_000L
 
 @Composable
 fun TransparentBalancePanel(
+    isHideBalances: Boolean,
     onShielding: () -> Unit,
     shieldState: ShieldState,
     walletSnapshot: WalletSnapshot,
@@ -383,6 +415,7 @@ fun TransparentBalancePanel(
             Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
             TransparentBalanceRow(
+                isHideBalances = isHideBalances,
                 isProgressbarVisible = shieldState == ShieldState.Running,
                 onHelpClick = { showHelpPanel = !showHelpPanel },
                 walletSnapshot = walletSnapshot
@@ -428,6 +461,7 @@ fun TransparentBalancePanel(
 
 @Composable
 fun TransparentBalanceRow(
+    isHideBalances: Boolean,
     isProgressbarVisible: Boolean,
     onHelpClick: () -> Unit,
     walletSnapshot: WalletSnapshot,
@@ -466,6 +500,7 @@ fun TransparentBalanceRow(
         Row(verticalAlignment = Alignment.CenterVertically) {
             StyledBalance(
                 balanceParts = walletSnapshot.transparentBalance.toZecStringFull().asZecAmountTriple(),
+                isHideBalances = isHideBalances,
                 textStyles =
                     Pair(
                         ZcashTheme.extendedTypography.balanceSingleStyles.first,
@@ -526,18 +561,19 @@ fun TransparentBalanceHelpPanel(onHideHelpPanel: () -> Unit) {
 fun BalancesOverview(
     walletSnapshot: WalletSnapshot,
     isFiatConversionEnabled: Boolean,
+    isHideBalances: Boolean,
 ) {
     Column {
-        SpendableBalanceRow(walletSnapshot)
+        SpendableBalanceRow(isHideBalances, walletSnapshot)
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
-        ChangePendingRow(walletSnapshot)
+        ChangePendingRow(isHideBalances, walletSnapshot)
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
         //  aka value pending
-        PendingTransactionsRow(walletSnapshot)
+        PendingTransactionsRow(isHideBalances, walletSnapshot)
 
         if (isFiatConversionEnabled) {
             val walletDisplayValues =
@@ -574,7 +610,10 @@ fun BalancesOverview(
 const val TEXT_PART_WIDTH_RATIO = 0.6f
 
 @Composable
-fun SpendableBalanceRow(walletSnapshot: WalletSnapshot) {
+fun SpendableBalanceRow(
+    isHideBalances: Boolean,
+    walletSnapshot: WalletSnapshot
+) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -588,6 +627,7 @@ fun SpendableBalanceRow(walletSnapshot: WalletSnapshot) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             StyledBalance(
                 balanceParts = walletSnapshot.spendableBalance().toZecStringFull().asZecAmountTriple(),
+                isHideBalances = isHideBalances,
                 textStyles =
                     Pair(
                         ZcashTheme.extendedTypography.balanceSingleStyles.first,
@@ -609,7 +649,10 @@ fun SpendableBalanceRow(walletSnapshot: WalletSnapshot) {
 }
 
 @Composable
-fun ChangePendingRow(walletSnapshot: WalletSnapshot) {
+fun ChangePendingRow(
+    isHideBalances: Boolean,
+    walletSnapshot: WalletSnapshot
+) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -623,6 +666,7 @@ fun ChangePendingRow(walletSnapshot: WalletSnapshot) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             StyledBalance(
                 balanceParts = walletSnapshot.changePendingBalance().toZecStringFull().asZecAmountTriple(),
+                isHideBalances = isHideBalances,
                 textStyles =
                     Pair(
                         ZcashTheme.extendedTypography.balanceSingleStyles.first,
@@ -643,7 +687,10 @@ fun ChangePendingRow(walletSnapshot: WalletSnapshot) {
 }
 
 @Composable
-fun PendingTransactionsRow(walletSnapshot: WalletSnapshot) {
+fun PendingTransactionsRow(
+    isHideBalances: Boolean,
+    walletSnapshot: WalletSnapshot
+) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -657,6 +704,7 @@ fun PendingTransactionsRow(walletSnapshot: WalletSnapshot) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             StyledBalance(
                 balanceParts = walletSnapshot.valuePendingBalance().toZecStringFull().asZecAmountTriple(),
+                isHideBalances = isHideBalances,
                 textStyles =
                     Pair(
                         ZcashTheme.extendedTypography.balanceSingleStyles.first,

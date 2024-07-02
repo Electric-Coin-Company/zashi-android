@@ -10,6 +10,7 @@ import co.electriccoin.zcash.ui.design.component.CommonTag
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 import co.electriccoin.zcash.ui.screen.account.AccountTag
 import co.electriccoin.zcash.ui.screen.account.AccountTestSetup
+import co.electriccoin.zcash.ui.screen.send.clickHideBalances
 import co.electriccoin.zcash.ui.screen.send.clickSettingsTopAppBarMenu
 import org.junit.Assert
 import org.junit.Rule
@@ -49,11 +50,25 @@ class AccountViewTest : UiTestPrerequisites() {
         Assert.assertEquals(1, testSetup.getOnSettingsCount())
     }
 
-    private fun newTestSetup(walletSnapshot: WalletSnapshot = WalletSnapshotFixture.new()) =
-        AccountTestSetup(
-            composeTestRule,
-            walletSnapshot = walletSnapshot,
-        ).apply {
-            setDefaultContent()
-        }
+    @Test
+    @MediumTest
+    fun hide_balances_btn_click_test() {
+        val testSetup = newTestSetup()
+
+        Assert.assertEquals(0, testSetup.getOnHideBalancesCount())
+
+        composeTestRule.clickHideBalances()
+
+        Assert.assertEquals(1, testSetup.getOnHideBalancesCount())
+    }
+
+    private fun newTestSetup(
+        walletSnapshot: WalletSnapshot = WalletSnapshotFixture.new(),
+        isHideBalances: Boolean = false
+    ) = AccountTestSetup(
+        composeTestRule,
+        walletSnapshot = walletSnapshot,
+    ).apply {
+        setDefaultContent(isHideBalances)
+    }
 }

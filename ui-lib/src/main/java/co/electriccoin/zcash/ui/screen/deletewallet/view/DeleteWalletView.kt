@@ -28,6 +28,7 @@ import co.electriccoin.zcash.ui.design.component.GridBgScaffold
 import co.electriccoin.zcash.ui.design.component.GridBgSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.LabeledCheckBox
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
+import co.electriccoin.zcash.ui.design.component.TopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.component.TopScreenLogoTitle
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 
@@ -88,9 +89,13 @@ private fun DeleteWalletDataTopAppBar(
                 TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
                 TopAppBarSubTitleState.None -> null
             },
-        backText = stringResource(R.string.delete_wallet_back).uppercase(),
-        backContentDescriptionText = stringResource(R.string.delete_wallet_back_content_description),
-        onBack = onBack,
+        navigationAction = {
+            TopAppBarBackNavigation(
+                backText = stringResource(id = R.string.back_navigation).uppercase(),
+                backContentDescriptionText = stringResource(R.string.back_navigation_content_description),
+                onBack = onBack
+            )
+        }
     )
 }
 

@@ -1,7 +1,4 @@
 <resources>
-    <string name="settings_back">Back</string>
-    <string name="settings_back_content_description">Back</string>
-
     <string name="settings_troubleshooting_menu_content_description">Additional settings</string>
     <string name="settings_troubleshooting_rescan">Rescan blockchain</string>
     <string name="settings_troubleshooting_enable_background_sync">Background sync</string>
@@ -11,5 +8,4 @@
     <string name="settings_send_us_feedback">Send us feedback</string>
     <string name="settings_advanced_settings">Advanced</string>
     <string name="settings_about">About</string>
-
 </resources>

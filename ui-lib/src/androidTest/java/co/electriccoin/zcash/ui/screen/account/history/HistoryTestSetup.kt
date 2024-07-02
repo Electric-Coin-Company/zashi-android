@@ -29,11 +29,12 @@ class HistoryTestSetup(
         composeTestRule.setContent {
             ZcashTheme {
                 HistoryContainer(
-                    transactionState = initialHistoryUiState,
+                    isHideBalances = false,
                     onStatusClick = {},
                     onTransactionItemAction = {
                         onItemIdClickCount.incrementAndGet()
                     },
+                    transactionState = initialHistoryUiState,
                     walletRestoringState = WalletRestoringState.NONE,
                     walletSnapshot = WalletSnapshotFixture.new()
                 )

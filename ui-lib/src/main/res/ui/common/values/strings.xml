@@ -2,11 +2,16 @@
     <!-- This is replaced by a resource overlay via app/build.gradle.kts -->
     <string name="app_name">zashi-ui</string>
 
+    <string name="back_navigation">Back</string>
+    <string name="back_navigation_content_description">Back</string>
+
     <string name="fiat_currency_conversion_rate_unavailable">Unavailable</string>
     <string name="empty_char">-</string>
     <string name="zcash_logo_content_description">Zcash logo</string>
     <string name="settings_menu_content_description">Open Settings</string>
     <string name="balance_widget_available">Available Balance:</string>
+
+    <string name="hide_balances_content_description">Hide balances</string>
 
     <!-- This is replaced by a resource overlay via app/build.gradle.kts -->
     <string name="support_email_address" />

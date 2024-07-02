@@ -44,6 +44,7 @@ import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
+import co.electriccoin.zcash.ui.design.component.TopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.ConfigInfoFixture
 import co.electriccoin.zcash.ui.fixture.VersionInfoFixture
@@ -119,9 +120,13 @@ private fun AboutTopAppBar(
                 TopAppBarSubTitleState.None -> null
             },
         titleText = stringResource(id = R.string.about_title).uppercase(),
-        backText = stringResource(id = R.string.about_back).uppercase(),
-        backContentDescriptionText = stringResource(R.string.about_back_content_description),
-        onBack = onBack,
+        navigationAction = {
+            TopAppBarBackNavigation(
+                backText = stringResource(id = R.string.back_navigation).uppercase(),
+                backContentDescriptionText = stringResource(R.string.back_navigation_content_description),
+                onBack = onBack
+            )
+        },
         regularActions = {
             if (versionInfo.isDebuggable && !versionInfo.isRunningUnderTestService) {
                 DebugMenu(versionInfo, configInfo)
