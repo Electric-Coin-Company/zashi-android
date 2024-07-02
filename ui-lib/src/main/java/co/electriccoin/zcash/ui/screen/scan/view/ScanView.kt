@@ -71,6 +71,7 @@ import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.SecondaryButton
 import co.electriccoin.zcash.ui.design.component.Small
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
+import co.electriccoin.zcash.ui.design.component.TopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.scan.ScanTag
 import co.electriccoin.zcash.ui.screen.scan.model.ScanState
@@ -284,15 +285,16 @@ private fun ScanTopAppBar(
                 TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
                 TopAppBarSubTitleState.None -> null
             },
-        backText =
+        navigationAction = {
             if (showBack) {
-                stringResource(id = R.string.scan_back)
-            } else {
-                null
-            },
-        backContentDescriptionText = stringResource(id = R.string.scan_back_content_description),
+                TopAppBarBackNavigation(
+                    backText = stringResource(id = R.string.back_navigation).uppercase(),
+                    backContentDescriptionText = stringResource(R.string.back_navigation_content_description),
+                    onBack = onBack
+                )
+            }
+        },
         colors = ZcashTheme.colors.transparentTopAppBarColors,
-        onBack = onBack,
     )
 }
 

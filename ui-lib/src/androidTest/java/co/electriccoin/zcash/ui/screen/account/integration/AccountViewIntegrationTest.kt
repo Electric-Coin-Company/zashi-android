@@ -40,7 +40,7 @@ class AccountViewIntegrationTest : UiTestPrerequisites() {
         val testSetup = newTestSetup(walletSnapshot)
 
         restorationTester.setContent {
-            testSetup.DefaultContent()
+            testSetup.DefaultContent(isHideBalances = false)
         }
 
         assertEquals(WalletSnapshotFixture.SAPLING_BALANCE, testSetup.getWalletSnapshot().saplingBalance)

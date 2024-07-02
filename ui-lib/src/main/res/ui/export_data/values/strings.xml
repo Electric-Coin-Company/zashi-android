@@ -9,8 +9,6 @@
         funds, only the ability to see what you do with your funds.</string>
     <string name="export_data_confirm">Export private data</string>
     <string name="export_data_agree">I agree</string>
-    <string name="export_data_back">Back</string>
-    <string name="export_data_back_content_description">Back</string>
     <string name="export_data_export_data_chooser_title">Share internal Zashi data with:</string>
     <string name="export_data_unable_to_share">Unable to find an application to share with.</string>
 </resources>

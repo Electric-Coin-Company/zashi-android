@@ -13,8 +13,6 @@
     <string name="send_confirmation_dialog_error_btn">OK</string>
 
     <string name="send_confirmation_multiple_error_title">Transaction error</string>
-    <string name="send_confirmation_multiple_error_back">Back</string>
-    <string name="send_confirmation_multiple_error_back_content_description">Back</string>
     <string name="send_confirmation_multiple_error_text_1">Sending to this recipient required multiple transactions,
         but only some of them succeeded. Your funds are safe, but they need to be recovered with the help of Zashi
         team support.</string>

@@ -24,6 +24,7 @@ class AccountTestSetup(
     val initialTransactionState: TransactionUiState = TransactionHistoryUiStateFixture.new()
 
     private val onSettingsCount = AtomicInteger(0)
+    private val onHideBalancesCount = AtomicInteger(0)
     private val onReceiveCount = AtomicInteger(0)
     private val onSendCount = AtomicInteger(0)
     private val onItemClickCount = AtomicInteger(0)
@@ -44,6 +45,11 @@ class AccountTestSetup(
         return onSettingsCount.get()
     }
 
+    fun getOnHideBalancesCount(): Int {
+        composeTestRule.waitForIdle()
+        return onHideBalancesCount.get()
+    }
+
     fun getOnReceiveCount(): Int {
         composeTestRule.waitForIdle()
         return onReceiveCount.get()
@@ -61,31 +67,35 @@ class AccountTestSetup(
 
     @Composable
     @Suppress("TestFunctionName")
-    fun DefaultContent() {
+    fun DefaultContent(isHideBalances: Boolean) {
         Account(
             balanceState = BalanceStateFixture.new(),
             goSettings = {
                 onSettingsCount.incrementAndGet()
             },
             goBalances = {},
-            transactionsUiState = initialTransactionState,
+            hideStatusDialog = {},
+            onHideBalances = {
+                onHideBalancesCount.incrementAndGet()
+            },
+            isHideBalances = isHideBalances,
             onTransactionItemAction = {
                 onItemClickCount.incrementAndGet()
             },
-            hideStatusDialog = {},
-            showStatusDialog = null,
             onStatusClick = {},
+            showStatusDialog = null,
             snackbarHostState = SnackbarHostState(),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
+            transactionsUiState = initialTransactionState,
             walletRestoringState = WalletRestoringState.NONE,
             walletSnapshot = WalletSnapshotFixture.new(),
         )
     }
 
-    fun setDefaultContent() {
+    fun setDefaultContent(isHideBalances: Boolean = false) {
         composeTestRule.setContent {
             ZcashTheme {
-                DefaultContent()
+                DefaultContent(isHideBalances)
             }
         }
     }

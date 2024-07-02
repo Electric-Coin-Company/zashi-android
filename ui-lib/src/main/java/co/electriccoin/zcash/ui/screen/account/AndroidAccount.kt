@@ -20,6 +20,7 @@ import co.electriccoin.zcash.ui.common.compose.LocalActivity
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
+import co.electriccoin.zcash.ui.common.viewmodel.HomeViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.screen.account.model.TransactionUiState
@@ -43,6 +44,8 @@ internal fun WrapAccount(
 
     val transactionHistoryViewModel by activity.viewModels<TransactionHistoryViewModel>()
 
+    val homeViewModel by activity.viewModels<HomeViewModel>()
+
     val synchronizer = walletViewModel.synchronizer.collectAsStateWithLifecycle().value
 
     val transactionsUiState = transactionHistoryViewModel.transactionUiState.collectAsStateWithLifecycle().value
@@ -59,10 +62,14 @@ internal fun WrapAccount(
 
     val walletSnapshot = walletViewModel.walletSnapshot.collectAsStateWithLifecycle().value
 
+    val isHideBalances = homeViewModel.isHideBalances.collectAsStateWithLifecycle().value ?: false
+
     WrapAccount(
         balanceState = balanceState,
         goBalances = goBalances,
         goSettings = goSettings,
+        isHideBalances = isHideBalances,
+        onHideBalances = { homeViewModel.setHideBalances(it) },
         synchronizer = synchronizer,
         topAppBarSubTitleState = walletState,
         transactionHistoryViewModel = transactionHistoryViewModel,
@@ -82,9 +89,11 @@ internal fun WrapAccount(
     balanceState: BalanceState,
     goBalances: () -> Unit,
     goSettings: () -> Unit,
-    transactionsUiState: TransactionUiState,
+    isHideBalances: Boolean,
     synchronizer: Synchronizer?,
+    onHideBalances: (Boolean) -> Unit,
     topAppBarSubTitleState: TopAppBarSubTitleState,
+    transactionsUiState: TransactionUiState,
     transactionHistoryViewModel: TransactionHistoryViewModel,
     walletRestoringState: WalletRestoringState,
     walletSnapshot: WalletSnapshot?
@@ -107,9 +116,11 @@ internal fun WrapAccount(
     } else {
         Account(
             balanceState = balanceState,
+            isHideBalances = isHideBalances,
             transactionsUiState = transactionsUiState,
             showStatusDialog = showStatusDialog.value,
             hideStatusDialog = { showStatusDialog.value = null },
+            onHideBalances = onHideBalances,
             onStatusClick = { status ->
                 when (status) {
                     is StatusAction.Detailed -> showStatusDialog.value = status

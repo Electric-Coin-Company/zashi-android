@@ -1,7 +1,4 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="advanced_settings_back">Back</string>
-    <string name="advanced_settings_back_content_description">Back</string>
-
     <string name="advanced_settings_backup_wallet">Recovery phrase</string>
     <string name="advanced_settings_export_private_data">Export private data</string>
     <string name="advanced_settings_choose_server">Choose a server</string>
@@ -10,5 +7,4 @@
         Delete <xliff:g id="app_name" example="Zashi">%1$s</xliff:g>
     </string>
     <string name="advanced_settings_delete_wallet_footnote">(You will be asked to confirm on next screen)</string>
-
 </resources>

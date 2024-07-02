@@ -39,7 +39,7 @@ class SeedRecoveryRecoveryViewTest : UiTestPrerequisites() {
         assertEquals(0, testSetup.getOnCompleteCount())
         assertEquals(0, testSetup.getOnBackCount())
 
-        composeTestRule.onNodeWithContentDescription(getStringResource(R.string.seed_recovery_back_content_description))
+        composeTestRule.onNodeWithContentDescription(getStringResource(R.string.back_navigation_content_description))
             .also {
                 it.assertExists()
             }
@@ -86,7 +86,7 @@ class SeedRecoveryRecoveryViewTest : UiTestPrerequisites() {
 
         assertEquals(0, testSetup.getOnBackCount())
 
-        composeTestRule.onNodeWithContentDescription(getStringResource(R.string.seed_recovery_back_content_description))
+        composeTestRule.onNodeWithContentDescription(getStringResource(R.string.back_navigation_content_description))
             .also {
                 it.performClick()
             }

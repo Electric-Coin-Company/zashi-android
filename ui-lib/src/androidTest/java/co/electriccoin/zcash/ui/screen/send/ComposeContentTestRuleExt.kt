@@ -24,6 +24,12 @@ internal fun ComposeContentTestRule.clickSettingsTopAppBarMenu() {
     }
 }
 
+internal fun ComposeContentTestRule.clickHideBalances() {
+    onNodeWithContentDescription(getStringResource(R.string.hide_balances_content_description)).also {
+        it.performClick()
+    }
+}
+
 internal fun ComposeContentTestRule.clickScanner() {
     onNodeWithContentDescription(getStringResource(R.string.send_scan_content_description)).also {
         it.performClick()

@@ -1,6 +1,4 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="scan_back">Back</string>
-    <string name="scan_back_content_description">Back</string>
     <string name="scan_preview_content_description">Camera</string>
 
     <string name="scan_cancel_button">Cancel</string>

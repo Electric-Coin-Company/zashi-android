@@ -38,6 +38,8 @@ class BalancesTestSetup(
                 onSettingsCount.incrementAndGet()
             },
             hideStatusDialog = {},
+            isHideBalances = false,
+            onHideBalances = {},
             showStatusDialog = null,
             onStatusClick = {},
             snackbarHostState = SnackbarHostState(),

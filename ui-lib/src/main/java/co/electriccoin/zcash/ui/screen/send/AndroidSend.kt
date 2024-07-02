@@ -24,6 +24,7 @@ import co.electriccoin.zcash.ui.common.compose.BalanceState
 import co.electriccoin.zcash.ui.common.compose.LocalActivity
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
+import co.electriccoin.zcash.ui.common.viewmodel.HomeViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.screen.send.ext.Saver
@@ -50,6 +51,8 @@ internal fun WrapSend(
 
     val walletViewModel by activity.viewModels<WalletViewModel>()
 
+    val homeViewModel by activity.viewModels<HomeViewModel>()
+
     val hasCameraFeature = activity.packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)
 
     val synchronizer = walletViewModel.synchronizer.collectAsStateWithLifecycle().value
@@ -66,8 +69,12 @@ internal fun WrapSend(
 
     val balanceState = walletViewModel.balanceState.collectAsStateWithLifecycle().value
 
+    val isHideBalances = homeViewModel.isHideBalances.collectAsStateWithLifecycle().value ?: false
+
     WrapSend(
         balanceState = balanceState,
+        isHideBalances = isHideBalances,
+        onHideBalances = { homeViewModel.setHideBalances(it) },
         sendArguments = sendArguments,
         synchronizer = synchronizer,
         walletSnapshot = walletSnapshot,
@@ -88,6 +95,7 @@ internal fun WrapSend(
 @Composable
 internal fun WrapSend(
     balanceState: BalanceState,
+    isHideBalances: Boolean,
     goToQrScanner: () -> Unit,
     goBack: () -> Unit,
     goBalances: () -> Unit,
@@ -95,6 +103,7 @@ internal fun WrapSend(
     goSendConfirmation: (ZecSend) -> Unit,
     hasCameraFeature: Boolean,
     monetarySeparators: MonetarySeparators,
+    onHideBalances: (Boolean) -> Unit,
     sendArguments: SendArguments?,
     spendingKey: UnifiedSpendingKey?,
     synchronizer: Synchronizer?,
@@ -181,6 +190,7 @@ internal fun WrapSend(
     } else {
         Send(
             balanceState = balanceState,
+            isHideBalances = isHideBalances,
             sendStage = sendStage,
             onCreateZecSend = { newZecSend ->
                 scope.launch {
@@ -199,6 +209,7 @@ internal fun WrapSend(
                 }
             },
             onBack = onBackAction,
+            onHideBalances = onHideBalances,
             onSettings = goSettings,
             recipientAddressState = recipientAddressState,
             onRecipientAddressChange = {

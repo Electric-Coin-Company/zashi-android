@@ -1,7 +1,5 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="security_warning_header">Security warning:</string>
-    <string name="security_warning_back">Back</string>
-    <string name="security_warning_back_content_description">Back</string>
 
     <string name="security_warning_text" formatted="true">Zashi <xliff:g example="0.2.0" id="version_name">%1$s
     </xliff:g>is a Zcash-only, shielded wallet — built by Zcashers for Zcashers. Zashi has been engineered for your

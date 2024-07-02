@@ -31,7 +31,7 @@ class SettingsViewTest : UiTestPrerequisites() {
         assertEquals(0, testSetup.getBackCount())
 
         composeTestRule.onNodeWithContentDescription(
-            getStringResource(R.string.settings_back_content_description)
+            getStringResource(R.string.back_navigation_content_description)
         ).also {
             it.performClick()
         }
