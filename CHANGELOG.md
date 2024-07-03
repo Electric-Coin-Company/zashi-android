@@ -9,14 +9,15 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [1.1.2 (676)] - 2024-07-03
+
 ### Added
 - Proper ZEC amount abbreviation has been added across the entire app as described by the design document
 - The new Hide Balances feature has been added to the Account, Send, and Balances screen.
 
 ### Fixed
-- The app navigation has been improved to always behave the same for system, gesture, or top app bar back navigation actions
-
-### Fixed
+- The app navigation has been improved to always behave the same for system, gesture, or top app bar back navigation 
+  actions
 - The app authentication now correctly handles authentication success after a previous failed state 
 
 ## [1.1.2 (676)] - 2024-06-24
