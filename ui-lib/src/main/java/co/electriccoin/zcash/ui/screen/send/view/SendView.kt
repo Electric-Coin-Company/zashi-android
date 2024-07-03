@@ -154,7 +154,7 @@ private fun SendFormTransparentAddressPreview() {
 fun Send(
     balanceState: BalanceState,
     isHideBalances: Boolean,
-    onHideBalances: (Boolean) -> Unit,
+    onHideBalances: () -> Unit,
     sendStage: SendStage,
     onCreateZecSend: (ZecSend) -> Unit,
     onBack: () -> Unit,
@@ -210,7 +210,7 @@ fun Send(
 @Composable
 private fun SendTopAppBar(
     isHideBalances: Boolean,
-    onHideBalances: (Boolean) -> Unit,
+    onHideBalances: () -> Unit,
     onSettings: () -> Unit,
     subTitleState: TopAppBarSubTitleState
 ) {
@@ -244,7 +244,7 @@ private fun SendTopAppBar(
                             R.drawable.ic_hide_balances_off
                         }
                     ),
-                onClick = { onHideBalances(!isHideBalances) },
+                onClick = onHideBalances,
                 modifier = Modifier.testTag(CommonTag.HIDE_BALANCES_TOP_BAR_BUTTON)
             )
         },

@@ -97,7 +97,7 @@ internal fun Account(
     goSettings: () -> Unit,
     isHideBalances: Boolean,
     hideStatusDialog: () -> Unit,
-    onHideBalances: (Boolean) -> Unit,
+    onHideBalances: () -> Unit,
     onStatusClick: (StatusAction) -> Unit,
     onTransactionItemAction: (TrxItemAction) -> Unit,
     showStatusDialog: StatusAction.Detailed?,
@@ -150,7 +150,7 @@ internal fun Account(
 @Composable
 private fun AccountTopAppBar(
     isHideBalances: Boolean,
-    onHideBalances: (Boolean) -> Unit,
+    onHideBalances: () -> Unit,
     onSettings: () -> Unit,
     subTitleState: TopAppBarSubTitleState
 ) {
@@ -184,7 +184,7 @@ private fun AccountTopAppBar(
                             R.drawable.ic_hide_balances_off
                         }
                     ),
-                onClick = { onHideBalances(!isHideBalances) },
+                onClick = onHideBalances,
                 modifier = Modifier.testTag(CommonTag.HIDE_BALANCES_TOP_BAR_BUTTON)
             )
         },

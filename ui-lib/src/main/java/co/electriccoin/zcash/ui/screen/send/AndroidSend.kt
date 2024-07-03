@@ -74,7 +74,7 @@ internal fun WrapSend(
     WrapSend(
         balanceState = balanceState,
         isHideBalances = isHideBalances,
-        onHideBalances = { homeViewModel.setHideBalances(it) },
+        onHideBalances = { homeViewModel.showOrHideBalances() },
         sendArguments = sendArguments,
         synchronizer = synchronizer,
         walletSnapshot = walletSnapshot,
@@ -103,7 +103,7 @@ internal fun WrapSend(
     goSendConfirmation: (ZecSend) -> Unit,
     hasCameraFeature: Boolean,
     monetarySeparators: MonetarySeparators,
-    onHideBalances: (Boolean) -> Unit,
+    onHideBalances: () -> Unit,
     sendArguments: SendArguments?,
     spendingKey: UnifiedSpendingKey?,
     synchronizer: Synchronizer?,

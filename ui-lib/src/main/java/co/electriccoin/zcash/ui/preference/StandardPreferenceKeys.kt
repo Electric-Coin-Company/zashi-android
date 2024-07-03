@@ -71,6 +71,6 @@ object StandardPreferenceKeys {
     val IS_HIDE_BALANCES =
         BooleanPreferenceDefault(
             PreferenceKey("IS_HIDE_BALANCES"),
-            true
+            false
         )
 }

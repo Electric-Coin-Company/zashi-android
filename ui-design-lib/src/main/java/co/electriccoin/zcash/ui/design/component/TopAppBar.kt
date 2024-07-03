@@ -3,7 +3,6 @@
 package co.electriccoin.zcash.ui.design.component
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -356,27 +355,24 @@ fun TopAppBarBackNavigation(
     backText: String? = null,
     onBack: () -> Unit
 ) {
-    Box(
+    Row(
         modifier =
             Modifier
                 .wrapContentSize()
                 .clip(RoundedCornerShape(ZcashTheme.dimens.regularRippleEffectCorner))
                 .clickable { onBack() }
+                .padding(all = ZcashTheme.dimens.spacingMid),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(
-            modifier = Modifier.padding(all = ZcashTheme.dimens.spacingDefault),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                imageVector = backIconVector,
-                contentDescription = backContentDescriptionText,
-            )
+        Icon(
+            imageVector = backIconVector,
+            contentDescription = backContentDescriptionText,
+        )
 
-            backText?.let {
-                Spacer(modifier = Modifier.size(size = ZcashTheme.dimens.spacingSmall))
+        backText?.let {
+            Spacer(modifier = Modifier.size(size = ZcashTheme.dimens.spacingSmall))
 
-                Text(text = backText)
-            }
+            Text(text = backText)
         }
     }
 }
@@ -486,7 +482,7 @@ fun SmallTopAppBar(
             }
         },
         navigationIcon = {
-            navigationAction.invoke()
+            navigationAction()
         },
         actions = {
             regularActions?.invoke(this)

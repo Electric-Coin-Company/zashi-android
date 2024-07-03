@@ -13,6 +13,8 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -45,8 +47,10 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
      */
     val isHideBalances: StateFlow<Boolean?> = booleanStateFlow(StandardPreferenceKeys.IS_HIDE_BALANCES)
 
-    fun setHideBalances(value: Boolean) {
-        setBooleanPreference(StandardPreferenceKeys.IS_HIDE_BALANCES, value)
+    fun showOrHideBalances() {
+        viewModelScope.launch {
+            setBooleanPreference(StandardPreferenceKeys.IS_HIDE_BALANCES, isHideBalances.filterNotNull().first().not())
+        }
     }
 
     val configurationFlow: StateFlow<Configuration?> =

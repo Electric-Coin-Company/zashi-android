@@ -162,7 +162,7 @@ fun Balances(
     isUpdateAvailable: Boolean,
     isShowingErrorDialog: Boolean,
     hideStatusDialog: () -> Unit,
-    onHideBalances: (Boolean) -> Unit,
+    onHideBalances: () -> Unit,
     onSettings: () -> Unit,
     onShielding: () -> Unit,
     onStatusClick: (StatusAction) -> Unit,
@@ -267,7 +267,7 @@ fun ShieldingErrorDialog(
 @Composable
 private fun BalancesTopAppBar(
     isHideBalances: Boolean,
-    onHideBalances: (Boolean) -> Unit,
+    onHideBalances: () -> Unit,
     onSettings: () -> Unit,
     subTitleState: TopAppBarSubTitleState
 ) {
@@ -302,7 +302,7 @@ private fun BalancesTopAppBar(
                             R.drawable.ic_hide_balances_off
                         }
                     ),
-                onClick = { onHideBalances(!isHideBalances) },
+                onClick = onHideBalances,
                 modifier = Modifier.testTag(CommonTag.HIDE_BALANCES_TOP_BAR_BUTTON)
             )
         },
