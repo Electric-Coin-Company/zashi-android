@@ -38,6 +38,7 @@ import co.electriccoin.zcash.ui.design.component.FormTextField
 import co.electriccoin.zcash.ui.design.component.GridBgScaffold
 import co.electriccoin.zcash.ui.design.component.GridBgSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
+import co.electriccoin.zcash.ui.design.component.TopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 
 @Preview
@@ -141,9 +142,13 @@ private fun SupportTopAppBar(
                 TopAppBarSubTitleState.None -> null
             },
         titleText = stringResource(id = R.string.support_header),
-        backText = stringResource(id = R.string.support_back).uppercase(),
-        backContentDescriptionText = stringResource(R.string.support_back_content_description),
-        onBack = onBack,
+        navigationAction = {
+            TopAppBarBackNavigation(
+                backText = stringResource(id = R.string.back_navigation).uppercase(),
+                backContentDescriptionText = stringResource(R.string.back_navigation_content_description),
+                onBack = onBack
+            )
+        },
     )
 }
 

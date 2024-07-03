@@ -45,6 +45,7 @@ import co.electriccoin.zcash.ui.design.component.FormTextField
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.RadioButton
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
+import co.electriccoin.zcash.ui.design.component.TopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.chooseserver.ChooseServerTag
 import co.electriccoin.zcash.ui.screen.chooseserver.validateCustomServerValue
@@ -233,9 +234,13 @@ private fun ChooseServerTopAppBar(
             },
         modifier = Modifier.testTag(ChooseServerTag.CHOOSE_SERVER_TOP_APP_BAR),
         showTitleLogo = true,
-        backText = stringResource(id = R.string.choose_server_back).uppercase(),
-        backContentDescriptionText = stringResource(R.string.choose_server_back_content_description),
-        onBack = onBack,
+        navigationAction = {
+            TopAppBarBackNavigation(
+                backText = stringResource(id = R.string.back_navigation).uppercase(),
+                backContentDescriptionText = stringResource(R.string.back_navigation_content_description),
+                onBack = onBack
+            )
+        }
     )
 }
 

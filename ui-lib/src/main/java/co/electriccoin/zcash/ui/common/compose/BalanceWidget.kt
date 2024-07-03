@@ -1,6 +1,5 @@
 package co.electriccoin.zcash.ui.common.compose
 
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -46,6 +45,7 @@ private fun BalanceWidgetPreview() {
                             totalBalance = Zatoshi(1234567891234567L),
                             spendableBalance = Zatoshi(1234567891234567L)
                         ),
+                    isHideBalances = false,
                     isReferenceToBalances = true,
                     onReferenceClick = {},
                     modifier = Modifier
@@ -65,6 +65,26 @@ private fun BalanceWidgetNotAvailableYetPreview() {
             @Suppress("MagicNumber")
             BalanceWidget(
                 balanceState = BalanceState.Loading(Zatoshi(0L)),
+                isHideBalances = false,
+                isReferenceToBalances = true,
+                onReferenceClick = {},
+                modifier = Modifier
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun BalanceWidgetHiddenAmountPreview() {
+    ZcashTheme(forceDarkMode = false) {
+        BlankSurface(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            @Suppress("MagicNumber")
+            BalanceWidget(
+                balanceState = BalanceState.Loading(Zatoshi(0L)),
+                isHideBalances = true,
                 isReferenceToBalances = true,
                 onReferenceClick = {},
                 modifier = Modifier
@@ -86,6 +106,7 @@ sealed class BalanceState(open val totalBalance: Zatoshi) {
 fun BalanceWidget(
     balanceState: BalanceState,
     isReferenceToBalances: Boolean,
+    isHideBalances: Boolean,
     onReferenceClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -96,12 +117,12 @@ fun BalanceWidget(
                 .then(modifier),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        BalanceWidgetBigLineOnly(parts = balanceState.totalBalance.toZecStringFull().asZecAmountTriple())
+        BalanceWidgetBigLineOnly(
+            isHideBalances = isHideBalances,
+            parts = balanceState.totalBalance.toZecStringFull().asZecAmountTriple()
+        )
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.animateContentSize()
-        ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
             if (isReferenceToBalances) {
                 Reference(
                     text = stringResource(id = co.electriccoin.zcash.ui.R.string.balance_widget_available),
@@ -135,6 +156,7 @@ fun BalanceWidget(
                 is BalanceState.Available -> {
                     StyledBalance(
                         balanceParts = balanceState.spendableBalance.toZecStringFull().asZecAmountTriple(),
+                        isHideBalances = isHideBalances,
                         textStyles =
                             Pair(
                                 ZcashTheme.extendedTypography.balanceWidgetStyles.third,
@@ -157,6 +179,7 @@ fun BalanceWidget(
 @Composable
 fun BalanceWidgetBigLineOnly(
     parts: ZecAmountTriple,
+    isHideBalances: Boolean,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -165,6 +188,7 @@ fun BalanceWidgetBigLineOnly(
     ) {
         StyledBalance(
             balanceParts = parts,
+            isHideBalances = isHideBalances,
             textStyles =
                 Pair(
                     ZcashTheme.extendedTypography.balanceWidgetStyles.first,

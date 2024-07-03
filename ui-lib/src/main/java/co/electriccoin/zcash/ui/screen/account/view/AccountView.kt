@@ -12,9 +12,11 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.ui.R
@@ -27,6 +29,7 @@ import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.test.CommonTag
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
+import co.electriccoin.zcash.ui.design.component.TopAppBarHideBalancesNavigation
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.BalanceStateFixture
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
@@ -41,12 +44,14 @@ private fun HistoryLoadingComposablePreview() {
     ZcashTheme(forceDarkMode = false) {
         Account(
             balanceState = BalanceStateFixture.new(),
+            isHideBalances = false,
             goBalances = {},
             goSettings = {},
             hideStatusDialog = {},
-            showStatusDialog = null,
+            onHideBalances = {},
             onStatusClick = {},
             onTransactionItemAction = {},
+            showStatusDialog = null,
             snackbarHostState = SnackbarHostState(),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
             transactionsUiState = TransactionUiState.Loading,
@@ -67,12 +72,14 @@ private fun HistoryListComposablePreview() {
                     Zatoshi(123_000_000L),
                     Zatoshi(123_000_000L)
                 ),
+            isHideBalances = false,
             goBalances = {},
             goSettings = {},
             hideStatusDialog = {},
-            showStatusDialog = null,
+            onHideBalances = {},
             onStatusClick = {},
             onTransactionItemAction = {},
+            showStatusDialog = null,
             snackbarHostState = SnackbarHostState(),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
             transactionsUiState = TransactionUiState.Done(transactions = TransactionsFixture.new()),
@@ -88,10 +95,12 @@ internal fun Account(
     balanceState: BalanceState,
     goBalances: () -> Unit,
     goSettings: () -> Unit,
+    isHideBalances: Boolean,
     hideStatusDialog: () -> Unit,
-    showStatusDialog: StatusAction.Detailed?,
+    onHideBalances: () -> Unit,
     onStatusClick: (StatusAction) -> Unit,
     onTransactionItemAction: (TrxItemAction) -> Unit,
+    showStatusDialog: StatusAction.Detailed?,
     snackbarHostState: SnackbarHostState,
     topAppBarSubTitleState: TopAppBarSubTitleState,
     transactionsUiState: TransactionUiState,
@@ -101,6 +110,8 @@ internal fun Account(
     BlankBgScaffold(
         topBar = {
             AccountTopAppBar(
+                isHideBalances = isHideBalances,
+                onHideBalances = onHideBalances,
                 onSettings = goSettings,
                 subTitleState = topAppBarSubTitleState,
             )
@@ -111,6 +122,7 @@ internal fun Account(
     ) { paddingValues ->
         AccountMainContent(
             balanceState = balanceState,
+            isHideBalances = isHideBalances,
             goBalances = goBalances,
             onStatusClick = onStatusClick,
             onTransactionItemAction = onTransactionItemAction,
@@ -137,6 +149,8 @@ internal fun Account(
 
 @Composable
 private fun AccountTopAppBar(
+    isHideBalances: Boolean,
+    onHideBalances: () -> Unit,
     onSettings: () -> Unit,
     subTitleState: TopAppBarSubTitleState
 ) {
@@ -158,7 +172,22 @@ private fun AccountTopAppBar(
                     contentDescription = stringResource(id = R.string.settings_menu_content_description)
                 )
             }
-        }
+        },
+        navigationAction = {
+            TopAppBarHideBalancesNavigation(
+                contentDescription = stringResource(id = R.string.hide_balances_content_description),
+                iconVector =
+                    ImageVector.vectorResource(
+                        if (isHideBalances) {
+                            R.drawable.ic_hide_balances_on
+                        } else {
+                            R.drawable.ic_hide_balances_off
+                        }
+                    ),
+                onClick = onHideBalances,
+                modifier = Modifier.testTag(CommonTag.HIDE_BALANCES_TOP_BAR_BUTTON)
+            )
+        },
     )
 }
 
@@ -167,10 +196,11 @@ private fun AccountTopAppBar(
 private fun AccountMainContent(
     balanceState: BalanceState,
     goBalances: () -> Unit,
+    isHideBalances: Boolean,
+    isWalletRestoringState: WalletRestoringState,
     onTransactionItemAction: (TrxItemAction) -> Unit,
     onStatusClick: (StatusAction) -> Unit,
     transactionState: TransactionUiState,
-    isWalletRestoringState: WalletRestoringState,
     walletSnapshot: WalletSnapshot,
     modifier: Modifier = Modifier,
 ) {
@@ -183,6 +213,7 @@ private fun AccountMainContent(
         BalancesStatus(
             balanceState = balanceState,
             goBalances = goBalances,
+            isHideBalances = isHideBalances,
             modifier =
                 Modifier
                     .padding(horizontal = ZcashTheme.dimens.screenHorizontalSpacingRegular)
@@ -191,6 +222,7 @@ private fun AccountMainContent(
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
 
         HistoryContainer(
+            isHideBalances = isHideBalances,
             onStatusClick = onStatusClick,
             onTransactionItemAction = onTransactionItemAction,
             transactionState = transactionState,
@@ -204,6 +236,7 @@ private fun AccountMainContent(
 private fun BalancesStatus(
     balanceState: BalanceState,
     goBalances: () -> Unit,
+    isHideBalances: Boolean,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -217,6 +250,7 @@ private fun BalancesStatus(
     ) {
         BalanceWidget(
             balanceState = balanceState,
+            isHideBalances = isHideBalances,
             isReferenceToBalances = true,
             onReferenceClick = goBalances
         )

@@ -55,6 +55,7 @@ import co.electriccoin.zcash.ui.design.component.Small
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.StyledBalance
 import co.electriccoin.zcash.ui.design.component.Tiny
+import co.electriccoin.zcash.ui.design.component.TopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.sendconfirmation.SendConfirmationTag
 import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SendConfirmationStage
@@ -303,12 +304,13 @@ private fun SendConfirmationTopAppBar(
             SmallTopAppBar(
                 subTitle = subTitle,
                 titleText = stringResource(id = R.string.send_confirmation_multiple_error_title),
-                backText = stringResource(id = R.string.send_confirmation_multiple_error_back),
-                backContentDescriptionText =
-                    stringResource(
-                        id = R.string.send_confirmation_multiple_error_back_content_description
-                    ),
-                onBack = onBack,
+                navigationAction = {
+                    TopAppBarBackNavigation(
+                        backText = stringResource(id = R.string.back_navigation).uppercase(),
+                        backContentDescriptionText = stringResource(R.string.back_navigation_content_description),
+                        onBack = onBack
+                    )
+                },
             )
         }
     }
@@ -371,7 +373,11 @@ private fun SendConfirmationContent(
 
         Small(stringResource(R.string.send_confirmation_amount))
 
-        BalanceWidgetBigLineOnly(parts = zecSend.amount.toZecStringFull().asZecAmountTriple())
+        BalanceWidgetBigLineOnly(
+            parts = zecSend.amount.toZecStringFull().asZecAmountTriple(),
+            // We don't hide any balance in confirmation screen
+            isHideBalances = false
+        )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
@@ -392,6 +398,8 @@ private fun SendConfirmationContent(
             // due to: "Smart cast to 'Proposal' is impossible, because 'zecSend.proposal' is a public API
             // property declared in different module. See more details on the Kotlin forum.
             balanceParts = zecSend.proposal!!.totalFeeRequired().toZecStringFull().asZecAmountTriple(),
+            // We don't hide any balance in confirmation screen
+            isHideBalances = false,
             textStyles =
                 Pair(
                     ZcashTheme.extendedTypography.balanceSingleStyles.first,

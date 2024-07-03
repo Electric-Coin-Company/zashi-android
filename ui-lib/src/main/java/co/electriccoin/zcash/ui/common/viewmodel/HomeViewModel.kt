@@ -13,6 +13,8 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -40,6 +42,29 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         setBooleanPreference(StandardPreferenceKeys.IS_RESTORING_INITIAL_WARNING_SEEN, true)
     }
 
+    /**
+     * A flow of the wallet balances visibility.
+     */
+    val isHideBalances: StateFlow<Boolean?> = booleanStateFlow(StandardPreferenceKeys.IS_HIDE_BALANCES)
+
+    fun showOrHideBalances() {
+        viewModelScope.launch {
+            setBooleanPreference(StandardPreferenceKeys.IS_HIDE_BALANCES, isHideBalances.filterNotNull().first().not())
+        }
+    }
+
+    val configurationFlow: StateFlow<Configuration?> =
+        AndroidConfigurationFactory.getInstance(application).getConfigurationFlow()
+            .stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT.inWholeMilliseconds),
+                null
+            )
+
+    //
+    // PRIVATE HELPERS
+    //
+
     private fun booleanStateFlow(default: BooleanPreferenceDefault): StateFlow<Boolean?> =
         flow<Boolean?> {
             val preferenceProvider = StandardPreferenceSingleton.getInstance(getApplication())
@@ -49,14 +74,6 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
             null
         )
-
-    val configurationFlow: StateFlow<Configuration?> =
-        AndroidConfigurationFactory.getInstance(application).getConfigurationFlow()
-            .stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT.inWholeMilliseconds),
-                null
-            )
 
     private fun setBooleanPreference(
         default: BooleanPreferenceDefault,

@@ -116,7 +116,7 @@ class SupportViewTest : UiTestPrerequisites() {
 }
 
 private fun ComposeContentTestRule.clickBack() {
-    onNodeWithContentDescription(getStringResource(R.string.support_back_content_description)).also {
+    onNodeWithContentDescription(getStringResource(R.string.back_navigation_content_description)).also {
         it.performClick()
     }
 }

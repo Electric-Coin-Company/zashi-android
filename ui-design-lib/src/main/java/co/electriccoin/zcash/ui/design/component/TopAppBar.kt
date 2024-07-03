@@ -3,7 +3,6 @@
 package co.electriccoin.zcash.ui.design.component
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -34,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -51,7 +51,16 @@ import co.electriccoin.zcash.ui.design.theme.internal.TopAppBarColors
 private fun TopAppBarTextComposablePreview() {
     ZcashTheme(forceDarkMode = false) {
         BlankSurface {
-            SmallTopAppBar(titleText = "Screen A", backText = "Back")
+            SmallTopAppBar(
+                navigationAction = {
+                    TopAppBarBackNavigation(
+                        onBack = {},
+                        backText = "BACK",
+                        backContentDescriptionText = "BACK"
+                    )
+                },
+                titleText = "Screen A"
+            )
         }
     }
 }
@@ -61,7 +70,16 @@ private fun TopAppBarTextComposablePreview() {
 private fun TopAppBarTextDarkComposablePreview() {
     ZcashTheme(forceDarkMode = true) {
         BlankSurface {
-            SmallTopAppBar(titleText = "Screen A", backText = "Back")
+            SmallTopAppBar(
+                navigationAction = {
+                    TopAppBarBackNavigation(
+                        onBack = {},
+                        backText = "BACK",
+                        backContentDescriptionText = "BACK"
+                    )
+                },
+                titleText = "Screen A"
+            )
         }
     }
 }
@@ -72,8 +90,14 @@ private fun TopAppBarTextRestoringComposablePreview() {
     ZcashTheme(forceDarkMode = false) {
         BlankSurface {
             SmallTopAppBar(
+                navigationAction = {
+                    TopAppBarBackNavigation(
+                        onBack = {},
+                        backText = "BACK",
+                        backContentDescriptionText = "BACK"
+                    )
+                },
                 titleText = "Screen A",
-                backText = "Back",
                 subTitle = "[RESTORING YOUR WALLET…]"
             )
         }
@@ -86,9 +110,15 @@ private fun TopAppBarTextRestoringLongComposablePreview() {
     ZcashTheme(forceDarkMode = false) {
         BlankSurface {
             SmallTopAppBar(
+                navigationAction = {
+                    TopAppBarBackNavigation(
+                        onBack = {},
+                        backText = "BACK",
+                        backContentDescriptionText = "BACK"
+                    )
+                },
+                subTitle = "[RESTORING YOUR WALLET LONG TEXT…]",
                 titleText = "Screen A",
-                backText = "Back",
-                subTitle = "[RESTORING YOUR WALLET LONG TEXT…]"
             )
         }
     }
@@ -99,7 +129,16 @@ private fun TopAppBarTextRestoringLongComposablePreview() {
 private fun TopAppBarLogoComposablePreview() {
     ZcashTheme(forceDarkMode = false) {
         BlankSurface {
-            SmallTopAppBar(showTitleLogo = true, backText = "Back")
+            SmallTopAppBar(
+                navigationAction = {
+                    TopAppBarBackNavigation(
+                        onBack = {},
+                        backText = "BACK",
+                        backContentDescriptionText = "BACK"
+                    )
+                },
+                showTitleLogo = true
+            )
         }
     }
 }
@@ -110,8 +149,14 @@ private fun TopAppBarLogoRestoringComposablePreview() {
     ZcashTheme(forceDarkMode = false) {
         BlankSurface {
             SmallTopAppBar(
+                navigationAction = {
+                    TopAppBarBackNavigation(
+                        onBack = {},
+                        backText = "BACK",
+                        backContentDescriptionText = "BACK"
+                    )
+                },
                 showTitleLogo = true,
-                backText = "Back",
                 subTitle = "[RESTORING YOUR WALLET…]"
             )
         }
@@ -124,8 +169,14 @@ private fun TopAppBarLogoRestoringDarkComposablePreview() {
     ZcashTheme(forceDarkMode = true) {
         BlankSurface {
             SmallTopAppBar(
+                navigationAction = {
+                    TopAppBarBackNavigation(
+                        onBack = {},
+                        backText = "BACK",
+                        backContentDescriptionText = "BACK"
+                    )
+                },
                 showTitleLogo = true,
-                backText = "Back",
                 subTitle = "[RESTORING YOUR WALLET…]"
             )
         }
@@ -157,7 +208,13 @@ private fun TopAppBarOneVisibleActionMenuComposablePreview() {
         BlankSurface {
             SmallTopAppBar(
                 titleText = "Screen C",
-                backText = "Back",
+                navigationAction = {
+                    TopAppBarBackNavigation(
+                        onBack = {},
+                        backText = "BACK",
+                        backContentDescriptionText = "BACK"
+                    )
+                },
                 regularActions = {
                     TopBarOneVisibleActionMenuExample(
                         actionCallback = {}
@@ -175,12 +232,18 @@ private fun TopAppBarHamburgerMenuComposablePreview() {
         BlankSurface {
             SmallTopAppBar(
                 titleText = "Screen D",
-                backText = "Back",
                 hamburgerMenuActions = {
                     TopBarHamburgerMenuExample(
                         actionCallback = {}
                     )
-                }
+                },
+                navigationAction = {
+                    TopAppBarBackNavigation(
+                        onBack = {},
+                        backText = "BACK",
+                        backContentDescriptionText = "BACK"
+                    )
+                },
             )
         }
     }
@@ -286,14 +349,60 @@ private fun TopBarOneVisibleActionMenuExample(
 }
 
 @Composable
+fun TopAppBarBackNavigation(
+    backContentDescriptionText: String? = null,
+    backIconVector: ImageVector = Icons.AutoMirrored.Filled.ArrowBack,
+    backText: String? = null,
+    onBack: () -> Unit
+) {
+    Row(
+        modifier =
+            Modifier
+                .wrapContentSize()
+                .clip(RoundedCornerShape(ZcashTheme.dimens.regularRippleEffectCorner))
+                .clickable { onBack() }
+                .padding(all = ZcashTheme.dimens.spacingMid),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = backIconVector,
+            contentDescription = backContentDescriptionText,
+        )
+
+        backText?.let {
+            Spacer(modifier = Modifier.size(size = ZcashTheme.dimens.spacingSmall))
+
+            Text(text = backText)
+        }
+    }
+}
+
+@Composable
+fun TopAppBarHideBalancesNavigation(
+    iconVector: ImageVector,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    contentDescription: String? = null,
+) {
+    IconButton(
+        onClick = onClick,
+        modifier = modifier
+    ) {
+        Icon(
+            imageVector = iconVector,
+            contentDescription = contentDescription,
+            modifier = Modifier.size(24.dp)
+        )
+    }
+}
+
+@Composable
 @Suppress("LongParameterList")
 fun GridBgSmallTopAppBar(
     modifier: Modifier = Modifier,
-    backContentDescriptionText: String? = null,
-    backText: String? = null,
     colors: TopAppBarColors = ZcashTheme.colors.topAppBarColors,
     hamburgerMenuActions: (@Composable RowScope.() -> Unit)? = null,
-    onBack: (() -> Unit)? = null,
+    navigationAction: @Composable () -> Unit = {},
     regularActions: (@Composable RowScope.() -> Unit)? = null,
     subTitle: String? = null,
     showTitleLogo: Boolean = false,
@@ -309,11 +418,9 @@ fun GridBgSmallTopAppBar(
                     gridLineWidth = ZcashTheme.dimens.gridLineWidth
                 )
             ),
-        backContentDescriptionText = backContentDescriptionText,
-        backText = backText,
         colors = colors.copyColors(containerColor = Color.Transparent),
         hamburgerMenuActions = hamburgerMenuActions,
-        onBack = onBack,
+        navigationAction = navigationAction,
         regularActions = regularActions,
         subTitle = subTitle,
         showTitleLogo = showTitleLogo,
@@ -322,15 +429,13 @@ fun GridBgSmallTopAppBar(
 }
 
 @Composable
-@Suppress("LongParameterList", "LongMethod")
+@Suppress("LongParameterList")
 @OptIn(ExperimentalMaterial3Api::class)
 fun SmallTopAppBar(
     modifier: Modifier = Modifier,
-    backContentDescriptionText: String? = null,
-    backText: String? = null,
     colors: TopAppBarColors = ZcashTheme.colors.topAppBarColors,
     hamburgerMenuActions: (@Composable RowScope.() -> Unit)? = null,
-    onBack: (() -> Unit)? = null,
+    navigationAction: @Composable () -> Unit = {},
     regularActions: (@Composable RowScope.() -> Unit)? = null,
     subTitle: String? = null,
     showTitleLogo: Boolean = false,
@@ -377,28 +482,7 @@ fun SmallTopAppBar(
             }
         },
         navigationIcon = {
-            backText?.let {
-                Box(
-                    modifier =
-                        Modifier
-                            .wrapContentSize()
-                            .clip(RoundedCornerShape(ZcashTheme.dimens.regularRippleEffectCorner))
-                            .clickable { onBack?.run { onBack() } }
-                ) {
-                    Row(
-                        modifier = Modifier.padding(all = ZcashTheme.dimens.spacingDefault),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = backContentDescriptionText,
-                            tint = colors.navigationColor,
-                        )
-                        Spacer(modifier = Modifier.size(size = ZcashTheme.dimens.spacingSmall))
-                        Text(text = backText.uppercase())
-                    }
-                }
-            }
+            navigationAction()
         },
         actions = {
             regularActions?.invoke(this)

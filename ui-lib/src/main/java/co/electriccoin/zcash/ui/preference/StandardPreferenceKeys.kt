@@ -32,8 +32,6 @@ object StandardPreferenceKeys {
 
     val IS_KEEP_SCREEN_ON_DURING_SYNC = BooleanPreferenceDefault(PreferenceKey("is_keep_screen_on_during_sync"), true)
 
-    val IS_DETAILED_SYNC_STATUS = BooleanPreferenceDefault(PreferenceKey("is_detailed_sync_status"), false)
-
     val IS_RESTORING_INITIAL_WARNING_SEEN =
         BooleanPreferenceDefault(PreferenceKey("IS_RESTORING_INITIAL_WARNING_SEEN"), false)
 
@@ -69,5 +67,10 @@ object StandardPreferenceKeys {
         BooleanPreferenceDefault(
             PreferenceKey("IS_SEND_FUNDS_AUTHENTICATION"),
             true
+        )
+    val IS_HIDE_BALANCES =
+        BooleanPreferenceDefault(
+            PreferenceKey("IS_HIDE_BALANCES"),
+            false
         )
 }

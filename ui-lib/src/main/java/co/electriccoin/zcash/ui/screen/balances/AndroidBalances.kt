@@ -26,6 +26,7 @@ import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.viewmodel.CheckUpdateViewModel
+import co.electriccoin.zcash.ui.common.viewmodel.HomeViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
 import co.electriccoin.zcash.ui.configuration.RemoteConfig
@@ -54,6 +55,8 @@ internal fun WrapBalances(
 
     val createTransactionsViewModel by activity.viewModels<CreateTransactionsViewModel>()
 
+    val homeViewModel by activity.viewModels<HomeViewModel>()
+
     val synchronizer = walletViewModel.synchronizer.collectAsStateWithLifecycle().value
 
     val walletSnapshot = walletViewModel.walletSnapshot.collectAsStateWithLifecycle().value
@@ -63,6 +66,8 @@ internal fun WrapBalances(
     val walletRestoringState = walletViewModel.walletRestoringState.collectAsStateWithLifecycle().value
 
     val walletState = walletViewModel.walletStateInformation.collectAsStateWithLifecycle().value
+
+    val isHideBalances = homeViewModel.isHideBalances.collectAsStateWithLifecycle().value ?: false
 
     val checkUpdateViewModel by activity.viewModels<CheckUpdateViewModel> {
         CheckUpdateViewModel.CheckUpdateViewModelFactory(
@@ -79,7 +84,9 @@ internal fun WrapBalances(
         checkUpdateViewModel = checkUpdateViewModel,
         goSettings = goSettings,
         goMultiTrxSubmissionFailure = goMultiTrxSubmissionFailure,
+        isHideBalances = isHideBalances,
         lifecycleScope = activity.lifecycleScope,
+        onHideBalances = { homeViewModel.showOrHideBalances() },
         spendingKey = spendingKey,
         synchronizer = synchronizer,
         topAppBarSubTitleState = walletState,
@@ -101,6 +108,8 @@ internal fun WrapBalances(
     goSettings: () -> Unit,
     goMultiTrxSubmissionFailure: () -> Unit,
     lifecycleScope: CoroutineScope,
+    isHideBalances: Boolean,
+    onHideBalances: () -> Unit,
     spendingKey: UnifiedSpendingKey?,
     synchronizer: Synchronizer?,
     topAppBarSubTitleState: TopAppBarSubTitleState,
@@ -158,7 +167,9 @@ internal fun WrapBalances(
         Balances(
             balanceState = balanceState,
             isFiatConversionEnabled = isFiatConversionEnabled,
+            isHideBalances = isHideBalances,
             isUpdateAvailable = isUpdateAvailable,
+            onHideBalances = onHideBalances,
             onSettings = goSettings,
             isShowingErrorDialog = isShowingErrorDialog,
             setShowErrorDialog = setShowErrorDialog,

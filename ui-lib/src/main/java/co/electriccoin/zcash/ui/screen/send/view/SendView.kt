@@ -32,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalContext
@@ -39,6 +40,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -74,6 +76,7 @@ import co.electriccoin.zcash.ui.design.component.FormTextField
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.Small
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
+import co.electriccoin.zcash.ui.design.component.TopAppBarHideBalancesNavigation
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.BalanceStateFixture
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
@@ -93,6 +96,7 @@ private fun PreviewSendForm() {
             sendStage = SendStage.Form,
             onCreateZecSend = {},
             onBack = {},
+            onHideBalances = {},
             onSettings = {},
             onQrScannerOpen = {},
             goBalances = {},
@@ -105,7 +109,8 @@ private fun PreviewSendForm() {
             memoState = MemoState.new("Test message"),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
             walletSnapshot = WalletSnapshotFixture.new(),
-            balanceState = BalanceStateFixture.new()
+            balanceState = BalanceStateFixture.new(),
+            isHideBalances = false,
         )
     }
 }
@@ -118,6 +123,7 @@ private fun SendFormTransparentAddressPreview() {
             sendStage = SendStage.Form,
             onCreateZecSend = {},
             onBack = {},
+            onHideBalances = {},
             onSettings = {},
             onQrScannerOpen = {},
             goBalances = {},
@@ -134,7 +140,8 @@ private fun SendFormTransparentAddressPreview() {
             memoState = MemoState.new("Test message"),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
             walletSnapshot = WalletSnapshotFixture.new(),
-            balanceState = BalanceStateFixture.new()
+            balanceState = BalanceStateFixture.new(),
+            isHideBalances = false,
         )
     }
 }
@@ -146,6 +153,8 @@ private fun SendFormTransparentAddressPreview() {
 @Composable
 fun Send(
     balanceState: BalanceState,
+    isHideBalances: Boolean,
+    onHideBalances: () -> Unit,
     sendStage: SendStage,
     onCreateZecSend: (ZecSend) -> Unit,
     onBack: () -> Unit,
@@ -164,12 +173,15 @@ fun Send(
 ) {
     BlankBgScaffold(topBar = {
         SendTopAppBar(
+            isHideBalances = isHideBalances,
+            onHideBalances = onHideBalances,
             subTitleState = topAppBarSubTitleState,
             onSettings = onSettings
         )
     }) { paddingValues ->
         SendMainContent(
             balanceState = balanceState,
+            isHideBalances = isHideBalances,
             walletSnapshot = walletSnapshot,
             onBack = onBack,
             sendStage = sendStage,
@@ -197,6 +209,8 @@ fun Send(
 
 @Composable
 private fun SendTopAppBar(
+    isHideBalances: Boolean,
+    onHideBalances: () -> Unit,
     onSettings: () -> Unit,
     subTitleState: TopAppBarSubTitleState
 ) {
@@ -219,6 +233,21 @@ private fun SendTopAppBar(
                 )
             }
         },
+        navigationAction = {
+            TopAppBarHideBalancesNavigation(
+                contentDescription = stringResource(id = R.string.hide_balances_content_description),
+                iconVector =
+                    ImageVector.vectorResource(
+                        if (isHideBalances) {
+                            R.drawable.ic_hide_balances_on
+                        } else {
+                            R.drawable.ic_hide_balances_off
+                        }
+                    ),
+                onClick = onHideBalances,
+                modifier = Modifier.testTag(CommonTag.HIDE_BALANCES_TOP_BAR_BUTTON)
+            )
+        },
     )
 }
 
@@ -226,6 +255,7 @@ private fun SendTopAppBar(
 @Composable
 private fun SendMainContent(
     balanceState: BalanceState,
+    isHideBalances: Boolean,
     walletSnapshot: WalletSnapshot,
     onBack: () -> Unit,
     goBalances: () -> Unit,
@@ -246,6 +276,7 @@ private fun SendMainContent(
 
     SendForm(
         balanceState = balanceState,
+        isHideBalances = isHideBalances,
         walletSnapshot = walletSnapshot,
         recipientAddressState = recipientAddressState,
         onRecipientAddressChange = onRecipientAddressChange,
@@ -278,6 +309,7 @@ private fun SendMainContent(
 @Composable
 private fun SendForm(
     balanceState: BalanceState,
+    isHideBalances: Boolean,
     walletSnapshot: WalletSnapshot,
     recipientAddressState: RecipientAddressState,
     onRecipientAddressChange: (String) -> Unit,
@@ -311,6 +343,7 @@ private fun SendForm(
 
         BalanceWidget(
             balanceState = balanceState,
+            isHideBalances = isHideBalances,
             isReferenceToBalances = true,
             onReferenceClick = goBalances
         )

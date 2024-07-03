@@ -83,6 +83,7 @@ private fun ComposablePreview() {
         HistoryContainer(
             onTransactionItemAction = {},
             onStatusClick = {},
+            isHideBalances = false,
             transactionState = TransactionUiState.Loading,
             walletRestoringState = WalletRestoringState.SYNCING,
             walletSnapshot = WalletSnapshotFixture.new()
@@ -98,6 +99,7 @@ private fun ComposableHistoryListPreview() {
             transactionState = TransactionUiState.Done(transactions = TransactionsFixture.new()),
             onTransactionItemAction = {},
             onStatusClick = {},
+            isHideBalances = false,
             walletRestoringState = WalletRestoringState.RESTORING,
             walletSnapshot = WalletSnapshotFixture.new()
         )
@@ -116,6 +118,7 @@ private val dateFormat: DateFormat by lazy {
 internal fun HistoryContainer(
     onStatusClick: (StatusAction) -> Unit,
     onTransactionItemAction: (TrxItemAction) -> Unit,
+    isHideBalances: Boolean,
     transactionState: TransactionUiState,
     walletRestoringState: WalletRestoringState,
     walletSnapshot: WalletSnapshot,
@@ -167,6 +170,7 @@ internal fun HistoryContainer(
             is TransactionUiState.Prepared -> {
                 HistoryList(
                     transactions = transactionState.transactions,
+                    isHideBalances = isHideBalances,
                     onAction = onTransactionItemAction,
                 )
             }
@@ -211,6 +215,7 @@ private fun EmptyTransactionHistory() {
 @Composable
 private fun HistoryList(
     transactions: ImmutableList<TransactionUi>,
+    isHideBalances: Boolean,
     onAction: (TrxItemAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -220,6 +225,7 @@ private fun HistoryList(
         items(transactions.size) { index ->
             HistoryItem(
                 transaction = transactions[index],
+                isHideBalances = isHideBalances,
                 onAction = onAction
             )
 
@@ -239,6 +245,7 @@ private fun ComposableHistoryListItemPreview() {
         BlankSurface {
             HistoryItem(
                 onAction = {},
+                isHideBalances = false,
                 transaction = TransactionUiFixture.new()
             )
         }
@@ -253,6 +260,7 @@ private fun ComposableHistoryListItemExpandedPreview() {
             Column {
                 HistoryItem(
                     onAction = {},
+                    isHideBalances = false,
                     transaction =
                         TransactionUiFixture.new(
                             overview = TransactionOverviewFixture.new().copy(isSentTransaction = true),
@@ -261,6 +269,7 @@ private fun ComposableHistoryListItemExpandedPreview() {
                 )
                 HistoryItem(
                     onAction = {},
+                    isHideBalances = false,
                     transaction =
                         TransactionUiFixture.new(
                             overview = TransactionOverviewFixture.new().copy(isSentTransaction = false),
@@ -279,6 +288,7 @@ private fun ComposableHistoryListItemsPreview() {
         BlankSurface {
             HistoryItem(
                 onAction = {},
+                isHideBalances = false,
                 transaction =
                     TransactionUiFixture.new(
                         messages = persistentListOf("Message 1", "Message 2", "Message 3"),
@@ -295,6 +305,7 @@ const val ADDRESS_IN_TITLE_WIDTH_RATIO = 0.5f
 @Suppress("LongMethod")
 private fun HistoryItem(
     transaction: TransactionUi,
+    isHideBalances: Boolean,
     onAction: (TrxItemAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -373,6 +384,7 @@ private fun HistoryItem(
         Column {
             HistoryItemCollapsedMainPart(
                 transaction = transaction,
+                isHideBalances = isHideBalances,
                 typeText = typeText,
                 textStyle = textStyle,
                 textColor = textColor,
@@ -417,6 +429,7 @@ private fun HistoryItemCollapsedMainPart(
     typeText: String,
     textStyle: TextStyle,
     textColor: Color,
+    isHideBalances: Boolean,
     onAction: (TrxItemAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -475,6 +488,7 @@ private fun HistoryItemCollapsedMainPart(
                         suffix = stringResource(id = R.string.general_etc)
                     ).asZecAmountTriple(prefix)
                 },
+            isHideBalances = isHideBalances,
             textStyles =
                 Pair(
                     first = valueTextStyle,
@@ -812,6 +826,8 @@ private fun HistoryItemTransactionFeePart(
         } else {
             StyledBalance(
                 balanceParts = fee.toZecStringFull().asZecAmountTriple(),
+                // Fees are always visible
+                isHideBalances = false,
                 textStyles =
                     Pair(
                         first = ZcashTheme.extendedTypography.transactionItemStyles.feeFirstPart,

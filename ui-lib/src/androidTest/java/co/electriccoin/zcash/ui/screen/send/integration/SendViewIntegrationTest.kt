@@ -75,6 +75,8 @@ class SendViewIntegrationTest {
                 goBalances = {},
                 goSettings = {},
                 goSendConfirmation = {},
+                isHideBalances = false,
+                onHideBalances = {},
                 hasCameraFeature = true,
                 monetarySeparators = monetarySeparators,
                 topAppBarSubTitleState = TopAppBarSubTitleState.None,

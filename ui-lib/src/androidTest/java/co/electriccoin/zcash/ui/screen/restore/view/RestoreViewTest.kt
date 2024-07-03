@@ -311,7 +311,7 @@ class RestoreViewTest : UiTestPrerequisites() {
         assertEquals(0, testSetup.getOnBackCount())
 
         composeTestRule.onNodeWithContentDescription(
-            getStringResource(R.string.restore_back_content_description)
+            getStringResource(R.string.back_navigation_content_description)
         ).also {
             it.performClick()
         }
@@ -331,7 +331,7 @@ class RestoreViewTest : UiTestPrerequisites() {
         assertEquals(0, testSetup.getOnBackCount())
 
         composeTestRule.onNodeWithContentDescription(
-            getStringResource(R.string.restore_back_content_description)
+            getStringResource(R.string.back_navigation_content_description)
         ).also {
             it.performClick()
         }
