@@ -3,6 +3,7 @@ package co.electriccoin.zcash.ui.screen.home.view
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
@@ -19,16 +20,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import cash.z.ecc.android.sdk.Synchronizer
-import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.DisableScreenTimeout
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
-import co.electriccoin.zcash.ui.design.component.AppAlertDialog
 import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.NavigationTabText
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
@@ -77,7 +75,10 @@ fun Home(
     )
 
     if (isShowingRestoreInitDialog) {
-        HomeRestoringInitialDialog(setShowingRestoreInitDialog)
+        RestoreSuccessView(
+            modifier = Modifier.fillMaxSize(),
+            onPositiveClick = setShowingRestoreInitDialog
+        )
     }
 
     if (isKeepScreenOnWhileSyncing == true &&
@@ -181,14 +182,4 @@ private fun HomeContent(
             }
         }
     }
-}
-
-@Composable
-fun HomeRestoringInitialDialog(setShowingRestoreInitDialog: () -> Unit) {
-    AppAlertDialog(
-        title = stringResource(id = R.string.restoring_initial_dialog_title),
-        text = stringResource(id = R.string.restoring_initial_dialog_description),
-        confirmButtonText = stringResource(id = R.string.restoring_initial_dialog_positive_button),
-        onConfirmButtonClick = setShowingRestoreInitDialog
-    )
 }
