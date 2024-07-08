@@ -13,6 +13,8 @@ syntax: glob
 .idea/migrations.xml
 .idea/studiobot.xml
 .idea/material_theme_project_new.xml
+.idea/csv-editor.xml
+.idea/vcs.xml
 .settings
 *.iml
 bin/
