@@ -59,6 +59,7 @@ import co.electriccoin.zcash.ui.design.component.BubbleArrowAlignment
 import co.electriccoin.zcash.ui.design.component.BubbleMessage
 import co.electriccoin.zcash.ui.design.component.CircularMidProgressIndicator
 import co.electriccoin.zcash.ui.design.component.StyledBalance
+import co.electriccoin.zcash.ui.design.component.StyledBalanceDefaults
 import co.electriccoin.zcash.ui.design.component.TextWithIcon
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
@@ -159,6 +160,7 @@ internal fun HistoryContainer(
             TransactionUiState.Loading -> {
                 LoadingTransactionHistory()
             }
+
             TransactionUiState.SyncingEmpty -> {
                 if (walletRestoringState == WalletRestoringState.INITIATING) {
                     // In case we are syncing a new wallet, it's empty
@@ -167,6 +169,7 @@ internal fun HistoryContainer(
                     // Intentionally leaving the UI empty otherwise
                 }
             }
+
             is TransactionUiState.Prepared -> {
                 HistoryList(
                     transactions = transactionState.transactions,
@@ -174,6 +177,7 @@ internal fun HistoryContainer(
                     onAction = onTransactionItemAction,
                 )
             }
+
             is TransactionUiState.DoneEmpty -> {
                 EmptyTransactionHistory()
             }
@@ -320,12 +324,14 @@ private fun HistoryItem(
             textColor = MaterialTheme.colorScheme.onBackground
             textStyle = ZcashTheme.extendedTypography.transactionItemStyles.titleRegular
         }
+
         TransactionExtendedState.SENDING -> {
             typeText = stringResource(id = R.string.account_history_item_sending)
             typeIcon = ImageVector.vectorResource(R.drawable.ic_trx_send_icon)
             textColor = ZcashTheme.colors.textDescription
             textStyle = ZcashTheme.extendedTypography.transactionItemStyles.titleRunning
         }
+
         TransactionExtendedState.SEND_FAILED -> {
             typeText = stringResource(id = R.string.account_history_item_send_failed)
             typeIcon = ImageVector.vectorResource(R.drawable.ic_trx_send_icon)
@@ -339,12 +345,14 @@ private fun HistoryItem(
             textColor = MaterialTheme.colorScheme.onBackground
             textStyle = ZcashTheme.extendedTypography.transactionItemStyles.titleRegular
         }
+
         TransactionExtendedState.RECEIVING -> {
             typeText = stringResource(id = R.string.account_history_item_receiving)
             typeIcon = ImageVector.vectorResource(R.drawable.ic_trx_receive_icon)
             textColor = ZcashTheme.colors.textDescription
             textStyle = ZcashTheme.extendedTypography.transactionItemStyles.titleRunning
         }
+
         TransactionExtendedState.RECEIVE_FAILED -> {
             typeText = stringResource(id = R.string.account_history_item_receive_failed)
             typeIcon = ImageVector.vectorResource(R.drawable.ic_trx_receive_icon)
@@ -489,11 +497,11 @@ private fun HistoryItemCollapsedMainPart(
                     ).asZecAmountTriple(prefix)
                 },
             isHideBalances = isHideBalances,
-            textStyles =
-                Pair(
-                    first = valueTextStyle,
-                    second = ZcashTheme.extendedTypography.transactionItemStyles.valueSecondPart
-                ),
+            textStyle =
+            StyledBalanceDefaults.textStyles(
+                integerPart = valueTextStyle,
+                floatingPart = ZcashTheme.extendedTypography.transactionItemStyles.valueSecondPart
+            ),
             textColor = valueTextColor,
         )
     }
@@ -510,6 +518,7 @@ private fun HistoryItemCollapsedAddressPart(
             TrxItemState.EXPANDED_ADDRESS, TrxItemState.EXPANDED_ALL -> {
                 // No address displayed in the top row
             }
+
             else -> {
                 val clickModifier =
                     modifier.then(
@@ -828,11 +837,11 @@ private fun HistoryItemTransactionFeePart(
                 balanceParts = fee.toZecStringFull().asZecAmountTriple(),
                 // Fees are always visible
                 isHideBalances = false,
-                textStyles =
-                    Pair(
-                        first = ZcashTheme.extendedTypography.transactionItemStyles.feeFirstPart,
-                        second = ZcashTheme.extendedTypography.transactionItemStyles.feeSecondPart
-                    ),
+                textStyle =
+                StyledBalanceDefaults.textStyles(
+                    integerPart = ZcashTheme.extendedTypography.transactionItemStyles.feeFirstPart,
+                    floatingPart = ZcashTheme.extendedTypography.transactionItemStyles.feeSecondPart
+                ),
                 textColor = ZcashTheme.colors.textDescription
             )
         }
@@ -936,6 +945,7 @@ private fun TransactionOverview.getExtendedState(): TransactionExtendedState {
                 TransactionExtendedState.RECEIVE_FAILED
             }
         }
+
         TransactionState.Confirmed -> {
             if (isSentTransaction) {
                 TransactionExtendedState.SENT
@@ -943,6 +953,7 @@ private fun TransactionOverview.getExtendedState(): TransactionExtendedState {
                 TransactionExtendedState.RECEIVED
             }
         }
+
         TransactionState.Pending -> {
             if (isSentTransaction) {
                 TransactionExtendedState.SENDING
@@ -950,6 +961,7 @@ private fun TransactionOverview.getExtendedState(): TransactionExtendedState {
                 TransactionExtendedState.RECEIVING
             }
         }
+
         else -> {
             error("Unexpected transaction state found while calculating its extended state.")
         }

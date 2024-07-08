@@ -54,6 +54,7 @@ import co.electriccoin.zcash.ui.design.component.SecondaryButton
 import co.electriccoin.zcash.ui.design.component.Small
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.StyledBalance
+import co.electriccoin.zcash.ui.design.component.StyledBalanceDefaults
 import co.electriccoin.zcash.ui.design.component.Tiny
 import co.electriccoin.zcash.ui.design.component.TopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
@@ -400,11 +401,11 @@ private fun SendConfirmationContent(
             balanceParts = zecSend.proposal!!.totalFeeRequired().toZecStringFull().asZecAmountTriple(),
             // We don't hide any balance in confirmation screen
             isHideBalances = false,
-            textStyles =
-                Pair(
-                    ZcashTheme.extendedTypography.balanceSingleStyles.first,
-                    ZcashTheme.extendedTypography.balanceSingleStyles.second
-                )
+            textStyle =
+            StyledBalanceDefaults.textStyles(
+                integerPart = ZcashTheme.extendedTypography.balanceSingleStyles.first,
+                floatingPart = ZcashTheme.extendedTypography.balanceSingleStyles.second
+            ),
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingUpLarge))
