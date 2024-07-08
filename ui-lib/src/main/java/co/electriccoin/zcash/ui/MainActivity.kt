@@ -11,6 +11,7 @@ import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -133,6 +134,7 @@ class MainActivity : AppCompatActivity() {
                         Modifier
                             .fillMaxWidth()
                             .fillMaxHeight()
+                            .imePadding()
                     ) {
                         BindCompLocalProvider {
                             MainContent()
