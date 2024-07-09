@@ -40,7 +40,7 @@ object ClipboardManagerUtil {
             runBlocking(Dispatchers.IO) {
                 clipboardManager.setPrimaryClip(data)
             }
-            Toast.makeText(context, value, Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "******", Toast.LENGTH_SHORT).show()
         }
     }
 }
