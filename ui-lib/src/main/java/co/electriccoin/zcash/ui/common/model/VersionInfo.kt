@@ -4,19 +4,21 @@ import android.content.Context
 import android.content.pm.ApplicationInfo
 import co.electriccoin.zcash.build.gitCommitCount
 import co.electriccoin.zcash.build.gitSha
+import co.electriccoin.zcash.build.releaseNotesEn
 import co.electriccoin.zcash.spackle.EmulatorWtfUtil
 import co.electriccoin.zcash.spackle.FirebaseTestLabUtil
 import co.electriccoin.zcash.spackle.getPackageInfoCompat
 import co.electriccoin.zcash.spackle.versionCodeCompat
 
 data class VersionInfo(
-    val versionName: String,
-    val versionCode: Long,
+    val gitSha: String,
+    val gitCommitCount: Long,
+    val changelog: Changelog,
     val isDebuggable: Boolean,
     val isRunningUnderTestService: Boolean,
     val isTestnet: Boolean,
-    val gitSha: String,
-    val gitCommitCount: Long
+    val versionCode: Long,
+    val versionName: String,
 ) {
     companion object {
         fun new(context: Context): VersionInfo {
@@ -35,7 +37,8 @@ data class VersionInfo(
                 ),
                 isTestnet = context.resources.getBoolean(cash.z.ecc.sdk.ext.R.bool.zcash_is_testnet),
                 gitSha = gitSha,
-                gitCommitCount = gitCommitCount.toLong()
+                gitCommitCount = gitCommitCount.toLong(),
+                changelog = Changelog.new(json = releaseNotesEn)
             )
         }
     }

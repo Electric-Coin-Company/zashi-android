@@ -227,6 +227,28 @@ fun AboutMainContent(
         PrivacyPolicyLink(onPrivacyPolicy)
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingHuge))
+
+        Text(text = versionInfo.changelog.version.toString())
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
+        Text(text = versionInfo.changelog.date)
+
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
+        Text(text = "Added:")
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
+        Text(text = versionInfo.changelog.added)
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
+
+        Text(text = "Changed:")
+        Text(text = versionInfo.changelog.changed)
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
+
+        Text(text = "Fixed:")
+        Text(text = versionInfo.changelog.fixed)
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
+
+        Text(text = "Removed:")
+        Text(text = versionInfo.changelog.removed)
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
     }
 }
 

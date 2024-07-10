@@ -23,12 +23,13 @@ object VersionInfoFixture {
         gitSha: String = GIT_SHA,
         gitCommitCount: Long = GIT_COMMIT_COUNT
     ) = VersionInfo(
-        versionName,
-        versionCode,
-        isDebuggable,
-        isRunningUnderTestService,
-        isTestnet,
-        gitSha,
-        gitCommitCount
+        versionName = versionName,
+        versionCode = versionCode,
+        isDebuggable = isDebuggable,
+        isRunningUnderTestService = isRunningUnderTestService,
+        isTestnet = isTestnet,
+        gitSha = gitSha,
+        gitCommitCount = gitCommitCount,
+        changelog = ChangelogFixture.new()
     )
 }
