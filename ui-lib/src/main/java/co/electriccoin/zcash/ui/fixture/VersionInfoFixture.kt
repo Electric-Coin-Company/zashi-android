@@ -1,6 +1,10 @@
 package co.electriccoin.zcash.ui.fixture
 
+import co.electriccoin.zcash.ui.common.model.Changelog
 import co.electriccoin.zcash.ui.common.model.VersionInfo
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.todayIn
 
 // Magic Number doesn't matter here for hard-coded fixture values
 @Suppress("MagicNumber")
@@ -30,6 +34,14 @@ object VersionInfoFixture {
         isTestnet = isTestnet,
         gitSha = gitSha,
         gitCommitCount = gitCommitCount,
-        changelog = ChangelogFixture.new()
+        changelog =
+            Changelog(
+                version = "version",
+                date = Clock.System.todayIn(TimeZone.currentSystemDefault()),
+                added = null,
+                changed = null,
+                fixed = null,
+                removed = null,
+            )
     )
 }

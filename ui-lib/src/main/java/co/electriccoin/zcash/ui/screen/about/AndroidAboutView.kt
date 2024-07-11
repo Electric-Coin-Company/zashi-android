@@ -12,8 +12,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.configuration.AndroidConfigurationFactory
+import co.electriccoin.zcash.ui.NavigationTargets.WHATS_NEW
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.LocalActivity
+import co.electriccoin.zcash.ui.common.compose.LocalNavController
 import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.about.util.WebBrowserUtil
@@ -25,6 +27,7 @@ import kotlinx.coroutines.launch
 @Composable
 internal fun WrapAbout(goBack: () -> Unit) {
     val activity = LocalActivity.current
+    val navController = LocalNavController.current
 
     val walletViewModel by activity.viewModels<WalletViewModel>()
 
@@ -59,6 +62,9 @@ internal fun WrapAbout(goBack: () -> Unit) {
         },
         snackbarHostState = snackbarHostState,
         topAppBarSubTitleState = walletState,
+        onWhatsNew = {
+            navController.navigate(WHATS_NEW)
+        }
     )
 }
 

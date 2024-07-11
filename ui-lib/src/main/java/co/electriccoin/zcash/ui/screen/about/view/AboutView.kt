@@ -43,6 +43,7 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
+import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.TopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
@@ -58,6 +59,7 @@ private fun AboutPreview() {
             onBack = {},
             configInfo = ConfigInfoFixture.new(),
             onPrivacyPolicy = {},
+            onWhatsNew = {},
             snackbarHostState = SnackbarHostState(),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
             versionInfo = VersionInfoFixture.new(),
@@ -71,6 +73,7 @@ fun About(
     onBack: () -> Unit,
     configInfo: ConfigInfo,
     onPrivacyPolicy: () -> Unit,
+    onWhatsNew: () -> Unit,
     snackbarHostState: SnackbarHostState,
     topAppBarSubTitleState: TopAppBarSubTitleState,
     versionInfo: VersionInfo,
@@ -89,6 +92,7 @@ fun About(
         AboutMainContent(
             versionInfo = versionInfo,
             onPrivacyPolicy = onPrivacyPolicy,
+            onWhatsNew = onWhatsNew,
             modifier =
                 Modifier
                     .fillMaxHeight()
@@ -174,6 +178,7 @@ private fun DebugMenu(
 
 @Composable
 fun AboutMainContent(
+    onWhatsNew: () -> Unit,
     onPrivacyPolicy: () -> Unit,
     versionInfo: VersionInfo,
     modifier: Modifier = Modifier
@@ -226,29 +231,9 @@ fun AboutMainContent(
 
         PrivacyPolicyLink(onPrivacyPolicy)
 
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingHuge))
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingUpLarge))
 
-        Text(text = versionInfo.changelog.version.toString())
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
-        Text(text = versionInfo.changelog.date)
-
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
-        Text(text = "Added:")
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
-        Text(text = versionInfo.changelog.added)
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
-
-        Text(text = "Changed:")
-        Text(text = versionInfo.changelog.changed)
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
-
-        Text(text = "Fixed:")
-        Text(text = versionInfo.changelog.fixed)
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
-
-        Text(text = "Removed:")
-        Text(text = versionInfo.changelog.removed)
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
+        PrimaryButton(onClick = onWhatsNew, text = stringResource(R.string.about_button_whats_new))
     }
 }
 

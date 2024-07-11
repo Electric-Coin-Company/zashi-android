@@ -35,6 +35,7 @@ import co.electriccoin.zcash.ui.NavigationTargets.SEED_RECOVERY
 import co.electriccoin.zcash.ui.NavigationTargets.SEND_CONFIRMATION
 import co.electriccoin.zcash.ui.NavigationTargets.SETTINGS
 import co.electriccoin.zcash.ui.NavigationTargets.SUPPORT
+import co.electriccoin.zcash.ui.NavigationTargets.WHATS_NEW
 import co.electriccoin.zcash.ui.common.compose.LocalNavController
 import co.electriccoin.zcash.ui.common.model.SerializableAddress
 import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
@@ -44,6 +45,7 @@ import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.exitTransition
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.popEnterTransition
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.popExitTransition
 import co.electriccoin.zcash.ui.screen.about.WrapAbout
+import co.electriccoin.zcash.ui.screen.about.view.WhatsNewView
 import co.electriccoin.zcash.ui.screen.advancedsettings.WrapAdvancedSettings
 import co.electriccoin.zcash.ui.screen.authentication.AuthenticationUseCase
 import co.electriccoin.zcash.ui.screen.authentication.WrapAuthentication
@@ -205,6 +207,9 @@ internal fun MainActivity.Navigation() {
         }
         composable(ABOUT) {
             WrapAbout(goBack = { navController.popBackStackJustOnce(ABOUT) })
+        }
+        composable(WHATS_NEW) {
+            WhatsNewView()
         }
         composable(SCAN) {
             WrapScanValidator(
@@ -425,6 +430,7 @@ object NavigationArguments {
 
 object NavigationTargets {
     const val ABOUT = "about"
+    const val WHATS_NEW = "whats_new"
     const val ADVANCED_SETTINGS = "advanced_settings"
     const val DELETE_WALLET = "delete_wallet"
     const val EXPORT_PRIVATE_DATA = "export_private_data"

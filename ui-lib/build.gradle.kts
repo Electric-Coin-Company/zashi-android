@@ -48,6 +48,7 @@ android {
                     "src/main/res/ui/seed_recovery",
                     "src/main/res/ui/send",
                     "src/main/res/ui/send_confirmation",
+                    "src/main/res/ui/whats_new",
                     "src/main/res/ui/settings",
                     "src/main/res/ui/support",
                     "src/main/res/ui/update",

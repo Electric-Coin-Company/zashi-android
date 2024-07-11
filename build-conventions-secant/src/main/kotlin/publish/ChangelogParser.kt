@@ -9,13 +9,9 @@ object ChangelogParser {
     private const val CHANGELOG_TITLE_POSITION = 0
     private const val UNRELEASED_TITLE_POSITION = 4
 
-
     fun getChangelogEntry(filePath: String): ChangelogEntry {
-        println("Parser: starting...")
-
         val src = File(filePath).readText()
-        val flavour = GFMFlavourDescriptor()
-        val parsedTree = MarkdownParser(flavour).buildMarkdownTreeFromString(src)
+        val parsedTree = MarkdownParser(GFMFlavourDescriptor()).buildMarkdownTreeFromString(src)
 
         println("Parser: ${parsedTree.children.size}")
 
@@ -23,7 +19,6 @@ object ChangelogParser {
             parsedTree.children
                 .map { it.getTextInNode(src).toString() }
                 .filter { it.isNotBlank() }
-        // .onEachIndexed { index, value -> log("Parser: item $index: $value") }
 
         // Validate content
         check(
@@ -33,41 +28,33 @@ object ChangelogParser {
             "Provided changelog file is incorrect or its structure is malformed."
         }
 
-        // Get the last changelog entry
-        val entryPredicate: (String) -> Boolean = { it.startsWith("## [") && it != "## [Unreleased]" }
-
-        val fromIndex = nodes.indexOfFirst { entryPredicate(it) }
-        val toIndex = nodes.subList(fromIndex + 1, nodes.size).indexOfFirst { entryPredicate(it) } + fromIndex + 1
-
-        println("Parser: $fromIndex, $toIndex")
+        val fromIndex = nodes.indexOfFirst { findNodeByPrefix(it) }
+        val toIndex = nodes.subList(fromIndex + 1, nodes.size).indexOfFirst { findNodeByPrefix(it) } + fromIndex + 1
 
         val lastChangelogEntry =
             nodes.subList(fromIndex = fromIndex, toIndex).let { parts ->
-                println("Parser: related nodes:\n${parts.joinToString("\n")}")
                 ChangelogEntry(
-                    version = parts[0].split("(")[1].split(")")[0],
-                    date = parts[0].split("- ")[1],
-                    added = parts.extractTextFromNodes("### Added", "###"),
-                    changed = parts.extractTextFromNodes("### Changed", "###"),
-                    fixed = parts.extractTextFromNodes("### Fixed", "###"),
-                    removed = parts.extractTextFromNodes("### Removed", "###"),
+                    version = parts[0].split("[")[1].split("]")[0].trim(),
+                    date = parts[0].split("- ")[1].trim(),
+                    added = parts.getNodePart("Added"),
+                    changed = parts.getNodePart("Changed"),
+                    fixed = parts.getNodePart("Fixed"),
+                    removed = parts.getNodePart("Removed"),
                 )
             }
-
-        println("Parser: $lastChangelogEntry")
 
         return lastChangelogEntry
     }
 
-    private fun List<String>.extractTextFromNodes(
-        fromContent: String,
-        toContent: String
-    ) = runCatching {
-        println("Parser: extract text from nodes: $fromContent, $toContent")
+    private fun findNodeByPrefix(node: String): Boolean = node.startsWith("## [") && node != "## [Unreleased]"
+
+    private fun List<String>.getNodePart(title: String): ChangelogEntrySection? {
+        val fromContent = "### $title"
+        val toContent = "###"
         val startIndex =
             indexOfFirst { it.contains(fromContent) }.let { index ->
                 if (index < 0) {
-                    return@runCatching ""
+                    return null
                 } else {
                     index + 1
                 }
@@ -80,8 +67,8 @@ object ChangelogParser {
                     index + startIndex
                 }
             }
-        return subList(startIndex, endIndex).joinToString("\n").also {
-            println("Parser: extracted part: \n$it")
+        return subList(startIndex, endIndex).joinToString("\n").takeIf { it.isNotBlank() }?.let {
+            ChangelogEntrySection(title = title, content = it)
         }
-    }.onFailure { println("Parser: failed with: $it") }.getOrDefault("")
+    }
 }

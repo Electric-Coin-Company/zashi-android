@@ -5,34 +5,41 @@ import com.google.gson.GsonBuilder
 data class ChangelogEntry(
     val version: String,
     val date: String,
-    val added: String,
-    val changed: String,
-    val fixed: String,
-    val removed: String,
+    val added: ChangelogEntrySection?,
+    val changed: ChangelogEntrySection?,
+    val fixed: ChangelogEntrySection?,
+    val removed: ChangelogEntrySection?,
 ) {
     fun toInAppUpdateReleaseNotesText() =
         buildString {
-            if (added.isNotBlank()) {
-                appendLine("Added:")
-                appendLine(added)
-                appendLine()
+            if (added != null) {
+                appendChangeLogSection(added)
             }
-            if (changed.isNotBlank()) {
-                appendLine("Changed:")
-                appendLine(changed)
-                appendLine()
+            if (changed != null) {
+                appendChangeLogSection(changed)
             }
-            if (fixed.isNotBlank()) {
-                appendLine("Fixed:")
-                appendLine(fixed)
-                appendLine()
+            if (fixed != null) {
+                appendChangeLogSection(fixed)
             }
-            if (removed.isNotBlank()) {
-                appendLine("Removed:")
-                appendLine(removed)
-                appendLine()
+            if (removed != null) {
+                appendChangeLogSection(removed)
             }
         }
 
-    fun toJsonString(): String = GsonBuilder().create().toJson(this).replace("\"", "\\\"")
+    private fun StringBuilder.appendChangeLogSection(section: ChangelogEntrySection) {
+        appendLine(section.title)
+        appendLine(section.content)
+        appendLine()
+    }
+
+    fun toJsonString(): String =
+        GsonBuilder()
+            .serializeNulls()
+            .create()
+            .toJson(this).replace("\"", "\\\"")
 }
+
+data class ChangelogEntrySection(
+    val title: String,
+    val content: String
+)
