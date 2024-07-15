@@ -3,7 +3,7 @@
 package co.electriccoin.zcash.ui.screen.chooseserver
 
 import androidx.activity.compose.BackHandler
-import androidx.activity.viewModels
+import co.electriccoin.zcash.di.koinActivityViewModel
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,7 +28,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 internal fun MainActivity.WrapChooseServer(goBack: () -> Unit) {
-    val walletViewModel by viewModels<WalletViewModel>()
+    val walletViewModel = koinActivityViewModel<WalletViewModel>()
 
     val secretState = walletViewModel.secretState.collectAsStateWithLifecycle().value
 

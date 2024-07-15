@@ -2,7 +2,6 @@ package co.electriccoin.zcash.ui.screen.update
 
 import android.content.Context
 import androidx.activity.compose.BackHandler
-import androidx.activity.viewModels
 import androidx.annotation.VisibleForTesting
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -10,6 +9,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import co.electriccoin.zcash.di.koinActivityViewModel
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.LocalActivity
 import co.electriccoin.zcash.ui.common.viewmodel.CheckUpdateViewModel
@@ -20,20 +20,14 @@ import co.electriccoin.zcash.ui.screen.update.viewmodel.UpdateViewModel
 import co.electriccoin.zcash.ui.util.PlayStoreUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import org.koin.core.parameter.parametersOf
 
 @Composable
 internal fun WrapCheckForUpdate() {
-    val activity = LocalActivity.current
-
     // TODO [#403]: Manual testing of already implemented in-app update mechanisms
     // TODO [#403]: https://github.com/Electric-Coin-Company/zashi-android/issues/403
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    val checkUpdateViewModel by activity.viewModels<CheckUpdateViewModel> {
-        CheckUpdateViewModel.CheckUpdateViewModelFactory(
-            activity.application,
-            AppUpdateCheckerImp.new()
-        )
-    }
+    val checkUpdateViewModel = koinActivityViewModel<CheckUpdateViewModel>()
 
     val updateInfo = checkUpdateViewModel.updateInfo.collectAsStateWithLifecycle().value
 
@@ -55,12 +49,8 @@ internal fun WrapCheckForUpdate() {
 internal fun WrapUpdate(inputUpdateInfo: UpdateInfo) {
     val activity = LocalActivity.current
 
-    val viewModel by activity.viewModels<UpdateViewModel> {
-        UpdateViewModel.UpdateViewModelFactory(
-            activity.application,
-            inputUpdateInfo,
-            AppUpdateCheckerImp.new()
-        )
+    val viewModel = koinActivityViewModel<UpdateViewModel> {
+        parametersOf(inputUpdateInfo)
     }
 
     val snackbarHostState = remember { SnackbarHostState() }

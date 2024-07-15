@@ -1,7 +1,6 @@
 package co.electriccoin.zcash.ui.screen.account.viewmodel
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.internal.Twig
@@ -24,7 +23,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.toList
 
-class TransactionHistoryViewModel(application: Application) : AndroidViewModel(application) {
+class TransactionHistoryViewModel : ViewModel() {
     private val state: MutableStateFlow<State> = MutableStateFlow(State.LOADING)
 
     private val transactions: MutableStateFlow<ImmutableList<TransactionUi>> = MutableStateFlow(persistentListOf())

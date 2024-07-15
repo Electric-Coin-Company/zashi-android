@@ -4,7 +4,7 @@ package co.electriccoin.zcash.ui.screen.support
 
 import android.content.Intent
 import androidx.activity.compose.BackHandler
-import androidx.activity.viewModels
+import co.electriccoin.zcash.di.koinActivityViewModel
 import androidx.annotation.VisibleForTesting
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -26,11 +26,9 @@ import kotlinx.coroutines.launch
 
 @Composable
 internal fun WrapSupport(goBack: () -> Unit) {
-    val activity = LocalActivity.current
+    val supportViewModel = koinActivityViewModel<SupportViewModel>()
 
-    val supportViewModel by activity.viewModels<SupportViewModel>()
-
-    val walletViewModel by activity.viewModels<WalletViewModel>()
+    val walletViewModel = koinActivityViewModel<WalletViewModel>()
 
     val supportInfo = supportViewModel.supportInfo.collectAsStateWithLifecycle().value
 

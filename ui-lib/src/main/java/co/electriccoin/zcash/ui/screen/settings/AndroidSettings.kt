@@ -1,7 +1,7 @@
 package co.electriccoin.zcash.ui.screen.settings
 
 import androidx.activity.compose.BackHandler
-import androidx.activity.viewModels
+import co.electriccoin.zcash.di.koinActivityViewModel
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.ui.common.compose.LocalActivity
@@ -23,9 +23,9 @@ internal fun WrapSettings(
 ) {
     val activity = LocalActivity.current
 
-    val walletViewModel by activity.viewModels<WalletViewModel>()
+    val walletViewModel = koinActivityViewModel<WalletViewModel>()
 
-    val settingsViewModel by activity.viewModels<SettingsViewModel>()
+    val settingsViewModel = koinActivityViewModel<SettingsViewModel>()
 
     val walletState = walletViewModel.walletStateInformation.collectAsStateWithLifecycle().value
 

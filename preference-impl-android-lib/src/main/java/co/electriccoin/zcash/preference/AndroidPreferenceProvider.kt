@@ -5,7 +5,9 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
+import co.electriccoin.zcash.preference.api.EncryptedPreferenceProvider
 import co.electriccoin.zcash.preference.api.PreferenceProvider
+import co.electriccoin.zcash.preference.api.StandardPreferenceProvider
 import co.electriccoin.zcash.preference.model.entry.PreferenceKey
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.asCoroutineDispatcher
@@ -28,12 +30,11 @@ import java.util.concurrent.Executors
  * this instance lives for the lifetime of the application. Constructing multiple instances will
  * potentially corrupt preference data and will leak resources.
  */
-class AndroidPreferenceProvider(
+class AndroidPreferenceProvider private constructor(
     private val sharedPreferences: SharedPreferences,
     private val dispatcher: CoroutineDispatcher
-) : PreferenceProvider {
+) : PreferenceProvider, StandardPreferenceProvider, EncryptedPreferenceProvider {
     private val mutex = Mutex()
-
     /*
      * Implementation note: EncryptedSharedPreferences are not thread-safe, so this implementation
      * confines them to a single background thread.
@@ -94,51 +95,42 @@ class AndroidPreferenceProvider(
             .map { getString(key) }
 
     companion object {
-        suspend fun newStandard(
+        fun newStandard(
             context: Context,
             filename: String
-        ): PreferenceProvider {
+        ): StandardPreferenceProvider {
             /*
              * Because of this line, we don't want multiple instances of this object created
              * because we don't clean up the thread afterwards.
              */
             val singleThreadedDispatcher = Executors.newSingleThreadExecutor().asCoroutineDispatcher()
 
-            val sharedPreferences =
-                withContext(singleThreadedDispatcher) {
-                    context.getSharedPreferences(filename, Context.MODE_PRIVATE)
-                }
+            val sharedPreferences = context.getSharedPreferences(filename, Context.MODE_PRIVATE)
 
             return AndroidPreferenceProvider(sharedPreferences, singleThreadedDispatcher)
         }
 
-        suspend fun newEncrypted(
+        fun newEncrypted(
             context: Context,
             filename: String
-        ): PreferenceProvider {
+        ): EncryptedPreferenceProvider {
             /*
              * Because of this line, we don't want multiple instances of this object created
              * because we don't clean up the thread afterwards.
              */
             val singleThreadedDispatcher = Executors.newSingleThreadExecutor().asCoroutineDispatcher()
 
-            val mainKey =
-                withContext(singleThreadedDispatcher) {
-                    MasterKey.Builder(context).apply {
-                        setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-                    }.build()
-                }
+            val mainKey = MasterKey.Builder(context).apply {
+                setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+            }.build()
 
-            val sharedPreferences =
-                withContext(singleThreadedDispatcher) {
-                    EncryptedSharedPreferences.create(
-                        context,
-                        filename,
-                        mainKey,
-                        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-                        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-                    )
-                }
+            val sharedPreferences = EncryptedSharedPreferences.create(
+                context,
+                filename,
+                mainKey,
+                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+            )
 
             return AndroidPreferenceProvider(sharedPreferences, singleThreadedDispatcher)
         }

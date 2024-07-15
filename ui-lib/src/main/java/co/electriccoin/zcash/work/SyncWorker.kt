@@ -9,9 +9,8 @@ import androidx.work.PeriodicWorkRequest
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkerParameters
 import cash.z.ecc.android.sdk.Synchronizer
-import cash.z.ecc.android.sdk.WalletCoordinator
 import cash.z.ecc.android.sdk.model.PercentDecimal
-import co.electriccoin.zcash.global.getInstance
+import cash.z.ecc.sdk.usecase.ObserveSynchronizerUseCase
 import co.electriccoin.zcash.spackle.Twig
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
@@ -27,6 +26,8 @@ import kotlinx.datetime.atTime
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.until
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import kotlin.random.Random
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
@@ -40,12 +41,18 @@ import kotlin.time.toJavaDuration
 // TODO [#1249]: https://github.com/Electric-Coin-Company/zashi-android/issues/1249
 
 @Keep
-class SyncWorker(context: Context, workerParameters: WorkerParameters) : CoroutineWorker(context, workerParameters) {
+class SyncWorker(
+    context: Context,
+    workerParameters: WorkerParameters
+) : CoroutineWorker(context, workerParameters), KoinComponent {
+
+    private val observeSynchronizer: ObserveSynchronizerUseCase by inject()
+
     @OptIn(ExperimentalCoroutinesApi::class)
     override suspend fun doWork(): Result {
         Twig.debug { "BG Sync: starting..." }
 
-        WalletCoordinator.getInstance(applicationContext).synchronizer
+        observeSynchronizer()
             .flatMapLatest {
                 Twig.debug { "BG Sync: synchronizer: $it" }
 

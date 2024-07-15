@@ -2,8 +2,6 @@ package co.electriccoin.zcash.ui.common.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.android.sdk.ext.onFirst
 import co.electriccoin.zcash.ui.screen.update.AppUpdateChecker
@@ -23,20 +21,6 @@ class CheckUpdateViewModel(
                 getApplication()
             ).onFirst { newInfo ->
                 updateInfo.value = newInfo
-            }
-        }
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    class CheckUpdateViewModelFactory(
-        private val application: Application,
-        private val appUpdateChecker: AppUpdateChecker
-    ) : ViewModelProvider.Factory {
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return if (modelClass.isAssignableFrom(CheckUpdateViewModel::class.java)) {
-                CheckUpdateViewModel(application, appUpdateChecker) as T
-            } else {
-                throw IllegalArgumentException("ViewModel Not Found.")
             }
         }
     }

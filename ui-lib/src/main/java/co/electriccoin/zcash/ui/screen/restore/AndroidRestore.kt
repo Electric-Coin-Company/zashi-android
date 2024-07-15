@@ -2,7 +2,7 @@ package co.electriccoin.zcash.ui.screen.restore
 
 import android.content.ClipboardManager
 import androidx.activity.ComponentActivity
-import androidx.activity.viewModels
+import co.electriccoin.zcash.di.koinActivityViewModel
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -17,10 +17,10 @@ import co.electriccoin.zcash.ui.screen.restore.viewmodel.CompleteWordSetState
 import co.electriccoin.zcash.ui.screen.restore.viewmodel.RestoreViewModel
 
 @Composable
-fun WrapRestore(activity: ComponentActivity) {
-    val walletViewModel by activity.viewModels<WalletViewModel>()
-    val onboardingViewModel by activity.viewModels<OnboardingViewModel>()
-    val restoreViewModel by activity.viewModels<RestoreViewModel>()
+fun WrapRestore() {
+    val walletViewModel = koinActivityViewModel<WalletViewModel>()
+    val onboardingViewModel = koinActivityViewModel<OnboardingViewModel>()
+    val restoreViewModel = koinActivityViewModel<RestoreViewModel>()
 
     val applicationContext = LocalContext.current.applicationContext
 

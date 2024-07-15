@@ -1,7 +1,6 @@
 package co.electriccoin.zcash.ui.screen.sendconfirmation.viewmodel
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.model.Proposal
 import cash.z.ecc.android.sdk.model.TransactionSubmitResult
@@ -10,7 +9,7 @@ import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SubmitResult
 import kotlinx.coroutines.flow.MutableStateFlow
 
-class CreateTransactionsViewModel(application: Application) : AndroidViewModel(application) {
+class CreateTransactionsViewModel : ViewModel() {
     // Technically this value will not survive process dead, but will survive all possible configuration changes
     // Possible solution would be storing the value within [SavedStateHandle]
     val submissions: MutableStateFlow<List<TransactionSubmitResult>> = MutableStateFlow(emptyList())
@@ -36,12 +35,12 @@ class CreateTransactionsViewModel(application: Application) : AndroidViewModel(a
                     // proposal. Simple error pop up is fine then
                     SubmitResult.SimpleTrxFailure(
                         errorDescription =
-                            buildString {
-                                val result = (submitResults[0] as TransactionSubmitResult.Failure)
-                                appendLine("Error code: ${result.code}")
-                                appendLine("Is gRPC error: ${result.grpcError}")
-                                appendLine(result.description ?: "")
-                            }
+                        buildString {
+                            val result = (submitResults[0] as TransactionSubmitResult.Failure)
+                            appendLine("Error code: ${result.code}")
+                            appendLine("Is gRPC error: ${result.grpcError}")
+                            appendLine(result.description ?: "")
+                        }
                     )
                 } else {
                     // Any subsequent transaction submission failed - user needs to resolve this manually. Multiple

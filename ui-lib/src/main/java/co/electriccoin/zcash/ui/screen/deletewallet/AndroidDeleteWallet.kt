@@ -2,7 +2,7 @@ package co.electriccoin.zcash.ui.screen.deletewallet
 
 import android.app.Activity
 import androidx.activity.compose.BackHandler
-import androidx.activity.viewModels
+import co.electriccoin.zcash.di.koinActivityViewModel
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 internal fun MainActivity.WrapDeleteWallet(goBack: () -> Unit) {
-    val walletViewModel by viewModels<WalletViewModel>()
+    val walletViewModel = koinActivityViewModel<WalletViewModel>()
 
     val walletState = walletViewModel.walletStateInformation.collectAsStateWithLifecycle().value
 

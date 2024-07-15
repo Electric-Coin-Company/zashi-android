@@ -3,7 +3,7 @@
 package co.electriccoin.zcash.ui.screen.authentication
 
 import android.widget.Toast
-import androidx.activity.viewModels
+import co.electriccoin.zcash.di.koinActivityViewModel
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.res.stringResource
@@ -115,7 +115,7 @@ private fun WrapDeleteWalletAuth(
     onCancel: () -> Unit,
     onFailed: () -> Unit,
 ) {
-    val authenticationViewModel by activity.viewModels<AuthenticationViewModel>()
+    val authenticationViewModel = koinActivityViewModel<AuthenticationViewModel>()
 
     val authenticationResult =
         authenticationViewModel.authenticationResult
@@ -188,7 +188,7 @@ private fun WrapAppExportPrivateDataAuth(
     onCancel: () -> Unit,
     onFailed: () -> Unit,
 ) {
-    val authenticationViewModel by activity.viewModels<AuthenticationViewModel>()
+    val authenticationViewModel = koinActivityViewModel<AuthenticationViewModel>()
 
     val authenticationResult =
         authenticationViewModel.authenticationResult
@@ -261,7 +261,7 @@ private fun WrapSeedRecoveryAuth(
     onCancel: () -> Unit,
     onFailed: () -> Unit,
 ) {
-    val authenticationViewModel by activity.viewModels<AuthenticationViewModel>()
+    val authenticationViewModel = koinActivityViewModel<AuthenticationViewModel>()
 
     val authenticationResult =
         authenticationViewModel.authenticationResult
@@ -335,7 +335,7 @@ private fun WrapSendFundsAuth(
     onCancel: () -> Unit,
     onFailed: () -> Unit,
 ) {
-    val authenticationViewModel by activity.viewModels<AuthenticationViewModel>()
+    val authenticationViewModel = koinActivityViewModel<AuthenticationViewModel>()
 
     val authenticationResult =
         authenticationViewModel.authenticationResult
@@ -409,7 +409,7 @@ private fun WrapAppAccessAuth(
     onCancel: () -> Unit,
     onFailed: () -> Unit,
 ) {
-    val authenticationViewModel by activity.viewModels<AuthenticationViewModel>()
+    val authenticationViewModel = koinActivityViewModel<AuthenticationViewModel>()
 
     val welcomeAnimVisibility = authenticationViewModel.showWelcomeAnimation.collectAsStateWithLifecycle().value
 

@@ -1,7 +1,7 @@
 package co.electriccoin.zcash.ui.screen.seedrecovery
 
 import androidx.activity.compose.BackHandler
-import androidx.activity.viewModels
+import co.electriccoin.zcash.di.koinActivityViewModel
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cash.z.ecc.android.sdk.Synchronizer
@@ -20,9 +20,7 @@ internal fun WrapSeedRecovery(
     goBack: () -> Unit,
     onDone: () -> Unit,
 ) {
-    val activity = LocalActivity.current
-
-    val walletViewModel by activity.viewModels<WalletViewModel>()
+    val walletViewModel = koinActivityViewModel<WalletViewModel>()
 
     val synchronizer = walletViewModel.synchronizer.collectAsStateWithLifecycle().value
 

@@ -1,7 +1,7 @@
 package co.electriccoin.zcash.ui.screen.support.model
 
 import android.content.Context
-import co.electriccoin.zcash.configuration.AndroidConfigurationFactory
+import co.electriccoin.zcash.configuration.api.ConfigurationProvider
 import co.electriccoin.zcash.spackle.getPackageInfoCompatSuspend
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.toPersistentList
@@ -63,15 +63,17 @@ data class SupportInfo(
     companion object {
         // Although most of our calls now are non-blocking, we expect more of them to be blocking
         // in the future.
-        suspend fun new(context: Context): SupportInfo {
+        suspend fun newInstance(
+            context: Context,
+            androidConfigurationProvider: ConfigurationProvider
+        ): SupportInfo {
             val applicationContext = context.applicationContext
             val packageInfo = applicationContext.packageManager.getPackageInfoCompatSuspend(context.packageName, 0L)
-            val configurationProvider = AndroidConfigurationFactory.getInstance(applicationContext)
 
             return SupportInfo(
                 TimeInfo.new(packageInfo),
                 AppInfo.new(packageInfo),
-                ConfigInfo.new(configurationProvider),
+                ConfigInfo.new(androidConfigurationProvider),
                 OperatingSystemInfo.new(),
                 DeviceInfo.new(),
                 EnvironmentInfo.new(applicationContext),

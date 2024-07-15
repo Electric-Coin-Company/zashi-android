@@ -3,7 +3,7 @@
 package co.electriccoin.zcash.ui.screen.onboarding
 
 import android.content.Context
-import androidx.activity.viewModels
+import co.electriccoin.zcash.di.koinActivityViewModel
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cash.z.ecc.android.sdk.WalletInitMode
@@ -28,8 +28,8 @@ import co.electriccoin.zcash.ui.screen.restore.WrapRestore
 @Composable
 internal fun WrapOnboarding() {
     val activity = LocalActivity.current
-    val walletViewModel by activity.viewModels<WalletViewModel>()
-    val onboardingViewModel by activity.viewModels<OnboardingViewModel>()
+    val walletViewModel = koinActivityViewModel<WalletViewModel>()
+    val onboardingViewModel = koinActivityViewModel<OnboardingViewModel>()
 
     val versionInfo = VersionInfo.new(activity.applicationContext)
 
@@ -75,7 +75,7 @@ internal fun WrapOnboarding() {
 
         activity.reportFullyDrawn()
     } else {
-        WrapRestore(activity)
+        WrapRestore()
     }
 }
 
