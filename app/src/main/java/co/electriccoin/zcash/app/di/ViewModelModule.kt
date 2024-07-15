@@ -12,21 +12,21 @@ import co.electriccoin.zcash.ui.screen.settings.viewmodel.ScreenBrightnessViewMo
 import co.electriccoin.zcash.ui.screen.settings.viewmodel.SettingsViewModel
 import co.electriccoin.zcash.ui.screen.support.viewmodel.SupportViewModel
 import co.electriccoin.zcash.ui.screen.warning.viewmodel.StorageCheckViewModel
-import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.dsl.module
 
-val viewModelModule = module {
-    viewModelOf(::WalletViewModel)
-    viewModelOf(::AuthenticationViewModel)
-    viewModelOf(::CheckUpdateViewModel)
-    viewModelOf(::HomeViewModel)
-    viewModelOf(::TransactionHistoryViewModel)
-    viewModelOf(::OnboardingViewModel)
-    viewModelOf(::StorageCheckViewModel)
-    viewModelOf(::RestoreViewModel)
-    viewModelOf(::ScreenBrightnessViewModel)
-    viewModelOf(::SettingsViewModel)
-    viewModelOf(::SupportViewModel)
-    viewModelOf(::CreateTransactionsViewModel)
-}
+val viewModelModule =
+    module {
+        viewModelOf(::WalletViewModel)
+        viewModelOf(::AuthenticationViewModel)
+        viewModelOf(::CheckUpdateViewModel)
+        viewModelOf(::HomeViewModel)
+        viewModelOf(::TransactionHistoryViewModel)
+        viewModelOf(::OnboardingViewModel)
+        viewModelOf(::StorageCheckViewModel)
+        viewModelOf(::RestoreViewModel)
+        viewModelOf(::ScreenBrightnessViewModel)
+        viewModelOf(::SettingsViewModel)
+        viewModelOf(::SupportViewModel)
+        viewModelOf(::CreateTransactionsViewModel)
+    }

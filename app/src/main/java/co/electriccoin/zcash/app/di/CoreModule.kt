@@ -13,34 +13,36 @@ import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
-val coreModule = module {
-    single {
-        WalletCoordinator.newInstance(
-            context = get(),
-            encryptedPreferenceProvider = get(),
-            persistableWalletPreference = get(),
-        )
+val coreModule =
+    module {
+        single {
+            WalletCoordinator.newInstance(
+                context = get(),
+                encryptedPreferenceProvider = get(),
+                persistableWalletPreference = get(),
+            )
+        }
+
+        single {
+            PersistableWalletPreferenceDefault(PreferenceKey("persistable_wallet"))
+        }
+
+        single {
+            AndroidPreferenceProvider.newEncrypted(context = get(), filename = "co.electriccoin.zcash.encrypted")
+        }
+
+        single {
+            AndroidPreferenceProvider.newStandard(context = get(), filename = "co.electriccoin.zcash")
+        }
+
+        single {
+            BiometricManager.from(
+                // context =
+                get()
+            )
+        }
+
+        factoryOf(::AppUpdateCheckerImpl) bind AppUpdateChecker::class
+
+        factory { AndroidConfigurationFactory.newInstance() }
     }
-
-    single {
-        PersistableWalletPreferenceDefault(PreferenceKey("persistable_wallet"))
-    }
-
-    single {
-        AndroidPreferenceProvider.newEncrypted(context = get(), filename = "co.electriccoin.zcash.encrypted")
-    }
-
-    single {
-        AndroidPreferenceProvider.newStandard(context = get(), filename = "co.electriccoin.zcash")
-    }
-
-    single {
-        BiometricManager.from(
-            /* context = */ get()
-        )
-    }
-
-    factoryOf(::AppUpdateCheckerImpl) bind AppUpdateChecker::class
-
-    factory { AndroidConfigurationFactory.newInstance() }
-}

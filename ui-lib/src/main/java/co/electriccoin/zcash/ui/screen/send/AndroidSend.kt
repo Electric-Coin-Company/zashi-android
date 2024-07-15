@@ -3,7 +3,6 @@
 package co.electriccoin.zcash.ui.screen.send
 
 import android.content.pm.PackageManager
-import co.electriccoin.zcash.di.koinActivityViewModel
 import androidx.annotation.VisibleForTesting
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect

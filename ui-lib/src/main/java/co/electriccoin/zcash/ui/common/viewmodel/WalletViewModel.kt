@@ -83,7 +83,6 @@ class WalletViewModel(
     private val encryptedPreferenceProvider: EncryptedPreferenceProvider,
     private val standardPreferenceProvider: StandardPreferenceProvider,
 ) : AndroidViewModel(application) {
-
     /*
      * Using the Mutex may be overkill, but it ensures that if multiple calls are accidentally made
      * that they have a consistent ordering.
@@ -250,11 +249,11 @@ class WalletViewModel(
                                         overview = it,
                                         recipient = recipient,
                                         recipientAddressType =
-                                        if (recipient != null && (recipient is TransactionRecipient.Address)) {
-                                            synchronizer.validateAddress(recipient.addressValue)
-                                        } else {
-                                            null
-                                        }
+                                            if (recipient != null && (recipient is TransactionRecipient.Address)) {
+                                                synchronizer.validateAddress(recipient.addressValue)
+                                            } else {
+                                                null
+                                            }
                                     )
                                 } else {
                                     // Note that recipients can only be queried for sent transactions
@@ -294,7 +293,7 @@ class WalletViewModel(
                         snapshot.spendableBalance().value == 0L &&
                             snapshot.totalBalance().value > 0L &&
                             (snapshot.hasChangePending() || snapshot.hasValuePending())
-                        ) -> {
+                    ) -> {
                         BalanceState.Loading(
                             totalBalance = snapshot.totalBalance()
                         )

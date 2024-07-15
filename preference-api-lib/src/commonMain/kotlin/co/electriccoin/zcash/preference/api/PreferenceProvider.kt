@@ -18,6 +18,6 @@ interface PreferenceProvider {
     suspend fun clearPreferences(): Boolean
 }
 
-interface StandardPreferenceProvider: PreferenceProvider
+interface StandardPreferenceProvider : PreferenceProvider
 
-interface EncryptedPreferenceProvider: PreferenceProvider
+interface EncryptedPreferenceProvider : PreferenceProvider

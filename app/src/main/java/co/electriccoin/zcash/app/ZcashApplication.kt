@@ -5,7 +5,6 @@ import co.electriccoin.zcash.app.di.repositoryModule
 import co.electriccoin.zcash.app.di.useCaseModule
 import co.electriccoin.zcash.app.di.viewModelModule
 import co.electriccoin.zcash.crash.android.GlobalCrashReporter
-import co.electriccoin.zcash.preference.api.PreferenceProvider
 import co.electriccoin.zcash.preference.api.StandardPreferenceProvider
 import co.electriccoin.zcash.spackle.StrictModeCompat
 import co.electriccoin.zcash.spackle.Twig
@@ -18,7 +17,6 @@ import org.koin.core.context.startKoin
 
 @Suppress("unused")
 class ZcashApplication : CoroutineApplication() {
-
     private val standardPreferenceProvider by inject<StandardPreferenceProvider>()
 
     override fun onCreate() {

@@ -2,12 +2,12 @@ package co.electriccoin.zcash.ui.screen.deletewallet
 
 import android.app.Activity
 import androidx.activity.compose.BackHandler
-import co.electriccoin.zcash.di.koinActivityViewModel
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import co.electriccoin.zcash.di.koinActivityViewModel
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R

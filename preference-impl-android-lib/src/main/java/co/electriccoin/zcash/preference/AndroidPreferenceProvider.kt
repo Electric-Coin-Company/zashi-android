@@ -120,17 +120,19 @@ class AndroidPreferenceProvider private constructor(
              */
             val singleThreadedDispatcher = Executors.newSingleThreadExecutor().asCoroutineDispatcher()
 
-            val mainKey = MasterKey.Builder(context).apply {
-                setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-            }.build()
+            val mainKey =
+                MasterKey.Builder(context).apply {
+                    setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+                }.build()
 
-            val sharedPreferences = EncryptedSharedPreferences.create(
-                context,
-                filename,
-                mainKey,
-                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-            )
+            val sharedPreferences =
+                EncryptedSharedPreferences.create(
+                    context,
+                    filename,
+                    mainKey,
+                    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+                )
 
             return AndroidPreferenceProvider(sharedPreferences, singleThreadedDispatcher)
         }

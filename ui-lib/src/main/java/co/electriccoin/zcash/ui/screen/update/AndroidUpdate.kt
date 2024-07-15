@@ -49,9 +49,10 @@ internal fun WrapCheckForUpdate() {
 internal fun WrapUpdate(inputUpdateInfo: UpdateInfo) {
     val activity = LocalActivity.current
 
-    val viewModel = koinActivityViewModel<UpdateViewModel> {
-        parametersOf(inputUpdateInfo)
-    }
+    val viewModel =
+        koinActivityViewModel<UpdateViewModel> {
+            parametersOf(inputUpdateInfo)
+        }
 
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()

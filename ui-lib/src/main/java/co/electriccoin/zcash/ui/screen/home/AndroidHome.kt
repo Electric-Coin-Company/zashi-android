@@ -3,7 +3,6 @@
 package co.electriccoin.zcash.ui.screen.home
 
 import androidx.activity.compose.BackHandler
-import co.electriccoin.zcash.di.koinActivityViewModel
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable

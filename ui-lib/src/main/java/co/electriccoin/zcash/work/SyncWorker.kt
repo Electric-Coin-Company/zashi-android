@@ -45,7 +45,6 @@ class SyncWorker(
     context: Context,
     workerParameters: WorkerParameters
 ) : CoroutineWorker(context, workerParameters), KoinComponent {
-
     private val observeSynchronizer: ObserveSynchronizerUseCase by inject()
 
     @OptIn(ExperimentalCoroutinesApi::class)

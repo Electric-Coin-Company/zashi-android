@@ -165,34 +165,34 @@ class AuthenticationViewModel(
                         when (errorCode) {
                             // The hardware is unavailable. Try again later
                             BiometricPrompt.ERROR_HW_UNAVAILABLE,
-                                // The sensor was unable to process the current image
+                            // The sensor was unable to process the current image
                             BiometricPrompt.ERROR_UNABLE_TO_PROCESS,
-                                // The current operation has been running too long and has timed out. This is intended to
-                                // prevent programs from waiting for the biometric sensor indefinitely. The timeout is
-                                // platform and sensor-specific, but is generally on the order of ~30 seconds.
+                            // The current operation has been running too long and has timed out. This is intended to
+                            // prevent programs from waiting for the biometric sensor indefinitely. The timeout is
+                            // platform and sensor-specific, but is generally on the order of ~30 seconds.
                             BiometricPrompt.ERROR_TIMEOUT,
-                                // The operation can't be completed because there is not enough device storage remaining
+                            // The operation can't be completed because there is not enough device storage remaining
                             BiometricPrompt.ERROR_NO_SPACE,
-                                // The operation was canceled because the API is locked out due to too many attempts. This
-                                // occurs after 5 failed attempts, and lasts for 30 seconds.
+                            // The operation was canceled because the API is locked out due to too many attempts. This
+                            // occurs after 5 failed attempts, and lasts for 30 seconds.
                             BiometricPrompt.ERROR_LOCKOUT,
-                                // The operation failed due to a vendor-specific error. This error code may be used by
-                                // hardware vendors to extend this list to cover errors that don't fall under one of the
-                                // other predefined categories. Vendors are responsible for providing the strings for these
-                                // errors. These messages are typically reserved for internal operations such as enrollment
-                                // but may be used to express any error that is not otherwise covered. In this case,
-                                // applications are expected to show the error message, but they are advised not to rely on
-                                // the message ID, since this may vary by vendor and device.
+                            // The operation failed due to a vendor-specific error. This error code may be used by
+                            // hardware vendors to extend this list to cover errors that don't fall under one of the
+                            // other predefined categories. Vendors are responsible for providing the strings for these
+                            // errors. These messages are typically reserved for internal operations such as enrollment
+                            // but may be used to express any error that is not otherwise covered. In this case,
+                            // applications are expected to show the error message, but they are advised not to rely on
+                            // the message ID, since this may vary by vendor and device.
                             BiometricPrompt.ERROR_VENDOR,
-                                // Biometric authentication is disabled until the user unlocks with their device credential
-                                // (i.e. PIN, pattern, or password).
+                            // Biometric authentication is disabled until the user unlocks with their device credential
+                            // (i.e. PIN, pattern, or password).
                             BiometricPrompt.ERROR_LOCKOUT_PERMANENT,
-                                // The device does not have the required authentication hardware
+                            // The device does not have the required authentication hardware
                             BiometricPrompt.ERROR_HW_NOT_PRESENT,
-                                // The user pressed the negative button
+                            // The user pressed the negative button
                             BiometricPrompt.ERROR_NEGATIVE_BUTTON,
-                                // A security vulnerability has been discovered with one or more hardware sensors. The
-                                // affected sensor(s) are unavailable until a security update has addressed the issue
+                            // A security vulnerability has been discovered with one or more hardware sensors. The
+                            // affected sensor(s) are unavailable until a security update has addressed the issue
                             BiometricPrompt.ERROR_SECURITY_UPDATE_REQUIRED -> {
                                 authenticationResult.value =
                                     AuthenticationResult.Error(errorCode, errorString.toString())
@@ -216,7 +216,7 @@ class AuthenticationViewModel(
                             }
                             // The user does not have any biometrics enrolled
                             BiometricPrompt.ERROR_NO_BIOMETRICS,
-                                // The device does not have pin, pattern, or password set up
+                            // The device does not have pin, pattern, or password set up
                             BiometricPrompt.ERROR_NO_DEVICE_CREDENTIAL -> {
                                 // Allow unauthenticated access if no authentication method is available on the device
                                 // These 2 errors can come for a different Android SDK versions, but they mean the same

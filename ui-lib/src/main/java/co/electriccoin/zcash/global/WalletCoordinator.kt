@@ -14,8 +14,9 @@ fun WalletCoordinator.Companion.newInstance(
 ): WalletCoordinator {
     return WalletCoordinator(
         context = context,
-        persistableWallet = flow {
-            emitAll(persistableWalletPreference.observe(encryptedPreferenceProvider))
-        }
+        persistableWallet =
+            flow {
+                emitAll(persistableWalletPreference.observe(encryptedPreferenceProvider))
+            }
     )
 }
