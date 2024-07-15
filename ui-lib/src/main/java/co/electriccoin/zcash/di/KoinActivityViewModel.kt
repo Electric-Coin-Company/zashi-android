@@ -13,6 +13,7 @@ import org.koin.core.parameter.ParametersDefinition
 import org.koin.core.qualifier.Qualifier
 import org.koin.core.scope.Scope
 
+@Suppress("LongParameterList")
 @Composable
 inline fun <reified T : ViewModel> koinActivityViewModel(
     qualifier: Qualifier? = null,

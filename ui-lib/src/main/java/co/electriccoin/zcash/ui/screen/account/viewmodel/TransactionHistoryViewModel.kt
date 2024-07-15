@@ -6,7 +6,7 @@ import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.internal.Twig
 import cash.z.ecc.android.sdk.model.FirstClassByteArray
 import cash.z.ecc.android.sdk.model.TransactionOverview
-import co.electriccoin.zcash.ui.common.ANDROID_STATE_FLOW_TIMEOUT
+import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.screen.account.ext.TransactionOverviewExt
 import co.electriccoin.zcash.ui.screen.account.model.TransactionUi
 import co.electriccoin.zcash.ui.screen.account.model.TransactionUiState

@@ -23,13 +23,13 @@ import cash.z.ecc.android.sdk.model.WalletBalance
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.ZcashNetwork
 import cash.z.ecc.android.sdk.tool.DerivationTool
+import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import cash.z.ecc.sdk.type.fromResources
 import cash.z.ecc.sdk.usecase.ObserveSynchronizerUseCase
 import co.electriccoin.zcash.preference.api.EncryptedPreferenceProvider
 import co.electriccoin.zcash.preference.api.StandardPreferenceProvider
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.MainActivity
-import co.electriccoin.zcash.ui.common.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.common.compose.BalanceState
 import co.electriccoin.zcash.ui.common.extension.throttle
 import co.electriccoin.zcash.ui.common.model.OnboardingState
@@ -100,9 +100,10 @@ class WalletViewModel(
     val walletRestoringState: StateFlow<WalletRestoringState> =
         flow {
             emitAll(
-                StandardPreferenceKeys.WALLET_RESTORING_STATE.observe(standardPreferenceProvider).map { persistedNumber ->
-                    WalletRestoringState.fromNumber(persistedNumber)
-                }
+                StandardPreferenceKeys.WALLET_RESTORING_STATE
+                    .observe(standardPreferenceProvider).map { persistedNumber ->
+                        WalletRestoringState.fromNumber(persistedNumber)
+                    }
             )
         }.stateIn(
             viewModelScope,
