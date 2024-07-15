@@ -1,6 +1,16 @@
 syntax: glob
-.DS_Store
+
+# Build and intermediate files
+build/
+bin/
+gen/
 .gradle/
+.DS_Store
+local.properties
+*.iml
+*.hprof
+
+# IDE-specific files
 .idea/caches
 .idea/compiler.xml
 .idea/dictionaries/
@@ -15,19 +25,17 @@ syntax: glob
 .idea/material_theme_project_new.xml
 .idea/csv-editor.xml
 .idea/vcs.xml
-.settings
-*.iml
-bin/
-build/
-gen/
-local.properties
-/.idea/deploymentTargetDropDown.xml
-*.hprof
-/.idea/artifacts
-/.idea/assetWizardSettings.xml
-/.idea/inspectionProfiles/Project_Default.xml
-/.idea/androidTestResultsUserPreferences.xml
+.idea/deploymentTargetDropDown.xml
+.idea/artifacts
+.idea/assetWizardSettings.xml
+.idea/inspectionProfiles/Project_Default.xml
+.idea/androidTestResultsUserPreferences.xml
+.idea/kotlinc.xml
+.idea/other.xml
+.idea/appInsightsSettings.xml
+
+# Other configuration files
 google-services.json
-/.idea/kotlinc.xml
-/.idea/other.xml
-/.idea/appInsightsSettings.xml
+.settings
+
+
