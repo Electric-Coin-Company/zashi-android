@@ -37,35 +37,55 @@ class QrCodeAnalyzer(
                         "Image height: ${image.height}"
                 }
 
+                // TODO [#1380]: Leverage FramePosition in QrCodeAnalyzer
+                // TODO [#1380]: https://github.com/Electric-Coin-Company/zashi-android/issues/1380
                 val source =
-                    PlanarYUVLuminanceSource(
-                        bytes,
-                        image.width,
-                        image.height,
-                        0,
-                        0,
-                        image.width,
-                        image.height,
-                        false
-                    )
+                    if (image.height > image.width) {
+                        PlanarYUVLuminanceSource(
+                            // yuvData =
+                            bytes,
+                            // dataWidth =
+                            image.width,
+                            // dataHeight =
+                            image.height,
+                            // left =
+                            (image.width * LEFT_OFFSET).toInt(),
+                            // top =
+                            (image.height * TOP_OFFSET).toInt(),
+                            // width =
+                            (image.width * WIDTH_OFFSET).toInt(),
+                            // height =
+                            (image.height * HEIGHT_OFFSET).toInt(),
+                            // reverseHorizontal =
+                            false
+                        )
+                    } else {
+                        PlanarYUVLuminanceSource(
+                            // yuvData =
+                            bytes,
+                            // dataWidth =
+                            image.width,
+                            // dataHeight =
+                            image.height,
+                            // left =
+                            (image.width * TOP_OFFSET).toInt(),
+                            // top =
+                            (image.height * LEFT_OFFSET).toInt(),
+                            // width =
+                            (image.width * HEIGHT_OFFSET).toInt(),
+                            // height =
+                            (image.height * WIDTH_OFFSET).toInt(),
+                            // reverseHorizontal =
+                            false
+                        )
+                    }
 
                 val binaryBmp = BinaryBitmap(HybridBinarizer(source))
 
-                // TODO [#1380]: Leverage FramePosition in QrCodeAnalyzer
-                // TODO [#1380]: https://github.com/Electric-Coin-Company/zashi-android/issues/1380
-                @Suppress("MagicNumber")
-                val binaryBitmapCropped =
-                    binaryBmp.crop(
-                        0,
-                        (binaryBmp.height * 0.25).toInt(),
-                        binaryBmp.width,
-                        (binaryBmp.height * 0.66).toInt()
-                    )
-
                 Twig.verbose {
                     "Scan result cropped: " +
-                        "Image width: ${binaryBitmapCropped.width}, " +
-                        "Image height: ${binaryBitmapCropped.height}"
+                        "Image width: ${binaryBmp.width}, " +
+                        "Image height: ${binaryBmp.height}"
                 }
 
                 runCatching {
@@ -77,7 +97,7 @@ class QrCodeAnalyzer(
                                     DecodeHintType.ALSO_INVERTED to true
                                 )
                             )
-                        }.decodeWithState(binaryBitmapCropped)
+                        }.decodeWithState(binaryBmp)
 
                     onQrCodeScanned(result.text)
                 }.onFailure {
@@ -94,3 +114,8 @@ class QrCodeAnalyzer(
         }
     }
 }
+
+private const val LEFT_OFFSET = .1
+private const val TOP_OFFSET = .15
+private const val WIDTH_OFFSET = .8
+private const val HEIGHT_OFFSET = .6
