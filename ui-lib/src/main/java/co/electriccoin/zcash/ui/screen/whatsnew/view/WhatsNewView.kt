@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.about.view
+package co.electriccoin.zcash.ui.screen.whatsnew.view
 
 import androidx.activity.compose.BackHandler
 import androidx.activity.viewModels
@@ -32,12 +32,12 @@ import co.electriccoin.zcash.ui.common.compose.LocalActivity
 import co.electriccoin.zcash.ui.common.compose.LocalNavController
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
-import co.electriccoin.zcash.ui.common.viewmodel.WhatsNewViewModel
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.TopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.screen.whatsnew.viewmodel.WhatsNewViewModel
 import co.electriccoin.zcash.ui.util.StringResource
 import co.electriccoin.zcash.ui.util.getValue
 import co.electriccoin.zcash.ui.util.stringRes

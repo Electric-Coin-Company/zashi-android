@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.common.viewmodel
+package co.electriccoin.zcash.ui.screen.whatsnew.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
@@ -6,8 +6,8 @@ import androidx.lifecycle.viewModelScope
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.common.model.VersionInfo
-import co.electriccoin.zcash.ui.screen.about.view.WhatsNewSectionState
-import co.electriccoin.zcash.ui.screen.about.view.WhatsNewState
+import co.electriccoin.zcash.ui.screen.whatsnew.view.WhatsNewSectionState
+import co.electriccoin.zcash.ui.screen.whatsnew.view.WhatsNewState
 import co.electriccoin.zcash.ui.util.stringRes
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
