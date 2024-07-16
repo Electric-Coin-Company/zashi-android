@@ -12,6 +12,7 @@ import co.electriccoin.zcash.ui.screen.update.model.UpdateState
 import com.google.android.play.core.appupdate.AppUpdateInfo
 import com.google.android.play.core.install.model.ActivityResult
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class UpdateViewModel(
@@ -60,6 +61,6 @@ class UpdateViewModel(
 
     fun remindLater() {
         // for mvp we just return user back to the previous screen
-        updateInfo.value = updateInfo.value.copy(state = UpdateState.Canceled)
+        updateInfo.update { it.copy(state = UpdateState.Canceled) }
     }
 }
