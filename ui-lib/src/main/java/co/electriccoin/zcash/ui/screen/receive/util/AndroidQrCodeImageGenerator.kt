@@ -22,8 +22,8 @@ object AndroidQrCodeImageGenerator : QrCodeImageGenerator {
 private fun BooleanArray.toBlackAndWhiteColorArray() =
     IntArray(size) {
         if (this[it]) {
-            Color.BLACK
-        } else {
             Color.WHITE
+        } else {
+            Color.BLACK
         }
     }

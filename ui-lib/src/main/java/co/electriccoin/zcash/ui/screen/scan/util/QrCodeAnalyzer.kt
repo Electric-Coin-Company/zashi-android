@@ -56,10 +56,10 @@ class QrCodeAnalyzer(
                 @Suppress("MagicNumber")
                 val binaryBitmapCropped =
                     binaryBmp.crop(
-                        (binaryBmp.width * 0.25).toInt(),
-                        (binaryBmp.height * 0.30).toInt(),
-                        (binaryBmp.width * 0.30).toInt(),
-                        (binaryBmp.height * 0.4).toInt()
+                        0,
+                        (binaryBmp.height * 0.25).toInt(),
+                        binaryBmp.width,
+                        (binaryBmp.height * 0.66).toInt()
                     )
 
                 Twig.verbose {
@@ -73,13 +73,11 @@ class QrCodeAnalyzer(
                         MultiFormatReader().apply {
                             setHints(
                                 mapOf(
-                                    DecodeHintType.POSSIBLE_FORMATS to
-                                        arrayListOf(
-                                            BarcodeFormat.QR_CODE
-                                        )
+                                    DecodeHintType.POSSIBLE_FORMATS to arrayListOf(BarcodeFormat.QR_CODE),
+                                    DecodeHintType.ALSO_INVERTED to true
                                 )
                             )
-                        }.decode(binaryBitmapCropped)
+                        }.decodeWithState(binaryBitmapCropped)
 
                     onQrCodeScanned(result.text)
                 }.onFailure {
