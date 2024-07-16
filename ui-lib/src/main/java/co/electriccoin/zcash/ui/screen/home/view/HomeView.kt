@@ -32,6 +32,7 @@ import co.electriccoin.zcash.ui.design.component.NavigationTabText
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 import co.electriccoin.zcash.ui.screen.home.model.TabItem
+import co.electriccoin.zcash.ui.screen.restoresuccess.view.RestoreSuccessView
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch

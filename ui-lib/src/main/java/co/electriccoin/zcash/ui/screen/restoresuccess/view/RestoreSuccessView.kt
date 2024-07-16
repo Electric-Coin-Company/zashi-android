@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.home.view
+package co.electriccoin.zcash.ui.screen.restoresuccess.view
 
 import androidx.activity.viewModels
 import androidx.compose.foundation.Image
@@ -34,7 +34,7 @@ import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.LabeledCheckBox
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
-import co.electriccoin.zcash.ui.screen.settings.viewmodel.RestoreSuccessViewModel
+import co.electriccoin.zcash.ui.screen.restoresuccess.viewmodel.RestoreSuccessViewModel
 
 @Composable
 fun RestoreSuccessView(
