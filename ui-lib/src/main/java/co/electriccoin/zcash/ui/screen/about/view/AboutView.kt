@@ -193,11 +193,21 @@ fun AboutMainContent(
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingUpLarge))
 
-        PrimaryButton(onClick = onWhatsNew, text = stringResource(R.string.about_button_whats_new))
+        PrimaryButton(
+            onClick = onWhatsNew,
+            text = stringResource(R.string.about_button_whats_new),
+            textStyle = ZcashTheme.extendedTypography.buttonTextSmall,
+            minHeight = ZcashTheme.dimens.buttonHeightSmall
+        )
 
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
 
-        PrimaryButton(onClick = onPrivacyPolicy, text = stringResource(R.string.about_button_privacy_policy))
+        PrimaryButton(
+            onClick = onPrivacyPolicy,
+            text = stringResource(R.string.about_button_privacy_policy),
+            textStyle = ZcashTheme.extendedTypography.buttonTextSmall,
+            minHeight = ZcashTheme.dimens.buttonHeightSmall
+        )
     }
 }
 
