@@ -1,7 +1,5 @@
 package co.electriccoin.zcash.ui.screen.whatsnew.view
 
-import androidx.activity.compose.BackHandler
-import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,7 +11,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
@@ -26,18 +23,13 @@ import androidx.compose.ui.text.style.TextIndent
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.compose.LocalActivity
-import co.electriccoin.zcash.ui.common.compose.LocalNavController
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
-import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.TopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
-import co.electriccoin.zcash.ui.screen.whatsnew.viewmodel.WhatsNewViewModel
 import co.electriccoin.zcash.ui.util.StringResource
 import co.electriccoin.zcash.ui.util.getValue
 import co.electriccoin.zcash.ui.util.stringRes
@@ -49,27 +41,7 @@ import kotlinx.datetime.todayIn
 import java.time.format.DateTimeFormatter
 
 @Composable
-fun WhatsNewView() {
-    val activity = LocalActivity.current
-    val navController = LocalNavController.current
-    val viewModel by activity.viewModels<WhatsNewViewModel>()
-    val walletViewModel by activity.viewModels<WalletViewModel>()
-    val walletState by walletViewModel.walletStateInformation.collectAsStateWithLifecycle()
-    val state = viewModel.state.collectAsStateWithLifecycle().value ?: return
-
-    BackHandler {
-        navController.popBackStack()
-    }
-
-    WhatsNewViewInternal(
-        state = state,
-        walletState = walletState,
-        onBack = { navController.popBackStack() }
-    )
-}
-
-@Composable
-private fun WhatsNewViewInternal(
+internal fun WhatsNewViewInternal(
     state: WhatsNewState,
     walletState: TopAppBarSubTitleState,
     onBack: () -> Unit

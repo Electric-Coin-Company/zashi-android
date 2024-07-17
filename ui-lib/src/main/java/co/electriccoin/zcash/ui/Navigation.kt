@@ -64,7 +64,7 @@ import co.electriccoin.zcash.ui.screen.settings.WrapSettings
 import co.electriccoin.zcash.ui.screen.support.WrapSupport
 import co.electriccoin.zcash.ui.screen.update.WrapCheckForUpdate
 import co.electriccoin.zcash.ui.screen.warning.WrapNotEnoughSpace
-import co.electriccoin.zcash.ui.screen.whatsnew.view.WhatsNewView
+import co.electriccoin.zcash.ui.screen.whatsnew.AndroidWhatsNewView
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
@@ -209,7 +209,7 @@ internal fun MainActivity.Navigation() {
             WrapAbout(goBack = { navController.popBackStackJustOnce(ABOUT) })
         }
         composable(WHATS_NEW) {
-            WhatsNewView()
+            AndroidWhatsNewView()
         }
         composable(SCAN) {
             WrapScanValidator(

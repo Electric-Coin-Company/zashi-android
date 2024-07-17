@@ -2,15 +2,12 @@ package co.electriccoin.zcash.ui.screen.about.view
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
@@ -32,12 +29,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
@@ -50,22 +42,6 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.ConfigInfoFixture
 import co.electriccoin.zcash.ui.fixture.VersionInfoFixture
 import co.electriccoin.zcash.ui.screen.support.model.ConfigInfo
-
-@Preview("About")
-@Composable
-private fun AboutPreview() {
-    ZcashTheme(forceDarkMode = false) {
-        About(
-            onBack = {},
-            configInfo = ConfigInfoFixture.new(),
-            onPrivacyPolicy = {},
-            onWhatsNew = {},
-            snackbarHostState = SnackbarHostState(),
-            topAppBarSubTitleState = TopAppBarSubTitleState.None,
-            versionInfo = VersionInfoFixture.new(),
-        )
-    }
-}
 
 @Composable
 @Suppress("LongParameterList")
@@ -184,40 +160,26 @@ fun AboutMainContent(
     modifier: Modifier = Modifier
 ) {
     Column(modifier) {
-        val logoContentDescription = stringResource(R.string.zcash_logo_content_description)
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
+        Image(
             modifier =
-                Modifier.semantics(mergeDescendants = true) {
-                    contentDescription = logoContentDescription
-                }
-        ) {
-            Image(
-                painter = painterResource(id = co.electriccoin.zcash.ui.design.R.drawable.zashi_logo_without_text),
-                colorFilter = ColorFilter.tint(color = ZcashTheme.colors.secondaryColor),
-                contentDescription = null,
-                modifier =
-                    Modifier
-                        .height(ZcashTheme.dimens.inScreenZcashLogoHeight)
-                        .width(ZcashTheme.dimens.inScreenZcashLogoWidth)
-            )
-            Spacer(modifier = Modifier.width(ZcashTheme.dimens.spacingDefault))
-            Image(
-                painter = painterResource(id = co.electriccoin.zcash.ui.design.R.drawable.zashi_text_logo),
-                colorFilter = ColorFilter.tint(color = ZcashTheme.colors.secondaryColor),
-                contentDescription = null,
-                modifier = Modifier.height(ZcashTheme.dimens.inScreenZcashTextLogoHeight)
-            )
-        }
+                Modifier
+                    .height(ZcashTheme.dimens.inScreenZcashTextLogoHeight)
+                    .align(Alignment.CenterHorizontally),
+            painter = painterResource(id = co.electriccoin.zcash.ui.design.R.drawable.zashi_text_logo_small),
+            colorFilter = ColorFilter.tint(color = ZcashTheme.colors.secondaryColor),
+            contentDescription = stringResource(R.string.zcash_logo_content_description)
+        )
 
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
 
         Text(
+            modifier = Modifier.fillMaxWidth(),
             text =
                 stringResource(
                     R.string.about_version_format,
                     versionInfo.versionName
                 ),
+            textAlign = TextAlign.Center,
             style = ZcashTheme.typography.primary.titleSmall
         )
 
@@ -229,52 +191,39 @@ fun AboutMainContent(
             style = ZcashTheme.extendedTypography.aboutText
         )
 
-        PrivacyPolicyLink(onPrivacyPolicy)
-
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingUpLarge))
 
         PrimaryButton(onClick = onWhatsNew, text = stringResource(R.string.about_button_whats_new))
+
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
+
+        PrimaryButton(onClick = onPrivacyPolicy, text = stringResource(R.string.about_button_privacy_policy))
     }
 }
 
 @Composable
-fun PrivacyPolicyLink(onPrivacyPolicy: () -> Unit) {
-    Column {
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
-
-        val textPart1 = stringResource(R.string.about_pp_part_1)
-        val textPart2 = stringResource(R.string.about_pp_part_2)
-        val textPart3 = stringResource(R.string.about_pp_part_3)
-
-        ClickableText(
-            text =
-                buildAnnotatedString {
-                    withStyle(SpanStyle(color = ZcashTheme.colors.textDescriptionDark)) {
-                        append(textPart1)
-                    }
-                    withStyle(
-                        SpanStyle(
-                            textDecoration = TextDecoration.Underline,
-                            color = ZcashTheme.colors.textDescriptionDark,
-                        )
-                    ) {
-                        append(textPart2)
-                    }
-                    withStyle(SpanStyle(color = ZcashTheme.colors.textDescriptionDark)) {
-                        append(textPart3)
-                    }
-                },
-            style = ZcashTheme.extendedTypography.aboutText,
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .testTag(AboutTag.PP_TEXT_TAG),
-            onClick = { letterOffset ->
-                // Call the callback only if user clicked the underlined part
-                if (letterOffset >= textPart1.length && letterOffset <= (textPart1.length + textPart2.length)) {
-                    onPrivacyPolicy()
-                }
-            }
-        )
-    }
+private fun AboutPreview() {
+    About(
+        onBack = {},
+        configInfo = ConfigInfoFixture.new(),
+        onPrivacyPolicy = {},
+        onWhatsNew = {},
+        snackbarHostState = SnackbarHostState(),
+        topAppBarSubTitleState = TopAppBarSubTitleState.None,
+        versionInfo = VersionInfoFixture.new(),
+    )
 }
+
+@Preview("About")
+@Composable
+private fun AboutPreviewLight() =
+    ZcashTheme(forceDarkMode = false) {
+        AboutPreview()
+    }
+
+@Preview("About")
+@Composable
+private fun AboutPreviewDark() =
+    ZcashTheme(forceDarkMode = true) {
+        AboutPreview()
+    }
