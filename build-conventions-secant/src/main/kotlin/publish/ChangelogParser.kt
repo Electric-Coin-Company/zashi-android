@@ -4,21 +4,39 @@ import org.intellij.markdown.ast.getTextInNode
 import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor
 import org.intellij.markdown.parser.MarkdownParser
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 object ChangelogParser {
+    // Enable this when you need detailed parser logging. This should be turned off for production builds.
+    private const val DEBUG_LOGS_ENABLED = false
+
     private const val CHANGELOG_TITLE_POSITION = 0
     private const val UNRELEASED_TITLE_POSITION = 4
 
-    fun getChangelogEntry(filePath: String): ChangelogEntry {
+    private fun log(value: Any) {
+        if (DEBUG_LOGS_ENABLED) {
+            println(value)
+        }
+    }
+
+    fun getChangelogEntry(
+        filePath: String,
+        versionNameFallback: String
+    ): ChangelogEntry {
+        log("Parser: starting...")
+
         val src = File(filePath).readText()
         val parsedTree = MarkdownParser(GFMFlavourDescriptor()).buildMarkdownTreeFromString(src)
 
-        println("Parser: ${parsedTree.children.size}")
+        log("Parser: ${parsedTree.children.size}")
 
         val nodes =
             parsedTree.children
                 .map { it.getTextInNode(src).toString() }
                 .filter { it.isNotBlank() }
+                .onEachIndexed { index, value -> log("Parser: node $index: $value") }
 
         // Validate content
         check(
@@ -28,14 +46,27 @@ object ChangelogParser {
             "Provided changelog file is incorrect or its structure is malformed."
         }
 
-        val fromIndex = nodes.indexOfFirst { findNodeByPrefix(it) }
-        val toIndex = nodes.subList(fromIndex + 1, nodes.size).indexOfFirst { findNodeByPrefix(it) } + fromIndex + 1
+        val fromIndex = findFirstValidNodeIndex(nodes)
+        log("Parser: index from: $fromIndex")
+
+        val toIndex =
+            nodes.subList(fromIndex + 1, nodes.size)
+                .indexOfFirst { findNodeByPrefix(it) }
+                .let {
+                    // Applies to the last or the only one entry
+                    if (it < 0) {
+                        nodes.size
+                    } else {
+                        it + fromIndex + 1
+                    }
+                }
+        log("Parser: index to: $toIndex")
 
         val lastChangelogEntry =
-            nodes.subList(fromIndex = fromIndex, toIndex).let { parts ->
+            nodes.subList(fromIndex = fromIndex, toIndex = toIndex).let { parts ->
                 ChangelogEntry(
-                    version = parts[0].split("[")[1].split("]")[0].trim(),
-                    date = parts[0].split("- ")[1].trim(),
+                    version = parts.getVersionPart(versionNameFallback),
+                    date = parts.getDatePart(),
                     added = parts.getNodePart("Added"),
                     changed = parts.getNodePart("Changed"),
                     fixed = parts.getNodePart("Fixed"),
@@ -43,10 +74,45 @@ object ChangelogParser {
                 )
             }
 
+        log("Parser: result: $lastChangelogEntry")
         return lastChangelogEntry
     }
 
-    private fun findNodeByPrefix(node: String): Boolean = node.startsWith("## [") && node != "## [Unreleased]"
+    private fun findFirstValidNodeIndex(nodes: List<String>): Int {
+        nodes.forEachIndexed { index, node ->
+            if (findNodeByPrefix(node) && findValidSubNodeByPrefix(nodes[index + 1])) {
+                return index
+            }
+        }
+
+        error("Provided changelog file is incorrect or its structure is malformed.")
+    }
+
+    private fun findNodeByPrefix(node: String): Boolean = node.startsWith("## [")
+
+    private fun findValidSubNodeByPrefix(subNode: String): Boolean =
+        subNode.startsWith("### Added") ||
+            subNode.startsWith("### Changed") ||
+            subNode.startsWith("### Fixed") ||
+            subNode.startsWith("### Removed")
+
+    private fun List<String>.getVersionPart(versionNameFallback: String): String {
+        return if (this.contains("## [Unreleased]")) {
+            versionNameFallback
+        } else {
+            this[0].split("[")[1].split("]")[0].trim()
+        }
+    }
+
+    private val dateFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+
+    private fun List<String>.getDatePart(): String {
+        return if (this.contains("## [Unreleased]")) {
+            dateFormatter.format(Date())
+        } else {
+            this[0].split("- ")[1].trim()
+        }
+    }
 
     private fun List<String>.getNodePart(title: String): ChangelogEntrySection? {
         val fromContent = "### $title"

@@ -244,7 +244,10 @@ abstract class PublishToGooglePlay @Inject constructor(
         // A description of what is new in this release in form of [LocalizedText]
         val localizedText = LocalizedText().apply {
             language = Locale.ENGLISH.toLanguageTag()
-            text = ChangelogParser.getChangelogEntry("docs/whatsNew/WHATS_NEW_EN.md").toInAppUpdateReleaseNotesText()
+            text = ChangelogParser.getChangelogEntry(
+                filePath = "docs/whatsNew/WHATS_NEW_EN.md",
+                versionNameFallback = gradleVersionName
+            ).toInAppUpdateReleaseNotesText()
         }
         val releaseNotes: MutableList<LocalizedText> = arrayListOf(localizedText)
 

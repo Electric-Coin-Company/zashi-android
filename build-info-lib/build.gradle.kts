@@ -22,7 +22,12 @@ val generateBuildConfigTask = tasks.create("buildConfig") {
 
     //val buildTimestamp = newIso8601Timestamp()
 
-    val releaseNotesJson = ChangelogParser.getChangelogEntry("docs/whatsNew/WHATS_NEW_EN.md").toJsonString()
+    val gradleVersionName = project.property("ZCASH_VERSION_NAME").toString()
+
+    val releaseNotesJson = ChangelogParser.getChangelogEntry(
+        filePath = "docs/whatsNew/WHATS_NEW_EN.md",
+        versionNameFallback = gradleVersionName
+    ).toJsonString()
 
     inputs.property("gitSha", gitInfo.sha)
     inputs.property("gitCommitCount", gitInfo.commitCount)
