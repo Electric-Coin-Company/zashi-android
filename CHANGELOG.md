@@ -14,6 +14,8 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 ### Changed
 - The About screen has been redesigned to align with the new design guidelines
 - `StyledBalance` text styles have been refactored from `Pair` into `BalanceTextStyle` 
+- The Restore Success dialog has been reworked into a separate screen, allowing users to opt out of the Keep screen
+  on while restoring option 
 
 ## [1.1.3 (682)] - 2024-07-03
 
