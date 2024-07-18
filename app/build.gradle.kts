@@ -10,7 +10,7 @@ plugins {
     id("com.osacky.fladle")
     id("wtf.emulator.gradle")
     id("secant.emulator-wtf-conventions")
-    id("secant.publish-conventions")
+    id("publish.secant.publish-conventions")
 }
 
 val hasFirebaseApiKeys = run {

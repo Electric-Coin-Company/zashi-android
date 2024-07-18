@@ -1,3 +1,5 @@
+package publish
+
 import com.android.build.gradle.internal.tasks.factory.dependsOn
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
 import com.google.api.client.http.AbstractInputStreamContent
@@ -15,6 +17,7 @@ import com.google.api.services.androidpublisher.AndroidPublisherRequestInitializ
 import com.google.api.services.androidpublisher.AndroidPublisherScopes
 import com.google.api.services.androidpublisher.model.AppEdit
 import com.google.api.services.androidpublisher.model.Bundle
+import com.google.api.services.androidpublisher.model.LocalizedText
 import com.google.api.services.androidpublisher.model.Track
 import com.google.api.services.androidpublisher.model.TrackRelease
 import com.google.auth.http.HttpCredentialsAdapter
@@ -27,6 +30,7 @@ import java.io.FileInputStream
 import java.io.IOException
 import java.security.GeneralSecurityException
 import java.security.KeyStore
+import java.util.Locale
 
 @CacheableTask
 abstract class PublishToGooglePlay @Inject constructor(
@@ -234,6 +238,19 @@ abstract class PublishToGooglePlay @Inject constructor(
         val gradleVersionName = project.property("ZCASH_VERSION_NAME").toString()
         val versionName = "$gradleVersionName (${bundle.versionCode.toLong()}): Automated Internal Testing Release"
 
+        // In-app update priority of the release. Can take values in the range [0, 5], with 5 the highest priority.
+        val inAppUpdatePriority = project.property("ZCASH_IN_APP_UPDATE_PRIORITY").toString().toInt()
+
+        // A description of what is new in this release in form of [LocalizedText]
+        val localizedText = LocalizedText().apply {
+            language = Locale.ENGLISH.toLanguageTag()
+            text = ChangelogParser.getChangelogEntry(
+                filePath = "docs/whatsNew/WHATS_NEW_EN.md",
+                versionNameFallback = gradleVersionName
+            ).toInAppUpdateReleaseNotesText()
+        }
+        val releaseNotes: MutableList<LocalizedText> = arrayListOf(localizedText)
+
         log("Publish - Version: $versionName has been uploaded")
 
         // Assign bundle to the selected track
@@ -245,8 +262,8 @@ abstract class PublishToGooglePlay @Inject constructor(
                 track,
                 Track().setReleases(
                     listOf(TrackRelease()
-                        // TODO [#1440]: Provide a way to inject in-app-update information
-                        // TODO [#1440]: https://github.com/Electric-Coin-Company/zashi-android/issues/1440
+                        .setInAppUpdatePriority(inAppUpdatePriority)
+                        .setReleaseNotes(releaseNotes)
                         .setName(versionName)
                         .setVersionCodes(bundleVersionCodes)
                         .setStatus(status)
@@ -387,6 +404,4 @@ tasks {
         .dependsOn(":app:assembleDebug")
         .dependsOn(":app:bundleZcashmainnetRelease")
         .dependsOn(":app:packageZcashmainnetReleaseUniversalApk")
-
-    println("Automated deployment task registered - all the necessary attributes set")
 }

@@ -31,8 +31,8 @@ android {
             res.setSrcDirs(
                 setOf(
                     "src/main/res/ui/about",
-                    "src/main/res/ui/advanced_settings",
                     "src/main/res/ui/account",
+                    "src/main/res/ui/advanced_settings",
                     "src/main/res/ui/authentication",
                     "src/main/res/ui/balances",
                     "src/main/res/ui/common",
@@ -45,6 +45,7 @@ android {
                     "src/main/res/ui/receive",
                     "src/main/res/ui/restore",
                     "src/main/res/ui/scan",
+                    "src/main/res/ui/security_warning",
                     "src/main/res/ui/seed_recovery",
                     "src/main/res/ui/send",
                     "src/main/res/ui/send_confirmation",
@@ -53,7 +54,7 @@ android {
                     "src/main/res/ui/update",
                     "src/main/res/ui/wallet_address",
                     "src/main/res/ui/warning",
-                    "src/main/res/ui/security_warning"
+                    "src/main/res/ui/whats_new",
                 )
             )
         }

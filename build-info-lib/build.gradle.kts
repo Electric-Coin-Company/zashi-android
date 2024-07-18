@@ -1,4 +1,5 @@
 import co.electriccoin.zcash.Git
+import publish.ChangelogParser
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -18,11 +19,21 @@ val generateBuildConfigTask = tasks.create("buildConfig") {
         Git.HEAD,
         parent!!.projectDir
     )
+
     //val buildTimestamp = newIso8601Timestamp()
+
+    val gradleVersionName = project.property("ZCASH_VERSION_NAME").toString()
+
+    val releaseNotesJson = ChangelogParser.getChangelogEntry(
+        filePath = "docs/whatsNew/WHATS_NEW_EN.md",
+        versionNameFallback = gradleVersionName
+    ).toJsonString()
 
     inputs.property("gitSha", gitInfo.sha)
     inputs.property("gitCommitCount", gitInfo.commitCount)
     //inputs.property("buildTimestamp", buildTimestamp)
+
+    inputs.property("releaseNotesEn", releaseNotesJson)
 
     outputs.dir(generatedDir)
 
@@ -41,6 +52,7 @@ package co.electriccoin.zcash.build
 
 const val gitSha: String = "${gitInfo.sha}"
 const val gitCommitCount: Int = ${gitInfo.commitCount}
+const val releaseNotesEn: String = "$releaseNotesJson"
 """.trimIndent()
         )
     }

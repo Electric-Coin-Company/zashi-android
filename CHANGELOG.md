@@ -4,12 +4,17 @@ All notable changes to this application will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this application adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-**Please be aware that this changelog primarily focuses on user-related modifications, emphasizing changes that can
-directly impact users rather than highlighting other key architectural updates.**
-
 ## [Unreleased]
 
-## [1.1.2 (676)] - 2024-07-03
+### Added
+- A new What's New screen has been added, accessible from the About screen. It contains the release notes parsed 
+  from the new [docs/whatsNew/WHATS_NEW_EN.md] file
+- These release notes and release priority are both propagated to every new Google Play release using CI logic
+
+### Changed
+- The About screen has been redesigned to align with the new design guidelines
+
+## [1.1.3 (682)] - 2024-07-03
 
 ### Added
 - Proper ZEC amount abbreviation has been added across the entire app as described by the design document

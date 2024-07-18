@@ -35,6 +35,7 @@ import co.electriccoin.zcash.ui.NavigationTargets.SEED_RECOVERY
 import co.electriccoin.zcash.ui.NavigationTargets.SEND_CONFIRMATION
 import co.electriccoin.zcash.ui.NavigationTargets.SETTINGS
 import co.electriccoin.zcash.ui.NavigationTargets.SUPPORT
+import co.electriccoin.zcash.ui.NavigationTargets.WHATS_NEW
 import co.electriccoin.zcash.ui.common.compose.LocalNavController
 import co.electriccoin.zcash.ui.common.model.SerializableAddress
 import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
@@ -63,6 +64,7 @@ import co.electriccoin.zcash.ui.screen.settings.WrapSettings
 import co.electriccoin.zcash.ui.screen.support.WrapSupport
 import co.electriccoin.zcash.ui.screen.update.WrapCheckForUpdate
 import co.electriccoin.zcash.ui.screen.warning.WrapNotEnoughSpace
+import co.electriccoin.zcash.ui.screen.whatsnew.WrapWhatsNew
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
@@ -204,7 +206,13 @@ internal fun MainActivity.Navigation() {
             )
         }
         composable(ABOUT) {
-            WrapAbout(goBack = { navController.popBackStackJustOnce(ABOUT) })
+            WrapAbout(
+                goBack = { navController.popBackStackJustOnce(ABOUT) },
+                goWhatsNew = { navController.navigateJustOnce(WHATS_NEW) }
+            )
+        }
+        composable(WHATS_NEW) {
+            WrapWhatsNew()
         }
         composable(SCAN) {
             WrapScanValidator(
@@ -436,4 +444,5 @@ object NavigationTargets {
     const val SEND_CONFIRMATION = "send_confirmation"
     const val SETTINGS = "settings"
     const val SUPPORT = "support"
+    const val WHATS_NEW = "whats_new"
 }

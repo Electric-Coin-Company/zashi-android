@@ -23,7 +23,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
-internal fun WrapAbout(goBack: () -> Unit) {
+internal fun WrapAbout(
+    goBack: () -> Unit,
+    goWhatsNew: () -> Unit,
+) {
     val activity = LocalActivity.current
 
     val walletViewModel by activity.viewModels<WalletViewModel>()
@@ -59,6 +62,7 @@ internal fun WrapAbout(goBack: () -> Unit) {
         },
         snackbarHostState = snackbarHostState,
         topAppBarSubTitleState = walletState,
+        onWhatsNew = goWhatsNew
     )
 }
 
