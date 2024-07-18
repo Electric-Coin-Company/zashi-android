@@ -30,14 +30,11 @@ import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.TopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
-import co.electriccoin.zcash.ui.util.StringResource
+import co.electriccoin.zcash.ui.fixture.ChangelogFixture
+import co.electriccoin.zcash.ui.screen.whatsnew.model.WhatsNewSectionState
+import co.electriccoin.zcash.ui.screen.whatsnew.model.WhatsNewState
 import co.electriccoin.zcash.ui.util.getValue
-import co.electriccoin.zcash.ui.util.stringRes
-import kotlinx.datetime.Clock
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toJavaLocalDate
-import kotlinx.datetime.todayIn
 import java.time.format.DateTimeFormatter
 
 @Composable
@@ -121,7 +118,8 @@ private fun WhatsNewSection(state: WhatsNewSectionState) {
             text = state.title.getValue(),
             style = ZcashTheme.typography.primary.titleSmall,
         )
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingXtiny))
+
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingMin))
 
         Text(
             text = bulletStyle,
@@ -153,55 +151,11 @@ private fun AppBar(
     )
 }
 
-data class WhatsNewState(
-    val version: StringResource,
-    val date: LocalDate,
-    val sections: List<WhatsNewSectionState>
-)
-
-data class WhatsNewSectionState(val title: StringResource, val content: StringResource)
-
 @Composable
 private fun WhatsNewViewPreview() {
     BlankSurface {
         WhatsNewView(
-            state =
-                WhatsNewState(
-                    version = stringRes("Zashi Version 1.1 (8)"),
-                    date = Clock.System.todayIn(TimeZone.currentSystemDefault()),
-                    sections =
-                        listOf(
-                            WhatsNewSectionState(
-                                title = stringRes("Added:"),
-                                content =
-                                    stringRes(
-                                        "\n- Highly requested dark mode functionality added. Turn it on by " +
-                                            "switching into dark mode in your device settings. Enjoy!" +
-                                            "\n- Scan QR code from an image stored in your photo library." +
-                                            "\n- Security feature added - hide your balances and transaction " +
-                                            "history with an eye icon on the Account and Balances tabs."
-                                    )
-                            ),
-                            WhatsNewSectionState(
-                                title = stringRes("Changed:"),
-                                content =
-                                    stringRes(
-                                        "\n- The copy on the confirmation button of the secret recovery " +
-                                            "phrase screen has been modified" +
-                                            "\n- We also improved Ul on the Receive screen - you can now " +
-                                            "switch between the unified and transparent address."
-                                    )
-                            ),
-                            WhatsNewSectionState(
-                                title = stringRes("Fixed:"),
-                                content =
-                                    stringRes(
-                                        "\n- Balances are refreshed right after the send or shielding " +
-                                            "transaction are processed."
-                                    )
-                            )
-                        )
-                ),
+            state = WhatsNewState.new(ChangelogFixture.new()),
             walletState = TopAppBarSubTitleState.None,
             onBack = {}
         )
