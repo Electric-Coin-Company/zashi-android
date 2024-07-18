@@ -498,10 +498,10 @@ private fun HistoryItemCollapsedMainPart(
                 },
             isHideBalances = isHideBalances,
             textStyle =
-            StyledBalanceDefaults.textStyles(
-                integerPart = valueTextStyle,
-                floatingPart = ZcashTheme.extendedTypography.transactionItemStyles.valueSecondPart
-            ),
+                StyledBalanceDefaults.textStyles(
+                    integerPart = valueTextStyle,
+                    floatingPart = ZcashTheme.extendedTypography.transactionItemStyles.valueSecondPart
+                ),
             textColor = valueTextColor,
         )
     }
@@ -838,10 +838,10 @@ private fun HistoryItemTransactionFeePart(
                 // Fees are always visible
                 isHideBalances = false,
                 textStyle =
-                StyledBalanceDefaults.textStyles(
-                    integerPart = ZcashTheme.extendedTypography.transactionItemStyles.feeFirstPart,
-                    floatingPart = ZcashTheme.extendedTypography.transactionItemStyles.feeSecondPart
-                ),
+                    StyledBalanceDefaults.textStyles(
+                        integerPart = ZcashTheme.extendedTypography.transactionItemStyles.feeFirstPart,
+                        floatingPart = ZcashTheme.extendedTypography.transactionItemStyles.feeSecondPart
+                    ),
                 textColor = ZcashTheme.colors.textDescription
             )
         }

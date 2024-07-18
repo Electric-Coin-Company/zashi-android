@@ -74,7 +74,7 @@ fun StyledBalance(
         if (isHideBalances) {
             buildAnnotatedString {
                 withStyle(
-                    style = textStyles.first.toSpanStyle()
+                    style = textStyle.integerPart.toSpanStyle()
                 ) {
                     append(hiddenBalancePlaceholder)
                 }

@@ -402,10 +402,10 @@ private fun SendConfirmationContent(
             // We don't hide any balance in confirmation screen
             isHideBalances = false,
             textStyle =
-            StyledBalanceDefaults.textStyles(
-                integerPart = ZcashTheme.extendedTypography.balanceSingleStyles.first,
-                floatingPart = ZcashTheme.extendedTypography.balanceSingleStyles.second
-            ),
+                StyledBalanceDefaults.textStyles(
+                    integerPart = ZcashTheme.extendedTypography.balanceSingleStyles.first,
+                    floatingPart = ZcashTheme.extendedTypography.balanceSingleStyles.second
+                ),
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingUpLarge))

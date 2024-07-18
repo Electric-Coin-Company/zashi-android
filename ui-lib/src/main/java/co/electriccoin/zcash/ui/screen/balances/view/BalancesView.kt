@@ -394,8 +394,6 @@ private fun BalancesMainContent(
     }
 }
 
-const val DEFAULT_LESS_THAN_FEE = 100_000L
-
 @Composable
 fun TransparentBalancePanel(
     isHideBalances: Boolean,
@@ -503,10 +501,10 @@ fun TransparentBalanceRow(
                 balanceParts = walletSnapshot.transparentBalance.toZecStringFull().asZecAmountTriple(),
                 isHideBalances = isHideBalances,
                 textStyle =
-                StyledBalanceDefaults.textStyles(
-                    integerPart = ZcashTheme.extendedTypography.balanceSingleStyles.first,
-                    floatingPart = ZcashTheme.extendedTypography.balanceSingleStyles.second
-                ),
+                    StyledBalanceDefaults.textStyles(
+                        integerPart = ZcashTheme.extendedTypography.balanceSingleStyles.first,
+                        floatingPart = ZcashTheme.extendedTypography.balanceSingleStyles.second
+                    ),
                 textColor = ZcashTheme.colors.textDescriptionDark
             )
 
@@ -630,10 +628,10 @@ fun SpendableBalanceRow(
                 balanceParts = walletSnapshot.spendableBalance().toZecStringFull().asZecAmountTriple(),
                 isHideBalances = isHideBalances,
                 textStyle =
-                StyledBalanceDefaults.textStyles(
-                    integerPart = ZcashTheme.extendedTypography.balanceSingleStyles.first,
-                    floatingPart = ZcashTheme.extendedTypography.balanceSingleStyles.second
-                ),
+                    StyledBalanceDefaults.textStyles(
+                        integerPart = ZcashTheme.extendedTypography.balanceSingleStyles.first,
+                        floatingPart = ZcashTheme.extendedTypography.balanceSingleStyles.second
+                    ),
                 textColor = ZcashTheme.colors.textPrimary
             )
 
@@ -669,10 +667,10 @@ fun ChangePendingRow(
                 balanceParts = walletSnapshot.changePendingBalance().toZecStringFull().asZecAmountTriple(),
                 isHideBalances = isHideBalances,
                 textStyle =
-                StyledBalanceDefaults.textStyles(
-                    integerPart = ZcashTheme.extendedTypography.balanceSingleStyles.first,
-                    floatingPart = ZcashTheme.extendedTypography.balanceSingleStyles.second
-                ),
+                    StyledBalanceDefaults.textStyles(
+                        integerPart = ZcashTheme.extendedTypography.balanceSingleStyles.first,
+                        floatingPart = ZcashTheme.extendedTypography.balanceSingleStyles.second
+                    ),
                 textColor = ZcashTheme.colors.textDescriptionDark
             )
 
@@ -707,10 +705,10 @@ fun PendingTransactionsRow(
                 balanceParts = walletSnapshot.valuePendingBalance().toZecStringFull().asZecAmountTriple(),
                 isHideBalances = isHideBalances,
                 textStyle =
-                StyledBalanceDefaults.textStyles(
-                    integerPart = ZcashTheme.extendedTypography.balanceSingleStyles.first,
-                    floatingPart = ZcashTheme.extendedTypography.balanceSingleStyles.second
-                ),
+                    StyledBalanceDefaults.textStyles(
+                        integerPart = ZcashTheme.extendedTypography.balanceSingleStyles.first,
+                        floatingPart = ZcashTheme.extendedTypography.balanceSingleStyles.second
+                    ),
                 textColor = ZcashTheme.colors.textDescriptionDark
             )
 

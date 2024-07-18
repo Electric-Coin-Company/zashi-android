@@ -160,10 +160,10 @@ fun BalanceWidget(
                         balanceParts = balanceState.spendableBalance.toZecStringFull().asZecAmountTriple(),
                         isHideBalances = isHideBalances,
                         textStyle =
-                        StyledBalanceDefaults.textStyles(
-                            integerPart = ZcashTheme.extendedTypography.balanceWidgetStyles.third,
-                            floatingPart = ZcashTheme.extendedTypography.balanceWidgetStyles.fourth
-                        )
+                            StyledBalanceDefaults.textStyles(
+                                integerPart = ZcashTheme.extendedTypography.balanceWidgetStyles.third,
+                                floatingPart = ZcashTheme.extendedTypography.balanceWidgetStyles.fourth
+                            )
                     )
                 }
             }
@@ -192,10 +192,10 @@ fun BalanceWidgetBigLineOnly(
             balanceParts = parts,
             isHideBalances = isHideBalances,
             textStyle =
-            StyledBalanceDefaults.textStyles(
-                integerPart = ZcashTheme.extendedTypography.balanceWidgetStyles.first,
-                floatingPart = ZcashTheme.extendedTypography.balanceWidgetStyles.second
-            )
+                StyledBalanceDefaults.textStyles(
+                    integerPart = ZcashTheme.extendedTypography.balanceWidgetStyles.first,
+                    floatingPart = ZcashTheme.extendedTypography.balanceWidgetStyles.second
+                )
         )
 
         Spacer(modifier = Modifier.width(ZcashTheme.dimens.spacingSmall))
