@@ -41,7 +41,7 @@ import kotlinx.datetime.todayIn
 import java.time.format.DateTimeFormatter
 
 @Composable
-internal fun WhatsNewViewInternal(
+fun WhatsNewView(
     state: WhatsNewState,
     walletState: TopAppBarSubTitleState,
     onBack: () -> Unit
@@ -164,7 +164,7 @@ data class WhatsNewSectionState(val title: StringResource, val content: StringRe
 @Composable
 private fun WhatsNewViewPreview() {
     BlankSurface {
-        WhatsNewViewInternal(
+        WhatsNewView(
             state =
                 WhatsNewState(
                     version = stringRes("Zashi Version 1.1 (8)"),
