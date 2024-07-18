@@ -79,6 +79,7 @@ import co.electriccoin.zcash.ui.design.component.Reference
 import co.electriccoin.zcash.ui.design.component.Small
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.StyledBalance
+import co.electriccoin.zcash.ui.design.component.StyledBalanceDefaults
 import co.electriccoin.zcash.ui.design.component.TopAppBarHideBalancesNavigation
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.BalanceStateFixture
@@ -393,8 +394,6 @@ private fun BalancesMainContent(
     }
 }
 
-const val DEFAULT_LESS_THAN_FEE = 100_000L
-
 @Composable
 fun TransparentBalancePanel(
     isHideBalances: Boolean,
@@ -501,10 +500,10 @@ fun TransparentBalanceRow(
             StyledBalance(
                 balanceParts = walletSnapshot.transparentBalance.toZecStringFull().asZecAmountTriple(),
                 isHideBalances = isHideBalances,
-                textStyles =
-                    Pair(
-                        ZcashTheme.extendedTypography.balanceSingleStyles.first,
-                        ZcashTheme.extendedTypography.balanceSingleStyles.second
+                textStyle =
+                    StyledBalanceDefaults.textStyles(
+                        mostSignificantPart = ZcashTheme.extendedTypography.balanceSingleStyles.first,
+                        leastSignificantPart = ZcashTheme.extendedTypography.balanceSingleStyles.second
                     ),
                 textColor = ZcashTheme.colors.textDescriptionDark
             )
@@ -628,10 +627,10 @@ fun SpendableBalanceRow(
             StyledBalance(
                 balanceParts = walletSnapshot.spendableBalance().toZecStringFull().asZecAmountTriple(),
                 isHideBalances = isHideBalances,
-                textStyles =
-                    Pair(
-                        ZcashTheme.extendedTypography.balanceSingleStyles.first,
-                        ZcashTheme.extendedTypography.balanceSingleStyles.second
+                textStyle =
+                    StyledBalanceDefaults.textStyles(
+                        mostSignificantPart = ZcashTheme.extendedTypography.balanceSingleStyles.first,
+                        leastSignificantPart = ZcashTheme.extendedTypography.balanceSingleStyles.second
                     ),
                 textColor = ZcashTheme.colors.textPrimary
             )
@@ -667,10 +666,10 @@ fun ChangePendingRow(
             StyledBalance(
                 balanceParts = walletSnapshot.changePendingBalance().toZecStringFull().asZecAmountTriple(),
                 isHideBalances = isHideBalances,
-                textStyles =
-                    Pair(
-                        ZcashTheme.extendedTypography.balanceSingleStyles.first,
-                        ZcashTheme.extendedTypography.balanceSingleStyles.second
+                textStyle =
+                    StyledBalanceDefaults.textStyles(
+                        mostSignificantPart = ZcashTheme.extendedTypography.balanceSingleStyles.first,
+                        leastSignificantPart = ZcashTheme.extendedTypography.balanceSingleStyles.second
                     ),
                 textColor = ZcashTheme.colors.textDescriptionDark
             )
@@ -705,10 +704,10 @@ fun PendingTransactionsRow(
             StyledBalance(
                 balanceParts = walletSnapshot.valuePendingBalance().toZecStringFull().asZecAmountTriple(),
                 isHideBalances = isHideBalances,
-                textStyles =
-                    Pair(
-                        ZcashTheme.extendedTypography.balanceSingleStyles.first,
-                        ZcashTheme.extendedTypography.balanceSingleStyles.second
+                textStyle =
+                    StyledBalanceDefaults.textStyles(
+                        mostSignificantPart = ZcashTheme.extendedTypography.balanceSingleStyles.first,
+                        leastSignificantPart = ZcashTheme.extendedTypography.balanceSingleStyles.second
                     ),
                 textColor = ZcashTheme.colors.textDescriptionDark
             )

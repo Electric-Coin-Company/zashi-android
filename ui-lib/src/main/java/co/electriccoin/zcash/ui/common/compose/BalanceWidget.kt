@@ -27,6 +27,7 @@ import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.CircularSmallProgressIndicator
 import co.electriccoin.zcash.ui.design.component.Reference
 import co.electriccoin.zcash.ui.design.component.StyledBalance
+import co.electriccoin.zcash.ui.design.component.StyledBalanceDefaults
 import co.electriccoin.zcash.ui.design.component.ZecAmountTriple
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 
@@ -153,14 +154,15 @@ fun BalanceWidget(
                 BalanceState.None, is BalanceState.Loading -> {
                     CircularSmallProgressIndicator(color = ZcashTheme.colors.circularProgressBarSmallDark)
                 }
+
                 is BalanceState.Available -> {
                     StyledBalance(
                         balanceParts = balanceState.spendableBalance.toZecStringFull().asZecAmountTriple(),
                         isHideBalances = isHideBalances,
-                        textStyles =
-                            Pair(
-                                ZcashTheme.extendedTypography.balanceWidgetStyles.third,
-                                ZcashTheme.extendedTypography.balanceWidgetStyles.fourth
+                        textStyle =
+                            StyledBalanceDefaults.textStyles(
+                                mostSignificantPart = ZcashTheme.extendedTypography.balanceWidgetStyles.third,
+                                leastSignificantPart = ZcashTheme.extendedTypography.balanceWidgetStyles.fourth
                             )
                     )
                 }
@@ -189,10 +191,10 @@ fun BalanceWidgetBigLineOnly(
         StyledBalance(
             balanceParts = parts,
             isHideBalances = isHideBalances,
-            textStyles =
-                Pair(
-                    ZcashTheme.extendedTypography.balanceWidgetStyles.first,
-                    ZcashTheme.extendedTypography.balanceWidgetStyles.second
+            textStyle =
+                StyledBalanceDefaults.textStyles(
+                    mostSignificantPart = ZcashTheme.extendedTypography.balanceWidgetStyles.first,
+                    leastSignificantPart = ZcashTheme.extendedTypography.balanceWidgetStyles.second
                 )
         )
 

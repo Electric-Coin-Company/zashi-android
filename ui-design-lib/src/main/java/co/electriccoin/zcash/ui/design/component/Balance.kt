@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.Stable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -31,11 +33,6 @@ private fun StyledBalanceComposablePreview() {
                 StyledBalance(
                     balanceParts = ZecAmountTriple(main = "1,234.56789012"),
                     isHideBalances = false,
-                    textStyles =
-                        Pair(
-                            ZcashTheme.extendedTypography.balanceWidgetStyles.first,
-                            ZcashTheme.extendedTypography.balanceWidgetStyles.second
-                        ),
                     modifier = Modifier
                 )
 
@@ -44,11 +41,6 @@ private fun StyledBalanceComposablePreview() {
                 StyledBalance(
                     balanceParts = ZecAmountTriple(main = "1,234.56789012"),
                     isHideBalances = true,
-                    textStyles =
-                        Pair(
-                            ZcashTheme.extendedTypography.balanceWidgetStyles.first,
-                            ZcashTheme.extendedTypography.balanceWidgetStyles.second
-                        ),
                     modifier = Modifier
                 )
             }
@@ -63,8 +55,8 @@ private fun StyledBalanceComposablePreview() {
  * @param balanceParts [ZecAmountTriple] class that holds balance parts
  * @param isHideBalances Flag referring about the balance being hidden or not
  * @param hiddenBalancePlaceholder String holding the placeholder for the hidden balance
- * @param textStyles Styles for the first and second part of the balance
- * @param textColor Optional color to modify the default font color from [textStyles]
+ * @param textStyle Styles for the integer and floating part of the balance
+ * @param textColor Optional color to modify the default font color from [textStyle]
  * @param modifier Modifier to modify the Text UI element as needed
  */
 @OptIn(ExperimentalFoundationApi::class)
@@ -72,17 +64,17 @@ private fun StyledBalanceComposablePreview() {
 @Composable
 fun StyledBalance(
     balanceParts: ZecAmountTriple,
-    textStyles: Pair<TextStyle, TextStyle>,
     modifier: Modifier = Modifier,
     isHideBalances: Boolean = false,
     hiddenBalancePlaceholder: String = stringResource(id = R.string.hide_balance_placeholder),
-    textColor: Color? = null,
+    textColor: Color = Color.Unspecified,
+    textStyle: BalanceTextStyle = StyledBalanceDefaults.textStyles(),
 ) {
     val content =
         if (isHideBalances) {
             buildAnnotatedString {
                 withStyle(
-                    style = textStyles.first.toSpanStyle()
+                    style = textStyle.mostSignificantPart.toSpanStyle()
                 ) {
                     append(hiddenBalancePlaceholder)
                 }
@@ -92,12 +84,12 @@ fun StyledBalance(
 
             buildAnnotatedString {
                 withStyle(
-                    style = textStyles.first.toSpanStyle()
+                    style = textStyle.mostSignificantPart.toSpanStyle()
                 ) {
                     append(balanceSplit.first)
                 }
                 withStyle(
-                    style = textStyles.second.toSpanStyle()
+                    style = textStyle.leastSignificantPart.toSpanStyle()
                 ) {
                     append(balanceSplit.second)
                 }
@@ -110,20 +102,12 @@ fun StyledBalance(
             .animateContentSize()
             .then(modifier)
 
-    if (textColor != null) {
-        Text(
-            text = content,
-            color = textColor,
-            maxLines = 1,
-            modifier = resultModifier
-        )
-    } else {
-        Text(
-            text = content,
-            maxLines = 1,
-            modifier = resultModifier
-        )
-    }
+    Text(
+        text = content,
+        color = textColor,
+        maxLines = 1,
+        modifier = resultModifier
+    )
 }
 
 private const val CUT_POSITION_OFFSET = 4
@@ -171,3 +155,18 @@ data class ZecAmountTriple(
     val prefix: String? = null,
     val suffix: String? = null
 )
+
+@Immutable
+data class BalanceTextStyle(val mostSignificantPart: TextStyle, val leastSignificantPart: TextStyle)
+
+object StyledBalanceDefaults {
+    @Stable
+    @Composable
+    fun textStyles(
+        mostSignificantPart: TextStyle = ZcashTheme.extendedTypography.balanceWidgetStyles.first,
+        leastSignificantPart: TextStyle = ZcashTheme.extendedTypography.balanceWidgetStyles.second,
+    ) = BalanceTextStyle(
+        mostSignificantPart = mostSignificantPart,
+        leastSignificantPart = leastSignificantPart
+    )
+}
