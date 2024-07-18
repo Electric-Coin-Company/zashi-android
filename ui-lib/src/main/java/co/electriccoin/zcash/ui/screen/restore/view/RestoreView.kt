@@ -30,7 +30,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
@@ -47,7 +46,6 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
@@ -400,7 +398,7 @@ private fun RestoreSeedMainContent(
     goNext: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val scope = rememberCoroutineScope()
+    val focusManager = LocalFocusManager.current
     val scrollState = rememberScrollState()
     val focusRequester = remember { FocusRequester() }
     val textFieldScrollToHeight = rememberSaveable { mutableIntStateOf(0) }
@@ -468,24 +466,21 @@ private fun RestoreSeedMainContent(
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingHuge))
     }
 
-    if (isSeedValid) {
-        // Clear focus and hide keyboard to make it easier for users to see the next button
-        LocalSoftwareKeyboardController.current?.hide()
-        LocalFocusManager.current.clearFocus()
+    LaunchedEffect(isSeedValid) {
+        if (isSeedValid) {
+            // Clear focus and hide keyboard to make it easier for users to see the next button
+            focusManager.clearFocus()
+        }
     }
 
-    DisposableEffect(parseResult) {
+    LaunchedEffect(parseResult) {
         // Causes the TextFiled to refocus
         if (!isSeedValid) {
             focusRequester.requestFocus()
         }
-        // Causes scroll to the TextField after the first type action
         if (text.isNotEmpty() && userWordList.current.value.isEmpty()) {
-            scope.launch {
-                scrollState.animateScrollTo(textFieldScrollToHeight.intValue)
-            }
+            scrollState.animateScrollTo(textFieldScrollToHeight.intValue)
         }
-        onDispose { /* Nothing to dispose */ }
     }
 }
 
