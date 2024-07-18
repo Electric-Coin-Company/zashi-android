@@ -3,13 +3,4 @@
     <string name="home_tab_send">Send</string>
     <string name="home_tab_receive">Receive</string>
     <string name="home_tab_balances">Balances</string>
-
-    <string name="restoring_initial_dialog_title">Keep Zashi open!</string>
-    <string name="restoring_initial_dialog_subtitle">Your wallet has been successfully restored and is now syncing</string>
-    <string name="restoring_initial_dialog_description">To prevent interruption, keep your screen awake, plug your device into a power source, and keep it in a secure place.</string>
-    <string name="restoring_initial_dialog_checkbox">Keep screen on while restoring.</string>
-    <string name="restoring_initial_dialog_note_part_1">Note:</string>
-    <string name="restoring_initial_dialog_note_part_2">During the initial sync your funds cannot be sent or
-        spent. Depending on the age of your wallet, it may take a few hours to fully sync.</string>
-    <string name="restoring_initial_dialog_positive_button">GOT IT!</string>
 </resources>
