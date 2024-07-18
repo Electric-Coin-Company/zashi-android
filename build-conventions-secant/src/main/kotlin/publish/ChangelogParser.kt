@@ -133,8 +133,10 @@ object ChangelogParser {
                     index + startIndex
                 }
             }
-        return subList(startIndex, endIndex).joinToString("\n").takeIf { it.isNotBlank() }?.let {
-            ChangelogEntrySection(title = title, content = it)
-        }
+        return subList(startIndex, endIndex)
+            .joinToString(prefix = "\n", separator = "\n")
+            .takeIf { it.isNotBlank() }?.let {
+                ChangelogEntrySection(title = title, content = it)
+            }
     }
 }
