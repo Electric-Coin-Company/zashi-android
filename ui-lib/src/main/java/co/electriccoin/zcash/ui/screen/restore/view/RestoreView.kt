@@ -31,12 +31,10 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -82,7 +80,7 @@ import co.electriccoin.zcash.ui.screen.restore.state.WordList
 import co.electriccoin.zcash.ui.screen.restore.state.wordValidation
 import kotlinx.collections.immutable.ImmutableSet
 import kotlinx.collections.immutable.persistentHashSetOf
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
 
 @Preview
 @Composable
@@ -222,7 +220,6 @@ fun RestoreWallet(
     paste: () -> String?,
     onFinished: () -> Unit
 ) {
-    val scope = rememberCoroutineScope()
     var text by rememberSaveable { mutableStateOf("") }
     val parseResult = ParseResult.new(completeWordList, text)
 
@@ -235,10 +232,14 @@ fun RestoreWallet(
     }
 
     // To avoid unnecessary recompositions that this flow produces
-    SideEffect {
-        scope.launch {
-            userWordList.wordValidation().collect {
-                isSeedValid = it is SeedPhraseValidation.Valid
+    LaunchedEffect(Unit) {
+        userWordList.wordValidation().collect {
+            if (it is SeedPhraseValidation.Valid) {
+                @Suppress("MagicNumber")
+                delay(100)
+                isSeedValid = true
+            } else {
+                isSeedValid = false
             }
         }
     }
@@ -256,6 +257,7 @@ fun RestoreWallet(
                         }
                     )
                 }
+
                 RestoreStage.Birthday -> {
                     RestoreSeedBirthdayTopAppBar(
                         onBack = {
@@ -285,6 +287,7 @@ fun RestoreWallet(
                                 .fillMaxWidth()
                     )
                 }
+
                 RestoreStage.Birthday -> {
                     // No content. The action button is part of scrollable content.
                 }
@@ -316,6 +319,7 @@ fun RestoreWallet(
                         modifier = commonModifier
                     )
                 }
+
                 RestoreStage.Birthday -> {
                     RestoreBirthdayMainContent(
                         zcashNetwork = zcashNetwork,
@@ -669,9 +673,11 @@ private fun Autocomplete(
             is ParseResult.Autocomplete -> {
                 Pair(false, parseResult.suggestions)
             }
+
             is ParseResult.Warn -> {
                 return
             }
+
             else -> {
                 Pair(false, null)
             }
