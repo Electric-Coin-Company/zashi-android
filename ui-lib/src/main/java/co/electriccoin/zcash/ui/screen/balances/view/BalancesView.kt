@@ -502,8 +502,8 @@ fun TransparentBalanceRow(
                 isHideBalances = isHideBalances,
                 textStyle =
                     StyledBalanceDefaults.textStyles(
-                        integerPart = ZcashTheme.extendedTypography.balanceSingleStyles.first,
-                        floatingPart = ZcashTheme.extendedTypography.balanceSingleStyles.second
+                        mostSignificantPart = ZcashTheme.extendedTypography.balanceSingleStyles.first,
+                        leastSignificantPart = ZcashTheme.extendedTypography.balanceSingleStyles.second
                     ),
                 textColor = ZcashTheme.colors.textDescriptionDark
             )
@@ -629,8 +629,8 @@ fun SpendableBalanceRow(
                 isHideBalances = isHideBalances,
                 textStyle =
                     StyledBalanceDefaults.textStyles(
-                        integerPart = ZcashTheme.extendedTypography.balanceSingleStyles.first,
-                        floatingPart = ZcashTheme.extendedTypography.balanceSingleStyles.second
+                        mostSignificantPart = ZcashTheme.extendedTypography.balanceSingleStyles.first,
+                        leastSignificantPart = ZcashTheme.extendedTypography.balanceSingleStyles.second
                     ),
                 textColor = ZcashTheme.colors.textPrimary
             )
@@ -668,8 +668,8 @@ fun ChangePendingRow(
                 isHideBalances = isHideBalances,
                 textStyle =
                     StyledBalanceDefaults.textStyles(
-                        integerPart = ZcashTheme.extendedTypography.balanceSingleStyles.first,
-                        floatingPart = ZcashTheme.extendedTypography.balanceSingleStyles.second
+                        mostSignificantPart = ZcashTheme.extendedTypography.balanceSingleStyles.first,
+                        leastSignificantPart = ZcashTheme.extendedTypography.balanceSingleStyles.second
                     ),
                 textColor = ZcashTheme.colors.textDescriptionDark
             )
@@ -706,8 +706,8 @@ fun PendingTransactionsRow(
                 isHideBalances = isHideBalances,
                 textStyle =
                     StyledBalanceDefaults.textStyles(
-                        integerPart = ZcashTheme.extendedTypography.balanceSingleStyles.first,
-                        floatingPart = ZcashTheme.extendedTypography.balanceSingleStyles.second
+                        mostSignificantPart = ZcashTheme.extendedTypography.balanceSingleStyles.first,
+                        leastSignificantPart = ZcashTheme.extendedTypography.balanceSingleStyles.second
                     ),
                 textColor = ZcashTheme.colors.textDescriptionDark
             )

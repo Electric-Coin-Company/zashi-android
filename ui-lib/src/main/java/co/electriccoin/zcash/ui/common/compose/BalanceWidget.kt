@@ -161,8 +161,8 @@ fun BalanceWidget(
                         isHideBalances = isHideBalances,
                         textStyle =
                             StyledBalanceDefaults.textStyles(
-                                integerPart = ZcashTheme.extendedTypography.balanceWidgetStyles.third,
-                                floatingPart = ZcashTheme.extendedTypography.balanceWidgetStyles.fourth
+                                mostSignificantPart = ZcashTheme.extendedTypography.balanceWidgetStyles.third,
+                                leastSignificantPart = ZcashTheme.extendedTypography.balanceWidgetStyles.fourth
                             )
                     )
                 }
@@ -193,8 +193,8 @@ fun BalanceWidgetBigLineOnly(
             isHideBalances = isHideBalances,
             textStyle =
                 StyledBalanceDefaults.textStyles(
-                    integerPart = ZcashTheme.extendedTypography.balanceWidgetStyles.first,
-                    floatingPart = ZcashTheme.extendedTypography.balanceWidgetStyles.second
+                    mostSignificantPart = ZcashTheme.extendedTypography.balanceWidgetStyles.first,
+                    leastSignificantPart = ZcashTheme.extendedTypography.balanceWidgetStyles.second
                 )
         )
 

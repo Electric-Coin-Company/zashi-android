@@ -403,8 +403,8 @@ private fun SendConfirmationContent(
             isHideBalances = false,
             textStyle =
                 StyledBalanceDefaults.textStyles(
-                    integerPart = ZcashTheme.extendedTypography.balanceSingleStyles.first,
-                    floatingPart = ZcashTheme.extendedTypography.balanceSingleStyles.second
+                    mostSignificantPart = ZcashTheme.extendedTypography.balanceSingleStyles.first,
+                    leastSignificantPart = ZcashTheme.extendedTypography.balanceSingleStyles.second
                 ),
         )
 

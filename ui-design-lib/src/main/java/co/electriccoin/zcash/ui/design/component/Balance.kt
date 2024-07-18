@@ -74,7 +74,7 @@ fun StyledBalance(
         if (isHideBalances) {
             buildAnnotatedString {
                 withStyle(
-                    style = textStyle.integerPart.toSpanStyle()
+                    style = textStyle.mostSignificantPart.toSpanStyle()
                 ) {
                     append(hiddenBalancePlaceholder)
                 }
@@ -84,12 +84,12 @@ fun StyledBalance(
 
             buildAnnotatedString {
                 withStyle(
-                    style = textStyle.integerPart.toSpanStyle()
+                    style = textStyle.mostSignificantPart.toSpanStyle()
                 ) {
                     append(balanceSplit.first)
                 }
                 withStyle(
-                    style = textStyle.floatingPart.toSpanStyle()
+                    style = textStyle.leastSignificantPart.toSpanStyle()
                 ) {
                     append(balanceSplit.second)
                 }
@@ -157,16 +157,16 @@ data class ZecAmountTriple(
 )
 
 @Immutable
-data class BalanceTextStyle(val integerPart: TextStyle, val floatingPart: TextStyle)
+data class BalanceTextStyle(val mostSignificantPart: TextStyle, val leastSignificantPart: TextStyle)
 
 object StyledBalanceDefaults {
     @Stable
     @Composable
     fun textStyles(
-        integerPart: TextStyle = ZcashTheme.extendedTypography.balanceWidgetStyles.first,
-        floatingPart: TextStyle = ZcashTheme.extendedTypography.balanceWidgetStyles.second,
+        mostSignificantPart: TextStyle = ZcashTheme.extendedTypography.balanceWidgetStyles.first,
+        leastSignificantPart: TextStyle = ZcashTheme.extendedTypography.balanceWidgetStyles.second,
     ) = BalanceTextStyle(
-        integerPart = integerPart,
-        floatingPart = floatingPart
+        mostSignificantPart = mostSignificantPart,
+        leastSignificantPart = leastSignificantPart
     )
 }
