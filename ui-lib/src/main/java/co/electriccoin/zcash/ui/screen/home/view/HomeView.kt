@@ -3,7 +3,6 @@ package co.electriccoin.zcash.ui.screen.home.view
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
@@ -32,7 +31,7 @@ import co.electriccoin.zcash.ui.design.component.NavigationTabText
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 import co.electriccoin.zcash.ui.screen.home.model.TabItem
-import co.electriccoin.zcash.ui.screen.restoresuccess.view.RestoreSuccessView
+import co.electriccoin.zcash.ui.screen.restoresuccess.WrapRestoreSuccess
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
@@ -76,10 +75,7 @@ fun Home(
     )
 
     if (isShowingRestoreInitDialog) {
-        RestoreSuccessView(
-            modifier = Modifier.fillMaxSize(),
-            onPositiveClick = setShowingRestoreInitDialog
-        )
+        WrapRestoreSuccess(onDone = setShowingRestoreInitDialog)
     }
 
     if (isKeepScreenOnWhileSyncing == true &&

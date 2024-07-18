@@ -44,6 +44,7 @@ android {
                     "src/main/res/ui/onboarding",
                     "src/main/res/ui/receive",
                     "src/main/res/ui/restore",
+                    "src/main/res/ui/restore_success",
                     "src/main/res/ui/scan",
                     "src/main/res/ui/security_warning",
                     "src/main/res/ui/seed_recovery",
