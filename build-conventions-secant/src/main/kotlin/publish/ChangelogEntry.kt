@@ -2,6 +2,9 @@ package publish
 
 import com.google.gson.GsonBuilder
 
+private const val RELEASE_NOTES_MAX_LENGTH = 500
+private const val NEW_LINE_SIGN = "\n"
+
 data class ChangelogEntry(
     val version: String,
     val date: String,
@@ -27,9 +30,17 @@ data class ChangelogEntry(
         }
 
     private fun StringBuilder.appendChangeLogSection(section: ChangelogEntrySection) {
-        appendLine(section.title)
-        appendLine(section.content)
-        appendLine()
+        appendLineIfCan(section.title)
+        appendLineIfCan(section.content)
+    }
+
+    private fun StringBuilder.appendLineIfCan(line: String) {
+        if (length + line.length <= RELEASE_NOTES_MAX_LENGTH) {
+            append(line)
+        }
+        if (length + NEW_LINE_SIGN.length <= RELEASE_NOTES_MAX_LENGTH) {
+            append(NEW_LINE_SIGN)
+        }
     }
 
     fun toJsonString(): String =
