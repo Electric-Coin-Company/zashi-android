@@ -11,6 +11,8 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ### Added
 - A new What's New screen has been added, accessible from the About screen
+- Copying sensitive information like addresses, transaction IDs, or wallet secrets into the device clipboard is now 
+  masked out from the system visual confirmation, but it's still copied as expected.
 
 ### Changed
 - The About screen has been redesigned to align with the new design guidelines

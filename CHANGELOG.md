@@ -10,6 +10,9 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 - A new What's New screen has been added, accessible from the About screen. It contains the release notes parsed 
   from the new [docs/whatsNew/WHATS_NEW_EN.md] file
 - These release notes and release priority are both propagated to every new Google Play release using CI logic
+- Copying sensitive information like addresses, transaction IDs, or wallet secrets into the device clipboard is now 
+  masked out from the system visual confirmation, but it's still copied as expected. `ClipDescription.EXTRA_IS_SENSITIVE`
+flag is used on Android SDK level 33 and higher, masking out the `Toast` text on levels below it.  
 
 ### Changed
 - The About screen has been redesigned to align with the new design guidelines
