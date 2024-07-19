@@ -66,7 +66,7 @@ private fun RestoreSuccessContent(
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingBig))
 
         Text(
-            text = stringResource(id = R.string.restoring_initial_dialog_title),
+            text = stringResource(id = R.string.restore_success_title),
             style = ZcashTheme.typography.secondary.headlineMedium
         )
 
@@ -74,14 +74,14 @@ private fun RestoreSuccessContent(
 
         Image(
             painter = painterResource(id = R.drawable.img_success_dialog),
-            contentDescription = stringResource(id = R.string.restoring_initial_dialog_subtitle),
+            contentDescription = stringResource(id = R.string.restore_success_subtitle),
             colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onBackground)
         )
 
         Spacer(Modifier.height(ZcashTheme.dimens.spacingUpLarge))
 
         Text(
-            text = stringResource(id = R.string.restoring_initial_dialog_subtitle),
+            text = stringResource(id = R.string.restore_success_subtitle),
             textAlign = TextAlign.Center,
             style = ZcashTheme.typography.secondary.headlineSmall,
             fontWeight = FontWeight.SemiBold
@@ -90,7 +90,7 @@ private fun RestoreSuccessContent(
         Spacer(Modifier.height(ZcashTheme.dimens.spacingUpLarge))
 
         Text(
-            text = stringResource(id = R.string.restoring_initial_dialog_description),
+            text = stringResource(id = R.string.restore_success_description),
             style = ZcashTheme.typography.secondary.bodySmall,
         )
 
@@ -109,10 +109,10 @@ private fun RestoreSuccessContent(
             text =
                 buildAnnotatedString {
                     withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
-                        append(stringResource(id = R.string.restoring_initial_dialog_note_part_1))
+                        append(stringResource(id = R.string.restore_success_note_part_1))
                     }
                     append(" ")
-                    append(stringResource(id = R.string.restoring_initial_dialog_note_part_2))
+                    append(stringResource(id = R.string.restore_success_note_part_2))
                 },
             style = ZcashTheme.extendedTypography.footnote,
         )
@@ -123,7 +123,7 @@ private fun RestoreSuccessContent(
 
         PrimaryButton(
             onClick = state.onPositiveClick,
-            text = stringResource(id = R.string.restoring_initial_dialog_positive_button)
+            text = stringResource(id = R.string.restore_success_button)
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingBig))
