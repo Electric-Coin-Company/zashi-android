@@ -20,3 +20,5 @@ suspend fun Context.getInternalCacheDirSuspend(subDirectory: String?): File =
     withContext(Dispatchers.IO) {
         (subDirectory?.let { File(cacheDir, subDirectory) } ?: cacheDir).apply { mkdirsSuspend() }
     }
+
+inline fun <reified T> Context.getSystemService(): T = getSystemService(T::class.java)
