@@ -235,8 +235,8 @@ fun RestoreWallet(
     LaunchedEffect(Unit) {
         userWordList.wordValidation().collect {
             if (it is SeedPhraseValidation.Valid) {
-                // temporary fix to wait for other states to update first
-                // https://github.com/Electric-Coin-Company/zashi-android/issues/1522
+                // TODO [1522]: temporary fix to wait for other states to update first
+                // TODO [1522]: https://github.com/Electric-Coin-Company/zashi-android/issues/1522
                 @Suppress("MagicNumber")
                 delay(100)
                 isSeedValid = true
