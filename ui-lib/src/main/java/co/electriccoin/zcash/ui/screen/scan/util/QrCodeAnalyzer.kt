@@ -115,7 +115,7 @@ class QrCodeAnalyzer(
     }
 }
 
-private const val LEFT_OFFSET = .1
+private const val LEFT_OFFSET = .15
 private const val TOP_OFFSET = .15
-private const val WIDTH_OFFSET = .8
-private const val HEIGHT_OFFSET = .6
+private const val WIDTH_OFFSET = .7
+private const val HEIGHT_OFFSET = .45
