@@ -3,8 +3,4 @@
     <string name="home_tab_send">Send</string>
     <string name="home_tab_receive">Receive</string>
     <string name="home_tab_balances">Balances</string>
-
-    <string name="restoring_initial_dialog_title">Success</string>
-    <string name="restoring_initial_dialog_description">Your wallet has been successfully restored! During the initial sync, your funds cannot be spent or sent. Depending on the age of your wallet, it may take a few hours to fully sync.</string>
-    <string name="restoring_initial_dialog_positive_button">OK</string>
 </resources>

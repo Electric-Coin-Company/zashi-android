@@ -14,6 +14,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import java.util.concurrent.Executors
 
@@ -30,6 +32,8 @@ class AndroidPreferenceProvider(
     private val sharedPreferences: SharedPreferences,
     private val dispatcher: CoroutineDispatcher
 ) : PreferenceProvider {
+    private val mutex = Mutex()
+
     /*
      * Implementation note: EncryptedSharedPreferences are not thread-safe, so this implementation
      * confines them to a single background thread.
@@ -45,13 +49,15 @@ class AndroidPreferenceProvider(
         key: PreferenceKey,
         value: String?
     ) = withContext(dispatcher) {
-        val editor = sharedPreferences.edit()
+        mutex.withLock {
+            val editor = sharedPreferences.edit()
 
-        editor.putString(key.key, value)
+            editor.putString(key.key, value)
 
-        editor.commit()
+            editor.commit()
 
-        Unit
+            Unit
+        }
     }
 
     override suspend fun getString(key: PreferenceKey) =

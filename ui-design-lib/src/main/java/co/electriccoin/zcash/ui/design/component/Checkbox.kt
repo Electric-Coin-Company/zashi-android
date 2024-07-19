@@ -3,7 +3,6 @@ package co.electriccoin.zcash.ui.design.component
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
@@ -76,7 +75,6 @@ fun LabeledCheckBox(
         modifier =
             modifier.then(
                 Modifier
-                    .wrapContentSize()
                     .clip(RoundedCornerShape(ZcashTheme.dimens.regularRippleEffectCorner))
                     .clickable {
                         setCheckedState(!checkedState)

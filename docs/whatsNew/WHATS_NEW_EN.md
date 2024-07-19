@@ -14,3 +14,5 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ### Changed
 - The About screen has been redesigned to align with the new design guidelines
+- The Restore Success dialog has been reworked into a separate screen, allowing users to opt out of the Keep screen 
+  on while restoring option

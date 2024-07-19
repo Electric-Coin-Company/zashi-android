@@ -19,21 +19,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import cash.z.ecc.android.sdk.Synchronizer
-import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.DisableScreenTimeout
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
-import co.electriccoin.zcash.ui.design.component.AppAlertDialog
 import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.NavigationTabText
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 import co.electriccoin.zcash.ui.screen.home.model.TabItem
+import co.electriccoin.zcash.ui.screen.restoresuccess.WrapRestoreSuccess
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
@@ -46,8 +44,8 @@ private fun ComposablePreview() {
         BlankSurface {
             Home(
                 isKeepScreenOnWhileSyncing = false,
-                isShowingRestoreInitDialog = false,
-                setShowingRestoreInitDialog = {},
+                isShowingRestoreSuccess = false,
+                setShowingRestoreSuccess = {},
                 subScreens = persistentListOf(),
                 walletSnapshot = WalletSnapshotFixture.new(),
             )
@@ -60,8 +58,8 @@ private fun ComposablePreview() {
 @Composable
 fun Home(
     isKeepScreenOnWhileSyncing: Boolean?,
-    isShowingRestoreInitDialog: Boolean,
-    setShowingRestoreInitDialog: () -> Unit,
+    isShowingRestoreSuccess: Boolean,
+    setShowingRestoreSuccess: () -> Unit,
     subScreens: ImmutableList<TabItem>,
     walletSnapshot: WalletSnapshot?,
     pagerState: PagerState =
@@ -76,8 +74,8 @@ fun Home(
         subScreens = subScreens,
     )
 
-    if (isShowingRestoreInitDialog) {
-        HomeRestoringInitialDialog(setShowingRestoreInitDialog)
+    if (isShowingRestoreSuccess) {
+        WrapRestoreSuccess(onDone = setShowingRestoreSuccess)
     }
 
     if (isKeepScreenOnWhileSyncing == true &&
@@ -181,14 +179,4 @@ private fun HomeContent(
             }
         }
     }
-}
-
-@Composable
-fun HomeRestoringInitialDialog(setShowingRestoreInitDialog: () -> Unit) {
-    AppAlertDialog(
-        title = stringResource(id = R.string.restoring_initial_dialog_title),
-        text = stringResource(id = R.string.restoring_initial_dialog_description),
-        confirmButtonText = stringResource(id = R.string.restoring_initial_dialog_positive_button),
-        onConfirmButtonClick = setShowingRestoreInitDialog
-    )
 }

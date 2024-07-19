@@ -14,12 +14,8 @@ import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 
 class SettingsViewModel(application: Application) : AndroidViewModel(application) {
-    private val mutex = Mutex()
-
     val isAnalyticsEnabled: StateFlow<Boolean?> = booleanStateFlow(StandardPreferenceKeys.IS_ANALYTICS_ENABLED)
 
     val isBackgroundSync: StateFlow<Boolean?> = booleanStateFlow(StandardPreferenceKeys.IS_BACKGROUND_SYNC_ENABLED)
@@ -51,9 +47,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
     ) {
         viewModelScope.launch {
             val prefs = StandardPreferenceSingleton.getInstance(getApplication())
-            mutex.withLock {
-                default.putValue(prefs, newState)
-            }
+            default.putValue(prefs, newState)
         }
     }
 }
