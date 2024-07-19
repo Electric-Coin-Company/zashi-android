@@ -55,8 +55,6 @@ internal fun WrapHome(
 
     val isKeepScreenOnWhileSyncing = homeViewModel.isKeepScreenOnWhileSyncing.collectAsStateWithLifecycle().value
 
-    val isRestoringInitialWarningSeen = homeViewModel.isRestoringInitialWarningSeen.collectAsStateWithLifecycle().value
-
     val walletSnapshot = walletViewModel.walletSnapshot.collectAsStateWithLifecycle().value
 
     val walletRestoringState = walletViewModel.walletRestoringState.collectAsStateWithLifecycle().value
@@ -66,20 +64,24 @@ internal fun WrapHome(
         walletViewModel.persistWalletRestoringState(WalletRestoringState.SYNCING)
     }
 
-    var isShowingRestoreInitDialog by rememberSaveable { mutableStateOf(false) }
-    val setShowingRestoreInitDialog = {
+    // TODO [#1523]: Refactor RestoreSuccess screen navigation
+    // TODO [#1523]: https://github.com/Electric-Coin-Company/zashi-android/issues/1523
+    val isRestoreSuccessSeen = homeViewModel.isRestoreSuccessSeen.collectAsStateWithLifecycle().value
+
+    var isShowingRestoreSuccess by rememberSaveable { mutableStateOf(false) }
+    val setShowingRestoreSuccess = {
         homeViewModel.setRestoringInitialWarningSeen()
-        isShowingRestoreInitDialog = false
+        isShowingRestoreSuccess = false
     }
 
-    // Show initial restoring warn dialog
-    isRestoringInitialWarningSeen?.let { restoringWarningSeen ->
-        if (!restoringWarningSeen && walletRestoringState == WalletRestoringState.RESTORING) {
-            LaunchedEffect(key1 = isShowingRestoreInitDialog) {
-                // Adding an extra little delay before displaying the dialog for a better UX
+    // Show initial restore success screen
+    isRestoreSuccessSeen?.let { restoreSuccessSeen ->
+        if (!restoreSuccessSeen && walletRestoringState == WalletRestoringState.RESTORING) {
+            LaunchedEffect(key1 = isShowingRestoreSuccess) {
+                // Adding an extra little delay before displaying for a better UX
                 @Suppress("MagicNumber")
                 delay(1500)
-                isShowingRestoreInitDialog = true
+                isShowingRestoreSuccess = true
             }
         }
     }
@@ -90,9 +92,9 @@ internal fun WrapHome(
         goSettings = goSettings,
         goMultiTrxSubmissionFailure = goMultiTrxSubmissionFailure,
         isKeepScreenOnWhileSyncing = isKeepScreenOnWhileSyncing,
-        isShowingRestoreInitDialog = isShowingRestoreInitDialog,
+        isShowingRestoreSuccess = isShowingRestoreSuccess,
         sendArguments = sendArguments,
-        setShowingRestoreInitDialog = setShowingRestoreInitDialog,
+        setShowingRestoreSuccess = setShowingRestoreSuccess,
         walletSnapshot = walletSnapshot
     )
 }
@@ -106,9 +108,9 @@ internal fun WrapHome(
     goScan: () -> Unit,
     goSendConfirmation: (ZecSend) -> Unit,
     isKeepScreenOnWhileSyncing: Boolean?,
-    isShowingRestoreInitDialog: Boolean,
+    isShowingRestoreSuccess: Boolean,
     sendArguments: SendArguments,
-    setShowingRestoreInitDialog: () -> Unit,
+    setShowingRestoreSuccess: () -> Unit,
     walletSnapshot: WalletSnapshot?,
 ) {
     val focusManager = LocalFocusManager.current
@@ -209,8 +211,8 @@ internal fun WrapHome(
     Home(
         subScreens = tabs,
         isKeepScreenOnWhileSyncing = isKeepScreenOnWhileSyncing,
-        isShowingRestoreInitDialog = isShowingRestoreInitDialog,
-        setShowingRestoreInitDialog = setShowingRestoreInitDialog,
+        isShowingRestoreSuccess = isShowingRestoreSuccess,
+        setShowingRestoreSuccess = setShowingRestoreSuccess,
         walletSnapshot = walletSnapshot,
         pagerState = pagerState,
     )

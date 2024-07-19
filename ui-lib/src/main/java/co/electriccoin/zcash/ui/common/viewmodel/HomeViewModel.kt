@@ -33,9 +33,9 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         booleanStateFlow(StandardPreferenceKeys.IS_KEEP_SCREEN_ON_DURING_SYNC)
 
     /**
-     * A flow of whether the app presented the user with an initial restoring dialog
+     * A flow of whether the app presented the user with restore success screem
      */
-    val isRestoringInitialWarningSeen: StateFlow<Boolean?> =
+    val isRestoreSuccessSeen: StateFlow<Boolean?> =
         booleanStateFlow(StandardPreferenceKeys.IS_RESTORING_INITIAL_WARNING_SEEN)
 
     fun setRestoringInitialWarningSeen() {

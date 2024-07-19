@@ -44,8 +44,8 @@ private fun ComposablePreview() {
         BlankSurface {
             Home(
                 isKeepScreenOnWhileSyncing = false,
-                isShowingRestoreInitDialog = false,
-                setShowingRestoreInitDialog = {},
+                isShowingRestoreSuccess = false,
+                setShowingRestoreSuccess = {},
                 subScreens = persistentListOf(),
                 walletSnapshot = WalletSnapshotFixture.new(),
             )
@@ -58,8 +58,8 @@ private fun ComposablePreview() {
 @Composable
 fun Home(
     isKeepScreenOnWhileSyncing: Boolean?,
-    isShowingRestoreInitDialog: Boolean,
-    setShowingRestoreInitDialog: () -> Unit,
+    isShowingRestoreSuccess: Boolean,
+    setShowingRestoreSuccess: () -> Unit,
     subScreens: ImmutableList<TabItem>,
     walletSnapshot: WalletSnapshot?,
     pagerState: PagerState =
@@ -74,8 +74,8 @@ fun Home(
         subScreens = subScreens,
     )
 
-    if (isShowingRestoreInitDialog) {
-        WrapRestoreSuccess(onDone = setShowingRestoreInitDialog)
+    if (isShowingRestoreSuccess) {
+        WrapRestoreSuccess(onDone = setShowingRestoreSuccess)
     }
 
     if (isKeepScreenOnWhileSyncing == true &&
