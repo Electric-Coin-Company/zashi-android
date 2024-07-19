@@ -30,14 +30,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -47,7 +44,6 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
@@ -84,7 +80,7 @@ import co.electriccoin.zcash.ui.screen.restore.state.WordList
 import co.electriccoin.zcash.ui.screen.restore.state.wordValidation
 import kotlinx.collections.immutable.ImmutableSet
 import kotlinx.collections.immutable.persistentHashSetOf
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
 
 @Preview
 @Composable
@@ -224,7 +220,6 @@ fun RestoreWallet(
     paste: () -> String?,
     onFinished: () -> Unit
 ) {
-    val scope = rememberCoroutineScope()
     var text by rememberSaveable { mutableStateOf("") }
     val parseResult = ParseResult.new(completeWordList, text)
 
@@ -237,10 +232,16 @@ fun RestoreWallet(
     }
 
     // To avoid unnecessary recompositions that this flow produces
-    SideEffect {
-        scope.launch {
-            userWordList.wordValidation().collect {
-                isSeedValid = it is SeedPhraseValidation.Valid
+    LaunchedEffect(Unit) {
+        userWordList.wordValidation().collect {
+            if (it is SeedPhraseValidation.Valid) {
+                // TODO [#1522]: temporary fix to wait for other states to update first
+                // TODO [#1522]: https://github.com/Electric-Coin-Company/zashi-android/issues/1522
+                @Suppress("MagicNumber")
+                delay(100)
+                isSeedValid = true
+            } else {
+                isSeedValid = false
             }
         }
     }
@@ -258,6 +259,7 @@ fun RestoreWallet(
                         }
                     )
                 }
+
                 RestoreStage.Birthday -> {
                     RestoreSeedBirthdayTopAppBar(
                         onBack = {
@@ -287,6 +289,7 @@ fun RestoreWallet(
                                 .fillMaxWidth()
                     )
                 }
+
                 RestoreStage.Birthday -> {
                     // No content. The action button is part of scrollable content.
                 }
@@ -318,6 +321,7 @@ fun RestoreWallet(
                         modifier = commonModifier
                     )
                 }
+
                 RestoreStage.Birthday -> {
                     RestoreBirthdayMainContent(
                         zcashNetwork = zcashNetwork,
@@ -400,7 +404,7 @@ private fun RestoreSeedMainContent(
     goNext: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val scope = rememberCoroutineScope()
+    val focusManager = LocalFocusManager.current
     val scrollState = rememberScrollState()
     val focusRequester = remember { FocusRequester() }
     val textFieldScrollToHeight = rememberSaveable { mutableIntStateOf(0) }
@@ -468,24 +472,21 @@ private fun RestoreSeedMainContent(
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingHuge))
     }
 
-    if (isSeedValid) {
-        // Clear focus and hide keyboard to make it easier for users to see the next button
-        LocalSoftwareKeyboardController.current?.hide()
-        LocalFocusManager.current.clearFocus()
+    LaunchedEffect(isSeedValid) {
+        if (isSeedValid) {
+            // Clear focus and hide keyboard to make it easier for users to see the next button
+            focusManager.clearFocus()
+        }
     }
 
-    DisposableEffect(parseResult) {
+    LaunchedEffect(parseResult) {
         // Causes the TextFiled to refocus
         if (!isSeedValid) {
             focusRequester.requestFocus()
         }
-        // Causes scroll to the TextField after the first type action
         if (text.isNotEmpty() && userWordList.current.value.isEmpty()) {
-            scope.launch {
-                scrollState.animateScrollTo(textFieldScrollToHeight.intValue)
-            }
+            scrollState.animateScrollTo(textFieldScrollToHeight.intValue)
         }
-        onDispose { /* Nothing to dispose */ }
     }
 }
 
@@ -674,9 +675,11 @@ private fun Autocomplete(
             is ParseResult.Autocomplete -> {
                 Pair(false, parseResult.suggestions)
             }
+
             is ParseResult.Warn -> {
                 return
             }
+
             else -> {
                 Pair(false, null)
             }
