@@ -16,3 +16,6 @@ directly impact users rather than highlighting other key architectural updates.*
 - The About screen has been redesigned to align with the new design guidelines
 - The Restore Success dialog has been reworked into a separate screen, allowing users to opt out of the Keep screen 
   on while restoring option
+
+### Fixed
+- Support Screen now shows the Send button above keyboard instead of overlaying it
