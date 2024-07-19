@@ -15,11 +15,13 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 - The About screen has been redesigned to align with the new design guidelines
 - `StyledBalance` text styles have been refactored from `Pair` into `BalanceTextStyle` 
 - The Restore Success dialog has been reworked into a separate screen, allowing users to opt out of the Keep screen
-  on while restoring option 
+  on while restoring option
 
 ## Fixed
 - Support Screen now shows the Send button above keyboard instead of overlaying it. This was achieved by setting 
   `adjustResize` to `MainActivity` and adding `imePadding` to top level composable
+- QR code scanning speed and reliability have been improved to address the latest reported scan issue. The obtained 
+  image cropping and image reader hints have been changed as part of these improvements.   
 
 ## [1.1.3 (682)] - 2024-07-03
 

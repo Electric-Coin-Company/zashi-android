@@ -48,7 +48,12 @@ class ImageUriToQrCodeConverter {
     private fun BinaryBitmap.toQRCode(): String =
         MultiFormatReader()
             .apply {
-                setHints(mapOf(DecodeHintType.POSSIBLE_FORMATS to arrayListOf(BarcodeFormat.QR_CODE)))
+                setHints(
+                    mapOf(
+                        DecodeHintType.POSSIBLE_FORMATS to arrayListOf(BarcodeFormat.QR_CODE),
+                        DecodeHintType.ALSO_INVERTED to true
+                    )
+                )
             }
-            .decode(this@toQRCode).text
+            .decodeWithState(this@toQRCode).text
 }
