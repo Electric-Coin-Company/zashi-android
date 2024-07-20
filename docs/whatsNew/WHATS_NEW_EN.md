@@ -20,3 +20,6 @@ directly impact users rather than highlighting other key architectural updates.*
 ### Fixed
 - Support Screen now shows the Send button above keyboard instead of overlaying it
 - QR code scanning speed and reliability have been improved to address the latest reported scan issue
+
+### Removed
+- Test - test - test fine!

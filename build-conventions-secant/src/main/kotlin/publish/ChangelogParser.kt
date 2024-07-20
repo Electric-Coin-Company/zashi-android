@@ -10,7 +10,7 @@ import java.util.Locale
 
 object ChangelogParser {
     // Enable this when you need detailed parser logging. This should be turned off for production builds.
-    private const val DEBUG_LOGS_ENABLED = false
+    private const val DEBUG_LOGS_ENABLED = true
 
     private const val CHANGELOG_TITLE_POSITION = 0
     private const val UNRELEASED_TITLE_POSITION = 4
@@ -23,7 +23,8 @@ object ChangelogParser {
 
     fun getChangelogEntry(
         filePath: String,
-        versionNameFallback: String
+        versionNameFallback: String,
+        keywords: LocalizedKeywords,
     ): ChangelogEntry {
         log("Parser: starting...")
 
@@ -40,13 +41,13 @@ object ChangelogParser {
 
         // Validate content
         check(
-            nodes[CHANGELOG_TITLE_POSITION].contains("# Changelog") &&
-                nodes[UNRELEASED_TITLE_POSITION].contains("## [Unreleased]")
+            nodes[CHANGELOG_TITLE_POSITION].contains("# ${keywords.changelog}") &&
+                nodes[UNRELEASED_TITLE_POSITION].contains("## [${keywords.unreleased}]")
         ) {
             "Provided changelog file is incorrect or its structure is malformed."
         }
 
-        val fromIndex = findFirstValidNodeIndex(nodes)
+        val fromIndex = findFirstValidNodeIndex(nodes, keywords)
         log("Parser: index from: $fromIndex")
 
         val toIndex =
@@ -65,12 +66,12 @@ object ChangelogParser {
         val lastChangelogEntry =
             nodes.subList(fromIndex = fromIndex, toIndex = toIndex).let { parts ->
                 ChangelogEntry(
-                    version = parts.getVersionPart(versionNameFallback),
-                    date = parts.getDatePart(),
-                    added = parts.getNodePart("Added"),
-                    changed = parts.getNodePart("Changed"),
-                    fixed = parts.getNodePart("Fixed"),
-                    removed = parts.getNodePart("Removed"),
+                    version = parts.getVersionPart(versionNameFallback, keywords),
+                    date = parts.getDatePart(keywords),
+                    added = parts.getNodePart(keywords.added),
+                    changed = parts.getNodePart(keywords.changed),
+                    fixed = parts.getNodePart(keywords.fixed),
+                    removed = parts.getNodePart(keywords.removed),
                 )
             }
 
@@ -78,9 +79,9 @@ object ChangelogParser {
         return lastChangelogEntry
     }
 
-    private fun findFirstValidNodeIndex(nodes: List<String>): Int {
+    private fun findFirstValidNodeIndex(nodes: List<String>, keywords: LocalizedKeywords): Int {
         nodes.forEachIndexed { index, node ->
-            if (findNodeByPrefix(node) && findValidSubNodeByPrefix(nodes[index + 1])) {
+            if (findNodeByPrefix(node) && findValidSubNodeByPrefix(nodes[index + 1], keywords)) {
                 return index
             }
         }
@@ -90,25 +91,25 @@ object ChangelogParser {
 
     private fun findNodeByPrefix(node: String): Boolean = node.startsWith("## [")
 
-    private fun findValidSubNodeByPrefix(subNode: String): Boolean =
-        subNode.startsWith("### Added") ||
-            subNode.startsWith("### Changed") ||
-            subNode.startsWith("### Fixed") ||
-            subNode.startsWith("### Removed")
+    private fun findValidSubNodeByPrefix(subNode: String, keywords: LocalizedKeywords): Boolean =
+        subNode.startsWith("### ${keywords.added}") ||
+            subNode.startsWith("### ${keywords.changed}") ||
+            subNode.startsWith("### ${keywords.fixed}") ||
+            subNode.startsWith("### ${keywords.removed}")
 
-    private fun List<String>.getVersionPart(versionNameFallback: String): String {
-        return if (this.contains("## [Unreleased]")) {
+    private fun List<String>.getVersionPart(versionNameFallback: String, keywords: LocalizedKeywords): String {
+        return if (this.contains("## [${keywords.unreleased}]")) {
             versionNameFallback
         } else {
             this[0].split("[")[1].split("]")[0].trim()
         }
     }
 
-    private val dateFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+    private val fallbackDateFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
 
-    private fun List<String>.getDatePart(): String {
-        return if (this.contains("## [Unreleased]")) {
-            dateFormatter.format(Date())
+    private fun List<String>.getDatePart(keywords: LocalizedKeywords): String {
+        return if (this.contains("## [${keywords.unreleased}]")) {
+            fallbackDateFormatter.format(Date())
         } else {
             this[0].split("- ")[1].trim()
         }
@@ -134,9 +135,19 @@ object ChangelogParser {
                 }
             }
         return subList(startIndex, endIndex)
-            .joinToString(prefix = "\n", separator = "\n")
+            .map { it.replace("\n- ", "\n• ") }
+            .joinToString(separator = "\n")
             .takeIf { it.isNotBlank() }?.let {
                 ChangelogEntrySection(title = title, content = it)
             }
     }
+
+    data class LocalizedKeywords(
+        val changelog: String,
+        val unreleased: String,
+        val added: String,
+        val changed: String,
+        val fixed: String,
+        val removed: String,
+    )
 }

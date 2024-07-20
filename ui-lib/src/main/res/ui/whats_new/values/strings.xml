@@ -2,4 +2,5 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="whats_new_title">What\'s new</string>
     <string name="whats_new_version">Zashi Version %s</string>
+    <string name="whats_new_entry_title"><xliff:g id="entry_title" example="Added">%1$s</xliff:g>:</string>
 </resources>

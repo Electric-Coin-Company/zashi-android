@@ -8,19 +8,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.ParagraphStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextIndent
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import co.electriccoin.zcash.ui.R
@@ -50,15 +42,15 @@ fun WhatsNewView(
     ) { paddingValues ->
         Column(
             modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(
-                        top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
-                        bottom = paddingValues.calculateBottomPadding() + ZcashTheme.dimens.spacingDefault,
-                        start = ZcashTheme.dimens.screenHorizontalSpacingRegular,
-                        end = ZcashTheme.dimens.screenHorizontalSpacingRegular
-                    )
-                    .verticalScroll(rememberScrollState())
+            Modifier
+                .fillMaxSize()
+                .padding(
+                    top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
+                    bottom = paddingValues.calculateBottomPadding() + ZcashTheme.dimens.spacingDefault,
+                    start = ZcashTheme.dimens.screenHorizontalSpacingRegular,
+                    end = ZcashTheme.dimens.screenHorizontalSpacingRegular
+                )
+                .verticalScroll(rememberScrollState())
         ) {
             Row {
                 Text(
@@ -87,43 +79,17 @@ fun WhatsNewView(
 
 @Composable
 private fun WhatsNewSection(state: WhatsNewSectionState) {
-    val bulletString = "\u2022\t\t"
-    val bulletTextStyle = MaterialTheme.typography.bodySmall
-    val bulletTextMeasurer = rememberTextMeasurer()
-    val bulletStringWidth =
-        remember(bulletTextStyle, bulletTextMeasurer) {
-            bulletTextMeasurer.measure(text = bulletString, style = bulletTextStyle).size.width
-        }
-    val bulletRestLine = with(LocalDensity.current) { bulletStringWidth.toSp() }
-    val bulletParagraphStyle = ParagraphStyle(textIndent = TextIndent(restLine = bulletRestLine))
-    val bulletStyle =
-        state.content.getValue().split("\n-")
-            .filter { it.isNotBlank() }
-            .map {
-                it.replace("\n-", "").trim()
-            }
-            .let { text ->
-                buildAnnotatedString {
-                    text.forEach {
-                        withStyle(style = bulletParagraphStyle) {
-                            append(bulletString)
-                            append(it)
-                        }
-                    }
-                }
-            }
-
     Column {
         Text(
-            text = state.title.getValue(),
+            text = stringResource(id = R.string.whats_new_entry_title, state.title.getValue()),
             style = ZcashTheme.typography.primary.titleSmall,
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingMin))
 
         Text(
-            text = bulletStyle,
-            style = bulletTextStyle
+            text = state.content.getValue(),
+            style = ZcashTheme.typography.primary.bodySmall
         )
     }
 }

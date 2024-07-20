@@ -26,7 +26,15 @@ val generateBuildConfigTask = tasks.create("buildConfig") {
 
     val releaseNotesJson = ChangelogParser.getChangelogEntry(
         filePath = "docs/whatsNew/WHATS_NEW_EN.md",
-        versionNameFallback = gradleVersionName
+        versionNameFallback = gradleVersionName,
+        keywords = ChangelogParser.LocalizedKeywords(
+            changelog = "Changelog",
+            unreleased = "Unreleased",
+            added = "Added",
+            changed = "Changed",
+            fixed = "Fixed",
+            removed = "Removed",
+        )
     ).toJsonString()
 
     inputs.property("gitSha", gitInfo.sha)
