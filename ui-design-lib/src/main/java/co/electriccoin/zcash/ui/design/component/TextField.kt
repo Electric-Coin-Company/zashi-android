@@ -26,6 +26,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.util.StringResource
+import co.electriccoin.zcash.ui.design.util.getValue
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -38,27 +40,20 @@ fun FormTextField(
     error: String? = null,
     enabled: Boolean = true,
     textStyle: TextStyle = ZcashTheme.extendedTypography.textFieldValue,
-    placeholder:
-        @Composable()
-        (() -> Unit)? = null,
-    leadingIcon:
-        @Composable()
-        (() -> Unit)? = null,
-    trailingIcon:
-        @Composable()
-        (() -> Unit)? = null,
+    placeholder: @Composable (() -> Unit)? = null,
+    leadingIcon: @Composable (() -> Unit)? = null,
+    trailingIcon: @Composable (() -> Unit)? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-    colors: TextFieldColors =
-        TextFieldDefaults.colors(
-            cursorColor = ZcashTheme.colors.textPrimary,
-            focusedContainerColor = Color.Transparent,
-            unfocusedContainerColor = Color.Transparent,
-            disabledContainerColor = Color.Transparent,
-            errorContainerColor = Color.Transparent,
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent,
-            disabledIndicatorColor = Color.Transparent
-        ),
+    colors: TextFieldColors = TextFieldDefaults.colors(
+        cursorColor = ZcashTheme.colors.textPrimary,
+        focusedContainerColor = Color.Transparent,
+        unfocusedContainerColor = Color.Transparent,
+        disabledContainerColor = Color.Transparent,
+        errorContainerColor = Color.Transparent,
+        focusedIndicatorColor = Color.Transparent,
+        unfocusedIndicatorColor = Color.Transparent,
+        disabledIndicatorColor = Color.Transparent
+    ),
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     shape: Shape = TextFieldDefaults.shape,
     // To enable border around the TextField
@@ -74,41 +69,41 @@ fun FormTextField(
             value = value,
             onValueChange = onValueChange,
             placeholder =
-                if (enabled) {
-                    placeholder
-                } else {
-                    null
-                },
+            if (enabled) {
+                placeholder
+            } else {
+                null
+            },
             textStyle = textStyle,
             keyboardOptions = keyboardOptions,
             colors = colors,
             modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .defaultMinSize(minHeight = minHeight)
-                    .onFocusEvent { focusState ->
-                        bringIntoViewRequester?.run {
-                            if (focusState.isFocused) {
-                                coroutineScope.launch {
-                                    bringIntoView()
-                                }
+            Modifier
+                .fillMaxWidth()
+                .defaultMinSize(minHeight = minHeight)
+                .onFocusEvent { focusState ->
+                    bringIntoViewRequester?.run {
+                        if (focusState.isFocused) {
+                            coroutineScope.launch {
+                                bringIntoView()
                             }
                         }
                     }
-                    .then(
-                        if (withBorder) {
-                            Modifier.border(width = 1.dp, color = ZcashTheme.colors.textFieldFrame)
-                        } else {
-                            Modifier
-                        }
-                    )
-                    .then(
-                        if (testTag.isNullOrEmpty()) {
-                            Modifier
-                        } else {
-                            Modifier.testTag(testTag)
-                        }
-                    ),
+                }
+                .then(
+                    if (withBorder) {
+                        Modifier.border(width = 1.dp, color = ZcashTheme.colors.textFieldFrame)
+                    } else {
+                        Modifier
+                    }
+                )
+                .then(
+                    if (testTag.isNullOrEmpty()) {
+                        Modifier
+                    } else {
+                        Modifier.testTag(testTag)
+                    }
+                ),
             leadingIcon = leadingIcon,
             trailingIcon = trailingIcon,
             keyboardActions = keyboardActions,
@@ -128,3 +123,59 @@ fun FormTextField(
         }
     }
 }
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun FormTextField(
+    state: TextFieldState,
+    modifier: Modifier = Modifier,
+    textStyle: TextStyle = ZcashTheme.extendedTypography.textFieldValue,
+    placeholder: @Composable (() -> Unit)? = null,
+    leadingIcon: @Composable (() -> Unit)? = null,
+    trailingIcon: @Composable (() -> Unit)? = null,
+    keyboardOptions: KeyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+    colors: TextFieldColors =
+        TextFieldDefaults.colors(
+            cursorColor = ZcashTheme.colors.textPrimary,
+            focusedContainerColor = Color.Transparent,
+            unfocusedContainerColor = Color.Transparent,
+            disabledContainerColor = Color.Transparent,
+            errorContainerColor = Color.Transparent,
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+            disabledIndicatorColor = Color.Transparent
+        ),
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    shape: Shape = TextFieldDefaults.shape,
+    withBorder: Boolean = true,
+    bringIntoViewRequester: BringIntoViewRequester? = null,
+    minHeight: Dp = ZcashTheme.dimens.textFieldDefaultHeight,
+    testTag: String? = null
+) {
+    FormTextField(
+        value = state.value.getValue(),
+        error = state.error?.getValue(),
+        enabled = state.isEnabled,
+        onValueChange = state.onValueChange,
+        modifier = modifier,
+        textStyle = textStyle,
+        placeholder = placeholder,
+        leadingIcon = leadingIcon,
+        trailingIcon = trailingIcon,
+        keyboardOptions = keyboardOptions,
+        colors = colors,
+        keyboardActions = keyboardActions,
+        shape = shape,
+        withBorder = withBorder,
+        bringIntoViewRequester = bringIntoViewRequester,
+        minHeight = minHeight,
+        testTag = testTag,
+    )
+}
+
+data class TextFieldState(
+    val value: StringResource,
+    val error: StringResource?,
+    val isEnabled: Boolean,
+    val onValueChange: (String) -> Unit,
+)

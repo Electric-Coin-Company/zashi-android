@@ -52,25 +52,6 @@ import co.electriccoin.zcash.ui.screen.chooseserver.validateCustomServerValue
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
-@Preview("Choose Server")
-@Composable
-private fun PreviewChooseServer() {
-    ZcashTheme(forceDarkMode = false) {
-        ChooseServer(
-            availableServers = emptyList<LightWalletEndpoint>().toImmutableList(),
-            onBack = {},
-            onServerChange = {},
-            validationResult = ServerValidation.Valid,
-            wallet = PersistableWalletFixture.new(),
-            isShowingErrorDialog = false,
-            setShowErrorDialog = {},
-            isShowingSuccessDialog = false,
-            setShowSuccessDialog = {},
-            topAppBarSubTitleState = TopAppBarSubTitleState.None,
-        )
-    }
-}
-
 @Composable
 @Suppress("LongMethod", "LongParameterList")
 fun ChooseServer(
@@ -85,6 +66,9 @@ fun ChooseServer(
     setShowSuccessDialog: (Boolean) -> Unit,
     topAppBarSubTitleState: TopAppBarSubTitleState,
 ) {
+
+    val index = CUSTOM_SERVER_OPTION_INDEX.coerceIn(0, availableServers.size.coerceAtLeast(0))
+
     val options =
         availableServers.toMutableList().apply {
             // Note that this comparison could lead to a match with any predefined server endpoint even though the user
@@ -92,10 +76,10 @@ fun ChooseServer(
             //  server list obtaining is implemented.
             if (contains(wallet.endpoint)) {
                 // We define the custom server as secured by default
-                add(CUSTOM_SERVER_OPTION_INDEX, LightWalletEndpoint("", -1, true))
+                add(index, LightWalletEndpoint("", -1, true))
             } else {
                 // Adding previously chosen custom endpoint
-                add(CUSTOM_SERVER_OPTION_INDEX, wallet.endpoint)
+                add(index, wallet.endpoint)
             }
         }.toImmutableList()
 
@@ -105,17 +89,18 @@ fun ChooseServer(
         }
 
     val initialCustomServerValue =
-        options[CUSTOM_SERVER_OPTION_INDEX].run {
-            if (options[CUSTOM_SERVER_OPTION_INDEX].isValid()) {
+        options[index].run {
+            if (options[index].isValid()) {
                 stringResource(
                     R.string.choose_server_full_server_name,
-                    options[CUSTOM_SERVER_OPTION_INDEX].host,
-                    options[CUSTOM_SERVER_OPTION_INDEX].port
+                    options[index].host,
+                    options[index].port
                 )
             } else {
                 ""
             }
         }
+
     val (customServerValue, setCustomServerValue) =
         rememberSaveable {
             mutableStateOf(initialCustomServerValue)
@@ -143,17 +128,17 @@ fun ChooseServer(
         ChooseServerMainContent(
             customServerValue = customServerValue,
             modifier =
-                Modifier
-                    .verticalScroll(
-                        rememberScrollState()
-                    )
-                    .padding(
-                        top = paddingValues.calculateTopPadding(),
-                        bottom = paddingValues.calculateBottomPadding(),
-                        start = ZcashTheme.dimens.screenHorizontalSpacingRegular,
-                        end = ZcashTheme.dimens.screenHorizontalSpacingRegular
-                    )
-                    .fillMaxWidth(),
+            Modifier
+                .verticalScroll(
+                    rememberScrollState()
+                )
+                .padding(
+                    top = paddingValues.calculateTopPadding(),
+                    bottom = paddingValues.calculateBottomPadding(),
+                    start = ZcashTheme.dimens.screenHorizontalSpacingRegular,
+                    end = ZcashTheme.dimens.screenHorizontalSpacingRegular
+                )
+                .fillMaxWidth(),
             options = options,
             selectedOption = selectedOption,
             setCustomServerValue = setCustomServerValue,
@@ -188,10 +173,10 @@ fun ChooseServerBottomBar(
 ) {
     Column(
         modifier =
-            modifier.then(
-                Modifier
-                    .background(MaterialTheme.colorScheme.surface)
-            )
+        modifier.then(
+            Modifier
+                .background(MaterialTheme.colorScheme.surface)
+        )
     ) {
         HorizontalDivider(
             thickness = DividerDefaults.Thickness,
@@ -227,11 +212,11 @@ private fun ChooseServerTopAppBar(
     SmallTopAppBar(
         titleText = stringResource(id = R.string.choose_server_title),
         subTitle =
-            when (subTitleState) {
-                TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
-                TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
-                TopAppBarSubTitleState.None -> null
-            },
+        when (subTitleState) {
+            TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
+            TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
+            TopAppBarSubTitleState.None -> null
+        },
         modifier = Modifier.testTag(ChooseServerTag.CHOOSE_SERVER_TOP_APP_BAR),
         showTitleLogo = true,
         navigationAction = {
@@ -295,18 +280,19 @@ fun ServerList(
                         endpoint = endpoint,
                         changeClick = { setSelectedOption(index) },
                         name =
+                        stringResource(
+                            id = R.string.choose_server_default_label,
                             stringResource(
-                                id = R.string.choose_server_default_label,
-                                stringResource(
-                                    id = R.string.choose_server_full_server_name,
-                                    endpoint.host,
-                                    endpoint.port
-                                )
-                            ),
+                                id = R.string.choose_server_full_server_name,
+                                endpoint.host,
+                                endpoint.port
+                            )
+                        ),
                         selected = isSelected,
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
+
                 CUSTOM_SERVER_OPTION_INDEX -> {
                     Column(
                         modifier = Modifier.animateContentSize()
@@ -333,36 +319,37 @@ fun ServerList(
                                     Text(text = stringResource(R.string.choose_server_textfield_hint))
                                 },
                                 keyboardActions =
-                                    KeyboardActions(
-                                        onDone = {
-                                            focusManager.clearFocus(true)
-                                        }
-                                    ),
+                                KeyboardActions(
+                                    onDone = {
+                                        focusManager.clearFocus(true)
+                                    }
+                                ),
                                 keyboardOptions =
-                                    KeyboardOptions(
-                                        keyboardType = KeyboardType.Uri,
-                                        imeAction = ImeAction.Done
-                                    ),
+                                KeyboardOptions(
+                                    keyboardType = KeyboardType.Uri,
+                                    imeAction = ImeAction.Done
+                                ),
                                 modifier =
-                                    Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = ZcashTheme.dimens.spacingSmall)
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = ZcashTheme.dimens.spacingSmall)
                             )
 
                             Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
                         }
                     }
                 }
+
                 else -> {
                     LabeledRadioButton(
                         endpoint = endpoint,
                         changeClick = { setSelectedOption(index) },
                         name =
-                            stringResource(
-                                id = R.string.choose_server_full_server_name,
-                                endpoint.host,
-                                endpoint.port
-                            ),
+                        stringResource(
+                            id = R.string.choose_server_full_server_name,
+                            endpoint.host,
+                            endpoint.port
+                        ),
                         selected = isSelected,
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -428,9 +415,9 @@ fun SaveButton(
             onServerChange(selectedServer)
         },
         modifier =
-            modifier.then(
-                Modifier.fillMaxWidth()
-            )
+        modifier.then(
+            Modifier.fillMaxWidth()
+        )
     )
 }
 
@@ -476,4 +463,30 @@ fun SaveSuccessDialog(onDone: () -> Unit) {
         confirmButtonText = stringResource(id = R.string.choose_server_save_success_dialog_btn),
         onConfirmButtonClick = onDone
     )
+}
+
+@Composable
+private fun ChooseServerPreview() = ChooseServer(
+    availableServers = emptyList<LightWalletEndpoint>().toImmutableList(),
+    onBack = {},
+    onServerChange = {},
+    validationResult = ServerValidation.Valid,
+    wallet = PersistableWalletFixture.new(),
+    isShowingErrorDialog = false,
+    setShowErrorDialog = {},
+    isShowingSuccessDialog = false,
+    setShowSuccessDialog = {},
+    topAppBarSubTitleState = TopAppBarSubTitleState.None,
+)
+
+@Preview
+@Composable
+private fun ChooseServerPreviewLight() = ZcashTheme(forceDarkMode = false) {
+    ChooseServerPreview()
+}
+
+@Preview
+@Composable
+private fun ChooseServerPreviewDark() = ZcashTheme(forceDarkMode = true) {
+    ChooseServerPreview()
 }

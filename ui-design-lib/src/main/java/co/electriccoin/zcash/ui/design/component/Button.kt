@@ -46,6 +46,8 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.internal.ButtonColors
 import co.electriccoin.zcash.ui.design.theme.internal.DarkTertiaryButtonColors
 import co.electriccoin.zcash.ui.design.theme.internal.LightTertiaryButtonColors
+import co.electriccoin.zcash.ui.design.util.StringResource
+import co.electriccoin.zcash.ui.design.util.getValue
 
 @Preview
 @Composable
@@ -55,9 +57,9 @@ private fun ButtonComposablePreview() {
             Column(Modifier.padding(ZcashTheme.dimens.spacingDefault)) {
                 Column(
                     modifier =
-                        Modifier
-                            .background(color = Color.Gray)
-                            .padding(all = 24.dp)
+                    Modifier
+                        .background(color = Color.Gray)
+                        .padding(all = 24.dp)
                 ) {
                     PrimaryButton(onClick = { }, text = "Primary Basic")
                     PrimaryButton(onClick = { }, text = "Primary Disabled", enabled = false)
@@ -102,9 +104,9 @@ private fun ButtonComposableDarkPreview() {
             Column(Modifier.padding(ZcashTheme.dimens.spacingDefault)) {
                 Column(
                     modifier =
-                        Modifier
-                            .background(color = Color.Gray)
-                            .padding(all = 24.dp)
+                    Modifier
+                        .background(color = Color.Gray)
+                        .padding(all = 24.dp)
                 ) {
                     PrimaryButton(onClick = { }, text = "Primary Basic")
                     PrimaryButton(onClick = { }, text = "Primary Disabled", enabled = false)
@@ -165,55 +167,55 @@ fun PrimaryButton(
         enabled = enabled,
         contentPadding = contentPaddingValues,
         modifier =
-            modifier.then(
-                Modifier
-                    .padding(outerPaddingValues)
-                    .shadow(
-                        contentColor =
-                            if (enabled) {
-                                buttonColors.shadowColor
-                            } else {
-                                buttonColors.disabledShadowColor
-                            },
-                        strokeColor =
-                            if (enabled) {
-                                buttonColors.shadowStrokeColor
-                            } else {
-                                buttonColors.shadowDisabledStrokeColor
-                            },
-                        strokeWidth = 1.dp,
-                        offsetX = ZcashTheme.dimens.buttonShadowOffsetX,
-                        offsetY = ZcashTheme.dimens.buttonShadowOffsetY,
-                        spread = ZcashTheme.dimens.buttonShadowSpread,
-                    )
-                    .then(
-                        if (enabled) {
-                            Modifier.translationClick(
-                                // + 6dp to exactly cover the bottom shadow
-                                translationX = ZcashTheme.dimens.buttonShadowOffsetX + 6.dp,
-                                translationY = ZcashTheme.dimens.buttonShadowOffsetX + 6.dp
-                            )
-                        } else {
-                            Modifier
-                        }
-                    )
-                    .defaultMinSize(minWidth, minHeight)
-                    .border(
-                        width = 1.dp,
-                        color =
-                            if (enabled) {
-                                buttonColors.strokeColor
-                            } else {
-                                buttonColors.disabledStrokeColor
-                            }
-                    )
-            ),
+        modifier.then(
+            Modifier
+                .padding(outerPaddingValues)
+                .shadow(
+                    contentColor =
+                    if (enabled) {
+                        buttonColors.shadowColor
+                    } else {
+                        buttonColors.disabledShadowColor
+                    },
+                    strokeColor =
+                    if (enabled) {
+                        buttonColors.shadowStrokeColor
+                    } else {
+                        buttonColors.shadowDisabledStrokeColor
+                    },
+                    strokeWidth = 1.dp,
+                    offsetX = ZcashTheme.dimens.buttonShadowOffsetX,
+                    offsetY = ZcashTheme.dimens.buttonShadowOffsetY,
+                    spread = ZcashTheme.dimens.buttonShadowSpread,
+                )
+                .then(
+                    if (enabled) {
+                        Modifier.translationClick(
+                            // + 6dp to exactly cover the bottom shadow
+                            translationX = ZcashTheme.dimens.buttonShadowOffsetX + 6.dp,
+                            translationY = ZcashTheme.dimens.buttonShadowOffsetX + 6.dp
+                        )
+                    } else {
+                        Modifier
+                    }
+                )
+                .defaultMinSize(minWidth, minHeight)
+                .border(
+                    width = 1.dp,
+                    color =
+                    if (enabled) {
+                        buttonColors.strokeColor
+                    } else {
+                        buttonColors.disabledStrokeColor
+                    }
+                )
+        ),
         colors =
-            buttonColors(
-                containerColor = buttonColors.containerColor,
-                disabledContainerColor = buttonColors.disabledContainerColor,
-                disabledContentColor = buttonColors.disabledContainerColor,
-            ),
+        buttonColors(
+            containerColor = buttonColors.containerColor,
+            disabledContainerColor = buttonColors.disabledContainerColor,
+            disabledContentColor = buttonColors.disabledContainerColor,
+        ),
         onClick = onClick,
     ) {
         ConstraintLayout(modifier = Modifier.fillMaxWidth()) {
@@ -224,48 +226,79 @@ fun PrimaryButton(
                 textAlign = TextAlign.Center,
                 text = text.uppercase(),
                 color =
-                    if (enabled) {
-                        buttonColors.textColor
-                    } else {
-                        buttonColors.disabledTextColor
-                    },
+                if (enabled) {
+                    buttonColors.textColor
+                } else {
+                    buttonColors.disabledTextColor
+                },
                 modifier =
-                    Modifier.constrainAs(title) {
-                        top.linkTo(parent.top)
-                        bottom.linkTo(parent.bottom)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                    }
+                Modifier.constrainAs(title) {
+                    top.linkTo(parent.top)
+                    bottom.linkTo(parent.bottom)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                }
             )
 
             if (showProgressBar) {
                 Spacer(
                     modifier =
-                        Modifier
-                            .width(12.dp)
-                            .constrainAs(spacer) {
-                                top.linkTo(parent.top)
-                                bottom.linkTo(parent.bottom)
-                                start.linkTo(title.end)
-                                end.linkTo(progress.start)
-                            }
+                    Modifier
+                        .width(12.dp)
+                        .constrainAs(spacer) {
+                            top.linkTo(parent.top)
+                            bottom.linkTo(parent.bottom)
+                            start.linkTo(title.end)
+                            end.linkTo(progress.start)
+                        }
                 )
 
                 CircularProgressIndicator(
                     color = Color.White,
                     strokeWidth = 2.dp,
                     modifier =
-                        Modifier
-                            .size(18.dp)
-                            .constrainAs(progress) {
-                                top.linkTo(parent.top)
-                                bottom.linkTo(parent.bottom)
-                                start.linkTo(spacer.end)
-                            }
+                    Modifier
+                        .size(18.dp)
+                        .constrainAs(progress) {
+                            top.linkTo(parent.top)
+                            bottom.linkTo(parent.bottom)
+                            start.linkTo(spacer.end)
+                        }
                 )
             }
         }
     }
+}
+
+@Composable
+@Suppress("LongParameterList", "LongMethod")
+fun PrimaryButton(
+    state: ButtonState,
+    modifier: Modifier = Modifier,
+    minWidth: Dp = ZcashTheme.dimens.buttonWidth,
+    minHeight: Dp = ZcashTheme.dimens.buttonHeight,
+    buttonColors: ButtonColors = ZcashTheme.colors.primaryButtonColors,
+    textStyle: TextStyle = ZcashTheme.extendedTypography.buttonText,
+    outerPaddingValues: PaddingValues =
+        PaddingValues(
+            horizontal = ZcashTheme.dimens.spacingNone,
+            vertical = ZcashTheme.dimens.spacingSmall
+        ),
+    contentPaddingValues: PaddingValues = PaddingValues(all = 17.dp)
+) {
+    PrimaryButton(
+        onClick = state.onClick,
+        text = state.text.getValue(),
+        enabled = state.isEnabled,
+        showProgressBar = state.showProgressBar,
+        modifier = modifier,
+        minWidth = minWidth,
+        minHeight = minHeight,
+        buttonColors = buttonColors,
+        textStyle = textStyle,
+        outerPaddingValues = outerPaddingValues,
+        contentPaddingValues = contentPaddingValues,
+    )
 }
 
 @Composable
@@ -290,56 +323,56 @@ fun SecondaryButton(
         enabled = enabled,
         contentPadding = contentPaddingValues,
         modifier =
-            modifier.then(
-                Modifier
-                    .padding(outerPaddingValues)
-                    .shadow(
-                        contentColor =
-                            if (enabled) {
-                                buttonColors.shadowColor
-                            } else {
-                                buttonColors.disabledShadowColor
-                            },
-                        strokeColor =
-                            if (enabled) {
-                                buttonColors.shadowStrokeColor
-                            } else {
-                                buttonColors.shadowDisabledStrokeColor
-                            },
-                        strokeWidth = 1.dp,
-                        offsetX = ZcashTheme.dimens.buttonShadowOffsetX,
-                        offsetY = ZcashTheme.dimens.buttonShadowOffsetY,
-                        spread = ZcashTheme.dimens.buttonShadowSpread,
-                    )
-                    .then(
-                        if (enabled) {
-                            Modifier.translationClick(
-                                // + 6dp to exactly cover the bottom shadow
-                                translationX = ZcashTheme.dimens.buttonShadowOffsetX + 6.dp,
-                                translationY = ZcashTheme.dimens.buttonShadowOffsetX + 6.dp
-                            )
-                        } else {
-                            Modifier
-                        }
-                    )
-                    .defaultMinSize(minWidth, minHeight)
-                    .fillMaxWidth()
-                    .border(
-                        width = 1.dp,
-                        color =
-                            if (enabled) {
-                                buttonColors.strokeColor
-                            } else {
-                                buttonColors.disabledStrokeColor
-                            }
-                    )
-            ),
+        modifier.then(
+            Modifier
+                .padding(outerPaddingValues)
+                .shadow(
+                    contentColor =
+                    if (enabled) {
+                        buttonColors.shadowColor
+                    } else {
+                        buttonColors.disabledShadowColor
+                    },
+                    strokeColor =
+                    if (enabled) {
+                        buttonColors.shadowStrokeColor
+                    } else {
+                        buttonColors.shadowDisabledStrokeColor
+                    },
+                    strokeWidth = 1.dp,
+                    offsetX = ZcashTheme.dimens.buttonShadowOffsetX,
+                    offsetY = ZcashTheme.dimens.buttonShadowOffsetY,
+                    spread = ZcashTheme.dimens.buttonShadowSpread,
+                )
+                .then(
+                    if (enabled) {
+                        Modifier.translationClick(
+                            // + 6dp to exactly cover the bottom shadow
+                            translationX = ZcashTheme.dimens.buttonShadowOffsetX + 6.dp,
+                            translationY = ZcashTheme.dimens.buttonShadowOffsetX + 6.dp
+                        )
+                    } else {
+                        Modifier
+                    }
+                )
+                .defaultMinSize(minWidth, minHeight)
+                .fillMaxWidth()
+                .border(
+                    width = 1.dp,
+                    color =
+                    if (enabled) {
+                        buttonColors.strokeColor
+                    } else {
+                        buttonColors.disabledStrokeColor
+                    }
+                )
+        ),
         colors =
-            buttonColors(
-                containerColor = buttonColors.containerColor,
-                disabledContainerColor = buttonColors.disabledContainerColor,
-                disabledContentColor = buttonColors.disabledContainerColor
-            ),
+        buttonColors(
+            containerColor = buttonColors.containerColor,
+            disabledContainerColor = buttonColors.disabledContainerColor,
+            disabledContentColor = buttonColors.disabledContainerColor
+        ),
         onClick = onClick,
     ) {
         Text(
@@ -347,11 +380,11 @@ fun SecondaryButton(
             textAlign = TextAlign.Center,
             text = text.uppercase(),
             color =
-                if (enabled) {
-                    buttonColors.textColor
-                } else {
-                    buttonColors.disabledTextColor
-                }
+            if (enabled) {
+                buttonColors.textColor
+            } else {
+                buttonColors.disabledTextColor
+            }
         )
     }
 }
@@ -407,8 +440,6 @@ fun Modifier.shadow(
     }
 )
 
-private enum class ButtonState { Pressed, Idle }
-
 // TODO [#1346]: Rework not-recommended composed{}
 // TODO [#1346]: https://github.com/Electric-Coin-Company/zashi-android/issues/1346
 @Suppress("ModifierComposed")
@@ -416,33 +447,33 @@ fun Modifier.translationClick(
     translationX: Dp = 0.dp,
     translationY: Dp = 0.dp
 ) = composed {
-    var buttonState by remember { mutableStateOf(ButtonState.Idle) }
+    var buttonMode by remember { mutableStateOf(ButtonMode.Idle) }
 
     val translationXAnimated by animateFloatAsState(
         targetValue =
-            if (buttonState == ButtonState.Pressed) {
-                translationX.value
-            } else {
-                0f
-            },
+        if (buttonMode == ButtonMode.Pressed) {
+            translationX.value
+        } else {
+            0f
+        },
         label = "ClickTranslationXAnimation",
         animationSpec =
-            tween(
-                durationMillis = 100
-            )
+        tween(
+            durationMillis = 100
+        )
     )
     val translationYAnimated by animateFloatAsState(
         targetValue =
-            if (buttonState == ButtonState.Pressed) {
-                translationY.value
-            } else {
-                0f
-            },
+        if (buttonMode == ButtonMode.Pressed) {
+            translationY.value
+        } else {
+            0f
+        },
         label = "ClickTranslationYAnimation",
         animationSpec =
-            tween(
-                durationMillis = 100
-            )
+        tween(
+            durationMillis = 100
+        )
     )
 
     this
@@ -450,16 +481,25 @@ fun Modifier.translationClick(
             this.translationX = translationXAnimated
             this.translationY = translationYAnimated
         }
-        .pointerInput(buttonState) {
+        .pointerInput(buttonMode) {
             awaitPointerEventScope {
-                buttonState =
-                    if (buttonState == ButtonState.Pressed) {
+                buttonMode =
+                    if (buttonMode == ButtonMode.Pressed) {
                         waitForUpOrCancellation()
-                        ButtonState.Idle
+                        ButtonMode.Idle
                     } else {
                         awaitFirstDown(false)
-                        ButtonState.Pressed
+                        ButtonMode.Pressed
                     }
             }
         }
 }
+
+private enum class ButtonMode { Pressed, Idle }
+
+data class ButtonState(
+    val text: StringResource,
+    val isEnabled: Boolean = true,
+    val showProgressBar: Boolean = false,
+    val onClick: () -> Unit,
+)
