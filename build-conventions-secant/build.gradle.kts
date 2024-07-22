@@ -52,7 +52,7 @@ dependencies {
         "org.jetbrains.kotlinx.kover:org.jetbrains.kotlinx.kover.gradle.plugin:" +
             rootProperties.getProperty("KOVER_VERSION")
     )
-    implementation("org.jetbrains:markdown:0.7.3")
+    implementation("org.jetbrains:markdown:${rootProperties.getProperty("MARKDOWN_VERSION")}")
 }
 
 // A slightly gross way to use the root gradle.properties as the single source of truth for version numbers
