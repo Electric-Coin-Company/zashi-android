@@ -12,7 +12,8 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 - These release notes and release priority are both propagated to every new Google Play release using CI logic
 - Copying sensitive information like addresses, transaction IDs, or wallet secrets into the device clipboard is now 
   masked out from the system visual confirmation, but it's still copied as expected. `ClipDescription.EXTRA_IS_SENSITIVE`
-flag is used on Android SDK level 33 and higher, masking out the `Toast` text on levels below it.  
+flag is used on Android SDK level 33 and higher, masking out the `Toast` text on levels below it.
+- `androidx.fragment:fragment-compose` dependency has been added
 
 ### Changed
 - The About screen has been redesigned to align with the new design guidelines
@@ -29,6 +30,9 @@ flag is used on Android SDK level 33 and higher, masking out the `Toast` text on
   `android:configChanges="orientation|locale|layoutDirection|screenLayout|uiMode|colorMode|keyboard|screenSize"`
   option has been added to the app's `AndroidManifest.xml`, leaving the configuration changes handling entirely to 
   the Jetpack Compose layer.
+
+## Removed
+- `androidx.appcompat:appcompat` dependency has been removed
 
 ## [1.1.3 (682)] - 2024-07-03
 
