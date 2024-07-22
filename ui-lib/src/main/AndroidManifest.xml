@@ -12,8 +12,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true">
 
+        <!-- compose can handle most config changes by itself hence we do not need activity recreation -->
+        <!-- https://developer.android.com/guide/topics/resources/runtime-changes#react-changes-compose -->
         <activity
             android:name=".MainActivity"
+            android:configChanges="orientation|locale|layoutDirection|screenLayout|uiMode|colorMode|keyboard|screenSize"
             android:exported="false"
             android:windowSoftInputMode="adjustResize"
             android:label="@string/app_name"
