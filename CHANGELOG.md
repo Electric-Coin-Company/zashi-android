@@ -24,7 +24,11 @@ flag is used on Android SDK level 33 and higher, masking out the `Toast` text on
 - Support Screen now shows the Send button above keyboard instead of overlaying it. This was achieved by setting 
   `adjustResize` to `MainActivity` and adding `imePadding` to top level composable
 - QR code scanning speed and reliability have been improved to address the latest reported scan issue. The obtained 
-  image cropping and image reader hints have been changed as part of these improvements.   
+  image cropping and image reader hints have been changed as part of these improvements.
+- The handling of Android configuration changes has been improved. 
+  `android:configChanges="orientation|locale|layoutDirection|screenLayout|uiMode|colorMode|keyboard|screenSize"`
+  option has been added to the app's `AndroidManifest.xml`, leaving the configuration changes handling entirely to 
+  the Jetpack Compose layer.
 
 ## [1.1.3 (682)] - 2024-07-03
 
