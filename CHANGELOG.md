@@ -20,6 +20,7 @@ flag is used on Android SDK level 33 and higher, masking out the `Toast` text on
 - `StyledBalance` text styles have been refactored from `Pair` into `BalanceTextStyle` 
 - The Restore Success dialog has been reworked into a separate screen, allowing users to opt out of the Keep screen
   on while restoring option
+- `targetSdk` property value changed from 33 to 34
 
 ## Fixed
 - Support Screen now shows the Send button above keyboard instead of overlaying it. This was achieved by setting 
