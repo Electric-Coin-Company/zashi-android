@@ -41,6 +41,7 @@ dependencies {
     api(libs.kotlinx.immutable)
     implementation(libs.zcash.sdk.incubator)
     implementation(projects.spackleAndroidLib)
+    api(libs.androidx.fragment)
 
     androidTestImplementation(libs.bundles.androidx.test)
     androidTestImplementation(libs.androidx.compose.test.junit)
