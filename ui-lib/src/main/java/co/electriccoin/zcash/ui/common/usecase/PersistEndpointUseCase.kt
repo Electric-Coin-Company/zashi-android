@@ -10,12 +10,10 @@ class PersistEndpointUseCase(
     private val getPersistableWallet: GetPersistableWalletUseCase,
 ) {
     @Throws(PersistEndpointException::class)
-    suspend operator fun invoke(endpoint: LightWalletEndpoint?) {
+    suspend operator fun invoke(endpoint: LightWalletEndpoint) {
         val selected = getPersistableWallet().endpoint
 
-        if (endpoint == null || selected == endpoint) {
-            return
-        }
+        if (selected == endpoint) return
 
         when (val result = validateServerEndpoint(endpoint)) {
             ServerValidation.Valid -> {

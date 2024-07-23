@@ -133,8 +133,9 @@ class ChooseServerViewModel(
 
     private fun onSaveButtonClicked() = viewModelScope.launch {
         isButtonEnabled.update { false }
+        val selection = getUserEndpointSelectionOrShowError() ?: return@launch
         try {
-            persistEndpoint(requireUserEndpointSelection())
+            persistEndpoint(selection)
             showSuccessDialog()
         } catch (e: PersistEndpointException) {
             showValidationErrorDialog(e.message)
@@ -147,9 +148,10 @@ class ChooseServerViewModel(
     }
 
     /**
-     * @return an endpoint selected by user or null if user didn't select any new endpoint explicitly
+     * @return an endpoint selected by user or null if user didn't select any new endpoint explicitly or if selected
+     * custom endpoint is invalid
      */
-    private fun requireUserEndpointSelection(): LightWalletEndpoint? {
+    private fun getUserEndpointSelectionOrShowError(): LightWalletEndpoint? {
         return when (val selection = userEndpointSelection.value) {
             Selection.Custom -> {
                 val endpoint = userCustomEndpointText.value
