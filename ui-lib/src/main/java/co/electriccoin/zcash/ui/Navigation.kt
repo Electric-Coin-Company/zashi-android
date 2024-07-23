@@ -48,7 +48,7 @@ import co.electriccoin.zcash.ui.screen.about.WrapAbout
 import co.electriccoin.zcash.ui.screen.advancedsettings.WrapAdvancedSettings
 import co.electriccoin.zcash.ui.screen.authentication.AuthenticationUseCase
 import co.electriccoin.zcash.ui.screen.authentication.WrapAuthentication
-import co.electriccoin.zcash.ui.screen.chooseserver.view.WrapChooseServer
+import co.electriccoin.zcash.ui.screen.chooseserver.WrapChooseServer
 import co.electriccoin.zcash.ui.screen.deletewallet.WrapDeleteWallet
 import co.electriccoin.zcash.ui.screen.disconnected.WrapDisconnected
 import co.electriccoin.zcash.ui.screen.exportdata.WrapExportPrivateData
@@ -156,6 +156,7 @@ internal fun MainActivity.Navigation() {
                         setCheckedProperty = setDeleteWalletAuthentication
                     )
                 }
+
                 exportPrivateDataAuthentication -> {
                     ShowSystemAuthentication(
                         navHostController = navController,
@@ -164,6 +165,7 @@ internal fun MainActivity.Navigation() {
                         setCheckedProperty = setExportPrivateDataAuthentication
                     )
                 }
+
                 seedRecoveryAuthentication -> {
                     ShowSystemAuthentication(
                         navHostController = navController,
@@ -175,11 +177,7 @@ internal fun MainActivity.Navigation() {
             }
         }
         composable(CHOOSE_SERVER) {
-            WrapChooseServer(
-                goBack = {
-                    navController.popBackStackJustOnce(CHOOSE_SERVER)
-                }
-            )
+            WrapChooseServer()
         }
         composable(SEED_RECOVERY) {
             WrapSeedRecovery(
@@ -290,18 +288,18 @@ private fun MainActivity.NavigationHome(
             navController.navigateJustOnce(SEND_CONFIRMATION)
         },
         sendArguments =
-            SendArguments(
-                recipientAddress =
-                    backStack.savedStateHandle.get<String>(SEND_SCAN_RECIPIENT_ADDRESS)?.let {
-                        Json.decodeFromString<SerializableAddress>(it).toRecipient()
-                    },
-                clearForm = backStack.savedStateHandle.get<Boolean>(MULTIPLE_SUBMISSION_CLEAR_FORM) ?: false
-            ).also {
-                // Remove Send screen arguments passed from the Scan or MultipleSubmissionFailure screens if
-                // some exist after we use them
-                backStack.savedStateHandle.remove<String>(SEND_SCAN_RECIPIENT_ADDRESS)
-                backStack.savedStateHandle.remove<Boolean>(MULTIPLE_SUBMISSION_CLEAR_FORM)
+        SendArguments(
+            recipientAddress =
+            backStack.savedStateHandle.get<String>(SEND_SCAN_RECIPIENT_ADDRESS)?.let {
+                Json.decodeFromString<SerializableAddress>(it).toRecipient()
             },
+            clearForm = backStack.savedStateHandle.get<Boolean>(MULTIPLE_SUBMISSION_CLEAR_FORM) ?: false
+        ).also {
+            // Remove Send screen arguments passed from the Scan or MultipleSubmissionFailure screens if
+            // some exist after we use them
+            backStack.savedStateHandle.remove<String>(SEND_SCAN_RECIPIENT_ADDRESS)
+            backStack.savedStateHandle.remove<Boolean>(MULTIPLE_SUBMISSION_CLEAR_FORM)
+        },
     )
 
     val isEnoughSpace by storageCheckViewModel.isEnoughSpace.collectAsStateWithLifecycle()

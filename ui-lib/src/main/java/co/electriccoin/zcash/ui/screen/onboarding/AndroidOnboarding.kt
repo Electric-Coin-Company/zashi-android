@@ -102,7 +102,7 @@ internal fun persistExistingWalletWithSeedPhrase(
         PersistableWallet(
             network = network,
             birthday = birthday,
-            endpoint = AvailableServerProvider.getDefaultServer(network),
+            endpoint = AvailableServerProvider.getDefaultServer(),
             seedPhrase = seedPhrase,
             walletInitMode = WalletInitMode.RestoreWallet
         )

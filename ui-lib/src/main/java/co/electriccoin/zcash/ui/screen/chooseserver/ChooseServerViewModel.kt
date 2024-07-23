@@ -1,17 +1,15 @@
 package co.electriccoin.zcash.ui.screen.chooseserver
 
-import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import cash.z.ecc.android.sdk.model.ZcashNetwork
-import cash.z.ecc.sdk.type.fromResources
+import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.lightwallet.client.model.LightWalletEndpoint
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.ANDROID_STATE_FLOW_TIMEOUT
-import co.electriccoin.zcash.ui.common.usecase.GetPersistableWalletUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetAvailableServersUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObservePersistableWalletUseCase
 import co.electriccoin.zcash.ui.common.usecase.PersistEndpointException
 import co.electriccoin.zcash.ui.common.usecase.PersistEndpointUseCase
+import co.electriccoin.zcash.ui.common.usecase.ValidateEndpointUseCase
 import co.electriccoin.zcash.ui.design.component.AlertDialogState
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.TextFieldState
@@ -27,13 +25,13 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class ChooseServerViewModel(
-    application: Application,
     observePersistableWallet: ObservePersistableWalletUseCase,
-    private val getPersistableWallet: GetPersistableWalletUseCase,
-    private val persistEndpoint: PersistEndpointUseCase
+    getAvailableServers: GetAvailableServersUseCase,
+    private val persistEndpoint: PersistEndpointUseCase,
+    private val validateEndpoint: ValidateEndpointUseCase,
 ) : ViewModel() {
 
-    private val allEndpoints = AvailableServerProvider.toList(ZcashNetwork.fromResources(application))
+    private val allEndpoints: List<LightWalletEndpoint> by lazy { getAvailableServers() }
 
     private val userCustomEndpointText = MutableStateFlow<String?>(null)
 
@@ -70,8 +68,6 @@ class ChooseServerViewModel(
                 } else {
                     stringRes("")
                 },
-                error = null,
-                isEnabled = true,
                 onValueChange = ::onCustomEndpointTextChanged,
             ),
             onClick = ::onCustomEndpointClicked,
@@ -121,6 +117,8 @@ class ChooseServerViewModel(
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT), null)
 
+    fun canGoBack() : Boolean = isButtonEnabled.value
+
     private fun onCustomEndpointTextChanged(new: String) {
         this.userCustomEndpointText.update { new }
     }
@@ -135,20 +133,12 @@ class ChooseServerViewModel(
 
     private fun onSaveButtonClicked() = viewModelScope.launch {
         isButtonEnabled.update { false }
-
-        val wallet = getPersistableWallet()
-        val selectedEndpoint = wallet.endpoint
-        val userEndpointSelection = requireUserEndpointSelection(selectedEndpoint)
-
-        if (userEndpointSelection != null && userEndpointSelection != selectedEndpoint) {
-            try {
-                persistEndpoint(userEndpointSelection)
-                showSuccessDialog()
-            } catch (e: PersistEndpointException) {
-                showValidationErrorDialog(e.message)
-            }
+        try {
+            persistEndpoint(requireUserEndpointSelection())
+            showSuccessDialog()
+        } catch (e: PersistEndpointException) {
+            showValidationErrorDialog(e.message)
         }
-
         isButtonEnabled.update { true }
     }
 
@@ -156,30 +146,22 @@ class ChooseServerViewModel(
         dialogState.update { null }
     }
 
-    private fun requireUserEndpointSelection(selected: LightWalletEndpoint): LightWalletEndpoint? {
-        fun String.toEndpoint(delimiter: String): LightWalletEndpoint {
-            val parts = split(delimiter)
-            return LightWalletEndpoint(parts[0], parts[1].toInt(), true)
-        }
-
+    /**
+     * @return an endpoint selected by user or null if user didn't select any new endpoint explicitly
+     */
+    private fun requireUserEndpointSelection(): LightWalletEndpoint? {
         return when (val selection = userEndpointSelection.value) {
             Selection.Custom -> {
-                val userCustomEndpointText = userCustomEndpointText.value
-                if (userCustomEndpointText == null) {
-                    selected
-                } else {
-                    val valid = ENDPOINT_REGEX.toRegex().matches(userCustomEndpointText)
-                    if (!valid) {
-                        showValidationErrorDialog(null) // TODO
-                        return null
-                    } else {
-                        userCustomEndpointText.toEndpoint(":")
-                    }
+                val endpoint = userCustomEndpointText.value
+                val validated = validateEndpoint(endpoint.orEmpty())
+                if (validated == null) {
+                    showValidationErrorDialog(null)
                 }
+                validated
             }
 
             is Selection.Endpoint -> selection.endpoint
-            null -> selected
+            null -> null
         }
     }
 
@@ -219,5 +201,3 @@ private sealed interface Selection {
     data object Custom : Selection
     data class Endpoint(val endpoint: LightWalletEndpoint) : Selection
 }
-
-private const val ENDPOINT_REGEX = "^(([^:/?#\\s]+)://)?([^/?#\\s]+):([1-9][0-9]{3}|[1-5][0-9]{2}|[0-9]{1,2})$"

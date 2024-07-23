@@ -175,7 +175,7 @@ fun FormTextField(
 
 data class TextFieldState(
     val value: StringResource,
-    val error: StringResource?,
-    val isEnabled: Boolean,
+    val isEnabled: Boolean = true,
+    val error: StringResource? = null,
     val onValueChange: (String) -> Unit,
 )

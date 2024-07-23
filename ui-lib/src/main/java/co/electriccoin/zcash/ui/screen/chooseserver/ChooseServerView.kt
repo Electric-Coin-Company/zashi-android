@@ -164,7 +164,7 @@ private fun ChooseServerTopAppBar(
             TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
             TopAppBarSubTitleState.None -> null
         },
-        modifier = Modifier.testTag(ChooseServerTag.CHOOSE_SERVER_TOP_APP_BAR),
+        modifier = Modifier.testTag(CHOOSE_SERVER_TOP_APP_BAR),
         showTitleLogo = true,
         navigationAction = {
             TopAppBarBackNavigation(
@@ -348,3 +348,4 @@ private fun ChooseServerPreviewSaveSuccessDialogDark() = ZcashTheme(forceDarkMod
     ChooseServerPreviewSaveSuccessDialog()
 }
 
+private const val CHOOSE_SERVER_TOP_APP_BAR = "choose_server_top_app_bar"

@@ -25,7 +25,6 @@ import cash.z.ecc.android.sdk.model.ZcashNetwork
 import cash.z.ecc.android.sdk.tool.DerivationTool
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import cash.z.ecc.sdk.type.fromResources
-import cash.z.ecc.sdk.usecase.ObserveSynchronizerUseCase
 import co.electriccoin.zcash.preference.api.EncryptedPreferenceProvider
 import co.electriccoin.zcash.preference.api.StandardPreferenceProvider
 import co.electriccoin.zcash.spackle.Twig
@@ -40,12 +39,13 @@ import co.electriccoin.zcash.ui.common.model.hasChangePending
 import co.electriccoin.zcash.ui.common.model.hasValuePending
 import co.electriccoin.zcash.ui.common.model.spendableBalance
 import co.electriccoin.zcash.ui.common.model.totalBalance
-import co.electriccoin.zcash.ui.preference.PersistableWalletPreferenceDefault
+import co.electriccoin.zcash.ui.common.repository.WalletRepository
+import co.electriccoin.zcash.ui.common.usecase.GetAvailableServersUseCase
+import co.electriccoin.zcash.ui.common.usecase.ObserveSynchronizerUseCase
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
 import co.electriccoin.zcash.ui.screen.account.ext.TransactionOverviewExt
 import co.electriccoin.zcash.ui.screen.account.ext.getSortHeight
 import co.electriccoin.zcash.ui.screen.account.state.TransactionHistorySyncState
-import co.electriccoin.zcash.ui.screen.chooseserver.AvailableServerProvider
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -66,8 +66,6 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import kotlin.time.Duration.Companion.seconds
 
@@ -78,16 +76,12 @@ import kotlin.time.Duration.Companion.seconds
 class WalletViewModel(
     application: Application,
     observeSynchronizer: ObserveSynchronizerUseCase,
-    private val persistableWalletPreference: PersistableWalletPreferenceDefault,
     private val walletCoordinator: WalletCoordinator,
+    private val walletRepository: WalletRepository,
     private val encryptedPreferenceProvider: EncryptedPreferenceProvider,
     private val standardPreferenceProvider: StandardPreferenceProvider,
+    private val getAvailableServers: GetAvailableServersUseCase
 ) : AndroidViewModel(application) {
-    /*
-     * Using the Mutex may be overkill, but it ensures that if multiple calls are accidentally made
-     * that they have a consistent ordering.
-     */
-    private val persistWalletMutex = Mutex()
 
     /**
      * Synchronizer that is retained long enough to survive configuration changes.
@@ -331,10 +325,10 @@ class WalletViewModel(
                 PersistableWallet.new(
                     application = application,
                     zcashNetwork = zcashNetwork,
-                    endpoint = AvailableServerProvider.getDefaultServer(zcashNetwork),
+                    endpoint = getAvailableServers().first(),
                     walletInitMode = WalletInitMode.NewWallet
                 )
-            persistWallet(newWallet)
+            walletRepository.persistWallet(newWallet)
         }
     }
 
@@ -343,35 +337,11 @@ class WalletViewModel(
      * to see the side effects.  This would be used for a user restoring a wallet from a backup.
      */
     fun persistExistingWallet(persistableWallet: PersistableWallet) {
-        persistWallet(persistableWallet)
+        walletRepository.persistWallet(persistableWallet)
     }
 
-    /**
-     * Persists a wallet asynchronously.  Clients observe [secretState] to see the side effects.
-     */
-    private fun persistWallet(persistableWallet: PersistableWallet) {
-        viewModelScope.launch {
-            persistWalletMutex.withLock {
-                persistableWalletPreference.putValue(encryptedPreferenceProvider, persistableWallet)
-            }
-        }
-    }
-
-    /**
-     * Asynchronously notes that the user has completed the backup steps, which means the wallet
-     * is ready to use.  Clients observe [secretState] to see the side effects.  This would be used
-     * for a user creating a new wallet.
-     */
     fun persistOnboardingState(onboardingState: OnboardingState) {
-        viewModelScope.launch {
-            // Use the Mutex here to avoid timing issues.  During wallet restore, persistOnboardingState()
-            // is called prior to persistExistingWallet().  Although persistOnboardingState() should
-            // complete quickly, it isn't guaranteed to complete before persistExistingWallet()
-            // unless a mutex is used here.
-            persistWalletMutex.withLock {
-                StandardPreferenceKeys.ONBOARDING_STATE.putValue(standardPreferenceProvider, onboardingState.toNumber())
-            }
-        }
+        walletRepository.persistOnboardingState(onboardingState)
     }
 
     /**
