@@ -9,6 +9,8 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [1.1.4 (700)] - 2024-07-23
+
 ### Added
 - A new What's New screen has been added, accessible from the About screen
 - Copying sensitive information like addresses, transaction IDs, or wallet secrets into the device clipboard is now 
