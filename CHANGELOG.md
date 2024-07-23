@@ -6,6 +6,8 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+## [1.1.4 (700)] - 2024-07-23
+
 ### Added
 - A new What's New screen has been added, accessible from the About screen. It contains the release notes parsed 
   from the new [docs/whatsNew/WHATS_NEW_EN.md] file
