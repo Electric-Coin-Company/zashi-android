@@ -230,6 +230,7 @@ private fun ReceiveContents(
                             is WalletAddress.Unified -> R.string.receive_wallet_address_unified
                             is WalletAddress.Sapling -> R.string.receive_wallet_address_sapling
                             is WalletAddress.Transparent -> R.string.receive_wallet_address_transparent
+                            else -> error("Unsupported address type")
                         }
                     )
                 }.toPersistentList(),
@@ -304,6 +305,7 @@ private fun ColumnScope.QrCode(
                     is WalletAddress.Unified -> R.string.receive_unified_content_description
                     is WalletAddress.Sapling -> R.string.receive_sapling_content_description
                     is WalletAddress.Transparent -> R.string.receive_transparent_content_description
+                    else -> error("Unsupported address type")
                 }
             ),
         modifier =

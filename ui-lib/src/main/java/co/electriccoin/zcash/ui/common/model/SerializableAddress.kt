@@ -29,6 +29,7 @@ data class SerializableAddress(
                 AddressType.Unified -> WalletAddress.Unified.new(address)
                 AddressType.Shielded -> WalletAddress.Sapling.new(address)
                 AddressType.Transparent -> WalletAddress.Transparent.new(address)
+                AddressType.Tex -> WalletAddress.Tex.new(address)
                 is AddressType.Invalid -> error("Invalid address type")
             }
         }

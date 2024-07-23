@@ -386,7 +386,8 @@ private fun SendForm(
                     recipientAddressState.type is AddressType.Invalid ||
                     (
                         recipientAddressState.type is AddressType.Valid &&
-                            recipientAddressState.type !is AddressType.Transparent
+                            recipientAddressState.type !is AddressType.Transparent &&
+                            recipientAddressState.type !is AddressType.Tex
                     )
             ),
             scrollState = scrollState,
