@@ -117,8 +117,6 @@ As a specific example, the "Request ZEC" button on the home screen is currently 
 # Shared Resources
 There are some app-wide resources that share a common namespace, and these should be documented here to make it easy to ensure there are no collisions.
 
-* SharedPreferences
-    * "co.electriccoin.zcash.encrypted" is defined as a preference file in `EncryptedPreferenceSingleton.kt`
 * Databases
     * Some databases are defined by the SDK
 * Notification IDs

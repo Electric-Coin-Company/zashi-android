@@ -8,8 +8,8 @@ import cash.z.ecc.android.bip39.Mnemonics
 import cash.z.ecc.android.sdk.ext.collectWith
 import cash.z.ecc.android.sdk.model.BlockHeight
 import cash.z.ecc.android.sdk.model.ZcashNetwork
+import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import cash.z.ecc.sdk.type.fromResources
-import co.electriccoin.zcash.ui.common.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.screen.restore.model.RestoreStage
 import co.electriccoin.zcash.ui.screen.restore.state.RestoreState
 import co.electriccoin.zcash.ui.screen.restore.state.WordList

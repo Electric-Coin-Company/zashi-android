@@ -6,7 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.test.filters.MediumTest
 import cash.z.ecc.android.sdk.ext.onFirst
-import co.electriccoin.zcash.ui.screen.update.AppUpdateCheckerImp
+import co.electriccoin.zcash.ui.screen.update.AppUpdateCheckerImpl
 import co.electriccoin.zcash.ui.screen.update.model.UpdateInfo
 import co.electriccoin.zcash.ui.screen.update.model.UpdateState
 import co.electriccoin.zcash.ui.test.getAppContext
@@ -19,13 +19,13 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
-class AppUpdateCheckerImpTest {
+class AppUpdateCheckerImplTest {
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
     companion object {
         val context: Context = getAppContext()
-        val updateChecker = AppUpdateCheckerImp.new()
+        val updateChecker = AppUpdateCheckerImpl()
     }
 
     private fun getAppUpdateInfoFlow(): Flow<UpdateInfo> {

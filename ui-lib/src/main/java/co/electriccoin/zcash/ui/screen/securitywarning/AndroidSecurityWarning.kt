@@ -3,10 +3,11 @@ package co.electriccoin.zcash.ui.screen.securitywarning
 import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import co.electriccoin.zcash.configuration.AndroidConfigurationFactory
+import co.electriccoin.zcash.configuration.api.ConfigurationProvider
 import co.electriccoin.zcash.ui.common.compose.LocalActivity
 import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.screen.securitywarning.view.SecurityWarning
+import org.koin.compose.koinInject
 
 @Composable
 internal fun WrapSecurityWarning(
@@ -14,7 +15,7 @@ internal fun WrapSecurityWarning(
     onConfirm: () -> Unit
 ) {
     val activity = LocalActivity.current
-
+    val androidConfigurationProvider = koinInject<ConfigurationProvider>()
     BackHandler {
         onBack()
     }
@@ -29,6 +30,6 @@ internal fun WrapSecurityWarning(
     )
 
     LaunchedEffect(key1 = true) {
-        AndroidConfigurationFactory.getInstance(activity.applicationContext).hintToRefresh()
+        androidConfigurationProvider.hintToRefresh()
     }
 }

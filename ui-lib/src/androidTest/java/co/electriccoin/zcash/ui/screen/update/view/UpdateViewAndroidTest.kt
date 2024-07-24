@@ -23,8 +23,8 @@ class UpdateViewAndroidTest : UiTestPrerequisites() {
 
     private fun newTestSetup(updateInfo: UpdateInfo) =
         UpdateViewAndroidTestSetup(
-            composeTestRule,
-            updateInfo
+            updateInfo,
+            composeTestRule
         ).apply {
             setDefaultContent()
         }
