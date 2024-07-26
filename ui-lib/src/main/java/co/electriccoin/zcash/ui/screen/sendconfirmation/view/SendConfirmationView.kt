@@ -32,6 +32,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import cash.z.ecc.android.sdk.fixture.WalletAddressFixture
+import cash.z.ecc.android.sdk.model.FiatCurrencyResult
 import cash.z.ecc.android.sdk.model.FirstClassByteArray
 import cash.z.ecc.android.sdk.model.TransactionSubmitResult
 import cash.z.ecc.android.sdk.model.ZecSend
@@ -39,6 +40,7 @@ import cash.z.ecc.sdk.extension.toZecStringFull
 import cash.z.ecc.sdk.fixture.MemoFixture
 import cash.z.ecc.sdk.fixture.ZatoshiFixture
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.StyledExchangeBalance
 import co.electriccoin.zcash.ui.common.compose.BalanceWidgetBigLineOnly
 import co.electriccoin.zcash.ui.common.extension.asZecAmountTriple
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
@@ -83,7 +85,8 @@ private fun SendConfirmationPreview() {
             stage = SendConfirmationStage.Confirmation,
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
             onContactSupport = {},
-            submissionResults = emptyList<TransactionSubmitResult>().toImmutableList()
+            submissionResults = emptyList<TransactionSubmitResult>().toImmutableList(),
+            exchangeRate = FiatCurrencyResult.Loading()
         )
     }
 }
@@ -106,7 +109,8 @@ private fun SendConfirmationDarkPreview() {
             stage = SendConfirmationStage.Confirmation,
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
             onContactSupport = {},
-            submissionResults = emptyList<TransactionSubmitResult>().toImmutableList()
+            submissionResults = emptyList<TransactionSubmitResult>().toImmutableList(),
+            exchangeRate = FiatCurrencyResult.Loading()
         )
     }
 }
@@ -129,7 +133,8 @@ private fun SendMultipleErrorPreview() {
             stage = SendConfirmationStage.MultipleTrxFailure,
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
             onContactSupport = {},
-            submissionResults = emptyList<TransactionSubmitResult>().toImmutableList()
+            submissionResults = emptyList<TransactionSubmitResult>().toImmutableList(),
+            exchangeRate = FiatCurrencyResult.Loading()
         )
     }
 }
@@ -152,7 +157,8 @@ private fun SendMultipleErrorDarkPreview() {
             stage = SendConfirmationStage.MultipleTrxFailure,
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
             onContactSupport = {},
-            submissionResults = emptyList<TransactionSubmitResult>().toImmutableList()
+            submissionResults = emptyList<TransactionSubmitResult>().toImmutableList(),
+            exchangeRate = FiatCurrencyResult.Loading()
         )
     }
 }
@@ -171,7 +177,8 @@ private fun PreviewSendConfirmation() {
                 ),
             onConfirmation = {},
             onBack = {},
-            isSending = false
+            isSending = false,
+            exchangeRate = FiatCurrencyResult.Loading()
         )
     }
 }
@@ -244,6 +251,7 @@ fun SendConfirmation(
     submissionResults: ImmutableList<TransactionSubmitResult>,
     topAppBarSubTitleState: TopAppBarSubTitleState,
     zecSend: ZecSend,
+    exchangeRate: FiatCurrencyResult
 ) {
     BlankBgScaffold(
         topBar = {
@@ -269,7 +277,8 @@ fun SendConfirmation(
                         bottom = paddingValues.calculateBottomPadding(),
                         start = ZcashTheme.dimens.screenHorizontalSpacingRegular,
                         end = ZcashTheme.dimens.screenHorizontalSpacingRegular
-                    )
+                    ),
+            exchangeRate = exchangeRate
         )
     }
 }
@@ -327,6 +336,7 @@ private fun SendConfirmationMainContent(
     submissionResults: ImmutableList<TransactionSubmitResult>,
     zecSend: ZecSend,
     modifier: Modifier = Modifier,
+    exchangeRate: FiatCurrencyResult
 ) {
     when (stage) {
         SendConfirmationStage.Confirmation, SendConfirmationStage.Sending, is SendConfirmationStage.Failure -> {
@@ -335,7 +345,8 @@ private fun SendConfirmationMainContent(
                 onBack = onBack,
                 onConfirmation = onConfirmation,
                 isSending = stage == SendConfirmationStage.Sending,
-                modifier = modifier
+                modifier = modifier,
+                exchangeRate = exchangeRate
             )
             if (stage is SendConfirmationStage.Failure) {
                 SendFailure(
@@ -358,6 +369,7 @@ private fun SendConfirmationMainContent(
 @Suppress("LongMethod")
 private fun SendConfirmationContent(
     zecSend: ZecSend,
+    exchangeRate: FiatCurrencyResult,
     onConfirmation: () -> Unit,
     onBack: () -> Unit,
     isSending: Boolean,
@@ -377,6 +389,12 @@ private fun SendConfirmationContent(
         BalanceWidgetBigLineOnly(
             parts = zecSend.amount.toZecStringFull().asZecAmountTriple(),
             // We don't hide any balance in confirmation screen
+            isHideBalances = false
+        )
+
+        StyledExchangeBalance(
+            zatoshi = zecSend.amount,
+            exchangeRate = exchangeRate,
             isHideBalances = false
         )
 

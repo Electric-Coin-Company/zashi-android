@@ -6,6 +6,10 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+### Added
+- Balance now also displays USD value
+- An option to enter USD amount in Send Transaction screen
+
 ## [1.1.4 (700)] - 2024-07-23
 
 ### Added

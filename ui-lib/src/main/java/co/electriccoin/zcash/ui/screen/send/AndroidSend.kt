@@ -13,6 +13,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cash.z.ecc.android.sdk.Synchronizer
+import cash.z.ecc.android.sdk.model.FiatCurrencyResult
 import cash.z.ecc.android.sdk.model.MonetarySeparators
 import cash.z.ecc.android.sdk.model.UnifiedSpendingKey
 import cash.z.ecc.android.sdk.model.ZecSend
@@ -138,24 +139,45 @@ internal fun WrapSend(
         rememberSaveable(stateSaver = AmountState.Saver) {
             // Default amount state
             mutableStateOf(
-                AmountState.new(
+                AmountState.newFromZec(
                     context = context,
                     value = zecSend?.amount?.toZecString() ?: "",
                     monetarySeparators = monetarySeparators,
-                    isTransparentRecipient = recipientAddressState.type?.let { it == AddressType.Transparent } ?: false
+                    isTransparentRecipient = recipientAddressState.type?.let { it == AddressType.Transparent } ?: false,
+                    fiatValue = "",
+                    fiatCurrencyConversion =
+                        (walletSnapshot?.exchangeRateUsd as? FiatCurrencyResult.Success)
+                            ?.currencyConversion
                 )
             )
         }
     // New amount state based on the recipient address type (e.g. shielded supports zero funds sending and
     // transparent not)
-    LaunchedEffect(key1 = recipientAddressState) {
+    LaunchedEffect(recipientAddressState, walletSnapshot?.exchangeRateUsd) {
         setAmountState(
-            AmountState.new(
-                context = context,
-                isTransparentRecipient = recipientAddressState.type?.let { it == AddressType.Transparent } ?: false,
-                monetarySeparators = monetarySeparators,
-                value = amountState.value
-            )
+            if (amountState.value.isNotBlank() || amountState.fiatValue.isBlank()) {
+                AmountState.newFromZec(
+                    context = context,
+                    isTransparentRecipient = recipientAddressState.type?.let { it == AddressType.Transparent } ?: false,
+                    monetarySeparators = monetarySeparators,
+                    value = amountState.value,
+                    fiatValue = amountState.fiatValue,
+                    fiatCurrencyConversion =
+                        (walletSnapshot?.exchangeRateUsd as? FiatCurrencyResult.Success)
+                            ?.currencyConversion
+                )
+            } else {
+                AmountState.newFromFiat(
+                    context = context,
+                    isTransparentRecipient = recipientAddressState.type?.let { it == AddressType.Transparent } ?: false,
+                    monetarySeparators = monetarySeparators,
+                    value = amountState.value,
+                    fiatValue = amountState.fiatValue,
+                    fiatCurrencyConversion =
+                        (walletSnapshot?.exchangeRateUsd as? FiatCurrencyResult.Success)
+                            ?.currencyConversion
+                )
+            }
         )
     }
 
@@ -170,14 +192,28 @@ internal fun WrapSend(
         setSendStage(SendStage.Form)
         setZecSend(null)
         setRecipientAddressState(RecipientAddressState.new("", null))
-        setAmountState(AmountState.new(context, monetarySeparators, "", false))
+        setAmountState(
+            AmountState.newFromZec(
+                context = context,
+                monetarySeparators = monetarySeparators,
+                value = "",
+                fiatValue = "",
+                isTransparentRecipient = false,
+                fiatCurrencyConversion =
+                    (walletSnapshot?.exchangeRateUsd as? FiatCurrencyResult.Success)
+                        ?.currencyConversion
+            )
+        )
         setMemoState(MemoState.new(""))
     }
 
     val onBackAction = {
         when (sendStage) {
             SendStage.Form -> goBack()
-            SendStage.Proposing -> { /* no action - wait until the sending is done */ }
+            SendStage.Proposing -> {
+                // no action - wait until the sending is done
+            }
+
             is SendStage.SendFailure -> setSendStage(SendStage.Form)
         }
     }

@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.fixture
 
+import cash.z.ecc.android.sdk.model.FiatCurrencyResult
 import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.ui.common.compose.BalanceState
 
@@ -11,9 +12,11 @@ object BalanceStateFixture {
 
     fun new(
         totalBalance: Zatoshi = TOTAL_BALANCE,
-        spendableBalance: Zatoshi = SPENDABLE_BALANCE
+        spendableBalance: Zatoshi = SPENDABLE_BALANCE,
+        exchangeRate: FiatCurrencyResult = FiatCurrencyResultFixture.new()
     ) = BalanceState.Available(
         totalBalance = totalBalance,
-        spendableBalance = spendableBalance
+        spendableBalance = spendableBalance,
+        exchangeRate = exchangeRate
     )
 }

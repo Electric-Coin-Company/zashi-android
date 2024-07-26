@@ -3,6 +3,7 @@ package co.electriccoin.zcash.ui.fixture
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.block.processor.CompactBlockProcessor
 import cash.z.ecc.android.sdk.fixture.WalletBalanceFixture
+import cash.z.ecc.android.sdk.model.FiatCurrencyResult
 import cash.z.ecc.android.sdk.model.PercentDecimal
 import cash.z.ecc.android.sdk.model.WalletBalance
 import cash.z.ecc.android.sdk.model.Zatoshi
@@ -34,12 +35,13 @@ object WalletSnapshotFixture {
         progress: PercentDecimal = PROGRESS,
         synchronizerError: SynchronizerError? = null
     ) = WalletSnapshot(
-        status,
-        processorInfo,
-        orchardBalance,
-        saplingBalance,
-        transparentBalance,
-        progress,
-        synchronizerError
+        status = status,
+        processorInfo = processorInfo,
+        orchardBalance = orchardBalance,
+        saplingBalance = saplingBalance,
+        transparentBalance = transparentBalance,
+        exchangeRateUsd = FiatCurrencyResult.Loading(),
+        progress = progress,
+        synchronizerError = synchronizerError
     )
 }

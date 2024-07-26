@@ -14,7 +14,7 @@ import cash.z.ecc.android.sdk.WalletInitMode
 import cash.z.ecc.android.sdk.block.processor.CompactBlockProcessor
 import cash.z.ecc.android.sdk.model.Account
 import cash.z.ecc.android.sdk.model.BlockHeight
-import cash.z.ecc.android.sdk.model.FiatCurrency
+import cash.z.ecc.android.sdk.model.FiatCurrencyResult
 import cash.z.ecc.android.sdk.model.PercentDecimal
 import cash.z.ecc.android.sdk.model.PersistableWallet
 import cash.z.ecc.android.sdk.model.TransactionOverview
@@ -90,19 +90,6 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
      */
     val synchronizer =
         walletCoordinator.synchronizer.stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            null
-        )
-
-    /**
-     * A flow of the user's preferred fiat currency.
-     */
-    val preferredFiatCurrency: StateFlow<FiatCurrency?> =
-        flow<FiatCurrency?> {
-            val preferenceProvider = StandardPreferenceSingleton.getInstance(application)
-            emitAll(StandardPreferenceKeys.PREFERRED_FIAT_CURRENCY.observe(preferenceProvider))
-        }.stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
             null
@@ -310,20 +297,22 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
                             (snapshot.hasChangePending() || snapshot.hasValuePending())
                     ) -> {
                         BalanceState.Loading(
-                            totalBalance = snapshot.totalBalance()
+                            totalBalance = snapshot.totalBalance(),
+                            exchangeRate = snapshot.exchangeRateUsd
                         )
                     }
                     else -> {
                         BalanceState.Available(
                             totalBalance = snapshot.totalBalance(),
-                            spendableBalance = snapshot.spendableBalance()
+                            spendableBalance = snapshot.spendableBalance(),
+                            exchangeRate = snapshot.exchangeRateUsd
                         )
                     }
                 }
             }.stateIn(
                 viewModelScope,
                 SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-                BalanceState.None
+                BalanceState.None(FiatCurrencyResult.Loading())
             )
 
     /**
@@ -597,24 +586,29 @@ private fun Synchronizer.toWalletSnapshot() =
         // 4
         transparentBalance,
         // 5
-        progress,
+        exchangeRateUsd,
         // 6
+        progress,
+        // 7
         toCommonError()
     ) { flows ->
         val orchardBalance = flows[2] as WalletBalance?
         val saplingBalance = flows[3] as WalletBalance?
         val transparentBalance = flows[4] as Zatoshi?
 
-        val progressPercentDecimal = flows[5] as PercentDecimal
+        @Suppress("UNCHECKED_CAST")
+        val exchangeRateUsd = flows[5] as FiatCurrencyResult
+        val progressPercentDecimal = (flows[6] as PercentDecimal)
 
         WalletSnapshot(
-            flows[0] as Synchronizer.Status,
-            flows[1] as CompactBlockProcessor.ProcessorInfo,
-            orchardBalance ?: WalletBalance(Zatoshi(0), Zatoshi(0), Zatoshi(0)),
-            saplingBalance ?: WalletBalance(Zatoshi(0), Zatoshi(0), Zatoshi(0)),
-            transparentBalance ?: Zatoshi(0),
-            progressPercentDecimal,
-            flows[6] as SynchronizerError?
+            status = flows[0] as Synchronizer.Status,
+            processorInfo = flows[1] as CompactBlockProcessor.ProcessorInfo,
+            orchardBalance = orchardBalance ?: WalletBalance(Zatoshi(0), Zatoshi(0), Zatoshi(0)),
+            saplingBalance = saplingBalance ?: WalletBalance(Zatoshi(0), Zatoshi(0), Zatoshi(0)),
+            transparentBalance = transparentBalance ?: Zatoshi(0),
+            exchangeRateUsd = exchangeRateUsd,
+            progress = progressPercentDecimal,
+            synchronizerError = flows[7] as SynchronizerError?
         )
     }
 

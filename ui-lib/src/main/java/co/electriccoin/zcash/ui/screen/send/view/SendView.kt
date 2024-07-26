@@ -4,6 +4,7 @@ package co.electriccoin.zcash.ui.screen.send.view
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.relocation.BringIntoViewRequester
@@ -32,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
@@ -47,6 +50,9 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import cash.z.ecc.android.sdk.model.FiatCurrencyResult
 import cash.z.ecc.android.sdk.model.Memo
 import cash.z.ecc.android.sdk.model.MonetarySeparators
 import cash.z.ecc.android.sdk.model.ZecSend
@@ -104,7 +110,12 @@ private fun PreviewSendForm() {
             recipientAddressState = RecipientAddressState("invalid_address", AddressType.Invalid()),
             onRecipientAddressChange = {},
             setAmountState = {},
-            amountState = AmountState.Valid(ZatoshiFixture.ZATOSHI_LONG.toString(), ZatoshiFixture.new()),
+            amountState =
+                AmountState.Valid(
+                    value = ZatoshiFixture.ZATOSHI_LONG.toString(),
+                    fiatValue = "",
+                    zatoshi = ZatoshiFixture.new()
+                ),
             setMemoState = {},
             memoState = MemoState.new("Test message"),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
@@ -135,7 +146,12 @@ private fun SendFormTransparentAddressPreview() {
                 ),
             onRecipientAddressChange = {},
             setAmountState = {},
-            amountState = AmountState.Valid(ZatoshiFixture.ZATOSHI_LONG.toString(), ZatoshiFixture.new()),
+            amountState =
+                AmountState.Valid(
+                    value = ZatoshiFixture.ZATOSHI_LONG.toString(),
+                    fiatValue = "",
+                    zatoshi = ZatoshiFixture.new()
+                ),
             setMemoState = {},
             memoState = MemoState.new("Test message"),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
@@ -363,7 +379,7 @@ private fun SendForm(
         Spacer(Modifier.size(ZcashTheme.dimens.spacingDefault))
 
         SendFormAmountTextField(
-            amountSate = amountState,
+            amountState = amountState,
             imeAction =
                 if (recipientAddressState.type == AddressType.Transparent) {
                     ImeAction.Done
@@ -583,7 +599,7 @@ fun SendFormAddressTextField(
 @Suppress("LongParameterList", "LongMethod")
 @Composable
 fun SendFormAmountTextField(
-    amountSate: AmountState,
+    amountState: AmountState,
     imeAction: ImeAction,
     isTransparentRecipient: Boolean,
     monetarySeparators: MonetarySeparators,
@@ -597,9 +613,9 @@ fun SendFormAmountTextField(
     val zcashCurrency = ZcashCurrency.getLocalizedName(context)
 
     val amountError =
-        when (amountSate) {
+        when (amountState) {
             is AmountState.Invalid -> {
-                if (amountSate.value.isEmpty()) {
+                if (amountState.value.isEmpty()) {
                     null
                 } else {
                     stringResource(id = R.string.send_amount_invalid)
@@ -607,7 +623,7 @@ fun SendFormAmountTextField(
             }
 
             is AmountState.Valid -> {
-                if (walletSnapshot.spendableBalance() < amountSate.zatoshi) {
+                if (walletSnapshot.spendableBalance() < amountState.zatoshi) {
                     stringResource(id = R.string.send_amount_insufficient_balance)
                 } else {
                     null
@@ -629,47 +645,123 @@ fun SendFormAmountTextField(
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
 
-        FormTextField(
-            value = amountSate.value,
-            onValueChange = { newValue ->
-                setAmountState(
-                    AmountState.new(
-                        context = context,
-                        value = newValue,
-                        monetarySeparators = monetarySeparators,
-                        isTransparentRecipient = isTransparentRecipient
+        Row {
+            FormTextField(
+                textStyle = ZcashTheme.extendedTypography.textFieldValue.copy(fontSize = 14.sp),
+                value = amountState.value,
+                onValueChange = { newValue ->
+                    setAmountState(
+                        AmountState.newFromZec(
+                            context = context,
+                            value = newValue,
+                            monetarySeparators = monetarySeparators,
+                            isTransparentRecipient = isTransparentRecipient,
+                            fiatValue = amountState.fiatValue,
+                            fiatCurrencyConversion =
+                                (walletSnapshot.exchangeRateUsd as? FiatCurrencyResult.Success)
+                                    ?.currencyConversion
+                        )
                     )
-                )
-            },
-            modifier = Modifier.fillMaxWidth(),
-            error = amountError,
-            placeholder = {
-                Text(
-                    text =
-                        stringResource(
-                            id = R.string.send_amount_hint,
-                            zcashCurrency
-                        ),
-                    style = ZcashTheme.extendedTypography.textFieldHint,
-                    color = ZcashTheme.colors.textFieldHint
-                )
-            },
-            keyboardOptions =
-                KeyboardOptions(
-                    keyboardType = KeyboardType.Number,
-                    imeAction = imeAction
-                ),
-            keyboardActions =
-                KeyboardActions(
-                    onDone = {
-                        focusManager.clearFocus(true)
-                    },
-                    onNext = {
-                        focusManager.moveFocus(FocusDirection.Down)
-                    }
-                ),
-            bringIntoViewRequester = bringIntoViewRequester,
-        )
+                },
+                modifier = Modifier.weight(1f),
+                error = amountError,
+                placeholder = {
+                    Text(
+                        text =
+                            stringResource(
+                                id = R.string.send_amount_hint,
+                                zcashCurrency
+                            ),
+                        style = ZcashTheme.extendedTypography.textFieldHint,
+                        color = ZcashTheme.colors.textFieldHint
+                    )
+                },
+                keyboardOptions =
+                    KeyboardOptions(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = imeAction
+                    ),
+                keyboardActions =
+                    KeyboardActions(
+                        onDone = {
+                            focusManager.clearFocus(true)
+                        },
+                        onNext = {
+                            focusManager.moveFocus(FocusDirection.Right)
+                        }
+                    ),
+                bringIntoViewRequester = bringIntoViewRequester,
+                leadingIcon = {
+                    Image(
+                        modifier = Modifier.requiredSize(7.dp, 13.dp),
+                        painter = painterResource(R.drawable.ic_send_zashi),
+                        contentDescription = "",
+                        colorFilter = ColorFilter.tint(color = ZcashTheme.colors.secondaryColor),
+                    )
+                }
+            )
+            Spacer(modifier = Modifier.width(ZcashTheme.dimens.spacingMin))
+            Image(
+                modifier = Modifier.padding(top = 24.dp),
+                painter = painterResource(id = R.drawable.ic_send_convert),
+                contentDescription = "",
+                colorFilter = ColorFilter.tint(color = ZcashTheme.colors.secondaryColor),
+            )
+            Spacer(modifier = Modifier.width(ZcashTheme.dimens.spacingMin))
+            FormTextField(
+                textStyle = ZcashTheme.extendedTypography.textFieldValue.copy(fontSize = 14.sp),
+                value = amountState.fiatValue,
+                onValueChange = { newValue -> // TODO
+                    setAmountState(
+                        AmountState.newFromFiat(
+                            context = context,
+                            value = amountState.value,
+                            monetarySeparators = monetarySeparators,
+                            isTransparentRecipient = isTransparentRecipient,
+                            fiatValue = newValue,
+                            fiatCurrencyConversion =
+                                (walletSnapshot.exchangeRateUsd as? FiatCurrencyResult.Success)
+                                    ?.currencyConversion
+                        )
+                    )
+                },
+                modifier = Modifier.weight(1f),
+                placeholder = {
+                    Text(
+                        text =
+                            stringResource(
+                                id = R.string.send_usd_amount_hint,
+                                zcashCurrency
+                            ),
+                        style = ZcashTheme.extendedTypography.textFieldHint,
+                        color = ZcashTheme.colors.textFieldHint
+                    )
+                },
+                keyboardOptions =
+                    KeyboardOptions(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = imeAction
+                    ),
+                keyboardActions =
+                    KeyboardActions(
+                        onDone = {
+                            focusManager.clearFocus(true)
+                        },
+                        onNext = {
+                            focusManager.moveFocus(FocusDirection.Down)
+                        }
+                    ),
+                bringIntoViewRequester = bringIntoViewRequester,
+                leadingIcon = {
+                    Image(
+                        modifier = Modifier.requiredSize(7.dp, 13.dp),
+                        painter = painterResource(R.drawable.ic_usd),
+                        contentDescription = "",
+                        colorFilter = ColorFilter.tint(color = ZcashTheme.colors.secondaryColor),
+                    )
+                }
+            )
+        }
     }
 }
 
