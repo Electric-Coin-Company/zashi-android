@@ -1,3 +1,5 @@
+@file:Suppress("TooManyFunctions")
+
 package co.electriccoin.zcash.ui
 
 import androidx.compose.animation.animateContentSize
@@ -31,6 +33,7 @@ import co.electriccoin.zcash.ui.util.getValue
 import co.electriccoin.zcash.ui.util.stringRes
 import kotlinx.datetime.Clock
 
+@Suppress("LongParameterList")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun StyledExchangeBalance(
@@ -80,7 +83,9 @@ fun StyledExchangeBalance(
                                 is FiatCurrencyConversionRateState.Current -> state.formattedFiatValue
                                 is FiatCurrencyConversionRateState.Stale -> state.formattedFiatValue
                                 FiatCurrencyConversionRateState.Unavailable ->
-                                    stringResource(co.electriccoin.zcash.ui.R.string.fiat_currency_conversion_rate_unavailable)
+                                    stringResource(
+                                        co.electriccoin.zcash.ui.R.string.fiat_currency_conversion_rate_unavailable
+                                    )
                             }
                         },
                     textColor = textColor,
@@ -94,9 +99,9 @@ fun StyledExchangeBalance(
 @Composable
 private fun StyledExchangeText(
     text: String,
-    modifier: Modifier = Modifier,
     textColor: Color,
-    style: TextStyle
+    style: TextStyle,
+    modifier: Modifier = Modifier,
 ) {
     Text(
         text = text,

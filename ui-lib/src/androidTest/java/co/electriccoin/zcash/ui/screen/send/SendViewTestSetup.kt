@@ -69,7 +69,7 @@ class SendViewTestSetup(
     }
 
     @Composable
-    @Suppress("TestFunctionName")
+    @Suppress("TestFunctionName", "LongMethod")
     fun DefaultContent() {
         val context = LocalContext.current
 

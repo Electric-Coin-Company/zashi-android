@@ -27,6 +27,7 @@ sealed interface AmountState {
     data class Invalid(override val value: String, override val fiatValue: String) : AmountState
 
     companion object {
+        @Suppress("LongParameterList")
         fun newFromZec(
             context: Context,
             monetarySeparators: MonetarySeparators,
@@ -67,6 +68,7 @@ sealed interface AmountState {
             }
         }
 
+        @Suppress("LongParameterList")
         fun newFromFiat(
             context: Context,
             monetarySeparators: MonetarySeparators,

@@ -711,7 +711,7 @@ fun SendFormAmountTextField(
             FormTextField(
                 textStyle = ZcashTheme.extendedTypography.textFieldValue.copy(fontSize = 14.sp),
                 value = amountState.fiatValue,
-                onValueChange = { newValue -> // TODO
+                onValueChange = { newValue ->
                     setAmountState(
                         AmountState.newFromFiat(
                             context = context,

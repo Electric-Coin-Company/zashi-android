@@ -329,14 +329,14 @@ private fun SendConfirmationTopAppBar(
 @Composable
 @Suppress("LongParameterList")
 private fun SendConfirmationMainContent(
-    onBack: () -> Unit,
-    onContactSupport: () -> Unit,
-    onConfirmation: () -> Unit,
     stage: SendConfirmationStage,
     submissionResults: ImmutableList<TransactionSubmitResult>,
     zecSend: ZecSend,
+    onBack: () -> Unit,
+    onContactSupport: () -> Unit,
+    onConfirmation: () -> Unit,
+    exchangeRate: FiatCurrencyResult,
     modifier: Modifier = Modifier,
-    exchangeRate: FiatCurrencyResult
 ) {
     when (stage) {
         SendConfirmationStage.Confirmation, SendConfirmationStage.Sending, is SendConfirmationStage.Failure -> {
@@ -366,13 +366,13 @@ private fun SendConfirmationMainContent(
 }
 
 @Composable
-@Suppress("LongMethod")
+@Suppress("LongMethod", "LongParameterList")
 private fun SendConfirmationContent(
     zecSend: ZecSend,
     exchangeRate: FiatCurrencyResult,
+    isSending: Boolean,
     onConfirmation: () -> Unit,
     onBack: () -> Unit,
-    isSending: Boolean,
     modifier: Modifier = Modifier,
 ) {
     Column(
