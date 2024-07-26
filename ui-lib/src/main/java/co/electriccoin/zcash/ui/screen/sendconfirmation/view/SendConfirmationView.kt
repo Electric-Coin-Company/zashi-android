@@ -395,7 +395,9 @@ private fun SendConfirmationContent(
         StyledExchangeBalance(
             zatoshi = zecSend.amount,
             exchangeRate = exchangeRate,
-            isHideBalances = false
+            isHideBalances = false,
+            style = ZcashTheme.typography.secondary.headlineSmall,
+            textColor = ZcashTheme.colors.textFieldHint
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
