@@ -80,12 +80,13 @@ fun ChooseServerView(
     ) { paddingValues ->
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(
-                top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
-                bottom = paddingValues.calculateBottomPadding() + ZcashTheme.dimens.spacingDefault,
-                start = ZcashTheme.dimens.screenHorizontalSpacingRegular,
-                end = ZcashTheme.dimens.screenHorizontalSpacingRegular
-            )
+            contentPadding =
+                PaddingValues(
+                    top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
+                    bottom = paddingValues.calculateBottomPadding() + ZcashTheme.dimens.spacingDefault,
+                    start = ZcashTheme.dimens.screenHorizontalSpacingRegular,
+                    end = ZcashTheme.dimens.screenHorizontalSpacingRegular
+                )
         ) {
             if (state.fastest.isLoading || state.all.servers.isNotEmpty()) {
                 serverListItems(state.fastest)
@@ -159,11 +160,11 @@ private fun ChooseServerTopAppBar(
     SmallTopAppBar(
         titleText = stringResource(id = R.string.choose_server_title),
         subTitle =
-        when (subTitleState) {
-            TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
-            TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
-            TopAppBarSubTitleState.None -> null
-        },
+            when (subTitleState) {
+                TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
+                TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
+                TopAppBarSubTitleState.None -> null
+            },
         modifier = Modifier.testTag(CHOOSE_SERVER_TOP_APP_BAR),
         showTitleLogo = true,
         navigationAction = {
@@ -186,24 +187,29 @@ private fun LazyListScope.serverListItems(state: ServerListState) {
         contentType = { item -> item.contentType },
     ) {
         when (it) {
-            is ServerState.Custom -> CustomServerRadioButton(
-                modifier = Modifier.fillMaxWidth(),
-                state = it
-            )
+            is ServerState.Custom ->
+                CustomServerRadioButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    state = it
+                )
 
-            is ServerState.Default -> RadioButton(
-                modifier = Modifier.fillMaxWidth(),
-                text = it.name.getValue(),
-                selected = it.isChecked,
-                onClick = it.onClick,
-            )
+            is ServerState.Default ->
+                RadioButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = it.name.getValue(),
+                    selected = it.isChecked,
+                    onClick = it.onClick,
+                )
         }
     }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun CustomServerRadioButton(modifier: Modifier, state: ServerState.Custom) {
+private fun CustomServerRadioButton(
+    state: ServerState.Custom,
+    modifier: Modifier = Modifier
+) {
     Column(modifier = modifier) {
         RadioButton(
             modifier = Modifier.fillMaxWidth(),
@@ -222,9 +228,10 @@ private fun CustomServerRadioButton(modifier: Modifier, state: ServerState.Custo
                 },
                 keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus(true) }),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri, imeAction = ImeAction.Done),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = ZcashTheme.dimens.spacingSmall)
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = ZcashTheme.dimens.spacingSmall)
             )
 
             Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
@@ -232,120 +239,140 @@ private fun CustomServerRadioButton(modifier: Modifier, state: ServerState.Custo
     }
 }
 
+@Suppress("LongMethod", "MagicNumber")
 @Composable
 private fun ChooseServerPreview(dialogState: ServerDialogState? = null) {
     var selectionIndex by remember { mutableIntStateOf(5) }
     ChooseServerView(
-        state = ChooseServerState(
-            fastest = ServerListState.Fastest(
-                title = stringRes("Fastest Servers"),
-                servers = (1..3).map {
-                    ServerState.Default(
-                        name = stringRes("Some Server"),
-                        isChecked = selectionIndex == it,
-                        onClick = {
-                            selectionIndex = it
-                        },
-                    )
-                },
-                isLoading = false
-            ),
-            all = ServerListState.All(
-                title = stringRes("All Servers"),
-                servers = (4..<12).map {
-                    if (it == 5) {
-                        ServerState.Custom(
-                            name = stringRes("Custom Server"),
-                            isChecked = selectionIndex == it,
-                            newServerTextFieldState = TextFieldState(
-                                value = stringRes(""),
-                                error = null,
-                                isEnabled = true,
-                                onValueChange = { },
-                            ),
-                            onClick = {
-                                selectionIndex = it
-                            }
-                        )
-                    } else {
-                        ServerState.Default(
-                            name = stringRes("Some Server"),
-                            isChecked = selectionIndex == it,
-                            onClick = {
-                                selectionIndex = it
+        state =
+            ChooseServerState(
+                fastest =
+                    ServerListState.Fastest(
+                        title = stringRes("Fastest Servers"),
+                        servers =
+                            (1..3).map {
+                                ServerState.Default(
+                                    name = stringRes("Some Server"),
+                                    isChecked = selectionIndex == it,
+                                    onClick = {
+                                        selectionIndex = it
+                                    },
+                                )
                             },
-                        )
-                    }
-                }
+                        isLoading = false
+                    ),
+                all =
+                    ServerListState.All(
+                        title = stringRes("All Servers"),
+                        servers =
+                            (4..<12).map {
+                                if (it == 5) {
+                                    ServerState.Custom(
+                                        name = stringRes("Custom Server"),
+                                        isChecked = selectionIndex == it,
+                                        newServerTextFieldState =
+                                            TextFieldState(
+                                                value = stringRes(""),
+                                                error = null,
+                                                isEnabled = true,
+                                                onValueChange = { },
+                                            ),
+                                        onClick = {
+                                            selectionIndex = it
+                                        }
+                                    )
+                                } else {
+                                    ServerState.Default(
+                                        name = stringRes("Some Server"),
+                                        isChecked = selectionIndex == it,
+                                        onClick = {
+                                            selectionIndex = it
+                                        },
+                                    )
+                                }
+                            }
+                    ),
+                saveButton =
+                    ButtonState(
+                        text = stringRes("Save Button"),
+                        isEnabled = true,
+                        showProgressBar = false,
+                        onClick = {},
+                    ),
+                dialogState = dialogState
             ),
-            saveButton = ButtonState(
-                text = stringRes("Save Button"),
-                isEnabled = true,
-                showProgressBar = false,
-                onClick = {},
-            ),
-            dialogState = dialogState
-        ),
         onBack = {},
         topAppBarSubTitleState = TopAppBarSubTitleState.None,
     )
 }
 
 @Composable
-private fun ChooseServerPreviewValidationDialog() = ChooseServerPreview(
-    dialogState = ServerDialogState.Validation(
-        state = AlertDialogState(
-            title = stringRes("title"),
-            text = stringRes("text"),
-        ),
-        reason = stringRes("reason")
+private fun ChooseServerPreviewValidationDialog() =
+    ChooseServerPreview(
+        dialogState =
+            ServerDialogState.Validation(
+                state =
+                    AlertDialogState(
+                        title = stringRes("title"),
+                        text = stringRes("text"),
+                    ),
+                reason = stringRes("reason")
+            )
     )
-)
 
 @Composable
-private fun ChooseServerPreviewSaveSuccessDialog() = ChooseServerPreview(
-    dialogState = ServerDialogState.SaveSuccess(
-        state = AlertDialogState(
-            title = stringRes("title"),
-            text = stringRes("text"),
-        ),
+private fun ChooseServerPreviewSaveSuccessDialog() =
+    ChooseServerPreview(
+        dialogState =
+            ServerDialogState.SaveSuccess(
+                state =
+                    AlertDialogState(
+                        title = stringRes("title"),
+                        text = stringRes("text"),
+                    ),
+            )
     )
-)
 
 @Preview
 @Composable
-private fun ChooseServerPreviewLight() = ZcashTheme(forceDarkMode = false) {
-    ChooseServerPreview()
-}
+private fun ChooseServerPreviewLight() =
+    ZcashTheme(forceDarkMode = false) {
+        ChooseServerPreview()
+    }
 
 @Preview
 @Composable
-private fun ChooseServerPreviewValidationDialogLight() = ZcashTheme(forceDarkMode = false) {
-    ChooseServerPreviewValidationDialog()
-}
+private fun ChooseServerPreviewValidationDialogLight() =
+    ZcashTheme(forceDarkMode = false) {
+        ChooseServerPreviewValidationDialog()
+    }
 
 @Preview
 @Composable
-private fun ChooseServerPreviewSaveSuccessDialogLight() = ZcashTheme(forceDarkMode = false) {
-    ChooseServerPreviewSaveSuccessDialog()
-}
+private fun ChooseServerPreviewSaveSuccessDialogLight() =
+    ZcashTheme(forceDarkMode = false) {
+        ChooseServerPreviewSaveSuccessDialog()
+    }
 
 @Preview
 @Composable
-private fun ChooseServerPreviewDark() = ZcashTheme(forceDarkMode = true) {
-    ChooseServerPreview()
-}
+private fun ChooseServerPreviewDark() =
+    ZcashTheme(forceDarkMode = true) {
+        ChooseServerPreview()
+    }
 
 @Preview
 @Composable
-private fun ChooseServerPreviewValidationDialogDark() = ZcashTheme(forceDarkMode = true) {
-    ChooseServerPreviewValidationDialog()
-}
+private fun ChooseServerPreviewValidationDialogDark() =
+    ZcashTheme(forceDarkMode = true) {
+        ChooseServerPreviewValidationDialog()
+    }
 
 @Preview
 @Composable
-private fun ChooseServerPreviewSaveSuccessDialogDark() = ZcashTheme(forceDarkMode = true) {
-    ChooseServerPreviewSaveSuccessDialog()
-}
+private fun ChooseServerPreviewSaveSuccessDialogDark() =
+    ZcashTheme(forceDarkMode = true) {
+        ChooseServerPreviewSaveSuccessDialog()
+    }
 
 private const val CHOOSE_SERVER_TOP_APP_BAR = "choose_server_top_app_bar"

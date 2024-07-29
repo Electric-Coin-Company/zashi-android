@@ -9,10 +9,11 @@ import kotlinx.coroutines.flow.map
 class GetPersistableWalletUseCase(
     private val walletRepository: WalletRepository
 ) {
-    suspend operator fun invoke() = walletRepository.secretState
-        .map {
-            (it as? SecretState.Ready?)?.persistableWallet
-        }
-        .filterNotNull()
-        .first()
+    suspend operator fun invoke() =
+        walletRepository.secretState
+            .map {
+                (it as? SecretState.Ready?)?.persistableWallet
+            }
+            .filterNotNull()
+            .first()
 }

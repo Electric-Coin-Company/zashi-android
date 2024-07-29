@@ -1,9 +1,9 @@
 package co.electriccoin.zcash.app.di
 
 import co.electriccoin.zcash.ui.common.usecase.CloseSynchronizerUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetAvailableServersUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetPersistableWalletUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSynchronizerUseCase
+import co.electriccoin.zcash.ui.common.usecase.ObserveFastestServersUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObservePersistableWalletUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveSynchronizerUseCase
 import co.electriccoin.zcash.ui.common.usecase.PersistEndpointUseCase
@@ -24,5 +24,5 @@ val useCaseModule =
         factoryOf(::PersistWalletUseCase)
         factoryOf(::ValidateServerEndpointUseCase)
         factoryOf(::ValidateEndpointUseCase)
-        factoryOf(::GetAvailableServersUseCase)
+        factoryOf(::ObserveFastestServersUseCase)
     }

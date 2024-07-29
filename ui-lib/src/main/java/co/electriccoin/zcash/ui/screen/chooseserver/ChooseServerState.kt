@@ -14,7 +14,6 @@ data class ChooseServerState(
 )
 
 sealed interface ServerListState {
-
     val title: StringResource
     val servers: List<ServerState>
 
@@ -55,5 +54,6 @@ sealed interface ServerDialogState {
     val state: AlertDialogState
 
     data class Validation(override val state: AlertDialogState, val reason: StringResource?) : ServerDialogState
+
     data class SaveSuccess(override val state: AlertDialogState) : ServerDialogState
 }

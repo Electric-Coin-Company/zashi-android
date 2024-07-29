@@ -28,9 +28,9 @@ private fun LightAlertDialogComposablePreview() {
         AppAlertDialog(
             title = "Light popup",
             text =
-            "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Temporibus autem quibusdam et aut " +
-                "officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et " +
-                "molestiae non recusandae. Duis condimentum augue id magna semper rutrum.",
+                "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Temporibus autem quibusdam et aut " +
+                    "officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et " +
+                    "molestiae non recusandae. Duis condimentum augue id magna semper rutrum.",
             confirmButtonText = "OK",
             dismissButtonText = "Cancel"
         )
@@ -44,9 +44,9 @@ private fun NoButtonAlertDialogComposablePreview() {
         AppAlertDialog(
             title = "Light popup",
             text =
-            "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Temporibus autem quibusdam et aut " +
-                "officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et " +
-                "molestiae non recusandae. Duis condimentum augue id magna semper rutrum.",
+                "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Temporibus autem quibusdam et aut " +
+                    "officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et " +
+                    "molestiae non recusandae. Duis condimentum augue id magna semper rutrum.",
         )
     }
 }
@@ -58,9 +58,9 @@ private fun DarkAlertDialogComposablePreview() {
         AppAlertDialog(
             title = "Dark no button popup",
             text =
-            "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Temporibus autem quibusdam et aut " +
-                "officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et " +
-                "molestiae non recusandae. Duis condimentum augue id magna semper rutrum.",
+                "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Temporibus autem quibusdam et aut " +
+                    "officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et " +
+                    "molestiae non recusandae. Duis condimentum augue id magna semper rutrum.",
             confirmButtonText = "OK",
             dismissButtonText = "Cancel"
         )

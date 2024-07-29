@@ -40,7 +40,7 @@ import co.electriccoin.zcash.ui.common.model.hasValuePending
 import co.electriccoin.zcash.ui.common.model.spendableBalance
 import co.electriccoin.zcash.ui.common.model.totalBalance
 import co.electriccoin.zcash.ui.common.repository.WalletRepository
-import co.electriccoin.zcash.ui.common.usecase.GetAvailableServersUseCase
+import co.electriccoin.zcash.ui.common.usecase.AvailableServersProvider
 import co.electriccoin.zcash.ui.common.usecase.ObserveSynchronizerUseCase
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
 import co.electriccoin.zcash.ui.screen.account.ext.TransactionOverviewExt
@@ -73,6 +73,7 @@ import kotlin.time.Duration.Companion.seconds
 // for loading the preferences.
 // TODO [#292]: Should be moved to SDK-EXT-UI module.
 // TODO [#292]: https://github.com/Electric-Coin-Company/zashi-android/issues/292
+@Suppress("LongParameterList")
 class WalletViewModel(
     application: Application,
     observeSynchronizer: ObserveSynchronizerUseCase,
@@ -80,9 +81,8 @@ class WalletViewModel(
     private val walletRepository: WalletRepository,
     private val encryptedPreferenceProvider: EncryptedPreferenceProvider,
     private val standardPreferenceProvider: StandardPreferenceProvider,
-    private val getAvailableServers: GetAvailableServersUseCase
+    private val getAvailableServers: AvailableServersProvider
 ) : AndroidViewModel(application) {
-
     /**
      * Synchronizer that is retained long enough to survive configuration changes.
      */

@@ -8,26 +8,30 @@ import co.electriccoin.lightwallet.client.model.LightWalletEndpoint
 
 // TODO [#1273]: Add ChooseServer Tests #1273
 // TODO [#1273]: https://github.com/Electric-Coin-Company/zashi-android/issues/1273
-class GetAvailableServersUseCase(private val application: Application) {
-    operator fun invoke() = if (ZcashNetwork.fromResources(application) == ZcashNetwork.Mainnet) {
-        listOf(
-            LightWalletEndpoint(ZR_HOST, ZR_PORT, true),
-            LightWalletEndpoint(ZR_HOST_NA, ZR_PORT, true),
-            LightWalletEndpoint(ZR_HOST_SA, ZR_PORT, true),
-            LightWalletEndpoint(ZR_HOST_EU, ZR_PORT, true),
-            LightWalletEndpoint(ZR_HOST_AP, ZR_PORT, true),
-            LightWalletEndpoint(YW_HOST_1, YW_PORT, true),
-            LightWalletEndpoint(YW_HOST_2, YW_PORT, true),
-            LightWalletEndpoint(YW_HOST_3, YW_PORT, true),
-            LightWalletEndpoint(YW_HOST_4, YW_PORT, true),
-            LightWalletEndpoint(YW_HOST_5, YW_PORT, true),
-            LightWalletEndpoint(YW_HOST_6, YW_PORT, true),
-            LightWalletEndpoint(YW_HOST_7, YW_PORT, true),
-            LightWalletEndpoint(YW_HOST_8, YW_PORT, true),
-        )
-    } else {
-        listOf(LightWalletEndpoint.Testnet)
+class AvailableServersProvider(private val application: Application) {
+    private val lightWalletEndpoints by lazy {
+        if (ZcashNetwork.fromResources(application) == ZcashNetwork.Mainnet) {
+            listOf(
+                LightWalletEndpoint(ZR_HOST, ZR_PORT, true),
+                LightWalletEndpoint(ZR_HOST_NA, ZR_PORT, true),
+                LightWalletEndpoint(ZR_HOST_SA, ZR_PORT, true),
+                LightWalletEndpoint(ZR_HOST_EU, ZR_PORT, true),
+                LightWalletEndpoint(ZR_HOST_AP, ZR_PORT, true),
+                LightWalletEndpoint(YW_HOST_1, YW_PORT, true),
+                LightWalletEndpoint(YW_HOST_2, YW_PORT, true),
+                LightWalletEndpoint(YW_HOST_3, YW_PORT, true),
+                LightWalletEndpoint(YW_HOST_4, YW_PORT, true),
+                LightWalletEndpoint(YW_HOST_5, YW_PORT, true),
+                LightWalletEndpoint(YW_HOST_6, YW_PORT, true),
+                LightWalletEndpoint(YW_HOST_7, YW_PORT, true),
+                LightWalletEndpoint(YW_HOST_8, YW_PORT, true),
+            )
+        } else {
+            listOf(LightWalletEndpoint.Testnet)
+        }
     }
+
+    operator fun invoke() = lightWalletEndpoints
 }
 
 private const val ZR_HOST = "zec.rocks" // NON-NLS

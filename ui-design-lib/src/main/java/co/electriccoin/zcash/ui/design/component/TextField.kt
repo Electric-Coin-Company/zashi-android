@@ -44,16 +44,17 @@ fun FormTextField(
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-    colors: TextFieldColors = TextFieldDefaults.colors(
-        cursorColor = ZcashTheme.colors.textPrimary,
-        focusedContainerColor = Color.Transparent,
-        unfocusedContainerColor = Color.Transparent,
-        disabledContainerColor = Color.Transparent,
-        errorContainerColor = Color.Transparent,
-        focusedIndicatorColor = Color.Transparent,
-        unfocusedIndicatorColor = Color.Transparent,
-        disabledIndicatorColor = Color.Transparent
-    ),
+    colors: TextFieldColors =
+        TextFieldDefaults.colors(
+            cursorColor = ZcashTheme.colors.textPrimary,
+            focusedContainerColor = Color.Transparent,
+            unfocusedContainerColor = Color.Transparent,
+            disabledContainerColor = Color.Transparent,
+            errorContainerColor = Color.Transparent,
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+            disabledIndicatorColor = Color.Transparent
+        ),
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     shape: Shape = TextFieldDefaults.shape,
     // To enable border around the TextField
@@ -69,41 +70,41 @@ fun FormTextField(
             value = value,
             onValueChange = onValueChange,
             placeholder =
-            if (enabled) {
-                placeholder
-            } else {
-                null
-            },
+                if (enabled) {
+                    placeholder
+                } else {
+                    null
+                },
             textStyle = textStyle,
             keyboardOptions = keyboardOptions,
             colors = colors,
             modifier =
-            Modifier
-                .fillMaxWidth()
-                .defaultMinSize(minHeight = minHeight)
-                .onFocusEvent { focusState ->
-                    bringIntoViewRequester?.run {
-                        if (focusState.isFocused) {
-                            coroutineScope.launch {
-                                bringIntoView()
+                Modifier
+                    .fillMaxWidth()
+                    .defaultMinSize(minHeight = minHeight)
+                    .onFocusEvent { focusState ->
+                        bringIntoViewRequester?.run {
+                            if (focusState.isFocused) {
+                                coroutineScope.launch {
+                                    bringIntoView()
+                                }
                             }
                         }
                     }
-                }
-                .then(
-                    if (withBorder) {
-                        Modifier.border(width = 1.dp, color = ZcashTheme.colors.textFieldFrame)
-                    } else {
-                        Modifier
-                    }
-                )
-                .then(
-                    if (testTag.isNullOrEmpty()) {
-                        Modifier
-                    } else {
-                        Modifier.testTag(testTag)
-                    }
-                ),
+                    .then(
+                        if (withBorder) {
+                            Modifier.border(width = 1.dp, color = ZcashTheme.colors.textFieldFrame)
+                        } else {
+                            Modifier
+                        }
+                    )
+                    .then(
+                        if (testTag.isNullOrEmpty()) {
+                            Modifier
+                        } else {
+                            Modifier.testTag(testTag)
+                        }
+                    ),
             leadingIcon = leadingIcon,
             trailingIcon = trailingIcon,
             keyboardActions = keyboardActions,
@@ -124,6 +125,7 @@ fun FormTextField(
     }
 }
 
+@Suppress("LongParameterList")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun FormTextField(

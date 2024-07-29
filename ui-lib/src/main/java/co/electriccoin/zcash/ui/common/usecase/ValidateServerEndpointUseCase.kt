@@ -10,9 +10,10 @@ class ValidateServerEndpointUseCase(
     private val application: Application,
     private val walletRepository: WalletRepository,
 ) {
-    suspend operator fun invoke(endpoint: LightWalletEndpoint) = walletRepository
-        .synchronizer
-        .filterNotNull()
-        .first()
-        .validateServerEndpoint(application, endpoint)
+    suspend operator fun invoke(endpoint: LightWalletEndpoint) =
+        walletRepository
+            .synchronizer
+            .filterNotNull()
+            .first()
+            .validateServerEndpoint(application, endpoint)
 }

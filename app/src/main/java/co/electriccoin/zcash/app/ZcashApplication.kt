@@ -1,6 +1,7 @@
 package co.electriccoin.zcash.app
 
 import co.electriccoin.zcash.app.di.coreModule
+import co.electriccoin.zcash.app.di.providerModule
 import co.electriccoin.zcash.app.di.repositoryModule
 import co.electriccoin.zcash.app.di.useCaseModule
 import co.electriccoin.zcash.app.di.viewModelModule
@@ -31,6 +32,7 @@ class ZcashApplication : CoroutineApplication() {
             androidContext(this@ZcashApplication)
             modules(
                 coreModule,
+                providerModule,
                 repositoryModule,
                 useCaseModule,
                 viewModelModule
