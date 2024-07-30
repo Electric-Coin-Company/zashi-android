@@ -1,0 +1,1116 @@
+{
+  "translation_dict": {
+    "Account": {
+      "en": "Account",
+      "es": "Cuenta"
+    },
+    "Send": {
+      "en": "Send",
+      "es": "Enviar"
+    },
+    "Receive": {
+      "en": "Receive",
+      "es": "Recibir"
+    },
+    "Balances": {
+      "en": "Balances",
+      "es": "Saldos"
+    },
+    "DeleteWallet": {
+      "en": "Delete Wallet",
+      "es": "Eliminar Cartera"
+    },
+    "AdvancedSettings": {
+      "en": "Advanced Settings",
+      "es": "Configuraciones Avanzadas"
+    },
+    "SeedRecovery": {
+      "en": "Seed Recovery",
+      "es": "Recuperación de Semilla"
+    },
+    "Settings": {
+      "en": "Settings",
+      "es": "Configuraciones"
+    },
+    "Home": {
+      "en": "Home",
+      "es": "Inicio"
+    },
+    "WhatsNew": {
+      "en": "What's New",
+      "es": "Novedades"
+    },
+    "ExportData": {
+      "en": "Export Data",
+      "es": "Exportar Datos"
+    },
+    "NewWalletRecovery": {
+      "en": "New Wallet Recovery",
+      "es": "Recuperación de Nueva Cartera"
+    },
+    "Update": {
+      "en": "Update",
+      "es": "Actualizar"
+    },
+    "About": {
+      "en": "About",
+      "es": "Acerca de"
+    },
+    "Scan": {
+      "en": "Scan",
+      "es": "Escanear"
+    },
+    "ChooseServer": {
+      "en": "Choose Server",
+      "es": "Elegir Servidor"
+    },
+    "Warning": {
+      "en": "Warning",
+      "es": "Advertencia"
+    },
+    "Common": {
+      "en": "Common",
+      "es": "Común"
+    },
+    "Support": {
+      "en": "Support",
+      "es": "Soporte"
+    },
+    "SendConfirmation": {
+      "en": "Send Confirmation",
+      "es": "Confirmación de Envío"
+    },
+    "SecurityWarning": {
+      "en": "Security Warning",
+      "es": "Advertencia de Seguridad"
+    },
+    "Restore": {
+      "en": "Restore",
+      "es": "Restaurar"
+    },
+    "Authentication": {
+      "en": "Authentication",
+      "es": "Autenticación"
+    },
+    "RestoreSuccess": {
+      "en": "Restore Success",
+      "es": "Restauración Exitosa"
+    },
+    "Onboarding": {
+      "en": "Onboarding",
+      "es": "Introducción"
+    },
+    "KeepZashiOpen": {
+      "en": "Keep Zashi open!",
+      "es": "¡Mantén Zashi abierto!"
+    },
+    "SuccessfulRestore": {
+      "en": "Your wallet has been successfully restored and is now syncing",
+      "es": "Tu billetera se ha restaurado correctamente y ahora se está sincronizando"
+    },
+    "PreventInterruption": {
+      "en": "To prevent interruption, keep your screen awake, plug your device into a power source, and keep it in a secure place.",
+      "es": "Para evitar interrupciones, mantén la pantalla encendida, conecta tu dispositivo a una fuente de energía y guárdalo en un lugar seguro."
+    },
+    "KeepScreenOn": {
+      "en": "Keep screen on while restoring.",
+      "es": "Mantén la pantalla encendida mientras restauras."
+    },
+    "Note": {
+      "en": "Note:",
+      "es": "Nota:"
+    },
+    "InitialSync": {
+      "en": "During the initial sync your funds cannot be sent or spent. Depending on the age of your wallet, it may take a few hours to fully sync.",
+      "es": "Durante la sincronización inicial, tus fondos no pueden ser enviados o gastados. Dependiendo de la antigüedad de tu billetera, puede tardar algunas horas en sincronizarse completamente."
+    },
+    "GotIt": {
+      "en": "GOT IT!",
+      "es": "¡ENTENDIDO!"
+    },
+    "NoFrillsWallet": {
+      "en": "A no-frills wallet for sending and receiving Zcash (ZEC)",
+      "es": "Una billetera sin complicaciones para enviar y recibir Zcash (ZEC)"
+    },
+    "CreateNewWallet": {
+      "en": "Create New Wallet",
+      "es": "Crear Nueva Billetera"
+    },
+    "RestoreExistingWallet": {
+      "en": "Restore Existing Wallet",
+      "es": "Restaurar Billetera Existente"
+    },
+    "AmountWithFiatCurrencySymbol": {
+      "en": "%1$s %2$s",
+      "es": "%1$s %2$s"
+    },
+    "HideBalancePlaceholder": {
+      "en": "-----",
+      "es": "-----"
+    },
+    "HideClipboardPlaceholder": {
+      "en": "******",
+      "es": "******"
+    },
+    "AboutTitle": {
+      "en": "About",
+      "es": "Acerca de"
+    },
+    "AboutVersionFormat": {
+      "en": "Zashi Version %s",
+      "es": "Versión de Zashi %s"
+    },
+    "AboutDebugMenuAppName": {
+      "en": "App name: %1$s",
+      "es": "Nombre de la aplicación: %1$s"
+    },
+    "AboutDebugMenuBuild": {
+      "en": "Build: %1$s",
+      "es": "Compilación: %1$s"
+    },
+    "AboutDescription": {
+      "en": "Send and receive ZEC on Zashi! Zashi is a minimal-design, self-custody, ZEC-only shielded wallet that keeps your transaction history and wallet balance private. Built by Zcashers, for Zcashers. Developed and maintained by Electric Coin Co., the inventor of Zcash, Zashi features a built-in user-feedback mechanism to enable more features, more quickly.",
+      "es": "¡Envía y recibe ZEC en Zashi! Zashi es una billetera blindada de diseño minimalista y autogestionada, solo para ZEC, que mantiene tu historial de transacciones y el saldo de tu billetera privados. Construido por Zcashers, para Zcashers. Desarrollado y mantenido por Electric Coin Co., el inventor de Zcash, Zashi cuenta con un mecanismo de retroalimentación de usuario incorporado para habilitar más funciones, más rápidamente."
+    },
+    "AboutPPPart1": {
+      "en": "See our Privacy Policy",
+      "es": "Consulta nuestra Política de Privacidad"
+    },
+    "AboutPPPart2": {
+      "en": "here",
+      "es": "aquí"
+    },
+    "AboutPPPart3": {
+      "en": ".",
+      "es": "."
+    },
+    "AboutUnableToWebBrowser": {
+      "en": "Unable to find a web browser app.",
+      "es": "No se puede encontrar una aplicación de navegador web."
+    },
+    "AboutButtonWhatsNew": {
+      "en": "WHAT'S NEW",
+      "es": "NOVEDADES"
+    },
+    "AboutButtonPrivacyPolicy": {
+      "en": "PRIVACY POLICY",
+      "es": "POLÍTICA DE PRIVACIDAD"
+    },
+    "AccountHistoryEmpty": {
+      "en": "No transaction history",
+      "es": "Sin historial de transacciones"
+    },
+    "AccountHistoryItemSent": {
+      "en": "Sent",
+      "es": "Enviado"
+    },
+    "AccountHistoryItemReceived": {
+      "en": "Received",
+      "es": "Recibido"
+    },
+    "AccountHistoryItemSending": {
+      "en": "Sending…",
+      "es": "Enviando…"
+    },
+    "AccountHistoryItemReceiving": {
+      "en": "Receiving…",
+      "es": "Recibiendo…"
+    },
+    "AccountHistoryItemReceiveFailed": {
+      "en": "Receive failed",
+      "es": "Fallo al recibir"
+    },
+    "AccountHistoryItemSendFailed": {
+      "en": "Send failed",
+      "es": "Fallo al enviar"
+    },
+    "AccountHistoryItemShielded": {
+      "en": "Shielded transaction",
+      "es": "Transacción blindada"
+    },
+    "AccountHistoryItemSentPrefix": {
+      "en": "-",
+      "es": "-"
+    },
+    "AccountHistoryItemReceivedPrefix": {
+      "en": "+",
+      "es": "+"
+    },
+    "AccountHistoryItemTapToCopy": {
+      "en": "Tap to copy",
+      "es": "Toca para copiar"
+    },
+    "AccountHistoryItemNoMessage": {
+      "en": "No message included in transaction",
+      "es": "No se incluyó mensaje en la transacción"
+    },
+    "AccountHistoryItemCollapseTransaction": {
+      "en": "Collapse transaction",
+      "es": "Colapsar transacción"
+    },
+    "AccountHistoryItemTransactionID": {
+      "en": "Transaction ID",
+      "es": "ID de transacción"
+    },
+    "AccountHistoryItemTransactionFee": {
+      "en": "Transaction Fee",
+      "es": "Tarifa de transacción"
+    },
+    "AccountHistoryItemTransactionFeeTypical": {
+      "en": "Typical Fee < %1$s",
+      "es": "Tarifa típica < %1$s"
+    },
+    "AccountHistoryMemoClipboardTag": {
+      "en": "Transaction message",
+      "es": "Mensaje de transacción"
+    },
+    "AccountHistoryIDClipboardTag": {
+      "en": "Transaction ID",
+      "es": "ID de transacción"
+    },
+    "AccountHistoryAddressClipboardTag": {
+      "en": "Transaction address",
+      "es": "Dirección de transacción"
+    },
+    "AdvancedSettingsBackupWallet": {
+      "en": "Recovery phrase",
+      "es": "Frase de recuperación"
+    },
+    "AdvancedSettingsExportPrivateData": {
+      "en": "Export private data",
+      "es": "Exportar datos privados"
+    },
+    "AdvancedSettingsChooseServer": {
+      "en": "Choose a server",
+      "es": "Elegir un servidor"
+    },
+    "AdvancedSettingsDeleteWalletFootnote": {
+      "en": "(You will be asked to confirm on next screen)",
+      "es": "(Se te pedirá que confirmes en la siguiente pantalla)"
+    },
+    "AuthenticationSystemUITitle": {
+      "en": "Authentication for %1$s",
+      "es": "Autenticación para %1$s"
+    },
+    "AuthenticationSystemUISubtitle": {
+      "en": "Use biometric or device credential to access %1$s.",
+      "es": "Usa credenciales biométricas o del dispositivo para acceder a %1$s."
+    },
+    "AuthenticationUseCaseDeleteWallet": {
+      "en": "Delete Wallet feature",
+      "es": "Función de eliminar billetera"
+    },
+    "AuthenticationUseCaseExportData": {
+      "en": "Export Private Data feature",
+      "es": "Función de exportar datos privados"
+    },
+    "AuthenticationUseCaseSeedRecovery": {
+      "en": "Seed Recovery feature",
+      "es": "Función de recuperación de semilla"
+    },
+    "AuthenticationUseCaseSendFunds": {
+      "en": "Send Funds feature",
+      "es": "Función de envío de fondos"
+    },
+    "AuthenticationToastCanceled": {
+      "en": "Authentication canceled",
+      "es": "Autenticación cancelada"
+    },
+    "AuthenticationToastFailed": {
+      "en": "Authentication failed",
+      "es": "Autenticación fallida"
+    },
+    "AuthenticationErrorTitle": {
+      "en": "Authentication error",
+      "es": "Error de autenticación"
+    },
+    "AuthenticationErrorText": {
+      "en": "Authentication failed for the following reason. Retry the authentication, or contact the support team for help.",
+      "es": "La autenticación falló por la siguiente razón. Reintenta la autenticación o contacta al equipo de soporte para obtener ayuda."
+    },
+    "AuthenticationErrorDetails": {
+      "en": "Error code: %1$d\nError message: %2$s",
+      "es": "Código de error: %1$d\nMensaje de error: %2$s"
+    },
+    "AuthenticationErrorButtonRetry": {
+      "en": "Retry",
+      "es": "Reintentar"
+    },
+    "AuthenticationErrorButtonSupport": {
+      "en": "Contact Support",
+      "es": "Contactar Soporte"
+    },
+    "AuthenticationFailedTitle": {
+      "en": "Authentication failed",
+      "es": "Autenticación fallida"
+    },
+    "AuthenticationFailedText": {
+      "en": "Authentication was presented but not recognized. Retry authentication, or contact the support team for help.",
+      "es": "Se presentó la autenticación pero no fue reconocida. Reintenta la autenticación o contacta al equipo de soporte para obtener ayuda."
+    },
+    "AuthenticationFailedButtonRetry": {
+      "en": "Retry",
+      "es": "Reintentar"
+    },
+    "AuthenticationFailedButtonSupport": {
+      "en": "Contact Support",
+      "es": "Contactar Soporte"
+    },
+    "BalancesTitle": {
+      "en": "Balances",
+      "es": "Saldos"
+    },
+    "BalancesShieldedSpendable": {
+      "en": "Shielded zec (spendable)",
+      "es": "zec blindado (gastable)"
+    },
+    "BalancesChangePending": {
+      "en": "Change pending",
+      "es": "Cambio pendiente"
+    },
+    "BalancesPendingTransactions": {
+      "en": "Pending transactions",
+      "es": "Transacciones pendientes"
+    },
+    "BalancesTransparentBalance": {
+      "en": "Transparent balance",
+      "es": "Saldo transparente"
+    },
+    "BalancesTransparentBalanceHelp": {
+      "en": "%1$s uses the latest network upgrade and does not support sending transparent (unshielded) %2$s. Use the Shield and Consolidate button to shield your funds, which will add to your available balance and make your %2$s spendable.",
+      "es": "%1$s utiliza la última actualización de red y no admite el envío de %2$s transparentes (sin blindar). Usa el botón de Blindar y Consolidar para blindar tus fondos, lo que agregará a tu saldo disponible y hará que tu %2$s sea gastable."
+    },
+    "BalancesTransparentBalanceHelpClose": {
+      "en": "I got it!",
+      "es": "¡Entendido!"
+    },
+    "BalancesTransparentHelpContentDescription": {
+      "en": "Show help",
+      "es": "Mostrar ayuda"
+    },
+    "BalancesTransparentBalanceShield": {
+      "en": "Shield and consolidate funds",
+      "es": "Blindar y consolidar fondos"
+    },
+    "BalancesTransparentBalanceFee": {
+      "en": "(Typical Fee < %1$s)",
+      "es": "(Tarifa típica < %1$s)"
+    },
+    "BalancesStatusSyncing": {
+      "en": "Syncing…",
+      "es": "Sincronizando…"
+    },
+    "BalancesStatusSyncingAmountSuffix": {
+      "en": "%1$s so far",
+      "es": "Hasta ahora %1$s"
+    },
+    "BalancesStatusSyncingPercentage": {
+      "en": "%1$s%%",
+      "es": "%1$s%%"
+    },
+    "BalancesStatusSynced": {
+      "en": "Synced",
+      "es": "Sincronizado"
+    },
+    "BalancesStatusUpdate": {
+      "en": "Please update %1$s using Google Play",
+      "es": "Por favor, actualiza %1$s usando Google Play"
+    },
+    "BalancesStatusErrorSimple": {
+      "en": "%1$s encountered an error while syncing, attempting to resolve…",
+      "es": "%1$s encontró un error mientras sincronizaba, intentando resolver…"
+    },
+    "BalancesStatusRestoringText": {
+      "en": "The restore process can take several hours on lower-powered devices, and even on powerful devices is likely to take more than an hour.",
+      "es": "El proceso de restauración puede tardar varias horas en dispositivos de baja potencia, e incluso en dispositivos potentes es probable que tarde más de una hora."
+    },
+    "BalancesShieldingSuccessful": {
+      "en": "Shielding has been successfully submitted",
+      "es": "El blindaje se ha enviado con éxito"
+    },
+    "BalancesStatusErrorDialogTitle": {
+      "en": "Error",
+      "es": "Error"
+    },
+    "BalancesStatusErrorDialogConnection": {
+      "en": "Disconnected. Please check your internet connection.",
+      "es": "Desconectado. Por favor, revisa tu conexión a internet."
+    },
+    "BalancesStatusErrorDialogCause": {
+      "en": "Error: %1$s",
+      "es": "Error: %1$s"
+    },
+    "BalancesStatusErrorDialogUnknown": {
+      "en": "Unknown cause. Please contact our support team if the problem persists.",
+      "es": "Causa desconocida. Por favor, contacta a nuestro equipo de soporte si el problema persiste."
+    },
+    "BalancesStatusDialogStopped": {
+      "en": "Synchronization is stopped. It will resume soon.",
+      "es": "La sincronización se ha detenido. Se reanudará pronto."
+    },
+    "BalancesStatusDialogButton": {
+      "en": "OK",
+      "es": "OK"
+    },
+    "BalancesShieldingDialogErrorTitle": {
+      "en": "Failed to shield funds",
+      "es": "Fallo al blindar fondos"
+    },
+    "BalancesShieldingDialogErrorText": {
+      "en": "Error: The attempt to shield the transparent funds failed. Try it again, please.",
+      "es": "Error: El intento de blindar los fondos transparentes falló. Inténtalo de nuevo, por favor."
+    },
+    "BalancesShieldingDialogErrorBtn": {
+      "en": "OK",
+      "es": "OK"
+    },
+    "BalancesShieldingDialogErrorBelowThreshold": {
+      "en": "The current transparent balance is zero or below the allowed shielding limit.",
+      "es": "El saldo transparente actual es cero o está por debajo del límite permitido para el blindaje."
+    },
+    "ChooseServerTitle": {
+      "en": "Server",
+      "es": "Servidor"
+    },
+    "ChooseServerDefaultLabel": {
+      "en": "default: %1$s",
+      "es": "predeterminado: %1$s"
+    },
+    "ChooseServerCustom": {
+      "en": "custom",
+      "es": "personalizado"
+    },
+    "ChooseServerCustomDelimiter": {
+      "en": ":",
+      "es": ":"
+    },
+    "ChooseServerFullServerName": {
+      "en": "%1$s:%2$d",
+      "es": "%1$s:%2$d"
+    },
+    "ChooseServerTextFieldHint": {
+      "en": "<hostname>:<port>",
+      "es": "<nombre del host>:<puerto>"
+    },
+    "ChooseServerSave": {
+      "en": "Save",
+      "es": "Guardar"
+    },
+    "ChooseServerValidationDialogErrorTitle": {
+      "en": "Invalid server endpoint",
+      "es": "Punto final del servidor inválido"
+    },
+    "ChooseServerValidationDialogErrorText": {
+      "en": "Error: The attempt to switch endpoints failed. Check that the hostname and port are correct, and are formatted as <hostname>:<port>.",
+      "es": "Error: El intento de cambiar puntos finales falló. Verifica que el nombre del host y el puerto sean correctos, y estén formateados como <nombre del host>:<puerto>."
+    },
+    "ChooseServerValidationDialogErrorBtn": {
+      "en": "OK",
+      "es": "OK"
+    },
+    "ChooseServerSaveSuccessDialogTitle": {
+      "en": "Server saved",
+      "es": "Servidor guardado"
+    },
+    "ChooseServerSaveSuccessDialogText": {
+      "en": "The selected server endpoint has been successfully saved.",
+      "es": "El punto final del servidor seleccionado se ha guardado con éxito."
+    },
+    "ChooseServerSaveSuccessDialogBtn": {
+      "en": "OK",
+      "es": "OK"
+    },
+    "AppName": {
+      "en": "zashi-ui",
+      "es": "zashi-ui"
+    },
+    "BackNavigation": {
+      "en": "Back",
+      "es": "Atrás"
+    },
+    "BackNavigationContentDescription": {
+      "en": "Back",
+      "es": "Atrás"
+    },
+    "FiatCurrencyConversionRateUnavailable": {
+      "en": "Unavailable",
+      "es": "No disponible"
+    },
+    "EmptyChar": {
+      "en": "-",
+      "es": "-"
+    },
+    "ZcashLogoContentDescription": {
+      "en": "Zcash logo",
+      "es": "Logo de Zcash"
+    },
+    "SettingsMenuContentDescription": {
+      "en": "Open Settings",
+      "es": "Abrir Configuraciones"
+    },
+    "BalanceWidgetAvailable": {
+      "en": "Available Balance:",
+      "es": "Saldo Disponible:"
+    },
+    "HideBalancesContentDescription": {
+      "en": "Hide balances",
+      "es": "Ocultar saldos"
+    },
+    "SupportEmailAddress": {
+      "en": "",
+      "es": ""
+    },
+    "RestoringWalletLabel": {
+      "en": "[Restoring Your Wallet…]",
+      "es": "[Restaurando tu Billetera…]"
+    },
+    "DisconnectedLabel": {
+      "en": "[Disconnected…]",
+      "es": "[Desconectado…]"
+    },
+    "UnableToOpenPlayStore": {
+      "en": "Unable to launch Google Play store app…",
+      "es": "No se puede lanzar la aplicación de Google Play Store…"
+    },
+    "ServerDisconnectedDialogTitle": {
+      "en": "Heads up",
+      "es": "Aviso"
+    },
+    "ServerDisconnectedDialogMessage": {
+      "en": "Your current server is experiencing difficulties. Check your device connection, and/or navigate to Advanced Settings to choose a different server.",
+      "es": "Tu servidor actual está experimentando dificultades. Revisa la conexión de tu dispositivo y/o navega a Configuraciones Avanzadas para elegir un servidor diferente."
+    },
+    "ServerDisconnectedDialogSwitchBtn": {
+      "en": "Switch Server",
+      "es": "Cambiar Servidor"
+    },
+    "ServerDisconnectedDialogIgnoreBtn": {
+      "en": "Ignore",
+      "es": "Ignorar"
+    },
+    "GeneralEtc": {
+      "en": "…",
+      "es": "…"
+    },
+    "DeleteWalletTitle": {
+      "en": "Delete %1$s",
+      "es": "Eliminar %1$s"
+    },
+    "DeleteWalletText1": {
+      "en": "Please don't delete this app unless you're sure you understand the effects.",
+      "es": "Por favor, no elimines esta aplicación a menos que estés seguro de que entiendes los efectos."
+    },
+    "DeleteWalletText2": {
+      "en": "Deleting the %1$s app will delete the database and cached data. Any funds you have in this wallet will be lost and can only be recovered by using your %1$s secret recovery phrase in %1$s or another Zcash wallet.",
+      "es": "Eliminar la aplicación %1$s eliminará la base de datos y los datos en caché. Cualquier fondo que tengas en esta billetera se perderá y solo se puede recuperar usando tu frase de recuperación secreta de %1$s en %1$s o en otra billetera de Zcash."
+    },
+    "DeleteWalletAcknowledge": {
+      "en": "I understand",
+      "es": "Entiendo"
+    },
+    "DeleteWalletButton": {
+      "en": "Delete %1$s",
+      "es": "Eliminar %1$s"
+    },
+    "DeleteWalletFailed": {
+      "en": "Wallet deletion failed. Try it again, please.",
+      "es": "La eliminación de la billetera falló. Inténtalo de nuevo, por favor."
+    },
+    "ExportDataHeader": {
+      "en": "Consent for Exporting Private Data",
+      "es": "Consentimiento para Exportar Datos Privados"
+    },
+    "ExportDataText1": {
+      "en": "By clicking \"I Agree\" below, you give your consent to export Zashi’s private data which includes the entire history of the wallet, all private information, memos, amounts and recipient addresses, even for your shielded activity.*\n\nThis private data also gives the ability to see certain future actions you take with Zashi.\n\nSharing this private data is irrevocable — once you have shared this private data with someone, there is no way to revoke their access.",
+      "es": "Al hacer clic en \"Estoy de acuerdo\" a continuación, das tu consentimiento para exportar los datos privados de Zashi, que incluyen todo el historial de la billetera, toda la información privada, notas, montos y direcciones de los destinatarios, incluso para tu actividad blindada.*\n\nEstos datos privados también permiten ver ciertas acciones futuras que realices con Zashi.\n\nCompartir estos datos privados es irrevocable: una vez que hayas compartido estos datos privados con alguien, no hay forma de revocar su acceso."
+    },
+    "ExportDataText2": {
+      "en": "*Note that this private data does not give them the ability to spend your funds, only the ability to see what you do with your funds.",
+      "es": "*Ten en cuenta que estos datos privados no les otorgan la capacidad de gastar tus fondos, solo la capacidad de ver lo que haces con tus fondos."
+    },
+    "ExportDataConfirm": {
+      "en": "Export private data",
+      "es": "Exportar datos privados"
+    },
+    "ExportDataAgree": {
+      "en": "I agree",
+      "es": "Estoy de acuerdo"
+    },
+    "ExportDataExportDataChooserTitle": {
+      "en": "Share internal Zashi data with:",
+      "es": "Compartir datos internos de Zashi con:"
+    },
+    "ExportDataUnableToShare": {
+      "en": "Unable to find an application to share with.",
+      "es": "No se puede encontrar una aplicación para compartir."
+    },
+    "HomeTabAccount": {
+      "en": "Account",
+      "es": "Cuenta"
+    },
+    "HomeTabSend": {
+      "en": "Send",
+      "es": "Enviar"
+    },
+    "HomeTabReceive": {
+      "en": "Receive",
+      "es": "Recibir"
+    },
+    "HomeTabBalances": {
+      "en": "Balances",
+      "es": "Saldos"
+    },
+    "NewWalletRecoveryHeader": {
+      "en": "Your secret recovery phrase",
+      "es": "Tu frase de recuperación secreta"
+    },
+    "NewWalletRecoveryDescription": {
+      "en": "The following 24 words are the keys to your funds and are the only way to recover your funds if you get locked out or get a new device. Protect your ZEC by storing this phrase in a place you trust and never share it with anyone!",
+      "es": "Las siguientes 24 palabras son las llaves para tus fondos y son la única manera de recuperar tus fondos si te bloqueas o consigues un nuevo dispositivo. Protege tu ZEC almacenando esta frase en un lugar de confianza y nunca la compartas con nadie."
+    },
+    "NewWalletRecoveryBirthdayHeight": {
+      "en": "Wallet birthday height: %1$d",
+      "es": "Altura de cumpleaños de la billetera: %1$d"
+    },
+    "NewWalletRecoveryButtonFinished": {
+      "en": "I've saved it",
+      "es": "Lo he guardado"
+    },
+    "NewWalletRecoveryCopy": {
+      "en": "Tap to Copy",
+      "es": "Toca para Copiar"
+    },
+    "NewWalletRecoverySeedClipboardTag": {
+      "en": "Zcash Seed Phrase",
+      "es": "Frase de Semilla de Zcash"
+    },
+    "NewWalletRecoveryBirthdayClipboardTag": {
+      "en": "Zcash Wallet Birthday",
+      "es": "Cumpleaños de la Billetera de Zcash"
+    },
+    "OnboardingHeader": {
+      "en": "A no-frills wallet for sending and receiving Zcash (ZEC)",
+      "es": "Una billetera sin complicaciones para enviar y recibir Zcash (ZEC)"
+    },
+    "OnboardingCreateNewWallet": {
+      "en": "Create New Wallet",
+      "es": "Crear Nueva Billetera"
+    },
+    "OnboardingImportExistingWallet": {
+      "en": "Restore Existing Wallet",
+      "es": "Restaurar Billetera Existente"
+    },
+    "ReceiveTitle": {
+      "en": "Receive",
+      "es": "Recibir"
+    },
+    "ReceiveBrightnessContentDescription": {
+      "en": "Adjust brightness",
+      "es": "Ajustar brillo"
+    },
+    "ReceiveUnifiedContentDescription": {
+      "en": "Unified Address QR code",
+      "es": "Código QR de Dirección Unificada"
+    },
+    "ReceiveSaplingContentDescription": {
+      "en": "Sapling Address QR code",
+      "es": "Código QR de Dirección Sapling"
+    },
+    "ReceiveTransparentContentDescription": {
+      "en": "Transparent Address QR code",
+      "es": "Código QR de Dirección Transparente"
+    },
+    "ReceiveWalletAddressUnified": {
+      "en": "Unified Address",
+      "es": "Dirección Unificada"
+    },
+    "ReceiveWalletAddressSapling": {
+      "en": "Sapling Address",
+      "es": "Dirección Sapling"
+    },
+    "ReceiveWalletAddressTransparent": {
+      "en": "Transparent Address",
+      "es": "Dirección Transparente"
+    },
+    "ReceiveCopy": {
+      "en": "Copy",
+      "es": "Copiar"
+    },
+    "ReceiveShare": {
+      "en": "Share",
+      "es": "Compartir"
+    },
+    "ReceiveClipboardTag": {
+      "en": "Zcash Wallet Address",
+      "es": "Dirección de Billetera de Zcash"
+    },
+    "ReceiveDataUnableToShare": {
+      "en": "Unable to find an application to share the QR code with.",
+      "es": "No se puede encontrar una aplicación para compartir el código QR."
+    },
+    "RestoreSuccessTitle": {
+      "en": "Keep Zashi open!",
+      "es": "¡Mantén Zashi abierto!"
+    },
+    "RestoreSuccessSubtitle": {
+      "en": "Your wallet has been successfully restored and is now syncing",
+      "es": "Tu billetera se ha restaurado correctamente y ahora se está sincronizando"
+    },
+    "RestoreSuccessDescription": {
+      "en": "To prevent interruption, keep your screen awake, plug your device into a power source, and keep it in a secure place.",
+      "es": "Para evitar interrupciones, mantén la pantalla encendida, conecta tu dispositivo a una fuente de energía y guárdalo en un lugar seguro."
+    },
+    "RestoringInitialDialogCheckbox": {
+      "en": "Keep screen on while restoring.",
+      "es": "Mantén la pantalla encendida mientras restauras."
+    },
+    "RestoreSuccessNotePart1": {
+      "en": "Note:",
+      "es": "Nota:"
+    },
+    "RestoreSuccessNotePart2": {
+      "en": "During the initial sync your funds cannot be sent or spent. Depending on the age of your wallet, it may take a few hours to fully sync.",
+      "es": "Durante la sincronización inicial, tus fondos no pueden ser enviados o gastados. Dependiendo de la antigüedad de tu billetera, puede tardar algunas horas en sincronizarse completamente."
+    },
+    "RestoreSuccessButton": {
+      "en": "GOT IT!",
+      "es": "¡ENTENDIDO!"
+    },
+    "RestoreButtonClear": {
+      "en": "Clear Seed",
+      "es": "Borrar Semilla"
+    },
+    "RestoreTitle": {
+      "en": "Enter secret recovery phrase",
+      "es": "Introduce la frase de recuperación secreta"
+    },
+    "RestoreSeedInstructions": {
+      "en": "Enter your 24-word seed phrase to restore the associated wallet.",
+      "es": "Introduce tu frase de semilla de 24 palabras para restaurar la billetera asociada."
+    },
+    "RestoreSeedHint": {
+      "en": "privacy dignity freedom …",
+      "es": "privacidad dignidad libertad …"
+    },
+    "RestoreSeedButtonNext": {
+      "en": "Next",
+      "es": "Siguiente"
+    },
+    "RestoreSeedWarningSuggestions": {
+      "en": "This word is not in the seed phrase dictionary. Please select the correct one from the suggestions.",
+      "es": "Esta palabra no está en el diccionario de frases de semilla. Por favor, selecciona la correcta de las sugerencias."
+    },
+    "RestoreSeedWarningNoSuggestions": {
+      "en": "This word is not in the seed phrase dictionary.",
+      "es": "Esta palabra no está en el diccionario de frases de semilla."
+    },
+    "RestoreBirthdayHeader": {
+      "en": "Wallet birthday height",
+      "es": "Altura de cumpleaños de la billetera"
+    },
+    "RestoreBirthdaySubHeader": {
+      "en": "(optional)",
+      "es": "(opcional)"
+    },
+    "RestoreBirthdayButtonRestore": {
+      "en": "Restore",
+      "es": "Restaurar"
+    },
+    "ScanPreviewContentDescription": {
+      "en": "Camera",
+      "es": "Cámara"
+    },
+    "ScanCancelButton": {
+      "en": "Cancel",
+      "es": "Cancelar"
+    },
+    "ScanSettingsButton": {
+      "en": "Open Settings",
+      "es": "Abrir Configuraciones"
+    },
+    "ScanSettingsOpenFailed": {
+      "en": "Unable to launch Settings app.",
+      "es": "No se puede lanzar la aplicación de Configuraciones."
+    },
+    "ScanStatePermission": {
+      "en": "%1$s does not have access to your camera. Please go to your system settings and authorize %1$s.",
+      "es": "%1$s no tiene acceso a tu cámara. Por favor, ve a las configuraciones del sistema y autoriza %1$s."
+    },
+    "ScanStateFailed": {
+      "en": "Camera initialization failed. Try it again, please.",
+      "es": "La inicialización de la cámara falló. Inténtalo de nuevo, por favor."
+    },
+    "ScanAddressValidationFailed": {
+      "en": "This QR code is not a valid Zcash Address.",
+      "es": "Este código QR no es una dirección válida de Zcash."
+    },
+    "ScanTorchContentDescription": {
+      "en": "Camera torch toggle",
+      "es": "Alternar linterna de cámara"
+    },
+    "GalleryContentDescription": {
+      "en": "Gallery",
+      "es": "Galería"
+    },
+    "SecurityWarningHeader": {
+      "en": "Security warning:",
+      "es": "Advertencia de seguridad:"
+    },
+    "SecurityWarningText": {
+      "en": "Zashi %1$s is a Zcash-only, shielded wallet — built by Zcashers for Zcashers. Zashi has been engineered for your privacy and safety. By installing and using Zashi, you consent to share crash reports with Electric Coin Co. (the wallet developer), which will help us improve the Zashi user experience.*\n\nPlease acknowledge and confirm below to proceed.",
+      "es": "Zashi %1$s es una billetera blindada solo para Zcash, construida por Zcashers para Zcashers. Zashi ha sido diseñada para tu privacidad y seguridad. Al instalar y usar Zashi, consientes en compartir informes de fallos con Electric Coin Co. (el desarrollador de la billetera), lo que nos ayudará a mejorar la experiencia del usuario de Zashi.*\n\nPor favor, confirma a continuación para continuar."
+    },
+    "SecurityWarningTextFootnotePart1": {
+      "en": "*Note:",
+      "es": "*Nota:"
+    },
+    "SecurityWarningTextFootnotePart2": {
+      "en": " Crash reports might reveal the timing of the crash and what events occurred, but it would not reveal spending or viewing keys.",
+      "es": " Los informes de fallos podrían revelar el momento del fallo y los eventos que ocurrieron, pero no revelarían claves de gasto o visualización."
+    },
+    "SecurityWarningConfirm": {
+      "en": "Confirm",
+      "es": "Confirmar"
+    },
+    "SecurityWarningAcknowledge": {
+      "en": "I acknowledge",
+      "es": "Reconozco"
+    },
+    "SeedRecoveryHeader": {
+      "en": "Your secret recovery phrase",
+      "es": "Tu frase de recuperación secreta"
+    },
+    "SeedRecoveryDescription": {
+      "en": "The following 24 words are the keys to your funds and are the only way to recover your funds if you get locked out or get a new device. Protect your ZEC by storing this phrase in a place you trust and never share it with anyone!",
+      "es": "Las siguientes 24 palabras son las llaves para tus fondos y son la única manera de recuperar tus fondos si te bloqueas o consigues un nuevo dispositivo. Protege tu ZEC almacenando esta frase en un lugar de confianza y nunca la compartas con nadie."
+    },
+    "SeedRecoveryBirthdayHeight": {
+      "en": "Wallet birthday height: %1$d",
+      "es": "Altura de cumpleaños de la billetera: %1$d"
+    },
+    "SeedRecoveryButtonFinished": {
+      "en": "I got it!",
+      "es": "¡Entendido!"
+    },
+    "SeedRecoveryCopy": {
+      "en": "Tap to Copy",
+      "es": "Toca para Copiar"
+    },
+    "SeedRecoverySeedClipboardTag": {
+      "en": "Zcash Seed Phrase",
+      "es": "Frase de Semilla de Zcash"
+    },
+    "SeedRecoveryBirthdayClipboardTag": {
+      "en": "Zcash Wallet Birthday",
+      "es": "Cumpleaños de la Billetera de Zcash"
+    },
+    "SendStageSendTitle": {
+      "en": "Send",
+      "es": "Enviar"
+    },
+    "SendScanContentDescription": {
+      "en": "Scan",
+      "es": "Escanear"
+    },
+    "SendAddressLabel": {
+      "en": "To:",
+      "es": "Para:"
+    },
+    "SendAddressHint": {
+      "en": "Zcash Address",
+      "es": "Dirección de Zcash"
+    },
+    "SendAddressInvalid": {
+      "en": "Invalid address",
+      "es": "Dirección inválida"
+    },
+    "SendAmountLabel": {
+      "en": "Amount:",
+      "es": "Cantidad:"
+    },
+    "SendAmountHint": {
+      "en": "%1$s Amount",
+      "es": "Cantidad de %1$s"
+    },
+    "SendAmountInsufficientBalance": {
+      "en": "Insufficient funds",
+      "es": "Fondos insuficientes"
+    },
+    "SendAmountInvalid": {
+      "en": "Invalid amount",
+      "es": "Cantidad inválida"
+    },
+    "SendMemoLabel": {
+      "en": "Message",
+      "es": "Mensaje"
+    },
+    "SendMemoHint": {
+      "en": "Write private message here…",
+      "es": "Escribe un mensaje privado aquí…"
+    },
+    "SendMemoBytesCounter": {
+      "en": "%1$s/%2$s",
+      "es": "%1$s/%2$s"
+    },
+    "SendCreate": {
+      "en": "Review",
+      "es": "Revisar"
+    },
+    "SendFee": {
+      "en": "(Typical Fee < %1$s)",
+      "es": "(Tarifa típica < %1$s)"
+    },
+    "SendDialogErrorTitle": {
+      "en": "Failed to send funds",
+      "es": "Fallo al enviar fondos"
+    },
+    "SendDialogErrorText": {
+      "en": "Error: The attempt to send funds failed. Try it again, please.",
+      "es": "Error: El intento de enviar fondos falló. Inténtalo de nuevo, por favor."
+    },
+    "SendDialogErrorBtn": {
+      "en": "OK",
+      "es": "OK"
+    },
+    "SendAbbreviatedAddressFormat": {
+      "en": "%1$s…%2$s",
+      "es": "%1$s…%2$s"
+    },
+    "SettingsTroubleshootingMenuContentDescription": {
+      "en": "Additional settings",
+      "es": "Configuraciones adicionales"
+    },
+    "SettingsTroubleshootingRescan": {
+      "en": "Rescan blockchain",
+      "es": "Reescanear blockchain"
+    },
+    "SettingsTroubleshootingEnableBackgroundSync": {
+      "en": "Background sync",
+      "es": "Sincronización en segundo plano"
+    },
+    "SettingsTroubleshootingEnableKeepScreenOn": {
+      "en": "Keep screen on during sync",
+      "es": "Mantener la pantalla encendida durante la sincronización"
+    },
+    "SettingsTroubleshootingEnableAnalytics": {
+      "en": "Report crashes",
+      "es": "Informar fallos"
+    },
+    "SettingsSendUsFeedback": {
+      "en": "Send us feedback",
+      "es": "Envíanos comentarios"
+    },
+    "SettingsAdvancedSettings": {
+      "en": "Advanced",
+      "es": "Avanzado"
+    },
+    "SettingsAbout": {
+      "en": "About",
+      "es": "Acerca de"
+    },
+    "SupportHeader": {
+      "en": "Support",
+      "es": "Soporte"
+    },
+    "SupportHint": {
+      "en": "How can we help?",
+      "es": "¿Cómo podemos ayudarte?"
+    },
+    "SupportSend": {
+      "en": "Send",
+      "es": "Enviar"
+    },
+    "SupportConfirmationDialogOK": {
+      "en": "OK",
+      "es": "OK"
+    },
+    "SupportConfirmationDialogCancel": {
+      "en": "Cancel",
+      "es": "Cancelar"
+    },
+    "SupportConfirmationDialogTitle": {
+      "en": "Open e-mail app",
+      "es": "Abrir aplicación de correo electrónico"
+    },
+    "SupportConfirmationExplanation": {
+      "en": "%1$s is about to open your e-mail app with a pre-filled message.\n\nBe sure to hit send within your e-mail app.",
+      "es": "%1$s está a punto de abrir tu aplicación de correo electrónico con un mensaje prellenado.\n\nAsegúrate de presionar enviar dentro de tu aplicación de correo electrónico."
+    },
+    "SupportInformation": {
+      "en": "Please let us know about any problems you have had, or features you want to see in the future.",
+      "es": "Por favor, infórmanos sobre cualquier problema que hayas tenido o funciones que quieras ver en el futuro."
+    },
+    "SupportUnableToOpenEmail": {
+      "en": "Unable to launch email app.",
+      "es": "No se puede lanzar la aplicación de correo electrónico."
+    },
+    "UpdateHeader": {
+      "en": "Update available",
+      "es": "Actualización disponible"
+    },
+    "UpdateCriticalHeader": {
+      "en": "Update required",
+      "es": "Actualización requerida"
+    },
+    "UpdateTitleAvailable": {
+      "en": "%1$s here.",
+      "es": "%1$s aquí."
+    },
+    "UpdateTitleRequired": {
+      "en": "It's not you, it's me.",
+      "es": "No eres tú, soy yo."
+    },
+    "UpdateDescriptionRequired": {
+      "en": "There is a required update for %1$s that makes major improvements to performance and/or security.",
+      "es": "Hay una actualización requerida para %1$s que hace importantes mejoras en el rendimiento y/o la seguridad."
+    },
+    "UpdateDescriptionAvailable": {
+      "en": "There is a new version of %1$s that makes minor updates to improve performance and/or security.\n\nPlease take a moment to update to the latest version.",
+      "es": "Hay una nueva versión de %1$s que realiza actualizaciones menores para mejorar el rendimiento y/o la seguridad.\n\nPor favor, tómate un momento para actualizar a la última versión."
+    },
+    "UpdateLinkText": {
+      "en": "Learn more about this update here.",
+      "es": "Aprende más sobre esta actualización aquí."
+    },
+    "UpdateDownloadButton": {
+      "en": "Update",
+      "es": "Actualizar"
+    },
+    "UpdateLaterEnabledButton": {
+      "en": "Remind me later",
+      "es": "Recuérdame más tarde"
+    },
+    "UpdateLaterDisabledButton": {
+      "en": "(required)",
+      "es": "(requerido)"
+    },
+    "NotEnoughSpaceTitle": {
+      "en": "Not enough free space",
+      "es": "No hay suficiente espacio libre"
+    },
+    "NotEnoughSpaceDescription1": {
+      "en": "%1$s requires at least %2$d GB of space to operate but there is only %3$d MB available.",
+      "es": "%1$s requiere al menos %2$d GB de espacio para operar, pero solo hay %3$d MB disponibles."
+    },
+    "NotEnoughSpaceDescription2": {
+      "en": "Go to your device settings and make more space available if you wish to use the %1$s app.",
+      "es": "Ve a las configuraciones de tu dispositivo y libera más espacio si deseas usar la aplicación %1$s."
+    },
+    "NotEnoughSpaceSystemSettingsBtn": {
+      "en": "System settings",
+      "es": "Configuraciones del sistema"
+    },
+    "NotEnoughSpaceSettingsOpenFailed": {
+      "en": "Unable to launch Settings app.",
+      "es": "No se puede lanzar la aplicación de Configuraciones."
+    },
+    "WhatsNewTitle": {
+      "en": "What's new",
+      "es": "Novedades"
+    },
+    "WhatsNewVersion": {
+      "en": "Zashi Version %s",
+      "es": "Versión de Zashi %s"
+    }
+  }
+}
