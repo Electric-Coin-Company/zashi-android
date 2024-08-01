@@ -13,6 +13,9 @@ directly impact users rather than highlighting other key architectural updates.*
 - Transaction resubmission feature has been added. It periodically searches for unmined sent transactions that are 
   still within their expiry window and resubmits them if there are any.
 
+### Changed
+- Choose server screen redesigned
+
 ## [1.1.7 (718)] - 2024-09-06
 
 ### Added

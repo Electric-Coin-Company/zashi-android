@@ -48,7 +48,6 @@ import co.electriccoin.zcash.ui.common.usecase.ObserveSynchronizerUseCase
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.common.wallet.RefreshLock
 import co.electriccoin.zcash.ui.common.wallet.StaleLock
-import co.electriccoin.zcash.ui.preference.PersistableWalletPreferenceDefault
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
 import co.electriccoin.zcash.ui.screen.account.ext.TransactionOverviewExt
 import co.electriccoin.zcash.ui.screen.account.ext.getSortHeight
@@ -79,8 +78,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
@@ -95,17 +92,10 @@ class WalletViewModel(
     observeSynchronizer: ObserveSynchronizerUseCase,
     private val walletCoordinator: WalletCoordinator,
     private val walletRepository: WalletRepository,
-    private val persistableWalletPreference: PersistableWalletPreferenceDefault,
     private val encryptedPreferenceProvider: EncryptedPreferenceProvider,
     private val standardPreferenceProvider: StandardPreferenceProvider,
     private val getAvailableServers: GetDefaultServersProvider
 ) : AndroidViewModel(application) {
-    /*
-     * Using the Mutex may be overkill, but it ensures that if multiple calls are accidentally made
-     * that they have a consistent ordering.
-     */
-    private val persistWalletMutex = Mutex()
-
     val navigationCommand = MutableSharedFlow<String>()
 
     val backNavigationCommand = MutableSharedFlow<Unit>()
@@ -508,35 +498,12 @@ class WalletViewModel(
     }
 
     /**
-     * Persists a wallet asynchronously.  Clients observe [secretState] to see the side effects.
-     */
-    private fun persistWallet(persistableWallet: PersistableWallet) {
-        viewModelScope.launch {
-            persistWalletMutex.withLock {
-                persistableWalletPreference.putValue(encryptedPreferenceProvider(), persistableWallet)
-            }
-        }
-    }
-
-    /**
      * Asynchronously notes that the user has completed the backup steps, which means the wallet
      * is ready to use.  Clients observe [secretState] to see the side effects.  This would be used
      * for a user creating a new wallet.
      */
     fun persistOnboardingState(onboardingState: OnboardingState) {
-        viewModelScope.launch {
-            // Use the Mutex here to avoid timing issues.  During wallet restore, persistOnboardingState()
-            // is called prior to persistExistingWallet().  Although persistOnboardingState() should
-            // complete quickly, it isn't guaranteed to complete before persistExistingWallet()
-            // unless a mutex is used here.
-            persistWalletMutex.withLock {
-                StandardPreferenceKeys.ONBOARDING_STATE.putValue(
-                    standardPreferenceProvider(),
-                    onboardingState
-                        .toNumber()
-                )
-            }
-        }
+        walletRepository.persistOnboardingState(onboardingState)
     }
 
     /**
@@ -561,27 +528,6 @@ class WalletViewModel(
         viewModelScope.launch {
             walletCoordinator.rescanBlockchain()
             persistWalletRestoringState(WalletRestoringState.RESTORING)
-        }
-    }
-
-    /**
-     * This asynchronously resets the SDK state.  This is non-destructive, as SDK state can be rederived.
-     *
-     * This could be used as a troubleshooting step in debugging.
-     */
-    fun resetSdk() {
-        walletCoordinator.resetSdk()
-    }
-
-    /**
-     * This safely and asynchronously stops [Synchronizer].
-     */
-    fun closeSynchronizer() {
-        val synchronizer = synchronizer.value
-        if (null != synchronizer) {
-            viewModelScope.launch {
-                (synchronizer as SdkSynchronizer).close()
-            }
         }
     }
 

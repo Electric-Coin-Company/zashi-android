@@ -20,17 +20,12 @@ class PersistEndpointUseCase(
 
         when (val result = validateServerEndpoint(endpoint)) {
             ServerValidation.Valid -> {
-                closeSynchronizer()
                 persistWallet(getPersistableWallet().copy(endpoint = endpoint))
             }
 
             is ServerValidation.InValid -> throw PersistEndpointException(result.reason.message)
             ServerValidation.Running -> throw PersistEndpointException(null)
         }
-    }
-
-    private fun closeSynchronizer() {
-        walletRepository.closeSynchronizer()
     }
 
     private suspend fun validateServerEndpoint(endpoint: LightWalletEndpoint) =

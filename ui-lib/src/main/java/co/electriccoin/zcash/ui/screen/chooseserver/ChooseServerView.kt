@@ -403,7 +403,8 @@ private fun CustomServerRadioButton(
                             .align(Alignment.CenterVertically)
                             .rotate(iconAngle.value),
                     painter = painterResource(id = R.drawable.ic_expand),
-                    contentDescription = state.radioButtonState.text.getValue()
+                    contentDescription = state.radioButtonState.text.getValue(),
+                    colorFilter = ColorFilter.tint(ZcashTheme.zashiColors.textPrimary)
                 )
             }
         )

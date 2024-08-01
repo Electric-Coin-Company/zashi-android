@@ -49,8 +49,6 @@ interface WalletRepository {
     val fastestServers: StateFlow<FastestServersState>
     val persistableWallet: Flow<PersistableWallet?>
 
-    fun closeSynchronizer()
-
     fun persistWallet(persistableWallet: PersistableWallet)
 
     fun persistOnboardingState(onboardingState: OnboardingState)
@@ -72,7 +70,7 @@ class WalletRepositoryImpl(
 ) : WalletRepository {
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
-    private val persistWalletMutex = Mutex()
+    private val walletMutex = Mutex()
 
     private val refreshFastestServersRequest = MutableSharedFlow<Unit>(replay = 1)
 
@@ -162,20 +160,13 @@ class WalletRepositoryImpl(
             (it as? SecretState.Ready?)?.persistableWallet
         }
 
-    override fun closeSynchronizer() {
-        scope.launch {
-            synchronizer.value?.let {
-                (it as SdkSynchronizer).close()
-            }
-        }
-    }
-
     /**
      * Persists a wallet asynchronously.  Clients observe [secretState] to see the side effects.
      */
     override fun persistWallet(persistableWallet: PersistableWallet) {
         scope.launch {
-            persistWalletMutex.withLock {
+            walletMutex.withLock {
+                synchronizer.value?.let { (it as? SdkSynchronizer)?.close() }
                 persistableWalletPreference.putValue(encryptedPreferenceProvider(), persistableWallet)
             }
         }
@@ -192,7 +183,7 @@ class WalletRepositoryImpl(
             // is called prior to persistExistingWallet().  Although persistOnboardingState() should
             // complete quickly, it isn't guaranteed to complete before persistExistingWallet()
             // unless a mutex is used here.
-            persistWalletMutex.withLock {
+            walletMutex.withLock {
                 StandardPreferenceKeys.ONBOARDING_STATE.putValue(
                     standardPreferenceProvider(),
                     onboardingState
