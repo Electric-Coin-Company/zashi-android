@@ -122,7 +122,7 @@ tasks {
             "ZCASH_GOOGLE_PLAY_DEPLOY_STATUS" to "draft",
 
             "SDK_INCLUDED_BUILD_PATH" to "",
-            "BIP_39_INCLUDED_BUILD_PATH" to ""
+            "BIP_39_INCLUDED_BUILD_PATH" to "",
         )
 
         val actualPropertyValues = project.properties.filterKeys { it in expectedPropertyValues.keys }

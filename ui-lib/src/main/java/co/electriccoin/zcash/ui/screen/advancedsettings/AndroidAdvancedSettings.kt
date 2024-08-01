@@ -2,8 +2,10 @@
 
 package co.electriccoin.zcash.ui.screen.advancedsettings
 
+import android.app.Activity
 import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.di.koinActivityViewModel
 import co.electriccoin.zcash.ui.MainActivity
@@ -20,8 +22,10 @@ internal fun MainActivity.WrapAdvancedSettings(
     goSeedRecovery: () -> Unit,
 ) {
     val walletViewModel = koinActivityViewModel<WalletViewModel>()
+    val viewModel = koinActivityViewModel<AdvancedSettingsViewModel>()
 
-    val walletState = walletViewModel.walletStateInformation.collectAsStateWithLifecycle().value
+    val walletState by walletViewModel.walletStateInformation.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsStateWithLifecycle()
 
     WrapAdvancedSettings(
         goBack = goBack,
@@ -29,7 +33,8 @@ internal fun MainActivity.WrapAdvancedSettings(
         goExportPrivateData = goExportPrivateData,
         goChooseServer = goChooseServer,
         goSeedRecovery = goSeedRecovery,
-        topAppBarSubTitleState = walletState
+        topAppBarSubTitleState = walletState,
+        state = state
     )
 }
 
@@ -42,6 +47,7 @@ private fun WrapAdvancedSettings(
     goSeedRecovery: () -> Unit,
     goDeleteWallet: () -> Unit,
     topAppBarSubTitleState: TopAppBarSubTitleState,
+    state: AdvancedSettingsState
 ) {
     BackHandler {
         goBack()
@@ -54,5 +60,12 @@ private fun WrapAdvancedSettings(
         onChooseServer = goChooseServer,
         onSeedRecovery = goSeedRecovery,
         topAppBarSubTitleState = topAppBarSubTitleState,
+        isBuyWithCoinbaseVisible = state.isBuyWithCoinbaseVisible,
+        onBuyWithCoinbase = state.onBuyWithCoinbase
     )
 }
+
+data class AdvancedSettingsState(
+    val isBuyWithCoinbaseVisible: Boolean,
+    val onBuyWithCoinbase: (Activity) -> Unit,
+)

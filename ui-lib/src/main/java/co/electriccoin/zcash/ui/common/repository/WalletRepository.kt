@@ -1,14 +1,17 @@
 package co.electriccoin.zcash.ui.common.repository
 
 import android.app.Application
+import androidx.lifecycle.viewModelScope
 import cash.z.ecc.android.sdk.SdkSynchronizer
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.WalletCoordinator
 import cash.z.ecc.android.sdk.model.FastestServersResult
 import cash.z.ecc.android.sdk.model.PersistableWallet
+import cash.z.ecc.android.sdk.model.WalletAddresses
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.preference.api.EncryptedPreferenceProvider
 import co.electriccoin.zcash.preference.api.StandardPreferenceProvider
+import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.model.OnboardingState
 import co.electriccoin.zcash.ui.common.usecase.AvailableServersProvider
 import co.electriccoin.zcash.ui.common.viewmodel.SecretState
@@ -23,6 +26,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
@@ -36,6 +40,7 @@ interface WalletRepository {
     val synchronizer: StateFlow<Synchronizer?>
     val secretState: StateFlow<SecretState?>
     val fastestServers: StateFlow<FastestServersResult>
+    val addresses: StateFlow<WalletAddresses?>
 
     fun closeSynchronizer()
 
@@ -110,6 +115,21 @@ class WalletRepositoryImpl(
                 scope = scope,
                 started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
                 initialValue = FastestServersResult(servers = emptyList(), isLoading = true)
+            )
+
+    override val addresses: StateFlow<WalletAddresses?> =
+        synchronizer
+            .filterNotNull()
+            .map {
+                runCatching {
+                    WalletAddresses.new(it)
+                }.onFailure {
+                    Twig.warn { "Wait until the SDK starts providing the addresses" }
+                }.getOrNull()
+            }.stateIn(
+                scope,
+                SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+                null
             )
 
     override fun closeSynchronizer() {
