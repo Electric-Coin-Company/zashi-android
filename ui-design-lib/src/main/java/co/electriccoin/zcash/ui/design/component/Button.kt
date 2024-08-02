@@ -290,7 +290,7 @@ fun PrimaryButton(
         onClick = state.onClick,
         text = state.text.getValue(),
         enabled = state.isEnabled,
-        showProgressBar = state.showProgressBar,
+        showProgressBar = state.isLoading,
         modifier = modifier,
         minWidth = minWidth,
         minHeight = minHeight,
@@ -500,6 +500,6 @@ private enum class ButtonMode { Pressed, Idle }
 data class ButtonState(
     val text: StringResource,
     val isEnabled: Boolean = true,
-    val showProgressBar: Boolean = false,
-    val onClick: () -> Unit,
+    val isLoading: Boolean = false,
+    val onClick: () -> Unit = {},
 )

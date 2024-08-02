@@ -8,6 +8,7 @@ import co.electriccoin.zcash.ui.common.usecase.ObservePersistableWalletUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveSynchronizerUseCase
 import co.electriccoin.zcash.ui.common.usecase.PersistEndpointUseCase
 import co.electriccoin.zcash.ui.common.usecase.PersistWalletUseCase
+import co.electriccoin.zcash.ui.common.usecase.RefreshFastestServersUseCase
 import co.electriccoin.zcash.ui.common.usecase.ValidateEndpointUseCase
 import co.electriccoin.zcash.ui.common.usecase.ValidateServerEndpointUseCase
 import org.koin.core.module.dsl.factoryOf
@@ -25,4 +26,5 @@ val useCaseModule =
         factoryOf(::ValidateServerEndpointUseCase)
         factoryOf(::ValidateEndpointUseCase)
         factoryOf(::ObserveFastestServersUseCase)
+        factoryOf(::RefreshFastestServersUseCase)
     }

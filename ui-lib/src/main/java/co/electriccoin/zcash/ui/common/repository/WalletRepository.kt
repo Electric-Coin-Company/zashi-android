@@ -18,16 +18,22 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.filterNot
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.withIndex
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -42,6 +48,8 @@ interface WalletRepository {
     fun persistWallet(persistableWallet: PersistableWallet)
 
     fun persistOnboardingState(onboardingState: OnboardingState)
+
+    fun refreshFastestServers()
 }
 
 class WalletRepositoryImpl(
@@ -55,6 +63,8 @@ class WalletRepositoryImpl(
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     private val persistWalletMutex = Mutex()
+
+    private val refreshFastestServersRequest = MutableSharedFlow<Unit>(replay = 1)
 
     /**
      * A flow of the wallet onboarding state.
@@ -99,18 +109,33 @@ class WalletRepositoryImpl(
             initialValue = SecretState.Loading
         )
 
+    private var previousFastestServerResult: FastestServersResult? = null
+
     @OptIn(ExperimentalCoroutinesApi::class)
-    override val fastestServers =
+    override val fastestServers = combine(
+        refreshFastestServersRequest.onStart { emit(Unit) },
         synchronizer
-            .flatMapLatest { synchronizer ->
-                synchronizer?.getFastestServers(application, getAvailableServers())
-                    ?: flowOf(FastestServersResult(servers = emptyList(), isLoading = true))
-            }
-            .stateIn(
-                scope = scope,
-                started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-                initialValue = FastestServersResult(servers = emptyList(), isLoading = true)
-            )
+    ) { _, synchronizer -> synchronizer }
+        .withIndex()
+        .flatMapLatest { (_, synchronizer) ->
+            synchronizer
+                ?.getFastestServers(application, getAvailableServers())
+                ?.map {
+                    if (it.servers == null && it.isLoading) {
+                        previousFastestServerResult?.copy(isLoading = true) ?: it
+                    } else {
+                        it
+                    }
+                }
+                ?.onEach {
+                    previousFastestServerResult = it
+                } ?: emptyFlow()
+        }
+        .stateIn(
+            scope = scope,
+            started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+            initialValue = FastestServersResult(servers = emptyList(), isLoading = true)
+        )
 
     override fun closeSynchronizer() {
         scope.launch {
@@ -144,6 +169,14 @@ class WalletRepositoryImpl(
             // unless a mutex is used here.
             persistWalletMutex.withLock {
                 StandardPreferenceKeys.ONBOARDING_STATE.putValue(standardPreferenceProvider, onboardingState.toNumber())
+            }
+        }
+    }
+
+    override fun refreshFastestServers() {
+        scope.launch {
+            if (!fastestServers.first().isLoading) {
+                refreshFastestServersRequest.emit(Unit)
             }
         }
     }

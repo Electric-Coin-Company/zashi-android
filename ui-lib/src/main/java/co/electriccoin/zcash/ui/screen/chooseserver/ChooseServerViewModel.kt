@@ -10,14 +10,15 @@ import co.electriccoin.zcash.ui.common.usecase.ObserveFastestServersUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObservePersistableWalletUseCase
 import co.electriccoin.zcash.ui.common.usecase.PersistEndpointException
 import co.electriccoin.zcash.ui.common.usecase.PersistEndpointUseCase
+import co.electriccoin.zcash.ui.common.usecase.RefreshFastestServersUseCase
 import co.electriccoin.zcash.ui.common.usecase.ValidateEndpointUseCase
 import co.electriccoin.zcash.ui.design.component.AlertDialogState
 import co.electriccoin.zcash.ui.design.component.ButtonState
+import co.electriccoin.zcash.ui.design.component.RadioButtonState
 import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
@@ -29,7 +30,8 @@ import kotlinx.coroutines.launch
 class ChooseServerViewModel(
     observePersistableWallet: ObservePersistableWalletUseCase,
     observeFastestServers: ObserveFastestServersUseCase,
-    getAvailableServers: AvailableServersProvider,
+    private val getAvailableServers: AvailableServersProvider,
+    private val refreshFastestServersUseCase: RefreshFastestServersUseCase,
     private val persistEndpoint: PersistEndpointUseCase,
     private val validateEndpoint: ValidateEndpointUseCase,
 ) : ViewModel() {
@@ -37,7 +39,7 @@ class ChooseServerViewModel(
 
     private val userEndpointSelection = MutableStateFlow<Selection?>(null)
 
-    private val isSaveButtonEnabled = MutableStateFlow(true)
+    private val isSaveInProgress = MutableStateFlow(false)
 
     private val dialogState = MutableStateFlow<ServerDialogState?>(null)
 
@@ -48,23 +50,27 @@ class ChooseServerViewModel(
             userEndpointSelection,
         ) { selectedEndpoint, result, userEndpointSelection ->
             ServerListState.Fastest(
-                title = stringRes("Fastest"),
-                servers =
-                    result.servers
-                        ?.map { endpoint ->
-                            createDefaultServerState(endpoint, userEndpointSelection, selectedEndpoint)
-                        }
-                        .orEmpty(),
-                isLoading = false
+                title = stringRes(R.string.choose_server_fastest_servers),
+                servers = result.servers
+                    ?.map { endpoint ->
+                        createDefaultServerState(endpoint, userEndpointSelection, selectedEndpoint)
+                    }
+                    .orEmpty(),
+                isLoading = result.isLoading,
+                retryButton = ButtonState(
+                    text = stringRes(R.string.choose_server_refresh),
+                    onClick = ::onRefreshClicked
+                )
             )
         }
 
-    private val all =
+    private val other =
         combine(
             observePersistableWallet().map { it?.endpoint },
+            observeFastestServers(),
             userCustomEndpointText,
             userEndpointSelection,
-        ) { selectedEndpoint, userCustomEndpointText, userEndpointSelection ->
+        ) { selectedEndpoint, fastest, userCustomEndpointText, userEndpointSelection ->
             if (selectedEndpoint == null) return@combine null
 
             val isSelectedEndpointCustom = !getAvailableServers().contains(selectedEndpoint)
@@ -77,44 +83,54 @@ class ChooseServerViewModel(
                     selectedEndpoint = selectedEndpoint
                 )
 
-            ServerListState.All(
-                title = stringRes("All"),
+            ServerListState.Other(
+                title = stringRes(R.string.choose_server_other_servers),
                 servers =
-                    getAvailableServers()
-                        .map<LightWalletEndpoint, ServerState> { endpoint ->
-                            createDefaultServerState(endpoint, userEndpointSelection, selectedEndpoint)
-                        }
-                        .toMutableList()
-                        .apply {
-                            val index = 1.coerceIn(0, size.coerceAtLeast(0))
-                            add(index, customEndpointState)
-                        }
-                        .toList()
+                getAvailableServers()
+                    .filter {
+                        !fastest.servers.orEmpty().contains(it)
+                    }
+                    .map<LightWalletEndpoint, ServerState> { endpoint ->
+                        createDefaultServerState(endpoint, userEndpointSelection, selectedEndpoint)
+                    }
+                    .toMutableList()
+                    .apply {
+                        val index = 1.coerceIn(0, size.coerceAtLeast(0))
+                        add(index, customEndpointState)
+                    }
+                    .toList()
             )
         }
 
-    val state: StateFlow<ChooseServerState?> =
-        combine(fastest, all, isSaveButtonEnabled, dialogState) { fastest, all,
-                                                                  isButtonEnabled, dialogState ->
-            if (all == null) { // not loaded yet
-                return@combine null
-            }
+    private val buttonState = combine(
+        observePersistableWallet().map { it?.endpoint },
+        userEndpointSelection,
+        isSaveInProgress
+    ) { selectedEndpoint, userEndpointSelection, isSaveInProgress ->
+        val userSelectedEndpoint = (userEndpointSelection as? Selection.Endpoint)?.endpoint
+        ButtonState(
+            text = stringRes(R.string.choose_server_save),
+            isEnabled = userEndpointSelection == null || selectedEndpoint != userSelectedEndpoint,
+            isLoading = isSaveInProgress,
+            onClick = ::onSaveButtonClicked
+        )
+    }
 
-            ChooseServerState(
-                fastest = fastest,
-                all = all,
-                saveButton =
-                    ButtonState(
-                        text = stringRes(R.string.choose_server_save),
-                        isEnabled = isButtonEnabled,
-                        showProgressBar = !isButtonEnabled,
-                        onClick = ::onSaveButtonClicked
-                    ),
-                dialogState = dialogState,
-            )
-        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT), null)
+    val state = combine(fastest, other, buttonState, dialogState) { fastest, all,
+        buttonState, dialogState ->
+        if (all == null) { // not loaded yet
+            return@combine null
+        }
 
-    fun canGoBack(): Boolean = isSaveButtonEnabled.value
+        ChooseServerState(
+            fastest = fastest,
+            other = all,
+            saveButton = buttonState,
+            dialogState = dialogState,
+        )
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT), null)
+
+    fun canGoBack(): Boolean = isSaveInProgress.value
 
     private fun createCustomServerState(
         userEndpointSelection: Selection?,
@@ -122,41 +138,52 @@ class ChooseServerViewModel(
         userCustomEndpointText: String?,
         selectedEndpoint: LightWalletEndpoint
     ) = ServerState.Custom(
-        name = stringRes(R.string.choose_server_custom),
-        isChecked =
+        radioButtonState = RadioButtonState(
+            text = stringRes(R.string.choose_server_custom),
+            isChecked =
             userEndpointSelection is Selection.Custom ||
                 (userEndpointSelection == null && isSelectedEndpointCustom),
+            onClick = ::onCustomEndpointClicked,
+        ),
         newServerTextFieldState =
-            TextFieldState(
-                value =
-                    userCustomEndpointText?.let { stringRes(it) } ?: if (isSelectedEndpointCustom) {
-                        stringRes(
-                            resource = R.string.choose_server_full_server_name,
-                            selectedEndpoint.host,
-                            selectedEndpoint.port
-                        )
-                    } else {
-                        stringRes("")
-                    },
-                onValueChange = ::onCustomEndpointTextChanged,
-            ),
-        onClick = ::onCustomEndpointClicked,
+        TextFieldState(
+            value =
+            userCustomEndpointText?.let { stringRes(it) } ?: if (isSelectedEndpointCustom) {
+                stringRes(
+                    resource = R.string.choose_server_full_server_name,
+                    selectedEndpoint.host,
+                    selectedEndpoint.port
+                )
+            } else {
+                stringRes("")
+            },
+            onValueChange = ::onCustomEndpointTextChanged,
+        ),
     )
 
     private fun createDefaultServerState(
         endpoint: LightWalletEndpoint,
         userEndpointSelection: Selection?,
-        selectedEndpoint: LightWalletEndpoint?
+        selectedEndpoint: LightWalletEndpoint?,
     ): ServerState.Default {
+        val defaultEndpoint = getAvailableServers.defaultEndpoint()
         val isEndpointChecked =
             (userEndpointSelection is Selection.Endpoint && userEndpointSelection.endpoint == endpoint) ||
                 (userEndpointSelection == null && selectedEndpoint == endpoint)
 
         return ServerState.Default(
-            name = stringRes(R.string.choose_server_full_server_name, endpoint.host, endpoint.port),
-            isChecked = isEndpointChecked,
-            onClick = { onEndpointClicked(endpoint) }
+            RadioButtonState(
+                text = stringRes(R.string.choose_server_full_server_name, endpoint.host, endpoint.port),
+                isChecked = isEndpointChecked,
+                onClick = { onEndpointClicked(endpoint) },
+                subtitle = if (endpoint == defaultEndpoint) stringRes(R.string.choose_server_save_default) else null,
+            ),
+            badge = if (endpoint == selectedEndpoint) stringRes(R.string.choose_server_active) else null,
         )
+    }
+
+    private fun onRefreshClicked() {
+        refreshFastestServersUseCase()
     }
 
     private fun onCustomEndpointTextChanged(new: String) {
@@ -171,18 +198,18 @@ class ChooseServerViewModel(
         userEndpointSelection.update { Selection.Custom }
     }
 
-    private fun onSaveButtonClicked() =
-        viewModelScope.launch {
-            isSaveButtonEnabled.update { false }
-            val selection = getUserEndpointSelectionOrShowError() ?: return@launch
-            try {
-                persistEndpoint(selection)
-                showSuccessDialog()
-            } catch (e: PersistEndpointException) {
-                showValidationErrorDialog(e.message)
-            }
-            isSaveButtonEnabled.update { true }
+    private fun onSaveButtonClicked() = viewModelScope.launch {
+        if (isSaveInProgress.value) return@launch
+
+        isSaveInProgress.update { true }
+        val selection = getUserEndpointSelectionOrShowError() ?: return@launch
+        try {
+            persistEndpoint(selection)
+        } catch (e: PersistEndpointException) {
+            showValidationErrorDialog(e.message)
         }
+        isSaveInProgress.update { false }
+    }
 
     private fun onConfirmDialogButtonClicked() {
         dialogState.update { null }
@@ -215,28 +242,12 @@ class ChooseServerViewModel(
                     title = stringRes(R.string.choose_server_validation_dialog_error_title),
                     text = stringRes(R.string.choose_server_validation_dialog_error_text),
                     confirmButtonState =
-                        ButtonState(
-                            text = stringRes(R.string.choose_server_save_success_dialog_btn),
-                            onClick = ::onConfirmDialogButtonClicked
-                        ),
+                    ButtonState(
+                        text = stringRes(R.string.choose_server_save_success_dialog_btn),
+                        onClick = ::onConfirmDialogButtonClicked
+                    ),
                 ),
                 reason = reason?.let { stringRes(it) }
-            )
-        }
-    }
-
-    private fun showSuccessDialog() {
-        dialogState.update {
-            ServerDialogState.SaveSuccess(
-                AlertDialogState(
-                    title = stringRes(R.string.choose_server_save_success_dialog_title),
-                    text = stringRes(R.string.choose_server_save_success_dialog_text),
-                    confirmButtonState =
-                        ButtonState(
-                            text = stringRes(R.string.choose_server_save_success_dialog_btn),
-                            onClick = ::onConfirmDialogButtonClicked
-                        ),
-                )
             )
         }
     }

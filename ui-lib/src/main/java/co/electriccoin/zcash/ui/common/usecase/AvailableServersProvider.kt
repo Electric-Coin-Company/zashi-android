@@ -32,6 +32,8 @@ class AvailableServersProvider(private val application: Application) {
     }
 
     operator fun invoke() = lightWalletEndpoints
+
+    fun defaultEndpoint() = this().first()
 }
 
 private const val ZR_HOST = "zec.rocks" // NON-NLS
