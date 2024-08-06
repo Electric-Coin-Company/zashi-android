@@ -78,6 +78,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
 // To make this more multiplatform compatible, we need to remove the dependency on Context
@@ -700,5 +701,5 @@ fun Synchronizer.Status.isSyncing() = this == Synchronizer.Status.SYNCING
 
 fun Synchronizer.Status.isSynced() = this == Synchronizer.Status.SYNCED
 
-private val USD_EXCHANGE_REFRESH_LOCK_THRESHOLD = 10.seconds
-private val USD_EXCHANGE_STALE_LOCK_THRESHOLD = 20.seconds
+private val USD_EXCHANGE_REFRESH_LOCK_THRESHOLD = 2.minutes
+private val USD_EXCHANGE_STALE_LOCK_THRESHOLD = 15.minutes
