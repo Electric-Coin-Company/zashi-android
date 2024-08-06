@@ -36,7 +36,7 @@ data class WalletDisplayValues(
 
             val fiatCurrencyAmountState =
                 walletSnapshot.spendableBalance().toFiatCurrencyState(
-                    walletSnapshot.exchangeRateUsd,
+                    null,
                     Locale.current.toKotlinLocale(),
                     MonetarySeparators.current(java.util.Locale.getDefault())
                 )

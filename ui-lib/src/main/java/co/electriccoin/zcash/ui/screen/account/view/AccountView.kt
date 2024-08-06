@@ -18,9 +18,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
-import cash.z.ecc.android.sdk.model.FiatCurrency
 import cash.z.ecc.android.sdk.model.FiatCurrencyConversion
-import cash.z.ecc.android.sdk.model.FiatCurrencyResult
 import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.BalanceState
@@ -30,6 +28,7 @@ import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.test.CommonTag
+import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.TopAppBarHideBalancesNavigation
@@ -76,13 +75,15 @@ private fun HistoryListComposablePreview() {
                     totalBalance = Zatoshi(value = 123_000_000L),
                     spendableBalance = Zatoshi(value = 123_000_000L),
                     exchangeRate =
-                        FiatCurrencyResult.Success(
-                            FiatCurrencyConversion(
-                                fiatCurrency = FiatCurrency.USD,
-                                timestamp = Clock.System.now(),
-                                priceOfZec = 25.0
-                            )
-                        )
+                        ExchangeRateState(
+                            isLoading = false,
+                            isRefreshEnabled = true,
+                            currencyConversion =
+                                FiatCurrencyConversion(
+                                    timestamp = Clock.System.now(),
+                                    priceOfZec = 25.0
+                                )
+                        ) {}
                 ),
             isHideBalances = false,
             goBalances = {},

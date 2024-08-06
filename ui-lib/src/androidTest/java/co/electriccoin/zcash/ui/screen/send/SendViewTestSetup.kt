@@ -130,7 +130,7 @@ class SendViewTestSetup(
                         value = "",
                         fiatValue = "",
                         isTransparentRecipient = false,
-                        fiatCurrencyConversion = null
+                        exchangeRateState = null
                     ),
                 setMemoState = {},
                 memoState = MemoState.new(""),

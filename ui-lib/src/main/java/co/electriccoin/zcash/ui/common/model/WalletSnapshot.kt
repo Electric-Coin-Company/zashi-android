@@ -2,7 +2,6 @@ package co.electriccoin.zcash.ui.common.model
 
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.block.processor.CompactBlockProcessor
-import cash.z.ecc.android.sdk.model.FiatCurrencyResult
 import cash.z.ecc.android.sdk.model.PercentDecimal
 import cash.z.ecc.android.sdk.model.WalletBalance
 import cash.z.ecc.android.sdk.model.Zatoshi
@@ -16,7 +15,6 @@ data class WalletSnapshot(
     val orchardBalance: WalletBalance,
     val saplingBalance: WalletBalance,
     val transparentBalance: Zatoshi,
-    val exchangeRateUsd: FiatCurrencyResult,
     val progress: PercentDecimal,
     val synchronizerError: SynchronizerError?
 ) {

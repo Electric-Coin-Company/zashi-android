@@ -1,8 +1,8 @@
 package co.electriccoin.zcash.ui.fixture
 
-import cash.z.ecc.android.sdk.model.FiatCurrencyResult
 import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.ui.common.compose.BalanceState
+import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 
 object BalanceStateFixture {
     private const val BALANCE_VALUE = 0L
@@ -13,7 +13,7 @@ object BalanceStateFixture {
     fun new(
         totalBalance: Zatoshi = TOTAL_BALANCE,
         spendableBalance: Zatoshi = SPENDABLE_BALANCE,
-        exchangeRate: FiatCurrencyResult = FiatCurrencyResultFixture.new()
+        exchangeRate: ExchangeRateState = ObserveFiatCurrencyResultFixture.new()
     ) = BalanceState.Available(
         totalBalance = totalBalance,
         spendableBalance = spendableBalance,

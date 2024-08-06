@@ -17,12 +17,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
-import cash.z.ecc.android.sdk.model.FiatCurrencyResult
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.sdk.extension.toZecStringFull
 import cash.z.ecc.sdk.type.ZcashCurrency
 import co.electriccoin.zcash.ui.StyledExchangeBalance
 import co.electriccoin.zcash.ui.common.extension.asZecAmountTriple
+import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.Body
@@ -32,7 +32,7 @@ import co.electriccoin.zcash.ui.design.component.StyledBalance
 import co.electriccoin.zcash.ui.design.component.StyledBalanceDefaults
 import co.electriccoin.zcash.ui.design.component.ZecAmountTriple
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
-import co.electriccoin.zcash.ui.fixture.FiatCurrencyResultFixture
+import co.electriccoin.zcash.ui.fixture.ObserveFiatCurrencyResultFixture
 
 @Preview(device = Devices.PIXEL_2)
 @Composable
@@ -48,7 +48,7 @@ private fun BalanceWidgetPreview() {
                         BalanceState.Available(
                             totalBalance = Zatoshi(1234567891234567L),
                             spendableBalance = Zatoshi(1234567891234567L),
-                            exchangeRate = FiatCurrencyResultFixture.new()
+                            exchangeRate = ObserveFiatCurrencyResultFixture.new()
                         ),
                     isHideBalances = false,
                     isReferenceToBalances = true,
@@ -72,7 +72,7 @@ private fun BalanceWidgetNotAvailableYetPreview() {
                 balanceState =
                     BalanceState.Loading(
                         totalBalance = Zatoshi(value = 0L),
-                        exchangeRate = FiatCurrencyResultFixture.new()
+                        exchangeRate = ObserveFiatCurrencyResultFixture.new()
                     ),
                 isHideBalances = false,
                 isReferenceToBalances = true,
@@ -95,7 +95,7 @@ private fun BalanceWidgetHiddenAmountPreview() {
                 balanceState =
                     BalanceState.Loading(
                         totalBalance = Zatoshi(0L),
-                        exchangeRate = FiatCurrencyResultFixture.new()
+                        exchangeRate = ObserveFiatCurrencyResultFixture.new()
                     ),
                 isHideBalances = true,
                 isReferenceToBalances = true,
@@ -108,22 +108,22 @@ private fun BalanceWidgetHiddenAmountPreview() {
 
 sealed interface BalanceState {
     val totalBalance: Zatoshi
-    val exchangeRate: FiatCurrencyResult
+    val exchangeRate: ExchangeRateState
 
     data class None(
-        override val exchangeRate: FiatCurrencyResult
+        override val exchangeRate: ExchangeRateState
     ) : BalanceState {
         override val totalBalance: Zatoshi = Zatoshi(0L)
     }
 
     data class Loading(
         override val totalBalance: Zatoshi,
-        override val exchangeRate: FiatCurrencyResult
+        override val exchangeRate: ExchangeRateState
     ) : BalanceState
 
     data class Available(
         override val totalBalance: Zatoshi,
-        override val exchangeRate: FiatCurrencyResult,
+        override val exchangeRate: ExchangeRateState,
         val spendableBalance: Zatoshi
     ) : BalanceState
 }
@@ -151,7 +151,7 @@ fun BalanceWidget(
 
         StyledExchangeBalance(
             zatoshi = balanceState.totalBalance,
-            exchangeRate = balanceState.exchangeRate,
+            state = balanceState.exchangeRate,
             isHideBalances = isHideBalances
         )
 

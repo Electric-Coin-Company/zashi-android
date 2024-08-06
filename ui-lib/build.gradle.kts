@@ -110,6 +110,7 @@ dependencies {
     implementation(libs.zcash.sdk.incubator)
     implementation(libs.zcash.bip39)
     implementation(libs.zxing)
+    implementation(libs.lottie)
 
     implementation(projects.buildInfoLib)
     implementation(projects.configurationApiLib)
@@ -120,6 +121,7 @@ dependencies {
     implementation(projects.sdkExtLib)
     implementation(projects.spackleAndroidLib)
     api(projects.uiDesignLib)
+    implementation("androidx.graphics:graphics-shapes-android:1.0.0-rc01")
 
     androidTestImplementation(projects.testLib)
     androidTestImplementation(libs.bundles.androidx.test)

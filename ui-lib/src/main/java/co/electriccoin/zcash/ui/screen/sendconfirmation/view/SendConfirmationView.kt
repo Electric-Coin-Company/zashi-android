@@ -32,7 +32,6 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import cash.z.ecc.android.sdk.fixture.WalletAddressFixture
-import cash.z.ecc.android.sdk.model.FiatCurrencyResult
 import cash.z.ecc.android.sdk.model.FirstClassByteArray
 import cash.z.ecc.android.sdk.model.TransactionSubmitResult
 import cash.z.ecc.android.sdk.model.ZecSend
@@ -44,6 +43,7 @@ import co.electriccoin.zcash.ui.StyledExchangeBalance
 import co.electriccoin.zcash.ui.common.compose.BalanceWidgetBigLineOnly
 import co.electriccoin.zcash.ui.common.extension.asZecAmountTriple
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
+import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.AppAlertDialog
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
@@ -60,6 +60,7 @@ import co.electriccoin.zcash.ui.design.component.StyledBalanceDefaults
 import co.electriccoin.zcash.ui.design.component.Tiny
 import co.electriccoin.zcash.ui.design.component.TopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.fixture.ObserveFiatCurrencyResultFixture
 import co.electriccoin.zcash.ui.screen.sendconfirmation.SendConfirmationTag
 import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SendConfirmationStage
 import kotlinx.collections.immutable.ImmutableList
@@ -86,7 +87,7 @@ private fun SendConfirmationPreview() {
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
             onContactSupport = {},
             submissionResults = emptyList<TransactionSubmitResult>().toImmutableList(),
-            exchangeRate = FiatCurrencyResult.Loading()
+            exchangeRate = ObserveFiatCurrencyResultFixture.new()
         )
     }
 }
@@ -110,7 +111,7 @@ private fun SendConfirmationDarkPreview() {
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
             onContactSupport = {},
             submissionResults = emptyList<TransactionSubmitResult>().toImmutableList(),
-            exchangeRate = FiatCurrencyResult.Loading()
+            exchangeRate = ObserveFiatCurrencyResultFixture.new()
         )
     }
 }
@@ -134,7 +135,7 @@ private fun SendMultipleErrorPreview() {
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
             onContactSupport = {},
             submissionResults = emptyList<TransactionSubmitResult>().toImmutableList(),
-            exchangeRate = FiatCurrencyResult.Loading()
+            exchangeRate = ObserveFiatCurrencyResultFixture.new()
         )
     }
 }
@@ -158,7 +159,7 @@ private fun SendMultipleErrorDarkPreview() {
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
             onContactSupport = {},
             submissionResults = emptyList<TransactionSubmitResult>().toImmutableList(),
-            exchangeRate = FiatCurrencyResult.Loading()
+            exchangeRate = ObserveFiatCurrencyResultFixture.new()
         )
     }
 }
@@ -178,7 +179,7 @@ private fun PreviewSendConfirmation() {
             onConfirmation = {},
             onBack = {},
             isSending = false,
-            exchangeRate = FiatCurrencyResult.Loading()
+            exchangeRate = ObserveFiatCurrencyResultFixture.new()
         )
     }
 }
@@ -251,7 +252,7 @@ fun SendConfirmation(
     submissionResults: ImmutableList<TransactionSubmitResult>,
     topAppBarSubTitleState: TopAppBarSubTitleState,
     zecSend: ZecSend,
-    exchangeRate: FiatCurrencyResult
+    exchangeRate: ExchangeRateState
 ) {
     BlankBgScaffold(
         topBar = {
@@ -335,7 +336,7 @@ private fun SendConfirmationMainContent(
     onBack: () -> Unit,
     onContactSupport: () -> Unit,
     onConfirmation: () -> Unit,
-    exchangeRate: FiatCurrencyResult,
+    exchangeRate: ExchangeRateState,
     modifier: Modifier = Modifier,
 ) {
     when (stage) {
@@ -369,7 +370,7 @@ private fun SendConfirmationMainContent(
 @Suppress("LongMethod", "LongParameterList")
 private fun SendConfirmationContent(
     zecSend: ZecSend,
-    exchangeRate: FiatCurrencyResult,
+    exchangeRate: ExchangeRateState,
     isSending: Boolean,
     onConfirmation: () -> Unit,
     onBack: () -> Unit,
@@ -394,7 +395,7 @@ private fun SendConfirmationContent(
 
         StyledExchangeBalance(
             zatoshi = zecSend.amount,
-            exchangeRate = exchangeRate,
+            state = exchangeRate,
             isHideBalances = false,
             style = ZcashTheme.typography.secondary.headlineSmall,
             textColor = ZcashTheme.colors.textFieldHint

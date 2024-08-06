@@ -4,7 +4,8 @@ import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.os.SystemClock
-import androidx.activity.compose.setContent
+import android.view.ViewGroup
+import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.annotation.VisibleForTesting
@@ -12,16 +13,25 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionContext
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.findViewTreeLifecycleOwner
+import androidx.lifecycle.findViewTreeViewModelStoreOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.lifecycle.setViewTreeLifecycleOwner
+import androidx.lifecycle.setViewTreeViewModelStoreOwner
 import androidx.navigation.NavHostController
+import androidx.savedstate.findViewTreeSavedStateRegistryOwner
+import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import cash.z.ecc.android.sdk.fixture.WalletFixture
 import cash.z.ecc.android.sdk.model.SeedPhrase
 import cash.z.ecc.android.sdk.model.ZcashNetwork
@@ -126,7 +136,6 @@ class MainActivity : FragmentActivity() {
         // including IME animations, and go edge-to-edge.
         // This also sets up the initial system bar style based on the platform theme
         enableEdgeToEdge()
-
         setContent {
             Override(configurationOverrideFlow) {
                 ZcashTheme {
@@ -150,6 +159,54 @@ class MainActivity : FragmentActivity() {
         }
     }
 
+    private fun setContent(
+        parent: CompositionContext? = null,
+        content: @Composable () -> Unit
+    ) {
+        val existingComposeView =
+            window.decorView
+                .findViewById<ViewGroup>(android.R.id.content)
+                .getChildAt(0) as? ComposeView
+
+        if (existingComposeView != null) {
+            with(existingComposeView) {
+                setParentCompositionContext(parent)
+                setContent(content)
+            }
+        } else {
+            ComposeView(this).apply {
+                // Set content and parent **before** setContentView
+                // to have ComposeView create the composition on attach
+                setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnDetachedFromWindow)
+                setParentCompositionContext(parent)
+                setContent(content)
+                // Set the view tree owners before setting the content view so that the inflation process
+                // and attach listeners will see them already present
+                setOwners()
+                setContentView(
+                    this,
+                    ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.WRAP_CONTENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT
+                    )
+                )
+            }
+        }
+    }
+
+    private fun ComponentActivity.setOwners() {
+        val decorView = window.decorView
+        if (decorView.findViewTreeLifecycleOwner() == null) {
+            decorView.setViewTreeLifecycleOwner(this)
+        }
+        if (decorView.findViewTreeViewModelStoreOwner() == null) {
+            decorView.setViewTreeViewModelStoreOwner(this)
+        }
+        if (decorView.findViewTreeSavedStateRegistryOwner() == null) {
+            decorView.setViewTreeSavedStateRegistryOwner(this)
+        }
+    }
+
     @Composable
     private fun AuthenticationForAppAccess() {
         val authState = authenticationViewModel.appAccessAuthenticationResultState.collectAsStateWithLifecycle().value
@@ -160,6 +217,7 @@ class MainActivity : FragmentActivity() {
                 Twig.debug { "Authentication initial state" }
                 // Wait for the state update
             }
+
             AuthenticationUIState.NotRequired -> {
                 Twig.debug { "App access authentication NOT required - welcome animation only" }
                 if (animateAppAccess) {
@@ -173,6 +231,7 @@ class MainActivity : FragmentActivity() {
                     }
                 }
             }
+
             AuthenticationUIState.Required -> {
                 Twig.debug { "App access authentication required" }
 
@@ -198,12 +257,14 @@ class MainActivity : FragmentActivity() {
                     useCase = AuthenticationUseCase.AppAccess
                 )
             }
+
             AuthenticationUIState.SupportedRequired -> {
                 Twig.debug { "Authentication support required" }
                 WrapSupport(
                     goBack = { finish() }
                 )
             }
+
             AuthenticationUIState.Successful -> {
                 Twig.debug { "Authentication successful - entering the app" }
                 // No action is needed - the main app content is laid out now
@@ -229,6 +290,7 @@ class MainActivity : FragmentActivity() {
                     SecretState.None -> {
                         WrapOnboarding()
                     }
+
                     is SecretState.NeedsWarning -> {
                         WrapSecurityWarning(
                             onBack = { walletViewModel.persistOnboardingState(OnboardingState.NONE) },
@@ -249,15 +311,18 @@ class MainActivity : FragmentActivity() {
                             }
                         )
                     }
+
                     is SecretState.NeedsBackup -> {
                         WrapNewWalletRecovery(
                             secretState.persistableWallet,
                             onBackupComplete = { walletViewModel.persistOnboardingState(OnboardingState.READY) }
                         )
                     }
+
                     is SecretState.Ready -> {
                         Navigation()
                     }
+
                     else -> {
                         error("Unhandled secret state: $secretState")
                     }

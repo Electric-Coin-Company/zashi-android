@@ -13,7 +13,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cash.z.ecc.android.sdk.Synchronizer
-import cash.z.ecc.android.sdk.model.FiatCurrencyResult
 import cash.z.ecc.android.sdk.model.MonetarySeparators
 import cash.z.ecc.android.sdk.model.UnifiedSpendingKey
 import cash.z.ecc.android.sdk.model.ZecSend
@@ -27,6 +26,7 @@ import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.viewmodel.HomeViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
+import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.screen.send.ext.Saver
 import co.electriccoin.zcash.ui.screen.send.model.AmountState
@@ -72,6 +72,8 @@ internal fun WrapSend(
 
     val isHideBalances = homeViewModel.isHideBalances.collectAsStateWithLifecycle().value ?: false
 
+    val exchangeRateState = walletViewModel.exchangeRateUsd.collectAsStateWithLifecycle().value
+
     WrapSend(
         balanceState = balanceState,
         isHideBalances = isHideBalances,
@@ -88,6 +90,7 @@ internal fun WrapSend(
         hasCameraFeature = hasCameraFeature,
         monetarySeparators = monetarySeparators,
         topAppBarSubTitleState = walletState,
+        exchangeRateState = exchangeRateState,
     )
 }
 
@@ -96,6 +99,7 @@ internal fun WrapSend(
 @Composable
 internal fun WrapSend(
     balanceState: BalanceState,
+    exchangeRateState: ExchangeRateState,
     isHideBalances: Boolean,
     goToQrScanner: () -> Unit,
     goBack: () -> Unit,
@@ -145,15 +149,13 @@ internal fun WrapSend(
                     monetarySeparators = monetarySeparators,
                     isTransparentRecipient = recipientAddressState.type?.let { it == AddressType.Transparent } ?: false,
                     fiatValue = "",
-                    fiatCurrencyConversion =
-                        (walletSnapshot?.exchangeRateUsd as? FiatCurrencyResult.Success)
-                            ?.currencyConversion
+                    exchangeRateState = exchangeRateState
                 )
             )
         }
     // New amount state based on the recipient address type (e.g. shielded supports zero funds sending and
     // transparent not)
-    LaunchedEffect(recipientAddressState, walletSnapshot?.exchangeRateUsd) {
+    LaunchedEffect(recipientAddressState, exchangeRateState) {
         setAmountState(
             if (amountState.value.isNotBlank() || amountState.fiatValue.isBlank()) {
                 AmountState.newFromZec(
@@ -162,9 +164,7 @@ internal fun WrapSend(
                     monetarySeparators = monetarySeparators,
                     value = amountState.value,
                     fiatValue = amountState.fiatValue,
-                    fiatCurrencyConversion =
-                        (walletSnapshot?.exchangeRateUsd as? FiatCurrencyResult.Success)
-                            ?.currencyConversion
+                    exchangeRateState = exchangeRateState
                 )
             } else {
                 AmountState.newFromFiat(
@@ -173,9 +173,7 @@ internal fun WrapSend(
                     monetarySeparators = monetarySeparators,
                     value = amountState.value,
                     fiatValue = amountState.fiatValue,
-                    fiatCurrencyConversion =
-                        (walletSnapshot?.exchangeRateUsd as? FiatCurrencyResult.Success)
-                            ?.currencyConversion
+                    exchangeRateState = exchangeRateState
                 )
             }
         )
@@ -199,9 +197,7 @@ internal fun WrapSend(
                 value = "",
                 fiatValue = "",
                 isTransparentRecipient = false,
-                fiatCurrencyConversion =
-                    (walletSnapshot?.exchangeRateUsd as? FiatCurrencyResult.Success)
-                        ?.currencyConversion
+                exchangeRateState = exchangeRateState
             )
         )
         setMemoState(MemoState.new(""))
@@ -269,6 +265,7 @@ internal fun WrapSend(
             hasCameraFeature = hasCameraFeature,
             topAppBarSubTitleState = topAppBarSubTitleState,
             walletSnapshot = walletSnapshot,
+            exchangeRateState = exchangeRateState
         )
     }
 }

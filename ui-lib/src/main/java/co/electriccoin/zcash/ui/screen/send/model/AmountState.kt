@@ -3,7 +3,6 @@ package co.electriccoin.zcash.ui.screen.send.model
 import android.content.Context
 import androidx.compose.runtime.saveable.mapSaver
 import androidx.compose.ui.text.intl.Locale
-import cash.z.ecc.android.sdk.model.FiatCurrencyConversion
 import cash.z.ecc.android.sdk.model.MonetarySeparators
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.ZecStringExt
@@ -13,6 +12,7 @@ import cash.z.ecc.android.sdk.model.toZatoshi
 import cash.z.ecc.android.sdk.model.toZecString
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.extension.toKotlinLocale
+import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 
 sealed interface AmountState {
     val value: String
@@ -34,7 +34,7 @@ sealed interface AmountState {
             value: String,
             fiatValue: String,
             isTransparentRecipient: Boolean,
-            fiatCurrencyConversion: FiatCurrencyConversion?,
+            exchangeRateState: ExchangeRateState,
         ): AmountState {
             val isValid = validate(context, monetarySeparators, value)
 
@@ -43,6 +43,13 @@ sealed interface AmountState {
             }
 
             val zatoshi = Zatoshi.fromZecString(context, value, monetarySeparators)
+
+            val currencyConversion =
+                if (!exchangeRateState.isLoading && exchangeRateState.isStale) {
+                    null
+                } else {
+                    exchangeRateState.currencyConversion
+                }
 
             // Note that the zero funds sending is supported for sending a memo-only shielded transaction
             return when {
@@ -53,11 +60,11 @@ sealed interface AmountState {
                         value = value,
                         zatoshi = zatoshi,
                         fiatValue =
-                            if (fiatCurrencyConversion == null) {
+                            if (currencyConversion == null) {
                                 fiatValue
                             } else {
                                 zatoshi.toFiatString(
-                                    currencyConversion = fiatCurrencyConversion,
+                                    currencyConversion = currencyConversion,
                                     locale = Locale.current.toKotlinLocale(),
                                     monetarySeparators = MonetarySeparators.current(java.util.Locale.getDefault()),
                                     includeSymbols = false
@@ -75,7 +82,7 @@ sealed interface AmountState {
             value: String,
             fiatValue: String,
             isTransparentRecipient: Boolean,
-            fiatCurrencyConversion: FiatCurrencyConversion?,
+            exchangeRateState: ExchangeRateState,
         ): AmountState {
             val isValid = validate(context, monetarySeparators, fiatValue)
 
@@ -84,7 +91,7 @@ sealed interface AmountState {
             }
 
             val zatoshi =
-                fiatCurrencyConversion?.toZatoshi(
+                exchangeRateState.currencyConversion?.toZatoshi(
                     context = context,
                     value = fiatValue,
                     monetarySeparators = MonetarySeparators.current(java.util.Locale.getDefault())
