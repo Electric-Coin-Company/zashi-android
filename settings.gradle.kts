@@ -167,6 +167,7 @@ dependencyResolutionManagement {
             val androidxTestRunnerVersion = extra["ANDROIDX_TEST_RUNNER_VERSION"].toString()
             val androidxUiAutomatorVersion = extra["ANDROIDX_UI_AUTOMATOR_VERSION"].toString()
             val androidxWorkManagerVersion = extra["ANDROIDX_WORK_MANAGER_VERSION"].toString()
+            val androidxBrowserVersion = extra["ANDROIDX_BROWSER_VERSION"].toString()
             val coreLibraryDesugaringVersion = extra["CORE_LIBRARY_DESUGARING_VERSION"].toString()
             val flankVersion = extra["FLANK_VERSION"].toString()
             val jacocoVersion = extra["JACOCO_VERSION"].toString()
@@ -182,6 +183,7 @@ dependencyResolutionManagement {
             val zcashBip39Version = extra["ZCASH_BIP39_VERSION"].toString()
             val zcashSdkVersion = extra["ZCASH_SDK_VERSION"].toString()
             val zxingVersion = extra["ZXING_VERSION"].toString()
+            val koinVersion = extra["KOIN_VERSION"].toString()
 
             // Standalone versions
             version("flank", flankVersion)
@@ -218,6 +220,7 @@ dependencyResolutionManagement {
             library("androidx-startup", "androidx.startup:startup-runtime:$androidxStartupVersion")
             library("androidx-viewmodel-compose", "androidx.lifecycle:lifecycle-viewmodel-compose:$androidxLifecycleVersion")
             library("androidx-workmanager", "androidx.work:work-runtime-ktx:$androidxWorkManagerVersion")
+            library("androidx-browser", "androidx.browser:browser:$androidxBrowserVersion")
             library("desugaring", "com.android.tools:desugar_jdk_libs:$coreLibraryDesugaringVersion")
             library("firebase-bom", "com.google.firebase:firebase-bom:${extra["FIREBASE_BOM_VERSION_MATCHER"]}")
             library("firebase-installations", "com.google.firebase", "firebase-installations").withoutVersion()
@@ -239,6 +242,8 @@ dependencyResolutionManagement {
             library("zcash-sdk-incubator", "cash.z.ecc.android:zcash-android-sdk-incubator:$zcashSdkVersion")
             library("zcash-bip39", "cash.z.ecc.android:kotlin-bip39:$zcashBip39Version")
             library("zxing", "com.google.zxing:core:$zxingVersion")
+            library("koin", "io.insert-koin:koin-android:$koinVersion")
+            library("koin-compose", "io.insert-koin:koin-androidx-compose:$koinVersion")
 
             // Test libraries
             library("androidx-compose-test-junit", "androidx.compose.ui:ui-test-junit4:$androidxComposeVersion")

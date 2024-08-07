@@ -18,6 +18,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.util.StringResource
+import co.electriccoin.zcash.ui.design.util.getValue
 
 @Preview
 @Composable
@@ -141,6 +143,28 @@ fun AppAlertDialog(
     )
 }
 
+@Composable
+@Suppress("LongParameterList")
+fun AppAlertDialog(
+    state: AlertDialogState,
+    modifier: Modifier = Modifier,
+    icon: ImageVector? = null,
+    properties: DialogProperties = DialogProperties()
+) {
+    AppAlertDialog(
+        modifier = modifier,
+        onDismissRequest = state.onDismissRequest,
+        confirmButtonText = state.confirmButtonState?.text?.getValue(),
+        onConfirmButtonClick = state.confirmButtonState?.onClick,
+        dismissButtonText = state.dismissButtonState?.text?.getValue(),
+        onDismissButtonClick = state.dismissButtonState?.onClick,
+        icon = icon,
+        title = state.title.getValue(),
+        text = state.text.getValue(),
+        properties = properties,
+    )
+}
+
 @Preview
 @Composable
 private fun NavigationButtonPreview() {
@@ -187,3 +211,11 @@ private fun NavigationButton(
         )
     }
 }
+
+data class AlertDialogState(
+    val title: StringResource,
+    val text: StringResource,
+    val confirmButtonState: ButtonState? = null,
+    val dismissButtonState: ButtonState? = null,
+    val onDismissRequest: (() -> Unit)? = null,
+)

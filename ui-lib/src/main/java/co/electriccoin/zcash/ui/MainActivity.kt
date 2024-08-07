@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.os.SystemClock
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
 import androidx.annotation.VisibleForTesting
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -58,20 +57,19 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
 class MainActivity : FragmentActivity() {
-    private val homeViewModel by viewModels<HomeViewModel>()
+    private val homeViewModel by viewModel<HomeViewModel>()
 
-    val walletViewModel by viewModels<WalletViewModel>()
+    val walletViewModel by viewModel<WalletViewModel>()
 
-    val storageCheckViewModel by viewModels<StorageCheckViewModel>()
+    val storageCheckViewModel by viewModel<StorageCheckViewModel>()
 
-    internal val authenticationViewModel by viewModels<AuthenticationViewModel> {
-        AuthenticationViewModel.AuthenticationViewModelFactory(application)
-    }
+    internal val authenticationViewModel by viewModel<AuthenticationViewModel>()
 
     lateinit var navControllerForTesting: NavHostController
 
@@ -269,7 +267,6 @@ class MainActivity : FragmentActivity() {
     private fun monitorForBackgroundSync() {
         val isEnableBackgroundSyncFlow =
             run {
-                val homeViewModel by viewModels<HomeViewModel>()
                 val isSecretReadyFlow = walletViewModel.secretState.map { it is SecretState.Ready }
                 val isBackgroundSyncEnabledFlow = homeViewModel.isBackgroundSyncEnabled.filterNotNull()
 

@@ -2,8 +2,8 @@ package co.electriccoin.zcash.ui.screen.whatsnew.model
 
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.Changelog
-import co.electriccoin.zcash.ui.util.StringResource
-import co.electriccoin.zcash.ui.util.stringRes
+import co.electriccoin.zcash.ui.design.util.StringResource
+import co.electriccoin.zcash.ui.design.util.stringRes
 import kotlinx.datetime.LocalDate
 
 data class WhatsNewState(

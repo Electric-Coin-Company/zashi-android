@@ -73,6 +73,14 @@ androidComponents {
                 comment = "Whether is the SecureScreen sensitive data protection enabled"
             )
         )
+        variant.buildConfigFields.put(
+            "COINBASE_APP_ID",
+            BuildConfigField(
+                type = "String",
+                value = "\"${project.property("COINBASE_APP_ID")?.toString().orEmpty()}\"",
+                comment = "App ID of coinbase project"
+            )
+        )
         // To configure screen orientation in runtime
         variant.buildConfigFields.put(
             "IS_SCREEN_ROTATION_ENABLED",
@@ -94,7 +102,8 @@ dependencies {
     implementation(libs.androidx.lifecycle.livedata)
     implementation(libs.androidx.splash)
     implementation(libs.androidx.workmanager)
-    implementation(libs.bundles.androidx.biometric)
+    api(libs.bundles.androidx.biometric)
+    implementation(libs.androidx.browser)
     implementation(libs.bundles.androidx.camera)
     implementation(libs.bundles.androidx.compose.core)
     implementation(libs.bundles.androidx.compose.extended)
@@ -113,13 +122,15 @@ dependencies {
 
     implementation(projects.buildInfoLib)
     implementation(projects.configurationApiLib)
-    implementation(projects.configurationImplAndroidLib)
     implementation(projects.crashAndroidLib)
     implementation(projects.preferenceApiLib)
     implementation(projects.preferenceImplAndroidLib)
-    implementation(projects.sdkExtLib)
     implementation(projects.spackleAndroidLib)
+    api(projects.configurationImplAndroidLib)
+    api(projects.sdkExtLib)
     api(projects.uiDesignLib)
+    api(libs.koin)
+    api(libs.koin.compose)
 
     androidTestImplementation(projects.testLib)
     androidTestImplementation(libs.bundles.androidx.test)
