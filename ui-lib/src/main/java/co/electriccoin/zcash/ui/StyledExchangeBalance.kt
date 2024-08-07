@@ -218,7 +218,7 @@ private fun ExchangeRateUnavailableButton(
     }
 
     if (transitionState.currentState || transitionState.targetState || !transitionState.isIdle) {
-        val offset = with(LocalDensity.current) { 64.dp.toPx() }.toInt()
+        val offset = with(LocalDensity.current) { 78.dp.toPx() }.toInt()
         UnavailableExchangeRatePopup(
             onDismissRequest = {
                 transitionState.targetState = false
