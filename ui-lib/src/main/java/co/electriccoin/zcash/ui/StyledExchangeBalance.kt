@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -63,7 +64,7 @@ fun StyledExchangeBalance(
     isHideBalances: Boolean = false,
     hiddenBalancePlaceholder: StringResource =
         stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
-    textColor: Color = ZcashTheme.colors.textPrimary,
+    textColor: Color = ZcashTheme.exchangeRateColors.btnSecondaryFg,
     style: TextStyle = ZcashTheme.typography.primary.titleSmall.copy(fontWeight = FontWeight.SemiBold)
 ) {
     if ((state.isStale && !state.isLoading) ||
@@ -168,7 +169,7 @@ private fun ExchangeAvailableRateButton(
                         if (state.isRefreshEnabled) {
                             textColor
                         } else {
-                            ZcashTheme.colors.textDisabled
+                            ZcashTheme.exchangeRateColors.btnSpinnerDisabled
                         }
                     )
             )
@@ -241,10 +242,11 @@ private fun ExchangeRateButton(
     ElevatedButton(
         modifier =
             modifier
+                .height(36.dp)
                 .animateContentSize(),
         onClick = onClick,
         enabled = isEnabled,
-        shape = RoundedCornerShape(6.dp),
+        shape = RoundedCornerShape(8.dp),
         elevation =
             ButtonDefaults.elevatedButtonElevation(
                 defaultElevation = 0.dp,
@@ -252,12 +254,23 @@ private fun ExchangeRateButton(
             ),
         colors =
             ButtonDefaults.elevatedButtonColors(
+                containerColor =
+                    if (isEnabled && enableBorder) {
+                        ZcashTheme.exchangeRateColors.btnSecondaryBg
+                    } else {
+                        Color.Unspecified
+                    },
                 disabledContainerColor = Color.Transparent,
                 disabledContentColor = textColor,
                 contentColor = textColor
             ),
-        border = if (isEnabled && enableBorder) BorderStroke(1.dp, Color.Gray) else null,
-        contentPadding = PaddingValues(horizontal = 14.dp, vertical = 2.dp),
+        border =
+            if (isEnabled && enableBorder) {
+                BorderStroke(1.dp, ZcashTheme.exchangeRateColors.btnSecondaryBorder)
+            } else {
+                BorderStroke(1.dp, Color.Transparent)
+            },
+        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 0.dp),
         content = content
     )
 }
