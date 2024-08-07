@@ -39,5 +39,6 @@ internal fun WalletAddress.toSerializableAddress() =
                 is WalletAddress.Unified -> AddressType.Unified
                 is WalletAddress.Sapling -> AddressType.Shielded
                 is WalletAddress.Transparent -> AddressType.Transparent
+                is WalletAddress.Tex -> AddressType.Tex
             }
     )
