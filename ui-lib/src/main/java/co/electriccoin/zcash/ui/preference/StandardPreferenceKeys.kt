@@ -36,11 +36,6 @@ object StandardPreferenceKeys {
         BooleanPreferenceDefault(PreferenceKey("IS_RESTORING_INITIAL_WARNING_SEEN"), false)
 
     /**
-     * The fiat currency that the user prefers.
-     */
-    val PREFERRED_FIAT_CURRENCY = FiatCurrencyPreferenceDefault(PreferenceKey("preferred_fiat_currency_code"))
-
-    /**
      * Screens or flows protected by required authentication
      */
     val IS_APP_ACCESS_AUTHENTICATION =

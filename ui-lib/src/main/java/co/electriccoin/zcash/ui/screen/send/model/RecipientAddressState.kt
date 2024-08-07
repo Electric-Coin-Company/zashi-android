@@ -14,6 +14,7 @@ data class RecipientAddressState(
         private const val TYPE_INVALID = "invalid" // $NON-NLS
         private const val TYPE_SHIELDED = "shielded" // $NON-NLS
         private const val TYPE_TRANSPARENT = "transparent" // $NON-NLS
+        private const val TYPE_TEX = "tex" // $NON-NLS
         private const val TYPE_UNIFIED = "unified" // $NON-NLS
 
         fun new(
@@ -42,6 +43,7 @@ data class RecipientAddressState(
                                         TYPE_SHIELDED -> AddressType.Shielded
                                         TYPE_UNIFIED -> AddressType.Unified
                                         TYPE_TRANSPARENT -> AddressType.Transparent
+                                        TYPE_TEX -> AddressType.Tex
                                         else -> null
                                     }
                                 )
@@ -62,14 +64,13 @@ data class RecipientAddressState(
                             saverMap[KEY_INVALID_REASON] = this.type.reason
                             TYPE_INVALID
                         }
-
                         AddressType.Unified -> TYPE_UNIFIED
                         AddressType.Transparent -> TYPE_TRANSPARENT
                         AddressType.Shielded -> TYPE_SHIELDED
+                        AddressType.Tex -> TYPE_TEX
                         else -> error("Unsupported type: ${this.type}")
                     }
             }
-
             return saverMap
         }
     }

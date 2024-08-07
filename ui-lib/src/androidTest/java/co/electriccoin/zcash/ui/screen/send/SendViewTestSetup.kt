@@ -69,7 +69,7 @@ class SendViewTestSetup(
     }
 
     @Composable
-    @Suppress("TestFunctionName")
+    @Suppress("TestFunctionName", "LongMethod")
     fun DefaultContent() {
         val context = LocalContext.current
 
@@ -123,7 +123,15 @@ class SendViewTestSetup(
                     // TODO [#1260]: https://github.com/Electric-Coin-Company/zashi-android/issues/1260
                 },
                 setAmountState = {},
-                amountState = AmountState.new(context, monetarySeparators, "", false),
+                amountState =
+                    AmountState.newFromZec(
+                        context = context,
+                        monetarySeparators = monetarySeparators,
+                        value = "",
+                        fiatValue = "",
+                        isTransparentRecipient = false,
+                        exchangeRateState = null
+                    ),
                 setMemoState = {},
                 memoState = MemoState.new(""),
                 topAppBarSubTitleState = TopAppBarSubTitleState.None,

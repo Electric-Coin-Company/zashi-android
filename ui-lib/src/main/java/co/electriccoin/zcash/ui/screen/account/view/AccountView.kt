@@ -18,6 +18,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
+import cash.z.ecc.android.sdk.model.FiatCurrencyConversion
 import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.BalanceState
@@ -27,6 +28,7 @@ import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.test.CommonTag
+import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.TopAppBarHideBalancesNavigation
@@ -37,6 +39,7 @@ import co.electriccoin.zcash.ui.screen.account.AccountTag
 import co.electriccoin.zcash.ui.screen.account.fixture.TransactionsFixture
 import co.electriccoin.zcash.ui.screen.account.model.TransactionUiState
 import co.electriccoin.zcash.ui.screen.balances.model.StatusAction
+import kotlinx.datetime.Clock
 
 @Preview("Account No History")
 @Composable
@@ -69,8 +72,18 @@ private fun HistoryListComposablePreview() {
         Account(
             balanceState =
                 BalanceState.Available(
-                    Zatoshi(123_000_000L),
-                    Zatoshi(123_000_000L)
+                    totalBalance = Zatoshi(value = 123_000_000L),
+                    spendableBalance = Zatoshi(value = 123_000_000L),
+                    exchangeRate =
+                        ExchangeRateState(
+                            isLoading = false,
+                            isRefreshEnabled = true,
+                            currencyConversion =
+                                FiatCurrencyConversion(
+                                    timestamp = Clock.System.now(),
+                                    priceOfZec = 25.0
+                                )
+                        ) {}
                 ),
             isHideBalances = false,
             goBalances = {},
@@ -216,7 +229,7 @@ private fun AccountMainContent(
             isHideBalances = isHideBalances,
             modifier =
                 Modifier
-                    .padding(horizontal = ZcashTheme.dimens.screenHorizontalSpacingRegular)
+                    .padding(horizontal = ZcashTheme.dimens.screenHorizontalSpacingRegular),
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
@@ -252,7 +265,7 @@ private fun BalancesStatus(
             balanceState = balanceState,
             isHideBalances = isHideBalances,
             isReferenceToBalances = true,
-            onReferenceClick = goBalances
+            onReferenceClick = goBalances,
         )
     }
 }

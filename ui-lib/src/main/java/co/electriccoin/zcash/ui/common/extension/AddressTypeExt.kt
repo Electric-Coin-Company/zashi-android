@@ -13,6 +13,7 @@ fun AddressType.toSerializableName(): String =
         AddressType.Transparent -> "transparent"
         AddressType.Shielded -> "shielded"
         AddressType.Unified -> "unified"
+        AddressType.Tex -> "tex"
         // Improve this with serializing reason
         is AddressType.Invalid -> "invalid"
     }
@@ -22,6 +23,7 @@ fun fromSerializableName(typeName: String): AddressType =
         "transparent" -> AddressType.Transparent
         "shielded" -> AddressType.Shielded
         "unified" -> AddressType.Unified
+        "tex" -> AddressType.Tex
         // Improve this with deserializing reason
         "invalid" -> AddressType.Invalid()
         else -> error("Unsupported AddressType: $typeName")
