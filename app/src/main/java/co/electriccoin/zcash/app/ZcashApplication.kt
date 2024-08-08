@@ -5,7 +5,12 @@ import co.electriccoin.zcash.spackle.StrictModeCompat
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
 import co.electriccoin.zcash.ui.preference.StandardPreferenceSingleton
+import com.flexa.core.Flexa
+import com.flexa.core.shared.AppAccount
+import com.flexa.core.shared.FlexaClientConfiguration
+import com.flexa.core.theme.FlexaTheme
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 @Suppress("unused")
 class ZcashApplication : CoroutineApplication() {
@@ -19,6 +24,45 @@ class ZcashApplication : CoroutineApplication() {
         // Since analytics will need disk IO internally, we want this to be registered after strict
         // mode is configured to ensure none of that IO happens on the main thread
         configureAnalytics()
+
+        Flexa.init(
+            FlexaClientConfiguration(
+                context = applicationContext,
+                publishableKey = "", // TODO
+                theme = FlexaTheme(
+                    useDynamicColorScheme = true,
+                ),
+                appAccounts = arrayListOf(
+                    AppAccount(
+                        accountId = UUID.randomUUID().toString(),
+                        displayName = "My Wallet",
+                        icon = "https://flexa.network/static/4bbb1733b3ef41240ca0f0675502c4f7/d8419/flexa-logo%403x.png",
+                        availableAssets = emptyList(),
+                        custodyModel = i.e.a
+                    )
+                ),
+                webViewThemeConfig = "{\n" +
+                    "    \"android\": {\n" +
+                    "        \"light\": {\n" +
+                    "            \"backgroundColor\": \"#100e29\",\n" +
+                    "            \"sortTextColor\": \"#ed7f60\",\n" +
+                    "            \"titleColor\": \"#ffffff\",\n" +
+                    "            \"cardColor\": \"#2a254e\",\n" +
+                    "            \"borderRadius\": \"15px\",\n" +
+                    "            \"textColor\": \"#ffffff\"\n" +
+                    "        },\n" +
+                    "        \"dark\": {\n" +
+                    "            \"backgroundColor\": \"#100e29\",\n" +
+                    "            \"sortTextColor\": \"#ed7f60\",\n" +
+                    "            \"titleColor\": \"#ffffff\",\n" +
+                    "            \"cardColor\": \"#2a254e\",\n" +
+                    "            \"borderRadius\": \"15px\",\n" +
+                    "            \"textColor\": \"#ffffff\"\n" +
+                    "        }\n" +
+                    "    }\n" +
+                    "}"
+            )
+        )
     }
 
     private fun configureLogging() {

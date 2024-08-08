@@ -18,6 +18,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.compose.LocalActivity
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
@@ -27,6 +28,9 @@ import co.electriccoin.zcash.ui.design.component.TopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme.dimens
 import co.electriccoin.zcash.ui.screen.advancedsettings.AdvancedSettingsTag
+import com.flexa.core.Flexa
+import com.flexa.identity.buildIdentity
+import com.flexa.identity.shared.ConnectResult
 
 // TODO [#1271]: Add AdvancedSettingsView Tests
 // TODO [#1271]: https://github.com/Electric-Coin-Company/zashi-android/issues/1271
@@ -116,6 +120,8 @@ private fun AdvancedSettingsMainContent(
     onSeedRecovery: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val activity = LocalActivity.current
+
     Column(
         Modifier
             .fillMaxSize()
@@ -149,6 +155,29 @@ private fun AdvancedSettingsMainContent(
                 Modifier
                     .fillMaxHeight()
                     .weight(MINIMAL_WEIGHT)
+        )
+
+        PrimaryButton(
+            onClick = {
+                Flexa.buildIdentity()
+                    .onResult { result ->
+                        when (result) {
+                            is ConnectResult.Connected -> {}
+                            else -> {}
+                        }
+                    }
+                    .build()
+                    .open(activity)
+            },
+            text = "Flexa",
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(
+            modifier =
+            Modifier
+                .fillMaxHeight()
+                .weight(MINIMAL_WEIGHT)
         )
 
         Spacer(modifier = Modifier.height(dimens.spacingDefault))

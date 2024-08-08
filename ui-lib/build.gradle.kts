@@ -111,6 +111,17 @@ dependencies {
     implementation(libs.zcash.bip39)
     implementation(libs.zxing)
 
+    // api("com.squareup.okhttp3:okhttp:4.12.0")
+    // api("com.squareup.okhttp3:logging-interceptor:4.12.0")
+    // api("com.squareup.okhttp3:okhttp-sse:4.12.0")
+    // implementation ("com.google.accompanist:accompanist-navigation-animation:0.34.0")
+
+    // api("com.google.mlkit:barcode-scanning:17.3.0")
+    api("com.flexa:core:0.2.0-beta.1") {
+        // isChanging = true
+        // isTransitive = false
+    }
+
     implementation(projects.buildInfoLib)
     implementation(projects.configurationApiLib)
     implementation(projects.configurationImplAndroidLib)
@@ -143,4 +154,3 @@ dependencies {
         }
     }
 }
-
