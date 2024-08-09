@@ -7,10 +7,12 @@ import cash.z.ecc.android.sdk.WalletCoordinator
 import cash.z.ecc.android.sdk.model.FastestServersResult
 import cash.z.ecc.android.sdk.model.PersistableWallet
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
+import co.electriccoin.lightwallet.client.model.LightWalletEndpoint
 import co.electriccoin.zcash.preference.api.EncryptedPreferenceProvider
 import co.electriccoin.zcash.preference.api.StandardPreferenceProvider
+import co.electriccoin.zcash.ui.common.model.FastestServersState
 import co.electriccoin.zcash.ui.common.model.OnboardingState
-import co.electriccoin.zcash.ui.common.usecase.AvailableServersProvider
+import co.electriccoin.zcash.ui.common.provider.GetDefaultServersProvider
 import co.electriccoin.zcash.ui.common.viewmodel.SecretState
 import co.electriccoin.zcash.ui.preference.PersistableWalletPreferenceDefault
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
@@ -18,17 +20,20 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
+import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.emptyFlow
-import kotlinx.coroutines.flow.filterNot
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
@@ -41,7 +46,8 @@ import kotlinx.coroutines.sync.withLock
 interface WalletRepository {
     val synchronizer: StateFlow<Synchronizer?>
     val secretState: StateFlow<SecretState?>
-    val fastestServers: StateFlow<FastestServersResult>
+    val fastestServers: StateFlow<FastestServersState>
+    val persistableWallet: Flow<PersistableWallet?>
 
     fun closeSynchronizer()
 
@@ -50,12 +56,16 @@ interface WalletRepository {
     fun persistOnboardingState(onboardingState: OnboardingState)
 
     fun refreshFastestServers()
+
+    suspend fun getSelectedServer(): LightWalletEndpoint
+
+    suspend fun getAllServers(): List<LightWalletEndpoint>
 }
 
 class WalletRepositoryImpl(
     walletCoordinator: WalletCoordinator,
     private val application: Application,
-    private val getAvailableServers: AvailableServersProvider,
+    private val getDefaultServers: GetDefaultServersProvider,
     private val standardPreferenceProvider: StandardPreferenceProvider,
     private val persistableWalletPreference: PersistableWalletPreferenceDefault,
     private val encryptedPreferenceProvider: EncryptedPreferenceProvider,
@@ -109,33 +119,48 @@ class WalletRepositoryImpl(
             initialValue = SecretState.Loading
         )
 
-    private var previousFastestServerResult: FastestServersResult? = null
-
     @OptIn(ExperimentalCoroutinesApi::class)
-    override val fastestServers = combine(
-        refreshFastestServersRequest.onStart { emit(Unit) },
-        synchronizer
-    ) { _, synchronizer -> synchronizer }
-        .withIndex()
-        .flatMapLatest { (_, synchronizer) ->
-            synchronizer
-                ?.getFastestServers(application, getAvailableServers())
-                ?.map {
-                    if (it.servers == null && it.isLoading) {
-                        previousFastestServerResult?.copy(isLoading = true) ?: it
-                    } else {
-                        it
-                    }
+    override val fastestServers =
+        channelFlow {
+            var previousFastestServerState: FastestServersState? = null
+
+            combine(
+                refreshFastestServersRequest.onStart { emit(Unit) },
+                synchronizer
+            ) { _, synchronizer -> synchronizer }
+                .withIndex()
+                .flatMapLatest { (_, synchronizer) ->
+                    synchronizer
+                        ?.getFastestServers(application, getAllServers())
+                        ?.map {
+                            when (it) {
+                                FastestServersResult.Measuring ->
+                                    previousFastestServerState?.copy(isLoading = true)
+                                        ?: FastestServersState(servers = null, isLoading = true)
+
+                                is FastestServersResult.Validating ->
+                                    FastestServersState(servers = it.servers, isLoading = true)
+
+                                is FastestServersResult.Done ->
+                                    FastestServersState(servers = it.servers, isLoading = false)
+                            }
+                        } ?: emptyFlow()
                 }
-                ?.onEach {
-                    previousFastestServerResult = it
-                } ?: emptyFlow()
-        }
-        .stateIn(
+                .onEach {
+                    previousFastestServerState = it
+                    send(it)
+                }
+                .launchIn(this)
+        }.stateIn(
             scope = scope,
             started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            initialValue = FastestServersResult(servers = emptyList(), isLoading = true)
+            initialValue = FastestServersState(servers = emptyList(), isLoading = true)
         )
+
+    override val persistableWallet: Flow<PersistableWallet?> =
+        secretState.map {
+            (it as? SecretState.Ready?)?.persistableWallet
+        }
 
     override fun closeSynchronizer() {
         scope.launch {
@@ -178,6 +203,26 @@ class WalletRepositoryImpl(
             if (!fastestServers.first().isLoading) {
                 refreshFastestServersRequest.emit(Unit)
             }
+        }
+    }
+
+    override suspend fun getSelectedServer(): LightWalletEndpoint {
+        return persistableWallet
+            .map {
+                it?.endpoint
+            }
+            .filterNotNull()
+            .first()
+    }
+
+    override suspend fun getAllServers(): List<LightWalletEndpoint> {
+        val defaultServers = getDefaultServers()
+        val selectedServer = getSelectedServer()
+
+        return if (defaultServers.contains(selectedServer)) {
+            defaultServers
+        } else {
+            defaultServers + selectedServer
         }
     }
 }

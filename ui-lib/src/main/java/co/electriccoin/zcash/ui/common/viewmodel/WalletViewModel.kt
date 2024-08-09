@@ -39,8 +39,8 @@ import co.electriccoin.zcash.ui.common.model.hasChangePending
 import co.electriccoin.zcash.ui.common.model.hasValuePending
 import co.electriccoin.zcash.ui.common.model.spendableBalance
 import co.electriccoin.zcash.ui.common.model.totalBalance
+import co.electriccoin.zcash.ui.common.provider.GetDefaultServersProvider
 import co.electriccoin.zcash.ui.common.repository.WalletRepository
-import co.electriccoin.zcash.ui.common.usecase.AvailableServersProvider
 import co.electriccoin.zcash.ui.common.usecase.ObserveSynchronizerUseCase
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
 import co.electriccoin.zcash.ui.screen.account.ext.TransactionOverviewExt
@@ -81,7 +81,7 @@ class WalletViewModel(
     private val walletRepository: WalletRepository,
     private val encryptedPreferenceProvider: EncryptedPreferenceProvider,
     private val standardPreferenceProvider: StandardPreferenceProvider,
-    private val getAvailableServers: AvailableServersProvider
+    private val getAvailableServers: GetDefaultServersProvider
 ) : AndroidViewModel(application) {
     /**
      * Synchronizer that is retained long enough to survive configuration changes.

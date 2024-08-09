@@ -1,14 +1,11 @@
 package co.electriccoin.zcash.ui.common.usecase
 
+import cash.z.ecc.android.sdk.model.PersistableWallet
 import co.electriccoin.zcash.ui.common.repository.WalletRepository
-import co.electriccoin.zcash.ui.common.viewmodel.SecretState
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.Flow
 
 class ObservePersistableWalletUseCase(
     private val walletRepository: WalletRepository
 ) {
-    operator fun invoke() =
-        walletRepository.secretState.map {
-            (it as? SecretState.Ready?)?.persistableWallet
-        }
+    operator fun invoke(): Flow<PersistableWallet?> = walletRepository.persistableWallet
 }

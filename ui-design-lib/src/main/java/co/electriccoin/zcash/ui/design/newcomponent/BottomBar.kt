@@ -1,6 +1,5 @@
 package co.electriccoin.zcash.ui.design.newcomponent
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,12 +21,12 @@ fun BottomBar(
     content: @Composable () -> Unit,
 ) {
     Surface(
+        modifier = modifier,
         shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
-        shadowElevation = 4.dp
+        shadowElevation = 4.dp,
+        color = MaterialTheme.colorScheme.surface
     ) {
-        Column(
-            modifier = modifier.background(MaterialTheme.colorScheme.surface)
-        ) {
+        Column {
             Spacer(modifier = Modifier.height(16.dp))
             content()
             Spacer(modifier = Modifier.height(40.dp))
@@ -37,13 +36,15 @@ fun BottomBar(
 
 @ScreenPreview
 @Composable
-private fun BottomBarPreview() = ZcashTheme {
-    BottomBar {
-        PrimaryButton(
-            state = ButtonState(text = stringRes("Save Button")),
-            modifier = Modifier
-                .padding(horizontal = 24.dp)
-                .fillMaxWidth()
-        )
+private fun BottomBarPreview() =
+    ZcashTheme {
+        BottomBar {
+            PrimaryButton(
+                state = ButtonState(text = stringRes("Save Button")),
+                modifier =
+                Modifier
+                    .padding(horizontal = 24.dp)
+                    .fillMaxWidth()
+            )
+        }
     }
-}

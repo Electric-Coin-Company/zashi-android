@@ -50,22 +50,23 @@ fun RadioButton(
     testTag: String? = null,
 ) {
     Row(
-        modifier = modifier
-            .clip(RoundedCornerShape(12.dp))
-            .clickable(
-                indication = rememberRipple(),
-                interactionSource = remember { MutableInteractionSource() },
-                onClick = state.onClick,
-                role = Role.Button,
-            )
-            .padding(horizontal = 20.dp)
-            .then(
-                if (testTag != null) {
-                    Modifier.testTag(testTag)
-                } else {
-                    Modifier
-                }
-            ),
+        modifier =
+            modifier
+                .clip(RoundedCornerShape(12.dp))
+                .clickable(
+                    indication = rememberRipple(),
+                    interactionSource = remember { MutableInteractionSource() },
+                    onClick = state.onClick,
+                    role = Role.Button,
+                )
+                .padding(horizontal = 20.dp)
+                .then(
+                    if (testTag != null) {
+                        Modifier.testTag(testTag)
+                    } else {
+                        Modifier
+                    }
+                ),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -82,12 +83,12 @@ fun RadioButton(
                     style = ZcashTheme.extendedTypography.radioButton,
                     color = ZcashTheme.colors.textPrimary,
                     modifier =
-                    Modifier.padding(
-                        top = 14.dp,
-                        bottom = if (state.subtitle == null) 14.dp else 0.dp,
-                        start = 0.dp,
-                        end = ZcashTheme.dimens.spacingDefault
-                    )
+                        Modifier.padding(
+                            top = 14.dp,
+                            bottom = if (state.subtitle == null) 14.dp else 0.dp,
+                            start = 0.dp,
+                            end = ZcashTheme.dimens.spacingDefault
+                        )
                 )
 
                 if (state.subtitle != null) {
@@ -96,11 +97,12 @@ fun RadioButton(
                         style = ZcashTheme.extendedTypography.radioButton,
                         fontWeight = FontWeight.Normal,
                         color = Color(0xFF838385),
-                        modifier = Modifier.padding(
-                            bottom = 6.dp,
-                            start = 0.dp,
-                            end = ZcashTheme.dimens.spacingDefault
-                        )
+                        modifier =
+                            Modifier.padding(
+                                bottom = 6.dp,
+                                start = 0.dp,
+                                end = ZcashTheme.dimens.spacingDefault
+                            )
                     )
                 }
             }
@@ -130,7 +132,6 @@ fun RadioButtonCheckedContent(state: RadioButtonState) {
     )
 }
 
-
 @Composable
 private fun RadioButtonIndicator(
     state: RadioButtonState,
@@ -157,28 +158,31 @@ data class RadioButtonState(
 )
 
 @Composable
-private fun RadioButtonPreview() = BlankBgColumn {
-    var isChecked by remember { mutableStateOf(false) }
+private fun RadioButtonPreview() =
+    BlankBgColumn {
+        var isChecked by remember { mutableStateOf(false) }
 
-    RadioButton(
-        modifier = Modifier.fillMaxWidth(),
-        state = RadioButtonState(
-            text = stringRes("test"),
-            isChecked = isChecked,
-            onClick = { isChecked = !isChecked },
-        ),
-        trailingContent = {
-            Text(text = "Trailing text")
-        }
-    )
-    RadioButton(
-        state = RadioButtonState(
-            text = stringRes("test"),
-            isChecked = true,
-            onClick = {},
-        ),
-    )
-}
+        RadioButton(
+            modifier = Modifier.fillMaxWidth(),
+            state =
+                RadioButtonState(
+                    text = stringRes("test"),
+                    isChecked = isChecked,
+                    onClick = { isChecked = !isChecked },
+                ),
+            trailingContent = {
+                Text(text = "Trailing text")
+            }
+        )
+        RadioButton(
+            state =
+                RadioButtonState(
+                    text = stringRes("test"),
+                    isChecked = true,
+                    onClick = {},
+                ),
+        )
+    }
 
 @ScreenPreview
 @Composable

@@ -91,18 +91,19 @@ fun PrimaryButtonText(text: StringResource) {
 
 @ScreenPreview
 @Composable
-private fun ButtonPreview() = ZcashTheme {
-    PrimaryButton(state = ButtonState(text = stringRes("Button text")))
-}
+private fun ButtonPreview() =
+    ZcashTheme {
+        PrimaryButton(state = ButtonState(text = stringRes("Button text")))
+    }
 
 @ScreenPreview
 @Composable
-private fun ButtonDisabledPreview() = ZcashTheme {
-    PrimaryButton(state = ButtonState(text = stringRes("Button text"), isEnabled = false))
-}
+private fun ButtonDisabledPreview() =
+    ZcashTheme {
+        PrimaryButton(state = ButtonState(text = stringRes("Button text"), isEnabled = false))
+    }
 
 object PrimaryButtonDefaults {
-
     val Shape get() = RoundedCornerShape(10.dp)
 
     val ContentPadding get() = PaddingValues(vertical = 14.dp, horizontal = 20.dp)
@@ -121,7 +122,5 @@ object PrimaryButtonDefaults {
     )
 
     @Composable
-    fun buttonElevation(
-        defaultElevation: Dp = 2.dp,
-    ) = ButtonDefaults.buttonElevation(defaultElevation = defaultElevation)
+    fun buttonElevation(defaultElevation: Dp = 2.dp) = ButtonDefaults.buttonElevation(defaultElevation = defaultElevation)
 }

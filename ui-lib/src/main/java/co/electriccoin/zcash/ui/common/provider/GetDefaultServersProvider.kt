@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.common.usecase
+package co.electriccoin.zcash.ui.common.provider
 
 import android.app.Application
 import cash.z.ecc.android.sdk.model.ZcashNetwork
@@ -8,7 +8,7 @@ import co.electriccoin.lightwallet.client.model.LightWalletEndpoint
 
 // TODO [#1273]: Add ChooseServer Tests #1273
 // TODO [#1273]: https://github.com/Electric-Coin-Company/zashi-android/issues/1273
-class AvailableServersProvider(private val application: Application) {
+class GetDefaultServersProvider(private val application: Application) {
     private val lightWalletEndpoints by lazy {
         if (ZcashNetwork.fromResources(application) == ZcashNetwork.Mainnet) {
             listOf(

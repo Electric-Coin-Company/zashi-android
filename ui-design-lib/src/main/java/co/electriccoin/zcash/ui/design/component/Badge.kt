@@ -47,6 +47,7 @@ fun Badge(
 
 @Preview
 @Composable
-private fun BadgePreview() = ZcashTheme {
-    Badge(text = stringRes("Badge"))
-}
+private fun BadgePreview() =
+    ZcashTheme {
+        Badge(text = stringRes("Badge"))
+    }
