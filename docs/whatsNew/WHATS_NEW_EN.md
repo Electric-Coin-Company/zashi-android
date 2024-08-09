@@ -9,6 +9,10 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+### Changed
+- Adopted the latest Zcash SDK version 2.1.3, which brings a significant block synchronization speed-up and improved
+  UTXOs fetching logic
+
 ## [1.1.4 (700)] - 2024-07-23
 
 ### Added
