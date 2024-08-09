@@ -27,10 +27,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.component.AnimationConstants.ANIMATION_DURATION
 import co.electriccoin.zcash.ui.design.component.AnimationConstants.INITIAL_DELAY
+import co.electriccoin.zcash.ui.design.component.AnimationConstants.WELCOME_ANIM_TEST_TAG
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.util.screenHeight
 import kotlinx.coroutines.delay
@@ -40,6 +42,7 @@ import kotlin.time.Duration.Companion.milliseconds
 object AnimationConstants {
     const val ANIMATION_DURATION = 700
     const val INITIAL_DELAY = 1000
+    const val WELCOME_ANIM_TEST_TAG = "WELCOME_ANIM_TEST_TAG"
 
     fun together() = (ANIMATION_DURATION + INITIAL_DELAY).toLong()
 }
@@ -56,7 +59,7 @@ fun WelcomeAnimationAutostart(
 
     WelcomeAnimation(
         animationState = currentAnimationState,
-        modifier = modifier
+        modifier = modifier.testTag(WELCOME_ANIM_TEST_TAG)
     )
 
     // Let's start the animation automatically in case e.g. authentication is not involved
