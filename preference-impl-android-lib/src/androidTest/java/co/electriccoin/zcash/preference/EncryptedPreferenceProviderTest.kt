@@ -40,7 +40,7 @@ class EncryptedPreferenceProviderTest {
             val expectedValue = StringDefaultPreferenceFixture.DEFAULT_VALUE + "extra"
 
             val preferenceProvider =
-                new().apply {
+                newInstance().apply {
                     putString(StringDefaultPreferenceFixture.KEY, expectedValue)
                 }
 
@@ -51,7 +51,7 @@ class EncryptedPreferenceProviderTest {
     @SmallTest
     fun hasKey_false() =
         runBlocking {
-            val preferenceProvider = new()
+            val preferenceProvider = newInstance()
 
             assertFalse(preferenceProvider.hasKey(StringDefaultPreferenceFixture.new().key))
         }
@@ -63,7 +63,7 @@ class EncryptedPreferenceProviderTest {
             val expectedValue = StringDefaultPreferenceFixture.DEFAULT_VALUE + "extra"
 
             val preferenceProvider =
-                new().apply {
+                newInstance().apply {
                     putString(StringDefaultPreferenceFixture.KEY, expectedValue)
                 }
 
@@ -78,7 +78,7 @@ class EncryptedPreferenceProviderTest {
         runBlocking {
             val expectedValue = StringDefaultPreferenceFixture.DEFAULT_VALUE + "extra"
 
-            new().apply {
+            newInstance().apply {
                 putString(StringDefaultPreferenceFixture.KEY, expectedValue)
             }
 
@@ -95,7 +95,7 @@ class EncryptedPreferenceProviderTest {
     companion object {
         private val FILENAME = "encrypted_preference_test"
 
-        private suspend fun new() =
+        private fun newInstance() =
             AndroidPreferenceProvider.newEncrypted(
                 ApplicationProvider.getApplicationContext(),
                 FILENAME

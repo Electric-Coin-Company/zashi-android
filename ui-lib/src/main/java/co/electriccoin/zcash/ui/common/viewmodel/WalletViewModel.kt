@@ -14,7 +14,6 @@ import cash.z.ecc.android.sdk.WalletInitMode
 import cash.z.ecc.android.sdk.block.processor.CompactBlockProcessor
 import cash.z.ecc.android.sdk.model.Account
 import cash.z.ecc.android.sdk.model.BlockHeight
-import cash.z.ecc.android.sdk.model.FiatCurrency
 import cash.z.ecc.android.sdk.model.PercentDecimal
 import cash.z.ecc.android.sdk.model.PersistableWallet
 import cash.z.ecc.android.sdk.model.TransactionOverview
@@ -24,11 +23,12 @@ import cash.z.ecc.android.sdk.model.WalletBalance
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.ZcashNetwork
 import cash.z.ecc.android.sdk.tool.DerivationTool
+import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import cash.z.ecc.sdk.type.fromResources
-import co.electriccoin.zcash.global.getInstance
+import co.electriccoin.zcash.preference.api.EncryptedPreferenceProvider
+import co.electriccoin.zcash.preference.api.StandardPreferenceProvider
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.MainActivity
-import co.electriccoin.zcash.ui.common.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.common.compose.BalanceState
 import co.electriccoin.zcash.ui.common.extension.throttle
 import co.electriccoin.zcash.ui.common.model.OnboardingState
@@ -39,14 +39,13 @@ import co.electriccoin.zcash.ui.common.model.hasChangePending
 import co.electriccoin.zcash.ui.common.model.hasValuePending
 import co.electriccoin.zcash.ui.common.model.spendableBalance
 import co.electriccoin.zcash.ui.common.model.totalBalance
-import co.electriccoin.zcash.ui.preference.EncryptedPreferenceKeys
-import co.electriccoin.zcash.ui.preference.EncryptedPreferenceSingleton
+import co.electriccoin.zcash.ui.common.provider.GetDefaultServersProvider
+import co.electriccoin.zcash.ui.common.repository.WalletRepository
+import co.electriccoin.zcash.ui.common.usecase.ObserveSynchronizerUseCase
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
-import co.electriccoin.zcash.ui.preference.StandardPreferenceSingleton
 import co.electriccoin.zcash.ui.screen.account.ext.TransactionOverviewExt
 import co.electriccoin.zcash.ui.screen.account.ext.getSortHeight
 import co.electriccoin.zcash.ui.screen.account.state.TransactionHistorySyncState
-import co.electriccoin.zcash.ui.screen.chooseserver.AvailableServerProvider
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -67,8 +66,6 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import kotlin.time.Duration.Companion.seconds
 
@@ -76,48 +73,31 @@ import kotlin.time.Duration.Companion.seconds
 // for loading the preferences.
 // TODO [#292]: Should be moved to SDK-EXT-UI module.
 // TODO [#292]: https://github.com/Electric-Coin-Company/zashi-android/issues/292
-class WalletViewModel(application: Application) : AndroidViewModel(application) {
-    private val walletCoordinator = WalletCoordinator.getInstance(application)
-
-    /*
-     * Using the Mutex may be overkill, but it ensures that if multiple calls are accidentally made
-     * that they have a consistent ordering.
-     */
-    private val persistWalletMutex = Mutex()
-
+@Suppress("LongParameterList")
+class WalletViewModel(
+    application: Application,
+    observeSynchronizer: ObserveSynchronizerUseCase,
+    private val walletCoordinator: WalletCoordinator,
+    private val walletRepository: WalletRepository,
+    private val encryptedPreferenceProvider: EncryptedPreferenceProvider,
+    private val standardPreferenceProvider: StandardPreferenceProvider,
+    private val getAvailableServers: GetDefaultServersProvider
+) : AndroidViewModel(application) {
     /**
      * Synchronizer that is retained long enough to survive configuration changes.
      */
-    val synchronizer =
-        walletCoordinator.synchronizer.stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            null
-        )
-
-    /**
-     * A flow of the user's preferred fiat currency.
-     */
-    val preferredFiatCurrency: StateFlow<FiatCurrency?> =
-        flow<FiatCurrency?> {
-            val preferenceProvider = StandardPreferenceSingleton.getInstance(application)
-            emitAll(StandardPreferenceKeys.PREFERRED_FIAT_CURRENCY.observe(preferenceProvider))
-        }.stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            null
-        )
+    val synchronizer = observeSynchronizer()
 
     /**
      * A flow of the wallet block synchronization state.
      */
     val walletRestoringState: StateFlow<WalletRestoringState> =
         flow {
-            val preferenceProvider = StandardPreferenceSingleton.getInstance(application)
             emitAll(
-                StandardPreferenceKeys.WALLET_RESTORING_STATE.observe(preferenceProvider).map { persistedNumber ->
-                    WalletRestoringState.fromNumber(persistedNumber)
-                }
+                StandardPreferenceKeys.WALLET_RESTORING_STATE
+                    .observe(standardPreferenceProvider).map { persistedNumber ->
+                        WalletRestoringState.fromNumber(persistedNumber)
+                    }
             )
         }.stateIn(
             viewModelScope,
@@ -156,9 +136,8 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
      */
     private val onboardingState =
         flow {
-            val preferenceProvider = StandardPreferenceSingleton.getInstance(application)
             emitAll(
-                StandardPreferenceKeys.ONBOARDING_STATE.observe(preferenceProvider).map { persistedNumber ->
+                StandardPreferenceKeys.ONBOARDING_STATE.observe(standardPreferenceProvider).map { persistedNumber ->
                     OnboardingState.fromNumber(persistedNumber)
                 }
             )
@@ -175,9 +154,11 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
                 onboardingState == OnboardingState.NEEDS_BACKUP && persistableWallet != null -> {
                     SecretState.NeedsBackup(persistableWallet)
                 }
+
                 onboardingState == OnboardingState.READY && persistableWallet != null -> {
                     SecretState.Ready(persistableWallet)
                 }
+
                 else -> SecretState.None
             }
         }.stateIn(
@@ -248,10 +229,9 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
                     synchronizer.transactions,
                     synchronizer.status,
                     synchronizer.networkHeight
-                ) {
-                        transactions: List<TransactionOverview>,
-                        status: Synchronizer.Status,
-                        networkHeight: BlockHeight? ->
+                ) { transactions: List<TransactionOverview>,
+                    status: Synchronizer.Status,
+                    networkHeight: BlockHeight? ->
                     val enhancedTransactions =
                         transactions
                             .sortedByDescending {
@@ -313,6 +293,7 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
                             totalBalance = snapshot.totalBalance()
                         )
                     }
+
                     else -> {
                         BalanceState.Available(
                             totalBalance = snapshot.totalBalance(),
@@ -344,10 +325,10 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
                 PersistableWallet.new(
                     application = application,
                     zcashNetwork = zcashNetwork,
-                    endpoint = AvailableServerProvider.getDefaultServer(zcashNetwork),
+                    endpoint = getAvailableServers().first(),
                     walletInitMode = WalletInitMode.NewWallet
                 )
-            persistWallet(newWallet)
+            walletRepository.persistWallet(newWallet)
         }
     }
 
@@ -356,42 +337,11 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
      * to see the side effects.  This would be used for a user restoring a wallet from a backup.
      */
     fun persistExistingWallet(persistableWallet: PersistableWallet) {
-        persistWallet(persistableWallet)
+        walletRepository.persistWallet(persistableWallet)
     }
 
-    /**
-     * Persists a wallet asynchronously.  Clients observe [secretState] to see the side effects.
-     */
-    private fun persistWallet(persistableWallet: PersistableWallet) {
-        val application = getApplication<Application>()
-
-        viewModelScope.launch {
-            val preferenceProvider = EncryptedPreferenceSingleton.getInstance(application)
-            persistWalletMutex.withLock {
-                EncryptedPreferenceKeys.PERSISTABLE_WALLET.putValue(preferenceProvider, persistableWallet)
-            }
-        }
-    }
-
-    /**
-     * Asynchronously notes that the user has completed the backup steps, which means the wallet
-     * is ready to use.  Clients observe [secretState] to see the side effects.  This would be used
-     * for a user creating a new wallet.
-     */
     fun persistOnboardingState(onboardingState: OnboardingState) {
-        val application = getApplication<Application>()
-
-        viewModelScope.launch {
-            val preferenceProvider = StandardPreferenceSingleton.getInstance(application)
-
-            // Use the Mutex here to avoid timing issues.  During wallet restore, persistOnboardingState()
-            // is called prior to persistExistingWallet().  Although persistOnboardingState() should
-            // complete quickly, it isn't guaranteed to complete before persistExistingWallet()
-            // unless a mutex is used here.
-            persistWalletMutex.withLock {
-                StandardPreferenceKeys.ONBOARDING_STATE.putValue(preferenceProvider, onboardingState.toNumber())
-            }
-        }
+        walletRepository.persistOnboardingState(onboardingState)
     }
 
     /**
@@ -401,11 +351,11 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
      * state from the SDK, and thus, we need to note the wallet restoring state here on the client side.
      */
     fun persistWalletRestoringState(walletRestoringState: WalletRestoringState) {
-        val application = getApplication<Application>()
-
         viewModelScope.launch {
-            val preferenceProvider = StandardPreferenceSingleton.getInstance(application)
-            StandardPreferenceKeys.WALLET_RESTORING_STATE.putValue(preferenceProvider, walletRestoringState.toNumber())
+            StandardPreferenceKeys.WALLET_RESTORING_STATE.putValue(
+                standardPreferenceProvider,
+                walletRestoringState.toNumber()
+            )
         }
     }
 
@@ -442,16 +392,12 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
 
     private fun clearAppStateFlow(): Flow<Boolean> =
         callbackFlow {
-            val application = getApplication<Application>()
-
             viewModelScope.launch {
                 val standardPrefsCleared =
-                    StandardPreferenceSingleton
-                        .getInstance(application)
+                    standardPreferenceProvider
                         .clearPreferences()
                 val encryptedPrefsCleared =
-                    EncryptedPreferenceSingleton
-                        .getInstance(application)
+                    encryptedPreferenceProvider
                         .clearPreferences()
 
                 Twig.info { "Both preferences cleared: ${standardPrefsCleared && encryptedPrefsCleared}" }

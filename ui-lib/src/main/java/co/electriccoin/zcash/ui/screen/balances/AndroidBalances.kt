@@ -4,7 +4,6 @@ package co.electriccoin.zcash.ui.screen.balances
 
 import android.content.Context
 import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -18,6 +17,7 @@ import cash.z.ecc.android.sdk.SdkSynchronizer
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.model.UnifiedSpendingKey
 import cash.z.ecc.android.sdk.model.Zatoshi
+import co.electriccoin.zcash.di.koinActivityViewModel
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.BalanceState
@@ -36,7 +36,6 @@ import co.electriccoin.zcash.ui.screen.balances.model.StatusAction
 import co.electriccoin.zcash.ui.screen.balances.view.Balances
 import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SubmitResult
 import co.electriccoin.zcash.ui.screen.sendconfirmation.viewmodel.CreateTransactionsViewModel
-import co.electriccoin.zcash.ui.screen.update.AppUpdateCheckerImp
 import co.electriccoin.zcash.ui.screen.update.model.UpdateState
 import co.electriccoin.zcash.ui.util.PlayStoreUtil
 import kotlinx.coroutines.CoroutineScope
@@ -51,11 +50,11 @@ internal fun WrapBalances(
 ) {
     val activity = LocalActivity.current
 
-    val walletViewModel by activity.viewModels<WalletViewModel>()
+    val walletViewModel = koinActivityViewModel<WalletViewModel>()
 
-    val createTransactionsViewModel by activity.viewModels<CreateTransactionsViewModel>()
+    val createTransactionsViewModel = koinActivityViewModel<CreateTransactionsViewModel>()
 
-    val homeViewModel by activity.viewModels<HomeViewModel>()
+    val homeViewModel = koinActivityViewModel<HomeViewModel>()
 
     val synchronizer = walletViewModel.synchronizer.collectAsStateWithLifecycle().value
 
@@ -69,12 +68,7 @@ internal fun WrapBalances(
 
     val isHideBalances = homeViewModel.isHideBalances.collectAsStateWithLifecycle().value ?: false
 
-    val checkUpdateViewModel by activity.viewModels<CheckUpdateViewModel> {
-        CheckUpdateViewModel.CheckUpdateViewModelFactory(
-            activity.application,
-            AppUpdateCheckerImp.new()
-        )
-    }
+    val checkUpdateViewModel = koinActivityViewModel<CheckUpdateViewModel>()
 
     val balanceState = walletViewModel.balanceState.collectAsStateWithLifecycle().value
 

@@ -46,6 +46,8 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.internal.ButtonColors
 import co.electriccoin.zcash.ui.design.theme.internal.DarkTertiaryButtonColors
 import co.electriccoin.zcash.ui.design.theme.internal.LightTertiaryButtonColors
+import co.electriccoin.zcash.ui.design.util.StringResource
+import co.electriccoin.zcash.ui.design.util.getValue
 
 @Preview
 @Composable
@@ -270,6 +272,37 @@ fun PrimaryButton(
 
 @Composable
 @Suppress("LongParameterList", "LongMethod")
+fun PrimaryButton(
+    state: ButtonState,
+    modifier: Modifier = Modifier,
+    minWidth: Dp = ZcashTheme.dimens.buttonWidth,
+    minHeight: Dp = ZcashTheme.dimens.buttonHeight,
+    buttonColors: ButtonColors = ZcashTheme.colors.primaryButtonColors,
+    textStyle: TextStyle = ZcashTheme.extendedTypography.buttonText,
+    outerPaddingValues: PaddingValues =
+        PaddingValues(
+            horizontal = ZcashTheme.dimens.spacingNone,
+            vertical = ZcashTheme.dimens.spacingSmall
+        ),
+    contentPaddingValues: PaddingValues = PaddingValues(all = 17.dp)
+) {
+    PrimaryButton(
+        onClick = state.onClick,
+        text = state.text.getValue(),
+        enabled = state.isEnabled,
+        showProgressBar = state.isLoading,
+        modifier = modifier,
+        minWidth = minWidth,
+        minHeight = minHeight,
+        buttonColors = buttonColors,
+        textStyle = textStyle,
+        outerPaddingValues = outerPaddingValues,
+        contentPaddingValues = contentPaddingValues,
+    )
+}
+
+@Composable
+@Suppress("LongParameterList", "LongMethod")
 fun SecondaryButton(
     onClick: () -> Unit,
     text: String,
@@ -407,8 +440,6 @@ fun Modifier.shadow(
     }
 )
 
-private enum class ButtonState { Pressed, Idle }
-
 // TODO [#1346]: Rework not-recommended composed{}
 // TODO [#1346]: https://github.com/Electric-Coin-Company/zashi-android/issues/1346
 @Suppress("ModifierComposed")
@@ -416,11 +447,11 @@ fun Modifier.translationClick(
     translationX: Dp = 0.dp,
     translationY: Dp = 0.dp
 ) = composed {
-    var buttonState by remember { mutableStateOf(ButtonState.Idle) }
+    var buttonMode by remember { mutableStateOf(ButtonMode.Idle) }
 
     val translationXAnimated by animateFloatAsState(
         targetValue =
-            if (buttonState == ButtonState.Pressed) {
+            if (buttonMode == ButtonMode.Pressed) {
                 translationX.value
             } else {
                 0f
@@ -433,7 +464,7 @@ fun Modifier.translationClick(
     )
     val translationYAnimated by animateFloatAsState(
         targetValue =
-            if (buttonState == ButtonState.Pressed) {
+            if (buttonMode == ButtonMode.Pressed) {
                 translationY.value
             } else {
                 0f
@@ -450,16 +481,25 @@ fun Modifier.translationClick(
             this.translationX = translationXAnimated
             this.translationY = translationYAnimated
         }
-        .pointerInput(buttonState) {
+        .pointerInput(buttonMode) {
             awaitPointerEventScope {
-                buttonState =
-                    if (buttonState == ButtonState.Pressed) {
+                buttonMode =
+                    if (buttonMode == ButtonMode.Pressed) {
                         waitForUpOrCancellation()
-                        ButtonState.Idle
+                        ButtonMode.Idle
                     } else {
                         awaitFirstDown(false)
-                        ButtonState.Pressed
+                        ButtonMode.Pressed
                     }
             }
         }
 }
+
+private enum class ButtonMode { Pressed, Idle }
+
+data class ButtonState(
+    val text: StringResource,
+    val isEnabled: Boolean = true,
+    val isLoading: Boolean = false,
+    val onClick: () -> Unit = {},
+)
