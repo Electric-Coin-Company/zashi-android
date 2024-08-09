@@ -13,7 +13,7 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ### Changed
 - We adopted the latest Zcash SDK version 2.1.3, which significantly improves block synchronization speed.
-- We also improved the logic for fetching transactions.
+- We also improved the logic for fetching transparent transactions.
 
 ## [1.1.4 (700)] - 2024-07-23
 
