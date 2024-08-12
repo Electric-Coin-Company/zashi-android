@@ -6,6 +6,8 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+## [1.1.5 (706)] - 2024-08-09
+
 ### Changed
 - Adopted the latest Zcash SDK version 2.1.3, which brings a significant block synchronization speed-up and improved 
   UTXOs fetching logic
