@@ -1,10 +1,12 @@
 package co.electriccoin.zcash.app.di
 
-import cash.z.ecc.sdk.usecase.ObserveSynchronizerUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetSynchronizerUseCase
+import co.electriccoin.zcash.ui.common.usecase.ObserveSynchronizerUseCase
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
 val useCaseModule =
     module {
         singleOf(::ObserveSynchronizerUseCase)
+        singleOf(::GetSynchronizerUseCase)
     }

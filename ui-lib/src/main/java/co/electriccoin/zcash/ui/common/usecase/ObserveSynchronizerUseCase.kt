@@ -1,6 +1,6 @@
-package cash.z.ecc.sdk.usecase
+package co.electriccoin.zcash.ui.common.usecase
 
-import cash.z.ecc.sdk.repository.WalletRepository
+import co.electriccoin.zcash.ui.common.repository.WalletRepository
 
 class ObserveSynchronizerUseCase(
     private val walletRepository: WalletRepository

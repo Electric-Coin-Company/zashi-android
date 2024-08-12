@@ -10,8 +10,8 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkerParameters
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.model.PercentDecimal
-import cash.z.ecc.sdk.usecase.ObserveSynchronizerUseCase
 import co.electriccoin.zcash.spackle.Twig
+import co.electriccoin.zcash.ui.common.usecase.ObserveSynchronizerUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
@@ -39,7 +39,6 @@ import kotlin.time.toJavaDuration
 
 // TODO [#1249]: Add documentation and tests on background syncing
 // TODO [#1249]: https://github.com/Electric-Coin-Company/zashi-android/issues/1249
-
 @Keep
 class SyncWorker(
     context: Context,

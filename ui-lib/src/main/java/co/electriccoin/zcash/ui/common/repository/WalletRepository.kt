@@ -1,4 +1,4 @@
-package cash.z.ecc.sdk.repository
+package co.electriccoin.zcash.ui.common.repository
 
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.WalletCoordinator

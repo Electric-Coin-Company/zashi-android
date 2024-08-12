@@ -1,7 +1,7 @@
 package co.electriccoin.zcash.app.di
 
-import cash.z.ecc.sdk.repository.WalletRepository
-import cash.z.ecc.sdk.repository.WalletRepositoryImpl
+import co.electriccoin.zcash.ui.common.repository.WalletRepository
+import co.electriccoin.zcash.ui.common.repository.WalletRepositoryImpl
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module

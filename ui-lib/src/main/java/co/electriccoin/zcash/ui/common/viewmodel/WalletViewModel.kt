@@ -25,7 +25,6 @@ import cash.z.ecc.android.sdk.model.ZcashNetwork
 import cash.z.ecc.android.sdk.tool.DerivationTool
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import cash.z.ecc.sdk.type.fromResources
-import cash.z.ecc.sdk.usecase.ObserveSynchronizerUseCase
 import co.electriccoin.zcash.preference.api.EncryptedPreferenceProvider
 import co.electriccoin.zcash.preference.api.StandardPreferenceProvider
 import co.electriccoin.zcash.spackle.Twig
@@ -40,6 +39,7 @@ import co.electriccoin.zcash.ui.common.model.hasChangePending
 import co.electriccoin.zcash.ui.common.model.hasValuePending
 import co.electriccoin.zcash.ui.common.model.spendableBalance
 import co.electriccoin.zcash.ui.common.model.totalBalance
+import co.electriccoin.zcash.ui.common.usecase.ObserveSynchronizerUseCase
 import co.electriccoin.zcash.ui.preference.PersistableWalletPreferenceDefault
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
 import co.electriccoin.zcash.ui.screen.account.ext.TransactionOverviewExt

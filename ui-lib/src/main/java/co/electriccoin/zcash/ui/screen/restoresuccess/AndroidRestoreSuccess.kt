@@ -14,11 +14,11 @@ fun WrapRestoreSuccess(onDone: () -> Unit) {
 
     RestoreSuccess(
         state =
-        state.copy(
-            onPositiveClick = {
-                state.onPositiveClick()
-                onDone()
-            }
-        )
+            state.copy(
+                onPositiveClick = {
+                    state.onPositiveClick()
+                    onDone()
+                }
+            )
     )
 }
