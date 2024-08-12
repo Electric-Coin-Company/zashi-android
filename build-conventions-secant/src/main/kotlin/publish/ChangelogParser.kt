@@ -134,6 +134,9 @@ object ChangelogParser {
                 }
             }
         return subList(startIndex, endIndex)
+            .onEach { log("Parser: before formatting item: $it") }
+            // To remove hard line wrap from AS
+            .map { it.replace("\n  ", "") }
             .joinToString(prefix = "\n", separator = "\n")
             .takeIf { it.isNotBlank() }?.let {
                 ChangelogEntrySection(title = title, content = it)
