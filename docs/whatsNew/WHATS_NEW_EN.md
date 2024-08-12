@@ -13,6 +13,12 @@ directly impact users rather than highlighting other key architectural updates.*
 - Balance now also displays USD value
 - An option to enter USD amount in Send Transaction screen
 
+## [1.1.5 (706)] - 2024-08-09
+
+### Changed
+- We adopted the latest Zcash SDK version 2.1.3, which significantly improves block synchronization speed.
+- We also improved the logic for fetching transparent transactions.
+
 ## [1.1.4 (700)] - 2024-07-23
 
 ### Added

@@ -10,6 +10,18 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 - Balance now also displays USD value
 - An option to enter USD amount in Send Transaction screen
 
+## Changed
+- Android NDK version has been bumped to 26.1.10909125
+
+## Fixed
+- The app screenshot testing has been re-enabled after we moved away from AppCompat components 
+
+## [1.1.5 (706)] - 2024-08-09
+
+### Changed
+- Adopted the latest Zcash SDK version 2.1.3, which brings a significant block synchronization speed-up and improved 
+  UTXOs fetching logic
+
 ## [1.1.4 (700)] - 2024-07-23
 
 ### Added
