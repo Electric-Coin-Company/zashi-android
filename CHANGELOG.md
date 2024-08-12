@@ -6,6 +6,9 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+## Changed
+- Android NDK version has been bumped to 26.1.10909125
+
 ## Fixed
 - The app screenshot testing has been re-enabled after we moved away from AppCompat components 
 
