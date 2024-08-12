@@ -6,6 +6,9 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+## Fixed
+- The app screenshot testing has been re-enabled after we moved away from AppCompat components 
+
 ## [1.1.5 (706)] - 2024-08-09
 
 ### Changed
