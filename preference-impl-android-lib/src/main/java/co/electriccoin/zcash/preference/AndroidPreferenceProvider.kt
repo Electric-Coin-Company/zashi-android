@@ -5,9 +5,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
-import co.electriccoin.zcash.preference.api.EncryptedPreferenceProvider
 import co.electriccoin.zcash.preference.api.PreferenceProvider
-import co.electriccoin.zcash.preference.api.StandardPreferenceProvider
 import co.electriccoin.zcash.preference.model.entry.PreferenceKey
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.asCoroutineDispatcher
@@ -33,7 +31,7 @@ import java.util.concurrent.Executors
 class AndroidPreferenceProvider private constructor(
     private val sharedPreferences: SharedPreferences,
     private val dispatcher: CoroutineDispatcher
-) : PreferenceProvider, StandardPreferenceProvider, EncryptedPreferenceProvider {
+) : PreferenceProvider {
     private val mutex = Mutex()
     /*
      * Implementation note: EncryptedSharedPreferences are not thread-safe, so this implementation
@@ -77,7 +75,7 @@ class AndroidPreferenceProvider private constructor(
         }
 
     override fun observe(key: PreferenceKey): Flow<String?> =
-        callbackFlow<Unit> {
+        callbackFlow {
             val listener =
                 SharedPreferences.OnSharedPreferenceChangeListener { _, _ ->
                     // Callback on main thread
@@ -95,44 +93,49 @@ class AndroidPreferenceProvider private constructor(
             .map { getString(key) }
 
     companion object {
-        fun newStandard(
+        suspend fun newStandard(
             context: Context,
             filename: String
-        ): StandardPreferenceProvider {
+        ): PreferenceProvider {
             /*
              * Because of this line, we don't want multiple instances of this object created
              * because we don't clean up the thread afterwards.
              */
             val singleThreadedDispatcher = Executors.newSingleThreadExecutor().asCoroutineDispatcher()
 
-            val sharedPreferences = context.getSharedPreferences(filename, Context.MODE_PRIVATE)
+            val sharedPreferences =
+                withContext(singleThreadedDispatcher) {
+                    context.getSharedPreferences(filename, Context.MODE_PRIVATE)
+                }
 
             return AndroidPreferenceProvider(sharedPreferences, singleThreadedDispatcher)
         }
 
-        fun newEncrypted(
+        suspend fun newEncrypted(
             context: Context,
             filename: String
-        ): EncryptedPreferenceProvider {
+        ): PreferenceProvider {
             /*
              * Because of this line, we don't want multiple instances of this object created
              * because we don't clean up the thread afterwards.
              */
             val singleThreadedDispatcher = Executors.newSingleThreadExecutor().asCoroutineDispatcher()
 
-            val mainKey =
-                MasterKey.Builder(context).apply {
-                    setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-                }.build()
-
             val sharedPreferences =
-                EncryptedSharedPreferences.create(
-                    context,
-                    filename,
-                    mainKey,
-                    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-                    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-                )
+                withContext(singleThreadedDispatcher) {
+                    val mainKey =
+                        MasterKey.Builder(context).apply {
+                            setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+                        }.build()
+
+                    EncryptedSharedPreferences.create(
+                        context,
+                        filename,
+                        mainKey,
+                        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+                    )
+                }
 
             return AndroidPreferenceProvider(sharedPreferences, singleThreadedDispatcher)
         }

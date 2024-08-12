@@ -33,7 +33,7 @@ fun MainActivity.BindCompLocalProvider(content: @Composable () -> Unit) {
         LocalScreenBrightness provides screenBrightness,
         LocalScreenTimeout provides screenTimeout,
         LocalNavController provides navController,
-        LocalActivity provides this,
+        LocalActivity provides this@BindCompLocalProvider,
         content = content
     )
 }

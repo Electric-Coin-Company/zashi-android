@@ -95,7 +95,7 @@ class EncryptedPreferenceProviderTest {
     companion object {
         private val FILENAME = "encrypted_preference_test"
 
-        private fun newInstance() =
+        private suspend fun newInstance() =
             AndroidPreferenceProvider.newEncrypted(
                 ApplicationProvider.getApplicationContext(),
                 FILENAME

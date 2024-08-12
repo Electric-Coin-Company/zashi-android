@@ -25,8 +25,8 @@ import cash.z.ecc.android.sdk.model.ZcashNetwork
 import cash.z.ecc.android.sdk.tool.DerivationTool
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import cash.z.ecc.sdk.type.fromResources
-import co.electriccoin.zcash.preference.api.EncryptedPreferenceProvider
-import co.electriccoin.zcash.preference.api.StandardPreferenceProvider
+import co.electriccoin.zcash.preference.EncryptedPreferenceProvider
+import co.electriccoin.zcash.preference.StandardPreferenceProvider
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.common.compose.BalanceState
@@ -101,7 +101,7 @@ class WalletViewModel(
         flow {
             emitAll(
                 StandardPreferenceKeys.WALLET_RESTORING_STATE
-                    .observe(standardPreferenceProvider).map { persistedNumber ->
+                    .observe(standardPreferenceProvider()).map { persistedNumber ->
                         WalletRestoringState.fromNumber(persistedNumber)
                     }
             )
@@ -143,9 +143,10 @@ class WalletViewModel(
     private val onboardingState =
         flow {
             emitAll(
-                StandardPreferenceKeys.ONBOARDING_STATE.observe(standardPreferenceProvider).map { persistedNumber ->
-                    OnboardingState.fromNumber(persistedNumber)
-                }
+                StandardPreferenceKeys.ONBOARDING_STATE
+                    .observe(standardPreferenceProvider()).map { persistedNumber ->
+                        OnboardingState.fromNumber(persistedNumber)
+                    }
             )
         }
 
@@ -352,7 +353,7 @@ class WalletViewModel(
     private fun persistWallet(persistableWallet: PersistableWallet) {
         viewModelScope.launch {
             persistWalletMutex.withLock {
-                persistableWalletPreference.putValue(encryptedPreferenceProvider, persistableWallet)
+                persistableWalletPreference.putValue(encryptedPreferenceProvider(), persistableWallet)
             }
         }
     }
@@ -369,7 +370,11 @@ class WalletViewModel(
             // complete quickly, it isn't guaranteed to complete before persistExistingWallet()
             // unless a mutex is used here.
             persistWalletMutex.withLock {
-                StandardPreferenceKeys.ONBOARDING_STATE.putValue(standardPreferenceProvider, onboardingState.toNumber())
+                StandardPreferenceKeys.ONBOARDING_STATE.putValue(
+                    standardPreferenceProvider(),
+                    onboardingState
+                        .toNumber()
+                )
             }
         }
     }
@@ -383,7 +388,7 @@ class WalletViewModel(
     fun persistWalletRestoringState(walletRestoringState: WalletRestoringState) {
         viewModelScope.launch {
             StandardPreferenceKeys.WALLET_RESTORING_STATE.putValue(
-                standardPreferenceProvider,
+                standardPreferenceProvider(),
                 walletRestoringState.toNumber()
             )
         }
@@ -424,10 +429,10 @@ class WalletViewModel(
         callbackFlow {
             viewModelScope.launch {
                 val standardPrefsCleared =
-                    standardPreferenceProvider
+                    standardPreferenceProvider()
                         .clearPreferences()
                 val encryptedPrefsCleared =
-                    encryptedPreferenceProvider
+                    encryptedPreferenceProvider()
                         .clearPreferences()
 
                 Twig.info { "Both preferences cleared: ${standardPrefsCleared && encryptedPrefsCleared}" }

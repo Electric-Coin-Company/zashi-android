@@ -1,7 +1,10 @@
 package co.electriccoin.zcash.di
 
+import android.content.Context
+import android.content.ContextWrapper
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelStoreOwner
@@ -17,9 +20,9 @@ import org.koin.core.scope.Scope
 @Composable
 inline fun <reified T : ViewModel> koinActivityViewModel(
     qualifier: Qualifier? = null,
-    viewModelStoreOwner: ViewModelStoreOwner = LocalContext.current as ComponentActivity,
+    viewModelStoreOwner: ViewModelStoreOwner = LocalContext.componentActivity(),
     key: String? = null,
-    extras: CreationExtras = defaultExtras(LocalContext.current as ComponentActivity),
+    extras: CreationExtras = defaultExtras(LocalContext.componentActivity()),
     scope: Scope = currentKoinScope(),
     noinline parameters: ParametersDefinition? = null,
 ) = koinViewModel<T>(
@@ -30,3 +33,15 @@ inline fun <reified T : ViewModel> koinActivityViewModel(
     scope = scope,
     parameters = parameters,
 )
+
+@Composable
+fun ProvidableCompositionLocal<Context>.componentActivity(): ComponentActivity {
+    val context = this.current
+    return when {
+        context is ComponentActivity -> context
+        context is ContextWrapper && context.baseContext is ComponentActivity ->
+            context.baseContext as ComponentActivity
+
+        else -> throw ClassCastException("Context is not a ComponentActivity")
+    }
+}
