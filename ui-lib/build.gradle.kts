@@ -98,6 +98,7 @@ dependencies {
     implementation(libs.bundles.androidx.camera)
     implementation(libs.bundles.androidx.compose.core)
     implementation(libs.bundles.androidx.compose.extended)
+    api(libs.bundles.koin)
     implementation(libs.bundles.play.update)
     implementation(libs.kotlin.stdlib)
     implementation(libs.kotlinx.coroutines.android)
@@ -120,8 +121,6 @@ dependencies {
     api(projects.configurationImplAndroidLib)
     api(projects.sdkExtLib)
     api(projects.uiDesignLib)
-    api(libs.koin)
-    api(libs.koin.compose)
 
     androidTestImplementation(projects.testLib)
     androidTestImplementation(libs.bundles.androidx.test)

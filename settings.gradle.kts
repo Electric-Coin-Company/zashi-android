@@ -296,13 +296,6 @@ dependencyResolutionManagement {
                 )
             )
             bundle(
-                "play-update",
-                listOf(
-                    "play-update",
-                    "play-update-ktx",
-                )
-            )
-            bundle(
                 "androidx-test",
                 listOf(
                     "androidx-espresso-core",
@@ -311,6 +304,20 @@ dependencyResolutionManagement {
                     "androidx-test-junit",
                     "androidx-test-orchestrator",
                     "androidx-test-runner"
+                )
+            )
+            bundle(
+                "koin",
+                listOf(
+                    "koin",
+                    "koin-compose",
+                )
+            )
+            bundle(
+                "play-update",
+                listOf(
+                    "play-update",
+                    "play-update-ktx",
                 )
             )
         }
