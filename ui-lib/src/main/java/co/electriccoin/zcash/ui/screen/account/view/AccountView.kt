@@ -1,10 +1,11 @@
 package co.electriccoin.zcash.ui.screen.account.view
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.fadeIn
+import androidx.compose.animation.core.snap
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,11 +19,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -54,9 +50,7 @@ import co.electriccoin.zcash.ui.screen.account.model.TransactionUiState
 import co.electriccoin.zcash.ui.screen.balances.model.StatusAction
 import co.electriccoin.zcash.ui.screen.exchangerate.widget.StyledExchangeOptIn
 import co.electriccoin.zcash.ui.util.PreviewScreens
-import kotlinx.coroutines.delay
 import kotlinx.datetime.Clock
-import kotlin.time.Duration.Companion.seconds
 
 @Suppress("UnusedPrivateMember")
 @PreviewScreens
@@ -241,16 +235,6 @@ private fun AccountMainContent(
     modifier: Modifier = Modifier,
     paddingValues: PaddingValues = PaddingValues()
 ) {
-    var delayedExchangeRateState by remember { mutableStateOf<ExchangeRateState?>(null) }
-
-    LaunchedEffect(key1 = balanceState.exchangeRate) {
-        if (delayedExchangeRateState == null && balanceState.exchangeRate is ExchangeRateState.OptIn) {
-            delay(1.seconds)
-        }
-
-        delayedExchangeRateState = balanceState.exchangeRate
-    }
-
     Box {
         Column(
             modifier = modifier,
@@ -260,7 +244,18 @@ private fun AccountMainContent(
 
             val bottomPadding =
                 animateDpAsState(
-                    targetValue = if (delayedExchangeRateState is ExchangeRateState.OptIn) 76.dp else 0.dp,
+                    targetValue =
+                        if (balanceState.exchangeRate is ExchangeRateState.OptIn) {
+                            76.dp
+                        } else {
+                            0.dp
+                        },
+                    animationSpec =
+                        if (balanceState.exchangeRate is ExchangeRateState.OptIn) {
+                            snap()
+                        } else {
+                            spring(visibilityThreshold = .1.dp)
+                        },
                     label = "bottom padding animation"
                 )
 
@@ -290,8 +285,8 @@ private fun AccountMainContent(
         }
 
         AnimatedVisibility(
-            visible = delayedExchangeRateState is ExchangeRateState.OptIn,
-            enter = fadeIn() + slideInVertically(),
+            visible = balanceState.exchangeRate is ExchangeRateState.OptIn,
+            enter = EnterTransition.None,
             exit = fadeOut() + slideOutVertically(),
         ) {
             Column {
@@ -299,7 +294,7 @@ private fun AccountMainContent(
                 StyledExchangeOptIn(
                     modifier = Modifier.padding(horizontal = 24.dp),
                     state =
-                        (delayedExchangeRateState as? ExchangeRateState.OptIn) ?: ExchangeRateState.OptIn(
+                        (balanceState.exchangeRate as? ExchangeRateState.OptIn) ?: ExchangeRateState.OptIn(
                             onDismissClick = {},
                         )
                 )
