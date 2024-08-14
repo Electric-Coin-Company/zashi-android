@@ -116,6 +116,7 @@ private fun Option(
             )
             Spacer(modifier = Modifier.width(12.dp))
             Column(
+                modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
@@ -131,7 +132,6 @@ private fun Option(
                     fontSize = 14.sp,
                 )
             }
-            Spacer(modifier = Modifier.weight(1f))
             Image(
                 painter = painterResource(selectionImage),
                 contentDescription = ""
