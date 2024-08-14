@@ -2,6 +2,7 @@ package co.electriccoin.zcash.ui.preference
 
 import co.electriccoin.zcash.preference.model.entry.BooleanPreferenceDefault
 import co.electriccoin.zcash.preference.model.entry.IntegerPreferenceDefault
+import co.electriccoin.zcash.preference.model.entry.NullableBooleanPreferenceDefault
 import co.electriccoin.zcash.preference.model.entry.PreferenceKey
 import co.electriccoin.zcash.ui.common.model.OnboardingState
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
@@ -67,5 +68,10 @@ object StandardPreferenceKeys {
         BooleanPreferenceDefault(
             PreferenceKey("IS_HIDE_BALANCES"),
             false
+        )
+    val EXCHANGE_RATE_USD_OPTED_IN =
+        NullableBooleanPreferenceDefault(
+            PreferenceKey("EXCHANGE_RATE_USD_OPTED_IN"),
+            null
         )
 }

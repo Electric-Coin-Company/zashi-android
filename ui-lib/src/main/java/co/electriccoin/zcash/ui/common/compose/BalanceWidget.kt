@@ -22,7 +22,6 @@ import androidx.compose.ui.unit.dp
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.sdk.extension.toZecStringFull
 import cash.z.ecc.sdk.type.ZcashCurrency
-import co.electriccoin.zcash.ui.StyledExchangeBalance
 import co.electriccoin.zcash.ui.common.extension.asZecAmountTriple
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.R
@@ -35,6 +34,7 @@ import co.electriccoin.zcash.ui.design.component.StyledBalanceDefaults
 import co.electriccoin.zcash.ui.design.component.ZecAmountTriple
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.ObserveFiatCurrencyResultFixture
+import co.electriccoin.zcash.ui.screen.exchangerate.widget.StyledExchangeBalance
 
 @Preview(device = Devices.PIXEL_2)
 @Composable
@@ -151,7 +151,9 @@ fun BalanceWidget(
             parts = balanceState.totalBalance.toZecStringFull().asZecAmountTriple()
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        if (balanceState.exchangeRate is ExchangeRateState.Data) {
+            Spacer(modifier = Modifier.height(16.dp))
+        }
 
         StyledExchangeBalance(
             zatoshi = balanceState.totalBalance,
@@ -159,7 +161,9 @@ fun BalanceWidget(
             isHideBalances = isHideBalances
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
+        if (balanceState.exchangeRate is ExchangeRateState.Data) {
+            Spacer(modifier = Modifier.height(12.dp))
+        }
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             if (isReferenceToBalances) {

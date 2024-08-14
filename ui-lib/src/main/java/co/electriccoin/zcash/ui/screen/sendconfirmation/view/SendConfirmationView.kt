@@ -39,7 +39,6 @@ import cash.z.ecc.sdk.extension.toZecStringFull
 import cash.z.ecc.sdk.fixture.MemoFixture
 import cash.z.ecc.sdk.fixture.ZatoshiFixture
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.StyledExchangeBalance
 import co.electriccoin.zcash.ui.common.compose.BalanceWidgetBigLineOnly
 import co.electriccoin.zcash.ui.common.extension.asZecAmountTriple
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
@@ -61,6 +60,7 @@ import co.electriccoin.zcash.ui.design.component.Tiny
 import co.electriccoin.zcash.ui.design.component.TopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.ObserveFiatCurrencyResultFixture
+import co.electriccoin.zcash.ui.screen.exchangerate.widget.StyledExchangeLabel
 import co.electriccoin.zcash.ui.screen.sendconfirmation.SendConfirmationTag
 import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SendConfirmationStage
 import kotlinx.collections.immutable.ImmutableList
@@ -393,12 +393,10 @@ private fun SendConfirmationContent(
             isHideBalances = false
         )
 
-        StyledExchangeBalance(
+        StyledExchangeLabel(
             zatoshi = zecSend.amount,
             state = exchangeRate,
             isHideBalances = false,
-            style = ZcashTheme.typography.secondary.headlineSmall,
-            textColor = ZcashTheme.colors.textFieldHint
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))

@@ -75,7 +75,7 @@ internal fun MainActivity.WrapSendConfirmation(
 
     val walletState = walletViewModel.walletStateInformation.collectAsStateWithLifecycle().value
 
-    val exchangeRateState = walletViewModel.exchangeRateUsd.collectAsStateWithLifecycle().value
+    val exchangeRateState by remember { mutableStateOf(walletViewModel.exchangeRateUsd.value) }
 
     WrapSendConfirmation(
         activity = this,
@@ -133,9 +133,13 @@ internal fun WrapSendConfirmation(
     val onBackAction = {
         when (stage) {
             SendConfirmationStage.Confirmation -> goBack(false)
-            SendConfirmationStage.Sending -> { /* no action - wait until the sending is done */ }
+            SendConfirmationStage.Sending -> { // no action - wait until the sending is done
+            }
+
             is SendConfirmationStage.Failure -> setStage(SendConfirmationStage.Confirmation)
-            is SendConfirmationStage.MultipleTrxFailure -> { /* no action - wait until report the result */ }
+            is SendConfirmationStage.MultipleTrxFailure -> { // no action - wait until report the result
+            }
+
             is SendConfirmationStage.MultipleTrxFailureReported -> goBack(true)
         }
     }
@@ -311,9 +315,11 @@ private fun processSubmissionResult(
             setStage(SendConfirmationStage.Confirmation)
             goHome()
         }
+
         is SubmitResult.SimpleTrxFailure -> {
             setStage(SendConfirmationStage.Failure(submitResult.errorDescription))
         }
+
         is SubmitResult.MultipleTrxFailure -> {
             setStage(SendConfirmationStage.MultipleTrxFailure)
         }

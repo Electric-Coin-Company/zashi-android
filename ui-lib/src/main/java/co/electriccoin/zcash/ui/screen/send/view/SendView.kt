@@ -122,7 +122,7 @@ private fun PreviewSendForm() {
             walletSnapshot = WalletSnapshotFixture.new(),
             balanceState = BalanceStateFixture.new(),
             isHideBalances = false,
-            exchangeRateState = ExchangeRateState {}
+            exchangeRateState = ExchangeRateState.OptedOut
         )
     }
 }
@@ -159,7 +159,7 @@ private fun SendFormTransparentAddressPreview() {
             walletSnapshot = WalletSnapshotFixture.new(),
             balanceState = BalanceStateFixture.new(),
             isHideBalances = false,
-            exchangeRateState = ExchangeRateState {}
+            exchangeRateState = ExchangeRateState.OptedOut
         )
     }
 }
@@ -708,7 +708,9 @@ fun SendFormAmountTextField(
                 }
             )
 
-            if (!exchangeRateState.isStale || exchangeRateState.isLoading) {
+            if (exchangeRateState is ExchangeRateState.Data &&
+                (!exchangeRateState.isStale || exchangeRateState.isLoading)
+            ) {
                 Spacer(modifier = Modifier.width(ZcashTheme.dimens.spacingMin))
                 Image(
                     modifier = Modifier.padding(top = 24.dp),

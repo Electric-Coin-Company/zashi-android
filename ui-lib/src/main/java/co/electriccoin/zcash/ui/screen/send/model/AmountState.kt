@@ -45,7 +45,9 @@ sealed interface AmountState {
             val zatoshi = Zatoshi.fromZecString(context, value, monetarySeparators)
 
             val currencyConversion =
-                if (!exchangeRateState.isLoading && exchangeRateState.isStale) {
+                if (exchangeRateState !is ExchangeRateState.Data ||
+                    (!exchangeRateState.isLoading && exchangeRateState.isStale)
+                ) {
                     null
                 } else {
                     exchangeRateState.currencyConversion
@@ -91,7 +93,7 @@ sealed interface AmountState {
             }
 
             val zatoshi =
-                exchangeRateState.currencyConversion?.toZatoshi(
+                (exchangeRateState as? ExchangeRateState.Data)?.currencyConversion?.toZatoshi(
                     context = context,
                     value = fiatValue,
                     monetarySeparators = MonetarySeparators.current(java.util.Locale.getDefault())

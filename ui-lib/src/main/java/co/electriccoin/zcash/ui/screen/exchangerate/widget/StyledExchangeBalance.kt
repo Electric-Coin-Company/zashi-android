@@ -1,6 +1,6 @@
 @file:Suppress("TooManyFunctions")
 
-package co.electriccoin.zcash.ui
+package co.electriccoin.zcash.ui.screen.exchangerate.widget
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.MutableTransitionState
@@ -39,6 +39,7 @@ import cash.z.ecc.android.sdk.model.FiatCurrencyConversion
 import cash.z.ecc.android.sdk.model.MonetarySeparators
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.toFiatString
+import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.extension.toKotlinLocale
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.component.BlankSurface
@@ -67,56 +68,47 @@ fun StyledExchangeBalance(
     textColor: Color = ZcashTheme.exchangeRateColors.btnSecondaryFg,
     style: TextStyle = ZcashTheme.typography.primary.titleSmall.copy(fontWeight = FontWeight.SemiBold)
 ) {
-    if ((state.isStale && !state.isLoading) ||
-        (!state.isLoading && state.currencyConversion == null)
-    ) {
-        ExchangeRateUnavailableButton(
-            textColor = textColor,
-            style = style,
-            modifier = modifier
-        )
-    } else {
-        ExchangeAvailableRateButton(
-            style = style,
-            textColor = textColor,
-            zatoshi = zatoshi,
-            isHideBalances = isHideBalances,
-            state = state,
-            hiddenBalancePlaceholder = hiddenBalancePlaceholder
-        )
+    when (state) {
+        is ExchangeRateState.Data ->
+            if ((state.isStale && !state.isLoading) || (!state.isLoading && state.currencyConversion == null)) {
+                ExchangeRateUnavailableButton(
+                    textColor = textColor,
+                    style = style,
+                    modifier = modifier
+                )
+            } else {
+                ExchangeAvailableRateLabelInternal(
+                    style = style,
+                    textColor = textColor,
+                    zatoshi = zatoshi,
+                    isHideBalances = isHideBalances,
+                    state = state,
+                    hiddenBalancePlaceholder = hiddenBalancePlaceholder
+                )
+            }
+
+        is ExchangeRateState.OptIn -> {
+            // do not show anything
+        }
+
+        ExchangeRateState.OptedOut -> {
+            // do not show anything
+        }
     }
 }
 
 @Suppress("LongParameterList", "LongMethod")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun ExchangeAvailableRateButton(
+private fun ExchangeAvailableRateLabelInternal(
     style: TextStyle,
     textColor: Color,
     zatoshi: Zatoshi,
     isHideBalances: Boolean,
-    state: ExchangeRateState,
+    state: ExchangeRateState.Data,
     hiddenBalancePlaceholder: StringResource,
     modifier: Modifier = Modifier,
 ) {
-    val currencySymbol = state.fiatCurrency.symbol
-    val text =
-        if (isHideBalances) {
-            "${currencySymbol}${hiddenBalancePlaceholder.getValue()}"
-        } else if (state.currencyConversion != null) {
-            val value =
-                zatoshi.toFiatString(
-                    currencyConversion = state.currencyConversion,
-                    locale = Locale.current.toKotlinLocale(),
-                    monetarySeparators = MonetarySeparators.current(java.util.Locale.getDefault()),
-                    includeSymbols = false
-                )
-
-            "$currencySymbol$value"
-        } else {
-            currencySymbol
-        }
-
     val isEnabled = !state.isLoading && state.isRefreshEnabled
 
     ExchangeRateButton(
@@ -129,7 +121,7 @@ private fun ExchangeAvailableRateButton(
         textColor = textColor,
     ) {
         Text(
-            text = text,
+            text = createExchangeRateText(state, isHideBalances, hiddenBalancePlaceholder, zatoshi),
             style = style,
             maxLines = 1,
             color = textColor
@@ -178,6 +170,33 @@ private fun ExchangeAvailableRateButton(
 }
 
 @Composable
+internal fun createExchangeRateText(
+    state: ExchangeRateState.Data,
+    isHideBalances: Boolean,
+    hiddenBalancePlaceholder: StringResource,
+    zatoshi: Zatoshi
+): String {
+    val currencySymbol = state.fiatCurrency.symbol
+    val text =
+        if (isHideBalances) {
+            "${currencySymbol}${hiddenBalancePlaceholder.getValue()}"
+        } else if (state.currencyConversion != null) {
+            val value =
+                zatoshi.toFiatString(
+                    currencyConversion = state.currencyConversion,
+                    locale = Locale.current.toKotlinLocale(),
+                    monetarySeparators = MonetarySeparators.current(java.util.Locale.getDefault()),
+                    includeSymbols = false
+                )
+
+            "$currencySymbol$value"
+        } else {
+            currencySymbol
+        }
+    return text
+}
+
+@Composable
 private fun ExchangeRateUnavailableButton(
     textColor: Color,
     style: TextStyle,
@@ -199,7 +218,7 @@ private fun ExchangeRateUnavailableButton(
         textColor = textColor,
     ) {
         Text(
-            text = stringResource(id = R.string.balances_exchange_rate_unavailable),
+            text = stringResource(id = R.string.exchange_rate_unavailable_title),
             style = style,
             maxLines = 1,
             color = textColor
@@ -211,7 +230,7 @@ private fun ExchangeRateUnavailableButton(
             modifier =
                 Modifier
                     .align(CenterVertically),
-            painter = painterResource(R.drawable.ic_unavailable_exchange_rate),
+            painter = painterResource(R.drawable.ic_exchange_rate_info),
             contentDescription = "",
             colorFilter = ColorFilter.tint(textColor)
         )
@@ -219,7 +238,7 @@ private fun ExchangeRateUnavailableButton(
 
     if (transitionState.currentState || transitionState.targetState || !transitionState.isIdle) {
         val offset = with(LocalDensity.current) { 78.dp.toPx() }.toInt()
-        UnavailableExchangeRatePopup(
+        StyledExchangeUnavailablePopup(
             onDismissRequest = {
                 transitionState.targetState = false
             },
@@ -287,7 +306,7 @@ private fun DefaultPreview() =
                     modifier = Modifier,
                     zatoshi = Zatoshi(1),
                     state =
-                        ExchangeRateState(
+                        ExchangeRateState.Data(
                             isLoading = false,
                             currencyConversion =
                                 FiatCurrencyConversion(
@@ -313,7 +332,7 @@ private fun DefaultNoRefreshPreview() =
                     modifier = Modifier,
                     zatoshi = Zatoshi(1),
                     state =
-                        ExchangeRateState(
+                        ExchangeRateState.Data(
                             isLoading = false,
                             currencyConversion =
                                 FiatCurrencyConversion(
@@ -340,7 +359,7 @@ private fun HiddenPreview() =
                     modifier = Modifier,
                     zatoshi = Zatoshi(1),
                     state =
-                        ExchangeRateState(
+                        ExchangeRateState.Data(
                             isLoading = false,
                             currencyConversion =
                                 FiatCurrencyConversion(
@@ -366,7 +385,7 @@ private fun HiddenStalePreview() =
                     modifier = Modifier,
                     zatoshi = Zatoshi(1),
                     state =
-                        ExchangeRateState(
+                        ExchangeRateState.Data(
                             isLoading = false,
                             isStale = true,
                             currencyConversion =

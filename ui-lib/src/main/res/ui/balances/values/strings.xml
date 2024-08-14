@@ -48,7 +48,4 @@
     <string name="balances_shielding_dialog_error_text">Error: The attempt to shield the transparent funds failed. Try it again, please.</string>
     <string name="balances_shielding_dialog_error_btn">OK</string>
     <string name="balances_shielding_dialog_error_below_threshold">The current transparent balance is zero or below the allowed shielding limit.</string>
-    <string name="balances_exchange_rate_unavailable">Exchange rate unavailable</string>
-    <string name="balances_exchange_rate_unavailable_subtitle">We tried but we couldn\’t refresh the exchange rate
-        for you. Check your connection, relaunch the app, and we’ll try again.</string>
 </resources>

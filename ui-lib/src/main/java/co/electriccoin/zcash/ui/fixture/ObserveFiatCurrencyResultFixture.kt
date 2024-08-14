@@ -14,5 +14,5 @@ object ObserveFiatCurrencyResultFixture {
                 timestamp = Clock.System.now(),
                 priceOfZec = 25.0
             ),
-    ) = ExchangeRateState(isLoading, isStale, isRefreshEnabled, currencyConversion) {}
+    ) = ExchangeRateState.Data(isLoading, isStale, isRefreshEnabled, currencyConversion) {}
 }

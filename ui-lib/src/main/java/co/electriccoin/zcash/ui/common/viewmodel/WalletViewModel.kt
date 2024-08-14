@@ -26,8 +26,10 @@ import cash.z.ecc.android.sdk.model.ZcashNetwork
 import cash.z.ecc.android.sdk.tool.DerivationTool
 import cash.z.ecc.sdk.type.fromResources
 import co.electriccoin.zcash.global.getInstance
+import co.electriccoin.zcash.preference.model.entry.NullableBooleanPreferenceDefault
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.MainActivity
+import co.electriccoin.zcash.ui.NavigationTargets.EXCHANGE_RATE_OPT_IN
 import co.electriccoin.zcash.ui.common.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.common.compose.BalanceState
 import co.electriccoin.zcash.ui.common.extension.throttle
@@ -55,6 +57,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
@@ -78,7 +81,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
-import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
 // To make this more multiplatform compatible, we need to remove the dependency on Context
@@ -96,6 +98,10 @@ class WalletViewModel(
      * that they have a consistent ordering.
      */
     private val persistWalletMutex = Mutex()
+
+    val navigationCommand = MutableSharedFlow<String>()
+
+    val backNavigationCommand = MutableSharedFlow<Unit>()
 
     /**
      * Synchronizer that is retained long enough to survive configuration changes.
@@ -292,18 +298,25 @@ class WalletViewModel(
                 initialValue = TransactionHistorySyncState.Loading
             )
 
+    val isExchangeRateUsdOptedIn = nullableBooleanStateFlow(StandardPreferenceKeys.EXCHANGE_RATE_USD_OPTED_IN)
+
     @OptIn(ExperimentalCoroutinesApi::class)
     private val exchangeRateUsdInternal =
-        synchronizer
-            .filterNotNull()
-            .flatMapLatest { synchronizer ->
-                synchronizer.exchangeRateUsd
+        isExchangeRateUsdOptedIn.flatMapLatest { optedIn ->
+            if (optedIn == true) {
+                synchronizer
+                    .filterNotNull()
+                    .flatMapLatest { synchronizer ->
+                        synchronizer.exchangeRateUsd
+                    }
+            } else {
+                flowOf(ObserveFiatCurrencyResult(isLoading = false, currencyConversion = null))
             }
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(USD_EXCHANGE_REFRESH_LOCK_THRESHOLD),
-                initialValue = ObserveFiatCurrencyResult()
-            )
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(USD_EXCHANGE_REFRESH_LOCK_THRESHOLD),
+            initialValue = ObserveFiatCurrencyResult(isLoading = false, currencyConversion = null)
+        )
 
     private val usdExchangeRateTimestamp =
         exchangeRateUsdInternal
@@ -312,23 +325,56 @@ class WalletViewModel(
             }
             .distinctUntilChanged()
 
+    private var lastExchangeRateUsdValue: ExchangeRateState = ExchangeRateState.OptedOut
+
     val exchangeRateUsd: StateFlow<ExchangeRateState> =
         channelFlow {
-            var lastValue = ExchangeRateState(onRefresh = ::refreshExchangeRateUsd)
-
             combine(
+                isExchangeRateUsdOptedIn,
                 exchangeRateUsdInternal,
                 staleExchangeRateUsdLock.state,
                 refreshExchangeRateUsdLock.state,
-            ) { exchangeRate, isStale, isRefreshEnabled ->
-                lastValue =
-                    lastValue.copy(
-                        isLoading = exchangeRate.isLoading,
-                        isStale = isStale,
-                        isRefreshEnabled = isRefreshEnabled,
-                        currencyConversion = exchangeRate.currencyConversion,
-                    )
-                lastValue
+            ) { isOptedIn, exchangeRate, isStale, isRefreshEnabled ->
+                lastExchangeRateUsdValue =
+                    when (isOptedIn) {
+                        true ->
+                            when (val lastValue = lastExchangeRateUsdValue) {
+                                is ExchangeRateState.Data ->
+                                    lastValue.copy(
+                                        isLoading = exchangeRate.isLoading,
+                                        isStale = isStale,
+                                        isRefreshEnabled = isRefreshEnabled,
+                                        currencyConversion = exchangeRate.currencyConversion,
+                                    )
+
+                                ExchangeRateState.OptedOut ->
+                                    ExchangeRateState.Data(
+                                        isLoading = exchangeRate.isLoading,
+                                        isStale = isStale,
+                                        isRefreshEnabled = isRefreshEnabled,
+                                        currencyConversion = exchangeRate.currencyConversion,
+                                        onRefresh = ::refreshExchangeRateUsd
+                                    )
+
+                                is ExchangeRateState.OptIn ->
+                                    ExchangeRateState.Data(
+                                        isLoading = exchangeRate.isLoading,
+                                        isStale = isStale,
+                                        isRefreshEnabled = isRefreshEnabled,
+                                        currencyConversion = exchangeRate.currencyConversion,
+                                        onRefresh = ::refreshExchangeRateUsd
+                                    )
+                            }
+
+                        false -> ExchangeRateState.OptedOut
+                        null ->
+                            ExchangeRateState.OptIn(
+                                onDismissClick = ::dismissWidgetOptInExchangeRateUsd,
+                                onPrimaryClick = ::showOptInExchangeRateUsd
+                            )
+                    }
+
+                lastExchangeRateUsdValue
             }.distinctUntilChanged()
                 .onEach {
                     Twig.info { "[USD] $it" }
@@ -342,7 +388,7 @@ class WalletViewModel(
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(),
-            initialValue = ExchangeRateState(onRefresh = ::refreshExchangeRateUsd)
+            initialValue = ExchangeRateState.OptedOut
         )
 
     /**
@@ -380,7 +426,7 @@ class WalletViewModel(
         }.stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            BalanceState.None(ExchangeRateState(onRefresh = ::refreshExchangeRateUsd))
+            BalanceState.None(ExchangeRateState.OptedOut)
         )
 
     private val refreshExchangeRateUsdLock =
@@ -400,9 +446,30 @@ class WalletViewModel(
         viewModelScope.launch {
             val synchronizer = synchronizer.filterNotNull().first()
             val value = exchangeRateUsd.value
-            if (value.isRefreshEnabled && !value.isLoading) {
+            if (value is ExchangeRateState.Data && value.isRefreshEnabled && !value.isLoading) {
                 synchronizer.refreshExchangeRateUsd()
             }
+        }
+
+    fun optInExchangeRateUsd(optIn: Boolean) =
+        viewModelScope.launch {
+            setNullableBooleanPreference(StandardPreferenceKeys.EXCHANGE_RATE_USD_OPTED_IN, optIn)
+            backNavigationCommand.emit(Unit)
+        }
+
+    fun dismissOptInExchangeRateUsd() =
+        viewModelScope.launch {
+            setNullableBooleanPreference(StandardPreferenceKeys.EXCHANGE_RATE_USD_OPTED_IN, false)
+            backNavigationCommand.emit(Unit)
+        }
+
+    private fun dismissWidgetOptInExchangeRateUsd() {
+        setNullableBooleanPreference(StandardPreferenceKeys.EXCHANGE_RATE_USD_OPTED_IN, false)
+    }
+
+    private fun showOptInExchangeRateUsd() =
+        viewModelScope.launch {
+            navigationCommand.emit(EXCHANGE_RATE_OPT_IN)
         }
 
     /**
@@ -579,6 +646,26 @@ class WalletViewModel(
                 // Nothing to close
             }
         }
+
+    private fun nullableBooleanStateFlow(default: NullableBooleanPreferenceDefault): StateFlow<Boolean?> =
+        flow {
+            val preferenceProvider = StandardPreferenceSingleton.getInstance(getApplication())
+            emitAll(default.observe(preferenceProvider))
+        }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+            null
+        )
+
+    private fun setNullableBooleanPreference(
+        default: NullableBooleanPreferenceDefault,
+        newState: Boolean
+    ) {
+        viewModelScope.launch {
+            val prefs = StandardPreferenceSingleton.getInstance(getApplication())
+            default.putValue(prefs, newState)
+        }
+    }
 }
 
 /**
@@ -718,5 +805,5 @@ fun Synchronizer.Status.isSyncing() = this == Synchronizer.Status.SYNCING
 
 fun Synchronizer.Status.isSynced() = this == Synchronizer.Status.SYNCED
 
-private val USD_EXCHANGE_REFRESH_LOCK_THRESHOLD = 2.minutes
-private val USD_EXCHANGE_STALE_LOCK_THRESHOLD = 15.minutes
+private val USD_EXCHANGE_REFRESH_LOCK_THRESHOLD = 10.seconds
+private val USD_EXCHANGE_STALE_LOCK_THRESHOLD = 20.seconds
