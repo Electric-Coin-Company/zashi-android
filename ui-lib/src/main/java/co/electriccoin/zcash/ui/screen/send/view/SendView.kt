@@ -25,6 +25,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -708,9 +709,7 @@ fun SendFormAmountTextField(
                 }
             )
 
-            if (exchangeRateState is ExchangeRateState.Data &&
-                (!exchangeRateState.isStale || exchangeRateState.isLoading)
-            ) {
+            if (exchangeRateState is ExchangeRateState.Data) {
                 Spacer(modifier = Modifier.width(ZcashTheme.dimens.spacingMin))
                 Image(
                     modifier = Modifier.padding(top = 24.dp),
@@ -720,8 +719,21 @@ fun SendFormAmountTextField(
                 )
                 Spacer(modifier = Modifier.width(ZcashTheme.dimens.spacingMin))
                 FormTextField(
+                    enabled = !exchangeRateState.isStale,
                     textStyle = ZcashTheme.extendedTypography.textFieldValue.copy(fontSize = 14.sp),
                     value = amountState.fiatValue,
+                    colors =
+                        TextFieldDefaults.colors(
+                            cursorColor = ZcashTheme.colors.textPrimary,
+                            disabledTextColor = ZcashTheme.colors.textDisabled,
+                            focusedContainerColor = Color.Transparent,
+                            unfocusedContainerColor = Color.Transparent,
+                            disabledContainerColor = Color.Transparent,
+                            errorContainerColor = Color.Transparent,
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            disabledIndicatorColor = Color.Transparent
+                        ),
                     onValueChange = { newValue ->
                         setAmountState(
                             AmountState.newFromFiat(
@@ -766,7 +778,12 @@ fun SendFormAmountTextField(
                             modifier = Modifier.requiredSize(7.dp, 13.dp),
                             painter = painterResource(R.drawable.ic_usd),
                             contentDescription = "",
-                            colorFilter = ColorFilter.tint(color = ZcashTheme.colors.secondaryColor),
+                            colorFilter =
+                                if (!exchangeRateState.isStale) {
+                                    ColorFilter.tint(color = ZcashTheme.colors.secondaryColor)
+                                } else {
+                                    ColorFilter.tint(color = ZcashTheme.colors.textDisabled)
+                                }
                         )
                     }
                 )

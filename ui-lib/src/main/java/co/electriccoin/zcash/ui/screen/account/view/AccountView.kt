@@ -222,7 +222,7 @@ private fun AccountTopAppBar(
 }
 
 @Composable
-@Suppress("LongParameterList", "ModifierNotUsedAtRoot")
+@Suppress("LongParameterList", "ModifierNotUsedAtRoot", "LongMethod")
 private fun AccountMainContent(
     balanceState: BalanceState,
     goBalances: () -> Unit,
