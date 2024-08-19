@@ -6,6 +6,8 @@ import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.block.processor.CompactBlockProcessor
 import cash.z.ecc.android.sdk.model.Account
 import cash.z.ecc.android.sdk.model.BlockHeight
+import cash.z.ecc.android.sdk.model.FastestServersResult
+import cash.z.ecc.android.sdk.model.ObserveFiatCurrencyResult
 import cash.z.ecc.android.sdk.model.PercentDecimal
 import cash.z.ecc.android.sdk.model.Proposal
 import cash.z.ecc.android.sdk.model.TransactionOverview
@@ -29,6 +31,13 @@ import kotlinx.coroutines.flow.StateFlow
 internal class MockSynchronizer : CloseableSynchronizer {
     override val latestBirthdayHeight: BlockHeight
         get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
+
+    override suspend fun getFastestServers(
+        context: Context,
+        servers: List<LightWalletEndpoint>
+    ): Flow<FastestServersResult> {
+        TODO("Not yet implemented")
+    }
 
     override val latestHeight: BlockHeight
         get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
@@ -64,6 +73,7 @@ internal class MockSynchronizer : CloseableSynchronizer {
 
     override val processorInfo: Flow<CompactBlockProcessor.ProcessorInfo>
         get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
+
     override val progress: Flow<PercentDecimal>
         get() = TODO("Not yet implemented")
 
@@ -72,11 +82,15 @@ internal class MockSynchronizer : CloseableSynchronizer {
 
     override val status: Flow<Synchronizer.Status>
         get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
+
     override val transactions: Flow<List<TransactionOverview>>
         get() = TODO("Not yet implemented")
 
     override val transparentBalance: StateFlow<Zatoshi?>
         get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
+
+    override val exchangeRateUsd: StateFlow<ObserveFiatCurrencyResult>
+        get() = TODO("Not yet implemented")
 
     override fun close() {
         error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
@@ -109,6 +123,10 @@ internal class MockSynchronizer : CloseableSynchronizer {
         error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
 
+    override suspend fun refreshExchangeRateUsd() {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun getTransparentBalance(tAddr: String): Zatoshi {
         error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
@@ -127,6 +145,10 @@ internal class MockSynchronizer : CloseableSynchronizer {
 
     override suspend fun isValidUnifiedAddr(address: String): Boolean {
         error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
+    }
+
+    override suspend fun isValidTexAddr(address: String): Boolean {
+        TODO("Not yet implemented")
     }
 
     override suspend fun proposeShielding(
@@ -165,9 +187,9 @@ internal class MockSynchronizer : CloseableSynchronizer {
     @Deprecated(
         "Upcoming SDK 2.1 will create multiple transactions at once for some recipients.",
         replaceWith =
-            ReplaceWith(
-                "createProposedTransactions(proposeTransfer(usk.account, toAddress, amount, memo), usk)"
-            )
+        ReplaceWith(
+            "createProposedTransactions(proposeTransfer(usk.account, toAddress, amount, memo), usk)"
+        )
     )
     override suspend fun sendToAddress(
         usk: UnifiedSpendingKey,
@@ -181,9 +203,9 @@ internal class MockSynchronizer : CloseableSynchronizer {
     @Deprecated(
         "Upcoming SDK 2.1 will create multiple transactions at once for some recipients.",
         replaceWith =
-            ReplaceWith(
-                "proposeShielding(usk.account, shieldingThreshold, memo)?.let { createProposedTransactions(it, usk) }"
-            )
+        ReplaceWith(
+            "proposeShielding(usk.account, shieldingThreshold, memo)?.let { createProposedTransactions(it, usk) }"
+        )
     )
     override suspend fun shieldFunds(
         usk: UnifiedSpendingKey,

@@ -10,8 +10,6 @@ import cash.z.ecc.android.sdk.model.MonetarySeparators
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.ZcashNetwork
 import cash.z.ecc.sdk.fixture.ZecSendFixture
-import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
-import co.electriccoin.zcash.ui.fixture.BalanceStateFixture
 import co.electriccoin.zcash.ui.fixture.MockSynchronizer
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 import co.electriccoin.zcash.ui.screen.send.WrapSend
@@ -65,21 +63,12 @@ class SendViewIntegrationTest {
 
         restorationTester.setContent {
             WrapSend(
-                balanceState = BalanceStateFixture.new(),
                 sendArguments = null,
-                synchronizer = synchronizer,
-                walletSnapshot = walletSnapshot,
-                spendingKey = spendingKey,
                 goToQrScanner = {},
                 goBack = {},
                 goBalances = {},
                 goSettings = {},
                 goSendConfirmation = {},
-                isHideBalances = false,
-                onHideBalances = {},
-                hasCameraFeature = true,
-                monetarySeparators = monetarySeparators,
-                topAppBarSubTitleState = TopAppBarSubTitleState.None,
             )
         }
 

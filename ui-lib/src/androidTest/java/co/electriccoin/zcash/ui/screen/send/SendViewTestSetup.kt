@@ -12,6 +12,7 @@ import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.android.sdk.type.AddressType
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
+import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.BalanceStateFixture
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
@@ -130,7 +131,7 @@ class SendViewTestSetup(
                         value = "",
                         fiatValue = "",
                         isTransparentRecipient = false,
-                        exchangeRateState = null
+                        exchangeRateState = ExchangeRateState.OptedOut
                     ),
                 setMemoState = {},
                 memoState = MemoState.new(""),
@@ -142,6 +143,7 @@ class SendViewTestSetup(
                                 available = Zatoshi(Zatoshi.MAX_INCLUSIVE.div(100))
                             )
                     ),
+                exchangeRateState = ExchangeRateState.OptedOut
             )
         }
     }
