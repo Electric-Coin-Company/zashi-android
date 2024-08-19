@@ -461,6 +461,7 @@ object NavigationTargets {
     const val ABOUT = "about"
     const val ADVANCED_SETTINGS = "advanced_settings"
     const val DELETE_WALLET = "delete_wallet"
+    const val EXCHANGE_RATE_OPT_IN = "exchange_rate_opt_in"
     const val EXPORT_PRIVATE_DATA = "export_private_data"
     const val HOME = "home"
     const val CHOOSE_SERVER = "choose_server"
@@ -469,8 +470,7 @@ object NavigationTargets {
     const val SEED_RECOVERY = "seed_recovery"
     const val SEND_CONFIRMATION = "send_confirmation"
     const val SETTINGS = "settings"
+    const val SETTINGS_EXCHANGE_RATE_OPT_IN = "settings_exchange_rate_opt_in"
     const val SUPPORT = "support"
     const val WHATS_NEW = "whats_new"
-    const val SETTINGS_EXCHANGE_RATE_OPT_IN = "settings_exchange_rate_opt_in"
-    const val EXCHANGE_RATE_OPT_IN = "EXCHANGE_RATE_OPT_IN"
 }
