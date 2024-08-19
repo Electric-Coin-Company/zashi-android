@@ -122,7 +122,6 @@ dependencies {
     implementation(projects.sdkExtLib)
     implementation(projects.spackleAndroidLib)
     api(projects.uiDesignLib)
-    implementation("androidx.graphics:graphics-shapes-android:1.0.0-rc01")
 
     androidTestImplementation(projects.testLib)
     androidTestImplementation(libs.bundles.androidx.test)

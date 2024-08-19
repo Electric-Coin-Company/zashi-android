@@ -3,9 +3,9 @@
 package co.electriccoin.zcash.ui.design.theme
 
 import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 
+// TODO [#1555]: replace by new design system
 @Immutable
 data class ExchangeRateColors(
     val btnSecondaryBg: Color,
@@ -29,6 +29,3 @@ internal val DarkExchangeRateColorPalette =
         btnSecondaryFg = Color(0xFFFFFFFF),
         btnSpinnerDisabled = Color(0xFF3D3A3B)
     )
-
-@Suppress("CompositionLocalAllowlist")
-internal val LocalExchangeRateColors = staticCompositionLocalOf<ExchangeRateColors> { error("no colors specified") }

@@ -30,12 +30,10 @@ fun ZcashTheme(
     val baseColors = if (useDarkMode) DarkColorPalette else LightColorPalette
     val extendedColors = if (useDarkMode) DarkExtendedColorPalette else LightExtendedColorPalette
     val zashiColors = if (useDarkMode) DarkZashiColorPalette else LightZashiColorPalette
-    val exchangeRateColors = if (useDarkMode) DarkExchangeRateColorPalette else LightExchangeRateColorPalette
 
     CompositionLocalProvider(
         LocalExtendedColors provides extendedColors,
         LocalZashiColors provides zashiColors,
-        LocalExchangeRateColors provides exchangeRateColors,
     ) {
         ProvideDimens {
             MaterialTheme(
@@ -70,8 +68,4 @@ object ZcashTheme {
     val zashiColors: ZashiColors
         @Composable
         get() = LocalZashiColors.current
-
-    val exchangeRateColors: ExchangeRateColors
-        @Composable
-        get() = LocalExchangeRateColors.current
 }

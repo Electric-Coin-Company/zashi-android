@@ -6,6 +6,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 
+// TODO [#1555]: extract colors to separate file
 @Immutable
 data class ZashiColors(
     val textLight: Color,
@@ -23,6 +24,7 @@ data class ZashiColors(
     val btnPrimaryFg: Color,
     val btnPrimaryFgDisabled: Color,
     val btnTextFg: Color,
+    val exchangeRateColors: ExchangeRateColors
 )
 
 internal val LightZashiColorPalette =
@@ -41,7 +43,8 @@ internal val LightZashiColorPalette =
         btnPrimaryBgDisabled = Color(0xFFEBEBE6),
         btnPrimaryFg = Color(0xFFFFFFFF),
         btnPrimaryFgDisabled = Color(0xFF94907B),
-        btnTextFg = Color(0xFF231F20)
+        btnTextFg = Color(0xFF231F20),
+        exchangeRateColors = LightExchangeRateColorPalette
     )
 
 internal val DarkZashiColorPalette =
@@ -60,7 +63,8 @@ internal val DarkZashiColorPalette =
         btnPrimaryBgDisabled = Color(0xFF343031),
         btnPrimaryFg = Color(0xFF231F20),
         btnPrimaryFgDisabled = Color(0xFF7E7C7C),
-        btnTextFg = Color(0xFFE8E8E8)
+        btnTextFg = Color(0xFFE8E8E8),
+        exchangeRateColors = DarkExchangeRateColorPalette
     )
 
 @Suppress("CompositionLocalAllowlist")

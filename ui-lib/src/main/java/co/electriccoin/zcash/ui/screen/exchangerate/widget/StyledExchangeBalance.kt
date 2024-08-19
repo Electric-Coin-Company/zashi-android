@@ -65,7 +65,7 @@ fun StyledExchangeBalance(
     isHideBalances: Boolean = false,
     hiddenBalancePlaceholder: StringResource =
         stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
-    textColor: Color = ZcashTheme.exchangeRateColors.btnSecondaryFg,
+    textColor: Color = ZcashTheme.zashiColors.exchangeRateColors.btnSecondaryFg,
     style: TextStyle = ZcashTheme.typography.primary.titleSmall.copy(fontWeight = FontWeight.SemiBold)
 ) {
     when (state) {
@@ -161,7 +161,7 @@ private fun ExchangeAvailableRateLabelInternal(
                         if (state.isRefreshEnabled) {
                             textColor
                         } else {
-                            ZcashTheme.exchangeRateColors.btnSpinnerDisabled
+                            ZcashTheme.zashiColors.exchangeRateColors.btnSpinnerDisabled
                         }
                     )
             )
@@ -275,7 +275,7 @@ private fun ExchangeRateButton(
             ButtonDefaults.elevatedButtonColors(
                 containerColor =
                     if (isEnabled && enableBorder) {
-                        ZcashTheme.exchangeRateColors.btnSecondaryBg
+                        ZcashTheme.zashiColors.exchangeRateColors.btnSecondaryBg
                     } else {
                         Color.Unspecified
                     },
@@ -285,7 +285,7 @@ private fun ExchangeRateButton(
             ),
         border =
             if (isEnabled && enableBorder) {
-                BorderStroke(1.dp, ZcashTheme.exchangeRateColors.btnSecondaryBorder)
+                BorderStroke(1.dp, ZcashTheme.zashiColors.exchangeRateColors.btnSecondaryBorder)
             } else {
                 BorderStroke(1.dp, Color.Transparent)
             },
