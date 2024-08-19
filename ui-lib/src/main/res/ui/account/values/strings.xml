@@ -3,6 +3,9 @@
     <string name="account_history_empty">No transaction history</string>
 
     <string name="account_history_item_sent">Sent</string>
+    <string name="account_history_item_shielded_funds">Shielded Funds</string>
+    <string name="account_history_item_shielding_funds">Shielding Funds...</string>
+    <string name="account_history_item_shielding_failed">Shielding Failed...</string>
     <string name="account_history_item_received">Received</string>
     <string name="account_history_item_sending">Sending…</string>
     <string name="account_history_item_receiving">Receiving…</string>
