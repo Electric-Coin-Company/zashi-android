@@ -7,6 +7,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 
 // TODO [#1555]: extract colors to separate file
+// TODO [#1555]: https://github.com/Electric-Coin-Company/zashi-android/issues/1555
 @Immutable
 data class ZashiColors(
     val textLight: Color,
