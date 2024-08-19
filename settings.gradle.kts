@@ -176,13 +176,13 @@ dependencyResolutionManagement {
             val kotlinxCoroutinesVersion = extra["KOTLINX_COROUTINES_VERSION"].toString()
             val kotlinxImmutableCollectionsVersion = extra["KOTLINX_IMMUTABLE_COLLECTIONS_VERSION"].toString()
             val kotlinxSerializableJsonVersion = extra["KOTLINX_SERIALIZABLE_JSON_VERSION"].toString()
+            val lottieVersion = extra["LOTTIE_VERSION"].toString()
             val markdownVersion = extra["MARKDOWN_VERSION"].toString()
             val playAppUpdateVersion = extra["PLAY_APP_UPDATE_VERSION"].toString()
             val playAppUpdateKtxVersion = extra["PLAY_APP_UPDATE_KTX_VERSION"].toString()
             val zcashBip39Version = extra["ZCASH_BIP39_VERSION"].toString()
             val zcashSdkVersion = extra["ZCASH_SDK_VERSION"].toString()
             val zxingVersion = extra["ZXING_VERSION"].toString()
-            val lottieVersion = extra["LOTTIE_VERSION"].toString()
 
             // Standalone versions
             version("flank", flankVersion)
@@ -233,6 +233,7 @@ dependencyResolutionManagement {
             library("kotlinx-datetime", "org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDateTimeVersion")
             library("kotlinx-immutable", "org.jetbrains.kotlinx:kotlinx-collections-immutable:$kotlinxImmutableCollectionsVersion")
             library("kotlinx-serializable-json", "org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializableJsonVersion")
+            library("lottie", "com.airbnb.android:lottie-compose:$lottieVersion")
             library("markdown", "org.jetbrains:markdown:$markdownVersion")
             library("play-update", "com.google.android.play:app-update:$playAppUpdateVersion")
             library("play-update-ktx", "com.google.android.play:app-update-ktx:$playAppUpdateKtxVersion")
@@ -240,7 +241,6 @@ dependencyResolutionManagement {
             library("zcash-sdk-incubator", "cash.z.ecc.android:zcash-android-sdk-incubator:$zcashSdkVersion")
             library("zcash-bip39", "cash.z.ecc.android:kotlin-bip39:$zcashBip39Version")
             library("zxing", "com.google.zxing:core:$zxingVersion")
-            library("lottie", "com.airbnb.android:lottie-compose:$lottieVersion")
 
             // Test libraries
             library("androidx-compose-test-junit", "androidx.compose.ui:ui-test-junit4:$androidxComposeVersion")

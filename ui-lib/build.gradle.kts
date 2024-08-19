@@ -107,11 +107,11 @@ dependencies {
     implementation(libs.kotlinx.datetime)
     implementation(libs.kotlinx.immutable)
     implementation(libs.kotlinx.serializable.json)
+    implementation(libs.lottie)
     implementation(libs.zcash.sdk)
     implementation(libs.zcash.sdk.incubator)
     implementation(libs.zcash.bip39)
     implementation(libs.zxing)
-    implementation(libs.lottie)
 
     implementation(projects.buildInfoLib)
     implementation(projects.configurationApiLib)
