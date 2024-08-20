@@ -11,11 +11,12 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [1.1.6 (712)] - 2024-08-20
 
-## Changed
-- Android NDK version has been bumped to 26.1.10909125
+### Added
+- We added ZEC/USD currency conversion to Zashi which doesn't compromise your IP address.
+- You can now view your balances, and type in the transaction amount in both USD and ZEC.
 
-## Fixed
-- The app screenshot testing has been re-enabled after we moved away from AppCompat components
+### Changed
+- We adopted the latest Zcash SDK version 2.2.0, which brings the ZIP 320 TEX addresses support and ZEC/USD currency conversion functionality.
 
 ## [1.1.5 (706)] - 2024-08-09
 
