@@ -695,7 +695,11 @@ fun SendFormAmountTextField(
                             focusManager.clearFocus(true)
                         },
                         onNext = {
-                            focusManager.moveFocus(FocusDirection.Right)
+                            if (exchangeRateState is ExchangeRateState.Data) {
+                                focusManager.moveFocus(FocusDirection.Right)
+                            } else {
+                                focusManager.moveFocus(FocusDirection.Down)
+                            }
                         }
                     ),
                 bringIntoViewRequester = bringIntoViewRequester,
