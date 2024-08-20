@@ -25,7 +25,7 @@ sealed class AmountState(
             context: Context,
             monetarySeparators: MonetarySeparators,
             value: String,
-            isTransparentRecipient: Boolean
+            isTransparentOrTextRecipient: Boolean
         ): AmountState {
             // Validate raw input string
             val validated =
@@ -45,7 +45,7 @@ sealed class AmountState(
             // Note that the zero funds sending is supported for sending a memo-only shielded transaction
             return when {
                 (zatoshi == null) -> Invalid(value)
-                (zatoshi.value == 0L && isTransparentRecipient) -> Invalid(value)
+                (zatoshi.value == 0L && isTransparentOrTextRecipient) -> Invalid(value)
                 else -> Valid(value, zatoshi)
             }
         }

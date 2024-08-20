@@ -142,7 +142,9 @@ internal fun WrapSend(
                     context = context,
                     value = zecSend?.amount?.toZecString() ?: "",
                     monetarySeparators = monetarySeparators,
-                    isTransparentRecipient = recipientAddressState.type?.let { it == AddressType.Transparent } ?: false
+                    isTransparentOrTextRecipient =
+                        recipientAddressState.type?.let { it == AddressType.Transparent }
+                            ?: false
                 )
             )
         }
@@ -152,7 +154,9 @@ internal fun WrapSend(
         setAmountState(
             AmountState.new(
                 context = context,
-                isTransparentRecipient = recipientAddressState.type?.let { it == AddressType.Transparent } ?: false,
+                isTransparentOrTextRecipient =
+                    recipientAddressState.type?.let { it == AddressType.Transparent }
+                        ?: false,
                 monetarySeparators = monetarySeparators,
                 value = amountState.value
             )
@@ -177,7 +181,9 @@ internal fun WrapSend(
     val onBackAction = {
         when (sendStage) {
             SendStage.Form -> goBack()
-            SendStage.Proposing -> { /* no action - wait until the sending is done */ }
+            SendStage.Proposing -> { // no action - wait until the sending is done
+            }
+
             is SendStage.SendFailure -> setSendStage(SendStage.Form)
         }
     }

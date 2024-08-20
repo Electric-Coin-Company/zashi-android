@@ -379,7 +379,10 @@ private fun SendForm(
                 } else {
                     ImeAction.Next
                 },
-            isTransparentRecipient = recipientAddressState.type?.let { it == AddressType.Transparent } ?: false,
+            isTransparentOrTextRecipient =
+                recipientAddressState.type?.let {
+                    it == AddressType.Transparent || it == AddressType.Tex
+                } ?: false,
             monetarySeparators = monetarySeparators,
             setAmountState = setAmountState,
             walletSnapshot = walletSnapshot,
@@ -586,7 +589,7 @@ fun SendFormAddressTextField(
 fun SendFormAmountTextField(
     amountSate: AmountState,
     imeAction: ImeAction,
-    isTransparentRecipient: Boolean,
+    isTransparentOrTextRecipient: Boolean,
     monetarySeparators: MonetarySeparators,
     setAmountState: (AmountState) -> Unit,
     walletSnapshot: WalletSnapshot,
@@ -638,7 +641,7 @@ fun SendFormAmountTextField(
                         context = context,
                         value = newValue,
                         monetarySeparators = monetarySeparators,
-                        isTransparentRecipient = isTransparentRecipient
+                        isTransparentOrTextRecipient = isTransparentOrTextRecipient
                     )
                 )
             },
