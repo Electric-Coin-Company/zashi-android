@@ -8,7 +8,6 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.basicMarquee
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
@@ -21,7 +20,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
@@ -43,17 +41,13 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.extension.toKotlinLocale
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.component.BlankSurface
+import co.electriccoin.zcash.ui.design.component.LottieProgress
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.ObserveFiatCurrencyResultFixture
 import co.electriccoin.zcash.ui.util.PreviewScreens
 import co.electriccoin.zcash.ui.util.StringResource
 import co.electriccoin.zcash.ui.util.getValue
 import co.electriccoin.zcash.ui.util.stringRes
-import com.airbnb.lottie.compose.LottieAnimation
-import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.LottieConstants
-import com.airbnb.lottie.compose.animateLottieCompositionAsState
-import com.airbnb.lottie.compose.rememberLottieComposition
 import kotlinx.datetime.Clock
 
 @Suppress("LongParameterList", "ComplexCondition")
@@ -130,24 +124,7 @@ private fun ExchangeAvailableRateLabelInternal(
         Spacer(modifier = Modifier.width(12.dp))
 
         if (state.isLoading) {
-            val composition by rememberLottieComposition(
-                LottieCompositionSpec.RawRes(
-                    if (isSystemInDarkTheme()) R.raw.exchange_rate_loading_white else R.raw.exchange_rate_loading
-                )
-            )
-            val progress by animateLottieCompositionAsState(
-                iterations = LottieConstants.IterateForever,
-                composition = composition
-            )
-            LottieAnimation(
-                modifier =
-                    Modifier
-                        .align(CenterVertically)
-                        .size(16.dp),
-                composition = composition,
-                progress = { progress },
-                maintainOriginalImageBounds = true
-            )
+            LottieProgress(modifier = Modifier.align(CenterVertically))
         } else {
             Image(
                 modifier =

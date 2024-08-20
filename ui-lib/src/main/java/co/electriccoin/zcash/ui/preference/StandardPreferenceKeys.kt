@@ -69,9 +69,9 @@ object StandardPreferenceKeys {
             PreferenceKey("IS_HIDE_BALANCES"),
             false
         )
-    val EXCHANGE_RATE_USD_OPTED_IN =
+    val EXCHANGE_RATE_OPTED_IN =
         NullableBooleanPreferenceDefault(
-            PreferenceKey("EXCHANGE_RATE_USD_OPTED_IN"),
+            PreferenceKey("EXCHANGE_RATE_OPTED_IN"),
             null
         )
 }

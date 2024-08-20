@@ -1,6 +1,6 @@
 @file:Suppress("MagicNumber")
 
-package co.electriccoin.zcash.ui.design.theme
+package co.electriccoin.zcash.ui.design.theme.internal
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color

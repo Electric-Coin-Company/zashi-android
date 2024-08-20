@@ -27,7 +27,7 @@ import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.Body
-import co.electriccoin.zcash.ui.design.component.CircularSmallProgressIndicator
+import co.electriccoin.zcash.ui.design.component.LottieProgress
 import co.electriccoin.zcash.ui.design.component.Reference
 import co.electriccoin.zcash.ui.design.component.StyledBalance
 import co.electriccoin.zcash.ui.design.component.StyledBalanceDefaults
@@ -193,9 +193,7 @@ fun BalanceWidget(
             Spacer(modifier = Modifier.width(ZcashTheme.dimens.spacingTiny))
 
             when (balanceState) {
-                is BalanceState.None, is BalanceState.Loading -> {
-                    CircularSmallProgressIndicator(color = ZcashTheme.colors.circularProgressBarSmallDark)
-                }
+                is BalanceState.None, is BalanceState.Loading -> LottieProgress()
 
                 is BalanceState.Available -> {
                     StyledBalance(

@@ -299,7 +299,7 @@ class WalletViewModel(
                 initialValue = TransactionHistorySyncState.Loading
             )
 
-    val isExchangeRateUsdOptedIn = nullableBooleanStateFlow(StandardPreferenceKeys.EXCHANGE_RATE_USD_OPTED_IN)
+    val isExchangeRateUsdOptedIn = nullableBooleanStateFlow(StandardPreferenceKeys.EXCHANGE_RATE_OPTED_IN)
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private val exchangeRateUsdInternal =
@@ -454,18 +454,18 @@ class WalletViewModel(
 
     fun optInExchangeRateUsd(optIn: Boolean) =
         viewModelScope.launch {
-            setNullableBooleanPreference(StandardPreferenceKeys.EXCHANGE_RATE_USD_OPTED_IN, optIn)
+            setNullableBooleanPreference(StandardPreferenceKeys.EXCHANGE_RATE_OPTED_IN, optIn)
             backNavigationCommand.emit(Unit)
         }
 
     fun dismissOptInExchangeRateUsd() =
         viewModelScope.launch {
-            setNullableBooleanPreference(StandardPreferenceKeys.EXCHANGE_RATE_USD_OPTED_IN, false)
+            setNullableBooleanPreference(StandardPreferenceKeys.EXCHANGE_RATE_OPTED_IN, false)
             backNavigationCommand.emit(Unit)
         }
 
     private fun dismissWidgetOptInExchangeRateUsd() {
-        setNullableBooleanPreference(StandardPreferenceKeys.EXCHANGE_RATE_USD_OPTED_IN, false)
+        setNullableBooleanPreference(StandardPreferenceKeys.EXCHANGE_RATE_OPTED_IN, false)
     }
 
     private fun showOptInExchangeRateUsd() =

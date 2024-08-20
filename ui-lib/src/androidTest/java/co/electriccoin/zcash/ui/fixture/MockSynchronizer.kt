@@ -187,9 +187,9 @@ internal class MockSynchronizer : CloseableSynchronizer {
     @Deprecated(
         "Upcoming SDK 2.1 will create multiple transactions at once for some recipients.",
         replaceWith =
-        ReplaceWith(
-            "createProposedTransactions(proposeTransfer(usk.account, toAddress, amount, memo), usk)"
-        )
+            ReplaceWith(
+                "createProposedTransactions(proposeTransfer(usk.account, toAddress, amount, memo), usk)"
+            )
     )
     override suspend fun sendToAddress(
         usk: UnifiedSpendingKey,
@@ -203,9 +203,9 @@ internal class MockSynchronizer : CloseableSynchronizer {
     @Deprecated(
         "Upcoming SDK 2.1 will create multiple transactions at once for some recipients.",
         replaceWith =
-        ReplaceWith(
-            "proposeShielding(usk.account, shieldingThreshold, memo)?.let { createProposedTransactions(it, usk) }"
-        )
+            ReplaceWith(
+                "proposeShielding(usk.account, shieldingThreshold, memo)?.let { createProposedTransactions(it, usk) }"
+            )
     )
     override suspend fun shieldFunds(
         usk: UnifiedSpendingKey,

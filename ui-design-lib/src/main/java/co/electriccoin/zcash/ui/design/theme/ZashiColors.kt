@@ -5,6 +5,9 @@ package co.electriccoin.zcash.ui.design.theme
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
+import co.electriccoin.zcash.ui.design.theme.internal.DarkExchangeRateColorPalette
+import co.electriccoin.zcash.ui.design.theme.internal.ExchangeRateColors
+import co.electriccoin.zcash.ui.design.theme.internal.LightExchangeRateColorPalette
 
 // TODO [#1555]: extract colors to separate file
 // TODO [#1555]: https://github.com/Electric-Coin-Company/zashi-android/issues/1555
