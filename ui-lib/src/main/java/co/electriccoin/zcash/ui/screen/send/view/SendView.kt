@@ -362,10 +362,19 @@ private fun SendForm(
 
         Spacer(Modifier.size(ZcashTheme.dimens.spacingDefault))
 
+        val isMemoFieldAvailable =
+            recipientAddressState.address.isEmpty() ||
+                recipientAddressState.type is AddressType.Invalid ||
+                (
+                    recipientAddressState.type is AddressType.Valid &&
+                        recipientAddressState.type !is AddressType.Transparent &&
+                        recipientAddressState.type !is AddressType.Tex
+                )
+
         SendFormAmountTextField(
             amountSate = amountState,
             imeAction =
-                if (recipientAddressState.type == AddressType.Transparent) {
+                if (recipientAddressState.type == AddressType.Transparent || !isMemoFieldAvailable) {
                     ImeAction.Done
                 } else {
                     ImeAction.Next
@@ -381,15 +390,7 @@ private fun SendForm(
         SendFormMemoTextField(
             memoState = memoState,
             setMemoState = setMemoState,
-            isMemoFieldAvailable = (
-                recipientAddressState.address.isEmpty() ||
-                    recipientAddressState.type is AddressType.Invalid ||
-                    (
-                        recipientAddressState.type is AddressType.Valid &&
-                            recipientAddressState.type !is AddressType.Transparent &&
-                            recipientAddressState.type !is AddressType.Tex
-                    )
-            ),
+            isMemoFieldAvailable = isMemoFieldAvailable,
             scrollState = scrollState,
             scrollTo = scrollToFeePixels
         )
