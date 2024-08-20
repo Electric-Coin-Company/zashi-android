@@ -9,6 +9,14 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [1.1.6 (712)] - 2024-08-20
+
+## Changed
+- Android NDK version has been bumped to 26.1.10909125
+
+## Fixed
+- The app screenshot testing has been re-enabled after we moved away from AppCompat components
+
 ## [1.1.5 (706)] - 2024-08-09
 
 ### Changed

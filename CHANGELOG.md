@@ -6,6 +6,8 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+## [1.1.6 (712)] - 2024-08-20
+
 ## Changed
 - Android NDK version has been bumped to 26.1.10909125
 
