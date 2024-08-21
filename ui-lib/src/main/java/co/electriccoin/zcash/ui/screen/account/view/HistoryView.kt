@@ -148,9 +148,9 @@ internal fun HistoryContainer(
                     testTag = BalancesTag.STATUS,
                     walletSnapshot = walletSnapshot,
                     modifier =
-                        Modifier
-                            .padding(horizontal = ZcashTheme.dimens.spacingDefault)
-                            .animateContentSize()
+                    Modifier
+                        .padding(horizontal = ZcashTheme.dimens.spacingDefault)
+                        .animateContentSize()
                 )
 
                 Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
@@ -576,13 +576,13 @@ private fun HistoryItemCollapsedAddressPart(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier =
-                        Modifier
-                            .fillMaxWidth(ADDRESS_IN_TITLE_WIDTH_RATIO)
-                            .then(clickModifier)
+                    Modifier
+                        .fillMaxWidth(ADDRESS_IN_TITLE_WIDTH_RATIO)
+                        .then(clickModifier)
                 )
             }
         }
-    } else {
+    } else if (!transaction.overview.isShielding) {
         Icon(
             imageVector = ImageVector.vectorResource(R.drawable.ic_trx_shielded),
             contentDescription = stringResource(id = R.string.account_history_item_shielded)
@@ -622,10 +622,10 @@ private fun HistoryItemExpandedAddressPart(
             iconVector = ImageVector.vectorResource(R.drawable.ic_trx_copy),
             iconTintColor = ZcashTheme.colors.secondaryColor,
             modifier =
-                Modifier
-                    .clip(RoundedCornerShape(ZcashTheme.dimens.regularRippleEffectCorner))
-                    .clickable { onAction(TrxItemAction.AddressClick(recipient)) }
-                    .padding(all = ZcashTheme.dimens.spacingTiny)
+            Modifier
+                .clip(RoundedCornerShape(ZcashTheme.dimens.regularRippleEffectCorner))
+                .clickable { onAction(TrxItemAction.AddressClick(recipient)) }
+                .padding(all = ZcashTheme.dimens.spacingTiny)
         )
     }
 }
@@ -706,9 +706,25 @@ private fun HistoryItemExpandedPart(
             onAction = onAction
         )
 
+        if (transaction.overview.getExtendedState().isShielding()) {
+            Spacer(modifier = (Modifier.height(ZcashTheme.dimens.spacingDefault)))
+
+            val prefix =
+                if (transaction.overview.isSentTransaction) {
+                    stringResource(id = R.string.account_history_item_sent_prefix)
+                } else {
+                    stringResource(id = R.string.account_history_item_received_prefix)
+                }
+
+
+            Text(text =
+                "Amount: ${transaction.overview.netValue.toZecStringFull().asZecAmountTriple(prefix)}"
+            )
+        }
+
         Spacer(modifier = (Modifier.height(ZcashTheme.dimens.spacingDefault)))
 
-        HistoryItemTransactionFeePart(fee = transaction.overview.feePaid)
+        HistoryItemTransactionFeePart(transaction = transaction, fee = transaction.overview.feePaid)
 
         Spacer(modifier = (Modifier.height(ZcashTheme.dimens.spacingLarge)))
 
@@ -836,6 +852,7 @@ private fun HistoryItemTransactionIdPart(
 
 @Composable
 private fun HistoryItemTransactionFeePart(
+    transaction: TransactionUi,
     fee: Zatoshi?,
     modifier: Modifier = Modifier
 ) {
@@ -843,7 +860,11 @@ private fun HistoryItemTransactionFeePart(
         Text(
             text = stringResource(id = R.string.account_history_item_transaction_fee),
             style = ZcashTheme.extendedTypography.transactionItemStyles.content,
-            color = ZcashTheme.colors.textDescription,
+            color = if (transaction.overview.getExtendedState().isShielding()) {
+                ZcashTheme.colors.historyRedColor
+            } else {
+                ZcashTheme.colors.textDescription
+            },
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingTiny))
