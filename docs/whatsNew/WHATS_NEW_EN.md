@@ -12,11 +12,13 @@ directly impact users rather than highlighting other key architectural updates.*
 ## [1.1.6 (712)] - 2024-08-20
 
 ### Added
-- We added ZEC/USD currency conversion to Zashi which doesn't compromise your IP address.
-- You can now view your balances, and type in the transaction amount in both USD and ZEC.
+- We added ZEC/USD currency conversion to Zashi which doesn't compromise your IP address. You can now view your balances, and type in the transaction amount in both USD and ZEC.
 
 ### Changed
-- We adopted the latest Zcash SDK version 2.2.0, which brings the ZIP 320 TEX addresses support and ZEC/USD currency conversion functionality.
+- We adopted the latest Zcash SDK version 2.2.0, which brings ZIP 320 TEX addresses support, fetching ZEC/USD exchange rate over Tor, and support for restoring the full history from transparent-only wallets.
+
+### Fixed
+- We re-enabled app screenshot testing after we moved away from the AppCompat components.
 
 ## [1.1.5 (706)] - 2024-08-09
 
