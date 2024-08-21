@@ -755,8 +755,7 @@ fun SendFormAmountTextField(
                         Text(
                             text =
                                 stringResource(
-                                    id = R.string.send_usd_amount_hint,
-                                    zcashCurrency
+                                    id = R.string.send_usd_amount_hint
                                 ),
                             style = ZcashTheme.extendedTypography.textFieldHint,
                             color = ZcashTheme.colors.textFieldHint
