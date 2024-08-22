@@ -10,6 +10,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.test.filters.MediumTest
 import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.R
@@ -39,6 +40,7 @@ class SecurityWarningViewTest : UiTestPrerequisites() {
         }
 
         composeTestRule.onNodeWithText(getStringResource(R.string.security_warning_confirm), ignoreCase = true).also {
+            it.performScrollTo()
             it.assertExists()
             it.assertIsDisplayed()
             it.assertHasClickAction()
@@ -105,6 +107,7 @@ private fun ComposeContentTestRule.clickBack() {
 
 private fun ComposeContentTestRule.clickConfirm() {
     onNodeWithText(getStringResource(R.string.security_warning_confirm), ignoreCase = true).also {
+        it.performScrollTo()
         it.performClick()
     }
 }
