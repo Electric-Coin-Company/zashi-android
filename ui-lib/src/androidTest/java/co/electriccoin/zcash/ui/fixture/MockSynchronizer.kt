@@ -30,7 +30,7 @@ import kotlinx.coroutines.flow.StateFlow
 @Suppress("TooManyFunctions", "UNUSED_PARAMETER")
 internal class MockSynchronizer : CloseableSynchronizer {
     override val exchangeRateUsd: StateFlow<ObserveFiatCurrencyResult>
-        get() = TODO("Not yet implemented")
+        get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
 
     override val latestBirthdayHeight: BlockHeight
         get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
@@ -71,7 +71,7 @@ internal class MockSynchronizer : CloseableSynchronizer {
         get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
 
     override val progress: Flow<PercentDecimal>
-        get() = TODO("Not yet implemented")
+        get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
 
     override val saplingBalances: StateFlow<WalletBalance?>
         get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
@@ -80,7 +80,7 @@ internal class MockSynchronizer : CloseableSynchronizer {
         get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
 
     override val transactions: Flow<List<TransactionOverview>>
-        get() = TODO("Not yet implemented")
+        get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
 
     override val transparentBalance: StateFlow<Zatoshi?>
         get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
@@ -129,7 +129,7 @@ internal class MockSynchronizer : CloseableSynchronizer {
     }
 
     override suspend fun isValidTexAddr(address: String): Boolean {
-        TODO("Not yet implemented")
+        error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
 
     override suspend fun isValidTransparentAddr(address: String): Boolean {
@@ -163,7 +163,7 @@ internal class MockSynchronizer : CloseableSynchronizer {
     }
 
     override suspend fun refreshExchangeRateUsd() {
-        TODO("Not yet implemented")
+        error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
 
     override suspend fun refreshUtxos(
@@ -232,7 +232,7 @@ internal class MockSynchronizer : CloseableSynchronizer {
         context: Context,
         servers: List<LightWalletEndpoint>
     ): Flow<FastestServersResult> {
-        TODO("Not yet implemented")
+        error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
 
     companion object {
