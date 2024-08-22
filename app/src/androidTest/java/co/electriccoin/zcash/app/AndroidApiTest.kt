@@ -30,7 +30,7 @@ class AndroidApiTest {
         // change this unless you're absolutely sure we're ready to set a new API level.
         assertEquals(
             ApplicationProvider.getApplicationContext<Application>().applicationInfo.minSdkVersion,
-            Build.VERSION_CODES.O_MR1
+            Build.VERSION_CODES.R
         )
     }
 }
