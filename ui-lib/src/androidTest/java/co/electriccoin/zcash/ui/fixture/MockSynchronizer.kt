@@ -6,6 +6,8 @@ import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.block.processor.CompactBlockProcessor
 import cash.z.ecc.android.sdk.model.Account
 import cash.z.ecc.android.sdk.model.BlockHeight
+import cash.z.ecc.android.sdk.model.FastestServersResult
+import cash.z.ecc.android.sdk.model.ObserveFiatCurrencyResult
 import cash.z.ecc.android.sdk.model.PercentDecimal
 import cash.z.ecc.android.sdk.model.Proposal
 import cash.z.ecc.android.sdk.model.TransactionOverview
@@ -27,6 +29,9 @@ import kotlinx.coroutines.flow.StateFlow
  */
 @Suppress("TooManyFunctions", "UNUSED_PARAMETER")
 internal class MockSynchronizer : CloseableSynchronizer {
+    override val exchangeRateUsd: StateFlow<ObserveFiatCurrencyResult>
+        get() = TODO("Not yet implemented")
+
     override val latestBirthdayHeight: BlockHeight
         get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
 
@@ -64,6 +69,7 @@ internal class MockSynchronizer : CloseableSynchronizer {
 
     override val processorInfo: Flow<CompactBlockProcessor.ProcessorInfo>
         get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
+
     override val progress: Flow<PercentDecimal>
         get() = TODO("Not yet implemented")
 
@@ -72,6 +78,7 @@ internal class MockSynchronizer : CloseableSynchronizer {
 
     override val status: Flow<Synchronizer.Status>
         get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
+
     override val transactions: Flow<List<TransactionOverview>>
         get() = TODO("Not yet implemented")
 
@@ -121,6 +128,10 @@ internal class MockSynchronizer : CloseableSynchronizer {
         error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
 
+    override suspend fun isValidTexAddr(address: String): Boolean {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun isValidTransparentAddr(address: String): Boolean {
         error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
@@ -149,6 +160,10 @@ internal class MockSynchronizer : CloseableSynchronizer {
 
     override suspend fun quickRewind() {
         error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
+    }
+
+    override suspend fun refreshExchangeRateUsd() {
+        TODO("Not yet implemented")
     }
 
     override suspend fun refreshUtxos(
@@ -211,6 +226,13 @@ internal class MockSynchronizer : CloseableSynchronizer {
         alias: String
     ): String {
         error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
+    }
+
+    override suspend fun getFastestServers(
+        context: Context,
+        servers: List<LightWalletEndpoint>
+    ): Flow<FastestServersResult> {
+        TODO("Not yet implemented")
     }
 
     companion object {
