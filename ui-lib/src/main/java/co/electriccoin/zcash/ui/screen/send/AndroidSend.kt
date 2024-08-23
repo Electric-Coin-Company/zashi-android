@@ -147,7 +147,9 @@ internal fun WrapSend(
                     context = context,
                     value = zecSend?.amount?.toZecString() ?: "",
                     monetarySeparators = monetarySeparators,
-                    isTransparentRecipient = recipientAddressState.type?.let { it == AddressType.Transparent } ?: false,
+                    isTransparentOrTextRecipient =
+                        recipientAddressState.type?.let { it == AddressType.Transparent }
+                            ?: false,
                     fiatValue = "",
                     exchangeRateState = exchangeRateState
                 )
@@ -160,7 +162,7 @@ internal fun WrapSend(
             if (amountState.value.isNotBlank() || amountState.fiatValue.isBlank()) {
                 AmountState.newFromZec(
                     context = context,
-                    isTransparentRecipient = recipientAddressState.type?.let { it == AddressType.Transparent } ?: false,
+                    isTransparentOrTextRecipient = recipientAddressState.type?.let { it == AddressType.Transparent } ?: false,
                     monetarySeparators = monetarySeparators,
                     value = amountState.value,
                     fiatValue = amountState.fiatValue,
@@ -169,7 +171,7 @@ internal fun WrapSend(
             } else {
                 AmountState.newFromFiat(
                     context = context,
-                    isTransparentRecipient = recipientAddressState.type?.let { it == AddressType.Transparent } ?: false,
+                    isTransparentOrTextRecipient = recipientAddressState.type?.let { it == AddressType.Transparent } ?: false,
                     monetarySeparators = monetarySeparators,
                     value = amountState.value,
                     fiatValue = amountState.fiatValue,
@@ -196,7 +198,7 @@ internal fun WrapSend(
                 monetarySeparators = monetarySeparators,
                 value = "",
                 fiatValue = "",
-                isTransparentRecipient = false,
+                isTransparentOrTextRecipient = false,
                 exchangeRateState = exchangeRateState
             )
         )
@@ -209,7 +211,6 @@ internal fun WrapSend(
             SendStage.Proposing -> {
                 // no action - wait until the sending is done
             }
-
             is SendStage.SendFailure -> setSendStage(SendStage.Form)
         }
     }

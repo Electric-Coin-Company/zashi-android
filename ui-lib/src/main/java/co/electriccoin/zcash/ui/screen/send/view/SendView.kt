@@ -386,15 +386,27 @@ private fun SendForm(
 
         Spacer(Modifier.size(ZcashTheme.dimens.spacingDefault))
 
+        val isMemoFieldAvailable =
+            recipientAddressState.address.isEmpty() ||
+                recipientAddressState.type is AddressType.Invalid ||
+                (
+                    recipientAddressState.type is AddressType.Valid &&
+                        recipientAddressState.type !is AddressType.Transparent &&
+                        recipientAddressState.type !is AddressType.Tex
+                )
+
         SendFormAmountTextField(
             amountState = amountState,
             imeAction =
-                if (recipientAddressState.type == AddressType.Transparent) {
+                if (recipientAddressState.type == AddressType.Transparent || !isMemoFieldAvailable) {
                     ImeAction.Done
                 } else {
                     ImeAction.Next
                 },
-            isTransparentRecipient = recipientAddressState.type?.let { it == AddressType.Transparent } ?: false,
+            isTransparentOrTextRecipient =
+                recipientAddressState.type?.let {
+                    it == AddressType.Transparent || it == AddressType.Tex
+                } ?: false,
             monetarySeparators = monetarySeparators,
             setAmountState = setAmountState,
             walletSnapshot = walletSnapshot,
@@ -406,15 +418,7 @@ private fun SendForm(
         SendFormMemoTextField(
             memoState = memoState,
             setMemoState = setMemoState,
-            isMemoFieldAvailable = (
-                recipientAddressState.address.isEmpty() ||
-                    recipientAddressState.type is AddressType.Invalid ||
-                    (
-                        recipientAddressState.type is AddressType.Valid &&
-                            recipientAddressState.type !is AddressType.Transparent &&
-                            recipientAddressState.type !is AddressType.Tex
-                    )
-            ),
+            isMemoFieldAvailable = isMemoFieldAvailable,
             scrollState = scrollState,
             scrollTo = scrollToFeePixels
         )
@@ -610,7 +614,7 @@ fun SendFormAddressTextField(
 fun SendFormAmountTextField(
     amountState: AmountState,
     imeAction: ImeAction,
-    isTransparentRecipient: Boolean,
+    isTransparentOrTextRecipient: Boolean,
     monetarySeparators: MonetarySeparators,
     exchangeRateState: ExchangeRateState,
     setAmountState: (AmountState) -> Unit,
@@ -665,7 +669,7 @@ fun SendFormAmountTextField(
                             context = context,
                             value = newValue,
                             monetarySeparators = monetarySeparators,
-                            isTransparentRecipient = isTransparentRecipient,
+                            isTransparentOrTextRecipient = isTransparentOrTextRecipient,
                             fiatValue = amountState.fiatValue,
                             exchangeRateState = exchangeRateState
                         )
@@ -744,7 +748,7 @@ fun SendFormAmountTextField(
                                 context = context,
                                 value = amountState.value,
                                 monetarySeparators = monetarySeparators,
-                                isTransparentRecipient = isTransparentRecipient,
+                                isTransparentOrTextRecipient = isTransparentOrTextRecipient,
                                 fiatValue = newValue,
                                 exchangeRateState = exchangeRateState
                             )

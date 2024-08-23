@@ -33,7 +33,7 @@ sealed interface AmountState {
             monetarySeparators: MonetarySeparators,
             value: String,
             fiatValue: String,
-            isTransparentRecipient: Boolean,
+            isTransparentOrTextRecipient: Boolean,
             exchangeRateState: ExchangeRateState,
         ): AmountState {
             val isValid = validate(context, monetarySeparators, value)
@@ -56,7 +56,7 @@ sealed interface AmountState {
             // Note that the zero funds sending is supported for sending a memo-only shielded transaction
             return when {
                 (zatoshi == null) -> Invalid(value, if (value.isBlank()) "" else fiatValue)
-                (zatoshi.value == 0L && isTransparentRecipient) -> Invalid(value, fiatValue)
+                (zatoshi.value == 0L && isTransparentOrTextRecipient) -> Invalid(value, fiatValue)
                 else -> {
                     Valid(
                         value = value,
@@ -83,7 +83,7 @@ sealed interface AmountState {
             monetarySeparators: MonetarySeparators,
             value: String,
             fiatValue: String,
-            isTransparentRecipient: Boolean,
+            isTransparentOrTextRecipient: Boolean,
             exchangeRateState: ExchangeRateState,
         ): AmountState {
             val isValid = validate(context, monetarySeparators, fiatValue)
@@ -101,7 +101,7 @@ sealed interface AmountState {
 
             return when {
                 (zatoshi == null) -> Invalid(value, fiatValue)
-                (zatoshi.value == 0L && isTransparentRecipient) -> Invalid(value, fiatValue)
+                (zatoshi.value == 0L && isTransparentOrTextRecipient) -> Invalid(value, fiatValue)
                 else -> {
                     Valid(
                         value = zatoshi.toZecString(),

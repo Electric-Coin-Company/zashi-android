@@ -284,7 +284,7 @@ fladle {
     // Firebase Test Lab has min and max values that might differ from our project's
     // These are determined by `gcloud firebase test android models list`
     @Suppress("MagicNumber", "VariableNaming")
-    val FIREBASE_TEST_LAB_MIN_SDK = 27 // Minimum for Pixel2.arm device
+    val FIREBASE_TEST_LAB_MIN_SDK = 30 // Minimum for Pixel2.arm device
 
     @Suppress("MagicNumber", "VariableNaming")
     val FIREBASE_TEST_LAB_MAX_SDK = 33

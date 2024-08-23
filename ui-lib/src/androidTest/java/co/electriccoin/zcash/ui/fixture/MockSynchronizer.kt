@@ -29,126 +29,115 @@ import kotlinx.coroutines.flow.StateFlow
  */
 @Suppress("TooManyFunctions", "UNUSED_PARAMETER")
 internal class MockSynchronizer : CloseableSynchronizer {
-    override val latestBirthdayHeight: BlockHeight
-        get() = error("Intentionally not implemented yet.")
+    override val exchangeRateUsd: StateFlow<ObserveFiatCurrencyResult>
+        get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
 
-    override suspend fun getFastestServers(
-        context: Context,
-        servers: List<LightWalletEndpoint>
-    ): Flow<FastestServersResult> {
-        error("Intentionally not implemented yet.")
-    }
+    override val latestBirthdayHeight: BlockHeight
+        get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
 
     override val latestHeight: BlockHeight
-        get() = error("Intentionally not implemented yet.")
+        get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
 
     override val network: ZcashNetwork
-        get() = error("Intentionally not implemented yet.")
+        get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
 
     override val networkHeight: StateFlow<BlockHeight?>
-        get() = error("Intentionally not implemented yet.")
+        get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
 
     override var onChainErrorHandler: ((BlockHeight, BlockHeight) -> Any)?
-        get() = error("Intentionally not implemented yet.")
-        set(value) = error("Intentionally not implemented yet.")
+        get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
+        set(value) {}
 
     override var onCriticalErrorHandler: ((Throwable?) -> Boolean)?
-        get() = error("Intentionally not implemented yet.")
-        set(value) = error("Intentionally not implemented yet.")
+        get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
+        set(value) {}
 
     override var onProcessorErrorHandler: ((Throwable?) -> Boolean)?
-        get() = error("Intentionally not implemented yet.")
-        set(value) = error("Intentionally not implemented yet.")
+        get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
+        set(value) {}
 
     override var onSetupErrorHandler: ((Throwable?) -> Boolean)?
-        get() = error("Intentionally not implemented yet.")
-        set(value) = error("Intentionally not implemented yet.")
+        get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
+        set(value) {}
 
     override var onSubmissionErrorHandler: ((Throwable?) -> Boolean)?
         get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
-        set(value) = error("Intentionally not implemented yet.")
+        set(value) {}
 
     override val orchardBalances: StateFlow<WalletBalance?>
-        get() = error("Intentionally not implemented yet.")
+        get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
 
     override val processorInfo: Flow<CompactBlockProcessor.ProcessorInfo>
-        get() = error("Intentionally not implemented yet.")
+        get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
 
     override val progress: Flow<PercentDecimal>
-        get() = error("Intentionally not implemented yet.")
+        get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
 
     override val saplingBalances: StateFlow<WalletBalance?>
-        get() = error("Intentionally not implemented yet.")
+        get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
 
     override val status: Flow<Synchronizer.Status>
-        get() = error("Intentionally not implemented yet.")
+        get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
 
     override val transactions: Flow<List<TransactionOverview>>
-        get() = error("Intentionally not implemented yet.")
+        get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
 
     override val transparentBalance: StateFlow<Zatoshi?>
-        get() = error("Intentionally not implemented yet.")
-
-    override val exchangeRateUsd: StateFlow<ObserveFiatCurrencyResult>
-        get() = error("Intentionally not implemented yet.")
+        get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
 
     override fun close() {
-        error("Intentionally not implemented yet.")
+        error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
 
     override suspend fun createProposedTransactions(
         proposal: Proposal,
         usk: UnifiedSpendingKey
     ): Flow<TransactionSubmitResult> {
-        error("Intentionally not implemented yet.")
+        error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} yet.")
     }
 
     override fun getMemos(transactionOverview: TransactionOverview): Flow<String> {
-        error("Intentionally not implemented yet.")
+        error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
 
     override suspend fun getNearestRewindHeight(height: BlockHeight): BlockHeight {
-        error("Intentionally not implemented yet.")
+        error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
 
     override fun getRecipients(transactionOverview: TransactionOverview): Flow<TransactionRecipient> {
-        error("Intentionally not implemented yet.")
+        error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
 
     override suspend fun getSaplingAddress(account: Account): String {
-        error("Intentionally not implemented yet.")
+        error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
 
     override suspend fun getTransparentAddress(account: Account): String {
-        error("Intentionally not implemented yet.")
-    }
-
-    override suspend fun refreshExchangeRateUsd() {
-        error("Intentionally not implemented yet.")
+        error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
 
     override suspend fun getTransparentBalance(tAddr: String): Zatoshi {
-        error("Intentionally not implemented yet.")
+        error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
 
     override suspend fun getUnifiedAddress(account: Account): String {
-        error("Intentionally not implemented yet.")
+        error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
 
     override suspend fun isValidShieldedAddr(address: String): Boolean {
-        error("Intentionally not implemented yet.")
-    }
-
-    override suspend fun isValidTransparentAddr(address: String): Boolean {
-        error("Intentionally not implemented yet.")
-    }
-
-    override suspend fun isValidUnifiedAddr(address: String): Boolean {
-        error("Intentionally not implemented yet.")
+        error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
 
     override suspend fun isValidTexAddr(address: String): Boolean {
-        error("Intentionally not implemented yet.")
+        error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
+    }
+
+    override suspend fun isValidTransparentAddr(address: String): Boolean {
+        error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
+    }
+
+    override suspend fun isValidUnifiedAddr(address: String): Boolean {
+        error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
 
     override suspend fun proposeShielding(
@@ -157,7 +146,7 @@ internal class MockSynchronizer : CloseableSynchronizer {
         memo: String,
         transparentReceiver: String?
     ): Proposal? {
-        error("Intentionally not implemented yet.")
+        error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} yet.")
     }
 
     override suspend fun proposeTransfer(
@@ -166,22 +155,26 @@ internal class MockSynchronizer : CloseableSynchronizer {
         amount: Zatoshi,
         memo: String
     ): Proposal {
-        error("Intentionally not implemented yet.")
+        error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} yet.")
     }
 
     override suspend fun quickRewind() {
-        error("Intentionally not implemented yet.")
+        error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
+    }
+
+    override suspend fun refreshExchangeRateUsd() {
+        error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
 
     override suspend fun refreshUtxos(
         account: Account,
         since: BlockHeight
     ): Int? {
-        error("Intentionally not implemented yet.")
+        error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
 
     override suspend fun rewindToNearestHeight(height: BlockHeight) {
-        error("Intentionally not implemented yet.")
+        error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
 
     @Deprecated(
@@ -211,20 +204,20 @@ internal class MockSynchronizer : CloseableSynchronizer {
         usk: UnifiedSpendingKey,
         memo: String
     ): Long {
-        error("Intentionally not implemented yet.")
+        error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
 
     override suspend fun validateAddress(address: String): AddressType = AddressType.Unified
 
     override suspend fun validateConsensusBranch(): ConsensusMatchType {
-        error("Intentionally not implemented yet.")
+        error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
 
     override suspend fun validateServerEndpoint(
         context: Context,
         endpoint: LightWalletEndpoint
     ): ServerValidation {
-        error("Intentionally not implemented yet.")
+        error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
 
     override suspend fun getExistingDataDbFilePath(
@@ -232,7 +225,14 @@ internal class MockSynchronizer : CloseableSynchronizer {
         network: ZcashNetwork,
         alias: String
     ): String {
-        error("Intentionally not implemented yet.")
+        error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
+    }
+
+    override suspend fun getFastestServers(
+        context: Context,
+        servers: List<LightWalletEndpoint>
+    ): Flow<FastestServersResult> {
+        error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
 
     companion object {
