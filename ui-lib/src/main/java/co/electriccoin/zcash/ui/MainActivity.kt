@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.os.SystemClock
+import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.annotation.VisibleForTesting
@@ -28,7 +29,6 @@ import cash.z.ecc.sdk.type.fromResources
 import co.electriccoin.zcash.spackle.FirebaseTestLabUtil
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.compose.BindCompLocalProvider
-import co.electriccoin.zcash.ui.common.extension.setContentCompat
 import co.electriccoin.zcash.ui.common.model.OnboardingState
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.viewmodel.AuthenticationUIState
@@ -126,7 +126,8 @@ class MainActivity : FragmentActivity() {
         // including IME animations, and go edge-to-edge.
         // This also sets up the initial system bar style based on the platform theme
         enableEdgeToEdge()
-        setContentCompat {
+
+        setContent {
             Override(configurationOverrideFlow) {
                 ZcashTheme {
                     BlankSurface(
@@ -159,7 +160,6 @@ class MainActivity : FragmentActivity() {
                 Twig.debug { "Authentication initial state" }
                 // Wait for the state update
             }
-
             AuthenticationUIState.NotRequired -> {
                 Twig.debug { "App access authentication NOT required - welcome animation only" }
                 if (animateAppAccess) {
@@ -173,7 +173,6 @@ class MainActivity : FragmentActivity() {
                     }
                 }
             }
-
             AuthenticationUIState.Required -> {
                 Twig.debug { "App access authentication required" }
 
@@ -199,14 +198,12 @@ class MainActivity : FragmentActivity() {
                     useCase = AuthenticationUseCase.AppAccess
                 )
             }
-
             AuthenticationUIState.SupportedRequired -> {
                 Twig.debug { "Authentication support required" }
                 WrapSupport(
                     goBack = { finish() }
                 )
             }
-
             AuthenticationUIState.Successful -> {
                 Twig.debug { "Authentication successful - entering the app" }
                 // No action is needed - the main app content is laid out now
@@ -232,7 +229,6 @@ class MainActivity : FragmentActivity() {
                     SecretState.None -> {
                         WrapOnboarding()
                     }
-
                     is SecretState.NeedsWarning -> {
                         WrapSecurityWarning(
                             onBack = { walletViewModel.persistOnboardingState(OnboardingState.NONE) },
@@ -253,18 +249,15 @@ class MainActivity : FragmentActivity() {
                             }
                         )
                     }
-
                     is SecretState.NeedsBackup -> {
                         WrapNewWalletRecovery(
                             secretState.persistableWallet,
                             onBackupComplete = { walletViewModel.persistOnboardingState(OnboardingState.READY) }
                         )
                     }
-
                     is SecretState.Ready -> {
                         Navigation()
                     }
-
                     else -> {
                         error("Unhandled secret state: $secretState")
                     }
