@@ -9,7 +9,7 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
-## [1.1.6 (712)] - 2024-08-20
+## [1.1.6 (712)] - 2024-08-23
 
 ### Added
 - We added ZEC/USD currency conversion to Zashi which doesn't compromise your IP address. You can now view your balances, and type in the transaction amount in both USD and ZEC.
