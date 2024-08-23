@@ -8,6 +8,10 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [1.1.6 (712)] - 2024-08-20
 
+### Added
+- Balance now also displays USD value
+- An option to enter USD amount in Send Transaction screen
+
 ## Changed
 - Android NDK version has been bumped to 26.1.10909125
 

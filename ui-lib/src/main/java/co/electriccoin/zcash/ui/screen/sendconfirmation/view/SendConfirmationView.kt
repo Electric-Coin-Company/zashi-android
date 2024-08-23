@@ -42,6 +42,7 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.BalanceWidgetBigLineOnly
 import co.electriccoin.zcash.ui.common.extension.asZecAmountTriple
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
+import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.AppAlertDialog
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
@@ -58,6 +59,8 @@ import co.electriccoin.zcash.ui.design.component.StyledBalanceDefaults
 import co.electriccoin.zcash.ui.design.component.Tiny
 import co.electriccoin.zcash.ui.design.component.TopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.fixture.ObserveFiatCurrencyResultFixture
+import co.electriccoin.zcash.ui.screen.exchangerate.widget.StyledExchangeLabel
 import co.electriccoin.zcash.ui.screen.sendconfirmation.SendConfirmationTag
 import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SendConfirmationStage
 import kotlinx.collections.immutable.ImmutableList
@@ -83,7 +86,8 @@ private fun SendConfirmationPreview() {
             stage = SendConfirmationStage.Confirmation,
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
             onContactSupport = {},
-            submissionResults = emptyList<TransactionSubmitResult>().toImmutableList()
+            submissionResults = emptyList<TransactionSubmitResult>().toImmutableList(),
+            exchangeRate = ObserveFiatCurrencyResultFixture.new()
         )
     }
 }
@@ -106,7 +110,8 @@ private fun SendConfirmationDarkPreview() {
             stage = SendConfirmationStage.Confirmation,
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
             onContactSupport = {},
-            submissionResults = emptyList<TransactionSubmitResult>().toImmutableList()
+            submissionResults = emptyList<TransactionSubmitResult>().toImmutableList(),
+            exchangeRate = ObserveFiatCurrencyResultFixture.new()
         )
     }
 }
@@ -129,7 +134,8 @@ private fun SendMultipleErrorPreview() {
             stage = SendConfirmationStage.MultipleTrxFailure,
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
             onContactSupport = {},
-            submissionResults = emptyList<TransactionSubmitResult>().toImmutableList()
+            submissionResults = emptyList<TransactionSubmitResult>().toImmutableList(),
+            exchangeRate = ObserveFiatCurrencyResultFixture.new()
         )
     }
 }
@@ -152,7 +158,8 @@ private fun SendMultipleErrorDarkPreview() {
             stage = SendConfirmationStage.MultipleTrxFailure,
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
             onContactSupport = {},
-            submissionResults = emptyList<TransactionSubmitResult>().toImmutableList()
+            submissionResults = emptyList<TransactionSubmitResult>().toImmutableList(),
+            exchangeRate = ObserveFiatCurrencyResultFixture.new()
         )
     }
 }
@@ -171,7 +178,8 @@ private fun PreviewSendConfirmation() {
                 ),
             onConfirmation = {},
             onBack = {},
-            isSending = false
+            isSending = false,
+            exchangeRate = ObserveFiatCurrencyResultFixture.new()
         )
     }
 }
@@ -244,6 +252,7 @@ fun SendConfirmation(
     submissionResults: ImmutableList<TransactionSubmitResult>,
     topAppBarSubTitleState: TopAppBarSubTitleState,
     zecSend: ZecSend,
+    exchangeRate: ExchangeRateState
 ) {
     BlankBgScaffold(
         topBar = {
@@ -269,7 +278,8 @@ fun SendConfirmation(
                         bottom = paddingValues.calculateBottomPadding(),
                         start = ZcashTheme.dimens.screenHorizontalSpacingRegular,
                         end = ZcashTheme.dimens.screenHorizontalSpacingRegular
-                    )
+                    ),
+            exchangeRate = exchangeRate
         )
     }
 }
@@ -320,12 +330,13 @@ private fun SendConfirmationTopAppBar(
 @Composable
 @Suppress("LongParameterList")
 private fun SendConfirmationMainContent(
-    onBack: () -> Unit,
-    onContactSupport: () -> Unit,
-    onConfirmation: () -> Unit,
     stage: SendConfirmationStage,
     submissionResults: ImmutableList<TransactionSubmitResult>,
     zecSend: ZecSend,
+    onBack: () -> Unit,
+    onContactSupport: () -> Unit,
+    onConfirmation: () -> Unit,
+    exchangeRate: ExchangeRateState,
     modifier: Modifier = Modifier,
 ) {
     when (stage) {
@@ -335,7 +346,8 @@ private fun SendConfirmationMainContent(
                 onBack = onBack,
                 onConfirmation = onConfirmation,
                 isSending = stage == SendConfirmationStage.Sending,
-                modifier = modifier
+                modifier = modifier,
+                exchangeRate = exchangeRate
             )
             if (stage is SendConfirmationStage.Failure) {
                 SendFailure(
@@ -355,12 +367,13 @@ private fun SendConfirmationMainContent(
 }
 
 @Composable
-@Suppress("LongMethod")
+@Suppress("LongMethod", "LongParameterList")
 private fun SendConfirmationContent(
     zecSend: ZecSend,
+    exchangeRate: ExchangeRateState,
+    isSending: Boolean,
     onConfirmation: () -> Unit,
     onBack: () -> Unit,
-    isSending: Boolean,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -378,6 +391,12 @@ private fun SendConfirmationContent(
             parts = zecSend.amount.toZecStringFull().asZecAmountTriple(),
             // We don't hide any balance in confirmation screen
             isHideBalances = false
+        )
+
+        StyledExchangeLabel(
+            zatoshi = zecSend.amount,
+            state = exchangeRate,
+            isHideBalances = false,
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))

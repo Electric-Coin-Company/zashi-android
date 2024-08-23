@@ -28,7 +28,6 @@ import androidx.test.espresso.matcher.ViewMatchers.isRoot
 import androidx.test.espresso.screenshot.captureToBitmap
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.filters.LargeTest
-import androidx.test.filters.MediumTest
 import androidx.test.filters.SdkSuppress
 import cash.z.ecc.android.sdk.fixture.WalletAddressFixture
 import cash.z.ecc.android.sdk.model.MonetarySeparators
@@ -49,6 +48,7 @@ import co.electriccoin.zcash.ui.screen.account.AccountTag
 import co.electriccoin.zcash.ui.screen.home.HomeTag
 import co.electriccoin.zcash.ui.screen.restore.RestoreTag
 import co.electriccoin.zcash.ui.screen.restore.viewmodel.RestoreViewModel
+import co.electriccoin.zcash.ui.screen.securitywarning.view.SecurityScreenTag.ACKNOWLEDGE_CHECKBOX_TAG
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -124,7 +124,7 @@ class ScreenshotTest : UiTestPrerequisites() {
     }
 
     @Test
-    @MediumTest
+    @LargeTest
     fun takeScreenshotsForRestoreWalletLightEnXA() {
         runWith(UiMode.Light, "en-XA") { context, tag ->
             takeScreenshotsForRestoreWallet(context, tag)
@@ -132,7 +132,7 @@ class ScreenshotTest : UiTestPrerequisites() {
     }
 
     @Test
-    @MediumTest
+    @LargeTest
     fun takeScreenshotsForRestoreWalletLightArXB() {
         runWith(UiMode.Light, "ar-XB") { context, tag ->
             takeScreenshotsForRestoreWallet(context, tag)
@@ -140,7 +140,7 @@ class ScreenshotTest : UiTestPrerequisites() {
     }
 
     @Test
-    @MediumTest
+    @LargeTest
     fun takeScreenshotsForRestoreWalletLightEnUS() {
         runWith(UiMode.Light, "en-US") { context, tag ->
             takeScreenshotsForRestoreWallet(context, tag)
@@ -149,8 +149,7 @@ class ScreenshotTest : UiTestPrerequisites() {
 
     // Dark mode was introduced in Android Q
     @Test
-    @MediumTest
-    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.Q)
+    @LargeTest
     fun takeScreenshotsForRestoreWalletDarkEnUS() {
         runWith(UiMode.Dark, "en-US") { context, tag ->
             takeScreenshotsForRestoreWallet(context, tag)
@@ -235,6 +234,12 @@ class ScreenshotTest : UiTestPrerequisites() {
             it.performScrollTo()
             it.performClick()
         }
+
+        composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) {
+            composeTestRule.activity.walletViewModel.walletSnapshot.value != null
+        }
+
+        composeTestRule.waitUntilDoesNotExist(hasTestTag(ACKNOWLEDGE_CHECKBOX_TAG), DEFAULT_TIMEOUT_MILLISECONDS)
     }
 
     @Test
