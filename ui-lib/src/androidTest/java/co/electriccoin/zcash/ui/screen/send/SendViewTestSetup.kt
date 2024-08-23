@@ -130,7 +130,7 @@ class SendViewTestSetup(
                         monetarySeparators = monetarySeparators,
                         value = "",
                         fiatValue = "",
-                        isTransparentRecipient = false,
+                        isTransparentOrTextRecipient = false,
                         exchangeRateState = ExchangeRateState.OptedOut
                     ),
                 setMemoState = {},
