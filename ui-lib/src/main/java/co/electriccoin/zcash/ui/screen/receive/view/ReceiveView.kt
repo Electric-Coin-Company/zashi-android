@@ -224,12 +224,13 @@ private fun ReceiveContents(
                     .fillMaxWidth(),
             pagerState = pagerState,
             tabs =
-                state.map {
+                state.mapNotNull {
                     stringResource(
                         when (it) {
                             is WalletAddress.Unified -> R.string.receive_wallet_address_unified
                             is WalletAddress.Sapling -> R.string.receive_wallet_address_sapling
                             is WalletAddress.Transparent -> R.string.receive_wallet_address_transparent
+                            else -> return@mapNotNull null
                         }
                     )
                 }.toPersistentList(),
@@ -299,13 +300,12 @@ private fun ColumnScope.QrCode(
         qrCodeImage = qrCodeImage,
         onQrImageBitmapShare = onQrImageShare,
         contentDescription =
-            stringResource(
-                when (walletAddress) {
-                    is WalletAddress.Unified -> R.string.receive_unified_content_description
-                    is WalletAddress.Sapling -> R.string.receive_sapling_content_description
-                    is WalletAddress.Transparent -> R.string.receive_transparent_content_description
-                }
-            ),
+            when (walletAddress) {
+                is WalletAddress.Unified -> stringResource(R.string.receive_unified_content_description)
+                is WalletAddress.Sapling -> stringResource(R.string.receive_sapling_content_description)
+                is WalletAddress.Transparent -> stringResource(R.string.receive_transparent_content_description)
+                else -> ""
+            },
         modifier =
             Modifier
                 .align(Alignment.CenterHorizontally),
