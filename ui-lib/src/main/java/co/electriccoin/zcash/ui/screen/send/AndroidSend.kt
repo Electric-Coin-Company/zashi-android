@@ -162,7 +162,9 @@ internal fun WrapSend(
             if (amountState.value.isNotBlank() || amountState.fiatValue.isBlank()) {
                 AmountState.newFromZec(
                     context = context,
-                    isTransparentOrTextRecipient = recipientAddressState.type?.let { it == AddressType.Transparent } ?: false,
+                    isTransparentOrTextRecipient =
+                        recipientAddressState.type
+                            ?.let { it == AddressType.Transparent } ?: false,
                     monetarySeparators = monetarySeparators,
                     value = amountState.value,
                     fiatValue = amountState.fiatValue,
@@ -171,7 +173,9 @@ internal fun WrapSend(
             } else {
                 AmountState.newFromFiat(
                     context = context,
-                    isTransparentOrTextRecipient = recipientAddressState.type?.let { it == AddressType.Transparent } ?: false,
+                    isTransparentOrTextRecipient =
+                        recipientAddressState.type
+                            ?.let { it == AddressType.Transparent } ?: false,
                     monetarySeparators = monetarySeparators,
                     value = amountState.value,
                     fiatValue = amountState.fiatValue,

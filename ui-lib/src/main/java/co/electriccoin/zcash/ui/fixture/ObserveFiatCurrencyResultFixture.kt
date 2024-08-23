@@ -8,10 +8,11 @@ object ObserveFiatCurrencyResultFixture {
     const val IS_LOADING: Boolean = true
     const val IS_STALE: Boolean = false
     const val IS_REFRESH_ENABLED: Boolean = false
-    val CURRENCY_CONVERSION: FiatCurrencyConversion = FiatCurrencyConversion(
-        timestamp = Clock.System.now(),
-        priceOfZec = 25.0
-    )
+    val CURRENCY_CONVERSION: FiatCurrencyConversion =
+        FiatCurrencyConversion(
+            timestamp = Clock.System.now(),
+            priceOfZec = 25.0
+        )
 
     fun new(
         isLoading: Boolean = IS_LOADING,
