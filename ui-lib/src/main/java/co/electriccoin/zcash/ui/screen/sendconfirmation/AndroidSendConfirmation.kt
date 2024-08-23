@@ -29,6 +29,7 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.viewmodel.AuthenticationViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
+import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.screen.authentication.AuthenticationUseCase
 import co.electriccoin.zcash.ui.screen.authentication.WrapAuthentication
@@ -74,6 +75,8 @@ internal fun MainActivity.WrapSendConfirmation(
 
     val walletState = walletViewModel.walletStateInformation.collectAsStateWithLifecycle().value
 
+    val exchangeRateState by remember { mutableStateOf(walletViewModel.exchangeRateUsd.value) }
+
     WrapSendConfirmation(
         activity = this,
         arguments = arguments,
@@ -87,6 +90,7 @@ internal fun MainActivity.WrapSendConfirmation(
         supportMessage = supportMessage,
         synchronizer = synchronizer,
         topAppBarSubTitleState = walletState,
+        exchangeRateState = exchangeRateState,
     )
 }
 
@@ -97,6 +101,7 @@ internal fun WrapSendConfirmation(
     activity: MainActivity,
     arguments: SendConfirmationArguments,
     authenticationViewModel: AuthenticationViewModel,
+    exchangeRateState: ExchangeRateState,
     createTransactionsViewModel: CreateTransactionsViewModel,
     goBack: (clearForm: Boolean) -> Unit,
     goHome: () -> Unit,
@@ -128,9 +133,13 @@ internal fun WrapSendConfirmation(
     val onBackAction = {
         when (stage) {
             SendConfirmationStage.Confirmation -> goBack(false)
-            SendConfirmationStage.Sending -> { /* no action - wait until the sending is done */ }
+            SendConfirmationStage.Sending -> { // no action - wait until the sending is done
+            }
+
             is SendConfirmationStage.Failure -> setStage(SendConfirmationStage.Confirmation)
-            is SendConfirmationStage.MultipleTrxFailure -> { /* no action - wait until report the result */ }
+            is SendConfirmationStage.MultipleTrxFailure -> { // no action - wait until report the result
+            }
+
             is SendConfirmationStage.MultipleTrxFailureReported -> goBack(true)
         }
     }
@@ -206,6 +215,7 @@ internal fun WrapSendConfirmation(
                 }
             },
             topAppBarSubTitleState = topAppBarSubTitleState,
+            exchangeRate = exchangeRateState
         )
 
         if (sendFundsAuthentication.value) {
@@ -305,9 +315,11 @@ private fun processSubmissionResult(
             setStage(SendConfirmationStage.Confirmation)
             goHome()
         }
+
         is SubmitResult.SimpleTrxFailure -> {
             setStage(SendConfirmationStage.Failure(submitResult.errorDescription))
         }
+
         is SubmitResult.MultipleTrxFailure -> {
             setStage(SendConfirmationStage.MultipleTrxFailure)
         }

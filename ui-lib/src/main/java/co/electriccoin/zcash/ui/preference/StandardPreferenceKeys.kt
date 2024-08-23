@@ -2,6 +2,7 @@ package co.electriccoin.zcash.ui.preference
 
 import co.electriccoin.zcash.preference.model.entry.BooleanPreferenceDefault
 import co.electriccoin.zcash.preference.model.entry.IntegerPreferenceDefault
+import co.electriccoin.zcash.preference.model.entry.NullableBooleanPreferenceDefault
 import co.electriccoin.zcash.preference.model.entry.PreferenceKey
 import co.electriccoin.zcash.ui.common.model.OnboardingState
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
@@ -36,11 +37,6 @@ object StandardPreferenceKeys {
         BooleanPreferenceDefault(PreferenceKey("IS_RESTORING_INITIAL_WARNING_SEEN"), false)
 
     /**
-     * The fiat currency that the user prefers.
-     */
-    val PREFERRED_FIAT_CURRENCY = FiatCurrencyPreferenceDefault(PreferenceKey("preferred_fiat_currency_code"))
-
-    /**
      * Screens or flows protected by required authentication
      */
     val IS_APP_ACCESS_AUTHENTICATION =
@@ -72,5 +68,10 @@ object StandardPreferenceKeys {
         BooleanPreferenceDefault(
             PreferenceKey("IS_HIDE_BALANCES"),
             false
+        )
+    val EXCHANGE_RATE_OPTED_IN =
+        NullableBooleanPreferenceDefault(
+            PreferenceKey("EXCHANGE_RATE_OPTED_IN"),
+            null
         )
 }

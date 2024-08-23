@@ -1,6 +1,15 @@
 package co.electriccoin.zcash.ui.screen.account.view
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.snap
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -17,7 +26,8 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import cash.z.ecc.android.sdk.model.FiatCurrencyConversion
 import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.BalanceState
@@ -27,6 +37,7 @@ import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.test.CommonTag
+import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.TopAppBarHideBalancesNavigation
@@ -37,13 +48,20 @@ import co.electriccoin.zcash.ui.screen.account.AccountTag
 import co.electriccoin.zcash.ui.screen.account.fixture.TransactionsFixture
 import co.electriccoin.zcash.ui.screen.account.model.TransactionUiState
 import co.electriccoin.zcash.ui.screen.balances.model.StatusAction
+import co.electriccoin.zcash.ui.screen.exchangerate.widget.StyledExchangeOptIn
+import co.electriccoin.zcash.ui.util.PreviewScreens
+import kotlinx.datetime.Clock
 
-@Preview("Account No History")
+@Suppress("UnusedPrivateMember")
+@PreviewScreens
 @Composable
 private fun HistoryLoadingComposablePreview() {
     ZcashTheme(forceDarkMode = false) {
         Account(
-            balanceState = BalanceStateFixture.new(),
+            balanceState =
+                BalanceStateFixture.new(
+                    exchangeRate = ExchangeRateState.OptIn(onDismissClick = {})
+                ),
             isHideBalances = false,
             goBalances = {},
             goSettings = {},
@@ -61,16 +79,27 @@ private fun HistoryLoadingComposablePreview() {
     }
 }
 
+@Suppress("UnusedPrivateMember")
 @Composable
-@Preview("Account History List")
+@PreviewScreens
 private fun HistoryListComposablePreview() {
-    ZcashTheme(forceDarkMode = false) {
+    ZcashTheme {
         @Suppress("MagicNumber")
         Account(
             balanceState =
                 BalanceState.Available(
-                    Zatoshi(123_000_000L),
-                    Zatoshi(123_000_000L)
+                    totalBalance = Zatoshi(value = 123_000_000L),
+                    spendableBalance = Zatoshi(value = 123_000_000L),
+                    exchangeRate =
+                        ExchangeRateState.Data(
+                            isLoading = false,
+                            isRefreshEnabled = true,
+                            currencyConversion =
+                                FiatCurrencyConversion(
+                                    timestamp = Clock.System.now(),
+                                    priceOfZec = 25.0
+                                )
+                        ) {}
                 ),
             isHideBalances = false,
             goBalances = {},
@@ -134,7 +163,8 @@ internal fun Account(
                     top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
                     // We intentionally do not set the bottom and horizontal paddings here. Those are set by the
                     // underlying transaction history composable
-                )
+                ),
+            paddingValues = paddingValues
         )
 
         // Show synchronization status popup
@@ -192,7 +222,7 @@ private fun AccountTopAppBar(
 }
 
 @Composable
-@Suppress("LongParameterList")
+@Suppress("LongParameterList", "ModifierNotUsedAtRoot", "LongMethod")
 private fun AccountMainContent(
     balanceState: BalanceState,
     goBalances: () -> Unit,
@@ -203,32 +233,73 @@ private fun AccountMainContent(
     transactionState: TransactionUiState,
     walletSnapshot: WalletSnapshot,
     modifier: Modifier = Modifier,
+    paddingValues: PaddingValues = PaddingValues()
 ) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
+    Box {
+        Column(
+            modifier = modifier,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
 
-        BalancesStatus(
-            balanceState = balanceState,
-            goBalances = goBalances,
-            isHideBalances = isHideBalances,
-            modifier =
-                Modifier
-                    .padding(horizontal = ZcashTheme.dimens.screenHorizontalSpacingRegular)
-        )
+            val bottomPadding =
+                animateDpAsState(
+                    targetValue =
+                        if (balanceState.exchangeRate is ExchangeRateState.OptIn) {
+                            76.dp
+                        } else {
+                            0.dp
+                        },
+                    animationSpec =
+                        if (balanceState.exchangeRate is ExchangeRateState.OptIn) {
+                            snap()
+                        } else {
+                            spring(visibilityThreshold = .1.dp)
+                        },
+                    label = "bottom padding animation"
+                )
 
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
+            BalancesStatus(
+                balanceState = balanceState,
+                goBalances = goBalances,
+                isHideBalances = isHideBalances,
+                modifier =
+                    Modifier
+                        .padding(
+                            start = ZcashTheme.dimens.screenHorizontalSpacingRegular,
+                            end = ZcashTheme.dimens.screenHorizontalSpacingRegular,
+                            bottom = bottomPadding.value
+                        ),
+            )
 
-        HistoryContainer(
-            isHideBalances = isHideBalances,
-            onStatusClick = onStatusClick,
-            onTransactionItemAction = onTransactionItemAction,
-            transactionState = transactionState,
-            walletRestoringState = isWalletRestoringState,
-            walletSnapshot = walletSnapshot,
-        )
+            Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
+
+            HistoryContainer(
+                isHideBalances = isHideBalances,
+                onStatusClick = onStatusClick,
+                onTransactionItemAction = onTransactionItemAction,
+                transactionState = transactionState,
+                walletRestoringState = isWalletRestoringState,
+                walletSnapshot = walletSnapshot,
+            )
+        }
+
+        AnimatedVisibility(
+            visible = balanceState.exchangeRate is ExchangeRateState.OptIn,
+            enter = EnterTransition.None,
+            exit = fadeOut() + slideOutVertically(),
+        ) {
+            Column {
+                Spacer(modifier = Modifier.height(80.dp + paddingValues.calculateTopPadding()))
+                StyledExchangeOptIn(
+                    modifier = Modifier.padding(horizontal = 24.dp),
+                    state =
+                        (balanceState.exchangeRate as? ExchangeRateState.OptIn) ?: ExchangeRateState.OptIn(
+                            onDismissClick = {},
+                        )
+                )
+            }
+        }
     }
 }
 
@@ -252,7 +323,7 @@ private fun BalancesStatus(
             balanceState = balanceState,
             isHideBalances = isHideBalances,
             isReferenceToBalances = true,
-            onReferenceClick = goBalances
+            onReferenceClick = goBalances,
         )
     }
 }

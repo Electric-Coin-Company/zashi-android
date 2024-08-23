@@ -1,4 +1,4 @@
-# Changelog
+    # Changelog
 All notable changes to this application will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
@@ -8,6 +8,10 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 directly impact users rather than highlighting other key architectural updates.**
 
 ## [Unreleased]
+
+### Added
+- Balance now also displays USD value
+- An option to enter USD amount in Send Transaction screen
 
 ## [1.1.5 (706)] - 2024-08-09
 

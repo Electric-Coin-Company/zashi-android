@@ -26,6 +26,7 @@ import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.viewmodel.HomeViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
+import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.screen.send.ext.Saver
 import co.electriccoin.zcash.ui.screen.send.model.AmountState
@@ -71,6 +72,8 @@ internal fun WrapSend(
 
     val isHideBalances = homeViewModel.isHideBalances.collectAsStateWithLifecycle().value ?: false
 
+    val exchangeRateState = walletViewModel.exchangeRateUsd.collectAsStateWithLifecycle().value
+
     WrapSend(
         balanceState = balanceState,
         isHideBalances = isHideBalances,
@@ -87,6 +90,7 @@ internal fun WrapSend(
         hasCameraFeature = hasCameraFeature,
         monetarySeparators = monetarySeparators,
         topAppBarSubTitleState = walletState,
+        exchangeRateState = exchangeRateState,
     )
 }
 
@@ -95,6 +99,7 @@ internal fun WrapSend(
 @Composable
 internal fun WrapSend(
     balanceState: BalanceState,
+    exchangeRateState: ExchangeRateState,
     isHideBalances: Boolean,
     goToQrScanner: () -> Unit,
     goBack: () -> Unit,
@@ -138,28 +143,45 @@ internal fun WrapSend(
         rememberSaveable(stateSaver = AmountState.Saver) {
             // Default amount state
             mutableStateOf(
-                AmountState.new(
+                AmountState.newFromZec(
                     context = context,
                     value = zecSend?.amount?.toZecString() ?: "",
                     monetarySeparators = monetarySeparators,
                     isTransparentOrTextRecipient =
                         recipientAddressState.type?.let { it == AddressType.Transparent }
-                            ?: false
+                            ?: false,
+                    fiatValue = "",
+                    exchangeRateState = exchangeRateState
                 )
             )
         }
     // New amount state based on the recipient address type (e.g. shielded supports zero funds sending and
     // transparent not)
-    LaunchedEffect(key1 = recipientAddressState) {
+    LaunchedEffect(recipientAddressState, exchangeRateState) {
         setAmountState(
-            AmountState.new(
-                context = context,
-                isTransparentOrTextRecipient =
-                    recipientAddressState.type?.let { it == AddressType.Transparent }
-                        ?: false,
-                monetarySeparators = monetarySeparators,
-                value = amountState.value
-            )
+            if (amountState.value.isNotBlank() || amountState.fiatValue.isBlank()) {
+                AmountState.newFromZec(
+                    context = context,
+                    isTransparentOrTextRecipient =
+                        recipientAddressState.type
+                            ?.let { it == AddressType.Transparent } ?: false,
+                    monetarySeparators = monetarySeparators,
+                    value = amountState.value,
+                    fiatValue = amountState.fiatValue,
+                    exchangeRateState = exchangeRateState
+                )
+            } else {
+                AmountState.newFromFiat(
+                    context = context,
+                    isTransparentOrTextRecipient =
+                        recipientAddressState.type
+                            ?.let { it == AddressType.Transparent } ?: false,
+                    monetarySeparators = monetarySeparators,
+                    value = amountState.value,
+                    fiatValue = amountState.fiatValue,
+                    exchangeRateState = exchangeRateState
+                )
+            }
         )
     }
 
@@ -174,16 +196,25 @@ internal fun WrapSend(
         setSendStage(SendStage.Form)
         setZecSend(null)
         setRecipientAddressState(RecipientAddressState.new("", null))
-        setAmountState(AmountState.new(context, monetarySeparators, "", false))
+        setAmountState(
+            AmountState.newFromZec(
+                context = context,
+                monetarySeparators = monetarySeparators,
+                value = "",
+                fiatValue = "",
+                isTransparentOrTextRecipient = false,
+                exchangeRateState = exchangeRateState
+            )
+        )
         setMemoState(MemoState.new(""))
     }
 
     val onBackAction = {
         when (sendStage) {
             SendStage.Form -> goBack()
-            SendStage.Proposing -> { // no action - wait until the sending is done
+            SendStage.Proposing -> {
+                // no action - wait until the sending is done
             }
-
             is SendStage.SendFailure -> setSendStage(SendStage.Form)
         }
     }
@@ -239,6 +270,7 @@ internal fun WrapSend(
             hasCameraFeature = hasCameraFeature,
             topAppBarSubTitleState = topAppBarSubTitleState,
             walletSnapshot = walletSnapshot,
+            exchangeRateState = exchangeRateState
         )
     }
 }

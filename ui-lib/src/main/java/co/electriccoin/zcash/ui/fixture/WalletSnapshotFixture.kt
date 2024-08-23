@@ -34,12 +34,12 @@ object WalletSnapshotFixture {
         progress: PercentDecimal = PROGRESS,
         synchronizerError: SynchronizerError? = null
     ) = WalletSnapshot(
-        status,
-        processorInfo,
-        orchardBalance,
-        saplingBalance,
-        transparentBalance,
-        progress,
-        synchronizerError
+        status = status,
+        processorInfo = processorInfo,
+        orchardBalance = orchardBalance,
+        saplingBalance = saplingBalance,
+        transparentBalance = transparentBalance,
+        progress = progress,
+        synchronizerError = synchronizerError
     )
 }
