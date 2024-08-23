@@ -28,7 +28,6 @@ import androidx.test.espresso.matcher.ViewMatchers.isRoot
 import androidx.test.espresso.screenshot.captureToBitmap
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.filters.LargeTest
-import androidx.test.filters.MediumTest
 import androidx.test.filters.SdkSuppress
 import cash.z.ecc.android.sdk.fixture.WalletAddressFixture
 import cash.z.ecc.android.sdk.model.MonetarySeparators
@@ -124,7 +123,7 @@ class ScreenshotTest : UiTestPrerequisites() {
     }
 
     @Test
-    @MediumTest
+    @LargeTest
     fun takeScreenshotsForRestoreWalletLightEnXA() {
         runWith(UiMode.Light, "en-XA") { context, tag ->
             takeScreenshotsForRestoreWallet(context, tag)
@@ -132,7 +131,7 @@ class ScreenshotTest : UiTestPrerequisites() {
     }
 
     @Test
-    @MediumTest
+    @LargeTest
     fun takeScreenshotsForRestoreWalletLightArXB() {
         runWith(UiMode.Light, "ar-XB") { context, tag ->
             takeScreenshotsForRestoreWallet(context, tag)
@@ -140,23 +139,22 @@ class ScreenshotTest : UiTestPrerequisites() {
     }
 
     @Test
-    @MediumTest
+    @LargeTest
     fun takeScreenshotsForRestoreWalletLightEnUS() {
         runWith(UiMode.Light, "en-US") { context, tag ->
             takeScreenshotsForRestoreWallet(context, tag)
         }
     }
 
-    // disabling flaky test
     // Dark mode was introduced in Android Q
-    // @Test
-    // @MediumTest
-    // @SdkSuppress(minSdkVersion = Build.VERSION_CODES.Q)
-    // fun takeScreenshotsForRestoreWalletDarkEnUS() {
-    //     runWith(UiMode.Dark, "en-US") { context, tag ->
-    //         takeScreenshotsForRestoreWallet(context, tag)
-    //     }
-    // }
+    @Test
+    @LargeTest
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.Q)
+    fun takeScreenshotsForRestoreWalletDarkEnUS() {
+        runWith(UiMode.Dark, "en-US") { context, tag ->
+            takeScreenshotsForRestoreWallet(context, tag)
+        }
+    }
 
     @OptIn(ExperimentalTestApi::class)
     @Suppress("LongMethod", "CyclomaticComplexMethod")
