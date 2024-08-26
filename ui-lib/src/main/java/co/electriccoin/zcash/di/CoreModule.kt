@@ -36,5 +36,5 @@ val coreModule =
 
         factoryOf(::AppUpdateCheckerImpl) bind AppUpdateChecker::class
 
-        factory { AndroidConfigurationFactory.newInstance() }
+        factory { AndroidConfigurationFactory.new() }
     }

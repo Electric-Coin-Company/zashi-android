@@ -7,13 +7,15 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 ## [Unreleased]
 
 ### Added
-- Dependency injection using Koin has been added to the project. This helps us keep the codebase organized while 
+- Balance now also displays USD value
+- An option to enter USD amount in Send Transaction screen
+- Dependency injection using Koin has been added to the project. This helps us keep the codebase organized while
   adding new app features.
 
-### Changed
+## Changed
 - Android NDK version has been bumped to 26.1.10909125
 
-### Fixed
+## Fixed
 - The app screenshot testing has been re-enabled after we moved away from AppCompat components 
 
 ## [1.1.5 (706)] - 2024-08-09

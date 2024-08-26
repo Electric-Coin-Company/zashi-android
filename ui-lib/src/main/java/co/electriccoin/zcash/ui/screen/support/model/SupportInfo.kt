@@ -63,7 +63,7 @@ data class SupportInfo(
     companion object {
         // Although most of our calls now are non-blocking, we expect more of them to be blocking
         // in the future.
-        suspend fun newInstance(
+        suspend fun new(
             context: Context,
             androidConfigurationProvider: ConfigurationProvider
         ): SupportInfo {

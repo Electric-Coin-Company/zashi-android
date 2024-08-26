@@ -5,6 +5,6 @@ import co.electriccoin.zcash.preference.api.PreferenceProvider
 
 class EncryptedPreferenceProvider(private val context: Context) : PreferenceHolder() {
     override suspend fun create(): PreferenceProvider {
-        return AndroidPreferenceProvider.newStandard(context, "co.electriccoin.zcash.encrypted")
+        return AndroidPreferenceProvider.newEncrypted(context, "co.electriccoin.zcash.encrypted")
     }
 }
