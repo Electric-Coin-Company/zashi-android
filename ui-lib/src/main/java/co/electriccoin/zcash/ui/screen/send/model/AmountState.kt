@@ -69,8 +69,7 @@ sealed interface AmountState {
                                     currencyConversion = currencyConversion,
                                     locale = Locale.current.toKotlinLocale(),
                                     monetarySeparators = MonetarySeparators.current(java.util.Locale.getDefault()),
-                                    includeSymbols = false
-                                )
+                                ).replace(currencyConversion.fiatCurrency.symbol, "")
                             }
                     )
                 }

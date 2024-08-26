@@ -158,15 +158,11 @@ internal fun createExchangeRateText(
         if (isHideBalances) {
             "${currencySymbol}${hiddenBalancePlaceholder.getValue()}"
         } else if (state.currencyConversion != null) {
-            val value =
-                zatoshi.toFiatString(
-                    currencyConversion = state.currencyConversion,
-                    locale = Locale.current.toKotlinLocale(),
-                    monetarySeparators = MonetarySeparators.current(java.util.Locale.getDefault()),
-                    includeSymbols = false
-                )
-
-            "$currencySymbol$value"
+            zatoshi.toFiatString(
+                currencyConversion = state.currencyConversion,
+                locale = Locale.current.toKotlinLocale(),
+                monetarySeparators = MonetarySeparators.current(java.util.Locale.getDefault()),
+            )
         } else {
             currencySymbol
         }
