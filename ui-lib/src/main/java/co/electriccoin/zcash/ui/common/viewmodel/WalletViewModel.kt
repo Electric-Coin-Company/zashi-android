@@ -700,28 +700,35 @@ sealed class SynchronizerError {
 
     abstract fun getStackTrace(limit: Int = STACKTRACE_LIMIT): String?
 
+    internal fun Throwable.stackTraceToLimitedString() =
+        if (stackTraceToString().isNotEmpty()) {
+            stackTraceToString().substring(0..stackTraceToString().length.coerceAtMost(STACKTRACE_LIMIT))
+        } else {
+            null
+        }
+
     class Critical(val error: Throwable?) : SynchronizerError() {
         override fun getCauseMessage(): String? = error?.message
 
-        override fun getStackTrace(limit: Int): String? = error?.stackTraceToString()?.substring(0..limit)
+        override fun getStackTrace(limit: Int): String? = error?.stackTraceToLimitedString()
     }
 
     class Processor(val error: Throwable?) : SynchronizerError() {
         override fun getCauseMessage(): String? = error?.message
 
-        override fun getStackTrace(limit: Int): String? = error?.stackTraceToString()?.substring(0..limit)
+        override fun getStackTrace(limit: Int): String? = error?.stackTraceToLimitedString()
     }
 
     class Submission(val error: Throwable?) : SynchronizerError() {
         override fun getCauseMessage(): String? = error?.message
 
-        override fun getStackTrace(limit: Int): String? = error?.stackTraceToString()?.substring(0..limit)
+        override fun getStackTrace(limit: Int): String? = error?.stackTraceToLimitedString()
     }
 
     class Setup(val error: Throwable?) : SynchronizerError() {
         override fun getCauseMessage(): String? = error?.message
 
-        override fun getStackTrace(limit: Int): String? = error?.stackTraceToString()?.substring(0..limit)
+        override fun getStackTrace(limit: Int): String? = error?.stackTraceToLimitedString()
     }
 
     class Chain(val x: BlockHeight, val y: BlockHeight) : SynchronizerError() {
