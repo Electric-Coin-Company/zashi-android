@@ -120,7 +120,7 @@ jobs:
           zip -r ${REPORTS_ZIP_PATH} . -i build/reports/detekt/*
       - name: Upload Artifacts
         if: ${{ always() }}
-        uses: actions/upload-artifact@834a144ee995460fba8ed112a2fc961b36a5ec5a
+        uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874
         timeout-minutes: 1
         with:
           name: Detekt static analysis results
@@ -160,7 +160,7 @@ jobs:
           zip -r ${REPORTS_ZIP_PATH} . -i build/reports/ktlint/\*
       - name: Upload Artifacts
         if: ${{ always() }}
-        uses: actions/upload-artifact@834a144ee995460fba8ed112a2fc961b36a5ec5a
+        uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874
         timeout-minutes: 1
         with:
           name: Ktlint static analysis results
@@ -203,7 +203,7 @@ jobs:
           zip -r ${LINT_ZIP_PATH} . -i \*build/reports/\*
       - name: Upload Artifacts
         if: ${{ always() }}
-        uses: actions/upload-artifact@834a144ee995460fba8ed112a2fc961b36a5ec5a
+        uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874
         timeout-minutes: 1
         with:
           name: Android Lint static analysis results
@@ -244,7 +244,7 @@ jobs:
           zip -r ${RESULTS_ZIP_PATH} . -i \*build/reports/\* \*/build/kover/html/\* \*/build/kover/xml/report.xml
       - name: Upload Artifacts
         if: ${{ always() }}
-        uses: actions/upload-artifact@834a144ee995460fba8ed112a2fc961b36a5ec5a
+        uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874
         timeout-minutes: 1
         with:
           name: Test Kotlin modules results
@@ -309,7 +309,7 @@ jobs:
           zip -r ${TEST_RESULTS_ZIP_PATH} . -i build/fladle/\* \*/build/outputs/androidTest-results/\*
       - name: Upload Artifacts
         if: ${{ always() }}
-        uses: actions/upload-artifact@834a144ee995460fba8ed112a2fc961b36a5ec5a
+        uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874
         timeout-minutes: 1
         with:
           name: Test Android modules with FTL results
@@ -356,7 +356,7 @@ jobs:
           zip -r ${TEST_RESULTS_ZIP_PATH} . -i \*/build/test-results/\*
       - name: Upload Artifacts
         if: ${{ always() }}
-        uses: actions/upload-artifact@834a144ee995460fba8ed112a2fc961b36a5ec5a
+        uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874
         timeout-minutes: 1
         with:
           name: Test Android libs with WTF results
@@ -403,7 +403,7 @@ jobs:
           zip -r ${TEST_RESULTS_ZIP_PATH} . -i \*/build/test-results/\*
       - name: Upload Artifacts
         if: ${{ always() }}
-        uses: actions/upload-artifact@834a144ee995460fba8ed112a2fc961b36a5ec5a
+        uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874
         timeout-minutes: 1
         with:
           name: Test Android app with WTF results
@@ -530,7 +530,7 @@ jobs:
           zip -r ${MAPPINGS_ZIP_PATH} . -i *app/build/outputs/mapping/*/mapping.txt
           zip -r ${COMPOSE_METRICS_ZIP_PATH} . -i \*/build/compose-metrics/\* \*/build/compose-reports/\*
       - name: Upload Artifacts
-        uses: actions/upload-artifact@834a144ee995460fba8ed112a2fc961b36a5ec5a
+        uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874
         timeout-minutes: 2
         with:
           name: Binaries
