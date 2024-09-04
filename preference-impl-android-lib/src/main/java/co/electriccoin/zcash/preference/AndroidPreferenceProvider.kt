@@ -5,9 +5,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
-import co.electriccoin.zcash.preference.api.EncryptedPreferenceProvider
 import co.electriccoin.zcash.preference.api.PreferenceProvider
-import co.electriccoin.zcash.preference.api.StandardPreferenceProvider
 import co.electriccoin.zcash.preference.model.entry.PreferenceKey
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.asCoroutineDispatcher
@@ -33,7 +31,7 @@ import java.util.concurrent.Executors
 class AndroidPreferenceProvider private constructor(
     private val sharedPreferences: SharedPreferences,
     private val dispatcher: CoroutineDispatcher
-) : PreferenceProvider, StandardPreferenceProvider, EncryptedPreferenceProvider {
+) : PreferenceProvider {
     private val mutex = Mutex()
     /*
      * Implementation note: EncryptedSharedPreferences are not thread-safe, so this implementation
@@ -98,7 +96,7 @@ class AndroidPreferenceProvider private constructor(
         fun newStandard(
             context: Context,
             filename: String
-        ): StandardPreferenceProvider {
+        ): PreferenceProvider {
             /*
              * Because of this line, we don't want multiple instances of this object created
              * because we don't clean up the thread afterwards.
@@ -113,7 +111,7 @@ class AndroidPreferenceProvider private constructor(
         suspend fun newEncrypted(
             context: Context,
             filename: String
-        ): EncryptedPreferenceProvider {
+        ): PreferenceProvider {
             /*
              * Because of this line, we don't want multiple instances of this object created
              * because we don't clean up the thread afterwards.

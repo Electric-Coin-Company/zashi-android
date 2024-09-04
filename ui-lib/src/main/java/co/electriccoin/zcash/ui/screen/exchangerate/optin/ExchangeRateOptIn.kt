@@ -57,13 +57,10 @@ fun ExchangeRateOptIn(
         footer = {
             ZashiButton(
                 modifier = Modifier.fillMaxWidth(),
+                text = stringResource(R.string.exchange_rate_opt_in_enable),
                 onClick = onEnabledClick,
                 colors = ZashiButtonDefaults.primaryButtonColors()
-            ) {
-                Text(
-                    text = stringResource(R.string.exchange_rate_opt_in_enable)
-                )
-            }
+            )
             ZashiTextButton(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = onDismiss,

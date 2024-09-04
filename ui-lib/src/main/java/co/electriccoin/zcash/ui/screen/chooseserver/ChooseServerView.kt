@@ -3,12 +3,7 @@
 package co.electriccoin.zcash.ui.screen.chooseserver
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -60,19 +55,20 @@ import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.design.component.FormTextField
+import co.electriccoin.zcash.ui.design.component.LottieProgress
 import co.electriccoin.zcash.ui.design.component.RadioButton
 import co.electriccoin.zcash.ui.design.component.RadioButtonCheckedContent
 import co.electriccoin.zcash.ui.design.component.RadioButtonState
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.component.TopAppBarBackNavigation
-import co.electriccoin.zcash.ui.design.newcomponent.BottomBar
-import co.electriccoin.zcash.ui.design.newcomponent.PrimaryButton
 import co.electriccoin.zcash.ui.design.newcomponent.ScreenPreview
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.screen.exchangerate.BottomBar
+import co.electriccoin.zcash.ui.screen.exchangerate.ZashiButton
 
 @Composable
 fun ChooseServerView(
@@ -102,10 +98,10 @@ fun ChooseServerView(
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding =
-                PaddingValues(
-                    top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
-                    bottom = paddingValues.calculateBottomPadding() + ZcashTheme.dimens.spacingDefault,
-                )
+            PaddingValues(
+                top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
+                bottom = paddingValues.calculateBottomPadding() + ZcashTheme.dimens.spacingDefault,
+            )
         ) {
             if (state.fastest.servers.isEmpty() && state.fastest.isLoading) {
                 item {
@@ -131,11 +127,14 @@ fun ChooseServerView(
 private fun ServerLoading() {
     Column(
         modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+        Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        LottieProgress(
+            size = 32.dp,
+        )
         Spacer(modifier = Modifier.height(20.dp))
         Text(
             text = stringResource(id = R.string.choose_server_loading_title),
@@ -188,12 +187,12 @@ private fun ErrorDialog(dialogState: ServerDialogState) {
 @Composable
 fun ChooseServerBottomBar(saveButtonState: ButtonState) {
     BottomBar {
-        PrimaryButton(
+        ZashiButton(
             state = saveButtonState,
             modifier =
-                Modifier
-                    .padding(horizontal = 24.dp)
-                    .fillMaxWidth()
+            Modifier
+                .padding(horizontal = 24.dp)
+                .fillMaxWidth()
         )
     }
 }
@@ -206,11 +205,11 @@ private fun ChooseServerTopAppBar(
     SmallTopAppBar(
         titleText = stringResource(id = R.string.choose_server_title),
         subTitle =
-            when (subTitleState) {
-                TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
-                TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
-                TopAppBarSubTitleState.None -> null
-            },
+        when (subTitleState) {
+            TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
+            TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
+            TopAppBarSubTitleState.None -> null
+        },
         modifier = Modifier.testTag(CHOOSE_SERVER_TOP_APP_BAR),
         showTitleLogo = true,
         navigationAction = {
@@ -239,16 +238,16 @@ private fun LazyListScope.serverListItems(state: ServerListState) {
             is ServerState.Custom ->
                 CustomServerRadioButton(
                     modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(start = 4.dp, end = 4.dp)
-                            .then(
-                                if (item.radioButtonState.isChecked) {
-                                    Modifier.background(Color(0xFFF4F4F6), RoundedCornerShape(12.dp))
-                                } else {
-                                    Modifier
-                                }
-                            ),
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(start = 4.dp, end = 4.dp)
+                        .then(
+                            if (item.radioButtonState.isChecked) {
+                                Modifier.background(Color(0xFFF4F4F6), RoundedCornerShape(12.dp))
+                            } else {
+                                Modifier
+                            }
+                        ),
                     state = item
                 )
 
@@ -256,16 +255,16 @@ private fun LazyListScope.serverListItems(state: ServerListState) {
                 RadioButton(
                     state = item.radioButtonState,
                     modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 4.dp)
-                            .then(
-                                if (item.radioButtonState.isChecked && item.badge == null) {
-                                    Modifier.background(Color(0xFFF4F4F6), RoundedCornerShape(12.dp))
-                                } else {
-                                    Modifier
-                                }
-                            ),
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 4.dp)
+                        .then(
+                            if (item.radioButtonState.isChecked && item.badge == null) {
+                                Modifier.background(Color(0xFFF4F4F6), RoundedCornerShape(12.dp))
+                            } else {
+                                Modifier
+                            }
+                        ),
                     checkedContent = {
                         if (item.badge == null) {
                             RadioButtonCheckedContent(item.radioButtonState)
@@ -312,28 +311,15 @@ private fun FastestServersHeader(state: ServerListState.Fastest) {
                     fontSize = 14.sp
                 )
                 Spacer(modifier = Modifier.width(6.dp))
-                Image(
-                    modifier =
-                        Modifier.then(
-                            if (state.isLoading) {
-                                val infiniteTransition = rememberInfiniteTransition(label = "")
-                                val angle by infiniteTransition.animateFloat(
-                                    initialValue = 360F,
-                                    targetValue = 0F,
-                                    animationSpec =
-                                        infiniteRepeatable(
-                                            animation = tween(2000, easing = LinearEasing)
-                                        ),
-                                    label = "Loading Animation"
-                                )
-                                Modifier.rotate(angle)
-                            } else {
-                                Modifier
-                            }
-                        ),
-                    painter = painterResource(id = R.drawable.ic_retry),
-                    contentDescription = state.retryButton.text.getValue()
-                )
+
+                if (state.isLoading) {
+                    LottieProgress()
+                } else {
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_retry),
+                        contentDescription = state.retryButton.text.getValue()
+                    )
+                }
             }
         }
 
@@ -395,13 +381,13 @@ private fun CustomServerRadioButton(
                 keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus(true) }),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri, imeAction = ImeAction.Done),
                 modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(
-                            start = 52.dp,
-                            end = 20.dp,
-                            bottom = 16.dp
-                        )
+                Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        start = 52.dp,
+                        end = 20.dp,
+                        bottom = 16.dp
+                    )
             )
         }
     }
@@ -418,8 +404,57 @@ private fun ChooseServerPreview(
         ServerListState.Fastest(
             title = stringRes("Fastest Servers"),
             servers =
-                if (showFastestServerLoading) {
-                    (1..3).map {
+            if (showFastestServerLoading) {
+                (1..3).map {
+                    ServerState.Default(
+                        RadioButtonState(
+                            text = stringRes("Some Server"),
+                            isChecked = selectionIndex == it,
+                            onClick = {
+                                selectionIndex = it
+                            },
+                            subtitle = null,
+                        ),
+                        badge = null
+                    )
+                }
+            } else {
+                listOf()
+            },
+            retryButton =
+            ButtonState(
+                text = stringRes("Save Button"),
+                onClick = {},
+            ),
+            isLoading = true,
+        )
+    ChooseServerView(
+        state =
+        ChooseServerState(
+            fastest = fastestServers,
+            other =
+            ServerListState.Other(
+                title = stringRes("Other Servers"),
+                servers =
+                (4..<12).map {
+                    if (it == 5) {
+                        ServerState.Custom(
+                            RadioButtonState(
+                                text = stringRes("Custom Server"),
+                                isChecked = selectionIndex == it,
+                                onClick = {
+                                    selectionIndex = it
+                                }
+                            ),
+                            newServerTextFieldState =
+                            TextFieldState(
+                                value = stringRes(""),
+                                error = null,
+                                isEnabled = true,
+                                onValueChange = { },
+                            ),
+                        )
+                    } else {
                         ServerState.Default(
                             RadioButtonState(
                                 text = stringRes("Some Server"),
@@ -427,69 +462,20 @@ private fun ChooseServerPreview(
                                 onClick = {
                                     selectionIndex = it
                                 },
-                                subtitle = null,
+                                subtitle = if (it == 6) stringRes("Default") else null,
                             ),
-                            badge = null
+                            badge = if (it == 6) stringRes("Active") else null,
                         )
                     }
-                } else {
-                    listOf()
-                },
-            retryButton =
-                ButtonState(
-                    text = stringRes("Save Button"),
-                    onClick = {},
-                ),
-            isLoading = true,
-        )
-    ChooseServerView(
-        state =
-            ChooseServerState(
-                fastest = fastestServers,
-                other =
-                    ServerListState.Other(
-                        title = stringRes("Other Servers"),
-                        servers =
-                            (4..<12).map {
-                                if (it == 5) {
-                                    ServerState.Custom(
-                                        RadioButtonState(
-                                            text = stringRes("Custom Server"),
-                                            isChecked = selectionIndex == it,
-                                            onClick = {
-                                                selectionIndex = it
-                                            }
-                                        ),
-                                        newServerTextFieldState =
-                                            TextFieldState(
-                                                value = stringRes(""),
-                                                error = null,
-                                                isEnabled = true,
-                                                onValueChange = { },
-                                            ),
-                                    )
-                                } else {
-                                    ServerState.Default(
-                                        RadioButtonState(
-                                            text = stringRes("Some Server"),
-                                            isChecked = selectionIndex == it,
-                                            onClick = {
-                                                selectionIndex = it
-                                            },
-                                            subtitle = if (it == 6) stringRes("Default") else null,
-                                        ),
-                                        badge = if (it == 6) stringRes("Active") else null,
-                                    )
-                                }
-                            }
-                    ),
-                saveButton =
-                    ButtonState(
-                        text = stringRes("Save Button"),
-                        onClick = {},
-                    ),
-                dialogState = dialogState
+                }
             ),
+            saveButton =
+            ButtonState(
+                text = stringRes("Save Button"),
+                onClick = {},
+            ),
+            dialogState = dialogState
+        ),
         onBack = {},
         topAppBarSubTitleState = TopAppBarSubTitleState.None,
     )
@@ -501,14 +487,14 @@ private fun ChooseServerPreviewValidationDialog() =
     ZcashTheme {
         ChooseServerPreview(
             dialogState =
-                ServerDialogState.Validation(
-                    state =
-                        AlertDialogState(
-                            title = stringRes("title"),
-                            text = stringRes("text"),
-                        ),
-                    reason = stringRes("reason")
-                )
+            ServerDialogState.Validation(
+                state =
+                AlertDialogState(
+                    title = stringRes("title"),
+                    text = stringRes("text"),
+                ),
+                reason = stringRes("reason")
+            )
         )
     }
 

@@ -85,13 +85,15 @@ fun StyledExchangeOptIn(
                         .fillMaxWidth()
                         .padding(end = 20.dp),
                 onClick = state.onPrimaryClick,
-                colors = ZashiButtonDefaults.tertiaryButtonColors()
-            ) {
+                colors = ZashiButtonDefaults.tertiaryButtonColors(),
+                text = stringResource(R.string.exchange_rate_opt_in_primary_btn),
+            ) { scope ->
                 Text(
                     text = stringResource(R.string.exchange_rate_opt_in_primary_btn),
                     style = ZcashTheme.typography.primary.titleSmall.copy(fontWeight = FontWeight.SemiBold),
                     fontSize = 14.sp
                 )
+                scope.Loading()
             }
         }
     }

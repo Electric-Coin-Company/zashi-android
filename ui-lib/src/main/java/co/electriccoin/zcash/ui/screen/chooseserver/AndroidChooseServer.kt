@@ -2,6 +2,7 @@
 
 package co.electriccoin.zcash.ui.screen.chooseserver
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -17,6 +18,12 @@ internal fun WrapChooseServer() {
     val viewModel = koinViewModel<ChooseServerViewModel>()
     val walletState by walletViewModel.walletStateInformation.collectAsStateWithLifecycle()
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    BackHandler {
+        if (viewModel.canGoBack()) {
+            navController.popBackStack()
+        }
+    }
 
     ChooseServerView(
         state = state,

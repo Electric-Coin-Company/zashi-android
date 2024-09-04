@@ -112,7 +112,7 @@ class ChooseServerViewModel(
             val userSelectedEndpoint = (userEndpointSelection as? Selection.Endpoint)?.endpoint
             ButtonState(
                 text = stringRes(R.string.choose_server_save),
-                isEnabled = userEndpointSelection == null || selectedEndpoint != userSelectedEndpoint,
+                isEnabled = userEndpointSelection != null && selectedEndpoint != userSelectedEndpoint,
                 isLoading = isSaveInProgress,
                 onClick = ::onSaveButtonClicked
             )
@@ -133,7 +133,7 @@ class ChooseServerViewModel(
             )
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT), null)
 
-    fun canGoBack(): Boolean = isSaveInProgress.value
+    fun canGoBack(): Boolean = isSaveInProgress.value.not()
 
     private fun createCustomServerState(
         userEndpointSelection: Selection?,
