@@ -1,4 +1,4 @@
-    # Changelog
+# Changelog
 All notable changes to this application will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
@@ -9,7 +9,7 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
-## [1.1.6 (712)] - 2024-08-23
+## [1.1.6 (712)] - 2024-09-04
 
 ### Added
 - We added ZEC/USD currency conversion to Zashi which doesn't compromise your IP address. You can now view your balances, and type in the transaction amount in both USD and ZEC.
