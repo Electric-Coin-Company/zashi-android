@@ -17,7 +17,7 @@ import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 /**
  * Same like [ComponentActivity.setContent] but allows for addition of [ViewCompositionStrategy].
  */
-fun ComponentActivity.setContentCompat(
+internal fun ComponentActivity.setContentCompat(
     viewCompositionStrategy: ViewCompositionStrategy = ViewCompositionStrategy.DisposeOnDetachedFromWindow,
     parent: CompositionContext? = null,
     content: @Composable () -> Unit
