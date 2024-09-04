@@ -29,9 +29,8 @@ fun Override(
         val contextWrapper =
             run {
                 val context = LocalContext.current
-                object : ContextThemeWrapper() {
+                object : ContextThemeWrapper(context, null) {
                     init {
-                        attachBaseContext(context)
                         applyOverrideConfiguration(configuration)
                     }
                 }

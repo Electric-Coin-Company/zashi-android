@@ -3,9 +3,9 @@
 package co.electriccoin.zcash.ui.screen.advancedsettings
 
 import androidx.activity.compose.BackHandler
-import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import co.electriccoin.zcash.di.koinActivityViewModel
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
@@ -21,7 +21,7 @@ internal fun MainActivity.WrapAdvancedSettings(
     goSeedRecovery: () -> Unit,
     onCurrencyConversion: () -> Unit
 ) {
-    val walletViewModel by viewModels<WalletViewModel>()
+    val walletViewModel = koinActivityViewModel<WalletViewModel>()
 
     val walletState = walletViewModel.walletStateInformation.collectAsStateWithLifecycle().value
 

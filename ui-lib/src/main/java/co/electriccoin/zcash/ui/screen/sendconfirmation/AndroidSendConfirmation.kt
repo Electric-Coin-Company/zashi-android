@@ -5,7 +5,6 @@ package co.electriccoin.zcash.ui.screen.sendconfirmation
 import android.content.Context
 import android.content.Intent
 import androidx.activity.compose.BackHandler
-import androidx.activity.viewModels
 import androidx.annotation.VisibleForTesting
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -23,6 +22,7 @@ import cash.z.ecc.android.sdk.model.Proposal
 import cash.z.ecc.android.sdk.model.TransactionSubmitResult
 import cash.z.ecc.android.sdk.model.UnifiedSpendingKey
 import cash.z.ecc.android.sdk.model.ZecSend
+import co.electriccoin.zcash.di.koinActivityViewModel
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
@@ -57,15 +57,13 @@ internal fun MainActivity.WrapSendConfirmation(
     goSupport: () -> Unit,
     arguments: SendConfirmationArguments
 ) {
-    val walletViewModel by viewModels<WalletViewModel>()
+    val walletViewModel = koinActivityViewModel<WalletViewModel>()
 
-    val createTransactionsViewModel by viewModels<CreateTransactionsViewModel>()
+    val createTransactionsViewModel = koinActivityViewModel<CreateTransactionsViewModel>()
 
-    val supportViewModel by viewModels<SupportViewModel>()
+    val supportViewModel = koinActivityViewModel<SupportViewModel>()
 
-    val authenticationViewModel by viewModels<AuthenticationViewModel> {
-        AuthenticationViewModel.AuthenticationViewModelFactory(application)
-    }
+    val authenticationViewModel = koinActivityViewModel<AuthenticationViewModel>()
 
     val synchronizer = walletViewModel.synchronizer.collectAsStateWithLifecycle().value
 

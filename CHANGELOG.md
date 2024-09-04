@@ -6,6 +6,12 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+### Added
+- Balance now also displays USD value
+- An option to enter USD amount in Send Transaction screen
+- Dependency injection using Koin has been added to the project. This helps us keep the codebase organized while
+  adding new app features.
+
 ## [1.1.6 (712)] - 2024-09-04
 
 ### Added
