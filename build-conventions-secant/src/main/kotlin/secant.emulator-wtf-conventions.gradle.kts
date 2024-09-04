@@ -1,11 +1,11 @@
 // Emulator WTF has min and max values that might differ from our project's
-// These are determined by `ew-cli --models`
+// These are determined by `ew-cli --models`, or by visiting documentation: https://docs.emulator.wtf/emulators/
 
 @Suppress("MagicNumber", "PropertyName", "VariableNaming")
-val EMULATOR_WTF_MIN_SDK = 23
+val EMULATOR_WTF_MIN_SDK = 27
 
 @Suppress("MagicNumber", "PropertyName", "VariableNaming")
-val EMULATOR_WTF_MAX_SDK = 33
+val EMULATOR_WTF_MAX_SDK = 34
 
 internal val className = this::class.simpleName
 
