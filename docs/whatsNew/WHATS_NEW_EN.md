@@ -1,4 +1,4 @@
-    # Changelog
+# Changelog
 All notable changes to this application will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
@@ -9,9 +9,17 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [1.1.6 (712)] - 2024-09-04
+
 ### Added
-- Balance now also displays USD value
-- An option to enter USD amount in Send Transaction screen
+- We added ZEC/USD currency conversion to Zashi without compromising your IP address.
+- You can now view your balances and type in transaction amounts in both USD and ZEC.
+
+### Changed
+- We adopted the latest Zcash SDK version 2.2.0, which brings the ZIP 320 TEX addresses support, currency conversion feature that fetches ZEC/USD exchange rate over Tor, and support for restoring the full history from transparent-only wallets.
+
+### Fixed
+- We re-enabled app screenshot testing after we moved away from the AppCompat components.
 
 ## [1.1.5 (706)] - 2024-08-09
 
