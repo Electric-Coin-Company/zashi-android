@@ -32,7 +32,7 @@ import co.electriccoin.zcash.ui.screen.exchangerate.BaseExchangeRateOptIn
 import co.electriccoin.zcash.ui.screen.exchangerate.SecondaryCard
 import co.electriccoin.zcash.ui.screen.exchangerate.ZashiButton
 import co.electriccoin.zcash.ui.screen.exchangerate.ZashiButtonDefaults
-import co.electriccoin.zcash.ui.util.PreviewScreens
+import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 
 @Composable
 fun SettingsExchangeRateOptIn(

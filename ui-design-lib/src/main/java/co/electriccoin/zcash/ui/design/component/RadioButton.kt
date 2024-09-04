@@ -34,12 +34,13 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.design.R
-import co.electriccoin.zcash.ui.design.newcomponent.ScreenPreview
+import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.stringRes
 
+@Suppress("LongParameterList", "LongMethod")
 @Composable
 fun RadioButton(
     state: RadioButtonState,
@@ -51,22 +52,22 @@ fun RadioButton(
 ) {
     Row(
         modifier =
-            modifier
-                .clip(RoundedCornerShape(12.dp))
-                .clickable(
-                    indication = rememberRipple(),
-                    interactionSource = remember { MutableInteractionSource() },
-                    onClick = state.onClick,
-                    role = Role.Button,
-                )
-                .padding(horizontal = 20.dp)
-                .then(
-                    if (testTag != null) {
-                        Modifier.testTag(testTag)
-                    } else {
-                        Modifier
-                    }
-                ),
+        modifier
+            .clip(RoundedCornerShape(12.dp))
+            .clickable(
+                indication = rememberRipple(),
+                interactionSource = remember { MutableInteractionSource() },
+                onClick = state.onClick,
+                role = Role.Button,
+            )
+            .padding(horizontal = 20.dp)
+            .then(
+                if (testTag != null) {
+                    Modifier.testTag(testTag)
+                } else {
+                    Modifier
+                }
+            ),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -83,12 +84,12 @@ fun RadioButton(
                     style = ZcashTheme.extendedTypography.radioButton,
                     color = ZcashTheme.colors.textPrimary,
                     modifier =
-                        Modifier.padding(
-                            top = 14.dp,
-                            bottom = if (state.subtitle == null) 14.dp else 0.dp,
-                            start = 0.dp,
-                            end = ZcashTheme.dimens.spacingDefault
-                        )
+                    Modifier.padding(
+                        top = 14.dp,
+                        bottom = if (state.subtitle == null) 14.dp else 0.dp,
+                        start = 0.dp,
+                        end = ZcashTheme.dimens.spacingDefault
+                    )
                 )
 
                 if (state.subtitle != null) {
@@ -98,11 +99,11 @@ fun RadioButton(
                         fontWeight = FontWeight.Normal,
                         color = Color(0xFF838385),
                         modifier =
-                            Modifier.padding(
-                                bottom = 6.dp,
-                                start = 0.dp,
-                                end = ZcashTheme.dimens.spacingDefault
-                            )
+                        Modifier.padding(
+                            bottom = 6.dp,
+                            start = 0.dp,
+                            end = ZcashTheme.dimens.spacingDefault
+                        )
                     )
                 }
             }
@@ -165,25 +166,26 @@ private fun RadioButtonPreview() =
         RadioButton(
             modifier = Modifier.fillMaxWidth(),
             state =
-                RadioButtonState(
-                    text = stringRes("test"),
-                    isChecked = isChecked,
-                    onClick = { isChecked = !isChecked },
-                ),
+            RadioButtonState(
+                text = stringRes("test"),
+                isChecked = isChecked,
+                onClick = { isChecked = !isChecked },
+            ),
             trailingContent = {
                 Text(text = "Trailing text")
             }
         )
         RadioButton(
             state =
-                RadioButtonState(
-                    text = stringRes("test"),
-                    isChecked = true,
-                    onClick = {},
-                ),
+            RadioButtonState(
+                text = stringRes("test"),
+                isChecked = true,
+                onClick = {},
+            ),
         )
     }
 
-@ScreenPreview
+@Suppress("UnusedPrivateMember")
+@PreviewScreens
 @Composable
 private fun RadioButtonPreviewLight() = ZcashTheme { RadioButtonPreview() }

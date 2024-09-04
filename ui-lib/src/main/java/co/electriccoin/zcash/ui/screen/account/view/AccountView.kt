@@ -49,7 +49,7 @@ import co.electriccoin.zcash.ui.screen.account.fixture.TransactionsFixture
 import co.electriccoin.zcash.ui.screen.account.model.TransactionUiState
 import co.electriccoin.zcash.ui.screen.balances.model.StatusAction
 import co.electriccoin.zcash.ui.screen.exchangerate.widget.StyledExchangeOptIn
-import co.electriccoin.zcash.ui.util.PreviewScreens
+import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import kotlinx.datetime.Clock
 
 @Suppress("UnusedPrivateMember")

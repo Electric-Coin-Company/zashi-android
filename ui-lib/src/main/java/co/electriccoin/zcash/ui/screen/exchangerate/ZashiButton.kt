@@ -38,6 +38,7 @@ internal fun ZashiButton(
     )
 }
 
+@Suppress("LongParameterList")
 @Composable
 internal fun ZashiButton(
     text: String,

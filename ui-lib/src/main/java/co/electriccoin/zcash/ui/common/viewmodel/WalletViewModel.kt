@@ -89,7 +89,7 @@ import kotlin.time.Duration.Companion.seconds
 // for loading the preferences.
 // TODO [#292]: Should be moved to SDK-EXT-UI module.
 // TODO [#292]: https://github.com/Electric-Coin-Company/zashi-android/issues/292
-@Suppress("LongParameterList")
+@Suppress("LongParameterList", "TooManyFunctions")
 class WalletViewModel(
     application: Application,
     observeSynchronizer: ObserveSynchronizerUseCase,

@@ -62,13 +62,13 @@ import co.electriccoin.zcash.ui.design.component.RadioButtonState
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.component.TopAppBarBackNavigation
-import co.electriccoin.zcash.ui.design.newcomponent.ScreenPreview
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.exchangerate.BottomBar
 import co.electriccoin.zcash.ui.screen.exchangerate.ZashiButton
+import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 
 @Composable
 fun ChooseServerView(
@@ -222,6 +222,7 @@ private fun ChooseServerTopAppBar(
     )
 }
 
+@Suppress("LongMethod")
 private fun LazyListScope.serverListItems(state: ServerListState) {
     item {
         when (state) {
@@ -481,7 +482,8 @@ private fun ChooseServerPreview(
     )
 }
 
-@ScreenPreview
+@Suppress("UnusedPrivateMember")
+@PreviewScreens
 @Composable
 private fun ChooseServerPreviewValidationDialog() =
     ZcashTheme {
@@ -498,14 +500,16 @@ private fun ChooseServerPreviewValidationDialog() =
         )
     }
 
-@ScreenPreview
+@Suppress("UnusedPrivateMember")
+@PreviewScreens
 @Composable
 private fun ChooseServerPreviewLoading() =
     ZcashTheme {
         ChooseServerPreview(showFastestServerLoading = false)
     }
 
-@ScreenPreview
+@Suppress("UnusedPrivateMember")
+@PreviewScreens
 @Composable
 private fun ChooseServerPreviewData() =
     ZcashTheme {

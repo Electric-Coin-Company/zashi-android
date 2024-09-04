@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.util
+package co.electriccoin.zcash.ui.design.newcomponent
 
 import android.content.res.Configuration
 import androidx.compose.ui.tooling.preview.Preview

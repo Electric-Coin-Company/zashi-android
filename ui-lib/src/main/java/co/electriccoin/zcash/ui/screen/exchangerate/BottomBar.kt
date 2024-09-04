@@ -15,9 +15,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.design.component.ButtonState
-import co.electriccoin.zcash.ui.design.newcomponent.ScreenPreview
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 
 @Composable
 fun BottomBar(
@@ -39,7 +39,8 @@ fun BottomBar(
     }
 }
 
-@ScreenPreview
+@Suppress("UnusedPrivateMember")
+@PreviewScreens
 @Composable
 private fun BottomBarPreview() =
     ZcashTheme {

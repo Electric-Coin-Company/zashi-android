@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
-import co.electriccoin.zcash.ui.util.PreviewScreens
+import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 
 @Composable
 internal fun StyledExchangeUnavailablePopup(

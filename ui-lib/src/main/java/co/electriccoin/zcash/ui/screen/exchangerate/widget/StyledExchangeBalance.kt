@@ -47,7 +47,7 @@ import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.fixture.ObserveFiatCurrencyResultFixture
-import co.electriccoin.zcash.ui.util.PreviewScreens
+import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import kotlinx.datetime.Clock
 
 @Suppress("LongParameterList", "ComplexCondition")
