@@ -4,7 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
-import co.electriccoin.zcash.preference.api.StandardPreferenceProvider
+import co.electriccoin.zcash.preference.StandardPreferenceProvider
 import co.electriccoin.zcash.preference.model.entry.BooleanPreferenceDefault
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
 import co.electriccoin.zcash.ui.screen.restoresuccess.view.RestoreSuccessViewState
@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 
 class RestoreSuccessViewModel(
     application: Application,
-    private val standardPreferenceProvider: StandardPreferenceProvider
+    private val standardPreferenceProvider: StandardPreferenceProvider,
 ) : AndroidViewModel(application) {
     private val keepScreenOn = MutableStateFlow(DEFAULT_KEEP_SCREEN_ON)
 
@@ -48,7 +48,7 @@ class RestoreSuccessViewModel(
         default: BooleanPreferenceDefault,
         newState: Boolean
     ) = viewModelScope.launch {
-        default.putValue(standardPreferenceProvider, newState)
+        default.putValue(standardPreferenceProvider(), newState)
     }
 }
 

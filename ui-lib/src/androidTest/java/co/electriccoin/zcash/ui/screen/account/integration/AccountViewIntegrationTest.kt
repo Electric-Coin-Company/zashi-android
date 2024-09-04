@@ -9,6 +9,7 @@ import androidx.compose.ui.unit.dp
 import androidx.test.filters.MediumTest
 import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
+import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 import co.electriccoin.zcash.ui.screen.account.AccountTag
 import co.electriccoin.zcash.ui.screen.account.AccountTestSetup
@@ -40,7 +41,9 @@ class AccountViewIntegrationTest : UiTestPrerequisites() {
         val testSetup = newTestSetup(walletSnapshot)
 
         restorationTester.setContent {
-            testSetup.DefaultContent(isHideBalances = false)
+            ZcashTheme {
+                testSetup.DefaultContent(isHideBalances = false)
+            }
         }
 
         assertEquals(WalletSnapshotFixture.SAPLING_BALANCE, testSetup.getWalletSnapshot().saplingBalance)

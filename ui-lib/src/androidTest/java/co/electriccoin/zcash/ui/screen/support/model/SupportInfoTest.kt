@@ -11,7 +11,7 @@ class SupportInfoTest {
     @Test
     fun filter_time() =
         runTest {
-            val supportInfo = SupportInfo.newInstance(getAppContext(), AndroidConfigurationFactory.newInstance())
+            val supportInfo = SupportInfo.new(getAppContext(), AndroidConfigurationFactory.new())
 
             val individualExpected = supportInfo.timeInfo.toSupportString()
 
@@ -25,7 +25,7 @@ class SupportInfoTest {
     @Test
     fun filter_app() =
         runTest {
-            val supportInfo = SupportInfo.newInstance(getAppContext(), AndroidConfigurationFactory.newInstance())
+            val supportInfo = SupportInfo.new(getAppContext(), AndroidConfigurationFactory.new())
 
             val individualExpected = supportInfo.appInfo.toSupportString()
 
@@ -39,7 +39,7 @@ class SupportInfoTest {
     @Test
     fun filter_os() =
         runTest {
-            val supportInfo = SupportInfo.newInstance(getAppContext(), AndroidConfigurationFactory.newInstance())
+            val supportInfo = SupportInfo.new(getAppContext(), AndroidConfigurationFactory.new())
 
             val individualExpected = supportInfo.operatingSystemInfo.toSupportString()
 
@@ -53,7 +53,7 @@ class SupportInfoTest {
     @Test
     fun filter_device() =
         runTest {
-            val supportInfo = SupportInfo.newInstance(getAppContext(), AndroidConfigurationFactory.newInstance())
+            val supportInfo = SupportInfo.new(getAppContext(), AndroidConfigurationFactory.new())
 
             val individualExpected = supportInfo.deviceInfo.toSupportString()
 
@@ -67,7 +67,7 @@ class SupportInfoTest {
     @Test
     fun filter_crash() =
         runTest {
-            val supportInfo = SupportInfo.newInstance(getAppContext(), AndroidConfigurationFactory.newInstance())
+            val supportInfo = SupportInfo.new(getAppContext(), AndroidConfigurationFactory.new())
 
             val individualExpected = supportInfo.crashInfo.toCrashSupportString()
 
@@ -78,7 +78,7 @@ class SupportInfoTest {
     @Test
     fun filter_environment() =
         runTest {
-            val supportInfo = SupportInfo.newInstance(getAppContext(), AndroidConfigurationFactory.newInstance())
+            val supportInfo = SupportInfo.new(getAppContext(), AndroidConfigurationFactory.new())
 
             val individualExpected = supportInfo.environmentInfo.toSupportString()
 
@@ -92,7 +92,7 @@ class SupportInfoTest {
     @Test
     fun filter_permission() =
         runTest {
-            val supportInfo = SupportInfo.newInstance(getAppContext(), AndroidConfigurationFactory.newInstance())
+            val supportInfo = SupportInfo.new(getAppContext(), AndroidConfigurationFactory.new())
 
             val individualExpected = supportInfo.permissionInfo.toPermissionSupportString()
 

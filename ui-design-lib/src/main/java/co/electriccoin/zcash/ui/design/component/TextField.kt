@@ -31,7 +31,7 @@ import co.electriccoin.zcash.ui.design.util.getValue
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
-@Suppress("LongParameterList")
+@Suppress("LongParameterList", "LongMethod")
 @Composable
 fun FormTextField(
     value: String,
@@ -93,7 +93,15 @@ fun FormTextField(
                     }
                     .then(
                         if (withBorder) {
-                            Modifier.border(width = 1.dp, color = ZcashTheme.colors.textFieldFrame)
+                            Modifier.border(
+                                width = 1.dp,
+                                color =
+                                    if (enabled) {
+                                        ZcashTheme.colors.textFieldFrame
+                                    } else {
+                                        ZcashTheme.colors.textDisabled
+                                    }
+                            )
                         } else {
                             Modifier
                         }

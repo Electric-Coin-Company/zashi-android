@@ -6,7 +6,7 @@ import android.os.PowerManager
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.runner.AndroidJUnitRunner
 
-class ZcashUiTestRunner : AndroidJUnitRunner() {
+open class ZcashUiTestRunner : AndroidJUnitRunner() {
     private lateinit var wakeLock: PowerManager.WakeLock
 
     override fun onCreate(arguments: Bundle?) {

@@ -39,7 +39,6 @@ import kotlin.time.toJavaDuration
 
 // TODO [#1249]: Add documentation and tests on background syncing
 // TODO [#1249]: https://github.com/Electric-Coin-Company/zashi-android/issues/1249
-
 @Keep
 class SyncWorker(
     context: Context,

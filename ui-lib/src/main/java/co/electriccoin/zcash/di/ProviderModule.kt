@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.app.di
+package co.electriccoin.zcash.di
 
 import co.electriccoin.zcash.ui.common.provider.GetDefaultServersProvider
 import org.koin.core.module.dsl.factoryOf

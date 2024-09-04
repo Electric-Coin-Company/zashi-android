@@ -1,12 +1,12 @@
 package co.electriccoin.zcash.app
 
-import co.electriccoin.zcash.app.di.coreModule
-import co.electriccoin.zcash.app.di.providerModule
-import co.electriccoin.zcash.app.di.repositoryModule
-import co.electriccoin.zcash.app.di.useCaseModule
-import co.electriccoin.zcash.app.di.viewModelModule
 import co.electriccoin.zcash.crash.android.GlobalCrashReporter
-import co.electriccoin.zcash.preference.api.StandardPreferenceProvider
+import co.electriccoin.zcash.di.coreModule
+import co.electriccoin.zcash.di.providerModule
+import co.electriccoin.zcash.di.repositoryModule
+import co.electriccoin.zcash.di.useCaseModule
+import co.electriccoin.zcash.di.viewModelModule
+import co.electriccoin.zcash.preference.StandardPreferenceProvider
 import co.electriccoin.zcash.spackle.StrictModeCompat
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
@@ -63,7 +63,7 @@ class ZcashApplication : CoroutineApplication() {
     private fun configureAnalytics() {
         if (GlobalCrashReporter.register(this)) {
             applicationScope.launch {
-                StandardPreferenceKeys.IS_ANALYTICS_ENABLED.observe(standardPreferenceProvider).collect {
+                StandardPreferenceKeys.IS_ANALYTICS_ENABLED.observe(standardPreferenceProvider()).collect {
                     if (it) {
                         GlobalCrashReporter.enable()
                     } else {

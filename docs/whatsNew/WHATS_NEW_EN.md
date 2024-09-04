@@ -9,17 +9,35 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [1.1.6 (712)] - 2024-09-04
+
 ### Added
-- A new What's New screen has been added, accessible from the About screen
-- Copying sensitive information like addresses, transaction IDs, or wallet secrets into the device clipboard is now 
-  masked out from the system visual confirmation, but it's still copied as expected.
+- We added ZEC/USD currency conversion to Zashi without compromising your IP address.
+- You can now view your balances and type in transaction amounts in both USD and ZEC.
 
 ### Changed
-- The About screen has been redesigned to align with the new design guidelines
-- The Restore Success dialog has been reworked into a separate screen, allowing users to opt out of the Keep screen 
-  on while restoring option
+- We adopted the latest Zcash SDK version 2.2.0, which brings the ZIP 320 TEX addresses support, currency conversion feature that fetches ZEC/USD exchange rate over Tor, and support for restoring the full history from transparent-only wallets.
 
 ### Fixed
-- Support Screen now shows the Send button above keyboard instead of overlaying it
-- QR code scanning speed and reliability have been improved to address the latest reported scan issue
-- The handling of Android configuration changes has been improved
+- We re-enabled app screenshot testing after we moved away from the AppCompat components.
+
+## [1.1.5 (706)] - 2024-08-09
+
+### Changed
+- We adopted the latest Zcash SDK version 2.1.3, which significantly improves block synchronization speed.
+- We also improved the logic for fetching transparent transactions.
+
+## [1.1.4 (700)] - 2024-07-23
+
+### Added
+- We added What’s New information to the About screen.
+- We secured copying sensitive information into a device clipboard by masking it from the system visual confirmation.
+
+### Changed
+- We added a screen with syncing tips for successful Restore.
+- We updated UI of the About screen.
+
+### Fixed
+- We fixed QR code scanning speed and reliability.
+- We fixed UI on the Feedback screen, so the Send button is not hidden by keyboard anymore. 
+- We also improved handling of Android configuration changes.

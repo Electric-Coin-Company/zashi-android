@@ -4,8 +4,6 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
@@ -17,7 +15,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import cash.z.ecc.android.sdk.model.MonetarySeparators
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.design.R
@@ -26,7 +23,7 @@ import java.util.Locale
 
 @Preview
 @Composable
-private fun StyledBalanceComposablePreview() {
+private fun StyledBalancePreview() =
     ZcashTheme(forceDarkMode = false) {
         BlankSurface {
             Column {
@@ -35,9 +32,16 @@ private fun StyledBalanceComposablePreview() {
                     isHideBalances = false,
                     modifier = Modifier
                 )
+            }
+        }
+    }
 
-                Spacer(modifier = Modifier.height(24.dp))
-
+@Preview
+@Composable
+private fun HiddenStyledBalancePreview() =
+    ZcashTheme(forceDarkMode = false) {
+        BlankSurface {
+            Column {
                 StyledBalance(
                     balanceParts = ZecAmountTriple(main = "1,234.56789012"),
                     isHideBalances = true,
@@ -46,7 +50,6 @@ private fun StyledBalanceComposablePreview() {
             }
         }
     }
-}
 
 /**
  * This accepts string with balance and displays it in the UI component styled according to the design

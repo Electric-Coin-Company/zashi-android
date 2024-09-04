@@ -10,6 +10,7 @@ import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.model.PercentDecimal
 import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
+import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 import co.electriccoin.zcash.ui.screen.balances.BalancesTag
 import co.electriccoin.zcash.ui.screen.balances.BalancesTestSetup
@@ -42,7 +43,9 @@ class BalancesViewIntegrationTest : UiTestPrerequisites() {
         val testSetup = newTestSetup(walletSnapshot)
 
         restorationTester.setContent {
-            testSetup.DefaultContent()
+            ZcashTheme {
+                testSetup.DefaultContent()
+            }
         }
 
         assertNotEquals(WalletSnapshotFixture.STATUS, testSetup.getWalletSnapshot().status)

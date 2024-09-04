@@ -13,6 +13,7 @@ import co.electriccoin.zcash.ui.common.extension.toKotlinLocale
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.model.spendableBalance
 import co.electriccoin.zcash.ui.common.model.totalBalance
+import co.electriccoin.zcash.ui.common.viewmodel.STACKTRACE_LIMIT
 
 data class WalletDisplayValues(
     val progress: PercentDecimal,
@@ -34,9 +35,6 @@ data class WalletDisplayValues(
             var statusText = ""
             var statusAction: StatusAction = StatusAction.None
 
-            // TODO [#578]: Provide Zatoshi -> USD fiat currency formatting
-            // TODO [#578]: https://github.com/Electric-Coin-Company/zcash-android-wallet-sdk/issues/578
-            // We'll ideally provide a "fresh" currencyConversion object here
             val fiatCurrencyAmountState =
                 walletSnapshot.spendableBalance().toFiatCurrencyState(
                     null,
@@ -105,7 +103,9 @@ data class WalletDisplayValues(
                             context.getString(
                                 R.string.balances_status_error_dialog_cause,
                                 walletSnapshot.synchronizerError.getCauseMessage()
-                                    ?: context.getString(R.string.balances_status_error_dialog_unknown)
+                                    ?: context.getString(R.string.balances_status_error_dialog_cause_unknown),
+                                walletSnapshot.synchronizerError.getStackTrace(limit = STACKTRACE_LIMIT)
+                                    ?: context.getString(R.string.balances_status_error_dialog_stacktrace_unknown)
                             )
                     )
             }

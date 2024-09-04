@@ -22,7 +22,7 @@ class SupportViewModel(
     // care about is capturing a snapshot of the app, OS, and device state.
     val supportInfo: StateFlow<SupportInfo?> =
         flow<SupportInfo?> {
-            emit(SupportInfo.newInstance(application, androidConfigurationProvider))
+            emit(SupportInfo.new(application, androidConfigurationProvider))
         }
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT, Duration.ZERO), null)
 }

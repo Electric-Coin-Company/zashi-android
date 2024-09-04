@@ -41,7 +41,8 @@ private fun PreviewAdvancedSettings() {
             onExportPrivateData = {},
             onChooseServer = {},
             onSeedRecovery = {},
-            topAppBarSubTitleState = TopAppBarSubTitleState.None
+            topAppBarSubTitleState = TopAppBarSubTitleState.None,
+            onCurrencyConversion = {}
         )
     }
 }
@@ -54,6 +55,7 @@ fun AdvancedSettings(
     onExportPrivateData: () -> Unit,
     onChooseServer: () -> Unit,
     onSeedRecovery: () -> Unit,
+    onCurrencyConversion: () -> Unit,
     topAppBarSubTitleState: TopAppBarSubTitleState,
 ) {
     BlankBgScaffold(
@@ -80,6 +82,7 @@ fun AdvancedSettings(
             onExportPrivateData = onExportPrivateData,
             onSeedRecovery = onSeedRecovery,
             onChooseServer = onChooseServer,
+            onCurrencyConversion = onCurrencyConversion
         )
     }
 }
@@ -108,11 +111,13 @@ private fun AdvancedSettingsTopAppBar(
     )
 }
 
+@Suppress("LongParameterList")
 @Composable
 private fun AdvancedSettingsMainContent(
     onDeleteWallet: () -> Unit,
     onExportPrivateData: () -> Unit,
     onChooseServer: () -> Unit,
+    onCurrencyConversion: () -> Unit,
     onSeedRecovery: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -141,6 +146,14 @@ private fun AdvancedSettingsMainContent(
         PrimaryButton(
             onClick = onChooseServer,
             text = stringResource(R.string.advanced_settings_choose_server),
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(dimens.spacingDefault))
+
+        PrimaryButton(
+            onClick = onCurrencyConversion,
+            text = stringResource(R.string.advanced_settings_currency_conversion),
             modifier = Modifier.fillMaxWidth()
         )
 

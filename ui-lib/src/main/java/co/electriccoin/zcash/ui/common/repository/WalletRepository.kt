@@ -8,8 +8,8 @@ import cash.z.ecc.android.sdk.model.FastestServersResult
 import cash.z.ecc.android.sdk.model.PersistableWallet
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.lightwallet.client.model.LightWalletEndpoint
-import co.electriccoin.zcash.preference.api.EncryptedPreferenceProvider
-import co.electriccoin.zcash.preference.api.StandardPreferenceProvider
+import co.electriccoin.zcash.preference.EncryptedPreferenceProvider
+import co.electriccoin.zcash.preference.StandardPreferenceProvider
 import co.electriccoin.zcash.ui.common.model.FastestServersState
 import co.electriccoin.zcash.ui.common.model.OnboardingState
 import co.electriccoin.zcash.ui.common.provider.GetDefaultServersProvider
@@ -82,7 +82,7 @@ class WalletRepositoryImpl(
     private val onboardingState =
         flow {
             emitAll(
-                StandardPreferenceKeys.ONBOARDING_STATE.observe(standardPreferenceProvider).map { persistedNumber ->
+                StandardPreferenceKeys.ONBOARDING_STATE.observe(standardPreferenceProvider()).map { persistedNumber ->
                     OnboardingState.fromNumber(persistedNumber)
                 }
             )
@@ -176,7 +176,7 @@ class WalletRepositoryImpl(
     override fun persistWallet(persistableWallet: PersistableWallet) {
         scope.launch {
             persistWalletMutex.withLock {
-                persistableWalletPreference.putValue(encryptedPreferenceProvider, persistableWallet)
+                persistableWalletPreference.putValue(encryptedPreferenceProvider(), persistableWallet)
             }
         }
     }
@@ -193,7 +193,8 @@ class WalletRepositoryImpl(
             // complete quickly, it isn't guaranteed to complete before persistExistingWallet()
             // unless a mutex is used here.
             persistWalletMutex.withLock {
-                StandardPreferenceKeys.ONBOARDING_STATE.putValue(standardPreferenceProvider, onboardingState.toNumber())
+                StandardPreferenceKeys.ONBOARDING_STATE.putValue(standardPreferenceProvider(), onboardingState
+                    .toNumber())
             }
         }
     }

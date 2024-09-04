@@ -7,6 +7,46 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 ## [Unreleased]
 
 ### Added
+- Balance now also displays USD value
+- An option to enter USD amount in Send Transaction screen
+- Dependency injection using Koin has been added to the project. This helps us keep the codebase organized while
+  adding new app features.
+
+## [1.1.6 (712)] - 2024-09-04
+
+### Added
+- Zcash SDK 2.2.2 has been adopted. It brings several new important features:
+- Currency exchange rates (currently just USD/ZEC) are now made available via the SDK.
+  The exchange rate computed as the median of values provided by at least three separate
+  cryptocurrency exchanges, and is fetched over Tor connections in order to avoid leaking
+  the wallet's IP address to the exchanges.
+- Sending to ZIP 320 (TEX) addresses is now supported. When sending to a ZIP 320 address,
+  the wallet will first automatically de-shield the required funds to a fresh ephemeral
+  transparent address, and then will make a second fully-transparent transaction sending
+  the funds to the eventual recipient that is not linkable via on-chain information to any
+  other transaction in the  user's wallet.
+- As part of adding ZIP 320 support, the SDK now also provides full support for recovering
+  transparent transaction history. Prior to this release, only transactions belonging to the
+  wallet that contained either some shielded component OR a member of the current
+  transparent UTXO set were included in transaction history.
+- Thus, the balances widget now optionally displays the USD value as well
+- A new option to enter the USD amount in the Send screen has been added
+
+## Changed
+- Android NDK version has been bumped to 26.1.10909125
+
+## Fixed
+- The app screenshot testing has been re-enabled after we moved away from AppCompat components 
+
+## [1.1.5 (706)] - 2024-08-09
+
+### Changed
+- Adopted the latest Zcash SDK version 2.1.3, which brings a significant block synchronization speed-up and improved 
+  UTXOs fetching logic
+
+## [1.1.4 (700)] - 2024-07-23
+
+### Added
 - A new What's New screen has been added, accessible from the About screen. It contains the release notes parsed 
   from the new [docs/whatsNew/WHATS_NEW_EN.md] file
 - These release notes and release priority are both propagated to every new Google Play release using CI logic

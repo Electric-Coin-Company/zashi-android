@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.configuration.api.ConfigurationProvider
 import co.electriccoin.zcash.configuration.model.map.Configuration
-import co.electriccoin.zcash.preference.api.StandardPreferenceProvider
+import co.electriccoin.zcash.preference.StandardPreferenceProvider
 import co.electriccoin.zcash.preference.model.entry.BooleanPreferenceDefault
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
 import kotlinx.coroutines.flow.SharingStarted
@@ -69,7 +69,7 @@ class HomeViewModel(
 
     private fun booleanStateFlow(default: BooleanPreferenceDefault): StateFlow<Boolean?> =
         flow<Boolean?> {
-            emitAll(default.observe(standardPreferenceProvider))
+            emitAll(default.observe(standardPreferenceProvider()))
         }.stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
@@ -81,7 +81,7 @@ class HomeViewModel(
         newState: Boolean
     ) {
         viewModelScope.launch {
-            default.putValue(standardPreferenceProvider, newState)
+            default.putValue(standardPreferenceProvider(), newState)
         }
     }
 }

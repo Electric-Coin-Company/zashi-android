@@ -2,26 +2,14 @@
 
 package co.electroniccoin.zcash.ui.screenshot
 
-import org.junit.Test
-
-// NOTE: this is just a placeholder test to satisfy this module test settings and will be removed once the below
-// issue is resolved
-class ScreenshotTest {
-    @Test
-    fun placeholderTest() {
-        assert(true)
-    }
-}
-/*
-TODO [#1448]: Re-enable or rework screenshot testing
-TODO [#1448]: https://github.com/Electric-Coin-Company/zashi-android/issues/1448
-
 import android.content.Context
 import android.os.Build
 import android.os.LocaleList
 import androidx.activity.viewModels
+import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.hasContentDescription
+import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
@@ -40,7 +28,6 @@ import androidx.test.espresso.matcher.ViewMatchers.isRoot
 import androidx.test.espresso.screenshot.captureToBitmap
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.filters.LargeTest
-import androidx.test.filters.MediumTest
 import androidx.test.filters.SdkSuppress
 import cash.z.ecc.android.sdk.fixture.WalletAddressFixture
 import cash.z.ecc.android.sdk.model.MonetarySeparators
@@ -54,12 +41,14 @@ import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.NavigationTargets
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.viewmodel.SecretState
+import co.electriccoin.zcash.ui.design.component.AnimationConstants.WELCOME_ANIM_TEST_TAG
 import co.electriccoin.zcash.ui.design.component.ConfigurationOverride
 import co.electriccoin.zcash.ui.design.component.UiMode
 import co.electriccoin.zcash.ui.screen.account.AccountTag
 import co.electriccoin.zcash.ui.screen.home.HomeTag
 import co.electriccoin.zcash.ui.screen.restore.RestoreTag
 import co.electriccoin.zcash.ui.screen.restore.viewmodel.RestoreViewModel
+import co.electriccoin.zcash.ui.screen.securitywarning.view.SecurityScreenTag.ACKNOWLEDGE_CHECKBOX_TAG
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -135,7 +124,7 @@ class ScreenshotTest : UiTestPrerequisites() {
     }
 
     @Test
-    @MediumTest
+    @LargeTest
     fun takeScreenshotsForRestoreWalletLightEnXA() {
         runWith(UiMode.Light, "en-XA") { context, tag ->
             takeScreenshotsForRestoreWallet(context, tag)
@@ -143,7 +132,7 @@ class ScreenshotTest : UiTestPrerequisites() {
     }
 
     @Test
-    @MediumTest
+    @LargeTest
     fun takeScreenshotsForRestoreWalletLightArXB() {
         runWith(UiMode.Light, "ar-XB") { context, tag ->
             takeScreenshotsForRestoreWallet(context, tag)
@@ -151,7 +140,7 @@ class ScreenshotTest : UiTestPrerequisites() {
     }
 
     @Test
-    @MediumTest
+    @LargeTest
     fun takeScreenshotsForRestoreWalletLightEnUS() {
         runWith(UiMode.Light, "en-US") { context, tag ->
             takeScreenshotsForRestoreWallet(context, tag)
@@ -160,14 +149,14 @@ class ScreenshotTest : UiTestPrerequisites() {
 
     // Dark mode was introduced in Android Q
     @Test
-    @MediumTest
-    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.Q)
+    @LargeTest
     fun takeScreenshotsForRestoreWalletDarkEnUS() {
         runWith(UiMode.Dark, "en-US") { context, tag ->
             takeScreenshotsForRestoreWallet(context, tag)
         }
     }
 
+    @OptIn(ExperimentalTestApi::class)
     @Suppress("LongMethod", "CyclomaticComplexMethod")
     private fun takeScreenshotsForRestoreWallet(
         resContext: Context,
@@ -182,6 +171,8 @@ class ScreenshotTest : UiTestPrerequisites() {
         composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) {
             composeTestRule.activity.walletViewModel.secretState.value is SecretState.None
         }
+
+        composeTestRule.waitUntilDoesNotExist(hasTestTag(WELCOME_ANIM_TEST_TAG), DEFAULT_TIMEOUT_MILLISECONDS)
 
         composeTestRule.onNodeWithText(
             text =
@@ -243,6 +234,12 @@ class ScreenshotTest : UiTestPrerequisites() {
             it.performScrollTo()
             it.performClick()
         }
+
+        composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) {
+            composeTestRule.activity.walletViewModel.walletSnapshot.value != null
+        }
+
+        composeTestRule.waitUntilDoesNotExist(hasTestTag(ACKNOWLEDGE_CHECKBOX_TAG), DEFAULT_TIMEOUT_MILLISECONDS)
     }
 
     @Test
@@ -324,6 +321,7 @@ class ScreenshotTest : UiTestPrerequisites() {
     }
 }
 
+@OptIn(ExperimentalTestApi::class)
 private fun onboardingScreenshots(
     resContext: Context,
     tag: String,
@@ -339,6 +337,8 @@ private fun onboardingScreenshots(
         ScreenshotTest.takeScreenshot(tag, "Onboarding 1")
     }
 
+    composeTestRule.waitUntilDoesNotExist(hasTestTag(WELCOME_ANIM_TEST_TAG), DEFAULT_TIMEOUT_MILLISECONDS)
+
     composeTestRule.onNodeWithText(
         text = resContext.getString(R.string.onboarding_create_new_wallet),
         ignoreCase = true
@@ -347,7 +347,10 @@ private fun onboardingScreenshots(
     }
 
     // Security Warning screen
-    composeTestRule.onNodeWithText(text = resContext.getString(R.string.security_warning_acknowledge)).also {
+    composeTestRule.onNodeWithText(
+        text = resContext.getString(R.string.security_warning_acknowledge),
+        ignoreCase = true
+    ).also {
         it.assertExists()
         it.performClick()
         ScreenshotTest.takeScreenshot(tag, "Security Warning")
@@ -551,4 +554,3 @@ private fun seedScreenshots(
 
     ScreenshotTest.takeScreenshot(tag, "Seed 1")
 }
-*/

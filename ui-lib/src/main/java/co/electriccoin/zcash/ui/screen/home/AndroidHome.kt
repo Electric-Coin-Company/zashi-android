@@ -111,9 +111,11 @@ internal fun WrapHome(
     setShowingRestoreSuccess: () -> Unit,
     walletSnapshot: WalletSnapshot?,
 ) {
+    val activity = LocalActivity.current
+
     val focusManager = LocalFocusManager.current
 
-    val activity = LocalActivity.current
+    val walletViewModel = koinActivityViewModel<WalletViewModel>()
 
     val scope = rememberCoroutineScope()
 
@@ -216,7 +218,9 @@ internal fun WrapHome(
     )
 
     LaunchedEffect(pagerState.currentPage) {
-        if (pagerState.currentPage != HomeScreenIndex.SEND.pageIndex) {
+        if (pagerState.currentPage == HomeScreenIndex.SEND.pageIndex) {
+            walletViewModel.refreshExchangeRateUsd()
+        } else {
             focusManager.clearFocus(true)
         }
     }

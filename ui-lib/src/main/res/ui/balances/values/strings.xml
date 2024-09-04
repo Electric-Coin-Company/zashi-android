@@ -30,12 +30,17 @@
     <string name="balances_status_error_dialog_connection">
         Disconnected. Please check your internet connection.
     </string>
-    <string name="balances_status_error_dialog_cause" formatted="true">
-        Error: <xliff:g id="error_cause" example="Block scanning problem">%1$s</xliff:g>
+    <string name="balances_status_error_dialog_cause" formatted="true">Error:
+        <xliff:g id="error_cause" example="Block scanning problem">%1$s</xliff:g>\n\nStacktrace:
+        <xliff:g id="error_stacktrace"
+        example="java.lang.IllegalStateException: Unsupported wallet state
+        at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:104)
+        Caused by: java.lang.RuntimeException: Failure from Rust backend">%2$s</xliff:g>
     </string>
-    <string name="balances_status_error_dialog_unknown">
+    <string name="balances_status_error_dialog_cause_unknown">
         Unknown cause. Please contact our support team if the problem persists.
     </string>
+    <string name="balances_status_error_dialog_stacktrace_unknown">Unknown stacktrace.</string>
     <string name="balances_status_dialog_stopped">Synchronization is stopped. It will resume soon.</string>
     <string name="balances_status_dialog_button">OK</string>
 

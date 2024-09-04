@@ -77,7 +77,7 @@ class AndroidPreferenceProvider private constructor(
         }
 
     override fun observe(key: PreferenceKey): Flow<String?> =
-        callbackFlow<Unit> {
+        callbackFlow {
             val listener =
                 SharedPreferences.OnSharedPreferenceChangeListener { _, _ ->
                     // Callback on main thread
@@ -110,7 +110,7 @@ class AndroidPreferenceProvider private constructor(
             return AndroidPreferenceProvider(sharedPreferences, singleThreadedDispatcher)
         }
 
-        fun newEncrypted(
+        suspend fun newEncrypted(
             context: Context,
             filename: String
         ): EncryptedPreferenceProvider {
@@ -120,19 +120,21 @@ class AndroidPreferenceProvider private constructor(
              */
             val singleThreadedDispatcher = Executors.newSingleThreadExecutor().asCoroutineDispatcher()
 
-            val mainKey =
-                MasterKey.Builder(context).apply {
-                    setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-                }.build()
-
             val sharedPreferences =
-                EncryptedSharedPreferences.create(
-                    context,
-                    filename,
-                    mainKey,
-                    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-                    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-                )
+                withContext(singleThreadedDispatcher) {
+                    val mainKey =
+                        MasterKey.Builder(context).apply {
+                            setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+                        }.build()
+
+                    EncryptedSharedPreferences.create(
+                        context,
+                        filename,
+                        mainKey,
+                        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+                    )
+                }
 
             return AndroidPreferenceProvider(sharedPreferences, singleThreadedDispatcher)
         }

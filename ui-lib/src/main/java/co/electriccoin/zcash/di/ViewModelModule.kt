@@ -1,11 +1,10 @@
-package co.electriccoin.zcash.app.di
+package co.electriccoin.zcash.di
 
 import co.electriccoin.zcash.ui.common.viewmodel.AuthenticationViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.CheckUpdateViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.HomeViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.account.viewmodel.TransactionHistoryViewModel
-import co.electriccoin.zcash.ui.screen.chooseserver.ChooseServerViewModel
 import co.electriccoin.zcash.ui.screen.onboarding.viewmodel.OnboardingViewModel
 import co.electriccoin.zcash.ui.screen.restore.viewmodel.RestoreViewModel
 import co.electriccoin.zcash.ui.screen.restoresuccess.viewmodel.RestoreSuccessViewModel
@@ -36,5 +35,4 @@ val viewModelModule =
         viewModelOf(::RestoreSuccessViewModel)
         viewModelOf(::WhatsNewViewModel)
         viewModelOf(::UpdateViewModel)
-        viewModelOf(::ChooseServerViewModel)
     }

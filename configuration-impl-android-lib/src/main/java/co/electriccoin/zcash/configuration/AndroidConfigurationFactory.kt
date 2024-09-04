@@ -6,7 +6,7 @@ import co.electriccoin.zcash.configuration.internal.intent.IntentConfigurationPr
 import kotlinx.collections.immutable.toPersistentList
 
 object AndroidConfigurationFactory {
-    fun newInstance(): ConfigurationProvider {
+    fun new(): ConfigurationProvider {
         val configurationProviders =
             buildList<ConfigurationProvider> {
                 // For ordering, ensure the IntentConfigurationProvider is first so that it can

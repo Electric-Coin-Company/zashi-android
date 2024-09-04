@@ -176,6 +176,7 @@ dependencyResolutionManagement {
             val kotlinxCoroutinesVersion = extra["KOTLINX_COROUTINES_VERSION"].toString()
             val kotlinxImmutableCollectionsVersion = extra["KOTLINX_IMMUTABLE_COLLECTIONS_VERSION"].toString()
             val kotlinxSerializableJsonVersion = extra["KOTLINX_SERIALIZABLE_JSON_VERSION"].toString()
+            val lottieVersion = extra["LOTTIE_VERSION"].toString()
             val markdownVersion = extra["MARKDOWN_VERSION"].toString()
             val playAppUpdateVersion = extra["PLAY_APP_UPDATE_VERSION"].toString()
             val playAppUpdateKtxVersion = extra["PLAY_APP_UPDATE_KTX_VERSION"].toString()
@@ -233,6 +234,7 @@ dependencyResolutionManagement {
             library("kotlinx-datetime", "org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDateTimeVersion")
             library("kotlinx-immutable", "org.jetbrains.kotlinx:kotlinx-collections-immutable:$kotlinxImmutableCollectionsVersion")
             library("kotlinx-serializable-json", "org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializableJsonVersion")
+            library("lottie", "com.airbnb.android:lottie-compose:$lottieVersion")
             library("markdown", "org.jetbrains:markdown:$markdownVersion")
             library("play-update", "com.google.android.play:app-update:$playAppUpdateVersion")
             library("play-update-ktx", "com.google.android.play:app-update-ktx:$playAppUpdateKtxVersion")
@@ -296,13 +298,6 @@ dependencyResolutionManagement {
                 )
             )
             bundle(
-                "play-update",
-                listOf(
-                    "play-update",
-                    "play-update-ktx",
-                )
-            )
-            bundle(
                 "androidx-test",
                 listOf(
                     "androidx-espresso-core",
@@ -311,6 +306,20 @@ dependencyResolutionManagement {
                     "androidx-test-junit",
                     "androidx-test-orchestrator",
                     "androidx-test-runner"
+                )
+            )
+            bundle(
+                "koin",
+                listOf(
+                    "koin",
+                    "koin-compose",
+                )
+            )
+            bundle(
+                "play-update",
+                listOf(
+                    "play-update",
+                    "play-update-ktx",
                 )
             )
         }

@@ -56,6 +56,7 @@ android {
                     "src/main/res/ui/wallet_address",
                     "src/main/res/ui/warning",
                     "src/main/res/ui/whats_new",
+                    "src/main/res/ui/exchange_rate",
                 )
             )
         }
@@ -98,6 +99,7 @@ dependencies {
     implementation(libs.bundles.androidx.camera)
     implementation(libs.bundles.androidx.compose.core)
     implementation(libs.bundles.androidx.compose.extended)
+    api(libs.bundles.koin)
     implementation(libs.bundles.play.update)
     implementation(libs.kotlin.stdlib)
     implementation(libs.kotlinx.coroutines.android)

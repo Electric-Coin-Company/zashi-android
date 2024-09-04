@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.app.di
+package co.electriccoin.zcash.di
 
 import co.electriccoin.zcash.ui.common.repository.WalletRepository
 import co.electriccoin.zcash.ui.common.repository.WalletRepositoryImpl
