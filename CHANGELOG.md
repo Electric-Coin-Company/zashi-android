@@ -6,6 +6,9 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+### Added
+- Android 15 support for 16kb memory page size
+
 ## [1.1.6 (712)] - 2024-09-04
 
 ### Added
