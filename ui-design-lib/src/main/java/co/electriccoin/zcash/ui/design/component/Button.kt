@@ -47,7 +47,6 @@ import co.electriccoin.zcash.ui.design.theme.internal.ButtonColors
 import co.electriccoin.zcash.ui.design.theme.internal.DarkTertiaryButtonColors
 import co.electriccoin.zcash.ui.design.theme.internal.LightTertiaryButtonColors
 import co.electriccoin.zcash.ui.design.util.StringResource
-import co.electriccoin.zcash.ui.design.util.getValue
 
 @Preview
 @Composable
@@ -268,37 +267,6 @@ fun PrimaryButton(
             }
         }
     }
-}
-
-@Composable
-@Suppress("LongParameterList", "LongMethod")
-fun PrimaryButton(
-    state: ButtonState,
-    modifier: Modifier = Modifier,
-    minWidth: Dp = ZcashTheme.dimens.buttonWidth,
-    minHeight: Dp = ZcashTheme.dimens.buttonHeight,
-    buttonColors: ButtonColors = ZcashTheme.colors.primaryButtonColors,
-    textStyle: TextStyle = ZcashTheme.extendedTypography.buttonText,
-    outerPaddingValues: PaddingValues =
-        PaddingValues(
-            horizontal = ZcashTheme.dimens.spacingNone,
-            vertical = ZcashTheme.dimens.spacingSmall
-        ),
-    contentPaddingValues: PaddingValues = PaddingValues(all = 17.dp)
-) {
-    PrimaryButton(
-        onClick = state.onClick,
-        text = state.text.getValue(),
-        enabled = state.isEnabled,
-        showProgressBar = state.isLoading,
-        modifier = modifier,
-        minWidth = minWidth,
-        minHeight = minHeight,
-        buttonColors = buttonColors,
-        textStyle = textStyle,
-        outerPaddingValues = outerPaddingValues,
-        contentPaddingValues = contentPaddingValues,
-    )
 }
 
 @Composable

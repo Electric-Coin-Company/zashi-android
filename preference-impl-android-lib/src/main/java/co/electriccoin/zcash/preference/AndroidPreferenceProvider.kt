@@ -93,7 +93,7 @@ class AndroidPreferenceProvider private constructor(
             .map { getString(key) }
 
     companion object {
-        fun newStandard(
+        suspend fun newStandard(
             context: Context,
             filename: String
         ): PreferenceProvider {
@@ -103,7 +103,10 @@ class AndroidPreferenceProvider private constructor(
              */
             val singleThreadedDispatcher = Executors.newSingleThreadExecutor().asCoroutineDispatcher()
 
-            val sharedPreferences = context.getSharedPreferences(filename, Context.MODE_PRIVATE)
+            val sharedPreferences =
+                withContext(singleThreadedDispatcher) {
+                    context.getSharedPreferences(filename, Context.MODE_PRIVATE)
+                }
 
             return AndroidPreferenceProvider(sharedPreferences, singleThreadedDispatcher)
         }

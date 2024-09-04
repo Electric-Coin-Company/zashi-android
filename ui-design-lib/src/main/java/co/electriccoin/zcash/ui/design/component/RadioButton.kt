@@ -158,8 +158,10 @@ data class RadioButtonState(
     val onClick: () -> Unit,
 )
 
+@Suppress("UnusedPrivateMember")
+@PreviewScreens
 @Composable
-private fun RadioButtonPreview() =
+private fun RadioButtonPreview() = ZcashTheme {
     BlankBgColumn {
         var isChecked by remember { mutableStateOf(false) }
 
@@ -184,8 +186,4 @@ private fun RadioButtonPreview() =
             ),
         )
     }
-
-@Suppress("UnusedPrivateMember")
-@PreviewScreens
-@Composable
-private fun RadioButtonPreviewLight() = ZcashTheme { RadioButtonPreview() }
+}
