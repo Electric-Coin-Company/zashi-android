@@ -35,7 +35,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -98,10 +97,10 @@ fun ChooseServerView(
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding =
-            PaddingValues(
-                top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
-                bottom = paddingValues.calculateBottomPadding() + ZcashTheme.dimens.spacingDefault,
-            )
+                PaddingValues(
+                    top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
+                    bottom = paddingValues.calculateBottomPadding() + ZcashTheme.dimens.spacingDefault,
+                )
         ) {
             if (state.fastest.servers.isEmpty() && state.fastest.isLoading) {
                 item {
@@ -127,9 +126,9 @@ fun ChooseServerView(
 private fun ServerLoading() {
     Column(
         modifier =
-        Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
+            Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         LottieProgress(
@@ -190,9 +189,9 @@ fun ChooseServerBottomBar(saveButtonState: ButtonState) {
         ZashiButton(
             state = saveButtonState,
             modifier =
-            Modifier
-                .padding(horizontal = 24.dp)
-                .fillMaxWidth()
+                Modifier
+                    .padding(horizontal = 24.dp)
+                    .fillMaxWidth()
         )
     }
 }
@@ -205,11 +204,11 @@ private fun ChooseServerTopAppBar(
     SmallTopAppBar(
         titleText = stringResource(id = R.string.choose_server_title),
         subTitle =
-        when (subTitleState) {
-            TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
-            TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
-            TopAppBarSubTitleState.None -> null
-        },
+            when (subTitleState) {
+                TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
+                TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
+                TopAppBarSubTitleState.None -> null
+            },
         modifier = Modifier.testTag(CHOOSE_SERVER_TOP_APP_BAR),
         showTitleLogo = true,
         navigationAction = {
@@ -239,16 +238,16 @@ private fun LazyListScope.serverListItems(state: ServerListState) {
             is ServerState.Custom ->
                 CustomServerRadioButton(
                     modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(start = 4.dp, end = 4.dp)
-                        .then(
-                            if (item.radioButtonState.isChecked) {
-                                Modifier.background(ZcashTheme.zashiColors.bgSecondary, RoundedCornerShape(12.dp))
-                            } else {
-                                Modifier
-                            }
-                        ),
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(start = 4.dp, end = 4.dp)
+                            .then(
+                                if (item.radioButtonState.isChecked) {
+                                    Modifier.background(ZcashTheme.zashiColors.bgSecondary, RoundedCornerShape(12.dp))
+                                } else {
+                                    Modifier
+                                }
+                            ),
                     state = item
                 )
 
@@ -256,28 +255,30 @@ private fun LazyListScope.serverListItems(state: ServerListState) {
                 RadioButton(
                     state = item.radioButtonState,
                     modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 4.dp)
-                        .then(
-                            if (item.radioButtonState.isChecked && item.badge == null) {
-                                Modifier.background(ZcashTheme.zashiColors.bgSecondary, RoundedCornerShape(12.dp))
-                            } else {
-                                Modifier
-                            }
-                        ),
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 4.dp)
+                            .then(
+                                if (item.radioButtonState.isChecked && item.badge == null) {
+                                    Modifier.background(ZcashTheme.zashiColors.bgSecondary, RoundedCornerShape(12.dp))
+                                } else {
+                                    Modifier
+                                }
+                            ),
                     checkedContent = {
                         if (item.badge == null) {
                             RadioButtonCheckedContent(item.radioButtonState)
                         } else {
                             Image(
-                                painter = painterResource(
-                                    id = if (isSystemInDarkTheme()) {
-                                        drawable.ic_radio_button_checked_variant_dark
-                                    } else {
-                                        drawable.ic_radio_button_checked_variant
-                                    }
-                                ),
+                                painter =
+                                    painterResource(
+                                        id =
+                                            if (isSystemInDarkTheme()) {
+                                                drawable.ic_radio_button_checked_variant_dark
+                                            } else {
+                                                drawable.ic_radio_button_checked_variant
+                                            }
+                                    ),
                                 contentDescription = item.radioButtonState.text.getValue(),
                             )
                         }
@@ -386,13 +387,13 @@ private fun CustomServerRadioButton(
                 keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus(true) }),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri, imeAction = ImeAction.Done),
                 modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        start = 52.dp,
-                        end = 20.dp,
-                        bottom = 16.dp
-                    )
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            start = 52.dp,
+                            end = 20.dp,
+                            bottom = 16.dp
+                        )
             )
         }
     }
@@ -409,57 +410,8 @@ private fun ChooseServerPreview(
         ServerListState.Fastest(
             title = stringRes("Fastest Servers"),
             servers =
-            if (showFastestServerLoading) {
-                (1..3).map {
-                    ServerState.Default(
-                        RadioButtonState(
-                            text = stringRes("Some Server"),
-                            isChecked = selectionIndex == it,
-                            onClick = {
-                                selectionIndex = it
-                            },
-                            subtitle = null,
-                        ),
-                        badge = null
-                    )
-                }
-            } else {
-                listOf()
-            },
-            retryButton =
-            ButtonState(
-                text = stringRes("Save Button"),
-                onClick = {},
-            ),
-            isLoading = true,
-        )
-    ChooseServerView(
-        state =
-        ChooseServerState(
-            fastest = fastestServers,
-            other =
-            ServerListState.Other(
-                title = stringRes("Other Servers"),
-                servers =
-                (4..<12).map {
-                    if (it == 5) {
-                        ServerState.Custom(
-                            RadioButtonState(
-                                text = stringRes("Custom Server"),
-                                isChecked = selectionIndex == it,
-                                onClick = {
-                                    selectionIndex = it
-                                }
-                            ),
-                            newServerTextFieldState =
-                            TextFieldState(
-                                value = stringRes(""),
-                                error = null,
-                                isEnabled = true,
-                                onValueChange = { },
-                            ),
-                        )
-                    } else {
+                if (showFastestServerLoading) {
+                    (1..3).map {
                         ServerState.Default(
                             RadioButtonState(
                                 text = stringRes("Some Server"),
@@ -467,20 +419,69 @@ private fun ChooseServerPreview(
                                 onClick = {
                                     selectionIndex = it
                                 },
-                                subtitle = if (it == 6) stringRes("Default") else null,
+                                subtitle = null,
                             ),
-                            badge = if (it == 6) stringRes("Active") else null,
+                            badge = null
                         )
                     }
-                }
+                } else {
+                    listOf()
+                },
+            retryButton =
+                ButtonState(
+                    text = stringRes("Save Button"),
+                    onClick = {},
+                ),
+            isLoading = true,
+        )
+    ChooseServerView(
+        state =
+            ChooseServerState(
+                fastest = fastestServers,
+                other =
+                    ServerListState.Other(
+                        title = stringRes("Other Servers"),
+                        servers =
+                            (4..<12).map {
+                                if (it == 5) {
+                                    ServerState.Custom(
+                                        RadioButtonState(
+                                            text = stringRes("Custom Server"),
+                                            isChecked = selectionIndex == it,
+                                            onClick = {
+                                                selectionIndex = it
+                                            }
+                                        ),
+                                        newServerTextFieldState =
+                                            TextFieldState(
+                                                value = stringRes(""),
+                                                error = null,
+                                                isEnabled = true,
+                                                onValueChange = { },
+                                            ),
+                                    )
+                                } else {
+                                    ServerState.Default(
+                                        RadioButtonState(
+                                            text = stringRes("Some Server"),
+                                            isChecked = selectionIndex == it,
+                                            onClick = {
+                                                selectionIndex = it
+                                            },
+                                            subtitle = if (it == 6) stringRes("Default") else null,
+                                        ),
+                                        badge = if (it == 6) stringRes("Active") else null,
+                                    )
+                                }
+                            }
+                    ),
+                saveButton =
+                    ButtonState(
+                        text = stringRes("Save Button"),
+                        onClick = {},
+                    ),
+                dialogState = dialogState
             ),
-            saveButton =
-            ButtonState(
-                text = stringRes("Save Button"),
-                onClick = {},
-            ),
-            dialogState = dialogState
-        ),
         onBack = {},
         topAppBarSubTitleState = TopAppBarSubTitleState.None,
     )
@@ -493,14 +494,14 @@ private fun ChooseServerPreviewValidationDialog() =
     ZcashTheme {
         ChooseServerPreview(
             dialogState =
-            ServerDialogState.Validation(
-                state =
-                AlertDialogState(
-                    title = stringRes("title"),
-                    text = stringRes("text"),
-                ),
-                reason = stringRes("reason")
-            )
+                ServerDialogState.Validation(
+                    state =
+                        AlertDialogState(
+                            title = stringRes("title"),
+                            text = stringRes("text"),
+                        ),
+                    reason = stringRes("reason")
+                )
         )
     }
 

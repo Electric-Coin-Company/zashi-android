@@ -27,12 +27,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.BlankSurface
+import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.exchangerate.BaseExchangeRateOptIn
 import co.electriccoin.zcash.ui.screen.exchangerate.SecondaryCard
 import co.electriccoin.zcash.ui.screen.exchangerate.ZashiButton
 import co.electriccoin.zcash.ui.screen.exchangerate.ZashiButtonDefaults
-import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 
 @Composable
 fun SettingsExchangeRateOptIn(

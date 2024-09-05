@@ -100,17 +100,15 @@ class WalletViewModel(
     private val standardPreferenceProvider: StandardPreferenceProvider,
     private val getAvailableServers: GetDefaultServersProvider
 ) : AndroidViewModel(application) {
-
     /*
      * Using the Mutex may be overkill, but it ensures that if multiple calls are accidentally made
      * that they have a consistent ordering.
-    */
+     */
     private val persistWalletMutex = Mutex()
 
     val navigationCommand = MutableSharedFlow<String>()
 
     val backNavigationCommand = MutableSharedFlow<Unit>()
-
 
     /**
      * Synchronizer that is retained long enough to survive configuration changes.
@@ -419,11 +417,10 @@ class WalletViewModel(
                     )
                 }
 
-
-                    else -> {
-                        BalanceState.Available(
-                            totalBalance = snapshot.totalBalance(),
-                            spendableBalance = snapshot.spendableBalance(),
+                else -> {
+                    BalanceState.Available(
+                        totalBalance = snapshot.totalBalance(),
+                        spendableBalance = snapshot.spendableBalance(),
                         exchangeRate = exchangeRateUsd
                     )
                 }

@@ -3,6 +3,7 @@ package co.electroniccoin.zcash.ui.screenshot
 import android.app.Application
 import android.content.Context
 import co.electriccoin.zcash.di.coreModule
+import co.electriccoin.zcash.di.providerModule
 import co.electriccoin.zcash.di.repositoryModule
 import co.electriccoin.zcash.di.useCaseModule
 import co.electriccoin.zcash.di.viewModelModule
@@ -29,6 +30,7 @@ class ZcashUiTestApplication : Application() {
             androidContext(this@ZcashUiTestApplication)
             modules(
                 coreModule,
+                providerModule,
                 repositoryModule,
                 useCaseModule,
                 viewModelModule

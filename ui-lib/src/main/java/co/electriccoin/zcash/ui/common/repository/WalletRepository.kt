@@ -193,8 +193,11 @@ class WalletRepositoryImpl(
             // complete quickly, it isn't guaranteed to complete before persistExistingWallet()
             // unless a mutex is used here.
             persistWalletMutex.withLock {
-                StandardPreferenceKeys.ONBOARDING_STATE.putValue(standardPreferenceProvider(), onboardingState
-                    .toNumber())
+                StandardPreferenceKeys.ONBOARDING_STATE.putValue(
+                    standardPreferenceProvider(),
+                    onboardingState
+                        .toNumber()
+                )
             }
         }
     }

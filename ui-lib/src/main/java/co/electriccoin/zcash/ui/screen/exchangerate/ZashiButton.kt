@@ -48,25 +48,27 @@ internal fun ZashiButton(
     colors: ButtonColors = ZashiButtonDefaults.primaryButtonColors(),
     content: @Composable RowScope.(ZashiButtonScope) -> Unit = ZashiButtonDefaults.content
 ) {
-    val scope = object : ZashiButtonScope {
-        @Composable
-        override fun Text() {
-            Text(text = text)
-        }
+    val scope =
+        object : ZashiButtonScope {
+            @Composable
+            override fun Text() {
+                Text(text = text)
+            }
 
-        @Composable
-        override fun Loading() {
-            if (enabled && isLoading) {
-                LottieProgress(
-                    loadingRes = if (isSystemInDarkTheme()) {
-                        R.raw.lottie_loading
-                    } else {
-                        R.raw.lottie_loading_white
-                    }
-                )
+            @Composable
+            override fun Loading() {
+                if (enabled && isLoading) {
+                    LottieProgress(
+                        loadingRes =
+                            if (isSystemInDarkTheme()) {
+                                R.raw.lottie_loading
+                            } else {
+                                R.raw.lottie_loading_white
+                            }
+                    )
+                }
             }
         }
-    }
 
     Button(
         onClick = onClick,
@@ -89,7 +91,6 @@ interface ZashiButtonScope {
 }
 
 object ZashiButtonDefaults {
-
     val content: @Composable RowScope.(ZashiButtonScope) -> Unit
         get() = { scope ->
             scope.Text()

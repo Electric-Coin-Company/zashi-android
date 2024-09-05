@@ -15,9 +15,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.design.component.ButtonState
+import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 
 @Composable
 fun BottomBar(
@@ -48,9 +48,9 @@ private fun BottomBarPreview() =
             ZashiButton(
                 state = ButtonState(text = stringRes("Save Button")),
                 modifier =
-                Modifier
-                    .padding(horizontal = 24.dp)
-                    .fillMaxWidth()
+                    Modifier
+                        .padding(horizontal = 24.dp)
+                        .fillMaxWidth()
             )
         }
     }
