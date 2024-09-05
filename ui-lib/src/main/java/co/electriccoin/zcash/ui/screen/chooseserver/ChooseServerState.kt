@@ -43,6 +43,8 @@ sealed interface ServerState : Itemizable {
     data class Custom(
         val radioButtonState: RadioButtonState,
         val newServerTextFieldState: TextFieldState,
+        val badge: StringResource?,
+        val isExpanded: Boolean,
     ) : ServerState {
         override val contentType: Any = "Custom"
         override val key: Any = contentType

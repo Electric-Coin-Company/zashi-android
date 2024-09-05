@@ -42,6 +42,8 @@ class ChooseServerViewModel(
 
     private val dialogState = MutableStateFlow<ServerDialogState?>(null)
 
+    private val isCustomEndpointExpanded = MutableStateFlow(false)
+
     private val fastest =
         combine(
             observeSelectedEndpoint(),
@@ -71,7 +73,8 @@ class ChooseServerViewModel(
             observeFastestServers(),
             userCustomEndpointText,
             userEndpointSelection,
-        ) { selectedEndpoint, fastest, userCustomEndpointText, userEndpointSelection ->
+            isCustomEndpointExpanded
+        ) { selectedEndpoint, fastest, userCustomEndpointText, userEndpointSelection, isCustomEndpointExpanded ->
             if (selectedEndpoint == null) return@combine null
 
             val isSelectedEndpointCustom = !getAvailableServers().contains(selectedEndpoint)
@@ -81,7 +84,8 @@ class ChooseServerViewModel(
                     userEndpointSelection = userEndpointSelection,
                     isSelectedEndpointCustom = isSelectedEndpointCustom,
                     userCustomEndpointText = userCustomEndpointText,
-                    selectedEndpoint = selectedEndpoint
+                    selectedEndpoint = selectedEndpoint,
+                    isCustomEndpointExpanded = isCustomEndpointExpanded
                 )
 
             ServerListState.Other(
@@ -109,7 +113,15 @@ class ChooseServerViewModel(
             userEndpointSelection,
             isSaveInProgress
         ) { selectedEndpoint, userEndpointSelection, isSaveInProgress ->
-            val userSelectedEndpoint = (userEndpointSelection as? Selection.Endpoint)?.endpoint
+            val userSelectedEndpoint =
+                when (userEndpointSelection) {
+                    Selection.Custom -> {
+                        val isSelectedEndpointCustom = !getAvailableServers().contains(selectedEndpoint)
+                        if (isSelectedEndpointCustom) selectedEndpoint else null
+                    }
+                    is Selection.Endpoint -> userEndpointSelection.endpoint
+                    null -> null
+                }
             ButtonState(
                 text = stringRes(R.string.choose_server_save),
                 isEnabled = userEndpointSelection != null && selectedEndpoint != userSelectedEndpoint,
@@ -139,11 +151,17 @@ class ChooseServerViewModel(
         userEndpointSelection: Selection?,
         isSelectedEndpointCustom: Boolean,
         userCustomEndpointText: String?,
-        selectedEndpoint: LightWalletEndpoint
+        selectedEndpoint: LightWalletEndpoint,
+        isCustomEndpointExpanded: Boolean,
     ) = ServerState.Custom(
         radioButtonState =
             RadioButtonState(
-                text = stringRes(R.string.choose_server_custom),
+                text =
+                    if (isSelectedEndpointCustom) {
+                        stringRes(R.string.choose_server_full_server_name, selectedEndpoint.host, selectedEndpoint.port)
+                    } else {
+                        stringRes(R.string.choose_server_custom)
+                    },
                 isChecked =
                     userEndpointSelection is Selection.Custom ||
                         (userEndpointSelection == null && isSelectedEndpointCustom),
@@ -163,6 +181,8 @@ class ChooseServerViewModel(
                     },
                 onValueChange = ::onCustomEndpointTextChanged,
             ),
+        badge = if (isSelectedEndpointCustom) stringRes(R.string.choose_server_active) else null,
+        isExpanded = isCustomEndpointExpanded
     )
 
     private fun createDefaultServerState(
@@ -195,10 +215,12 @@ class ChooseServerViewModel(
     }
 
     private fun onEndpointClicked(endpoint: LightWalletEndpoint) {
+        isCustomEndpointExpanded.update { false }
         userEndpointSelection.update { Selection.Endpoint(endpoint) }
     }
 
     private fun onCustomEndpointClicked() {
+        isCustomEndpointExpanded.update { true }
         userEndpointSelection.update { Selection.Custom }
     }
 
@@ -210,6 +232,7 @@ class ChooseServerViewModel(
                 val selection = getUserEndpointSelectionOrShowError() ?: return@launch
                 try {
                     persistEndpoint(selection)
+                    isCustomEndpointExpanded.update { false }
                 } catch (e: PersistEndpointException) {
                     showValidationErrorDialog(e.message)
                 }
@@ -228,7 +251,7 @@ class ChooseServerViewModel(
      */
     private fun getUserEndpointSelectionOrShowError(): LightWalletEndpoint? {
         return when (val selection = userEndpointSelection.value) {
-            Selection.Custom -> {
+            is Selection.Custom -> {
                 val endpoint = userCustomEndpointText.value
                 val validated = validateEndpoint(endpoint.orEmpty())
                 if (validated == null) {

@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -46,7 +47,7 @@ fun RadioButton(
     modifier: Modifier = Modifier,
     checkedContent: @Composable () -> Unit = { RadioButtonCheckedContent(state) },
     uncheckedContent: @Composable () -> Unit = { RadioButtonUncheckedContent(state) },
-    trailingContent: @Composable (() -> Unit)? = null,
+    trailingContent: @Composable (RowScope.() -> Unit)? = null,
     testTag: String? = null,
 ) {
     Row(

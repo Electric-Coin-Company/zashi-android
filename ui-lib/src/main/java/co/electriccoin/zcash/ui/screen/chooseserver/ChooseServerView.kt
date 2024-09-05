@@ -35,6 +35,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -324,7 +325,8 @@ private fun FastestServersHeader(state: ServerListState.Fastest) {
                 } else {
                     Image(
                         painter = painterResource(id = R.drawable.ic_retry),
-                        contentDescription = state.retryButton.text.getValue()
+                        contentDescription = state.retryButton.text.getValue(),
+                        colorFilter = ColorFilter.tint(ZcashTheme.zashiColors.textPrimary)
                     )
                 }
             }
@@ -353,6 +355,7 @@ private fun ServerHeader(text: StringResource) {
     )
 }
 
+@Suppress("LongMethod")
 @Composable
 private fun CustomServerRadioButton(
     state: ServerState.Custom,
@@ -362,21 +365,50 @@ private fun CustomServerRadioButton(
         RadioButton(
             state = state.radioButtonState,
             modifier = Modifier.fillMaxWidth(),
+            checkedContent = {
+                if (state.badge == null) {
+                    RadioButtonCheckedContent(state.radioButtonState)
+                } else {
+                    Image(
+                        painter =
+                            painterResource(
+                                id =
+                                    if (isSystemInDarkTheme()) {
+                                        drawable.ic_radio_button_checked_variant_dark
+                                    } else {
+                                        drawable.ic_radio_button_checked_variant
+                                    }
+                            ),
+                        contentDescription = state.radioButtonState.text.getValue(),
+                    )
+                }
+            },
             trailingContent = {
+                if (state.badge != null) {
+                    Badge(
+                        text = state.badge,
+                    )
+                    Spacer(
+                        modifier = Modifier.width(8.dp),
+                    )
+                }
                 val iconAngle =
                     animateFloatAsState(
-                        targetValue = if (state.radioButtonState.isChecked) 180f else 0f,
+                        targetValue = if (state.isExpanded) 180f else 0f,
                         label = "iconAngle"
                     )
                 Image(
-                    modifier = Modifier.rotate(iconAngle.value),
+                    modifier =
+                        Modifier
+                            .align(Alignment.CenterVertically)
+                            .rotate(iconAngle.value),
                     painter = painterResource(id = R.drawable.ic_expand),
                     contentDescription = state.radioButtonState.text.getValue()
                 )
             }
         )
 
-        AnimatedVisibility(visible = state.radioButtonState.isChecked) {
+        AnimatedVisibility(visible = state.isExpanded) {
             val focusManager = LocalFocusManager.current
             Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
             ZashiTextField(
@@ -459,6 +491,8 @@ private fun ChooseServerPreview(
                                                 isEnabled = true,
                                                 onValueChange = { },
                                             ),
+                                        badge = null,
+                                        isExpanded = true
                                     )
                                 } else {
                                     ServerState.Default(

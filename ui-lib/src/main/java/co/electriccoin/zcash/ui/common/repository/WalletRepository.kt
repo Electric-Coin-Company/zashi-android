@@ -131,7 +131,7 @@ class WalletRepositoryImpl(
                 .withIndex()
                 .flatMapLatest { (_, synchronizer) ->
                     synchronizer
-                        ?.getFastestServers(application, getAllServers())
+                        ?.getFastestServers(application, getDefaultServers())
                         ?.map {
                             when (it) {
                                 FastestServersResult.Measuring ->
