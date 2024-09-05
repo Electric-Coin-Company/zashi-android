@@ -97,7 +97,7 @@ fun RadioButton(
                         text = state.subtitle.getValue(),
                         style = ZcashTheme.extendedTypography.radioButton,
                         fontWeight = FontWeight.Normal,
-                        color = Color(0xFF838385),
+                        color = ZcashTheme.zashiColors.textTertiary,
                         modifier =
                         Modifier.padding(
                             bottom = 6.dp,

@@ -204,16 +204,18 @@ class ChooseServerViewModel(
 
     private fun onSaveButtonClicked() =
         viewModelScope.launch {
-            if (isSaveInProgress.value) return@launch
-
-            isSaveInProgress.update { true }
-            val selection = getUserEndpointSelectionOrShowError() ?: return@launch
             try {
-                persistEndpoint(selection)
-            } catch (e: PersistEndpointException) {
-                showValidationErrorDialog(e.message)
+                if (isSaveInProgress.value) return@launch
+                isSaveInProgress.update { true }
+                val selection = getUserEndpointSelectionOrShowError() ?: return@launch
+                try {
+                    persistEndpoint(selection)
+                } catch (e: PersistEndpointException) {
+                    showValidationErrorDialog(e.message)
+                }
+            } finally {
+                isSaveInProgress.update { false }
             }
-            isSaveInProgress.update { false }
         }
 
     private fun onConfirmDialogButtonClicked() {

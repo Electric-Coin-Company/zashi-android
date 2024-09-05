@@ -1,8 +1,8 @@
 package co.electriccoin.zcash.ui.screen.exchangerate
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -10,7 +10,6 @@ import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -58,7 +57,13 @@ internal fun ZashiButton(
         @Composable
         override fun Loading() {
             if (enabled && isLoading) {
-                LottieProgress(loadingRes = R.raw.lottie_loading_white)
+                LottieProgress(
+                    loadingRes = if (isSystemInDarkTheme()) {
+                        R.raw.lottie_loading
+                    } else {
+                        R.raw.lottie_loading_white
+                    }
+                )
             }
         }
     }

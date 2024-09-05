@@ -18,6 +18,7 @@ import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.stringRes
 
+@Suppress("MagicNumber")
 @Composable
 fun Badge(
     text: StringResource,

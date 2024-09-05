@@ -27,7 +27,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.util.StringResource
-import co.electriccoin.zcash.ui.design.util.getValue
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -133,59 +132,9 @@ fun FormTextField(
     }
 }
 
-@Suppress("LongParameterList")
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun FormTextField(
-    state: TextFieldState,
-    modifier: Modifier = Modifier,
-    textStyle: TextStyle = ZcashTheme.extendedTypography.textFieldValue,
-    placeholder: @Composable (() -> Unit)? = null,
-    leadingIcon: @Composable (() -> Unit)? = null,
-    trailingIcon: @Composable (() -> Unit)? = null,
-    keyboardOptions: KeyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-    colors: TextFieldColors =
-        TextFieldDefaults.colors(
-            cursorColor = ZcashTheme.colors.textPrimary,
-            focusedContainerColor = Color.Transparent,
-            unfocusedContainerColor = Color.Transparent,
-            disabledContainerColor = Color.Transparent,
-            errorContainerColor = Color.Transparent,
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent,
-            disabledIndicatorColor = Color.Transparent
-        ),
-    keyboardActions: KeyboardActions = KeyboardActions.Default,
-    shape: Shape = TextFieldDefaults.shape,
-    withBorder: Boolean = true,
-    bringIntoViewRequester: BringIntoViewRequester? = null,
-    minHeight: Dp = ZcashTheme.dimens.textFieldDefaultHeight,
-    testTag: String? = null
-) {
-    FormTextField(
-        value = state.value.getValue(),
-        error = state.error?.getValue(),
-        enabled = state.isEnabled,
-        onValueChange = state.onValueChange,
-        modifier = modifier,
-        textStyle = textStyle,
-        placeholder = placeholder,
-        leadingIcon = leadingIcon,
-        trailingIcon = trailingIcon,
-        keyboardOptions = keyboardOptions,
-        colors = colors,
-        keyboardActions = keyboardActions,
-        shape = shape,
-        withBorder = withBorder,
-        bringIntoViewRequester = bringIntoViewRequester,
-        minHeight = minHeight,
-        testTag = testTag,
-    )
-}
-
 data class TextFieldState(
     val value: StringResource,
-    val isEnabled: Boolean = true,
     val error: StringResource? = null,
+    val isEnabled: Boolean = true,
     val onValueChange: (String) -> Unit,
 )

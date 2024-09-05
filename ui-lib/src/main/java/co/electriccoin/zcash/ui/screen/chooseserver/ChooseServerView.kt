@@ -4,9 +4,9 @@ package co.electriccoin.zcash.ui.screen.chooseserver
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -54,7 +54,6 @@ import co.electriccoin.zcash.ui.design.component.Badge
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
-import co.electriccoin.zcash.ui.design.component.FormTextField
 import co.electriccoin.zcash.ui.design.component.LottieProgress
 import co.electriccoin.zcash.ui.design.component.RadioButton
 import co.electriccoin.zcash.ui.design.component.RadioButtonCheckedContent
@@ -62,13 +61,14 @@ import co.electriccoin.zcash.ui.design.component.RadioButtonState
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.component.TopAppBarBackNavigation
+import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.exchangerate.BottomBar
 import co.electriccoin.zcash.ui.screen.exchangerate.ZashiButton
-import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
+import co.electriccoin.zcash.ui.screen.exchangerate.ZashiTextField
 
 @Composable
 fun ChooseServerView(
@@ -145,7 +145,7 @@ private fun ServerLoading() {
         Text(
             text = stringResource(id = R.string.choose_server_loading_subtitle),
             fontSize = 14.sp,
-            color = Color(0xFF646464)
+            color = ZcashTheme.zashiColors.textTertiary
         )
         Spacer(modifier = Modifier.height(24.dp))
     }
@@ -244,7 +244,7 @@ private fun LazyListScope.serverListItems(state: ServerListState) {
                         .padding(start = 4.dp, end = 4.dp)
                         .then(
                             if (item.radioButtonState.isChecked) {
-                                Modifier.background(Color(0xFFF4F4F6), RoundedCornerShape(12.dp))
+                                Modifier.background(ZcashTheme.zashiColors.bgSecondary, RoundedCornerShape(12.dp))
                             } else {
                                 Modifier
                             }
@@ -261,7 +261,7 @@ private fun LazyListScope.serverListItems(state: ServerListState) {
                         .padding(horizontal = 4.dp)
                         .then(
                             if (item.radioButtonState.isChecked && item.badge == null) {
-                                Modifier.background(Color(0xFFF4F4F6), RoundedCornerShape(12.dp))
+                                Modifier.background(ZcashTheme.zashiColors.bgSecondary, RoundedCornerShape(12.dp))
                             } else {
                                 Modifier
                             }
@@ -271,7 +271,13 @@ private fun LazyListScope.serverListItems(state: ServerListState) {
                             RadioButtonCheckedContent(item.radioButtonState)
                         } else {
                             Image(
-                                painter = painterResource(id = drawable.ic_radio_button_checked_variant),
+                                painter = painterResource(
+                                    id = if (isSystemInDarkTheme()) {
+                                        drawable.ic_radio_button_checked_variant_dark
+                                    } else {
+                                        drawable.ic_radio_button_checked_variant
+                                    }
+                                ),
                                 contentDescription = item.radioButtonState.text.getValue(),
                             )
                         }
@@ -287,8 +293,7 @@ private fun LazyListScope.serverListItems(state: ServerListState) {
         if (index != state.servers.lastIndex) {
             Spacer(modifier = Modifier.height(4.dp))
             HorizontalDivider(
-                modifier = Modifier.padding(horizontal = 24.dp),
-                color = Color(0xFFF7F7F5),
+                color = ZcashTheme.zashiColors.divider,
             )
             Spacer(modifier = Modifier.height(4.dp))
         }
@@ -347,7 +352,6 @@ private fun ServerHeader(text: StringResource) {
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun CustomServerRadioButton(
     state: ServerState.Custom,
@@ -374,7 +378,7 @@ private fun CustomServerRadioButton(
         AnimatedVisibility(visible = state.radioButtonState.isChecked) {
             val focusManager = LocalFocusManager.current
             Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
-            FormTextField(
+            ZashiTextField(
                 state = state.newServerTextFieldState,
                 placeholder = {
                     Text(text = stringResource(R.string.choose_server_textfield_hint))
