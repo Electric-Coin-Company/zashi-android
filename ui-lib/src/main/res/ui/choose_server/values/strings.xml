@@ -7,6 +7,9 @@
         <xliff:g id="hostname" example="example.com">%1$s</xliff:g>:
         <xliff:g id="port" example="508">%2$d</xliff:g>
     </string>
+    <string name="choose_server_full_server_name_text_field">
+        <xliff:g id="hostname" example="example.com">%1$s</xliff:g>:<xliff:g id="port" example="508">%2$d</xliff:g>
+    </string>
     <string name="choose_server_textfield_hint">&lt;hostname&gt;:&lt;port&gt;</string>
     <string name="choose_server_save">Save selection</string>
 

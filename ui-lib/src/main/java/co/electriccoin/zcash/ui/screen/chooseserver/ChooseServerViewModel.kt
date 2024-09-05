@@ -1,6 +1,7 @@
 package co.electriccoin.zcash.ui.screen.chooseserver
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.lightwallet.client.model.LightWalletEndpoint
@@ -16,6 +17,7 @@ import co.electriccoin.zcash.ui.design.component.AlertDialogState
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.RadioButtonState
 import co.electriccoin.zcash.ui.design.component.TextFieldState
+import co.electriccoin.zcash.ui.design.util.getString
 import co.electriccoin.zcash.ui.design.util.stringRes
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -25,15 +27,16 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-@Suppress("TooManyFunctions")
+@Suppress("TooManyFunctions", "LongParameterList")
 class ChooseServerViewModel(
+    application: Application,
     observeFastestServers: ObserveFastestServersUseCase,
     observeSelectedEndpoint: ObserveSelectedEndpointUseCase,
     private val getAvailableServers: GetDefaultServersProvider,
     private val refreshFastestServersUseCase: RefreshFastestServersUseCase,
     private val persistEndpoint: PersistEndpointUseCase,
     private val validateEndpoint: ValidateEndpointUseCase,
-) : ViewModel() {
+) : AndroidViewModel(application) {
     private val userCustomEndpointText = MutableStateFlow<String?>(null)
 
     private val userEndpointSelection = MutableStateFlow<Selection?>(null)
@@ -111,8 +114,9 @@ class ChooseServerViewModel(
         combine(
             observeSelectedEndpoint(),
             userEndpointSelection,
-            isSaveInProgress
-        ) { selectedEndpoint, userEndpointSelection, isSaveInProgress ->
+            isSaveInProgress,
+            userCustomEndpointText,
+        ) { selectedEndpoint, userEndpointSelection, isSaveInProgress, userCustomEndpointText ->
             val userSelectedEndpoint =
                 when (userEndpointSelection) {
                     Selection.Custom -> {
@@ -122,9 +126,27 @@ class ChooseServerViewModel(
                     is Selection.Endpoint -> userEndpointSelection.endpoint
                     null -> null
                 }
+
+            val isCustomEndpointSelectedAndUpdated =
+                when (userEndpointSelection) {
+                    Selection.Custom -> {
+                        val isSelectedEndpointCustom = !getAvailableServers().contains(selectedEndpoint)
+                        when {
+                            isSelectedEndpointCustom && userCustomEndpointText == null -> false
+                            isSelectedEndpointCustom && selectedEndpoint?.generateUserString() !=
+                                userCustomEndpointText -> true
+                            else -> false
+                        }
+                    }
+                    is Selection.Endpoint -> false
+                    null -> false
+                }
+
             ButtonState(
                 text = stringRes(R.string.choose_server_save),
-                isEnabled = userEndpointSelection != null && selectedEndpoint != userSelectedEndpoint,
+                isEnabled =
+                    (userEndpointSelection != null && selectedEndpoint != userSelectedEndpoint) ||
+                        isCustomEndpointSelectedAndUpdated,
                 isLoading = isSaveInProgress,
                 onClick = ::onSaveButtonClicked
             )
@@ -172,7 +194,7 @@ class ChooseServerViewModel(
                 value =
                     userCustomEndpointText?.let { stringRes(it) } ?: if (isSelectedEndpointCustom) {
                         stringRes(
-                            resource = R.string.choose_server_full_server_name,
+                            resource = R.string.choose_server_full_server_name_text_field,
                             selectedEndpoint.host,
                             selectedEndpoint.port
                         )
@@ -233,6 +255,7 @@ class ChooseServerViewModel(
                 try {
                     persistEndpoint(selection)
                     isCustomEndpointExpanded.update { false }
+                    userEndpointSelection.update { null }
                 } catch (e: PersistEndpointException) {
                     showValidationErrorDialog(e.message)
                 }
@@ -280,6 +303,11 @@ class ChooseServerViewModel(
                 reason = reason?.let { stringRes(it) }
             )
         }
+    }
+
+    private fun LightWalletEndpoint.generateUserString(): String {
+        return stringRes(resource = R.string.choose_server_full_server_name_text_field, host, port)
+            .getString(getApplication())
     }
 }
 
