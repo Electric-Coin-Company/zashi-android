@@ -33,6 +33,9 @@ data class ZashiColors(
     val textSupport: Color,
     val stroke: Color,
     val divider: Color,
+    val utilitySuccess700: Color,
+    val utilitySuccess200: Color,
+    val utilitySuccess50: Color,
 )
 
 internal val LightZashiColorPalette =
@@ -56,7 +59,10 @@ internal val LightZashiColorPalette =
         exchangeRateColors = LightExchangeRateColorPalette,
         textSupport = Color(0xFF94907B),
         stroke = Color(0xFFD9D8CF),
-        divider = Color(0xFFF7F7F5)
+        divider = Color(0xFFF7F7F5),
+        utilitySuccess700 = Color(0xFF098605),
+        utilitySuccess200 = Color(0xFFA3FF95),
+        utilitySuccess50 = Color(0xFFEAFFE5),
     )
 
 internal val DarkZashiColorPalette =
@@ -80,7 +86,10 @@ internal val DarkZashiColorPalette =
         exchangeRateColors = DarkExchangeRateColorPalette,
         textSupport = Color(0xFF7E7C7C),
         stroke = Color(0xFFA7A5A6),
-        divider = Color(0xFF343031)
+        divider = Color(0xFF343031),
+        utilitySuccess700 = Color(0xFF098605),
+        utilitySuccess200 = Color(0xFFA3FF95),
+        utilitySuccess50 = Color(0xFFEAFFE5),
     )
 
 @Suppress("CompositionLocalAllowlist")

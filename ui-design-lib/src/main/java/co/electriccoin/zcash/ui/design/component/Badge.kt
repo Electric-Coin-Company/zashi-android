@@ -24,8 +24,8 @@ fun Badge(
     text: StringResource,
     modifier: Modifier = Modifier,
     shape: Shape = CircleShape,
-    color: Color = Color(0xFFEAFFE5),
-    border: BorderStroke = BorderStroke(1.dp, Color(0xFFA3FF95)),
+    color: Color = ZcashTheme.zashiColors.utilitySuccess50,
+    border: BorderStroke = BorderStroke(1.dp, ZcashTheme.zashiColors.utilitySuccess200),
 ) {
     Surface(
         modifier = modifier,
@@ -40,7 +40,7 @@ fun Badge(
                 text = text.getValue(),
                 style = ZcashTheme.extendedTypography.transactionItemStyles.contentMedium,
                 fontSize = 14.sp,
-                color = Color(0xFF098605)
+                color = ZcashTheme.zashiColors.utilitySuccess700
             )
         }
     }
