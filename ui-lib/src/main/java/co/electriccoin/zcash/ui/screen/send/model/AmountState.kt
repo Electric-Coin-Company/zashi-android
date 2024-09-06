@@ -41,7 +41,7 @@ sealed interface AmountState {
                 return Invalid(value, if (value.isBlank()) "" else fiatValue)
             }
 
-            val zatoshi = Zatoshi.fromZecString(context, value, cash.z.ecc.android.sdk.model.Locale.getDefault())
+            val zatoshi = Zatoshi.fromZecString(context, value, Locale.getDefault())
 
             val currencyConversion =
                 if (exchangeRateState !is ExchangeRateState.Data ||
