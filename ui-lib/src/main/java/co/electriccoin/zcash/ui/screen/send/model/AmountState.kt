@@ -2,17 +2,16 @@ package co.electriccoin.zcash.ui.screen.send.model
 
 import android.content.Context
 import androidx.compose.runtime.saveable.mapSaver
+import cash.z.ecc.android.sdk.model.Locale
 import cash.z.ecc.android.sdk.model.MonetarySeparators
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.ZecStringExt
 import cash.z.ecc.android.sdk.model.fromZecString
 import cash.z.ecc.android.sdk.model.toFiatString
-import cash.z.ecc.android.sdk.model.toKotlinLocale
 import cash.z.ecc.android.sdk.model.toZatoshi
 import cash.z.ecc.android.sdk.model.toZecString
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
-import java.util.Locale
 
 sealed interface AmountState {
     val value: String
@@ -67,7 +66,7 @@ sealed interface AmountState {
                             } else {
                                 zatoshi.toFiatString(
                                     currencyConversion = currencyConversion,
-                                    locale = Locale.getDefault().toKotlinLocale(),
+                                    locale = Locale.getDefault(),
                                 )
                             }
                     )
@@ -94,7 +93,7 @@ sealed interface AmountState {
                 (exchangeRateState as? ExchangeRateState.Data)?.currencyConversion?.toZatoshi(
                     context = context,
                     value = fiatValue,
-                    locale = Locale.getDefault().toKotlinLocale(),
+                    locale = Locale.getDefault(),
                 )
 
             return when {
