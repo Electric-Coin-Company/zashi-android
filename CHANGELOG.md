@@ -6,7 +6,7 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
-## [1.1.7 (717)] - 2024-09-06
+## [1.1.7 (718)] - 2024-09-06
 
 ### Added
 - Dependency injection using Koin has been added to the project. This helps us keep the codebase organized while
