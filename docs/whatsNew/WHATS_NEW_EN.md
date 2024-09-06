@@ -9,7 +9,7 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
-## [1.1.7 (717)] - 2024-09-06
+## [1.1.7 (718)] - 2024-09-06
 
 ### Added
 - We added ZEC/USD currency conversion to Zashi without compromising your IP address.
