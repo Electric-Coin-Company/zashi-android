@@ -62,9 +62,7 @@ internal fun WrapSend(
 
     val spendingKey = walletViewModel.spendingKey.collectAsStateWithLifecycle().value
 
-    // TODO [#1171]: Remove default MonetarySeparators locale
-    // TODO [#1171]: https://github.com/Electric-Coin-Company/zashi-android/issues/1171
-    val monetarySeparators = MonetarySeparators.current(Locale.US)
+    val monetarySeparators = MonetarySeparators.current(Locale.getDefault())
 
     val walletState = walletViewModel.walletStateInformation.collectAsStateWithLifecycle().value
 
