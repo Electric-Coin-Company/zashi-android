@@ -148,9 +148,9 @@ internal fun HistoryContainer(
                     testTag = BalancesTag.STATUS,
                     walletSnapshot = walletSnapshot,
                     modifier =
-                    Modifier
-                        .padding(horizontal = ZcashTheme.dimens.spacingDefault)
-                        .animateContentSize()
+                        Modifier
+                            .padding(horizontal = ZcashTheme.dimens.spacingDefault)
+                            .animateContentSize()
                 )
 
                 Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
@@ -306,7 +306,7 @@ private fun ComposableHistoryListItemsPreview() {
 const val ADDRESS_IN_TITLE_WIDTH_RATIO = 0.5f
 
 @Composable
-@Suppress("LongMethod")
+@Suppress("LongMethod", "CyclomaticComplexMethod")
 private fun HistoryItem(
     transaction: TransactionUi,
     isHideBalances: Boolean,
@@ -508,12 +508,8 @@ private fun HistoryItemCollapsedMainPart(
                 stringResource(id = R.string.account_history_item_received_prefix)
             }
 
-        if (transaction.expandableState.isInAnyExtendedState() &&
-            transaction.overview.getExtendedState().isShielding()) {
-            // do not show anything in this case
-        } else {
-            StyledBalance(
-                balanceParts =
+        StyledBalance(
+            balanceParts =
                 if (transaction.expandableState.isInAnyExtendedState()) {
                     transaction.overview.netValue.toZecStringFull().asZecAmountTriple(prefix)
                 } else {
@@ -521,15 +517,14 @@ private fun HistoryItemCollapsedMainPart(
                         suffix = stringResource(id = R.string.general_etc)
                     ).asZecAmountTriple(prefix)
                 },
-                isHideBalances = isHideBalances,
-                textStyle =
+            isHideBalances = isHideBalances,
+            textStyle =
                 StyledBalanceDefaults.textStyles(
                     mostSignificantPart = valueTextStyle,
                     leastSignificantPart = ZcashTheme.extendedTypography.transactionItemStyles.valueSecondPart
                 ),
-                textColor = valueTextColor,
-            )
-        }
+            textColor = valueTextColor,
+        )
     }
 }
 
@@ -576,9 +571,9 @@ private fun HistoryItemCollapsedAddressPart(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier =
-                    Modifier
-                        .fillMaxWidth(ADDRESS_IN_TITLE_WIDTH_RATIO)
-                        .then(clickModifier)
+                        Modifier
+                            .fillMaxWidth(ADDRESS_IN_TITLE_WIDTH_RATIO)
+                            .then(clickModifier)
                 )
             }
         }
@@ -622,10 +617,10 @@ private fun HistoryItemExpandedAddressPart(
             iconVector = ImageVector.vectorResource(R.drawable.ic_trx_copy),
             iconTintColor = ZcashTheme.colors.secondaryColor,
             modifier =
-            Modifier
-                .clip(RoundedCornerShape(ZcashTheme.dimens.regularRippleEffectCorner))
-                .clickable { onAction(TrxItemAction.AddressClick(recipient)) }
-                .padding(all = ZcashTheme.dimens.spacingTiny)
+                Modifier
+                    .clip(RoundedCornerShape(ZcashTheme.dimens.regularRippleEffectCorner))
+                    .clickable { onAction(TrxItemAction.AddressClick(recipient)) }
+                    .padding(all = ZcashTheme.dimens.spacingTiny)
         )
     }
 }
@@ -662,7 +657,7 @@ private fun HistoryItemExpandedPart(
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
-        if (transaction.messages.containsValidMemo()) {
+        if (transaction.overview.isShielding.not() && transaction.messages.containsValidMemo()) {
             Text(
                 text =
                     pluralStringResource(
@@ -688,8 +683,8 @@ private fun HistoryItemExpandedPart(
                 )
                 Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
             }
-        } else if (transaction.recipientAddressType == null ||
-            transaction.recipientAddressType == AddressType.Shielded
+        } else if (transaction.overview.isShielding.not() &&
+            (transaction.recipientAddressType == null || transaction.recipientAddressType == AddressType.Shielded)
         ) {
             Text(
                 text = stringResource(id = R.string.account_history_item_no_message),
@@ -705,22 +700,6 @@ private fun HistoryItemExpandedPart(
             transaction = transaction,
             onAction = onAction
         )
-
-        if (transaction.overview.getExtendedState().isShielding()) {
-            Spacer(modifier = (Modifier.height(ZcashTheme.dimens.spacingDefault)))
-
-            val prefix =
-                if (transaction.overview.isSentTransaction) {
-                    stringResource(id = R.string.account_history_item_sent_prefix)
-                } else {
-                    stringResource(id = R.string.account_history_item_received_prefix)
-                }
-
-
-            Text(text =
-                "Amount: ${transaction.overview.netValue.toZecStringFull().asZecAmountTriple(prefix)}"
-            )
-        }
 
         Spacer(modifier = (Modifier.height(ZcashTheme.dimens.spacingDefault)))
 
@@ -769,7 +748,7 @@ private fun HistoryItemTransactionIdPart(
     onAction: (TrxItemAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val txIdString = transaction.overview.txIdString() ?: return
+    val txIdString = transaction.overview.txIdString().orEmpty()
 
     Column(modifier = modifier) {
         if (transaction.expandableState == TrxItemState.EXPANDED_ID ||
@@ -860,11 +839,12 @@ private fun HistoryItemTransactionFeePart(
         Text(
             text = stringResource(id = R.string.account_history_item_transaction_fee),
             style = ZcashTheme.extendedTypography.transactionItemStyles.content,
-            color = if (transaction.overview.getExtendedState().isShielding()) {
-                ZcashTheme.colors.historyRedColor
-            } else {
-                ZcashTheme.colors.textDescription
-            },
+            color =
+                if (transaction.overview.getExtendedState().isShielding()) {
+                    ZcashTheme.colors.historyRedColor
+                } else {
+                    ZcashTheme.colors.textDescription
+                },
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingTiny))
@@ -990,23 +970,26 @@ internal enum class TransactionExtendedState {
 
 private fun TransactionOverview.getExtendedState(): TransactionExtendedState {
     return when (transactionState) {
-        TransactionState.Expired -> when {
-            isShielding -> TransactionExtendedState.SHIELDING_FAILED
-            isSentTransaction -> TransactionExtendedState.SEND_FAILED
-            else -> TransactionExtendedState.RECEIVE_FAILED
-        }
+        TransactionState.Expired ->
+            when {
+                isShielding -> TransactionExtendedState.SHIELDING_FAILED
+                isSentTransaction -> TransactionExtendedState.SEND_FAILED
+                else -> TransactionExtendedState.RECEIVE_FAILED
+            }
 
-        TransactionState.Confirmed -> when {
-            isShielding -> TransactionExtendedState.SHIELDED
-            isSentTransaction -> TransactionExtendedState.SENT
-            else -> TransactionExtendedState.RECEIVED
-        }
+        TransactionState.Confirmed ->
+            when {
+                isShielding -> TransactionExtendedState.SHIELDED
+                isSentTransaction -> TransactionExtendedState.SENT
+                else -> TransactionExtendedState.RECEIVED
+            }
 
-        TransactionState.Pending -> when {
-            isShielding -> TransactionExtendedState.SHIELDING
-            isSentTransaction -> TransactionExtendedState.SENDING
-            else -> TransactionExtendedState.RECEIVING
-        }
+        TransactionState.Pending ->
+            when {
+                isShielding -> TransactionExtendedState.SHIELDING
+                isSentTransaction -> TransactionExtendedState.SENDING
+                else -> TransactionExtendedState.RECEIVING
+            }
 
         else -> error("Unexpected transaction state found while calculating its extended state.")
     }
