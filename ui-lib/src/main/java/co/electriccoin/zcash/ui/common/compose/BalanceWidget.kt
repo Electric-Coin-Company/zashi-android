@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
@@ -21,15 +22,18 @@ import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.sdk.extension.toZecStringFull
 import cash.z.ecc.sdk.type.ZcashCurrency
 import co.electriccoin.zcash.ui.common.extension.asZecAmountTriple
+import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.Body
-import co.electriccoin.zcash.ui.design.component.CircularSmallProgressIndicator
+import co.electriccoin.zcash.ui.design.component.LottieProgress
 import co.electriccoin.zcash.ui.design.component.Reference
 import co.electriccoin.zcash.ui.design.component.StyledBalance
 import co.electriccoin.zcash.ui.design.component.StyledBalanceDefaults
 import co.electriccoin.zcash.ui.design.component.ZecAmountTriple
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.fixture.ObserveFiatCurrencyResultFixture
+import co.electriccoin.zcash.ui.screen.exchangerate.widget.StyledExchangeBalance
 
 @Preview(device = Devices.PIXEL_2)
 @Composable
@@ -44,12 +48,13 @@ private fun BalanceWidgetPreview() {
                     balanceState =
                         BalanceState.Available(
                             totalBalance = Zatoshi(1234567891234567L),
-                            spendableBalance = Zatoshi(1234567891234567L)
+                            spendableBalance = Zatoshi(1234567891234567L),
+                            exchangeRate = ObserveFiatCurrencyResultFixture.new()
                         ),
                     isHideBalances = false,
                     isReferenceToBalances = true,
                     onReferenceClick = {},
-                    modifier = Modifier
+                    modifier = Modifier,
                 )
             )
         }
@@ -65,11 +70,15 @@ private fun BalanceWidgetNotAvailableYetPreview() {
         ) {
             @Suppress("MagicNumber")
             BalanceWidget(
-                balanceState = BalanceState.Loading(Zatoshi(0L)),
+                balanceState =
+                    BalanceState.Loading(
+                        totalBalance = Zatoshi(value = 0L),
+                        exchangeRate = ObserveFiatCurrencyResultFixture.new()
+                    ),
                 isHideBalances = false,
                 isReferenceToBalances = true,
                 onReferenceClick = {},
-                modifier = Modifier
+                modifier = Modifier,
             )
         }
     }
@@ -84,22 +93,40 @@ private fun BalanceWidgetHiddenAmountPreview() {
         ) {
             @Suppress("MagicNumber")
             BalanceWidget(
-                balanceState = BalanceState.Loading(Zatoshi(0L)),
+                balanceState =
+                    BalanceState.Loading(
+                        totalBalance = Zatoshi(0L),
+                        exchangeRate = ObserveFiatCurrencyResultFixture.new()
+                    ),
                 isHideBalances = true,
                 isReferenceToBalances = true,
                 onReferenceClick = {},
-                modifier = Modifier
+                modifier = Modifier,
             )
         }
     }
 }
 
-sealed class BalanceState(open val totalBalance: Zatoshi) {
-    data object None : BalanceState(Zatoshi(0L))
+sealed interface BalanceState {
+    val totalBalance: Zatoshi
+    val exchangeRate: ExchangeRateState
 
-    data class Loading(override val totalBalance: Zatoshi) : BalanceState(totalBalance)
+    data class None(
+        override val exchangeRate: ExchangeRateState
+    ) : BalanceState {
+        override val totalBalance: Zatoshi = Zatoshi(0L)
+    }
 
-    data class Available(override val totalBalance: Zatoshi, val spendableBalance: Zatoshi) : BalanceState(totalBalance)
+    data class Loading(
+        override val totalBalance: Zatoshi,
+        override val exchangeRate: ExchangeRateState
+    ) : BalanceState
+
+    data class Available(
+        override val totalBalance: Zatoshi,
+        override val exchangeRate: ExchangeRateState,
+        val spendableBalance: Zatoshi
+    ) : BalanceState
 }
 
 @Composable
@@ -122,6 +149,20 @@ fun BalanceWidget(
             isHideBalances = isHideBalances,
             parts = balanceState.totalBalance.toZecStringFull().asZecAmountTriple()
         )
+
+        if (balanceState.exchangeRate is ExchangeRateState.Data) {
+            Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingMid))
+        }
+
+        StyledExchangeBalance(
+            zatoshi = balanceState.totalBalance,
+            state = balanceState.exchangeRate,
+            isHideBalances = isHideBalances
+        )
+
+        if (balanceState.exchangeRate is ExchangeRateState.Data) {
+            Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
+        }
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             if (isReferenceToBalances) {
@@ -151,9 +192,7 @@ fun BalanceWidget(
             Spacer(modifier = Modifier.width(ZcashTheme.dimens.spacingTiny))
 
             when (balanceState) {
-                BalanceState.None, is BalanceState.Loading -> {
-                    CircularSmallProgressIndicator(color = ZcashTheme.colors.circularProgressBarSmallDark)
-                }
+                is BalanceState.None, is BalanceState.Loading -> LottieProgress()
 
                 is BalanceState.Available -> {
                     StyledBalance(

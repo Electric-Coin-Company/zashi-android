@@ -14,7 +14,7 @@ import cash.z.ecc.android.sdk.WalletInitMode
 import cash.z.ecc.android.sdk.block.processor.CompactBlockProcessor
 import cash.z.ecc.android.sdk.model.Account
 import cash.z.ecc.android.sdk.model.BlockHeight
-import cash.z.ecc.android.sdk.model.FiatCurrency
+import cash.z.ecc.android.sdk.model.ObserveFiatCurrencyResult
 import cash.z.ecc.android.sdk.model.PercentDecimal
 import cash.z.ecc.android.sdk.model.PersistableWallet
 import cash.z.ecc.android.sdk.model.TransactionOverview
@@ -24,11 +24,14 @@ import cash.z.ecc.android.sdk.model.WalletBalance
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.ZcashNetwork
 import cash.z.ecc.android.sdk.tool.DerivationTool
+import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import cash.z.ecc.sdk.type.fromResources
-import co.electriccoin.zcash.global.getInstance
+import co.electriccoin.zcash.preference.EncryptedPreferenceProvider
+import co.electriccoin.zcash.preference.StandardPreferenceProvider
+import co.electriccoin.zcash.preference.model.entry.NullableBooleanPreferenceDefault
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.MainActivity
-import co.electriccoin.zcash.ui.common.ANDROID_STATE_FLOW_TIMEOUT
+import co.electriccoin.zcash.ui.NavigationTargets.EXCHANGE_RATE_OPT_IN
 import co.electriccoin.zcash.ui.common.compose.BalanceState
 import co.electriccoin.zcash.ui.common.extension.throttle
 import co.electriccoin.zcash.ui.common.model.OnboardingState
@@ -39,10 +42,12 @@ import co.electriccoin.zcash.ui.common.model.hasChangePending
 import co.electriccoin.zcash.ui.common.model.hasValuePending
 import co.electriccoin.zcash.ui.common.model.spendableBalance
 import co.electriccoin.zcash.ui.common.model.totalBalance
-import co.electriccoin.zcash.ui.preference.EncryptedPreferenceKeys
-import co.electriccoin.zcash.ui.preference.EncryptedPreferenceSingleton
+import co.electriccoin.zcash.ui.common.usecase.ObserveSynchronizerUseCase
+import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
+import co.electriccoin.zcash.ui.common.wallet.RefreshLock
+import co.electriccoin.zcash.ui.common.wallet.StaleLock
+import co.electriccoin.zcash.ui.preference.PersistableWalletPreferenceDefault
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
-import co.electriccoin.zcash.ui.preference.StandardPreferenceSingleton
 import co.electriccoin.zcash.ui.screen.account.ext.TransactionOverviewExt
 import co.electriccoin.zcash.ui.screen.account.ext.getSortHeight
 import co.electriccoin.zcash.ui.screen.account.state.TransactionHistorySyncState
@@ -52,72 +57,73 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
 // To make this more multiplatform compatible, we need to remove the dependency on Context
 // for loading the preferences.
 // TODO [#292]: Should be moved to SDK-EXT-UI module.
 // TODO [#292]: https://github.com/Electric-Coin-Company/zashi-android/issues/292
-class WalletViewModel(application: Application) : AndroidViewModel(application) {
-    private val walletCoordinator = WalletCoordinator.getInstance(application)
-
+@Suppress(
+    "TooManyFunctions"
+)
+class WalletViewModel(
+    application: Application,
+    observeSynchronizer: ObserveSynchronizerUseCase,
+    private val persistableWalletPreference: PersistableWalletPreferenceDefault,
+    private val walletCoordinator: WalletCoordinator,
+    private val encryptedPreferenceProvider: EncryptedPreferenceProvider,
+    private val standardPreferenceProvider: StandardPreferenceProvider,
+) : AndroidViewModel(application) {
     /*
      * Using the Mutex may be overkill, but it ensures that if multiple calls are accidentally made
      * that they have a consistent ordering.
      */
     private val persistWalletMutex = Mutex()
 
+    val navigationCommand = MutableSharedFlow<String>()
+
+    val backNavigationCommand = MutableSharedFlow<Unit>()
+
     /**
      * Synchronizer that is retained long enough to survive configuration changes.
      */
-    val synchronizer =
-        walletCoordinator.synchronizer.stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            null
-        )
-
-    /**
-     * A flow of the user's preferred fiat currency.
-     */
-    val preferredFiatCurrency: StateFlow<FiatCurrency?> =
-        flow<FiatCurrency?> {
-            val preferenceProvider = StandardPreferenceSingleton.getInstance(application)
-            emitAll(StandardPreferenceKeys.PREFERRED_FIAT_CURRENCY.observe(preferenceProvider))
-        }.stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            null
-        )
+    val synchronizer = observeSynchronizer()
 
     /**
      * A flow of the wallet block synchronization state.
      */
     val walletRestoringState: StateFlow<WalletRestoringState> =
         flow {
-            val preferenceProvider = StandardPreferenceSingleton.getInstance(application)
             emitAll(
-                StandardPreferenceKeys.WALLET_RESTORING_STATE.observe(preferenceProvider).map { persistedNumber ->
-                    WalletRestoringState.fromNumber(persistedNumber)
-                }
+                StandardPreferenceKeys.WALLET_RESTORING_STATE
+                    .observe(standardPreferenceProvider()).map { persistedNumber ->
+                        WalletRestoringState.fromNumber(persistedNumber)
+                    }
             )
         }.stateIn(
             viewModelScope,
@@ -156,11 +162,11 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
      */
     private val onboardingState =
         flow {
-            val preferenceProvider = StandardPreferenceSingleton.getInstance(application)
             emitAll(
-                StandardPreferenceKeys.ONBOARDING_STATE.observe(preferenceProvider).map { persistedNumber ->
-                    OnboardingState.fromNumber(persistedNumber)
-                }
+                StandardPreferenceKeys.ONBOARDING_STATE
+                    .observe(standardPreferenceProvider()).map { persistedNumber ->
+                        OnboardingState.fromNumber(persistedNumber)
+                    }
             )
         }
 
@@ -175,9 +181,11 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
                 onboardingState == OnboardingState.NEEDS_BACKUP && persistableWallet != null -> {
                     SecretState.NeedsBackup(persistableWallet)
                 }
+
                 onboardingState == OnboardingState.READY && persistableWallet != null -> {
                     SecretState.Ready(persistableWallet)
                 }
+
                 else -> SecretState.None
             }
         }.stateIn(
@@ -248,10 +256,9 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
                     synchronizer.transactions,
                     synchronizer.status,
                     synchronizer.networkHeight
-                ) {
-                        transactions: List<TransactionOverview>,
-                        status: Synchronizer.Status,
-                        networkHeight: BlockHeight? ->
+                ) { transactions: List<TransactionOverview>,
+                    status: Synchronizer.Status,
+                    networkHeight: BlockHeight? ->
                     val enhancedTransactions =
                         transactions
                             .sortedByDescending {
@@ -292,39 +299,179 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
                 initialValue = TransactionHistorySyncState.Loading
             )
 
+    val isExchangeRateUsdOptedIn = nullableBooleanStateFlow(StandardPreferenceKeys.EXCHANGE_RATE_OPTED_IN)
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private val exchangeRateUsdInternal =
+        isExchangeRateUsdOptedIn.flatMapLatest { optedIn ->
+            if (optedIn == true) {
+                synchronizer
+                    .filterNotNull()
+                    .flatMapLatest { synchronizer ->
+                        synchronizer.exchangeRateUsd
+                    }
+            } else {
+                flowOf(ObserveFiatCurrencyResult(isLoading = false, currencyConversion = null))
+            }
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(USD_EXCHANGE_REFRESH_LOCK_THRESHOLD),
+            initialValue = ObserveFiatCurrencyResult(isLoading = false, currencyConversion = null)
+        )
+
+    private val usdExchangeRateTimestamp =
+        exchangeRateUsdInternal
+            .map {
+                it.currencyConversion?.timestamp
+            }
+            .distinctUntilChanged()
+
+    private var lastExchangeRateUsdValue: ExchangeRateState = ExchangeRateState.OptedOut
+
+    val exchangeRateUsd: StateFlow<ExchangeRateState> =
+        channelFlow {
+            combine(
+                isExchangeRateUsdOptedIn,
+                exchangeRateUsdInternal,
+                staleExchangeRateUsdLock.state,
+                refreshExchangeRateUsdLock.state,
+            ) { isOptedIn, exchangeRate, isStale, isRefreshEnabled ->
+                lastExchangeRateUsdValue =
+                    when (isOptedIn) {
+                        true ->
+                            when (val lastValue = lastExchangeRateUsdValue) {
+                                is ExchangeRateState.Data ->
+                                    lastValue.copy(
+                                        isLoading = exchangeRate.isLoading,
+                                        isStale = isStale,
+                                        isRefreshEnabled = isRefreshEnabled,
+                                        currencyConversion = exchangeRate.currencyConversion,
+                                    )
+
+                                ExchangeRateState.OptedOut ->
+                                    ExchangeRateState.Data(
+                                        isLoading = exchangeRate.isLoading,
+                                        isStale = isStale,
+                                        isRefreshEnabled = isRefreshEnabled,
+                                        currencyConversion = exchangeRate.currencyConversion,
+                                        onRefresh = ::refreshExchangeRateUsd
+                                    )
+
+                                is ExchangeRateState.OptIn ->
+                                    ExchangeRateState.Data(
+                                        isLoading = exchangeRate.isLoading,
+                                        isStale = isStale,
+                                        isRefreshEnabled = isRefreshEnabled,
+                                        currencyConversion = exchangeRate.currencyConversion,
+                                        onRefresh = ::refreshExchangeRateUsd
+                                    )
+                            }
+
+                        false -> ExchangeRateState.OptedOut
+                        null ->
+                            ExchangeRateState.OptIn(
+                                onDismissClick = ::dismissWidgetOptInExchangeRateUsd,
+                                onPrimaryClick = ::showOptInExchangeRateUsd
+                            )
+                    }
+
+                lastExchangeRateUsdValue
+            }.distinctUntilChanged()
+                .onEach {
+                    Twig.info { "[USD] $it" }
+                    send(it)
+                }
+                .launchIn(this)
+
+            awaitClose {
+                // do nothing
+            }
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(),
+            initialValue = ExchangeRateState.OptedOut
+        )
+
     /**
      * A flow of the wallet balances state used for the UI layer. It's computed form [WalletSnapshot]'s properties
      * and provides the result [BalanceState] UI state.
      */
     val balanceState: StateFlow<BalanceState> =
-        walletSnapshot
-            .filterNotNull()
-            .map { snapshot ->
-                when {
-                    // Show the loader only under these conditions:
-                    // - Available balance is currently zero AND total balance is non-zero
-                    // - And wallet has some ChangePending or ValuePending in progress
-                    (
-                        snapshot.spendableBalance().value == 0L &&
-                            snapshot.totalBalance().value > 0L &&
-                            (snapshot.hasChangePending() || snapshot.hasValuePending())
-                    ) -> {
-                        BalanceState.Loading(
-                            totalBalance = snapshot.totalBalance()
-                        )
-                    }
-                    else -> {
-                        BalanceState.Available(
-                            totalBalance = snapshot.totalBalance(),
-                            spendableBalance = snapshot.spendableBalance()
-                        )
-                    }
+        combine(
+            walletSnapshot.filterNotNull(),
+            exchangeRateUsd,
+        ) { snapshot, exchangeRateUsd ->
+            when {
+                // Show the loader only under these conditions:
+                // - Available balance is currently zero AND total balance is non-zero
+                // - And wallet has some ChangePending or ValuePending in progress
+                (
+                    snapshot.spendableBalance().value == 0L &&
+                        snapshot.totalBalance().value > 0L &&
+                        (snapshot.hasChangePending() || snapshot.hasValuePending())
+                ) -> {
+                    BalanceState.Loading(
+                        totalBalance = snapshot.totalBalance(),
+                        exchangeRate = exchangeRateUsd
+                    )
                 }
-            }.stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-                BalanceState.None
-            )
+
+                else -> {
+                    BalanceState.Available(
+                        totalBalance = snapshot.totalBalance(),
+                        spendableBalance = snapshot.spendableBalance(),
+                        exchangeRate = exchangeRateUsd
+                    )
+                }
+            }
+        }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+            BalanceState.None(ExchangeRateState.OptedOut)
+        )
+
+    private val refreshExchangeRateUsdLock =
+        RefreshLock(
+            timestampToObserve = usdExchangeRateTimestamp,
+            lockDuration = USD_EXCHANGE_REFRESH_LOCK_THRESHOLD
+        )
+
+    private val staleExchangeRateUsdLock =
+        StaleLock(
+            timestampToObserve = usdExchangeRateTimestamp,
+            lockDuration = USD_EXCHANGE_STALE_LOCK_THRESHOLD,
+            onRefresh = { refreshExchangeRateUsd().join() }
+        )
+
+    fun refreshExchangeRateUsd() =
+        viewModelScope.launch {
+            val synchronizer = synchronizer.filterNotNull().first()
+            val value = exchangeRateUsd.value
+            if (value is ExchangeRateState.Data && value.isRefreshEnabled && !value.isLoading) {
+                synchronizer.refreshExchangeRateUsd()
+            }
+        }
+
+    fun optInExchangeRateUsd(optIn: Boolean) =
+        viewModelScope.launch {
+            setNullableBooleanPreference(StandardPreferenceKeys.EXCHANGE_RATE_OPTED_IN, optIn)
+            backNavigationCommand.emit(Unit)
+        }
+
+    fun dismissOptInExchangeRateUsd() =
+        viewModelScope.launch {
+            setNullableBooleanPreference(StandardPreferenceKeys.EXCHANGE_RATE_OPTED_IN, false)
+            backNavigationCommand.emit(Unit)
+        }
+
+    private fun dismissWidgetOptInExchangeRateUsd() {
+        setNullableBooleanPreference(StandardPreferenceKeys.EXCHANGE_RATE_OPTED_IN, false)
+    }
+
+    private fun showOptInExchangeRateUsd() =
+        viewModelScope.launch {
+            navigationCommand.emit(EXCHANGE_RATE_OPT_IN)
+        }
 
     /**
      * Creates a wallet asynchronously and then persists it.  Clients observe
@@ -363,12 +510,9 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
      * Persists a wallet asynchronously.  Clients observe [secretState] to see the side effects.
      */
     private fun persistWallet(persistableWallet: PersistableWallet) {
-        val application = getApplication<Application>()
-
         viewModelScope.launch {
-            val preferenceProvider = EncryptedPreferenceSingleton.getInstance(application)
             persistWalletMutex.withLock {
-                EncryptedPreferenceKeys.PERSISTABLE_WALLET.putValue(preferenceProvider, persistableWallet)
+                persistableWalletPreference.putValue(encryptedPreferenceProvider(), persistableWallet)
             }
         }
     }
@@ -379,17 +523,17 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
      * for a user creating a new wallet.
      */
     fun persistOnboardingState(onboardingState: OnboardingState) {
-        val application = getApplication<Application>()
-
         viewModelScope.launch {
-            val preferenceProvider = StandardPreferenceSingleton.getInstance(application)
-
             // Use the Mutex here to avoid timing issues.  During wallet restore, persistOnboardingState()
             // is called prior to persistExistingWallet().  Although persistOnboardingState() should
             // complete quickly, it isn't guaranteed to complete before persistExistingWallet()
             // unless a mutex is used here.
             persistWalletMutex.withLock {
-                StandardPreferenceKeys.ONBOARDING_STATE.putValue(preferenceProvider, onboardingState.toNumber())
+                StandardPreferenceKeys.ONBOARDING_STATE.putValue(
+                    standardPreferenceProvider(),
+                    onboardingState
+                        .toNumber()
+                )
             }
         }
     }
@@ -401,11 +545,11 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
      * state from the SDK, and thus, we need to note the wallet restoring state here on the client side.
      */
     fun persistWalletRestoringState(walletRestoringState: WalletRestoringState) {
-        val application = getApplication<Application>()
-
         viewModelScope.launch {
-            val preferenceProvider = StandardPreferenceSingleton.getInstance(application)
-            StandardPreferenceKeys.WALLET_RESTORING_STATE.putValue(preferenceProvider, walletRestoringState.toNumber())
+            StandardPreferenceKeys.WALLET_RESTORING_STATE.putValue(
+                standardPreferenceProvider(),
+                walletRestoringState.toNumber()
+            )
         }
     }
 
@@ -442,16 +586,12 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
 
     private fun clearAppStateFlow(): Flow<Boolean> =
         callbackFlow {
-            val application = getApplication<Application>()
-
             viewModelScope.launch {
                 val standardPrefsCleared =
-                    StandardPreferenceSingleton
-                        .getInstance(application)
+                    standardPreferenceProvider()
                         .clearPreferences()
                 val encryptedPrefsCleared =
-                    EncryptedPreferenceSingleton
-                        .getInstance(application)
+                    encryptedPreferenceProvider()
                         .clearPreferences()
 
                 Twig.info { "Both preferences cleared: ${standardPrefsCleared && encryptedPrefsCleared}" }
@@ -500,6 +640,24 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
                 // Nothing to close
             }
         }
+
+    private fun nullableBooleanStateFlow(default: NullableBooleanPreferenceDefault): StateFlow<Boolean?> =
+        flow {
+            emitAll(default.observe(standardPreferenceProvider()))
+        }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+            null
+        )
+
+    private fun setNullableBooleanPreference(
+        default: NullableBooleanPreferenceDefault,
+        newState: Boolean
+    ) {
+        viewModelScope.launch {
+            default.putValue(standardPreferenceProvider(), newState)
+        }
+    }
 }
 
 /**
@@ -533,28 +691,35 @@ sealed class SynchronizerError {
 
     abstract fun getStackTrace(limit: Int = STACKTRACE_LIMIT): String?
 
+    internal fun Throwable.stackTraceToLimitedString() =
+        if (stackTraceToString().isNotEmpty()) {
+            stackTraceToString().substring(0..stackTraceToString().length.coerceAtMost(STACKTRACE_LIMIT))
+        } else {
+            null
+        }
+
     class Critical(val error: Throwable?) : SynchronizerError() {
         override fun getCauseMessage(): String? = error?.message
 
-        override fun getStackTrace(limit: Int): String? = error?.stackTraceToString()?.substring(0..limit)
+        override fun getStackTrace(limit: Int): String? = error?.stackTraceToLimitedString()
     }
 
     class Processor(val error: Throwable?) : SynchronizerError() {
         override fun getCauseMessage(): String? = error?.message
 
-        override fun getStackTrace(limit: Int): String? = error?.stackTraceToString()?.substring(0..limit)
+        override fun getStackTrace(limit: Int): String? = error?.stackTraceToLimitedString()
     }
 
     class Submission(val error: Throwable?) : SynchronizerError() {
         override fun getCauseMessage(): String? = error?.message
 
-        override fun getStackTrace(limit: Int): String? = error?.stackTraceToString()?.substring(0..limit)
+        override fun getStackTrace(limit: Int): String? = error?.stackTraceToLimitedString()
     }
 
     class Setup(val error: Throwable?) : SynchronizerError() {
         override fun getCauseMessage(): String? = error?.message
 
-        override fun getStackTrace(limit: Int): String? = error?.stackTraceToString()?.substring(0..limit)
+        override fun getStackTrace(limit: Int): String? = error?.stackTraceToLimitedString()
     }
 
     class Chain(val x: BlockHeight, val y: BlockHeight) : SynchronizerError() {
@@ -622,19 +787,22 @@ private fun Synchronizer.toWalletSnapshot() =
         val saplingBalance = flows[3] as WalletBalance?
         val transparentBalance = flows[4] as Zatoshi?
 
-        val progressPercentDecimal = flows[5] as PercentDecimal
+        val progressPercentDecimal = (flows[5] as PercentDecimal)
 
         WalletSnapshot(
-            flows[0] as Synchronizer.Status,
-            flows[1] as CompactBlockProcessor.ProcessorInfo,
-            orchardBalance ?: WalletBalance(Zatoshi(0), Zatoshi(0), Zatoshi(0)),
-            saplingBalance ?: WalletBalance(Zatoshi(0), Zatoshi(0), Zatoshi(0)),
-            transparentBalance ?: Zatoshi(0),
-            progressPercentDecimal,
-            flows[6] as SynchronizerError?
+            status = flows[0] as Synchronizer.Status,
+            processorInfo = flows[1] as CompactBlockProcessor.ProcessorInfo,
+            orchardBalance = orchardBalance ?: WalletBalance(Zatoshi(0), Zatoshi(0), Zatoshi(0)),
+            saplingBalance = saplingBalance ?: WalletBalance(Zatoshi(0), Zatoshi(0), Zatoshi(0)),
+            transparentBalance = transparentBalance ?: Zatoshi(0),
+            progress = progressPercentDecimal,
+            synchronizerError = flows[6] as SynchronizerError?
         )
     }
 
 fun Synchronizer.Status.isSyncing() = this == Synchronizer.Status.SYNCING
 
 fun Synchronizer.Status.isSynced() = this == Synchronizer.Status.SYNCED
+
+private val USD_EXCHANGE_REFRESH_LOCK_THRESHOLD = 2.minutes
+private val USD_EXCHANGE_STALE_LOCK_THRESHOLD = 15.minutes

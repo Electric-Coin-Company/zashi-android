@@ -3,7 +3,6 @@
 package co.electriccoin.zcash.ui.screen.home
 
 import androidx.activity.compose.BackHandler
-import androidx.activity.viewModels
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
@@ -19,6 +18,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cash.z.ecc.android.sdk.model.ZecSend
+import co.electriccoin.zcash.di.koinActivityViewModel
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.LocalActivity
 import co.electriccoin.zcash.ui.common.compose.RestoreScreenBrightness
@@ -47,11 +47,9 @@ internal fun WrapHome(
     goSendConfirmation: (ZecSend) -> Unit,
     sendArguments: SendArguments
 ) {
-    val activity = LocalActivity.current
+    val homeViewModel = koinActivityViewModel<HomeViewModel>()
 
-    val homeViewModel by activity.viewModels<HomeViewModel>()
-
-    val walletViewModel by activity.viewModels<WalletViewModel>()
+    val walletViewModel = koinActivityViewModel<WalletViewModel>()
 
     val isKeepScreenOnWhileSyncing = homeViewModel.isKeepScreenOnWhileSyncing.collectAsStateWithLifecycle().value
 
@@ -113,9 +111,11 @@ internal fun WrapHome(
     setShowingRestoreSuccess: () -> Unit,
     walletSnapshot: WalletSnapshot?,
 ) {
+    val activity = LocalActivity.current
+
     val focusManager = LocalFocusManager.current
 
-    val activity = LocalActivity.current
+    val walletViewModel = koinActivityViewModel<WalletViewModel>()
 
     val scope = rememberCoroutineScope()
 
@@ -218,7 +218,9 @@ internal fun WrapHome(
     )
 
     LaunchedEffect(pagerState.currentPage) {
-        if (pagerState.currentPage != HomeScreenIndex.SEND.pageIndex) {
+        if (pagerState.currentPage == HomeScreenIndex.SEND.pageIndex) {
+            walletViewModel.refreshExchangeRateUsd()
+        } else {
             focusManager.clearFocus(true)
         }
     }

@@ -12,6 +12,7 @@ import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.android.sdk.type.AddressType
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
+import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.BalanceStateFixture
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
@@ -69,7 +70,7 @@ class SendViewTestSetup(
     }
 
     @Composable
-    @Suppress("TestFunctionName")
+    @Suppress("TestFunctionName", "LongMethod")
     fun DefaultContent() {
         val context = LocalContext.current
 
@@ -123,7 +124,15 @@ class SendViewTestSetup(
                     // TODO [#1260]: https://github.com/Electric-Coin-Company/zashi-android/issues/1260
                 },
                 setAmountState = {},
-                amountState = AmountState.new(context, monetarySeparators, "", false),
+                amountState =
+                    AmountState.newFromZec(
+                        context = context,
+                        monetarySeparators = monetarySeparators,
+                        value = "",
+                        fiatValue = "",
+                        isTransparentOrTextRecipient = false,
+                        exchangeRateState = ExchangeRateState.OptedOut
+                    ),
                 setMemoState = {},
                 memoState = MemoState.new(""),
                 topAppBarSubTitleState = TopAppBarSubTitleState.None,
@@ -134,6 +143,7 @@ class SendViewTestSetup(
                                 available = Zatoshi(Zatoshi.MAX_INCLUSIVE.div(100))
                             )
                     ),
+                exchangeRateState = ExchangeRateState.OptedOut
             )
         }
     }

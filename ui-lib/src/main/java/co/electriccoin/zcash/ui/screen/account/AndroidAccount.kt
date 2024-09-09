@@ -3,7 +3,6 @@
 package co.electriccoin.zcash.ui.screen.account
 
 import android.content.Context
-import androidx.activity.viewModels
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -13,6 +12,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.internal.Twig
+import co.electriccoin.zcash.di.koinActivityViewModel
 import co.electriccoin.zcash.spackle.ClipboardManagerUtil
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.BalanceState
@@ -40,11 +40,11 @@ internal fun WrapAccount(
 ) {
     val activity = LocalActivity.current
 
-    val walletViewModel by activity.viewModels<WalletViewModel>()
+    val walletViewModel = koinActivityViewModel<WalletViewModel>()
 
-    val transactionHistoryViewModel by activity.viewModels<TransactionHistoryViewModel>()
+    val transactionHistoryViewModel = koinActivityViewModel<TransactionHistoryViewModel>()
 
-    val homeViewModel by activity.viewModels<HomeViewModel>()
+    val homeViewModel = koinActivityViewModel<HomeViewModel>()
 
     val synchronizer = walletViewModel.synchronizer.collectAsStateWithLifecycle().value
 

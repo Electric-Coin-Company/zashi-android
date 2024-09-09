@@ -4,8 +4,6 @@ import android.app.Activity
 import android.app.Application
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.android.sdk.ext.onFirst
 import co.electriccoin.zcash.ui.screen.update.AppUpdateChecker
@@ -14,6 +12,7 @@ import co.electriccoin.zcash.ui.screen.update.model.UpdateState
 import com.google.android.play.core.appupdate.AppUpdateInfo
 import com.google.android.play.core.install.model.ActivityResult
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class UpdateViewModel(
@@ -62,21 +61,6 @@ class UpdateViewModel(
 
     fun remindLater() {
         // for mvp we just return user back to the previous screen
-        updateInfo.value = updateInfo.value.copy(state = UpdateState.Canceled)
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    class UpdateViewModelFactory(
-        private val application: Application,
-        private val updateInfo: UpdateInfo,
-        private val appUpdateChecker: AppUpdateChecker
-    ) : ViewModelProvider.Factory {
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return if (modelClass.isAssignableFrom(UpdateViewModel::class.java)) {
-                UpdateViewModel(application, updateInfo, appUpdateChecker) as T
-            } else {
-                throw IllegalArgumentException("ViewModel Not Found.")
-            }
-        }
+        updateInfo.update { it.copy(state = UpdateState.Canceled) }
     }
 }

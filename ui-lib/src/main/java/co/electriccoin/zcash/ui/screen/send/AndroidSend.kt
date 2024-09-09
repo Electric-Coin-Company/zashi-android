@@ -3,7 +3,6 @@
 package co.electriccoin.zcash.ui.screen.send
 
 import android.content.pm.PackageManager
-import androidx.activity.viewModels
 import androidx.annotation.VisibleForTesting
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -19,6 +18,7 @@ import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.android.sdk.model.proposeSend
 import cash.z.ecc.android.sdk.model.toZecString
 import cash.z.ecc.android.sdk.type.AddressType
+import co.electriccoin.zcash.di.koinActivityViewModel
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.compose.BalanceState
 import co.electriccoin.zcash.ui.common.compose.LocalActivity
@@ -26,6 +26,7 @@ import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.viewmodel.HomeViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
+import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.screen.send.ext.Saver
 import co.electriccoin.zcash.ui.screen.send.model.AmountState
@@ -49,9 +50,9 @@ internal fun WrapSend(
 ) {
     val activity = LocalActivity.current
 
-    val walletViewModel by activity.viewModels<WalletViewModel>()
+    val walletViewModel = koinActivityViewModel<WalletViewModel>()
 
-    val homeViewModel by activity.viewModels<HomeViewModel>()
+    val homeViewModel = koinActivityViewModel<HomeViewModel>()
 
     val hasCameraFeature = activity.packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)
 
@@ -61,15 +62,15 @@ internal fun WrapSend(
 
     val spendingKey = walletViewModel.spendingKey.collectAsStateWithLifecycle().value
 
-    // TODO [#1171]: Remove default MonetarySeparators locale
-    // TODO [#1171]: https://github.com/Electric-Coin-Company/zashi-android/issues/1171
-    val monetarySeparators = MonetarySeparators.current(Locale.US)
+    val monetarySeparators = MonetarySeparators.current(Locale.getDefault())
 
     val walletState = walletViewModel.walletStateInformation.collectAsStateWithLifecycle().value
 
     val balanceState = walletViewModel.balanceState.collectAsStateWithLifecycle().value
 
     val isHideBalances = homeViewModel.isHideBalances.collectAsStateWithLifecycle().value ?: false
+
+    val exchangeRateState = walletViewModel.exchangeRateUsd.collectAsStateWithLifecycle().value
 
     WrapSend(
         balanceState = balanceState,
@@ -87,6 +88,7 @@ internal fun WrapSend(
         hasCameraFeature = hasCameraFeature,
         monetarySeparators = monetarySeparators,
         topAppBarSubTitleState = walletState,
+        exchangeRateState = exchangeRateState,
     )
 }
 
@@ -95,6 +97,7 @@ internal fun WrapSend(
 @Composable
 internal fun WrapSend(
     balanceState: BalanceState,
+    exchangeRateState: ExchangeRateState,
     isHideBalances: Boolean,
     goToQrScanner: () -> Unit,
     goBack: () -> Unit,
@@ -138,24 +141,45 @@ internal fun WrapSend(
         rememberSaveable(stateSaver = AmountState.Saver) {
             // Default amount state
             mutableStateOf(
-                AmountState.new(
+                AmountState.newFromZec(
                     context = context,
                     value = zecSend?.amount?.toZecString() ?: "",
                     monetarySeparators = monetarySeparators,
-                    isTransparentRecipient = recipientAddressState.type?.let { it == AddressType.Transparent } ?: false
+                    isTransparentOrTextRecipient =
+                        recipientAddressState.type?.let { it == AddressType.Transparent }
+                            ?: false,
+                    fiatValue = "",
+                    exchangeRateState = exchangeRateState
                 )
             )
         }
     // New amount state based on the recipient address type (e.g. shielded supports zero funds sending and
     // transparent not)
-    LaunchedEffect(key1 = recipientAddressState) {
+    LaunchedEffect(recipientAddressState, exchangeRateState) {
         setAmountState(
-            AmountState.new(
-                context = context,
-                isTransparentRecipient = recipientAddressState.type?.let { it == AddressType.Transparent } ?: false,
-                monetarySeparators = monetarySeparators,
-                value = amountState.value
-            )
+            if (amountState.value.isNotBlank() || amountState.fiatValue.isBlank()) {
+                AmountState.newFromZec(
+                    context = context,
+                    isTransparentOrTextRecipient =
+                        recipientAddressState.type
+                            ?.let { it == AddressType.Transparent } ?: false,
+                    monetarySeparators = monetarySeparators,
+                    value = amountState.value,
+                    fiatValue = amountState.fiatValue,
+                    exchangeRateState = exchangeRateState
+                )
+            } else {
+                AmountState.newFromFiat(
+                    context = context,
+                    isTransparentOrTextRecipient =
+                        recipientAddressState.type
+                            ?.let { it == AddressType.Transparent } ?: false,
+                    monetarySeparators = monetarySeparators,
+                    value = amountState.value,
+                    fiatValue = amountState.fiatValue,
+                    exchangeRateState = exchangeRateState
+                )
+            }
         )
     }
 
@@ -170,14 +194,25 @@ internal fun WrapSend(
         setSendStage(SendStage.Form)
         setZecSend(null)
         setRecipientAddressState(RecipientAddressState.new("", null))
-        setAmountState(AmountState.new(context, monetarySeparators, "", false))
+        setAmountState(
+            AmountState.newFromZec(
+                context = context,
+                monetarySeparators = monetarySeparators,
+                value = "",
+                fiatValue = "",
+                isTransparentOrTextRecipient = false,
+                exchangeRateState = exchangeRateState
+            )
+        )
         setMemoState(MemoState.new(""))
     }
 
     val onBackAction = {
         when (sendStage) {
             SendStage.Form -> goBack()
-            SendStage.Proposing -> { /* no action - wait until the sending is done */ }
+            SendStage.Proposing -> {
+                // no action - wait until the sending is done
+            }
             is SendStage.SendFailure -> setSendStage(SendStage.Form)
         }
     }
@@ -233,6 +268,7 @@ internal fun WrapSend(
             hasCameraFeature = hasCameraFeature,
             topAppBarSubTitleState = topAppBarSubTitleState,
             walletSnapshot = walletSnapshot,
+            exchangeRateState = exchangeRateState
         )
     }
 }

@@ -28,12 +28,11 @@ import java.util.concurrent.Executors
  * this instance lives for the lifetime of the application. Constructing multiple instances will
  * potentially corrupt preference data and will leak resources.
  */
-class AndroidPreferenceProvider(
+class AndroidPreferenceProvider private constructor(
     private val sharedPreferences: SharedPreferences,
     private val dispatcher: CoroutineDispatcher
 ) : PreferenceProvider {
     private val mutex = Mutex()
-
     /*
      * Implementation note: EncryptedSharedPreferences are not thread-safe, so this implementation
      * confines them to a single background thread.
@@ -76,7 +75,7 @@ class AndroidPreferenceProvider(
         }
 
     override fun observe(key: PreferenceKey): Flow<String?> =
-        callbackFlow<Unit> {
+        callbackFlow {
             val listener =
                 SharedPreferences.OnSharedPreferenceChangeListener { _, _ ->
                     // Callback on main thread
@@ -122,15 +121,13 @@ class AndroidPreferenceProvider(
              */
             val singleThreadedDispatcher = Executors.newSingleThreadExecutor().asCoroutineDispatcher()
 
-            val mainKey =
-                withContext(singleThreadedDispatcher) {
-                    MasterKey.Builder(context).apply {
-                        setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-                    }.build()
-                }
-
             val sharedPreferences =
                 withContext(singleThreadedDispatcher) {
+                    val mainKey =
+                        MasterKey.Builder(context).apply {
+                            setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+                        }.build()
+
                     EncryptedSharedPreferences.create(
                         context,
                         filename,

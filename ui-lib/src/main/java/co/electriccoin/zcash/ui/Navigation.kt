@@ -1,6 +1,7 @@
 package co.electriccoin.zcash.ui
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -27,6 +28,7 @@ import co.electriccoin.zcash.ui.NavigationTargets.ABOUT
 import co.electriccoin.zcash.ui.NavigationTargets.ADVANCED_SETTINGS
 import co.electriccoin.zcash.ui.NavigationTargets.CHOOSE_SERVER
 import co.electriccoin.zcash.ui.NavigationTargets.DELETE_WALLET
+import co.electriccoin.zcash.ui.NavigationTargets.EXCHANGE_RATE_OPT_IN
 import co.electriccoin.zcash.ui.NavigationTargets.EXPORT_PRIVATE_DATA
 import co.electriccoin.zcash.ui.NavigationTargets.HOME
 import co.electriccoin.zcash.ui.NavigationTargets.NOT_ENOUGH_SPACE
@@ -34,6 +36,7 @@ import co.electriccoin.zcash.ui.NavigationTargets.SCAN
 import co.electriccoin.zcash.ui.NavigationTargets.SEED_RECOVERY
 import co.electriccoin.zcash.ui.NavigationTargets.SEND_CONFIRMATION
 import co.electriccoin.zcash.ui.NavigationTargets.SETTINGS
+import co.electriccoin.zcash.ui.NavigationTargets.SETTINGS_EXCHANGE_RATE_OPT_IN
 import co.electriccoin.zcash.ui.NavigationTargets.SUPPORT
 import co.electriccoin.zcash.ui.NavigationTargets.WHATS_NEW
 import co.electriccoin.zcash.ui.common.compose.LocalNavController
@@ -51,6 +54,8 @@ import co.electriccoin.zcash.ui.screen.authentication.WrapAuthentication
 import co.electriccoin.zcash.ui.screen.chooseserver.WrapChooseServer
 import co.electriccoin.zcash.ui.screen.deletewallet.WrapDeleteWallet
 import co.electriccoin.zcash.ui.screen.disconnected.WrapDisconnected
+import co.electriccoin.zcash.ui.screen.exchangerate.optin.AndroidExchangeRateOptIn
+import co.electriccoin.zcash.ui.screen.exchangerate.settings.AndroidSettingsExchangeRateOptIn
 import co.electriccoin.zcash.ui.screen.exportdata.WrapExportPrivateData
 import co.electriccoin.zcash.ui.screen.home.WrapHome
 import co.electriccoin.zcash.ui.screen.scan.WrapScanValidator
@@ -85,6 +90,18 @@ internal fun MainActivity.Navigation() {
         rememberSaveable { mutableStateOf(false) }
     val (deleteWalletAuthentication, setDeleteWalletAuthentication) =
         rememberSaveable { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        walletViewModel.navigationCommand.collect {
+            navController.navigateJustOnce(it)
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        walletViewModel.backNavigationCommand.collect {
+            navController.popBackStack()
+        }
+    }
 
     NavHost(
         navController = navController,
@@ -145,6 +162,9 @@ internal fun MainActivity.Navigation() {
                         unProtectedDestination = DELETE_WALLET
                     )
                 },
+                onCurrencyConversion = {
+                    navController.navigateJustOnce(SETTINGS_EXCHANGE_RATE_OPT_IN)
+                }
             )
 
             when {
@@ -213,6 +233,12 @@ internal fun MainActivity.Navigation() {
         }
         composable(WHATS_NEW) {
             WrapWhatsNew()
+        }
+        composable(EXCHANGE_RATE_OPT_IN) {
+            AndroidExchangeRateOptIn()
+        }
+        composable(SETTINGS_EXCHANGE_RATE_OPT_IN) {
+            AndroidSettingsExchangeRateOptIn()
         }
         composable(SCAN) {
             WrapScanValidator(
@@ -435,6 +461,7 @@ object NavigationTargets {
     const val ABOUT = "about"
     const val ADVANCED_SETTINGS = "advanced_settings"
     const val DELETE_WALLET = "delete_wallet"
+    const val EXCHANGE_RATE_OPT_IN = "exchange_rate_opt_in"
     const val EXPORT_PRIVATE_DATA = "export_private_data"
     const val HOME = "home"
     const val CHOOSE_SERVER = "choose_server"
@@ -443,6 +470,7 @@ object NavigationTargets {
     const val SEED_RECOVERY = "seed_recovery"
     const val SEND_CONFIRMATION = "send_confirmation"
     const val SETTINGS = "settings"
+    const val SETTINGS_EXCHANGE_RATE_OPT_IN = "settings_exchange_rate_opt_in"
     const val SUPPORT = "support"
     const val WHATS_NEW = "whats_new"
 }

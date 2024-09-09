@@ -4,14 +4,14 @@ package co.electriccoin.zcash.ui.screen.about
 
 import android.content.Context
 import androidx.activity.compose.BackHandler
-import androidx.activity.viewModels
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import co.electriccoin.zcash.configuration.AndroidConfigurationFactory
+import co.electriccoin.zcash.configuration.api.ConfigurationProvider
+import co.electriccoin.zcash.di.koinActivityViewModel
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.LocalActivity
 import co.electriccoin.zcash.ui.common.model.VersionInfo
@@ -21,6 +21,7 @@ import co.electriccoin.zcash.ui.screen.about.view.About
 import co.electriccoin.zcash.ui.screen.support.model.ConfigInfo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import org.koin.compose.koinInject
 
 @Composable
 internal fun WrapAbout(
@@ -29,7 +30,7 @@ internal fun WrapAbout(
 ) {
     val activity = LocalActivity.current
 
-    val walletViewModel by activity.viewModels<WalletViewModel>()
+    val walletViewModel = koinActivityViewModel<WalletViewModel>()
 
     val walletState = walletViewModel.walletStateInformation.collectAsStateWithLifecycle().value
 
@@ -37,12 +38,13 @@ internal fun WrapAbout(
         goBack()
     }
 
-    val configInfo = ConfigInfo.new(AndroidConfigurationFactory.getInstance(activity.applicationContext))
+    val androidConfigurationProvider = koinInject<ConfigurationProvider>()
+    val configInfo = ConfigInfo.new(androidConfigurationProvider)
     val versionInfo = VersionInfo.new(activity.applicationContext)
 
     // Allows an implicit way to force configuration refresh by simply visiting the About screen
     LaunchedEffect(key1 = true) {
-        AndroidConfigurationFactory.getInstance(activity.applicationContext).hintToRefresh()
+        androidConfigurationProvider.hintToRefresh()
     }
 
     val snackbarHostState = remember { SnackbarHostState() }

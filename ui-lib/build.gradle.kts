@@ -56,6 +56,7 @@ android {
                     "src/main/res/ui/wallet_address",
                     "src/main/res/ui/warning",
                     "src/main/res/ui/whats_new",
+                    "src/main/res/ui/exchange_rate",
                 )
             )
         }
@@ -94,10 +95,11 @@ dependencies {
     implementation(libs.androidx.lifecycle.livedata)
     implementation(libs.androidx.splash)
     implementation(libs.androidx.workmanager)
-    implementation(libs.bundles.androidx.biometric)
+    api(libs.bundles.androidx.biometric)
     implementation(libs.bundles.androidx.camera)
     implementation(libs.bundles.androidx.compose.core)
     implementation(libs.bundles.androidx.compose.extended)
+    api(libs.bundles.koin)
     implementation(libs.bundles.play.update)
     implementation(libs.kotlin.stdlib)
     implementation(libs.kotlinx.coroutines.android)
@@ -113,12 +115,12 @@ dependencies {
 
     implementation(projects.buildInfoLib)
     implementation(projects.configurationApiLib)
-    implementation(projects.configurationImplAndroidLib)
     implementation(projects.crashAndroidLib)
     implementation(projects.preferenceApiLib)
     implementation(projects.preferenceImplAndroidLib)
-    implementation(projects.sdkExtLib)
     implementation(projects.spackleAndroidLib)
+    api(projects.configurationImplAndroidLib)
+    api(projects.sdkExtLib)
     api(projects.uiDesignLib)
 
     androidTestImplementation(projects.testLib)

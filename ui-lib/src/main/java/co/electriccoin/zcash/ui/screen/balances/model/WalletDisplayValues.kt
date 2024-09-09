@@ -1,15 +1,13 @@
 package co.electriccoin.zcash.ui.screen.balances.model
 
 import android.content.Context
-import androidx.compose.ui.text.intl.Locale
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.model.FiatCurrencyConversionRateState
-import cash.z.ecc.android.sdk.model.MonetarySeparators
+import cash.z.ecc.android.sdk.model.Locale
 import cash.z.ecc.android.sdk.model.PercentDecimal
 import cash.z.ecc.android.sdk.model.toFiatCurrencyState
 import cash.z.ecc.android.sdk.model.toZecString
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.extension.toKotlinLocale
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.model.spendableBalance
 import co.electriccoin.zcash.ui.common.model.totalBalance
@@ -35,14 +33,10 @@ data class WalletDisplayValues(
             var statusText = ""
             var statusAction: StatusAction = StatusAction.None
 
-            // TODO [#578]: Provide Zatoshi -> USD fiat currency formatting
-            // TODO [#578]: https://github.com/Electric-Coin-Company/zcash-android-wallet-sdk/issues/578
-            // We'll ideally provide a "fresh" currencyConversion object here
             val fiatCurrencyAmountState =
                 walletSnapshot.spendableBalance().toFiatCurrencyState(
                     null,
-                    Locale.current.toKotlinLocale(),
-                    MonetarySeparators.current(java.util.Locale.getDefault())
+                    Locale.getDefault(),
                 )
             var fiatCurrencyAmountText = getFiatCurrencyRateValue(context, fiatCurrencyAmountState)
 

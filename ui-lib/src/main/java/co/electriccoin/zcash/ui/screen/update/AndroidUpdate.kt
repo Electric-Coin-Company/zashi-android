@@ -2,7 +2,6 @@ package co.electriccoin.zcash.ui.screen.update
 
 import android.content.Context
 import androidx.activity.compose.BackHandler
-import androidx.activity.viewModels
 import androidx.annotation.VisibleForTesting
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -10,6 +9,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import co.electriccoin.zcash.di.koinActivityViewModel
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.LocalActivity
 import co.electriccoin.zcash.ui.common.viewmodel.CheckUpdateViewModel
@@ -20,27 +20,34 @@ import co.electriccoin.zcash.ui.screen.update.viewmodel.UpdateViewModel
 import co.electriccoin.zcash.ui.util.PlayStoreUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import org.koin.core.parameter.parametersOf
 
 @Composable
 internal fun WrapCheckForUpdate() {
-    val activity = LocalActivity.current
-
     // TODO [#403]: Manual testing of already implemented in-app update mechanisms
     // TODO [#403]: https://github.com/Electric-Coin-Company/zashi-android/issues/403
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    val checkUpdateViewModel by activity.viewModels<CheckUpdateViewModel> {
-        CheckUpdateViewModel.CheckUpdateViewModelFactory(
-            activity.application,
-            AppUpdateCheckerImp.new()
+    val checkUpdateViewModel = koinActivityViewModel<CheckUpdateViewModel>()
+
+    val activity = LocalActivity.current
+
+    val inputUpdateInfo = checkUpdateViewModel.updateInfo.collectAsStateWithLifecycle().value ?: return
+
+    val viewModel = koinActivityViewModel<UpdateViewModel> { parametersOf(inputUpdateInfo) }
+    val updateInfo = viewModel.updateInfo.collectAsStateWithLifecycle().value
+
+    if (updateInfo.appUpdateInfo != null && updateInfo.state == UpdateState.Prepared) {
+        WrapUpdate(
+            updateInfo = updateInfo,
+            checkForUpdate = viewModel::checkForAppUpdate,
+            remindLater = viewModel::remindLater,
+            goForUpdate = {
+                viewModel.goForUpdate(
+                    activity = activity,
+                    appUpdateInfo = updateInfo.appUpdateInfo
+                )
+            }
         )
-    }
-
-    val updateInfo = checkUpdateViewModel.updateInfo.collectAsStateWithLifecycle().value
-
-    updateInfo?.let {
-        if (it.appUpdateInfo != null && it.state == UpdateState.Prepared) {
-            WrapUpdate(updateInfo)
-        }
     }
 
     // Check for an app update asynchronously. We create an effect that matches the activity
@@ -52,21 +59,16 @@ internal fun WrapCheckForUpdate() {
 
 @VisibleForTesting
 @Composable
-internal fun WrapUpdate(inputUpdateInfo: UpdateInfo) {
+internal fun WrapUpdate(
+    updateInfo: UpdateInfo,
+    checkForUpdate: () -> Unit,
+    remindLater: () -> Unit,
+    goForUpdate: () -> Unit,
+) {
     val activity = LocalActivity.current
-
-    val viewModel by activity.viewModels<UpdateViewModel> {
-        UpdateViewModel.UpdateViewModelFactory(
-            activity.application,
-            inputUpdateInfo,
-            AppUpdateCheckerImp.new()
-        )
-    }
 
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
-
-    val updateInfo = viewModel.updateInfo.collectAsStateWithLifecycle().value
 
     when (updateInfo.state) {
         UpdateState.Done, UpdateState.Canceled -> {
@@ -76,7 +78,7 @@ internal fun WrapUpdate(inputUpdateInfo: UpdateInfo) {
 
         UpdateState.Failed -> {
             // we need to refresh AppUpdateInfo object, as it can be used only once
-            viewModel.checkForAppUpdate()
+            checkForUpdate()
         }
 
         UpdateState.Prepared, UpdateState.Running -> {
@@ -86,7 +88,7 @@ internal fun WrapUpdate(inputUpdateInfo: UpdateInfo) {
 
     val onLaterAction = {
         if (!updateInfo.isForce && updateInfo.state != UpdateState.Running) {
-            viewModel.remindLater()
+            remindLater()
         }
     }
 
@@ -100,11 +102,7 @@ internal fun WrapUpdate(inputUpdateInfo: UpdateInfo) {
         onDownload = {
             // in this state of the update we have the AppUpdateInfo filled
             requireNotNull(updateInfo.appUpdateInfo)
-
-            viewModel.goForUpdate(
-                activity,
-                updateInfo.appUpdateInfo
-            )
+            goForUpdate()
         },
         onLater = onLaterAction,
         onReference = {

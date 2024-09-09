@@ -6,6 +6,8 @@ import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.block.processor.CompactBlockProcessor
 import cash.z.ecc.android.sdk.model.Account
 import cash.z.ecc.android.sdk.model.BlockHeight
+import cash.z.ecc.android.sdk.model.FastestServersResult
+import cash.z.ecc.android.sdk.model.ObserveFiatCurrencyResult
 import cash.z.ecc.android.sdk.model.PercentDecimal
 import cash.z.ecc.android.sdk.model.Proposal
 import cash.z.ecc.android.sdk.model.TransactionOverview
@@ -27,6 +29,9 @@ import kotlinx.coroutines.flow.StateFlow
  */
 @Suppress("TooManyFunctions", "UNUSED_PARAMETER")
 internal class MockSynchronizer : CloseableSynchronizer {
+    override val exchangeRateUsd: StateFlow<ObserveFiatCurrencyResult>
+        get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
+
     override val latestBirthdayHeight: BlockHeight
         get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
 
@@ -64,16 +69,18 @@ internal class MockSynchronizer : CloseableSynchronizer {
 
     override val processorInfo: Flow<CompactBlockProcessor.ProcessorInfo>
         get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
+
     override val progress: Flow<PercentDecimal>
-        get() = TODO("Not yet implemented")
+        get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
 
     override val saplingBalances: StateFlow<WalletBalance?>
         get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
 
     override val status: Flow<Synchronizer.Status>
         get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
+
     override val transactions: Flow<List<TransactionOverview>>
-        get() = TODO("Not yet implemented")
+        get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
 
     override val transparentBalance: StateFlow<Zatoshi?>
         get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
@@ -121,6 +128,10 @@ internal class MockSynchronizer : CloseableSynchronizer {
         error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
 
+    override suspend fun isValidTexAddr(address: String): Boolean {
+        error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
+    }
+
     override suspend fun isValidTransparentAddr(address: String): Boolean {
         error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
@@ -148,6 +159,10 @@ internal class MockSynchronizer : CloseableSynchronizer {
     }
 
     override suspend fun quickRewind() {
+        error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
+    }
+
+    override suspend fun refreshExchangeRateUsd() {
         error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
 
@@ -210,6 +225,13 @@ internal class MockSynchronizer : CloseableSynchronizer {
         network: ZcashNetwork,
         alias: String
     ): String {
+        error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
+    }
+
+    override suspend fun getFastestServers(
+        context: Context,
+        servers: List<LightWalletEndpoint>
+    ): Flow<FastestServersResult> {
         error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
 
