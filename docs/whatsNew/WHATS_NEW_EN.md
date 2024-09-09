@@ -9,6 +9,9 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+### Added
+- Shielded transactions are properly indicated in transaction history
+
 ## [1.1.7 (718)] - 2024-09-06
 
 ### Added

@@ -6,6 +6,9 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+### Added
+- Shielded transactions are properly indicated in transaction history
+
 ## [1.1.7 (718)] - 2024-09-06
 
 ### Added
