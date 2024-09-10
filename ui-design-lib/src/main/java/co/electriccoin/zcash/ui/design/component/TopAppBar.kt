@@ -33,9 +33,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -351,7 +354,7 @@ private fun TopBarOneVisibleActionMenuExample(
 @Composable
 fun TopAppBarBackNavigation(
     backContentDescriptionText: String? = null,
-    backIconVector: ImageVector = Icons.AutoMirrored.Filled.ArrowBack,
+    painter: Painter = rememberVectorPainter(Icons.AutoMirrored.Filled.ArrowBack),
     backText: String? = null,
     onBack: () -> Unit
 ) {
@@ -365,7 +368,7 @@ fun TopAppBarBackNavigation(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
-            imageVector = backIconVector,
+            painter = painter,
             contentDescription = backContentDescriptionText,
         )
 
@@ -440,6 +443,7 @@ fun SmallTopAppBar(
     subTitle: String? = null,
     showTitleLogo: Boolean = false,
     titleText: String? = null,
+    titleStyle: TextStyle = SecondaryTypography.headlineSmall,
 ) {
     CenterAlignedTopAppBar(
         title = {
@@ -451,7 +455,7 @@ fun SmallTopAppBar(
                 if (titleText != null) {
                     Text(
                         text = titleText.uppercase(),
-                        style = SecondaryTypography.headlineSmall,
+                        style = titleStyle,
                         color = colors.titleColor,
                     )
                     restoringSpacerHeight = ZcashTheme.dimens.spacingTiny

@@ -19,6 +19,7 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 ### Added
 - Dependency injection using Koin has been added to the project. This helps us keep the codebase organized while
   adding new app features.
+- Settings & Advanced Settings redesigned
 
 ### Changed
 - Zcash SDK version 2.2.3-SNAPSHOT has been adopted

@@ -16,6 +16,7 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ### Changed
 - Choose server screen has been redesigned
+- Settings & Advanced Settings redesigned
 
 ## [1.1.7 (718)] - 2024-09-06
 

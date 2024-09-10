@@ -36,6 +36,9 @@ data class ZashiColors(
     val utilitySuccess700: Color,
     val utilitySuccess200: Color,
     val utilitySuccess50: Color,
+    val btnDestroyFg: Color,
+    val btnDestroyBg: Color,
+    val btnDestroyBorder: Color,
 )
 
 internal val LightZashiColorPalette =
@@ -63,6 +66,9 @@ internal val LightZashiColorPalette =
         utilitySuccess700 = Color(0xFF098605),
         utilitySuccess200 = Color(0xFFA3FF95),
         utilitySuccess50 = Color(0xFFEAFFE5),
+        btnDestroyFg = Color(0xFFD92D20),
+        btnDestroyBg = Color(0xFFFFFFFF),
+        btnDestroyBorder = Color(0xFFFDA29B)
     )
 
 internal val DarkZashiColorPalette =
@@ -90,6 +96,9 @@ internal val DarkZashiColorPalette =
         utilitySuccess700 = Color(0xFF098605),
         utilitySuccess200 = Color(0xFFA3FF95),
         utilitySuccess50 = Color(0xFFEAFFE5),
+        btnDestroyFg = Color(0xFFFEE4E2),
+        btnDestroyBg = Color(0xFF55160C),
+        btnDestroyBorder = Color(0xFF912018)
     )
 
 @Suppress("CompositionLocalAllowlist")
