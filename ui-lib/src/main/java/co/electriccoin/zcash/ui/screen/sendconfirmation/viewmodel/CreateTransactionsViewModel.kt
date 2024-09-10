@@ -33,15 +33,12 @@ class CreateTransactionsViewModel : ViewModel() {
                 if (submitResults.size == 1) {
                     // The first transaction submission failed - user might just be able to re-submit the transaction
                     // proposal. Simple error pop up is fine then
-                    SubmitResult.SimpleTrxFailure(
-                        errorDescription =
-                            buildString {
-                                val result = (submitResults[0] as TransactionSubmitResult.Failure)
-                                appendLine("Error code: ${result.code}")
-                                appendLine("Is gRPC error: ${result.grpcError}")
-                                appendLine(result.description ?: "")
-                            }
-                    )
+                    val result = (submitResults[0] as TransactionSubmitResult.Failure)
+                    if (result.grpcError) {
+                        SubmitResult.SimpleTrxFailure.SimpleTrxFailureGrpc(result)
+                    } else {
+                        SubmitResult.SimpleTrxFailure.SimpleTrxFailureSubmit(result)
+                    }
                 } else {
                     // Any subsequent transaction submission failed - user needs to resolve this manually. Multiple
                     // transaction failure screen presented
@@ -56,7 +53,7 @@ class CreateTransactionsViewModel : ViewModel() {
         }.onFailure {
             Twig.error(it) { "Transactions submission failed" }
         }.getOrElse {
-            SubmitResult.SimpleTrxFailure(it.message ?: "")
+            SubmitResult.SimpleTrxFailure.SimpleTrxFailureOther(it)
         }.also {
             // Save the submission results for the later MultipleSubmissionError screen
             if (it == SubmitResult.MultipleTrxFailure) {

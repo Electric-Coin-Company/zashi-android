@@ -8,9 +8,14 @@
     <string name="send_confirmation_send_button">Send</string>
     <string name="send_confirmation_back_button">Go Back</string>
 
-    <string name="send_confirmation_dialog_error_title">Failed to send funds</string>
-    <string name="send_confirmation_dialog_error_text">Error: The attempt to send funds failed. Try it again, please.</string>
+    <string name="send_confirmation_dialog_error_title">Transaction Failed</string>
+    <string name="send_confirmation_dialog_error_text">An error occurred and the attempt to send funds failed. Try it again, please.</string>
     <string name="send_confirmation_dialog_error_btn">OK</string>
+
+    <string name="send_confirmation_dialog_error_grpc_title">Connection Error</string>
+    <string name="send_confirmation_dialog_error_grpc_text">Zashi encountered some connection issues when submitting
+        the transaction to the network. It will retry during the next few minutes.</string>
+    <string name="send_confirmation_dialog_error_grpc_btn">OK</string>
 
     <string name="send_confirmation_multiple_error_title">Transaction error</string>
     <string name="send_confirmation_multiple_error_text_1">Sending to this recipient required multiple transactions,

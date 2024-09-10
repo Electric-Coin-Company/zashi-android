@@ -135,6 +135,10 @@ internal fun WrapSendConfirmation(
             }
 
             is SendConfirmationStage.Failure -> setStage(SendConfirmationStage.Confirmation)
+            is SendConfirmationStage.FailureGrpc -> {
+                setStage(SendConfirmationStage.Confirmation)
+                goHome()
+            }
             is SendConfirmationStage.MultipleTrxFailure -> { // no action - wait until report the result
             }
 
@@ -313,11 +317,15 @@ private fun processSubmissionResult(
             setStage(SendConfirmationStage.Confirmation)
             goHome()
         }
-
-        is SubmitResult.SimpleTrxFailure -> {
-            setStage(SendConfirmationStage.Failure(submitResult.errorDescription))
+        is SubmitResult.SimpleTrxFailure.SimpleTrxFailureSubmit -> {
+            setStage(SendConfirmationStage.Failure(submitResult.toErrorDescription()))
         }
-
+        is SubmitResult.SimpleTrxFailure.SimpleTrxFailureGrpc -> {
+            setStage(SendConfirmationStage.FailureGrpc)
+        }
+        is SubmitResult.SimpleTrxFailure.SimpleTrxFailureOther -> {
+            setStage(SendConfirmationStage.Failure(submitResult.toErrorDescription()))
+        }
         is SubmitResult.MultipleTrxFailure -> {
             setStage(SendConfirmationStage.MultipleTrxFailure)
         }

@@ -9,6 +9,8 @@ sealed class SendConfirmationStage {
 
     data class Failure(val error: String?) : SendConfirmationStage()
 
+    data object FailureGrpc : SendConfirmationStage()
+
     data object MultipleTrxFailure : SendConfirmationStage()
 
     data object MultipleTrxFailureReported : SendConfirmationStage()
@@ -17,6 +19,7 @@ sealed class SendConfirmationStage {
         return when (this) {
             Confirmation -> TYPE_CONFIRMATION
             is Failure -> TYPE_FAILURE
+            is FailureGrpc -> TYPE_FAILURE_GRPC
             MultipleTrxFailure -> TYPE_MULTIPLE_TRX_FAILURE
             MultipleTrxFailureReported -> TYPE_MULTIPLE_TRX_FAILURE_REPORTED
             Sending -> TYPE_SENDING
@@ -27,6 +30,7 @@ sealed class SendConfirmationStage {
         private const val TYPE_CONFIRMATION = "confirmation" // $NON-NLS
         private const val TYPE_SENDING = "sending" // $NON-NLS
         private const val TYPE_FAILURE = "failure" // $NON-NLS
+        private const val TYPE_FAILURE_GRPC = "type_failure_grpc" // $NON-NLS
         private const val TYPE_MULTIPLE_TRX_FAILURE = "multiple_trx_failure" // $NON-NLS
         private const val TYPE_MULTIPLE_TRX_FAILURE_REPORTED = "multiple_trx_failure_reported" // $NON-NLS
         private const val KEY_TYPE = "type" // $NON-NLS
@@ -46,6 +50,7 @@ sealed class SendConfirmationStage {
                                     TYPE_CONFIRMATION -> Confirmation
                                     TYPE_SENDING -> Sending
                                     TYPE_FAILURE -> Failure((it[KEY_ERROR] as String))
+                                    TYPE_FAILURE_GRPC -> FailureGrpc
                                     TYPE_MULTIPLE_TRX_FAILURE -> MultipleTrxFailure
                                     TYPE_MULTIPLE_TRX_FAILURE_REPORTED -> MultipleTrxFailureReported
                                     else -> null
@@ -64,6 +69,7 @@ sealed class SendConfirmationStage {
                     saverMap[KEY_TYPE] = TYPE_FAILURE
                     saverMap[KEY_ERROR] = this.error ?: ""
                 }
+                is FailureGrpc -> saverMap[KEY_TYPE] = TYPE_FAILURE
                 is MultipleTrxFailure -> saverMap[KEY_TYPE] = TYPE_MULTIPLE_TRX_FAILURE
                 is MultipleTrxFailureReported -> saverMap[KEY_TYPE] = TYPE_MULTIPLE_TRX_FAILURE_REPORTED
             }
@@ -77,6 +83,7 @@ sealed class SendConfirmationStage {
                 TYPE_SENDING -> Sending
                 // Add the String error parameter storing and retrieving
                 TYPE_FAILURE -> Failure(null)
+                TYPE_FAILURE_GRPC -> FailureGrpc
                 TYPE_MULTIPLE_TRX_FAILURE -> MultipleTrxFailure
                 TYPE_MULTIPLE_TRX_FAILURE_REPORTED -> MultipleTrxFailureReported
                 else -> Confirmation
