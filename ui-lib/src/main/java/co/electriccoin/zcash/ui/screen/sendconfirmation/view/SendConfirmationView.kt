@@ -564,7 +564,7 @@ private fun SendFailure(
 }
 
 @Composable
-private fun SendFailureGrpc(onDone: () -> Unit,) {
+private fun SendFailureGrpc(onDone: () -> Unit) {
     AppAlertDialog(
         title = stringResource(id = R.string.send_confirmation_dialog_error_grpc_title),
         text = {
