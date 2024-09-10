@@ -137,14 +137,14 @@ internal fun WrapBalances(
         Toast.makeText(context, context.getString(R.string.balances_shielding_successful), Toast.LENGTH_LONG).show()
     }
 
-    suspend fun showShieldingError(errorMessage: String?) {
-        Twig.error { "Shielding proposal failed with: $errorMessage" }
+    suspend fun showShieldingError(shieldingState: ShieldState) {
+        Twig.error { "Shielding proposal failed with: $shieldingState" }
 
         // Adding the extra delay before notifying UI for a better UX
         @Suppress("MagicNumber")
-        delay(1500)
+        delay(1000)
 
-        setShieldState(ShieldState.Failed(errorMessage ?: ""))
+        setShieldState(shieldingState)
         setShowErrorDialog(true)
     }
 
@@ -190,7 +190,9 @@ internal fun WrapBalances(
 
                         if (newProposal == null) {
                             showShieldingError(
-                                context.getString(R.string.balances_shielding_dialog_error_below_threshold)
+                                ShieldState.Failed(
+                                    context.getString(R.string.balances_shielding_dialog_error_text_below_threshold)
+                                )
                             )
                         } else {
                             val result =
@@ -212,9 +214,13 @@ internal fun WrapBalances(
                                     Twig.info { "Shielding transaction done successfully" }
                                     showShieldingSuccess()
                                 }
+                                is SubmitResult.SimpleTrxFailure.SimpleTrxFailureGrpc -> {
+                                    Twig.warn { "Shielding transaction failed" }
+                                    showShieldingError(ShieldState.FailedGrpc)
+                                }
                                 is SubmitResult.SimpleTrxFailure -> {
                                     Twig.warn { "Shielding transaction failed" }
-                                    showShieldingError(result.errorDescription)
+                                    showShieldingError(ShieldState.Failed(result.toErrorDescription()))
                                 }
                                 is SubmitResult.MultipleTrxFailure -> {
                                     Twig.warn { "Shielding failed with multi-transactions-submission-error handling" }
@@ -223,7 +229,7 @@ internal fun WrapBalances(
                             }
                         }
                     }.onFailure {
-                        showShieldingError(it.message)
+                        showShieldingError(ShieldState.Failed(it.message ?: "Unknown error"))
                     }
                 }
             },

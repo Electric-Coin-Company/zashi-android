@@ -6,6 +6,10 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+### Added
+- Transaction resubmission feature has been added. It periodically searches for unmined sent transactions that 
+  are still within their expiry window and resubmits them if there are any.
+
 ## [1.1.7 (718)] - 2024-09-06
 
 ### Added

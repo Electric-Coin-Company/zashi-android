@@ -299,7 +299,8 @@ private fun SendConfirmationTopAppBar(
     when (stage) {
         SendConfirmationStage.Confirmation,
         SendConfirmationStage.Sending,
-        is SendConfirmationStage.Failure -> {
+        is SendConfirmationStage.Failure,
+        is SendConfirmationStage.FailureGrpc, -> {
             SmallTopAppBar(
                 subTitle = subTitle,
                 titleText = stringResource(id = R.string.send_stage_confirmation_title),
@@ -340,7 +341,10 @@ private fun SendConfirmationMainContent(
     modifier: Modifier = Modifier,
 ) {
     when (stage) {
-        SendConfirmationStage.Confirmation, SendConfirmationStage.Sending, is SendConfirmationStage.Failure -> {
+        SendConfirmationStage.Confirmation,
+        SendConfirmationStage.Sending,
+        is SendConfirmationStage.Failure,
+        is SendConfirmationStage.FailureGrpc -> {
             SendConfirmationContent(
                 zecSend = zecSend,
                 onBack = onBack,
@@ -349,7 +353,9 @@ private fun SendConfirmationMainContent(
                 modifier = modifier,
                 exchangeRate = exchangeRate
             )
-            if (stage is SendConfirmationStage.Failure) {
+            if (stage is SendConfirmationStage.FailureGrpc) {
+                SendFailureGrpc(onDone = onBack)
+            } else if (stage is SendConfirmationStage.Failure) {
                 SendFailure(
                     onDone = onBack,
                     reason = stage.error,
@@ -553,6 +559,25 @@ private fun SendFailure(
             }
         },
         confirmButtonText = stringResource(id = R.string.send_confirmation_dialog_error_btn),
+        onConfirmButtonClick = onDone
+    )
+}
+
+@Composable
+private fun SendFailureGrpc(onDone: () -> Unit) {
+    AppAlertDialog(
+        title = stringResource(id = R.string.send_confirmation_dialog_error_grpc_title),
+        text = {
+            Column(
+                Modifier.verticalScroll(rememberScrollState())
+            ) {
+                Text(
+                    text = stringResource(id = R.string.send_confirmation_dialog_error_grpc_text),
+                    color = ZcashTheme.colors.textPrimary,
+                )
+            }
+        },
+        confirmButtonText = stringResource(id = R.string.send_confirmation_dialog_error_grpc_btn),
         onConfirmButtonClick = onDone
     )
 }
