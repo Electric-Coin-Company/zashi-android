@@ -2,6 +2,7 @@ package co.electriccoin.zcash.app
 
 import co.electriccoin.zcash.crash.android.GlobalCrashReporter
 import co.electriccoin.zcash.di.coreModule
+import co.electriccoin.zcash.di.providerModule
 import co.electriccoin.zcash.di.repositoryModule
 import co.electriccoin.zcash.di.useCaseModule
 import co.electriccoin.zcash.di.viewModelModule
@@ -31,6 +32,7 @@ class ZcashApplication : CoroutineApplication() {
             androidContext(this@ZcashApplication)
             modules(
                 coreModule,
+                providerModule,
                 repositoryModule,
                 useCaseModule,
                 viewModelModule

@@ -176,6 +176,7 @@ internal fun MainActivity.Navigation() {
                         setCheckedProperty = setDeleteWalletAuthentication
                     )
                 }
+
                 exportPrivateDataAuthentication -> {
                     ShowSystemAuthentication(
                         navHostController = navController,
@@ -184,6 +185,7 @@ internal fun MainActivity.Navigation() {
                         setCheckedProperty = setExportPrivateDataAuthentication
                     )
                 }
+
                 seedRecoveryAuthentication -> {
                     ShowSystemAuthentication(
                         navHostController = navController,
@@ -195,11 +197,7 @@ internal fun MainActivity.Navigation() {
             }
         }
         composable(CHOOSE_SERVER) {
-            WrapChooseServer(
-                goBack = {
-                    navController.popBackStackJustOnce(CHOOSE_SERVER)
-                }
-            )
+            WrapChooseServer()
         }
         composable(SEED_RECOVERY) {
             WrapSeedRecovery(
