@@ -9,9 +9,10 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 ### Added
 - Transaction resubmission feature has been added. It periodically searches for unmined sent transactions that 
   are still within their expiry window and resubmits them if there are any.
+- The Choose server screen now provides a new search for the three fastest servers feature
 
 ### Changed
-- Choose server screen redesigned
+- Choose server screen has been redesigned
 
 ## [1.1.7 (718)] - 2024-09-06
 
