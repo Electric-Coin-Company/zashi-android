@@ -30,15 +30,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import cash.z.ecc.android.sdk.model.FiatCurrencyConversion
-import cash.z.ecc.android.sdk.model.MonetarySeparators
+import cash.z.ecc.android.sdk.model.Locale
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.toFiatString
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.extension.toKotlinLocale
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.LottieProgress
@@ -161,9 +159,7 @@ internal fun createExchangeRateText(
             val value =
                 zatoshi.toFiatString(
                     currencyConversion = state.currencyConversion,
-                    locale = Locale.current.toKotlinLocale(),
-                    monetarySeparators = MonetarySeparators.current(java.util.Locale.getDefault()),
-                    includeSymbols = false
+                    locale = Locale.getDefault(),
                 )
 
             "$currencySymbol$value"

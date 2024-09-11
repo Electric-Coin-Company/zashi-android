@@ -9,6 +9,22 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+### Added
+- Transaction resubmission feature has been added. It periodically searches for unmined sent transactions that are 
+  still within their expiry window and resubmits them if there are any.
+
+## [1.1.7 (718)] - 2024-09-06
+
+### Added
+- We added ZEC/USD currency conversion to Zashi without compromising your IP address.
+- You can now view your balances and type in transaction amounts in both USD and ZEC.
+
+### Changed
+- We adopted the latest Zcash SDK version 2.2.0, which brings the ZIP 320 TEX addresses support, currency conversion feature that fetches ZEC/USD exchange rate over Tor, and support for restoring the full history from transparent-only wallets.
+
+### Fixed
+- We re-enabled app screenshot testing after we moved away from the AppCompat components.
+
 ## [1.1.6 (712)] - 2024-09-04
 
 ### Added

@@ -18,7 +18,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.sdk.extension.toZecStringFull
 import cash.z.ecc.sdk.type.ZcashCurrency
@@ -152,7 +151,7 @@ fun BalanceWidget(
         )
 
         if (balanceState.exchangeRate is ExchangeRateState.Data) {
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingMid))
         }
 
         StyledExchangeBalance(
@@ -162,7 +161,7 @@ fun BalanceWidget(
         )
 
         if (balanceState.exchangeRate is ExchangeRateState.Data) {
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
         }
 
         Row(verticalAlignment = Alignment.CenterVertically) {

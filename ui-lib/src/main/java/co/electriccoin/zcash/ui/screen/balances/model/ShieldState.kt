@@ -13,6 +13,8 @@ sealed class ShieldState {
 
     data class Failed(val error: String) : ShieldState()
 
+    data object FailedGrpc : ShieldState()
+
     fun isEnabled() = this != Running && this !is Failed && this != Shielded
 
     companion object {
@@ -21,6 +23,7 @@ sealed class ShieldState {
         private const val TYPE_RUNNING = "running" // $NON-NLS
         private const val TYPE_SHIELDED = "shielded" // $NON-NLS
         private const val TYPE_FAILED = "failed" // $NON-NLS
+        private const val TYPE_FAILED_GRPC = "failed_grpc" // $NON-NLS
         private const val KEY_TYPE = "type" // $NON-NLS
 
         private const val KEY_ERROR = "error" // $NON-NLS
@@ -41,6 +44,7 @@ sealed class ShieldState {
                                     TYPE_RUNNING -> Running
                                     TYPE_SHIELDED -> Shielded
                                     TYPE_FAILED -> Failed((it[KEY_ERROR] as String))
+                                    TYPE_FAILED_GRPC -> FailedGrpc
                                     else -> null
                                 }
                             }
@@ -59,6 +63,7 @@ sealed class ShieldState {
                     saverMap[KEY_TYPE] = TYPE_FAILED
                     saverMap[KEY_ERROR] = this.error
                 }
+                FailedGrpc -> saverMap[KEY_TYPE] = TYPE_FAILED_GRPC
             }
 
             return saverMap

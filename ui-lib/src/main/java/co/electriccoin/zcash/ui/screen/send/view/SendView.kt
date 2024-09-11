@@ -347,9 +347,7 @@ private fun SendForm(
     hasCameraFeature: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    // TODO [#1171]: Remove default MonetarySeparators locale
-    // TODO [#1171]: https://github.com/Electric-Coin-Company/zashi-android/issues/1171
-    val monetarySeparators = MonetarySeparators.current(Locale.US)
+    val monetarySeparators = MonetarySeparators.current(Locale.getDefault())
 
     val scrollState = rememberScrollState()
 
@@ -435,7 +433,6 @@ private fun SendForm(
         SendButton(
             amountState = amountState,
             memoState = memoState,
-            monetarySeparators = monetarySeparators,
             onCreateZecSend = onCreateZecSend,
             recipientAddressState = recipientAddressState,
             walletSnapshot = walletSnapshot,
@@ -449,7 +446,6 @@ private fun SendForm(
 fun SendButton(
     amountState: AmountState,
     memoState: MemoState,
-    monetarySeparators: MonetarySeparators,
     onCreateZecSend: (ZecSend) -> Unit,
     recipientAddressState: RecipientAddressState,
     setScrollToFeePixels: (Int) -> Unit,
@@ -486,7 +482,6 @@ fun SendButton(
                             } else {
                                 memoState.text
                             },
-                        monetarySeparators = monetarySeparators
                     )
 
                 when (zecSendValidation) {
