@@ -122,8 +122,6 @@ dependencies {
     api(projects.configurationImplAndroidLib)
     api(projects.sdkExtLib)
     api(projects.uiDesignLib)
-    api(libs.koin)
-    api(libs.koin.compose)
 
     androidTestImplementation(projects.testLib)
     androidTestImplementation(libs.bundles.androidx.test)
