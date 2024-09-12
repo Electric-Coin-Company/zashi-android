@@ -13,7 +13,7 @@ directly impact users rather than highlighting other key architectural updates.*
 - Transaction resubmission feature has been added. It periodically searches for unmined sent transactions that
   are still within their expiry window and resubmits them if there are any.
 - The Choose server screen now provides a new search for the three fastest servers feature
-- Coinbase integration button added to Advanced Settings
+- Coinbase Onramp integration button has been added to the Advanced Settings screen
 
 ### Changed
 - Choose server screen has been redesigned
