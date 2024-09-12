@@ -25,7 +25,27 @@ import androidx.compose.ui.unit.sp
 import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.orDark
+
+@Composable
+fun ZashiSettingsListItem(
+    state: ButtonState,
+    @DrawableRes icon: Int,
+    trailing: @Composable () -> Unit = {
+        Image(
+            painter = painterResource(R.drawable.ic_chevron_right orDark R.drawable.ic_chevron_right_dark),
+            contentDescription = state.text.getValue(),
+        )
+    }
+) {
+    ZashiSettingsListItem(
+        text = state.text.getValue(),
+        icon = icon,
+        trailing = trailing,
+        onClick = state.onClick
+    )
+}
 
 @Composable
 fun ZashiSettingsListItem(
