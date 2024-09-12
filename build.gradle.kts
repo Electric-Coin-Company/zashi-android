@@ -121,8 +121,6 @@ tasks {
             "ZCASH_GOOGLE_PLAY_DEPLOY_TRACK" to "internal",
             "ZCASH_GOOGLE_PLAY_DEPLOY_STATUS" to "draft",
 
-            "SDK_INCLUDED_BUILD_PATH" to "",
-            "BIP_39_INCLUDED_BUILD_PATH" to "",
             "COINBASE_APP_ID" to "",
             "SDK_INCLUDED_BUILD_PATH" to "",
             "BIP_39_INCLUDED_BUILD_PATH" to ""
