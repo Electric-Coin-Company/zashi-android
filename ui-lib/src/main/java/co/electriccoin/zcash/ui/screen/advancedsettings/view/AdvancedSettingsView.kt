@@ -26,12 +26,14 @@ import androidx.compose.ui.unit.sp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
+import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.ZashiSettingsListItem
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.util.orDark
+import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.advancedsettings.AdvancedSettingsState
 import co.electriccoin.zcash.ui.screen.advancedsettings.AdvancedSettingsTag
 import co.electriccoin.zcash.ui.screen.exchangerate.ZashiButton
@@ -92,6 +94,13 @@ fun AdvancedSettings(
                         R.drawable.ic_advanced_settings_currency_conversion_dark,
                 onClick = state.onCurrencyConversionClick
             )
+            if (state.coinbaseButton != null) {
+                HorizontalDivider(color = ZcashTheme.zashiColors.divider)
+                ZashiSettingsListItem(
+                    icon = R.drawable.ic_advanced_settings_coinbase,
+                    state = state.coinbaseButton
+                )
+            }
             Spacer(modifier = Modifier.height(24.dp))
             Spacer(modifier = Modifier.weight(1f))
             Row(
@@ -161,6 +170,11 @@ private fun AdvancedSettingsPreview() =
                     onChooseServerClick = {},
                     onCurrencyConversionClick = {},
                     onDeleteZashiClick = {},
+                    coinbaseButton =
+                        ButtonState(
+                            text = stringRes("Coinbase"),
+                            onClick = {}
+                        )
                 ),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )

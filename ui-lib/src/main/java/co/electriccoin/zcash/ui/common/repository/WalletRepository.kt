@@ -6,10 +6,12 @@ import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.WalletCoordinator
 import cash.z.ecc.android.sdk.model.FastestServersResult
 import cash.z.ecc.android.sdk.model.PersistableWallet
+import cash.z.ecc.android.sdk.model.WalletAddresses
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.lightwallet.client.model.LightWalletEndpoint
 import co.electriccoin.zcash.preference.EncryptedPreferenceProvider
 import co.electriccoin.zcash.preference.StandardPreferenceProvider
+import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.model.FastestServersState
 import co.electriccoin.zcash.ui.common.model.OnboardingState
 import co.electriccoin.zcash.ui.common.provider.GetDefaultServersProvider
@@ -48,6 +50,7 @@ interface WalletRepository {
     val secretState: StateFlow<SecretState?>
     val fastestServers: StateFlow<FastestServersState>
     val persistableWallet: Flow<PersistableWallet?>
+    val addresses: StateFlow<WalletAddresses?>
 
     fun persistWallet(persistableWallet: PersistableWallet)
 
@@ -159,6 +162,21 @@ class WalletRepositoryImpl(
         secretState.map {
             (it as? SecretState.Ready?)?.persistableWallet
         }
+
+    override val addresses: StateFlow<WalletAddresses?> =
+        synchronizer
+            .filterNotNull()
+            .map {
+                runCatching {
+                    WalletAddresses.new(it)
+                }.onFailure {
+                    Twig.warn { "Wait until the SDK starts providing the addresses" }
+                }.getOrNull()
+            }.stateIn(
+                scope,
+                SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+                null
+            )
 
     /**
      * Persists a wallet asynchronously.  Clients observe [secretState] to see the side effects.
