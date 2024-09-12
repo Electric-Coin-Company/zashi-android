@@ -33,9 +33,9 @@ import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.util.orDark
 import co.electriccoin.zcash.ui.screen.advancedsettings.AdvancedSettingsState
+import co.electriccoin.zcash.ui.screen.advancedsettings.AdvancedSettingsTag
 import co.electriccoin.zcash.ui.screen.exchangerate.ZashiButton
 import co.electriccoin.zcash.ui.screen.exchangerate.ZashiButtonDefaults
-import co.electriccoin.zcash.ui.screen.settings.SettingsTag
 
 // TODO [#1271]: Add AdvancedSettingsView Tests
 // TODO [#1271]: https://github.com/Electric-Coin-Company/zashi-android/issues/1271
@@ -139,7 +139,7 @@ private fun AdvancedSettingsTopAppBar(
                 TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
                 TopAppBarSubTitleState.None -> null
             },
-        modifier = Modifier.testTag(SettingsTag.SETTINGS_TOP_APP_BAR),
+        modifier = Modifier.testTag(AdvancedSettingsTag.ADVANCED_SETTINGS_TOP_APP_BAR),
         showTitleLogo = true,
         navigationAction = {
             ZashiTopAppBarBackNavigation(onBack = onBack)
