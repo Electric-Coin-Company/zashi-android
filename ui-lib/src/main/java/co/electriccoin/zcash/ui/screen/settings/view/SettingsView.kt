@@ -93,6 +93,7 @@ fun Settings(
                     onClick = state.onSendUsFeedbackClick
                 )
                 Spacer(modifier = Modifier.weight(1f))
+                Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingMin))
                 Image(
                     modifier = Modifier.align(CenterHorizontally),
                     painter =
