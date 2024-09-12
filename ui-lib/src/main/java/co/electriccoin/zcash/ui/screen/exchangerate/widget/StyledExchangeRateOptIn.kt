@@ -24,11 +24,11 @@ import androidx.compose.ui.unit.sp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.component.BlankSurface
+import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.exchangerate.SecondaryCard
 import co.electriccoin.zcash.ui.screen.exchangerate.ZashiButton
 import co.electriccoin.zcash.ui.screen.exchangerate.ZashiButtonDefaults
-import co.electriccoin.zcash.ui.util.PreviewScreens
 
 @Suppress("LongMethod")
 @Composable
@@ -85,13 +85,15 @@ fun StyledExchangeOptIn(
                         .fillMaxWidth()
                         .padding(end = 20.dp),
                 onClick = state.onPrimaryClick,
-                colors = ZashiButtonDefaults.tertiaryButtonColors()
-            ) {
+                colors = ZashiButtonDefaults.tertiaryButtonColors(),
+                text = stringResource(R.string.exchange_rate_opt_in_primary_btn),
+            ) { scope ->
                 Text(
                     text = stringResource(R.string.exchange_rate_opt_in_primary_btn),
                     style = ZcashTheme.typography.primary.titleSmall.copy(fontWeight = FontWeight.SemiBold),
                     fontSize = 14.sp
                 )
+                scope.Loading()
             }
         }
     }

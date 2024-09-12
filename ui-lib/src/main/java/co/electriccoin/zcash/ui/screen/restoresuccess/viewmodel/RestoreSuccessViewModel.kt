@@ -3,10 +3,10 @@ package co.electriccoin.zcash.ui.screen.restoresuccess.viewmodel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
+import co.electriccoin.zcash.preference.StandardPreferenceProvider
 import co.electriccoin.zcash.preference.model.entry.BooleanPreferenceDefault
-import co.electriccoin.zcash.ui.common.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
-import co.electriccoin.zcash.ui.preference.StandardPreferenceSingleton
 import co.electriccoin.zcash.ui.screen.restoresuccess.view.RestoreSuccessViewState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -16,7 +16,10 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class RestoreSuccessViewModel(application: Application) : AndroidViewModel(application) {
+class RestoreSuccessViewModel(
+    application: Application,
+    private val standardPreferenceProvider: StandardPreferenceProvider,
+) : AndroidViewModel(application) {
     private val keepScreenOn = MutableStateFlow(DEFAULT_KEEP_SCREEN_ON)
 
     val state =
@@ -45,8 +48,7 @@ class RestoreSuccessViewModel(application: Application) : AndroidViewModel(appli
         default: BooleanPreferenceDefault,
         newState: Boolean
     ) = viewModelScope.launch {
-        val prefs = StandardPreferenceSingleton.getInstance(getApplication())
-        default.putValue(prefs, newState)
+        default.putValue(standardPreferenceProvider(), newState)
     }
 }
 

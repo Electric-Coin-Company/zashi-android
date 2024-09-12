@@ -2,7 +2,7 @@ package co.electriccoin.zcash.ui.screen.send.model
 
 import android.content.Context
 import androidx.compose.runtime.saveable.mapSaver
-import androidx.compose.ui.text.intl.Locale
+import cash.z.ecc.android.sdk.model.Locale
 import cash.z.ecc.android.sdk.model.MonetarySeparators
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.ZecStringExt
@@ -11,7 +11,6 @@ import cash.z.ecc.android.sdk.model.toFiatString
 import cash.z.ecc.android.sdk.model.toZatoshi
 import cash.z.ecc.android.sdk.model.toZecString
 import co.electriccoin.zcash.spackle.Twig
-import co.electriccoin.zcash.ui.common.extension.toKotlinLocale
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 
 sealed interface AmountState {
@@ -42,7 +41,7 @@ sealed interface AmountState {
                 return Invalid(value, if (value.isBlank()) "" else fiatValue)
             }
 
-            val zatoshi = Zatoshi.fromZecString(context, value, monetarySeparators)
+            val zatoshi = Zatoshi.fromZecString(context, value, Locale.getDefault())
 
             val currencyConversion =
                 if (exchangeRateState !is ExchangeRateState.Data ||
@@ -67,9 +66,7 @@ sealed interface AmountState {
                             } else {
                                 zatoshi.toFiatString(
                                     currencyConversion = currencyConversion,
-                                    locale = Locale.current.toKotlinLocale(),
-                                    monetarySeparators = MonetarySeparators.current(java.util.Locale.getDefault()),
-                                    includeSymbols = false
+                                    locale = Locale.getDefault(),
                                 )
                             }
                     )
@@ -89,19 +86,23 @@ sealed interface AmountState {
             val isValid = validate(context, monetarySeparators, fiatValue)
 
             if (!isValid) {
-                return Invalid(value, fiatValue)
+                return Invalid(value = if (fiatValue.isBlank()) "" else value, fiatValue = fiatValue)
             }
 
             val zatoshi =
                 (exchangeRateState as? ExchangeRateState.Data)?.currencyConversion?.toZatoshi(
                     context = context,
                     value = fiatValue,
-                    monetarySeparators = MonetarySeparators.current(java.util.Locale.getDefault())
+                    locale = Locale.getDefault(),
                 )
 
             return when {
-                (zatoshi == null) -> Invalid(value, fiatValue)
-                (zatoshi.value == 0L && isTransparentOrTextRecipient) -> Invalid(value, fiatValue)
+                (zatoshi == null) -> {
+                    Invalid(value = if (fiatValue.isBlank()) "" else value, fiatValue = fiatValue)
+                }
+                (zatoshi.value == 0L && isTransparentOrTextRecipient) -> {
+                    Invalid(if (fiatValue.isBlank()) "" else value, fiatValue)
+                }
                 else -> {
                     Valid(
                         value = zatoshi.toZecString(),

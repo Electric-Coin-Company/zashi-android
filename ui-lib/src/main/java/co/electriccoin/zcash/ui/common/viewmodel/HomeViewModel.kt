@@ -1,14 +1,13 @@
 package co.electriccoin.zcash.ui.common.viewmodel
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import co.electriccoin.zcash.configuration.AndroidConfigurationFactory
+import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.configuration.model.map.Configuration
+import co.electriccoin.zcash.preference.StandardPreferenceProvider
 import co.electriccoin.zcash.preference.model.entry.BooleanPreferenceDefault
-import co.electriccoin.zcash.ui.common.ANDROID_STATE_FLOW_TIMEOUT
+import co.electriccoin.zcash.ui.common.usecase.ObserveConfigurationUseCase
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
-import co.electriccoin.zcash.ui.preference.StandardPreferenceSingleton
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
@@ -19,7 +18,10 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class HomeViewModel(application: Application) : AndroidViewModel(application) {
+class HomeViewModel(
+    private val observeConfiguration: ObserveConfigurationUseCase,
+    private val standardPreferenceProvider: StandardPreferenceProvider,
+) : ViewModel() {
     /**
      * A flow of whether background sync is enabled
      */
@@ -53,13 +55,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    val configurationFlow: StateFlow<Configuration?> =
-        AndroidConfigurationFactory.getInstance(application).getConfigurationFlow()
-            .stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT.inWholeMilliseconds),
-                null
-            )
+    val configurationFlow: StateFlow<Configuration?> = observeConfiguration()
 
     //
     // PRIVATE HELPERS
@@ -67,8 +63,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
     private fun booleanStateFlow(default: BooleanPreferenceDefault): StateFlow<Boolean?> =
         flow<Boolean?> {
-            val preferenceProvider = StandardPreferenceSingleton.getInstance(getApplication())
-            emitAll(default.observe(preferenceProvider))
+            emitAll(default.observe(standardPreferenceProvider()))
         }.stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
@@ -80,8 +75,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         newState: Boolean
     ) {
         viewModelScope.launch {
-            val prefs = StandardPreferenceSingleton.getInstance(getApplication())
-            default.putValue(prefs, newState)
+            default.putValue(standardPreferenceProvider(), newState)
         }
     }
 }

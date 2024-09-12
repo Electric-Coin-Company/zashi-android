@@ -3,7 +3,7 @@ package co.electriccoin.zcash.ui.screen.whatsnew.viewmodel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import co.electriccoin.zcash.ui.common.ANDROID_STATE_FLOW_TIMEOUT
+import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.screen.whatsnew.model.WhatsNewState
 import kotlinx.coroutines.flow.SharingStarted

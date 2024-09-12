@@ -3,7 +3,6 @@
 package co.electriccoin.zcash.ui.screen.onboarding
 
 import android.content.Context
-import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cash.z.ecc.android.sdk.WalletInitMode
@@ -13,6 +12,7 @@ import cash.z.ecc.android.sdk.model.PersistableWallet
 import cash.z.ecc.android.sdk.model.SeedPhrase
 import cash.z.ecc.android.sdk.model.ZcashNetwork
 import cash.z.ecc.sdk.type.fromResources
+import co.electriccoin.zcash.di.koinActivityViewModel
 import co.electriccoin.zcash.spackle.FirebaseTestLabUtil
 import co.electriccoin.zcash.ui.common.compose.LocalActivity
 import co.electriccoin.zcash.ui.common.model.OnboardingState
@@ -28,8 +28,8 @@ import co.electriccoin.zcash.ui.screen.restore.WrapRestore
 @Composable
 internal fun WrapOnboarding() {
     val activity = LocalActivity.current
-    val walletViewModel by activity.viewModels<WalletViewModel>()
-    val onboardingViewModel by activity.viewModels<OnboardingViewModel>()
+    val walletViewModel = koinActivityViewModel<WalletViewModel>()
+    val onboardingViewModel = koinActivityViewModel<OnboardingViewModel>()
 
     val versionInfo = VersionInfo.new(activity.applicationContext)
 
@@ -75,7 +75,7 @@ internal fun WrapOnboarding() {
 
         activity.reportFullyDrawn()
     } else {
-        WrapRestore(activity)
+        WrapRestore()
     }
 }
 
@@ -102,7 +102,7 @@ internal fun persistExistingWalletWithSeedPhrase(
         PersistableWallet(
             network = network,
             birthday = birthday,
-            endpoint = AvailableServerProvider.getDefaultServer(network),
+            endpoint = AvailableServerProvider.getDefaultServer(),
             seedPhrase = seedPhrase,
             walletInitMode = WalletInitMode.RestoreWallet
         )

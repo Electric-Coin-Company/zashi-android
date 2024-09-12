@@ -183,6 +183,7 @@ dependencyResolutionManagement {
             val zcashBip39Version = extra["ZCASH_BIP39_VERSION"].toString()
             val zcashSdkVersion = extra["ZCASH_SDK_VERSION"].toString()
             val zxingVersion = extra["ZXING_VERSION"].toString()
+            val koinVersion = extra["KOIN_VERSION"].toString()
 
             // Standalone versions
             version("flank", flankVersion)
@@ -241,6 +242,8 @@ dependencyResolutionManagement {
             library("zcash-sdk-incubator", "cash.z.ecc.android:zcash-android-sdk-incubator:$zcashSdkVersion")
             library("zcash-bip39", "cash.z.ecc.android:kotlin-bip39:$zcashBip39Version")
             library("zxing", "com.google.zxing:core:$zxingVersion")
+            library("koin", "io.insert-koin:koin-android:$koinVersion")
+            library("koin-compose", "io.insert-koin:koin-androidx-compose:$koinVersion")
 
             // Test libraries
             library("androidx-compose-test-junit", "androidx.compose.ui:ui-test-junit4:$androidxComposeVersion")
@@ -295,13 +298,6 @@ dependencyResolutionManagement {
                 )
             )
             bundle(
-                "play-update",
-                listOf(
-                    "play-update",
-                    "play-update-ktx",
-                )
-            )
-            bundle(
                 "androidx-test",
                 listOf(
                     "androidx-espresso-core",
@@ -310,6 +306,20 @@ dependencyResolutionManagement {
                     "androidx-test-junit",
                     "androidx-test-orchestrator",
                     "androidx-test-runner"
+                )
+            )
+            bundle(
+                "koin",
+                listOf(
+                    "koin",
+                    "koin-compose",
+                )
+            )
+            bundle(
+                "play-update",
+                listOf(
+                    "play-update",
+                    "play-update-ktx",
                 )
             )
         }

@@ -18,12 +18,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.BlankSurface
+import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.exchangerate.BaseExchangeRateOptIn
 import co.electriccoin.zcash.ui.screen.exchangerate.ZashiButton
 import co.electriccoin.zcash.ui.screen.exchangerate.ZashiButtonDefaults
 import co.electriccoin.zcash.ui.screen.exchangerate.ZashiTextButton
-import co.electriccoin.zcash.ui.util.PreviewScreens
 
 @Composable
 fun ExchangeRateOptIn(
@@ -57,13 +57,10 @@ fun ExchangeRateOptIn(
         footer = {
             ZashiButton(
                 modifier = Modifier.fillMaxWidth(),
+                text = stringResource(R.string.exchange_rate_opt_in_enable),
                 onClick = onEnabledClick,
                 colors = ZashiButtonDefaults.primaryButtonColors()
-            ) {
-                Text(
-                    text = stringResource(R.string.exchange_rate_opt_in_enable)
-                )
-            }
+            )
             ZashiTextButton(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = onDismiss,

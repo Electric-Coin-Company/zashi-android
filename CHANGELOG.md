@@ -7,7 +7,27 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 ## [Unreleased]
 
 ### Added
+- Transaction resubmission feature has been added. It periodically searches for unmined sent transactions that 
+  are still within their expiry window and resubmits them if there are any.
+- The Choose server screen now provides a new search for the three fastest servers feature
 - Android 15 support for 16kb memory page size
+
+### Changed
+- Choose server screen has been redesigned
+- Settings and Advanced Settings screens have been redesigned
+
+## [1.1.7 (718)] - 2024-09-06
+
+### Added
+- Dependency injection using Koin has been added to the project. This helps us keep the codebase organized while
+  adding new app features.
+
+### Changed
+- Zcash SDK version 2.2.3-SNAPSHOT has been adopted
+
+### Fixed
+- The Zec to USD currency conversion logic on the Send screen, which caused issues on lower Android SDK versions 
+ together with non-English device localizations, has been fixed. 
 
 ## [1.1.6 (712)] - 2024-09-04
 
@@ -29,10 +49,10 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 - Thus, the balances widget now optionally displays the USD value as well
 - A new option to enter the USD amount in the Send screen has been added
 
-## Changed
+### Changed
 - Android NDK version has been bumped to 26.1.10909125
 
-## Fixed
+### Fixed
 - The app screenshot testing has been re-enabled after we moved away from AppCompat components 
 
 ## [1.1.5 (706)] - 2024-08-09
@@ -60,7 +80,7 @@ flag is used on Android SDK level 33 and higher, masking out the `Toast` text on
 - `targetSdk` property value changed from 33 to 34
 - The Zcash SDK dependency has been switched from `2.1.2-SNAPSHOT` to `2.1.2`
 
-## Fixed
+### Fixed
 - Support Screen now shows the Send button above keyboard instead of overlaying it. This was achieved by setting 
   `adjustResize` to `MainActivity` and adding `imePadding` to top level composable
 - QR code scanning speed and reliability have been improved to address the latest reported scan issue. The obtained 
@@ -70,7 +90,7 @@ flag is used on Android SDK level 33 and higher, masking out the `Toast` text on
   option has been added to the app's `AndroidManifest.xml`, leaving the configuration changes handling entirely to 
   the Jetpack Compose layer.
 
-## Removed
+### Removed
 - `androidx.appcompat:appcompat` dependency has been removed
 
 ## [1.1.3 (682)] - 2024-07-03

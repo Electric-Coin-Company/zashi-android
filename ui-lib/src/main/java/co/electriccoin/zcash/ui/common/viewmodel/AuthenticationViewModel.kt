@@ -7,17 +7,15 @@ import androidx.biometric.BiometricManager.Authenticators
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
+import co.electriccoin.zcash.preference.StandardPreferenceProvider
 import co.electriccoin.zcash.preference.model.entry.BooleanPreferenceDefault
 import co.electriccoin.zcash.spackle.AndroidApiVersion
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
-import co.electriccoin.zcash.ui.preference.StandardPreferenceSingleton
 import co.electriccoin.zcash.ui.screen.authentication.AuthenticationUseCase
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,7 +35,9 @@ import kotlin.time.Duration.Companion.milliseconds
 private const val DEFAULT_INITIAL_DELAY = 0
 
 class AuthenticationViewModel(
-    private val application: Application,
+    application: Application,
+    private val standardPreferenceProvider: StandardPreferenceProvider,
+    private val biometricManager: BiometricManager,
 ) : AndroidViewModel(application) {
     private val executor: Executor by lazy { ContextCompat.getMainExecutor(application) }
     private lateinit var biometricPrompt: BiometricPrompt
@@ -54,6 +54,7 @@ class AuthenticationViewModel(
             // Android SDK version == 28 || 29
             (AndroidApiVersion.isExactlyP || AndroidApiVersion.isExactlyQ) ->
                 Authenticators.BIOMETRIC_WEAK or Authenticators.DEVICE_CREDENTIAL
+
             else -> error("Unsupported Android SDK version")
         }
 
@@ -128,6 +129,7 @@ class AuthenticationViewModel(
             BiometricSupportResult.Success -> {
                 // No action needed, let user proceed to the authentication steps
             }
+
             else -> {
                 // Otherwise biometric authentication might not be available, but users still can use the
                 // device credential authentication path
@@ -253,24 +255,28 @@ class AuthenticationViewModel(
         promptInfo =
             BiometricPrompt.PromptInfo.Builder()
                 .setTitle(
-                    application.applicationContext.run {
+                    getApplication<Application>().applicationContext.run {
                         getString(R.string.authentication_system_ui_title, getString(R.string.app_name))
                     }
                 )
                 .setSubtitle(
-                    application.applicationContext.run {
+                    getApplication<Application>().applicationContext.run {
                         getString(
                             R.string.authentication_system_ui_subtitle,
                             getString(
                                 when (useCase) {
                                     AuthenticationUseCase.AppAccess ->
                                         R.string.app_name
+
                                     AuthenticationUseCase.DeleteWallet ->
                                         R.string.authentication_use_case_delete_wallet
+
                                     AuthenticationUseCase.ExportPrivateData ->
                                         R.string.authentication_use_case_export_data
+
                                     AuthenticationUseCase.SeedRecovery ->
                                         R.string.authentication_use_case_seed_recovery
+
                                     AuthenticationUseCase.SendFunds ->
                                         R.string.authentication_use_case_send_funds
                                 }
@@ -292,13 +298,12 @@ class AuthenticationViewModel(
     }
 
     private fun getBiometricAuthenticationSupport(allowedAuthenticators: Int): BiometricSupportResult {
-        val biometricManager = BiometricManager.from(application)
-
         return when (biometricManager.canAuthenticate(allowedAuthenticators)) {
             BiometricManager.BIOMETRIC_SUCCESS -> {
                 Twig.debug { "Auth canAuthenticate BIOMETRIC_SUCCESS: App can authenticate using biometrics." }
                 BiometricSupportResult.Success
             }
+
             BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE -> {
                 Twig.info {
                     "Auth canAuthenticate BIOMETRIC_ERROR_NO_HARDWARE: No biometric features available on " +
@@ -306,6 +311,7 @@ class AuthenticationViewModel(
                 }
                 BiometricSupportResult.ErrorNoHardware
             }
+
             BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE -> {
                 Twig.error {
                     "Auth canAuthenticate BIOMETRIC_ERROR_HW_UNAVAILABLE: Biometric features are currently " +
@@ -313,6 +319,7 @@ class AuthenticationViewModel(
                 }
                 BiometricSupportResult.ErrorHwUnavailable
             }
+
             BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> {
                 Twig.warn {
                     "Auth canAuthenticate BIOMETRIC_ERROR_NONE_ENROLLED: Prompts the user to create " +
@@ -320,6 +327,7 @@ class AuthenticationViewModel(
                 }
                 BiometricSupportResult.ErrorNoneEnrolled
             }
+
             BiometricManager.BIOMETRIC_ERROR_SECURITY_UPDATE_REQUIRED -> {
                 Twig.error {
                     "Auth canAuthenticate BIOMETRIC_ERROR_SECURITY_UPDATE_REQUIRED: The user can't authenticate " +
@@ -328,6 +336,7 @@ class AuthenticationViewModel(
                 }
                 BiometricSupportResult.ErrorSecurityUpdateRequired
             }
+
             BiometricManager.BIOMETRIC_ERROR_UNSUPPORTED -> {
                 Twig.error {
                     "Auth canAuthenticate BIOMETRIC_ERROR_UNSUPPORTED: The user can't authenticate because " +
@@ -335,6 +344,7 @@ class AuthenticationViewModel(
                 }
                 BiometricSupportResult.ErrorUnsupported
             }
+
             BiometricManager.BIOMETRIC_STATUS_UNKNOWN -> {
                 Twig.error {
                     "Auth canAuthenticate BIOMETRIC_STATUS_UNKNOWN: Unable to determine whether the user can" +
@@ -345,6 +355,7 @@ class AuthenticationViewModel(
                 }
                 BiometricSupportResult.StatusUnknown
             }
+
             else -> {
                 Twig.error { "Unexpected biometric framework status" }
                 BiometricSupportResult.StatusUnexpected
@@ -352,20 +363,9 @@ class AuthenticationViewModel(
         }
     }
 
-    @Suppress("UNCHECKED_CAST")
-    class AuthenticationViewModelFactory(
-        private val application: Application
-    ) : ViewModelProvider.Factory {
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            require(modelClass.isAssignableFrom(AuthenticationViewModel::class.java)) { "ViewModel Not Found." }
-            return AuthenticationViewModel(application) as T
-        }
-    }
-
     private fun booleanStateFlow(default: BooleanPreferenceDefault): StateFlow<Boolean?> =
         flow<Boolean?> {
-            val preferenceProvider = StandardPreferenceSingleton.getInstance(getApplication())
-            emitAll(default.observe(preferenceProvider))
+            emitAll(default.observe(standardPreferenceProvider()))
         }.stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
