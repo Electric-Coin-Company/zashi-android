@@ -94,7 +94,7 @@ class SettingsViewModel(
         combine(isLoading, troubleshootingState) { isLoading, troubleshootingState ->
             SettingsState(
                 isLoading = isLoading,
-                version = stringRes(R.string.settings_version, getVersionInfo().versionName),
+                version = stringRes(R.string.settings_version, versionInfo.versionName),
                 settingsTroubleshootingState = troubleshootingState,
                 onBack = ::onBack,
                 onAdvancedSettingsClick = ::onAdvancedSettingsClick,

@@ -63,9 +63,11 @@ jobs:
           # GOOGLE_PLAY_WORKLOAD_IDENTITY_PROVIDER: ${{ secrets.GOOGLE_PLAY_WORKLOAD_IDENTITY_PROVIDER }}
           GOOGLE_PLAY_SERVICE_ACCOUNT_KEY: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_KEY }}
           GOOGLE_PLAY_PUBLISHER_API_KEY: ${{ secrets.GOOGLE_PLAY_PUBLISHER_API_KEY }}
+          COINBASE_APP_ID: ${{ secrets.COINBASE_APP_ID }}
         if: "${{ env.GOOGLE_PLAY_CLOUD_PROJECT != '' &&  
           env.GOOGLE_PLAY_SERVICE_ACCOUNT_KEY != '' && 
-          env.GOOGLE_PLAY_PUBLISHER_API_KEY != '' 
+          env.GOOGLE_PLAY_PUBLISHER_API_KEY != '' &&
+          env.COINBASE_APP_ID != ''      
         }}"
         run: echo "defined=true" >> $GITHUB_OUTPUT
 
@@ -99,6 +101,7 @@ jobs:
         env:
           FIREBASE_DEBUG_JSON_BASE64: ${{ secrets.FIREBASE_DEBUG_JSON_BASE64 }}
           FIREBASE_RELEASE_JSON_BASE64: ${{ secrets.FIREBASE_RELEASE_JSON_BASE64 }}
+          COINBASE_APP_ID: ${{ secrets.COINBASE_APP_ID }}
         if: "${{ env.FIREBASE_DEBUG_JSON_BASE64 != '' && env.FIREBASE_RELEASE_JSON_BASE64 != '' }}"
         shell: bash
         run: |

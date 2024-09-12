@@ -223,20 +223,7 @@ class WalletViewModel(
                 null
             )
 
-    val addresses: StateFlow<WalletAddresses?> =
-        synchronizer
-            .filterNotNull()
-            .map {
-                runCatching {
-                    WalletAddresses.new(it)
-                }.onFailure {
-                    Twig.warn { "Wait until the SDK starts providing the addresses" }
-                }.getOrNull()
-            }.stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-                null
-            )
+    val addresses: StateFlow<WalletAddresses?> = walletRepository.addresses
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val transactionHistoryState =
