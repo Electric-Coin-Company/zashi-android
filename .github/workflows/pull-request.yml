@@ -306,7 +306,7 @@ jobs:
           ORG_GRADLE_PROJECT_ZCASH_FIREBASE_TEST_LAB_API_KEY_PATH: ${{ steps.auth_test_lab.outputs.credentials_file_path }}
           # Because Fulladle doesn't allow Test Orchestrator to be enabled/disabled for a specific submodule, it must be enabled for all modules
           ORG_GRADLE_PROJECT_IS_USE_TEST_ORCHESTRATOR: true
-          COINBASE_APP_ID: ${{ secrets.COINBASE_APP_ID }}
+          ORG_GRADLE_PROJECT_ZCASH_COINBASE_APP_ID: ${{ secrets.COINBASE_APP_ID }}
         run: |
           ./gradlew runFlank
       - name: Collect Artifacts
@@ -354,7 +354,7 @@ jobs:
           ORG_GRADLE_PROJECT_ZCASH_DEBUG_APP_NAME_SUFFIX: ""
           ORG_GRADLE_PROJECT_ZCASH_EMULATOR_WTF_API_KEY: ${{ secrets.EMULATOR_WTF_API_KEY }}
           ORG_GRADLE_PROJECT_IS_ANDROID_INSTRUMENTATION_TEST_COVERAGE_ENABLED: true
-          COINBASE_APP_ID: ${{ secrets.COINBASE_APP_ID }}
+          ORG_GRADLE_PROJECT_ZCASH_COINBASE_APP_ID: ${{ secrets.COINBASE_APP_ID }}
         run: |
           ./gradlew testDebugWithEmulatorWtf :ui-integration-test:testZcashmainnetDebugWithEmulatorWtf
       - name: Collect Artifacts
@@ -402,7 +402,7 @@ jobs:
           ORG_GRADLE_PROJECT_ZCASH_DEBUG_APP_NAME_SUFFIX: ""
           ORG_GRADLE_PROJECT_ZCASH_EMULATOR_WTF_API_KEY: ${{ secrets.EMULATOR_WTF_API_KEY }}
           ORG_GRADLE_PROJECT_IS_ANDROID_INSTRUMENTATION_TEST_COVERAGE_ENABLED: false
-          COINBASE_APP_ID: ${{ secrets.COINBASE_APP_ID }}
+          ORG_GRADLE_PROJECT_ZCASH_COINBASE_APP_ID: ${{ secrets.COINBASE_APP_ID }}
         run: |
           ./gradlew :app:testZcashmainnetDebugWithEmulatorWtf :ui-screenshot-test:testZcashmainnetDebugWithEmulatorWtf
       - name: Collect Artifacts
@@ -461,7 +461,7 @@ jobs:
         env:
           ORG_GRADLE_PROJECT_ZCASH_SUPPORT_EMAIL_ADDRESS: ${{ vars.SUPPORT_EMAIL_ADDRESS }}
           ORG_GRADLE_PROJECT_IS_CRASH_ON_STRICT_MODE_VIOLATION: true
-          COINBASE_APP_ID: ${{ secrets.COINBASE_APP_ID }}
+          ORG_GRADLE_PROJECT_ZCASH_COINBASE_APP_ID: ${{ secrets.COINBASE_APP_ID }}
         run: |
           ./gradlew :app:assembleDebug
       - name: Authenticate to Google Cloud for Firebase Test Lab
@@ -479,7 +479,7 @@ jobs:
           # This first environment variable is used by Flank, since the temporary token is missing the project name
           GOOGLE_CLOUD_PROJECT: ${{ vars.FIREBASE_TEST_LAB_PROJECT }}
           ORG_GRADLE_PROJECT_ZCASH_FIREBASE_TEST_LAB_API_KEY_PATH: ${{ steps.auth_test_lab.outputs.credentials_file_path }}
-          COINBASE_APP_ID: ${{ secrets.COINBASE_APP_ID }}
+          ORG_GRADLE_PROJECT_COINBASE_APP_ID: ${{ secrets.COINBASE_APP_ID }}
         run: |
           ./gradlew :app:runFlankSanityConfigDebug
 
@@ -532,7 +532,7 @@ jobs:
           ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEYSTORE_PASSWORD: android
           ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEY_ALIAS: androiddebugkey
           ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEY_ALIAS_PASSWORD: android
-          COINBASE_APP_ID: ${{ secrets.COINBASE_APP_ID }}
+          ORG_GRADLE_PROJECT_ZCASH_COINBASE_APP_ID: ${{ secrets.COINBASE_APP_ID }}
         run: |
           ./gradlew :app:assembleDebug :app:bundleRelease :app:packageZcashmainnetReleaseUniversalApk
       - name: Collect Artifacts
@@ -597,7 +597,7 @@ jobs:
           # This first environment variable is used by Flank, since the temporary token is missing the project name
           GOOGLE_CLOUD_PROJECT: ${{ vars.FIREBASE_TEST_LAB_PROJECT }}
           ORG_GRADLE_PROJECT_ZCASH_FIREBASE_TEST_LAB_API_KEY_PATH: ${{ steps.auth_test_lab.outputs.credentials_file_path }}
-          COINBASE_APP_ID: ${{ secrets.COINBASE_APP_ID }}
+          ORG_GRADLE_PROJECT_ZCASH_COINBASE_APP_ID: ${{ secrets.COINBASE_APP_ID }}
         run: |
           unzip ${BINARIES_ZIP_PATH}
           ./gradlew :app:runFlankSanityConfigRelease

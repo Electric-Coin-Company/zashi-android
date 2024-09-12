@@ -75,13 +75,11 @@ androidComponents {
             )
         )
         variant.buildConfigFields.put(
-            "COINBASE_APP_ID",
+            "ZCASH_COINBASE_APP_ID",
             BuildConfigField(
                 type = "String",
-                value = "\"${
-                    System.getenv("COINBASE_APP_ID") ?: project.property("COINBASE_APP_ID")?.toString().orEmpty()
-                }\"",
-                comment = "App ID of coinbase project"
+                value = "\"${project.property("ZCASH_COINBASE_APP_ID")?.toString().orEmpty()}\"",
+                comment = "App ID of the Coinbase Onramp integration"
             )
         )
         // To configure screen orientation in runtime

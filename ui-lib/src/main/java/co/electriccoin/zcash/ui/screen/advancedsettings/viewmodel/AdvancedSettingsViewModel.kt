@@ -36,7 +36,7 @@ class AdvancedSettingsViewModel(
                     ButtonState(
                         text = stringRes(R.string.advanced_settings_coinbase, getZcashCurrency.getLocalizedName()),
                         onClick = { onBuyWithCoinbaseClicked() }
-                    ).takeIf { BuildConfig.COINBASE_APP_ID.isNotEmpty() || forceShowCoinbaseForDebug }
+                    ).takeIf { BuildConfig.ZCASH_COINBASE_APP_ID.isNotEmpty() || forceShowCoinbaseForDebug }
             )
         ).asStateFlow()
 
@@ -56,7 +56,7 @@ class AdvancedSettingsViewModel(
 
     private fun onBuyWithCoinbaseClicked() {
         viewModelScope.launch {
-            val appId = BuildConfig.COINBASE_APP_ID
+            val appId = BuildConfig.ZCASH_COINBASE_APP_ID
 
             when {
                 appId.isEmpty() && forceShowCoinbaseForDebug ->
