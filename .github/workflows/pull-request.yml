@@ -70,7 +70,7 @@ jobs:
     steps:
       - id: check_coinbase_secrets
         env:
-          EMULATOR_WTF_API_KEY: ${{ secrets.COINBASE_APP_ID }}
+          COINBASE_APP_ID: ${{ secrets.COINBASE_APP_ID }}
         if: "${{ env.COINBASE_APP_ID != '' }}"
         run: echo "defined=true" >> $GITHUB_OUTPUT
 
