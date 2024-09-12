@@ -4,7 +4,7 @@
     <string name="advanced_settings_export">Export Private Data</string>
     <string name="advanced_settings_choose_server">Choose a Server</string>
     <string name="advanced_settings_currency_conversion">Currency Conversion</string>
-    <string name="advanced_settings_coinbase">Buy %s with Coinbase</string>
+    <string name="advanced_settings_coinbase">Buy <xliff:g id="currency" example="ZEC">%1$s</xliff:g> with Coinbase</string>
     <string name="advanced_settings_info">You will be asked to confirm on the next screen</string>
     <string name="advanced_settings_delete_button">Delete Zashi</string>
 </resources>

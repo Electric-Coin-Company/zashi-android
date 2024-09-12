@@ -34,9 +34,14 @@ class AdvancedSettingsViewModel(
                 onDeleteZashiClick = {},
                 coinbaseButton =
                     ButtonState(
+                        // Set the wallet currency by app build is more future-proof, although we hide it from the UI
+                        // in the Testnet build
                         text = stringRes(R.string.advanced_settings_coinbase, getZcashCurrency.getLocalizedName()),
                         onClick = { onBuyWithCoinbaseClicked() }
-                    ).takeIf { BuildConfig.ZCASH_COINBASE_APP_ID.isNotEmpty() || forceShowCoinbaseForDebug }
+                    ).takeIf {
+                        !getVersionInfo().isTestnet &&
+                            (BuildConfig.ZCASH_COINBASE_APP_ID.isNotEmpty() || forceShowCoinbaseForDebug)
+                    }
             )
         ).asStateFlow()
 
