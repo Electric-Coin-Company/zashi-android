@@ -425,7 +425,7 @@ private fun settingsScreenshots(
     composeTestRule: ComposeTestRule
 ) {
     composeTestRule.onNode(
-        hasText(resContext.getString(R.string.settings_send_us_feedback), ignoreCase = true)
+        hasText(resContext.getString(R.string.settings_feedback), ignoreCase = true)
     ).also {
         it.assertExists()
     }

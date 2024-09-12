@@ -13,6 +13,7 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ### Changed
 - Choose server screen has been redesigned
+- Settings and Advanced Settings screens have been redesigned
 
 ## [1.1.7 (718)] - 2024-09-06
 

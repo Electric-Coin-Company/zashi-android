@@ -115,26 +115,10 @@ internal fun MainActivity.Navigation() {
             NavigationHome(navController, backStack)
         }
         composable(SETTINGS) {
-            WrapSettings(
-                goAbout = {
-                    navController.navigateJustOnce(ABOUT)
-                },
-                goAdvancedSettings = {
-                    navController.navigateJustOnce(ADVANCED_SETTINGS)
-                },
-                goBack = {
-                    navController.popBackStackJustOnce(SETTINGS)
-                },
-                goFeedback = {
-                    navController.navigateJustOnce(SUPPORT)
-                },
-            )
+            WrapSettings()
         }
         composable(ADVANCED_SETTINGS) {
             WrapAdvancedSettings(
-                goBack = {
-                    navController.popBackStackJustOnce(ADVANCED_SETTINGS)
-                },
                 goExportPrivateData = {
                     navController.checkProtectedDestination(
                         scope = lifecycleScope,
@@ -151,9 +135,6 @@ internal fun MainActivity.Navigation() {
                         unProtectedDestination = SEED_RECOVERY
                     )
                 },
-                goChooseServer = {
-                    navController.navigateJustOnce(CHOOSE_SERVER)
-                },
                 goDeleteWallet = {
                     navController.checkProtectedDestination(
                         scope = lifecycleScope,
@@ -162,9 +143,6 @@ internal fun MainActivity.Navigation() {
                         unProtectedDestination = DELETE_WALLET
                     )
                 },
-                onCurrencyConversion = {
-                    navController.navigateJustOnce(SETTINGS_EXCHANGE_RATE_OPT_IN)
-                }
             )
 
             when {
