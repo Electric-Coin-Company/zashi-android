@@ -703,7 +703,7 @@ private fun HistoryItemExpandedPart(
 
         Spacer(modifier = (Modifier.height(ZcashTheme.dimens.spacingDefault)))
 
-        HistoryItemTransactionFeePart(transaction = transaction, fee = transaction.overview.feePaid)
+        HistoryItemTransactionFeePart(fee = transaction.overview.feePaid)
 
         Spacer(modifier = (Modifier.height(ZcashTheme.dimens.spacingLarge)))
 
@@ -748,7 +748,7 @@ private fun HistoryItemTransactionIdPart(
     onAction: (TrxItemAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val txIdString = transaction.overview.txIdString().orEmpty()
+    val txIdString = transaction.overview.txIdString()
 
     Column(modifier = modifier) {
         if (transaction.expandableState == TrxItemState.EXPANDED_ID ||
@@ -831,7 +831,6 @@ private fun HistoryItemTransactionIdPart(
 
 @Composable
 private fun HistoryItemTransactionFeePart(
-    transaction: TransactionUi,
     fee: Zatoshi?,
     modifier: Modifier = Modifier
 ) {
@@ -839,12 +838,7 @@ private fun HistoryItemTransactionFeePart(
         Text(
             text = stringResource(id = R.string.account_history_item_transaction_fee),
             style = ZcashTheme.extendedTypography.transactionItemStyles.content,
-            color =
-                if (transaction.overview.getExtendedState().isShielding()) {
-                    ZcashTheme.colors.historyRedColor
-                } else {
-                    ZcashTheme.colors.textDescription
-                },
+            color = ZcashTheme.colors.textDescription,
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingTiny))
