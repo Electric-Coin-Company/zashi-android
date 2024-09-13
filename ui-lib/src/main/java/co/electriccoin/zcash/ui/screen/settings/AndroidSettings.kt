@@ -2,77 +2,43 @@ package co.electriccoin.zcash.ui.screen.settings
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.di.koinActivityViewModel
-import co.electriccoin.zcash.ui.common.compose.LocalActivity
-import co.electriccoin.zcash.ui.common.model.VersionInfo
+import co.electriccoin.zcash.ui.common.compose.LocalNavController
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
-import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
-import co.electriccoin.zcash.ui.configuration.RemoteConfig
-import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
-import co.electriccoin.zcash.ui.screen.settings.model.TroubleshootingParameters
 import co.electriccoin.zcash.ui.screen.settings.view.Settings
 import co.electriccoin.zcash.ui.screen.settings.viewmodel.SettingsViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
-internal fun WrapSettings(
-    goAbout: () -> Unit,
-    goAdvancedSettings: () -> Unit,
-    goBack: () -> Unit,
-    goFeedback: () -> Unit,
-) {
-    val activity = LocalActivity.current
-
+internal fun WrapSettings() {
+    val navController = LocalNavController.current
     val walletViewModel = koinActivityViewModel<WalletViewModel>()
-
-    val settingsViewModel = koinActivityViewModel<SettingsViewModel>()
-
+    val settingsViewModel = koinViewModel<SettingsViewModel>()
+    val state by settingsViewModel.state.collectAsStateWithLifecycle()
     val walletState = walletViewModel.walletStateInformation.collectAsStateWithLifecycle().value
 
-    val isBackgroundSyncEnabled = settingsViewModel.isBackgroundSync.collectAsStateWithLifecycle().value
-    val isKeepScreenOnWhileSyncing = settingsViewModel.isKeepScreenOnWhileSyncing.collectAsStateWithLifecycle().value
-    val isAnalyticsEnabled = settingsViewModel.isAnalyticsEnabled.collectAsStateWithLifecycle().value
-
-    val versionInfo = VersionInfo.new(activity.applicationContext)
-
-    BackHandler {
-        goBack()
+    LaunchedEffect(Unit) {
+        settingsViewModel.navigationCommand.collect {
+            navController.navigate(it)
+        }
     }
 
-    if (null == isAnalyticsEnabled ||
-        null == isBackgroundSyncEnabled ||
-        null == isKeepScreenOnWhileSyncing
-    ) {
-        // TODO [#1146]: Consider moving CircularScreenProgressIndicator from Android layer to View layer
-        // TODO [#1146]: Improve this by allowing screen composition and updating it after the data is available
-        // TODO [#1146]: https://github.com/Electric-Coin-Company/zashi-android/issues/1146
-        CircularScreenProgressIndicator()
-    } else {
+    LaunchedEffect(Unit) {
+        settingsViewModel.backNavigationCommand.collect {
+            navController.popBackStack()
+        }
+    }
+
+    BackHandler {
+        settingsViewModel.onBack()
+    }
+
+    state?.let {
         Settings(
-            onAbout = goAbout,
-            onAdvancedSettings = goAdvancedSettings,
-            onBack = goBack,
-            onFeedback = goFeedback,
-            troubleshootingParameters =
-                TroubleshootingParameters(
-                    isEnabled = versionInfo.isDebuggable && !versionInfo.isRunningUnderTestService,
-                    isBackgroundSyncEnabled = isBackgroundSyncEnabled,
-                    isKeepScreenOnDuringSyncEnabled = isKeepScreenOnWhileSyncing,
-                    isAnalyticsEnabled = isAnalyticsEnabled,
-                    isRescanEnabled = ConfigurationEntries.IS_RESCAN_ENABLED.getValue(RemoteConfig.current),
-                ),
-            onRescanWallet = {
-                walletViewModel.rescanBlockchain()
-            },
-            onBackgroundSyncSettingsChanged = {
-                settingsViewModel.setBackgroundSyncEnabled(it)
-            },
-            onKeepScreenOnDuringSyncSettingsChanged = {
-                settingsViewModel.setKeepScreenOnWhileSyncing(it)
-            },
-            onAnalyticsSettingsChanged = {
-                settingsViewModel.setAnalyticsEnabled(it)
-            },
+            state = it,
             topAppBarSubTitleState = walletState,
         )
     }

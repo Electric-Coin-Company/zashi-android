@@ -17,6 +17,7 @@ data class ZashiColors(
     val textLightSupport: Color,
     val surfacePrimary: Color,
     val bgPrimary: Color,
+    val bgSecondary: Color,
     val defaultFg: Color,
     val textTertiary: Color,
     val textPrimary: Color,
@@ -28,7 +29,16 @@ data class ZashiColors(
     val btnPrimaryFg: Color,
     val btnPrimaryFgDisabled: Color,
     val btnTextFg: Color,
-    val exchangeRateColors: ExchangeRateColors
+    val exchangeRateColors: ExchangeRateColors,
+    val textSupport: Color,
+    val stroke: Color,
+    val divider: Color,
+    val utilitySuccess700: Color,
+    val utilitySuccess200: Color,
+    val utilitySuccess50: Color,
+    val btnDestroyFg: Color,
+    val btnDestroyBg: Color,
+    val btnDestroyBorder: Color,
 )
 
 internal val LightZashiColorPalette =
@@ -37,6 +47,7 @@ internal val LightZashiColorPalette =
         textLightSupport = Color(0xFFD9D8CF),
         surfacePrimary = Color(0xFF282622),
         bgPrimary = Color(0xFFFFFFFF),
+        bgSecondary = Color(0xFFF4F4F4),
         defaultFg = Color(0xFFD9D8CF),
         textPrimary = Color(0xFF231F20),
         textTertiary = Color(0xFF716C5D),
@@ -48,7 +59,16 @@ internal val LightZashiColorPalette =
         btnPrimaryFg = Color(0xFFFFFFFF),
         btnPrimaryFgDisabled = Color(0xFF94907B),
         btnTextFg = Color(0xFF231F20),
-        exchangeRateColors = LightExchangeRateColorPalette
+        exchangeRateColors = LightExchangeRateColorPalette,
+        textSupport = Color(0xFF94907B),
+        stroke = Color(0xFFD9D8CF),
+        divider = Color(0xFFF7F7F5),
+        utilitySuccess700 = Color(0xFF098605),
+        utilitySuccess200 = Color(0xFFA3FF95),
+        utilitySuccess50 = Color(0xFFEAFFE5),
+        btnDestroyFg = Color(0xFFD92D20),
+        btnDestroyBg = Color(0xFFFFFFFF),
+        btnDestroyBorder = Color(0xFFFDA29B)
     )
 
 internal val DarkZashiColorPalette =
@@ -57,6 +77,7 @@ internal val DarkZashiColorPalette =
         textLightSupport = Color(0xFFBDBBBC),
         surfacePrimary = Color(0xFF454243),
         bgPrimary = Color(0xFF231F20),
+        bgSecondary = Color(0xFF3B3839),
         defaultFg = Color(0xFFBDBBBC),
         textPrimary = Color(0xFFE8E8E8),
         textTertiary = Color(0xFFBDBBBC),
@@ -68,7 +89,16 @@ internal val DarkZashiColorPalette =
         btnPrimaryFg = Color(0xFF231F20),
         btnPrimaryFgDisabled = Color(0xFF7E7C7C),
         btnTextFg = Color(0xFFE8E8E8),
-        exchangeRateColors = DarkExchangeRateColorPalette
+        exchangeRateColors = DarkExchangeRateColorPalette,
+        textSupport = Color(0xFF7E7C7C),
+        stroke = Color(0xFFA7A5A6),
+        divider = Color(0xFF343031),
+        utilitySuccess700 = Color(0xFF098605),
+        utilitySuccess200 = Color(0xFFA3FF95),
+        utilitySuccess50 = Color(0xFFEAFFE5),
+        btnDestroyFg = Color(0xFFFEE4E2),
+        btnDestroyBg = Color(0xFF55160C),
+        btnDestroyBorder = Color(0xFF912018)
     )
 
 @Suppress("CompositionLocalAllowlist")

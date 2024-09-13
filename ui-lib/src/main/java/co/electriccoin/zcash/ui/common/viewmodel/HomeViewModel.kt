@@ -3,10 +3,10 @@ package co.electriccoin.zcash.ui.common.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
-import co.electriccoin.zcash.configuration.api.ConfigurationProvider
 import co.electriccoin.zcash.configuration.model.map.Configuration
 import co.electriccoin.zcash.preference.StandardPreferenceProvider
 import co.electriccoin.zcash.preference.model.entry.BooleanPreferenceDefault
+import co.electriccoin.zcash.ui.common.usecase.ObserveConfigurationUseCase
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
-    androidConfigurationProvider: ConfigurationProvider,
+    private val observeConfiguration: ObserveConfigurationUseCase,
     private val standardPreferenceProvider: StandardPreferenceProvider,
 ) : ViewModel() {
     /**
@@ -55,13 +55,7 @@ class HomeViewModel(
         }
     }
 
-    val configurationFlow: StateFlow<Configuration?> =
-        androidConfigurationProvider.getConfigurationFlow()
-            .stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT.inWholeMilliseconds),
-                null
-            )
+    val configurationFlow: StateFlow<Configuration?> = observeConfiguration()
 
     //
     // PRIVATE HELPERS

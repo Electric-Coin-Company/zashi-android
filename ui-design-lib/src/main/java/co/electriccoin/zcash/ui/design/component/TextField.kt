@@ -26,6 +26,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.util.StringResource
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -38,15 +39,9 @@ fun FormTextField(
     error: String? = null,
     enabled: Boolean = true,
     textStyle: TextStyle = ZcashTheme.extendedTypography.textFieldValue,
-    placeholder:
-        @Composable()
-        (() -> Unit)? = null,
-    leadingIcon:
-        @Composable()
-        (() -> Unit)? = null,
-    trailingIcon:
-        @Composable()
-        (() -> Unit)? = null,
+    placeholder: @Composable (() -> Unit)? = null,
+    leadingIcon: @Composable (() -> Unit)? = null,
+    trailingIcon: @Composable (() -> Unit)? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
     colors: TextFieldColors =
         TextFieldDefaults.colors(
@@ -136,3 +131,10 @@ fun FormTextField(
         }
     }
 }
+
+data class TextFieldState(
+    val value: StringResource,
+    val error: StringResource? = null,
+    val isEnabled: Boolean = true,
+    val onValueChange: (String) -> Unit,
+)

@@ -7,8 +7,11 @@
         <xliff:g id="hostname" example="example.com">%1$s</xliff:g>:
         <xliff:g id="port" example="508">%2$d</xliff:g>
     </string>
+    <string name="choose_server_full_server_name_text_field">
+        <xliff:g id="hostname" example="example.com">%1$s</xliff:g>:<xliff:g id="port" example="508">%2$d</xliff:g>
+    </string>
     <string name="choose_server_textfield_hint">&lt;hostname&gt;:&lt;port&gt;</string>
-    <string name="choose_server_save">Save</string>
+    <string name="choose_server_save">Save selection</string>
 
     <string name="choose_server_validation_dialog_error_title">Invalid server endpoint</string>
     <string name="choose_server_validation_dialog_error_text">Error: The attempt to switch endpoints failed.
@@ -19,4 +22,14 @@
     <string name="choose_server_save_success_dialog_text">The selected server endpoint has been
         successfully saved.</string>
     <string name="choose_server_save_success_dialog_btn">OK</string>
+    <string name="choose_server_save_default">Default</string>
+
+    <string name="choose_server_loading_title">Performing Server Test</string>
+    <string name="choose_server_loading_subtitle">This may take a moment…</string>
+
+    <string name="choose_server_fastest_servers">Fastest servers</string>
+    <string name="choose_server_other_servers">Other servers</string>
+    <string name="choose_server_refresh">Refresh</string>
+    <string name="choose_server_active">Active</string>
+    <string name="choose_server_default">Default</string>
 </resources>

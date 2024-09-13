@@ -44,8 +44,16 @@
     <string name="balances_status_dialog_stopped">Synchronization is stopped. It will resume soon.</string>
     <string name="balances_status_dialog_button">OK</string>
 
-    <string name="balances_shielding_dialog_error_title">Failed to shield funds</string>
-    <string name="balances_shielding_dialog_error_text">Error: The attempt to shield the transparent funds failed. Try it again, please.</string>
+    <string name="balances_shielding_dialog_error_title">Transaction Failed</string>
+    <string name="balances_shielding_dialog_error_text">The attempt to shield the transparent funds failed. Try it
+        again, please.</string>
     <string name="balances_shielding_dialog_error_btn">OK</string>
-    <string name="balances_shielding_dialog_error_below_threshold">The current transparent balance is zero or below the allowed shielding limit.</string>
+    <string name="balances_shielding_dialog_error_text_below_threshold">The current transparent balance is zero or
+        below the allowed shielding limit.</string>
+
+    <string name="balances_shielding_dialog_error_grpc_title">Connection Error</string>
+    <string name="balances_shielding_dialog_error_grpc_text">Zashi encountered some connection issues when submitting
+        the shielding transaction to the network. It will retry during the next few minutes.</string>
+    <string name="balances_shielding_dialog_error_grpc_btn">OK</string>
+
 </resources>

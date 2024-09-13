@@ -30,10 +30,10 @@ import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.TopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.fixture.ChangelogFixture
 import co.electriccoin.zcash.ui.screen.whatsnew.model.WhatsNewSectionState
 import co.electriccoin.zcash.ui.screen.whatsnew.model.WhatsNewState
-import co.electriccoin.zcash.ui.util.getValue
 import kotlinx.datetime.toJavaLocalDate
 import java.time.format.DateTimeFormatter
 

@@ -121,6 +121,7 @@ tasks {
             "ZCASH_GOOGLE_PLAY_DEPLOY_TRACK" to "internal",
             "ZCASH_GOOGLE_PLAY_DEPLOY_STATUS" to "draft",
 
+            "ZCASH_COINBASE_APP_ID" to "",
             "SDK_INCLUDED_BUILD_PATH" to "",
             "BIP_39_INCLUDED_BUILD_PATH" to ""
         )
@@ -192,12 +193,16 @@ fladle {
 
     flankVersion.set(libs.versions.flank.get())
 
-    filesToDownload.set(listOf(
-        ".*/matrix_.*/.*test_results_merged\\.xml",
-        ".*/matrix_.*/.*/artifacts/sdcard/googletest/test_outputfiles/.*\\.png"
-    ))
+    filesToDownload.set(
+        listOf(
+            ".*/matrix_.*/.*test_results_merged\\.xml",
+            ".*/matrix_.*/.*/artifacts/sdcard/googletest/test_outputfiles/.*\\.png"
+        )
+    )
 
-    directoriesToPull.set(listOf(
-        "/sdcard/googletest/test_outputfiles"
-    ))
+    directoriesToPull.set(
+        listOf(
+            "/sdcard/googletest/test_outputfiles"
+        )
+    )
 }

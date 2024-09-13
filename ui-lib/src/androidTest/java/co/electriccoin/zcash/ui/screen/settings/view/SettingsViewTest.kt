@@ -13,7 +13,6 @@ import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.screen.settings.SettingsTag
 import co.electriccoin.zcash.ui.screen.settings.SettingsViewTestSetup
-import co.electriccoin.zcash.ui.screen.settings.fixture.TroubleshootingParametersFixture
 import co.electriccoin.zcash.ui.test.getStringResource
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -26,7 +25,7 @@ class SettingsViewTest : UiTestPrerequisites() {
     @Test
     @MediumTest
     fun on_back_test() {
-        val testSetup = SettingsViewTestSetup(composeTestRule, TroubleshootingParametersFixture.new())
+        val testSetup = SettingsViewTestSetup(composeTestRule, isTroubleshootingEnabled = false)
 
         assertEquals(0, testSetup.getBackCount())
 
@@ -42,12 +41,12 @@ class SettingsViewTest : UiTestPrerequisites() {
     @Test
     @MediumTest
     fun on_feedback_test() {
-        val testSetup = SettingsViewTestSetup(composeTestRule, TroubleshootingParametersFixture.new())
+        val testSetup = SettingsViewTestSetup(composeTestRule, isTroubleshootingEnabled = false)
 
         assertEquals(0, testSetup.getFeedbackCount())
 
         composeTestRule.onNodeWithText(
-            text = getStringResource(R.string.settings_send_us_feedback),
+            text = getStringResource(R.string.settings_feedback),
             ignoreCase = true
         ).also {
             it.performClick()
@@ -59,7 +58,7 @@ class SettingsViewTest : UiTestPrerequisites() {
     @Test
     @MediumTest
     fun on_advanced_settings_test() {
-        val testSetup = SettingsViewTestSetup(composeTestRule, TroubleshootingParametersFixture.new())
+        val testSetup = SettingsViewTestSetup(composeTestRule, isTroubleshootingEnabled = false)
 
         assertEquals(0, testSetup.getAdvancedSettingsCount())
 
@@ -76,12 +75,12 @@ class SettingsViewTest : UiTestPrerequisites() {
     @Test
     @MediumTest
     fun on_about_test() {
-        val testSetup = SettingsViewTestSetup(composeTestRule, TroubleshootingParametersFixture.new())
+        val testSetup = SettingsViewTestSetup(composeTestRule, isTroubleshootingEnabled = false)
 
         assertEquals(0, testSetup.getAboutCount())
 
         composeTestRule.onNodeWithText(
-            text = getStringResource(R.string.settings_about),
+            text = getStringResource(R.string.settings_about_us),
             ignoreCase = true
         ).also {
             it.performScrollTo()
@@ -94,7 +93,7 @@ class SettingsViewTest : UiTestPrerequisites() {
     @Test
     @SmallTest
     fun troubleshooting_menu_visible_test() {
-        SettingsViewTestSetup(composeTestRule, TroubleshootingParametersFixture.new(isEnabled = true))
+        SettingsViewTestSetup(composeTestRule, isTroubleshootingEnabled = true)
 
         composeTestRule.onNodeWithTag(SettingsTag.TROUBLESHOOTING_MENU).also {
             it.assertExists()
@@ -104,7 +103,7 @@ class SettingsViewTest : UiTestPrerequisites() {
     @Test
     @SmallTest
     fun troubleshooting_menu_not_visible_test() {
-        SettingsViewTestSetup(composeTestRule, TroubleshootingParametersFixture.new(isEnabled = false))
+        SettingsViewTestSetup(composeTestRule, isTroubleshootingEnabled = false)
 
         composeTestRule.onNodeWithTag(SettingsTag.TROUBLESHOOTING_MENU).also {
             it.assertDoesNotExist()
@@ -116,11 +115,9 @@ class SettingsViewTest : UiTestPrerequisites() {
     fun troubleshooting_rescan_test() {
         val testSetup =
             SettingsViewTestSetup(
-                composeTestRule,
-                TroubleshootingParametersFixture.new(
-                    isEnabled = true,
-                    isRescanEnabled = true
-                )
+                composeTestRule = composeTestRule,
+                isTroubleshootingEnabled = true,
+                isRescanEnabled = true
             )
 
         assertEquals(0, testSetup.getRescanCount())
@@ -140,10 +137,8 @@ class SettingsViewTest : UiTestPrerequisites() {
         val testSetup =
             SettingsViewTestSetup(
                 composeTestRule,
-                TroubleshootingParametersFixture.new(
-                    isEnabled = true,
-                    isBackgroundSyncEnabled = true
-                )
+                isTroubleshootingEnabled = true,
+                isBackgroundSyncEnabled = true
             )
 
         assertEquals(0, testSetup.getBackgroundSyncCount())
@@ -165,10 +160,8 @@ class SettingsViewTest : UiTestPrerequisites() {
         val testSetup =
             SettingsViewTestSetup(
                 composeTestRule,
-                TroubleshootingParametersFixture.new(
-                    isEnabled = true,
-                    isKeepScreenOnDuringSyncEnabled = true
-                )
+                isTroubleshootingEnabled = true,
+                isKeepScreenOnDuringSyncEnabled = true
             )
 
         assertEquals(0, testSetup.getKeepScreenOnSyncCount())
@@ -190,10 +183,8 @@ class SettingsViewTest : UiTestPrerequisites() {
         val testSetup =
             SettingsViewTestSetup(
                 composeTestRule,
-                TroubleshootingParametersFixture.new(
-                    isEnabled = true,
-                    isAnalyticsEnabled = true
-                )
+                isTroubleshootingEnabled = true,
+                isAnalyticsEnabled = true
             )
 
         assertEquals(0, testSetup.getAnalyticsCount())

@@ -154,7 +154,7 @@ private fun ComposableBalancesShieldErrorDialogPreview() {
     }
 }
 
-@Suppress("LongParameterList")
+@Suppress("LongParameterList", "LongMethod")
 @Composable
 fun Balances(
     balanceState: BalanceState,
@@ -219,11 +219,21 @@ fun Balances(
             }
 
             // Show shielding error popup
-            if (isShowingErrorDialog && shieldState is ShieldState.Failed) {
-                ShieldingErrorDialog(
-                    reason = shieldState.error,
-                    onDone = { setShowErrorDialog(false) }
-                )
+            if (isShowingErrorDialog) {
+                when (shieldState) {
+                    is ShieldState.Failed -> {
+                        ShieldingErrorDialog(
+                            reason = shieldState.error,
+                            onDone = { setShowErrorDialog(false) }
+                        )
+                    }
+                    ShieldState.FailedGrpc -> {
+                        ShieldingErrorGrpcDialog(
+                            onDone = { setShowErrorDialog(false) }
+                        )
+                    }
+                    else -> { /* Nothing to do now */ }
+                }
             }
         }
     }
@@ -261,6 +271,25 @@ fun ShieldingErrorDialog(
             }
         },
         confirmButtonText = stringResource(id = R.string.balances_shielding_dialog_error_btn),
+        onConfirmButtonClick = onDone
+    )
+}
+
+@Composable
+fun ShieldingErrorGrpcDialog(onDone: () -> Unit) {
+    AppAlertDialog(
+        title = stringResource(id = R.string.balances_shielding_dialog_error_grpc_title),
+        text = {
+            Column(
+                Modifier.verticalScroll(rememberScrollState())
+            ) {
+                Text(
+                    text = stringResource(id = R.string.balances_shielding_dialog_error_grpc_text),
+                    color = ZcashTheme.colors.textPrimary,
+                )
+            }
+        },
+        confirmButtonText = stringResource(id = R.string.balances_shielding_dialog_error_grpc_btn),
         onConfirmButtonClick = onDone
     )
 }

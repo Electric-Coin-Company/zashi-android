@@ -7,6 +7,16 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 ## [Unreleased]
 
 ### Added
+- Transaction resubmission feature has been added. It periodically searches for unmined sent transactions that 
+  are still within their expiry window and resubmits them if there are any.
+- The Choose server screen now provides a new search for the three fastest servers feature
+- Android 15 (Android SDK API level 35) support for 16 KB memory page size has been added
+- Coinbase Onramp integration button has been added to the Advanced Settings screen
+
+### Changed
+- Choose server screen has been redesigned
+- Settings and Advanced Settings screens have been redesigned
+- Android `compileSdkVersion` and `targetSdkVersion` have been updated to version 35
 - Shielded transactions are properly indicated in transaction history
 
 ## [1.1.7 (718)] - 2024-09-06

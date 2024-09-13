@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.util
+package co.electriccoin.zcash.ui.design.util
 
 import android.content.Context
 import androidx.annotation.StringRes

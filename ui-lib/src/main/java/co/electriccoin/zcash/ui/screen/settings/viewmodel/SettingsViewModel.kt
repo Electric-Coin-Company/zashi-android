@@ -5,41 +5,123 @@ import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.preference.StandardPreferenceProvider
 import co.electriccoin.zcash.preference.model.entry.BooleanPreferenceDefault
+import co.electriccoin.zcash.ui.NavigationTargets.ABOUT
+import co.electriccoin.zcash.ui.NavigationTargets.ADVANCED_SETTINGS
+import co.electriccoin.zcash.ui.NavigationTargets.SUPPORT
+import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
+import co.electriccoin.zcash.ui.common.usecase.ObserveConfigurationUseCase
+import co.electriccoin.zcash.ui.common.usecase.RescanBlockchainUseCase
+import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
+import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
+import co.electriccoin.zcash.ui.screen.settings.model.SettingsState
+import co.electriccoin.zcash.ui.screen.settings.model.SettingsTroubleshootingState
+import co.electriccoin.zcash.ui.screen.settings.model.TroubleshootingItemState
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class SettingsViewModel(
+    observeConfiguration: ObserveConfigurationUseCase,
     private val standardPreferenceProvider: StandardPreferenceProvider,
+    private val getVersionInfo: GetVersionInfoProvider,
+    private val rescanBlockchain: RescanBlockchainUseCase
 ) : ViewModel() {
-    val isAnalyticsEnabled: StateFlow<Boolean?> = booleanStateFlow(StandardPreferenceKeys.IS_ANALYTICS_ENABLED)
+    private val versionInfo by lazy { getVersionInfo() }
 
-    val isBackgroundSync: StateFlow<Boolean?> = booleanStateFlow(StandardPreferenceKeys.IS_BACKGROUND_SYNC_ENABLED)
-
-    val isKeepScreenOnWhileSyncing: StateFlow<Boolean?> =
+    private val isAnalyticsEnabled = booleanStateFlow(StandardPreferenceKeys.IS_ANALYTICS_ENABLED)
+    private val isBackgroundSyncEnabled = booleanStateFlow(StandardPreferenceKeys.IS_BACKGROUND_SYNC_ENABLED)
+    private val isKeepScreenOnWhileSyncingEnabled =
         booleanStateFlow(StandardPreferenceKeys.IS_KEEP_SCREEN_ON_DURING_SYNC)
 
-    private fun booleanStateFlow(default: BooleanPreferenceDefault): StateFlow<Boolean?> =
-        flow<Boolean?> {
-            emitAll(default.observe(standardPreferenceProvider()))
+    private val isLoading =
+        combine(
+            isAnalyticsEnabled,
+            isBackgroundSyncEnabled,
+            isKeepScreenOnWhileSyncingEnabled
+        ) { isAnalyticsEnabled, isBackgroundSync, isKeepScreenOnWhileSyncing ->
+            isAnalyticsEnabled == null || isBackgroundSync == null || isKeepScreenOnWhileSyncing == null
+        }.distinctUntilChanged()
+
+    @Suppress("ComplexCondition")
+    private val troubleshootingState =
+        combine(
+            observeConfiguration(),
+            isAnalyticsEnabled,
+            isBackgroundSyncEnabled,
+            isKeepScreenOnWhileSyncingEnabled
+        ) { configuration, isAnalyticsEnabled, isBackgroundSyncEnabled, isKeepScreenOnWhileSyncingEnabled ->
+            if (configuration != null &&
+                isAnalyticsEnabled != null &&
+                isBackgroundSyncEnabled != null &&
+                isKeepScreenOnWhileSyncingEnabled != null &&
+                versionInfo.isDebuggable &&
+                !versionInfo.isRunningUnderTestService
+            ) {
+                SettingsTroubleshootingState(
+                    backgroundSync =
+                        TroubleshootingItemState(
+                            isBackgroundSyncEnabled
+                        ) { setBackgroundSyncEnabled(isBackgroundSyncEnabled.not()) },
+                    keepScreenOnDuringSync =
+                        TroubleshootingItemState(
+                            isKeepScreenOnWhileSyncingEnabled
+                        ) { setKeepScreenOnWhileSyncing(isKeepScreenOnWhileSyncingEnabled.not()) },
+                    analytics =
+                        TroubleshootingItemState(
+                            isAnalyticsEnabled
+                        ) { setAnalyticsEnabled(isAnalyticsEnabled.not()) },
+                    rescan =
+                        TroubleshootingItemState(
+                            ConfigurationEntries.IS_RESCAN_ENABLED.getValue(configuration),
+                            ::onRescanBlockchainClick
+                        )
+                )
+            } else {
+                null
+            }
+        }
+
+    val state: StateFlow<SettingsState?> =
+        combine(isLoading, troubleshootingState) { isLoading, troubleshootingState ->
+            SettingsState(
+                isLoading = isLoading,
+                version = stringRes(R.string.settings_version, versionInfo.versionName),
+                settingsTroubleshootingState = troubleshootingState,
+                onBack = ::onBack,
+                onAdvancedSettingsClick = ::onAdvancedSettingsClick,
+                onAboutUsClick = ::onAboutUsClick,
+                onSendUsFeedbackClick = ::onSendUsFeedbackClick,
+            )
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT), null)
 
-    fun setAnalyticsEnabled(enabled: Boolean) {
+    val navigationCommand = MutableSharedFlow<String>()
+    val backNavigationCommand = MutableSharedFlow<Unit>()
+
+    private fun setAnalyticsEnabled(enabled: Boolean) {
         setBooleanPreference(StandardPreferenceKeys.IS_ANALYTICS_ENABLED, enabled)
     }
 
-    fun setBackgroundSyncEnabled(enabled: Boolean) {
+    private fun setBackgroundSyncEnabled(enabled: Boolean) {
         setBooleanPreference(StandardPreferenceKeys.IS_BACKGROUND_SYNC_ENABLED, enabled)
     }
 
-    fun setKeepScreenOnWhileSyncing(enabled: Boolean) {
+    private fun setKeepScreenOnWhileSyncing(enabled: Boolean) {
         setBooleanPreference(StandardPreferenceKeys.IS_KEEP_SCREEN_ON_DURING_SYNC, enabled)
     }
+
+    private fun onRescanBlockchainClick() =
+        viewModelScope.launch {
+            rescanBlockchain()
+        }
 
     private fun setBooleanPreference(
         default: BooleanPreferenceDefault,
@@ -49,4 +131,29 @@ class SettingsViewModel(
             default.putValue(standardPreferenceProvider(), newState)
         }
     }
+
+    fun onBack() =
+        viewModelScope.launch {
+            backNavigationCommand.emit(Unit)
+        }
+
+    private fun onAdvancedSettingsClick() =
+        viewModelScope.launch {
+            navigationCommand.emit(ADVANCED_SETTINGS)
+        }
+
+    private fun onAboutUsClick() =
+        viewModelScope.launch {
+            navigationCommand.emit(ABOUT)
+        }
+
+    private fun onSendUsFeedbackClick() =
+        viewModelScope.launch {
+            navigationCommand.emit(SUPPORT)
+        }
+
+    private fun booleanStateFlow(default: BooleanPreferenceDefault): StateFlow<Boolean?> =
+        flow<Boolean?> {
+            emitAll(default.observe(standardPreferenceProvider()))
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT), null)
 }

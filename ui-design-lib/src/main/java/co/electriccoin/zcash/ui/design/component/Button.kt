@@ -46,6 +46,7 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.internal.ButtonColors
 import co.electriccoin.zcash.ui.design.theme.internal.DarkTertiaryButtonColors
 import co.electriccoin.zcash.ui.design.theme.internal.LightTertiaryButtonColors
+import co.electriccoin.zcash.ui.design.util.StringResource
 
 @Preview
 @Composable
@@ -407,8 +408,6 @@ fun Modifier.shadow(
     }
 )
 
-private enum class ButtonState { Pressed, Idle }
-
 // TODO [#1346]: Rework not-recommended composed{}
 // TODO [#1346]: https://github.com/Electric-Coin-Company/zashi-android/issues/1346
 @Suppress("ModifierComposed")
@@ -416,11 +415,11 @@ fun Modifier.translationClick(
     translationX: Dp = 0.dp,
     translationY: Dp = 0.dp
 ) = composed {
-    var buttonState by remember { mutableStateOf(ButtonState.Idle) }
+    var buttonMode by remember { mutableStateOf(ButtonMode.Idle) }
 
     val translationXAnimated by animateFloatAsState(
         targetValue =
-            if (buttonState == ButtonState.Pressed) {
+            if (buttonMode == ButtonMode.Pressed) {
                 translationX.value
             } else {
                 0f
@@ -433,7 +432,7 @@ fun Modifier.translationClick(
     )
     val translationYAnimated by animateFloatAsState(
         targetValue =
-            if (buttonState == ButtonState.Pressed) {
+            if (buttonMode == ButtonMode.Pressed) {
                 translationY.value
             } else {
                 0f
@@ -450,16 +449,25 @@ fun Modifier.translationClick(
             this.translationX = translationXAnimated
             this.translationY = translationYAnimated
         }
-        .pointerInput(buttonState) {
+        .pointerInput(buttonMode) {
             awaitPointerEventScope {
-                buttonState =
-                    if (buttonState == ButtonState.Pressed) {
+                buttonMode =
+                    if (buttonMode == ButtonMode.Pressed) {
                         waitForUpOrCancellation()
-                        ButtonState.Idle
+                        ButtonMode.Idle
                     } else {
                         awaitFirstDown(false)
-                        ButtonState.Pressed
+                        ButtonMode.Pressed
                     }
             }
         }
 }
+
+private enum class ButtonMode { Pressed, Idle }
+
+data class ButtonState(
+    val text: StringResource,
+    val isEnabled: Boolean = true,
+    val isLoading: Boolean = false,
+    val onClick: () -> Unit = {},
+)
