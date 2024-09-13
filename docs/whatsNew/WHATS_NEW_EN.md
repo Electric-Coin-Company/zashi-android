@@ -15,6 +15,7 @@ directly impact users rather than highlighting other key architectural updates.*
 - The Choose server screen now provides a new search for the three fastest servers feature
 - Android 15 (Android SDK API level 35) support for 16 KB memory page size has been added
 - Coinbase Onramp integration button has been added to the Advanced Settings screen
+- Shielded transactions are properly indicated in transaction history
 
 ### Changed
 - Choose server screen has been redesigned
