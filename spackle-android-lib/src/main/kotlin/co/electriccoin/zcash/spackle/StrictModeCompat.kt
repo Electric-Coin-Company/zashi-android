@@ -1,7 +1,6 @@
 package co.electriccoin.zcash.spackle
 
 import android.annotation.SuppressLint
-import android.os.Build
 import android.os.StrictMode
 
 object StrictModeCompat {
