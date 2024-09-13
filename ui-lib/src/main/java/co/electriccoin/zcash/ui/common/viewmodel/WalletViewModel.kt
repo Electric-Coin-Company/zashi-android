@@ -627,7 +627,7 @@ sealed class SynchronizerError {
 
     internal fun Throwable.stackTraceToLimitedString() =
         if (stackTraceToString().isNotEmpty()) {
-            stackTraceToString().substring(0..stackTraceToString().length.coerceAtMost(STACKTRACE_LIMIT))
+            stackTraceToString().substring(0..(stackTraceToString().length - 1).coerceAtMost(STACKTRACE_LIMIT))
         } else {
             null
         }

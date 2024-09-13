@@ -18,6 +18,9 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 - Settings and Advanced Settings screens have been redesigned
 - Android `compileSdkVersion` and `targetSdkVersion` have been updated to version 35
 
+### Fixed
+- The issue of printing the stacktrace of errors in dialogs has been resolved
+
 ## [1.1.7 (718)] - 2024-09-06
 
 ### Added
