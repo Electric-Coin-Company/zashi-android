@@ -17,7 +17,7 @@ class VersionCodeCompatTest {
             PackageInfo().apply {
                 @Suppress("Deprecation")
                 versionCode = expectedVersionCode.toInt()
-                if (AndroidApiVersion.isAtLeastT) {
+                if (AndroidApiVersion.isAtLeastTiramisu) {
                     longVersionCode = expectedVersionCode
                 }
             }

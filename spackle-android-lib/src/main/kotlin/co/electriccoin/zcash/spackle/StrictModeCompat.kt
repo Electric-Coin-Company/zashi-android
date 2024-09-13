@@ -26,6 +26,9 @@ object StrictModeCompat {
         // Don't enable missing network tags, because those are noisy.
         StrictMode.setVmPolicy(
             StrictMode.VmPolicy.Builder().apply {
+                if (AndroidApiVersion.isAtLeastS) {
+                    detectUnsafeIntentLaunch()
+                }
                 detectActivityLeaks()
                 detectCleartextNetwork()
                 detectContentUriWithoutPermission()

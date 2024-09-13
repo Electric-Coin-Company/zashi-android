@@ -11,7 +11,7 @@ fun PackageManager.getPackageInfoCompat(
     packageName: String,
     flags: Long
 ): PackageInfo =
-    if (AndroidApiVersion.isAtLeastT) {
+    if (AndroidApiVersion.isAtLeastTiramisu) {
         getPackageInfoTPlus(packageName, flags)
     } else {
         getPackageInfoLegacy(packageName, flags)
@@ -21,7 +21,7 @@ suspend fun PackageManager.getPackageInfoCompatSuspend(
     packageName: String,
     flags: Long
 ): PackageInfo =
-    if (AndroidApiVersion.isAtLeastT) {
+    if (AndroidApiVersion.isAtLeastTiramisu) {
         withContext(Dispatchers.IO) { getPackageInfoTPlus(packageName, flags) }
     } else {
         withContext(Dispatchers.IO) { getPackageInfoLegacy(packageName, flags) }

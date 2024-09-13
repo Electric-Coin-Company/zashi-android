@@ -26,7 +26,7 @@ class Components {
 }
 
 private fun PackageManager.getProviderInfoCompat(componentName: ComponentName) =
-    if (AndroidApiVersion.isAtLeastT) {
+    if (AndroidApiVersion.isAtLeastTiramisu) {
         getProviderInfo(componentName, PackageManager.ComponentInfoFlags.of(0))
     } else {
         @Suppress("Deprecation")
@@ -34,7 +34,7 @@ private fun PackageManager.getProviderInfoCompat(componentName: ComponentName) =
     }
 
 private fun PackageManager.getReceiverInfoCompat(componentName: ComponentName) =
-    if (AndroidApiVersion.isAtLeastT) {
+    if (AndroidApiVersion.isAtLeastTiramisu) {
         getReceiverInfo(componentName, PackageManager.ComponentInfoFlags.of(0))
     } else {
         @Suppress("Deprecation")

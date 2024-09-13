@@ -12,7 +12,7 @@ import kotlinx.coroutines.runBlocking
 object ClipboardManagerUtil {
     private val extraIsSensitive: String
         get() =
-            if (AndroidApiVersion.isAtLeastT) {
+            if (AndroidApiVersion.isAtLeastTiramisu) {
                 ClipDescription.EXTRA_IS_SENSITIVE
             } else {
                 "android.content.extra.IS_SENSITIVE"
@@ -32,7 +32,7 @@ object ClipboardManagerUtil {
                         putBoolean(extraIsSensitive, true)
                     }
             }
-        if (AndroidApiVersion.isAtLeastT) {
+        if (AndroidApiVersion.isAtLeastTiramisu) {
             // API 33 and later implement their system Toast UI.
             clipboardManager.setPrimaryClip(data)
         } else {
