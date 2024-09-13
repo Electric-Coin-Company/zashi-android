@@ -9,7 +9,7 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
-## [1.2 (730)] - 2024-09-13
+## [1.2 (729)] - 2024-09-13
 
 ### Added
 - We added an experimental feature which allows you to buy ZEC with Coinbase Onramp integration - find it in the Advanced Settings.

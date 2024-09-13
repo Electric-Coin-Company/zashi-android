@@ -6,7 +6,7 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
-## [1.1.8 (729)] - 2024-09-13
+## [1.2 (729)] - 2024-09-13
 
 ### Added
 - Transaction resubmission feature has been added. It periodically searches for unmined sent transactions that 
