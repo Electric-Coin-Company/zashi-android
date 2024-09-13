@@ -1,6 +1,7 @@
 package co.electriccoin.zcash.spackle
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.os.StrictMode
 
 object StrictModeCompat {
@@ -26,6 +27,9 @@ object StrictModeCompat {
         // Don't enable missing network tags, because those are noisy.
         StrictMode.setVmPolicy(
             StrictMode.VmPolicy.Builder().apply {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    detectUnsafeIntentLaunch()
+                }
                 detectActivityLeaks()
                 detectCleartextNetwork()
                 detectContentUriWithoutPermission()
