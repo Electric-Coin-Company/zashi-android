@@ -9,6 +9,17 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [1.2 (730)] - 2024-09-16
+
+### Added
+- We added an experimental feature which allows you to buy ZEC with Coinbase Onramp integration - find it in the Advanced Settings.
+- No need to keep guessing which server performs best. We added a dynamic server switch, which identifies the best performing servers for you.
+- We improved UX for unsent transactions. The SDK now checks whether there are any unsent transactions, and it attempts to resubmit such transactions.
+- We also added support for Android 15.
+
+### Changed
+- We updated our Settings UI.
+
 ## [1.2 (729)] - 2024-09-13
 
 ### Added
