@@ -6,7 +6,7 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
-## [1.2 (730)] - 2024-09-16
+## [1.2 (731)] - 2024-09-16
 
 ### Changed
 - Adopted the latest snapshot Zcash SDK version 2.2.4 that brings improvements in the disposal logic of its 
