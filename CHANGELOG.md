@@ -6,6 +6,10 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+### Changed
+- The Message text field on the Send Form screen has been updated to provide the Return key on the software keyboard 
+  and make auto-capitalization on the beginning of every sentence or new line. 
+
 ## [1.2 (731)] - 2024-09-16
 
 ### Changed
