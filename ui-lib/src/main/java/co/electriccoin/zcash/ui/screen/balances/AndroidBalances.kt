@@ -3,6 +3,7 @@
 package co.electriccoin.zcash.ui.screen.balances
 
 import android.content.Context
+import android.content.Intent
 import android.widget.Toast
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -36,7 +37,11 @@ import co.electriccoin.zcash.ui.screen.balances.model.StatusAction
 import co.electriccoin.zcash.ui.screen.balances.view.Balances
 import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SubmitResult
 import co.electriccoin.zcash.ui.screen.sendconfirmation.viewmodel.CreateTransactionsViewModel
+import co.electriccoin.zcash.ui.screen.support.model.SupportInfo
+import co.electriccoin.zcash.ui.screen.support.model.SupportInfoType
+import co.electriccoin.zcash.ui.screen.support.viewmodel.SupportViewModel
 import co.electriccoin.zcash.ui.screen.update.model.UpdateState
+import co.electriccoin.zcash.ui.util.EmailUtil
 import co.electriccoin.zcash.ui.util.PlayStoreUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
@@ -56,6 +61,8 @@ internal fun WrapBalances(
 
     val homeViewModel = koinActivityViewModel<HomeViewModel>()
 
+    val supportViewModel = koinActivityViewModel<SupportViewModel>()
+
     val synchronizer = walletViewModel.synchronizer.collectAsStateWithLifecycle().value
 
     val walletSnapshot = walletViewModel.walletSnapshot.collectAsStateWithLifecycle().value
@@ -72,6 +79,8 @@ internal fun WrapBalances(
 
     val balanceState = walletViewModel.balanceState.collectAsStateWithLifecycle().value
 
+    val supportInfo = supportViewModel.supportInfo.collectAsStateWithLifecycle().value
+
     WrapBalances(
         balanceState = balanceState,
         createTransactionsViewModel = createTransactionsViewModel,
@@ -82,6 +91,7 @@ internal fun WrapBalances(
         lifecycleScope = activity.lifecycleScope,
         onHideBalances = { homeViewModel.showOrHideBalances() },
         spendingKey = spendingKey,
+        supportInfo = supportInfo,
         synchronizer = synchronizer,
         topAppBarSubTitleState = walletState,
         walletSnapshot = walletSnapshot,
@@ -105,6 +115,7 @@ internal fun WrapBalances(
     isHideBalances: Boolean,
     onHideBalances: () -> Unit,
     spendingKey: UnifiedSpendingKey?,
+    supportInfo: SupportInfo?,
     synchronizer: Synchronizer?,
     topAppBarSubTitleState: TopAppBarSubTitleState,
     walletSnapshot: WalletSnapshot?,
@@ -191,7 +202,8 @@ internal fun WrapBalances(
                         if (newProposal == null) {
                             showShieldingError(
                                 ShieldState.Failed(
-                                    context.getString(R.string.balances_shielding_dialog_error_text_below_threshold)
+                                    error = context.getString(R.string.balances_shielding_dialog_error_text_below_threshold),
+                                    stackTrace = ""
                                 )
                             )
                         } else {
@@ -220,7 +232,12 @@ internal fun WrapBalances(
                                 }
                                 is SubmitResult.SimpleTrxFailure -> {
                                     Twig.warn { "Shielding transaction failed" }
-                                    showShieldingError(ShieldState.Failed(result.toErrorDescription()))
+                                    showShieldingError(
+                                        ShieldState.Failed(
+                                            error = result.toErrorMessage(),
+                                            stackTrace = result.toErrorStacktrace()
+                                        )
+                                    )
                                 }
                                 is SubmitResult.MultipleTrxFailure -> {
                                     Twig.warn { "Shielding failed with multi-transactions-submission-error handling" }
@@ -229,7 +246,12 @@ internal fun WrapBalances(
                             }
                         }
                     }.onFailure {
-                        showShieldingError(ShieldState.Failed(it.message ?: "Unknown error"))
+                        showShieldingError(
+                            ShieldState.Failed(
+                                error = it.message ?: "Unknown error",
+                                stackTrace = it.stackTraceToString()
+                            )
+                        )
                     }
                 }
             },
@@ -245,6 +267,30 @@ internal fun WrapBalances(
                     }
                     else -> {
                         // No action required
+                    }
+                }
+            },
+            onContactSupport = { error ->
+                val fullMessage =
+                    EmailUtil.formatMessage(
+                        body = error,
+                        supportInfo = supportInfo?.toSupportString(SupportInfoType.entries.toSet())
+                    )
+                val mailIntent =
+                    EmailUtil.newMailActivityIntent(
+                        context.getString(R.string.support_email_address),
+                        context.getString(R.string.app_name),
+                        fullMessage
+                    ).apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    }
+                runCatching {
+                    context.startActivity(mailIntent)
+                }.onFailure {
+                    scope.launch {
+                        snackbarHostState.showSnackbar(
+                            message = context.getString(R.string.unable_to_open_email)
+                        )
                     }
                 }
             },

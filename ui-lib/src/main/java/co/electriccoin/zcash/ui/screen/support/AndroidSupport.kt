@@ -66,8 +66,11 @@ internal fun WrapSupport(
         setShowDialog = setShowDialog,
         onBack = goBack,
         onSend = { userMessage ->
-            val fullMessage = formatMessage(userMessage, supportInfo)
-
+            val fullMessage =
+                EmailUtil.formatMessage(
+                    body = userMessage,
+                    supportInfo = supportInfo?.toSupportString(SupportInfoType.entries.toSet())
+                )
             val mailIntent =
                 EmailUtil.newMailActivityIntent(
                     activity.getString(R.string.support_email_address),
@@ -76,7 +79,6 @@ internal fun WrapSupport(
                 ).apply {
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 }
-
             runCatching {
                 activity.startActivity(mailIntent)
             }.onSuccess {
@@ -85,7 +87,7 @@ internal fun WrapSupport(
                 setShowDialog(false)
                 scope.launch {
                     snackbarHostState.showSnackbar(
-                        message = activity.getString(R.string.support_unable_to_open_email)
+                        message = activity.getString(R.string.unable_to_open_email)
                     )
                 }
             }
@@ -93,10 +95,3 @@ internal fun WrapSupport(
         topAppBarSubTitleState = topAppBarSubTitleState,
     )
 }
-
-// Note that we don't need to localize this format string
-private fun formatMessage(
-    messageBody: String,
-    appInfo: SupportInfo?,
-    supportInfoValues: Set<SupportInfoType> = SupportInfoType.entries.toSet()
-): String = "$messageBody\n\n${appInfo?.toSupportString(supportInfoValues) ?: ""}"

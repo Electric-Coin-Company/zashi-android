@@ -8,23 +8,31 @@ sealed class SubmitResult {
     data object MultipleTrxFailure : SubmitResult()
 
     sealed class SimpleTrxFailure : SubmitResult() {
-        abstract fun toErrorDescription(): String
+        abstract fun toErrorMessage(): String
+
+        abstract fun toErrorStacktrace(): String
 
         data class SimpleTrxFailureGrpc(val result: TransactionSubmitResult.Failure) : SimpleTrxFailure() {
             // Currently, we intentionally do not include any error related details
-            override fun toErrorDescription() = ""
+            override fun toErrorMessage() = ""
+
+            override fun toErrorStacktrace() = ""
         }
 
         data class SimpleTrxFailureSubmit(val result: TransactionSubmitResult.Failure) : SimpleTrxFailure() {
-            override fun toErrorDescription() =
+            override fun toErrorMessage() =
                 buildString {
                     appendLine("Error code: ${result.code}")
                     appendLine(result.description ?: "Unknown error")
                 }
+
+            override fun toErrorStacktrace(): String = toErrorMessage()
         }
 
         data class SimpleTrxFailureOther(val error: Throwable) : SimpleTrxFailure() {
-            override fun toErrorDescription() = error.message ?: "Unknown error"
+            override fun toErrorMessage() = error.message ?: "Unknown error"
+
+            override fun toErrorStacktrace(): String = error.stackTraceToString()
         }
     }
 }

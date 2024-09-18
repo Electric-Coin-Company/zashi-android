@@ -3,6 +3,7 @@
 package co.electriccoin.zcash.ui.screen.account
 
 import android.content.Context
+import android.content.Intent
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -28,6 +29,10 @@ import co.electriccoin.zcash.ui.screen.account.view.Account
 import co.electriccoin.zcash.ui.screen.account.view.TrxItemAction
 import co.electriccoin.zcash.ui.screen.account.viewmodel.TransactionHistoryViewModel
 import co.electriccoin.zcash.ui.screen.balances.model.StatusAction
+import co.electriccoin.zcash.ui.screen.support.model.SupportInfo
+import co.electriccoin.zcash.ui.screen.support.model.SupportInfoType
+import co.electriccoin.zcash.ui.screen.support.viewmodel.SupportViewModel
+import co.electriccoin.zcash.ui.util.EmailUtil
 import co.electriccoin.zcash.ui.util.PlayStoreUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -45,6 +50,8 @@ internal fun WrapAccount(
     val transactionHistoryViewModel = koinActivityViewModel<TransactionHistoryViewModel>()
 
     val homeViewModel = koinActivityViewModel<HomeViewModel>()
+
+    val supportViewModel = koinActivityViewModel<SupportViewModel>()
 
     val synchronizer = walletViewModel.synchronizer.collectAsStateWithLifecycle().value
 
@@ -64,12 +71,15 @@ internal fun WrapAccount(
 
     val isHideBalances = homeViewModel.isHideBalances.collectAsStateWithLifecycle().value ?: false
 
+    val supportInfo = supportViewModel.supportInfo.collectAsStateWithLifecycle().value
+
     WrapAccount(
         balanceState = balanceState,
         goBalances = goBalances,
         goSettings = goSettings,
         isHideBalances = isHideBalances,
         onHideBalances = { homeViewModel.showOrHideBalances() },
+        supportInfo = supportInfo,
         synchronizer = synchronizer,
         topAppBarSubTitleState = walletState,
         transactionHistoryViewModel = transactionHistoryViewModel,
@@ -92,6 +102,7 @@ internal fun WrapAccount(
     isHideBalances: Boolean,
     synchronizer: Synchronizer?,
     onHideBalances: () -> Unit,
+    supportInfo: SupportInfo?,
     topAppBarSubTitleState: TopAppBarSubTitleState,
     transactionsUiState: TransactionUiState,
     transactionHistoryViewModel: TransactionHistoryViewModel,
@@ -121,6 +132,30 @@ internal fun WrapAccount(
             showStatusDialog = showStatusDialog.value,
             hideStatusDialog = { showStatusDialog.value = null },
             onHideBalances = onHideBalances,
+            onContactSupport = { status ->
+                val fullMessage =
+                    EmailUtil.formatMessage(
+                        body = status.fullStackTrace,
+                        supportInfo = supportInfo?.toSupportString(SupportInfoType.entries.toSet())
+                    )
+                val mailIntent =
+                    EmailUtil.newMailActivityIntent(
+                        context.getString(R.string.support_email_address),
+                        context.getString(R.string.app_name),
+                        fullMessage
+                    ).apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    }
+                runCatching {
+                    context.startActivity(mailIntent)
+                }.onFailure {
+                    scope.launch {
+                        snackbarHostState.showSnackbar(
+                            message = context.getString(R.string.unable_to_open_email)
+                        )
+                    }
+                }
+            },
             onStatusClick = { status ->
                 when (status) {
                     is StatusAction.Detailed -> showStatusDialog.value = status

@@ -623,11 +623,13 @@ const val STACKTRACE_LIMIT = 250
 sealed class SynchronizerError {
     abstract fun getCauseMessage(): String?
 
-    abstract fun getStackTrace(limit: Int = STACKTRACE_LIMIT): String?
+    abstract fun getStackTrace(limit: Int? = STACKTRACE_LIMIT): String?
 
-    internal fun Throwable.stackTraceToLimitedString() =
+    internal fun Throwable.stackTraceFullString() = stackTraceToString()
+
+    internal fun Throwable.stackTraceToLimitedString(limit: Int) =
         if (stackTraceToString().isNotEmpty()) {
-            stackTraceToString().substring(0..(stackTraceToString().length - 1).coerceAtMost(STACKTRACE_LIMIT))
+            stackTraceToString().substring(0..(stackTraceToString().length - 1).coerceAtMost(limit))
         } else {
             null
         }
@@ -635,31 +637,51 @@ sealed class SynchronizerError {
     class Critical(val error: Throwable?) : SynchronizerError() {
         override fun getCauseMessage(): String? = error?.message
 
-        override fun getStackTrace(limit: Int): String? = error?.stackTraceToLimitedString()
+        override fun getStackTrace(limit: Int?): String? =
+            if (limit != null) {
+                error?.stackTraceToLimitedString(limit)
+            } else {
+                error?.stackTraceFullString()
+            }
     }
 
     class Processor(val error: Throwable?) : SynchronizerError() {
         override fun getCauseMessage(): String? = error?.message
 
-        override fun getStackTrace(limit: Int): String? = error?.stackTraceToLimitedString()
+        override fun getStackTrace(limit: Int?): String? =
+            if (limit != null) {
+                error?.stackTraceToLimitedString(limit)
+            } else {
+                error?.stackTraceFullString()
+            }
     }
 
     class Submission(val error: Throwable?) : SynchronizerError() {
         override fun getCauseMessage(): String? = error?.message
 
-        override fun getStackTrace(limit: Int): String? = error?.stackTraceToLimitedString()
+        override fun getStackTrace(limit: Int?): String? =
+            if (limit != null) {
+                error?.stackTraceToLimitedString(limit)
+            } else {
+                error?.stackTraceFullString()
+            }
     }
 
     class Setup(val error: Throwable?) : SynchronizerError() {
         override fun getCauseMessage(): String? = error?.message
 
-        override fun getStackTrace(limit: Int): String? = error?.stackTraceToLimitedString()
+        override fun getStackTrace(limit: Int?): String? =
+            if (limit != null) {
+                error?.stackTraceToLimitedString(limit)
+            } else {
+                error?.stackTraceFullString()
+            }
     }
 
     class Chain(val x: BlockHeight, val y: BlockHeight) : SynchronizerError() {
         override fun getCauseMessage(): String = "$x, $y"
 
-        override fun getStackTrace(limit: Int): String? = null
+        override fun getStackTrace(limit: Int?): String? = null
     }
 }
 

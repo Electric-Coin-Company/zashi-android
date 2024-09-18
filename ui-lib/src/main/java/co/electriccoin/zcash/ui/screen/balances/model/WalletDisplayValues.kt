@@ -103,7 +103,8 @@ data class WalletDisplayValues(
                                     ?: context.getString(R.string.balances_status_error_dialog_cause_unknown),
                                 walletSnapshot.synchronizerError.getStackTrace(limit = STACKTRACE_LIMIT)
                                     ?: context.getString(R.string.balances_status_error_dialog_stacktrace_unknown)
-                            )
+                            ),
+                        fullStackTrace = walletSnapshot.synchronizerError.getStackTrace(limit = null)
                     )
             }
 
@@ -134,8 +135,13 @@ sealed class StatusAction {
 
     data class Stopped(override val details: String) : Detailed(details)
 
-    data class Error(override val details: String) : Detailed(details)
+    data class Error(
+        override val details: String,
+        val fullStackTrace: String?
+    ) : Detailed(details)
 }
+
+fun StatusAction.isReportable() = this is StatusAction.Error && fullStackTrace != null
 
 private fun getFiatCurrencyRateValue(
     context: Context,

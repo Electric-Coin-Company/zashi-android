@@ -11,7 +11,10 @@ sealed class ShieldState {
 
     data object Shielded : ShieldState()
 
-    data class Failed(val error: String) : ShieldState()
+    data class Failed(
+        val error: String,
+        val stackTrace: String,
+    ) : ShieldState()
 
     data object FailedGrpc : ShieldState()
 
@@ -24,9 +27,10 @@ sealed class ShieldState {
         private const val TYPE_SHIELDED = "shielded" // $NON-NLS
         private const val TYPE_FAILED = "failed" // $NON-NLS
         private const val TYPE_FAILED_GRPC = "failed_grpc" // $NON-NLS
-        private const val KEY_TYPE = "type" // $NON-NLS
 
+        private const val KEY_TYPE = "type" // $NON-NLS
         private const val KEY_ERROR = "error" // $NON-NLS
+        private const val KEY_STACKTRACE = "stacktrace" // $NON-NLS
 
         internal val Saver
             get() =
@@ -43,7 +47,11 @@ sealed class ShieldState {
                                     TYPE_AVAILABLE -> Available
                                     TYPE_RUNNING -> Running
                                     TYPE_SHIELDED -> Shielded
-                                    TYPE_FAILED -> Failed((it[KEY_ERROR] as String))
+                                    TYPE_FAILED ->
+                                        Failed(
+                                            error = (it[KEY_ERROR] as String),
+                                            stackTrace = (it[KEY_STACKTRACE] as String)
+                                        )
                                     TYPE_FAILED_GRPC -> FailedGrpc
                                     else -> null
                                 }
@@ -62,6 +70,7 @@ sealed class ShieldState {
                 is Failed -> {
                     saverMap[KEY_TYPE] = TYPE_FAILED
                     saverMap[KEY_ERROR] = this.error
+                    saverMap[KEY_STACKTRACE] = this.stackTrace
                 }
                 FailedGrpc -> saverMap[KEY_TYPE] = TYPE_FAILED_GRPC
             }
