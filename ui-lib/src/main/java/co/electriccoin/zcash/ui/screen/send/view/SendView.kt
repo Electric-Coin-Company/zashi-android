@@ -5,7 +5,6 @@ package co.electriccoin.zcash.ui.screen.send.view
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -27,18 +26,13 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
@@ -48,6 +42,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -92,7 +87,6 @@ import co.electriccoin.zcash.ui.screen.send.model.AmountState
 import co.electriccoin.zcash.ui.screen.send.model.MemoState
 import co.electriccoin.zcash.ui.screen.send.model.RecipientAddressState
 import co.electriccoin.zcash.ui.screen.send.model.SendStage
-import kotlinx.coroutines.launch
 import java.util.Locale
 
 @Composable
@@ -349,15 +343,11 @@ private fun SendForm(
 ) {
     val monetarySeparators = MonetarySeparators.current(Locale.getDefault())
 
-    val scrollState = rememberScrollState()
-
-    val (scrollToFeePixels, setScrollToFeePixels) = rememberSaveable { mutableIntStateOf(0) }
-
     Column(
         modifier =
             Modifier
                 .fillMaxHeight()
-                .verticalScroll(scrollState)
+                .verticalScroll(rememberScrollState())
                 .then(modifier),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -417,8 +407,6 @@ private fun SendForm(
             memoState = memoState,
             setMemoState = setMemoState,
             isMemoFieldAvailable = isMemoFieldAvailable,
-            scrollState = scrollState,
-            scrollTo = scrollToFeePixels
         )
 
         Spacer(
@@ -436,7 +424,6 @@ private fun SendForm(
             onCreateZecSend = onCreateZecSend,
             recipientAddressState = recipientAddressState,
             walletSnapshot = walletSnapshot,
-            setScrollToFeePixels = setScrollToFeePixels
         )
     }
 }
@@ -448,7 +435,6 @@ fun SendButton(
     memoState: MemoState,
     onCreateZecSend: (ZecSend) -> Unit,
     recipientAddressState: RecipientAddressState,
-    setScrollToFeePixels: (Int) -> Unit,
     walletSnapshot: WalletSnapshot,
 ) {
     val context = LocalContext.current
@@ -510,10 +496,6 @@ fun SendButton(
                     DEFAULT_FEE
                 ),
             textFontWeight = FontWeight.SemiBold,
-            modifier =
-                Modifier.onGloballyPositioned {
-                    setScrollToFeePixels(it.positionInRoot().y.toInt())
-                }
         )
     }
 }
@@ -801,13 +783,7 @@ fun SendFormMemoTextField(
     isMemoFieldAvailable: Boolean,
     memoState: MemoState,
     setMemoState: (MemoState) -> Unit,
-    scrollState: ScrollState,
-    scrollTo: Int
 ) {
-    val focusManager = LocalFocusManager.current
-
-    val scope = rememberCoroutineScope()
-
     val bringIntoViewRequester = remember { BringIntoViewRequester() }
 
     Column(
@@ -869,19 +845,8 @@ fun SendFormMemoTextField(
                 keyboardOptions =
                     KeyboardOptions(
                         keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Done
-                    ),
-                keyboardActions =
-                    KeyboardActions(
-                        onDone = {
-                            focusManager.clearFocus(true)
-                            // Scroll down to make sure the Send button is visible on small screens
-                            if (scrollTo > 0) {
-                                scope.launch {
-                                    scrollState.animateScrollTo(scrollTo)
-                                }
-                            }
-                        }
+                        imeAction = ImeAction.Default,
+                        capitalization = KeyboardCapitalization.Sentences
                     ),
                 placeholder = {
                     Text(

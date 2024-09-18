@@ -9,6 +9,10 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+### Changed
+- The Message text field on the Send Form screen has been updated to provide the Return key on the software keyboard
+  and make auto-capitalization on the beginning of every sentence or new line.
+
 ## [1.2 (731)] - 2024-09-16
 
 ### Added
