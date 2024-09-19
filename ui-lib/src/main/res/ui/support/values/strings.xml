@@ -9,5 +9,4 @@
     <string name="support_confirmation_explanation"><xliff:g id="app_name" example="Zcash">%1$s</xliff:g> is about to
         open your e-mail app with a pre-filled message.\n\nBe sure to hit send within your e-mail app.</string>
     <string name="support_information">Please let us know about any problems you have had, or features you want to see in the future.</string>
-    <string name="support_unable_to_open_email">Unable to launch email app.</string>
 </resources>

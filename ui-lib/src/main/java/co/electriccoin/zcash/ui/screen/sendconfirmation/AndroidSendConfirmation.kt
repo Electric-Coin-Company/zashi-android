@@ -2,7 +2,6 @@
 
 package co.electriccoin.zcash.ui.screen.sendconfirmation
 
-import android.content.Context
 import android.content.Intent
 import androidx.activity.compose.BackHandler
 import androidx.annotation.VisibleForTesting
@@ -19,7 +18,6 @@ import androidx.lifecycle.lifecycleScope
 import cash.z.ecc.android.sdk.SdkSynchronizer
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.model.Proposal
-import cash.z.ecc.android.sdk.model.TransactionSubmitResult
 import cash.z.ecc.android.sdk.model.UnifiedSpendingKey
 import cash.z.ecc.android.sdk.model.ZecSend
 import co.electriccoin.zcash.di.koinActivityViewModel
@@ -44,7 +42,6 @@ import co.electriccoin.zcash.ui.screen.support.model.SupportInfo
 import co.electriccoin.zcash.ui.screen.support.model.SupportInfoType
 import co.electriccoin.zcash.ui.screen.support.viewmodel.SupportViewModel
 import co.electriccoin.zcash.ui.util.EmailUtil
-import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.filterNotNull
@@ -162,13 +159,27 @@ internal fun WrapSendConfirmation(
             submissionResults = submissionResults,
             snackbarHostState = snackbarHostState,
             onBack = onBackAction,
-            onContactSupport = {
+            onContactSupport = { stageToGo, body ->
                 val fullMessage =
-                    formatMessage(
-                        context = activity,
-                        appInfo = supportMessage,
-                        submissionResults = submissionResults
-                    )
+                    when (stageToGo) {
+                        is SendConfirmationStage.Failure -> {
+                            EmailUtil.formatMessage(
+                                body = body,
+                                supportInfo = supportMessage?.toSupportString(SupportInfoType.entries.toSet())
+                            )
+                        }
+                        SendConfirmationStage.MultipleTrxFailureReported -> {
+                            EmailUtil.formatMessage(
+                                prefix = activity.getString(R.string.send_confirmation_multiple_report_text),
+                                supportInfo = supportMessage?.toSupportString(SupportInfoType.entries.toSet()),
+                                suffix = submissionResults.toSupportString(activity)
+                            )
+                        }
+                        else -> {
+                            Twig.error { "Unsupported stage: $stage" }
+                            ""
+                        }
+                    }
 
                 val mailIntent =
                     EmailUtil.newMailActivityIntent(
@@ -178,13 +189,12 @@ internal fun WrapSendConfirmation(
                     ).apply {
                         flags = Intent.FLAG_ACTIVITY_NEW_TASK
                     }
-
                 runCatching {
                     activity.startActivity(mailIntent)
                 }.onSuccess {
-                    setStage(SendConfirmationStage.MultipleTrxFailureReported)
+                    setStage(stageToGo)
                 }.onFailure {
-                    setStage(SendConfirmationStage.MultipleTrxFailureReported)
+                    setStage(stageToGo)
                     scope.launch {
                         snackbarHostState.showSnackbar(
                             message = activity.getString(R.string.send_confirmation_multiple_report_unable_open_email)
@@ -318,31 +328,16 @@ private fun processSubmissionResult(
             goHome()
         }
         is SubmitResult.SimpleTrxFailure.SimpleTrxFailureSubmit -> {
-            setStage(SendConfirmationStage.Failure(submitResult.toErrorDescription()))
+            setStage(SendConfirmationStage.Failure(submitResult.toErrorMessage(), submitResult.toErrorStacktrace()))
         }
         is SubmitResult.SimpleTrxFailure.SimpleTrxFailureGrpc -> {
             setStage(SendConfirmationStage.FailureGrpc)
         }
         is SubmitResult.SimpleTrxFailure.SimpleTrxFailureOther -> {
-            setStage(SendConfirmationStage.Failure(submitResult.toErrorDescription()))
+            setStage(SendConfirmationStage.Failure(submitResult.toErrorMessage(), submitResult.toErrorStacktrace()))
         }
         is SubmitResult.MultipleTrxFailure -> {
             setStage(SendConfirmationStage.MultipleTrxFailure)
         }
     }
 }
-
-private fun formatMessage(
-    context: Context,
-    appInfo: SupportInfo?,
-    supportInfoValues: Set<SupportInfoType> = SupportInfoType.entries.toSet(),
-    submissionResults: ImmutableList<TransactionSubmitResult>
-): String =
-    buildString {
-        appendLine(context.getString(R.string.send_confirmation_multiple_report_text))
-        appendLine()
-        append(appInfo?.toSupportString(supportInfoValues) ?: "")
-        if (submissionResults.isNotEmpty()) {
-            append(submissionResults.toSupportString(context))
-        }
-    }

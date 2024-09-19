@@ -68,6 +68,7 @@ private fun HistoryLoadingComposablePreview() {
             hideStatusDialog = {},
             onHideBalances = {},
             onStatusClick = {},
+            onContactSupport = {},
             onTransactionItemAction = {},
             showStatusDialog = null,
             snackbarHostState = SnackbarHostState(),
@@ -107,6 +108,7 @@ private fun HistoryListComposablePreview() {
             hideStatusDialog = {},
             onHideBalances = {},
             onStatusClick = {},
+            onContactSupport = {},
             onTransactionItemAction = {},
             showStatusDialog = null,
             snackbarHostState = SnackbarHostState(),
@@ -128,6 +130,7 @@ internal fun Account(
     hideStatusDialog: () -> Unit,
     onHideBalances: () -> Unit,
     onStatusClick: (StatusAction) -> Unit,
+    onContactSupport: (StatusAction.Error) -> Unit,
     onTransactionItemAction: (TrxItemAction) -> Unit,
     showStatusDialog: StatusAction.Detailed?,
     snackbarHostState: SnackbarHostState,
@@ -171,7 +174,11 @@ internal fun Account(
         if (showStatusDialog != null) {
             StatusDialog(
                 statusAction = showStatusDialog,
-                onDone = hideStatusDialog
+                onDone = hideStatusDialog,
+                onReport = { status ->
+                    hideStatusDialog()
+                    onContactSupport(status)
+                }
             )
         }
     }

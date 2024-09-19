@@ -47,6 +47,7 @@ class BalancesTestSetup(
             isUpdateAvailable = false,
             isShowingErrorDialog = false,
             setShowErrorDialog = {},
+            onContactSupport = {},
             onShielding = {},
             shieldState = ShieldState.Available,
             topAppBarSubTitleState = TopAppBarSubTitleState.None,

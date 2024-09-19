@@ -106,6 +106,7 @@ private fun ComposableBalancesPreview() {
             onSettings = {},
             onShielding = {},
             onStatusClick = {},
+            onContactSupport = {},
             shieldState = ShieldState.Available,
             snackbarHostState = SnackbarHostState(),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
@@ -132,6 +133,7 @@ private fun ComposableBalancesShieldDarkPreview() {
             onSettings = {},
             onShielding = {},
             onStatusClick = {},
+            onContactSupport = {},
             shieldState = ShieldState.Available,
             snackbarHostState = SnackbarHostState(),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
@@ -147,8 +149,9 @@ private fun ComposableBalancesShieldErrorDialogPreview() {
     ZcashTheme(forceDarkMode = false) {
         BlankSurface {
             ShieldingErrorDialog(
-                reason = "Test Error Text",
-                onDone = {}
+                state = ShieldState.Failed("Test Error Text", "Test Error Stacktrace"),
+                onDone = {},
+                onReport = {}
             )
         }
     }
@@ -163,6 +166,7 @@ fun Balances(
     isUpdateAvailable: Boolean,
     isShowingErrorDialog: Boolean,
     hideStatusDialog: () -> Unit,
+    onContactSupport: (String?) -> Unit,
     onHideBalances: () -> Unit,
     onSettings: () -> Unit,
     onShielding: () -> Unit,
@@ -214,7 +218,11 @@ fun Balances(
             if (showStatusDialog != null) {
                 StatusDialog(
                     statusAction = showStatusDialog,
-                    onDone = hideStatusDialog
+                    onDone = hideStatusDialog,
+                    onReport = { status ->
+                        hideStatusDialog()
+                        onContactSupport(status.fullStackTrace)
+                    }
                 )
             }
 
@@ -223,8 +231,12 @@ fun Balances(
                 when (shieldState) {
                     is ShieldState.Failed -> {
                         ShieldingErrorDialog(
-                            reason = shieldState.error,
-                            onDone = { setShowErrorDialog(false) }
+                            state = shieldState,
+                            onDone = { setShowErrorDialog(false) },
+                            onReport = { state ->
+                                setShowErrorDialog(false)
+                                onContactSupport(state.stackTrace)
+                            }
                         )
                     }
                     ShieldState.FailedGrpc -> {
@@ -241,13 +253,10 @@ fun Balances(
 
 @Composable
 fun ShieldingErrorDialog(
-    reason: String,
-    onDone: () -> Unit
+    state: ShieldState.Failed,
+    onDone: () -> Unit,
+    onReport: (ShieldState.Failed) -> Unit,
 ) {
-    // TODO [#1276]: Once we ensure that reason contains a localized message, we can leverage it for the UI prompt
-    // TODO [#1276]: Consider adding support for a specific exception in AppAlertDialog
-    // TODO [#1276]: https://github.com/Electric-Coin-Company/zashi-android/issues/1276
-
     AppAlertDialog(
         title = stringResource(id = R.string.balances_shielding_dialog_error_title),
         text = {
@@ -259,11 +268,11 @@ fun ShieldingErrorDialog(
                     color = ZcashTheme.colors.textPrimary,
                 )
 
-                if (reason.isNotEmpty()) {
+                if (state.error.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
                     Text(
-                        text = reason,
+                        text = state.error,
                         fontStyle = FontStyle.Italic,
                         color = ZcashTheme.colors.textPrimary,
                     )
@@ -271,7 +280,9 @@ fun ShieldingErrorDialog(
             }
         },
         confirmButtonText = stringResource(id = R.string.balances_shielding_dialog_error_btn),
-        onConfirmButtonClick = onDone
+        onConfirmButtonClick = onDone,
+        dismissButtonText = stringResource(id = R.string.balances_shielding_dialog_report_btn),
+        onDismissButtonClick = { onReport(state) },
     )
 }
 

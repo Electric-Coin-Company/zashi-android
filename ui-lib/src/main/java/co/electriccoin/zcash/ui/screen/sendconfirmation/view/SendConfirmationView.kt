@@ -85,7 +85,7 @@ private fun SendConfirmationPreview() {
             onBack = {},
             stage = SendConfirmationStage.Confirmation,
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
-            onContactSupport = {},
+            onContactSupport = { _, _ -> },
             submissionResults = emptyList<TransactionSubmitResult>().toImmutableList(),
             exchangeRate = ObserveFiatCurrencyResultFixture.new()
         )
@@ -109,7 +109,7 @@ private fun SendConfirmationDarkPreview() {
             onBack = {},
             stage = SendConfirmationStage.Confirmation,
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
-            onContactSupport = {},
+            onContactSupport = { _, _ -> },
             submissionResults = emptyList<TransactionSubmitResult>().toImmutableList(),
             exchangeRate = ObserveFiatCurrencyResultFixture.new()
         )
@@ -133,7 +133,7 @@ private fun SendMultipleErrorPreview() {
             onBack = {},
             stage = SendConfirmationStage.MultipleTrxFailure,
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
-            onContactSupport = {},
+            onContactSupport = { _, _ -> },
             submissionResults = emptyList<TransactionSubmitResult>().toImmutableList(),
             exchangeRate = ObserveFiatCurrencyResultFixture.new()
         )
@@ -157,7 +157,7 @@ private fun SendMultipleErrorDarkPreview() {
             onBack = {},
             stage = SendConfirmationStage.MultipleTrxFailure,
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
-            onContactSupport = {},
+            onContactSupport = { _, _ -> },
             submissionResults = emptyList<TransactionSubmitResult>().toImmutableList(),
             exchangeRate = ObserveFiatCurrencyResultFixture.new()
         )
@@ -246,7 +246,7 @@ private fun SendMultipleTransactionFailureDarkPreview() {
 fun SendConfirmation(
     onBack: () -> Unit,
     onConfirmation: () -> Unit,
-    onContactSupport: () -> Unit,
+    onContactSupport: (SendConfirmationStage, String?) -> Unit,
     snackbarHostState: SnackbarHostState,
     stage: SendConfirmationStage,
     submissionResults: ImmutableList<TransactionSubmitResult>,
@@ -335,7 +335,7 @@ private fun SendConfirmationMainContent(
     submissionResults: ImmutableList<TransactionSubmitResult>,
     zecSend: ZecSend,
     onBack: () -> Unit,
-    onContactSupport: () -> Unit,
+    onContactSupport: (SendConfirmationStage, String?) -> Unit,
     onConfirmation: () -> Unit,
     exchangeRate: ExchangeRateState,
     modifier: Modifier = Modifier,
@@ -358,13 +358,19 @@ private fun SendConfirmationMainContent(
             } else if (stage is SendConfirmationStage.Failure) {
                 SendFailure(
                     onDone = onBack,
-                    reason = stage.error,
+                    onReport = { status ->
+                        // Using [SendConfirmationStage.Confirmation] to dismiss the error dialog
+                        onContactSupport(SendConfirmationStage.Confirmation, status.stackTrace)
+                    },
+                    stage = stage,
                 )
             }
         }
         is SendConfirmationStage.MultipleTrxFailure, SendConfirmationStage.MultipleTrxFailureReported -> {
             MultipleSubmissionFailure(
-                onContactSupport = onContactSupport,
+                onContactSupport = {
+                    onContactSupport(SendConfirmationStage.MultipleTrxFailureReported, null)
+                },
                 submissionResults = submissionResults,
                 modifier = modifier
             )
@@ -521,7 +527,8 @@ private fun PreviewSendConfirmationFailure() {
         BlankSurface {
             SendFailure(
                 onDone = {},
-                reason = "Failed due to network error"
+                onReport = {},
+                stage = SendConfirmationStage.Failure("Failed - network error", "Failed stackTrace"),
             )
         }
     }
@@ -530,7 +537,8 @@ private fun PreviewSendConfirmationFailure() {
 @Composable
 private fun SendFailure(
     onDone: () -> Unit,
-    reason: String?,
+    onReport: (SendConfirmationStage.Failure) -> Unit,
+    stage: SendConfirmationStage.Failure,
 ) {
     // TODO [#1276]: Once we ensure that the reason contains a localized message, we can leverage it for the UI prompt
     // TODO [#1276]: Consider adding support for a specific exception in AppAlertDialog
@@ -547,19 +555,21 @@ private fun SendFailure(
                     color = ZcashTheme.colors.textPrimary,
                 )
 
-                if (!reason.isNullOrEmpty()) {
+                if (stage.error.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
                     Text(
-                        text = reason,
+                        text = stage.error,
                         fontStyle = FontStyle.Italic,
                         color = ZcashTheme.colors.textPrimary,
                     )
                 }
             }
         },
-        confirmButtonText = stringResource(id = R.string.send_confirmation_dialog_error_btn),
-        onConfirmButtonClick = onDone
+        confirmButtonText = stringResource(id = R.string.send_confirmation_dialog_error_ok_btn),
+        onConfirmButtonClick = onDone,
+        dismissButtonText = stringResource(id = R.string.send_confirmation_dialog_error_report_btn),
+        onDismissButtonClick = { onReport(stage) },
     )
 }
 
