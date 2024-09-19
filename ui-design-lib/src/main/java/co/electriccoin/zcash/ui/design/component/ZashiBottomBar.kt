@@ -19,7 +19,7 @@ import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.util.stringRes
 
 @Composable
-fun BottomBar(
+fun ZashiBottomBar(
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
 ) {
@@ -43,7 +43,7 @@ fun BottomBar(
 @Composable
 private fun BottomBarPreview() =
     ZcashTheme {
-        BottomBar {
+        ZashiBottomBar {
             ZashiButton(
                 state = ButtonState(text = stringRes("Save Button")),
                 modifier =
