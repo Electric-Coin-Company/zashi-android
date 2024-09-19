@@ -24,11 +24,12 @@ import androidx.compose.ui.unit.sp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.component.BlankSurface
+import co.electriccoin.zcash.ui.design.component.ZashiButton
+import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.screen.exchangerate.SecondaryCard
-import co.electriccoin.zcash.ui.screen.exchangerate.ZashiButton
-import co.electriccoin.zcash.ui.screen.exchangerate.ZashiButtonDefaults
 
 @Suppress("LongMethod")
 @Composable
@@ -55,13 +56,13 @@ fun StyledExchangeOptIn(
                     Spacer(modifier = Modifier.height(22.dp))
                     Text(
                         text = stringResource(R.string.exchange_rate_opt_in_title),
-                        color = ZcashTheme.zashiColors.textTertiary,
+                        color = ZashiColors.Text.textTertiary,
                         fontSize = 14.sp,
                     )
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
                         text = stringResource(R.string.exchange_rate_opt_in_subtitle),
-                        color = ZcashTheme.zashiColors.textPrimary,
+                        color = ZashiColors.Text.textPrimary,
                         fontSize = 16.sp,
                         style = ZcashTheme.extendedTypography.restoringTopAppBarStyle,
                     )
@@ -74,7 +75,7 @@ fun StyledExchangeOptIn(
                     Icon(
                         painter = painterResource(R.drawable.ic_exchange_rate_unavailable_dialog_close),
                         contentDescription = "",
-                        tint = ZcashTheme.zashiColors.defaultFg
+                        tint = ZashiColors.HintTooltips.defaultFg
                     )
                 }
             }
@@ -85,7 +86,7 @@ fun StyledExchangeOptIn(
                         .fillMaxWidth()
                         .padding(end = 20.dp),
                 onClick = state.onPrimaryClick,
-                colors = ZashiButtonDefaults.tertiaryButtonColors(),
+                colors = ZashiButtonDefaults.tertiaryColors(),
                 text = stringResource(R.string.exchange_rate_opt_in_primary_btn),
             ) { scope ->
                 Text(

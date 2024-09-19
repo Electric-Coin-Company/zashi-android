@@ -1,10 +1,9 @@
-package co.electriccoin.zcash.ui.screen.exchangerate
+package co.electriccoin.zcash.ui.design.component
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -14,11 +13,11 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.selection.LocalTextSelectionColors
 import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -29,11 +28,13 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.takeOrElse
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
+import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.stringRes
 
@@ -43,7 +44,7 @@ fun ZashiTextField(
     state: TextFieldState,
     modifier: Modifier = Modifier,
     readOnly: Boolean = false,
-    textStyle: TextStyle = LocalTextStyle.current,
+    textStyle: TextStyle = ZashiTypography.textMd.copy(fontWeight = FontWeight.Medium),
     label: @Composable (() -> Unit)? = null,
     placeholder: @Composable (() -> Unit)? = null,
     leadingIcon: @Composable (() -> Unit)? = null,
@@ -59,7 +60,7 @@ fun ZashiTextField(
     minLines: Int = 1,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     shape: Shape = ZashiTextFieldDefaults.shape,
-    colors: TextFieldColors = ZashiTextFieldDefaults.colors()
+    colors: ZashiTextFieldColors = ZashiTextFieldDefaults.defaultColors()
 ) {
     TextFieldInternal(
         value = state.value.getValue(),
@@ -68,7 +69,7 @@ fun ZashiTextField(
             modifier then
                 Modifier.border(
                     width = 1.dp,
-                    color = ZcashTheme.zashiColors.stroke,
+                    color = colors.borderColor,
                     shape = ZashiTextFieldDefaults.shape
                 ),
         enabled = state.isEnabled,
@@ -90,7 +91,7 @@ fun ZashiTextField(
         minLines = minLines,
         interactionSource = interactionSource,
         shape = shape,
-        colors = colors,
+        colors = colors.toTextFieldColors(),
     )
 }
 
@@ -195,121 +196,82 @@ private val TextFieldColors.selectionColors: TextSelectionColors
     @Composable get() = textSelectionColors
 
 @Composable
-internal fun TextFieldColors.cursorColor(isError: Boolean): State<Color> {
+private fun TextFieldColors.cursorColor(isError: Boolean): State<Color> {
     return rememberUpdatedState(if (isError) errorCursorColor else cursorColor)
 }
+
+@Immutable
+data class ZashiTextFieldColors(
+    val textColor: Color,
+    val hintColor: Color,
+    val borderColor: Color,
+    val containerColor: Color,
+)
+
+@Composable
+private fun ZashiTextFieldColors.toTextFieldColors() =
+    TextFieldDefaults.colors(
+        focusedTextColor = textColor,
+        unfocusedTextColor = textColor,
+        disabledTextColor = textColor,
+        errorTextColor = Color.Unspecified,
+        focusedContainerColor = containerColor,
+        unfocusedContainerColor = containerColor,
+        disabledContainerColor = containerColor,
+        errorContainerColor = Color.Unspecified,
+        cursorColor = Color.Unspecified,
+        errorCursorColor = Color.Unspecified,
+        selectionColors = null,
+        focusedIndicatorColor = Color.Transparent,
+        unfocusedIndicatorColor = Color.Transparent,
+        disabledIndicatorColor = Color.Transparent,
+        errorIndicatorColor = Color.Unspecified,
+        focusedLeadingIconColor = Color.Unspecified,
+        unfocusedLeadingIconColor = Color.Unspecified,
+        disabledLeadingIconColor = Color.Unspecified,
+        errorLeadingIconColor = Color.Unspecified,
+        focusedTrailingIconColor = Color.Unspecified,
+        unfocusedTrailingIconColor = Color.Unspecified,
+        disabledTrailingIconColor = Color.Unspecified,
+        errorTrailingIconColor = Color.Unspecified,
+        focusedLabelColor = Color.Unspecified,
+        unfocusedLabelColor = Color.Unspecified,
+        disabledLabelColor = Color.Unspecified,
+        errorLabelColor = Color.Unspecified,
+        focusedPlaceholderColor = hintColor,
+        unfocusedPlaceholderColor = hintColor,
+        disabledPlaceholderColor = hintColor,
+        errorPlaceholderColor = Color.Unspecified,
+        focusedSupportingTextColor = hintColor,
+        unfocusedSupportingTextColor = hintColor,
+        disabledSupportingTextColor = hintColor,
+        errorSupportingTextColor = Color.Unspecified,
+        focusedPrefixColor = Color.Unspecified,
+        unfocusedPrefixColor = Color.Unspecified,
+        disabledPrefixColor = Color.Unspecified,
+        errorPrefixColor = Color.Unspecified,
+        focusedSuffixColor = Color.Unspecified,
+        unfocusedSuffixColor = Color.Unspecified,
+        disabledSuffixColor = Color.Unspecified,
+        errorSuffixColor = Color.Unspecified,
+    )
 
 object ZashiTextFieldDefaults {
     val shape: Shape
         get() = RoundedCornerShape(8.dp)
 
-    @Suppress("LongParameterList")
     @Composable
-    fun colors(
-        focusedTextColor: Color = ZcashTheme.zashiColors.textPrimary,
-        unfocusedTextColor: Color = ZcashTheme.zashiColors.textPrimary,
-        disabledTextColor: Color = ZcashTheme.zashiColors.textPrimary,
-        errorTextColor: Color = Color.Unspecified,
-        focusedContainerColor: Color =
-            if (isSystemInDarkTheme()) {
-                ZcashTheme.zashiColors.bgSecondary
-            } else {
-                ZcashTheme.zashiColors.bgPrimary
-            },
-        unfocusedContainerColor: Color =
-            if (isSystemInDarkTheme()) {
-                ZcashTheme.zashiColors.bgSecondary
-            } else {
-                ZcashTheme.zashiColors.bgPrimary
-            },
-        disabledContainerColor: Color =
-            if (isSystemInDarkTheme()) {
-                ZcashTheme.zashiColors.bgSecondary
-            } else {
-                ZcashTheme.zashiColors.bgPrimary
-            },
-        errorContainerColor: Color = Color.Unspecified,
-        cursorColor: Color = Color.Unspecified,
-        errorCursorColor: Color = Color.Unspecified,
-        selectionColors: TextSelectionColors? = null,
-        focusedIndicatorColor: Color = Color.Transparent,
-        unfocusedIndicatorColor: Color = Color.Transparent,
-        disabledIndicatorColor: Color = Color.Transparent,
-        errorIndicatorColor: Color = Color.Unspecified,
-        focusedLeadingIconColor: Color = Color.Unspecified,
-        unfocusedLeadingIconColor: Color = Color.Unspecified,
-        disabledLeadingIconColor: Color = Color.Unspecified,
-        errorLeadingIconColor: Color = Color.Unspecified,
-        focusedTrailingIconColor: Color = Color.Unspecified,
-        unfocusedTrailingIconColor: Color = Color.Unspecified,
-        disabledTrailingIconColor: Color = Color.Unspecified,
-        errorTrailingIconColor: Color = Color.Unspecified,
-        focusedLabelColor: Color = Color.Unspecified,
-        unfocusedLabelColor: Color = Color.Unspecified,
-        disabledLabelColor: Color = Color.Unspecified,
-        errorLabelColor: Color = Color.Unspecified,
-        focusedPlaceholderColor: Color = ZcashTheme.zashiColors.textSupport,
-        unfocusedPlaceholderColor: Color = ZcashTheme.zashiColors.textSupport,
-        disabledPlaceholderColor: Color = ZcashTheme.zashiColors.textSupport,
-        errorPlaceholderColor: Color = Color.Unspecified,
-        focusedSupportingTextColor: Color = ZcashTheme.zashiColors.textSupport,
-        unfocusedSupportingTextColor: Color = ZcashTheme.zashiColors.textSupport,
-        disabledSupportingTextColor: Color = ZcashTheme.zashiColors.textSupport,
-        errorSupportingTextColor: Color = Color.Unspecified,
-        focusedPrefixColor: Color = Color.Unspecified,
-        unfocusedPrefixColor: Color = Color.Unspecified,
-        disabledPrefixColor: Color = Color.Unspecified,
-        errorPrefixColor: Color = Color.Unspecified,
-        focusedSuffixColor: Color = Color.Unspecified,
-        unfocusedSuffixColor: Color = Color.Unspecified,
-        disabledSuffixColor: Color = Color.Unspecified,
-        errorSuffixColor: Color = Color.Unspecified,
-    ): TextFieldColors =
-        TextFieldDefaults.colors(
-            focusedTextColor = focusedTextColor,
-            unfocusedTextColor = unfocusedTextColor,
-            disabledTextColor = disabledTextColor,
-            errorTextColor = errorTextColor,
-            focusedContainerColor = focusedContainerColor,
-            unfocusedContainerColor = unfocusedContainerColor,
-            disabledContainerColor = disabledContainerColor,
-            errorContainerColor = errorContainerColor,
-            cursorColor = cursorColor,
-            errorCursorColor = errorCursorColor,
-            selectionColors = selectionColors,
-            focusedIndicatorColor = focusedIndicatorColor,
-            unfocusedIndicatorColor = unfocusedIndicatorColor,
-            disabledIndicatorColor = disabledIndicatorColor,
-            errorIndicatorColor = errorIndicatorColor,
-            focusedLeadingIconColor = focusedLeadingIconColor,
-            unfocusedLeadingIconColor = unfocusedLeadingIconColor,
-            disabledLeadingIconColor = disabledLeadingIconColor,
-            errorLeadingIconColor = errorLeadingIconColor,
-            focusedTrailingIconColor = focusedTrailingIconColor,
-            unfocusedTrailingIconColor = unfocusedTrailingIconColor,
-            disabledTrailingIconColor = disabledTrailingIconColor,
-            errorTrailingIconColor = errorTrailingIconColor,
-            focusedLabelColor = focusedLabelColor,
-            unfocusedLabelColor = unfocusedLabelColor,
-            disabledLabelColor = disabledLabelColor,
-            errorLabelColor = errorLabelColor,
-            focusedPlaceholderColor = focusedPlaceholderColor,
-            unfocusedPlaceholderColor = unfocusedPlaceholderColor,
-            disabledPlaceholderColor = disabledPlaceholderColor,
-            errorPlaceholderColor = errorPlaceholderColor,
-            focusedSupportingTextColor = focusedSupportingTextColor,
-            unfocusedSupportingTextColor = unfocusedSupportingTextColor,
-            disabledSupportingTextColor = disabledSupportingTextColor,
-            errorSupportingTextColor = errorSupportingTextColor,
-            focusedPrefixColor = focusedPrefixColor,
-            unfocusedPrefixColor = unfocusedPrefixColor,
-            disabledPrefixColor = disabledPrefixColor,
-            errorPrefixColor = errorPrefixColor,
-            focusedSuffixColor = focusedSuffixColor,
-            unfocusedSuffixColor = unfocusedSuffixColor,
-            disabledSuffixColor = disabledSuffixColor,
-            errorSuffixColor = errorSuffixColor,
-        )
+    fun defaultColors(
+        textColor: Color = ZashiColors.Inputs.Default.text,
+        hintColor: Color = ZashiColors.Inputs.Default.hint,
+        borderColor: Color = ZashiColors.Inputs.Default.stroke,
+        containerColor: Color = ZashiColors.Inputs.Default.bg
+    ) = ZashiTextFieldColors(
+        textColor = textColor,
+        hintColor = hintColor,
+        borderColor = borderColor,
+        containerColor = containerColor
+    )
 }
 
 @Suppress("UnusedPrivateMember")

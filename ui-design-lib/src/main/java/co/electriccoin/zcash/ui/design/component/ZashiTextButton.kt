@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.exchangerate
+package co.electriccoin.zcash.ui.design.component
 
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -9,14 +9,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 
 @Composable
-internal fun ZashiTextButton(
+fun ZashiTextButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    colors: ButtonColors = ZashiTextButtonDefaults.textButtonColors(),
+    colors: ButtonColors = ZashiTextButtonDefaults.colors(),
     content: @Composable RowScope.() -> Unit
 ) {
     TextButton(
@@ -31,9 +31,9 @@ internal fun ZashiTextButton(
 
 object ZashiTextButtonDefaults {
     @Composable
-    fun textButtonColors(
+    fun colors(
         containerColor: Color = Color.Unspecified,
-        contentColor: Color = ZcashTheme.zashiColors.btnTextFg,
+        contentColor: Color = ZashiColors.Text.textPrimary,
         disabledContainerColor: Color = Color.Unspecified,
         disabledContentColor: Color = Color.Unspecified,
     ): ButtonColors =

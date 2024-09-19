@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.exchangerate
+package co.electriccoin.zcash.ui.design.component
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -9,14 +9,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.util.stringRes
 
 @Composable
@@ -28,7 +27,7 @@ fun BottomBar(
         modifier = modifier,
         shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
         shadowElevation = 4.dp,
-        color = MaterialTheme.colorScheme.surface
+        color = ZashiColors.Surfaces.bgPrimary
     ) {
         Column {
             Spacer(modifier = Modifier.height(16.dp))

@@ -31,11 +31,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
+import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -81,8 +82,8 @@ fun RadioButton(
             Column {
                 Text(
                     text = state.text.getValue(),
-                    style = ZcashTheme.extendedTypography.radioButton,
-                    color = ZcashTheme.colors.textPrimary,
+                    style = ZashiTypography.textSm,
+                    color = ZashiColors.Text.textPrimary,
                     modifier =
                         Modifier.padding(
                             top = 14.dp,
@@ -95,9 +96,8 @@ fun RadioButton(
                 if (state.subtitle != null) {
                     Text(
                         text = state.subtitle.getValue(),
-                        style = ZcashTheme.extendedTypography.radioButton,
-                        fontWeight = FontWeight.Normal,
-                        color = ZcashTheme.zashiColors.textTertiary,
+                        style = ZashiTypography.textSm,
+                        color = ZashiColors.Text.textTertiary,
                         modifier =
                             Modifier.padding(
                                 bottom = 6.dp,

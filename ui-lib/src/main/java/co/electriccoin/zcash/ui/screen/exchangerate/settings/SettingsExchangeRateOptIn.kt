@@ -23,16 +23,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.BlankSurface
+import co.electriccoin.zcash.ui.design.component.ZashiButton
+import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
+import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.screen.exchangerate.BaseExchangeRateOptIn
 import co.electriccoin.zcash.ui.screen.exchangerate.SecondaryCard
-import co.electriccoin.zcash.ui.screen.exchangerate.ZashiButton
-import co.electriccoin.zcash.ui.screen.exchangerate.ZashiButtonDefaults
 
 @Composable
 fun SettingsExchangeRateOptIn(
@@ -54,8 +56,8 @@ fun SettingsExchangeRateOptIn(
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = stringResource(R.string.exchange_rate_opt_in_description_settings),
-                color = ZcashTheme.zashiColors.textTertiary,
-                fontSize = 14.sp,
+                style = ZashiTypography.textSm,
+                color = ZashiColors.Text.textTertiary,
             )
             Spacer(modifier = Modifier.height(24.dp))
             Option(
@@ -82,7 +84,7 @@ fun SettingsExchangeRateOptIn(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = { onSaveClick(isOptInSelected) },
                 enabled = !isButtonDisabled,
-                colors = ZashiButtonDefaults.primaryButtonColors()
+                colors = ZashiButtonDefaults.primaryColors()
             )
         }
     )
@@ -120,15 +122,15 @@ private fun Option(
             ) {
                 Text(
                     text = title,
-                    color = ZcashTheme.zashiColors.textPrimary,
-                    fontSize = 16.sp,
-                    style = ZcashTheme.extendedTypography.restoringTopAppBarStyle,
+                    style = ZashiTypography.textSm,
+                    color = ZashiColors.Text.textPrimary,
+                    fontWeight = FontWeight.SemiBold,
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
                     text = subtitle,
-                    color = ZcashTheme.zashiColors.textTertiary,
-                    fontSize = 14.sp,
+                    style = ZashiTypography.textSm,
+                    color = ZashiColors.Text.textTertiary,
                 )
             }
             Image(

@@ -21,10 +21,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
+import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.orDark
 
@@ -70,8 +71,9 @@ fun ZashiSettingsListItem(
         content = {
             Text(
                 text = text,
-                style = ZcashTheme.typography.primary.titleSmall.copy(fontWeight = FontWeight.SemiBold),
-                fontSize = 16.sp
+                style = ZashiTypography.textMd,
+                fontWeight = FontWeight.SemiBold,
+                color = ZashiColors.Text.textPrimary
             )
         },
         trailing = trailing,
