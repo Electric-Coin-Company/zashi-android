@@ -13,6 +13,9 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 - The Message text field on the Send Form screen has been updated to provide the Return key on the software keyboard 
   and make auto-capitalization on the beginning of every sentence or new line. 
 
+### Fixed
+- `EmailUtils.newMailActivityIntent` has been updated to produce an `Intent` that more e-mail clients can understand
+
 ## [1.2 (731)] - 2024-09-16
 
 ### Changed
