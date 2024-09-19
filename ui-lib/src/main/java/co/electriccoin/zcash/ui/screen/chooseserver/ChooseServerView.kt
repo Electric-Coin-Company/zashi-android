@@ -51,7 +51,6 @@ import co.electriccoin.zcash.ui.design.R.drawable
 import co.electriccoin.zcash.ui.design.component.AlertDialogState
 import co.electriccoin.zcash.ui.design.component.AppAlertDialog
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
-import co.electriccoin.zcash.ui.design.component.ZashiBottomBar
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.design.component.LottieProgress
@@ -62,6 +61,7 @@ import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.component.TopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.component.ZashiBadge
+import co.electriccoin.zcash.ui.design.component.ZashiBottomBar
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiHorizontalDivider
 import co.electriccoin.zcash.ui.design.component.ZashiTextField
