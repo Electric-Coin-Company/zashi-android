@@ -6,6 +6,8 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+## [1.2 (735)] - 2024-09-20
+
 ### Added
 - All app's error dialogs now have a new Report error button that opens and prefills users' email clients
 
