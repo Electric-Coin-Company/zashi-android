@@ -11,15 +11,14 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [1.2 (735)] - 2024-09-20
 
-### Added
-- All app's error dialogs now have a new Report error button that opens and prefills users' email clients
+### Added:
+- All Zashi's error dialogs now have a Report button that prefills the error stack trace in a selected email client.
 
-### Changed
-- The Message text field on the Send Form screen has been updated to provide the Return key on the software keyboard
-  and make auto-capitalization on the beginning of every sentence or new line.
+### Changed:
+- The Message input field on the Send screen has been updated to provide a Return key on the software keyboard, and make auto-capitalization at the beginning of every sentence or a new line.
 
-### Fixed
-- `EmailUtils.newMailActivityIntent` has been updated to produce an `Intent` that more e-mail clients can understand
+### Fixed:
+- We fixed the Send Feedback feature and made it compatible with more e-mail clients.
 
 ## [1.2 (731)] - 2024-09-16
 
