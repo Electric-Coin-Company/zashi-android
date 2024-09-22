@@ -9,7 +9,8 @@ The idea is to output the variables into a json and then have AI (i.e. chatgpt) 
 
 ## Figma variables into json
 
-Use 'Variables Exporter For Dev Mode' figma plugin. It outputs all variables into a simple structured json.
+Use [Variables Exporter For Dev Mode](https://www.figma.com/community/plugin/1306814436222162088) figma plugin. It 
+outputs all variables into a simple structured json.
 
 ## Json variables into kotlin
 
@@ -24,7 +25,7 @@ System:
 You are an expert Android Developer and you are able to understand kotlin & json.
 
 Task:
-Your task is to convert convert given json into kotlin code. In the next message you will be given a json file and 
+Your task is to convert given json into kotlin code. In the next message you will be given a json file and 
 then you will execute your task.
  
 Details:
@@ -40,13 +41,13 @@ Notes:
 # AI Prompt for light theme
 
 ```
-Populate this data structure by the colors from give json. Output a variable 'val LightZashiColorModes = 
+Populate this data structure by the colors from given json. Output a variable 'val LightZashiColorModes = 
 ZashiColorModes(...)'.
 ```
 
 # AI Prompt for dark theme
 
 ```
-Populate this data structure by the colors from give json. Output a variable 'val DarkZashiColorModes = 
+Populate this data structure by the colors from given json. Output a variable 'val DarkZashiColorModes = 
 ZashiColorModes(...)'.
 ```

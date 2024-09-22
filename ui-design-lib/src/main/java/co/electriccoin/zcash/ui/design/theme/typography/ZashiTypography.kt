@@ -9,4 +9,5 @@ val ZashiTypography: ZashiTypographyInternal
     @Composable get() = LocalZashiTypography.current
 
 @Suppress("CompositionLocalAllowlist")
-internal val LocalZashiTypography = staticCompositionLocalOf<ZashiTypographyInternal> { error("no colors specified") }
+internal val LocalZashiTypography =
+    staticCompositionLocalOf<ZashiTypographyInternal> { error("no typography specified") }
