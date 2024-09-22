@@ -9,6 +9,9 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+### Changed
+- Send screen redesigned
+
 ## [1.2 (735)] - 2024-09-20
 
 ### Added:
