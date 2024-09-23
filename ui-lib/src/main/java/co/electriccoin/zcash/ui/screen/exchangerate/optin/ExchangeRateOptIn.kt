@@ -14,16 +14,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.BlankSurface
+import co.electriccoin.zcash.ui.design.component.ZashiButton
+import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
+import co.electriccoin.zcash.ui.design.component.ZashiTextButton
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
+import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.screen.exchangerate.BaseExchangeRateOptIn
-import co.electriccoin.zcash.ui.screen.exchangerate.ZashiButton
-import co.electriccoin.zcash.ui.screen.exchangerate.ZashiButtonDefaults
-import co.electriccoin.zcash.ui.screen.exchangerate.ZashiTextButton
 
 @Composable
 fun ExchangeRateOptIn(
@@ -36,7 +39,7 @@ fun ExchangeRateOptIn(
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = stringResource(R.string.exchange_rate_opt_in_description),
-                color = ZcashTheme.zashiColors.textTertiary,
+                color = ZashiColors.Text.textTertiary,
                 fontSize = 14.sp,
             )
             Spacer(modifier = Modifier.height(24.dp))
@@ -59,13 +62,17 @@ fun ExchangeRateOptIn(
                 modifier = Modifier.fillMaxWidth(),
                 text = stringResource(R.string.exchange_rate_opt_in_enable),
                 onClick = onEnabledClick,
-                colors = ZashiButtonDefaults.primaryButtonColors()
+                colors = ZashiButtonDefaults.primaryColors()
             )
             ZashiTextButton(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = onDismiss,
             ) {
-                Text(text = stringResource(R.string.exchange_rate_opt_in_skip))
+                Text(
+                    text = stringResource(R.string.exchange_rate_opt_in_skip),
+                    style = ZashiTypography.textMd,
+                    fontWeight = FontWeight.SemiBold
+                )
             }
         }
     )
@@ -89,15 +96,15 @@ private fun InfoItem(
         ) {
             Text(
                 text = title,
-                color = ZcashTheme.zashiColors.textPrimary,
-                fontSize = 16.sp,
-                style = ZcashTheme.extendedTypography.restoringTopAppBarStyle,
+                style = ZashiTypography.textSm,
+                color = ZashiColors.Text.textPrimary,
+                fontWeight = FontWeight.SemiBold
             )
             Spacer(modifier = Modifier.height(2.dp))
             Text(
                 text = subtitle,
-                color = ZcashTheme.zashiColors.textTertiary,
-                fontSize = 14.sp,
+                style = ZashiTypography.textSm,
+                color = ZashiColors.Text.textTertiary,
             )
         }
         Spacer(modifier = Modifier.weight(1f))

@@ -14,7 +14,6 @@ import androidx.compose.material.icons.outlined.Cancel
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -33,11 +32,13 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
+import co.electriccoin.zcash.ui.design.component.ZashiHorizontalDivider
 import co.electriccoin.zcash.ui.design.component.ZashiSettingsListItem
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.orDark
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -80,13 +81,13 @@ fun Settings(
                     icon = R.drawable.ic_advanced_settings orDark R.drawable.ic_advanced_settings_dark,
                     onClick = state.onAdvancedSettingsClick
                 )
-                HorizontalDivider(color = ZcashTheme.zashiColors.divider)
+                ZashiHorizontalDivider()
                 ZashiSettingsListItem(
                     text = stringResource(id = R.string.settings_about_us),
                     icon = R.drawable.ic_settings_info orDark R.drawable.ic_settings_info_dark,
                     onClick = state.onAboutUsClick
                 )
-                HorizontalDivider(color = ZcashTheme.zashiColors.divider)
+                ZashiHorizontalDivider()
                 ZashiSettingsListItem(
                     text = stringResource(id = R.string.settings_feedback),
                     icon = R.drawable.ic_settings_feedback orDark R.drawable.ic_settings_feedback_dark,
@@ -104,7 +105,7 @@ fun Settings(
                 Text(
                     modifier = Modifier.align(CenterHorizontally),
                     text = state.version.getValue(),
-                    color = ZcashTheme.zashiColors.textTertiary
+                    color = ZashiColors.Text.textTertiary
                 )
                 Spacer(modifier = Modifier.height(20.dp))
             }

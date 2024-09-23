@@ -29,14 +29,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
+import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 
 @Composable
 internal fun StyledExchangeUnavailablePopup(
@@ -77,12 +77,12 @@ private fun PopupContent(onDismissRequest: () -> Unit) {
                 Modifier
                     .width(16.dp)
                     .height(8.dp)
-                    .background(ZcashTheme.zashiColors.surfacePrimary, TriangleShape)
+                    .background(ZashiColors.HintTooltips.surfacePrimary, TriangleShape)
         )
         Box(
             Modifier
                 .fillMaxWidth()
-                .background(ZcashTheme.zashiColors.surfacePrimary, RoundedCornerShape(8.dp))
+                .background(ZashiColors.HintTooltips.surfacePrimary, RoundedCornerShape(8.dp))
                 .padding(start = 12.dp, bottom = 12.dp),
         ) {
             Row {
@@ -91,19 +91,14 @@ private fun PopupContent(onDismissRequest: () -> Unit) {
                 ) {
                     Text(
                         modifier = Modifier.padding(top = 12.dp),
-                        color = ZcashTheme.zashiColors.textLight,
-                        fontSize = 16.sp,
-                        style = ZcashTheme.extendedTypography.restoringTopAppBarStyle,
+                        color = ZashiColors.Text.textLight,
+                        style = ZashiTypography.textMd,
                         text = stringResource(R.string.exchange_rate_unavailable_title)
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                     Text(
-                        color = ZcashTheme.zashiColors.textLightSupport,
-                        style =
-                            ZcashTheme.extendedTypography.restoringTopAppBarStyle.copy(
-                                fontWeight = FontWeight.Medium
-                            ),
-                        fontSize = 14.sp,
+                        color = ZashiColors.Text.textLightSupport,
+                        style = ZashiTypography.textSm,
                         text = stringResource(id = R.string.exchange_rate_unavailable_subtitle)
                     )
                 }
@@ -111,7 +106,7 @@ private fun PopupContent(onDismissRequest: () -> Unit) {
                     Icon(
                         painter = painterResource(R.drawable.ic_exchange_rate_unavailable_dialog_close),
                         contentDescription = "",
-                        tint = ZcashTheme.zashiColors.textLightSupport
+                        tint = ZashiColors.HintTooltips.defaultBg
                     )
                 }
             }

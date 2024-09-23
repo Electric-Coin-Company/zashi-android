@@ -25,10 +25,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
+import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 
 @Suppress("LongMethod")
 @Composable
@@ -56,13 +57,13 @@ internal fun BaseExchangeRateOptIn(
                 shape = RoundedCornerShape(12.dp),
                 colors =
                     ButtonDefaults.buttonColors(
-                        containerColor = ZcashTheme.zashiColors.btnPrimaryBgDisabled
+                        containerColor = ZashiColors.Btns.Tertiary.btnTertiaryBg
                     )
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.ic_exchange_rate_close),
                     contentDescription = "",
-                    colorFilter = ColorFilter.tint(ZcashTheme.zashiColors.btnTertiaryFg)
+                    colorFilter = ColorFilter.tint(ZashiColors.Btns.Tertiary.btnTertiaryFg)
                 )
             }
 
@@ -78,9 +79,9 @@ internal fun BaseExchangeRateOptIn(
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
                     text = "Currency Conversion",
-                    color = ZcashTheme.zashiColors.textPrimary,
-                    fontSize = 24.sp,
-                    style = ZcashTheme.extendedTypography.restoringTopAppBarStyle,
+                    color = ZashiColors.Text.textPrimary,
+                    style = ZashiTypography.header6,
+                    fontWeight = FontWeight.SemiBold
                 )
                 content()
 
@@ -91,13 +92,13 @@ internal fun BaseExchangeRateOptIn(
                     Image(
                         painter = painterResource(R.drawable.ic_exchange_rate_info),
                         contentDescription = "",
-                        colorFilter = ColorFilter.tint(ZcashTheme.zashiColors.textPrimary)
+                        colorFilter = ColorFilter.tint(ZashiColors.Text.textTertiary)
                     )
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(
                         text = stringResource(R.string.exchange_rate_opt_in_note),
-                        color = ZcashTheme.zashiColors.textTertiary,
-                        fontSize = 12.sp
+                        color = ZashiColors.Text.textTertiary,
+                        style = ZashiTypography.textXs
                     )
                 }
             }

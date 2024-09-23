@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.exchangerate
+package co.electriccoin.zcash.ui.design.component
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -14,20 +14,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.design.R
-import co.electriccoin.zcash.ui.design.component.BlankSurface
-import co.electriccoin.zcash.ui.design.component.ButtonState
-import co.electriccoin.zcash.ui.design.component.LottieProgress
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
+import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.getValue
 
 @Composable
-internal fun ZashiButton(
+fun ZashiButton(
     state: ButtonState,
     modifier: Modifier = Modifier,
-    colors: ZashiButtonColors = ZashiButtonDefaults.primaryButtonColors(),
+    colors: ZashiButtonColors = ZashiButtonDefaults.primaryColors(),
     content: @Composable RowScope.(ZashiButtonScope) -> Unit = ZashiButtonDefaults.content
 ) {
     ZashiButton(
@@ -43,20 +43,24 @@ internal fun ZashiButton(
 
 @Suppress("LongParameterList")
 @Composable
-internal fun ZashiButton(
+fun ZashiButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     isLoading: Boolean = false,
-    colors: ZashiButtonColors = ZashiButtonDefaults.primaryButtonColors(),
+    colors: ZashiButtonColors = ZashiButtonDefaults.primaryColors(),
     content: @Composable RowScope.(ZashiButtonScope) -> Unit = ZashiButtonDefaults.content
 ) {
     val scope =
         object : ZashiButtonScope {
             @Composable
             override fun Text() {
-                Text(text = text)
+                Text(
+                    text = text,
+                    style = ZashiTypography.textMd,
+                    fontWeight = FontWeight.SemiBold
+                )
             }
 
             @Composable
@@ -104,11 +108,11 @@ object ZashiButtonDefaults {
         }
 
     @Composable
-    fun primaryButtonColors(
-        containerColor: Color = ZcashTheme.zashiColors.btnPrimaryBg,
-        contentColor: Color = ZcashTheme.zashiColors.btnPrimaryFg,
-        disabledContainerColor: Color = ZcashTheme.zashiColors.btnPrimaryBgDisabled,
-        disabledContentColor: Color = ZcashTheme.zashiColors.btnPrimaryFgDisabled,
+    fun primaryColors(
+        containerColor: Color = ZashiColors.Btns.Primary.btnPrimaryBg,
+        contentColor: Color = ZashiColors.Btns.Primary.btnPrimaryFg,
+        disabledContainerColor: Color = ZashiColors.Btns.Primary.btnPrimaryBgDisabled,
+        disabledContentColor: Color = ZashiColors.Btns.Primary.btnBoldFgDisabled,
     ) = ZashiButtonColors(
         containerColor = containerColor,
         contentColor = contentColor,
@@ -118,11 +122,11 @@ object ZashiButtonDefaults {
     )
 
     @Composable
-    fun tertiaryButtonColors(
-        containerColor: Color = ZcashTheme.zashiColors.btnTertiaryBg,
-        contentColor: Color = ZcashTheme.zashiColors.btnTertiaryFg,
-        disabledContainerColor: Color = Color.Unspecified,
-        disabledContentColor: Color = Color.Unspecified,
+    fun tertiaryColors(
+        containerColor: Color = ZashiColors.Btns.Tertiary.btnTertiaryBg,
+        contentColor: Color = ZashiColors.Btns.Tertiary.btnTertiaryFg,
+        disabledContainerColor: Color = ZashiColors.Btns.Tertiary.btnTertiaryBgDisabled,
+        disabledContentColor: Color = ZashiColors.Btns.Tertiary.btnTertiaryFgDisabled,
     ) = ZashiButtonColors(
         containerColor = containerColor,
         contentColor = contentColor,
@@ -132,12 +136,12 @@ object ZashiButtonDefaults {
     )
 
     @Composable
-    fun destroyButtonColors(
-        containerColor: Color = ZcashTheme.zashiColors.btnDestroyBg,
-        contentColor: Color = ZcashTheme.zashiColors.btnDestroyFg,
-        borderColor: Color = ZcashTheme.zashiColors.btnDestroyBorder,
-        disabledContainerColor: Color = Color.Unspecified,
-        disabledContentColor: Color = Color.Unspecified,
+    fun destructive1Colors(
+        containerColor: Color = ZashiColors.Btns.Destructive1.btnDestroy1Bg,
+        contentColor: Color = ZashiColors.Btns.Destructive1.btnDestroy1Fg,
+        borderColor: Color = ZashiColors.Btns.Destructive1.btnDestroy1Border,
+        disabledContainerColor: Color = ZashiColors.Btns.Destructive1.btnDestroy1BgDisabled,
+        disabledContentColor: Color = ZashiColors.Btns.Destructive1.btnDestroy1FgDisabled,
     ) = ZashiButtonColors(
         containerColor = containerColor,
         contentColor = contentColor,
@@ -188,7 +192,7 @@ private fun TertiaryPreview() =
             ZashiButton(
                 modifier = Modifier.fillMaxWidth(),
                 text = "Primary",
-                colors = ZashiButtonDefaults.tertiaryButtonColors(),
+                colors = ZashiButtonDefaults.tertiaryColors(),
                 onClick = {},
             )
         }
@@ -203,7 +207,7 @@ private fun DestroyPreview() =
             ZashiButton(
                 modifier = Modifier.fillMaxWidth(),
                 text = "Primary",
-                colors = ZashiButtonDefaults.destroyButtonColors(),
+                colors = ZashiButtonDefaults.destructive1Colors(),
                 onClick = {},
             )
         }

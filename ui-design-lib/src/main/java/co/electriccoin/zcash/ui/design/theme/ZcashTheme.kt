@@ -4,6 +4,11 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import co.electriccoin.zcash.ui.design.theme.colors.DarkZashiColorsInternal
+import co.electriccoin.zcash.ui.design.theme.colors.LightZashiColorsInternal
+import co.electriccoin.zcash.ui.design.theme.colors.LocalZashiColors
+import co.electriccoin.zcash.ui.design.theme.dimensions.LocalZashiDimensions
+import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensionsInternal
 import co.electriccoin.zcash.ui.design.theme.internal.DarkColorPalette
 import co.electriccoin.zcash.ui.design.theme.internal.DarkExtendedColorPalette
 import co.electriccoin.zcash.ui.design.theme.internal.ExtendedTypography
@@ -14,6 +19,8 @@ import co.electriccoin.zcash.ui.design.theme.internal.LocalExtendedTypography
 import co.electriccoin.zcash.ui.design.theme.internal.LocalTypographies
 import co.electriccoin.zcash.ui.design.theme.internal.PrimaryTypography
 import co.electriccoin.zcash.ui.design.theme.internal.Typography
+import co.electriccoin.zcash.ui.design.theme.typography.LocalZashiTypography
+import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypographyInternal
 
 /**
  * Commonly used top level app theme definition
@@ -29,11 +36,13 @@ fun ZcashTheme(
     val useDarkMode = forceDarkMode || isSystemInDarkTheme()
     val baseColors = if (useDarkMode) DarkColorPalette else LightColorPalette
     val extendedColors = if (useDarkMode) DarkExtendedColorPalette else LightExtendedColorPalette
-    val zashiColors = if (useDarkMode) DarkZashiColorPalette else LightZashiColorPalette
+    val zashiColors = if (useDarkMode) DarkZashiColorsInternal else LightZashiColorsInternal
 
     CompositionLocalProvider(
         LocalExtendedColors provides extendedColors,
         LocalZashiColors provides zashiColors,
+        LocalZashiDimensions provides ZashiDimensionsInternal,
+        LocalZashiTypography provides ZashiTypographyInternal
     ) {
         ProvideDimens {
             MaterialTheme(
@@ -64,8 +73,4 @@ object ZcashTheme {
     val dimens: Dimens
         @Composable
         get() = localDimens.current
-
-    val zashiColors: ZashiColors
-        @Composable
-        get() = LocalZashiColors.current
 }
