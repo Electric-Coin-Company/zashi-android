@@ -77,6 +77,12 @@ fun Settings(
                         ),
             ) {
                 ZashiSettingsListItem(
+                    text = stringResource(id = R.string.settings_address_book),
+                    icon = R.drawable.ic_settings_address_book,
+                    onClick = state.onAddressBookClick
+                )
+                ZashiHorizontalDivider()
+                ZashiSettingsListItem(
                     text = stringResource(id = R.string.settings_advanced_settings),
                     icon = R.drawable.ic_advanced_settings orDark R.drawable.ic_advanced_settings_dark,
                     onClick = state.onAdvancedSettingsClick
@@ -230,6 +236,7 @@ private fun PreviewSettings() {
                     onAdvancedSettingsClick = {},
                     onAboutUsClick = {},
                     onSendUsFeedbackClick = {},
+                    onAddressBookClick = {}
                 ),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )
@@ -251,6 +258,7 @@ private fun PreviewSettingsLoading() {
                     onAdvancedSettingsClick = {},
                     onAboutUsClick = {},
                     onSendUsFeedbackClick = {},
+                    onAddressBookClick = {}
                 ),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )

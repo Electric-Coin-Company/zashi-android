@@ -32,10 +32,12 @@ android {
                 setOf(
                     "src/main/res/ui/about",
                     "src/main/res/ui/account",
+                    "src/main/res/ui/address_book",
                     "src/main/res/ui/advanced_settings",
                     "src/main/res/ui/authentication",
                     "src/main/res/ui/balances",
                     "src/main/res/ui/common",
+                    "src/main/res/ui/contact",
                     "src/main/res/ui/delete_wallet",
                     "src/main/res/ui/export_data",
                     "src/main/res/ui/home",

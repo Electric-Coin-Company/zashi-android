@@ -6,6 +6,7 @@ data class SettingsState(
     val isLoading: Boolean,
     val version: StringResource,
     val settingsTroubleshootingState: SettingsTroubleshootingState?,
+    val onAddressBookClick: () -> Unit,
     val onBack: () -> Unit,
     val onAdvancedSettingsClick: () -> Unit,
     val onAboutUsClick: () -> Unit,

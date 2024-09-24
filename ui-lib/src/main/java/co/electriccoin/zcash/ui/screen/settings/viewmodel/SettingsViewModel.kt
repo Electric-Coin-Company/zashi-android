@@ -29,6 +29,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
+@Suppress("TooManyFunctions")
 class SettingsViewModel(
     observeConfiguration: ObserveConfigurationUseCase,
     private val standardPreferenceProvider: StandardPreferenceProvider,
@@ -100,6 +101,7 @@ class SettingsViewModel(
                 onAdvancedSettingsClick = ::onAdvancedSettingsClick,
                 onAboutUsClick = ::onAboutUsClick,
                 onSendUsFeedbackClick = ::onSendUsFeedbackClick,
+                onAddressBookClick = ::onAddressBookClick
             )
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT), null)
 
@@ -151,6 +153,10 @@ class SettingsViewModel(
         viewModelScope.launch {
             navigationCommand.emit(SUPPORT)
         }
+
+    private fun onAddressBookClick() {
+        // empty
+    }
 
     private fun booleanStateFlow(default: BooleanPreferenceDefault): StateFlow<Boolean?> =
         flow<Boolean?> {
