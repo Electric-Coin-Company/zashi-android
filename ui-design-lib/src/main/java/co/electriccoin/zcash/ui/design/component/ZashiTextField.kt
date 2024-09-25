@@ -45,6 +45,7 @@ fun ZashiTextField(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
+    innerModifier: Modifier = Modifier,
     error: String? = null,
     isEnabled: Boolean = true,
     readOnly: Boolean = false,
@@ -93,6 +94,7 @@ fun ZashiTextField(
         interactionSource = interactionSource,
         shape = shape,
         colors = colors,
+        innerModifier = innerModifier
     )
 }
 
@@ -101,6 +103,7 @@ fun ZashiTextField(
 fun ZashiTextField(
     state: TextFieldState,
     modifier: Modifier = Modifier,
+    innerModifier: Modifier = Modifier,
     readOnly: Boolean = false,
     textStyle: TextStyle = ZashiTypography.textMd.copy(fontWeight = FontWeight.Medium),
     label: @Composable (() -> Unit)? = null,
@@ -141,6 +144,7 @@ fun ZashiTextField(
         interactionSource = interactionSource,
         shape = shape,
         colors = colors,
+        innerModifier = innerModifier
     )
 }
 
@@ -167,6 +171,7 @@ private fun TextFieldInternal(
     shape: Shape,
     colors: ZashiTextFieldColors,
     modifier: Modifier = Modifier,
+    innerModifier: Modifier = Modifier,
 ) {
     val borderColor by colors.borderColor(state)
     val androidColors = colors.toTextFieldColors()
@@ -184,7 +189,7 @@ private fun TextFieldInternal(
             BasicTextField(
                 value = state.value.getValue(),
                 modifier =
-                    Modifier.fillMaxWidth() then
+                    innerModifier.fillMaxWidth() then
                         if (borderColor == Color.Unspecified) {
                             Modifier
                         } else {

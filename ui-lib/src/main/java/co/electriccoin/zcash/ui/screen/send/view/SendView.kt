@@ -645,6 +645,7 @@ fun SendFormAmountTextField(
                     )
                 },
                 modifier = Modifier.weight(1f),
+                innerModifier = Modifier.testTag(SendTag.SEND_AMOUNT_FIELD),
                 error = amountError,
                 placeholder = {
                     Text(
