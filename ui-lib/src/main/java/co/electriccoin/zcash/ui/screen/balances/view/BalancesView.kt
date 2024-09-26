@@ -326,8 +326,8 @@ private fun BalancesTopAppBar(
                 onClick = onSettings,
                 modifier = Modifier.testTag(CommonTag.SETTINGS_TOP_BAR_BUTTON)
             ) {
-                Icon(
-                    painter = painterResource(id = co.electriccoin.zcash.ui.design.R.drawable.hamburger_menu_icon),
+                Image(
+                    painter = painterResource(id = co.electriccoin.zcash.ui.design.R.drawable.ic_hamburger_menu),
                     contentDescription = stringResource(id = R.string.settings_menu_content_description)
                 )
             }
