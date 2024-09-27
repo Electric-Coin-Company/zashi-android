@@ -7,9 +7,7 @@ import androidx.lifecycle.viewModelScope
 import cash.z.ecc.android.bip39.Mnemonics
 import cash.z.ecc.android.sdk.ext.collectWith
 import cash.z.ecc.android.sdk.model.BlockHeight
-import cash.z.ecc.android.sdk.model.ZcashNetwork
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
-import cash.z.ecc.sdk.type.fromResources
 import co.electriccoin.zcash.ui.screen.restore.model.RestoreStage
 import co.electriccoin.zcash.ui.screen.restore.state.RestoreState
 import co.electriccoin.zcash.ui.screen.restore.state.WordList
@@ -80,7 +78,7 @@ class RestoreViewModel(application: Application, savedStateHandle: SavedStateHan
         run {
             val initialValue: BlockHeight? =
                 savedStateHandle.get<Long>(KEY_BIRTHDAY_HEIGHT)?.let {
-                    BlockHeight.new(ZcashNetwork.fromResources(application), it)
+                    BlockHeight.new(it)
                 }
             MutableStateFlow(initialValue)
         }
