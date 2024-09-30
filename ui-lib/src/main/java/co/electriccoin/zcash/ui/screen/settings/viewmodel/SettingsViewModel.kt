@@ -6,6 +6,7 @@ import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.preference.StandardPreferenceProvider
 import co.electriccoin.zcash.preference.model.entry.BooleanPreferenceDefault
 import co.electriccoin.zcash.ui.NavigationTargets.ABOUT
+import co.electriccoin.zcash.ui.NavigationTargets.ADDRESS_BOOK
 import co.electriccoin.zcash.ui.NavigationTargets.ADVANCED_SETTINGS
 import co.electriccoin.zcash.ui.NavigationTargets.SUPPORT
 import co.electriccoin.zcash.ui.R
@@ -155,7 +156,9 @@ class SettingsViewModel(
         }
 
     private fun onAddressBookClick() {
-        // empty
+        viewModelScope.launch {
+            navigationCommand.emit(ADDRESS_BOOK)
+        }
     }
 
     private fun booleanStateFlow(default: BooleanPreferenceDefault): StateFlow<Boolean?> =

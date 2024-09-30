@@ -4,6 +4,7 @@ import co.electriccoin.zcash.ui.common.usecase.GetPersistableWalletUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSelectedEndpointUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSynchronizerUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTransparentAddressUseCase
+import co.electriccoin.zcash.ui.common.usecase.ObserveAddressBookContactsUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveConfigurationUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveFastestServersUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedEndpointUseCase
@@ -29,4 +30,5 @@ val useCaseModule =
         singleOf(::ObserveConfigurationUseCase)
         singleOf(::RescanBlockchainUseCase)
         singleOf(::GetTransparentAddressUseCase)
+        singleOf(::ObserveAddressBookContactsUseCase)
     }
