@@ -159,7 +159,7 @@ private fun SendFormTransparentAddressPreview() {
 
 // TODO [#1260]: Cover Send screens UI with tests
 // TODO [#1260]: https://github.com/Electric-Coin-Company/zashi-android/issues/1260
-
+@Suppress("LongParameterList")
 @Composable
 fun Send(
     balanceState: BalanceState,
@@ -263,6 +263,7 @@ private fun SendTopAppBar(
     )
 }
 
+@Suppress("LongParameterList")
 @Composable
 private fun SendMainContent(
     balanceState: BalanceState,
@@ -318,6 +319,7 @@ private fun SendMainContent(
 // TODO [#1257]: Send.Form TextFields not persisted on a configuration change when the underlying ViewPager is on the
 //  Balances page
 // TODO [#1257]: https://github.com/Electric-Coin-Company/zashi-android/issues/1257
+@Suppress("LongParameterList", "LongMethod")
 @Composable
 private fun SendForm(
     balanceState: BalanceState,
@@ -480,6 +482,7 @@ fun SendButton(
     )
 }
 
+@Suppress("LongMethod")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SendFormAddressTextField(
@@ -575,6 +578,7 @@ fun SendFormAddressTextField(
     }
 }
 
+@Suppress("LongParameterList", "LongMethod")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SendFormAmountTextField(
@@ -669,11 +673,7 @@ fun SendFormAmountTextField(
                             focusManager.clearFocus(true)
                         },
                         onNext = {
-                            if (exchangeRateState is ExchangeRateState.Data) {
-                                focusManager.moveFocus(FocusDirection.Right)
-                            } else {
-                                focusManager.moveFocus(FocusDirection.Down)
-                            }
+                            focusManager.moveFocus(FocusDirection.Down)
                         }
                     ),
                 leadingIcon = {
@@ -752,6 +752,7 @@ fun SendFormAmountTextField(
     }
 }
 
+@Suppress("LongMethod")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SendFormMemoTextField(
@@ -786,6 +787,7 @@ fun SendFormMemoTextField(
                 } else {
                     ""
                 },
+            error = if (memoState is MemoState.Correct) null else "",
             onValueChange = {
                 setMemoState(MemoState.new(it))
             },

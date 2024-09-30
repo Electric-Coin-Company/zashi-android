@@ -39,13 +39,11 @@ complexity:
     ignoreAnnotated:
       - 'Preview'
       - 'PreviewScreens'
-      - 'Composable'
   LongParameterList:
     active: true
     ignoreAnnotated:
       - 'Preview'
       - 'PreviewScreens'
-      - 'Composable'
 
 Compose:
   ModifierMissing:

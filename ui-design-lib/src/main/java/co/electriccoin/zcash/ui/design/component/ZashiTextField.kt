@@ -148,6 +148,7 @@ fun ZashiTextField(
     )
 }
 
+@Suppress("LongParameterList", "LongMethod")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TextFieldInternal(
@@ -239,7 +240,7 @@ private fun TextFieldInternal(
                 }
             )
 
-            if (state.error != null) {
+            if (state.error != null && state.error.getValue().isNotEmpty()) {
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
                     text = state.error.getValue(),
@@ -344,6 +345,7 @@ object ZashiTextFieldDefaults {
     val shape: Shape
         get() = RoundedCornerShape(8.dp)
 
+    @Suppress("LongParameterList")
     @Composable
     fun defaultColors(
         textColor: Color = ZashiColors.Inputs.Filled.text,
