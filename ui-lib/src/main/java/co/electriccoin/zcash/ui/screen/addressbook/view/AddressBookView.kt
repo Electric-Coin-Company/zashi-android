@@ -19,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -206,7 +207,11 @@ private fun AddContactButton(
         modifier = modifier,
         state = state
     ) { scope ->
-        Image(painter = painterResource(id = R.drawable.ic_address_book_plus), contentDescription = "")
+        Image(
+            painter = painterResource(id = R.drawable.ic_address_book_plus),
+            colorFilter = ColorFilter.tint(ZashiColors.Btns.Primary.btnPrimaryFg),
+            contentDescription = ""
+        )
         Spacer(modifier = Modifier.width(8.dp))
         scope.Text()
         Spacer(modifier = Modifier.width(6.dp))
