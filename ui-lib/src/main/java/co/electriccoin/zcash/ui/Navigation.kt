@@ -314,18 +314,18 @@ private fun MainActivity.NavigationHome(
             navController.navigateJustOnce(SEND_CONFIRMATION)
         },
         sendArguments =
-        SendArguments(
-            recipientAddress =
-            backStack.savedStateHandle.get<String>(SEND_SCAN_RECIPIENT_ADDRESS)?.let {
-                Json.decodeFromString<SerializableAddress>(it).toRecipient()
+            SendArguments(
+                recipientAddress =
+                    backStack.savedStateHandle.get<String>(SEND_SCAN_RECIPIENT_ADDRESS)?.let {
+                        Json.decodeFromString<SerializableAddress>(it).toRecipient()
+                    },
+                clearForm = backStack.savedStateHandle.get<Boolean>(MULTIPLE_SUBMISSION_CLEAR_FORM) ?: false
+            ).also {
+                // Remove Send screen arguments passed from the Scan or MultipleSubmissionFailure screens if
+                // some exist after we use them
+                backStack.savedStateHandle.remove<String>(SEND_SCAN_RECIPIENT_ADDRESS)
+                backStack.savedStateHandle.remove<Boolean>(MULTIPLE_SUBMISSION_CLEAR_FORM)
             },
-            clearForm = backStack.savedStateHandle.get<Boolean>(MULTIPLE_SUBMISSION_CLEAR_FORM) ?: false
-        ).also {
-            // Remove Send screen arguments passed from the Scan or MultipleSubmissionFailure screens if
-            // some exist after we use them
-            backStack.savedStateHandle.remove<String>(SEND_SCAN_RECIPIENT_ADDRESS)
-            backStack.savedStateHandle.remove<Boolean>(MULTIPLE_SUBMISSION_CLEAR_FORM)
-        },
     )
 
     val isEnoughSpace by storageCheckViewModel.isEnoughSpace.collectAsStateWithLifecycle()

@@ -8,9 +8,16 @@ import kotlinx.coroutines.flow.update
 interface AddressBookRepository {
     val contacts: StateFlow<List<AddressBookContact>>
 
-    suspend fun saveContact(name: String, address: String)
+    suspend fun saveContact(
+        name: String,
+        address: String
+    )
 
-    suspend fun updateContact(contact: AddressBookContact, name: String, address: String)
+    suspend fun updateContact(
+        contact: AddressBookContact,
+        name: String,
+        address: String
+    )
 
     suspend fun deleteContact(contact: AddressBookContact)
 
@@ -20,11 +27,18 @@ interface AddressBookRepository {
 class AddressBookRepositoryImpl : AddressBookRepository {
     override val contacts = MutableStateFlow(emptyList<AddressBookContact>())
 
-    override suspend fun saveContact(name: String, address: String) {
+    override suspend fun saveContact(
+        name: String,
+        address: String
+    ) {
         contacts.update { it + AddressBookContact(name = name.trim(), address = address.trim()) }
     }
 
-    override suspend fun updateContact(contact: AddressBookContact, name: String, address: String) {
+    override suspend fun updateContact(
+        contact: AddressBookContact,
+        name: String,
+        address: String
+    ) {
         contacts.update {
             it.toMutableList()
                 .apply {

@@ -45,12 +45,12 @@ fun ZashiSettingsListItem(
 ) {
     ZashiSettingsListItem(
         state =
-        ZashiSettingsListItemState(
-            text = stringRes(text),
-            subtitle = subtitle?.let { stringRes(it) },
-            isEnabled = isEnabled,
-            onClick = onClick
-        ),
+            ZashiSettingsListItemState(
+                text = stringRes(text),
+                subtitle = subtitle?.let { stringRes(it) },
+                isEnabled = isEnabled,
+                onClick = onClick
+            ),
         icon = icon,
     )
 }
@@ -159,18 +159,18 @@ fun ZashiSettingsListItem(
 ) {
     Row(
         modifier =
-        Modifier
-            .clip(RoundedCornerShape(12.dp)) then
-            if (onClick != null) {
-                Modifier.clickable(
-                    indication = rememberRipple(),
-                    interactionSource = remember { MutableInteractionSource() },
-                    onClick = onClick,
-                    role = Role.Button,
-                )
-            } else {
-                Modifier
-            } then Modifier.padding(contentPadding),
+            Modifier
+                .clip(RoundedCornerShape(12.dp)) then
+                if (onClick != null) {
+                    Modifier.clickable(
+                        indication = rememberRipple(),
+                        interactionSource = remember { MutableInteractionSource() },
+                        onClick = onClick,
+                        role = Role.Button,
+                    )
+                } else {
+                    Modifier
+                } then Modifier.padding(contentPadding),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Spacer(modifier = Modifier.width(20.dp))

@@ -34,7 +34,6 @@ class UpdateContactViewModel(
     private val deleteContact: DeleteContactUseCase,
     private val getContact: GetContactUseCase
 ) : ViewModel() {
-
     private var contact: AddressBookContact? = null
     private val contactAddress = MutableStateFlow("")
     private val contactName = MutableStateFlow("")
@@ -44,54 +43,61 @@ class UpdateContactViewModel(
     private val isLoadingContact = MutableStateFlow(true)
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private val contactAddressState = contactAddress.mapLatest { address ->
-        TextFieldState(
-            value = stringRes(address),
-            error = if (address.isEmpty()) {
-                null
-            } else {
-                when (validateContactAddress(address = address, exclude = contact)) {
-                    ValidateContactAddressUseCase.Result.Invalid -> stringRes("")
-                    ValidateContactAddressUseCase.Result.NotUnique ->
-                        stringRes(R.string.contact_address_error_not_unique)
+    private val contactAddressState =
+        contactAddress.mapLatest { address ->
+            TextFieldState(
+                value = stringRes(address),
+                error =
+                    if (address.isEmpty()) {
+                        null
+                    } else {
+                        when (validateContactAddress(address = address, exclude = contact)) {
+                            ValidateContactAddressUseCase.Result.Invalid -> stringRes("")
+                            ValidateContactAddressUseCase.Result.NotUnique ->
+                                stringRes(R.string.contact_address_error_not_unique)
 
-                    ValidateContactAddressUseCase.Result.Valid -> null
+                            ValidateContactAddressUseCase.Result.Valid -> null
+                        }
+                    },
+                onValueChange = { newValue ->
+                    contactAddress.update { newValue }
                 }
-            },
-            onValueChange = { newValue ->
-                contactAddress.update { newValue }
-            }
-        )
-    }
+            )
+        }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private val contactNameState = contactName.mapLatest { name ->
-        TextFieldState(
-            value = stringRes(name),
-            error = if (name.isEmpty()) {
-                null
-            } else {
-                when (validateContactName(name = name, exclude = contact)) {
-                    ValidateContactNameUseCase.Result.TooLong -> stringRes(R.string.contact_name_error_too_long)
-                    ValidateContactNameUseCase.Result.NotUnique -> stringRes(R.string.contact_name_error_not_unique)
-                    ValidateContactNameUseCase.Result.Valid -> null
+    private val contactNameState =
+        contactName.mapLatest { name ->
+            TextFieldState(
+                value = stringRes(name),
+                error =
+                    if (name.isEmpty()) {
+                        null
+                    } else {
+                        when (validateContactName(name = name, exclude = contact)) {
+                            ValidateContactNameUseCase.Result.TooLong ->
+                                stringRes(R.string.contact_name_error_too_long)
+                            ValidateContactNameUseCase.Result.NotUnique ->
+                                stringRes(R.string.contact_name_error_not_unique)
+                            ValidateContactNameUseCase.Result.Valid -> null
+                        }
+                    },
+                onValueChange = { newValue ->
+                    contactName.update { newValue }
                 }
-            },
-            onValueChange = { newValue ->
-                contactName.update { newValue }
-            }
-        )
-    }
+            )
+        }
 
     private val updateButtonState =
         combine(contactAddressState, contactNameState, isUpdatingContact) { address, name, isUpdatingContact ->
             ButtonState(
                 text = stringRes(R.string.update_contact_primary_btn),
-                isEnabled = address.error == null &&
-                    name.error == null &&
-                    contactAddress.value.isNotEmpty() &&
-                    contactName.value.isNotEmpty() &&
-                    (contactName.value.trim() != contact?.name || contactAddress.value.trim() != contact?.address),
+                isEnabled =
+                    address.error == null &&
+                        name.error == null &&
+                        contactAddress.value.isNotEmpty() &&
+                        contactName.value.isNotEmpty() &&
+                        (contactName.value.trim() != contact?.name || contactAddress.value.trim() != contact?.address),
                 onClick = ::onUpdateButtonClick,
                 isLoading = isUpdatingContact
             )
@@ -144,25 +150,28 @@ class UpdateContactViewModel(
         }
     }
 
-    private fun onBack() = viewModelScope.launch {
-        backNavigationCommand.emit(Unit)
-    }
-
-    private fun onUpdateButtonClick() = viewModelScope.launch {
-        contact?.let {
-            isUpdatingContact.update { true }
-            updateContact(contact = it, name = contactName.value, address = contactAddress.value)
+    private fun onBack() =
+        viewModelScope.launch {
             backNavigationCommand.emit(Unit)
-            isUpdatingContact.update { false }
         }
-    }
 
-    private fun onDeleteButtonClick() = viewModelScope.launch {
-        contact?.let {
-            isDeletingContact.update { true }
-            deleteContact(it)
-            backNavigationCommand.emit(Unit)
-            isDeletingContact.update { false }
+    private fun onUpdateButtonClick() =
+        viewModelScope.launch {
+            contact?.let {
+                isUpdatingContact.update { true }
+                updateContact(contact = it, name = contactName.value, address = contactAddress.value)
+                backNavigationCommand.emit(Unit)
+                isUpdatingContact.update { false }
+            }
         }
-    }
+
+    private fun onDeleteButtonClick() =
+        viewModelScope.launch {
+            contact?.let {
+                isDeletingContact.update { true }
+                deleteContact(it)
+                backNavigationCommand.emit(Unit)
+                isDeletingContact.update { false }
+            }
+        }
 }

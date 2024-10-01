@@ -8,7 +8,10 @@ class ValidateContactAddressUseCase(
     private val addressBookRepository: AddressBookRepository,
     private val walletRepository: WalletRepository,
 ) {
-    suspend operator fun invoke(address: String, exclude: AddressBookContact? = null): Result {
+    suspend operator fun invoke(
+        address: String,
+        exclude: AddressBookContact? = null
+    ): Result {
         val result = walletRepository.getSynchronizer().validateAddress(address)
         return when {
             result.isNotValid -> Result.Invalid
@@ -24,7 +27,9 @@ class ValidateContactAddressUseCase(
 
     sealed interface Result {
         data object Valid : Result
+
         data object Invalid : Result
+
         data object NotUnique : Result
     }
 }

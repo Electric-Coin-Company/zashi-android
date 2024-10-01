@@ -27,49 +27,55 @@ class AddContactViewModel(
     private val validateContactName: ValidateContactNameUseCase,
     private val saveContact: SaveContactUseCase
 ) : ViewModel() {
-
     private val contactAddress = MutableStateFlow("")
     private val contactName = MutableStateFlow("")
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private val contactAddressState = contactAddress.mapLatest { address ->
-        TextFieldState(
-            value = stringRes(address),
-            error = if (address.isEmpty()) {
-                null
-            } else {
-                when (validateContactAddress(address)) {
-                    ValidateContactAddressUseCase.Result.Invalid -> stringRes("")
-                    ValidateContactAddressUseCase.Result.NotUnique ->
-                        stringRes(R.string.contact_address_error_not_unique)
+    private val contactAddressState =
+        contactAddress.mapLatest { address ->
+            TextFieldState(
+                value = stringRes(address),
+                error =
+                    if (address.isEmpty()) {
+                        null
+                    } else {
+                        when (validateContactAddress(address)) {
+                            ValidateContactAddressUseCase.Result.Invalid -> stringRes("")
+                            ValidateContactAddressUseCase.Result.NotUnique ->
+                                stringRes(R.string.contact_address_error_not_unique)
 
-                    ValidateContactAddressUseCase.Result.Valid -> null
+                            ValidateContactAddressUseCase.Result.Valid -> null
+                        }
+                    },
+                onValueChange = { newValue ->
+                    contactAddress.update { newValue }
                 }
-            },
-            onValueChange = { newValue ->
-                contactAddress.update { newValue }
-            }
-        )
-    }
+            )
+        }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private val contactNameState = contactName.mapLatest { name ->
-        TextFieldState(
-            value = stringRes(name),
-            error = if (name.isEmpty()) {
-                null
-            } else {
-                when (validateContactName(name)) {
-                    ValidateContactNameUseCase.Result.TooLong -> stringRes(R.string.contact_name_error_too_long)
-                    ValidateContactNameUseCase.Result.NotUnique -> stringRes(R.string.contact_name_error_not_unique)
-                    ValidateContactNameUseCase.Result.Valid -> null
+    private val contactNameState =
+        contactName.mapLatest { name ->
+            TextFieldState(
+                value = stringRes(name),
+                error =
+                    if (name.isEmpty()) {
+                        null
+                    } else {
+                        when (validateContactName(name)) {
+                            ValidateContactNameUseCase.Result.TooLong ->
+                                stringRes(R.string.contact_name_error_too_long)
+                            ValidateContactNameUseCase.Result.NotUnique ->
+                                stringRes(R.string.contact_name_error_not_unique)
+                            ValidateContactNameUseCase.Result.Valid ->
+                                null
+                        }
+                    },
+                onValueChange = { newValue ->
+                    contactName.update { newValue }
                 }
-            },
-            onValueChange = { newValue ->
-                contactName.update { newValue }
-            }
-        )
-    }
+            )
+        }
 
     private val isSavingContact = MutableStateFlow(false)
 
@@ -77,43 +83,47 @@ class AddContactViewModel(
         combine(contactAddressState, contactNameState, isSavingContact) { address, name, isSavingContact ->
             ButtonState(
                 text = stringRes(R.string.add_new_contact_primary_btn),
-                isEnabled = address.error == null &&
-                    name.error == null &&
-                    contactAddress.value.isNotEmpty() &&
-                    contactName.value.isNotEmpty(),
+                isEnabled =
+                    address.error == null &&
+                        name.error == null &&
+                        contactAddress.value.isNotEmpty() &&
+                        contactName.value.isNotEmpty(),
                 onClick = ::onSaveButtonClick,
                 isLoading = isSavingContact
             )
         }
 
-    val state = combine(contactAddressState, contactNameState, saveButtonState) { address, name, saveButton ->
-        ContactState(
-            title = stringRes(R.string.new_contact_title),
-            isLoading = false,
-            walletAddress = address,
-            contactName = name,
-            negativeButton = null,
-            positiveButton = saveButton,
-            onBack = ::onBack,
+    val state =
+        combine(contactAddressState, contactNameState, saveButtonState) { address, name, saveButton ->
+            ContactState(
+                title = stringRes(R.string.new_contact_title),
+                isLoading = false,
+                walletAddress = address,
+                contactName = name,
+                negativeButton = null,
+                positiveButton = saveButton,
+                onBack = ::onBack,
+            )
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+            initialValue = null
         )
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-        initialValue = null
-    )
 
     val navigationCommand = MutableSharedFlow<String>()
 
     val backNavigationCommand = MutableSharedFlow<Unit>()
 
-    private fun onBack() = viewModelScope.launch {
-        backNavigationCommand.emit(Unit)
-    }
+    private fun onBack() =
+        viewModelScope.launch {
+            backNavigationCommand.emit(Unit)
+        }
 
-    private fun onSaveButtonClick() = viewModelScope.launch {
-        isSavingContact.update { true }
-        saveContact(name = contactName.value, address = contactAddress.value)
-        backNavigationCommand.emit(Unit)
-        isSavingContact.update { false }
-    }
+    private fun onSaveButtonClick() =
+        viewModelScope.launch {
+            isSavingContact.update { true }
+            saveContact(name = contactName.value, address = contactAddress.value)
+            backNavigationCommand.emit(Unit)
+            isSavingContact.update { false }
+        }
 }

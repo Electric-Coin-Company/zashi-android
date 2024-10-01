@@ -6,8 +6,10 @@ import co.electriccoin.zcash.ui.common.repository.AddressBookRepository
 class ValidateContactNameUseCase(
     private val addressBookRepository: AddressBookRepository
 ) {
-
-    operator fun invoke(name: String, exclude: AddressBookContact? = null) = when {
+    operator fun invoke(
+        name: String,
+        exclude: AddressBookContact? = null
+    ) = when {
         name.length > CONTACT_NAME_MAX_LENGTH -> Result.TooLong
         addressBookRepository.contacts.value
             .filter {
@@ -20,7 +22,9 @@ class ValidateContactNameUseCase(
 
     sealed interface Result {
         data object Valid : Result
+
         data object TooLong : Result
+
         data object NotUnique : Result
     }
 }
