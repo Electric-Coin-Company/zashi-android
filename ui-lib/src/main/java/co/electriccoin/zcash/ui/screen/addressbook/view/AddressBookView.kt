@@ -45,9 +45,9 @@ import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.screen.addressbook.AddressBookTag
 import co.electriccoin.zcash.ui.screen.addressbook.model.AddressBookContactState
 import co.electriccoin.zcash.ui.screen.addressbook.model.AddressBookState
-import co.electriccoin.zcash.ui.screen.settings.SettingsTag
 
 @Suppress("LongMethod")
 @Composable
@@ -232,7 +232,7 @@ private fun AddressBookTopAppBar(
                 TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
                 TopAppBarSubTitleState.None -> null
             },
-        modifier = Modifier.testTag(SettingsTag.SETTINGS_TOP_APP_BAR),
+        modifier = Modifier.testTag(AddressBookTag.TOP_APP_BAR),
         showTitleLogo = true,
         navigationAction = {
             ZashiTopAppBarBackNavigation(onBack = onBack)
