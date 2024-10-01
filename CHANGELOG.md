@@ -8,6 +8,7 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ### Changed
 - Send screen redesigned
+- Confirmation screen redesigned
 
 ## [1.2 (739)] - 2024-09-27 
 
