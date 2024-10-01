@@ -38,7 +38,6 @@ fun ZashiBottomBar(
     }
 }
 
-@Suppress("UnusedPrivateMember")
 @PreviewScreens
 @Composable
 private fun BottomBarPreview() =

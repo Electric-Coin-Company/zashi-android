@@ -26,6 +26,7 @@ class SettingsViewTestSetup(
     private val onBackgroundSyncChangedCount = AtomicInteger(0)
     private val onKeepScreenOnChangedCount = AtomicInteger(0)
     private val onAnalyticsChangedCount = AtomicInteger(0)
+    private val onAddressBookCount = AtomicInteger(0)
 
     private val settingsTroubleshootingState =
         if (isTroubleshootingEnabled) {
@@ -91,6 +92,11 @@ class SettingsViewTestSetup(
         return onAnalyticsChangedCount.get()
     }
 
+    fun getAddressBookCount(): Int {
+        composeTestRule.waitForIdle()
+        return onAddressBookCount.get()
+    }
+
     init {
         composeTestRule.setContent {
             ZcashTheme {
@@ -112,6 +118,9 @@ class SettingsViewTestSetup(
                             onAboutUsClick = {
                                 onAboutCount.incrementAndGet()
                             },
+                            onAddressBookClick = {
+                                onAddressBookCount.incrementAndGet()
+                            }
                         ),
                     topAppBarSubTitleState = TopAppBarSubTitleState.None,
                 )

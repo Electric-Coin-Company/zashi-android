@@ -1,0 +1,7 @@
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="new_contact_title">Add New Contact</string>
+    <string name="saved_contact_title">Saved Contact</string>
+
+    <string name="contact_name_label">Contact Name</string>
+    <string name="contact_address_label">Wallet Address</string>
+</resources>

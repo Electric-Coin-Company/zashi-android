@@ -8,7 +8,7 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
 import co.electriccoin.zcash.ui.common.provider.GetZcashCurrencyProvider
 import co.electriccoin.zcash.ui.common.usecase.GetTransparentAddressUseCase
-import co.electriccoin.zcash.ui.design.component.ButtonState
+import co.electriccoin.zcash.ui.design.component.ZashiSettingsListItemState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.advancedsettings.AdvancedSettingsState
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -33,7 +33,7 @@ class AdvancedSettingsViewModel(
                 onCurrencyConversionClick = ::onCurrencyConversionClick,
                 onDeleteZashiClick = {},
                 coinbaseButton =
-                    ButtonState(
+                    ZashiSettingsListItemState(
                         // Set the wallet currency by app build is more future-proof, although we hide it from the UI
                         // in the Testnet build
                         text = stringRes(R.string.advanced_settings_coinbase, getZcashCurrency.getLocalizedName()),
