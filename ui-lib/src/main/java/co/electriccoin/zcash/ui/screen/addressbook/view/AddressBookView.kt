@@ -66,7 +66,11 @@ fun AddressBookView(
             }
 
             state.contacts.isEmpty() && !state.isLoading -> {
-                Empty(state = state, modifier = Modifier.fillMaxSize())
+                Empty(
+                    state = state, modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues)
+                )
             }
 
             else -> {
@@ -75,16 +79,16 @@ fun AddressBookView(
                 ) {
                     LazyColumn(
                         modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .weight(1f),
+                        Modifier
+                            .fillMaxWidth()
+                            .weight(1f),
                         contentPadding =
-                            PaddingValues(
-                                top = paddingValues.calculateTopPadding(),
-                                bottom = paddingValues.calculateBottomPadding(),
-                                start = 4.dp,
-                                end = 4.dp
-                            )
+                        PaddingValues(
+                            top = paddingValues.calculateTopPadding(),
+                            bottom = paddingValues.calculateBottomPadding(),
+                            start = 4.dp,
+                            end = 4.dp
+                        )
                     ) {
                         itemsIndexed(state.contacts) { index, item ->
                             ContactItem(state = item)
@@ -98,9 +102,9 @@ fun AddressBookView(
                         AddContactButton(
                             state.addButton,
                             modifier =
-                                Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 20.dp)
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 20.dp)
                         )
                     }
                 }
@@ -112,17 +116,17 @@ fun AddressBookView(
 @Composable
 private fun ContactItem(state: AddressBookContactState) {
     ZashiSettingsListItem(
-        leading = {
+        leading = { modifier ->
             Box(
-                Modifier.size(height = 50.dp, width = 54.dp)
+                modifier.size(height = 50.dp, width = 54.dp)
             ) {
                 Text(
                     modifier =
-                        Modifier
-                            .background(ZashiColors.Avatars.avatarBg, CircleShape)
-                            .size(40.dp)
-                            .padding(top = 10.dp)
-                            .align(Alignment.Center),
+                    Modifier
+                        .background(ZashiColors.Avatars.avatarBg, CircleShape)
+                        .size(40.dp)
+                        .padding(top = 10.dp)
+                        .align(Alignment.Center),
                     text = state.initials.getValue(),
                     style = ZashiTypography.textSm,
                     color = ZashiColors.Avatars.avatarTextFg,
@@ -132,17 +136,19 @@ private fun ContactItem(state: AddressBookContactState) {
                 if (state.isShielded) {
                     Image(
                         modifier =
-                            Modifier
-                                .align(Alignment.BottomEnd)
-                                .size(24.dp),
+                        Modifier
+                            .align(Alignment.BottomEnd)
+                            .size(24.dp),
                         painter = painterResource(id = R.drawable.ic_address_book_shielded),
                         contentDescription = ""
                     )
                 }
             }
         },
-        content = {
-            Column {
+        content = { modifier ->
+            Column(
+                modifier = modifier
+            ) {
                 Text(
                     text = state.name.getValue(),
                     style = ZashiTypography.textMd,
@@ -159,7 +165,13 @@ private fun ContactItem(state: AddressBookContactState) {
                 )
             }
         },
-        trailing = { ZashiSettingsListTrailingItem(isEnabled = true, contentDescription = state.name.getValue()) },
+        trailing = { modifier ->
+            ZashiSettingsListTrailingItem(
+                modifier = modifier,
+                isEnabled = true,
+                contentDescription = state.name.getValue()
+            )
+        },
         onClick = state.onClick,
         contentPadding = PaddingValues(top = 12.dp, bottom = if (state.isShielded) 8.dp else 12.dp)
     )
@@ -190,10 +202,10 @@ private fun Empty(
         AddContactButton(
             state.addButton,
             modifier =
-                Modifier
-                    .align(Alignment.BottomCenter)
-                    .fillMaxWidth()
-                    .padding(20.dp)
+            Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth()
+                .padding(20.dp)
         )
     }
 }
@@ -227,11 +239,11 @@ private fun AddressBookTopAppBar(
     ZashiSmallTopAppBar(
         title = stringResource(id = R.string.address_book_title),
         subtitle =
-            when (subTitleState) {
-                TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
-                TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
-                TopAppBarSubTitleState.None -> null
-            },
+        when (subTitleState) {
+            TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
+            TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
+            TopAppBarSubTitleState.None -> null
+        },
         modifier = Modifier.testTag(AddressBookTag.TOP_APP_BAR),
         showTitleLogo = true,
         navigationAction = {
@@ -246,25 +258,25 @@ private fun DataPreview() {
     ZcashTheme {
         AddressBookView(
             state =
-                AddressBookState(
-                    isLoading = false,
-                    version = stringRes("Version 1.2"),
-                    onBack = {},
-                    contacts =
-                        (1..10).map {
-                            AddressBookContactState(
-                                name = stringRes("Name Surname"),
-                                address = stringRes("3iY5ZSkRnevzSMu4hosasdasdasdasd12312312dasd9hw2"),
-                                initials = stringRes("NS"),
-                                isShielded = it % 2 == 0,
-                                onClick = {}
-                            )
-                        },
-                    addButton =
-                        ButtonState(
-                            text = stringRes("Add New Contact"),
-                        )
-                ),
+            AddressBookState(
+                isLoading = false,
+                version = stringRes("Version 1.2"),
+                onBack = {},
+                contacts =
+                (1..10).map {
+                    AddressBookContactState(
+                        name = stringRes("Name Surname"),
+                        address = stringRes("3iY5ZSkRnevzSMu4hosasdasdasdasd12312312dasd9hw2"),
+                        initials = stringRes("NS"),
+                        isShielded = it % 2 == 0,
+                        onClick = {}
+                    )
+                },
+                addButton =
+                ButtonState(
+                    text = stringRes("Add New Contact"),
+                )
+            ),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )
     }
@@ -276,16 +288,16 @@ private fun LoadingPreview() {
     ZcashTheme {
         AddressBookView(
             state =
-                AddressBookState(
-                    isLoading = true,
-                    version = stringRes("Version 1.2"),
-                    onBack = {},
-                    contacts = emptyList(),
-                    addButton =
-                        ButtonState(
-                            text = stringRes("Add New Contact"),
-                        )
-                ),
+            AddressBookState(
+                isLoading = true,
+                version = stringRes("Version 1.2"),
+                onBack = {},
+                contacts = emptyList(),
+                addButton =
+                ButtonState(
+                    text = stringRes("Add New Contact"),
+                )
+            ),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )
     }
@@ -297,16 +309,16 @@ private fun EmptyPreview() {
     ZcashTheme {
         AddressBookView(
             state =
-                AddressBookState(
-                    isLoading = false,
-                    version = stringRes("Version 1.2"),
-                    onBack = {},
-                    contacts = emptyList(),
-                    addButton =
-                        ButtonState(
-                            text = stringRes("Add New Contact"),
-                        )
-                ),
+            AddressBookState(
+                isLoading = false,
+                version = stringRes("Version 1.2"),
+                onBack = {},
+                contacts = emptyList(),
+                addButton =
+                ButtonState(
+                    text = stringRes("Add New Contact"),
+                )
+            ),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )
     }

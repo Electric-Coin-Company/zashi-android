@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationTargets.ADD_NEW_CONTACT
+import co.electriccoin.zcash.ui.NavigationTargets.UPDATE_CONTACT
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.AddressBookContact
 import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
@@ -49,8 +50,8 @@ class AddressBookViewModel(
                 initials = getContactInitials(contact),
                 isShielded = false,
                 name = stringRes(contact.name),
-                address = stringRes(contact.address.address),
-                onClick = ::onAddContactClick
+                address = stringRes(contact.address),
+                onClick = { onUpdateContactClick(contact) }
             )
 
         },
@@ -73,6 +74,10 @@ class AddressBookViewModel(
 
     private fun onBack() = viewModelScope.launch {
         backNavigationCommand.emit(Unit)
+    }
+
+    private fun onUpdateContactClick(contact: AddressBookContact) = viewModelScope.launch {
+        navigationCommand.emit("$UPDATE_CONTACT/${contact.id}")
     }
 
     private fun onAddContactClick() = viewModelScope.launch {

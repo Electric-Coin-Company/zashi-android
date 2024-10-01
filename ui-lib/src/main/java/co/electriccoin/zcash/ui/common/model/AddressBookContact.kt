@@ -1,8 +1,9 @@
 package co.electriccoin.zcash.ui.common.model
 
-import cash.z.ecc.android.sdk.model.WalletAddress
+import java.util.UUID
 
 data class AddressBookContact(
     val name: String,
-    val address: WalletAddress,
+    val address: String,
+    val id: String = UUID.randomUUID().toString(),
 )

@@ -1,34 +1,51 @@
 package co.electriccoin.zcash.ui.common.repository
 
-import androidx.compose.runtime.MutableState
-import cash.z.ecc.android.sdk.model.WalletAddress
 import co.electriccoin.zcash.ui.common.model.AddressBookContact
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.runBlocking
 
 interface AddressBookRepository {
     val contacts: StateFlow<List<AddressBookContact>>
 
     suspend fun saveContact(name: String, address: String)
+
+    suspend fun updateContact(contact: AddressBookContact, name: String, address: String)
+
+    suspend fun deleteContact(contact: AddressBookContact)
+
+    suspend fun getContact(id: String): AddressBookContact?
 }
 
-class AddressBookRepositoryImpl: AddressBookRepository {
-    override val contacts = MutableStateFlow(
-        listOf(
-            AddressBookContact(
-                name = "Name Surname",
-                address = runBlocking {
-                    WalletAddress.Unified.new(
-                        "u1l9f0l4348negsncgr9pxd9d3qaxagmqv3lnexcplmufpq7muffvfaue6ksevfvd7wrz7xrvn95rc5zjtn7ugkmgh5rnxswmcj30y0pw52pn0zjvy38rn2esfgve64rj5pcmazxgpyuj"
-                    )
-                }
-            )
-        )
-    )
+class AddressBookRepositoryImpl : AddressBookRepository {
+    override val contacts = MutableStateFlow(emptyList<AddressBookContact>())
 
     override suspend fun saveContact(name: String, address: String) {
-        contacts.update { it + AddressBookContact(name, WalletAddress.Unified.new(address)) }
+        contacts.update { it + AddressBookContact(name = name.trim(), address = address.trim()) }
     }
+
+    override suspend fun updateContact(contact: AddressBookContact, name: String, address: String) {
+        contacts.update {
+            it.toMutableList()
+                .apply {
+                    set(
+                        it.indexOf(contact),
+                        AddressBookContact(name = name.trim(), address = address.trim())
+                    )
+                }
+                .toList()
+        }
+    }
+
+    override suspend fun deleteContact(contact: AddressBookContact) {
+        contacts.update {
+            contacts.value.toMutableList()
+                .apply {
+                    remove(contact)
+                }
+                .toList()
+        }
+    }
+
+    override suspend fun getContact(id: String): AddressBookContact? = contacts.value.find { it.id == id }
 }

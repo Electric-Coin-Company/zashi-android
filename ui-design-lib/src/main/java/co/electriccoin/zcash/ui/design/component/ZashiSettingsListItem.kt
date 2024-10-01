@@ -4,6 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -44,12 +45,12 @@ fun ZashiSettingsListItem(
 ) {
     ZashiSettingsListItem(
         state =
-            ZashiSettingsListItemState(
-                text = stringRes(text),
-                subtitle = subtitle?.let { stringRes(it) },
-                isEnabled = isEnabled,
-                onClick = onClick
-            ),
+        ZashiSettingsListItemState(
+            text = stringRes(text),
+            subtitle = subtitle?.let { stringRes(it) },
+            isEnabled = isEnabled,
+            onClick = onClick
+        ),
         icon = icon,
     )
 }
@@ -60,14 +61,26 @@ fun ZashiSettingsListItem(
     @DrawableRes icon: Int
 ) {
     ZashiSettingsListItem(
-        leading = {
-            ZashiSettingsListLeadingItem(icon = icon, contentDescription = state.text.getValue())
+        leading = { modifier ->
+            ZashiSettingsListLeadingItem(
+                modifier = modifier,
+                icon = icon,
+                contentDescription = state.text.getValue()
+            )
         },
-        content = {
-            ZashiSettingsListContentItem(text = state.text.getValue(), subtitle = state.subtitle?.getValue())
+        content = { modifier ->
+            ZashiSettingsListContentItem(
+                modifier = modifier,
+                text = state.text.getValue(),
+                subtitle = state.subtitle?.getValue()
+            )
         },
-        trailing = {
-            ZashiSettingsListTrailingItem(isEnabled = state.isEnabled, contentDescription = state.text.getValue())
+        trailing = { modifier ->
+            ZashiSettingsListTrailingItem(
+                modifier = modifier,
+                isEnabled = state.isEnabled,
+                contentDescription = state.text.getValue()
+            )
         },
         onClick = state.onClick.takeIf { state.isEnabled }
     )
@@ -76,34 +89,49 @@ fun ZashiSettingsListItem(
 @Composable
 fun ZashiSettingsListLeadingItem(
     icon: Int,
-    contentDescription: String
+    contentDescription: String,
+    modifier: Modifier = Modifier,
 ) {
-    Image(
-        modifier = Modifier.size(40.dp),
-        painter = painterResource(icon),
-        contentDescription = contentDescription,
-    )
-}
-
-@Composable
-fun ZashiSettingsListTrailingItem(
-    isEnabled: Boolean,
-    contentDescription: String
-) {
-    if (isEnabled) {
+    Box(
+        modifier = modifier,
+        contentAlignment = Alignment.Center
+    ) {
         Image(
-            painter = painterResource(R.drawable.ic_chevron_right orDark R.drawable.ic_chevron_right_dark),
+            modifier = Modifier.size(40.dp),
+            painter = painterResource(icon),
             contentDescription = contentDescription,
         )
     }
 }
 
 @Composable
+fun ZashiSettingsListTrailingItem(
+    isEnabled: Boolean,
+    contentDescription: String,
+    modifier: Modifier = Modifier
+) {
+    if (isEnabled) {
+        Box(
+            modifier = modifier,
+            contentAlignment = Alignment.Center
+        ) {
+            Image(
+                painter = painterResource(R.drawable.ic_chevron_right orDark R.drawable.ic_chevron_right_dark),
+                contentDescription = contentDescription,
+            )
+        }
+    }
+}
+
+@Composable
 fun ZashiSettingsListContentItem(
     text: String,
-    subtitle: String?
+    subtitle: String?,
+    modifier: Modifier = Modifier,
 ) {
-    Column {
+    Column(
+        modifier = modifier
+    ) {
         Text(
             text = text,
             style = ZashiTypography.textMd,
@@ -123,34 +151,34 @@ fun ZashiSettingsListContentItem(
 
 @Composable
 fun ZashiSettingsListItem(
-    leading: @Composable () -> Unit,
-    content: @Composable () -> Unit,
-    trailing: @Composable () -> Unit,
+    leading: @Composable (Modifier) -> Unit,
+    content: @Composable (Modifier) -> Unit,
+    trailing: @Composable (Modifier) -> Unit,
     contentPadding: PaddingValues = PaddingValues(vertical = 12.dp),
     onClick: (() -> Unit)?
 ) {
     Row(
         modifier =
-            Modifier
-                .clip(RoundedCornerShape(12.dp)) then
-                if (onClick != null) {
-                    Modifier.clickable(
-                        indication = rememberRipple(),
-                        interactionSource = remember { MutableInteractionSource() },
-                        onClick = onClick,
-                        role = Role.Button,
-                    )
-                } else {
-                    Modifier
-                } then Modifier.padding(contentPadding),
+        Modifier
+            .clip(RoundedCornerShape(12.dp)) then
+            if (onClick != null) {
+                Modifier.clickable(
+                    indication = rememberRipple(),
+                    interactionSource = remember { MutableInteractionSource() },
+                    onClick = onClick,
+                    role = Role.Button,
+                )
+            } else {
+                Modifier
+            } then Modifier.padding(contentPadding),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Spacer(modifier = Modifier.width(20.dp))
-        leading()
+        leading(Modifier)
         Spacer(modifier = Modifier.width(16.dp))
-        content()
-        Spacer(modifier = Modifier.weight(1f))
-        trailing()
+        content(Modifier.weight(1f))
+        Spacer(modifier = Modifier.width(16.dp))
+        trailing(Modifier)
         Spacer(modifier = Modifier.width(20.dp))
     }
 }

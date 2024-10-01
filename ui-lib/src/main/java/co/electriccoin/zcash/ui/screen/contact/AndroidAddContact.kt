@@ -10,17 +10,15 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.di.koinActivityViewModel
 import co.electriccoin.zcash.ui.common.compose.LocalNavController
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
-import co.electriccoin.zcash.ui.screen.addressbook.view.AddressBookView
-import co.electriccoin.zcash.ui.screen.addressbook.viewmodel.AddressBookViewModel
 import co.electriccoin.zcash.ui.screen.contact.view.ContactView
-import co.electriccoin.zcash.ui.screen.contact.viewmodel.AddNewContactViewModel
+import co.electriccoin.zcash.ui.screen.contact.viewmodel.AddContactViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-internal fun WrapAddNewContact() {
+internal fun WrapAddContact() {
     val navController = LocalNavController.current
     val walletViewModel = koinActivityViewModel<WalletViewModel>()
-    val viewModel = koinViewModel<AddNewContactViewModel>()
+    val viewModel = koinViewModel<AddContactViewModel>()
     val walletState by walletViewModel.walletStateInformation.collectAsStateWithLifecycle()
     val state by viewModel.state.collectAsStateWithLifecycle()
 

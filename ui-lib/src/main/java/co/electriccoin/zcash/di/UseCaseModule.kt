@@ -1,5 +1,7 @@
 package co.electriccoin.zcash.di
 
+import co.electriccoin.zcash.ui.common.usecase.DeleteContactUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetContactUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetPersistableWalletUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSelectedEndpointUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSynchronizerUseCase
@@ -13,6 +15,7 @@ import co.electriccoin.zcash.ui.common.usecase.PersistEndpointUseCase
 import co.electriccoin.zcash.ui.common.usecase.RefreshFastestServersUseCase
 import co.electriccoin.zcash.ui.common.usecase.RescanBlockchainUseCase
 import co.electriccoin.zcash.ui.common.usecase.SaveContactUseCase
+import co.electriccoin.zcash.ui.common.usecase.UpdateContactUseCase
 import co.electriccoin.zcash.ui.common.usecase.ValidateContactAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.ValidateContactNameUseCase
 import co.electriccoin.zcash.ui.common.usecase.ValidateEndpointUseCase
@@ -37,4 +40,7 @@ val useCaseModule =
         singleOf(::ValidateContactAddressUseCase)
         singleOf(::ValidateContactNameUseCase)
         singleOf(::SaveContactUseCase)
+        singleOf(::UpdateContactUseCase)
+        singleOf(::DeleteContactUseCase)
+        singleOf(::GetContactUseCase)
     }

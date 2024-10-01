@@ -22,7 +22,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class AddNewContactViewModel(
+class AddContactViewModel(
     private val validateContactAddress: ValidateContactAddressUseCase,
     private val validateContactName: ValidateContactNameUseCase,
     private val saveContact: SaveContactUseCase
@@ -80,7 +80,7 @@ class AddNewContactViewModel(
                 isEnabled = address.error == null &&
                     name.error == null &&
                     contactAddress.value.isNotEmpty() &&
-                    contactAddress.value.isNotEmpty(),
+                    contactName.value.isNotEmpty(),
                 onClick = ::onSaveButtonClick,
                 isLoading = isSavingContact
             )
