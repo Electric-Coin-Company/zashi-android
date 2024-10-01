@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -143,11 +144,16 @@ private fun ReceiveTopAppBar(
         hamburgerMenuActions = {
             IconButton(
                 onClick = onSettings,
-                modifier = Modifier.testTag(CommonTag.SETTINGS_TOP_BAR_BUTTON)
+                modifier = Modifier
+                    .padding(horizontal = ZcashTheme.dimens.spacingDefault)
+                    // Making the size bigger by 3.dp so the rounded image corners are not stripped out
+                    .size(43.dp)
+                    .testTag(CommonTag.SETTINGS_TOP_BAR_BUTTON)
             ) {
                 Image(
-                    painter = painterResource(id = co.electriccoin.zcash.ui.design.R.drawable.ic_hamburger_menu),
-                    contentDescription = stringResource(id = R.string.settings_menu_content_description)
+                    painter = painterResource(id = co.electriccoin.zcash.ui.design.R.drawable.ic_hamburger_menu_with_bg),
+                    contentDescription = stringResource(id = R.string.settings_menu_content_description),
+                    modifier = Modifier.padding(all = 3.dp)
                 )
             }
         },
