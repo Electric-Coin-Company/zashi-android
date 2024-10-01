@@ -3,6 +3,7 @@ package co.electriccoin.zcash.ui.screen.addressbook.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
+import co.electriccoin.zcash.ui.NavigationTargets.ADD_NEW_CONTACT
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.AddressBookContact
 import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
@@ -22,8 +23,10 @@ import kotlinx.coroutines.launch
 
 class AddressBookViewModel(
     observeAddressBookContacts: ObserveAddressBookContactsUseCase,
-    private val getVersionInfo: GetVersionInfoProvider,
+    getVersionInfo: GetVersionInfoProvider,
 ) : ViewModel() {
+
+    private val versionInfo = getVersionInfo()
 
     val state = observeAddressBookContacts()
         .map { contacts -> createState(contacts = contacts, isLoading = false) }
@@ -37,8 +40,6 @@ class AddressBookViewModel(
     val navigationCommand = MutableSharedFlow<String>()
 
     val backNavigationCommand = MutableSharedFlow<Unit>()
-
-    private val versionInfo by lazy(LazyThreadSafetyMode.NONE) { getVersionInfo() }
 
     private fun createState(contacts: List<AddressBookContact>, isLoading: Boolean) = AddressBookState(
         version = stringRes(R.string.address_book_version, versionInfo.versionName),
@@ -74,6 +75,7 @@ class AddressBookViewModel(
         backNavigationCommand.emit(Unit)
     }
 
-    private fun onAddContactClick() {
+    private fun onAddContactClick() = viewModelScope.launch {
+        navigationCommand.emit(ADD_NEW_CONTACT)
     }
 }

@@ -26,6 +26,7 @@ import co.electriccoin.zcash.ui.NavigationArguments.SEND_CONFIRM_RECIPIENT_ADDRE
 import co.electriccoin.zcash.ui.NavigationArguments.SEND_SCAN_RECIPIENT_ADDRESS
 import co.electriccoin.zcash.ui.NavigationTargets.ABOUT
 import co.electriccoin.zcash.ui.NavigationTargets.ADDRESS_BOOK
+import co.electriccoin.zcash.ui.NavigationTargets.ADD_NEW_CONTACT
 import co.electriccoin.zcash.ui.NavigationTargets.ADVANCED_SETTINGS
 import co.electriccoin.zcash.ui.NavigationTargets.CHOOSE_SERVER
 import co.electriccoin.zcash.ui.NavigationTargets.DELETE_WALLET
@@ -54,6 +55,7 @@ import co.electriccoin.zcash.ui.screen.advancedsettings.WrapAdvancedSettings
 import co.electriccoin.zcash.ui.screen.authentication.AuthenticationUseCase
 import co.electriccoin.zcash.ui.screen.authentication.WrapAuthentication
 import co.electriccoin.zcash.ui.screen.chooseserver.WrapChooseServer
+import co.electriccoin.zcash.ui.screen.contact.WrapAddNewContact
 import co.electriccoin.zcash.ui.screen.deletewallet.WrapDeleteWallet
 import co.electriccoin.zcash.ui.screen.disconnected.WrapDisconnected
 import co.electriccoin.zcash.ui.screen.exchangerate.optin.AndroidExchangeRateOptIn
@@ -268,6 +270,9 @@ internal fun MainActivity.Navigation() {
         composable(ADDRESS_BOOK) {
             WrapAddressBook()
         }
+        composable(ADD_NEW_CONTACT) {
+            WrapAddNewContact()
+        }
     }
 }
 
@@ -455,4 +460,5 @@ object NavigationTargets {
     const val SUPPORT = "support"
     const val WHATS_NEW = "whats_new"
     const val ADDRESS_BOOK = "address_book"
+    const val ADD_NEW_CONTACT = "add_new_contact"
 }

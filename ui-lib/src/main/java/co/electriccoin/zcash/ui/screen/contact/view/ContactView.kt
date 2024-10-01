@@ -67,6 +67,13 @@ fun ContactView(
                 ZashiTextField(
                     modifier = Modifier.fillMaxWidth(),
                     state = state.walletAddress,
+                    placeholder = {
+                        Text(
+                            text = stringResource(id = R.string.contact_address_hint),
+                            style = ZashiTypography.textMd,
+                            color = ZashiColors.Inputs.Default.text
+                        )
+                    }
                 )
                 Spacer(modifier = Modifier.height(20.dp))
                 Text(
@@ -78,7 +85,14 @@ fun ContactView(
                 Spacer(modifier = Modifier.height(6.dp))
                 ZashiTextField(
                     modifier = Modifier.fillMaxWidth(),
-                    state = state.contactName
+                    state = state.contactName,
+                    placeholder = {
+                        Text(
+                            text = stringResource(id = R.string.contact_name_hint),
+                            style = ZashiTypography.textMd,
+                            color = ZashiColors.Inputs.Default.text
+                        )
+                    }
                 )
 
                 Spacer(modifier = Modifier.weight(1f))

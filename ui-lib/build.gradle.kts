@@ -33,6 +33,7 @@ android {
                     "src/main/res/ui/about",
                     "src/main/res/ui/account",
                     "src/main/res/ui/address_book",
+                    "src/main/res/ui/add_new_contact",
                     "src/main/res/ui/advanced_settings",
                     "src/main/res/ui/authentication",
                     "src/main/res/ui/balances",

@@ -4,5 +4,5 @@ import cash.z.ecc.android.sdk.model.WalletAddress
 
 data class AddressBookContact(
     val name: String,
-    val address: WalletAddress.Unified,
+    val address: WalletAddress,
 )

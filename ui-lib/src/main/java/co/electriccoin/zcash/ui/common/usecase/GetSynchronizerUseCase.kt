@@ -7,5 +7,5 @@ import kotlinx.coroutines.flow.first
 class GetSynchronizerUseCase(
     private val walletRepository: WalletRepository
 ) {
-    suspend operator fun invoke() = walletRepository.synchronizer.filterNotNull().first()
+    suspend operator fun invoke() = walletRepository.getSynchronizer()
 }

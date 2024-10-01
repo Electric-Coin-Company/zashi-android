@@ -2,8 +2,10 @@ package co.electriccoin.zcash.ui.common.usecase
 
 import co.electriccoin.zcash.ui.common.repository.AddressBookRepository
 
-class ObserveAddressBookContactsUseCase(
+class SaveContactUseCase(
     private val addressBookRepository: AddressBookRepository
 ) {
-    operator fun invoke() = addressBookRepository.contacts
+    suspend operator fun invoke(name: String, address: String) {
+        addressBookRepository.saveContact(name = name, address = address)
+    }
 }
