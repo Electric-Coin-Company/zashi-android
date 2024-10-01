@@ -689,17 +689,6 @@ private fun HistoryItemExpandedPart(
                 )
                 Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
             }
-        } else if (transaction.recipientAddressType == null ||
-            transaction.recipientAddressType == AddressType.Shielded
-        ) {
-            Text(
-                text = stringResource(id = R.string.account_history_item_no_message),
-                style = ZashiTypography.textSm,
-                color = ZashiColors.Text.textTertiary,
-                modifier = Modifier.fillMaxWidth(EXPANDED_TRANSACTION_WIDTH_RATIO)
-            )
-
-            Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
         }
 
         HistoryItemTransactionIdPart(transaction = transaction, onAction = onAction)
