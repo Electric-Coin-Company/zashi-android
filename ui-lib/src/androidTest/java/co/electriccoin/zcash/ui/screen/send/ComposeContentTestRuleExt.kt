@@ -2,6 +2,7 @@ package co.electriccoin.zcash.ui.screen.send
 
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
@@ -49,11 +50,8 @@ internal fun ComposeContentTestRule.setValidAmount() {
 }
 
 internal fun ComposeContentTestRule.setAmount(amount: String) {
-    onNodeWithText(
-        getStringResourceWithArgs(
-            R.string.send_amount_hint,
-            ZcashCurrency.fromResources(getAppContext()).name
-        )
+    onNode(
+        hasTestTag(SendTag.SEND_AMOUNT_FIELD)
     ).also {
         it.performTextClearance()
         it.performTextInput(amount)

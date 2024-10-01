@@ -34,7 +34,6 @@ import cash.z.ecc.android.sdk.model.MonetarySeparators
 import cash.z.ecc.android.sdk.model.SeedPhrase
 import cash.z.ecc.sdk.fixture.MemoFixture
 import cash.z.ecc.sdk.fixture.SeedPhraseFixture
-import cash.z.ecc.sdk.type.ZcashCurrency
 import co.electriccoin.zcash.spackle.FirebaseTestLabUtil
 import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.MainActivity
@@ -49,6 +48,7 @@ import co.electriccoin.zcash.ui.screen.home.HomeTag
 import co.electriccoin.zcash.ui.screen.restore.RestoreTag
 import co.electriccoin.zcash.ui.screen.restore.viewmodel.RestoreViewModel
 import co.electriccoin.zcash.ui.screen.securitywarning.view.SecurityScreenTag.ACKNOWLEDGE_CHECKBOX_TAG
+import co.electriccoin.zcash.ui.screen.send.SendTag
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -476,11 +476,8 @@ private fun sendZecScreenshots(
     // Screenshot: Empty form
     ScreenshotTest.takeScreenshot(tag, "Send 1")
 
-    composeTestRule.onNodeWithText(
-        resContext.getString(
-            R.string.send_amount_hint,
-            ZcashCurrency.fromResources(resContext).name
-        )
+    composeTestRule.onNode(
+        hasTestTag(SendTag.SEND_AMOUNT_FIELD)
     ).also {
         val separators = MonetarySeparators.current()
 
