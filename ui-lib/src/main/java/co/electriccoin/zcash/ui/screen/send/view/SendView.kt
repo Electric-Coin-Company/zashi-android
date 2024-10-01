@@ -571,7 +571,7 @@ fun SendFormAddressTextField(
             keyboardActions =
                 KeyboardActions(
                     onNext = {
-                        focusManager.moveFocus(FocusDirection.Down)
+                        focusManager.moveFocus(FocusDirection.Next)
                     }
                 ),
         )
