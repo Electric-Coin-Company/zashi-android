@@ -6,8 +6,14 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
-### Changed:
+### Changed
+- Send screen redesigned
 - History item redesigned
+
+## [1.2 (739)] - 2024-09-27 
+
+### Changed
+- Adopted snapshot Zcash SDK version 2.2.5, which brings fix for the incorrect check inside the `BlockHeight` component
 
 ## [1.2 (735)] - 2024-09-20
 

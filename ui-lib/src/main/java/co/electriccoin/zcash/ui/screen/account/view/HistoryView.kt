@@ -50,7 +50,6 @@ import cash.z.ecc.android.sdk.model.TransactionOverview
 import cash.z.ecc.android.sdk.model.TransactionRecipient
 import cash.z.ecc.android.sdk.model.TransactionState
 import cash.z.ecc.android.sdk.model.Zatoshi
-import cash.z.ecc.android.sdk.type.AddressType
 import cash.z.ecc.sdk.extension.DEFAULT_FEE
 import cash.z.ecc.sdk.extension.toZecStringAbbreviated
 import cash.z.ecc.sdk.extension.toZecStringFull
