@@ -29,7 +29,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalDensity
@@ -44,9 +43,6 @@ import cash.z.ecc.android.sdk.fixture.WalletAddressesFixture
 import cash.z.ecc.android.sdk.model.WalletAddress
 import cash.z.ecc.android.sdk.model.WalletAddresses
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.compose.BrightenScreen
-import co.electriccoin.zcash.ui.common.compose.DisableScreenTimeout
-import co.electriccoin.zcash.ui.common.compose.ScreenBrightnessState
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.common.test.CommonTag
@@ -68,11 +64,9 @@ import kotlin.math.roundToInt
 private fun ReceivePreview() =
     ZcashTheme(forceDarkMode = false) {
         Receive(
-            screenBrightnessState = ScreenBrightnessState.NORMAL,
             walletAddress = runBlocking { WalletAddressesFixture.new() },
             snackbarHostState = SnackbarHostState(),
             onSettings = {},
-            onAdjustBrightness = {},
             onAddrCopyToClipboard = {},
             onQrImageShare = {},
             versionInfo = VersionInfoFixture.new(),
@@ -85,11 +79,9 @@ private fun ReceivePreview() =
 private fun ReceiveDarkPreview() =
     ZcashTheme(forceDarkMode = true) {
         Receive(
-            screenBrightnessState = ScreenBrightnessState.NORMAL,
             walletAddress = runBlocking { WalletAddressesFixture.new() },
             snackbarHostState = SnackbarHostState(),
             onSettings = {},
-            onAdjustBrightness = {},
             onAddrCopyToClipboard = {},
             onQrImageShare = {},
             versionInfo = VersionInfoFixture.new(),
@@ -100,11 +92,9 @@ private fun ReceiveDarkPreview() =
 @Suppress("LongParameterList")
 @Composable
 fun Receive(
-    screenBrightnessState: ScreenBrightnessState,
     walletAddress: WalletAddresses?,
     snackbarHostState: SnackbarHostState,
     onSettings: () -> Unit,
-    onAdjustBrightness: (ScreenBrightnessState) -> Unit,
     onAddrCopyToClipboard: (String) -> Unit,
     onQrImageShare: (ImageBitmap) -> Unit,
     topAppBarSubTitleState: TopAppBarSubTitleState,
@@ -114,11 +104,7 @@ fun Receive(
         topBar = {
             ReceiveTopAppBar(
                 onSettings = onSettings,
-                onBrightness = {
-                    onAdjustBrightness(screenBrightnessState.getChange())
-                },
                 subTitleState = topAppBarSubTitleState,
-                versionInfo = versionInfo,
             )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -130,7 +116,6 @@ fun Receive(
                 walletAddresses = walletAddress,
                 onAddressCopyToClipboard = onAddrCopyToClipboard,
                 onQrImageShare = onQrImageShare,
-                screenBrightnessState = screenBrightnessState,
                 versionInfo = versionInfo,
                 modifier =
                     Modifier.padding(
@@ -145,9 +130,7 @@ fun Receive(
 @Composable
 private fun ReceiveTopAppBar(
     onSettings: () -> Unit,
-    onBrightness: () -> Unit,
     subTitleState: TopAppBarSubTitleState,
-    versionInfo: VersionInfo,
 ) {
     SmallTopAppBar(
         subTitle =
@@ -168,19 +151,6 @@ private fun ReceiveTopAppBar(
                 )
             }
         },
-        regularActions = {
-            if (versionInfo.isDebuggable) {
-                IconButton(
-                    onClick = onBrightness
-                ) {
-                    Image(
-                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_adjust_brightness),
-                        colorFilter = ColorFilter.tint(color = ZcashTheme.colors.secondaryColor),
-                        contentDescription = stringResource(R.string.receive_brightness_content_description),
-                    )
-                }
-            }
-        },
     )
 }
 
@@ -191,15 +161,9 @@ private fun ReceiveContents(
     walletAddresses: WalletAddresses,
     onAddressCopyToClipboard: (String) -> Unit,
     onQrImageShare: (ImageBitmap) -> Unit,
-    screenBrightnessState: ScreenBrightnessState,
     versionInfo: VersionInfo,
     modifier: Modifier = Modifier,
 ) {
-    if (screenBrightnessState == ScreenBrightnessState.FULL) {
-        BrightenScreen()
-        DisableScreenTimeout()
-    }
-
     val state by remember {
         derivedStateOf {
             listOfNotNull(

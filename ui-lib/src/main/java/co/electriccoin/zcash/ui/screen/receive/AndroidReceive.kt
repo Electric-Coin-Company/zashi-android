@@ -16,11 +16,9 @@ import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.spackle.getInternalCacheDirSuspend
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.LocalActivity
-import co.electriccoin.zcash.ui.common.compose.ScreenBrightnessState
 import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.receive.view.Receive
-import co.electriccoin.zcash.ui.screen.settings.viewmodel.ScreenBrightnessViewModel
 import co.electriccoin.zcash.ui.util.FileShareUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
@@ -36,10 +34,6 @@ internal fun WrapReceive(onSettings: () -> Unit) {
 
     val walletViewModel = koinActivityViewModel<WalletViewModel>()
 
-    val brightnessViewModel = koinActivityViewModel<ScreenBrightnessViewModel>()
-
-    val screenBrightnessState = brightnessViewModel.screenBrightnessState.collectAsStateWithLifecycle().value
-
     val walletAddresses = walletViewModel.addresses.collectAsStateWithLifecycle().value
 
     val walletState = walletViewModel.walletStateInformation.collectAsStateWithLifecycle().value
@@ -50,13 +44,6 @@ internal fun WrapReceive(onSettings: () -> Unit) {
     val versionInfo = VersionInfo.new(activity.applicationContext)
 
     Receive(
-        screenBrightnessState = screenBrightnessState,
-        onAdjustBrightness = {
-            when (it) {
-                ScreenBrightnessState.NORMAL -> brightnessViewModel.restoreBrightness()
-                ScreenBrightnessState.FULL -> brightnessViewModel.fullBrightness()
-            }
-        },
         onAddrCopyToClipboard = { address ->
             ClipboardManagerUtil.copyToClipboard(
                 activity.applicationContext,

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="receive_title">Receive</string>
-    <string name="receive_brightness_content_description">Adjust brightness</string>
     <string name="receive_unified_content_description">Unified Address QR code</string>
     <string name="receive_sapling_content_description">Sapling Address QR code</string>
     <string name="receive_transparent_content_description">Transparent Address QR code</string>
