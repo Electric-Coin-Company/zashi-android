@@ -436,7 +436,8 @@ private fun CustomServerRadioButton(
                 colors =
                     ZashiTextFieldDefaults.defaultColors(
                         containerColor = ZashiColors.Surfaces.bgPrimary,
-                        textColor = ZashiColors.Text.textPrimary
+                        textColor = ZashiColors.Text.textPrimary,
+                        borderColor = ZashiColors.Inputs.Default.stroke,
                     ) orDark
                         ZashiTextFieldDefaults.defaultColors(
                             containerColor = ZashiColors.Surfaces.bgSecondary,
