@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import cash.z.ecc.android.sdk.fixture.WalletAddressFixture
 import cash.z.ecc.android.sdk.model.FirstClassByteArray
 import cash.z.ecc.android.sdk.model.TransactionSubmitResult
+import cash.z.ecc.android.sdk.model.WalletAddress
 import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.sdk.extension.toZecStringFull
 import cash.z.ecc.sdk.fixture.MemoFixture
@@ -501,7 +502,11 @@ private fun SendConfirmationContent(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        if (zecSend.memo.value.isNotEmpty()) {
+        val isMemoFieldAvailable =
+            zecSend.destination !is WalletAddress.Transparent &&
+                zecSend.destination !is WalletAddress.Tex
+
+        if (zecSend.memo.value.isNotEmpty() || !isMemoFieldAvailable) {
             Text(
                 stringResource(R.string.send_confirmation_memo),
                 style = ZashiTypography.textSm,
@@ -517,18 +522,36 @@ private fun SendConfirmationContent(
                         .fillMaxWidth(),
                 colors =
                     ZashiTextFieldDefaults.defaultColors(
-                        disabledTextColor = ZashiColors.Inputs.Disabled.text,
+                        disabledTextColor = ZashiColors.Inputs.Filled.text,
                         disabledHintColor = ZashiColors.Inputs.Disabled.hint,
                         disabledBorderColor = Color.Unspecified,
                         disabledContainerColor = ZashiColors.Inputs.Disabled.bg,
                         disabledPlaceholderColor = ZashiColors.Inputs.Disabled.text,
                     ),
-                leadingIcon = {
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_confirmation_message_info),
-                        contentDescription = ""
-                    )
-                }
+                placeholder =
+                    if (isMemoFieldAvailable) {
+                        null
+                    } else {
+                        {
+                            Text(
+                                text = stringResource(R.string.send_transparent_memo),
+                                style = ZashiTypography.textSm,
+                                color = ZashiColors.Utility.Gray.utilityGray700
+                            )
+                        }
+                    },
+                leadingIcon =
+                    if (isMemoFieldAvailable) {
+                        null
+                    } else {
+                        {
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_confirmation_message_info),
+                                contentDescription = "",
+                                colorFilter = ColorFilter.tint(ZashiColors.Utility.Gray.utilityGray500)
+                            )
+                        }
+                    }
             )
 
             Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingUpLarge))
