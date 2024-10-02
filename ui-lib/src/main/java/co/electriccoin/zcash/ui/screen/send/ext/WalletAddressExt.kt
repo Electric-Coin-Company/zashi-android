@@ -12,8 +12,10 @@ import co.electriccoin.zcash.ui.common.model.SerializableAddress
 
 /**
  * How far into the address will be abbreviation look forwards and backwards.
+ *
+ * This value align with ZIP 316 specification.
  */
-internal const val ABBREVIATION_INDEX = 5
+internal const val ABBREVIATION_INDEX = 20
 
 @Composable
 @ReadOnlyComposable

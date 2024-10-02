@@ -32,13 +32,13 @@ class ReceiveViewTestSetup(
             ZcashTheme {
                 ZcashTheme {
                     Receive(
-                        walletAddress = walletAddresses,
+                        walletAddresses = walletAddresses,
                         snackbarHostState = SnackbarHostState(),
                         onSettings = {
                             onSettingsCount.getAndIncrement()
                         },
                         onAddrCopyToClipboard = {},
-                        onQrImageShare = {},
+                        onQrCode = {},
                         topAppBarSubTitleState = TopAppBarSubTitleState.None,
                         versionInfo = versionInfo,
                     )

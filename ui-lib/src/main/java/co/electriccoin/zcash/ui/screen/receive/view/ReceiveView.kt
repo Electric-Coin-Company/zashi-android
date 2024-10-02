@@ -1,11 +1,10 @@
 package co.electriccoin.zcash.ui.screen.receive.view
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,31 +12,26 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cash.z.ecc.android.sdk.fixture.WalletAddressesFixture
@@ -49,27 +43,25 @@ import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.common.test.CommonTag
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
-import co.electriccoin.zcash.ui.design.component.PagerTabs
-import co.electriccoin.zcash.ui.design.component.Reference
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
+import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensionsInternal
 import co.electriccoin.zcash.ui.fixture.VersionInfoFixture
-import co.electriccoin.zcash.ui.screen.receive.util.AndroidQrCodeImageGenerator
-import co.electriccoin.zcash.ui.screen.receive.util.JvmQrCodeGenerator
-import kotlinx.collections.immutable.toPersistentList
+import co.electriccoin.zcash.ui.screen.send.ext.abbreviated
 import kotlinx.coroutines.runBlocking
-import kotlin.math.roundToInt
 
 @Preview
 @Composable
 private fun ReceivePreview() =
     ZcashTheme(forceDarkMode = false) {
         Receive(
-            walletAddress = runBlocking { WalletAddressesFixture.new() },
+            walletAddresses = runBlocking { WalletAddressesFixture.new() },
             snackbarHostState = SnackbarHostState(),
             onSettings = {},
             onAddrCopyToClipboard = {},
-            onQrImageShare = {},
+            onQrCode = {},
+            onRequest = {},
             versionInfo = VersionInfoFixture.new(),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )
@@ -80,11 +72,12 @@ private fun ReceivePreview() =
 private fun ReceiveDarkPreview() =
     ZcashTheme(forceDarkMode = true) {
         Receive(
-            walletAddress = runBlocking { WalletAddressesFixture.new() },
+            walletAddresses = runBlocking { WalletAddressesFixture.new() },
             snackbarHostState = SnackbarHostState(),
             onSettings = {},
             onAddrCopyToClipboard = {},
-            onQrImageShare = {},
+            onQrCode = {},
+            onRequest = {},
             versionInfo = VersionInfoFixture.new(),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )
@@ -93,11 +86,12 @@ private fun ReceiveDarkPreview() =
 @Suppress("LongParameterList")
 @Composable
 fun Receive(
-    walletAddress: WalletAddresses?,
+    walletAddresses: WalletAddresses?,
     snackbarHostState: SnackbarHostState,
     onSettings: () -> Unit,
     onAddrCopyToClipboard: (String) -> Unit,
-    onQrImageShare: (ImageBitmap) -> Unit,
+    onQrCode: (WalletAddress) -> Unit,
+    onRequest: (WalletAddress) -> Unit,
     topAppBarSubTitleState: TopAppBarSubTitleState,
     versionInfo: VersionInfo,
 ) {
@@ -110,13 +104,14 @@ fun Receive(
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { paddingValues ->
-        if (null == walletAddress) {
+        if (null == walletAddresses) {
             CircularScreenProgressIndicator()
         } else {
             ReceiveContents(
-                walletAddresses = walletAddress,
+                walletAddresses = walletAddresses,
                 onAddressCopyToClipboard = onAddrCopyToClipboard,
-                onQrImageShare = onQrImageShare,
+                onQrCode = onQrCode,
+                onRequest = onRequest,
                 versionInfo = versionInfo,
                 modifier =
                     Modifier.padding(
@@ -160,202 +155,220 @@ private fun ReceiveTopAppBar(
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Suppress("LongParameterList")
 @Composable
 private fun ReceiveContents(
     walletAddresses: WalletAddresses,
     onAddressCopyToClipboard: (String) -> Unit,
-    onQrImageShare: (ImageBitmap) -> Unit,
+    onQrCode: (WalletAddress) -> Unit,
+    onRequest: (WalletAddress) -> Unit,
     versionInfo: VersionInfo,
     modifier: Modifier = Modifier,
 ) {
-    val state by remember {
-        derivedStateOf {
-            listOfNotNull(
-                walletAddresses.unified,
-                walletAddresses.transparent,
-            )
-        }
-    }
-
-    val pagerState = rememberPagerState { state.size }
-
     Column(
-        modifier = modifier,
+        modifier = modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()),
     ) {
         Spacer(Modifier.height(ZcashTheme.dimens.spacingDefault))
 
-        PagerTabs(
-            modifier =
-                Modifier
-                    .padding(horizontal = ZcashTheme.dimens.screenHorizontalSpacingRegular)
-                    .fillMaxWidth(),
-            pagerState = pagerState,
-            tabs =
-                state.mapNotNull {
-                    stringResource(
-                        when (it) {
-                            is WalletAddress.Unified -> R.string.receive_wallet_address_unified
-                            is WalletAddress.Sapling -> R.string.receive_wallet_address_sapling
-                            is WalletAddress.Transparent -> R.string.receive_wallet_address_transparent
-                            else -> return@mapNotNull null
-                        }
-                    )
-                }.toPersistentList(),
+        ShieldedAddressPanel(
+            walletAddress = walletAddresses.unified,
+            onAddressCopyToClipboard = onAddressCopyToClipboard,
+            onQrCode = onQrCode,
+            onRequest = onRequest,
         )
-        HorizontalPager(
-            modifier = Modifier.fillMaxSize(),
-            state = pagerState,
-            userScrollEnabled = false
-        ) { index ->
-            AddressPage(
-                walletAddresses = walletAddresses,
-                modifier = Modifier.fillMaxSize(),
-                walletAddress = state[index],
-                versionInfo = versionInfo,
+
+
+        if (versionInfo.isTestnet) {
+            Spacer(Modifier.height(ZcashTheme.dimens.spacingDefault))
+
+            SaplingAddressPanel(
+                walletAddress = walletAddresses.sapling,
                 onAddressCopyToClipboard = onAddressCopyToClipboard,
-                onQrImageShare = onQrImageShare,
+                onQrImage = onQrCode,
+                onRequest = onRequest,
             )
         }
+
+        Spacer(Modifier.height(ZcashTheme.dimens.spacingDefault))
+
+        TransparentAddressPanel(
+            walletAddress = walletAddresses.transparent,
+            onAddressCopyToClipboard = onAddressCopyToClipboard,
+            onQrImage = onQrCode,
+            onRequest = onRequest,
+        )
     }
 }
 
-@Suppress("LongMethod", "LongParameterList")
 @Composable
-private fun AddressPage(
-    walletAddresses: WalletAddresses,
+private fun ShieldedAddressPanel(
     walletAddress: WalletAddress,
-    versionInfo: VersionInfo,
     onAddressCopyToClipboard: (String) -> Unit,
-    onQrImageShare: (ImageBitmap) -> Unit,
+    onQrCode: (WalletAddress) -> Unit,
+    onRequest: (WalletAddress) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
         modifier =
-            modifier
-                .verticalScroll(rememberScrollState())
-                .padding(
-                    horizontal = ZcashTheme.dimens.screenHorizontalSpacingRegular,
-                    vertical = ZcashTheme.dimens.spacingDefault,
-                ),
+        modifier
+            .wrapContentHeight()
+            .padding(
+                horizontal = ZcashTheme.dimens.screenHorizontalSpacingRegular,
+                vertical = ZcashTheme.dimens.spacingDefault,
+            ),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        QrCode(walletAddress, onAddressCopyToClipboard, onQrImageShare)
+        Row(modifier = Modifier
+            .fillMaxWidth()
+            .padding(all = ZcashTheme.dimens.spacingDefault)
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_zec_round_full),
+                contentDescription = null
+            )
 
-        if (versionInfo.isTestnet && walletAddress is WalletAddress.Unified) {
-            QrCode(walletAddresses.sapling, onAddressCopyToClipboard, onQrImageShare)
-        }
-    }
-}
+            Spacer(Modifier.width(ZcashTheme.dimens.spacingDefault))
 
-@Composable
-@Suppress("LongMethod")
-private fun ColumnScope.QrCode(
-    walletAddress: WalletAddress,
-    onAddressCopyToClipboard: (String) -> Unit,
-    onQrImageShare: (ImageBitmap) -> Unit,
-) {
-    val sizePixels = with(LocalDensity.current) { DEFAULT_QR_CODE_SIZE.toPx() }.roundToInt()
-    val qrCodeImage =
-        remember {
-            qrCodeForAddress(
-                address = walletAddress.address,
-                size = sizePixels
+            Column {
+                Text(text = stringResource(id = R.string.receive_wallet_address_shielded))
+                Text(text = walletAddress.abbreviated())
+            }
+
+            Spacer(Modifier.width(ZcashTheme.dimens.spacingDefault))
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            Image(
+                painter = painterResource(id = R.drawable.ic_check_shielded_solid),
+                contentDescription = null
             )
         }
 
-    QrCode(
-        qrCodeImage = qrCodeImage,
-        onQrImageBitmapShare = onQrImageShare,
-        contentDescription =
-            when (walletAddress) {
-                is WalletAddress.Unified -> stringResource(R.string.receive_unified_content_description)
-                is WalletAddress.Sapling -> stringResource(R.string.receive_sapling_content_description)
-                is WalletAddress.Transparent -> stringResource(R.string.receive_transparent_content_description)
-                else -> ""
-            },
-        modifier =
-            Modifier
-                .align(Alignment.CenterHorizontally),
-    )
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
 
-    Text(
-        text = walletAddress.address,
-        style = ZcashTheme.extendedTypography.addressStyle,
-        color = ZcashTheme.colors.textDescription,
-        textAlign = TextAlign.Center,
-        modifier =
+        Row(
+            modifier =
             Modifier
-                .align(Alignment.CenterHorizontally)
-                .clip(RoundedCornerShape(ZcashTheme.dimens.regularRippleEffectCorner))
-                .clickable { onAddressCopyToClipboard(walletAddress.address) }
-                .padding(
-                    horizontal = ZcashTheme.dimens.spacingLarge,
-                    vertical = ZcashTheme.dimens.spacingSmall
+                .fillMaxWidth()
+                .background(
+                    ZashiColors.Utility.Purple.utilityPurple50,
+                    RoundedCornerShape(ZashiDimensionsInternal.Radius.radiusXl)
                 )
-                .fillMaxWidth(),
-    )
+                .padding(all = ZcashTheme.dimens.spacingDefault)
+        ) {
+            ReceiveIconButton(
+                containerColor = ZashiColors.Utility.Purple.utilityPurple100,
+                contentColor = ZashiColors.Utility.Purple.utilityPurple800,
+                iconPainter = painterResource(id = R.drawable.ic_copy_shielded),
+                onClick = { onAddressCopyToClipboard(walletAddress.address) },
+                text = stringResource(id = R.string.receive_copy),
+            )
 
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center
-    ) {
-        Reference(
-            text = stringResource(id = R.string.receive_copy),
-            onClick = { onAddressCopyToClipboard(walletAddress.address) },
-            textAlign = TextAlign.Center,
-            imageVector = ImageVector.vectorResource(R.drawable.copy),
-            imageContentDescription = null,
-            modifier =
-                Modifier
-                    .wrapContentSize()
-                    .padding(all = ZcashTheme.dimens.spacingDefault),
-        )
-        Reference(
-            text = stringResource(id = R.string.receive_share),
-            onClick = { onQrImageShare(qrCodeImage) },
-            textAlign = TextAlign.Center,
-            imageVector = ImageVector.vectorResource(R.drawable.share),
-            imageContentDescription = null,
-            modifier =
-                Modifier
-                    .wrapContentSize()
-                    .padding(all = ZcashTheme.dimens.spacingDefault),
-        )
+            Spacer(modifier = Modifier.width(ZcashTheme.dimens.spacingDefault))
+
+            IconButton(
+                onClick = { onQrCode(walletAddress) },
+                colors = IconButtonColors(
+                    containerColor = ZashiColors.Utility.Purple.utilityPurple50,
+                    contentColor = ZashiColors.Utility.Purple.utilityPurple50,
+                    disabledContentColor = Color.Unspecified,
+                    disabledContainerColor = Color.Unspecified,
+                ),
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_qr_code_shielded),
+                    contentDescription = stringResource(id = R.string.receive_qr_code)
+                )
+                Text(text = stringResource(id = R.string.receive_copy))
+            }
+            IconButton(
+                onClick = { onRequest(walletAddress) },
+                colors = IconButtonColors(
+                    containerColor = ZashiColors.Utility.Purple.utilityPurple50,
+                    contentColor = ZashiColors.Utility.Purple.utilityPurple50,
+                    disabledContentColor = Color.Unspecified,
+                    disabledContainerColor = Color.Unspecified,
+                ),
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_request_shielded),
+                    contentDescription = stringResource(id = R.string.receive_request)
+                )
+                Text(text = stringResource(id = R.string.receive_request))
+            }
+        }
     }
 }
 
-private fun qrCodeForAddress(
-    address: String,
-    size: Int,
-): ImageBitmap {
-    // In the future, use actual/expect to switch QR code generator implementations for multiplatform
-
-    // Note that our implementation has an extra array copy to BooleanArray, which is a cross-platform
-    // representation.  This should have minimal performance impact since the QR code is relatively
-    // small and we only generate QR codes infrequently.
-
-    val qrCodePixelArray = JvmQrCodeGenerator.generate(address, size)
-
-    return AndroidQrCodeImageGenerator.generate(qrCodePixelArray, size)
+@Composable
+private fun SaplingAddressPanel(
+    walletAddress: WalletAddress,
+    onAddressCopyToClipboard: (String) -> Unit,
+    onQrImage: (WalletAddress) -> Unit,
+    onRequest: (WalletAddress) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier =
+        modifier
+            .padding(
+                horizontal = ZcashTheme.dimens.screenHorizontalSpacingRegular,
+                vertical = ZcashTheme.dimens.spacingDefault,
+            ),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {}
 }
 
 @Composable
-private fun QrCode(
-    contentDescription: String,
-    qrCodeImage: ImageBitmap,
-    onQrImageBitmapShare: (ImageBitmap) -> Unit,
+private fun TransparentAddressPanel(
+    walletAddress: WalletAddress,
+    onAddressCopyToClipboard: (String) -> Unit,
+    onQrImage: (WalletAddress) -> Unit,
+    onRequest: (WalletAddress) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Image(
-        bitmap = qrCodeImage,
-        contentDescription = contentDescription,
+    Column(
         modifier =
-            Modifier
-                .clickable { onQrImageBitmapShare(qrCodeImage) }
-                .then(modifier)
-    )
+        modifier
+            .padding(
+                horizontal = ZcashTheme.dimens.screenHorizontalSpacingRegular,
+                vertical = ZcashTheme.dimens.spacingDefault,
+            ),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {}
 }
 
-private val DEFAULT_QR_CODE_SIZE = 320.dp
+@Composable
+private fun ReceiveIconButton(
+    containerColor: Color,
+    contentColor: Color,
+    iconPainter: Painter,
+    text: String,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+            .clip(RoundedCornerShape(ZashiDimensionsInternal.Radius.radiusXl))
+            .clickable { onClick() }
+            .background(containerColor, RoundedCornerShape(ZashiDimensionsInternal.Radius.radiusXl))
+            .padding(ZcashTheme.dimens.spacingSmall)
+
+    ) {
+        Icon(
+            painter = iconPainter,
+            contentDescription = text,
+            tint = contentColor
+        )
+
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
+
+        Text(
+            text = text,
+            color = contentColor
+        )
+    }
+}

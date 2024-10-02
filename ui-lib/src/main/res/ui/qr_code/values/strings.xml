@@ -10,6 +10,6 @@
     <string name="receive_copy">Copy</string>
     <string name="receive_qr_code">QR Code</string>
     <string name="receive_request">Request</string>
-    <string name="receive_prioritize_shielded">Prioritize using shielded address for maximum privacy.</string>
     <string name="receive_clipboard_tag">Zcash Wallet Address</string>
+    <string name="qr_code_data_unable_to_share">Unable to find an application to share the QR code with.</string>
 </resources>
