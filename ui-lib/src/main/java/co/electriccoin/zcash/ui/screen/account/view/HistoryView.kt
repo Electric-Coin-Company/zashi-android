@@ -692,9 +692,12 @@ private fun HistoryItemExpandedPart(
 
         HistoryItemTransactionIdPart(transaction = transaction, onAction = onAction)
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        HistoryItemTransactionFeePart(fee = transaction.overview.feePaid)
+        if (transaction.overview.getExtendedState() !in
+            listOf(TransactionExtendedState.RECEIVING, TransactionExtendedState.RECEIVED)
+        ) {
+            Spacer(modifier = Modifier.height(16.dp))
+            HistoryItemTransactionFeePart(fee = transaction.overview.feePaid)
+        }
     }
 }
 
