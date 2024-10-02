@@ -46,3 +46,11 @@ internal fun WrapUpdateContact(contactId: String) {
         )
     }
 }
+
+object UpdateContactArgs {
+    private const val PATH = "update_contact"
+    const val CONTACT_ID = "contactId"
+    const val ROUTE = "$PATH/{$CONTACT_ID}"
+
+    operator fun invoke(contactId: String) = "$PATH/$contactId"
+}

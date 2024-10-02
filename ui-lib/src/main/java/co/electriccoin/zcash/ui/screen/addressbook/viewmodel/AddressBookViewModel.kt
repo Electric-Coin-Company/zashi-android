@@ -3,8 +3,6 @@ package co.electriccoin.zcash.ui.screen.addressbook.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
-import co.electriccoin.zcash.ui.NavigationTargets.ADD_NEW_CONTACT
-import co.electriccoin.zcash.ui.NavigationTargets.UPDATE_CONTACT
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.AddressBookContact
 import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
@@ -13,6 +11,9 @@ import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.addressbook.model.AddressBookContactState
 import co.electriccoin.zcash.ui.screen.addressbook.model.AddressBookState
+import co.electriccoin.zcash.ui.screen.contact.AddContactArgs
+import co.electriccoin.zcash.ui.screen.contact.UpdateContactArgs
+import co.electriccoin.zcash.ui.screen.scan.ScanNavigationArgs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -59,10 +60,15 @@ class AddressBookViewModel(
                 )
             },
         onBack = ::onBack,
-        addButton =
+        manualButton =
             ButtonState(
-                onClick = ::onAddContactClick,
-                text = stringRes(R.string.address_book_add)
+                onClick = ::onAddContactManuallyClick,
+                text = stringRes(R.string.address_book_manual_btn)
+            ),
+        scanButton =
+            ButtonState(
+                onClick = ::onScanContactClick,
+                text = stringRes(R.string.address_book_scan_btn)
             )
     )
 
@@ -84,11 +90,16 @@ class AddressBookViewModel(
 
     private fun onUpdateContactClick(contact: AddressBookContact) =
         viewModelScope.launch {
-            navigationCommand.emit("$UPDATE_CONTACT/${contact.id}")
+            navigationCommand.emit(UpdateContactArgs(contact.id))
         }
 
-    private fun onAddContactClick() =
+    private fun onAddContactManuallyClick() =
         viewModelScope.launch {
-            navigationCommand.emit(ADD_NEW_CONTACT)
+            navigationCommand.emit(AddContactArgs(null))
+        }
+
+    private fun onScanContactClick() =
+        viewModelScope.launch {
+            navigationCommand.emit(ScanNavigationArgs(ScanNavigationArgs.ADDRESS_BOOK))
         }
 }

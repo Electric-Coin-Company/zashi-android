@@ -20,6 +20,7 @@ import co.electriccoin.zcash.ui.screen.support.viewmodel.SupportViewModel
 import co.electriccoin.zcash.ui.screen.update.viewmodel.UpdateViewModel
 import co.electriccoin.zcash.ui.screen.warning.viewmodel.StorageCheckViewModel
 import co.electriccoin.zcash.ui.screen.whatsnew.viewmodel.WhatsNewViewModel
+import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.dsl.module
 
@@ -43,6 +44,13 @@ val viewModelModule =
         viewModelOf(::UpdateViewModel)
         viewModelOf(::ChooseServerViewModel)
         viewModelOf(::AddressBookViewModel)
-        viewModelOf(::AddContactViewModel)
+        viewModel { (address: String?) ->
+            AddContactViewModel(
+                address = address,
+                validateContactAddress = get(),
+                validateContactName = get(),
+                saveContact = get(),
+            )
+        }
         viewModelOf(::UpdateContactViewModel)
     }

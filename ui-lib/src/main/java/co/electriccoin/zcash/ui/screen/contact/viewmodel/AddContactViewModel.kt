@@ -23,11 +23,12 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class AddContactViewModel(
+    address: String? = null,
     private val validateContactAddress: ValidateContactAddressUseCase,
     private val validateContactName: ValidateContactNameUseCase,
     private val saveContact: SaveContactUseCase
 ) : ViewModel() {
-    private val contactAddress = MutableStateFlow("")
+    private val contactAddress = MutableStateFlow(address.orEmpty())
     private val contactName = MutableStateFlow("")
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -96,7 +97,7 @@ class AddContactViewModel(
     val state =
         combine(contactAddressState, contactNameState, saveButtonState) { address, name, saveButton ->
             ContactState(
-                title = stringRes(R.string.new_contact_title),
+                title = stringRes(R.string.add_new_contact_title),
                 isLoading = false,
                 walletAddress = address,
                 contactName = name,

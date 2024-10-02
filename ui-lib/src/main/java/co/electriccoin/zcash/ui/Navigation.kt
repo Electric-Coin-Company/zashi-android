@@ -19,7 +19,7 @@ import androidx.navigation.navArgument
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.model.ZecSend
 import co.electriccoin.zcash.spackle.Twig
-import co.electriccoin.zcash.ui.NavigationArgs.UPDATE_CONTACT_ID
+import co.electriccoin.zcash.spackle.getSerializableCompat
 import co.electriccoin.zcash.ui.NavigationArguments.MULTIPLE_SUBMISSION_CLEAR_FORM
 import co.electriccoin.zcash.ui.NavigationArguments.SEND_CONFIRM_AMOUNT
 import co.electriccoin.zcash.ui.NavigationArguments.SEND_CONFIRM_INITIAL_STAGE
@@ -29,7 +29,6 @@ import co.electriccoin.zcash.ui.NavigationArguments.SEND_CONFIRM_RECIPIENT_ADDRE
 import co.electriccoin.zcash.ui.NavigationArguments.SEND_SCAN_RECIPIENT_ADDRESS
 import co.electriccoin.zcash.ui.NavigationTargets.ABOUT
 import co.electriccoin.zcash.ui.NavigationTargets.ADDRESS_BOOK
-import co.electriccoin.zcash.ui.NavigationTargets.ADD_NEW_CONTACT
 import co.electriccoin.zcash.ui.NavigationTargets.ADVANCED_SETTINGS
 import co.electriccoin.zcash.ui.NavigationTargets.CHOOSE_SERVER
 import co.electriccoin.zcash.ui.NavigationTargets.DELETE_WALLET
@@ -37,13 +36,11 @@ import co.electriccoin.zcash.ui.NavigationTargets.EXCHANGE_RATE_OPT_IN
 import co.electriccoin.zcash.ui.NavigationTargets.EXPORT_PRIVATE_DATA
 import co.electriccoin.zcash.ui.NavigationTargets.HOME
 import co.electriccoin.zcash.ui.NavigationTargets.NOT_ENOUGH_SPACE
-import co.electriccoin.zcash.ui.NavigationTargets.SCAN
 import co.electriccoin.zcash.ui.NavigationTargets.SEED_RECOVERY
 import co.electriccoin.zcash.ui.NavigationTargets.SEND_CONFIRMATION
 import co.electriccoin.zcash.ui.NavigationTargets.SETTINGS
 import co.electriccoin.zcash.ui.NavigationTargets.SETTINGS_EXCHANGE_RATE_OPT_IN
 import co.electriccoin.zcash.ui.NavigationTargets.SUPPORT
-import co.electriccoin.zcash.ui.NavigationTargets.UPDATE_CONTACT
 import co.electriccoin.zcash.ui.NavigationTargets.WHATS_NEW
 import co.electriccoin.zcash.ui.common.compose.LocalNavController
 import co.electriccoin.zcash.ui.common.model.SerializableAddress
@@ -59,6 +56,8 @@ import co.electriccoin.zcash.ui.screen.advancedsettings.WrapAdvancedSettings
 import co.electriccoin.zcash.ui.screen.authentication.AuthenticationUseCase
 import co.electriccoin.zcash.ui.screen.authentication.WrapAuthentication
 import co.electriccoin.zcash.ui.screen.chooseserver.WrapChooseServer
+import co.electriccoin.zcash.ui.screen.contact.AddContactArgs
+import co.electriccoin.zcash.ui.screen.contact.UpdateContactArgs
 import co.electriccoin.zcash.ui.screen.contact.WrapAddContact
 import co.electriccoin.zcash.ui.screen.contact.WrapUpdateContact
 import co.electriccoin.zcash.ui.screen.deletewallet.WrapDeleteWallet
@@ -67,6 +66,7 @@ import co.electriccoin.zcash.ui.screen.exchangerate.optin.AndroidExchangeRateOpt
 import co.electriccoin.zcash.ui.screen.exchangerate.settings.AndroidSettingsExchangeRateOptIn
 import co.electriccoin.zcash.ui.screen.exportdata.WrapExportPrivateData
 import co.electriccoin.zcash.ui.screen.home.WrapHome
+import co.electriccoin.zcash.ui.screen.scan.ScanNavigationArgs
 import co.electriccoin.zcash.ui.screen.scan.WrapScanValidator
 import co.electriccoin.zcash.ui.screen.seedrecovery.WrapSeedRecovery
 import co.electriccoin.zcash.ui.screen.send.ext.toSerializableAddress
@@ -225,18 +225,41 @@ internal fun MainActivity.Navigation() {
         composable(SETTINGS_EXCHANGE_RATE_OPT_IN) {
             AndroidSettingsExchangeRateOptIn()
         }
-        composable(SCAN) {
+        composable(
+            route = ScanNavigationArgs.ROUTE,
+            arguments =
+                listOf(
+                    navArgument(ScanNavigationArgs.KEY) {
+                        type = NavType.EnumType(ScanNavigationArgs::class.java)
+                        defaultValue = ScanNavigationArgs.DEFAULT
+                    }
+                )
+        ) { backStackEntry ->
+            val mode =
+                backStackEntry.arguments
+                    ?.getSerializableCompat<ScanNavigationArgs>(ScanNavigationArgs.KEY) ?: ScanNavigationArgs.DEFAULT
+
             WrapScanValidator(
                 onScanValid = { scanResult ->
-                    navController.previousBackStackEntry?.savedStateHandle?.apply {
-                        set(
-                            SEND_SCAN_RECIPIENT_ADDRESS,
-                            Json.encodeToString(SerializableAddress.serializer(), scanResult)
-                        )
+                    when (mode) {
+                        ScanNavigationArgs.DEFAULT -> {
+                            navController.previousBackStackEntry?.savedStateHandle?.apply {
+                                set(
+                                    SEND_SCAN_RECIPIENT_ADDRESS,
+                                    Json.encodeToString(SerializableAddress.serializer(), scanResult)
+                                )
+                            }
+                            navController.popBackStackJustOnce(ScanNavigationArgs.ROUTE)
+                        }
+
+                        ScanNavigationArgs.ADDRESS_BOOK -> {
+                            val address = scanResult.address
+                            navController.popBackStack()
+                            navController.navigate(AddContactArgs(address))
+                        }
                     }
-                    navController.popBackStackJustOnce(SCAN)
                 },
-                goBack = { navController.popBackStackJustOnce(SCAN) }
+                goBack = { navController.popBackStackJustOnce(ScanNavigationArgs.ROUTE) }
             )
         }
         composable(EXPORT_PRIVATE_DATA) {
@@ -275,14 +298,25 @@ internal fun MainActivity.Navigation() {
         composable(ADDRESS_BOOK) {
             WrapAddressBook()
         }
-        composable(ADD_NEW_CONTACT) {
-            WrapAddContact()
+        composable(
+            route = AddContactArgs.ROUTE,
+            arguments =
+                listOf(
+                    navArgument(AddContactArgs.ADDRESS) {
+                        nullable = true
+                        defaultValue = null
+                        type = NavType.StringType
+                    }
+                )
+        ) { backStackEntry ->
+            val address = backStackEntry.arguments?.getString(AddContactArgs.ADDRESS)
+            WrapAddContact(address)
         }
         composable(
-            route = "$UPDATE_CONTACT/{$UPDATE_CONTACT_ID}",
-            arguments = listOf(navArgument(UPDATE_CONTACT_ID) { type = NavType.StringType })
+            route = UpdateContactArgs.ROUTE,
+            arguments = listOf(navArgument(UpdateContactArgs.CONTACT_ID) { type = NavType.StringType })
         ) { backStackEntry ->
-            val contactId = backStackEntry.arguments?.getString(UPDATE_CONTACT_ID).orEmpty()
+            val contactId = backStackEntry.arguments?.getString(UpdateContactArgs.CONTACT_ID).orEmpty()
             WrapUpdateContact(contactId)
         }
     }
@@ -297,7 +331,7 @@ private fun MainActivity.NavigationHome(
     backStack: NavBackStackEntry
 ) {
     WrapHome(
-        goScan = { navController.navigateJustOnce(SCAN) },
+        goScan = { navController.navigateJustOnce(ScanNavigationArgs(ScanNavigationArgs.DEFAULT)) },
         goSendConfirmation = { zecSend ->
             navController.currentBackStackEntry?.savedStateHandle?.let { handle ->
                 fillInHandleForConfirmation(handle, zecSend, SendConfirmationStage.Confirmation)
@@ -464,7 +498,6 @@ object NavigationTargets {
     const val HOME = "home"
     const val CHOOSE_SERVER = "choose_server"
     const val NOT_ENOUGH_SPACE = "not_enough_space"
-    const val SCAN = "scan"
     const val SEED_RECOVERY = "seed_recovery"
     const val SEND_CONFIRMATION = "send_confirmation"
     const val SETTINGS = "settings"
@@ -472,10 +505,4 @@ object NavigationTargets {
     const val SUPPORT = "support"
     const val WHATS_NEW = "whats_new"
     const val ADDRESS_BOOK = "address_book"
-    const val ADD_NEW_CONTACT = "add_new_contact"
-    const val UPDATE_CONTACT = "update_contact"
-}
-
-object NavigationArgs {
-    const val UPDATE_CONTACT_ID = "contactId"
 }

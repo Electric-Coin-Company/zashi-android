@@ -8,7 +8,8 @@ data class AddressBookState(
     val isLoading: Boolean,
     val version: StringResource,
     val onBack: () -> Unit,
-    val addButton: ButtonState
+    val scanButton: ButtonState,
+    val manualButton: ButtonState
 )
 
 data class AddressBookContactState(
