@@ -11,6 +11,7 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ### Changed
 - Send screen redesigned
+- Confirmation screen redesigned
 - History item redesigned
 
 ## [1.2 (739)] - 2024-09-27

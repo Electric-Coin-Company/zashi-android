@@ -33,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.onFocusEvent
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -51,6 +52,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cash.z.ecc.android.sdk.model.Memo
 import cash.z.ecc.android.sdk.model.MonetarySeparators
+import cash.z.ecc.android.sdk.model.WalletAddress
 import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.android.sdk.model.ZecSendExt
 import cash.z.ecc.android.sdk.type.AddressType
@@ -74,6 +76,7 @@ import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.TopAppBarHideBalancesNavigation
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiTextField
+import co.electriccoin.zcash.ui.design.component.ZashiTextFieldDefaults
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
@@ -427,6 +430,7 @@ private fun SendForm(
     }
 }
 
+@Suppress("CyclomaticComplexMethod")
 @Composable
 fun SendButton(
     amountState: AmountState,
@@ -435,6 +439,7 @@ fun SendButton(
     recipientAddressState: RecipientAddressState,
     walletSnapshot: WalletSnapshot,
 ) {
+    val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
     // Common conditions continuously checked for validity
@@ -449,27 +454,50 @@ fun SendButton(
 
     ZashiButton(
         onClick = {
-            // SDK side validations
-            val zecSendValidation =
-                ZecSendExt.new(
-                    context = context,
-                    destinationString = recipientAddressState.address,
-                    zecString = amountState.value,
-                    // Take memo for a valid non-transparent receiver only
-                    memoString =
-                        if (recipientAddressState.type == AddressType.Transparent) {
-                            ""
-                        } else {
-                            memoState.text
-                        },
-                )
+            scope.launch {
+                // SDK side validations
+                val zecSendValidation =
+                    ZecSendExt.new(
+                        context = context,
+                        destinationString = recipientAddressState.address,
+                        zecString = amountState.value,
+                        // Take memo for a valid non-transparent receiver only
+                        memoString =
+                            if (recipientAddressState.type == AddressType.Transparent) {
+                                ""
+                            } else {
+                                memoState.text
+                            },
+                    )
 
-            when (zecSendValidation) {
-                is ZecSendExt.ZecSendValidation.Valid -> onCreateZecSend(zecSendValidation.zecSend)
-                is ZecSendExt.ZecSendValidation.Invalid -> {
-                    // We do not expect this validation to fail, so logging is enough here
-                    // An error popup could be reasonable here as well
-                    Twig.warn { "Send failed with: ${zecSendValidation.validationErrors}" }
+                when (zecSendValidation) {
+                    is ZecSendExt.ZecSendValidation.Valid ->
+                        onCreateZecSend(
+                            zecSendValidation.zecSend.copy(
+                                destination =
+                                    when (recipientAddressState.type) {
+                                        is AddressType.Invalid ->
+                                            WalletAddress.Unified.new(recipientAddressState.address)
+
+                                        AddressType.Shielded ->
+                                            WalletAddress.Unified.new(recipientAddressState.address)
+
+                                        AddressType.Tex ->
+                                            WalletAddress.Tex.new(recipientAddressState.address)
+                                        AddressType.Transparent ->
+                                            WalletAddress.Transparent.new(recipientAddressState.address)
+                                        AddressType.Unified ->
+                                            WalletAddress.Unified.new(recipientAddressState.address)
+                                        null -> WalletAddress.Unified.new(recipientAddressState.address)
+                                    }
+                            )
+                        )
+
+                    is ZecSendExt.ZecSendValidation.Invalid -> {
+                        // We do not expect this validation to fail, so logging is enough here
+                        // An error popup could be reasonable here as well
+                        Twig.warn { "Send failed with: ${zecSendValidation.validationErrors}" }
+                    }
                 }
             }
         },
@@ -779,7 +807,7 @@ fun SendFormMemoTextField(
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
 
         ZashiTextField(
-            minLines = 2,
+            minLines = if (isMemoFieldAvailable) 2 else 1,
             isEnabled = isMemoFieldAvailable,
             value =
                 if (isMemoFieldAvailable) {
@@ -798,12 +826,44 @@ fun SendFormMemoTextField(
                     capitalization = KeyboardCapitalization.Sentences
                 ),
             placeholder = {
-                Text(
-                    text = stringResource(id = R.string.send_memo_hint),
-                    style = ZashiTypography.textMd,
-                    color = ZashiColors.Inputs.Default.text
-                )
+                if (isMemoFieldAvailable) {
+                    Text(
+                        text = stringResource(id = R.string.send_memo_hint),
+                        style = ZashiTypography.textMd,
+                        color = ZashiColors.Inputs.Default.text
+                    )
+                } else {
+                    Text(
+                        text = stringResource(R.string.send_transparent_memo),
+                        style = ZashiTypography.textSm,
+                        color = ZashiColors.Utility.Gray.utilityGray700
+                    )
+                }
             },
+            leadingIcon =
+                if (isMemoFieldAvailable) {
+                    null
+                } else {
+                    {
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_confirmation_message_info),
+                            contentDescription = "",
+                            colorFilter = ColorFilter.tint(ZashiColors.Utility.Gray.utilityGray500)
+                        )
+                    }
+                },
+            colors =
+                if (isMemoFieldAvailable) {
+                    ZashiTextFieldDefaults.defaultColors()
+                } else {
+                    ZashiTextFieldDefaults.defaultColors(
+                        disabledTextColor = ZashiColors.Inputs.Disabled.text,
+                        disabledHintColor = ZashiColors.Inputs.Disabled.hint,
+                        disabledBorderColor = Color.Unspecified,
+                        disabledContainerColor = ZashiColors.Inputs.Disabled.bg,
+                        disabledPlaceholderColor = ZashiColors.Inputs.Disabled.text,
+                    )
+                },
             modifier = Modifier.fillMaxWidth(),
         )
 

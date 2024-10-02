@@ -233,8 +233,10 @@ private fun TextFieldInternal(
                         colors = androidColors,
                         contentPadding =
                             PaddingValues(
-                                horizontal = 12.dp,
-                                vertical = if (trailingIcon != null || leadingIcon != null) 12.dp else 8.dp,
+                                start = if (leadingIcon != null) 8.dp else 12.dp,
+                                end = 12.dp,
+                                top = if (trailingIcon != null || leadingIcon != null) 12.dp else 8.dp,
+                                bottom = if (trailingIcon != null || leadingIcon != null) 12.dp else 8.dp,
                             )
                     )
                 }
