@@ -61,6 +61,8 @@ interface WalletRepository {
     suspend fun getSelectedServer(): LightWalletEndpoint
 
     suspend fun getAllServers(): List<LightWalletEndpoint>
+
+    suspend fun getSynchronizer(): Synchronizer
 }
 
 class WalletRepositoryImpl(
@@ -238,4 +240,6 @@ class WalletRepositoryImpl(
             defaultServers + selectedServer
         }
     }
+
+    override suspend fun getSynchronizer(): Synchronizer = synchronizer.filterNotNull().first()
 }

@@ -66,7 +66,13 @@ fun AddressBookView(
             }
 
             state.contacts.isEmpty() && !state.isLoading -> {
-                Empty(state = state, modifier = Modifier.fillMaxSize())
+                Empty(
+                    state = state,
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues)
+                )
             }
 
             else -> {
@@ -112,57 +118,81 @@ fun AddressBookView(
 @Composable
 private fun ContactItem(state: AddressBookContactState) {
     ZashiSettingsListItem(
-        leading = {
-            Box(
-                Modifier.size(height = 50.dp, width = 54.dp)
-            ) {
-                Text(
-                    modifier =
-                        Modifier
-                            .background(ZashiColors.Avatars.avatarBg, CircleShape)
-                            .size(40.dp)
-                            .padding(top = 10.dp)
-                            .align(Alignment.Center),
-                    text = state.initials.getValue(),
-                    style = ZashiTypography.textSm,
-                    color = ZashiColors.Avatars.avatarTextFg,
-                    textAlign = TextAlign.Center,
-                    fontWeight = FontWeight.SemiBold,
-                )
-                if (state.isShielded) {
-                    Image(
-                        modifier =
-                            Modifier
-                                .align(Alignment.BottomEnd)
-                                .size(24.dp),
-                        painter = painterResource(id = R.drawable.ic_address_book_shielded),
-                        contentDescription = ""
-                    )
-                }
-            }
+        leading = { modifier ->
+            ContactItemLeading(modifier = modifier, state = state)
         },
-        content = {
-            Column {
-                Text(
-                    text = state.name.getValue(),
-                    style = ZashiTypography.textMd,
-                    fontWeight = FontWeight.SemiBold,
-                    color = ZashiColors.Text.textPrimary
-                )
-                Spacer(modifier = Modifier.height(2.dp))
-                Text(
-                    text = state.address.getValue(),
-                    style = ZashiTypography.textXs,
-                    color = ZashiColors.Text.textTertiary,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
+        content = { modifier ->
+            ContactItemContent(modifier = modifier, state = state)
         },
-        trailing = { ZashiSettingsListTrailingItem(isEnabled = true, contentDescription = state.name.getValue()) },
+        trailing = { modifier ->
+            ZashiSettingsListTrailingItem(
+                modifier = modifier,
+                isEnabled = true,
+                contentDescription = state.name.getValue()
+            )
+        },
         onClick = state.onClick,
         contentPadding = PaddingValues(top = 12.dp, bottom = if (state.isShielded) 8.dp else 12.dp)
     )
+}
+
+@Composable
+private fun ContactItemLeading(
+    state: AddressBookContactState,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier.size(height = 50.dp, width = 54.dp)
+    ) {
+        Text(
+            modifier =
+                Modifier
+                    .background(ZashiColors.Avatars.avatarBg, CircleShape)
+                    .size(40.dp)
+                    .padding(top = 10.dp)
+                    .align(Alignment.Center),
+            text = state.initials.getValue(),
+            style = ZashiTypography.textSm,
+            color = ZashiColors.Avatars.avatarTextFg,
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.SemiBold,
+        )
+        if (state.isShielded) {
+            Image(
+                modifier =
+                    Modifier
+                        .align(Alignment.BottomEnd)
+                        .size(24.dp),
+                painter = painterResource(id = R.drawable.ic_address_book_shielded),
+                contentDescription = ""
+            )
+        }
+    }
+}
+
+@Composable
+private fun ContactItemContent(
+    state: AddressBookContactState,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier
+    ) {
+        Text(
+            text = state.name.getValue(),
+            style = ZashiTypography.textMd,
+            fontWeight = FontWeight.SemiBold,
+            color = ZashiColors.Text.textPrimary
+        )
+        Spacer(modifier = Modifier.height(2.dp))
+        Text(
+            text = state.address.getValue(),
+            style = ZashiTypography.textXs,
+            color = ZashiColors.Text.textTertiary,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+    }
 }
 
 @Composable

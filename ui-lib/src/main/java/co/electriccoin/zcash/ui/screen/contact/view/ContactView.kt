@@ -46,7 +46,8 @@ fun ContactView(
         if (state.isLoading) {
             CircularScreenProgressIndicator()
         } else {
-            Column(
+            ContactViewInternal(
+                state = state,
                 modifier =
                     Modifier
                         .fillMaxSize()
@@ -55,47 +56,71 @@ fun ContactView(
                             bottom = paddingValues.calculateBottomPadding() + 24.dp,
                             start = 20.dp,
                             end = 20.dp,
-                        ),
-            ) {
+                        )
+            )
+        }
+    }
+}
+
+@Composable
+private fun ContactViewInternal(
+    state: ContactState,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier,
+    ) {
+        Text(
+            text = stringResource(id = R.string.contact_address_label),
+            style = ZashiTypography.textSm,
+            fontWeight = FontWeight.Medium,
+            color = ZashiColors.Inputs.Filled.label
+        )
+        Spacer(modifier = Modifier.height(6.dp))
+        ZashiTextField(
+            modifier = Modifier.fillMaxWidth(),
+            state = state.walletAddress,
+            placeholder = {
                 Text(
-                    text = stringResource(id = R.string.contact_address_label),
-                    style = ZashiTypography.textSm,
-                    fontWeight = FontWeight.Medium,
-                    color = ZashiColors.Inputs.Filled.label
+                    text = stringResource(id = R.string.contact_address_hint),
+                    style = ZashiTypography.textMd,
+                    color = ZashiColors.Inputs.Default.text
                 )
-                Spacer(modifier = Modifier.height(6.dp))
-                ZashiTextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    state = state.walletAddress,
-                )
-                Spacer(modifier = Modifier.height(20.dp))
-                Text(
-                    text = stringResource(id = R.string.contact_name_label),
-                    style = ZashiTypography.textSm,
-                    fontWeight = FontWeight.Medium,
-                    color = ZashiColors.Inputs.Filled.label
-                )
-                Spacer(modifier = Modifier.height(6.dp))
-                ZashiTextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    state = state.contactName
-                )
-
-                Spacer(modifier = Modifier.weight(1f))
-
-                ZashiButton(
-                    state = state.positiveButton,
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                state.negativeButton?.let {
-                    ZashiButton(
-                        state = it,
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = ZashiButtonDefaults.destructive1Colors()
-                    )
-                }
             }
+        )
+        Spacer(modifier = Modifier.height(20.dp))
+        Text(
+            text = stringResource(id = R.string.contact_name_label),
+            style = ZashiTypography.textSm,
+            fontWeight = FontWeight.Medium,
+            color = ZashiColors.Inputs.Filled.label
+        )
+        Spacer(modifier = Modifier.height(6.dp))
+        ZashiTextField(
+            modifier = Modifier.fillMaxWidth(),
+            state = state.contactName,
+            placeholder = {
+                Text(
+                    text = stringResource(id = R.string.contact_name_hint),
+                    style = ZashiTypography.textMd,
+                    color = ZashiColors.Inputs.Default.text
+                )
+            }
+        )
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        ZashiButton(
+            state = state.positiveButton,
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        state.negativeButton?.let {
+            ZashiButton(
+                state = it,
+                modifier = Modifier.fillMaxWidth(),
+                colors = ZashiButtonDefaults.destructive1Colors()
+            )
         }
     }
 }
