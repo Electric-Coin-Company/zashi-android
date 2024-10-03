@@ -16,7 +16,7 @@ class WalletAddressExtTest {
 
             // TODO [#248]: The expected value should probably be reversed if the locale is RTL
             // TODO [#248]: https://github.com/Electric-Coin-Company/zashi-android/issues/248
-            val expected = "zs1vp…ee5k0"
+            val expected = "zs1vp7kvlqr4n9gpehzt…"
 
             assertEquals(expected, actual)
         }
@@ -29,7 +29,7 @@ class WalletAddressExtTest {
 
             // TODO [#248]: The expected value should probably be reversed if the locale is RTL
             // TODO [#248]: https://github.com/Electric-Coin-Company/zashi-android/issues/248
-            val expected = "t1dRJ…1QmGz"
+            val expected = "t1dRJRY7GmyeykJnMH38…"
 
             assertEquals(expected, actual)
         }

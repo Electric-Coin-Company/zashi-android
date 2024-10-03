@@ -8,7 +8,6 @@ import android.os.LocaleList
 import androidx.activity.viewModels
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsEnabled
-import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
@@ -443,8 +442,8 @@ private fun receiveZecScreenshots(
     }
 
     composeTestRule.onNode(
-        hasContentDescription(
-            value = resContext.getString(R.string.receive_unified_content_description),
+        hasText(
+            text = resContext.getString(R.string.receive_header),
             ignoreCase = true
         )
     ).also {
