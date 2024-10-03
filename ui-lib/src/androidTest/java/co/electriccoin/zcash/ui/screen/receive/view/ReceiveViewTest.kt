@@ -8,6 +8,8 @@ import androidx.test.filters.MediumTest
 import cash.z.ecc.android.sdk.fixture.WalletAddressesFixture
 import cash.z.ecc.android.sdk.model.WalletAddresses
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.screen.send.ext.abbreviated
+import co.electriccoin.zcash.ui.test.getAppContext
 import co.electriccoin.zcash.ui.test.getStringResource
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -34,7 +36,10 @@ class ReceiveViewTest {
             newTestSetup(walletAddresses)
 
             // Enable substring for ellipsizing
-            composeTestRule.onNodeWithText(walletAddresses.unified.address, substring = true).also {
+            composeTestRule.onNodeWithText(
+                text = walletAddresses.unified.abbreviated(getAppContext()),
+                substring = true
+            ).also {
                 it.assertExists()
             }
         }

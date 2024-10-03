@@ -39,6 +39,7 @@ class ReceiveViewTestSetup(
                         },
                         onAddrCopyToClipboard = {},
                         onQrCode = {},
+                        onRequest = {},
                         topAppBarSubTitleState = TopAppBarSubTitleState.None,
                         versionInfo = versionInfo,
                     )
