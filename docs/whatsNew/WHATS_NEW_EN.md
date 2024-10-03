@@ -11,6 +11,9 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ### Changed
 - The Receive screen UI has been redesigned
+- Send screen redesigned
+- Confirmation screen redesigned
+- History item redesigned
 
 ## [1.2 (739)] - 2024-09-27
 

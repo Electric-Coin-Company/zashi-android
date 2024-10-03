@@ -31,6 +31,19 @@ style:
     excludes: [ '**/*.kts' ]
     ignoreAnnotated:
       - 'Preview'
+      - 'PreviewScreens'
+
+complexity:
+  LongMethod:
+    active: true
+    ignoreAnnotated:
+      - 'Preview'
+      - 'PreviewScreens'
+  LongParameterList:
+    active: true
+    ignoreAnnotated:
+      - 'Preview'
+      - 'PreviewScreens'
 
 Compose:
   ModifierMissing:

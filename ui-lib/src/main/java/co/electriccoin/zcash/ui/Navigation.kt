@@ -12,11 +12,14 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.model.ZecSend
 import co.electriccoin.zcash.spackle.Twig
+import co.electriccoin.zcash.ui.NavigationArgs.UPDATE_CONTACT_ID
 import co.electriccoin.zcash.ui.NavigationArguments.MULTIPLE_SUBMISSION_CLEAR_FORM
 import co.electriccoin.zcash.ui.NavigationArguments.SEND_CONFIRM_AMOUNT
 import co.electriccoin.zcash.ui.NavigationArguments.SEND_CONFIRM_INITIAL_STAGE
@@ -25,6 +28,8 @@ import co.electriccoin.zcash.ui.NavigationArguments.SEND_CONFIRM_PROPOSAL
 import co.electriccoin.zcash.ui.NavigationArguments.SEND_CONFIRM_RECIPIENT_ADDRESS
 import co.electriccoin.zcash.ui.NavigationArguments.SEND_SCAN_RECIPIENT_ADDRESS
 import co.electriccoin.zcash.ui.NavigationTargets.ABOUT
+import co.electriccoin.zcash.ui.NavigationTargets.ADDRESS_BOOK
+import co.electriccoin.zcash.ui.NavigationTargets.ADD_NEW_CONTACT
 import co.electriccoin.zcash.ui.NavigationTargets.ADVANCED_SETTINGS
 import co.electriccoin.zcash.ui.NavigationTargets.CHOOSE_SERVER
 import co.electriccoin.zcash.ui.NavigationTargets.DELETE_WALLET
@@ -38,6 +43,7 @@ import co.electriccoin.zcash.ui.NavigationTargets.SEND_CONFIRMATION
 import co.electriccoin.zcash.ui.NavigationTargets.SETTINGS
 import co.electriccoin.zcash.ui.NavigationTargets.SETTINGS_EXCHANGE_RATE_OPT_IN
 import co.electriccoin.zcash.ui.NavigationTargets.SUPPORT
+import co.electriccoin.zcash.ui.NavigationTargets.UPDATE_CONTACT
 import co.electriccoin.zcash.ui.NavigationTargets.WHATS_NEW
 import co.electriccoin.zcash.ui.common.compose.LocalNavController
 import co.electriccoin.zcash.ui.common.model.SerializableAddress
@@ -48,10 +54,13 @@ import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.exitTransition
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.popEnterTransition
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.popExitTransition
 import co.electriccoin.zcash.ui.screen.about.WrapAbout
+import co.electriccoin.zcash.ui.screen.addressbook.WrapAddressBook
 import co.electriccoin.zcash.ui.screen.advancedsettings.WrapAdvancedSettings
 import co.electriccoin.zcash.ui.screen.authentication.AuthenticationUseCase
 import co.electriccoin.zcash.ui.screen.authentication.WrapAuthentication
 import co.electriccoin.zcash.ui.screen.chooseserver.WrapChooseServer
+import co.electriccoin.zcash.ui.screen.contact.WrapAddContact
+import co.electriccoin.zcash.ui.screen.contact.WrapUpdateContact
 import co.electriccoin.zcash.ui.screen.deletewallet.WrapDeleteWallet
 import co.electriccoin.zcash.ui.screen.disconnected.WrapDisconnected
 import co.electriccoin.zcash.ui.screen.exchangerate.optin.AndroidExchangeRateOptIn
@@ -263,6 +272,19 @@ internal fun MainActivity.Navigation() {
                 goSettings = { navController.navigateJustOnce(SETTINGS) }
             )
         }
+        composable(ADDRESS_BOOK) {
+            WrapAddressBook()
+        }
+        composable(ADD_NEW_CONTACT) {
+            WrapAddContact()
+        }
+        composable(
+            route = "$UPDATE_CONTACT/{$UPDATE_CONTACT_ID}",
+            arguments = listOf(navArgument(UPDATE_CONTACT_ID) { type = NavType.StringType })
+        ) { backStackEntry ->
+            val contactId = backStackEntry.arguments?.getString(UPDATE_CONTACT_ID).orEmpty()
+            WrapUpdateContact(contactId)
+        }
     }
 }
 
@@ -449,4 +471,11 @@ object NavigationTargets {
     const val SETTINGS_EXCHANGE_RATE_OPT_IN = "settings_exchange_rate_opt_in"
     const val SUPPORT = "support"
     const val WHATS_NEW = "whats_new"
+    const val ADDRESS_BOOK = "address_book"
+    const val ADD_NEW_CONTACT = "add_new_contact"
+    const val UPDATE_CONTACT = "update_contact"
+}
+
+object NavigationArgs {
+    const val UPDATE_CONTACT_ID = "contactId"
 }

@@ -32,6 +32,10 @@ android {
                 setOf(
                     "src/main/res/ui/about",
                     "src/main/res/ui/account",
+                    "src/main/res/ui/address_book",
+                    "src/main/res/ui/contact",
+                    "src/main/res/ui/add_contact",
+                    "src/main/res/ui/update_contact",
                     "src/main/res/ui/advanced_settings",
                     "src/main/res/ui/authentication",
                     "src/main/res/ui/balances",

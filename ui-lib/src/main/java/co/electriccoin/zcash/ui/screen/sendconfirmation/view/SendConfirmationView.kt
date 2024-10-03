@@ -26,14 +26,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import cash.z.ecc.android.sdk.fixture.WalletAddressFixture
 import cash.z.ecc.android.sdk.model.FirstClassByteArray
 import cash.z.ecc.android.sdk.model.TransactionSubmitResult
+import cash.z.ecc.android.sdk.model.WalletAddress
 import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.sdk.extension.toZecStringFull
 import cash.z.ecc.sdk.fixture.MemoFixture
@@ -48,17 +52,24 @@ import co.electriccoin.zcash.ui.design.component.AppAlertDialog
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.Body
-import co.electriccoin.zcash.ui.design.component.BubbleArrowAlignment
-import co.electriccoin.zcash.ui.design.component.BubbleMessage
+import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.PrimaryButton
-import co.electriccoin.zcash.ui.design.component.SecondaryButton
 import co.electriccoin.zcash.ui.design.component.Small
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.StyledBalance
 import co.electriccoin.zcash.ui.design.component.StyledBalanceDefaults
-import co.electriccoin.zcash.ui.design.component.Tiny
+import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.component.TopAppBarBackNavigation
+import co.electriccoin.zcash.ui.design.component.ZashiButton
+import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
+import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
+import co.electriccoin.zcash.ui.design.component.ZashiTextField
+import co.electriccoin.zcash.ui.design.component.ZashiTextFieldDefaults
+import co.electriccoin.zcash.ui.design.component.ZecAmountTriple
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
+import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.fixture.ObserveFiatCurrencyResultFixture
 import co.electriccoin.zcash.ui.screen.exchangerate.widget.StyledExchangeLabel
 import co.electriccoin.zcash.ui.screen.sendconfirmation.SendConfirmationTag
@@ -300,18 +311,21 @@ private fun SendConfirmationTopAppBar(
         SendConfirmationStage.Confirmation,
         SendConfirmationStage.Sending,
         is SendConfirmationStage.Failure,
-        is SendConfirmationStage.FailureGrpc, -> {
-            SmallTopAppBar(
-                subTitle = subTitle,
-                titleText = stringResource(id = R.string.send_stage_confirmation_title),
+        is SendConfirmationStage.FailureGrpc,
+        -> {
+            ZashiSmallTopAppBar(
+                title = stringResource(id = R.string.send_stage_confirmation_title),
+                subtitle = subTitle,
             )
         }
+
         SendConfirmationStage.MultipleTrxFailure -> {
             SmallTopAppBar(
                 subTitle = subTitle,
                 titleText = stringResource(id = R.string.send_confirmation_multiple_error_title),
             )
         }
+
         SendConfirmationStage.MultipleTrxFailureReported -> {
             SmallTopAppBar(
                 subTitle = subTitle,
@@ -366,6 +380,7 @@ private fun SendConfirmationMainContent(
                 )
             }
         }
+
         is SendConfirmationStage.MultipleTrxFailure, SendConfirmationStage.MultipleTrxFailureReported -> {
             MultipleSubmissionFailure(
                 onContactSupport = {
@@ -397,7 +412,11 @@ private fun SendConfirmationContent(
     ) {
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
 
-        Small(stringResource(R.string.send_confirmation_amount))
+        Text(
+            stringResource(R.string.send_confirmation_amount),
+            style = ZashiTypography.textSm,
+            color = ZashiColors.Text.textPrimary
+        )
 
         BalanceWidgetBigLineOnly(
             parts = zecSend.amount.toZecStringFull().asZecAmountTriple(),
@@ -409,56 +428,131 @@ private fun SendConfirmationContent(
             zatoshi = zecSend.amount,
             state = exchangeRate,
             isHideBalances = false,
+            style = ZashiTypography.textMd.copy(fontWeight = FontWeight.SemiBold),
+            textColor = ZashiColors.Text.textPrimary
         )
 
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
+        Spacer(modifier = Modifier.height(24.dp))
 
-        Small(stringResource(R.string.send_confirmation_address))
-
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingTiny))
-
-        Tiny(zecSend.destination.address)
-
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingUpLarge))
-
-        Small(stringResource(R.string.send_confirmation_fee))
-
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingTiny))
-
-        StyledBalance(
-            // The not-null assertion operator is necessary here even if we check its nullability before
-            // due to: "Smart cast to 'Proposal' is impossible, because 'zecSend.proposal' is a public API
-            // property declared in different module. See more details on the Kotlin forum.
-            balanceParts = zecSend.proposal!!.totalFeeRequired().toZecStringFull().asZecAmountTriple(),
-            // We don't hide any balance in confirmation screen
-            isHideBalances = false,
-            textStyle =
-                StyledBalanceDefaults.textStyles(
-                    mostSignificantPart = ZcashTheme.extendedTypography.balanceSingleStyles.first,
-                    leastSignificantPart = ZcashTheme.extendedTypography.balanceSingleStyles.second
-                ),
+        Text(
+            stringResource(R.string.send_confirmation_address),
+            style = ZashiTypography.textSm,
+            color = ZashiColors.Text.textTertiary
         )
 
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingUpLarge))
+        Spacer(modifier = Modifier.height(8.dp))
 
-        if (zecSend.memo.value.isNotEmpty()) {
-            Small(stringResource(R.string.send_confirmation_memo))
+        Text(
+            zecSend.destination.address,
+            style = ZashiTypography.textXs,
+            color = ZashiColors.Text.textPrimary
+        )
 
-            Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingTiny))
+        Spacer(modifier = Modifier.height(20.dp))
 
-            BubbleMessage(
-                modifier = Modifier.fillMaxWidth(),
-                arrowAlignment = BubbleArrowAlignment.BottomLeft,
-                backgroundColor = Color.Transparent
-            ) {
-                Tiny(
-                    text = zecSend.memo.value,
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(all = ZcashTheme.dimens.spacingMid)
-                )
-            }
+        Row {
+            Text(
+                modifier = Modifier.weight(1f),
+                text = stringResource(R.string.send_confirmation_amount_item),
+                style = ZashiTypography.textSm,
+                color = ZashiColors.Text.textTertiary
+            )
+
+            StyledBalance(
+                // The not-null assertion operator is necessary here even if we check its nullability before
+                // due to: "Smart cast to 'Proposal' is impossible, because 'zecSend.proposal' is a public API
+                // property declared in different module. See more details on the Kotlin forum.
+                balanceParts = zecSend.amount.toZecStringFull().asZecAmountTriple(),
+                // We don't hide any balance in confirmation screen
+                isHideBalances = false,
+                textStyle =
+                    StyledBalanceDefaults.textStyles(
+                        mostSignificantPart = ZcashTheme.extendedTypography.balanceSingleStyles.first,
+                        leastSignificantPart = ZcashTheme.extendedTypography.balanceSingleStyles.second
+                    ),
+            )
+        }
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        Row {
+            Text(
+                modifier = Modifier.weight(1f),
+                text = stringResource(R.string.send_confirmation_fee),
+                style = ZashiTypography.textSm,
+                color = ZashiColors.Text.textTertiary
+            )
+
+            StyledBalance(
+                // The not-null assertion operator is necessary here even if we check its nullability before
+                // due to: "Smart cast to 'Proposal' is impossible, because 'zecSend.proposal' is a public API
+                // property declared in different module. See more details on the Kotlin forum.
+                balanceParts =
+                    zecSend.proposal?.totalFeeRequired()?.toZecStringFull()?.asZecAmountTriple()
+                        ?: ZecAmountTriple("main", "prefix"),
+                // We don't hide any balance in confirmation screen
+                isHideBalances = false,
+                textStyle =
+                    StyledBalanceDefaults.textStyles(
+                        mostSignificantPart = ZcashTheme.extendedTypography.balanceSingleStyles.first,
+                        leastSignificantPart = ZcashTheme.extendedTypography.balanceSingleStyles.second
+                    ),
+            )
+        }
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        val isMemoFieldAvailable =
+            zecSend.destination !is WalletAddress.Transparent &&
+                zecSend.destination !is WalletAddress.Tex
+
+        if (zecSend.memo.value.isNotEmpty() || !isMemoFieldAvailable) {
+            Text(
+                stringResource(R.string.send_confirmation_memo),
+                style = ZashiTypography.textSm,
+                color = ZashiColors.Text.textTertiary
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            ZashiTextField(
+                state = TextFieldState(value = stringRes(zecSend.memo.value), isEnabled = false) {},
+                modifier =
+                    Modifier
+                        .fillMaxWidth(),
+                colors =
+                    ZashiTextFieldDefaults.defaultColors(
+                        disabledTextColor = ZashiColors.Inputs.Filled.text,
+                        disabledHintColor = ZashiColors.Inputs.Disabled.hint,
+                        disabledBorderColor = Color.Unspecified,
+                        disabledContainerColor = ZashiColors.Inputs.Disabled.bg,
+                        disabledPlaceholderColor = ZashiColors.Inputs.Disabled.text,
+                    ),
+                placeholder =
+                    if (isMemoFieldAvailable) {
+                        null
+                    } else {
+                        {
+                            Text(
+                                text = stringResource(R.string.send_transparent_memo),
+                                style = ZashiTypography.textSm,
+                                color = ZashiColors.Utility.Gray.utilityGray700
+                            )
+                        }
+                    },
+                leadingIcon =
+                    if (isMemoFieldAvailable) {
+                        null
+                    } else {
+                        {
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_confirmation_message_info),
+                                contentDescription = "",
+                                colorFilter = ColorFilter.tint(ZashiColors.Utility.Gray.utilityGray500)
+                            )
+                        }
+                    }
+            )
 
             Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingUpLarge))
         }
@@ -476,11 +570,9 @@ private fun SendConfirmationContent(
             onConfirmation = onConfirmation
         )
 
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingHuge))
+        Spacer(modifier = Modifier.height(52.dp))
     }
 }
-
-const val BUTTON_WIDTH_RATIO = 0.5f
 
 @Composable
 fun SendConfirmationActionButtons(
@@ -489,33 +581,37 @@ fun SendConfirmationActionButtons(
     isSending: Boolean,
     modifier: Modifier = Modifier
 ) {
-    Row(
+    Column(
         modifier = modifier
     ) {
-        PrimaryButton(
-            text = stringResource(id = R.string.send_confirmation_send_button),
-            onClick = onConfirmation,
-            enabled = !isSending,
-            showProgressBar = isSending,
-            minHeight = ZcashTheme.dimens.buttonHeightSmall,
-            buttonColors = ZcashTheme.colors.tertiaryButtonColors,
+        ZashiButton(
+            state =
+                ButtonState(
+                    text = stringRes(R.string.send_confirmation_send_button),
+                    onClick = onConfirmation,
+                    isEnabled = !isSending,
+                    isLoading = isSending,
+                ),
             modifier =
                 Modifier
+                    .fillMaxWidth()
                     .testTag(SendConfirmationTag.SEND_CONFIRMATION_SEND_BUTTON)
-                    .weight(BUTTON_WIDTH_RATIO)
         )
 
-        Spacer(modifier = Modifier.width(ZcashTheme.dimens.spacingLarge))
+        Spacer(modifier = Modifier.height(12.dp))
 
-        SecondaryButton(
-            text = stringResource(R.string.send_confirmation_back_button),
-            onClick = onBack,
-            enabled = !isSending,
-            minHeight = ZcashTheme.dimens.buttonHeightSmall,
+        ZashiButton(
+            state =
+                ButtonState(
+                    text = stringRes(R.string.send_confirmation_back_button),
+                    onClick = onBack,
+                    isEnabled = !isSending,
+                ),
             modifier =
                 Modifier
-                    .testTag(SendConfirmationTag.SEND_CONFIRMATION_BACK_BUTTON)
-                    .weight(BUTTON_WIDTH_RATIO)
+                    .fillMaxWidth()
+                    .testTag(SendConfirmationTag.SEND_CONFIRMATION_BACK_BUTTON),
+            colors = ZashiButtonDefaults.tertiaryColors()
         )
     }
 }

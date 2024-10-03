@@ -8,6 +8,9 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ### Changed
 - The Receive screen UI has been redesigned
+- Send screen redesigned
+- Confirmation screen redesigned
+- History item redesigned
 
 ## [1.2 (739)] - 2024-09-27 
 

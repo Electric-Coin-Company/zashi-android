@@ -218,6 +218,7 @@ fun TextWithIcon(
     textAlign: TextAlign = TextAlign.Start,
     style: TextStyle = LocalTextStyle.current,
     color: Color = ZcashTheme.colors.textPrimary,
+    fontWeight: FontWeight? = null,
 ) {
     Row(
         modifier =
@@ -248,6 +249,7 @@ fun TextWithIcon(
             overflow = overflow,
             textAlign = textAlign,
             style = style,
+            fontWeight = fontWeight
         )
     }
 }
