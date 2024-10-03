@@ -1,6 +1,6 @@
 package co.electriccoin.zcash.ui.screen.receive.view
 
-import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -266,7 +266,6 @@ private fun UnifiedAddressPanel(
                     ZashiColors.Utility.Purple.utilityPurple50,
                     RoundedCornerShape(ZashiDimensionsInternal.Radius.radius3xl)
                 )
-                .animateContentSize()
                 .clip(RoundedCornerShape(ZashiDimensionsInternal.Radius.radius3xl))
                 .clickable { onExpand() }
                 .padding(all = ZcashTheme.dimens.spacingLarge)
@@ -306,12 +305,13 @@ private fun UnifiedAddressPanel(
             )
         }
 
-        if (expanded) {
-            Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
-
+        AnimatedVisibility(visible = expanded) {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth()
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(top = ZcashTheme.dimens.spacingDefault)
             ) {
                 ReceiveIconButton(
                     containerColor = ZashiColors.Utility.Purple.utilityPurple100,
@@ -368,7 +368,6 @@ private fun SaplingAddressPanel(
                     ZashiColors.Utility.Gray.utilityGray50,
                     RoundedCornerShape(ZashiDimensionsInternal.Radius.radius3xl)
                 )
-                .animateContentSize()
                 .clip(RoundedCornerShape(ZashiDimensionsInternal.Radius.radius3xl))
                 .clickable { onExpand() }
                 .padding(all = ZcashTheme.dimens.spacingLarge),
@@ -399,12 +398,13 @@ private fun SaplingAddressPanel(
             }
         }
 
-        if (expanded) {
-            Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
-
+        AnimatedVisibility(visible = expanded) {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth()
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(top = ZcashTheme.dimens.spacingDefault)
             ) {
                 ReceiveIconButton(
                     containerColor = ZashiColors.Surfaces.bgTertiary,
@@ -461,7 +461,6 @@ private fun TransparentAddressPanel(
                     ZashiColors.Utility.Gray.utilityGray50,
                     RoundedCornerShape(ZashiDimensionsInternal.Radius.radius3xl)
                 )
-                .animateContentSize()
                 .clip(RoundedCornerShape(ZashiDimensionsInternal.Radius.radius3xl))
                 .clickable { onExpand() }
                 .padding(all = ZcashTheme.dimens.spacingLarge),
@@ -492,12 +491,13 @@ private fun TransparentAddressPanel(
             }
         }
 
-        if (expanded) {
-            Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
-
+        AnimatedVisibility(visible = expanded) {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth()
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(top = ZcashTheme.dimens.spacingDefault)
             ) {
                 ReceiveIconButton(
                     containerColor = ZashiColors.Surfaces.bgTertiary,
