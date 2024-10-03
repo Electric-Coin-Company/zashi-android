@@ -443,8 +443,8 @@ private fun receiveZecScreenshots(
     }
 
     composeTestRule.onNode(
-        hasContentDescription(
-            value = resContext.getString(R.string.receive_unified_content_description),
+        hasText(
+            text = resContext.getString(R.string.receive_header),
             ignoreCase = true
         )
     ).also {
