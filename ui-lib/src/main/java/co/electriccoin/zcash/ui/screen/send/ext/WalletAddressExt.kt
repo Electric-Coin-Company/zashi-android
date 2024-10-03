@@ -7,7 +7,6 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import cash.z.ecc.android.sdk.model.WalletAddress
 import cash.z.ecc.android.sdk.type.AddressType
-import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.SerializableAddress
 
 /**
@@ -27,10 +26,10 @@ internal fun WalletAddress.abbreviated(): String {
 internal fun WalletAddress.abbreviated(context: Context): String {
     require(address.length >= ABBREVIATION_INDEX) { "Address must be at least 5 characters long" }
 
-    val firstFive = address.substring(0, ABBREVIATION_INDEX)
-    val lastFive = address.substring(address.length - ABBREVIATION_INDEX, address.length)
-
-    return context.getString(R.string.send_abbreviated_address_format, firstFive, lastFive)
+    return buildString {
+        append(address.substring(0, ABBREVIATION_INDEX))
+        append(context.getString(co.electriccoin.zcash.ui.design.R.string.triple_dots))
+    }
 }
 
 internal fun WalletAddress.toSerializableAddress() =

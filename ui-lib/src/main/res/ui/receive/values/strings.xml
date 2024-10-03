@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="receive_title">Receive</string>
+    <string name="receive_header">Receive Zcash</string>
+    <string name="receive_prioritize_shielded">Prioritize using your shielded address for maximum privacy.</string>
     <string name="receive_unified_content_description">Unified Address QR code</string>
     <string name="receive_sapling_content_description">Sapling Address QR code</string>
     <string name="receive_transparent_content_description">Transparent Address QR code</string>
@@ -10,6 +12,5 @@
     <string name="receive_copy">Copy</string>
     <string name="receive_qr_code">QR Code</string>
     <string name="receive_request">Request</string>
-    <string name="receive_prioritize_shielded">Prioritize using shielded address for maximum privacy.</string>
     <string name="receive_clipboard_tag">Zcash Wallet Address</string>
 </resources>
