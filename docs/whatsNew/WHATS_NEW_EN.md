@@ -11,9 +11,10 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ### Changed
 - The Receive screen UI has been redesigned
-- Send screen redesigned
+- Send screen redesigned & added a possibility to pick a contact from address book
 - Confirmation screen redesigned
 - History item redesigned
+- Address Book, Create/Update/Delete Contact, Create Contact by QR screens added
 
 ## [1.2 (739)] - 2024-09-27
 
