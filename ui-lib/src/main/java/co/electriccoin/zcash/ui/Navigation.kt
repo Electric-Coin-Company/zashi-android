@@ -28,7 +28,6 @@ import co.electriccoin.zcash.ui.NavigationArguments.SEND_CONFIRM_PROPOSAL
 import co.electriccoin.zcash.ui.NavigationArguments.SEND_CONFIRM_RECIPIENT_ADDRESS
 import co.electriccoin.zcash.ui.NavigationArguments.SEND_SCAN_RECIPIENT_ADDRESS
 import co.electriccoin.zcash.ui.NavigationTargets.ABOUT
-import co.electriccoin.zcash.ui.NavigationTargets.ADDRESS_BOOK
 import co.electriccoin.zcash.ui.NavigationTargets.ADVANCED_SETTINGS
 import co.electriccoin.zcash.ui.NavigationTargets.CHOOSE_SERVER
 import co.electriccoin.zcash.ui.NavigationTargets.DELETE_WALLET
@@ -51,6 +50,7 @@ import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.exitTransition
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.popEnterTransition
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.popExitTransition
 import co.electriccoin.zcash.ui.screen.about.WrapAbout
+import co.electriccoin.zcash.ui.screen.addressbook.AddressBookArgs
 import co.electriccoin.zcash.ui.screen.addressbook.WrapAddressBook
 import co.electriccoin.zcash.ui.screen.advancedsettings.WrapAdvancedSettings
 import co.electriccoin.zcash.ui.screen.authentication.AuthenticationUseCase
@@ -295,8 +295,21 @@ internal fun MainActivity.Navigation() {
                 goSettings = { navController.navigateJustOnce(SETTINGS) }
             )
         }
-        composable(ADDRESS_BOOK) {
-            WrapAddressBook()
+        composable(
+            route = AddressBookArgs.ROUTE,
+            arguments =
+                listOf(
+                    navArgument(AddressBookArgs.MODE) {
+                        defaultValue = AddressBookArgs.DEFAULT
+                        type = NavType.EnumType(AddressBookArgs::class.java)
+                    }
+                )
+        ) { backStackEntry ->
+            val args =
+                backStackEntry.arguments
+                    ?.getSerializableCompat<AddressBookArgs>(AddressBookArgs.MODE) ?: AddressBookArgs.DEFAULT
+
+            WrapAddressBook(args)
         }
         composable(
             route = AddContactArgs.ROUTE,
@@ -504,5 +517,4 @@ object NavigationTargets {
     const val SETTINGS_EXCHANGE_RATE_OPT_IN = "settings_exchange_rate_opt_in"
     const val SUPPORT = "support"
     const val WHATS_NEW = "whats_new"
-    const val ADDRESS_BOOK = "address_book"
 }

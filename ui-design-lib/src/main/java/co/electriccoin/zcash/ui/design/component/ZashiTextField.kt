@@ -2,12 +2,14 @@ package co.electriccoin.zcash.ui.design.component
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
@@ -19,6 +21,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -217,8 +220,17 @@ private fun TextFieldInternal(
                     TextFieldDefaults.DecorationBox(
                         value = state.value.getValue(),
                         visualTransformation = visualTransformation,
-                        innerTextField = innerTextField,
-                        placeholder = placeholder,
+                        innerTextField = {
+                            DecorationBox(prefix = prefix, suffix = suffix, content = innerTextField)
+                        },
+                        placeholder =
+                            if (placeholder != null) {
+                                {
+                                    DecorationBox(prefix, suffix, placeholder)
+                                }
+                            } else {
+                                null
+                            },
                         label = label,
                         leadingIcon = leadingIcon,
                         trailingIcon = trailingIcon,
@@ -233,10 +245,10 @@ private fun TextFieldInternal(
                         colors = androidColors,
                         contentPadding =
                             PaddingValues(
-                                start = if (leadingIcon != null) 8.dp else 12.dp,
-                                end = 12.dp,
-                                top = if (trailingIcon != null || leadingIcon != null) 12.dp else 8.dp,
-                                bottom = if (trailingIcon != null || leadingIcon != null) 12.dp else 8.dp,
+                                start = if (leadingIcon != null) 8.dp else 14.dp,
+                                end = if (suffix != null) 4.dp else 12.dp,
+                                top = getVerticalPadding(trailingIcon, leadingIcon, suffix, prefix),
+                                bottom = getVerticalPadding(trailingIcon, leadingIcon, suffix, prefix),
                             )
                     )
                 }
@@ -251,6 +263,38 @@ private fun TextFieldInternal(
                 )
             }
         }
+    }
+}
+
+@ReadOnlyComposable
+@Composable
+private fun getVerticalPadding(
+    trailingIcon: @Composable (() -> Unit)?,
+    leadingIcon: @Composable (() -> Unit)?,
+    suffix: @Composable (() -> Unit)?,
+    prefix: @Composable (() -> Unit)?
+) = when {
+    trailingIcon != null || leadingIcon != null -> 12.dp
+    suffix != null || prefix != null -> 4.dp
+    else -> 10.dp
+}
+
+@Composable
+private fun DecorationBox(
+    prefix: @Composable (() -> Unit)?,
+    suffix: @Composable (() -> Unit)?,
+    content: @Composable () -> Unit
+) {
+    Box(
+        modifier =
+            Modifier.padding(
+                start = if (prefix != null) 4.dp else 0.dp,
+                top = if (suffix != null || prefix != null) 8.dp else 0.dp,
+                bottom = if (suffix != null || prefix != null) 8.dp else 0.dp,
+                end = if (suffix != null) 4.dp else 0.dp
+            )
+    ) {
+        content()
     }
 }
 

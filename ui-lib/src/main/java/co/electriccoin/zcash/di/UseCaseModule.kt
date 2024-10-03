@@ -1,13 +1,16 @@
 package co.electriccoin.zcash.di
 
 import co.electriccoin.zcash.ui.common.usecase.DeleteContactUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetContactUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetContactByAddressUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetContactByIdUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetPersistableWalletUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSelectedEndpointUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSynchronizerUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTransparentAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveAddressBookContactsUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveConfigurationUseCase
+import co.electriccoin.zcash.ui.common.usecase.ObserveContactByAddressUseCase
+import co.electriccoin.zcash.ui.common.usecase.ObserveContactPickedUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveFastestServersUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedEndpointUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveSynchronizerUseCase
@@ -42,5 +45,8 @@ val useCaseModule =
         singleOf(::SaveContactUseCase)
         singleOf(::UpdateContactUseCase)
         singleOf(::DeleteContactUseCase)
-        singleOf(::GetContactUseCase)
+        singleOf(::GetContactByIdUseCase)
+        singleOf(::GetContactByAddressUseCase)
+        singleOf(::ObserveContactByAddressUseCase)
+        singleOf(::ObserveContactPickedUseCase)
     }

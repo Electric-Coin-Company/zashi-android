@@ -2,6 +2,7 @@
 
 package co.electriccoin.zcash.ui.screen.send.view
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -85,6 +86,7 @@ import co.electriccoin.zcash.ui.screen.send.SendTag
 import co.electriccoin.zcash.ui.screen.send.model.AmountState
 import co.electriccoin.zcash.ui.screen.send.model.MemoState
 import co.electriccoin.zcash.ui.screen.send.model.RecipientAddressState
+import co.electriccoin.zcash.ui.screen.send.model.SendAddressBookState
 import co.electriccoin.zcash.ui.screen.send.model.SendStage
 import kotlinx.coroutines.launch
 import java.util.Locale
@@ -117,7 +119,13 @@ private fun PreviewSendForm() {
             walletSnapshot = WalletSnapshotFixture.new(),
             balanceState = BalanceStateFixture.new(),
             isHideBalances = false,
-            exchangeRateState = ExchangeRateState.OptedOut
+            exchangeRateState = ExchangeRateState.OptedOut,
+            sendAddressBookState =
+                SendAddressBookState(
+                    mode = SendAddressBookState.Mode.ADD_TO_ADDRESS_BOOK,
+                    isHintVisible = true,
+                    onButtonClick = {}
+                )
         )
     }
 }
@@ -154,7 +162,13 @@ private fun SendFormTransparentAddressPreview() {
             walletSnapshot = WalletSnapshotFixture.new(),
             balanceState = BalanceStateFixture.new(),
             isHideBalances = false,
-            exchangeRateState = ExchangeRateState.OptedOut
+            exchangeRateState = ExchangeRateState.OptedOut,
+            sendAddressBookState =
+                SendAddressBookState(
+                    mode = SendAddressBookState.Mode.ADD_TO_ADDRESS_BOOK,
+                    isHintVisible = true,
+                    onButtonClick = {}
+                )
         )
     }
 }
@@ -183,6 +197,7 @@ fun Send(
     topAppBarSubTitleState: TopAppBarSubTitleState,
     walletSnapshot: WalletSnapshot,
     exchangeRateState: ExchangeRateState,
+    sendAddressBookState: SendAddressBookState,
 ) {
     BlankBgScaffold(topBar = {
         SendTopAppBar(
@@ -216,7 +231,8 @@ fun Send(
                         start = ZcashTheme.dimens.screenHorizontalSpacingRegular,
                         end = ZcashTheme.dimens.screenHorizontalSpacingRegular
                     ),
-            exchangeRateState = exchangeRateState
+            exchangeRateState = exchangeRateState,
+            sendState = sendAddressBookState
         )
     }
 }
@@ -284,6 +300,7 @@ private fun SendMainContent(
     setAmountState: (AmountState) -> Unit,
     memoState: MemoState,
     setMemoState: (MemoState) -> Unit,
+    sendState: SendAddressBookState,
     modifier: Modifier = Modifier,
 ) {
     // For now, we merge [SendStage.Form] and [SendStage.Proposing] into one stage. We could eventually display a
@@ -304,7 +321,8 @@ private fun SendMainContent(
         goBalances = goBalances,
         hasCameraFeature = hasCameraFeature,
         modifier = modifier,
-        exchangeRateState = exchangeRateState
+        exchangeRateState = exchangeRateState,
+        sendState = sendState
     )
 
     if (sendStage is SendStage.SendFailure) {
@@ -338,6 +356,7 @@ private fun SendForm(
     onQrScannerOpen: () -> Unit,
     goBalances: () -> Unit,
     hasCameraFeature: Boolean,
+    sendState: SendAddressBookState,
     modifier: Modifier = Modifier,
 ) {
     val monetarySeparators = MonetarySeparators.current(Locale.getDefault())
@@ -368,8 +387,16 @@ private fun SendForm(
             hasCameraFeature = hasCameraFeature,
             onQrScannerOpen = onQrScannerOpen,
             recipientAddressState = recipientAddressState,
-            setRecipientAddress = onRecipientAddressChange
+            setRecipientAddress = onRecipientAddressChange,
+            sendAddressBookState = sendState
         )
+
+        AnimatedVisibility(visible = sendState.isHintVisible) {
+            Column {
+                Spacer(modifier = Modifier.height(8.dp))
+                SendAddressBookHint(Modifier.fillMaxWidth())
+            }
+        }
 
         Spacer(Modifier.size(ZcashTheme.dimens.spacingDefault))
 
@@ -513,6 +540,7 @@ fun SendButton(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SendFormAddressTextField(
+    sendAddressBookState: SendAddressBookState,
     hasCameraFeature: Boolean,
     onQrScannerOpen: () -> Unit,
     recipientAddressState: RecipientAddressState,
@@ -550,6 +578,8 @@ fun SendFormAddressTextField(
             }
 
         ZashiTextField(
+            singleLine = true,
+            maxLines = 1,
             value = recipientAddressValue,
             onValueChange = {
                 setRecipientAddress(it)
@@ -572,20 +602,40 @@ fun SendFormAddressTextField(
                     color = ZashiColors.Inputs.Default.text
                 )
             },
-            trailingIcon =
+            suffix =
                 if (hasCameraFeature) {
                     {
-                        Image(
-                            modifier =
-                                Modifier.clickable(
-                                    onClick = onQrScannerOpen,
-                                    role = Role.Button,
-                                    indication = rememberRipple(radius = 4.dp),
-                                    interactionSource = remember { MutableInteractionSource() }
-                                ),
-                            painter = painterResource(R.drawable.qr_code_icon),
-                            contentDescription = stringResource(R.string.send_scan_content_description),
-                        )
+                        Row(
+                            verticalAlignment = Alignment.Top
+                        ) {
+                            Image(
+                                modifier =
+                                    Modifier.clickable(
+                                        onClick = sendAddressBookState.onButtonClick,
+                                        role = Role.Button,
+                                        indication = rememberRipple(radius = 4.dp),
+                                        interactionSource = remember { MutableInteractionSource() }
+                                    ),
+                                painter = painterResource(sendAddressBookState.mode.icon),
+                                contentDescription = "",
+                            )
+
+                            Spacer(modifier = Modifier.width(4.dp))
+
+                            Image(
+                                modifier =
+                                    Modifier.clickable(
+                                        onClick = onQrScannerOpen,
+                                        role = Role.Button,
+                                        indication = rememberRipple(radius = 4.dp),
+                                        interactionSource = remember { MutableInteractionSource() }
+                                    ),
+                                painter = painterResource(R.drawable.qr_code_icon),
+                                contentDescription = stringResource(R.string.send_scan_content_description),
+                            )
+
+                            // Spacer(modifier = Modifier.width(6.dp))
+                        }
                     }
                 } else {
                     null
@@ -662,6 +712,8 @@ fun SendFormAmountTextField(
 
         Row {
             ZashiTextField(
+                singleLine = true,
+                maxLines = 1,
                 value = amountState.value,
                 onValueChange = { newValue ->
                     setAmountState(
@@ -703,7 +755,7 @@ fun SendFormAmountTextField(
                             focusManager.moveFocus(FocusDirection.Down)
                         }
                     ),
-                leadingIcon = {
+                prefix = {
                     Image(
                         painter = painterResource(R.drawable.ic_send_zashi),
                         contentDescription = "",
@@ -722,6 +774,8 @@ fun SendFormAmountTextField(
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 ZashiTextField(
+                    singleLine = true,
+                    maxLines = 1,
                     isEnabled = !exchangeRateState.isStale,
                     value = amountState.fiatValue,
                     onValueChange = { newValue ->
@@ -761,7 +815,7 @@ fun SendFormAmountTextField(
                                 focusManager.moveFocus(FocusDirection.Down)
                             }
                         ),
-                    leadingIcon = {
+                    prefix = {
                         Image(
                             painter = painterResource(R.drawable.ic_send_usd),
                             contentDescription = "",

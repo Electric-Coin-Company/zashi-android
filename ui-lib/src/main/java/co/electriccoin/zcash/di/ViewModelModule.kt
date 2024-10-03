@@ -5,6 +5,7 @@ import co.electriccoin.zcash.ui.common.viewmodel.CheckUpdateViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.HomeViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.account.viewmodel.TransactionHistoryViewModel
+import co.electriccoin.zcash.ui.screen.addressbook.AddressBookArgs
 import co.electriccoin.zcash.ui.screen.addressbook.viewmodel.AddressBookViewModel
 import co.electriccoin.zcash.ui.screen.advancedsettings.viewmodel.AdvancedSettingsViewModel
 import co.electriccoin.zcash.ui.screen.chooseserver.ChooseServerViewModel
@@ -43,7 +44,14 @@ val viewModelModule =
         viewModelOf(::WhatsNewViewModel)
         viewModelOf(::UpdateViewModel)
         viewModelOf(::ChooseServerViewModel)
-        viewModelOf(::AddressBookViewModel)
+        viewModel { (args: AddressBookArgs) ->
+            AddressBookViewModel(
+                args = args,
+                observeAddressBookContacts = get(),
+                getVersionInfo = get(),
+                observeContactPicked = get(),
+            )
+        }
         viewModel { (address: String?) ->
             AddContactViewModel(
                 address = address,

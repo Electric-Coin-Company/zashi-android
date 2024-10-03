@@ -14,7 +14,6 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
@@ -102,9 +101,10 @@ private fun ContactViewInternal(
         ZashiTextField(
             modifier = Modifier.fillMaxWidth(),
             state = state.contactName,
-            keyboardOptions = KeyboardOptions(
-                capitalization = KeyboardCapitalization.Words
-            ),
+            keyboardOptions =
+                KeyboardOptions(
+                    capitalization = KeyboardCapitalization.Words
+                ),
             placeholder = {
                 Text(
                     text = stringResource(id = R.string.contact_name_hint),
