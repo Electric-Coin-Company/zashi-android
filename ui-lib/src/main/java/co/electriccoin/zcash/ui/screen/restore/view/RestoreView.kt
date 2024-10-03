@@ -834,7 +834,7 @@ private fun RestoreBirthdayMainContent(
                 if (isEmptyBirthday) {
                     setRestoreHeight(null)
                 } else if (isBirthdayValid) {
-                    setRestoreHeight(BlockHeight.new(zcashNetwork, height.toLong()))
+                    setRestoreHeight(BlockHeight.new(height.toLong()))
                 } else {
                     error("The restore button should not expect click events")
                 }

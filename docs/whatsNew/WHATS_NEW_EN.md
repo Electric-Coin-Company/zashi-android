@@ -9,6 +9,11 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [1.2 (739)] - 2024-09-27
+
+### Changed
+- Adopted snapshot Zcash SDK version 2.2.5 which includes a fix for block synchronization issues caused by incorrect check of the block height component.
+
 ## [1.2 (735)] - 2024-09-20
 
 ### Added:
