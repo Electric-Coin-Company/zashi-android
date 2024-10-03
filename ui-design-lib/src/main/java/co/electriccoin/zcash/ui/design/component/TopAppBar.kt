@@ -2,6 +2,7 @@
 
 package co.electriccoin.zcash.ui.design.component
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -292,8 +293,8 @@ private fun TopBarHamburgerMenuExample(
                 actionCallback()
             }
         ) {
-            Icon(
-                painter = painterResource(id = R.drawable.hamburger_menu_icon),
+            Image(
+                painter = painterResource(id = R.drawable.ic_hamburger_menu),
                 contentDescription = "Content description text"
             )
         }

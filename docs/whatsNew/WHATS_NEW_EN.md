@@ -10,6 +10,7 @@ directly impact users rather than highlighting other key architectural updates.*
 ## [Unreleased]
 
 ### Changed
+- The Receive screen UI has been redesigned
 - Send screen redesigned
 - Confirmation screen redesigned
 - History item redesigned

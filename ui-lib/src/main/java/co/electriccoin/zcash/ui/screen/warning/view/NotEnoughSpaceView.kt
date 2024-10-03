@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -115,8 +114,8 @@ private fun NotEnoughSpaceTopAppBar(
                 onClick = onSettings,
                 modifier = Modifier.testTag(CommonTag.SETTINGS_TOP_BAR_BUTTON)
             ) {
-                Icon(
-                    painter = painterResource(id = co.electriccoin.zcash.ui.design.R.drawable.hamburger_menu_icon),
+                Image(
+                    painter = painterResource(id = co.electriccoin.zcash.ui.design.R.drawable.ic_hamburger_menu),
                     contentDescription = stringResource(id = R.string.settings_menu_content_description)
                 )
             }
