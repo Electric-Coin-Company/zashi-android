@@ -41,7 +41,8 @@ class AddContactViewModel(
                         null
                     } else {
                         when (validateContactAddress(address)) {
-                            ValidateContactAddressUseCase.Result.Invalid -> stringRes("")
+                            ValidateContactAddressUseCase.Result.Invalid ->
+                                stringRes(R.string.contact_address_error_invalid)
                             ValidateContactAddressUseCase.Result.NotUnique ->
                                 stringRes(R.string.contact_address_error_not_unique)
 

@@ -52,7 +52,8 @@ class UpdateContactViewModel(
                         null
                     } else {
                         when (validateContactAddress(address = address, exclude = contact)) {
-                            ValidateContactAddressUseCase.Result.Invalid -> stringRes("")
+                            ValidateContactAddressUseCase.Result.Invalid ->
+                                stringRes(R.string.contact_address_error_invalid)
                             ValidateContactAddressUseCase.Result.NotUnique ->
                                 stringRes(R.string.contact_address_error_not_unique)
 
