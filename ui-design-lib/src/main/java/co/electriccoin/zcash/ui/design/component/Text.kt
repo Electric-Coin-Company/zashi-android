@@ -222,7 +222,7 @@ fun TextWithIcon(
 ) {
     Row(
         modifier =
-        Modifier.then(modifier),
+            Modifier.then(modifier),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (iconTintColor != null) {

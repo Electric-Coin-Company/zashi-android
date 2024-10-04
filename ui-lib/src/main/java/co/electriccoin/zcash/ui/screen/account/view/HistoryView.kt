@@ -8,7 +8,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -623,12 +622,14 @@ private fun HistoryItemExpandedAddressPart(
                 fontWeight = FontWeight.SemiBold,
                 iconVector = ImageVector.vectorResource(R.drawable.ic_trx_copy),
                 iconTintColor = ZashiColors.Text.textTertiary,
-                modifier = (if (contact == null) Modifier.weight(1f) else Modifier) then Modifier
-                    .clickable(
-                        role = Role.Button,
-                        indication = rememberRipple(radius = 2.dp, color = ZashiColors.Text.textTertiary),
-                        interactionSource = remember { MutableInteractionSource() }
-                    ) { onAction(TrxItemAction.AddressClick(recipient)) }
+                modifier =
+                    (if (contact == null) Modifier.weight(1f) else Modifier) then
+                        Modifier
+                            .clickable(
+                                role = Role.Button,
+                                indication = rememberRipple(radius = 2.dp, color = ZashiColors.Text.textTertiary),
+                                interactionSource = remember { MutableInteractionSource() }
+                            ) { onAction(TrxItemAction.AddressClick(recipient)) }
             )
 
             if (contact == null) {
@@ -640,13 +641,13 @@ private fun HistoryItemExpandedAddressPart(
                     iconVector = ImageVector.vectorResource(R.drawable.ic_trx_save),
                     iconTintColor = ZashiColors.Text.textTertiary,
                     modifier =
-                    Modifier
-                        .weight(1f)
-                        .clickable(
-                            role = Role.Button,
-                            indication = rememberRipple(radius = 2.dp, color = ZashiColors.Text.textTertiary),
-                            interactionSource = remember { MutableInteractionSource() }
-                        ) { onAction(TrxItemAction.AddToAddressBookClick(recipient)) }
+                        Modifier
+                            .weight(1f)
+                            .clickable(
+                                role = Role.Button,
+                                indication = rememberRipple(radius = 2.dp, color = ZashiColors.Text.textTertiary),
+                                interactionSource = remember { MutableInteractionSource() }
+                            ) { onAction(TrxItemAction.AddToAddressBookClick(recipient)) }
                 )
             }
         }

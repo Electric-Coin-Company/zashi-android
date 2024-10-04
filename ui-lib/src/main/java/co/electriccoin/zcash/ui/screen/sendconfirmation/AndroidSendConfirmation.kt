@@ -147,9 +147,10 @@ internal fun WrapSendConfirmation(
 
     val getContact = koinInject<GetContactByAddressUseCase>()
 
-    val foundContact = remember(zecSend?.destination) {
-        getContact(zecSend?.destination?.address.orEmpty())
-    }
+    val foundContact =
+        remember(zecSend?.destination) {
+            getContact(zecSend?.destination?.address.orEmpty())
+        }
 
     BackHandler {
         onBackAction()

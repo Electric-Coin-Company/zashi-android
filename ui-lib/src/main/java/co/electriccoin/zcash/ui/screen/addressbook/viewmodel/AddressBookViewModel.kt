@@ -63,7 +63,7 @@ class AddressBookViewModel(
                     initials = getContactInitials(contact),
                     isShielded = false,
                     name = stringRes(contact.name),
-                    address = stringRes("${contact.address.take(20)}..."),
+                    address = stringRes("${contact.address.take(ADDRESS_MAX_LENGTH)}..."),
                     onClick = { onContactClick(contact) }
                 )
             },
@@ -124,3 +124,5 @@ class AddressBookViewModel(
             navigationCommand.emit(ScanNavigationArgs(ScanNavigationArgs.ADDRESS_BOOK))
         }
 }
+
+private const val ADDRESS_MAX_LENGTH = 20

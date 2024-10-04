@@ -88,9 +88,10 @@ class TransactionHistoryViewModel(
             data = data,
             expandableState = existingTransaction?.expandableState ?: TrxItemState.COLLAPSED,
             messages = existingTransaction?.messages,
-            addressBookContact = (data.recipient as? TransactionRecipient.Address)?.addressValue?.let {
-                getContactByAddress(it)
-            }
+            addressBookContact =
+                (data.recipient as? TransactionRecipient.Address)?.addressValue?.let {
+                    getContactByAddress(it)
+                }
         )
     }
 

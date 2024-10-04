@@ -416,9 +416,9 @@ private fun SendConfirmationContent(
     Column(
         horizontalAlignment = Alignment.Start,
         modifier =
-        modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState()),
+            modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState()),
     ) {
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
 
@@ -579,9 +579,9 @@ private fun SendConfirmationContent(
 
         Spacer(
             modifier =
-            Modifier
-                .fillMaxHeight()
-                .weight(MINIMAL_WEIGHT)
+                Modifier
+                    .fillMaxHeight()
+                    .weight(MINIMAL_WEIGHT)
         )
 
         SendConfirmationActionButtons(
@@ -613,9 +613,9 @@ fun SendConfirmationActionButtons(
                     isLoading = isSending,
                 ),
             modifier =
-            Modifier
-                .fillMaxWidth()
-                .testTag(SendConfirmationTag.SEND_CONFIRMATION_SEND_BUTTON)
+                Modifier
+                    .fillMaxWidth()
+                    .testTag(SendConfirmationTag.SEND_CONFIRMATION_SEND_BUTTON)
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -628,9 +628,9 @@ fun SendConfirmationActionButtons(
                     isEnabled = !isSending,
                 ),
             modifier =
-            Modifier
-                .fillMaxWidth()
-                .testTag(SendConfirmationTag.SEND_CONFIRMATION_BACK_BUTTON),
+                Modifier
+                    .fillMaxWidth()
+                    .testTag(SendConfirmationTag.SEND_CONFIRMATION_BACK_BUTTON),
             colors = ZashiButtonDefaults.tertiaryColors()
         )
     }

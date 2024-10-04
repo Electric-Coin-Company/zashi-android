@@ -145,11 +145,12 @@ class SendViewTestSetup(
                             )
                     ),
                 exchangeRateState = ExchangeRateState.OptedOut,
-                sendAddressBookState = SendAddressBookState(
-                    mode = SendAddressBookState.Mode.PICK_FROM_ADDRESS_BOOK,
-                    isHintVisible = false,
-                    onButtonClick = {}
-                )
+                sendAddressBookState =
+                    SendAddressBookState(
+                        mode = SendAddressBookState.Mode.PICK_FROM_ADDRESS_BOOK,
+                        isHintVisible = false,
+                        onButtonClick = {}
+                    )
             )
         }
     }
