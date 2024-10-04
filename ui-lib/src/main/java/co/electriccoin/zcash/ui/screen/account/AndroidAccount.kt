@@ -18,6 +18,7 @@ import co.electriccoin.zcash.spackle.ClipboardManagerUtil
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.BalanceState
 import co.electriccoin.zcash.ui.common.compose.LocalActivity
+import co.electriccoin.zcash.ui.common.compose.LocalNavController
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
@@ -29,6 +30,7 @@ import co.electriccoin.zcash.ui.screen.account.view.Account
 import co.electriccoin.zcash.ui.screen.account.view.TrxItemAction
 import co.electriccoin.zcash.ui.screen.account.viewmodel.TransactionHistoryViewModel
 import co.electriccoin.zcash.ui.screen.balances.model.StatusAction
+import co.electriccoin.zcash.ui.screen.contact.AddContactArgs
 import co.electriccoin.zcash.ui.screen.support.model.SupportInfo
 import co.electriccoin.zcash.ui.screen.support.model.SupportInfoType
 import co.electriccoin.zcash.ui.screen.support.viewmodel.SupportViewModel
@@ -109,6 +111,8 @@ internal fun WrapAccount(
     walletRestoringState: WalletRestoringState,
     walletSnapshot: WalletSnapshot?
 ) {
+    val navController = LocalNavController.current
+
     val context = LocalContext.current
 
     val scope = rememberCoroutineScope()
@@ -206,6 +210,10 @@ internal fun WrapAccount(
                             context.getString(R.string.account_history_memo_clipboard_tag),
                             action.memo
                         )
+                    }
+
+                    is TrxItemAction.AddToAddressBookClick -> {
+                        navController.navigate(AddContactArgs(action.address.addressValue))
                     }
                 }
             },

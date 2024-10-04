@@ -34,6 +34,7 @@ object TransactionUiFixture {
         recipient = recipient,
         recipientAddressType = recipientAddressType,
         expandableState = expandableState,
-        messages = messages
+        messages = messages,
+        addressBookContact = null
     )
 }

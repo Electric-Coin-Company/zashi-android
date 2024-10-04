@@ -8,6 +8,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -56,6 +57,7 @@ import cash.z.ecc.sdk.extension.toZecStringFull
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.SynchronizationStatus
 import co.electriccoin.zcash.ui.common.extension.asZecAmountTriple
+import co.electriccoin.zcash.ui.common.model.AddressBookContact
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.design.component.BlankSurface
@@ -432,7 +434,7 @@ private fun HistoryItem(
                     transaction.recipient != null &&
                     transaction.recipient is TransactionRecipient.Address
                 ) {
-                    HistoryItemExpandedAddressPart(onAction, transaction.recipient)
+                    HistoryItemExpandedAddressPart(onAction, transaction.recipient, transaction.addressBookContact)
 
                     Spacer(modifier = Modifier.height(16.dp))
                 }
@@ -593,6 +595,7 @@ const val EXPANDED_ADDRESS_WIDTH_RATIO = 0.75f
 private fun HistoryItemExpandedAddressPart(
     onAction: (TrxItemAction) -> Unit,
     recipient: TransactionRecipient.Address,
+    contact: AddressBookContact?,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -612,21 +615,41 @@ private fun HistoryItemExpandedAddressPart(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        TextWithIcon(
-            text = stringResource(id = R.string.account_history_item_tap_to_copy),
-            style = ZashiTypography.textSm,
-            color = ZashiColors.Btns.Tertiary.btnTertiaryFg,
-            fontWeight = FontWeight.SemiBold,
-            iconVector = ImageVector.vectorResource(R.drawable.ic_trx_copy),
-            iconTintColor = ZashiColors.Text.textTertiary,
-            modifier =
-                Modifier
+        Row {
+            TextWithIcon(
+                text = stringResource(id = R.string.account_history_item_tap_to_copy),
+                style = ZashiTypography.textSm,
+                color = ZashiColors.Btns.Tertiary.btnTertiaryFg,
+                fontWeight = FontWeight.SemiBold,
+                iconVector = ImageVector.vectorResource(R.drawable.ic_trx_copy),
+                iconTintColor = ZashiColors.Text.textTertiary,
+                modifier = (if (contact == null) Modifier.weight(1f) else Modifier) then Modifier
                     .clickable(
                         role = Role.Button,
                         indication = rememberRipple(radius = 2.dp, color = ZashiColors.Text.textTertiary),
                         interactionSource = remember { MutableInteractionSource() }
                     ) { onAction(TrxItemAction.AddressClick(recipient)) }
-        )
+            )
+
+            if (contact == null) {
+                TextWithIcon(
+                    text = stringResource(id = R.string.account_history_item_save_address),
+                    style = ZashiTypography.textSm,
+                    color = ZashiColors.Btns.Tertiary.btnTertiaryFg,
+                    fontWeight = FontWeight.SemiBold,
+                    iconVector = ImageVector.vectorResource(R.drawable.ic_trx_save),
+                    iconTintColor = ZashiColors.Text.textTertiary,
+                    modifier =
+                    Modifier
+                        .weight(1f)
+                        .clickable(
+                            role = Role.Button,
+                            indication = rememberRipple(radius = 2.dp, color = ZashiColors.Text.textTertiary),
+                            interactionSource = remember { MutableInteractionSource() }
+                        ) { onAction(TrxItemAction.AddToAddressBookClick(recipient)) }
+                )
+            }
+        }
     }
 }
 
@@ -921,6 +944,8 @@ internal sealed class TrxItemAction {
     ) : TrxItemAction()
 
     data class AddressClick(val address: TransactionRecipient.Address) : TrxItemAction()
+
+    data class AddToAddressBookClick(val address: TransactionRecipient.Address) : TrxItemAction()
 
     data class MessageClick(val memo: String) : TrxItemAction()
 }
