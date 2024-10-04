@@ -25,6 +25,7 @@ import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
+import co.electriccoin.zcash.ui.common.usecase.GetContactByAddressUseCase
 import co.electriccoin.zcash.ui.common.viewmodel.AuthenticationViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
@@ -46,6 +47,7 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
+import org.koin.compose.koinInject
 
 @Composable
 internal fun MainActivity.WrapSendConfirmation(
@@ -143,6 +145,12 @@ internal fun WrapSendConfirmation(
         }
     }
 
+    val getContact = koinInject<GetContactByAddressUseCase>()
+
+    val foundContact = remember(zecSend?.destination) {
+        getContact(zecSend?.destination?.address.orEmpty())
+    }
+
     BackHandler {
         onBackAction()
     }
@@ -227,7 +235,8 @@ internal fun WrapSendConfirmation(
                 }
             },
             topAppBarSubTitleState = topAppBarSubTitleState,
-            exchangeRate = exchangeRateState
+            exchangeRate = exchangeRateState,
+            contactName = foundContact?.name
         )
 
         if (sendFundsAuthentication.value) {
