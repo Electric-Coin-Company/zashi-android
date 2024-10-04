@@ -63,7 +63,7 @@ class AddressBookViewModel(
                     initials = getContactInitials(contact),
                     isShielded = false,
                     name = stringRes(contact.name),
-                    address = stringRes(contact.address),
+                    address = stringRes("${contact.address.take(20)}..."),
                     onClick = { onContactClick(contact) }
                 )
             },
