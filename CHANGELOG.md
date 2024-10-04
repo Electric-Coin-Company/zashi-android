@@ -7,6 +7,7 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 ## [Unreleased]
 
 ### Changed
+- Scan QR screen has been redesigned
 - The Receive screen UI has been redesigned
 - Send screen redesigned
 - Confirmation screen redesigned

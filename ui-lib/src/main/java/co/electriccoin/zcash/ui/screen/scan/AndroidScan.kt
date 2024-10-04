@@ -13,7 +13,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.type.AddressType
 import co.electriccoin.zcash.di.koinActivityViewModel
-import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.SerializableAddress
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
@@ -24,7 +23,7 @@ import co.electriccoin.zcash.ui.util.SettingsUtil
 import kotlinx.coroutines.launch
 
 @Composable
-internal fun MainActivity.WrapScanValidator(
+internal fun WrapScanValidator(
     onScanValid: (address: SerializableAddress) -> Unit,
     goBack: () -> Unit
 ) {
