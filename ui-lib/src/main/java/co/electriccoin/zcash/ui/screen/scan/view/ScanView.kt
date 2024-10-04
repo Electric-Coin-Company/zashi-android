@@ -339,27 +339,29 @@ private fun ScanMainContent(
 
     val density = LocalDensity.current
 
+    val decreaseCutoutSizeByPx = with(density) { 3.dp.toPx() }
+
     // Calculate the best frame size for the current device screen
     var layoutCoordinates by remember { mutableStateOf<LayoutCoordinates?>(null) }
     val layoutX by remember {
         derivedStateOf {
-            layoutCoordinates?.positionInParent()?.x ?: 0f
+            (layoutCoordinates?.positionInParent()?.x ?: 0f) + decreaseCutoutSizeByPx / 2
         }
     }
     val layoutY by remember {
         derivedStateOf {
-            layoutCoordinates?.positionInParent()?.y ?: 0f
+            (layoutCoordinates?.positionInParent()?.y ?: 0f) + decreaseCutoutSizeByPx / 2
         }
     }
 
     val cutoutWidth by remember {
         derivedStateOf {
-            layoutCoordinates?.size?.width ?: 0
+            (layoutCoordinates?.size?.width ?: 0) - decreaseCutoutSizeByPx
         }
     }
     val cutoutHeight by remember {
         derivedStateOf {
-            layoutCoordinates?.size?.height ?: 0
+            (layoutCoordinates?.size?.height ?: 0) - decreaseCutoutSizeByPx
         }
     }
 
