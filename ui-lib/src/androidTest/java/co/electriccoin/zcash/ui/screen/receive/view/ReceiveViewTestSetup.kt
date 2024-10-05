@@ -31,7 +31,7 @@ class ReceiveViewTestSetup(
         composeTestRule.setContent {
             ZcashTheme {
                 ZcashTheme {
-                    Receive(
+                    co.electriccoin.zcash.ui.screen.qrcode.view.ReceiveView(
                         walletAddresses = walletAddresses,
                         snackbarHostState = SnackbarHostState(),
                         onSettings = {

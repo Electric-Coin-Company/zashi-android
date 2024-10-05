@@ -20,6 +20,8 @@ import co.electriccoin.zcash.ui.screen.support.viewmodel.SupportViewModel
 import co.electriccoin.zcash.ui.screen.update.viewmodel.UpdateViewModel
 import co.electriccoin.zcash.ui.screen.warning.viewmodel.StorageCheckViewModel
 import co.electriccoin.zcash.ui.screen.whatsnew.viewmodel.WhatsNewViewModel
+import co.electriccoin.zcash.ui.screen.receive.viewmodel.ReceiveViewModel
+import co.electriccoin.zcash.ui.screen.qrcode.viewmodel.QrCodeViewModel
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.dsl.module
 
@@ -45,4 +47,6 @@ val viewModelModule =
         viewModelOf(::AddressBookViewModel)
         viewModelOf(::AddContactViewModel)
         viewModelOf(::UpdateContactViewModel)
+        viewModelOf(::ReceiveViewModel)
+        viewModelOf(::QrCodeViewModel)
     }
