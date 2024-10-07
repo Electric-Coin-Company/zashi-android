@@ -3,7 +3,7 @@ package co.electriccoin.zcash.ui.common.usecase
 import android.content.Context
 import co.electriccoin.zcash.spackle.ClipboardManagerUtil
 
-class CopyToClipboardUseCase() {
+class CopyToClipboardUseCase {
     operator fun invoke(
         context: Context,
         tag: String,

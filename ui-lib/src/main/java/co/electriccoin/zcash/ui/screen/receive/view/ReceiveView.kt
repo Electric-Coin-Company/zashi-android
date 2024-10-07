@@ -75,14 +75,15 @@ private fun ReceiveLoadingPreview() =
 private fun ReceivePreview() =
     ZcashTheme(forceDarkMode = false) {
         ReceiveView(
-            state = ReceiveState.Prepared(
-                walletAddresses = runBlocking { WalletAddressesFixture.new() },
-                isTestnet = false,
-                onAddressCopy = {},
-                onQrCode = {},
-                onSettings = {},
-                onRequest = {},
-            ),
+            state =
+                ReceiveState.Prepared(
+                    walletAddresses = runBlocking { WalletAddressesFixture.new() },
+                    isTestnet = false,
+                    onAddressCopy = {},
+                    onQrCode = {},
+                    onSettings = {},
+                    onRequest = {},
+                ),
             snackbarHostState = SnackbarHostState(),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )
@@ -115,10 +116,10 @@ internal fun ReceiveView(
                     onRequest = state.onRequest,
                     isTestnet = state.isTestnet,
                     modifier =
-                    Modifier.padding(
-                        top = paddingValues.calculateTopPadding()
-                        // We intentionally do not set the rest paddings, those are set by the underlying composable
-                    ),
+                        Modifier.padding(
+                            top = paddingValues.calculateTopPadding()
+                            // We intentionally do not set the rest paddings, those are set by the underlying composable
+                        ),
                 )
             }
         }

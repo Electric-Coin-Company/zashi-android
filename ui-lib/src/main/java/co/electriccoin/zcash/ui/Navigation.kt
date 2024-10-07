@@ -18,7 +18,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.model.ZecSend
-import cash.z.ecc.android.sdk.type.AddressType
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.NavigationArgs.ADDRESS_TYPE
 import co.electriccoin.zcash.ui.NavigationArgs.UPDATE_CONTACT_ID

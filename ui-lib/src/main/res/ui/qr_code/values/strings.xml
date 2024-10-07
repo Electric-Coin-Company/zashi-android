@@ -7,9 +7,10 @@
     <string name="qr_code_wallet_address_shielded">Zcash Shielded Address</string>
     <string name="qr_code_wallet_address_sapling">Zcash Sapling Address</string>
     <string name="qr_code_wallet_address_transparent">Zcash Transparent Address</string>
-    <string name="qr_code_copy">Copy</string>
-    <string name="qr_code_qr_code">QR Code</string>
-    <string name="qr_code_request">Request</string>
+    <string name="qr_code_privacy_level_shielded">Maximum Privacy</string>
+    <string name="qr_code_privacy_level_transparent">Low Privacy</string>
+    <string name="qr_code_share_btn">Share QR Code</string>
+    <string name="qr_code_copy_btn">Copy Address</string>
     <string name="qr_code_clipboard_tag">Zcash Wallet Address</string>
     <string name="qr_code_data_unable_to_share">Unable to find an application to share the QR code with.</string>
 </resources>

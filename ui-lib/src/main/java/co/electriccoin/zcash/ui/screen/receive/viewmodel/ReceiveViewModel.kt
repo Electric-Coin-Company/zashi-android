@@ -26,32 +26,32 @@ class ReceiveViewModel(
     getAddresses: GetAddressesUseCase,
     private val copyToClipboard: CopyToClipboardUseCase,
 ) : ViewModel() {
-
     @OptIn(ExperimentalCoroutinesApi::class)
-    internal val state = getAddresses().mapLatest { addresses ->
-        ReceiveState.Prepared(
-            walletAddresses = addresses,
-            isTestnet = getVersionInfo().isTestnet,
-            onAddressCopy = { address ->
-                copyToClipboard(
-                    context = application.applicationContext,
-                    tag = application.getString(R.string.receive_clipboard_tag),
-                    value = address
-                )
-            },
-            onQrCode = { addressType -> onQrCodeClick(addressType) },
-            onRequest = { addressType -> onRequestClick(addressType) },
-            onSettings = ::onSettingsClick,
+    internal val state =
+        getAddresses().mapLatest { addresses ->
+            ReceiveState.Prepared(
+                walletAddresses = addresses,
+                isTestnet = getVersionInfo().isTestnet,
+                onAddressCopy = { address ->
+                    copyToClipboard(
+                        context = application.applicationContext,
+                        tag = application.getString(R.string.receive_clipboard_tag),
+                        value = address
+                    )
+                },
+                onQrCode = { addressType -> onQrCodeClick(addressType) },
+                onRequest = { addressType -> onRequestClick(addressType) },
+                onSettings = ::onSettingsClick,
+            )
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+            initialValue = ReceiveState.Loading
         )
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-        initialValue = ReceiveState.Loading
-    )
-
 
     val navigationCommand = MutableSharedFlow<String>()
 
+    @Suppress("UNUSED_PARAMETER")
     private fun onRequestClick(addressType: ReceiveAddressType) =
         Toast.makeText(application.applicationContext, "Not implemented yet", Toast.LENGTH_SHORT).show()
 

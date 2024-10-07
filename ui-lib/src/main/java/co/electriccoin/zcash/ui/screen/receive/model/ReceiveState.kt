@@ -4,6 +4,7 @@ import cash.z.ecc.android.sdk.model.WalletAddresses
 
 internal sealed class ReceiveState {
     data object Loading : ReceiveState()
+
     data class Prepared(
         val walletAddresses: WalletAddresses,
         val onAddressCopy: (String) -> Unit,
