@@ -15,6 +15,9 @@ directly impact users rather than highlighting other key architectural updates.*
 - Confirmation screen redesigned
 - History item redesigned
 
+### Added
+- New QR Code detail screen has been added
+
 ## [1.2 (739)] - 2024-09-27
 
 ### Changed
