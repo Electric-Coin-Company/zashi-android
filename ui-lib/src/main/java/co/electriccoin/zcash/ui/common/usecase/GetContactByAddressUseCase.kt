@@ -5,5 +5,5 @@ import co.electriccoin.zcash.ui.common.repository.AddressBookRepository
 class GetContactByAddressUseCase(
     private val addressBookRepository: AddressBookRepository
 ) {
-    operator fun invoke(address: String) = addressBookRepository.contacts.value.find { it.address == address }
+    suspend operator fun invoke(address: String) = addressBookRepository.getContactByAddress(address)
 }

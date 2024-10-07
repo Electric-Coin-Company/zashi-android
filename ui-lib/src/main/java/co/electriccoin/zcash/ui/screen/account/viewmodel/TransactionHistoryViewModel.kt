@@ -1,6 +1,5 @@
 package co.electriccoin.zcash.ui.screen.account.viewmodel
 
-import android.location.Address
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.android.sdk.Synchronizer
@@ -25,6 +24,7 @@ import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.launch
 
 class TransactionHistoryViewModel(
     private val getContactByAddress: GetContactByAddressUseCase
@@ -48,38 +48,39 @@ class TransactionHistoryViewModel(
             TransactionUiState.Loading
         )
 
-    fun processTransactionState(dataState: TransactionHistorySyncState) {
-        when (dataState) {
-            TransactionHistorySyncState.Loading -> {
-                state.value = State.LOADING
-                transactions.value = persistentListOf()
-            }
-            is TransactionHistorySyncState.Syncing -> {
-                if (dataState.transactions.isEmpty()) {
-                    state.value = State.SYNCING_EMPTY
-                } else {
-                    state.value = State.SYNCING
-                    transactions.value =
-                        dataState.transactions
-                            .map { data -> getOrUpdateTransactionItem(data) }
-                            .toPersistentList()
+    fun processTransactionState(dataState: TransactionHistorySyncState) =
+        viewModelScope.launch {
+            when (dataState) {
+                TransactionHistorySyncState.Loading -> {
+                    state.value = State.LOADING
+                    transactions.value = persistentListOf()
                 }
-            }
-            is TransactionHistorySyncState.Done -> {
-                if (dataState.transactions.isEmpty()) {
-                    state.value = State.DONE_EMPTY
-                } else {
-                    state.value = State.DONE
-                    transactions.value =
-                        dataState.transactions
-                            .map { data -> getOrUpdateTransactionItem(data) }
-                            .toPersistentList()
+                is TransactionHistorySyncState.Syncing -> {
+                    if (dataState.transactions.isEmpty()) {
+                        state.value = State.SYNCING_EMPTY
+                    } else {
+                        state.value = State.SYNCING
+                        transactions.value =
+                            dataState.transactions
+                                .map { data -> getOrUpdateTransactionItem(data) }
+                                .toPersistentList()
+                    }
+                }
+                is TransactionHistorySyncState.Done -> {
+                    if (dataState.transactions.isEmpty()) {
+                        state.value = State.DONE_EMPTY
+                    } else {
+                        state.value = State.DONE
+                        transactions.value =
+                            dataState.transactions
+                                .map { data -> getOrUpdateTransactionItem(data) }
+                                .toPersistentList()
+                    }
                 }
             }
         }
-    }
 
-    private fun getOrUpdateTransactionItem(data: TransactionOverviewExt): TransactionUi {
+    private suspend fun getOrUpdateTransactionItem(data: TransactionOverviewExt): TransactionUi {
         val existingTransaction =
             transactions.value.find {
                 data.overview.rawId == it.overview.rawId

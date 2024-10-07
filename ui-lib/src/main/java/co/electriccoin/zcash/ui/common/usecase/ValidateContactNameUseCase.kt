@@ -2,16 +2,18 @@ package co.electriccoin.zcash.ui.common.usecase
 
 import co.electriccoin.zcash.ui.common.model.AddressBookContact
 import co.electriccoin.zcash.ui.common.repository.AddressBookRepository
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 
 class ValidateContactNameUseCase(
     private val addressBookRepository: AddressBookRepository
 ) {
-    operator fun invoke(
+    suspend operator fun invoke(
         name: String,
         exclude: AddressBookContact? = null
     ) = when {
         name.length > CONTACT_NAME_MAX_LENGTH -> Result.TooLong
-        addressBookRepository.contacts.value
+        addressBookRepository.contacts.filterNotNull().first()
             .filter {
                 if (exclude == null) true else it != exclude
             }

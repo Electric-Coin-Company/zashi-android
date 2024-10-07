@@ -39,46 +39,44 @@ class AddressBookViewModel(
 
     val state =
         observeAddressBookContacts()
-            .map { contacts -> createState(contacts = contacts, isLoading = false) }
+            .map { contacts -> createState(contacts = contacts) }
             .flowOn(Dispatchers.Default)
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-                initialValue = createState(contacts = emptyList(), isLoading = true)
+                initialValue = createState(contacts = emptyList())
             )
 
     val navigationCommand = MutableSharedFlow<String>()
 
     val backNavigationCommand = MutableSharedFlow<Unit>()
 
-    private fun createState(
-        contacts: List<AddressBookContact>,
-        isLoading: Boolean
-    ) = AddressBookState(
-        version = stringRes(R.string.address_book_version, versionInfo.versionName),
-        isLoading = isLoading,
-        contacts =
-            contacts.map { contact ->
-                AddressBookContactState(
-                    initials = getContactInitials(contact),
-                    isShielded = false,
-                    name = stringRes(contact.name),
-                    address = stringRes("${contact.address.take(ADDRESS_MAX_LENGTH)}..."),
-                    onClick = { onContactClick(contact) }
+    private fun createState(contacts: List<AddressBookContact>?) =
+        AddressBookState(
+            version = stringRes(R.string.address_book_version, versionInfo.versionName),
+            isLoading = contacts == null,
+            contacts =
+                contacts?.map { contact ->
+                    AddressBookContactState(
+                        initials = getContactInitials(contact),
+                        isShielded = false,
+                        name = stringRes(contact.name),
+                        address = stringRes("${contact.address.take(ADDRESS_MAX_LENGTH)}..."),
+                        onClick = { onContactClick(contact) }
+                    )
+                }.orEmpty(),
+            onBack = ::onBack,
+            manualButton =
+                ButtonState(
+                    onClick = ::onAddContactManuallyClick,
+                    text = stringRes(R.string.address_book_manual_btn)
+                ),
+            scanButton =
+                ButtonState(
+                    onClick = ::onScanContactClick,
+                    text = stringRes(R.string.address_book_scan_btn)
                 )
-            },
-        onBack = ::onBack,
-        manualButton =
-            ButtonState(
-                onClick = ::onAddContactManuallyClick,
-                text = stringRes(R.string.address_book_manual_btn)
-            ),
-        scanButton =
-            ButtonState(
-                onClick = ::onScanContactClick,
-                text = stringRes(R.string.address_book_scan_btn)
-            )
-    )
+        )
 
     private fun getContactInitials(contact: AddressBookContact) =
         stringRes(
@@ -102,6 +100,7 @@ class AddressBookViewModel(
                 AddressBookArgs.DEFAULT -> {
                     navigationCommand.emit(UpdateContactArgs(contact.id))
                 }
+
                 AddressBookArgs.PICK_CONTACT -> {
                     // receiver screen (send) does not have a VM by which to observe so we have to force
                     // non-cancellable coroutine due to back navigation
