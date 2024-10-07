@@ -34,16 +34,17 @@ class ReceiveViewTestSetup(
             ZcashTheme {
                 ZcashTheme {
                     ReceiveView(
-                        state = ReceiveState.Prepared(
-                            walletAddresses = runBlocking { walletAddresses },
-                            isTestnet = versionInfo.isTestnet,
-                            onAddressCopy = {},
-                            onQrCode = {},
-                            onSettings = {
-                                onSettingsCount.getAndIncrement()
-                            },
-                            onRequest = {},
-                        ),
+                        state =
+                            ReceiveState.Prepared(
+                                walletAddresses = runBlocking { walletAddresses },
+                                isTestnet = versionInfo.isTestnet,
+                                onAddressCopy = {},
+                                onQrCode = {},
+                                onSettings = {
+                                    onSettingsCount.getAndIncrement()
+                                },
+                                onRequest = {},
+                            ),
                         snackbarHostState = SnackbarHostState(),
                         topAppBarSubTitleState = TopAppBarSubTitleState.None,
                     )
