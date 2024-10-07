@@ -7,6 +7,8 @@ import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.VersionInfoFixture
+import co.electriccoin.zcash.ui.screen.receive.model.ReceiveState
+import kotlinx.coroutines.runBlocking
 import java.util.concurrent.atomic.AtomicInteger
 
 class ReceiveViewTestSetup(
@@ -31,17 +33,19 @@ class ReceiveViewTestSetup(
         composeTestRule.setContent {
             ZcashTheme {
                 ZcashTheme {
-                    co.electriccoin.zcash.ui.screen.qrcode.view.ReceiveView(
-                        walletAddresses = walletAddresses,
+                    ReceiveView(
+                        state = ReceiveState.Prepared(
+                            walletAddresses = runBlocking { walletAddresses },
+                            isTestnet = versionInfo.isTestnet,
+                            onAddressCopy = {},
+                            onQrCode = {},
+                            onSettings = {
+                                onSettingsCount.getAndIncrement()
+                            },
+                            onRequest = {},
+                        ),
                         snackbarHostState = SnackbarHostState(),
-                        onSettings = {
-                            onSettingsCount.getAndIncrement()
-                        },
-                        onAddrCopyToClipboard = {},
-                        onQrCode = {},
-                        onRequest = {},
                         topAppBarSubTitleState = TopAppBarSubTitleState.None,
-                        versionInfo = versionInfo,
                     )
                 }
             }

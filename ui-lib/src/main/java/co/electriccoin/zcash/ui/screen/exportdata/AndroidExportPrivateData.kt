@@ -107,6 +107,7 @@ fun shareData(
                         network = ZcashNetwork.fromResources(context)
                     ),
                 fileType = FileShareUtil.ZASHI_INTERNAL_DATA_MIME_TYPE,
+                sharePickerText = context.getString(R.string.export_data_export_data_chooser_title),
                 versionInfo = VersionInfo.new(context.applicationContext)
             )
         runCatching {

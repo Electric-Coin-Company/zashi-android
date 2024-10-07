@@ -59,6 +59,8 @@ class QrCodeViewModel(
 
     val backNavigationCommand = MutableSharedFlow<Unit>()
 
+    val shareResultCommand = MutableSharedFlow<Boolean>()
+
     private fun onBack() =
         viewModelScope.launch {
             backNavigationCommand.emit(Unit)
@@ -73,22 +75,20 @@ class QrCodeViewModel(
             qrImageBitmap = bitmap.asAndroidBitmap(),
             versionInfo = versionInfo
         ).collect { shareResult ->
-            Twig.info {
-                if (shareResult) {
-                    "Sharing the address QR code was successful"
-                } else {
-                    "Sharing the address QR code failed"
-                    // TODO snackbar activation
-                }
+            if (shareResult) {
+                Twig.info { "Sharing the address QR code was successful" }
+                shareResultCommand.emit(true)
+            } else {
+                Twig.info { "Sharing the address QR code failed" }
+                shareResultCommand.emit(false)
             }
-            // No other action for now
         }
     }
 
     private fun onAddressCopyClick(address: String) =
         copyToClipboard(
             context = application.applicationContext,
-            tag = application.getString(R.string.receive_clipboard_tag),
+            tag = application.getString(R.string.qr_code_clipboard_tag),
             value = address
         )
 }
@@ -126,8 +126,10 @@ fun shareData(
             FileShareUtil.newShareContentIntent(
                 context = context,
                 dataFilePath = bitmapFile.absolutePath,
+                fileType = FileShareUtil.ZASHI_QR_CODE_MIME_TYPE,
+                shareText = context.getString(R.string.qr_code_share_chooser_text),
+                sharePickerText = context.getString(R.string.qr_code_share_chooser_title),
                 versionInfo = versionInfo,
-                fileType = FileShareUtil.ZASHI_QR_CODE_MIME_TYPE
             )
         runCatching {
             context.startActivity(shareIntent)

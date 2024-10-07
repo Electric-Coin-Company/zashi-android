@@ -6,8 +6,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.di.koinActivityViewModel
+import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.LocalNavController
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.qrcode.model.QrCodeState
@@ -18,6 +20,7 @@ import org.koin.core.parameter.parametersOf
 
 @Composable
 internal fun WrapQrCode(addressType: Int) {
+    val context = LocalContext.current
     val navController = LocalNavController.current
 
     val walletViewModel = koinActivityViewModel<WalletViewModel>()
@@ -26,9 +29,20 @@ internal fun WrapQrCode(addressType: Int) {
     val qrCodeViewModel = koinViewModel<QrCodeViewModel> { parametersOf(addressType) }
     val qrCodeState by qrCodeViewModel.state.collectAsStateWithLifecycle()
 
+    val snackbarHostState = remember { SnackbarHostState() }
+
     LaunchedEffect(Unit) {
         qrCodeViewModel.backNavigationCommand.collect {
             navController.popBackStack()
+        }
+    }
+    LaunchedEffect(Unit) {
+        qrCodeViewModel.shareResultCommand.collect { sharedSuccessfully ->
+            if (!sharedSuccessfully) {
+                snackbarHostState.showSnackbar(
+                    message = context.getString(R.string.qr_code_data_unable_to_share)
+                )
+            }
         }
     }
 
@@ -38,8 +52,6 @@ internal fun WrapQrCode(addressType: Int) {
             is QrCodeState.Prepared -> (qrCodeState as QrCodeState.Prepared).onBack.invoke()
         }
     }
-
-    val snackbarHostState = remember { SnackbarHostState() }
 
     QrCodeView(
         state = qrCodeState,
