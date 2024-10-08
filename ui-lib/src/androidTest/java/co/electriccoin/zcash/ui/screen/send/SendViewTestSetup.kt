@@ -20,6 +20,7 @@ import co.electriccoin.zcash.ui.screen.send.ext.Saver
 import co.electriccoin.zcash.ui.screen.send.model.AmountState
 import co.electriccoin.zcash.ui.screen.send.model.MemoState
 import co.electriccoin.zcash.ui.screen.send.model.RecipientAddressState
+import co.electriccoin.zcash.ui.screen.send.model.SendAddressBookState
 import co.electriccoin.zcash.ui.screen.send.model.SendStage
 import co.electriccoin.zcash.ui.screen.send.view.Send
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -143,7 +144,13 @@ class SendViewTestSetup(
                                 available = Zatoshi(Zatoshi.MAX_INCLUSIVE.div(100))
                             )
                     ),
-                exchangeRateState = ExchangeRateState.OptedOut
+                exchangeRateState = ExchangeRateState.OptedOut,
+                sendAddressBookState =
+                    SendAddressBookState(
+                        mode = SendAddressBookState.Mode.PICK_FROM_ADDRESS_BOOK,
+                        isHintVisible = false,
+                        onButtonClick = {}
+                    )
             )
         }
     }

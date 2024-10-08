@@ -2,5 +2,7 @@
     <string name="address_book_title">Address Book</string>
     <string name="address_book_add">Add New Contact</string>
     <string name="address_book_empty">Your address book is empty</string>
-    <string name="address_book_version">Version %s</string>
+    <string name="address_book_version">Version <xliff:g example="1" id="version">%s</xliff:g></string>
+    <string name="address_book_scan_btn">Scan QR code</string>
+    <string name="address_book_manual_btn">Manual entry</string>
 </resources>

@@ -13,7 +13,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.type.AddressType
 import co.electriccoin.zcash.di.koinActivityViewModel
-import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.SerializableAddress
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
@@ -22,9 +21,11 @@ import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.screen.scan.view.Scan
 import co.electriccoin.zcash.ui.util.SettingsUtil
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 @Composable
-internal fun MainActivity.WrapScanValidator(
+internal fun WrapScanValidator(
     onScanValid: (address: SerializableAddress) -> Unit,
     goBack: () -> Unit
 ) {
@@ -59,6 +60,10 @@ fun WrapScan(
 
     val snackbarHostState = remember { SnackbarHostState() }
 
+    var hasBeenScannedSuccessfully by remember { mutableStateOf(false) }
+
+    val mutex = remember { Mutex() }
+
     var addressValidationResult by remember { mutableStateOf<AddressType?>(null) }
 
     if (synchronizer == null) {
@@ -73,10 +78,15 @@ fun WrapScan(
             onBack = goBack,
             onScanned = { result ->
                 scope.launch {
-                    addressValidationResult = synchronizer.validateAddress(result)
-                    val isAddressValid = addressValidationResult?.let { !it.isNotValid } ?: false
-                    if (isAddressValid) {
-                        onScanValid(SerializableAddress(result, addressValidationResult!!))
+                    mutex.withLock {
+                        if (!hasBeenScannedSuccessfully) {
+                            addressValidationResult = synchronizer.validateAddress(result)
+                            val isAddressValid = addressValidationResult?.let { !it.isNotValid } ?: false
+                            if (isAddressValid) {
+                                hasBeenScannedSuccessfully = true
+                                onScanValid(SerializableAddress(result, addressValidationResult!!))
+                            }
+                        }
                     }
                 }
             },
@@ -99,5 +109,18 @@ fun WrapScan(
             onScanStateChanged = {},
             topAppBarSubTitleState = topAppBarSubTitleState,
         )
+    }
+}
+
+enum class ScanNavigationArgs {
+    DEFAULT,
+    ADDRESS_BOOK;
+
+    companion object {
+        private const val PATH = "scan"
+        const val KEY = "mode"
+        const val ROUTE = "$PATH/{$KEY}"
+
+        operator fun invoke(mode: ScanNavigationArgs) = "$PATH/${mode.name}"
     }
 }

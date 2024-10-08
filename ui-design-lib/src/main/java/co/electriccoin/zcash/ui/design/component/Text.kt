@@ -222,10 +222,8 @@ fun TextWithIcon(
 ) {
     Row(
         modifier =
-            Modifier
-                .wrapContentSize()
-                .then(modifier),
-        verticalAlignment = Alignment.CenterVertically
+            Modifier.then(modifier),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         if (iconTintColor != null) {
             Image(
