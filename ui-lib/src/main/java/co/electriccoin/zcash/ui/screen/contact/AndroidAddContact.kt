@@ -13,12 +13,13 @@ import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.contact.view.ContactView
 import co.electriccoin.zcash.ui.screen.contact.viewmodel.AddContactViewModel
 import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 @Composable
-internal fun WrapAddContact() {
+internal fun WrapAddContact(address: String?) {
     val navController = LocalNavController.current
     val walletViewModel = koinActivityViewModel<WalletViewModel>()
-    val viewModel = koinViewModel<AddContactViewModel>()
+    val viewModel = koinViewModel<AddContactViewModel> { parametersOf(address) }
     val walletState by walletViewModel.walletStateInformation.collectAsStateWithLifecycle()
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -44,4 +45,12 @@ internal fun WrapAddContact() {
             topAppBarSubTitleState = walletState,
         )
     }
+}
+
+object AddContactArgs {
+    private const val PATH = "add_contact"
+    const val ADDRESS = "address"
+    const val ROUTE = "$PATH/{$ADDRESS}"
+
+    operator fun invoke(address: String?) = "$PATH/$address"
 }

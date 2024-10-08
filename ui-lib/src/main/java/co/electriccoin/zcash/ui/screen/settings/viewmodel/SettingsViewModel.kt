@@ -6,7 +6,6 @@ import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.preference.StandardPreferenceProvider
 import co.electriccoin.zcash.preference.model.entry.BooleanPreferenceDefault
 import co.electriccoin.zcash.ui.NavigationTargets.ABOUT
-import co.electriccoin.zcash.ui.NavigationTargets.ADDRESS_BOOK
 import co.electriccoin.zcash.ui.NavigationTargets.ADVANCED_SETTINGS
 import co.electriccoin.zcash.ui.NavigationTargets.SUPPORT
 import co.electriccoin.zcash.ui.R
@@ -16,6 +15,7 @@ import co.electriccoin.zcash.ui.common.usecase.RescanBlockchainUseCase
 import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
+import co.electriccoin.zcash.ui.screen.addressbook.AddressBookArgs
 import co.electriccoin.zcash.ui.screen.settings.model.SettingsState
 import co.electriccoin.zcash.ui.screen.settings.model.SettingsTroubleshootingState
 import co.electriccoin.zcash.ui.screen.settings.model.TroubleshootingItemState
@@ -157,7 +157,7 @@ class SettingsViewModel(
 
     private fun onAddressBookClick() {
         viewModelScope.launch {
-            navigationCommand.emit(ADDRESS_BOOK)
+            navigationCommand.emit(AddressBookArgs(AddressBookArgs.DEFAULT))
         }
     }
 

@@ -3,17 +3,22 @@ package co.electriccoin.zcash.ui.screen.addressbook.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
-import co.electriccoin.zcash.ui.NavigationTargets.ADD_NEW_CONTACT
-import co.electriccoin.zcash.ui.NavigationTargets.UPDATE_CONTACT
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.AddressBookContact
 import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
 import co.electriccoin.zcash.ui.common.usecase.ObserveAddressBookContactsUseCase
+import co.electriccoin.zcash.ui.common.usecase.ObserveContactPickedUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.screen.addressbook.AddressBookArgs
 import co.electriccoin.zcash.ui.screen.addressbook.model.AddressBookContactState
 import co.electriccoin.zcash.ui.screen.addressbook.model.AddressBookState
+import co.electriccoin.zcash.ui.screen.contact.AddContactArgs
+import co.electriccoin.zcash.ui.screen.contact.UpdateContactArgs
+import co.electriccoin.zcash.ui.screen.scan.ScanNavigationArgs
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
@@ -21,10 +26,14 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlin.time.Duration.Companion.seconds
 
 class AddressBookViewModel(
     observeAddressBookContacts: ObserveAddressBookContactsUseCase,
     getVersionInfo: GetVersionInfoProvider,
+    private val args: AddressBookArgs,
+    private val observeContactPicked: ObserveContactPickedUseCase
 ) : ViewModel() {
     private val versionInfo = getVersionInfo()
 
@@ -54,15 +63,20 @@ class AddressBookViewModel(
                     initials = getContactInitials(contact),
                     isShielded = false,
                     name = stringRes(contact.name),
-                    address = stringRes(contact.address),
-                    onClick = { onUpdateContactClick(contact) }
+                    address = stringRes("${contact.address.take(ADDRESS_MAX_LENGTH)}..."),
+                    onClick = { onContactClick(contact) }
                 )
             },
         onBack = ::onBack,
-        addButton =
+        manualButton =
             ButtonState(
-                onClick = ::onAddContactClick,
-                text = stringRes(R.string.address_book_add)
+                onClick = ::onAddContactManuallyClick,
+                text = stringRes(R.string.address_book_manual_btn)
+            ),
+        scanButton =
+            ButtonState(
+                onClick = ::onScanContactClick,
+                text = stringRes(R.string.address_book_scan_btn)
             )
     )
 
@@ -82,13 +96,33 @@ class AddressBookViewModel(
             backNavigationCommand.emit(Unit)
         }
 
-    private fun onUpdateContactClick(contact: AddressBookContact) =
+    private fun onContactClick(contact: AddressBookContact) =
         viewModelScope.launch {
-            navigationCommand.emit("$UPDATE_CONTACT/${contact.id}")
+            when (args) {
+                AddressBookArgs.DEFAULT -> {
+                    navigationCommand.emit(UpdateContactArgs(contact.id))
+                }
+                AddressBookArgs.PICK_CONTACT -> {
+                    // receiver screen (send) does not have a VM by which to observe so we have to force
+                    // non-cancellable coroutine due to back navigation
+                    withContext(NonCancellable) {
+                        backNavigationCommand.emit(Unit)
+                        delay(.75.seconds) // wait for the receiver screen to display
+                        observeContactPicked.onContactPicked(contact)
+                    }
+                }
+            }
         }
 
-    private fun onAddContactClick() =
+    private fun onAddContactManuallyClick() =
         viewModelScope.launch {
-            navigationCommand.emit(ADD_NEW_CONTACT)
+            navigationCommand.emit(AddContactArgs(null))
+        }
+
+    private fun onScanContactClick() =
+        viewModelScope.launch {
+            navigationCommand.emit(ScanNavigationArgs(ScanNavigationArgs.ADDRESS_BOOK))
         }
 }
+
+private const val ADDRESS_MAX_LENGTH = 20

@@ -6,7 +6,7 @@ import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.AddressBookContact
 import co.electriccoin.zcash.ui.common.usecase.DeleteContactUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetContactUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetContactByIdUseCase
 import co.electriccoin.zcash.ui.common.usecase.UpdateContactUseCase
 import co.electriccoin.zcash.ui.common.usecase.ValidateContactAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.ValidateContactNameUseCase
@@ -32,7 +32,7 @@ class UpdateContactViewModel(
     private val validateContactName: ValidateContactNameUseCase,
     private val updateContact: UpdateContactUseCase,
     private val deleteContact: DeleteContactUseCase,
-    private val getContact: GetContactUseCase
+    private val getContact: GetContactByIdUseCase
 ) : ViewModel() {
     private var contact: AddressBookContact? = null
     private val contactAddress = MutableStateFlow("")
@@ -52,7 +52,8 @@ class UpdateContactViewModel(
                         null
                     } else {
                         when (validateContactAddress(address = address, exclude = contact)) {
-                            ValidateContactAddressUseCase.Result.Invalid -> stringRes("")
+                            ValidateContactAddressUseCase.Result.Invalid ->
+                                stringRes(R.string.contact_address_error_invalid)
                             ValidateContactAddressUseCase.Result.NotUnique ->
                                 stringRes(R.string.contact_address_error_not_unique)
 

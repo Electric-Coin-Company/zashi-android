@@ -1,12 +1,15 @@
 package co.electriccoin.zcash.ui.screen.account.viewmodel
 
+import android.location.Address
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.internal.Twig
 import cash.z.ecc.android.sdk.model.FirstClassByteArray
 import cash.z.ecc.android.sdk.model.TransactionOverview
+import cash.z.ecc.android.sdk.model.TransactionRecipient
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
+import co.electriccoin.zcash.ui.common.usecase.GetContactByAddressUseCase
 import co.electriccoin.zcash.ui.screen.account.ext.TransactionOverviewExt
 import co.electriccoin.zcash.ui.screen.account.model.TransactionUi
 import co.electriccoin.zcash.ui.screen.account.model.TransactionUiState
@@ -23,7 +26,9 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.toList
 
-class TransactionHistoryViewModel : ViewModel() {
+class TransactionHistoryViewModel(
+    private val getContactByAddress: GetContactByAddressUseCase
+) : ViewModel() {
     private val state: MutableStateFlow<State> = MutableStateFlow(State.LOADING)
 
     private val transactions: MutableStateFlow<ImmutableList<TransactionUi>> = MutableStateFlow(persistentListOf())
@@ -83,6 +88,10 @@ class TransactionHistoryViewModel : ViewModel() {
             data = data,
             expandableState = existingTransaction?.expandableState ?: TrxItemState.COLLAPSED,
             messages = existingTransaction?.messages,
+            addressBookContact =
+                (data.recipient as? TransactionRecipient.Address)?.addressValue?.let {
+                    getContactByAddress(it)
+                }
         )
     }
 

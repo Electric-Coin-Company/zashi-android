@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.screen.addressbook.view
 
+import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -17,15 +18,18 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
@@ -102,7 +106,7 @@ fun AddressBookView(
 
                     ZashiBottomBar {
                         AddContactButton(
-                            state.addButton,
+                            state = state,
                             modifier =
                                 Modifier
                                     .fillMaxWidth()
@@ -218,7 +222,7 @@ private fun Empty(
         }
 
         AddContactButton(
-            state.addButton,
+            state = state,
             modifier =
                 Modifier
                     .align(Alignment.BottomCenter)
@@ -230,12 +234,24 @@ private fun Empty(
 
 @Composable
 private fun AddContactButton(
-    state: ButtonState,
+    state: AddressBookState,
     modifier: Modifier = Modifier
 ) {
+    val transitionState = remember { MutableTransitionState(false) }
+
     ZashiButton(
         modifier = modifier,
-        state = state
+        state =
+            ButtonState(
+                onClick = {
+                    if (transitionState.targetState && transitionState.currentState) {
+                        transitionState.targetState = false
+                    } else if (!transitionState.targetState && !transitionState.currentState) {
+                        transitionState.targetState = true
+                    }
+                },
+                text = stringRes(R.string.address_book_add)
+            )
     ) { scope ->
         Image(
             painter = painterResource(id = R.drawable.ic_address_book_plus),
@@ -246,6 +262,18 @@ private fun AddContactButton(
         scope.Text()
         Spacer(modifier = Modifier.width(6.dp))
         scope.Loading()
+    }
+
+    if (transitionState.currentState || transitionState.targetState || !transitionState.isIdle) {
+        val offset = with(LocalDensity.current) { 302.dp.toPx() }.toInt()
+        AddressBookPopup(
+            offset = IntOffset(0, offset),
+            transitionState = transitionState,
+            onDismissRequest = {
+                transitionState.targetState = false
+            },
+            state = state
+        )
     }
 }
 
@@ -290,9 +318,13 @@ private fun DataPreview() {
                                 onClick = {}
                             )
                         },
-                    addButton =
+                    scanButton =
                         ButtonState(
-                            text = stringRes("Add New Contact"),
+                            text = stringRes("Scan"),
+                        ),
+                    manualButton =
+                        ButtonState(
+                            text = stringRes("Manual"),
                         )
                 ),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
@@ -311,9 +343,13 @@ private fun LoadingPreview() {
                     version = stringRes("Version 1.2"),
                     onBack = {},
                     contacts = emptyList(),
-                    addButton =
+                    scanButton =
                         ButtonState(
-                            text = stringRes("Add New Contact"),
+                            text = stringRes("Scan"),
+                        ),
+                    manualButton =
+                        ButtonState(
+                            text = stringRes("Manual"),
                         )
                 ),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
@@ -332,9 +368,13 @@ private fun EmptyPreview() {
                     version = stringRes("Version 1.2"),
                     onBack = {},
                     contacts = emptyList(),
-                    addButton =
+                    scanButton =
                         ButtonState(
-                            text = stringRes("Add New Contact"),
+                            text = stringRes("Scan"),
+                        ),
+                    manualButton =
+                        ButtonState(
+                            text = stringRes("Manual"),
                         )
                 ),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
