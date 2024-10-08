@@ -92,7 +92,7 @@ class AddressBookRepositoryImpl(
         }
     }
 
-    @Suppress("UnusedParameter")
+    @Suppress("UNUSED_PARAMETER")
     private fun mergeContacts(
         local: AddressBook,
         remote: AddressBook?
