@@ -53,7 +53,7 @@ private fun RequestPreview() =
             state =
                 RequestState.Prepared(
                     walletAddress = runBlocking { WalletAddressFixture.unified() },
-                    onRequestQrCodeShare = {},
+                    onQrCodeShare = {},
                     onBack = {},
                 ),
             snackbarHostState = SnackbarHostState(),
@@ -86,7 +86,7 @@ internal fun RequestView(
             ) { paddingValues ->
                 RequestContents(
                     walletAddress = state.walletAddress,
-                    onRequestQrCodeShare = state.onRequestQrCodeShare,
+                    onRequestQrCodeShare = state.onQrCodeShare,
                     modifier =
                         Modifier.padding(
                             top = paddingValues.calculateTopPadding(),
@@ -143,7 +143,7 @@ private fun RequestBottomBar(
         ZashiButton(
             text = stringResource(id = R.string.request_share_btn),
             leadingIcon = painterResource(R.drawable.ic_share),
-            onClick = { state.onRequestQrCodeShare() },
+            onClick = { state.onQrCodeShare() },
             modifier =
                 Modifier
                     .padding(horizontal = 24.dp)

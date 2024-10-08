@@ -8,7 +8,9 @@ internal sealed class RequestState {
 
     data class Prepared(
         val walletAddress: WalletAddress,
-        val onRequestQrCodeShare: () -> Unit,
+        val onAmount: (Request) -> Unit,
+        val onRequest: (Request) -> Unit,
+        val onQrCodeShare: (ImageBitmap) -> Unit,
         val onBack: () -> Unit,
     ) : RequestState()
 }

@@ -16,6 +16,7 @@ import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
 import co.electriccoin.zcash.ui.common.usecase.GetAddressesUseCase
 import co.electriccoin.zcash.ui.screen.qrcode.ext.fromReceiveAddressType
 import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressType
+import co.electriccoin.zcash.ui.screen.request.model.Request
 import co.electriccoin.zcash.ui.screen.request.model.RequestState
 import co.electriccoin.zcash.ui.util.FileShareUtil
 import kotlinx.coroutines.Dispatchers
@@ -45,7 +46,9 @@ class RequestViewModel(
         getAddresses().mapLatest { addresses ->
             RequestState.Prepared(
                 walletAddress = addresses.fromReceiveAddressType(ReceiveAddressType.fromOrdinal(addressTypeOrdinal)),
-                onRequestQrCodeShare = { /*onRequestQrCodeShareClick(, versionInfo)*/ },
+                onQrCodeShare = { onRequestQrCodeShareClick(it, versionInfo) },
+                onRequest = { onRequest(it) },
+                onAmount = { onAmount(it) },
                 onBack = ::onBack,
             )
         }.stateIn(
@@ -58,33 +61,38 @@ class RequestViewModel(
 
     val shareResultCommand = MutableSharedFlow<Boolean>()
 
+    val request = MutableSharedFlow<Request>()
+
+    private fun onAmount(request: Request) = viewModelScope.launch {
+        //TODO
+    }
+
+    private fun onRequest(request: Request) = viewModelScope.launch {
+        //TODO
+    }
+
     private fun onBack() =
         viewModelScope.launch {
             backNavigationCommand.emit(Unit)
         }
 
     private fun onRequestQrCodeShareClick(
-        //bitmap: ImageBitmap,
+        bitmap: ImageBitmap,
         versionInfo: VersionInfo
     ) = viewModelScope.launch {
-
-        
-
-
-
-        // shareData(
-        //     context = application.applicationContext,
-        //     qrImageBitmap = bitmap.asAndroidBitmap(),
-        //     versionInfo = versionInfo
-        // ).collect { shareResult ->
-        //     if (shareResult) {
-        //         Twig.info { "Sharing the request QR code was successful" }
-        //         shareResultCommand.emit(true)
-        //     } else {
-        //         Twig.info { "Sharing the request QR code failed" }
-        //         shareResultCommand.emit(false)
-        //     }
-        // }
+        shareData(
+            context = application.applicationContext,
+            qrImageBitmap = bitmap.asAndroidBitmap(),
+            versionInfo = versionInfo
+        ).collect { shareResult ->
+            if (shareResult) {
+                Twig.info { "Sharing the request QR code was successful" }
+                shareResultCommand.emit(true)
+            } else {
+                Twig.info { "Sharing the request QR code failed" }
+                shareResultCommand.emit(false)
+            }
+        }
     }
 }
 
