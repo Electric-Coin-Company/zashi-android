@@ -31,6 +31,7 @@ interface LocalAddressBookDataSource {
     suspend fun saveContacts(contacts: AddressBook)
 }
 
+@Suppress("TooManyFunctions")
 class LocalAddressBookDataSourceImpl(
     private val localAddressBookStorageProvider: LocalAddressBookStorageProvider
 ) : LocalAddressBookDataSource {
@@ -186,7 +187,9 @@ class LocalAddressBookDataSourceImpl(
 
     private fun Int.createByteArray(): ByteArray = this.toLong().createByteArray()
 
-    private fun Long.createByteArray(): ByteArray = ByteBuffer.allocate(Long.SIZE_BYTES).order(BYTE_ORDER).putLong(this).array()
+    private fun Long.createByteArray(): ByteArray =
+        ByteBuffer
+            .allocate(Long.SIZE_BYTES).order(BYTE_ORDER).putLong(this).array()
 
     private fun String.createByteArray(): ByteArray {
         val byteArray = this.toByteArray()
