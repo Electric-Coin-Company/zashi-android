@@ -17,7 +17,7 @@ class ValidateContactAddressUseCase(
         val result = walletRepository.getSynchronizer().validateAddress(address)
         return when {
             result.isNotValid -> Result.Invalid
-            addressBookRepository.contacts.filterNotNull().first()
+            addressBookRepository.addressBook.filterNotNull().first().contacts
                 .filter {
                     if (exclude == null) true else it != exclude
                 }

@@ -98,7 +98,7 @@ class AddressBookViewModel(
         viewModelScope.launch {
             when (args) {
                 AddressBookArgs.DEFAULT -> {
-                    navigationCommand.emit(UpdateContactArgs(contact.id))
+                    navigationCommand.emit(UpdateContactArgs(contact.address))
                 }
 
                 AddressBookArgs.PICK_CONTACT -> {

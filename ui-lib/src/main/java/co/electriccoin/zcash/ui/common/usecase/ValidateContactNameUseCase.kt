@@ -13,7 +13,7 @@ class ValidateContactNameUseCase(
         exclude: AddressBookContact? = null
     ) = when {
         name.length > CONTACT_NAME_MAX_LENGTH -> Result.TooLong
-        addressBookRepository.contacts.filterNotNull().first()
+        addressBookRepository.addressBook.filterNotNull().first().contacts
             .filter {
                 if (exclude == null) true else it != exclude
             }

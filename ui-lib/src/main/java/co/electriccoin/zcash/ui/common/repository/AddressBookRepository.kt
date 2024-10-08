@@ -1,14 +1,21 @@
 package co.electriccoin.zcash.ui.common.repository
 
-import co.electriccoin.zcash.ui.common.datasource.AddressBookDataSource
+import co.electriccoin.zcash.ui.common.datasource.LocalAddressBookDataSource
+import co.electriccoin.zcash.ui.common.datasource.RemoteAddressBookProvider
+import co.electriccoin.zcash.ui.common.model.AddressBook
 import co.electriccoin.zcash.ui.common.model.AddressBookContact
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.onSubscription
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 
 interface AddressBookRepository {
-    val contacts: Flow<List<AddressBookContact>?>
+    val addressBook: Flow<AddressBook?>
 
     suspend fun saveContact(
         name: String,
@@ -22,22 +29,31 @@ interface AddressBookRepository {
     )
 
     suspend fun deleteContact(contact: AddressBookContact)
-
-    suspend fun getContactById(id: String): AddressBookContact?
-
-    suspend fun getContactByAddress(address: String): AddressBookContact?
 }
 
 class AddressBookRepositoryImpl(
-    private val addressBookDataSource: AddressBookDataSource
+    private val localAddressBookDataSource: LocalAddressBookDataSource,
+    private val remoteAddressBookProvider: RemoteAddressBookProvider
 ) : AddressBookRepository {
-    override val contacts = addressBookDataSource.contacts.map { it?.contacts }
+    private val semaphore = Mutex()
+    private val addressBookCache = MutableStateFlow<AddressBook?>(null)
+
+    override val addressBook: Flow<AddressBook?> =
+        addressBookCache
+            .onSubscription {
+                withNonCancellableSemaphore {
+                    ensureSynchronization()
+                }
+            }
 
     override suspend fun saveContact(
         name: String,
         address: String
-    ) {
-        addressBookDataSource.saveContact(name, address)
+    ) = withNonCancellableSemaphore {
+        ensureSynchronization()
+        val local = localAddressBookDataSource.saveContact(name, address)
+        addressBookCache.update { local }
+        remoteAddressBookProvider.uploadContacts()
     }
 
     override suspend fun updateContact(
@@ -45,18 +61,46 @@ class AddressBookRepositoryImpl(
         name: String,
         address: String
     ) {
-        addressBookDataSource.updateContact(contact, name, address)
+        withNonCancellableSemaphore {
+            ensureSynchronization()
+            val local = localAddressBookDataSource.updateContact(contact, name, address)
+            addressBookCache.update { local }
+            remoteAddressBookProvider.uploadContacts()
+        }
     }
 
-    override suspend fun deleteContact(contact: AddressBookContact) {
-        addressBookDataSource.deleteContact(contact)
+    override suspend fun deleteContact(contact: AddressBookContact) =
+        withNonCancellableSemaphore {
+            ensureSynchronization()
+            val local = localAddressBookDataSource.deleteContact(contact)
+            addressBookCache.update { local }
+            remoteAddressBookProvider.uploadContacts()
+        }
+
+    private suspend fun ensureSynchronization() {
+        if (addressBookCache.value == null) {
+            val merged =
+                mergeContacts(
+                    local = localAddressBookDataSource.getContacts(),
+                    remote = remoteAddressBookProvider.fetchContacts(),
+                )
+
+            localAddressBookDataSource.saveContacts(merged)
+            remoteAddressBookProvider.uploadContacts()
+
+            addressBookCache.update { merged }
+        }
     }
 
-    override suspend fun getContactById(id: String): AddressBookContact? = getLoadedContacts().find { it.id == id }
+    @Suppress("UnusedParameter")
+    private fun mergeContacts(
+        local: AddressBook,
+        remote: AddressBook?
+    ): AddressBook = local // TBD
 
-    override suspend fun getContactByAddress(address: String): AddressBookContact? =
-        getLoadedContacts()
-            .find { it.address == address }
-
-    private suspend fun getLoadedContacts() = contacts.filterNotNull().first()
+    private suspend fun withNonCancellableSemaphore(block: suspend () -> Unit) {
+        withContext(NonCancellable + Dispatchers.Default) {
+            semaphore.withLock { block() }
+        }
+    }
 }

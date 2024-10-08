@@ -8,9 +8,9 @@ class ObserveContactByAddressUseCase(
     private val addressBookRepository: AddressBookRepository
 ) {
     operator fun invoke(address: String) =
-        addressBookRepository.contacts
+        addressBookRepository.addressBook
             .filterNotNull()
-            .map { contacts ->
-                contacts.find { it.address == address }
+            .map {
+                it.contacts.find { contact -> contact.address == address }
             }
 }
