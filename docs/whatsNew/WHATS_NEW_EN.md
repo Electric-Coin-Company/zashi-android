@@ -10,6 +10,7 @@ directly impact users rather than highlighting other key architectural updates.*
 ## [Unreleased]
 
 ### Changed
+- Scan QR screen has been redesigned
 - The Receive screen UI has been redesigned
 - Send screen redesigned & added a possibility to pick a contact from address book
 - Confirmation screen redesigned & added a contact name to the transaction if the contact is in address book 
