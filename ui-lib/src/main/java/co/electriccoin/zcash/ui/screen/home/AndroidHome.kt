@@ -192,7 +192,7 @@ internal fun WrapHome(
                 title = stringResource(id = R.string.home_tab_receive),
                 testTag = HomeTag.TAB_RECEIVE,
                 screenContent = {
-                    WrapReceive(onSettings = goSettings)
+                    WrapReceive()
                 }
             ),
             TabItem(

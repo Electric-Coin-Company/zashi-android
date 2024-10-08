@@ -140,13 +140,6 @@ internal class MockSynchronizer : CloseableSynchronizer {
         error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
 
-    override suspend fun proposeFulfillingPaymentUri(
-        account: Account,
-        uri: String
-    ): Proposal {
-        error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
-    }
-
     override suspend fun proposeShielding(
         account: Account,
         shieldingThreshold: Zatoshi,
@@ -161,6 +154,13 @@ internal class MockSynchronizer : CloseableSynchronizer {
         recipient: String,
         amount: Zatoshi,
         memo: String
+    ): Proposal {
+        error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} yet.")
+    }
+
+    override suspend fun proposeFulfillingPaymentUri(
+        account: Account,
+        uri: String
     ): Proposal {
         error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} yet.")
     }

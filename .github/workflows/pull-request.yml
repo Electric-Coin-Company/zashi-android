@@ -32,7 +32,7 @@ jobs:
     steps:
       - name: Checkout
         timeout-minutes: 1
-        uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938
+        uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871
       # Gradle Wrapper validation can be flaky
       # https://github.com/gradle/wrapper-validation-action/issues/40
       - name: Gradle Wrapper Validation
@@ -82,7 +82,7 @@ jobs:
     steps:
       - name: Checkout
         timeout-minutes: 1
-        uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938
+        uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871
       - name: Set up Java
         uses: actions/setup-java@b36c23c0d998641eff861008f374ee103c25ac73
         timeout-minutes: 1
@@ -105,7 +105,7 @@ jobs:
     steps:
       - name: Checkout
         timeout-minutes: 1
-        uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938
+        uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871
       - name: Set up Java
         uses: actions/setup-java@b36c23c0d998641eff861008f374ee103c25ac73
         timeout-minutes: 1
@@ -131,7 +131,7 @@ jobs:
           zip -r ${REPORTS_ZIP_PATH} . -i build/reports/detekt/*
       - name: Upload Artifacts
         if: ${{ always() }}
-        uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874
+        uses: actions/upload-artifact@604373da6381bf24206979c74d06a550515601b9
         timeout-minutes: 1
         with:
           name: Detekt static analysis results
@@ -145,7 +145,7 @@ jobs:
     steps:
       - name: Checkout
         timeout-minutes: 1
-        uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938
+        uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871
       - name: Set up Java
         uses: actions/setup-java@b36c23c0d998641eff861008f374ee103c25ac73
         timeout-minutes: 1
@@ -171,7 +171,7 @@ jobs:
           zip -r ${REPORTS_ZIP_PATH} . -i build/reports/ktlint/\*
       - name: Upload Artifacts
         if: ${{ always() }}
-        uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874
+        uses: actions/upload-artifact@604373da6381bf24206979c74d06a550515601b9
         timeout-minutes: 1
         with:
           name: Ktlint static analysis results
@@ -185,7 +185,7 @@ jobs:
     steps:
       - name: Checkout
         timeout-minutes: 1
-        uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938
+        uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871
       - name: Set up Java
         uses: actions/setup-java@b36c23c0d998641eff861008f374ee103c25ac73
         timeout-minutes: 1
@@ -214,7 +214,7 @@ jobs:
           zip -r ${LINT_ZIP_PATH} . -i \*build/reports/\*
       - name: Upload Artifacts
         if: ${{ always() }}
-        uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874
+        uses: actions/upload-artifact@604373da6381bf24206979c74d06a550515601b9
         timeout-minutes: 1
         with:
           name: Android Lint static analysis results
@@ -228,7 +228,7 @@ jobs:
     steps:
       - name: Checkout
         timeout-minutes: 1
-        uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938
+        uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871
       - name: Set up Java
         uses: actions/setup-java@b36c23c0d998641eff861008f374ee103c25ac73
         timeout-minutes: 1
@@ -255,7 +255,7 @@ jobs:
           zip -r ${RESULTS_ZIP_PATH} . -i \*build/reports/\* \*/build/kover/html/\* \*/build/kover/xml/report.xml
       - name: Upload Artifacts
         if: ${{ always() }}
-        uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874
+        uses: actions/upload-artifact@604373da6381bf24206979c74d06a550515601b9
         timeout-minutes: 1
         with:
           name: Test Kotlin modules results
@@ -272,7 +272,7 @@ jobs:
     steps:
       - name: Checkout
         timeout-minutes: 1
-        uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938
+        uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871
       - name: Set up Java
         uses: actions/setup-java@b36c23c0d998641eff861008f374ee103c25ac73
         timeout-minutes: 1
@@ -321,7 +321,7 @@ jobs:
           zip -r ${TEST_RESULTS_ZIP_PATH} . -i build/fladle/\* \*/build/outputs/androidTest-results/\*
       - name: Upload Artifacts
         if: ${{ always() }}
-        uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874
+        uses: actions/upload-artifact@604373da6381bf24206979c74d06a550515601b9
         timeout-minutes: 1
         with:
           name: Test Android modules with FTL results
@@ -336,7 +336,7 @@ jobs:
     steps:
       - name: Checkout
         timeout-minutes: 1
-        uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938
+        uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871
       - name: Set up Java
         uses: actions/setup-java@b36c23c0d998641eff861008f374ee103c25ac73
         timeout-minutes: 1
@@ -369,7 +369,7 @@ jobs:
           zip -r ${TEST_RESULTS_ZIP_PATH} . -i \*/build/test-results/\*
       - name: Upload Artifacts
         if: ${{ always() }}
-        uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874
+        uses: actions/upload-artifact@604373da6381bf24206979c74d06a550515601b9
         timeout-minutes: 1
         with:
           name: Test Android libs with WTF results
@@ -384,7 +384,7 @@ jobs:
     steps:
       - name: Checkout
         timeout-minutes: 1
-        uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938
+        uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871
       - name: Set up Java
         uses: actions/setup-java@b36c23c0d998641eff861008f374ee103c25ac73
         timeout-minutes: 1
@@ -417,7 +417,7 @@ jobs:
           zip -r ${TEST_RESULTS_ZIP_PATH} . -i \*/build/test-results/\*
       - name: Upload Artifacts
         if: ${{ always() }}
-        uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874
+        uses: actions/upload-artifact@604373da6381bf24206979c74d06a550515601b9
         timeout-minutes: 1
         with:
           name: Test Android app with WTF results
@@ -435,7 +435,7 @@ jobs:
     steps:
       - name: Checkout
         timeout-minutes: 1
-        uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938
+        uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871
       - name: Set up Java
         uses: actions/setup-java@b36c23c0d998641eff861008f374ee103c25ac73
         timeout-minutes: 1
@@ -492,7 +492,7 @@ jobs:
     steps:
       - name: Checkout
         timeout-minutes: 1
-        uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938
+        uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871
       - name: Set up Java
         uses: actions/setup-java@b36c23c0d998641eff861008f374ee103c25ac73
         timeout-minutes: 1
@@ -548,7 +548,7 @@ jobs:
           zip -r ${MAPPINGS_ZIP_PATH} . -i *app/build/outputs/mapping/*/mapping.txt
           zip -r ${COMPOSE_METRICS_ZIP_PATH} . -i \*/build/compose-metrics/\* \*/build/compose-reports/\*
       - name: Upload Artifacts
-        uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874
+        uses: actions/upload-artifact@604373da6381bf24206979c74d06a550515601b9
         timeout-minutes: 2
         with:
           name: Binaries
@@ -566,7 +566,7 @@ jobs:
     steps:
       - name: Checkout
         timeout-minutes: 1
-        uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938
+        uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871
       - name: Set up Java
         uses: actions/setup-java@b36c23c0d998641eff861008f374ee103c25ac73
         timeout-minutes: 1

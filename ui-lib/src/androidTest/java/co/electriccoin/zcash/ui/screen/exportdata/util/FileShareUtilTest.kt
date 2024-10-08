@@ -28,6 +28,8 @@ class FileShareUtilTest {
                 context = getAppContext(),
                 dataFilePath = tempFilePath.pathString,
                 fileType = FileShareUtil.ZASHI_INTERNAL_DATA_MIME_TYPE,
+                shareText = null,
+                sharePickerText = "Test Picker Title",
                 versionInfo = VersionInfoFixture.new()
             )
         assertEquals(intent.action, Intent.ACTION_VIEW)
