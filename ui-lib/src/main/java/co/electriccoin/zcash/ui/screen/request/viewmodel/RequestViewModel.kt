@@ -106,6 +106,10 @@ class RequestViewModel(
         val proposal = getSynchronizer().proposeFulfillingPaymentUri(Account.DEFAULT, zip321Uri)
 
         Twig.error { "ZIP321: Proposal: ${proposal.toPrettyString()}" }
+
+        val paymentRequestFromUri = ZIP321.request(zip321Uri, null)
+
+        Twig.error { "ZIP321: Proposal from Uri: $paymentRequestFromUri" }
     }
 
     private fun onBack() =
