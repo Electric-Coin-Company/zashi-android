@@ -165,15 +165,15 @@ fun Scan(
                 scanState = scanState,
                 setScanState = setScanState,
                 modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .background(
-                            if (scanState != ScanState.Scanning) {
-                                ZcashTheme.colors.cameraDisabledBackgroundColor
-                            } else {
-                                Color.Black
-                            }
-                        )
+                Modifier
+                    .fillMaxSize()
+                    .background(
+                        if (scanState != ScanState.Scanning) {
+                            ZcashTheme.colors.cameraDisabledBackgroundColor
+                        } else {
+                            Color.Black
+                        }
+                    )
                 // Intentionally omitting paddingValues to have edge to edge design
             )
 
@@ -228,9 +228,9 @@ fun ScanBottomItems(
                     color = ZashiColors.Text.textPrimary,
                     fontWeight = FontWeight.Medium,
                     modifier =
-                        Modifier
-                            .weight(1f)
-                            .testTag(ScanTag.FAILED_TEXT_STATE)
+                    Modifier
+                        .weight(1f)
+                        .testTag(ScanTag.FAILED_TEXT_STATE)
                 )
             }
         }
@@ -248,6 +248,7 @@ fun ScanBottomItems(
 
             ScanState.Permission -> {
                 ZashiButton(
+                    modifier = Modifier.fillMaxWidth(),
                     onClick = onOpenSettings,
                     text = stringResource(id = R.string.scan_settings_button)
                 )
@@ -267,11 +268,11 @@ private fun ScanTopAppBar(
 ) {
     SmallTopAppBar(
         subTitle =
-            when (subTitleState) {
-                TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
-                TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
-                TopAppBarSubTitleState.None -> null
-            },
+        when (subTitleState) {
+            TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
+            TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
+            TopAppBarSubTitleState.None -> null
+        },
         navigationAction = {
             if (showBack) {
                 TopAppBarBackNavigation(
@@ -292,8 +293,6 @@ data class FramePosition(
     val top: Float,
     val right: Float,
     val bottom: Float,
-    val screenHeight: Int,
-    val screenWidth: Int
 ) {
     val width: Float = right - left
     val height: Float = bottom - top
@@ -365,16 +364,12 @@ private fun ScanMainContent(
         }
     }
 
-    val configuration = LocalConfiguration.current
-
     val framePosition =
         FramePosition(
             left = layoutX,
             top = layoutY,
             right = layoutX + cutoutWidth,
             bottom = layoutY + cutoutHeight,
-            screenHeight = with(density) { configuration.screenHeightDp.dp.roundToPx() },
-            screenWidth = with(density) { configuration.screenWidthDp.dp.roundToPx() }
         )
 
     val (isTorchOn, setIsTorchOn) = rememberSaveable { mutableStateOf(false) }
@@ -428,21 +423,21 @@ private fun ScanMainContent(
                     clipPath(
                         clipOp = ClipOp.Difference,
                         path =
-                            Path().apply {
-                                addRoundRect(
-                                    roundRect =
-                                        RoundRect(
-                                            left = framePosition.left,
-                                            top = framePosition.top,
-                                            right = framePosition.right,
-                                            bottom = framePosition.bottom,
-                                            topLeftCornerRadius = CornerRadius(24.dp.toPx()),
-                                            topRightCornerRadius = CornerRadius(24.dp.toPx()),
-                                            bottomRightCornerRadius = CornerRadius(24.dp.toPx()),
-                                            bottomLeftCornerRadius = CornerRadius(24.dp.toPx()),
-                                        )
+                        Path().apply {
+                            addRoundRect(
+                                roundRect =
+                                RoundRect(
+                                    left = framePosition.left,
+                                    top = framePosition.top,
+                                    right = framePosition.right,
+                                    bottom = framePosition.bottom,
+                                    topLeftCornerRadius = CornerRadius(24.dp.toPx()),
+                                    topRightCornerRadius = CornerRadius(24.dp.toPx()),
+                                    bottomRightCornerRadius = CornerRadius(24.dp.toPx()),
+                                    bottomLeftCornerRadius = CornerRadius(24.dp.toPx()),
                                 )
-                            }
+                            )
+                        }
                     ) {
                         drawRect(Color.Black.copy(alpha = CAMERA_TRANSLUCENT_BORDER))
                     }
@@ -450,13 +445,13 @@ private fun ScanMainContent(
 
                 Row(
                     modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .offset(
-                                x = 0.dp,
-                                y = with(density) { framePosition.bottom.toDp() }
-                            )
-                            .padding(top = 36.dp),
+                    Modifier
+                        .fillMaxWidth()
+                        .offset(
+                            x = 0.dp,
+                            y = with(density) { framePosition.bottom.toDp() }
+                        )
+                        .padding(top = 36.dp),
                     horizontalArrangement = Arrangement.Center
                 ) {
                     ImageButton(
@@ -470,11 +465,11 @@ private fun ScanMainContent(
 
                     ImageButton(
                         painter =
-                            if (isTorchOn) {
-                                painterResource(R.drawable.ic_scan_torch_off)
-                            } else {
-                                painterResource(R.drawable.ic_scan_torch)
-                            },
+                        if (isTorchOn) {
+                            painterResource(R.drawable.ic_scan_torch_off)
+                        } else {
+                            painterResource(R.drawable.ic_scan_torch)
+                        },
                         contentDescription = stringResource(id = R.string.scan_torch_content_description),
                     ) {
                         setIsTorchOn(!isTorchOn)
@@ -489,39 +484,36 @@ private fun ScanMainContent(
 
         Box(
             modifier =
-                Modifier
-                    .constrainAs(frame) {
-                        top.linkTo(topAnchor.bottom)
-                        start.linkTo(parent.start, 78.dp)
-                        end.linkTo(parent.end, 78.dp)
-                        this
-                            .height = Dimension.ratio("1:1.08") // height is 8% larger than width
-                        width = Dimension.matchParent
-                    }
-                    .onGloballyPositioned { coordinates ->
-                        layoutCoordinates = coordinates
-                    },
+            Modifier
+                .constrainAs(frame) {
+                    top.linkTo(parent.top)
+                    start.linkTo(parent.start, 78.dp)
+                    end.linkTo(parent.end, 78.dp)
+                    bottom.linkTo(bottomItems.top)
+                    this.height = Dimension.ratio("1:1.08") // height is 8% larger than width
+                    width = Dimension.matchParent
+                }
+                .onGloballyPositioned { coordinates ->
+                    layoutCoordinates = coordinates
+                },
             contentAlignment = Alignment.Center
         ) {
-            ScanFrame(
-                modifier = Modifier.fillMaxSize(),
-                isScanning = scanState == ScanState.Scanning
-            )
+            ScanFrame(modifier = Modifier.fillMaxSize())
         }
 
         Spacer(
             modifier =
-                Modifier
-                    .fillMaxHeight(.285f)
-                    .constrainAs(topAnchor) {
-                        top.linkTo(parent.top)
-                    },
+            Modifier
+                .fillMaxHeight(.285f)
+                .constrainAs(topAnchor) {
+                    top.linkTo(parent.top)
+                },
         )
 
         Box(
             modifier =
-                Modifier
-                    .constrainAs(bottomItems) { bottom.linkTo(parent.bottom) }
+            Modifier
+                .constrainAs(bottomItems) { bottom.linkTo(parent.bottom) }
         ) {
             ScanBottomItems(
                 addressValidationResult = addressValidationResult,
@@ -529,11 +521,11 @@ private fun ScanMainContent(
                 onOpenSettings = onOpenSettings,
                 scanState = scanState,
                 modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(
-                            horizontal = 24.dp
-                        )
+                Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        horizontal = 24.dp
+                    )
             )
         }
     }
@@ -550,65 +542,53 @@ private fun ImageButton(
         painter = painter,
         contentDescription = contentDescription,
         modifier =
-            modifier
-                .clip(RoundedCornerShape(12.dp))
-                .clickable { onClick() }
+        modifier
+            .clip(RoundedCornerShape(12.dp))
+            .clickable { onClick() }
     )
 }
 
 @Composable
-fun ScanFrame(
-    isScanning: Boolean,
-    modifier: Modifier = Modifier,
-) {
+fun ScanFrame(modifier: Modifier = Modifier) {
     @Suppress("MagicNumber")
     Box(
-        modifier =
-            modifier
-                .background(
-                    if (isScanning) {
-                        Color.Transparent
-                    } else {
-                        ZcashTheme.colors.cameraDisabledFrameColor
-                    }
-                )
-                .testTag(ScanTag.QR_FRAME)
+        modifier = modifier.testTag(ScanTag.QR_FRAME)
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(R.drawable.ic_scan_corner),
             tint = Color.White,
             contentDescription = null,
             modifier =
-                Modifier
-                    .rotate(270f)
-                    .align(Alignment.TopStart),
+            Modifier
+                .rotate(270f)
+                .align(Alignment.TopStart),
         )
         Icon(
             imageVector = ImageVector.vectorResource(R.drawable.ic_scan_corner),
             tint = Color.White,
             contentDescription = null,
             modifier =
-                Modifier
-                    .rotate(0f)
-                    .align(Alignment.TopEnd),
+            Modifier
+                .rotate(0f)
+                .align(Alignment.TopEnd),
         )
         Icon(
             imageVector = ImageVector.vectorResource(R.drawable.ic_scan_corner),
             tint = Color.White,
             contentDescription = null,
             modifier =
-                Modifier
-                    .rotate(180f)
-                    .align(Alignment.BottomStart),
+            Modifier
+                .rotate(180f)
+                .align(Alignment.BottomStart),
         )
         Icon(
             imageVector = ImageVector.vectorResource(R.drawable.ic_scan_corner),
             tint = Color.White,
             contentDescription = null,
             modifier =
-                Modifier
-                    .rotate(90f)
-                    .align(Alignment.BottomEnd),
+            Modifier
+                .rotate(90f)
+                .align(Alignment.BottomEnd),
         )
     }
 }
@@ -691,9 +671,9 @@ fun ScanCameraView(
                 previewView
             },
             modifier =
-                Modifier
-                    .fillMaxSize()
-                    .testTag(ScanTag.CAMERA_VIEW)
+            Modifier
+                .fillMaxSize()
+                .testTag(ScanTag.CAMERA_VIEW)
         )
 
         imageAnalysis.qrCodeFlow(
