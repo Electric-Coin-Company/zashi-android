@@ -70,7 +70,7 @@ class ScanViewTest : UiTestPrerequisites() {
 
         testSetup.grantPermission()
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.scan_cancel_button).uppercase()).also {
+        composeTestRule.onNodeWithText(getStringResource(R.string.scan_cancel_button)).also {
             it.assertIsDisplayed()
         }
 
