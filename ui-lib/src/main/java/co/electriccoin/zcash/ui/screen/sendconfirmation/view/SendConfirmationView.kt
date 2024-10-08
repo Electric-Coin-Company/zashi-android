@@ -98,7 +98,8 @@ private fun SendConfirmationPreview() {
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
             onContactSupport = { _, _ -> },
             submissionResults = emptyList<TransactionSubmitResult>().toImmutableList(),
-            exchangeRate = ObserveFiatCurrencyResultFixture.new()
+            exchangeRate = ObserveFiatCurrencyResultFixture.new(),
+            contactName = "Romek"
         )
     }
 }
@@ -122,7 +123,8 @@ private fun SendConfirmationDarkPreview() {
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
             onContactSupport = { _, _ -> },
             submissionResults = emptyList<TransactionSubmitResult>().toImmutableList(),
-            exchangeRate = ObserveFiatCurrencyResultFixture.new()
+            exchangeRate = ObserveFiatCurrencyResultFixture.new(),
+            contactName = "Romek"
         )
     }
 }
@@ -146,7 +148,8 @@ private fun SendMultipleErrorPreview() {
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
             onContactSupport = { _, _ -> },
             submissionResults = emptyList<TransactionSubmitResult>().toImmutableList(),
-            exchangeRate = ObserveFiatCurrencyResultFixture.new()
+            exchangeRate = ObserveFiatCurrencyResultFixture.new(),
+            contactName = "Romek"
         )
     }
 }
@@ -170,7 +173,8 @@ private fun SendMultipleErrorDarkPreview() {
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
             onContactSupport = { _, _ -> },
             submissionResults = emptyList<TransactionSubmitResult>().toImmutableList(),
-            exchangeRate = ObserveFiatCurrencyResultFixture.new()
+            exchangeRate = ObserveFiatCurrencyResultFixture.new(),
+            contactName = "Romek"
         )
     }
 }
@@ -190,7 +194,8 @@ private fun PreviewSendConfirmation() {
             onConfirmation = {},
             onBack = {},
             isSending = false,
-            exchangeRate = ObserveFiatCurrencyResultFixture.new()
+            exchangeRate = ObserveFiatCurrencyResultFixture.new(),
+            contactName = "Romek"
         )
     }
 }
@@ -263,6 +268,7 @@ fun SendConfirmation(
     submissionResults: ImmutableList<TransactionSubmitResult>,
     topAppBarSubTitleState: TopAppBarSubTitleState,
     zecSend: ZecSend,
+    contactName: String?,
     exchangeRate: ExchangeRateState
 ) {
     BlankBgScaffold(
@@ -290,7 +296,8 @@ fun SendConfirmation(
                         start = ZcashTheme.dimens.screenHorizontalSpacingRegular,
                         end = ZcashTheme.dimens.screenHorizontalSpacingRegular
                     ),
-            exchangeRate = exchangeRate
+            exchangeRate = exchangeRate,
+            contactName = contactName
         )
     }
 }
@@ -345,6 +352,7 @@ private fun SendConfirmationTopAppBar(
 @Composable
 @Suppress("LongParameterList")
 private fun SendConfirmationMainContent(
+    contactName: String?,
     stage: SendConfirmationStage,
     submissionResults: ImmutableList<TransactionSubmitResult>,
     zecSend: ZecSend,
@@ -360,6 +368,7 @@ private fun SendConfirmationMainContent(
         is SendConfirmationStage.Failure,
         is SendConfirmationStage.FailureGrpc -> {
             SendConfirmationContent(
+                contactName = contactName,
                 zecSend = zecSend,
                 onBack = onBack,
                 onConfirmation = onConfirmation,
@@ -396,6 +405,7 @@ private fun SendConfirmationMainContent(
 @Composable
 @Suppress("LongMethod", "LongParameterList")
 private fun SendConfirmationContent(
+    contactName: String?,
     zecSend: ZecSend,
     exchangeRate: ExchangeRateState,
     isSending: Boolean,
@@ -441,6 +451,16 @@ private fun SendConfirmationContent(
         )
 
         Spacer(modifier = Modifier.height(8.dp))
+
+        if (contactName != null) {
+            Text(
+                contactName,
+                style = ZashiTypography.textSm,
+                color = ZashiColors.Inputs.Filled.label,
+                fontWeight = FontWeight.Medium
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+        }
 
         Text(
             zecSend.destination.address,

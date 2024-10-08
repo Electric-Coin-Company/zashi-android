@@ -13,12 +13,13 @@ import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.addressbook.view.AddressBookView
 import co.electriccoin.zcash.ui.screen.addressbook.viewmodel.AddressBookViewModel
 import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 @Composable
-internal fun WrapAddressBook() {
+internal fun WrapAddressBook(args: AddressBookArgs) {
     val navController = LocalNavController.current
     val walletViewModel = koinActivityViewModel<WalletViewModel>()
-    val viewModel = koinViewModel<AddressBookViewModel>()
+    val viewModel = koinViewModel<AddressBookViewModel> { parametersOf(args) }
     val walletState by walletViewModel.walletStateInformation.collectAsStateWithLifecycle()
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -42,4 +43,18 @@ internal fun WrapAddressBook() {
         state = state,
         topAppBarSubTitleState = walletState,
     )
+}
+
+enum class AddressBookArgs {
+    DEFAULT,
+    PICK_CONTACT;
+
+    companion object {
+        private const val PATH = "address_book"
+        const val MODE = "mode"
+
+        const val ROUTE = "$PATH/{$MODE}"
+
+        operator fun invoke(mode: AddressBookArgs) = "$PATH/$mode"
+    }
 }

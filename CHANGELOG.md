@@ -9,9 +9,10 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 ### Changed
 - Scan QR screen has been redesigned
 - The Receive screen UI has been redesigned
-- Send screen redesigned
-- Confirmation screen redesigned
-- History item redesigned
+- Send screen redesigned & added a possibility to pick a contact from address book
+- Confirmation screen redesigned & added a contact name to the transaction if the contact is in address book
+- History item redesigned & added an option to create a contact from unknown address
+- Address Book, Create/Update/Delete Contact, Create Contact by QR screens added
 
 ### Added
 - New QR Code detail screen has been added

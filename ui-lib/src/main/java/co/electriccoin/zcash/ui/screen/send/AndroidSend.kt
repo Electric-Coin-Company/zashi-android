@@ -6,9 +6,14 @@ import android.content.pm.PackageManager
 import androidx.annotation.VisibleForTesting
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cash.z.ecc.android.sdk.Synchronizer
@@ -22,21 +27,31 @@ import co.electriccoin.zcash.di.koinActivityViewModel
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.compose.BalanceState
 import co.electriccoin.zcash.ui.common.compose.LocalActivity
+import co.electriccoin.zcash.ui.common.compose.LocalNavController
+import co.electriccoin.zcash.ui.common.model.AddressBookContact
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
+import co.electriccoin.zcash.ui.common.usecase.ObserveContactByAddressUseCase
+import co.electriccoin.zcash.ui.common.usecase.ObserveContactPickedUseCase
 import co.electriccoin.zcash.ui.common.viewmodel.HomeViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
+import co.electriccoin.zcash.ui.screen.addressbook.AddressBookArgs
+import co.electriccoin.zcash.ui.screen.contact.AddContactArgs
 import co.electriccoin.zcash.ui.screen.send.ext.Saver
 import co.electriccoin.zcash.ui.screen.send.model.AmountState
 import co.electriccoin.zcash.ui.screen.send.model.MemoState
 import co.electriccoin.zcash.ui.screen.send.model.RecipientAddressState
+import co.electriccoin.zcash.ui.screen.send.model.SendAddressBookState
 import co.electriccoin.zcash.ui.screen.send.model.SendArguments
 import co.electriccoin.zcash.ui.screen.send.model.SendStage
 import co.electriccoin.zcash.ui.screen.send.view.Send
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.koin.compose.koinInject
 import java.util.Locale
+import kotlin.time.Duration.Companion.seconds
 
 @Composable
 @Suppress("LongParameterList")
@@ -115,6 +130,11 @@ internal fun WrapSend(
 ) {
     val scope = rememberCoroutineScope()
 
+    val navController = LocalNavController.current
+
+    val observeContactByAddress = koinInject<ObserveContactByAddressUseCase>()
+    val observeContactPicked = koinInject<ObserveContactPickedUseCase>()
+
     val context = LocalContext.current
 
     val (sendStage, setSendStage) =
@@ -135,6 +155,68 @@ internal fun WrapSend(
             )
         )
     }
+
+    val existingContact: MutableState<AddressBookContact?> = remember { mutableStateOf(null) }
+    var isHintVisible by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        observeContactPicked().collect {
+            setRecipientAddressState(it)
+        }
+    }
+
+    LaunchedEffect(recipientAddressState.address) {
+        observeContactByAddress(recipientAddressState.address).collect {
+            existingContact.value = it
+        }
+    }
+
+    LaunchedEffect(existingContact, recipientAddressState.type) {
+        val exists = existingContact.value != null
+        val isValid = recipientAddressState.type?.isNotValid == false
+
+        if (!exists && isValid) {
+            isHintVisible = true
+            delay(3.seconds)
+            isHintVisible = false
+        } else {
+            isHintVisible = false
+        }
+    }
+
+    val sendAddressBookState =
+        remember(existingContact.value, recipientAddressState, isHintVisible) {
+            derivedStateOf {
+                val exists = existingContact.value != null
+                val isValid = recipientAddressState.type?.isNotValid == false
+                val mode =
+                    if (isValid) {
+                        if (exists) {
+                            SendAddressBookState.Mode.PICK_FROM_ADDRESS_BOOK
+                        } else {
+                            SendAddressBookState.Mode.ADD_TO_ADDRESS_BOOK
+                        }
+                    } else {
+                        SendAddressBookState.Mode.PICK_FROM_ADDRESS_BOOK
+                    }
+
+                SendAddressBookState(
+                    mode = mode,
+                    isHintVisible = isHintVisible,
+                    onButtonClick = {
+                        when (mode) {
+                            SendAddressBookState.Mode.PICK_FROM_ADDRESS_BOOK -> {
+                                navController.navigate(AddressBookArgs(AddressBookArgs.PICK_CONTACT))
+                            }
+
+                            SendAddressBookState.Mode.ADD_TO_ADDRESS_BOOK -> {
+                                navController.navigate(AddContactArgs(recipientAddressState.address))
+                            }
+                        }
+                    }
+                )
+            }
+        }
 
     // Amount computation:
     val (amountState, setAmountState) =
@@ -213,6 +295,7 @@ internal fun WrapSend(
             SendStage.Proposing -> {
                 // no action - wait until the sending is done
             }
+
             is SendStage.SendFailure -> setSendStage(SendStage.Form)
         }
     }
@@ -268,7 +351,8 @@ internal fun WrapSend(
             hasCameraFeature = hasCameraFeature,
             topAppBarSubTitleState = topAppBarSubTitleState,
             walletSnapshot = walletSnapshot,
-            exchangeRateState = exchangeRateState
+            exchangeRateState = exchangeRateState,
+            sendAddressBookState = sendAddressBookState.value
         )
     }
 }

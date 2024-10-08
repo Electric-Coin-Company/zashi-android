@@ -1,9 +1,9 @@
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="settings_title">Settings</string>
     <string name="settings_advanced_settings">Advanced Settings</string>
     <string name="settings_about_us">About Us</string>
     <string name="settings_feedback">Send Us Feedback</string>
-    <string name="settings_version">Version %s</string>
+    <string name="settings_version">Version <xliff:g example="1" id="version">%s</xliff:g></string>
     <string name="settings_address_book">Address Book</string>
 
     <string name="settings_troubleshooting_menu_content_description">Additional settings</string>
