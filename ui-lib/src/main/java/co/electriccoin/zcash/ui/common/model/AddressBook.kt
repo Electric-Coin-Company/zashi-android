@@ -2,8 +2,8 @@ package co.electriccoin.zcash.ui.common.model
 
 import kotlinx.datetime.Instant
 
-data class AddressBookContact(
-    val name: String,
-    val address: String,
+data class AddressBook(
     val lastUpdated: Instant,
+    val version: Int,
+    val contacts: List<AddressBookContact>
 )

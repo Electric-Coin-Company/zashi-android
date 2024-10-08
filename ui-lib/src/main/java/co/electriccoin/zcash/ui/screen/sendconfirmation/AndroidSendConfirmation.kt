@@ -7,6 +7,7 @@ import androidx.activity.compose.BackHandler
 import androidx.annotation.VisibleForTesting
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -24,6 +25,7 @@ import co.electriccoin.zcash.di.koinActivityViewModel
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.model.AddressBookContact
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.usecase.GetContactByAddressUseCase
 import co.electriccoin.zcash.ui.common.viewmodel.AuthenticationViewModel
@@ -147,10 +149,11 @@ internal fun WrapSendConfirmation(
 
     val getContact = koinInject<GetContactByAddressUseCase>()
 
-    val foundContact =
-        remember(zecSend?.destination) {
-            getContact(zecSend?.destination?.address.orEmpty())
-        }
+    val foundContact = remember { mutableStateOf<AddressBookContact?>(null) }
+
+    LaunchedEffect(zecSend?.destination?.address) {
+        foundContact.value = getContact(zecSend?.destination?.address.orEmpty())
+    }
 
     BackHandler {
         onBackAction()
@@ -237,7 +240,7 @@ internal fun WrapSendConfirmation(
             },
             topAppBarSubTitleState = topAppBarSubTitleState,
             exchangeRate = exchangeRateState,
-            contactName = foundContact?.name
+            contactName = foundContact.value?.name
         )
 
         if (sendFundsAuthentication.value) {

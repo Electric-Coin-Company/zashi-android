@@ -13,21 +13,28 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -42,21 +49,25 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.clipRect
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.drawscope.clipPath
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -67,12 +78,13 @@ import cash.z.ecc.android.sdk.type.AddressType
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
-import co.electriccoin.zcash.ui.design.component.BlankSurface
-import co.electriccoin.zcash.ui.design.component.SecondaryButton
-import co.electriccoin.zcash.ui.design.component.Small
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.TopAppBarBackNavigation
+import co.electriccoin.zcash.ui.design.component.ZashiButton
+import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
+import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.screen.scan.ScanTag
 import co.electriccoin.zcash.ui.screen.scan.model.ScanState
 import co.electriccoin.zcash.ui.screen.scan.util.ImageUriToQrCodeConverter
@@ -89,45 +101,6 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.guava.await
 import kotlinx.coroutines.launch
-import kotlin.math.roundToInt
-
-@Preview
-@Composable
-private fun ScanPreview() {
-    ZcashTheme(forceDarkMode = false) {
-        BlankSurface {
-            Scan(
-                snackbarHostState = SnackbarHostState(),
-                onBack = {},
-                onScanned = {},
-                onScanError = {},
-                onOpenSettings = {},
-                onScanStateChanged = {},
-                topAppBarSubTitleState = TopAppBarSubTitleState.None,
-                addressValidationResult = AddressType.Invalid(),
-            )
-        }
-    }
-}
-
-@Preview
-@Composable
-private fun ScanDarkPreview() {
-    ZcashTheme(forceDarkMode = true) {
-        BlankSurface {
-            Scan(
-                snackbarHostState = SnackbarHostState(),
-                onBack = {},
-                onScanned = {},
-                onScanError = {},
-                onOpenSettings = {},
-                onScanStateChanged = {},
-                topAppBarSubTitleState = TopAppBarSubTitleState.None,
-                addressValidationResult = AddressType.Transparent,
-            )
-        }
-    }
-}
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -141,7 +114,7 @@ fun Scan(
     onScanStateChanged: (ScanState) -> Unit,
     topAppBarSubTitleState: TopAppBarSubTitleState,
     addressValidationResult: AddressType?
-) {
+) = ZcashTheme(forceDarkMode = true) { // forces dark theme for this screen
     val permissionState =
         if (LocalInspectionMode.current) {
             remember {
@@ -235,40 +208,53 @@ fun ScanBottomItems(
                         id = R.string.scan_state_permission,
                         stringResource(id = R.string.app_name)
                     )
+
                 ScanState.Failed -> stringResource(id = R.string.scan_state_failed)
                 ScanState.Scanning -> failureText
             }
 
         if (failureText != null) {
-            Small(
-                text = failureText,
-                color = Color.White,
-                textAlign = TextAlign.Center,
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .testTag(ScanTag.FAILED_TEXT_STATE)
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(painter = painterResource(R.drawable.ic_scan_info), contentDescription = failureText)
+                Spacer(modifier = Modifier.width(12.dp))
+                Text(
+                    text = failureText,
+                    style = ZashiTypography.textXs,
+                    color = ZashiColors.Text.textPrimary,
+                    fontWeight = FontWeight.Medium,
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .testTag(ScanTag.FAILED_TEXT_STATE)
+                )
+            }
         }
 
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
+        Spacer(modifier = Modifier.height(24.dp))
 
         when (scanState) {
             ScanState.Scanning, ScanState.Failed -> {
-                SecondaryButton(
+                ZashiButton(
+                    modifier = Modifier.fillMaxWidth(),
                     onClick = onBack,
                     text = stringResource(id = R.string.scan_cancel_button)
                 )
             }
+
             ScanState.Permission -> {
-                SecondaryButton(
+                ZashiButton(
+                    modifier = Modifier.fillMaxWidth(),
                     onClick = onOpenSettings,
                     text = stringResource(id = R.string.scan_settings_button)
                 )
             }
         }
 
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
+        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.windowInsetsBottomHeight(WindowInsets.systemBars))
     }
 }
 
@@ -300,22 +286,24 @@ private fun ScanTopAppBar(
 
 const val CAMERA_TRANSLUCENT_BORDER = 0.5f
 
-const val FRAME_SIZE_RATIO = 0.6f
-
 data class FramePosition(
     val left: Float,
     val top: Float,
     val right: Float,
     val bottom: Float,
-    val screenHeight: Int,
-    val screenWidth: Int
 ) {
     val width: Float = right - left
     val height: Float = bottom - top
 }
 
 @OptIn(ExperimentalPermissionsApi::class)
-@Suppress("LongMethod", "LongParameterList", "CyclomaticComplexMethod", "MagicNumber")
+@Suppress(
+    "LongMethod",
+    "LongParameterList",
+    "CyclomaticComplexMethod",
+    "MagicNumber",
+    "DestructuringDeclarationWithTooManyEntries"
+)
 @Composable
 private fun ScanMainContent(
     addressValidationResult: AddressType?,
@@ -340,9 +328,11 @@ private fun ScanMainContent(
                 }
             }
         }
+
         (scanState == ScanState.Failed) -> {
             // Keep current state
         }
+
         (permissionState.status.isGranted) -> {
             if (scanState != ScanState.Scanning) {
                 setScanState(ScanState.Scanning)
@@ -350,28 +340,13 @@ private fun ScanMainContent(
         }
     }
 
-    // Calculate the best frame size for the current device screen
-    var framePossibleSize by remember { mutableStateOf(IntSize.Zero) }
-
-    val frameActualSize by remember {
-        derivedStateOf {
-            (framePossibleSize.width * FRAME_SIZE_RATIO).roundToInt()
-        }
-    }
-
     val density = LocalDensity.current
 
-    val configuration = LocalConfiguration.current
+    val decreaseCutoutSizeByPx = with(density) { 3.dp.toPx() }
 
-    val framePosition =
-        FramePosition(
-            left = (framePossibleSize.width - frameActualSize) / 2f,
-            top = (framePossibleSize.height - frameActualSize) / 2f,
-            right = (framePossibleSize.width - frameActualSize) / 2f + frameActualSize,
-            bottom = (framePossibleSize.height - frameActualSize) / 2f + frameActualSize,
-            screenHeight = with(density) { configuration.screenHeightDp.dp.roundToPx() },
-            screenWidth = with(density) { configuration.screenWidthDp.dp.roundToPx() }
-        )
+    // Calculate the best frame size for the current device screen
+    var scanFrameLayoutSize by remember { mutableStateOf<IntSize?>(null) }
+    var scanFrameLayoutSizeWindow by remember { mutableStateOf<IntSize?>(null) }
 
     val (isTorchOn, setIsTorchOn) = rememberSaveable { mutableStateOf(false) }
 
@@ -399,7 +374,41 @@ private fun ScanMainContent(
         )
 
     ConstraintLayout(modifier = modifier) {
-        val (frame, bottomItems, bottomAnchor) = createRefs()
+        val cutoutWidth by remember {
+            derivedStateOf {
+                (scanFrameLayoutSize?.width ?: 0) - decreaseCutoutSizeByPx
+            }
+        }
+        val cutoutHeight by remember {
+            derivedStateOf {
+                (scanFrameLayoutSize?.height ?: 0) - decreaseCutoutSizeByPx
+            }
+        }
+
+        val layoutX by remember {
+            derivedStateOf {
+                val windowWidth = scanFrameLayoutSizeWindow?.width ?: 0
+
+                windowWidth / 2 - cutoutWidth / 2
+            }
+        }
+        val layoutY by remember {
+            derivedStateOf {
+                val windowHeight = scanFrameLayoutSizeWindow?.height ?: 0
+
+                windowHeight / 2 - cutoutHeight / 2
+            }
+        }
+
+        val framePosition =
+            FramePosition(
+                left = layoutX,
+                top = layoutY,
+                right = layoutX + cutoutWidth,
+                bottom = layoutY + cutoutHeight,
+            )
+
+        val (frame, frameWindow, bottomItems, topAnchor) = createRefs()
 
         when (scanState) {
             ScanState.Permission -> {
@@ -421,56 +430,60 @@ private fun ScanMainContent(
                 }
 
                 Canvas(modifier = Modifier.fillMaxSize()) {
-                    clipRect(
+                    clipPath(
                         clipOp = ClipOp.Difference,
-                        left = framePosition.left,
-                        top = framePosition.top,
-                        right = framePosition.right,
-                        bottom = framePosition.bottom,
+                        path =
+                            Path().apply {
+                                addRoundRect(
+                                    roundRect =
+                                        RoundRect(
+                                            left = framePosition.left,
+                                            top = framePosition.top,
+                                            right = framePosition.right,
+                                            bottom = framePosition.bottom,
+                                            topLeftCornerRadius = CornerRadius(24.dp.toPx()),
+                                            topRightCornerRadius = CornerRadius(24.dp.toPx()),
+                                            bottomRightCornerRadius = CornerRadius(24.dp.toPx()),
+                                            bottomLeftCornerRadius = CornerRadius(24.dp.toPx()),
+                                        )
+                                )
+                            }
                     ) {
                         drawRect(Color.Black.copy(alpha = CAMERA_TRANSLUCENT_BORDER))
                     }
                 }
 
-                ImageButton(
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_gallery),
-                    contentDescription = stringResource(id = R.string.gallery_content_description),
+                Row(
                     modifier =
                         Modifier
+                            .fillMaxWidth()
                             .offset(
-                                x =
-                                    with(density) {
-                                        framePosition.left.toDp() - ZcashTheme.dimens.spacingMid
-                                    },
+                                x = 0.dp,
                                 y = with(density) { framePosition.bottom.toDp() }
-                            ),
+                            )
+                            .padding(top = 36.dp),
+                    horizontalArrangement = Arrangement.Center
                 ) {
-                    galleryLauncher.launch("image/*")
-                }
+                    ImageButton(
+                        painter = painterResource(R.drawable.ic_scan_gallery),
+                        contentDescription = stringResource(id = R.string.gallery_content_description),
+                    ) {
+                        galleryLauncher.launch("image/*")
+                    }
 
-                ImageButton(
-                    imageVector =
-                        if (isTorchOn) {
-                            ImageVector.vectorResource(R.drawable.ic_torch_off)
-                        } else {
-                            ImageVector.vectorResource(R.drawable.ic_torch_on)
-                        },
-                    contentDescription = stringResource(id = R.string.scan_torch_content_description),
-                    modifier =
-                        Modifier
-                            .offset(
-                                x =
-                                    with(density) {
-                                        (
-                                            framePosition.right.toDp() -
-                                                ZcashTheme.dimens.cameraTorchButton -
-                                                ZcashTheme.dimens.spacingDefault
-                                        )
-                                    },
-                                y = with(density) { framePosition.bottom.toDp() }
-                            ),
-                ) {
-                    setIsTorchOn(!isTorchOn)
+                    Spacer(modifier = Modifier.width(16.dp))
+
+                    ImageButton(
+                        painter =
+                            if (isTorchOn) {
+                                painterResource(R.drawable.ic_scan_torch_off)
+                            } else {
+                                painterResource(R.drawable.ic_scan_torch)
+                            },
+                        contentDescription = stringResource(id = R.string.scan_torch_content_description),
+                    ) {
+                        setIsTorchOn(!isTorchOn)
+                    }
                 }
             }
 
@@ -482,31 +495,44 @@ private fun ScanMainContent(
         Box(
             modifier =
                 Modifier
-                    .constrainAs(frame) {
+                    .constrainAs(frameWindow) {
                         top.linkTo(parent.top)
-                        bottom.linkTo(bottomAnchor.top)
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
-                        width = Dimension.fillToConstraints
+                        bottom.linkTo(bottomItems.top)
+                        width = Dimension.matchParent
                         height = Dimension.fillToConstraints
                     }
-                    .onSizeChanged { coordinates ->
-                        framePossibleSize = coordinates
+                    .onSizeChanged {
+                        scanFrameLayoutSizeWindow = it
+                    }
+        )
+
+        Box(
+            modifier =
+                Modifier
+                    .constrainAs(frame) {
+                        top.linkTo(parent.top)
+                        start.linkTo(parent.start, 78.dp)
+                        end.linkTo(parent.end, 78.dp)
+                        bottom.linkTo(bottomItems.top)
+                        this.height = Dimension.ratio("1:1.08") // height is 8% larger than width
+                        width = Dimension.matchParent
+                    }
+                    .onSizeChanged {
+                        scanFrameLayoutSize = it
                     },
             contentAlignment = Alignment.Center
         ) {
-            ScanFrame(
-                frameSize = frameActualSize,
-                isScanning = scanState == ScanState.Scanning
-            )
+            ScanFrame(modifier = Modifier.fillMaxSize())
         }
 
         Spacer(
             modifier =
                 Modifier
-                    .fillMaxHeight(.28f)
-                    .constrainAs(bottomAnchor) {
-                        bottom.linkTo(parent.bottom)
+                    .fillMaxHeight(.285f)
+                    .constrainAs(topAnchor) {
+                        top.linkTo(parent.top)
                     },
         )
 
@@ -524,8 +550,7 @@ private fun ScanMainContent(
                     Modifier
                         .fillMaxWidth()
                         .padding(
-                            vertical = ZcashTheme.dimens.spacingHuge,
-                            horizontal = ZcashTheme.dimens.screenHorizontalSpacingBig
+                            horizontal = 24.dp
                         )
             )
         }
@@ -534,45 +559,26 @@ private fun ScanMainContent(
 
 @Composable
 private fun ImageButton(
-    imageVector: ImageVector,
+    painter: Painter,
     contentDescription: String,
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
     Image(
-        imageVector = imageVector,
+        painter = painter,
         contentDescription = contentDescription,
         modifier =
             modifier
-                .clip(RoundedCornerShape(ZcashTheme.dimens.regularRippleEffectCorner))
+                .clip(RoundedCornerShape(12.dp))
                 .clickable { onClick() }
-                .padding(ZcashTheme.dimens.spacingDefault)
-                .size(
-                    width = ZcashTheme.dimens.cameraTorchButton,
-                    height = ZcashTheme.dimens.cameraTorchButton
-                )
     )
 }
 
 @Composable
-fun ScanFrame(
-    frameSize: Int,
-    isScanning: Boolean,
-    modifier: Modifier = Modifier,
-) {
+fun ScanFrame(modifier: Modifier = Modifier) {
     @Suppress("MagicNumber")
     Box(
-        modifier =
-            modifier
-                .size(with(LocalDensity.current) { frameSize.toDp() })
-                .background(
-                    if (isScanning) {
-                        Color.Transparent
-                    } else {
-                        ZcashTheme.colors.cameraDisabledFrameColor
-                    }
-                )
-                .testTag(ScanTag.QR_FRAME)
+        modifier = modifier.testTag(ScanTag.QR_FRAME)
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(R.drawable.ic_scan_corner),
@@ -580,7 +586,7 @@ fun ScanFrame(
             contentDescription = null,
             modifier =
                 Modifier
-                    .rotate(0f)
+                    .rotate(270f)
                     .align(Alignment.TopStart),
         )
         Icon(
@@ -589,7 +595,7 @@ fun ScanFrame(
             contentDescription = null,
             modifier =
                 Modifier
-                    .rotate(90f)
+                    .rotate(0f)
                     .align(Alignment.TopEnd),
         )
         Icon(
@@ -598,7 +604,7 @@ fun ScanFrame(
             contentDescription = null,
             modifier =
                 Modifier
-                    .rotate(-90f)
+                    .rotate(180f)
                     .align(Alignment.BottomStart),
         )
         Icon(
@@ -607,7 +613,7 @@ fun ScanFrame(
             contentDescription = null,
             modifier =
                 Modifier
-                    .rotate(180f)
+                    .rotate(90f)
                     .align(Alignment.BottomEnd),
         )
     }
@@ -732,3 +738,24 @@ fun ImageAnalysis.qrCodeFlow(framePosition: FramePosition): Flow<String> {
         }
     }
 }
+
+@PreviewScreens
+@Composable
+private fun ScanPreview() =
+    ZcashTheme {
+        Surface(
+            color = Color.Blue,
+            shape = RectangleShape,
+        ) {
+            Scan(
+                snackbarHostState = SnackbarHostState(),
+                onBack = {},
+                onScanned = {},
+                onScanError = {},
+                onOpenSettings = {},
+                onScanStateChanged = {},
+                topAppBarSubTitleState = TopAppBarSubTitleState.None,
+                addressValidationResult = AddressType.Invalid(),
+            )
+        }
+    }

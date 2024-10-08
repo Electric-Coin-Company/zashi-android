@@ -333,10 +333,10 @@ internal fun MainActivity.Navigation() {
         }
         composable(
             route = UpdateContactArgs.ROUTE,
-            arguments = listOf(navArgument(UpdateContactArgs.CONTACT_ID) { type = NavType.StringType })
+            arguments = listOf(navArgument(UpdateContactArgs.CONTACT_ADDRESS) { type = NavType.StringType })
         ) { backStackEntry ->
-            val contactId = backStackEntry.arguments?.getString(UpdateContactArgs.CONTACT_ID).orEmpty()
-            WrapUpdateContact(contactId)
+            val contactAddress = backStackEntry.arguments?.getString(UpdateContactArgs.CONTACT_ADDRESS).orEmpty()
+            WrapUpdateContact(contactAddress)
         }
         composable(
             route = "$QR_CODE/{$ADDRESS_TYPE}",
