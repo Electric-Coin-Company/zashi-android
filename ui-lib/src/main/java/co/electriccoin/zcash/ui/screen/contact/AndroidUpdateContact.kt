@@ -16,10 +16,10 @@ import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 @Composable
-internal fun WrapUpdateContact(contactId: String) {
+internal fun WrapUpdateContact(contactAddress: String) {
     val navController = LocalNavController.current
     val walletViewModel = koinActivityViewModel<WalletViewModel>()
-    val viewModel = koinViewModel<UpdateContactViewModel> { parametersOf(contactId) }
+    val viewModel = koinViewModel<UpdateContactViewModel> { parametersOf(contactAddress) }
     val walletState by walletViewModel.walletStateInformation.collectAsStateWithLifecycle()
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -49,8 +49,8 @@ internal fun WrapUpdateContact(contactId: String) {
 
 object UpdateContactArgs {
     private const val PATH = "update_contact"
-    const val CONTACT_ID = "contactId"
-    const val ROUTE = "$PATH/{$CONTACT_ID}"
+    const val CONTACT_ADDRESS = "contactAddress"
+    const val ROUTE = "$PATH/{$CONTACT_ADDRESS}"
 
-    operator fun invoke(contactId: String) = "$PATH/$contactId"
+    operator fun invoke(contactAddress: String) = "$PATH/$contactAddress"
 }

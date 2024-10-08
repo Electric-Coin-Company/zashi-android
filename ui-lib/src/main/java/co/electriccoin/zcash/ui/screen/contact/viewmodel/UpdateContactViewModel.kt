@@ -6,7 +6,7 @@ import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.AddressBookContact
 import co.electriccoin.zcash.ui.common.usecase.DeleteContactUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetContactByIdUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetContactByAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.UpdateContactUseCase
 import co.electriccoin.zcash.ui.common.usecase.ValidateContactAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.ValidateContactNameUseCase
@@ -27,12 +27,12 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class UpdateContactViewModel(
-    private val contactId: String,
+    private val originalContactAddress: String,
     private val validateContactAddress: ValidateContactAddressUseCase,
     private val validateContactName: ValidateContactNameUseCase,
     private val updateContact: UpdateContactUseCase,
     private val deleteContact: DeleteContactUseCase,
-    private val getContact: GetContactByIdUseCase
+    private val getContactByAddress: GetContactByAddressUseCase
 ) : ViewModel() {
     private var contact: AddressBookContact? = null
     private val contactAddress = MutableStateFlow("")
@@ -142,7 +142,7 @@ class UpdateContactViewModel(
 
     init {
         viewModelScope.launch {
-            getContact(contactId).let { contact ->
+            getContactByAddress(originalContactAddress).let { contact ->
                 contactAddress.update { contact?.address.orEmpty() }
                 contactName.update { contact?.name.orEmpty() }
                 this@UpdateContactViewModel.contact = contact

@@ -4,7 +4,6 @@ import co.electriccoin.zcash.ui.common.usecase.CopyToClipboardUseCase
 import co.electriccoin.zcash.ui.common.usecase.DeleteContactUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetAddressesUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetContactByAddressUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetContactByIdUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetPersistableWalletUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSelectedEndpointUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSynchronizerUseCase
@@ -47,7 +46,6 @@ val useCaseModule =
         singleOf(::SaveContactUseCase)
         singleOf(::UpdateContactUseCase)
         singleOf(::DeleteContactUseCase)
-        singleOf(::GetContactByIdUseCase)
         singleOf(::GetContactByAddressUseCase)
         singleOf(::ObserveContactByAddressUseCase)
         singleOf(::ObserveContactPickedUseCase)
