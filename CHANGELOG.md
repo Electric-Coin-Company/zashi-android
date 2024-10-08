@@ -12,6 +12,9 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 - Confirmation screen redesigned
 - History item redesigned
 
+### Added
+- New QR Code detail screen has been added
+
 ## [1.2 (739)] - 2024-09-27 
 
 ### Changed

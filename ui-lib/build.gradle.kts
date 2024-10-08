@@ -46,6 +46,7 @@ android {
                     "src/main/res/ui/choose_server",
                     "src/main/res/ui/new_wallet_recovery",
                     "src/main/res/ui/onboarding",
+                    "src/main/res/ui/qr_code",
                     "src/main/res/ui/receive",
                     "src/main/res/ui/restore",
                     "src/main/res/ui/restore_success",

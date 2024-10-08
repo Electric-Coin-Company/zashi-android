@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="receive_title">Receive</string>
-    <string name="receive_unified_content_description">Unified Address QR code</string>
-    <string name="receive_sapling_content_description">Sapling Address QR code</string>
-    <string name="receive_transparent_content_description">Transparent Address QR code</string>
-    <string name="receive_wallet_address_shielded">Zcash Shielded Address</string>
-    <string name="receive_wallet_address_sapling">Zcash Sapling Address</string>
-    <string name="receive_wallet_address_transparent">Zcash Transparent Address</string>
-    <string name="receive_copy">Copy</string>
-    <string name="receive_qr_code">QR Code</string>
-    <string name="receive_request">Request</string>
-    <string name="receive_clipboard_tag">Zcash Wallet Address</string>
-    <string name="qr_code_data_unable_to_share">Unable to find an application to share the QR code with.</string>
+    <string name="qr_code_close_content_description">Close</string>
+    <string name="qr_code_unified_content_description">Unified Address QR code</string>
+    <string name="qr_code_sapling_content_description">Sapling Address QR code</string>
+    <string name="qr_code_transparent_content_description">Transparent Address QR code</string>
+    <string name="qr_code_wallet_address_shielded">Zcash Shielded Address</string>
+    <string name="qr_code_wallet_address_sapling">Zcash Sapling Address</string>
+    <string name="qr_code_wallet_address_transparent">Zcash Transparent Address</string>
+    <string name="qr_code_privacy_level_shielded">Maximum Privacy</string>
+    <string name="qr_code_privacy_level_transparent">Low Privacy</string>
+    <string name="qr_code_share_btn">Share QR Code</string>
+    <string name="qr_code_copy_btn">Copy Address</string>
+    <string name="qr_code_clipboard_tag">Zcash Wallet Address</string>
+    <string name="qr_code_data_unable_to_share">Unable to find an application for sharing the QR code.</string>
+    <string name="qr_code_share_chooser_title">Share internal Zashi data with:</string>
+    <string name="qr_code_share_chooser_text">Hi, scan this QR code to send me a ZEC payment! Download Link:
+        https://play.google.com/store/apps/details?id=co.electriccoin.zcash</string>
 </resources>

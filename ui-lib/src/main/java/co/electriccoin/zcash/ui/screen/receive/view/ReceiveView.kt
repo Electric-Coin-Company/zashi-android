@@ -44,87 +44,84 @@ import cash.z.ecc.android.sdk.model.WalletAddress
 import cash.z.ecc.android.sdk.model.WalletAddresses
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
-import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.common.test.CommonTag
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
-import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
+import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
+import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensionsInternal
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
-import co.electriccoin.zcash.ui.fixture.VersionInfoFixture
+import co.electriccoin.zcash.ui.screen.receive.ext.toReceiveAddressType
+import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressType
+import co.electriccoin.zcash.ui.screen.receive.model.ReceiveState
 import co.electriccoin.zcash.ui.screen.send.ext.abbreviated
 import kotlinx.coroutines.runBlocking
+
+@Composable
+@PreviewScreens
+private fun ReceiveLoadingPreview() =
+    ZcashTheme(forceDarkMode = true) {
+        ReceiveView(
+            state = ReceiveState.Loading,
+            snackbarHostState = SnackbarHostState(),
+            topAppBarSubTitleState = TopAppBarSubTitleState.None,
+        )
+    }
 
 @Preview
 @Composable
 private fun ReceivePreview() =
     ZcashTheme(forceDarkMode = false) {
-        Receive(
-            walletAddresses = runBlocking { WalletAddressesFixture.new() },
+        ReceiveView(
+            state =
+                ReceiveState.Prepared(
+                    walletAddresses = runBlocking { WalletAddressesFixture.new() },
+                    isTestnet = false,
+                    onAddressCopy = {},
+                    onQrCode = {},
+                    onSettings = {},
+                    onRequest = {},
+                ),
             snackbarHostState = SnackbarHostState(),
-            onSettings = {},
-            onAddrCopyToClipboard = {},
-            onQrCode = {},
-            onRequest = {},
-            versionInfo = VersionInfoFixture.new(),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )
     }
 
-@Preview
 @Composable
-private fun ReceiveDarkPreview() =
-    ZcashTheme(forceDarkMode = true) {
-        Receive(
-            walletAddresses = runBlocking { WalletAddressesFixture.new() },
-            snackbarHostState = SnackbarHostState(),
-            onSettings = {},
-            onAddrCopyToClipboard = {},
-            onQrCode = {},
-            onRequest = {},
-            versionInfo = VersionInfoFixture.new(),
-            topAppBarSubTitleState = TopAppBarSubTitleState.None,
-        )
-    }
-
-@Suppress("LongParameterList")
-@Composable
-fun Receive(
-    walletAddresses: WalletAddresses?,
+internal fun ReceiveView(
+    state: ReceiveState,
     snackbarHostState: SnackbarHostState,
-    onSettings: () -> Unit,
-    onAddrCopyToClipboard: (String) -> Unit,
-    onQrCode: (WalletAddress) -> Unit,
-    onRequest: (WalletAddress) -> Unit,
     topAppBarSubTitleState: TopAppBarSubTitleState,
-    versionInfo: VersionInfo,
 ) {
-    BlankBgScaffold(
-        topBar = {
-            ReceiveTopAppBar(
-                onSettings = onSettings,
-                subTitleState = topAppBarSubTitleState,
-            )
-        },
-        snackbarHost = { SnackbarHost(snackbarHostState) },
-    ) { paddingValues ->
-        if (null == walletAddresses) {
+    when (state) {
+        ReceiveState.Loading -> {
             CircularScreenProgressIndicator()
-        } else {
-            ReceiveContents(
-                walletAddresses = walletAddresses,
-                onAddressCopyToClipboard = onAddrCopyToClipboard,
-                onQrCode = onQrCode,
-                onRequest = onRequest,
-                versionInfo = versionInfo,
-                modifier =
-                    Modifier.padding(
-                        top = paddingValues.calculateTopPadding()
-                        // We intentionally do not set the rest paddings, those are set by the underlying composable
-                    ),
-            )
+        }
+        is ReceiveState.Prepared -> {
+            BlankBgScaffold(
+                topBar = {
+                    ReceiveTopAppBar(
+                        onSettings = state.onSettings,
+                        subTitleState = topAppBarSubTitleState,
+                    )
+                },
+                snackbarHost = { SnackbarHost(snackbarHostState) },
+            ) { paddingValues ->
+                ReceiveContents(
+                    walletAddresses = state.walletAddresses,
+                    onAddressCopyToClipboard = state.onAddressCopy,
+                    onQrCode = state.onQrCode,
+                    onRequest = state.onRequest,
+                    isTestnet = state.isTestnet,
+                    modifier =
+                        Modifier.padding(
+                            top = paddingValues.calculateTopPadding()
+                            // We intentionally do not set the rest paddings, those are set by the underlying composable
+                        ),
+                )
+            }
         }
     }
 }
@@ -134,14 +131,14 @@ private fun ReceiveTopAppBar(
     onSettings: () -> Unit,
     subTitleState: TopAppBarSubTitleState,
 ) {
-    SmallTopAppBar(
-        subTitle =
+    ZashiSmallTopAppBar(
+        subtitle =
             when (subTitleState) {
                 TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
                 TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
                 TopAppBarSubTitleState.None -> null
             },
-        titleText = stringResource(id = R.string.receive_title),
+        title = stringResource(id = R.string.receive_title),
         hamburgerMenuActions = {
             IconButton(
                 onClick = onSettings,
@@ -165,23 +162,17 @@ private fun ReceiveTopAppBar(
     )
 }
 
-private enum class AddressType {
-    Unified,
-    Sapling,
-    Transparent,
-}
-
 @Composable
 @Suppress("LongParameterList")
 private fun ReceiveContents(
     walletAddresses: WalletAddresses,
     onAddressCopyToClipboard: (String) -> Unit,
-    onQrCode: (WalletAddress) -> Unit,
-    onRequest: (WalletAddress) -> Unit,
-    versionInfo: VersionInfo,
+    onQrCode: (ReceiveAddressType) -> Unit,
+    onRequest: (ReceiveAddressType) -> Unit,
+    isTestnet: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    var expandedAddressPanel by rememberSaveable { mutableStateOf<AddressType>(AddressType.Unified) }
+    var expandedAddressPanel by rememberSaveable { mutableStateOf(ReceiveAddressType.Unified) }
 
     Column(
         modifier =
@@ -216,11 +207,11 @@ private fun ReceiveContents(
             onAddressCopyToClipboard = onAddressCopyToClipboard,
             onQrCode = onQrCode,
             onRequest = onRequest,
-            expanded = expandedAddressPanel == AddressType.Unified,
-            onExpand = { expandedAddressPanel = AddressType.Unified }
+            expanded = expandedAddressPanel == ReceiveAddressType.Unified,
+            onExpand = { expandedAddressPanel = ReceiveAddressType.Unified }
         )
 
-        if (versionInfo.isTestnet) {
+        if (isTestnet) {
             Spacer(Modifier.height(ZcashTheme.dimens.spacingSmall))
 
             SaplingAddressPanel(
@@ -228,8 +219,8 @@ private fun ReceiveContents(
                 onAddressCopyToClipboard = onAddressCopyToClipboard,
                 onQrCode = onQrCode,
                 onRequest = onRequest,
-                expanded = expandedAddressPanel == AddressType.Sapling,
-                onExpand = { expandedAddressPanel = AddressType.Sapling }
+                expanded = expandedAddressPanel == ReceiveAddressType.Sapling,
+                onExpand = { expandedAddressPanel = ReceiveAddressType.Sapling }
             )
         }
 
@@ -240,8 +231,8 @@ private fun ReceiveContents(
             onAddressCopyToClipboard = onAddressCopyToClipboard,
             onQrCode = onQrCode,
             onRequest = onRequest,
-            expanded = expandedAddressPanel == AddressType.Transparent,
-            onExpand = { expandedAddressPanel = AddressType.Transparent }
+            expanded = expandedAddressPanel == ReceiveAddressType.Transparent,
+            onExpand = { expandedAddressPanel = ReceiveAddressType.Transparent }
         )
     }
 }
@@ -251,8 +242,8 @@ private fun ReceiveContents(
 private fun UnifiedAddressPanel(
     walletAddress: WalletAddress,
     onAddressCopyToClipboard: (String) -> Unit,
-    onQrCode: (WalletAddress) -> Unit,
-    onRequest: (WalletAddress) -> Unit,
+    onQrCode: (ReceiveAddressType) -> Unit,
+    onRequest: (ReceiveAddressType) -> Unit,
     expanded: Boolean,
     onExpand: () -> Unit,
     modifier: Modifier = Modifier,
@@ -328,7 +319,7 @@ private fun UnifiedAddressPanel(
                     containerColor = ZashiColors.Utility.Purple.utilityPurple100,
                     contentColor = ZashiColors.Utility.Purple.utilityPurple800,
                     iconPainter = painterResource(id = R.drawable.ic_qr_code_shielded),
-                    onClick = { onQrCode(walletAddress) },
+                    onClick = { onQrCode(walletAddress.toReceiveAddressType()) },
                     text = stringResource(id = R.string.receive_qr_code),
                     modifier = Modifier.weight(1f)
                 )
@@ -339,7 +330,7 @@ private fun UnifiedAddressPanel(
                     containerColor = ZashiColors.Utility.Purple.utilityPurple100,
                     contentColor = ZashiColors.Utility.Purple.utilityPurple800,
                     iconPainter = painterResource(id = R.drawable.ic_request_shielded),
-                    onClick = { onRequest(walletAddress) },
+                    onClick = { onRequest(walletAddress.toReceiveAddressType()) },
                     text = stringResource(id = R.string.receive_request),
                     modifier = Modifier.weight(1f)
                 )
@@ -353,8 +344,8 @@ private fun UnifiedAddressPanel(
 private fun SaplingAddressPanel(
     walletAddress: WalletAddress,
     onAddressCopyToClipboard: (String) -> Unit,
-    onQrCode: (WalletAddress) -> Unit,
-    onRequest: (WalletAddress) -> Unit,
+    onQrCode: (ReceiveAddressType) -> Unit,
+    onRequest: (ReceiveAddressType) -> Unit,
     expanded: Boolean,
     onExpand: () -> Unit,
     modifier: Modifier = Modifier,
@@ -421,7 +412,7 @@ private fun SaplingAddressPanel(
                     containerColor = ZashiColors.Surfaces.bgTertiary,
                     contentColor = ZashiColors.Text.textPrimary,
                     iconPainter = painterResource(id = R.drawable.ic_qr_code_other),
-                    onClick = { onQrCode(walletAddress) },
+                    onClick = { onQrCode(walletAddress.toReceiveAddressType()) },
                     text = stringResource(id = R.string.receive_qr_code),
                     modifier = Modifier.weight(1f)
                 )
@@ -432,7 +423,7 @@ private fun SaplingAddressPanel(
                     containerColor = ZashiColors.Surfaces.bgTertiary,
                     contentColor = ZashiColors.Text.textPrimary,
                     iconPainter = painterResource(id = R.drawable.ic_request_other),
-                    onClick = { onRequest(walletAddress) },
+                    onClick = { onRequest(walletAddress.toReceiveAddressType()) },
                     text = stringResource(id = R.string.receive_request),
                     modifier = Modifier.weight(1f)
                 )
@@ -446,8 +437,8 @@ private fun SaplingAddressPanel(
 private fun TransparentAddressPanel(
     walletAddress: WalletAddress,
     onAddressCopyToClipboard: (String) -> Unit,
-    onQrCode: (WalletAddress) -> Unit,
-    onRequest: (WalletAddress) -> Unit,
+    onQrCode: (ReceiveAddressType) -> Unit,
+    onRequest: (ReceiveAddressType) -> Unit,
     expanded: Boolean,
     onExpand: () -> Unit,
     modifier: Modifier = Modifier,
@@ -514,7 +505,7 @@ private fun TransparentAddressPanel(
                     containerColor = ZashiColors.Surfaces.bgTertiary,
                     contentColor = ZashiColors.Text.textPrimary,
                     iconPainter = painterResource(id = R.drawable.ic_qr_code_other),
-                    onClick = { onQrCode(walletAddress) },
+                    onClick = { onQrCode(walletAddress.toReceiveAddressType()) },
                     text = stringResource(id = R.string.receive_qr_code),
                     modifier = Modifier.weight(1f)
                 )
@@ -525,7 +516,7 @@ private fun TransparentAddressPanel(
                     containerColor = ZashiColors.Surfaces.bgTertiary,
                     contentColor = ZashiColors.Text.textPrimary,
                     iconPainter = painterResource(id = R.drawable.ic_request_other),
-                    onClick = { onRequest(walletAddress) },
+                    onClick = { onRequest(walletAddress.toReceiveAddressType()) },
                     text = stringResource(id = R.string.receive_request),
                     modifier = Modifier.weight(1f)
                 )

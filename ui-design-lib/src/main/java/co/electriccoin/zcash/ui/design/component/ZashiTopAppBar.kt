@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.internal.SecondaryTypography
 import co.electriccoin.zcash.ui.design.theme.internal.TopAppBarColors
@@ -11,7 +12,7 @@ import co.electriccoin.zcash.ui.design.theme.internal.TopAppBarColors
 @Composable
 @Suppress("LongParameterList")
 fun ZashiSmallTopAppBar(
-    title: String,
+    title: String?,
     subtitle: String?,
     modifier: Modifier = Modifier,
     showTitleLogo: Boolean = false,
@@ -32,3 +33,13 @@ fun ZashiSmallTopAppBar(
         titleStyle = SecondaryTypography.headlineSmall.copy(fontWeight = FontWeight.SemiBold)
     )
 }
+
+@PreviewScreens
+@Composable
+private fun ZashiSmallTopAppBarPreview() =
+    ZcashTheme {
+        ZashiSmallTopAppBar(
+            title = "Test Title",
+            subtitle = "Subtitle",
+        )
+    }

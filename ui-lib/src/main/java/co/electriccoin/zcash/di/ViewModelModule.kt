@@ -11,6 +11,8 @@ import co.electriccoin.zcash.ui.screen.chooseserver.ChooseServerViewModel
 import co.electriccoin.zcash.ui.screen.contact.viewmodel.AddContactViewModel
 import co.electriccoin.zcash.ui.screen.contact.viewmodel.UpdateContactViewModel
 import co.electriccoin.zcash.ui.screen.onboarding.viewmodel.OnboardingViewModel
+import co.electriccoin.zcash.ui.screen.qrcode.viewmodel.QrCodeViewModel
+import co.electriccoin.zcash.ui.screen.receive.viewmodel.ReceiveViewModel
 import co.electriccoin.zcash.ui.screen.restore.viewmodel.RestoreViewModel
 import co.electriccoin.zcash.ui.screen.restoresuccess.viewmodel.RestoreSuccessViewModel
 import co.electriccoin.zcash.ui.screen.sendconfirmation.viewmodel.CreateTransactionsViewModel
@@ -45,4 +47,6 @@ val viewModelModule =
         viewModelOf(::AddressBookViewModel)
         viewModelOf(::AddContactViewModel)
         viewModelOf(::UpdateContactViewModel)
+        viewModelOf(::ReceiveViewModel)
+        viewModelOf(::QrCodeViewModel)
     }

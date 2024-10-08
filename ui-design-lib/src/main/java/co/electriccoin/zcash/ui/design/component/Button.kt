@@ -34,6 +34,7 @@ import androidx.compose.ui.graphics.PaintingStyle
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.TextStyle
@@ -467,6 +468,7 @@ private enum class ButtonMode { Pressed, Idle }
 
 data class ButtonState(
     val text: StringResource,
+    val leadingIconVector: Painter? = null,
     val isEnabled: Boolean = true,
     val isLoading: Boolean = false,
     val onClick: () -> Unit = {},
