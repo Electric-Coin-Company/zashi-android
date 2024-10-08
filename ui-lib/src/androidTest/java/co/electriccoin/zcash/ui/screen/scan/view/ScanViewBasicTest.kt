@@ -37,7 +37,7 @@ class ScanViewBasicTest : UiTestPrerequisites() {
 
         assertEquals(0, testSetup.getOnBackCount())
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.scan_cancel_button).uppercase()).also {
+        composeTestRule.onNodeWithText(getStringResource(R.string.scan_cancel_button)).also {
             it.performClick()
         }
 
@@ -51,7 +51,7 @@ class ScanViewBasicTest : UiTestPrerequisites() {
 
         // Permission granted ui items (visible):
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.scan_cancel_button).uppercase()).also {
+        composeTestRule.onNodeWithText(getStringResource(R.string.scan_cancel_button)).also {
             it.assertIsDisplayed()
         }
 
