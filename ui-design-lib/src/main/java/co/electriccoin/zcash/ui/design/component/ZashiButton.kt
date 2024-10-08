@@ -1,10 +1,12 @@
 package co.electriccoin.zcash.ui.design.component
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -14,6 +16,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.design.R
@@ -32,6 +36,7 @@ fun ZashiButton(
 ) {
     ZashiButton(
         text = state.text.getValue(),
+        leadingIcon = state.leadingIconVector,
         onClick = state.onClick,
         modifier = modifier,
         enabled = state.isEnabled,
@@ -47,6 +52,7 @@ fun ZashiButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    leadingIcon: Painter? = null,
     enabled: Boolean = true,
     isLoading: Boolean = false,
     colors: ZashiButtonColors = ZashiButtonDefaults.primaryColors(),
@@ -54,6 +60,17 @@ fun ZashiButton(
 ) {
     val scope =
         object : ZashiButtonScope {
+            @Composable
+            override fun LeadingIcon() {
+                if (leadingIcon != null) {
+                    Image(
+                        painter = leadingIcon,
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+            }
+
             @Composable
             override fun Text() {
                 Text(
@@ -93,6 +110,9 @@ fun ZashiButton(
 
 interface ZashiButtonScope {
     @Composable
+    fun LeadingIcon()
+
+    @Composable
     fun Text()
 
     @Composable
@@ -102,6 +122,8 @@ interface ZashiButtonScope {
 object ZashiButtonDefaults {
     val content: @Composable RowScope.(ZashiButtonScope) -> Unit
         get() = { scope ->
+            scope.LeadingIcon()
+            Spacer(modifier = Modifier.width(6.dp))
             scope.Text()
             Spacer(modifier = Modifier.width(6.dp))
             scope.Loading()
@@ -113,6 +135,20 @@ object ZashiButtonDefaults {
         contentColor: Color = ZashiColors.Btns.Primary.btnPrimaryFg,
         disabledContainerColor: Color = ZashiColors.Btns.Primary.btnPrimaryBgDisabled,
         disabledContentColor: Color = ZashiColors.Btns.Primary.btnBoldFgDisabled,
+    ) = ZashiButtonColors(
+        containerColor = containerColor,
+        contentColor = contentColor,
+        disabledContainerColor = disabledContainerColor,
+        disabledContentColor = disabledContentColor,
+        borderColor = Color.Unspecified
+    )
+
+    @Composable
+    fun secondaryColors(
+        containerColor: Color = ZashiColors.Btns.Secondary.btnSecondaryBg,
+        contentColor: Color = ZashiColors.Btns.Secondary.btnSecondaryFg,
+        disabledContainerColor: Color = ZashiColors.Btns.Secondary.btnSecondaryBgDisabled,
+        disabledContentColor: Color = ZashiColors.Btns.Secondary.btnSecondaryFg,
     ) = ZashiButtonColors(
         containerColor = containerColor,
         contentColor = contentColor,
@@ -169,7 +205,6 @@ private fun ZashiButtonColors.toButtonColors() =
         disabledContentColor = disabledContentColor,
     )
 
-@Suppress("UnusedPrivateMember")
 @PreviewScreens
 @Composable
 private fun PrimaryPreview() =
@@ -183,7 +218,20 @@ private fun PrimaryPreview() =
         }
     }
 
-@Suppress("UnusedPrivateMember")
+@PreviewScreens
+@Composable
+private fun PrimaryWithIconPreview() =
+    ZcashTheme {
+        BlankSurface {
+            ZashiButton(
+                modifier = Modifier.fillMaxWidth(),
+                text = "Primary",
+                leadingIcon = painterResource(id = android.R.drawable.ic_secure),
+                onClick = {},
+            )
+        }
+    }
+
 @PreviewScreens
 @Composable
 private fun TertiaryPreview() =
@@ -198,7 +246,6 @@ private fun TertiaryPreview() =
         }
     }
 
-@Suppress("UnusedPrivateMember")
 @PreviewScreens
 @Composable
 private fun DestroyPreview() =

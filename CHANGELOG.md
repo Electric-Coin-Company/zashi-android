@@ -13,6 +13,9 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 - History item redesigned & added an option to create a contact from unknown address
 - Address Book, Create/Update/Delete Contact, Create Contact by QR screens added
 
+### Added
+- New QR Code detail screen has been added
+
 ## [1.2 (739)] - 2024-09-27 
 
 ### Changed

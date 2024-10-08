@@ -20,6 +20,7 @@ import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.model.ZecSend
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.spackle.getSerializableCompat
+import co.electriccoin.zcash.ui.NavigationArgs.ADDRESS_TYPE
 import co.electriccoin.zcash.ui.NavigationArguments.MULTIPLE_SUBMISSION_CLEAR_FORM
 import co.electriccoin.zcash.ui.NavigationArguments.SEND_CONFIRM_AMOUNT
 import co.electriccoin.zcash.ui.NavigationArguments.SEND_CONFIRM_INITIAL_STAGE
@@ -35,6 +36,7 @@ import co.electriccoin.zcash.ui.NavigationTargets.EXCHANGE_RATE_OPT_IN
 import co.electriccoin.zcash.ui.NavigationTargets.EXPORT_PRIVATE_DATA
 import co.electriccoin.zcash.ui.NavigationTargets.HOME
 import co.electriccoin.zcash.ui.NavigationTargets.NOT_ENOUGH_SPACE
+import co.electriccoin.zcash.ui.NavigationTargets.QR_CODE
 import co.electriccoin.zcash.ui.NavigationTargets.SEED_RECOVERY
 import co.electriccoin.zcash.ui.NavigationTargets.SEND_CONFIRMATION
 import co.electriccoin.zcash.ui.NavigationTargets.SETTINGS
@@ -66,6 +68,8 @@ import co.electriccoin.zcash.ui.screen.exchangerate.optin.AndroidExchangeRateOpt
 import co.electriccoin.zcash.ui.screen.exchangerate.settings.AndroidSettingsExchangeRateOptIn
 import co.electriccoin.zcash.ui.screen.exportdata.WrapExportPrivateData
 import co.electriccoin.zcash.ui.screen.home.WrapHome
+import co.electriccoin.zcash.ui.screen.qrcode.WrapQrCode
+import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressType
 import co.electriccoin.zcash.ui.screen.scan.ScanNavigationArgs
 import co.electriccoin.zcash.ui.screen.scan.WrapScanValidator
 import co.electriccoin.zcash.ui.screen.seedrecovery.WrapSeedRecovery
@@ -332,6 +336,13 @@ internal fun MainActivity.Navigation() {
             val contactId = backStackEntry.arguments?.getString(UpdateContactArgs.CONTACT_ID).orEmpty()
             WrapUpdateContact(contactId)
         }
+        composable(
+            route = "$QR_CODE/{$ADDRESS_TYPE}",
+            arguments = listOf(navArgument(ADDRESS_TYPE) { type = NavType.IntType })
+        ) { backStackEntry ->
+            val addressType = backStackEntry.arguments?.getInt(ADDRESS_TYPE) ?: ReceiveAddressType.Unified.ordinal
+            WrapQrCode(addressType)
+        }
     }
 }
 
@@ -511,10 +522,15 @@ object NavigationTargets {
     const val HOME = "home"
     const val CHOOSE_SERVER = "choose_server"
     const val NOT_ENOUGH_SPACE = "not_enough_space"
+    const val QR_CODE = "qr_code"
     const val SEED_RECOVERY = "seed_recovery"
     const val SEND_CONFIRMATION = "send_confirmation"
     const val SETTINGS = "settings"
     const val SETTINGS_EXCHANGE_RATE_OPT_IN = "settings_exchange_rate_opt_in"
     const val SUPPORT = "support"
     const val WHATS_NEW = "whats_new"
+}
+
+object NavigationArgs {
+    const val ADDRESS_TYPE = "addressType"
 }

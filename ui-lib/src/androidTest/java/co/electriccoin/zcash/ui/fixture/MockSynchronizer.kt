@@ -165,6 +165,13 @@ internal class MockSynchronizer : CloseableSynchronizer {
         error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} yet.")
     }
 
+    override suspend fun proposeFulfillingPaymentUri(
+        account: Account,
+        uri: String
+    ): Proposal {
+        error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} yet.")
+    }
+
     override suspend fun quickRewind() {
         error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
