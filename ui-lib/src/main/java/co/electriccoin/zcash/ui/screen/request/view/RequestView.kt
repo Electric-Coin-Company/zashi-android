@@ -20,8 +20,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import cash.z.ecc.android.sdk.ext.convertZecToZatoshi
+import cash.z.ecc.android.sdk.ext.toZec
 import cash.z.ecc.android.sdk.fixture.WalletAddressFixture
 import cash.z.ecc.android.sdk.model.WalletAddress
+import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
@@ -31,6 +34,7 @@ import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.screen.request.model.Request
 import co.electriccoin.zcash.ui.screen.request.model.RequestState
 import kotlinx.coroutines.runBlocking
 
@@ -54,6 +58,8 @@ private fun RequestPreview() =
                 RequestState.Prepared(
                     walletAddress = runBlocking { WalletAddressFixture.unified() },
                     onQrCodeShare = {},
+                    onRequest = {},
+                    onAmount = {},
                     onBack = {},
                 ),
             snackbarHostState = SnackbarHostState(),
@@ -85,8 +91,7 @@ internal fun RequestView(
                 }
             ) { paddingValues ->
                 RequestContents(
-                    walletAddress = state.walletAddress,
-                    onRequestQrCodeShare = state.onQrCodeShare,
+                    state = state,
                     modifier =
                         Modifier.padding(
                             top = paddingValues.calculateTopPadding(),
@@ -143,7 +148,18 @@ private fun RequestBottomBar(
         ZashiButton(
             text = stringResource(id = R.string.request_share_btn),
             leadingIcon = painterResource(R.drawable.ic_share),
-            onClick = { state.onQrCodeShare() },
+            onClick = {
+                state.onRequest(
+                    Request(
+                        amount = Zatoshi(1),
+                        memo = "Test memo",
+                        recipientAddress =
+                        runBlocking {
+                            WalletAddress.Unified.new("u1kpy0mhprcx64400thhj9xfp862j2dhrnl7nx37c8y8pn8l58n7t2pj3vy58zg37lr4zkfwp8h868ra8wjvmrpeuqff8r6h3lzdyvdv7ly04dwkxu88mu7ze49xx7we08suux6350m2z9eljtt5a75dscc56vckhn9u0uwvdry00mehs82wjfml4fmd28e64n5ruqltyn0e6nqr726vt")
+                        }
+                    )
+                )
+            },
             modifier =
                 Modifier
                     .padding(horizontal = 24.dp)
@@ -154,8 +170,7 @@ private fun RequestBottomBar(
 
 @Composable
 private fun RequestContents(
-    walletAddress: WalletAddress,
-    onRequestQrCodeShare: () -> Unit,
+    state: RequestState.Prepared,
     modifier: Modifier = Modifier,
 ) {
     Column(

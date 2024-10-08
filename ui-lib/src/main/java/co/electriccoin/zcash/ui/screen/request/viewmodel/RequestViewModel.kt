@@ -1,5 +1,10 @@
 package co.electriccoin.zcash.ui.screen.request.viewmodel
 
+import MemoBytes
+import NonNegativeAmount
+import Payment
+import PaymentRequest
+import RecipientAddress
 import android.app.Application
 import android.content.Context
 import android.graphics.Bitmap
@@ -7,6 +12,8 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cash.z.ecc.android.sdk.model.Account
+import cash.z.ecc.android.sdk.model.toZecString
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.spackle.getInternalCacheDirSuspend
@@ -14,6 +21,7 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
 import co.electriccoin.zcash.ui.common.usecase.GetAddressesUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetSynchronizerUseCase
 import co.electriccoin.zcash.ui.screen.qrcode.ext.fromReceiveAddressType
 import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressType
 import co.electriccoin.zcash.ui.screen.request.model.Request
@@ -31,13 +39,16 @@ import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.zecdev.zip321.ZIP321
 import java.io.File
+import java.math.BigDecimal
 
 class RequestViewModel(
     private val addressTypeOrdinal: Int,
     private val application: Application,
     getAddresses: GetAddressesUseCase,
     getVersionInfo: GetVersionInfoProvider,
+    private val getSynchronizer: GetSynchronizerUseCase
 ) : ViewModel() {
     private val versionInfo by lazy { getVersionInfo() }
 
@@ -68,7 +79,33 @@ class RequestViewModel(
     }
 
     private fun onRequest(request: Request) = viewModelScope.launch {
-        //TODO
+        val payment = Payment(
+            recipientAddress = RecipientAddress(request.recipientAddress.address),
+            nonNegativeAmount = NonNegativeAmount(request.amount.toZecString()),
+            memo = MemoBytes(request.memo),
+            label = "Test label",
+            message = "Thank you for your purchase",
+            otherParams = null
+        )
+
+        val paymentRequest = PaymentRequest(payments = listOf(payment))
+
+        val zip321Uri = ZIP321.uriString(
+            paymentRequest,
+            ZIP321.FormattingOptions.UseEmptyParamIndex(omitAddressLabel = true)
+        )
+
+        val zip321Request = ZIP321.request(
+            payment,
+            ZIP321.FormattingOptions.UseEmptyParamIndex(omitAddressLabel = true)
+        )
+
+        Twig.error { "ZIP321: Request: $zip321Request" }
+        Twig.error { "ZIP321: URI: $zip321Uri" }
+
+        val proposal = getSynchronizer().proposeFulfillingPaymentUri(Account.DEFAULT, zip321Uri)
+
+        Twig.error { "ZIP321: Proposal: ${proposal.toPrettyString()}" }
     }
 
     private fun onBack() =
