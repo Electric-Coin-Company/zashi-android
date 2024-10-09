@@ -3,6 +3,8 @@ package co.electriccoin.zcash.ui.screen.request.model
 import androidx.compose.ui.graphics.ImageBitmap
 import cash.z.ecc.android.sdk.model.WalletAddress
 import cash.z.ecc.android.sdk.model.Zatoshi
+import cash.z.ecc.sdk.type.ZcashCurrency
+import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 
 internal sealed class RequestState {
     data object Loading : RequestState()
@@ -14,6 +16,8 @@ internal sealed class RequestState {
 
     data class Amount(
         val request: Request,
+        val exchangeRateState: ExchangeRateState,
+        val zcashCurrency: ZcashCurrency,
         val onAmount: (Zatoshi) -> Unit,
         override val onBack: () -> Unit,
         override val onDone: () -> Unit,

@@ -14,10 +14,14 @@ import co.electriccoin.zcash.spackle.getInternalCacheDirSuspend
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
+import co.electriccoin.zcash.ui.common.provider.GetZcashCurrencyProvider
 import co.electriccoin.zcash.ui.common.usecase.GetAddressesUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSynchronizerUseCase
+import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.qrcode.ext.fromReceiveAddressType
 import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressType
+import co.electriccoin.zcash.ui.screen.request.model.AmountState
+import co.electriccoin.zcash.ui.screen.request.model.MemoState
 import co.electriccoin.zcash.ui.screen.request.model.Request
 import co.electriccoin.zcash.ui.screen.request.model.RequestState
 import co.electriccoin.zcash.ui.util.FileShareUtil
@@ -40,7 +44,9 @@ class RequestViewModel(
     private val application: Application,
     getAddresses: GetAddressesUseCase,
     getVersionInfo: GetVersionInfoProvider,
-    private val getSynchronizer: GetSynchronizerUseCase
+    walletViewModel: WalletViewModel,
+    getZcashCurrency: GetZcashCurrencyProvider,
+    private val getSynchronizer: GetSynchronizerUseCase,
 ) : ViewModel() {
     private val versionInfo by lazy { getVersionInfo() }
 
@@ -61,18 +67,25 @@ class RequestViewModel(
 
     internal val request = MutableStateFlow(
         Request(
-            amount = Zatoshi(0),
-            memo = "",
+            amountState = AmountState.InValid(Zatoshi(1)),
+            memoState = MemoState.InValid(""),
         )
     )
 
-    internal val stage = MutableStateFlow(Stage.AMOUNT)
+    private val stage = MutableStateFlow(Stage.AMOUNT)
 
-    internal val state = combine(getAddresses(), request, stage) { addresses, request, currentStage ->
+    internal val state = combine(
+        getAddresses(),
+        request,
+        stage,
+        walletViewModel.exchangeRateUsd,
+    ) { addresses, request, currentStage, exchangeRateUsd ->
         when (currentStage) {
             Stage.AMOUNT -> {
                 RequestState.Amount(
                     request = request,
+                    exchangeRateState = exchangeRateUsd,
+                    zcashCurrency = getZcashCurrency(),
                     onAmount = { onAmount(it) },
                     onDone = { onDone(Stage.MEMO) },
                     onBack = ::onBack,
@@ -110,11 +123,13 @@ class RequestViewModel(
     val shareResultCommand = MutableSharedFlow<Boolean>()
 
     private fun onAmount(zatoshi: Zatoshi) = viewModelScope.launch {
-        request.emit(request.value.copy(amount = zatoshi))
+        // TODO validation
+        request.emit(request.value.copy(amountState = AmountState.Valid(zatoshi)))
     }
 
     private fun onMemo(memo: String) = viewModelScope.launch {
-        request.emit(request.value.copy(memo = memo))
+        // TODO validation
+        request.emit(request.value.copy(memoState = MemoState.Valid(memo)))
     }
 
     internal fun onBack() = viewModelScope.launch {

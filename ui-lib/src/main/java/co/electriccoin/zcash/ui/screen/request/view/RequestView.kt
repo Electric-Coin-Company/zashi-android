@@ -3,7 +3,7 @@
 package co.electriccoin.zcash.ui.screen.request.view
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -19,17 +19,30 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import cash.z.ecc.android.sdk.ext.convertZatoshiToZecString
+import cash.z.ecc.android.sdk.model.Locale
 import cash.z.ecc.android.sdk.model.Zatoshi
+import cash.z.ecc.android.sdk.model.toFiatString
+import cash.z.ecc.sdk.type.ZcashCurrency
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
+import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.design.component.ZashiBottomBar
@@ -40,6 +53,8 @@ import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import co.electriccoin.zcash.ui.screen.request.model.AmountState
+import co.electriccoin.zcash.ui.screen.request.model.MemoState
 import co.electriccoin.zcash.ui.screen.request.model.Request
 import co.electriccoin.zcash.ui.screen.request.model.RequestState
 
@@ -64,9 +79,11 @@ private fun RequestPreview() =
                     onAmount = {},
                     onBack = {},
                     onDone = {},
+                    exchangeRateState = ExchangeRateState.OptedOut,
+                    zcashCurrency = ZcashCurrency.ZEC,
                     request = Request(
-                        amount = Zatoshi(0),
-                        memo = "",
+                        amountState = AmountState.Valid(Zatoshi(0)),
+                        memoState = MemoState.Valid(""),
                     )
                 ),
             snackbarHostState = SnackbarHostState(),
@@ -193,6 +210,85 @@ private fun RequestContents(
 }
 
 @Composable
+private fun RequestAmountWithMainFiatView(
+    state: RequestState.Amount,
+    modifier: Modifier = Modifier,
+    onFiatPreferenceSwitch: () -> Unit
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+    ) {
+        Spacer(modifier = Modifier.height(18.dp))
+
+        state.exchangeRateState as ExchangeRateState.Data
+        val fiatText = buildAnnotatedString {
+            withStyle(style = SpanStyle(color = ZashiColors.Text.textQuaternary)) {
+                append(state.exchangeRateState.fiatCurrency.symbol)
+            }
+            withStyle(style = SpanStyle(color = ZashiColors.Text.textPrimary)) {
+                append(
+                    if (state.exchangeRateState.currencyConversion != null) {
+                        state.request.amountState.amount.toFiatString(
+                            currencyConversion = state.exchangeRateState.currencyConversion,
+                            locale = Locale.getDefault()
+                        )
+                    } else {
+                        ""
+                    }
+                )
+            }
+        }
+
+        Text(
+            text = fiatText,
+            style = ZashiTypography.header1,
+            fontWeight = FontWeight.SemiBold,
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            val zecText = buildAnnotatedString {
+                withStyle(style = SpanStyle(color = ZashiColors.Text.textPrimary)) {
+                    append(
+                        state.request.amountState.amount.convertZatoshiToZecString(
+                            maxDecimals = 6,
+                            minDecimals = 2
+                        )
+                    )
+                }
+                append(" ") // Add an extra space between the texts
+                withStyle(style = SpanStyle(color = ZashiColors.Text.textQuaternary)) {
+                    append(state.zcashCurrency.localizedName(LocalContext.current))
+                }
+            }
+
+            Text(
+                text = zecText,
+                style = ZashiTypography.textLg,
+                fontWeight = FontWeight.Medium,
+            )
+
+            Spacer(modifier = Modifier.width(10.dp))
+
+            Image(
+                painter = painterResource(id = R.drawable.ic_switch),
+                contentDescription = null,
+                modifier = Modifier.clickable { onFiatPreferenceSwitch() }
+            )
+        }
+    }
+}
+
+@Composable
+private fun RequestAmountNoFiatView(state: RequestState.Amount) {
+
+}
+
+@Composable
 private fun RequestAmountView(
     state: RequestState.Amount,
     modifier: Modifier = Modifier
@@ -203,27 +299,61 @@ private fun RequestAmountView(
     ) {
         Spacer(Modifier.height(ZcashTheme.dimens.spacingDefault))
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.wrapContentWidth()
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_alert_outline),
-                colorFilter = ColorFilter.tint(ZashiColors.Utility.WarningYellow.utilityOrange700),
-                contentDescription = null
-            )
-
-            Spacer(modifier = Modifier.width(4.dp))
-
-            Text(
-                text = stringResource(id = R.string.request_amount_invalid),
-                color = ZashiColors.Utility.WarningYellow.utilityOrange700,
-                style = ZashiTypography.textSm,
-                fontWeight = FontWeight.Medium,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.wrapContentWidth()
-            )
+        if (state.request.amountState is AmountState.InValid) {
+            InvalidAmountView()
         }
+
+        var fiatValuePreferred by rememberSaveable { mutableStateOf(true) }
+
+        when(state.exchangeRateState) {
+            is ExchangeRateState.Data -> {
+                if (fiatValuePreferred) {
+                    RequestAmountWithMainFiatView(
+                        state = state,
+                        onFiatPreferenceSwitch = { fiatValuePreferred = !fiatValuePreferred }
+                    )
+                } else {
+                    RequestAmountWithMainZecView(
+                        state = state,
+                        onFiatPreferenceSwitch = { fiatValuePreferred = !fiatValuePreferred }
+                    )
+                }
+            }
+            else -> { RequestAmountNoFiatView(state) }
+        }
+    }
+}
+
+@Composable
+private fun RequestAmountWithMainZecView(
+    state: RequestState.Amount,
+    onFiatPreferenceSwitch: () -> Unit
+) {
+    TODO("Not yet implemented")
+}
+
+@Composable
+private fun InvalidAmountView() {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.wrapContentWidth()
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.ic_alert_outline),
+            colorFilter = ColorFilter.tint(ZashiColors.Utility.WarningYellow.utilityOrange700),
+            contentDescription = null
+        )
+
+        Spacer(modifier = Modifier.width(8.dp))
+
+        Text(
+            text = stringResource(id = R.string.request_amount_invalid),
+            color = ZashiColors.Utility.WarningYellow.utilityOrange700,
+            style = ZashiTypography.textSm,
+            fontWeight = FontWeight.Medium,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.wrapContentWidth()
+        )
     }
 }
 
