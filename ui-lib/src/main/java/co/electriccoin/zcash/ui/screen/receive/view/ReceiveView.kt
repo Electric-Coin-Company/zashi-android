@@ -144,18 +144,15 @@ private fun ReceiveTopAppBar(
                 onClick = onSettings,
                 modifier =
                     Modifier
-                        .padding(horizontal = ZcashTheme.dimens.spacingDefault)
-                        // Making the size bigger by 3.dp so the rounded image corners are not stripped out
-                        .size(43.dp)
+                        .padding(end = ZcashTheme.dimens.spacingDefault)
                         .testTag(CommonTag.SETTINGS_TOP_BAR_BUTTON)
             ) {
                 Image(
                     painter =
                         painterResource(
-                            id = co.electriccoin.zcash.ui.design.R.drawable.ic_hamburger_menu_with_bg
+                            id = co.electriccoin.zcash.ui.design.R.drawable.ic_hamburger_menu
                         ),
                     contentDescription = stringResource(id = R.string.settings_menu_content_description),
-                    modifier = Modifier.padding(all = 3.dp)
                 )
             }
         },
