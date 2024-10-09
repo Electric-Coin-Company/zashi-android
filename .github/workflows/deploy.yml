@@ -170,7 +170,7 @@ jobs:
           zip -r ${BINARIES_ZIP_PATH} . -i app/build/outputs/apk/\*/\*.apk app/build/outputs/apk_from_bundle/\*/\*.apk app/build/outputs/bundle/\*/\*.aab
           zip -r ${MAPPINGS_ZIP_PATH} . -i app/build/outputs/mapping/\*/mapping.txt
       - name: Upload Artifacts
-        uses: actions/upload-artifact@604373da6381bf24206979c74d06a550515601b9
+        uses: actions/upload-artifact@84480863f228bb9747b473957fcc9e309aa96097
         timeout-minutes: 5
         with:
           name: Binaries
