@@ -17,7 +17,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -33,23 +32,31 @@ class AddContactViewModel(
     private val contactName = MutableStateFlow("")
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private val contactAddressState =
+    private val contactAddressError =
         contactAddress.mapLatest { address ->
+            if (address.isEmpty()) {
+                null
+            } else {
+                when (validateContactAddress(address)) {
+                    ValidateContactAddressUseCase.Result.Invalid ->
+                        stringRes(R.string.contact_address_error_invalid)
+                    ValidateContactAddressUseCase.Result.NotUnique ->
+                        stringRes(R.string.contact_address_error_not_unique)
+
+                    ValidateContactAddressUseCase.Result.Valid -> null
+                }
+            }
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+            initialValue = null
+        )
+
+    private val contactAddressState =
+        combine(contactAddress, contactAddressError) { address, contactAddressError ->
             TextFieldState(
                 value = stringRes(address),
-                error =
-                    if (address.isEmpty()) {
-                        null
-                    } else {
-                        when (validateContactAddress(address)) {
-                            ValidateContactAddressUseCase.Result.Invalid ->
-                                stringRes(R.string.contact_address_error_invalid)
-                            ValidateContactAddressUseCase.Result.NotUnique ->
-                                stringRes(R.string.contact_address_error_not_unique)
-
-                            ValidateContactAddressUseCase.Result.Valid -> null
-                        }
-                    },
+                error = contactAddressError,
                 onValueChange = { newValue ->
                     contactAddress.update { newValue }
                 }
@@ -57,23 +64,33 @@ class AddContactViewModel(
         }
 
     @OptIn(ExperimentalCoroutinesApi::class)
+    private val contactNameError =
+        contactName.mapLatest { name ->
+            if (name.isEmpty()) {
+                null
+            } else {
+                when (validateContactName(name)) {
+                    ValidateContactNameUseCase.Result.TooLong ->
+                        stringRes(R.string.contact_name_error_too_long)
+
+                    ValidateContactNameUseCase.Result.NotUnique ->
+                        stringRes(R.string.contact_name_error_not_unique)
+
+                    ValidateContactNameUseCase.Result.Valid ->
+                        null
+                }
+            }
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+            initialValue = null
+        )
+
     private val contactNameState =
-        contactName.map { name ->
+        combine(contactName, contactNameError) { name, contactNameError ->
             TextFieldState(
                 value = stringRes(name),
-                error =
-                    if (name.isEmpty()) {
-                        null
-                    } else {
-                        when (validateContactName(name)) {
-                            ValidateContactNameUseCase.Result.TooLong ->
-                                stringRes(R.string.contact_name_error_too_long)
-                            ValidateContactNameUseCase.Result.NotUnique ->
-                                stringRes(R.string.contact_name_error_not_unique)
-                            ValidateContactNameUseCase.Result.Valid ->
-                                null
-                        }
-                    },
+                error = contactNameError,
                 onValueChange = { newValue ->
                     contactName.update { newValue }
                 }
