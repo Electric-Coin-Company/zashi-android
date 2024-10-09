@@ -2,6 +2,8 @@
 
 package co.electriccoin.zcash.ui.screen.request.view
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -212,8 +214,8 @@ private fun RequestContents(
 @Composable
 private fun RequestAmountWithMainFiatView(
     state: RequestState.Amount,
+    onFiatPreferenceSwitch: () -> Unit,
     modifier: Modifier = Modifier,
-    onFiatPreferenceSwitch: () -> Unit
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -226,6 +228,7 @@ private fun RequestAmountWithMainFiatView(
             withStyle(style = SpanStyle(color = ZashiColors.Text.textQuaternary)) {
                 append(state.exchangeRateState.fiatCurrency.symbol)
             }
+            append("\u2009") // Add an extra thin space between the texts
             withStyle(style = SpanStyle(color = ZashiColors.Text.textPrimary)) {
                 append(
                     if (state.exchangeRateState.currencyConversion != null) {
@@ -263,6 +266,81 @@ private fun RequestAmountWithMainFiatView(
                 append(" ") // Add an extra space between the texts
                 withStyle(style = SpanStyle(color = ZashiColors.Text.textQuaternary)) {
                     append(state.zcashCurrency.localizedName(LocalContext.current))
+                }
+            }
+
+            Text(
+                text = zecText,
+                style = ZashiTypography.textLg,
+                fontWeight = FontWeight.Medium,
+            )
+
+            Spacer(modifier = Modifier.width(10.dp))
+
+            Image(
+                painter = painterResource(id = R.drawable.ic_switch),
+                contentDescription = null,
+                modifier = Modifier.clickable { onFiatPreferenceSwitch() }
+            )
+        }
+    }
+}
+
+@Composable
+private fun RequestAmountWithMainZecView(
+    state: RequestState.Amount,
+    onFiatPreferenceSwitch: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+    ) {
+        Spacer(modifier = Modifier.height(18.dp))
+
+        state.exchangeRateState as ExchangeRateState.Data
+        val fiatText = buildAnnotatedString {
+            withStyle(style = SpanStyle(color = ZashiColors.Text.textPrimary)) {
+                append(
+                    state.request.amountState.amount.convertZatoshiToZecString(
+                        maxDecimals = 6,
+                        minDecimals = 2
+                    )
+                )
+            }
+            append("\u2009") // Add an extra thin space between the texts
+            withStyle(style = SpanStyle(color = ZashiColors.Text.textQuaternary)) {
+                append(state.zcashCurrency.localizedName(LocalContext.current))
+            }
+        }
+
+        Text(
+            text = fiatText,
+            style = ZashiTypography.header1,
+            fontWeight = FontWeight.SemiBold,
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            val zecText = buildAnnotatedString {
+                withStyle(style = SpanStyle(color = ZashiColors.Text.textQuaternary)) {
+                    append(state.exchangeRateState.fiatCurrency.symbol)
+                }
+                append(" ") // Add an extra space between the texts
+                withStyle(style = SpanStyle(color = ZashiColors.Text.textPrimary)) {
+                    append(
+                        if (state.exchangeRateState.currencyConversion != null) {
+                            state.request.amountState.amount.toFiatString(
+                                currencyConversion = state.exchangeRateState.currencyConversion,
+                                locale = Locale.getDefault()
+                            )
+                        } else {
+                            ""
+                        }
+                    )
                 }
             }
 
@@ -322,14 +400,6 @@ private fun RequestAmountView(
             else -> { RequestAmountNoFiatView(state) }
         }
     }
-}
-
-@Composable
-private fun RequestAmountWithMainZecView(
-    state: RequestState.Amount,
-    onFiatPreferenceSwitch: () -> Unit
-) {
-    TODO("Not yet implemented")
 }
 
 @Composable
