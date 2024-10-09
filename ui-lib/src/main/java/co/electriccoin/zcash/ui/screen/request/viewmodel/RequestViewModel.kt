@@ -1,10 +1,5 @@
 package co.electriccoin.zcash.ui.screen.request.viewmodel
 
-import MemoBytes
-import NonNegativeAmount
-import Payment
-import PaymentRequest
-import RecipientAddress
 import android.app.Application
 import android.content.Context
 import android.graphics.Bitmap
@@ -12,8 +7,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import cash.z.ecc.android.sdk.model.Account
-import cash.z.ecc.android.sdk.model.toZecString
+import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.spackle.getInternalCacheDirSuspend
@@ -28,20 +22,18 @@ import co.electriccoin.zcash.ui.screen.request.model.Request
 import co.electriccoin.zcash.ui.screen.request.model.RequestState
 import co.electriccoin.zcash.ui.util.FileShareUtil
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.zecdev.zip321.ZIP321
 import java.io.File
-import java.math.BigDecimal
 
 class RequestViewModel(
     private val addressTypeOrdinal: Int,
@@ -52,72 +44,132 @@ class RequestViewModel(
 ) : ViewModel() {
     private val versionInfo by lazy { getVersionInfo() }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    internal val state =
-        getAddresses().mapLatest { addresses ->
-            RequestState.Prepared(
-                walletAddress = addresses.fromReceiveAddressType(ReceiveAddressType.fromOrdinal(addressTypeOrdinal)),
-                onQrCodeShare = { onRequestQrCodeShareClick(it, versionInfo) },
-                onRequest = { onRequest(it) },
-                onAmount = { onAmount(it) },
-                onBack = ::onBack,
-            )
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            initialValue = RequestState.Loading
+    enum class Stage {
+        AMOUNT, MEMO, QR_CODE
+    }
+
+    // Request(
+    // amount = Zatoshi(1),
+    // memo = "Test memo",
+    // recipientAddress =
+    // runBlocking {
+    //     WalletAddress.Unified.new("u1kpy0mhprcx64400thhj9xfp862j2dhrnl7nx37c8y8pn8l58n7t2pj3vy58zg37lr4zkfwp8h868ra8wjvmrpeuqff8r6h3lzdyvdv7ly04dwkxu88mu7ze49xx7we08suux6350m2z9eljtt5a75dscc56vckhn9u0uwvdry00mehs82wjfml4fmd28e64n5ruqltyn0e6nqr726vt")
+    // }
+    // )
+
+    // walletAddress = addresses.fromReceiveAddressType(ReceiveAddressType.fromOrdinal(addressTypeOrdinal)),
+
+    internal val request = MutableStateFlow(
+        Request(
+            amount = Zatoshi(0),
+            memo = "",
         )
+    )
+
+    internal val stage = MutableStateFlow(Stage.AMOUNT)
+
+    internal val state = combine(getAddresses(), request, stage) { addresses, request, currentStage ->
+        when (currentStage) {
+            Stage.AMOUNT -> {
+                RequestState.Amount(
+                    request = request,
+                    onAmount = { onAmount(it) },
+                    onDone = { onDone(Stage.MEMO) },
+                    onBack = ::onBack,
+                )
+            }
+            Stage.MEMO -> {
+                RequestState.Memo(
+                    walletAddress = addresses
+                        .fromReceiveAddressType(ReceiveAddressType.fromOrdinal(addressTypeOrdinal)),
+                    request = request,
+                    onMemo = { onMemo(it) },
+                    onDone = { onDone(Stage.QR_CODE) },
+                    onBack = ::onBack,
+                )
+            }
+            Stage.QR_CODE -> {
+                RequestState.QrCode(
+                    walletAddress = addresses
+                        .fromReceiveAddressType(ReceiveAddressType.fromOrdinal(addressTypeOrdinal)),
+                    request = request,
+                    onQrCodeShare = { onRequestQrCodeShare(it, versionInfo) },
+                    onDone = { onDone(Stage.QR_CODE) },
+                    onBack = ::onBack,
+                )
+            }
+        }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+        initialValue = RequestState.Loading
+    )
 
     val backNavigationCommand = MutableSharedFlow<Unit>()
 
     val shareResultCommand = MutableSharedFlow<Boolean>()
 
-    val request = MutableSharedFlow<Request>()
-
-    private fun onAmount(request: Request) = viewModelScope.launch {
-        //TODO
+    private fun onAmount(zatoshi: Zatoshi) = viewModelScope.launch {
+        request.emit(request.value.copy(amount = zatoshi))
     }
 
-    private fun onRequest(request: Request) = viewModelScope.launch {
-        val payment = Payment(
-            recipientAddress = RecipientAddress(request.recipientAddress.address),
-            nonNegativeAmount = NonNegativeAmount(request.amount.toZecString()),
-            memo = MemoBytes(request.memo),
-            label = "Test label",
-            message = "Thank you for your purchase",
-            otherParams = null
-        )
-
-        val paymentRequest = PaymentRequest(payments = listOf(payment))
-
-        val zip321Uri = ZIP321.uriString(
-            paymentRequest,
-            ZIP321.FormattingOptions.UseEmptyParamIndex(omitAddressLabel = true)
-        )
-
-        val zip321Request = ZIP321.request(
-            payment,
-            ZIP321.FormattingOptions.UseEmptyParamIndex(omitAddressLabel = true)
-        )
-
-        Twig.error { "ZIP321: Request: $zip321Request" }
-        Twig.error { "ZIP321: URI: $zip321Uri" }
-
-        val proposal = getSynchronizer().proposeFulfillingPaymentUri(Account.DEFAULT, zip321Uri)
-
-        Twig.error { "ZIP321: Proposal: ${proposal.toPrettyString()}" }
-
-        val paymentRequestFromUri = ZIP321.request(zip321Uri, null)
-
-        Twig.error { "ZIP321: Proposal from Uri: $paymentRequestFromUri" }
+    private fun onMemo(memo: String) = viewModelScope.launch {
+        request.emit(request.value.copy(memo = memo))
     }
 
-    private fun onBack() =
-        viewModelScope.launch {
-            backNavigationCommand.emit(Unit)
+    internal fun onBack() = viewModelScope.launch {
+        when (stage.value) {
+            Stage.AMOUNT -> {
+                backNavigationCommand.emit(Unit)
+            }
+            Stage.MEMO -> {
+                stage.emit(Stage.AMOUNT)
+            }
+            Stage.QR_CODE -> {
+                stage.emit(Stage.MEMO)
+            }
         }
+    }
 
-    private fun onRequestQrCodeShareClick(
+    private fun onDone(newStage: Stage) = viewModelScope.launch {
+        stage.emit(newStage)
+    }
+
+    // private fun onRequest(request: Request) = viewModelScope.launch {
+    //     val payment = Payment(
+    //         recipientAddress = RecipientAddress(request.recipientAddress.address),
+    //         nonNegativeAmount = NonNegativeAmount(request.amount.toZecString()),
+    //         memo = MemoBytes(request.memo),
+    //         label = "Test label",
+    //         message = "Thank you for your purchase",
+    //         otherParams = null
+    //     )
+    //
+    //     val paymentRequest = PaymentRequest(payments = listOf(payment))
+    //
+    //     val zip321Uri = ZIP321.uriString(
+    //         paymentRequest,
+    //         ZIP321.FormattingOptions.UseEmptyParamIndex(omitAddressLabel = true)
+    //     )
+    //
+    //     val zip321Request = ZIP321.request(
+    //         payment,
+    //         ZIP321.FormattingOptions.UseEmptyParamIndex(omitAddressLabel = true)
+    //     )
+    //
+    //     Twig.error { "ZIP321: Request: $zip321Request" }
+    //     Twig.error { "ZIP321: URI: $zip321Uri" }
+    //
+    //     val proposal = getSynchronizer().proposeFulfillingPaymentUri(Account.DEFAULT, zip321Uri)
+    //
+    //     Twig.error { "ZIP321: Proposal: ${proposal.toPrettyString()}" }
+    //
+    //     val paymentRequestFromUri = ZIP321.request(zip321Uri, null)
+    //
+    //     Twig.error { "ZIP321: Proposal from Uri: $paymentRequestFromUri" }
+    // }
+
+    private fun onRequestQrCodeShare(
         bitmap: ImageBitmap,
         versionInfo: VersionInfo
     ) = viewModelScope.launch {

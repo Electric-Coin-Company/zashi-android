@@ -3,27 +3,30 @@
 package co.electriccoin.zcash.ui.screen.request.view
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import cash.z.ecc.android.sdk.ext.convertZecToZatoshi
-import cash.z.ecc.android.sdk.ext.toZec
-import cash.z.ecc.android.sdk.fixture.WalletAddressFixture
-import cash.z.ecc.android.sdk.model.WalletAddress
 import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
@@ -32,11 +35,13 @@ import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.design.component.ZashiBottomBar
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
+import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
+import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.screen.request.model.Request
 import co.electriccoin.zcash.ui.screen.request.model.RequestState
-import kotlinx.coroutines.runBlocking
 
 @Composable
 @PreviewScreens
@@ -55,12 +60,14 @@ private fun RequestPreview() =
     ZcashTheme(forceDarkMode = false) {
         RequestView(
             state =
-                RequestState.Prepared(
-                    walletAddress = runBlocking { WalletAddressFixture.unified() },
-                    onQrCodeShare = {},
-                    onRequest = {},
+                RequestState.Amount(
                     onAmount = {},
                     onBack = {},
+                    onDone = {},
+                    request = Request(
+                        amount = Zatoshi(0),
+                        memo = "",
+                    )
                 ),
             snackbarHostState = SnackbarHostState(),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
@@ -115,27 +122,9 @@ private fun RequestTopAppBar(
                 TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
                 TopAppBarSubTitleState.None -> null
             },
-        title = null,
+        title = stringResource(id = R.string.request_title),
         navigationAction = {
-            IconButton(
-                onClick = onBack,
-                modifier =
-                    Modifier
-                        .padding(horizontal = ZcashTheme.dimens.spacingDefault)
-                        // Making the size bigger by 3.dp so the rounded image corners are not stripped out
-                        .size(43.dp),
-            ) {
-                Image(
-                    painter =
-                        painterResource(
-                            id = co.electriccoin.zcash.ui.design.R.drawable.ic_close_full
-                        ),
-                    contentDescription = stringResource(id = R.string.request_back_content_description),
-                    modifier =
-                        Modifier
-                            .padding(all = 3.dp)
-                )
-            }
+            ZashiTopAppBarBackNavigation(onBack = onBack)
         },
     )
 }
@@ -143,28 +132,37 @@ private fun RequestTopAppBar(
 @Composable
 private fun RequestBottomBar(
     state: RequestState.Prepared,
+    modifier: Modifier = Modifier,
 ) {
+    val btnModifier = modifier
+        .padding(horizontal = 24.dp)
+        .fillMaxWidth()
+
     ZashiBottomBar {
-        ZashiButton(
-            text = stringResource(id = R.string.request_share_btn),
-            leadingIcon = painterResource(R.drawable.ic_share),
-            onClick = {
-                state.onRequest(
-                    Request(
-                        amount = Zatoshi(1),
-                        memo = "Test memo",
-                        recipientAddress =
-                        runBlocking {
-                            WalletAddress.Unified.new("u1kpy0mhprcx64400thhj9xfp862j2dhrnl7nx37c8y8pn8l58n7t2pj3vy58zg37lr4zkfwp8h868ra8wjvmrpeuqff8r6h3lzdyvdv7ly04dwkxu88mu7ze49xx7we08suux6350m2z9eljtt5a75dscc56vckhn9u0uwvdry00mehs82wjfml4fmd28e64n5ruqltyn0e6nqr726vt")
-                        }
-                    )
+        when (state) {
+            is RequestState.Amount -> {
+                ZashiButton(
+                    text = stringResource(id = R.string.request_amount_btn),
+                    onClick = { state.onDone() },
+                    modifier = btnModifier
                 )
-            },
-            modifier =
-                Modifier
-                    .padding(horizontal = 24.dp)
-                    .fillMaxWidth()
-        )
+            }
+            is RequestState.Memo -> {
+                ZashiButton(
+                    text = stringResource(id = R.string.request_memo_btn),
+                    onClick = { state.onDone() },
+                    modifier = btnModifier
+                )
+            }
+            is RequestState.QrCode -> {
+                ZashiButton(
+                    text = stringResource(id = R.string.request_share_btn),
+                    leadingIcon = painterResource(R.drawable.ic_share),
+                    onClick = { state.onDone() },
+                    modifier = btnModifier
+                )
+            }
+        }
     }
 }
 
@@ -175,11 +173,80 @@ private fun RequestContents(
 ) {
     Column(
         modifier =
-            modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = ZcashTheme.dimens.screenHorizontalSpacingRegular),
+        modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = ZcashTheme.dimens.screenHorizontalSpacingRegular),
+    ) {
+        when (state) {
+            is RequestState.Amount -> {
+                RequestAmountView(state = state)
+            }
+            is RequestState.Memo -> {
+                RequestMemoView(state = state)
+            }
+            is RequestState.QrCode -> {
+                RequestQrCodeView(state = state)
+            }
+        }
+    }
+}
+
+@Composable
+private fun RequestAmountView(
+    state: RequestState.Amount,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier.fillMaxSize()
     ) {
         Spacer(Modifier.height(ZcashTheme.dimens.spacingDefault))
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.wrapContentWidth()
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_alert_outline),
+                colorFilter = ColorFilter.tint(ZashiColors.Utility.WarningYellow.utilityOrange700),
+                contentDescription = null
+            )
+
+            Spacer(modifier = Modifier.width(4.dp))
+
+            Text(
+                text = stringResource(id = R.string.request_amount_invalid),
+                color = ZashiColors.Utility.WarningYellow.utilityOrange700,
+                style = ZashiTypography.textSm,
+                fontWeight = FontWeight.Medium,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.wrapContentWidth()
+            )
+        }
+    }
+}
+
+@Composable
+private fun RequestQrCodeView(
+    state: RequestState.QrCode,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier) {
+        Spacer(Modifier.height(ZcashTheme.dimens.spacingDefault))
+
+        Text(text = "QrCode")
+    }
+}
+
+@Composable
+private fun RequestMemoView(
+    state: RequestState.Memo,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier) {
+        Spacer(Modifier.height(ZcashTheme.dimens.spacingDefault))
+
+        Text(text = "Memo")
     }
 }

@@ -51,7 +51,7 @@ internal fun WrapRequest(addressType: Int) {
     BackHandler {
         when (requestState) {
             RequestState.Loading -> {}
-            is RequestState.Prepared -> (requestState as RequestState.Prepared).onBack.invoke()
+            else -> requestViewModel.onBack()
         }
     }
 

@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="request_title">Request</string>
     <string name="request_back_content_description">Close</string>
+    <string name="request_amount_invalid">This transaction amount is invalid</string>
     <string name="request_unified_content_description">Unified Address QR code</string>
     <string name="request_sapling_content_description">Sapling Address QR code</string>
     <string name="request_transparent_content_description">Transparent Address QR code</string>
@@ -9,8 +11,9 @@
     <string name="request_wallet_address_transparent">Zcash Transparent Address</string>
     <string name="request_privacy_level_shielded">Maximum Privacy</string>
     <string name="request_privacy_level_transparent">Low Privacy</string>
+    <string name="request_amount_btn">Next</string>
+    <string name="request_memo_btn">Request</string>
     <string name="request_share_btn">Share QR Code</string>
-    <string name="request_copy_btn">Copy Address</string>
     <string name="request_clipboard_tag">Zcash Wallet Address</string>
     <string name="request_data_unable_to_share">Unable to find an application for sharing the QR code.</string>
     <string name="request_share_chooser_title">Request ZEC</string>

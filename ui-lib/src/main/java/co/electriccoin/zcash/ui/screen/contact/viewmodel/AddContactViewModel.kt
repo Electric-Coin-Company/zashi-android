@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -57,7 +58,7 @@ class AddContactViewModel(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private val contactNameState =
-        contactName.mapLatest { name ->
+        contactName.map { name ->
             TextFieldState(
                 value = stringRes(name),
                 error =
