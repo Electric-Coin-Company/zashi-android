@@ -7,12 +7,12 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.spackle.getInternalCacheDirSuspend
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.VersionInfo
+import co.electriccoin.zcash.ui.common.provider.GetMonetarySeparatorProvider
 import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
 import co.electriccoin.zcash.ui.common.provider.GetZcashCurrencyProvider
 import co.electriccoin.zcash.ui.common.usecase.GetAddressesUseCase
@@ -22,6 +22,7 @@ import co.electriccoin.zcash.ui.screen.qrcode.ext.fromReceiveAddressType
 import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressType
 import co.electriccoin.zcash.ui.screen.request.model.AmountState
 import co.electriccoin.zcash.ui.screen.request.model.MemoState
+import co.electriccoin.zcash.ui.screen.request.model.OnAmount
 import co.electriccoin.zcash.ui.screen.request.model.Request
 import co.electriccoin.zcash.ui.screen.request.model.RequestState
 import co.electriccoin.zcash.ui.util.FileShareUtil
@@ -46,6 +47,7 @@ class RequestViewModel(
     getVersionInfo: GetVersionInfoProvider,
     walletViewModel: WalletViewModel,
     getZcashCurrency: GetZcashCurrencyProvider,
+    getMonetarySeparators: GetMonetarySeparatorProvider,
     private val getSynchronizer: GetSynchronizerUseCase,
 ) : ViewModel() {
     private val versionInfo by lazy { getVersionInfo() }
@@ -53,6 +55,9 @@ class RequestViewModel(
     enum class Stage {
         AMOUNT, MEMO, QR_CODE
     }
+
+    internal val DEFAULT_AMOUNT = application.getString(R.string.request_amount_empty)
+    internal val DEFAULT_MEMO = ""
 
     // Request(
     // amount = Zatoshi(1),
@@ -67,8 +72,8 @@ class RequestViewModel(
 
     internal val request = MutableStateFlow(
         Request(
-            amountState = AmountState.InValid(Zatoshi(1)),
-            memoState = MemoState.InValid(""),
+            amountState = AmountState.Default(DEFAULT_AMOUNT),
+            memoState = MemoState.Valid(DEFAULT_MEMO),
         )
     )
 
@@ -86,6 +91,7 @@ class RequestViewModel(
                     request = request,
                     exchangeRateState = exchangeRateUsd,
                     zcashCurrency = getZcashCurrency(),
+                    monetarySeparators = getMonetarySeparators(),
                     onAmount = { onAmount(it) },
                     onDone = { onDone(Stage.MEMO) },
                     onBack = ::onBack,
@@ -122,9 +128,42 @@ class RequestViewModel(
 
     val shareResultCommand = MutableSharedFlow<Boolean>()
 
-    private fun onAmount(zatoshi: Zatoshi) = viewModelScope.launch {
-        // TODO validation
-        request.emit(request.value.copy(amountState = AmountState.Valid(zatoshi)))
+    private fun onAmount(onAmount: OnAmount) = viewModelScope.launch {
+        val newState = when(onAmount) {
+            is OnAmount.Zero -> {
+                //TODO
+                AmountState.Default(onAmount.number.toString())
+            }
+            is OnAmount.Number -> {
+                if (request.value.amountState.amount == DEFAULT_AMOUNT) {
+                    if (onAmount.number == 0) {
+                        AmountState.Default(onAmount.number.toString())
+                    } else {
+                        AmountState.Valid(onAmount.number.toString())
+                    }
+                } else {
+                    AmountState.Valid(request.value.amountState.amount + onAmount.number)
+                }
+            }
+            OnAmount.Delete -> {
+                if (request.value.amountState.amount.length == 1) {
+                    AmountState.Default(DEFAULT_AMOUNT)
+                } else {
+                    AmountState.Valid(request.value.amountState.amount.dropLast(1))
+                }
+            }
+            is OnAmount.Separator -> {
+                if (request.value.amountState.amount.contains(onAmount.separator)) {
+                    AmountState.Valid(request.value.amountState.amount)
+                } else {
+                    AmountState.Valid(request.value.amountState.amount + onAmount.separator)
+                }
+            }
+        }
+
+        request.emit(
+            request.value.copy(amountState = newState)
+        )
     }
 
     private fun onMemo(memo: String) = viewModelScope.launch {

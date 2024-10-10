@@ -3,6 +3,7 @@ package co.electriccoin.zcash.di
 import co.electriccoin.zcash.ui.common.provider.GetDefaultServersProvider
 import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
 import co.electriccoin.zcash.ui.common.provider.GetZcashCurrencyProvider
+import co.electriccoin.zcash.ui.common.provider.GetMonetarySeparatorProvider
 import co.electriccoin.zcash.ui.common.provider.LocalAddressBookStorageProvider
 import co.electriccoin.zcash.ui.common.provider.LocalAddressBookStorageProviderImpl
 import org.koin.core.module.dsl.factoryOf
@@ -15,4 +16,5 @@ val providerModule =
         factoryOf(::GetVersionInfoProvider)
         factoryOf(::GetZcashCurrencyProvider)
         factoryOf(::LocalAddressBookStorageProviderImpl) bind LocalAddressBookStorageProvider::class
+        factoryOf(::GetMonetarySeparatorProvider)
     }

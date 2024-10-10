@@ -1,15 +1,41 @@
 package co.electriccoin.zcash.ui.screen.request.model
 
+import android.content.Context
+import cash.z.ecc.android.sdk.ext.convertUsdToZec
+import cash.z.ecc.android.sdk.ext.toZecString
+import cash.z.ecc.android.sdk.model.FiatCurrencyConversion
+import cash.z.ecc.android.sdk.model.Locale
 import cash.z.ecc.android.sdk.model.Zatoshi
+import cash.z.ecc.android.sdk.model.fromZecString
+import cash.z.ecc.android.sdk.model.toFiatString
 
 data class Request(
     val amountState: AmountState,
     val memoState: MemoState,
 )
 
-sealed class AmountState(open val amount: Zatoshi) {
-    data class Valid(override val amount: Zatoshi) : AmountState(amount)
-    data class InValid(override val amount: Zatoshi) : AmountState(amount)
+sealed class AmountState(open val amount: String) {
+    fun isValid(): Boolean = this is Valid
+
+    fun toZecString(
+        conversion: FiatCurrencyConversion
+    ): String = runCatching {
+        amount.toDouble().convertUsdToZec(conversion.priceOfZec).toZecString()
+    }.getOrElse { "" }
+
+    fun toFiatString(
+        context: Context,
+        conversion: FiatCurrencyConversion
+    ): String = kotlin.runCatching {
+        Zatoshi.fromZecString(context, amount, Locale.getDefault())?.toFiatString(
+            currencyConversion = conversion,
+            locale = Locale.getDefault()
+        ) ?: ""
+    }.getOrElse { "" }
+
+    data class Valid(override val amount: String) : AmountState(amount)
+    data class Default(override val amount: String) : AmountState(amount)
+    data class InValid(override val amount: String) : AmountState(amount)
 }
 
 sealed class MemoState() {
