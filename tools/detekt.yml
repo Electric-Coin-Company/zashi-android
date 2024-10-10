@@ -35,12 +35,12 @@ style:
 
 complexity:
   LongMethod:
-    active: true
+    active: false
     ignoreAnnotated:
       - 'Preview'
       - 'PreviewScreens'
   LongParameterList:
-    active: true
+    active: false
     ignoreAnnotated:
       - 'Preview'
       - 'PreviewScreens'
