@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -431,9 +432,7 @@ private fun RequestAmountView(
     ) {
         Spacer(Modifier.height(ZcashTheme.dimens.spacingDefault))
 
-        if (state.request.amountState is AmountState.InValid) {
-            InvalidAmountView()
-        }
+        InvalidAmountView(state.request.amountState)
 
         var zecValuePreferred by rememberSaveable { mutableStateOf(true) }
 
@@ -596,28 +595,32 @@ private fun RequestAmountKeyboardIconButton(
 
 @Composable
 private fun InvalidAmountView(
+    amountState: AmountState,
     modifier: Modifier = Modifier
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
-            .wrapContentWidth()
+            .fillMaxWidth()
+            .requiredHeight(48.dp)
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.ic_alert_outline),
-            contentDescription = null
-        )
+        if (amountState is AmountState.InValid) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_alert_outline),
+                contentDescription = null
+            )
 
-        Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(8.dp))
 
-        Text(
-            text = stringResource(id = R.string.request_amount_invalid),
-            color = ZashiColors.Utility.WarningYellow.utilityOrange700,
-            style = ZashiTypography.textSm,
-            fontWeight = FontWeight.Medium,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.wrapContentWidth()
-        )
+            Text(
+                text = stringResource(id = R.string.request_amount_invalid),
+                color = ZashiColors.Utility.WarningYellow.utilityOrange700,
+                style = ZashiTypography.textSm,
+                fontWeight = FontWeight.Medium,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.wrapContentWidth()
+            )
+        }
     }
 }
 
