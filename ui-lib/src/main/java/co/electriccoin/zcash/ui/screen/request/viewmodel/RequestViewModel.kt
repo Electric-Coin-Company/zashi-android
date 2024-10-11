@@ -130,40 +130,46 @@ class RequestViewModel(
 
     private fun onAmount(onAmount: OnAmount) = viewModelScope.launch {
         val newState = when(onAmount) {
-            is OnAmount.Zero -> {
-                //TODO
-                AmountState.Default(onAmount.number.toString())
-            }
             is OnAmount.Number -> {
                 if (request.value.amountState.amount == DEFAULT_AMOUNT) {
-                    if (onAmount.number == 0) {
-                        AmountState.Default(onAmount.number.toString())
-                    } else {
-                        AmountState.Valid(onAmount.number.toString())
-                    }
+                    // Special case with current value only zero
+                    validateAmountState(onAmount.number.toString())
                 } else {
-                    AmountState.Valid(request.value.amountState.amount + onAmount.number)
+                    // Adding new number to the result string
+                    validateAmountState(request.value.amountState.amount + onAmount.number)
                 }
             }
             OnAmount.Delete -> {
                 if (request.value.amountState.amount.length == 1) {
+                    // Deleting up to the last character
                     AmountState.Default(DEFAULT_AMOUNT)
                 } else {
-                    AmountState.Valid(request.value.amountState.amount.dropLast(1))
+                    validateAmountState(request.value.amountState.amount.dropLast(1))
                 }
             }
             is OnAmount.Separator -> {
                 if (request.value.amountState.amount.contains(onAmount.separator)) {
-                    AmountState.Valid(request.value.amountState.amount)
+                    // Separator already present
+                    validateAmountState(request.value.amountState.amount)
                 } else {
-                    AmountState.Valid(request.value.amountState.amount + onAmount.separator)
+                    validateAmountState(request.value.amountState.amount + onAmount.separator)
                 }
             }
         }
-
         request.emit(
             request.value.copy(amountState = newState)
         )
+    }
+
+    // Validates only zeros and decimal separator
+    private val validationRegex = "^[${DEFAULT_AMOUNT}${getMonetarySeparators().decimal}]*$".toRegex()
+
+    private fun validateAmountState(resultAmount: String): AmountState {
+        return if (resultAmount.contains(validationRegex)) {
+            AmountState.Default(resultAmount)
+        } else {
+            AmountState.Valid(resultAmount)
+        }
     }
 
     private fun onMemo(memo: String) = viewModelScope.launch {
