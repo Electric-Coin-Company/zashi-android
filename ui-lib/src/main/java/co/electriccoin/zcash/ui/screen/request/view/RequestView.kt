@@ -2,6 +2,8 @@
 
 package co.electriccoin.zcash.ui.screen.request.view
 
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.animateSizeAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -24,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -34,12 +37,16 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import cash.z.ecc.android.sdk.internal.Twig
 import cash.z.ecc.android.sdk.model.Locale
 import cash.z.ecc.android.sdk.model.MonetarySeparators
 import cash.z.ecc.android.sdk.model.toJavaLocale
@@ -60,6 +67,7 @@ import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.screen.request.model.AmountState
 import co.electriccoin.zcash.ui.screen.request.model.MemoState
 import co.electriccoin.zcash.ui.screen.request.model.OnAmount
+import co.electriccoin.zcash.ui.screen.request.model.OnSwitch
 import co.electriccoin.zcash.ui.screen.request.model.Request
 import co.electriccoin.zcash.ui.screen.request.model.RequestState
 
@@ -90,6 +98,7 @@ private fun RequestPreview() =
                     onAmount = {},
                     onBack = {},
                     onDone = {},
+                    onSwitch = {},
                     monetarySeparators = MonetarySeparators.current(Locale.getDefault().toJavaLocale())
                 ),
             snackbarHostState = SnackbarHostState(),
@@ -237,10 +246,11 @@ private fun RequestAmountWithMainFiatView(
             }
         }
 
-        Text(
+        AutoSizingText(
             text = fiatText,
-            style = ZashiTypography.header1,
-            fontWeight = FontWeight.SemiBold,
+            style = ZashiTypography.header1.copy(
+                fontWeight = FontWeight.SemiBold
+            )
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -270,6 +280,7 @@ private fun RequestAmountWithMainFiatView(
                 text = zecText,
                 style = ZashiTypography.textLg,
                 fontWeight = FontWeight.Medium,
+                maxLines = 1
             )
 
             Spacer(modifier = Modifier.width(10.dp))
@@ -304,10 +315,11 @@ private fun RequestAmountWithMainZecView(
             }
         }
 
-        Text(
+        AutoSizingText(
             text = zecText,
-            style = ZashiTypography.header1,
-            fontWeight = FontWeight.SemiBold,
+            style = ZashiTypography.header1.copy(
+                fontWeight = FontWeight.SemiBold
+            )
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -338,6 +350,7 @@ private fun RequestAmountWithMainZecView(
                 text = fiatText,
                 style = ZashiTypography.textLg,
                 fontWeight = FontWeight.Medium,
+                maxLines = 1,
             )
 
             Spacer(modifier = Modifier.width(10.dp))
@@ -370,12 +383,39 @@ private fun RequestAmountNoFiatView(
             }
         }
 
-        Text(
+        AutoSizingText(
             text = fiatText,
-            style = ZashiTypography.header1,
-            fontWeight = FontWeight.SemiBold,
+            style = ZashiTypography.header1.copy(
+                fontWeight = FontWeight.SemiBold
+            )
         )
     }
+}
+
+@Composable
+private fun AutoSizingText(
+    text: AnnotatedString,
+    style: TextStyle,
+    modifier: Modifier = Modifier
+) {
+    var fontSize by remember { mutableStateOf(style.fontSize) }
+
+    Text(
+        text = text,
+        fontSize = fontSize,
+        fontFamily = style.fontFamily,
+        lineHeight = style.lineHeight,
+        fontWeight = style.fontWeight,
+        maxLines = 1,
+        modifier = modifier,
+        onTextLayout = { textLayoutResult ->
+            if (textLayoutResult.didOverflowHeight) {
+                fontSize = (fontSize.value - 1).sp
+            } else {
+                // We should make the text bigger again
+            }
+        }
+    )
 }
 
 @Composable
@@ -404,13 +444,19 @@ private fun RequestAmountView(
                 if (zecValuePreferred) {
                     RequestAmountWithMainZecView(
                         state = state,
-                        onFiatPreferenceSwitch = { zecValuePreferred = !zecValuePreferred },
+                        onFiatPreferenceSwitch = {
+                            state.onSwitch(OnSwitch.ToFiat)
+                            zecValuePreferred = !zecValuePreferred
+                        },
                         modifier = Modifier.padding(horizontal = ZcashTheme.dimens.screenHorizontalSpacingRegular)
                     )
                 } else {
                     RequestAmountWithMainFiatView(
                         state = state,
-                        onFiatPreferenceSwitch = { zecValuePreferred = !zecValuePreferred },
+                        onFiatPreferenceSwitch = {
+                            state.onSwitch(OnSwitch.ToZec)
+                            zecValuePreferred = !zecValuePreferred
+                        },
                         modifier = Modifier.padding(horizontal = ZcashTheme.dimens.screenHorizontalSpacingRegular)
                     )
                 }

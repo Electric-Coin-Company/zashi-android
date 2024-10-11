@@ -9,7 +9,7 @@ import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class ZecSendExtTest {
+class ToZecSendExtTest {
     @Test
     @SmallTest
     @OptIn(ExperimentalCoroutinesApi::class)

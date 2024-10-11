@@ -17,6 +17,8 @@ data class Request(
 sealed class AmountState(open val amount: String) {
     fun isValid(): Boolean = this is Valid
 
+    abstract fun copyState(newValue: String): AmountState
+
     fun toZecString(
         conversion: FiatCurrencyConversion
     ): String = runCatching {
@@ -33,9 +35,15 @@ sealed class AmountState(open val amount: String) {
         ) ?: ""
     }.getOrElse { "" }
 
-    data class Valid(override val amount: String) : AmountState(amount)
-    data class Default(override val amount: String) : AmountState(amount)
-    data class InValid(override val amount: String) : AmountState(amount)
+    data class Valid(override val amount: String) : AmountState(amount) {
+        override fun copyState(newValue: String) = copy(amount = newValue)
+    }
+    data class Default(override val amount: String) : AmountState(amount) {
+        override fun copyState(newValue: String) = copy(amount = newValue)
+    }
+    data class InValid(override val amount: String) : AmountState(amount) {
+        override fun copyState(newValue: String) = copy(amount = newValue)
+    }
 }
 
 sealed class MemoState() {

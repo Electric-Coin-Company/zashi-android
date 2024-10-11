@@ -7,6 +7,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cash.z.ecc.android.sdk.model.FiatCurrencyConversion
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.spackle.getInternalCacheDirSuspend
@@ -18,12 +19,15 @@ import co.electriccoin.zcash.ui.common.provider.GetZcashCurrencyProvider
 import co.electriccoin.zcash.ui.common.usecase.GetAddressesUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSynchronizerUseCase
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
+import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.screen.qrcode.ext.fromReceiveAddressType
 import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressType
 import co.electriccoin.zcash.ui.screen.request.model.AmountState
 import co.electriccoin.zcash.ui.screen.request.model.MemoState
 import co.electriccoin.zcash.ui.screen.request.model.OnAmount
+import co.electriccoin.zcash.ui.screen.request.model.OnSwitch
 import co.electriccoin.zcash.ui.screen.request.model.Request
+import co.electriccoin.zcash.ui.screen.request.model.RequestStage
 import co.electriccoin.zcash.ui.screen.request.model.RequestState
 import co.electriccoin.zcash.ui.util.FileShareUtil
 import kotlinx.coroutines.Dispatchers
@@ -52,12 +56,10 @@ class RequestViewModel(
 ) : ViewModel() {
     private val versionInfo by lazy { getVersionInfo() }
 
-    enum class Stage {
-        AMOUNT, MEMO, QR_CODE
-    }
+    private val DEFAULT_AMOUNT = application.getString(R.string.request_amount_empty)
+    private val DEFAULT_MEMO = ""
 
-    internal val DEFAULT_AMOUNT = application.getString(R.string.request_amount_empty)
-    internal val DEFAULT_MEMO = ""
+    private val MAX_AMOUNT_FLOATING_POINTS = 8
 
     // Request(
     // amount = Zatoshi(1),
@@ -77,7 +79,7 @@ class RequestViewModel(
         )
     )
 
-    private val stage = MutableStateFlow(Stage.AMOUNT)
+    private val stage = MutableStateFlow(RequestStage.AMOUNT)
 
     internal val state = combine(
         getAddresses(),
@@ -86,34 +88,49 @@ class RequestViewModel(
         walletViewModel.exchangeRateUsd,
     ) { addresses, request, currentStage, exchangeRateUsd ->
         when (currentStage) {
-            Stage.AMOUNT -> {
+            RequestStage.AMOUNT -> {
                 RequestState.Amount(
-                    request = request,
                     exchangeRateState = exchangeRateUsd,
-                    zcashCurrency = getZcashCurrency(),
                     monetarySeparators = getMonetarySeparators(),
                     onAmount = { onAmount(it) },
-                    onDone = { onDone(Stage.MEMO) },
                     onBack = ::onBack,
+                    onDone = { onDone(RequestStage.MEMO) },
+                    onSwitch = {
+                        when (exchangeRateUsd) {
+                            is ExchangeRateState.Data -> {
+                                if (exchangeRateUsd.currencyConversion == null) {
+                                    Twig.warn { "Currency conversion is currently not available" }
+                                } else {
+                                    onSwitch(exchangeRateUsd.currencyConversion, it)
+                                }
+                            }
+                            else -> {
+                                // Should not happen as the switch button is not available in this case
+                                Twig.error { "Unexpected screen state" }
+                            }
+                        }
+                    },
+                    request = request,
+                    zcashCurrency = getZcashCurrency(),
                 )
             }
-            Stage.MEMO -> {
+            RequestStage.MEMO -> {
                 RequestState.Memo(
                     walletAddress = addresses
                         .fromReceiveAddressType(ReceiveAddressType.fromOrdinal(addressTypeOrdinal)),
                     request = request,
                     onMemo = { onMemo(it) },
-                    onDone = { onDone(Stage.QR_CODE) },
+                    onDone = { onDone(RequestStage.QR_CODE) },
                     onBack = ::onBack,
                 )
             }
-            Stage.QR_CODE -> {
+            RequestStage.QR_CODE -> {
                 RequestState.QrCode(
                     walletAddress = addresses
                         .fromReceiveAddressType(ReceiveAddressType.fromOrdinal(addressTypeOrdinal)),
                     request = request,
                     onQrCodeShare = { onRequestQrCodeShare(it, versionInfo) },
-                    onDone = { onDone(Stage.QR_CODE) },
+                    onDone = { onDone(RequestStage.QR_CODE) },
                     onBack = ::onBack,
                 )
             }
@@ -162,37 +179,67 @@ class RequestViewModel(
     }
 
     // Validates only zeros and decimal separator
-    private val validationRegex = "^[${DEFAULT_AMOUNT}${getMonetarySeparators().decimal}]*$".toRegex()
+    private val defaultAmountValidationRegex = "^[${DEFAULT_AMOUNT}${getMonetarySeparators().decimal}]*$".toRegex()
+    // Validates only numbers with 0-8 digits after the decimal separator
+    private val allowedDecimalsValidationRegex = "^-?\\d+(${getMonetarySeparators().decimal}\\d{0,8})?$".toRegex()
 
     private fun validateAmountState(resultAmount: String): AmountState {
-        return if (resultAmount.contains(validationRegex)) {
-            AmountState.Default(resultAmount)
+        return if (resultAmount.contains(defaultAmountValidationRegex)) {
+            AmountState.Default(
+                // Check for the max decimals in the default (i.e. 0.000) number, too
+                if (!resultAmount.contains(allowedDecimalsValidationRegex)) {
+                    request.value.amountState.amount
+                } else {
+                    resultAmount
+                }
+            )
+        } else if (!resultAmount.contains(allowedDecimalsValidationRegex)) {
+            AmountState.Valid(request.value.amountState.amount)
         } else {
             AmountState.Valid(resultAmount)
         }
     }
 
-    private fun onMemo(memo: String) = viewModelScope.launch {
-        // TODO validation
-        request.emit(request.value.copy(memoState = MemoState.Valid(memo)))
-    }
-
     internal fun onBack() = viewModelScope.launch {
         when (stage.value) {
-            Stage.AMOUNT -> {
+            RequestStage.AMOUNT -> {
                 backNavigationCommand.emit(Unit)
             }
-            Stage.MEMO -> {
-                stage.emit(Stage.AMOUNT)
+            RequestStage.MEMO -> {
+                stage.emit(RequestStage.AMOUNT)
             }
-            Stage.QR_CODE -> {
-                stage.emit(Stage.MEMO)
+            RequestStage.QR_CODE -> {
+                stage.emit(RequestStage.MEMO)
             }
         }
     }
 
-    private fun onDone(newStage: Stage) = viewModelScope.launch {
+    private fun onDone(newStage: RequestStage) = viewModelScope.launch {
         stage.emit(newStage)
+    }
+
+    private fun onSwitch(conversion: FiatCurrencyConversion, onSwitch: OnSwitch) = viewModelScope.launch {
+        val newAmount = when(onSwitch) {
+            is OnSwitch.ToFiat -> {
+                request.value.amountState.toFiatString(
+                    application.applicationContext,
+                    conversion
+                )
+            }
+            is OnSwitch.ToZec -> {
+                request.value.amountState.toZecString(
+                    conversion
+                )
+            }
+        }
+        request.emit(
+            request.value.copy(amountState = request.value.amountState.copyState(newAmount))
+        )
+    }
+
+    private fun onMemo(memo: String) = viewModelScope.launch {
+        // TODO validation
+        request.emit(request.value.copy(memoState = MemoState.Valid(memo)))
     }
 
     // private fun onRequest(request: Request) = viewModelScope.launch {
