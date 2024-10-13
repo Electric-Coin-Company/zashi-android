@@ -8,6 +8,7 @@ import cash.z.ecc.android.sdk.model.Locale
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.fromZecString
 import cash.z.ecc.android.sdk.model.toFiatString
+import co.electriccoin.zcash.ui.screen.request.ext.convertToDouble
 
 data class Request(
     val amountState: AmountState,
@@ -22,7 +23,7 @@ sealed class AmountState(open val amount: String) {
     fun toZecString(
         conversion: FiatCurrencyConversion
     ): String = runCatching {
-        amount.toDouble().convertUsdToZec(conversion.priceOfZec).toZecString()
+        amount.convertToDouble().convertUsdToZec(conversion.priceOfZec).toZecString()
     }.getOrElse { "" }
 
     fun toFiatString(

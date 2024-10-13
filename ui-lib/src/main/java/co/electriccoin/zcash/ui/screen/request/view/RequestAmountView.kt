@@ -48,7 +48,7 @@ import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.screen.request.model.AmountState
 import co.electriccoin.zcash.ui.screen.request.model.OnAmount
-import co.electriccoin.zcash.ui.screen.request.model.OnSwitch
+import co.electriccoin.zcash.ui.screen.request.model.RequestCurrency
 import co.electriccoin.zcash.ui.screen.request.model.RequestState
 
 @Composable
@@ -275,7 +275,7 @@ internal fun RequestAmountView(
                     RequestAmountWithMainZecView(
                         state = state,
                         onFiatPreferenceSwitch = {
-                            state.onSwitch(OnSwitch.ToFiat)
+                            state.onSwitch(RequestCurrency.Fiat)
                             zecValuePreferred = !zecValuePreferred
                         },
                         modifier = Modifier.padding(horizontal = ZcashTheme.dimens.screenHorizontalSpacingRegular)
@@ -284,7 +284,7 @@ internal fun RequestAmountView(
                     RequestAmountWithMainFiatView(
                         state = state,
                         onFiatPreferenceSwitch = {
-                            state.onSwitch(OnSwitch.ToZec)
+                            state.onSwitch(RequestCurrency.Zec)
                             zecValuePreferred = !zecValuePreferred
                         },
                         modifier = Modifier.padding(horizontal = ZcashTheme.dimens.screenHorizontalSpacingRegular)
@@ -304,7 +304,12 @@ internal fun RequestAmountView(
         Spacer(modifier = Modifier.weight(1f))
 
         RequestAmountKeyboardView(
-            state = state
+            state = state,
+            currentCurrency = if (zecValuePreferred) {
+                RequestCurrency.Zec
+            } else {
+                RequestCurrency.Fiat
+            },
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
@@ -314,6 +319,7 @@ internal fun RequestAmountView(
 @Composable
 private fun RequestAmountKeyboardView(
     state: RequestState.Amount,
+    currentCurrency: RequestCurrency,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -328,19 +334,21 @@ private fun RequestAmountKeyboardView(
         ) {
             RequestAmountKeyboardTextButton(
                 text = stringResource(id = R.string.request_amount_keyboard_one),
-                onClick = { state.onAmount(OnAmount.Number(1)) }
+                onClick = { state.onAmount(OnAmount.Number(1, currentCurrency)) }
             )
             RequestAmountKeyboardTextButton(
                 text = stringResource(id = R.string.request_amount_keyboard_four),
-                onClick = { state.onAmount(OnAmount.Number(4)) }
+                onClick = { state.onAmount(OnAmount.Number(4, currentCurrency)) }
             )
             RequestAmountKeyboardTextButton(
                 text = stringResource(id = R.string.request_amount_keyboard_seven),
-                onClick = { state.onAmount(OnAmount.Number(7)) }
+                onClick = { state.onAmount(OnAmount.Number(7, currentCurrency)) }
             )
             RequestAmountKeyboardTextButton(
                 text = state.monetarySeparators.decimal.toString(),
-                onClick = { state.onAmount(OnAmount.Separator(state.monetarySeparators.decimal.toString())) }
+                onClick = {
+                    state.onAmount(OnAmount.Separator(state.monetarySeparators.decimal.toString(), currentCurrency))
+                }
             )
         }
         Column(
@@ -348,19 +356,19 @@ private fun RequestAmountKeyboardView(
         ) {
             RequestAmountKeyboardTextButton(
                 text = stringResource(id = R.string.request_amount_keyboard_two),
-                onClick = { state.onAmount(OnAmount.Number(2)) }
+                onClick = { state.onAmount(OnAmount.Number(2, currentCurrency)) }
             )
             RequestAmountKeyboardTextButton(
                 text = stringResource(id = R.string.request_amount_keyboard_five),
-                onClick = { state.onAmount(OnAmount.Number(5)) }
+                onClick = { state.onAmount(OnAmount.Number(5, currentCurrency)) }
             )
             RequestAmountKeyboardTextButton(
                 text = stringResource(id = R.string.request_amount_keyboard_eight),
-                onClick = { state.onAmount(OnAmount.Number(8)) }
+                onClick = { state.onAmount(OnAmount.Number(8, currentCurrency)) }
             )
             RequestAmountKeyboardTextButton(
                 text = stringResource(id = R.string.request_amount_keyboard_zero),
-                onClick = { state.onAmount(OnAmount.Number(0)) }
+                onClick = { state.onAmount(OnAmount.Number(0, currentCurrency)) }
             )
         }
         Column(
@@ -368,20 +376,20 @@ private fun RequestAmountKeyboardView(
         ) {
             RequestAmountKeyboardTextButton(
                 text = stringResource(id = R.string.request_amount_keyboard_three),
-                onClick = { state.onAmount(OnAmount.Number(3)) }
+                onClick = { state.onAmount(OnAmount.Number(3, currentCurrency)) }
             )
             RequestAmountKeyboardTextButton(
                 text = stringResource(id = R.string.request_amount_keyboard_six),
-                onClick = { state.onAmount(OnAmount.Number(6)) }
+                onClick = { state.onAmount(OnAmount.Number(6, currentCurrency)) }
             )
             RequestAmountKeyboardTextButton(
                 text = stringResource(id = R.string.request_amount_keyboard_nine),
-                onClick = { state.onAmount(OnAmount.Number(9)) }
+                onClick = { state.onAmount(OnAmount.Number(9, currentCurrency)) }
             )
             RequestAmountKeyboardIconButton(
                 painter = painterResource(id = R.drawable.ic_delete),
                 contentDescription = stringResource(id = R.string.request_amount_keyboard_delete),
-                onClick = { state.onAmount(OnAmount.Delete) }
+                onClick = { state.onAmount(OnAmount.Delete(currentCurrency)) }
             )
         }
     }

@@ -22,11 +22,12 @@ import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.screen.qrcode.ext.fromReceiveAddressType
 import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressType
+import co.electriccoin.zcash.ui.screen.request.ext.convertToDouble
 import co.electriccoin.zcash.ui.screen.request.model.AmountState
 import co.electriccoin.zcash.ui.screen.request.model.MemoState
 import co.electriccoin.zcash.ui.screen.request.model.OnAmount
-import co.electriccoin.zcash.ui.screen.request.model.OnSwitch
 import co.electriccoin.zcash.ui.screen.request.model.Request
+import co.electriccoin.zcash.ui.screen.request.model.RequestCurrency
 import co.electriccoin.zcash.ui.screen.request.model.RequestStage
 import co.electriccoin.zcash.ui.screen.request.model.RequestState
 import co.electriccoin.zcash.ui.util.FileShareUtil
@@ -92,24 +93,10 @@ class RequestViewModel(
                 RequestState.Amount(
                     exchangeRateState = exchangeRateUsd,
                     monetarySeparators = getMonetarySeparators(),
-                    onAmount = { onAmount(it) },
+                    onAmount = { onAmount(resolveExchangeRateValue(exchangeRateUsd), it) },
                     onBack = ::onBack,
                     onDone = { onDone(RequestStage.MEMO) },
-                    onSwitch = {
-                        when (exchangeRateUsd) {
-                            is ExchangeRateState.Data -> {
-                                if (exchangeRateUsd.currencyConversion == null) {
-                                    Twig.warn { "Currency conversion is currently not available" }
-                                } else {
-                                    onSwitch(exchangeRateUsd.currencyConversion, it)
-                                }
-                            }
-                            else -> {
-                                // Should not happen as the switch button is not available in this case
-                                Twig.error { "Unexpected screen state" }
-                            }
-                        }
-                    },
+                    onSwitch = { onSwitch(resolveExchangeRateValue(exchangeRateUsd), it) },
                     request = request,
                     zcashCurrency = getZcashCurrency(),
                 )
@@ -145,31 +132,57 @@ class RequestViewModel(
 
     val shareResultCommand = MutableSharedFlow<Boolean>()
 
-    private fun onAmount(onAmount: OnAmount) = viewModelScope.launch {
+    private fun resolveExchangeRateValue(exchangeRateUsd: ExchangeRateState): FiatCurrencyConversion? {
+        return when (exchangeRateUsd) {
+            is ExchangeRateState.Data -> {
+                if (exchangeRateUsd.currencyConversion == null) {
+                    Twig.warn { "Currency conversion is currently not available" }
+                    null
+                } else {
+                    exchangeRateUsd.currencyConversion
+                }
+            }
+            else -> {
+                // Should not happen as the conversion rate related use cases should not be available
+                Twig.error { "Unexpected screen state" }
+                null
+            }
+        }
+    }
+
+    private fun onAmount(conversion: FiatCurrencyConversion?, onAmount: OnAmount) = viewModelScope.launch {
         val newState = when(onAmount) {
             is OnAmount.Number -> {
                 if (request.value.amountState.amount == DEFAULT_AMOUNT) {
                     // Special case with current value only zero
-                    validateAmountState(onAmount.number.toString())
+                    validateAmountState(conversion, onAmount.currency, onAmount.number.toString())
                 } else {
                     // Adding new number to the result string
-                    validateAmountState(request.value.amountState.amount + onAmount.number)
+                    validateAmountState(
+                        conversion,
+                        onAmount.currency,
+                        request.value.amountState.amount + onAmount.number
+                    )
                 }
             }
-            OnAmount.Delete -> {
+            is OnAmount.Delete -> {
                 if (request.value.amountState.amount.length == 1) {
                     // Deleting up to the last character
                     AmountState.Default(DEFAULT_AMOUNT)
                 } else {
-                    validateAmountState(request.value.amountState.amount.dropLast(1))
+                    validateAmountState(conversion, onAmount.currency, request.value.amountState.amount.dropLast(1))
                 }
             }
             is OnAmount.Separator -> {
                 if (request.value.amountState.amount.contains(onAmount.separator)) {
                     // Separator already present
-                    validateAmountState(request.value.amountState.amount)
+                    validateAmountState(conversion, onAmount.currency, request.value.amountState.amount)
                 } else {
-                    validateAmountState(request.value.amountState.amount + onAmount.separator)
+                    validateAmountState(
+                        conversion,
+                        onAmount.currency,
+                        request.value.amountState.amount + onAmount.separator
+                    )
                 }
             }
         }
@@ -180,24 +193,44 @@ class RequestViewModel(
 
     // Validates only zeros and decimal separator
     private val defaultAmountValidationRegex = "^[${DEFAULT_AMOUNT}${getMonetarySeparators().decimal}]*$".toRegex()
-    // Validates only numbers with 0-8 digits after the decimal separator
-    private val allowedDecimalsValidationRegex = "^-?\\d+(${getMonetarySeparators().decimal}\\d{0,8})?$".toRegex()
+    // Validates only numbers the properly use grouping and decimal separators
+    // Note that this regex aligns with the one from ZcashSDK (sdk-incubator-lib/src/main/res/values/strings-regex.xml)
+    // It only adds check for 0-8 digits after the decimal separator at maximum
+    private val allowedNumberFormatValidationRegex = "^([0-9]*([0-9]+([${getMonetarySeparators().grouping}]\$|[${getMonetarySeparators().grouping}][0-9]+))*([${getMonetarySeparators().decimal}]\$|[${getMonetarySeparators().decimal}][0-9]{0,8})?)?\$".toRegex()
 
-    private fun validateAmountState(resultAmount: String): AmountState {
-        return if (resultAmount.contains(defaultAmountValidationRegex)) {
+    private fun validateAmountState(
+        conversion: FiatCurrencyConversion?,
+        currentCurrency: RequestCurrency,
+        resultAmount: String,
+    ): AmountState {
+        val newAmount = if (resultAmount.contains(defaultAmountValidationRegex)) {
             AmountState.Default(
                 // Check for the max decimals in the default (i.e. 0.000) number, too
-                if (!resultAmount.contains(allowedDecimalsValidationRegex)) {
+                if (!resultAmount.contains(allowedNumberFormatValidationRegex)) {
                     request.value.amountState.amount
                 } else {
                     resultAmount
                 }
             )
-        } else if (!resultAmount.contains(allowedDecimalsValidationRegex)) {
+        } else if (!resultAmount.contains(allowedNumberFormatValidationRegex)) {
             AmountState.Valid(request.value.amountState.amount)
         } else {
             AmountState.Valid(resultAmount)
         }
+
+        // Check for max Zcash supply
+        return newAmount.amount.convertToDouble()?.let { currentValue ->
+            val zecValue = if (currentCurrency == RequestCurrency.Fiat && conversion != null) {
+                currentValue / conversion.priceOfZec
+            } else {
+                currentValue
+            }
+            if (zecValue > 21_000_000) {
+                newAmount.copyState(request.value.amountState.amount)
+            } else {
+                newAmount
+            }
+        } ?: newAmount
     }
 
     internal fun onBack() = viewModelScope.launch {
@@ -218,22 +251,33 @@ class RequestViewModel(
         stage.emit(newStage)
     }
 
-    private fun onSwitch(conversion: FiatCurrencyConversion, onSwitch: OnSwitch) = viewModelScope.launch {
-        val newAmount = when(onSwitch) {
-            is OnSwitch.ToFiat -> {
+    private fun onSwitch(conversion: FiatCurrencyConversion?, onSwitchTo: RequestCurrency) = viewModelScope.launch {
+        if (conversion == null) {
+            return@launch
+        }
+        val newAmount = when(onSwitchTo) {
+            is RequestCurrency.Fiat -> {
                 request.value.amountState.toFiatString(
                     application.applicationContext,
                     conversion
                 )
             }
-            is OnSwitch.ToZec -> {
+            is RequestCurrency.Zec -> {
                 request.value.amountState.toZecString(
                     conversion
                 )
             }
         }
+
+        // Check default value and shrink it to 0 if necessary
+        val newState = if (newAmount.contains(defaultAmountValidationRegex)) {
+            request.value.amountState.copyState(DEFAULT_AMOUNT)
+        } else {
+            request.value.amountState.copyState(newAmount)
+        }
+
         request.emit(
-            request.value.copy(amountState = request.value.amountState.copyState(newAmount))
+            request.value.copy(amountState = newState)
         )
     }
 

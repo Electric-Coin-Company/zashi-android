@@ -20,7 +20,7 @@ internal sealed class RequestState {
         val zcashCurrency: ZcashCurrency,
         val monetarySeparators: MonetarySeparators,
         val onAmount: (OnAmount) -> Unit,
-        val onSwitch: (OnSwitch) -> Unit,
+        val onSwitch: (RequestCurrency) -> Unit,
         override val onBack: () -> Unit,
         override val onDone: () -> Unit,
     ) : Prepared(onBack, onDone)
