@@ -28,6 +28,7 @@ internal sealed class RequestState {
     data class Memo(
         val request: Request,
         val walletAddress: WalletAddress,
+        val zcashCurrency: ZcashCurrency,
         val onMemo: (String) -> Unit,
         override val onBack: () -> Unit,
         override val onDone: () -> Unit,

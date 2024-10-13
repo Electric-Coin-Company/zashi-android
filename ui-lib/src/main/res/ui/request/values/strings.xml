@@ -14,6 +14,7 @@
     <string name="request_amount_btn">Next</string>
     <string name="request_memo_btn">Request</string>
     <string name="request_share_btn">Share QR Code</string>
+
     <string name="request_amount_empty">0</string>
     <string name="request_amount_keyboard_zero">0</string>
     <string name="request_amount_keyboard_one">1</string>
@@ -26,6 +27,9 @@
     <string name="request_amount_keyboard_eight">8</string>
     <string name="request_amount_keyboard_nine">9</string>
     <string name="request_amount_keyboard_delete">Delete</string>
+
+    <string name="request_memo_privacy_level_shielded">Maximum Privacy</string>
+
     <string name="request_clipboard_tag">Zcash Wallet Address</string>
     <string name="request_data_unable_to_share">Unable to find an application for sharing the QR code.</string>
     <string name="request_share_chooser_title">Request ZEC</string>

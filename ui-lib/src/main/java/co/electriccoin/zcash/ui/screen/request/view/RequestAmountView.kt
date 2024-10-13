@@ -52,6 +52,72 @@ import co.electriccoin.zcash.ui.screen.request.model.RequestCurrency
 import co.electriccoin.zcash.ui.screen.request.model.RequestState
 
 @Composable
+internal fun RequestAmountView(
+    state: RequestState.Amount,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()),
+    ) {
+        Spacer(Modifier.height(ZcashTheme.dimens.spacingDefault))
+
+        InvalidAmountView(state.request.amountState)
+
+        var zecValuePreferred by rememberSaveable { mutableStateOf(true) }
+
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
+
+        when(state.exchangeRateState) {
+            is ExchangeRateState.Data -> {
+                if (zecValuePreferred) {
+                    RequestAmountWithMainZecView(
+                        state = state,
+                        onFiatPreferenceSwitch = {
+                            state.onSwitch(RequestCurrency.Fiat)
+                            zecValuePreferred = !zecValuePreferred
+                        },
+                        modifier = Modifier.padding(horizontal = ZcashTheme.dimens.screenHorizontalSpacingRegular)
+                    )
+                } else {
+                    RequestAmountWithMainFiatView(
+                        state = state,
+                        onFiatPreferenceSwitch = {
+                            state.onSwitch(RequestCurrency.Zec)
+                            zecValuePreferred = !zecValuePreferred
+                        },
+                        modifier = Modifier.padding(horizontal = ZcashTheme.dimens.screenHorizontalSpacingRegular)
+                    )
+                }
+            }
+            else -> {
+                RequestAmountNoFiatView(
+                    state = state,
+                    modifier = Modifier.padding(horizontal = ZcashTheme.dimens.screenHorizontalSpacingRegular)
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        RequestAmountKeyboardView(
+            state = state,
+            currentCurrency = if (zecValuePreferred) {
+                RequestCurrency.Zec
+            } else {
+                RequestCurrency.Fiat
+            },
+        )
+
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
+    }
+}
+
+@Composable
 private fun RequestAmountWithMainFiatView(
     state: RequestState.Amount,
     onFiatPreferenceSwitch: () -> Unit,
@@ -221,98 +287,6 @@ private fun RequestAmountNoFiatView(
                 fontWeight = FontWeight.SemiBold
             )
         )
-    }
-}
-
-@Composable
-private fun AutoSizingText(
-    text: AnnotatedString,
-    style: TextStyle,
-    modifier: Modifier = Modifier
-) {
-    var fontSize by remember { mutableStateOf(style.fontSize) }
-
-    Text(
-        text = text,
-        fontSize = fontSize,
-        fontFamily = style.fontFamily,
-        lineHeight = style.lineHeight,
-        fontWeight = style.fontWeight,
-        maxLines = 1,
-        modifier = modifier,
-        onTextLayout = { textLayoutResult ->
-            if (textLayoutResult.didOverflowHeight) {
-                fontSize = (fontSize.value - 1).sp
-            } else {
-                // We should make the text bigger again
-            }
-        }
-    )
-}
-
-@Composable
-internal fun RequestAmountView(
-    state: RequestState.Amount,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState()),
-    ) {
-        Spacer(Modifier.height(ZcashTheme.dimens.spacingDefault))
-
-        InvalidAmountView(state.request.amountState)
-
-        var zecValuePreferred by rememberSaveable { mutableStateOf(true) }
-
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
-
-        when(state.exchangeRateState) {
-            is ExchangeRateState.Data -> {
-                if (zecValuePreferred) {
-                    RequestAmountWithMainZecView(
-                        state = state,
-                        onFiatPreferenceSwitch = {
-                            state.onSwitch(RequestCurrency.Fiat)
-                            zecValuePreferred = !zecValuePreferred
-                        },
-                        modifier = Modifier.padding(horizontal = ZcashTheme.dimens.screenHorizontalSpacingRegular)
-                    )
-                } else {
-                    RequestAmountWithMainFiatView(
-                        state = state,
-                        onFiatPreferenceSwitch = {
-                            state.onSwitch(RequestCurrency.Zec)
-                            zecValuePreferred = !zecValuePreferred
-                        },
-                        modifier = Modifier.padding(horizontal = ZcashTheme.dimens.screenHorizontalSpacingRegular)
-                    )
-                }
-            }
-            else -> {
-                RequestAmountNoFiatView(
-                    state = state,
-                    modifier = Modifier.padding(horizontal = ZcashTheme.dimens.screenHorizontalSpacingRegular)
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        RequestAmountKeyboardView(
-            state = state,
-            currentCurrency = if (zecValuePreferred) {
-                RequestCurrency.Zec
-            } else {
-                RequestCurrency.Fiat
-            },
-        )
-
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
     }
 }
 

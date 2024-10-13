@@ -17,6 +17,6 @@ internal fun RequestQrCodeView(
     Column(modifier) {
         Spacer(Modifier.height(ZcashTheme.dimens.spacingDefault))
 
-        Text(text = "Memo")
+        Text(text = "QrCodeShare")
     }
 }

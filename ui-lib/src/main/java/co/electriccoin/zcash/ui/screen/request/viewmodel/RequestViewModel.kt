@@ -109,6 +109,7 @@ class RequestViewModel(
                     onMemo = { onMemo(it) },
                     onDone = { onDone(RequestStage.QR_CODE) },
                     onBack = ::onBack,
+                    zcashCurrency = getZcashCurrency(),
                 )
             }
             RequestStage.QR_CODE -> {
