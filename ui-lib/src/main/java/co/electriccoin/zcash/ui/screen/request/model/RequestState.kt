@@ -35,6 +35,7 @@ internal sealed class RequestState {
         val request: Request,
         val walletAddress: WalletAddress,
         val onQrCodeShare: (ImageBitmap) -> Unit,
+        val onQrCodeGenerate: (pixels: Int) -> Unit,
         override val onBack: () -> Unit,
         val onClose: () -> Unit,
         val zcashCurrency: ZcashCurrency,

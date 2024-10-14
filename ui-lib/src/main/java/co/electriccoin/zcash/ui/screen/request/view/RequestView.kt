@@ -69,7 +69,8 @@ private fun RequestPreview() =
                         qrCodeState = QrCodeState(
                             "",//TODO
                             "0.25",
-                            memo = "Text memo"
+                            memo = "Text memo",
+                            null
                         ),
                     ),
                     exchangeRateState = ExchangeRateState.OptedOut,
@@ -171,7 +172,8 @@ private fun RequestBottomBar(
                 ZashiButton(
                     text = stringResource(id = R.string.request_qr_share_btn),
                     leadingIcon = painterResource(R.drawable.ic_share),
-                    onClick = state.onQrCodeShare,
+                    enabled = state.request.qrCodeState.isValid(),
+                    onClick = { state.onQrCodeShare(state.request.qrCodeState.bitmap!!) },
                     modifier = btnModifier
                 )
 

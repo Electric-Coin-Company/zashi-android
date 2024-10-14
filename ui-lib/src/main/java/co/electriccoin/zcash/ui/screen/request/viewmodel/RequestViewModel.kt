@@ -22,10 +22,11 @@ import co.electriccoin.zcash.ui.common.provider.GetMonetarySeparatorProvider
 import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
 import co.electriccoin.zcash.ui.common.provider.GetZcashCurrencyProvider
 import co.electriccoin.zcash.ui.common.usecase.GetAddressesUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetSynchronizerUseCase
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.screen.qrcode.ext.fromReceiveAddressType
+import co.electriccoin.zcash.ui.screen.qrcode.util.AndroidQrCodeImageGenerator
+import co.electriccoin.zcash.ui.screen.qrcode.util.JvmQrCodeGenerator
 import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressType
 import co.electriccoin.zcash.ui.screen.request.ext.convertToDouble
 import co.electriccoin.zcash.ui.screen.request.model.AmountState
@@ -60,7 +61,6 @@ class RequestViewModel(
     walletViewModel: WalletViewModel,
     getZcashCurrency: GetZcashCurrencyProvider,
     getMonetarySeparators: GetMonetarySeparatorProvider,
-    private val getSynchronizer: GetSynchronizerUseCase,
 ) : ViewModel() {
     private val versionInfo by lazy { getVersionInfo() }
 
@@ -68,22 +68,11 @@ class RequestViewModel(
     private val DEFAULT_MEMO = ""
     private val DEFAULT_QR_CODE_URI = ""
 
-    // Request(
-    // amount = Zatoshi(1),
-    // memo = "Test memo",
-    // recipientAddress =
-    // runBlocking {
-    //     WalletAddress.Unified.new("u1kpy0mhprcx64400thhj9xfp862j2dhrnl7nx37c8y8pn8l58n7t2pj3vy58zg37lr4zkfwp8h868ra8wjvmrpeuqff8r6h3lzdyvdv7ly04dwkxu88mu7ze49xx7we08suux6350m2z9eljtt5a75dscc56vckhn9u0uwvdry00mehs82wjfml4fmd28e64n5ruqltyn0e6nqr726vt")
-    // }
-    // )
-
-    // walletAddress = addresses.fromReceiveAddressType(ReceiveAddressType.fromOrdinal(addressTypeOrdinal)),
-
     internal val request = MutableStateFlow(
         Request(
             amountState = AmountState.Default(DEFAULT_AMOUNT, RequestCurrency.Zec),
             memoState = MemoState.Valid(DEFAULT_MEMO, 0, DEFAULT_AMOUNT),
-            qrCodeState = QrCodeState(DEFAULT_QR_CODE_URI, DEFAULT_AMOUNT, DEFAULT_MEMO),
+            qrCodeState = QrCodeState(DEFAULT_QR_CODE_URI, DEFAULT_AMOUNT, DEFAULT_MEMO, null),
         )
     )
 
@@ -95,6 +84,8 @@ class RequestViewModel(
         stage,
         walletViewModel.exchangeRateUsd,
     ) { addresses, request, currentStage, exchangeRateUsd ->
+        val walletAddress = addresses.fromReceiveAddressType(ReceiveAddressType.fromOrdinal(addressTypeOrdinal))
+
         when (currentStage) {
             RequestStage.AMOUNT -> {
                 RequestState.Amount(
@@ -109,21 +100,20 @@ class RequestViewModel(
                 )
             }
             RequestStage.MEMO -> {
-                val addressType = addresses.fromReceiveAddressType(ReceiveAddressType.fromOrdinal(addressTypeOrdinal))
                 RequestState.Memo(
-                    walletAddress = addressType,
+                    walletAddress = walletAddress,
                     request = request,
                     onMemo = { onMemo(it) },
-                    onDone = { onMemoDone(addressType.address) },
+                    onDone = { onMemoDone(walletAddress.address) },
                     onBack = ::onBack,
                     zcashCurrency = getZcashCurrency(),
                 )
             }
             RequestStage.QR_CODE -> {
                 RequestState.QrCode(
-                    walletAddress = addresses
-                        .fromReceiveAddressType(ReceiveAddressType.fromOrdinal(addressTypeOrdinal)),
+                    walletAddress = walletAddress,
                     request = request,
+                    onQrCodeGenerate = { qrCodeForValue(walletAddress.address, it) },
                     onQrCodeShare = { onRequestQrCodeShare(it, versionInfo) },
                     onBack = ::onBack,
                     onClose = ::onClose,
@@ -282,7 +272,8 @@ class RequestViewModel(
                     memo = request.value.memoState.text
                 ),
                 zecAmount = request.value.memoState.zecAmount,
-                memo = request.value.memoState.text
+                memo = request.value.memoState.text,
+                bitmap = null
             ))
         )
         stage.emit(RequestStage.QR_CODE)
@@ -361,6 +352,23 @@ class RequestViewModel(
                 shareResultCommand.emit(false)
             }
         }
+    }
+
+    private fun qrCodeForValue(
+        address: String,
+        size: Int,
+    ) = viewModelScope.launch {
+        // In the future, use actual/expect to switch QR code generator implementations for multiplatform
+
+        // Note that our implementation has an extra array copy to BooleanArray, which is a cross-platform
+        // representation.  This should have minimal performance impact since the QR code is relatively
+        // small and we only generate QR codes infrequently.
+
+        val qrCodePixelArray = JvmQrCodeGenerator.generate(address, size)
+        val bitmap = AndroidQrCodeImageGenerator.generate(qrCodePixelArray, size)
+        val newQrCodeState = request.value.qrCodeState.copy(bitmap = bitmap)
+
+        request.emit(request.value.copy(qrCodeState = newQrCodeState))
     }
 }
 

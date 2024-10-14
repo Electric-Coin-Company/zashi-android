@@ -1,6 +1,7 @@
 package co.electriccoin.zcash.ui.screen.request.model
 
 import android.content.Context
+import androidx.compose.ui.graphics.ImageBitmap
 import cash.z.ecc.android.sdk.ext.convertUsdToZec
 import cash.z.ecc.android.sdk.ext.toZecString
 import cash.z.ecc.android.sdk.model.FiatCurrencyConversion
@@ -10,6 +11,7 @@ import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.fromZecString
 import cash.z.ecc.android.sdk.model.toFiatString
 import co.electriccoin.zcash.ui.screen.request.ext.convertToDouble
+import co.electriccoin.zcash.ui.screen.request.model.MemoState.Valid
 
 data class Request(
     val amountState: AmountState,
@@ -102,4 +104,7 @@ data class QrCodeState(
     val requestUri: String,
     val zecAmount: String,
     val memo: String,
-)
+    val bitmap: ImageBitmap?
+) {
+    fun isValid(): Boolean = bitmap != null
+}

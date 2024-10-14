@@ -30,14 +30,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.design.component.ZashiBadge
 import co.electriccoin.zcash.ui.design.component.ZashiBadgeColors
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensionsInternal
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
-import co.electriccoin.zcash.ui.screen.qrcode.util.AndroidQrCodeImageGenerator
-import co.electriccoin.zcash.ui.screen.qrcode.util.JvmQrCodeGenerator
+import co.electriccoin.zcash.ui.screen.request.model.QrCodeState
 import co.electriccoin.zcash.ui.screen.request.model.RequestState
 import kotlin.math.roundToInt
 
@@ -73,17 +73,81 @@ internal fun RequestQrCodeView(
             modifier = Modifier.padding(horizontal = ZcashTheme.dimens.screenHorizontalSpacingRegular)
         )
 
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingBig))
 
         QrCode(
-            value = state.request.qrCodeState.requestUri,
+            qrCodeState = state.request.qrCodeState,
             onQrImageShare = state.onQrCodeShare,
-            modifier =
-            Modifier
-                .padding(horizontal = 24.dp),
+            onQrImageGenerate = state.onQrCodeGenerate,
+            modifier = Modifier.padding(horizontal = 24.dp),
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
+    }
+}
+
+@Composable
+private fun ColumnScope.QrCode(
+    qrCodeState: QrCodeState,
+    onQrImageShare: (ImageBitmap) -> Unit,
+    onQrImageGenerate: (pixels: Int) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val sizePixels = with(LocalDensity.current) { DEFAULT_QR_CODE_SIZE.toPx() }.roundToInt()
+
+    if (qrCodeState.bitmap == null) {
+        onQrImageGenerate(sizePixels)
+    }
+
+    QrCode(
+        qrCodeImage = qrCodeState.bitmap,
+        onQrImageBitmapShare = onQrImageShare,
+        contentDescription = stringResource(id = R.string.request_qr_code_content_description),
+        modifier =
+        modifier
+            .align(Alignment.CenterHorizontally)
+            .border(
+                border =
+                BorderStroke(
+                    width = 1.dp,
+                    color = ZashiColors.Surfaces.strokePrimary
+                ),
+                shape = RoundedCornerShape(ZashiDimensionsInternal.Radius.radius4xl)
+            )
+            .padding(all = 12.dp)
+    )
+}
+
+@Composable
+private fun QrCode(
+    contentDescription: String,
+    qrCodeImage: ImageBitmap?,
+    onQrImageBitmapShare: (ImageBitmap) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier =
+        Modifier
+            .clickable(
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() },
+                onClick = { qrCodeImage?.let { onQrImageBitmapShare(qrCodeImage) } },
+            )
+            .then(modifier)
+    ) {
+        if (qrCodeImage == null) {
+            CircularScreenProgressIndicator()
+        } else {
+            Image(
+                bitmap = qrCodeImage,
+                contentDescription = contentDescription,
+            )
+            Image(
+                painter = painterResource(id = R.drawable.logo_zec_fill_stroke),
+                contentDescription = contentDescription,
+            )
+        }
     }
 }
 
@@ -109,85 +173,6 @@ private fun RequestQrCodeZecAmountView(
         ),
         modifier = modifier
     )
-}
-
-@Composable
-private fun ColumnScope.QrCode(
-    value: String,
-    onQrImageShare: (ImageBitmap) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    val sizePixels = with(LocalDensity.current) { DEFAULT_QR_CODE_SIZE.toPx() }.roundToInt()
-    val qrCodeImage =
-        remember {
-            qrCodeForValue(
-                address = value,
-                size = sizePixels
-            )
-        }
-
-    QrCode(
-        qrCodeImage = qrCodeImage,
-        onQrImageBitmapShare = onQrImageShare,
-        contentDescription = stringResource(id = R.string.request_qr_code_content_description),
-        modifier =
-        modifier
-            .align(Alignment.CenterHorizontally)
-            .border(
-                border =
-                BorderStroke(
-                    width = 1.dp,
-                    color = ZashiColors.Surfaces.strokePrimary
-                ),
-                shape = RoundedCornerShape(ZashiDimensionsInternal.Radius.radius4xl)
-            )
-            .padding(all = 12.dp)
-    )
-}
-
-private fun qrCodeForValue(
-    address: String,
-    size: Int,
-): ImageBitmap {
-    // In the future, use actual/expect to switch QR code generator implementations for multiplatform
-
-    // Note that our implementation has an extra array copy to BooleanArray, which is a cross-platform
-    // representation.  This should have minimal performance impact since the QR code is relatively
-    // small and we only generate QR codes infrequently.
-
-    val qrCodePixelArray = JvmQrCodeGenerator.generate(address, size)
-
-    return AndroidQrCodeImageGenerator.generate(qrCodePixelArray, size)
-}
-
-@Composable
-private fun QrCode(
-    contentDescription: String,
-    qrCodeImage: ImageBitmap,
-    onQrImageBitmapShare: (ImageBitmap) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier =
-        Modifier
-            .clickable(
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() },
-                onClick = { onQrImageBitmapShare(qrCodeImage) },
-            )
-            .then(modifier)
-    ) {
-        Image(
-            bitmap = qrCodeImage,
-            contentDescription = contentDescription,
-        )
-
-        Image(
-            painter = painterResource(id = R.drawable.logo_zec_fill_stroke),
-            contentDescription = contentDescription,
-        )
-    }
 }
 
 private val DEFAULT_QR_CODE_SIZE = 320.dp
