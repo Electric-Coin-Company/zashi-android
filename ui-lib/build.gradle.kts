@@ -108,7 +108,6 @@ dependencies {
     implementation(libs.androidx.lifecycle.livedata)
     implementation(libs.androidx.splash)
     implementation(libs.androidx.workmanager)
-    api(libs.bundles.androidx.biometric)
     implementation(libs.androidx.browser)
     implementation(libs.bundles.androidx.camera)
     implementation(libs.bundles.androidx.compose.core)
@@ -136,6 +135,24 @@ dependencies {
     api(projects.configurationImplAndroidLib)
     api(projects.sdkExtLib)
     api(projects.uiDesignLib)
+    api(libs.androidx.fragment)
+    api(libs.androidx.fragment.compose)
+    api(libs.androidx.activity)
+    api(libs.google.http.client.gson) {
+        exclude(group = "io.grpc")
+    }
+    api(libs.google.api.client.android) {
+        exclude(group = "org.apache.httpcomponents")
+        exclude(group = "io.grpc")
+    }
+    api(libs.google.api.services.drive) {
+        exclude(group = "org.apache.httpcomponents")
+        exclude(group = "io.grpc")
+    }
+    api(libs.play.services.auth) {
+        exclude(group = "io.grpc")
+    }
+    api(libs.bundles.androidx.biometric)
 
     androidTestImplementation(projects.testLib)
     androidTestImplementation(libs.bundles.androidx.test)
@@ -157,20 +174,5 @@ dependencies {
                 type = "apk"
             }
         }
-    }
-
-    api(libs.google.http.client.gson) {
-        exclude(group = "io.grpc")
-    }
-    api(libs.google.api.client.android) {
-        exclude(group = "org.apache.httpcomponents")
-        exclude(group = "io.grpc")
-    }
-    api(libs.google.api.services.drive) {
-        exclude(group = "org.apache.httpcomponents")
-        exclude(group = "io.grpc")
-    }
-    api(libs.play.services.auth) {
-        exclude(group = "io.grpc")
     }
 }

@@ -117,7 +117,6 @@ class AuthenticationViewModel(
         authenticationResult.value = AuthenticationResult.None
     }
 
-    @Suppress("UNUSED_PARAMETER")
     fun authenticate(
         activity: MainActivity,
         initialAuthSystemWindowDelay: Duration = DEFAULT_INITIAL_DELAY.milliseconds,
@@ -137,121 +136,121 @@ class AuthenticationViewModel(
             }
         }
 
-        // biometricPrompt =
-        //     BiometricPrompt(
-        //         activity,
-        //         executor,
-        //         object : BiometricPrompt.AuthenticationCallback() {
-        //             /**
-        //              * Called when an unrecoverable error has been encountered and authentication has stopped.
-        //              *
-        //              * After this method is called, no further events will be sent for the current
-        //              * authentication session.
-        //              *
-        //              * @param errorCode An integer ID associated with the error.
-        //              * @param errorString A human-readable string that describes the error.
-        //              */
-        //             override fun onAuthenticationError(
-        //                 errorCode: Int,
-        //                 errorString: CharSequence
-        //             ) {
-        //                 super.onAuthenticationError(errorCode, errorString)
-        //                 Twig.warn { "Authentication error: $errorCode: $errorString" }
-        //
-        //                 // Note that we process most of the following authentication errors the same. A potential
-        //                 // improvement in the future could be let user take a different action for a different error.
-        //
-        //                 // All available error codes are implemented
-        //                 @SuppressLint("SwitchIntDef")
-        //                 when (errorCode) {
-        //                     // The hardware is unavailable. Try again later
-        //                     BiometricPrompt.ERROR_HW_UNAVAILABLE,
-        //                     // The sensor was unable to process the current image
-        //                     BiometricPrompt.ERROR_UNABLE_TO_PROCESS,
-        //                     // The current operation has been running too long and has timed out. This is intended to
-        //                     // prevent programs from waiting for the biometric sensor indefinitely. The timeout is
-        //                     // platform and sensor-specific, but is generally on the order of ~30 seconds.
-        //                     BiometricPrompt.ERROR_TIMEOUT,
-        //                     // The operation can't be completed because there is not enough device storage remaining
-        //                     BiometricPrompt.ERROR_NO_SPACE,
-        //                     // The operation was canceled because the API is locked out due to too many attempts. This
-        //                     // occurs after 5 failed attempts, and lasts for 30 seconds.
-        //                     BiometricPrompt.ERROR_LOCKOUT,
-        //                     // The operation failed due to a vendor-specific error. This error code may be used by
-        //                     // hardware vendors to extend this list to cover errors that don't fall under one of the
-        //                     // other predefined categories. Vendors are responsible for providing the strings for these
-        //                     // errors. These messages are typically reserved for internal operations such as enrollment
-        //                     // but may be used to express any error that is not otherwise covered. In this case,
-        //                     // applications are expected to show the error message, but they are advised not to rely on
-        //                     // the message ID, since this may vary by vendor and device.
-        //                     BiometricPrompt.ERROR_VENDOR,
-        //                     // Biometric authentication is disabled until the user unlocks with their device credential
-        //                     // (i.e. PIN, pattern, or password).
-        //                     BiometricPrompt.ERROR_LOCKOUT_PERMANENT,
-        //                     // The device does not have the required authentication hardware
-        //                     BiometricPrompt.ERROR_HW_NOT_PRESENT,
-        //                     // The user pressed the negative button
-        //                     BiometricPrompt.ERROR_NEGATIVE_BUTTON,
-        //                     // A security vulnerability has been discovered with one or more hardware sensors. The
-        //                     // affected sensor(s) are unavailable until a security update has addressed the issue
-        //                     BiometricPrompt.ERROR_SECURITY_UPDATE_REQUIRED -> {
-        //                         authenticationResult.value =
-        //                             AuthenticationResult.Error(errorCode, errorString.toString())
-        //                     }
-        //                     // The user canceled the operation. Upon receiving this, applications should use alternate
-        //                     // authentication, such as a password. The application should also provide the user a way of
-        //                     // returning to biometric authentication, such as a button. The operation was canceled
-        //                     // because [BiometricPrompt.ERROR_LOCKOUT] occurred too many times.
-        //                     BiometricPrompt.ERROR_USER_CANCELED -> {
-        //                         authenticationResult.value = AuthenticationResult.Canceled
-        //                         // The following values are just for testing purposes, so we can easier reproduce other
-        //                         // non-success results obtained from [BiometricPrompt]
-        //                         // = AuthenticationResult.Failed
-        //                         // = AuthenticationResult.Error(errorCode, errorString.toString())
-        //                     }
-        //                     // The operation was canceled because the biometric sensor is unavailable. This may happen
-        //                     // when user is switched, the device is locked, or another pending operation prevents it.
-        //                     BiometricPrompt.ERROR_CANCELED -> {
-        //                         // We could consider splitting ERROR_CANCELED from ERROR_USER_CANCELED
-        //                         authenticationResult.value = AuthenticationResult.Canceled
-        //                     }
-        //                     // The user does not have any biometrics enrolled
-        //                     BiometricPrompt.ERROR_NO_BIOMETRICS,
-        //                     // The device does not have pin, pattern, or password set up
-        //                     BiometricPrompt.ERROR_NO_DEVICE_CREDENTIAL -> {
-        //                         // Allow unauthenticated access if no authentication method is available on the device
-        //                         // These 2 errors can come for a different Android SDK versions, but they mean the same
-        //                         authenticationResult.value = AuthenticationResult.Success
-        //                     }
-        //                 }
-        //             }
-        //
-        //             /**
-        //              * Called when a biometric (e.g. fingerprint, face, etc.) is recognized, indicating that the
-        //              * user has successfully authenticated.
-        //              *
-        //              * <p>After this method is called, no further events will be sent for the current
-        //              * authentication session.
-        //              *
-        //              * @param result An object containing authentication-related data.
-        //              */
-        //             override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-        //                 super.onAuthenticationSucceeded(result)
-        //                 Twig.info { "Authentication successful" }
-        //                 authenticationResult.value = AuthenticationResult.Success
-        //             }
-        //
-        //             /**
-        //              * Called when a biometric (e.g. fingerprint, face, etc.) is presented but not recognized as
-        //              * belonging to the user.
-        //              */
-        //             override fun onAuthenticationFailed() {
-        //                 super.onAuthenticationFailed()
-        //                 Twig.error { "Authentication failed" }
-        //                 authenticationResult.value = AuthenticationResult.Failed
-        //             }
-        //         }
-        //     )
+        biometricPrompt =
+            BiometricPrompt(
+                activity,
+                executor,
+                object : BiometricPrompt.AuthenticationCallback() {
+                    /**
+                     * Called when an unrecoverable error has been encountered and authentication has stopped.
+                     *
+                     * After this method is called, no further events will be sent for the current
+                     * authentication session.
+                     *
+                     * @param errorCode An integer ID associated with the error.
+                     * @param errorString A human-readable string that describes the error.
+                     */
+                    override fun onAuthenticationError(
+                        errorCode: Int,
+                        errorString: CharSequence
+                    ) {
+                        super.onAuthenticationError(errorCode, errorString)
+                        Twig.warn { "Authentication error: $errorCode: $errorString" }
+
+                        // Note that we process most of the following authentication errors the same. A potential
+                        // improvement in the future could be let user take a different action for a different error.
+
+                        // All available error codes are implemented
+                        @SuppressLint("SwitchIntDef")
+                        when (errorCode) {
+                            // The hardware is unavailable. Try again later
+                            BiometricPrompt.ERROR_HW_UNAVAILABLE,
+                            // The sensor was unable to process the current image
+                            BiometricPrompt.ERROR_UNABLE_TO_PROCESS,
+                            // The current operation has been running too long and has timed out. This is intended to
+                            // prevent programs from waiting for the biometric sensor indefinitely. The timeout is
+                            // platform and sensor-specific, but is generally on the order of ~30 seconds.
+                            BiometricPrompt.ERROR_TIMEOUT,
+                            // The operation can't be completed because there is not enough device storage remaining
+                            BiometricPrompt.ERROR_NO_SPACE,
+                            // The operation was canceled because the API is locked out due to too many attempts. This
+                            // occurs after 5 failed attempts, and lasts for 30 seconds.
+                            BiometricPrompt.ERROR_LOCKOUT,
+                            // The operation failed due to a vendor-specific error. This error code may be used by
+                            // hardware vendors to extend this list to cover errors that don't fall under one of the
+                            // other predefined categories. Vendors are responsible for providing the strings for these
+                            // errors. These messages are typically reserved for internal operations such as enrollment
+                            // but may be used to express any error that is not otherwise covered. In this case,
+                            // applications are expected to show the error message, but they are advised not to rely on
+                            // the message ID, since this may vary by vendor and device.
+                            BiometricPrompt.ERROR_VENDOR,
+                            // Biometric authentication is disabled until the user unlocks with their device credential
+                            // (i.e. PIN, pattern, or password).
+                            BiometricPrompt.ERROR_LOCKOUT_PERMANENT,
+                            // The device does not have the required authentication hardware
+                            BiometricPrompt.ERROR_HW_NOT_PRESENT,
+                            // The user pressed the negative button
+                            BiometricPrompt.ERROR_NEGATIVE_BUTTON,
+                            // A security vulnerability has been discovered with one or more hardware sensors. The
+                            // affected sensor(s) are unavailable until a security update has addressed the issue
+                            BiometricPrompt.ERROR_SECURITY_UPDATE_REQUIRED -> {
+                                authenticationResult.value =
+                                    AuthenticationResult.Error(errorCode, errorString.toString())
+                            }
+                            // The user canceled the operation. Upon receiving this, applications should use alternate
+                            // authentication, such as a password. The application should also provide the user a way of
+                            // returning to biometric authentication, such as a button. The operation was canceled
+                            // because [BiometricPrompt.ERROR_LOCKOUT] occurred too many times.
+                            BiometricPrompt.ERROR_USER_CANCELED -> {
+                                authenticationResult.value = AuthenticationResult.Canceled
+                                // The following values are just for testing purposes, so we can easier reproduce other
+                                // non-success results obtained from [BiometricPrompt]
+                                // = AuthenticationResult.Failed
+                                // = AuthenticationResult.Error(errorCode, errorString.toString())
+                            }
+                            // The operation was canceled because the biometric sensor is unavailable. This may happen
+                            // when user is switched, the device is locked, or another pending operation prevents it.
+                            BiometricPrompt.ERROR_CANCELED -> {
+                                // We could consider splitting ERROR_CANCELED from ERROR_USER_CANCELED
+                                authenticationResult.value = AuthenticationResult.Canceled
+                            }
+                            // The user does not have any biometrics enrolled
+                            BiometricPrompt.ERROR_NO_BIOMETRICS,
+                            // The device does not have pin, pattern, or password set up
+                            BiometricPrompt.ERROR_NO_DEVICE_CREDENTIAL -> {
+                                // Allow unauthenticated access if no authentication method is available on the device
+                                // These 2 errors can come for a different Android SDK versions, but they mean the same
+                                authenticationResult.value = AuthenticationResult.Success
+                            }
+                        }
+                    }
+
+                    /**
+                     * Called when a biometric (e.g. fingerprint, face, etc.) is recognized, indicating that the
+                     * user has successfully authenticated.
+                     *
+                     * <p>After this method is called, no further events will be sent for the current
+                     * authentication session.
+                     *
+                     * @param result An object containing authentication-related data.
+                     */
+                    override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                        super.onAuthenticationSucceeded(result)
+                        Twig.info { "Authentication successful" }
+                        authenticationResult.value = AuthenticationResult.Success
+                    }
+
+                    /**
+                     * Called when a biometric (e.g. fingerprint, face, etc.) is presented but not recognized as
+                     * belonging to the user.
+                     */
+                    override fun onAuthenticationFailed() {
+                        super.onAuthenticationFailed()
+                        Twig.error { "Authentication failed" }
+                        authenticationResult.value = AuthenticationResult.Failed
+                    }
+                }
+            )
 
         promptInfo =
             BiometricPrompt.PromptInfo.Builder()
