@@ -60,7 +60,7 @@ private fun RequestPreview() =
                 RequestState.Amount(
                     request = Request(
                         amountState = AmountState.Valid("2.25"),
-                        memoState = MemoState.Valid(""),
+                        memoState = MemoState.Valid("", 0),
                     ),
                     exchangeRateState = ExchangeRateState.OptedOut,
                     zcashCurrency = ZcashCurrency.ZEC,
@@ -151,8 +151,9 @@ private fun RequestBottomBar(
             }
             is RequestState.Memo -> {
                 ZashiButton(
-                    text = stringResource(id = R.string.request_memo_btn),
+                    enabled = state.request.memoState.isValid(),
                     onClick = { state.onDone() },
+                    text = stringResource(id = R.string.request_memo_btn),
                     modifier = btnModifier
                 )
             }

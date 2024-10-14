@@ -29,7 +29,7 @@ internal sealed class RequestState {
         val request: Request,
         val walletAddress: WalletAddress,
         val zcashCurrency: ZcashCurrency,
-        val onMemo: (String) -> Unit,
+        val onMemo: (MemoState) -> Unit,
         override val onBack: () -> Unit,
         override val onDone: () -> Unit,
     ) : Prepared(onBack, onDone)

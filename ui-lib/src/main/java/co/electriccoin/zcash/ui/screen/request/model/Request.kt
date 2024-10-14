@@ -5,10 +5,12 @@ import cash.z.ecc.android.sdk.ext.convertUsdToZec
 import cash.z.ecc.android.sdk.ext.toZecString
 import cash.z.ecc.android.sdk.model.FiatCurrencyConversion
 import cash.z.ecc.android.sdk.model.Locale
+import cash.z.ecc.android.sdk.model.Memo
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.fromZecString
 import cash.z.ecc.android.sdk.model.toFiatString
 import co.electriccoin.zcash.ui.screen.request.ext.convertToDouble
+import co.electriccoin.zcash.ui.screen.request.model.AmountState.Valid
 
 data class Request(
     val amountState: AmountState,
@@ -47,7 +49,30 @@ sealed class AmountState(open val amount: String) {
     }
 }
 
-sealed class MemoState() {
-    data class Valid(val value: String) : MemoState()
-    data class InValid(val value: String) : MemoState()
+sealed class MemoState(
+    open val text: String,
+    open val byteSize: Int
+) {
+    fun isValid(): Boolean = this is Valid
+
+    data class Valid(
+        override val text: String,
+        override val byteSize: Int
+    ) : MemoState(text, byteSize)
+
+    data class InValid(
+        override val text: String,
+        override val byteSize: Int
+    ) : MemoState(text, byteSize)
+
+    companion object {
+        fun new(memo: String): MemoState {
+            val bytesCount = Memo.countLength(memo)
+            return if (bytesCount > Memo.MAX_MEMO_LENGTH_BYTES) {
+                InValid(memo, bytesCount)
+            } else {
+                Valid(memo, bytesCount)
+            }
+        }
+    }
 }

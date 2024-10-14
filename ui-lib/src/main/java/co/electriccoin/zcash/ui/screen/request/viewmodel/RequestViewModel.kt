@@ -60,8 +60,6 @@ class RequestViewModel(
     private val DEFAULT_AMOUNT = application.getString(R.string.request_amount_empty)
     private val DEFAULT_MEMO = ""
 
-    private val MAX_AMOUNT_FLOATING_POINTS = 8
-
     // Request(
     // amount = Zatoshi(1),
     // memo = "Test memo",
@@ -76,7 +74,7 @@ class RequestViewModel(
     internal val request = MutableStateFlow(
         Request(
             amountState = AmountState.Default(DEFAULT_AMOUNT),
-            memoState = MemoState.Valid(DEFAULT_MEMO),
+            memoState = MemoState.Valid(DEFAULT_MEMO, 0),
         )
     )
 
@@ -282,9 +280,8 @@ class RequestViewModel(
         )
     }
 
-    private fun onMemo(memo: String) = viewModelScope.launch {
-        // TODO validation
-        request.emit(request.value.copy(memoState = MemoState.Valid(memo)))
+    private fun onMemo(memoState: MemoState) = viewModelScope.launch {
+        request.emit(request.value.copy(memoState = memoState))
     }
 
     // private fun onRequest(request: Request) = viewModelScope.launch {
