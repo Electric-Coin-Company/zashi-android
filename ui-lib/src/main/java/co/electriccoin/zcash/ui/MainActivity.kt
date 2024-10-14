@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package co.electriccoin.zcash.ui
 
 import android.annotation.SuppressLint
@@ -81,8 +83,6 @@ class MainActivity : ComponentActivity() {
 
     val configurationOverrideFlow = MutableStateFlow<ConfigurationOverride?>(null)
 
-    // val accessDriveScope: Scope = Scope(Scopes.DRIVE_APPFOLDER)
-
     private val addressBookRepository by inject<AddressBookRepositoryImpl>()
 
     private val googleSignInLauncher =
@@ -110,84 +110,6 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-    // private val launcher2 = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-    //     if (result.resultCode == RESULT_OK) {
-    //
-    //         val data: Intent? = result.data
-    //         try {
-    //             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-    //             // task.getResult(ApiException::class.java)
-    //             driveSetUp(task.result)
-    //         } catch (e: ApiException) {
-    //
-    //         }
-    //     }
-    // }
-
-    // private fun driveSetUp(account: GoogleSignInAccount) = lifecycleScope.launch {
-    //     // val account = GoogleSignIn.getLastSignedInAccount(this@MainActivity)
-    //     val credentials = GoogleAccountCredential.usingOAuth2(this@MainActivity, listOf(Scopes.DRIVE_FILE))
-    //         .apply {
-    //             selectedAccount = account.account ?: allAccounts.firstOrNull()
-    //         }
-    //
-    //     val driveService = Drive
-    //         .Builder(
-    //             AndroidHttp.newCompatibleTransport(),
-    //             GsonFactory(),
-    //             credentials
-    //         )
-    //         .setApplicationName(if (BuildConfig.DEBUG) "secant-android-debug" else "secant-android-release")
-    //         .build()
-    //
-    //     withContext(Dispatchers.IO) {
-    //         val file = createTempFileInInternalStorage()
-    //
-    //         if (file != null) {
-    //             uploadFile(driveService, file)
-    //         }
-    //     }
-    // }
-
-    // private fun createTempFileInInternalStorage(): File {
-    //     val file = File(filesDir, "TEXT")
-    //     file.writeText("test string")
-    //     return file
-    // }
-
-    // private fun uploadFile(
-    //     driveService: Drive,
-    //     localFile: File,
-    // ) {
-    //     try {
-    //         try {
-    //             val files = driveService.files().list().setSpaces("appDataFolder").execute().files
-    //                 .filter { it.name == "TEXT" }
-    //
-    //             files.forEach {
-    //                 driveService.files().delete(it.id).execute()
-    //             }
-    //         } catch (e: GoogleJsonResponseException) {
-    //             // e.details.code == 404
-    //         }
-    //         val metadata = com.google.api.services.drive.model.File()
-    //             .setParents(listOf("appDataFolder"))
-    //             .setMimeType("application/octet-stream")
-    //             .setName(localFile.name)
-    //         val fileContent = FileContent("application/octet-stream", localFile)
-    //         val fileMeta = driveService.files().create(metadata, fileContent).execute()
-    //     } catch (e: UserRecoverableAuthException) {
-    //         e.intent?.let {
-    //             googleSignInLauncher.launch(it)
-    //         }
-    //     } catch (e: UserRecoverableAuthIOException) {
-    //         e.intent?.let {
-    //             // launcher2.launch(it)
-    //         }
-    //     } catch (e: Exception) {
-    //     }
-    // }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -198,8 +120,6 @@ class MainActivity : ComponentActivity() {
         setupUiContent()
 
         monitorForBackgroundSync()
-
-        // launcher.launch(googleSignInClient?.signInIntent!!)
 
         lifecycleScope.launch {
             addressBookRepository.googleSignInRequest.collect { scope ->

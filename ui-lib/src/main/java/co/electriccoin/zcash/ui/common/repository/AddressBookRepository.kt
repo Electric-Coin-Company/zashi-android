@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package co.electriccoin.zcash.ui.common.repository
 
 import android.content.Context
@@ -150,6 +152,7 @@ class AddressBookRepositoryImpl(
         }
     }
 
+    @Suppress("UNUSED_PARAMETER")
     private fun mergeContacts(local: AddressBook, remote: AddressBook?): AddressBook = local // TBD
 
     private suspend fun withGoogleDrivePermission(internalOperation: InternalOperation) {
@@ -171,6 +174,7 @@ class AddressBookRepositoryImpl(
         GoogleSignIn.hasPermissions(GoogleSignIn.getLastSignedInAccount(context), Scope(GOOGLE_DRIVE_SCOPE))
     }
 
+    @Suppress("UNUSED_PARAMETER")
     private suspend fun executeInternalOperation(operation: InternalOperation, includeRemote: Boolean) {
         // if (includeRemote) {
         ensureSynchronization()

@@ -101,7 +101,7 @@ androidComponents {
 
 dependencies {
     implementation(libs.accompanist.permissions)
-    api(libs.androidx.activity)
+    implementation(libs.androidx.activity)
     implementation(libs.androidx.annotation)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.core)
@@ -159,19 +159,18 @@ dependencies {
         }
     }
 
-    api("com.google.http-client:google-http-client-gson:1.45.0") {
+    api(libs.google.http.client.gson) {
         exclude(group = "io.grpc")
     }
-    api("com.google.api-client:google-api-client-android:1.26.0") {
+    api(libs.google.api.client.android) {
         exclude(group = "org.apache.httpcomponents")
         exclude(group = "io.grpc")
     }
-    api("com.google.apis:google-api-services-drive:v3-rev136-1.25.0") {
+    api(libs.google.api.services.drive) {
         exclude(group = "org.apache.httpcomponents")
         exclude(group = "io.grpc")
     }
-    // api("com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava")
-    api("com.google.android.gms:play-services-auth:21.2.0") {
+    api(libs.play.services.auth) {
         exclude(group = "io.grpc")
     }
 }

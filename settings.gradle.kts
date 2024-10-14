@@ -185,11 +185,21 @@ dependencyResolutionManagement {
             val zcashSdkVersion = extra["ZCASH_SDK_VERSION"].toString()
             val zxingVersion = extra["ZXING_VERSION"].toString()
             val koinVersion = extra["KOIN_VERSION"].toString()
+            val googleHttpClientGsonVersion = extra["GOOGLE_HTTP_CLIENT_GSON_VERSION"].toString()
+            val googleApiClientAndroidVersion = extra["GOOGLE_API_CLIENT_ANDROID_VERSION"].toString()
+            val googleApiServicesDriveVersion = extra["GOOGLE_API_SERVICES_DRIVE_VERSION"].toString()
+            val playServicesAuthVersion = extra["PLAY_SERVICES_AUTH_VERSION"].toString()
+
 
             // Standalone versions
             version("flank", flankVersion)
             version("jacoco", jacocoVersion)
             version("java", javaVersion)
+
+            library("google-http-client-gson", "com.google.http-client:google-http-client-gson:$googleHttpClientGsonVersion")
+            library("google-api-client-android", "com.google.api-client:google-api-client-android:$googleApiClientAndroidVersion")
+            library("google-api-services-drive", "com.google.apis:google-api-services-drive:$googleApiServicesDriveVersion")
+            library("play-services-auth", "com.google.android.gms:play-services-auth:$playServicesAuthVersion")
 
             // Aliases
             library("accompanist-permissions", "com.google.accompanist:accompanist-permissions:$accompanistPermissionsVersion")

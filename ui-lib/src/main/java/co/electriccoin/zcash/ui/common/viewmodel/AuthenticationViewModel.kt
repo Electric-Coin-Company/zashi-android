@@ -117,6 +117,7 @@ class AuthenticationViewModel(
         authenticationResult.value = AuthenticationResult.None
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun authenticate(
         activity: MainActivity,
         initialAuthSystemWindowDelay: Duration = DEFAULT_INITIAL_DELAY.milliseconds,
