@@ -4,7 +4,9 @@ import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.os.SystemClock
+import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.VisibleForTesting
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,7 +16,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -30,6 +31,7 @@ import co.electriccoin.zcash.ui.common.compose.BindCompLocalProvider
 import co.electriccoin.zcash.ui.common.extension.setContentCompat
 import co.electriccoin.zcash.ui.common.model.OnboardingState
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
+import co.electriccoin.zcash.ui.common.repository.AddressBookRepositoryImpl
 import co.electriccoin.zcash.ui.common.viewmodel.AuthenticationUIState
 import co.electriccoin.zcash.ui.common.viewmodel.AuthenticationViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.HomeViewModel
@@ -51,18 +53,22 @@ import co.electriccoin.zcash.ui.screen.securitywarning.WrapSecurityWarning
 import co.electriccoin.zcash.ui.screen.support.WrapSupport
 import co.electriccoin.zcash.ui.screen.warning.viewmodel.StorageCheckViewModel
 import co.electriccoin.zcash.work.WorkIds
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
-class MainActivity : FragmentActivity() {
+class MainActivity : ComponentActivity() {
     private val homeViewModel by viewModel<HomeViewModel>()
 
     val walletViewModel by viewModel<WalletViewModel>()
@@ -75,6 +81,113 @@ class MainActivity : FragmentActivity() {
 
     val configurationOverrideFlow = MutableStateFlow<ConfigurationOverride?>(null)
 
+    // val accessDriveScope: Scope = Scope(Scopes.DRIVE_APPFOLDER)
+
+    private val addressBookRepository by inject<AddressBookRepositoryImpl>()
+
+    private val googleSignInLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            when (result.resultCode) {
+                RESULT_OK -> {
+                    try {
+                        addressBookRepository.onGoogleSignInSuccess(
+                            account = GoogleSignIn.getSignedInAccountFromIntent(result.data).result
+                        )
+                        Twig.info { "Google sign in success" }
+                    } catch (e: ApiException) {
+                        Twig.error(e) { "Google sign in failed" }
+                        addressBookRepository.onGoogleSignInError()
+                    }
+                }
+                RESULT_CANCELED -> {
+                    Twig.info { "Google sign in cancelled" }
+                    addressBookRepository.onGoogleSignInCancelled()
+                }
+                else -> {
+                    Twig.error { "Google sign in failed" }
+                    addressBookRepository.onGoogleSignInError()
+                }
+            }
+        }
+
+    // private val launcher2 = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+    //     if (result.resultCode == RESULT_OK) {
+    //
+    //         val data: Intent? = result.data
+    //         try {
+    //             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+    //             // task.getResult(ApiException::class.java)
+    //             driveSetUp(task.result)
+    //         } catch (e: ApiException) {
+    //
+    //         }
+    //     }
+    // }
+
+    // private fun driveSetUp(account: GoogleSignInAccount) = lifecycleScope.launch {
+    //     // val account = GoogleSignIn.getLastSignedInAccount(this@MainActivity)
+    //     val credentials = GoogleAccountCredential.usingOAuth2(this@MainActivity, listOf(Scopes.DRIVE_FILE))
+    //         .apply {
+    //             selectedAccount = account.account ?: allAccounts.firstOrNull()
+    //         }
+    //
+    //     val driveService = Drive
+    //         .Builder(
+    //             AndroidHttp.newCompatibleTransport(),
+    //             GsonFactory(),
+    //             credentials
+    //         )
+    //         .setApplicationName(if (BuildConfig.DEBUG) "secant-android-debug" else "secant-android-release")
+    //         .build()
+    //
+    //     withContext(Dispatchers.IO) {
+    //         val file = createTempFileInInternalStorage()
+    //
+    //         if (file != null) {
+    //             uploadFile(driveService, file)
+    //         }
+    //     }
+    // }
+
+    // private fun createTempFileInInternalStorage(): File {
+    //     val file = File(filesDir, "TEXT")
+    //     file.writeText("test string")
+    //     return file
+    // }
+
+    // private fun uploadFile(
+    //     driveService: Drive,
+    //     localFile: File,
+    // ) {
+    //     try {
+    //         try {
+    //             val files = driveService.files().list().setSpaces("appDataFolder").execute().files
+    //                 .filter { it.name == "TEXT" }
+    //
+    //             files.forEach {
+    //                 driveService.files().delete(it.id).execute()
+    //             }
+    //         } catch (e: GoogleJsonResponseException) {
+    //             // e.details.code == 404
+    //         }
+    //         val metadata = com.google.api.services.drive.model.File()
+    //             .setParents(listOf("appDataFolder"))
+    //             .setMimeType("application/octet-stream")
+    //             .setName(localFile.name)
+    //         val fileContent = FileContent("application/octet-stream", localFile)
+    //         val fileMeta = driveService.files().create(metadata, fileContent).execute()
+    //     } catch (e: UserRecoverableAuthException) {
+    //         e.intent?.let {
+    //             googleSignInLauncher.launch(it)
+    //         }
+    //     } catch (e: UserRecoverableAuthIOException) {
+    //         e.intent?.let {
+    //             // launcher2.launch(it)
+    //         }
+    //     } catch (e: Exception) {
+    //     }
+    // }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -85,6 +198,21 @@ class MainActivity : FragmentActivity() {
         setupUiContent()
 
         monitorForBackgroundSync()
+
+        // launcher.launch(googleSignInClient?.signInIntent!!)
+
+        lifecycleScope.launch {
+            addressBookRepository.googleSignInRequest.collect { scope ->
+                val googleSignInClient = GoogleSignIn.getClient(
+                    this@MainActivity, GoogleSignInOptions
+                        .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                        .requestScopes(scope)
+                        .build()
+                )
+
+                googleSignInLauncher.launch(googleSignInClient.signInIntent)
+            }
+        }
     }
 
     /**
