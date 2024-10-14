@@ -14,6 +14,7 @@ import co.electriccoin.zcash.ui.screen.request.ext.convertToDouble
 data class Request(
     val amountState: AmountState,
     val memoState: MemoState,
+    val qrCodeState: QrCodeState,
 )
 
 sealed class AmountState(
@@ -96,3 +97,9 @@ sealed class MemoState(
         }
     }
 }
+
+data class QrCodeState(
+    val requestUri: String,
+    val zecAmount: String,
+    val memo: String,
+)

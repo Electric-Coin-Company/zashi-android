@@ -3,7 +3,9 @@
 package co.electriccoin.zcash.ui.screen.request.view
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -31,12 +33,14 @@ import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.design.component.ZashiBottomBar
 import co.electriccoin.zcash.ui.design.component.ZashiButton
+import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.request.model.AmountState
 import co.electriccoin.zcash.ui.screen.request.model.MemoState
+import co.electriccoin.zcash.ui.screen.request.model.QrCodeState
 import co.electriccoin.zcash.ui.screen.request.model.Request
 import co.electriccoin.zcash.ui.screen.request.model.RequestCurrency
 import co.electriccoin.zcash.ui.screen.request.model.RequestState
@@ -62,6 +66,11 @@ private fun RequestPreview() =
                     request = Request(
                         amountState = AmountState.Valid("2.25", RequestCurrency.Zec),
                         memoState = MemoState.Valid("", 0, "2.25"),
+                        qrCodeState = QrCodeState(
+                            "",//TODO
+                            "0.25",
+                            memo = "Text memo"
+                        ),
                     ),
                     exchangeRateState = ExchangeRateState.OptedOut,
                     zcashCurrency = ZcashCurrency.ZEC,
@@ -145,7 +154,7 @@ private fun RequestBottomBar(
             is RequestState.Amount -> {
                 ZashiButton(
                     text = stringResource(id = R.string.request_amount_btn),
-                    onClick = { state.onDone() },
+                    onClick = state.onDone,
                     enabled = state.request.amountState.isValid(),
                     modifier = btnModifier
                 )
@@ -153,16 +162,25 @@ private fun RequestBottomBar(
             is RequestState.Memo -> {
                 ZashiButton(
                     enabled = state.request.memoState.isValid(),
-                    onClick = { state.onDone() },
+                    onClick = state.onDone,
                     text = stringResource(id = R.string.request_memo_btn),
                     modifier = btnModifier
                 )
             }
             is RequestState.QrCode -> {
                 ZashiButton(
-                    text = stringResource(id = R.string.request_share_btn),
+                    text = stringResource(id = R.string.request_qr_share_btn),
                     leadingIcon = painterResource(R.drawable.ic_share),
-                    onClick = { state.onDone() },
+                    onClick = state.onQrCodeShare,
+                    modifier = btnModifier
+                )
+
+                Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingTiny))
+
+                ZashiButton(
+                    colors = ZashiButtonDefaults.secondaryColors(),
+                    onClick = state.onClose,
+                    text = stringResource(id = R.string.request_qr_close_btn),
                     modifier = btnModifier
                 )
             }

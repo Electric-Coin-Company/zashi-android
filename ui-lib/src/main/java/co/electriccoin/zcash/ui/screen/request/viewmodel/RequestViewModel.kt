@@ -1,5 +1,10 @@
 package co.electriccoin.zcash.ui.screen.request.viewmodel
 
+import MemoBytes
+import NonNegativeAmount
+import Payment
+import PaymentRequest
+import RecipientAddress
 import android.app.Application
 import android.content.Context
 import android.graphics.Bitmap
@@ -26,6 +31,7 @@ import co.electriccoin.zcash.ui.screen.request.ext.convertToDouble
 import co.electriccoin.zcash.ui.screen.request.model.AmountState
 import co.electriccoin.zcash.ui.screen.request.model.MemoState
 import co.electriccoin.zcash.ui.screen.request.model.OnAmount
+import co.electriccoin.zcash.ui.screen.request.model.QrCodeState
 import co.electriccoin.zcash.ui.screen.request.model.Request
 import co.electriccoin.zcash.ui.screen.request.model.RequestCurrency
 import co.electriccoin.zcash.ui.screen.request.model.RequestStage
@@ -43,6 +49,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.zecdev.zip321.ZIP321
 import java.io.File
 
 class RequestViewModel(
@@ -59,6 +66,7 @@ class RequestViewModel(
 
     private val DEFAULT_AMOUNT = application.getString(R.string.request_amount_empty)
     private val DEFAULT_MEMO = ""
+    private val DEFAULT_QR_CODE_URI = ""
 
     // Request(
     // amount = Zatoshi(1),
@@ -74,7 +82,8 @@ class RequestViewModel(
     internal val request = MutableStateFlow(
         Request(
             amountState = AmountState.Default(DEFAULT_AMOUNT, RequestCurrency.Zec),
-            memoState = MemoState.Valid(DEFAULT_MEMO, 0, ""),
+            memoState = MemoState.Valid(DEFAULT_MEMO, 0, DEFAULT_AMOUNT),
+            qrCodeState = QrCodeState(DEFAULT_QR_CODE_URI, DEFAULT_AMOUNT, DEFAULT_MEMO),
         )
     )
 
@@ -93,19 +102,19 @@ class RequestViewModel(
                     monetarySeparators = getMonetarySeparators(),
                     onAmount = { onAmount(resolveExchangeRateValue(exchangeRateUsd), it) },
                     onBack = ::onBack,
-                    onDone = { onDone(RequestStage.AMOUNT, resolveExchangeRateValue(exchangeRateUsd)) },
+                    onDone = { onAmountDone(resolveExchangeRateValue(exchangeRateUsd)) },
                     onSwitch = { onSwitch(resolveExchangeRateValue(exchangeRateUsd), it) },
                     request = request,
                     zcashCurrency = getZcashCurrency(),
                 )
             }
             RequestStage.MEMO -> {
+                val addressType = addresses.fromReceiveAddressType(ReceiveAddressType.fromOrdinal(addressTypeOrdinal))
                 RequestState.Memo(
-                    walletAddress = addresses
-                        .fromReceiveAddressType(ReceiveAddressType.fromOrdinal(addressTypeOrdinal)),
+                    walletAddress = addressType,
                     request = request,
                     onMemo = { onMemo(it) },
-                    onDone = { onDone(RequestStage.MEMO, null) },
+                    onDone = { onMemoDone(addressType.address) },
                     onBack = ::onBack,
                     zcashCurrency = getZcashCurrency(),
                 )
@@ -116,11 +125,9 @@ class RequestViewModel(
                         .fromReceiveAddressType(ReceiveAddressType.fromOrdinal(addressTypeOrdinal)),
                     request = request,
                     onQrCodeShare = { onRequestQrCodeShare(it, versionInfo) },
-                    onDone = { onDone(
-                        currentStage = RequestStage.QR_CODE,
-                        conversion = null,
-                    ) },
                     onBack = ::onBack,
+                    onClose = ::onClose,
+                    zcashCurrency = getZcashCurrency(),
                 )
             }
         }
@@ -247,27 +254,38 @@ class RequestViewModel(
         }
     }
 
-    private fun onDone(currentStage: RequestStage, conversion: FiatCurrencyConversion?) = viewModelScope.launch {
-        val newStage = when(currentStage) {
-            RequestStage.AMOUNT -> {
-                val memoAmount = when(request.value.amountState.currency) {
-                    RequestCurrency.Fiat -> if (conversion != null) {
-                        request.value.amountState.toZecString(conversion)
-                    } else {
-                        Twig.error { "Unexpected screen state" }
-                        request.value.amountState.amount
-                    }
-                    RequestCurrency.Zec -> request.value.amountState.amount
-                }
-                request.emit(request.value.copy(memoState = MemoState.new(DEFAULT_MEMO, memoAmount)))
-                RequestStage.MEMO
+    private fun onClose() = viewModelScope.launch {
+        backNavigationCommand.emit(Unit)
+    }
+
+    private fun onAmountDone(conversion: FiatCurrencyConversion?) = viewModelScope.launch {
+        val memoAmount = when (request.value.amountState.currency) {
+            RequestCurrency.Fiat -> if (conversion != null) {
+                request.value.amountState.toZecString(conversion)
+            } else {
+                Twig.error { "Unexpected screen state" }
+                request.value.amountState.amount
             }
-            RequestStage.MEMO -> {
-                RequestStage.QR_CODE
-            }
-            RequestStage.QR_CODE -> TODO()
+
+            RequestCurrency.Zec -> request.value.amountState.amount
         }
-        stage.emit(newStage)
+        request.emit(request.value.copy(memoState = MemoState.new(DEFAULT_MEMO, memoAmount)))
+        stage.emit(RequestStage.MEMO)
+    }
+
+    private fun onMemoDone(address: String) = viewModelScope.launch {
+        request.emit(request.value.copy(
+            qrCodeState = QrCodeState(
+                requestUri = createZip321Uri(
+                    address = address,
+                    amount = request.value.memoState.zecAmount,
+                    memo = request.value.memoState.text
+                ),
+                zecAmount = request.value.memoState.zecAmount,
+                memo = request.value.memoState.text
+            ))
+        )
+        stage.emit(RequestStage.QR_CODE)
     }
 
     private fun onSwitch(conversion: FiatCurrencyConversion?, onSwitchTo: RequestCurrency) = viewModelScope.launch {
@@ -304,39 +322,27 @@ class RequestViewModel(
         request.emit(request.value.copy(memoState = memoState))
     }
 
-    // private fun onRequest(request: Request) = viewModelScope.launch {
-    //     val payment = Payment(
-    //         recipientAddress = RecipientAddress(request.recipientAddress.address),
-    //         nonNegativeAmount = NonNegativeAmount(request.amount.toZecString()),
-    //         memo = MemoBytes(request.memo),
-    //         label = "Test label",
-    //         message = "Thank you for your purchase",
-    //         otherParams = null
-    //     )
-    //
-    //     val paymentRequest = PaymentRequest(payments = listOf(payment))
-    //
-    //     val zip321Uri = ZIP321.uriString(
-    //         paymentRequest,
-    //         ZIP321.FormattingOptions.UseEmptyParamIndex(omitAddressLabel = true)
-    //     )
-    //
-    //     val zip321Request = ZIP321.request(
-    //         payment,
-    //         ZIP321.FormattingOptions.UseEmptyParamIndex(omitAddressLabel = true)
-    //     )
-    //
-    //     Twig.error { "ZIP321: Request: $zip321Request" }
-    //     Twig.error { "ZIP321: URI: $zip321Uri" }
-    //
-    //     val proposal = getSynchronizer().proposeFulfillingPaymentUri(Account.DEFAULT, zip321Uri)
-    //
-    //     Twig.error { "ZIP321: Proposal: ${proposal.toPrettyString()}" }
-    //
-    //     val paymentRequestFromUri = ZIP321.request(zip321Uri, null)
-    //
-    //     Twig.error { "ZIP321: Proposal from Uri: $paymentRequestFromUri" }
-    // }
+    private fun createZip321Uri(address: String, amount: String, memo: String): String {
+        val payment = Payment(
+            recipientAddress = RecipientAddress(address),
+            nonNegativeAmount = NonNegativeAmount(amount),
+            memo = MemoBytes(memo),
+            otherParams = null,
+            label = null,
+            message = null
+        )
+
+        val paymentRequest = PaymentRequest(payments = listOf(payment))
+
+        val zip321Uri = ZIP321.uriString(
+            paymentRequest,
+            ZIP321.FormattingOptions.UseEmptyParamIndex(omitAddressLabel = true)
+        )
+
+        Twig.info { "Request Zip321 uri: $zip321Uri" }
+
+        return zip321Uri
+    }
 
     private fun onRequestQrCodeShare(
         bitmap: ImageBitmap,
@@ -392,8 +398,8 @@ fun shareData(
                 context = context,
                 dataFilePath = bitmapFile.absolutePath,
                 fileType = FileShareUtil.ZASHI_QR_CODE_MIME_TYPE,
-                shareText = context.getString(R.string.request_share_chooser_text),
-                sharePickerText = context.getString(R.string.request_share_chooser_title),
+                shareText = context.getString(R.string.request_qr_code_share_chooser_text),
+                sharePickerText = context.getString(R.string.request_qr_code_share_chooser_title),
                 versionInfo = versionInfo,
             )
         runCatching {

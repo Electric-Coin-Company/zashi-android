@@ -42,7 +42,7 @@ internal fun WrapRequest(addressType: Int) {
         requestViewModel.shareResultCommand.collect { sharedSuccessfully ->
             if (!sharedSuccessfully) {
                 snackbarHostState.showSnackbar(
-                    message = context.getString(R.string.request_data_unable_to_share)
+                    message = context.getString(R.string.request_qr_code_data_unable_to_share)
                 )
             }
         }

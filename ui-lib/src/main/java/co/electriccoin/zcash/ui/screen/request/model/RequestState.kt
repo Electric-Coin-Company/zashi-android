@@ -9,10 +9,7 @@ import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 internal sealed class RequestState {
     data object Loading : RequestState()
 
-    sealed class Prepared(
-        open val onBack: () -> Unit,
-        open val onDone: () -> Unit,
-    ) : RequestState()
+    sealed class Prepared(open val onBack: () -> Unit) : RequestState()
 
     data class Amount(
         val request: Request,
@@ -22,23 +19,24 @@ internal sealed class RequestState {
         val onAmount: (OnAmount) -> Unit,
         val onSwitch: (RequestCurrency) -> Unit,
         override val onBack: () -> Unit,
-        override val onDone: () -> Unit,
-    ) : Prepared(onBack, onDone)
+        val onDone: () -> Unit,
+    ) : Prepared(onBack)
 
     data class Memo(
         val request: Request,
         val walletAddress: WalletAddress,
         val zcashCurrency: ZcashCurrency,
         val onMemo: (MemoState) -> Unit,
+        val onDone: () -> Unit,
         override val onBack: () -> Unit,
-        override val onDone: () -> Unit,
-    ) : Prepared(onBack, onDone)
+    ) : Prepared(onBack)
 
     data class QrCode(
         val request: Request,
         val walletAddress: WalletAddress,
         val onQrCodeShare: (ImageBitmap) -> Unit,
         override val onBack: () -> Unit,
-        override val onDone: () -> Unit,
-    ) : Prepared(onBack, onDone)
+        val onClose: () -> Unit,
+        val zcashCurrency: ZcashCurrency,
+    ) : Prepared(onBack)
 }
