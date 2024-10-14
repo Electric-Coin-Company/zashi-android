@@ -108,7 +108,7 @@ private fun RequestMemoZecAmountView(
 ) {
     val zecText = buildAnnotatedString {
         withStyle(style = SpanStyle(color = ZashiColors.Text.textPrimary)) {
-            append(state.request.amountState.amount)
+            append(state.request.memoState.zecAmount)
         }
         append("\u2009") // Add an extra thin space between the texts
         withStyle(style = SpanStyle(color = ZashiColors.Text.textQuaternary)) {
@@ -148,7 +148,7 @@ private fun RequestMemoTextField(
             // Empty error message as the length counter color is used for error signaling
             error = if (memoState.isValid()) null else "",
             onValueChange = {
-                state.onMemo(MemoState.new(it))
+                state.onMemo(MemoState.new(it, memoState.zecAmount))
             },
             keyboardOptions =
             KeyboardOptions(

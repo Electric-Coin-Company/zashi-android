@@ -38,6 +38,7 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.request.model.AmountState
 import co.electriccoin.zcash.ui.screen.request.model.MemoState
 import co.electriccoin.zcash.ui.screen.request.model.Request
+import co.electriccoin.zcash.ui.screen.request.model.RequestCurrency
 import co.electriccoin.zcash.ui.screen.request.model.RequestState
 
 @Composable
@@ -59,8 +60,8 @@ private fun RequestPreview() =
             state =
                 RequestState.Amount(
                     request = Request(
-                        amountState = AmountState.Valid("2.25"),
-                        memoState = MemoState.Valid("", 0),
+                        amountState = AmountState.Valid("2.25", RequestCurrency.Zec),
+                        memoState = MemoState.Valid("", 0, "2.25"),
                     ),
                     exchangeRateState = ExchangeRateState.OptedOut,
                     zcashCurrency = ZcashCurrency.ZEC,

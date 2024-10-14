@@ -19,10 +19,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -62,28 +58,20 @@ internal fun RequestAmountView(
 
         InvalidAmountView(state.request.amountState)
 
-        var zecValuePreferred by rememberSaveable { mutableStateOf(true) }
-
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
         when(state.exchangeRateState) {
             is ExchangeRateState.Data -> {
-                if (zecValuePreferred) {
+                if (state.request.amountState.currency == RequestCurrency.Zec) {
                     RequestAmountWithMainZecView(
                         state = state,
-                        onFiatPreferenceSwitch = {
-                            state.onSwitch(RequestCurrency.Fiat)
-                            zecValuePreferred = !zecValuePreferred
-                        },
+                        onFiatPreferenceSwitch = { state.onSwitch(RequestCurrency.Fiat) },
                         modifier = Modifier.padding(horizontal = ZcashTheme.dimens.screenHorizontalSpacingRegular)
                     )
                 } else {
                     RequestAmountWithMainFiatView(
                         state = state,
-                        onFiatPreferenceSwitch = {
-                            state.onSwitch(RequestCurrency.Zec)
-                            zecValuePreferred = !zecValuePreferred
-                        },
+                        onFiatPreferenceSwitch = { state.onSwitch(RequestCurrency.Zec) },
                         modifier = Modifier.padding(horizontal = ZcashTheme.dimens.screenHorizontalSpacingRegular)
                     )
                 }
@@ -100,14 +88,7 @@ internal fun RequestAmountView(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        RequestAmountKeyboardView(
-            state = state,
-            currentCurrency = if (zecValuePreferred) {
-                RequestCurrency.Zec
-            } else {
-                RequestCurrency.Fiat
-            },
-        )
+        RequestAmountKeyboardView(state = state)
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
     }
@@ -289,7 +270,6 @@ private fun RequestAmountNoFiatView(
 @Composable
 private fun RequestAmountKeyboardView(
     state: RequestState.Amount,
-    currentCurrency: RequestCurrency,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -304,20 +284,20 @@ private fun RequestAmountKeyboardView(
         ) {
             RequestAmountKeyboardTextButton(
                 text = stringResource(id = R.string.request_amount_keyboard_one),
-                onClick = { state.onAmount(OnAmount.Number(1, currentCurrency)) }
+                onClick = { state.onAmount(OnAmount.Number(1)) }
             )
             RequestAmountKeyboardTextButton(
                 text = stringResource(id = R.string.request_amount_keyboard_four),
-                onClick = { state.onAmount(OnAmount.Number(4, currentCurrency)) }
+                onClick = { state.onAmount(OnAmount.Number(4)) }
             )
             RequestAmountKeyboardTextButton(
                 text = stringResource(id = R.string.request_amount_keyboard_seven),
-                onClick = { state.onAmount(OnAmount.Number(7, currentCurrency)) }
+                onClick = { state.onAmount(OnAmount.Number(7)) }
             )
             RequestAmountKeyboardTextButton(
                 text = state.monetarySeparators.decimal.toString(),
                 onClick = {
-                    state.onAmount(OnAmount.Separator(state.monetarySeparators.decimal.toString(), currentCurrency))
+                    state.onAmount(OnAmount.Separator(state.monetarySeparators.decimal.toString()))
                 }
             )
         }
@@ -326,19 +306,19 @@ private fun RequestAmountKeyboardView(
         ) {
             RequestAmountKeyboardTextButton(
                 text = stringResource(id = R.string.request_amount_keyboard_two),
-                onClick = { state.onAmount(OnAmount.Number(2, currentCurrency)) }
+                onClick = { state.onAmount(OnAmount.Number(2)) }
             )
             RequestAmountKeyboardTextButton(
                 text = stringResource(id = R.string.request_amount_keyboard_five),
-                onClick = { state.onAmount(OnAmount.Number(5, currentCurrency)) }
+                onClick = { state.onAmount(OnAmount.Number(5)) }
             )
             RequestAmountKeyboardTextButton(
                 text = stringResource(id = R.string.request_amount_keyboard_eight),
-                onClick = { state.onAmount(OnAmount.Number(8, currentCurrency)) }
+                onClick = { state.onAmount(OnAmount.Number(8)) }
             )
             RequestAmountKeyboardTextButton(
                 text = stringResource(id = R.string.request_amount_keyboard_zero),
-                onClick = { state.onAmount(OnAmount.Number(0, currentCurrency)) }
+                onClick = { state.onAmount(OnAmount.Number(0)) }
             )
         }
         Column(
@@ -346,20 +326,20 @@ private fun RequestAmountKeyboardView(
         ) {
             RequestAmountKeyboardTextButton(
                 text = stringResource(id = R.string.request_amount_keyboard_three),
-                onClick = { state.onAmount(OnAmount.Number(3, currentCurrency)) }
+                onClick = { state.onAmount(OnAmount.Number(3)) }
             )
             RequestAmountKeyboardTextButton(
                 text = stringResource(id = R.string.request_amount_keyboard_six),
-                onClick = { state.onAmount(OnAmount.Number(6, currentCurrency)) }
+                onClick = { state.onAmount(OnAmount.Number(6)) }
             )
             RequestAmountKeyboardTextButton(
                 text = stringResource(id = R.string.request_amount_keyboard_nine),
-                onClick = { state.onAmount(OnAmount.Number(9, currentCurrency)) }
+                onClick = { state.onAmount(OnAmount.Number(9)) }
             )
             RequestAmountKeyboardIconButton(
                 painter = painterResource(id = R.drawable.ic_delete),
                 contentDescription = stringResource(id = R.string.request_amount_keyboard_delete),
-                onClick = { state.onAmount(OnAmount.Delete(currentCurrency)) }
+                onClick = { state.onAmount(OnAmount.Delete) }
             )
         }
     }
