@@ -394,11 +394,17 @@ class RequestViewModel(
         memo: String,
         zip321BuildUriUseCase: Zip321BuildUriUseCase,
     ): String {
-        return zip321BuildUriUseCase.invoke(
-            address = address,
-            amount = amount,
-            memo = memo
-        )
+        val amountNumber = amount.convertToDouble()?.toBigDecimal()
+        return if (amountNumber == null) {
+            Twig.error { "Unexpected amount state" }
+            DEFAULT_URI
+        } else {
+            zip321BuildUriUseCase.invoke(
+                address = address,
+                amount = amountNumber,
+                memo = memo
+            )
+        }
     }
 
     private fun onRequestQrCodeShare(

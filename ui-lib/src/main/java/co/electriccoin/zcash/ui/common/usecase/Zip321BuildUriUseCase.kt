@@ -7,11 +7,12 @@ import PaymentRequest
 import RecipientAddress
 import co.electriccoin.zcash.spackle.Twig
 import org.zecdev.zip321.ZIP321
+import java.math.BigDecimal
 
 class Zip321BuildUriUseCase {
     operator fun invoke(
         address: String,
-        amount: String,
+        amount: BigDecimal,
         memo: String,
     ) = buildUri(
         address = address,
@@ -21,7 +22,7 @@ class Zip321BuildUriUseCase {
 
     private fun buildUri(
         address: String,
-        amount: String,
+        amount: BigDecimal,
         memo: String,
     ): String {
         val payment =

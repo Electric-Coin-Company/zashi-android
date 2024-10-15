@@ -5,6 +5,7 @@ import android.icu.text.NumberFormat
 import cash.z.ecc.android.sdk.model.FRACTION_DIGITS
 import cash.z.ecc.android.sdk.model.Locale
 import cash.z.ecc.android.sdk.model.toJavaLocale
+import java.math.BigDecimal
 import java.text.ParseException
 
 internal fun String.convertToDouble(): Double? {
