@@ -40,6 +40,7 @@ class AddContactViewModel(
                 when (validateContactAddress(address)) {
                     ValidateContactAddressUseCase.Result.Invalid ->
                         stringRes(R.string.contact_address_error_invalid)
+
                     ValidateContactAddressUseCase.Result.NotUnique ->
                         stringRes(R.string.contact_address_error_not_unique)
 
@@ -104,10 +105,10 @@ class AddContactViewModel(
             ButtonState(
                 text = stringRes(R.string.add_new_contact_primary_btn),
                 isEnabled =
-                    address.error == null &&
-                        name.error == null &&
-                        contactAddress.value.isNotEmpty() &&
-                        contactName.value.isNotEmpty(),
+                address.error == null &&
+                    name.error == null &&
+                    contactAddress.value.isNotEmpty() &&
+                    contactName.value.isNotEmpty(),
                 onClick = ::onSaveButtonClick,
                 isLoading = isSavingContact
             )
@@ -141,6 +142,8 @@ class AddContactViewModel(
 
     private fun onSaveButtonClick() =
         viewModelScope.launch {
+            if (isSavingContact.value) return@launch
+
             isSavingContact.update { true }
             saveContact(name = contactName.value, address = contactAddress.value)
             backNavigationCommand.emit(Unit)

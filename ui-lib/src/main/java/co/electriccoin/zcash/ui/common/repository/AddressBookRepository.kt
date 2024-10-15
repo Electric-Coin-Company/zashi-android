@@ -32,7 +32,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import kotlinx.datetime.Clock
 import java.io.IOException
+import kotlin.math.max
 
 interface AddressBookRepository {
     val addressBook: Flow<AddressBook?>
@@ -137,8 +139,8 @@ class AddressBookRepositoryImpl(
         }
     }
 
-    private suspend fun ensureSynchronization() {
-        if (addressBookCache.value == null) {
+    private suspend fun ensureSynchronization(forceUpdate: Boolean = false) {
+        if (forceUpdate || addressBookCache.value == null) {
             val remote = executeRemoteAddressBookSafe {
                 val contacts = remoteAddressBookDataSource.fetchContacts()
                 Twig.info { "Address Book: ensureSynchronization - remote address book loaded" }
@@ -158,8 +160,18 @@ class AddressBookRepositoryImpl(
         }
     }
 
-    @Suppress("UNUSED_PARAMETER")
-    private fun mergeContacts(local: AddressBook, remote: AddressBook?): AddressBook = local // TBD
+    private fun mergeContacts(local: AddressBook, remote: AddressBook?): AddressBook {
+        if (remote == null) return local
+        return AddressBook(
+            lastUpdated = Clock.System.now(),
+            version = max(local.version, remote.version),
+            contacts = (local.contacts + remote.contacts)
+                .groupBy { it.address }
+                .map { (_, contacts) ->
+                    contacts.maxBy { it.lastUpdated }
+                }
+        )
+    }
 
     private suspend fun withGoogleDrivePermission(internalOperation: InternalOperation) {
         val remoteConsent = getRemoteConsent()
@@ -192,7 +204,6 @@ class AddressBookRepositoryImpl(
     private suspend fun getRemoteConsent() = remoteAddressBookDataSource.getRemoteConsent()
 
     private suspend fun executeInternalOperation(operation: InternalOperation) {
-        ensureSynchronization()
         val local = when (operation) {
             is InternalOperation.Delete -> {
                 Twig.info { "Address Book: executeInternalOperation - delete" }
@@ -214,10 +225,7 @@ class AddressBookRepositoryImpl(
             }
         }
         addressBookCache.update { local }
-        executeRemoteAddressBookSafe {
-            remoteAddressBookDataSource.uploadContacts()
-            Twig.info { "Address Book: executeInternalOperation - remote address book uploaded" }
-        }
+        ensureSynchronization(forceUpdate = true)
     }
 
     private suspend fun withNonCancellableSemaphore(block: suspend () -> Unit) {

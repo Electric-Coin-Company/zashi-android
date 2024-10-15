@@ -64,10 +64,10 @@ class RemoteAddressBookDataSourceImpl(
 
         fun fetchRemoteFile(service: Drive): GoogleDriveFile? {
             return try {
-                service.files().list().setSpaces("appDataFolder").execute().files
-                    .find { it.name == REMOTE_ADDRESS_BOOK_FILE_NAME }
+                service.files().list().setSpaces(DRIVE_PRIVATE_APP_FOLDER).execute().files
+                    .find { it.name == DRIVE_ADDRESS_BOOK_FILE_NAME }
             } catch (e: GoogleJsonResponseException) {
-                Twig.info(e) { "No files found on google drive name $REMOTE_ADDRESS_BOOK_FILE_NAME" }
+                Twig.info(e) { "No files found on google drive name $DRIVE_ADDRESS_BOOK_FILE_NAME" }
                 null
             }
         }
@@ -82,7 +82,7 @@ class RemoteAddressBookDataSourceImpl(
 
                 localFile
             } catch (e: GoogleJsonResponseException) {
-                Twig.info(e) { "No files found on google drive name $REMOTE_ADDRESS_BOOK_FILE_NAME" }
+                Twig.info(e) { "No files found on google drive name $DRIVE_ADDRESS_BOOK_FILE_NAME" }
                 null
             }
         }
@@ -110,14 +110,14 @@ class RemoteAddressBookDataSourceImpl(
 
         fun deleteExistingRemoteFiles(service: Drive) {
             try {
-                val files = service.files().list().setSpaces("appDataFolder").execute().files
-                    .filter { it.name == REMOTE_ADDRESS_BOOK_FILE_NAME }
+                val files = service.files().list().setSpaces(DRIVE_PRIVATE_APP_FOLDER).execute().files
+                    .filter { it.name == DRIVE_ADDRESS_BOOK_FILE_NAME }
                 files.forEach {
                     service.files().delete(it.id).execute()
                 }
             } catch (e: GoogleJsonResponseException) {
                 if (e.statusCode == 404) {
-                    Twig.info(e) { "No files found on google drive name $REMOTE_ADDRESS_BOOK_FILE_NAME" }
+                    Twig.info(e) { "No files found on google drive name $DRIVE_ADDRESS_BOOK_FILE_NAME" }
                 } else {
                     throw e
                 }
@@ -126,7 +126,7 @@ class RemoteAddressBookDataSourceImpl(
 
         fun createRemoteFile(file: File, service: Drive) {
             val metadata = GoogleDriveFile()
-                .setParents(listOf("appDataFolder"))
+                .setParents(listOf(DRIVE_PRIVATE_APP_FOLDER))
                 .setMimeType("application/octet-stream")
                 .setName(file.name)
             val fileContent = FileContent("application/octet-stream", file)
@@ -150,13 +150,14 @@ class RemoteAddressBookDataSourceImpl(
         val drive = createGoogleDriveService()
 
         try {
-            drive.about().get().execute()
+            drive.files().list().setSpaces(DRIVE_PRIVATE_APP_FOLDER).execute()
             RemoteConsentResult.HasRemoteConsent
         } catch (e: UserRecoverableAuthException) {
             RemoteConsentResult.NoRemoteConsent(e.intent)
         } catch (e: UserRecoverableAuthIOException) {
             RemoteConsentResult.NoRemoteConsent(e.intent)
         } catch (e: Exception) {
+            Twig.error(e) { "Error getting remote consent" }
             RemoteConsentResult.NoRemoteConsent(null)
         }
     }
@@ -175,9 +176,10 @@ class RemoteAddressBookDataSourceImpl(
                 GsonFactory(),
                 credentials
             )
-            .setApplicationName(if (BuildConfig.DEBUG) "secant-android-debug" else "secant-android-release")
+            .setApplicationName(if (BuildConfig.DEBUG) "secant-android-debug" else "Zashi")
             .build()
     }
 }
 
-private const val REMOTE_ADDRESS_BOOK_FILE_NAME = "address_book"
+private const val DRIVE_PRIVATE_APP_FOLDER = "appDataFolder"
+private const val DRIVE_ADDRESS_BOOK_FILE_NAME = "address_book"

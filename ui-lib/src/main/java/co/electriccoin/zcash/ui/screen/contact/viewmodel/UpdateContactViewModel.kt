@@ -173,6 +173,7 @@ class UpdateContactViewModel(
 
     private fun onUpdateButtonClick() =
         viewModelScope.launch {
+            if (isDeletingContact.value || isUpdatingContact.value) return@launch
             contact?.let {
                 isUpdatingContact.update { true }
                 updateContact(contact = it, name = contactName.value, address = contactAddress.value)
@@ -183,6 +184,7 @@ class UpdateContactViewModel(
 
     private fun onDeleteButtonClick() =
         viewModelScope.launch {
+            if (isDeletingContact.value || isUpdatingContact.value) return@launch
             contact?.let {
                 isDeletingContact.update { true }
                 deleteContact(it)
