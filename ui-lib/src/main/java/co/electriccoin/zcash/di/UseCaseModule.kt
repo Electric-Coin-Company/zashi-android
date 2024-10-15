@@ -19,10 +19,12 @@ import co.electriccoin.zcash.ui.common.usecase.PersistEndpointUseCase
 import co.electriccoin.zcash.ui.common.usecase.RefreshFastestServersUseCase
 import co.electriccoin.zcash.ui.common.usecase.RescanBlockchainUseCase
 import co.electriccoin.zcash.ui.common.usecase.SaveContactUseCase
+import co.electriccoin.zcash.ui.common.usecase.ShareQrImageUseCase
 import co.electriccoin.zcash.ui.common.usecase.UpdateContactUseCase
 import co.electriccoin.zcash.ui.common.usecase.ValidateContactAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.ValidateContactNameUseCase
 import co.electriccoin.zcash.ui.common.usecase.ValidateEndpointUseCase
+import co.electriccoin.zcash.ui.common.usecase.Zip321BuildUriUseCase
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
@@ -51,4 +53,6 @@ val useCaseModule =
         singleOf(::ObserveContactPickedUseCase)
         singleOf(::GetAddressesUseCase)
         singleOf(::CopyToClipboardUseCase)
+        singleOf(::ShareQrImageUseCase)
+        singleOf(::Zip321BuildUriUseCase)
     }

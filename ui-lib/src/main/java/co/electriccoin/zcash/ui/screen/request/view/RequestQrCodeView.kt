@@ -66,11 +66,11 @@ internal fun RequestQrCodeView(
             )
         )
 
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingMid))
 
         RequestQrCodeZecAmountView(
             state = state,
-            modifier = Modifier.padding(horizontal = ZcashTheme.dimens.screenHorizontalSpacingRegular)
+            modifier = Modifier.padding(horizontal = ZcashTheme.dimens.spacingSmall)
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingBig))

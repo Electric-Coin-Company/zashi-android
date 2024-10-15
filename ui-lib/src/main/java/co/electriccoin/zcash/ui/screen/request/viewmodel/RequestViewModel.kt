@@ -1,13 +1,6 @@
 package co.electriccoin.zcash.ui.screen.request.viewmodel
 
-import MemoBytes
-import NonNegativeAmount
-import Payment
-import PaymentRequest
-import RecipientAddress
 import android.app.Application
-import android.content.Context
-import android.graphics.Bitmap
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.lifecycle.ViewModel
@@ -15,13 +8,12 @@ import androidx.lifecycle.viewModelScope
 import cash.z.ecc.android.sdk.model.FiatCurrencyConversion
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.spackle.Twig
-import co.electriccoin.zcash.spackle.getInternalCacheDirSuspend
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.common.provider.GetMonetarySeparatorProvider
-import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
 import co.electriccoin.zcash.ui.common.provider.GetZcashCurrencyProvider
 import co.electriccoin.zcash.ui.common.usecase.GetAddressesUseCase
+import co.electriccoin.zcash.ui.common.usecase.ShareQrImageUseCase
+import co.electriccoin.zcash.ui.common.usecase.Zip321BuildUriUseCase
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.screen.qrcode.ext.fromReceiveAddressType
@@ -37,33 +29,24 @@ import co.electriccoin.zcash.ui.screen.request.model.Request
 import co.electriccoin.zcash.ui.screen.request.model.RequestCurrency
 import co.electriccoin.zcash.ui.screen.request.model.RequestStage
 import co.electriccoin.zcash.ui.screen.request.model.RequestState
-import co.electriccoin.zcash.ui.util.FileShareUtil
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
-import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import org.zecdev.zip321.ZIP321
-import java.io.File
 
 class RequestViewModel(
     private val addressTypeOrdinal: Int,
     private val application: Application,
     getAddresses: GetAddressesUseCase,
-    getVersionInfo: GetVersionInfoProvider,
     walletViewModel: WalletViewModel,
     getZcashCurrency: GetZcashCurrencyProvider,
     getMonetarySeparators: GetMonetarySeparatorProvider,
+    shareImageBitmap: ShareQrImageUseCase,
+    zip321BuildUriUseCase: Zip321BuildUriUseCase,
 ) : ViewModel() {
-    private val versionInfo by lazy { getVersionInfo() }
-
     private val DEFAULT_AMOUNT = application.getString(R.string.request_amount_empty)
     private val DEFAULT_MEMO = ""
     private val DEFAULT_QR_CODE_URI = ""
@@ -104,7 +87,7 @@ class RequestViewModel(
                     walletAddress = walletAddress,
                     request = request,
                     onMemo = { onMemo(it) },
-                    onDone = { onMemoDone(walletAddress.address) },
+                    onDone = { onMemoDone(walletAddress.address, zip321BuildUriUseCase) },
                     onBack = ::onBack,
                     zcashCurrency = getZcashCurrency(),
                 )
@@ -113,8 +96,8 @@ class RequestViewModel(
                 RequestState.QrCode(
                     walletAddress = walletAddress,
                     request = request,
-                    onQrCodeGenerate = { qrCodeForValue(walletAddress.address, it) },
-                    onQrCodeShare = { onRequestQrCodeShare(it, versionInfo) },
+                    onQrCodeGenerate = { qrCodeForValue(request.qrCodeState.requestUri, it) },
+                    onQrCodeShare = { onRequestQrCodeShare(it, shareImageBitmap) },
                     onBack = ::onBack,
                     onClose = ::onClose,
                     zcashCurrency = getZcashCurrency(),
@@ -263,13 +246,14 @@ class RequestViewModel(
         stage.emit(RequestStage.MEMO)
     }
 
-    private fun onMemoDone(address: String) = viewModelScope.launch {
+    private fun onMemoDone(address: String, zip321BuildUriUseCase: Zip321BuildUriUseCase) = viewModelScope.launch {
         request.emit(request.value.copy(
             qrCodeState = QrCodeState(
                 requestUri = createZip321Uri(
                     address = address,
                     amount = request.value.memoState.zecAmount,
-                    memo = request.value.memoState.text
+                    memo = request.value.memoState.text,
+                    zip321BuildUriUseCase = zip321BuildUriUseCase
                 ),
                 zecAmount = request.value.memoState.zecAmount,
                 memo = request.value.memoState.text,
@@ -313,36 +297,29 @@ class RequestViewModel(
         request.emit(request.value.copy(memoState = memoState))
     }
 
-    private fun createZip321Uri(address: String, amount: String, memo: String): String {
-        val payment = Payment(
-            recipientAddress = RecipientAddress(address),
-            nonNegativeAmount = NonNegativeAmount(amount),
-            memo = MemoBytes(memo),
-            otherParams = null,
-            label = null,
-            message = null
+    private fun createZip321Uri(
+        address: String,
+        amount: String,
+        memo: String,
+        zip321BuildUriUseCase: Zip321BuildUriUseCase,
+    ): String {
+        return zip321BuildUriUseCase.invoke(
+            address = address,
+            amount = amount,
+            memo = memo
         )
-
-        val paymentRequest = PaymentRequest(payments = listOf(payment))
-
-        val zip321Uri = ZIP321.uriString(
-            paymentRequest,
-            ZIP321.FormattingOptions.UseEmptyParamIndex(omitAddressLabel = true)
-        )
-
-        Twig.info { "Request Zip321 uri: $zip321Uri" }
-
-        return zip321Uri
     }
 
     private fun onRequestQrCodeShare(
         bitmap: ImageBitmap,
-        versionInfo: VersionInfo
+        shareImageBitmap: ShareQrImageUseCase,
     ) = viewModelScope.launch {
-        shareData(
-            context = application.applicationContext,
-            qrImageBitmap = bitmap.asAndroidBitmap(),
-            versionInfo = versionInfo
+        shareImageBitmap(
+            shareImageBitmap = bitmap.asAndroidBitmap(),
+            filePrefix = TEMP_FILE_NAME_PREFIX,
+            fileSuffix = TEMP_FILE_NAME_SUFFIX,
+            shareText = application.getString(R.string.request_qr_code_share_chooser_text),
+            sharePickerText = application.getString(R.string.request_qr_code_share_chooser_title),
         ).collect { shareResult ->
             if (shareResult) {
                 Twig.info { "Sharing the request QR code was successful" }
@@ -355,7 +332,7 @@ class RequestViewModel(
     }
 
     private fun qrCodeForValue(
-        address: String,
+        value: String,
         size: Int,
     ) = viewModelScope.launch {
         // In the future, use actual/expect to switch QR code generator implementations for multiplatform
@@ -364,68 +341,13 @@ class RequestViewModel(
         // representation.  This should have minimal performance impact since the QR code is relatively
         // small and we only generate QR codes infrequently.
 
-        val qrCodePixelArray = JvmQrCodeGenerator.generate(address, size)
+        val qrCodePixelArray = JvmQrCodeGenerator.generate(value, size)
         val bitmap = AndroidQrCodeImageGenerator.generate(qrCodePixelArray, size)
-        val newQrCodeState = request.value.qrCodeState.copy(bitmap = bitmap)
 
+        val newQrCodeState = request.value.qrCodeState.copy(bitmap = bitmap)
         request.emit(request.value.copy(qrCodeState = newQrCodeState))
     }
 }
 
-private const val CACHE_SUBDIR = "zcash_address_qr_images" // NON-NLS
-private const val TEMP_FILE_NAME_PREFIX = "zcash_request_qr_" // NON-NLS
+private const val TEMP_FILE_NAME_PREFIX = "zip_321_request_qr_" // NON-NLS
 private const val TEMP_FILE_NAME_SUFFIX = ".png" // NON-NLS
-
-fun shareData(
-    context: Context,
-    qrImageBitmap: Bitmap,
-    versionInfo: VersionInfo
-): Flow<Boolean> =
-    callbackFlow {
-        // Initialize cache directory
-        val cacheDir = context.getInternalCacheDirSuspend(CACHE_SUBDIR)
-
-        // Save the bitmap to a temporary file in the cache directory
-        val bitmapFile =
-            withContext(Dispatchers.IO) {
-                File.createTempFile(
-                    TEMP_FILE_NAME_PREFIX,
-                    TEMP_FILE_NAME_SUFFIX,
-                    cacheDir,
-                ).also {
-                    it.storeBitmap(qrImageBitmap)
-                }
-            }
-
-        // Example of the expected temporary file path:
-        // /data/user/0/co.electriccoin.zcash.debug/cache/zcash_address_qr_images/
-        // zcash_address_qr_6455164324646067652.png
-
-        val shareIntent =
-            FileShareUtil.newShareContentIntent(
-                context = context,
-                dataFilePath = bitmapFile.absolutePath,
-                fileType = FileShareUtil.ZASHI_QR_CODE_MIME_TYPE,
-                shareText = context.getString(R.string.request_qr_code_share_chooser_text),
-                sharePickerText = context.getString(R.string.request_qr_code_share_chooser_title),
-                versionInfo = versionInfo,
-            )
-        runCatching {
-            context.startActivity(shareIntent)
-            trySend(true)
-        }.onFailure {
-            trySend(false)
-        }
-        awaitClose {
-            // No resources to release
-        }
-    }
-
-suspend fun File.storeBitmap(bitmap: Bitmap) =
-    withContext(Dispatchers.IO) {
-        outputStream().use { fOut ->
-            @Suppress("MagicNumber")
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fOut)
-            fOut.flush()
-        }
-    }
