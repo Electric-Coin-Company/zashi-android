@@ -15,7 +15,7 @@ import java.io.File
 
 private const val CACHE_SUBDIR = "zashi_qr_images" // NON-NLS
 
-class ShareQrImageUseCase(
+class ShareImageUseCase(
     private val context: Context,
     private val versionInfoProvider: GetVersionInfoProvider
 ) {

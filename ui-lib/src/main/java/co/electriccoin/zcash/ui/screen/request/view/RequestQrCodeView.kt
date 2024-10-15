@@ -49,10 +49,11 @@ internal fun RequestQrCodeView(
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = ZcashTheme.dimens.spacingLarge),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = ZcashTheme.dimens.spacingLarge),
     ) {
         Spacer(Modifier.height(ZcashTheme.dimens.spacingDefault))
 
@@ -62,11 +63,11 @@ internal fun RequestQrCodeView(
                     text = stringResource(id = R.string.request_memo_privacy_level_transparent),
                     leadingIconVector = painterResource(id = R.drawable.ic_alert_circle),
                     colors =
-                    ZashiBadgeColors(
-                        border = ZashiColors.Utility.WarningYellow.utilityOrange200,
-                        text = ZashiColors.Utility.WarningYellow.utilityOrange700,
-                        container = ZashiColors.Utility.WarningYellow.utilityOrange50,
-                    )
+                        ZashiBadgeColors(
+                            border = ZashiColors.Utility.WarningYellow.utilityOrange200,
+                            text = ZashiColors.Utility.WarningYellow.utilityOrange700,
+                            container = ZashiColors.Utility.WarningYellow.utilityOrange50,
+                        )
                 )
             }
             is WalletAddress.Unified, is WalletAddress.Sapling -> {
@@ -74,11 +75,11 @@ internal fun RequestQrCodeView(
                     text = stringResource(id = R.string.request_memo_privacy_level_shielded),
                     leadingIconVector = painterResource(id = R.drawable.ic_solid_check),
                     colors =
-                    ZashiBadgeColors(
-                        border = ZashiColors.Utility.Purple.utilityPurple200,
-                        text = ZashiColors.Utility.Purple.utilityPurple700,
-                        container = ZashiColors.Utility.Purple.utilityPurple50,
-                    )
+                        ZashiBadgeColors(
+                            border = ZashiColors.Utility.Purple.utilityPurple200,
+                            text = ZashiColors.Utility.Purple.utilityPurple700,
+                            container = ZashiColors.Utility.Purple.utilityPurple50,
+                        )
                 )
             }
             else -> error("Unsupported address type")
@@ -122,17 +123,17 @@ private fun ColumnScope.QrCode(
         onQrImageBitmapShare = onQrImageShare,
         contentDescription = stringResource(id = R.string.request_qr_code_content_description),
         modifier =
-        modifier
-            .align(Alignment.CenterHorizontally)
-            .border(
-                border =
-                BorderStroke(
-                    width = 1.dp,
-                    color = ZashiColors.Surfaces.strokePrimary
-                ),
-                shape = RoundedCornerShape(ZashiDimensionsInternal.Radius.radius4xl)
-            )
-            .padding(all = 12.dp)
+            modifier
+                .align(Alignment.CenterHorizontally)
+                .border(
+                    border =
+                        BorderStroke(
+                            width = 1.dp,
+                            color = ZashiColors.Surfaces.strokePrimary
+                        ),
+                    shape = RoundedCornerShape(ZashiDimensionsInternal.Radius.radius4xl)
+                )
+                .padding(all = 12.dp)
     )
 }
 
@@ -146,13 +147,13 @@ private fun QrCode(
     Box(
         contentAlignment = Alignment.Center,
         modifier =
-        Modifier
-            .clickable(
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() },
-                onClick = { qrCodeImage?.let { onQrImageBitmapShare(qrCodeImage) } },
-            )
-            .then(modifier)
+            Modifier
+                .clickable(
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() },
+                    onClick = { qrCodeImage?.let { onQrImageBitmapShare(qrCodeImage) } },
+                )
+                .then(modifier)
     ) {
         if (qrCodeImage == null) {
             CircularScreenProgressIndicator()
@@ -174,21 +175,23 @@ private fun RequestQrCodeZecAmountView(
     state: RequestState.QrCode,
     modifier: Modifier = Modifier
 ) {
-    val zecText = buildAnnotatedString {
-        withStyle(style = SpanStyle(color = ZashiColors.Text.textPrimary)) {
-            append(state.request.qrCodeState.zecAmount)
+    val zecText =
+        buildAnnotatedString {
+            withStyle(style = SpanStyle(color = ZashiColors.Text.textPrimary)) {
+                append(state.request.qrCodeState.zecAmount)
+            }
+            append("\u2009") // Add an extra thin space between the texts
+            withStyle(style = SpanStyle(color = ZashiColors.Text.textQuaternary)) {
+                append(state.zcashCurrency.localizedName(LocalContext.current))
+            }
         }
-        append("\u2009") // Add an extra thin space between the texts
-        withStyle(style = SpanStyle(color = ZashiColors.Text.textQuaternary)) {
-            append(state.zcashCurrency.localizedName(LocalContext.current))
-        }
-    }
 
     AutoSizingText(
         text = zecText,
-        style = ZashiTypography.header1.copy(
-            fontWeight = FontWeight.SemiBold
-        ),
+        style =
+            ZashiTypography.header1.copy(
+                fontWeight = FontWeight.SemiBold
+            ),
         modifier = modifier
     )
 }

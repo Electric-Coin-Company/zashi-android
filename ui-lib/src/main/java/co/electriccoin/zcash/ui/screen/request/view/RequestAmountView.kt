@@ -50,9 +50,10 @@ internal fun RequestAmountView(
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState()),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState()),
     ) {
         Spacer(Modifier.height(ZcashTheme.dimens.spacingDefault))
 
@@ -60,7 +61,7 @@ internal fun RequestAmountView(
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
-        when(state.exchangeRateState) {
+        when (state.exchangeRateState) {
             is ExchangeRateState.Data -> {
                 if (state.request.amountState.currency == RequestCurrency.Zec) {
                     RequestAmountWithMainZecView(
@@ -105,27 +106,29 @@ private fun RequestAmountWithMainFiatView(
         modifier = modifier
     ) {
         state.exchangeRateState as ExchangeRateState.Data
-        val fiatText = buildAnnotatedString {
-            withStyle(style = SpanStyle(color = ZashiColors.Text.textQuaternary)) {
-                append(state.exchangeRateState.fiatCurrency.symbol)
+        val fiatText =
+            buildAnnotatedString {
+                withStyle(style = SpanStyle(color = ZashiColors.Text.textQuaternary)) {
+                    append(state.exchangeRateState.fiatCurrency.symbol)
+                }
+                append("\u2009") // Add an extra thin space between the texts
+                withStyle(style = SpanStyle(color = ZashiColors.Text.textPrimary)) {
+                    append(
+                        if (state.exchangeRateState.currencyConversion != null) {
+                            state.request.amountState.amount
+                        } else {
+                            stringResource(id = R.string.request_amount_empty)
+                        }
+                    )
+                }
             }
-            append("\u2009") // Add an extra thin space between the texts
-            withStyle(style = SpanStyle(color = ZashiColors.Text.textPrimary)) {
-                append(
-                    if (state.exchangeRateState.currencyConversion != null) {
-                        state.request.amountState.amount
-                    } else {
-                        stringResource(id = R.string.request_amount_empty)
-                    }
-                )
-            }
-        }
 
         AutoSizingText(
             text = fiatText,
-            style = ZashiTypography.header1.copy(
-                fontWeight = FontWeight.SemiBold
-            )
+            style =
+                ZashiTypography.header1.copy(
+                    fontWeight = FontWeight.SemiBold
+                )
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -133,23 +136,24 @@ private fun RequestAmountWithMainFiatView(
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-            val zecText = buildAnnotatedString {
-                withStyle(style = SpanStyle(color = ZashiColors.Text.textPrimary)) {
-                    append(
-                        if (state.exchangeRateState.currencyConversion != null) {
-                            state.request.amountState.toZecString(
-                                state.exchangeRateState.currencyConversion
-                            )
-                        } else {
-                            stringResource(id = R.string.request_amount_empty)
-                        }
-                    )
+            val zecText =
+                buildAnnotatedString {
+                    withStyle(style = SpanStyle(color = ZashiColors.Text.textPrimary)) {
+                        append(
+                            if (state.exchangeRateState.currencyConversion != null) {
+                                state.request.amountState.toZecString(
+                                    state.exchangeRateState.currencyConversion
+                                )
+                            } else {
+                                stringResource(id = R.string.request_amount_empty)
+                            }
+                        )
+                    }
+                    append(" ") // Add an extra space between the texts
+                    withStyle(style = SpanStyle(color = ZashiColors.Text.textQuaternary)) {
+                        append(state.zcashCurrency.localizedName(LocalContext.current))
+                    }
                 }
-                append(" ") // Add an extra space between the texts
-                withStyle(style = SpanStyle(color = ZashiColors.Text.textQuaternary)) {
-                    append(state.zcashCurrency.localizedName(LocalContext.current))
-                }
-            }
 
             Text(
                 text = zecText,
@@ -180,21 +184,23 @@ private fun RequestAmountWithMainZecView(
         modifier = modifier
     ) {
         state.exchangeRateState as ExchangeRateState.Data
-        val zecText = buildAnnotatedString {
-            withStyle(style = SpanStyle(color = ZashiColors.Text.textPrimary)) {
-                append(state.request.amountState.amount)
+        val zecText =
+            buildAnnotatedString {
+                withStyle(style = SpanStyle(color = ZashiColors.Text.textPrimary)) {
+                    append(state.request.amountState.amount)
+                }
+                append("\u2009") // Add an extra thin space between the texts
+                withStyle(style = SpanStyle(color = ZashiColors.Text.textQuaternary)) {
+                    append(state.zcashCurrency.localizedName(LocalContext.current))
+                }
             }
-            append("\u2009") // Add an extra thin space between the texts
-            withStyle(style = SpanStyle(color = ZashiColors.Text.textQuaternary)) {
-                append(state.zcashCurrency.localizedName(LocalContext.current))
-            }
-        }
 
         AutoSizingText(
             text = zecText,
-            style = ZashiTypography.header1.copy(
-                fontWeight = FontWeight.SemiBold
-            )
+            style =
+                ZashiTypography.header1.copy(
+                    fontWeight = FontWeight.SemiBold
+                )
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -202,24 +208,25 @@ private fun RequestAmountWithMainZecView(
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-            val fiatText = buildAnnotatedString {
-                withStyle(style = SpanStyle(color = ZashiColors.Text.textQuaternary)) {
-                    append(state.exchangeRateState.fiatCurrency.symbol)
+            val fiatText =
+                buildAnnotatedString {
+                    withStyle(style = SpanStyle(color = ZashiColors.Text.textQuaternary)) {
+                        append(state.exchangeRateState.fiatCurrency.symbol)
+                    }
+                    append(" ") // Add an extra space between the texts
+                    withStyle(style = SpanStyle(color = ZashiColors.Text.textPrimary)) {
+                        append(
+                            if (state.exchangeRateState.currencyConversion != null) {
+                                state.request.amountState.toFiatString(
+                                    LocalContext.current,
+                                    state.exchangeRateState.currencyConversion
+                                )
+                            } else {
+                                stringResource(id = R.string.request_amount_empty)
+                            }
+                        )
+                    }
                 }
-                append(" ") // Add an extra space between the texts
-                withStyle(style = SpanStyle(color = ZashiColors.Text.textPrimary)) {
-                    append(
-                        if (state.exchangeRateState.currencyConversion != null) {
-                            state.request.amountState.toFiatString(
-                                LocalContext.current,
-                                state.exchangeRateState.currencyConversion
-                            )
-                        } else {
-                            stringResource(id = R.string.request_amount_empty)
-                        }
-                    )
-                }
-            }
 
             Text(
                 text = fiatText,
@@ -248,24 +255,37 @@ private fun RequestAmountNoFiatView(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
     ) {
-        val fiatText = buildAnnotatedString {
-            withStyle(style = SpanStyle(color = ZashiColors.Text.textPrimary)) {
-                append(state.request.amountState.amount)
+        val fiatText =
+            buildAnnotatedString {
+                withStyle(style = SpanStyle(color = ZashiColors.Text.textPrimary)) {
+                    append(state.request.amountState.amount)
+                }
+                append("\u2009") // Add an extra thin space between the texts
+                withStyle(style = SpanStyle(color = ZashiColors.Text.textQuaternary)) {
+                    append(state.zcashCurrency.localizedName(LocalContext.current))
+                }
             }
-            append("\u2009") // Add an extra thin space between the texts
-            withStyle(style = SpanStyle(color = ZashiColors.Text.textQuaternary)) {
-                append(state.zcashCurrency.localizedName(LocalContext.current))
-            }
-        }
 
         AutoSizingText(
             text = fiatText,
-            style = ZashiTypography.header1.copy(
-                fontWeight = FontWeight.SemiBold
-            )
+            style =
+                ZashiTypography.header1.copy(
+                    fontWeight = FontWeight.SemiBold
+                )
         )
     }
 }
+
+private const val KEYBOARD_ZERO = 0
+private const val KEYBOARD_ONE = 1
+private const val KEYBOARD_TWO = 2
+private const val KEYBOARD_THREE = 3
+private const val KEYBOARD_FOUR = 4
+private const val KEYBOARD_FIVE = 5
+private const val KEYBOARD_SIX = 6
+private const val KEYBOARD_SEVEN = 7
+private const val KEYBOARD_EIGHT = 8
+private const val KEYBOARD_NINE = 9
 
 @Composable
 private fun RequestAmountKeyboardView(
@@ -274,25 +294,26 @@ private fun RequestAmountKeyboardView(
 ) {
     Row(
         horizontalArrangement = Arrangement.SpaceEvenly,
-        modifier = modifier
-            .wrapContentHeight()
-            .fillMaxWidth()
-            .padding(horizontal = 8.dp)
+        modifier =
+            modifier
+                .wrapContentHeight()
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp)
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             RequestAmountKeyboardTextButton(
                 text = stringResource(id = R.string.request_amount_keyboard_one),
-                onClick = { state.onAmount(OnAmount.Number(1)) }
+                onClick = { state.onAmount(OnAmount.Number(KEYBOARD_ONE)) }
             )
             RequestAmountKeyboardTextButton(
                 text = stringResource(id = R.string.request_amount_keyboard_four),
-                onClick = { state.onAmount(OnAmount.Number(4)) }
+                onClick = { state.onAmount(OnAmount.Number(KEYBOARD_FOUR)) }
             )
             RequestAmountKeyboardTextButton(
                 text = stringResource(id = R.string.request_amount_keyboard_seven),
-                onClick = { state.onAmount(OnAmount.Number(7)) }
+                onClick = { state.onAmount(OnAmount.Number(KEYBOARD_SEVEN)) }
             )
             RequestAmountKeyboardTextButton(
                 text = state.monetarySeparators.decimal.toString(),
@@ -306,19 +327,19 @@ private fun RequestAmountKeyboardView(
         ) {
             RequestAmountKeyboardTextButton(
                 text = stringResource(id = R.string.request_amount_keyboard_two),
-                onClick = { state.onAmount(OnAmount.Number(2)) }
+                onClick = { state.onAmount(OnAmount.Number(KEYBOARD_TWO)) }
             )
             RequestAmountKeyboardTextButton(
                 text = stringResource(id = R.string.request_amount_keyboard_five),
-                onClick = { state.onAmount(OnAmount.Number(5)) }
+                onClick = { state.onAmount(OnAmount.Number(KEYBOARD_FIVE)) }
             )
             RequestAmountKeyboardTextButton(
                 text = stringResource(id = R.string.request_amount_keyboard_eight),
-                onClick = { state.onAmount(OnAmount.Number(8)) }
+                onClick = { state.onAmount(OnAmount.Number(KEYBOARD_EIGHT)) }
             )
             RequestAmountKeyboardTextButton(
                 text = stringResource(id = R.string.request_amount_keyboard_zero),
-                onClick = { state.onAmount(OnAmount.Number(0)) }
+                onClick = { state.onAmount(OnAmount.Number(KEYBOARD_ZERO)) }
             )
         }
         Column(
@@ -326,15 +347,15 @@ private fun RequestAmountKeyboardView(
         ) {
             RequestAmountKeyboardTextButton(
                 text = stringResource(id = R.string.request_amount_keyboard_three),
-                onClick = { state.onAmount(OnAmount.Number(3)) }
+                onClick = { state.onAmount(OnAmount.Number(KEYBOARD_THREE)) }
             )
             RequestAmountKeyboardTextButton(
                 text = stringResource(id = R.string.request_amount_keyboard_six),
-                onClick = { state.onAmount(OnAmount.Number(6)) }
+                onClick = { state.onAmount(OnAmount.Number(KEYBOARD_SIX)) }
             )
             RequestAmountKeyboardTextButton(
                 text = stringResource(id = R.string.request_amount_keyboard_nine),
-                onClick = { state.onAmount(OnAmount.Number(9)) }
+                onClick = { state.onAmount(OnAmount.Number(KEYBOARD_NINE)) }
             )
             RequestAmountKeyboardIconButton(
                 painter = painterResource(id = R.drawable.ic_delete),
@@ -356,11 +377,12 @@ private fun RequestAmountKeyboardTextButton(
         style = ZashiTypography.header4,
         fontWeight = FontWeight.SemiBold,
         color = ZashiColors.Text.textPrimary,
-        modifier = modifier
-            .wrapContentHeight()
-            .clip(RoundedCornerShape(ZcashTheme.dimens.regularRippleEffectCorner))
-            .clickable { onClick() }
-            .padding(horizontal = 42.dp, vertical = 10.dp)
+        modifier =
+            modifier
+                .wrapContentHeight()
+                .clip(RoundedCornerShape(ZcashTheme.dimens.regularRippleEffectCorner))
+                .clickable { onClick() }
+                .padding(horizontal = 42.dp, vertical = 10.dp)
     )
 }
 
@@ -375,10 +397,11 @@ private fun RequestAmountKeyboardIconButton(
         painter = painter,
         contentDescription = contentDescription,
         colorFilter = ColorFilter.tint(ZashiColors.Btns.Ghost.btnGhostFg),
-        modifier = modifier
-            .clip(RoundedCornerShape(ZcashTheme.dimens.regularRippleEffectCorner))
-            .clickable { onClick() }
-            .padding(horizontal = 32.dp, vertical = 10.dp)
+        modifier =
+            modifier
+                .clip(RoundedCornerShape(ZcashTheme.dimens.regularRippleEffectCorner))
+                .clickable { onClick() }
+                .padding(horizontal = 32.dp, vertical = 10.dp)
     )
 }
 
@@ -389,9 +412,10 @@ private fun InvalidAmountView(
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
-            .fillMaxWidth()
-            .requiredHeight(48.dp)
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .requiredHeight(48.dp)
     ) {
         if (amountState is AmountState.InValid) {
             Image(

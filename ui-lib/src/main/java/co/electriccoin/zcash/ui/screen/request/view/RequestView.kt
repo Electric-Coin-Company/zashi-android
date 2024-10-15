@@ -63,16 +63,18 @@ private fun RequestPreview() =
         RequestView(
             state =
                 RequestState.Amount(
-                    request = Request(
-                        amountState = AmountState.Valid("2.25", RequestCurrency.Zec),
-                        memoState = MemoState.Valid("", 0, "2.25"),
-                        qrCodeState = QrCodeState(
-                            "",//TODO
-                            "0.25",
-                            memo = "Text memo",
-                            null
+                    request =
+                        Request(
+                            amountState = AmountState.Valid("2.25", RequestCurrency.Zec),
+                            memoState = MemoState.Valid("", 0, "2.25"),
+                            qrCodeState =
+                                QrCodeState(
+                                    "zcash:t1duiEGg7b39nfQee3XaTY4f5McqfyJKhBi?amount=1&memo=VGhpcyBpcyBhIHNpbXBsZSBt",
+                                    "0.25",
+                                    memo = "Text memo",
+                                    null
+                                ),
                         ),
-                    ),
                     exchangeRateState = ExchangeRateState.OptedOut,
                     zcashCurrency = ZcashCurrency.ZEC,
                     onAmount = {},
@@ -146,18 +148,17 @@ private fun RequestBottomBar(
     state: RequestState.Prepared,
     modifier: Modifier = Modifier,
 ) {
-    val btnModifier = modifier
-        .padding(horizontal = 24.dp)
-        .fillMaxWidth()
-
-    ZashiBottomBar {
+    ZashiBottomBar(modifier = modifier.fillMaxWidth()) {
         when (state) {
             is RequestState.Amount -> {
                 ZashiButton(
                     text = stringResource(id = R.string.request_amount_btn),
                     onClick = state.onDone,
                     enabled = state.request.amountState.isValid(),
-                    modifier = btnModifier
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 24.dp)
                 )
             }
             is RequestState.Memo -> {
@@ -165,7 +166,10 @@ private fun RequestBottomBar(
                     enabled = state.request.memoState.isValid(),
                     onClick = state.onDone,
                     text = stringResource(id = R.string.request_memo_btn),
-                    modifier = btnModifier
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 24.dp)
                 )
             }
             is RequestState.QrCode -> {
@@ -174,7 +178,10 @@ private fun RequestBottomBar(
                     leadingIcon = painterResource(R.drawable.ic_share),
                     enabled = state.request.qrCodeState.isValid(),
                     onClick = { state.onQrCodeShare(state.request.qrCodeState.bitmap!!) },
-                    modifier = btnModifier
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 24.dp)
                 )
 
                 Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingTiny))
@@ -183,7 +190,10 @@ private fun RequestBottomBar(
                     colors = ZashiButtonDefaults.secondaryColors(),
                     onClick = state.onClose,
                     text = stringResource(id = R.string.request_qr_close_btn),
-                    modifier = btnModifier
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 24.dp)
                 )
             }
         }

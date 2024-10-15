@@ -24,21 +24,28 @@ class Zip321BuildUriUseCase {
         amount: String,
         memo: String,
     ): String {
-        val payment = Payment(
-            recipientAddress = RecipientAddress(address),
-            nonNegativeAmount = NonNegativeAmount(amount),
-            memo = if (memo.isBlank()) { null } else  { MemoBytes(memo) },
-            otherParams = null,
-            label = null,
-            message = null
-        )
+        val payment =
+            Payment(
+                recipientAddress = RecipientAddress(address),
+                nonNegativeAmount = NonNegativeAmount(amount),
+                memo =
+                    if (memo.isBlank()) {
+                        null
+                    } else {
+                        MemoBytes(memo)
+                    },
+                otherParams = null,
+                label = null,
+                message = null
+            )
 
         val paymentRequest = PaymentRequest(payments = listOf(payment))
 
-        val zip321Uri = ZIP321.uriString(
-            paymentRequest,
-            ZIP321.FormattingOptions.UseEmptyParamIndex(omitAddressLabel = true)
-        )
+        val zip321Uri =
+            ZIP321.uriString(
+                paymentRequest,
+                ZIP321.FormattingOptions.UseEmptyParamIndex(omitAddressLabel = true)
+            )
 
         Twig.info { "Request Zip321 uri: $zip321Uri" }
 

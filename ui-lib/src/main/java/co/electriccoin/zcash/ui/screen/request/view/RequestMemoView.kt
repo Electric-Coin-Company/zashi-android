@@ -54,10 +54,11 @@ internal fun RequestMemoView(
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = ZcashTheme.dimens.spacingLarge),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = ZcashTheme.dimens.spacingLarge),
     ) {
         Spacer(Modifier.height(ZcashTheme.dimens.spacingDefault))
 
@@ -73,11 +74,11 @@ internal fun RequestMemoView(
             text = stringResource(id = R.string.request_memo_privacy_level_shielded),
             leadingIconVector = painterResource(id = R.drawable.ic_solid_check),
             colors =
-            ZashiBadgeColors(
-                border = ZashiColors.Utility.Purple.utilityPurple200,
-                text = ZashiColors.Utility.Purple.utilityPurple700,
-                container = ZashiColors.Utility.Purple.utilityPurple50,
-            )
+                ZashiBadgeColors(
+                    border = ZashiColors.Utility.Purple.utilityPurple200,
+                    text = ZashiColors.Utility.Purple.utilityPurple700,
+                    container = ZashiColors.Utility.Purple.utilityPurple50,
+                )
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
@@ -109,21 +110,23 @@ private fun RequestMemoZecAmountView(
     state: RequestState.Memo,
     modifier: Modifier = Modifier
 ) {
-    val zecText = buildAnnotatedString {
-        withStyle(style = SpanStyle(color = ZashiColors.Text.textPrimary)) {
-            append(state.request.memoState.zecAmount)
+    val zecText =
+        buildAnnotatedString {
+            withStyle(style = SpanStyle(color = ZashiColors.Text.textPrimary)) {
+                append(state.request.memoState.zecAmount)
+            }
+            append("\u2009") // Add an extra thin space between the texts
+            withStyle(style = SpanStyle(color = ZashiColors.Text.textQuaternary)) {
+                append(state.zcashCurrency.localizedName(LocalContext.current))
+            }
         }
-        append("\u2009") // Add an extra thin space between the texts
-        withStyle(style = SpanStyle(color = ZashiColors.Text.textQuaternary)) {
-            append(state.zcashCurrency.localizedName(LocalContext.current))
-        }
-    }
 
     AutoSizingText(
         text = zecText,
-        style = ZashiTypography.header1.copy(
-            fontWeight = FontWeight.SemiBold
-        ),
+        style =
+            ZashiTypography.header1.copy(
+                fontWeight = FontWeight.SemiBold
+            ),
         modifier = modifier
     )
 }
@@ -140,12 +143,12 @@ private fun RequestMemoTextField(
 
     Column(
         modifier =
-        modifier
-            // Animate error show/hide
-            .animateContentSize()
-            // Scroll TextField above ime keyboard
-            .bringIntoViewRequester(bringIntoViewRequester)
-            .focusRequester(focusRequester),
+            modifier
+                // Animate error show/hide
+                .animateContentSize()
+                // Scroll TextField above ime keyboard
+                .bringIntoViewRequester(bringIntoViewRequester)
+                .focusRequester(focusRequester),
     ) {
         ZashiTextField(
             minLines = 3,
@@ -156,11 +159,11 @@ private fun RequestMemoTextField(
                 state.onMemo(MemoState.new(it, memoState.zecAmount))
             },
             keyboardOptions =
-            KeyboardOptions(
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Default,
-                capitalization = KeyboardCapitalization.Sentences
-            ),
+                KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Default,
+                    capitalization = KeyboardCapitalization.Sentences
+                ),
             placeholder = {
                 Text(
                     text = stringResource(id = R.string.request_memo_text_field_hint),
@@ -169,39 +172,39 @@ private fun RequestMemoTextField(
                 )
             },
             colors =
-            if (memoState.isValid()) {
-                ZashiTextFieldDefaults.defaultColors()
-            } else {
-                ZashiTextFieldDefaults.defaultColors(
-                    disabledTextColor = ZashiColors.Inputs.Disabled.text,
-                    disabledHintColor = ZashiColors.Inputs.Disabled.hint,
-                    disabledBorderColor = Color.Unspecified,
-                    disabledContainerColor = ZashiColors.Inputs.Disabled.bg,
-                    disabledPlaceholderColor = ZashiColors.Inputs.Disabled.text,
-                )
-            },
+                if (memoState.isValid()) {
+                    ZashiTextFieldDefaults.defaultColors()
+                } else {
+                    ZashiTextFieldDefaults.defaultColors(
+                        disabledTextColor = ZashiColors.Inputs.Disabled.text,
+                        disabledHintColor = ZashiColors.Inputs.Disabled.hint,
+                        disabledBorderColor = Color.Unspecified,
+                        disabledContainerColor = ZashiColors.Inputs.Disabled.bg,
+                        disabledPlaceholderColor = ZashiColors.Inputs.Disabled.text,
+                    )
+                },
             modifier = Modifier.fillMaxWidth(),
         )
 
         Text(
             text =
-            stringResource(
-                id = R.string.request_memo_bytes_counter,
-                Memo.MAX_MEMO_LENGTH_BYTES - memoState.byteSize,
-                Memo.MAX_MEMO_LENGTH_BYTES
-            ),
+                stringResource(
+                    id = R.string.request_memo_bytes_counter,
+                    Memo.MAX_MEMO_LENGTH_BYTES - memoState.byteSize,
+                    Memo.MAX_MEMO_LENGTH_BYTES
+                ),
             color =
-            if (memoState.isValid()) {
-                ZashiColors.Inputs.Default.hint
-            } else {
-                ZashiColors.Inputs.Filled.required
-            },
+                if (memoState.isValid()) {
+                    ZashiColors.Inputs.Default.hint
+                } else {
+                    ZashiColors.Inputs.Filled.required
+                },
             textAlign = TextAlign.End,
             style = ZashiTypography.textSm,
             modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(top = ZcashTheme.dimens.spacingTiny)
+                Modifier
+                    .fillMaxWidth()
+                    .padding(top = ZcashTheme.dimens.spacingTiny)
         )
 
         LaunchedEffect(Unit) {

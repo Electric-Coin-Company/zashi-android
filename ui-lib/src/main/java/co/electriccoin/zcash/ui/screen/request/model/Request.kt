@@ -30,42 +30,50 @@ sealed class AmountState(
         newCurrency: RequestCurrency = currency
     ): AmountState
 
-    fun toZecString(
-        conversion: FiatCurrencyConversion
-    ): String = runCatching {
-        amount.convertToDouble().convertUsdToZec(conversion.priceOfZec).toZecString()
-    }.getOrElse { "" }
+    fun toZecString(conversion: FiatCurrencyConversion): String =
+        runCatching {
+            amount.convertToDouble().convertUsdToZec(conversion.priceOfZec).toZecString()
+        }.getOrElse { "" }
 
     fun toFiatString(
         context: Context,
         conversion: FiatCurrencyConversion
-    ): String = kotlin.runCatching {
-        Zatoshi.fromZecString(context, amount, Locale.getDefault())?.toFiatString(
-            currencyConversion = conversion,
-            locale = Locale.getDefault()
-        ) ?: ""
-    }.getOrElse { "" }
+    ): String =
+        kotlin.runCatching {
+            Zatoshi.fromZecString(context, amount, Locale.getDefault())?.toFiatString(
+                currencyConversion = conversion,
+                locale = Locale.getDefault()
+            ) ?: ""
+        }.getOrElse { "" }
 
     data class Valid(
         override val amount: String,
         override val currency: RequestCurrency
     ) : AmountState(amount, currency) {
-        override fun copyState(newValue: String, newCurrency: RequestCurrency) =
-            copy(amount = newValue, currency = newCurrency)
+        override fun copyState(
+            newValue: String,
+            newCurrency: RequestCurrency
+        ) = copy(amount = newValue, currency = newCurrency)
     }
+
     data class Default(
         override val amount: String,
         override val currency: RequestCurrency
     ) : AmountState(amount, currency) {
-        override fun copyState(newValue: String, newCurrency: RequestCurrency) =
-            copy(amount = newValue, currency = newCurrency)
+        override fun copyState(
+            newValue: String,
+            newCurrency: RequestCurrency
+        ) = copy(amount = newValue, currency = newCurrency)
     }
+
     data class InValid(
         override val amount: String,
         override val currency: RequestCurrency
     ) : AmountState(amount, currency) {
-        override fun copyState(newValue: String, newCurrency: RequestCurrency) =
-            copy(amount = newValue, currency = newCurrency)
+        override fun copyState(
+            newValue: String,
+            newCurrency: RequestCurrency
+        ) = copy(amount = newValue, currency = newCurrency)
     }
 }
 
@@ -89,7 +97,10 @@ sealed class MemoState(
     ) : MemoState(text, byteSize, zecAmount)
 
     companion object {
-        fun new(memo: String, amount: String): MemoState {
+        fun new(
+            memo: String,
+            amount: String
+        ): MemoState {
             val bytesCount = Memo.countLength(memo)
             return if (bytesCount > Memo.MAX_MEMO_LENGTH_BYTES) {
                 InValid(memo, bytesCount, amount)
