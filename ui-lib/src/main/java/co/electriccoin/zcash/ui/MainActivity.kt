@@ -57,7 +57,9 @@ import co.electriccoin.zcash.ui.screen.warning.viewmodel.StorageCheckViewModel
 import co.electriccoin.zcash.work.WorkIds
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.common.Scopes
+import com.google.android.gms.common.api.Scope
+import com.google.android.gms.common.api.Status
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
@@ -89,24 +91,26 @@ class MainActivity : FragmentActivity() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             when (result.resultCode) {
                 RESULT_OK -> {
-                    try {
-                        addressBookRepository.onGoogleSignInSuccess(
-                            account = GoogleSignIn.getSignedInAccountFromIntent(result.data).result
-                        )
-                        Twig.info { "Google sign in success" }
-                    } catch (e: ApiException) {
-                        Twig.error(e) { "Google sign in failed" }
-                        addressBookRepository.onGoogleSignInError()
-                    }
+                    addressBookRepository.onGoogleSignInSuccess()
                 }
+
                 RESULT_CANCELED -> {
-                    Twig.info { "Google sign in cancelled" }
-                    addressBookRepository.onGoogleSignInCancelled()
+                    val status = result.data?.extras?.getParcelable<Status>("googleSignInStatus")
+                    addressBookRepository.onGoogleSignInCancelled(status)
                 }
+
                 else -> {
-                    Twig.error { "Google sign in failed" }
                     addressBookRepository.onGoogleSignInError()
                 }
+            }
+        }
+
+    private val googleConsentLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            when (result.resultCode) {
+                RESULT_OK -> requestGoogleSignIn()
+                RESULT_CANCELED -> addressBookRepository.onGoogleSignInCancelled(null)
+                else -> addressBookRepository.onGoogleSignInError()
             }
         }
 
@@ -122,17 +126,27 @@ class MainActivity : FragmentActivity() {
         monitorForBackgroundSync()
 
         lifecycleScope.launch {
-            addressBookRepository.googleSignInRequest.collect { scope ->
-                val googleSignInClient = GoogleSignIn.getClient(
-                    this@MainActivity, GoogleSignInOptions
-                        .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                        .requestScopes(scope)
-                        .build()
-                )
-
-                googleSignInLauncher.launch(googleSignInClient.signInIntent)
+            addressBookRepository.googleSignInRequest.collect {
+                requestGoogleSignIn()
             }
         }
+
+        lifecycleScope.launch {
+            addressBookRepository.googleRemoteConsentRequest.collect { intent ->
+                googleConsentLauncher.launch(intent)
+            }
+        }
+    }
+
+    private fun requestGoogleSignIn() {
+        val googleSignInClient = GoogleSignIn.getClient(
+            this@MainActivity, GoogleSignInOptions
+                .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestScopes(Scope(Scopes.DRIVE_APPFOLDER))
+                .build()
+        )
+
+        googleSignInLauncher.launch(googleSignInClient.signInIntent)
     }
 
     /**

@@ -3,17 +3,19 @@
 package co.electriccoin.zcash.ui.common.repository
 
 import android.content.Context
+import android.content.Intent
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.datasource.LocalAddressBookDataSource
 import co.electriccoin.zcash.ui.common.datasource.RemoteAddressBookDataSource
+import co.electriccoin.zcash.ui.common.datasource.RemoteAddressBookDataSource.RemoteConsentResult
 import co.electriccoin.zcash.ui.common.model.AddressBook
 import co.electriccoin.zcash.ui.common.model.AddressBookContact
 import com.google.android.gms.auth.GoogleAuthException
 import com.google.android.gms.auth.UserRecoverableAuthException
 import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.Scopes
 import com.google.android.gms.common.api.Scope
+import com.google.android.gms.common.api.Status
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException
 import com.google.api.client.googleapis.json.GoogleJsonResponseException
 import kotlinx.coroutines.CoroutineScope
@@ -35,7 +37,9 @@ import java.io.IOException
 interface AddressBookRepository {
     val addressBook: Flow<AddressBook?>
 
-    val googleSignInRequest: Flow<Scope>
+    val googleSignInRequest: Flow<Unit>
+
+    val googleRemoteConsentRequest: Flow<Intent>
 
     suspend fun saveContact(name: String, address: String)
 
@@ -47,9 +51,9 @@ interface AddressBookRepository {
 
     suspend fun deleteContact(contact: AddressBookContact)
 
-    fun onGoogleSignInSuccess(account: GoogleSignInAccount)
+    fun onGoogleSignInSuccess()
 
-    fun onGoogleSignInCancelled()
+    fun onGoogleSignInCancelled(status: Status?)
 
     fun onGoogleSignInError()
 }
@@ -76,7 +80,8 @@ class AddressBookRepositoryImpl(
                 }
             }
 
-    override val googleSignInRequest = MutableSharedFlow<Scope>()
+    override val googleSignInRequest = MutableSharedFlow<Unit>()
+    override val googleRemoteConsentRequest = MutableSharedFlow<Intent>()
 
     private val internalOperationCompleted = MutableSharedFlow<InternalOperation>()
 
@@ -92,25 +97,35 @@ class AddressBookRepositoryImpl(
     override suspend fun deleteContact(contact: AddressBookContact) =
         withGoogleDrivePermission(InternalOperation.Delete(contact = contact))
 
-    override fun onGoogleSignInSuccess(account: GoogleSignInAccount) {
+    override fun onGoogleSignInSuccess() {
         scope.launch {
             withNonCancellableSemaphore {
                 internalOperation?.let {
-                    Twig.info { "Address Book: onGoogleSignInSuccess" }
-                    executeInternalOperation(operation = it, includeRemote = true)
-                    this@AddressBookRepositoryImpl.internalOperation = null
-                    internalOperationCompleted.emit(it)
+                    Twig.info { "Google sign in success" }
+                    try {
+                        executeInternalOperation(operation = it, throwRemoteConsentExceptions = true)
+                        this@AddressBookRepositoryImpl.internalOperation = null
+                        internalOperationCompleted.emit(it)
+                    } catch (e: UserRecoverableAuthIOException) {
+                        e.intent?.let { intent ->
+                            googleRemoteConsentRequest.emit(intent)
+                        }
+                    } catch (e: UserRecoverableAuthException) {
+                        e.intent?.let { intent ->
+                            googleRemoteConsentRequest.emit(intent)
+                        }
+                    }
                 }
             }
         }
     }
 
-    override fun onGoogleSignInCancelled() {
+    override fun onGoogleSignInCancelled(status: Status?) {
         scope.launch {
             withNonCancellableSemaphore {
+                Twig.info { "Google sign in cancelled, $status" }
                 internalOperation?.let {
-                    Twig.info { "Address Book: onGoogleSignInCancelled" }
-                    executeInternalOperation(operation = it, includeRemote = false)
+                    executeInternalOperation(operation = it, throwRemoteConsentExceptions = false)
                     this@AddressBookRepositoryImpl.internalOperation = null
                     internalOperationCompleted.emit(it)
                 }
@@ -123,7 +138,7 @@ class AddressBookRepositoryImpl(
             withNonCancellableSemaphore {
                 internalOperation?.let {
                     Twig.info { "Address Book: onGoogleSignInError" }
-                    executeInternalOperation(operation = it, includeRemote = false)
+                    executeInternalOperation(operation = it, throwRemoteConsentExceptions = false)
                     this@AddressBookRepositoryImpl.internalOperation = null
                     internalOperationCompleted.emit(it)
                 }
@@ -133,7 +148,7 @@ class AddressBookRepositoryImpl(
 
     private suspend fun ensureSynchronization() {
         if (addressBookCache.value == null) {
-            val remote = executeRemoteAddressBookSafe {
+            val remote = executeRemoteAddressBookSafe(throwRemoteConsentExceptions = false) {
                 val contacts = remoteAddressBookDataSource.fetchContacts()
                 Twig.info { "Address Book: ensureSynchronization - remote address book loaded" }
                 contacts
@@ -144,7 +159,7 @@ class AddressBookRepositoryImpl(
                     remote = remote,
                 )
             localAddressBookDataSource.saveContacts(merged)
-            executeRemoteAddressBookSafe {
+            executeRemoteAddressBookSafe(throwRemoteConsentExceptions = false) {
                 remoteAddressBookDataSource.uploadContacts()
                 Twig.info { "Address Book: ensureSynchronization - remote address book uploaded" }
             }
@@ -156,15 +171,39 @@ class AddressBookRepositoryImpl(
     private fun mergeContacts(local: AddressBook, remote: AddressBook?): AddressBook = local // TBD
 
     private suspend fun withGoogleDrivePermission(internalOperation: InternalOperation) {
-        if (hasGoogleDrivePermission()) {
-            withNonCancellableSemaphore {
-                executeInternalOperation(operation = internalOperation, includeRemote = true)
+        val remoteConsent = getRemoteConsent()
+
+        if (hasGoogleDrivePermission() && remoteConsent is RemoteConsentResult.HasRemoteConsent) {
+            try {
+                withNonCancellableSemaphore {
+                    executeInternalOperation(operation = internalOperation, throwRemoteConsentExceptions = true)
+                }
+            } catch (e: UserRecoverableAuthIOException) {
+                this@AddressBookRepositoryImpl.internalOperation = internalOperation
+                e.intent?.let {
+                    googleRemoteConsentRequest.emit(it)
+                }
+                internalOperationCompleted.first { it == internalOperation }
+            } catch (e: UserRecoverableAuthException) {
+                this@AddressBookRepositoryImpl.internalOperation = internalOperation
+                e.intent?.let {
+                    googleRemoteConsentRequest.emit(it)
+                }
+                internalOperationCompleted.first { it == internalOperation }
             }
         } else {
             withNonCancellableSemaphore {
-                Twig.info { "Address Book: withGoogleDrivePermission - request permission" }
-                this.internalOperation = internalOperation
-                googleSignInRequest.emit(Scope(GOOGLE_DRIVE_SCOPE))
+                if (remoteConsent is RemoteConsentResult.NoRemoteConsent && remoteConsent.intent != null) {
+                    Twig.info { "Address Book: withGoogleDrivePermission - request consent" }
+                    this.internalOperation = internalOperation
+                    googleRemoteConsentRequest.emit(remoteConsent.intent)
+                } else {
+                    Twig.info { "Address Book: withGoogleDrivePermission - request permission" }
+                    this.internalOperation = internalOperation
+                    googleSignInRequest.emit(Unit)
+                }
+
+
             }
             internalOperationCompleted.first { it == internalOperation }
         }
@@ -174,11 +213,15 @@ class AddressBookRepositoryImpl(
         GoogleSignIn.hasPermissions(GoogleSignIn.getLastSignedInAccount(context), Scope(GOOGLE_DRIVE_SCOPE))
     }
 
-    @Suppress("UNUSED_PARAMETER")
-    private suspend fun executeInternalOperation(operation: InternalOperation, includeRemote: Boolean) {
-        // if (includeRemote) {
+    private suspend fun getRemoteConsent() = remoteAddressBookDataSource.getRemoteConsent()
+
+    /**
+     * @throws [UserRecoverableAuthException] or [UserRecoverableAuthIOException] if a consent error occurred and
+     * throwRemoteConsentExceptions is true
+     */
+    @Throws(UserRecoverableAuthException::class, UserRecoverableAuthIOException::class)
+    private suspend fun executeInternalOperation(operation: InternalOperation, throwRemoteConsentExceptions: Boolean) {
         ensureSynchronization()
-        // }
         val local = when (operation) {
             is InternalOperation.Delete -> {
                 Twig.info { "Address Book: executeInternalOperation - delete" }
@@ -200,7 +243,7 @@ class AddressBookRepositoryImpl(
             }
         }
         addressBookCache.update { local }
-        executeRemoteAddressBookSafe {
+        executeRemoteAddressBookSafe(throwRemoteConsentExceptions) {
             remoteAddressBookDataSource.uploadContacts()
             Twig.info { "Address Book: executeInternalOperation - remote address book uploaded" }
         }
@@ -212,7 +255,11 @@ class AddressBookRepositoryImpl(
         }
     }
 
-    private suspend fun <T> executeRemoteAddressBookSafe(block: suspend () -> T): T? {
+    @Throws(UserRecoverableAuthException::class, UserRecoverableAuthIOException::class)
+    private suspend fun <T> executeRemoteAddressBookSafe(
+        throwRemoteConsentExceptions: Boolean,
+        block: suspend () -> T
+    ): T? {
         if (hasGoogleDrivePermission().not()) {
             return null
         }
@@ -221,9 +268,15 @@ class AddressBookRepositoryImpl(
             block()
         } catch (e: UserRecoverableAuthException) {
             Twig.error(e) { "Address Book: remote execution failed" }
+            if (throwRemoteConsentExceptions) {
+                throw e
+            }
             null
         } catch (e: UserRecoverableAuthIOException) {
             Twig.error(e) { "Address Book: remote execution failed" }
+            if (throwRemoteConsentExceptions) {
+                throw e
+            }
             null
         } catch (e: GoogleAuthException) {
             Twig.error(e) { "Address Book: remote execution failed" }
@@ -252,5 +305,5 @@ private sealed interface InternalOperation {
     data class Delete(val contact: AddressBookContact) : InternalOperation
 }
 
-// private const val GOOGLE_DRIVE_SCOPE = Scopes.DRIVE_FILE
 private const val GOOGLE_DRIVE_SCOPE = Scopes.DRIVE_APPFOLDER
+

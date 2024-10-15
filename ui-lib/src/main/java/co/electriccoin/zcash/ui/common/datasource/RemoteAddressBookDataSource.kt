@@ -3,8 +3,10 @@
 package co.electriccoin.zcash.ui.common.datasource
 
 import android.content.Context
+import android.content.Intent
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.BuildConfig
+import co.electriccoin.zcash.ui.common.datasource.RemoteAddressBookDataSource.RemoteConsentResult
 import co.electriccoin.zcash.ui.common.model.AddressBook
 import co.electriccoin.zcash.ui.common.provider.AddressBookProvider
 import co.electriccoin.zcash.ui.common.provider.AddressBookStorageProvider
@@ -43,6 +45,14 @@ interface RemoteAddressBookDataSource {
         GoogleJsonResponseException::class,
     )
     suspend fun uploadContacts()
+
+    suspend fun getRemoteConsent(): RemoteConsentResult
+
+    sealed interface RemoteConsentResult {
+        data object HasRemoteConsent: RemoteConsentResult
+
+        data class NoRemoteConsent(val intent: Intent?): RemoteConsentResult
+    }
 }
 
 class RemoteAddressBookDataSourceImpl(
@@ -136,10 +146,25 @@ class RemoteAddressBookDataSourceImpl(
         createRemoteFile(localFile, drive)
     }
 
+    override suspend fun getRemoteConsent(): RemoteConsentResult = withContext(Dispatchers.IO) {
+        val drive = createGoogleDriveService()
+
+        try {
+            drive.about().get().execute()
+            RemoteConsentResult.HasRemoteConsent
+        } catch (e: UserRecoverableAuthException) {
+            RemoteConsentResult.NoRemoteConsent(e.intent)
+        } catch (e: UserRecoverableAuthIOException) {
+            RemoteConsentResult.NoRemoteConsent(e.intent)
+        } catch (e: Exception) {
+            RemoteConsentResult.NoRemoteConsent(null)
+        }
+    }
+
     private fun createGoogleDriveService(): Drive {
         val account = GoogleSignIn.getLastSignedInAccount(context)
 
-        val credentials = GoogleAccountCredential.usingOAuth2(context, listOf(Scopes.DRIVE_FILE))
+        val credentials = GoogleAccountCredential.usingOAuth2(context, listOf(Scopes.DRIVE_APPFOLDER))
             .apply {
                 selectedAccount = account?.account ?: allAccounts.firstOrNull()
             }
