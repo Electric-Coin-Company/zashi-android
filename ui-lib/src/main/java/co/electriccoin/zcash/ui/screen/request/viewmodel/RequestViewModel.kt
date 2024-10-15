@@ -6,6 +6,7 @@ import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.android.sdk.model.FiatCurrencyConversion
+import cash.z.ecc.android.sdk.model.WalletAddress
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.R
@@ -75,8 +76,22 @@ class RequestViewModel(
                     exchangeRateState = exchangeRateUsd,
                     monetarySeparators = getMonetarySeparators(),
                     onAmount = { onAmount(resolveExchangeRateValue(exchangeRateUsd), it) },
-                    onBack = ::onBack,
-                    onDone = { onAmountDone(resolveExchangeRateValue(exchangeRateUsd)) },
+                    onBack = { onBack() },
+                    onDone = {
+                        when (walletAddress) {
+                            is WalletAddress.Transparent -> {
+                                onAmountAndMemoDone(
+                                    walletAddress.address,
+                                    zip321BuildUriUseCase,
+                                    resolveExchangeRateValue(exchangeRateUsd)
+                                )
+                            }
+                            is WalletAddress.Unified, is WalletAddress.Sapling -> {
+                                onAmountDone(resolveExchangeRateValue(exchangeRateUsd))
+                            }
+                            else -> error("Unexpected address type")
+                        }
+                    },
                     onSwitch = { onSwitch(resolveExchangeRateValue(exchangeRateUsd), it) },
                     request = request,
                     zcashCurrency = getZcashCurrency(),
@@ -178,6 +193,8 @@ class RequestViewModel(
     // It only adds check for 0-8 digits after the decimal separator at maximum
     private val allowedNumberFormatValidationRegex = "^([0-9]*([0-9]+([${getMonetarySeparators().grouping}]\$|[${getMonetarySeparators().grouping}][0-9]+))*([${getMonetarySeparators().decimal}]\$|[${getMonetarySeparators().decimal}][0-9]{0,8})?)?\$".toRegex()
 
+    private val MAX_ZCASH_SUPPLY = 21_000_000
+
     private fun validateAmountState(
         conversion: FiatCurrencyConversion?,
         resultAmount: String,
@@ -205,7 +222,7 @@ class RequestViewModel(
             } else {
                 currentValue
             }
-            if (zecValue > 21_000_000) {
+            if (zecValue > MAX_ZCASH_SUPPLY) {
                 newAmount.copyState(request.value.amountState.amount)
             } else {
                 newAmount
@@ -222,7 +239,14 @@ class RequestViewModel(
                 stage.emit(RequestStage.AMOUNT)
             }
             RequestStage.QR_CODE -> {
-                stage.emit(RequestStage.MEMO)
+                when (ReceiveAddressType.fromOrdinal(addressTypeOrdinal)) {
+                    ReceiveAddressType.Transparent -> {
+                        stage.emit(RequestStage.AMOUNT)
+                    }
+                    ReceiveAddressType.Unified, ReceiveAddressType.Sapling -> {
+                        stage.emit(RequestStage.MEMO)
+                    }
+                }
             }
         }
     }
@@ -260,6 +284,37 @@ class RequestViewModel(
                 bitmap = null
             ))
         )
+        stage.emit(RequestStage.QR_CODE)
+    }
+
+    private fun onAmountAndMemoDone(
+        address: String,
+        zip321BuildUriUseCase: Zip321BuildUriUseCase,
+        conversion: FiatCurrencyConversion?
+    ) = viewModelScope.launch {
+        val qrCodeAmount = when (request.value.amountState.currency) {
+            RequestCurrency.Fiat -> if (conversion != null) {
+                request.value.amountState.toZecString(conversion)
+            } else {
+                Twig.error { "Unexpected screen state" }
+                request.value.amountState.amount
+            }
+            RequestCurrency.Zec -> request.value.amountState.amount
+        }
+        val newRequest = request.value.copy(
+            qrCodeState = QrCodeState(
+                requestUri = createZip321Uri(
+                    address = address,
+                    amount = qrCodeAmount,
+                    memo = DEFAULT_MEMO,
+                    zip321BuildUriUseCase = zip321BuildUriUseCase
+                ),
+                zecAmount = qrCodeAmount,
+                memo = DEFAULT_MEMO,
+                bitmap = null
+            )
+        )
+        request.emit(newRequest)
         stage.emit(RequestStage.QR_CODE)
     }
 

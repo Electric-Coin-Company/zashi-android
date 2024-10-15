@@ -29,6 +29,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import cash.z.ecc.android.sdk.model.WalletAddress
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.design.component.ZashiBadge
@@ -55,16 +56,33 @@ internal fun RequestQrCodeView(
     ) {
         Spacer(Modifier.height(ZcashTheme.dimens.spacingDefault))
 
-        ZashiBadge(
-            text = stringResource(id = R.string.request_memo_privacy_level_shielded),
-            leadingIconVector = painterResource(id = R.drawable.ic_solid_check),
-            colors =
-            ZashiBadgeColors(
-                border = ZashiColors.Utility.Purple.utilityPurple200,
-                text = ZashiColors.Utility.Purple.utilityPurple700,
-                container = ZashiColors.Utility.Purple.utilityPurple50,
-            )
-        )
+        when (state.walletAddress) {
+            is WalletAddress.Transparent -> {
+                ZashiBadge(
+                    text = stringResource(id = R.string.request_memo_privacy_level_transparent),
+                    leadingIconVector = painterResource(id = R.drawable.ic_alert_circle),
+                    colors =
+                    ZashiBadgeColors(
+                        border = ZashiColors.Utility.WarningYellow.utilityOrange200,
+                        text = ZashiColors.Utility.WarningYellow.utilityOrange700,
+                        container = ZashiColors.Utility.WarningYellow.utilityOrange50,
+                    )
+                )
+            }
+            is WalletAddress.Unified, is WalletAddress.Sapling -> {
+                ZashiBadge(
+                    text = stringResource(id = R.string.request_memo_privacy_level_shielded),
+                    leadingIconVector = painterResource(id = R.drawable.ic_solid_check),
+                    colors =
+                    ZashiBadgeColors(
+                        border = ZashiColors.Utility.Purple.utilityPurple200,
+                        text = ZashiColors.Utility.Purple.utilityPurple700,
+                        container = ZashiColors.Utility.Purple.utilityPurple50,
+                    )
+                )
+            }
+            else -> error("Unsupported address type")
+        }
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingMid))
 

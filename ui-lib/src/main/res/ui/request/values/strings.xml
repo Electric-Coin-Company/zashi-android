@@ -30,6 +30,7 @@
     <string name="request_amount_keyboard_delete">Delete</string>
 
     <string name="request_memo_privacy_level_shielded">Maximum Privacy</string>
+    <string name="request_memo_privacy_level_transparent">Low Privacy</string>
     <string name="request_memo_payment_request_subtitle">Payment Request</string>
     <string name="request_memo_text_field_hint">What\'s this for?</string>
     <string name="request_memo_bytes_counter">
