@@ -29,7 +29,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onSubscription
-import kotlinx.coroutines.flow.shareIn
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
@@ -88,7 +88,7 @@ class AddressBookRepositoryImpl(
                     ensureSynchronization()
                 }
             }
-            .shareIn(scope = scope, started = SharingStarted.WhileSubscribed(60.seconds), replay = 1)
+            .stateIn(scope = scope, started = SharingStarted.WhileSubscribed(60.seconds), initialValue = null)
 
     override val googleSignInRequest = MutableSharedFlow<Unit>()
 
