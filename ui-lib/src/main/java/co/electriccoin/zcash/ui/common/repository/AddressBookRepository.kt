@@ -176,7 +176,9 @@ class AddressBookRepositoryImpl(
     private suspend fun withGoogleDrivePermission(internalOperation: InternalOperation) {
         val remoteConsent = getRemoteConsent()
 
-        if (hasGoogleDrivePermission() && remoteConsent is RemoteConsentResult.HasRemoteConsent) {
+        if (hasGoogleDrivePermission() && remoteConsent in
+            listOf(RemoteConsentResult.HasRemoteConsent, RemoteConsentResult.Error)
+        ) {
             withNonCancellableSemaphore {
                 executeInternalOperation(operation = internalOperation)
             }

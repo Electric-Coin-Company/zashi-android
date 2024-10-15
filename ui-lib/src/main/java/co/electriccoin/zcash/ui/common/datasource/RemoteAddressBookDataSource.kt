@@ -52,6 +52,8 @@ interface RemoteAddressBookDataSource {
         data object HasRemoteConsent: RemoteConsentResult
 
         data class NoRemoteConsent(val intent: Intent?): RemoteConsentResult
+
+        data object Error: RemoteConsentResult
     }
 }
 
@@ -157,8 +159,7 @@ class RemoteAddressBookDataSourceImpl(
         } catch (e: UserRecoverableAuthIOException) {
             RemoteConsentResult.NoRemoteConsent(e.intent)
         } catch (e: Exception) {
-            Twig.error(e) { "Error getting remote consent" }
-            RemoteConsentResult.NoRemoteConsent(null)
+            RemoteConsentResult.Error
         }
     }
 
