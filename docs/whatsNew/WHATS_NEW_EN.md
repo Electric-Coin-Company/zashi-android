@@ -19,6 +19,7 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ### Added
 - New QR Code detail screen has been added
+- The new Request ZEC screens have been added. They provide a way to build ZIP 321 Uri consisting of the amount, message, and receiver address and then creates a QR code image of it.
 
 ## [1.2 (739)] - 2024-09-27
 
