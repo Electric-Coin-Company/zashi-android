@@ -25,8 +25,11 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onSubscription
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
@@ -35,6 +38,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import java.io.IOException
 import kotlin.math.max
+import kotlin.time.Duration.Companion.seconds
 
 interface AddressBookRepository {
     val addressBook: Flow<AddressBook?>
@@ -84,6 +88,7 @@ class AddressBookRepositoryImpl(
                     ensureSynchronization()
                 }
             }
+            .shareIn(scope = scope, started = SharingStarted.WhileSubscribed(60.seconds), replay = 1)
 
     override val googleSignInRequest = MutableSharedFlow<Unit>()
 
@@ -146,7 +151,10 @@ class AddressBookRepositoryImpl(
         }
     }
 
-    private suspend fun ensureSynchronization(forceUpdate: Boolean = false) {
+    private suspend fun ensureSynchronization(
+        forceUpdate: Boolean = false,
+        operation: InternalOperation? = null
+    ) {
         if (forceUpdate || addressBookCache.value == null) {
             val remote =
                 executeRemoteAddressBookSafe {
@@ -158,6 +166,7 @@ class AddressBookRepositoryImpl(
                 mergeContacts(
                     local = localAddressBookDataSource.getContacts(),
                     remote = remote,
+                    fromOperation = operation
                 )
             localAddressBookDataSource.saveContacts(merged)
             executeRemoteAddressBookSafe {
@@ -170,14 +179,27 @@ class AddressBookRepositoryImpl(
 
     private fun mergeContacts(
         local: AddressBook,
-        remote: AddressBook?
+        remote: AddressBook?,
+        fromOperation: InternalOperation?
     ): AddressBook {
         if (remote == null) return local
+
+        val allContacts =
+            if (fromOperation is InternalOperation.Delete) {
+                (local.contacts + remote.contacts).toMutableList()
+                    .apply {
+                        removeAll { it.address == fromOperation.contact.address }
+                    }
+                    .toList()
+            } else {
+                local.contacts + remote.contacts
+            }
+
         return AddressBook(
             lastUpdated = Clock.System.now(),
             version = max(local.version, remote.version),
             contacts =
-                (local.contacts + remote.contacts)
+                allContacts
                     .groupBy { it.address }
                     .map { (_, contacts) ->
                         contacts.maxBy { it.lastUpdated }
@@ -240,7 +262,11 @@ class AddressBookRepositoryImpl(
                 }
             }
         addressBookCache.update { local }
-        ensureSynchronization(forceUpdate = true)
+        scope.launch {
+            withNonCancellableSemaphore {
+                ensureSynchronization(forceUpdate = true, operation = operation)
+            }
+        }
     }
 
     private suspend fun withNonCancellableSemaphore(block: suspend () -> Unit) {
