@@ -23,6 +23,16 @@
 -dontwarn javax.naming.NamingEnumeration
 -dontwarn javax.naming.NamingException
 
+-dontwarn javax.naming.InvalidNameException
+-dontwarn javax.naming.ldap.LdapName
+-dontwarn javax.naming.ldap.Rdn
+-dontwarn org.ietf.jgss.GSSContext
+-dontwarn org.ietf.jgss.GSSCredential
+-dontwarn org.ietf.jgss.GSSException
+-dontwarn org.ietf.jgss.GSSManager
+-dontwarn org.ietf.jgss.GSSName
+-dontwarn org.ietf.jgss.Oid
+
 # kotlinx.datetime supports kotlinx.serialization, but we don't use kotlinx.serialization elsewhere
 # in the projects, so the classes aren't present.  These warnings are safe to suppress.
 -dontwarn kotlinx.serialization.KSerializer
