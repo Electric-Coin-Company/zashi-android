@@ -11,7 +11,10 @@ import kotlinx.datetime.Clock
 interface LocalAddressBookDataSource {
     suspend fun getContacts(): AddressBook
 
-    suspend fun saveContact(name: String, address: String): AddressBook
+    suspend fun saveContact(
+        name: String,
+        address: String
+    ): AddressBook
 
     suspend fun updateContact(
         contact: AddressBookContact,
@@ -62,12 +65,12 @@ class LocalAddressBookDataSourceImpl(
                     lastUpdated = lastUpdated,
                     version = 1,
                     contacts =
-                    addressBook?.contacts.orEmpty() +
-                        AddressBookContact(
-                            name = name,
-                            address = address,
-                            lastUpdated = lastUpdated,
-                        ),
+                        addressBook?.contacts.orEmpty() +
+                            AddressBookContact(
+                                name = name,
+                                address = address,
+                                lastUpdated = lastUpdated,
+                            ),
                 )
             writeAddressBookToLocalStorage(addressBook!!)
             addressBook!!
@@ -85,18 +88,18 @@ class LocalAddressBookDataSourceImpl(
                     lastUpdated = lastUpdated,
                     version = 1,
                     contacts =
-                    addressBook?.contacts.orEmpty().toMutableList()
-                        .apply {
-                            set(
-                                indexOf(contact),
-                                AddressBookContact(
-                                    name = name.trim(),
-                                    address = address.trim(),
-                                    lastUpdated = Clock.System.now()
+                        addressBook?.contacts.orEmpty().toMutableList()
+                            .apply {
+                                set(
+                                    indexOf(contact),
+                                    AddressBookContact(
+                                        name = name.trim(),
+                                        address = address.trim(),
+                                        lastUpdated = Clock.System.now()
+                                    )
                                 )
-                            )
-                        }
-                        .toList(),
+                            }
+                            .toList(),
                 )
             writeAddressBookToLocalStorage(addressBook!!)
             addressBook!!
@@ -110,11 +113,11 @@ class LocalAddressBookDataSourceImpl(
                     lastUpdated = lastUpdated,
                     version = 1,
                     contacts =
-                    addressBook?.contacts.orEmpty().toMutableList()
-                        .apply {
-                            remove(addressBookContact)
-                        }
-                        .toList(),
+                        addressBook?.contacts.orEmpty().toMutableList()
+                            .apply {
+                                remove(addressBookContact)
+                            }
+                            .toList(),
                 )
             writeAddressBookToLocalStorage(addressBook!!)
             addressBook!!
@@ -135,4 +138,3 @@ class LocalAddressBookDataSourceImpl(
         addressBookProvider.writeAddressBookToFile(file, addressBook)
     }
 }
-

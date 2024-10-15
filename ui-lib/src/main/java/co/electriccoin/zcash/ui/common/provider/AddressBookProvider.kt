@@ -10,15 +10,19 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
 interface AddressBookProvider {
-
-    fun writeAddressBookToFile(file: File, addressBook: AddressBook)
+    fun writeAddressBookToFile(
+        file: File,
+        addressBook: AddressBook
+    )
 
     fun readAddressBookFromFile(file: File): AddressBook
 }
 
 class AddressBookProviderImpl : AddressBookProvider {
-
-    override fun writeAddressBookToFile(file: File, addressBook: AddressBook) {
+    override fun writeAddressBookToFile(
+        file: File,
+        addressBook: AddressBook
+    ) {
         file.outputStream().use {
             serializeAddressBookToByteArrayFile(it, addressBook)
         }
@@ -30,7 +34,10 @@ class AddressBookProviderImpl : AddressBookProvider {
         }
     }
 
-    private fun serializeAddressBookToByteArrayFile(outputStream: FileOutputStream, addressBook: AddressBook) {
+    private fun serializeAddressBookToByteArrayFile(
+        outputStream: FileOutputStream,
+        addressBook: AddressBook
+    ) {
         outputStream.buffered().use {
             it.write(addressBook.version.createByteArray())
             it.write(addressBook.lastUpdated.toEpochMilliseconds().createByteArray())
@@ -50,15 +57,15 @@ class AddressBookProviderImpl : AddressBookProvider {
                 version = stream.readInt(),
                 lastUpdated = stream.readLong().let { Instant.fromEpochMilliseconds(it) },
                 contacts =
-                stream.readInt().let { contactsSize ->
-                    (0 until contactsSize).map { _ ->
-                        AddressBookContact(
-                            lastUpdated = stream.readLong().let { Instant.fromEpochMilliseconds(it) },
-                            address = stream.readString(),
-                            name = stream.readString(),
-                        )
+                    stream.readInt().let { contactsSize ->
+                        (0 until contactsSize).map { _ ->
+                            AddressBookContact(
+                                lastUpdated = stream.readLong().let { Instant.fromEpochMilliseconds(it) },
+                                address = stream.readString(),
+                                name = stream.readString(),
+                            )
+                        }
                     }
-                }
             )
         }
     }

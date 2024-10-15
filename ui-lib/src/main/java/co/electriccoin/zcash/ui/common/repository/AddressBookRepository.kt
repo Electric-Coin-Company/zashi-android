@@ -43,7 +43,10 @@ interface AddressBookRepository {
 
     val googleRemoteConsentRequest: Flow<Intent>
 
-    suspend fun saveContact(name: String, address: String)
+    suspend fun saveContact(
+        name: String,
+        address: String
+    )
 
     suspend fun updateContact(
         contact: AddressBookContact,
@@ -60,12 +63,12 @@ interface AddressBookRepository {
     fun onGoogleSignInError()
 }
 
+@Suppress("TooManyFunctions")
 class AddressBookRepositoryImpl(
     private val localAddressBookDataSource: LocalAddressBookDataSource,
     private val remoteAddressBookDataSource: RemoteAddressBookDataSource,
     private val context: Context
 ) : AddressBookRepository {
-
     private val scope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
 
     private val semaphore = Mutex()
@@ -88,8 +91,10 @@ class AddressBookRepositoryImpl(
 
     private val internalOperationCompleted = MutableSharedFlow<InternalOperation>()
 
-    override suspend fun saveContact(name: String, address: String) =
-        withGoogleDrivePermission(InternalOperation.Save(name = name, address = address))
+    override suspend fun saveContact(
+        name: String,
+        address: String
+    ) = withGoogleDrivePermission(InternalOperation.Save(name = name, address = address))
 
     override suspend fun updateContact(
         contact: AddressBookContact,
@@ -98,7 +103,9 @@ class AddressBookRepositoryImpl(
     ) = withGoogleDrivePermission(InternalOperation.Update(contact = contact, name = name, address = address))
 
     override suspend fun deleteContact(contact: AddressBookContact) =
-        withGoogleDrivePermission(InternalOperation.Delete(contact = contact))
+        withGoogleDrivePermission(
+            InternalOperation.Delete(contact = contact)
+        )
 
     override fun onGoogleSignInSuccess() {
         scope.launch {
@@ -141,11 +148,12 @@ class AddressBookRepositoryImpl(
 
     private suspend fun ensureSynchronization(forceUpdate: Boolean = false) {
         if (forceUpdate || addressBookCache.value == null) {
-            val remote = executeRemoteAddressBookSafe {
-                val contacts = remoteAddressBookDataSource.fetchContacts()
-                Twig.info { "Address Book: ensureSynchronization - remote address book loaded" }
-                contacts
-            }
+            val remote =
+                executeRemoteAddressBookSafe {
+                    val contacts = remoteAddressBookDataSource.fetchContacts()
+                    Twig.info { "Address Book: ensureSynchronization - remote address book loaded" }
+                    contacts
+                }
             val merged =
                 mergeContacts(
                     local = localAddressBookDataSource.getContacts(),
@@ -160,16 +168,20 @@ class AddressBookRepositoryImpl(
         }
     }
 
-    private fun mergeContacts(local: AddressBook, remote: AddressBook?): AddressBook {
+    private fun mergeContacts(
+        local: AddressBook,
+        remote: AddressBook?
+    ): AddressBook {
         if (remote == null) return local
         return AddressBook(
             lastUpdated = Clock.System.now(),
             version = max(local.version, remote.version),
-            contacts = (local.contacts + remote.contacts)
-                .groupBy { it.address }
-                .map { (_, contacts) ->
-                    contacts.maxBy { it.lastUpdated }
-                }
+            contacts =
+                (local.contacts + remote.contacts)
+                    .groupBy { it.address }
+                    .map { (_, contacts) ->
+                        contacts.maxBy { it.lastUpdated }
+                    }
         )
     }
 
@@ -193,39 +205,40 @@ class AddressBookRepositoryImpl(
                     this.internalOperation = internalOperation
                     googleSignInRequest.emit(Unit)
                 }
-
             }
             internalOperationCompleted.first { it == internalOperation }
         }
     }
 
-    private suspend fun hasGoogleDrivePermission() = withContext(Dispatchers.IO) {
-        GoogleSignIn.hasPermissions(GoogleSignIn.getLastSignedInAccount(context), Scope(GOOGLE_DRIVE_SCOPE))
-    }
+    private suspend fun hasGoogleDrivePermission() =
+        withContext(Dispatchers.IO) {
+            GoogleSignIn.hasPermissions(GoogleSignIn.getLastSignedInAccount(context), Scope(GOOGLE_DRIVE_SCOPE))
+        }
 
     private suspend fun getRemoteConsent() = remoteAddressBookDataSource.getRemoteConsent()
 
     private suspend fun executeInternalOperation(operation: InternalOperation) {
-        val local = when (operation) {
-            is InternalOperation.Delete -> {
-                Twig.info { "Address Book: executeInternalOperation - delete" }
-                localAddressBookDataSource.deleteContact(addressBookContact = operation.contact)
-            }
+        val local =
+            when (operation) {
+                is InternalOperation.Delete -> {
+                    Twig.info { "Address Book: executeInternalOperation - delete" }
+                    localAddressBookDataSource.deleteContact(addressBookContact = operation.contact)
+                }
 
-            is InternalOperation.Save -> {
-                Twig.info { "Address Book: executeInternalOperation - save" }
-                localAddressBookDataSource.saveContact(name = operation.name, address = operation.address)
-            }
+                is InternalOperation.Save -> {
+                    Twig.info { "Address Book: executeInternalOperation - save" }
+                    localAddressBookDataSource.saveContact(name = operation.name, address = operation.address)
+                }
 
-            is InternalOperation.Update -> {
-                Twig.info { "Address Book: executeInternalOperation - update" }
-                localAddressBookDataSource.updateContact(
-                    contact = operation.contact,
-                    name = operation.name,
-                    address = operation.address
-                )
+                is InternalOperation.Update -> {
+                    Twig.info { "Address Book: executeInternalOperation - update" }
+                    localAddressBookDataSource.updateContact(
+                        contact = operation.contact,
+                        name = operation.name,
+                        address = operation.address
+                    )
+                }
             }
-        }
         addressBookCache.update { local }
         ensureSynchronization(forceUpdate = true)
     }
@@ -236,6 +249,7 @@ class AddressBookRepositoryImpl(
         }
     }
 
+    @Suppress("TooGenericExceptionCaught")
     private suspend fun <T> executeRemoteAddressBookSafe(block: suspend () -> T): T? {
         if (hasGoogleDrivePermission().not()) {
             return null
@@ -277,4 +291,3 @@ private sealed interface InternalOperation {
 }
 
 private const val GOOGLE_DRIVE_SCOPE = Scopes.DRIVE_APPFOLDER
-

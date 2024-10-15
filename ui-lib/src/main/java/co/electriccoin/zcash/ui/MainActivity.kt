@@ -139,12 +139,14 @@ class MainActivity : FragmentActivity() {
     }
 
     private fun requestGoogleSignIn() {
-        val googleSignInClient = GoogleSignIn.getClient(
-            this@MainActivity, GoogleSignInOptions
-                .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestScopes(Scope(Scopes.DRIVE_APPFOLDER))
-                .build()
-        )
+        val googleSignInClient =
+            GoogleSignIn.getClient(
+                this@MainActivity,
+                GoogleSignInOptions
+                    .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .requestScopes(Scope(Scopes.DRIVE_APPFOLDER))
+                    .build()
+            )
 
         googleSignInLauncher.launch(googleSignInClient.signInIntent)
     }

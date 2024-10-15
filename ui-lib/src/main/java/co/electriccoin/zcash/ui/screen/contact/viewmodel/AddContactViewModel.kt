@@ -105,10 +105,10 @@ class AddContactViewModel(
             ButtonState(
                 text = stringRes(R.string.add_new_contact_primary_btn),
                 isEnabled =
-                address.error == null &&
-                    name.error == null &&
-                    contactAddress.value.isNotEmpty() &&
-                    contactName.value.isNotEmpty(),
+                    address.error == null &&
+                        name.error == null &&
+                        contactAddress.value.isNotEmpty() &&
+                        contactName.value.isNotEmpty(),
                 onClick = ::onSaveButtonClick,
                 isLoading = isSavingContact
             )

@@ -4,7 +4,6 @@ import android.content.Context
 import java.io.File
 
 interface AddressBookStorageProvider {
-
     fun getStorageFile(): File?
 
     fun getOrCreateStorageFile(): File
@@ -18,7 +17,6 @@ interface AddressBookStorageProvider {
 class AddressBookStorageProviderImpl(
     private val context: Context
 ) : AddressBookStorageProvider {
-
     override fun getStorageFile(): File? {
         return File(context.noBackupFilesDir, LOCAL_ADDRESS_BOOK_FILE_NAME)
             .takeIf { it.exists() && it.isFile }
@@ -39,4 +37,3 @@ class AddressBookStorageProviderImpl(
 
 private const val LOCAL_ADDRESS_BOOK_FILE_NAME = "address_book"
 private const val REMOTE_ADDRESS_BOOK_FILE_NAME_LOCAL_COPY = "address_book_temp"
-
