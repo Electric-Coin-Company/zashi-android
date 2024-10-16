@@ -28,9 +28,9 @@ import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.GridBgScaffold
 import co.electriccoin.zcash.ui.design.component.GridBgSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.LabeledCheckBox
-import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.TopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.component.TopScreenLogoTitle
+import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.VersionInfoFixture
 
@@ -145,7 +145,7 @@ private fun SecurityWarningContent(
                     .weight(MINIMAL_WEIGHT)
         )
 
-        PrimaryButton(
+        ZashiButton(
             onClick = onConfirm,
             text = stringResource(R.string.security_warning_confirm).uppercase(),
             enabled = checkedState.value,

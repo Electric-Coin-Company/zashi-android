@@ -29,9 +29,9 @@ import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.GridBgScaffold
 import co.electriccoin.zcash.ui.design.component.GridBgSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.LabeledCheckBox
-import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.TopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.component.TopScreenLogoTitle
+import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 
 @Preview("Export Private Data")
@@ -158,7 +158,7 @@ private fun ExportPrivateDataContent(
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
 
-        PrimaryButton(
+        ZashiButton(
             onClick = onConfirm,
             text = stringResource(R.string.export_data_confirm).uppercase(),
             enabled = checkedState.value,

@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -27,8 +28,8 @@ import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.GridBgScaffold
 import co.electriccoin.zcash.ui.design.component.Header
-import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
+import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 
 @Preview
@@ -182,7 +183,8 @@ private fun NotEnoughSpaceMainContent(
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
-        PrimaryButton(
+        ZashiButton(
+            modifier = Modifier.fillMaxWidth(),
             onClick = onSystemSettings,
             text = stringResource(R.string.not_enough_space_system_settings_btn),
         )

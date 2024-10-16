@@ -37,8 +37,8 @@ import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.FormTextField
 import co.electriccoin.zcash.ui.design.component.GridBgScaffold
 import co.electriccoin.zcash.ui.design.component.GridBgSmallTopAppBar
-import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.TopAppBarBackNavigation
+import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 
 @Preview
@@ -211,7 +211,7 @@ private fun SupportMainContent(
 
         // TODO [#1467]: Support screen - keep button above keyboard
         // TODO [#1467]: https://github.com/Electric-Coin-Company/zashi-android/issues/1467
-        PrimaryButton(
+        ZashiButton(
             onClick = { setShowDialog(true) },
             text = stringResource(id = R.string.support_send),
             modifier =

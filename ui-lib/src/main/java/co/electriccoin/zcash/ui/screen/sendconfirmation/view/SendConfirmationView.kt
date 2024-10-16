@@ -53,7 +53,6 @@ import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.ButtonState
-import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.Small
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.StyledBalance
@@ -753,7 +752,8 @@ fun MultipleSubmissionFailure(
 
         Spacer(modifier = Modifier.weight(1f, true))
 
-        PrimaryButton(
+        ZashiButton(
+            modifier = Modifier.fillMaxWidth(),
             onClick = onContactSupport,
             text = stringResource(id = R.string.send_confirmation_multiple_error_btn)
         )

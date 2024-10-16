@@ -6,7 +6,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -38,8 +37,8 @@ import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.GridBgScaffold
 import co.electriccoin.zcash.ui.design.component.GridBgSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.Header
-import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.Reference
+import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.UpdateInfoFixture
 import co.electriccoin.zcash.ui.screen.update.UpdateTag
@@ -208,7 +207,7 @@ private fun UpdateBottomAppBar(
                     ),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            PrimaryButton(
+            ZashiButton(
                 onClick = { onDownload(UpdateState.Running) },
                 text = stringResource(R.string.update_download_button),
                 modifier =
@@ -216,7 +215,6 @@ private fun UpdateBottomAppBar(
                         .testTag(UpdateTag.BTN_DOWNLOAD)
                         .fillMaxWidth(),
                 enabled = updateInfo.state != UpdateState.Running,
-                outerPaddingValues = PaddingValues(all = ZcashTheme.dimens.spacingNone),
             )
 
             Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))

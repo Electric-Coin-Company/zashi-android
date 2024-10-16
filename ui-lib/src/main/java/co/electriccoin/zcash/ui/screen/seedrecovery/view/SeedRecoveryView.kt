@@ -48,9 +48,9 @@ import co.electriccoin.zcash.ui.design.component.BodySmall
 import co.electriccoin.zcash.ui.design.component.ChipGrid
 import co.electriccoin.zcash.ui.design.component.GridBgScaffold
 import co.electriccoin.zcash.ui.design.component.GridBgSmallTopAppBar
-import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.TopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.component.TopScreenLogoTitle
+import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.VersionInfoFixture
 import kotlinx.collections.immutable.toPersistentList
@@ -220,7 +220,7 @@ private fun SeedRecoveryMainContent(
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
 
-        PrimaryButton(
+        ZashiButton(
             onClick = onDone,
             text = stringResource(R.string.seed_recovery_button_finished),
             modifier =

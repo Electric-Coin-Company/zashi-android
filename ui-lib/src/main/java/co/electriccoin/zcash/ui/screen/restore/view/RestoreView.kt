@@ -67,10 +67,10 @@ import co.electriccoin.zcash.ui.design.component.ChipOnSurface
 import co.electriccoin.zcash.ui.design.component.FormTextField
 import co.electriccoin.zcash.ui.design.component.GridBgScaffold
 import co.electriccoin.zcash.ui.design.component.GridBgSmallTopAppBar
-import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.Reference
 import co.electriccoin.zcash.ui.design.component.TopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.component.TopScreenLogoTitle
+import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.restore.RestoreTag
 import co.electriccoin.zcash.ui.screen.restore.model.ParseResult
@@ -461,11 +461,10 @@ private fun RestoreSeedMainContent(
 
         Spacer(Modifier.height(ZcashTheme.dimens.spacingLarge))
 
-        PrimaryButton(
+        ZashiButton(
             onClick = goNext,
             enabled = isSeedValid,
             text = stringResource(id = R.string.restore_seed_button_next),
-            outerPaddingValues = PaddingValues(top = ZcashTheme.dimens.spacingSmall),
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -829,7 +828,7 @@ private fun RestoreBirthdayMainContent(
 
         val isEmptyBirthday = height.isEmpty()
 
-        PrimaryButton(
+        ZashiButton(
             onClick = {
                 if (isEmptyBirthday) {
                     setRestoreHeight(null)

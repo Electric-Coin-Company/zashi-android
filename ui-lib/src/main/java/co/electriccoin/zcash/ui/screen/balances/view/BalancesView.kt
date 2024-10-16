@@ -9,7 +9,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -74,13 +73,13 @@ import co.electriccoin.zcash.ui.design.component.BodySmall
 import co.electriccoin.zcash.ui.design.component.BodyWithFiatCurrencySymbol
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.design.component.CircularSmallProgressIndicator
-import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.Reference
 import co.electriccoin.zcash.ui.design.component.Small
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.StyledBalance
 import co.electriccoin.zcash.ui.design.component.StyledBalanceDefaults
 import co.electriccoin.zcash.ui.design.component.TopAppBarHideBalancesNavigation
+import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.BalanceStateFixture
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
@@ -462,18 +461,12 @@ fun TransparentBalancePanel(
 
             Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
-            PrimaryButton(
+            ZashiButton(
                 onClick = onShielding,
                 text = stringResource(R.string.balances_transparent_balance_shield),
-                textStyle = ZcashTheme.extendedTypography.buttonTextSmall,
                 enabled = shieldState == ShieldState.Available,
-                minHeight = ZcashTheme.dimens.buttonHeightSmall,
-                modifier = Modifier.fillMaxWidth(),
-                outerPaddingValues =
-                    PaddingValues(
-                        horizontal = 54.dp,
-                        vertical = ZcashTheme.dimens.spacingSmall
-                    )
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 18.dp),
+
             )
 
             Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))

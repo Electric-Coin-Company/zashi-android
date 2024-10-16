@@ -35,9 +35,9 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
-import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.TopAppBarBackNavigation
+import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.ConfigInfoFixture
 import co.electriccoin.zcash.ui.fixture.VersionInfoFixture
@@ -193,20 +193,18 @@ fun AboutMainContent(
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingUpLarge))
 
-        PrimaryButton(
+        ZashiButton(
+            modifier = Modifier.fillMaxWidth(),
             onClick = onWhatsNew,
             text = stringResource(R.string.about_button_whats_new),
-            textStyle = ZcashTheme.extendedTypography.buttonTextSmall,
-            minHeight = ZcashTheme.dimens.buttonHeightSmall
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
 
-        PrimaryButton(
+        ZashiButton(
+            modifier = Modifier.fillMaxWidth(),
             onClick = onPrivacyPolicy,
             text = stringResource(R.string.about_button_privacy_policy),
-            textStyle = ZcashTheme.extendedTypography.buttonTextSmall,
-            minHeight = ZcashTheme.dimens.buttonHeightSmall
         )
     }
 }

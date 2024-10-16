@@ -25,6 +25,7 @@ import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.getValue
 
 @Composable
@@ -85,11 +86,11 @@ fun ZashiButton(
                 if (enabled && isLoading) {
                     LottieProgress(
                         loadingRes =
-                            if (isSystemInDarkTheme()) {
-                                R.raw.lottie_loading
-                            } else {
-                                R.raw.lottie_loading_white
-                            }
+                        if (isSystemInDarkTheme()) {
+                            R.raw.lottie_loading
+                        } else {
+                            R.raw.lottie_loading_white
+                        }
                     )
                 }
             }
@@ -194,6 +195,15 @@ data class ZashiButtonColors(
     val disabledContainerColor: Color,
     val disabledContentColor: Color,
     val borderColor: Color,
+)
+
+@Immutable
+data class ButtonState(
+    val text: StringResource,
+    val leadingIconVector: Painter? = null,
+    val isEnabled: Boolean = true,
+    val isLoading: Boolean = false,
+    val onClick: () -> Unit = {},
 )
 
 @Composable

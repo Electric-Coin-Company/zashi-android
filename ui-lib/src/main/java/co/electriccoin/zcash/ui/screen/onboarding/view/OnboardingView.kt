@@ -26,9 +26,9 @@ import cash.z.ecc.android.sdk.fixture.WalletFixture
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.GridBgScaffold
-import co.electriccoin.zcash.ui.design.component.PrimaryButton
-import co.electriccoin.zcash.ui.design.component.SecondaryButton
 import co.electriccoin.zcash.ui.design.component.TitleLarge
+import co.electriccoin.zcash.ui.design.component.ZashiButton
+import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 
 @Preview("Onboarding")
@@ -146,7 +146,7 @@ private fun OnboardingMainContent(
                     .weight(MINIMAL_WEIGHT)
         )
 
-        PrimaryButton(
+        ZashiButton(
             onClick = onCreateWallet,
             text = stringResource(R.string.onboarding_create_new_wallet),
             modifier = Modifier.fillMaxWidth()
@@ -154,9 +154,11 @@ private fun OnboardingMainContent(
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
-        SecondaryButton(
-            onImportWallet,
-            stringResource(R.string.onboarding_import_existing_wallet)
+        ZashiButton(
+            modifier = Modifier.fillMaxWidth(),
+            text = stringResource(R.string.onboarding_import_existing_wallet),
+            onClick = onImportWallet,
+            colors = ZashiButtonDefaults.secondaryColors()
         )
     }
 }
