@@ -10,6 +10,7 @@ directly impact users rather than highlighting other key architectural updates.*
 ## [Unreleased]
 
 ### Changed
+- Global design updates
 - Onboarding screen has been redesigned
 - Scan QR screen has been redesigned
 - The Receive screen UI has been redesigned
