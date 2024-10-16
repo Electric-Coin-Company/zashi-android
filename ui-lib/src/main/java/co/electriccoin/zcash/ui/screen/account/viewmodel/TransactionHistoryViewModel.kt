@@ -8,7 +8,8 @@ import cash.z.ecc.android.sdk.model.FirstClassByteArray
 import cash.z.ecc.android.sdk.model.TransactionOverview
 import cash.z.ecc.android.sdk.model.TransactionRecipient
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
-import co.electriccoin.zcash.ui.common.usecase.GetContactByAddressUseCase
+import co.electriccoin.zcash.ui.common.model.AddressBookContact
+import co.electriccoin.zcash.ui.common.usecase.ObserveAddressBookContactsUseCase
 import co.electriccoin.zcash.ui.screen.account.ext.TransactionOverviewExt
 import co.electriccoin.zcash.ui.screen.account.model.TransactionUi
 import co.electriccoin.zcash.ui.screen.account.model.TransactionUiState
@@ -17,21 +18,28 @@ import co.electriccoin.zcash.ui.screen.account.state.TransactionHistorySyncState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class TransactionHistoryViewModel(
-    private val getContactByAddress: GetContactByAddressUseCase
+    private val observeAddressBookContacts: ObserveAddressBookContactsUseCase
 ) : ViewModel() {
     private val state: MutableStateFlow<State> = MutableStateFlow(State.LOADING)
 
     private val transactions: MutableStateFlow<ImmutableList<TransactionUi>> = MutableStateFlow(persistentListOf())
+
+    private var transactionSyncJob: Job? = null
 
     val transactionUiState: StateFlow<TransactionUiState> =
         state.combine(transactions) { state: State, transactions: ImmutableList<TransactionUi> ->
@@ -48,39 +56,73 @@ class TransactionHistoryViewModel(
             TransactionUiState.Loading
         )
 
-    fun processTransactionState(dataState: TransactionHistorySyncState) =
-        viewModelScope.launch {
-            when (dataState) {
-                TransactionHistorySyncState.Loading -> {
-                    state.value = State.LOADING
-                    transactions.value = persistentListOf()
-                }
-                is TransactionHistorySyncState.Syncing -> {
-                    if (dataState.transactions.isEmpty()) {
-                        state.value = State.SYNCING_EMPTY
-                    } else {
-                        state.value = State.SYNCING
-                        transactions.value =
-                            dataState.transactions
-                                .map { data -> getOrUpdateTransactionItem(data) }
-                                .toPersistentList()
+    fun processTransactionState(dataState: TransactionHistorySyncState) {
+        transactionSyncJob?.cancel()
+        transactionSyncJob =
+            viewModelScope.launch {
+                when (dataState) {
+                    TransactionHistorySyncState.Loading -> {
+                        state.value = State.LOADING
+                        transactions.value = persistentListOf()
                     }
-                }
-                is TransactionHistorySyncState.Done -> {
-                    if (dataState.transactions.isEmpty()) {
-                        state.value = State.DONE_EMPTY
-                    } else {
-                        state.value = State.DONE
-                        transactions.value =
-                            dataState.transactions
-                                .map { data -> getOrUpdateTransactionItem(data) }
-                                .toPersistentList()
+
+                    is TransactionHistorySyncState.Syncing -> {
+                        if (dataState.transactions.isEmpty()) {
+                            state.value = State.SYNCING_EMPTY
+                        } else {
+                            state.value = State.SYNCING
+
+                            observeAddressBookContacts()
+                                .map { contacts ->
+                                    dataState.transactions
+                                        .map { data ->
+                                            val contact =
+                                                contacts?.find { contact ->
+                                                    contact.address ==
+                                                        (data.recipient as? TransactionRecipient.Address)
+                                                            ?.addressValue
+                                                }
+                                            getOrUpdateTransactionItem(data, contact)
+                                        }
+                                        .toPersistentList()
+                                }
+                                .onEach { new -> transactions.update { new } }
+                                .launchIn(this)
+                        }
+                    }
+
+                    is TransactionHistorySyncState.Done -> {
+                        if (dataState.transactions.isEmpty()) {
+                            state.value = State.DONE_EMPTY
+                        } else {
+                            state.value = State.DONE
+
+                            observeAddressBookContacts()
+                                .map { contacts ->
+                                    dataState.transactions
+                                        .map { data ->
+                                            val contact =
+                                                contacts?.find { contact ->
+                                                    contact.address ==
+                                                        (data.recipient as? TransactionRecipient.Address)
+                                                            ?.addressValue
+                                                }
+                                            getOrUpdateTransactionItem(data, contact)
+                                        }
+                                        .toPersistentList()
+                                }
+                                .onEach { new -> transactions.update { new } }
+                                .launchIn(this)
+                        }
                     }
                 }
             }
-        }
+    }
 
-    private suspend fun getOrUpdateTransactionItem(data: TransactionOverviewExt): TransactionUi {
+    private fun getOrUpdateTransactionItem(
+        data: TransactionOverviewExt,
+        addressBookContact: AddressBookContact?
+    ): TransactionUi {
         val existingTransaction =
             transactions.value.find {
                 data.overview.rawId == it.overview.rawId
@@ -89,10 +131,7 @@ class TransactionHistoryViewModel(
             data = data,
             expandableState = existingTransaction?.expandableState ?: TrxItemState.COLLAPSED,
             messages = existingTransaction?.messages,
-            addressBookContact =
-                (data.recipient as? TransactionRecipient.Address)?.addressValue?.let {
-                    getContactByAddress(it)
-                }
+            addressBookContact = addressBookContact
         )
     }
 

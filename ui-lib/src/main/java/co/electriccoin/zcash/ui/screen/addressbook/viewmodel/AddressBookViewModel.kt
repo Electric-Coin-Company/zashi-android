@@ -44,7 +44,7 @@ class AddressBookViewModel(
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-                initialValue = createState(contacts = emptyList())
+                initialValue = createState(contacts = null)
             )
 
     val navigationCommand = MutableSharedFlow<String>()
