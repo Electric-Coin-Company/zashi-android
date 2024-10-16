@@ -7,6 +7,7 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 ## [Unreleased]
 
 ### Changed
+- Address book local and remote storage support
 - Scan QR screen has been redesigned
 - The Receive screen UI has been redesigned
 - Send screen redesigned & added a possibility to pick a contact from address book
