@@ -15,6 +15,7 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 - Address Book, Create/Update/Delete Contact, Create Contact by QR screens added
 
 ### Added
+- New Integrations screen in settings
 - New QR Code detail screen has been added
 
 ## [1.2 (739)] - 2024-09-27 

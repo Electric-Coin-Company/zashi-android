@@ -8,6 +8,7 @@ data class SettingsState(
     val settingsTroubleshootingState: SettingsTroubleshootingState?,
     val onAddressBookClick: () -> Unit,
     val onBack: () -> Unit,
+    val onIntegrationsClick: () -> Unit,
     val onAdvancedSettingsClick: () -> Unit,
     val onAboutUsClick: () -> Unit,
     val onSendUsFeedbackClick: () -> Unit,

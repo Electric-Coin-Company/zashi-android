@@ -40,7 +40,6 @@ import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.util.getValue
-import co.electriccoin.zcash.ui.design.util.orDark
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.settings.SettingsTag
 import co.electriccoin.zcash.ui.screen.settings.model.SettingsState
@@ -83,20 +82,26 @@ fun Settings(
                 )
                 ZashiHorizontalDivider()
                 ZashiSettingsListItem(
+                    text = stringResource(id = R.string.settings_integrations),
+                    icon = R.drawable.ic_settings_integrations,
+                    onClick = state.onIntegrationsClick
+                )
+                ZashiHorizontalDivider()
+                ZashiSettingsListItem(
                     text = stringResource(id = R.string.settings_advanced_settings),
-                    icon = R.drawable.ic_advanced_settings orDark R.drawable.ic_advanced_settings_dark,
+                    icon = R.drawable.ic_advanced_settings,
                     onClick = state.onAdvancedSettingsClick
                 )
                 ZashiHorizontalDivider()
                 ZashiSettingsListItem(
                     text = stringResource(id = R.string.settings_about_us),
-                    icon = R.drawable.ic_settings_info orDark R.drawable.ic_settings_info_dark,
+                    icon = R.drawable.ic_settings_info,
                     onClick = state.onAboutUsClick
                 )
                 ZashiHorizontalDivider()
                 ZashiSettingsListItem(
                     text = stringResource(id = R.string.settings_feedback),
-                    icon = R.drawable.ic_settings_feedback orDark R.drawable.ic_settings_feedback_dark,
+                    icon = R.drawable.ic_settings_feedback,
                     onClick = state.onSendUsFeedbackClick
                 )
                 Spacer(modifier = Modifier.weight(1f))
@@ -104,7 +109,7 @@ fun Settings(
                 Image(
                     modifier = Modifier.align(CenterHorizontally),
                     painter =
-                        painterResource(id = R.drawable.ic_settings_zashi orDark R.drawable.ic_settings_zashi_dark),
+                        painterResource(id = R.drawable.ic_settings_zashi),
                     contentDescription = ""
                 )
                 Spacer(modifier = Modifier.height(16.dp))
@@ -236,7 +241,8 @@ private fun PreviewSettings() {
                     onAdvancedSettingsClick = {},
                     onAboutUsClick = {},
                     onSendUsFeedbackClick = {},
-                    onAddressBookClick = {}
+                    onAddressBookClick = {},
+                    onIntegrationsClick = {}
                 ),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )
@@ -258,7 +264,8 @@ private fun PreviewSettingsLoading() {
                     onAdvancedSettingsClick = {},
                     onAboutUsClick = {},
                     onSendUsFeedbackClick = {},
-                    onAddressBookClick = {}
+                    onAddressBookClick = {},
+                    onIntegrationsClick = {}
                 ),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )
