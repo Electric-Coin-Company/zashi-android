@@ -71,7 +71,7 @@ internal fun RequestMemoView(
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
 
         ZashiBadge(
-            text = stringResource(id = R.string.request_memo_privacy_level_shielded),
+            text = stringResource(id = R.string.request_privacy_level_shielded),
             leadingIconVector = painterResource(id = R.drawable.ic_solid_check),
             colors =
                 ZashiBadgeColors(

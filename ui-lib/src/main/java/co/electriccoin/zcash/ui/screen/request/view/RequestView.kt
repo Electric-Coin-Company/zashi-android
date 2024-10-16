@@ -220,6 +220,8 @@ private fun RequestContents(
     }
 }
 
+// TODO [#1635]: Learn AutoSizingText scale up
+// TODO [#1635]: https://github.com/Electric-Coin-Company/zashi-android/issues/1635
 @Composable
 internal fun AutoSizingText(
     text: AnnotatedString,

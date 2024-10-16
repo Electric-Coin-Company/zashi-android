@@ -1,20 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="request_title">Request</string>
-    <string name="request_back_content_description">Close</string>
     <string name="request_amount_invalid">This transaction amount is invalid</string>
-    <string name="request_unified_content_description">Unified Address QR code</string>
-    <string name="request_sapling_content_description">Sapling Address QR code</string>
-    <string name="request_transparent_content_description">Transparent Address QR code</string>
-    <string name="request_wallet_address_shielded">Zcash Shielded Address</string>
-    <string name="request_wallet_address_sapling">Zcash Sapling Address</string>
-    <string name="request_wallet_address_transparent">Zcash Transparent Address</string>
-    <string name="request_privacy_level_shielded">Maximum Privacy</string>
-    <string name="request_privacy_level_transparent">Low Privacy</string>
     <string name="request_amount_btn">Next</string>
     <string name="request_memo_btn">Request</string>
     <string name="request_qr_share_btn">Share QR Code</string>
     <string name="request_qr_close_btn">Close</string>
+    <string name="request_privacy_level_shielded">Maximum Privacy</string>
+    <string name="request_privacy_level_transparent">Low Privacy</string>
 
     <string name="request_amount_empty">0</string>
     <string name="request_amount_keyboard_zero">0</string>
@@ -29,8 +22,6 @@
     <string name="request_amount_keyboard_nine">9</string>
     <string name="request_amount_keyboard_delete">Delete</string>
 
-    <string name="request_memo_privacy_level_shielded">Maximum Privacy</string>
-    <string name="request_memo_privacy_level_transparent">Low Privacy</string>
     <string name="request_memo_payment_request_subtitle">Payment Request</string>
     <string name="request_memo_text_field_hint">What\'s this for?</string>
     <string name="request_memo_bytes_counter">
