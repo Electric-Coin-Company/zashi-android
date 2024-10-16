@@ -32,11 +32,11 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.AppAlertDialog
+import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.FormTextField
-import co.electriccoin.zcash.ui.design.component.GridBgScaffold
-import co.electriccoin.zcash.ui.design.component.GridBgSmallTopAppBar
+import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.TopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
@@ -98,7 +98,7 @@ fun Support(
 ) {
     val (message, setMessage) = rememberSaveable { mutableStateOf("") }
 
-    GridBgScaffold(
+    BlankBgScaffold(
         topBar = {
             SupportTopAppBar(
                 onBack = onBack,
@@ -134,7 +134,7 @@ private fun SupportTopAppBar(
     onBack: () -> Unit,
     subTitleState: TopAppBarSubTitleState
 ) {
-    GridBgSmallTopAppBar(
+    SmallTopAppBar(
         subTitle =
             when (subTitleState) {
                 TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)

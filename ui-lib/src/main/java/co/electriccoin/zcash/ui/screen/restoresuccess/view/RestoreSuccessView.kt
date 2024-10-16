@@ -25,15 +25,15 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.BlankSurface
-import co.electriccoin.zcash.ui.design.component.GridBgScaffold
 import co.electriccoin.zcash.ui.design.component.LabeledCheckBox
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 
 @Composable
 fun RestoreSuccess(state: RestoreSuccessViewState) {
-    GridBgScaffold { paddingValues ->
+    BlankBgScaffold { paddingValues ->
         RestoreSuccessContent(
             state = state,
             modifier =

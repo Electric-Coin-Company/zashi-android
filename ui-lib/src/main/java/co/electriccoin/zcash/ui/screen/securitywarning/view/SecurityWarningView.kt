@@ -25,9 +25,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
-import co.electriccoin.zcash.ui.design.component.GridBgScaffold
-import co.electriccoin.zcash.ui.design.component.GridBgSmallTopAppBar
+import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.LabeledCheckBox
+import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.TopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.component.TopScreenLogoTitle
 import co.electriccoin.zcash.ui.design.component.ZashiButton
@@ -67,7 +67,7 @@ fun SecurityWarning(
     onAcknowledged: (Boolean) -> Unit,
     onConfirm: () -> Unit,
 ) {
-    GridBgScaffold(
+    BlankBgScaffold(
         topBar = { SecurityWarningTopAppBar(onBack = onBack) },
     ) { paddingValues ->
         SecurityWarningContent(
@@ -90,7 +90,7 @@ fun SecurityWarning(
 
 @Composable
 private fun SecurityWarningTopAppBar(onBack: () -> Unit) {
-    GridBgSmallTopAppBar(
+    SmallTopAppBar(
         navigationAction = {
             TopAppBarBackNavigation(
                 backText = stringResource(id = R.string.back_navigation).uppercase(),

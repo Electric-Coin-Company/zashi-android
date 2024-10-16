@@ -33,7 +33,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
@@ -398,38 +397,6 @@ fun TopAppBarHideBalancesNavigation(
             modifier = Modifier.size(24.dp)
         )
     }
-}
-
-@Composable
-@Suppress("LongParameterList")
-fun GridBgSmallTopAppBar(
-    modifier: Modifier = Modifier,
-    colors: TopAppBarColors = ZcashTheme.colors.topAppBarColors,
-    hamburgerMenuActions: (@Composable RowScope.() -> Unit)? = null,
-    navigationAction: @Composable () -> Unit = {},
-    regularActions: (@Composable RowScope.() -> Unit)? = null,
-    subTitle: String? = null,
-    showTitleLogo: Boolean = false,
-    titleText: String? = null,
-) {
-    SmallTopAppBar(
-        modifier =
-            modifier.then(
-                Modifier.gridBackground(
-                    backgroundColor = ZcashTheme.colors.backgroundColor,
-                    gridSize = ZcashTheme.dimens.gridCellSize,
-                    gridColor = ZcashTheme.colors.gridColor,
-                    gridLineWidth = ZcashTheme.dimens.gridLineWidth
-                )
-            ),
-        colors = colors.copyColors(containerColor = Color.Transparent),
-        hamburgerMenuActions = hamburgerMenuActions,
-        navigationAction = navigationAction,
-        regularActions = regularActions,
-        subTitle = subTitle,
-        showTitleLogo = showTitleLogo,
-        titleText = titleText
-    )
 }
 
 @Composable

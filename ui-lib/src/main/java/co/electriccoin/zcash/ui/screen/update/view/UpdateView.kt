@@ -33,11 +33,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.Body
-import co.electriccoin.zcash.ui.design.component.GridBgScaffold
-import co.electriccoin.zcash.ui.design.component.GridBgSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.Header
 import co.electriccoin.zcash.ui.design.component.Reference
+import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.UpdateInfoFixture
@@ -109,7 +109,7 @@ fun Update(
     onLater: () -> Unit,
     onReference: () -> Unit
 ) {
-    GridBgScaffold(
+    BlankBgScaffold(
         topBar = {
             UpdateTopAppBar(updateInfo = updateInfo)
         },
@@ -165,7 +165,7 @@ fun UpdateOverlayRunning(updateInfo: UpdateInfo) {
 
 @Composable
 private fun UpdateTopAppBar(updateInfo: UpdateInfo) {
-    GridBgSmallTopAppBar(
+    SmallTopAppBar(
         titleText =
             stringResource(
                 updateInfo.isForce.let { force ->

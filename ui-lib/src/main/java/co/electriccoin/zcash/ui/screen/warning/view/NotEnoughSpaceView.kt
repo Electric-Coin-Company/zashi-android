@@ -25,8 +25,8 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.test.CommonTag
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
+import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.Body
-import co.electriccoin.zcash.ui.design.component.GridBgScaffold
 import co.electriccoin.zcash.ui.design.component.Header
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.ZashiButton
@@ -72,7 +72,7 @@ fun NotEnoughSpaceView(
     topAppBarSubTitleState: TopAppBarSubTitleState,
     snackbarHostState: SnackbarHostState,
 ) {
-    GridBgScaffold(
+    BlankBgScaffold(
         topBar = {
             NotEnoughSpaceTopAppBar(
                 onSettings = onSettings,

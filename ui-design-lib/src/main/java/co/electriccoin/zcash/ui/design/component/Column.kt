@@ -21,16 +21,6 @@ private fun BlankBgColumnComposablePreview() {
     }
 }
 
-@Preview("Column with grip pattern background")
-@Composable
-private fun GridBgScaffoldComposablePreview() {
-    ZcashTheme(forceDarkMode = false) {
-        GridBgColumn {
-            Text(text = "Grid pattern background column")
-        }
-    }
-}
-
 @Composable
 fun BlankBgColumn(
     modifier: Modifier = Modifier,
@@ -44,21 +34,4 @@ fun BlankBgColumn(
         verticalArrangement = verticalArrangement,
         content = content,
     )
-}
-
-@Composable
-fun GridBgColumn(
-    modifier: Modifier = Modifier,
-    verticalArrangement: Arrangement.Vertical = Arrangement.Top,
-    horizontalAlignment: Alignment.Horizontal = Alignment.Start,
-    content: @Composable ColumnScope.() -> Unit
-) {
-    GridSurface {
-        Column(
-            horizontalAlignment = horizontalAlignment,
-            verticalArrangement = verticalArrangement,
-            content = content,
-            modifier = modifier,
-        )
-    }
 }

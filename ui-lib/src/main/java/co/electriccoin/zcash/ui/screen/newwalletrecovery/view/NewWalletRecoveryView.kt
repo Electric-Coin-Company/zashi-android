@@ -42,10 +42,10 @@ import co.electriccoin.zcash.ui.common.compose.shouldSecureScreen
 import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.common.test.CommonTag.WALLET_BIRTHDAY
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
+import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.BodySmall
 import co.electriccoin.zcash.ui.design.component.ChipGrid
-import co.electriccoin.zcash.ui.design.component.GridBgScaffold
-import co.electriccoin.zcash.ui.design.component.GridBgSmallTopAppBar
+import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.TopScreenLogoTitle
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
@@ -91,7 +91,7 @@ fun NewWalletRecovery(
     onComplete: () -> Unit,
     versionInfo: VersionInfo,
 ) {
-    GridBgScaffold(
+    BlankBgScaffold(
         topBar = {
             NewWalletRecoveryTopAppBar(
                 onSeedCopy = onSeedCopy,
@@ -122,7 +122,7 @@ private fun NewWalletRecoveryTopAppBar(
     modifier: Modifier = Modifier,
     onSeedCopy: () -> Unit
 ) {
-    GridBgSmallTopAppBar(
+    SmallTopAppBar(
         modifier = modifier,
         regularActions = {
             if (versionInfo.isDebuggable && !versionInfo.isRunningUnderTestService) {

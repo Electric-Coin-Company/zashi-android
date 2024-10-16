@@ -19,16 +19,6 @@ private fun BlankBgScaffoldComposablePreview() {
     }
 }
 
-@Preview("Scaffold with grip pattern background")
-@Composable
-private fun GridBgScaffoldComposablePreview() {
-    ZcashTheme(forceDarkMode = false) {
-        GridBgScaffold {
-            Text(text = "Grid pattern background scaffold")
-        }
-    }
-}
-
 @Composable
 fun BlankBgScaffold(
     modifier: Modifier = Modifier,
@@ -45,24 +35,4 @@ fun BlankBgScaffold(
         content = content,
         modifier = modifier,
     )
-}
-
-@Composable
-fun GridBgScaffold(
-    modifier: Modifier = Modifier,
-    topBar: @Composable () -> Unit = {},
-    bottomBar: @Composable () -> Unit = {},
-    snackbarHost: @Composable () -> Unit = {},
-    content: @Composable (PaddingValues) -> Unit
-) {
-    GridSurface {
-        Scaffold(
-            containerColor = Color.Transparent,
-            topBar = topBar,
-            snackbarHost = snackbarHost,
-            bottomBar = bottomBar,
-            content = content,
-            modifier = modifier,
-        )
-    }
 }

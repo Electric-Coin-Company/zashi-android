@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -24,9 +25,8 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.Body
-import co.electriccoin.zcash.ui.design.component.GridBgScaffold
-import co.electriccoin.zcash.ui.design.component.GridBgSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.LabeledCheckBox
+import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.TopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.component.TopScreenLogoTitle
 import co.electriccoin.zcash.ui.design.component.ZashiButton
@@ -52,7 +52,7 @@ fun DeleteWallet(
     onConfirm: () -> Unit,
     topAppBarSubTitleState: TopAppBarSubTitleState,
 ) {
-    GridBgScaffold(
+    Scaffold (
         topBar = {
             DeleteWalletDataTopAppBar(
                 onBack = onBack,
@@ -82,7 +82,7 @@ private fun DeleteWalletDataTopAppBar(
     onBack: () -> Unit,
     subTitleState: TopAppBarSubTitleState
 ) {
-    GridBgSmallTopAppBar(
+    SmallTopAppBar(
         subTitle =
             when (subTitleState) {
                 TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)

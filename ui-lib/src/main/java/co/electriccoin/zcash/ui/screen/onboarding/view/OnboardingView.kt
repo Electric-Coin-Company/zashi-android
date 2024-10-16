@@ -25,7 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import cash.z.ecc.android.sdk.fixture.WalletFixture
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
-import co.electriccoin.zcash.ui.design.component.GridBgScaffold
+import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.TitleLarge
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
@@ -71,7 +71,7 @@ fun Onboarding(
     onCreateWallet: () -> Unit,
     onFixtureWallet: (String) -> Unit
 ) {
-    GridBgScaffold { paddingValues ->
+    BlankBgScaffold { paddingValues ->
         OnboardingMainContent(
             isDebugMenuEnabled = isDebugMenuEnabled,
             onCreateWallet = onCreateWallet,
