@@ -18,6 +18,7 @@ directly impact users rather than highlighting other key architectural updates.*
 - Address Book, Create/Update/Delete Contact, Create Contact by QR screens added
 
 ### Added
+- Address book local and remote storage support
 - New QR Code detail screen has been added
 
 ## [1.2 (739)] - 2024-09-27
