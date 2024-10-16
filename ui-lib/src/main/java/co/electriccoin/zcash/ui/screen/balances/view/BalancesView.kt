@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -80,7 +79,9 @@ import co.electriccoin.zcash.ui.design.component.StyledBalance
 import co.electriccoin.zcash.ui.design.component.StyledBalanceDefaults
 import co.electriccoin.zcash.ui.design.component.TopAppBarHideBalancesNavigation
 import co.electriccoin.zcash.ui.design.component.ZashiButton
+import co.electriccoin.zcash.ui.design.component.ZashiModal
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.fixture.BalanceStateFixture
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 import co.electriccoin.zcash.ui.screen.balances.BalancesTag
@@ -204,12 +205,12 @@ fun Balances(
                 walletSnapshot = walletSnapshot,
                 shieldState = shieldState,
                 modifier =
-                    Modifier.padding(
-                        top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
-                        bottom = paddingValues.calculateBottomPadding() + ZcashTheme.dimens.spacingHuge,
-                        start = ZcashTheme.dimens.screenHorizontalSpacingRegular,
-                        end = ZcashTheme.dimens.screenHorizontalSpacingRegular
-                    ),
+                Modifier.padding(
+                    top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
+                    bottom = paddingValues.calculateBottomPadding() + ZcashTheme.dimens.spacingHuge,
+                    start = ZcashTheme.dimens.screenHorizontalSpacingRegular,
+                    end = ZcashTheme.dimens.screenHorizontalSpacingRegular
+                ),
                 walletRestoringState = walletRestoringState
             )
 
@@ -238,12 +239,15 @@ fun Balances(
                             }
                         )
                     }
+
                     ShieldState.FailedGrpc -> {
                         ShieldingErrorGrpcDialog(
                             onDone = { setShowErrorDialog(false) }
                         )
                     }
-                    else -> { /* Nothing to do now */ }
+
+                    else -> { /* Nothing to do now */
+                    }
                 }
             }
         }
@@ -313,11 +317,11 @@ private fun BalancesTopAppBar(
 ) {
     SmallTopAppBar(
         subTitle =
-            when (subTitleState) {
-                TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
-                TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
-                TopAppBarSubTitleState.None -> null
-            },
+        when (subTitleState) {
+            TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
+            TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
+            TopAppBarSubTitleState.None -> null
+        },
         titleText = stringResource(id = R.string.balances_title),
         showTitleLogo = false,
         hamburgerMenuActions = {
@@ -335,13 +339,13 @@ private fun BalancesTopAppBar(
             TopAppBarHideBalancesNavigation(
                 contentDescription = stringResource(id = R.string.hide_balances_content_description),
                 iconVector =
-                    ImageVector.vectorResource(
-                        if (isHideBalances) {
-                            R.drawable.ic_hide_balances_on
-                        } else {
-                            R.drawable.ic_hide_balances_off
-                        }
-                    ),
+                ImageVector.vectorResource(
+                    if (isHideBalances) {
+                        R.drawable.ic_hide_balances_on
+                    } else {
+                        R.drawable.ic_hide_balances_off
+                    }
+                ),
                 onClick = onHideBalances,
                 modifier = Modifier.testTag(CommonTag.HIDE_BALANCES_TOP_BAR_BUTTON)
             )
@@ -365,10 +369,10 @@ private fun BalancesMainContent(
 ) {
     Column(
         modifier =
-            Modifier
-                .fillMaxHeight()
-                .verticalScroll(rememberScrollState())
-                .then(modifier),
+        Modifier
+            .fillMaxHeight()
+            .verticalScroll(rememberScrollState())
+            .then(modifier),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
@@ -413,9 +417,9 @@ private fun BalancesMainContent(
                 color = ZcashTheme.colors.textFieldWarning,
                 textAlign = TextAlign.Center,
                 modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = ZcashTheme.dimens.spacingSmall)
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = ZcashTheme.dimens.spacingSmall)
             )
 
             Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
@@ -441,17 +445,8 @@ fun TransparentBalancePanel(
     walletSnapshot: WalletSnapshot,
 ) {
     var showHelpPanel by rememberSaveable { mutableStateOf(false) }
-
-    Box(
-        modifier =
-            Modifier
-                .background(color = ZcashTheme.colors.panelBackgroundColor)
-                .wrapContentSize()
-                .animateContentSize()
-    ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
-
+    ZashiModal {
+        Column {
             TransparentBalanceRow(
                 isHideBalances = isHideBalances,
                 isProgressbarVisible = shieldState == ShieldState.Running,
@@ -465,22 +460,20 @@ fun TransparentBalancePanel(
                 onClick = onShielding,
                 text = stringResource(R.string.balances_transparent_balance_shield),
                 enabled = shieldState == ShieldState.Available,
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 18.dp),
-
+                modifier = Modifier.fillMaxWidth(),
             )
 
             Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
             BodySmall(
+                modifier = Modifier.align(Alignment.CenterHorizontally),
                 text =
-                    stringResource(
-                        id = R.string.balances_transparent_balance_fee,
-                        DEFAULT_FEE
-                    ),
+                stringResource(
+                    id = R.string.balances_transparent_balance_fee,
+                    DEFAULT_FEE
+                ),
                 textFontWeight = FontWeight.SemiBold
             )
-
-            Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingUpLarge))
         }
 
         if (showHelpPanel) {
@@ -500,24 +493,20 @@ fun TransparentBalanceRow(
 ) {
     Row(
         modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(
-                    start = ZcashTheme.dimens.spacingDefault,
-                    end = ZcashTheme.dimens.spacingSmall
-                ),
+        Modifier
+            .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         // To keep both elements together in relatively sized row
-        Row(modifier = Modifier.fillMaxWidth(TEXT_PART_WIDTH_RATIO)) {
+        Row(modifier = Modifier.weight(1f)) {
             // Apply common click listener
             Row(
                 modifier =
-                    Modifier
-                        .clip(RoundedCornerShape(ZcashTheme.dimens.smallRippleEffectCorner))
-                        .clickable { onHelpClick() }
-                        .padding(end = ZcashTheme.dimens.spacingXtiny)
+                Modifier
+                    .weight(1f)
+                    .clip(RoundedCornerShape(ZcashTheme.dimens.smallRippleEffectCorner))
+                    .clickable { onHelpClick() }
             ) {
                 BodySmall(text = stringResource(id = R.string.balances_transparent_balance).uppercase())
 
@@ -534,17 +523,16 @@ fun TransparentBalanceRow(
                 balanceParts = walletSnapshot.transparentBalance.toZecStringFull().asZecAmountTriple(),
                 isHideBalances = isHideBalances,
                 textStyle =
-                    StyledBalanceDefaults.textStyles(
-                        mostSignificantPart = ZcashTheme.extendedTypography.balanceSingleStyles.first,
-                        leastSignificantPart = ZcashTheme.extendedTypography.balanceSingleStyles.second
-                    ),
+                StyledBalanceDefaults.textStyles(
+                    mostSignificantPart = ZcashTheme.extendedTypography.balanceSingleStyles.first,
+                    leastSignificantPart = ZcashTheme.extendedTypography.balanceSingleStyles.second
+                ),
                 textColor = ZcashTheme.colors.textDescriptionDark
             )
 
-            Spacer(modifier = Modifier.width(ZcashTheme.dimens.spacingTiny))
-
-            Box(Modifier.width(ZcashTheme.dimens.circularSmallProgressWidth)) {
-                if (isProgressbarVisible) {
+            if (isProgressbarVisible) {
+                Spacer(modifier = Modifier.width(ZcashTheme.dimens.spacingTiny))
+                Box(Modifier.width(ZcashTheme.dimens.circularSmallProgressWidth)) {
                     CircularSmallProgressIndicator()
                 }
             }
@@ -556,23 +544,20 @@ fun TransparentBalanceRow(
 fun TransparentBalanceHelpPanel(onHideHelpPanel: () -> Unit) {
     Column(
         modifier =
-            Modifier
-                .padding(all = ZcashTheme.dimens.spacingDefault)
-                .background(color = ZcashTheme.colors.panelBackgroundColorActive)
-                .fillMaxSize(),
+        Modifier
+            .background(color = ZashiColors.Modals.surfacePrimary)
+            .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
-
         val appName = stringResource(id = R.string.app_name)
         val currencyName = ZcashCurrency.getLocalizedName(LocalContext.current)
         BodySmall(
             text =
-                stringResource(
-                    id = R.string.balances_transparent_balance_help,
-                    appName,
-                    currencyName
-                ),
+            stringResource(
+                id = R.string.balances_transparent_balance_help,
+                appName,
+                currencyName
+            ),
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(horizontal = ZcashTheme.dimens.spacingDefault)
         )
@@ -584,8 +569,6 @@ fun TransparentBalanceHelpPanel(onHideHelpPanel: () -> Unit) {
             onClick = onHideHelpPanel,
             textStyle = ZcashTheme.extendedTypography.referenceSmall
         )
-
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
     }
 }
 
@@ -624,12 +607,14 @@ fun BalancesOverview(
                             amount = walletDisplayValues.fiatCurrencyAmountText
                         )
                     }
+
                     is FiatCurrencyConversionRateState.Stale -> {
                         // Note: we should show information about staleness too
                         BodyWithFiatCurrencySymbol(
                             amount = walletDisplayValues.fiatCurrencyAmountText
                         )
                     }
+
                     is FiatCurrencyConversionRateState.Unavailable -> {
                         Body(text = walletDisplayValues.fiatCurrencyAmountText)
                     }
@@ -661,10 +646,10 @@ fun SpendableBalanceRow(
                 balanceParts = walletSnapshot.spendableBalance().toZecStringFull().asZecAmountTriple(),
                 isHideBalances = isHideBalances,
                 textStyle =
-                    StyledBalanceDefaults.textStyles(
-                        mostSignificantPart = ZcashTheme.extendedTypography.balanceSingleStyles.first,
-                        leastSignificantPart = ZcashTheme.extendedTypography.balanceSingleStyles.second
-                    ),
+                StyledBalanceDefaults.textStyles(
+                    mostSignificantPart = ZcashTheme.extendedTypography.balanceSingleStyles.first,
+                    leastSignificantPart = ZcashTheme.extendedTypography.balanceSingleStyles.second
+                ),
                 textColor = ZcashTheme.colors.textPrimary
             )
 
@@ -700,10 +685,10 @@ fun ChangePendingRow(
                 balanceParts = walletSnapshot.changePendingBalance().toZecStringFull().asZecAmountTriple(),
                 isHideBalances = isHideBalances,
                 textStyle =
-                    StyledBalanceDefaults.textStyles(
-                        mostSignificantPart = ZcashTheme.extendedTypography.balanceSingleStyles.first,
-                        leastSignificantPart = ZcashTheme.extendedTypography.balanceSingleStyles.second
-                    ),
+                StyledBalanceDefaults.textStyles(
+                    mostSignificantPart = ZcashTheme.extendedTypography.balanceSingleStyles.first,
+                    leastSignificantPart = ZcashTheme.extendedTypography.balanceSingleStyles.second
+                ),
                 textColor = ZcashTheme.colors.textDescriptionDark
             )
 
@@ -738,10 +723,10 @@ fun PendingTransactionsRow(
                 balanceParts = walletSnapshot.valuePendingBalance().toZecStringFull().asZecAmountTriple(),
                 isHideBalances = isHideBalances,
                 textStyle =
-                    StyledBalanceDefaults.textStyles(
-                        mostSignificantPart = ZcashTheme.extendedTypography.balanceSingleStyles.first,
-                        leastSignificantPart = ZcashTheme.extendedTypography.balanceSingleStyles.second
-                    ),
+                StyledBalanceDefaults.textStyles(
+                    mostSignificantPart = ZcashTheme.extendedTypography.balanceSingleStyles.first,
+                    leastSignificantPart = ZcashTheme.extendedTypography.balanceSingleStyles.second
+                ),
                 textColor = ZcashTheme.colors.textDescriptionDark
             )
 

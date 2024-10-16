@@ -39,7 +39,10 @@ import co.electriccoin.zcash.ui.design.component.FormTextField
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.TopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.component.ZashiButton
+import co.electriccoin.zcash.ui.design.component.ZashiTextField
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
+import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 
 @Preview
 @Composable
@@ -112,12 +115,12 @@ fun Support(
             setMessage = setMessage,
             setShowDialog = setShowDialog,
             modifier =
-                Modifier.padding(
-                    top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
-                    bottom = paddingValues.calculateBottomPadding(),
-                    start = ZcashTheme.dimens.screenHorizontalSpacingRegular,
-                    end = ZcashTheme.dimens.screenHorizontalSpacingRegular
-                )
+            Modifier.padding(
+                top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
+                bottom = paddingValues.calculateBottomPadding(),
+                start = ZcashTheme.dimens.screenHorizontalSpacingRegular,
+                end = ZcashTheme.dimens.screenHorizontalSpacingRegular
+            )
         )
 
         if (isShowingDialog) {
@@ -136,11 +139,11 @@ private fun SupportTopAppBar(
 ) {
     SmallTopAppBar(
         subTitle =
-            when (subTitleState) {
-                TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
-                TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
-                TopAppBarSubTitleState.None -> null
-            },
+        when (subTitleState) {
+            TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
+            TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
+            TopAppBarSubTitleState.None -> null
+        },
         titleText = stringResource(id = R.string.support_header),
         navigationAction = {
             TopAppBarBackNavigation(
@@ -188,23 +191,29 @@ private fun SupportMainContent(
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
 
-        FormTextField(
+        ZashiTextField(
             value = message,
             onValueChange = setMessage,
             modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .focusRequester(focusRequester),
-            placeholder = { Text(text = stringResource(id = R.string.support_hint)) },
+            Modifier
+                .fillMaxWidth()
+                .focusRequester(focusRequester),
+            placeholder = {
+                Text(
+                    text = stringResource(id = R.string.support_hint),
+                    style = ZashiTypography.textMd,
+                    color = ZashiColors.Inputs.Default.text
+                )
+            },
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
 
         Spacer(
             modifier =
-                Modifier
-                    .fillMaxHeight()
-                    .weight(MINIMAL_WEIGHT)
+            Modifier
+                .fillMaxHeight()
+                .weight(MINIMAL_WEIGHT)
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
@@ -215,9 +224,8 @@ private fun SupportMainContent(
             onClick = { setShowDialog(true) },
             text = stringResource(id = R.string.support_send),
             modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = ZcashTheme.dimens.screenHorizontalSpacingRegular)
+            Modifier
+                .fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingHuge))
@@ -242,9 +250,9 @@ private fun SupportConfirmationDialog(
         onDismissRequest = onDismiss,
         title = stringResource(id = R.string.support_confirmation_dialog_title),
         text =
-            stringResource(
-                id = R.string.support_confirmation_explanation,
-                stringResource(id = R.string.app_name)
-            )
+        stringResource(
+            id = R.string.support_confirmation_explanation,
+            stringResource(id = R.string.app_name)
+        )
     )
 }
