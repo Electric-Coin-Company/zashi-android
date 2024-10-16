@@ -52,6 +52,8 @@ import co.electriccoin.zcash.ui.design.component.TopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.component.TopScreenLogoTitle
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
+import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.fixture.VersionInfoFixture
 import kotlinx.collections.immutable.toPersistentList
 
@@ -104,10 +106,7 @@ fun SeedRecovery(
             // Horizontal paddings will be part of each UI element to minimize a possible truncation on very
             // small screens
             modifier =
-                Modifier.padding(
-                    top = paddingValues.calculateTopPadding(),
-                    bottom = paddingValues.calculateBottomPadding()
-                )
+                Modifier.scaffoldPadding(paddingValues)
         )
     }
 }
@@ -191,7 +190,7 @@ private fun SeedRecoveryMainContent(
         TopScreenLogoTitle(
             title = stringResource(R.string.seed_recovery_header),
             logoContentDescription = stringResource(R.string.zcash_logo_content_description),
-            modifier = Modifier.padding(horizontal = ZcashTheme.dimens.screenHorizontalSpacingBig)
+            modifier = Modifier.padding(horizontal = ZashiDimensions.Spacing.spacing3xl)
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
@@ -199,7 +198,7 @@ private fun SeedRecoveryMainContent(
         BodySmall(
             text = stringResource(R.string.seed_recovery_description),
             textAlign = TextAlign.Center,
-            modifier = Modifier.padding(horizontal = ZcashTheme.dimens.screenHorizontalSpacingBig)
+            modifier = Modifier.padding(horizontal = ZashiDimensions.Spacing.spacing3xl)
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
@@ -225,11 +224,6 @@ private fun SeedRecoveryMainContent(
             text = stringResource(R.string.seed_recovery_button_finished),
             modifier =
                 Modifier
-                    .padding(
-                        bottom = ZcashTheme.dimens.spacingHuge,
-                        start = ZcashTheme.dimens.screenHorizontalSpacingBig,
-                        end = ZcashTheme.dimens.screenHorizontalSpacingBig
-                    )
                     .fillMaxWidth()
         )
     }

@@ -40,6 +40,8 @@ import co.electriccoin.zcash.ui.design.component.Reference
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
+import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.fixture.UpdateInfoFixture
 import co.electriccoin.zcash.ui.screen.update.UpdateTag
 import co.electriccoin.zcash.ui.screen.update.model.UpdateInfo
@@ -131,12 +133,7 @@ fun Update(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .padding(
-                        top = paddingValues.calculateTopPadding(),
-                        bottom = paddingValues.calculateBottomPadding(),
-                        start = ZcashTheme.dimens.screenHorizontalSpacingRegular,
-                        end = ZcashTheme.dimens.screenHorizontalSpacingRegular
-                    )
+                    .scaffoldPadding(paddingValues)
         )
     }
     UpdateOverlayRunning(updateInfo)
@@ -200,10 +197,10 @@ private fun UpdateBottomAppBar(
             modifier =
                 Modifier
                     .padding(
-                        top = ZcashTheme.dimens.spacingDefault,
-                        bottom = ZcashTheme.dimens.spacingBig,
-                        start = ZcashTheme.dimens.screenHorizontalSpacingBig,
-                        end = ZcashTheme.dimens.screenHorizontalSpacingBig
+                        top = ZashiDimensions.Spacing.spacingLg,
+                        bottom =  ZashiDimensions.Spacing.spacing3xl,
+                        start = ZashiDimensions.Spacing.spacing3xl,
+                        end = ZashiDimensions.Spacing.spacing3xl
                     ),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -272,8 +269,6 @@ private fun UpdateContent(
             ),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingBig))
-
         Image(
             imageVector =
                 if (updateInfo.isForce) {

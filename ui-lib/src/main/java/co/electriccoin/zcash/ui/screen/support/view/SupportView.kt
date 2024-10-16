@@ -43,6 +43,7 @@ import co.electriccoin.zcash.ui.design.component.ZashiTextField
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 
 @Preview
 @Composable
@@ -114,13 +115,7 @@ fun Support(
             message = message,
             setMessage = setMessage,
             setShowDialog = setShowDialog,
-            modifier =
-            Modifier.padding(
-                top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
-                bottom = paddingValues.calculateBottomPadding(),
-                start = ZcashTheme.dimens.screenHorizontalSpacingRegular,
-                end = ZcashTheme.dimens.screenHorizontalSpacingRegular
-            )
+            modifier = Modifier.scaffoldPadding(paddingValues)
         )
 
         if (isShowingDialog) {
@@ -227,8 +222,6 @@ private fun SupportMainContent(
             Modifier
                 .fillMaxWidth()
         )
-
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingHuge))
     }
 
     LaunchedEffect(Unit) {

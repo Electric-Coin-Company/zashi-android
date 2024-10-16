@@ -177,7 +177,7 @@ private fun OnboardingMainContent(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingSm))
+        Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingLg))
 
         ZashiButton(
             modifier = Modifier.fillMaxWidth(),

@@ -82,6 +82,7 @@ import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiModal
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
+import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.fixture.BalanceStateFixture
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 import co.electriccoin.zcash.ui.screen.balances.BalancesTag
@@ -205,12 +206,7 @@ fun Balances(
                 walletSnapshot = walletSnapshot,
                 shieldState = shieldState,
                 modifier =
-                Modifier.padding(
-                    top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
-                    bottom = paddingValues.calculateBottomPadding() + ZcashTheme.dimens.spacingHuge,
-                    start = ZcashTheme.dimens.screenHorizontalSpacingRegular,
-                    end = ZcashTheme.dimens.screenHorizontalSpacingRegular
-                ),
+                Modifier.scaffoldPadding(paddingValues),
                 walletRestoringState = walletRestoringState
             )
 

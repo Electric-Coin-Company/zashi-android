@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
@@ -31,6 +30,7 @@ import co.electriccoin.zcash.ui.design.component.TopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.component.TopScreenLogoTitle
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 
 @Preview("Delete Wallet")
 @Composable
@@ -66,12 +66,7 @@ fun DeleteWallet(
             modifier =
                 Modifier
                     .fillMaxSize()
-                    .padding(
-                        top = paddingValues.calculateTopPadding(),
-                        bottom = paddingValues.calculateBottomPadding(),
-                        start = ZcashTheme.dimens.screenHorizontalSpacingBig,
-                        end = ZcashTheme.dimens.screenHorizontalSpacingBig
-                    )
+                    .scaffoldPadding(paddingValues)
                     .verticalScroll(rememberScrollState())
         )
     }
@@ -160,7 +155,5 @@ private fun DeleteWalletContent(
             enabled = checkedState.value,
             modifier = Modifier.fillMaxWidth()
         )
-
-        Spacer(Modifier.height(ZcashTheme.dimens.spacingHuge))
     }
 }

@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -39,6 +38,7 @@ import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.TopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.fixture.ConfigInfoFixture
 import co.electriccoin.zcash.ui.fixture.VersionInfoFixture
 import co.electriccoin.zcash.ui.screen.support.model.ConfigInfo
@@ -75,12 +75,7 @@ fun About(
                     .verticalScroll(
                         rememberScrollState()
                     )
-                    .padding(
-                        top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
-                        bottom = paddingValues.calculateBottomPadding() + ZcashTheme.dimens.spacingDefault,
-                        start = ZcashTheme.dimens.screenHorizontalSpacingBig,
-                        end = ZcashTheme.dimens.screenHorizontalSpacingBig
-                    )
+                    .scaffoldPadding(paddingValues)
         )
     }
 }

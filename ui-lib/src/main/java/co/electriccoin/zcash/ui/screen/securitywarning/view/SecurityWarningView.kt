@@ -3,11 +3,9 @@ package co.electriccoin.zcash.ui.screen.securitywarning.view
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
@@ -24,7 +22,6 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.VersionInfo
-import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.LabeledCheckBox
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
@@ -32,6 +29,7 @@ import co.electriccoin.zcash.ui.design.component.TopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.component.TopScreenLogoTitle
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.fixture.VersionInfoFixture
 
 @Preview
@@ -68,6 +66,7 @@ fun SecurityWarning(
     onConfirm: () -> Unit,
 ) {
     BlankBgScaffold(
+        modifier = Modifier.fillMaxSize(),
         topBar = { SecurityWarningTopAppBar(onBack = onBack) },
     ) { paddingValues ->
         SecurityWarningContent(
@@ -77,13 +76,8 @@ fun SecurityWarning(
             modifier =
                 Modifier
                     .fillMaxSize()
-                    .padding(
-                        top = paddingValues.calculateTopPadding(),
-                        bottom = paddingValues.calculateBottomPadding(),
-                        start = ZcashTheme.dimens.screenHorizontalSpacingBig,
-                        end = ZcashTheme.dimens.screenHorizontalSpacingBig
-                    )
                     .verticalScroll(rememberScrollState())
+                    .scaffoldPadding(paddingValues)
         )
     }
 }
@@ -137,13 +131,7 @@ private fun SecurityWarningContent(
                 checkBoxTestTag = SecurityScreenTag.ACKNOWLEDGE_CHECKBOX_TAG
             )
         }
-
-        Spacer(
-            modifier =
-                Modifier
-                    .fillMaxHeight()
-                    .weight(MINIMAL_WEIGHT)
-        )
+        Spacer(modifier = Modifier.weight(1f))
 
         ZashiButton(
             onClick = onConfirm,
@@ -151,8 +139,6 @@ private fun SecurityWarningContent(
             enabled = checkedState.value,
             modifier = Modifier.fillMaxWidth()
         )
-
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingHuge))
     }
 }
 

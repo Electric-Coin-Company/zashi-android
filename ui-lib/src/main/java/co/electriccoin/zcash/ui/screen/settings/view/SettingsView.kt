@@ -39,6 +39,7 @@ import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
+import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.orDark
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -71,7 +72,7 @@ fun Settings(
                         .verticalScroll(rememberScrollState())
                         .padding(
                             top = paddingValues.calculateTopPadding(),
-                            bottom = paddingValues.calculateBottomPadding(),
+                            bottom = paddingValues.calculateBottomPadding() + ZashiDimensions.Spacing.spacing3xl,
                             start = 4.dp,
                             end = 4.dp
                         ),
@@ -113,7 +114,6 @@ fun Settings(
                     text = state.version.getValue(),
                     color = ZashiColors.Text.textTertiary
                 )
-                Spacer(modifier = Modifier.height(20.dp))
             }
         }
     }

@@ -69,6 +69,7 @@ import co.electriccoin.zcash.ui.design.component.ZashiTextFieldDefaults
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
+import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
@@ -245,7 +246,7 @@ private fun HistoryList(
             HorizontalDivider(
                 color = ZcashTheme.colors.primaryDividerColor,
                 thickness = DividerDefaults.Thickness,
-                modifier = Modifier.padding(horizontal = ZcashTheme.dimens.spacingDefault)
+                modifier = Modifier.padding(horizontal = ZashiDimensions.Spacing.spacing3xl)
             )
         }
     }
