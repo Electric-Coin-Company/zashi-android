@@ -16,6 +16,7 @@ import co.electriccoin.zcash.ui.common.usecase.ObserveFastestServersUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedEndpointUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveSynchronizerUseCase
 import co.electriccoin.zcash.ui.common.usecase.PersistEndpointUseCase
+import co.electriccoin.zcash.ui.common.usecase.ProposalFromZip321UriUseCase
 import co.electriccoin.zcash.ui.common.usecase.RefreshFastestServersUseCase
 import co.electriccoin.zcash.ui.common.usecase.RescanBlockchainUseCase
 import co.electriccoin.zcash.ui.common.usecase.SaveContactUseCase
@@ -55,4 +56,5 @@ val useCaseModule =
         singleOf(::CopyToClipboardUseCase)
         singleOf(::ShareImageUseCase)
         singleOf(::Zip321BuildUriUseCase)
+        singleOf(::ProposalFromZip321UriUseCase)
     }
