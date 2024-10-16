@@ -613,8 +613,8 @@ fun SendFormAddressTextField(
                                     Modifier.clickable(
                                         onClick = sendAddressBookState.onButtonClick,
                                         role = Role.Button,
-                                        indication = rememberRipple(radius = 4.dp),
-                                        interactionSource = remember { MutableInteractionSource() }
+                                        // indication = rememberRipple(radius = 4.dp),
+                                        // interactionSource = remember { MutableInteractionSource() }
                                     ),
                                 painter = painterResource(sendAddressBookState.mode.icon),
                                 contentDescription = "",
@@ -627,8 +627,8 @@ fun SendFormAddressTextField(
                                     Modifier.clickable(
                                         onClick = onQrScannerOpen,
                                         role = Role.Button,
-                                        indication = rememberRipple(radius = 4.dp),
-                                        interactionSource = remember { MutableInteractionSource() }
+                                        // indication = rememberRipple(radius = 4.dp),
+                                        // interactionSource = remember { MutableInteractionSource() }
                                     ),
                                 painter = painterResource(R.drawable.qr_code_icon),
                                 contentDescription = stringResource(R.string.send_scan_content_description),

@@ -627,8 +627,8 @@ private fun HistoryItemExpandedAddressPart(
                         Modifier
                             .clickable(
                                 role = Role.Button,
-                                indication = rememberRipple(radius = 2.dp, color = ZashiColors.Text.textTertiary),
-                                interactionSource = remember { MutableInteractionSource() }
+                                // indication = rememberRipple(radius = 2.dp, color = ZashiColors.Text.textTertiary),
+                                // interactionSource = remember { MutableInteractionSource() }
                             ) { onAction(TrxItemAction.AddressClick(recipient)) }
             )
 
@@ -645,8 +645,8 @@ private fun HistoryItemExpandedAddressPart(
                             .weight(1f)
                             .clickable(
                                 role = Role.Button,
-                                indication = rememberRipple(radius = 2.dp, color = ZashiColors.Text.textTertiary),
-                                interactionSource = remember { MutableInteractionSource() }
+                                // indication = rememberRipple(radius = 2.dp, color = ZashiColors.Text.textTertiary),
+                                // interactionSource = remember { MutableInteractionSource() }
                             ) { onAction(TrxItemAction.AddToAddressBookClick(recipient)) }
                 )
             }
@@ -780,8 +780,8 @@ private fun HistoryItemTransactionIdPart(
                     Modifier
                         .clickable(
                             role = Role.Button,
-                            indication = rememberRipple(radius = 2.dp, color = ZashiColors.Text.textTertiary),
-                            interactionSource = remember { MutableInteractionSource() }
+                            // indication = rememberRipple(radius = 2.dp, color = ZashiColors.Text.textTertiary),
+                            // interactionSource = remember { MutableInteractionSource() }
                         ) { onAction(TrxItemAction.TransactionIdClick(txIdString)) }
             )
         } else {
@@ -929,8 +929,8 @@ private fun HistoryItemMessagePart(
                     .clickable(
                         onClick = { onAction(TrxItemAction.MessageClick(message)) },
                         role = Role.Button,
-                        indication = rememberRipple(radius = 2.dp, color = ZashiColors.Text.textTertiary),
-                        interactionSource = remember { MutableInteractionSource() }
+                        // indication = rememberRipple(radius = 2.dp, color = ZashiColors.Text.textTertiary),
+                        // interactionSource = remember { MutableInteractionSource() }
                     )
         )
     }

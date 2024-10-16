@@ -7,6 +7,7 @@ import co.electriccoin.zcash.preference.StandardPreferenceProvider
 import co.electriccoin.zcash.preference.model.entry.BooleanPreferenceDefault
 import co.electriccoin.zcash.ui.NavigationTargets.ABOUT
 import co.electriccoin.zcash.ui.NavigationTargets.ADVANCED_SETTINGS
+import co.electriccoin.zcash.ui.NavigationTargets.INTEGRATIONS
 import co.electriccoin.zcash.ui.NavigationTargets.SUPPORT
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
@@ -99,6 +100,7 @@ class SettingsViewModel(
                 version = stringRes(R.string.settings_version, versionInfo.versionName),
                 settingsTroubleshootingState = troubleshootingState,
                 onBack = ::onBack,
+                onIntegrationsClick = ::onIntegrationsClick,
                 onAdvancedSettingsClick = ::onAdvancedSettingsClick,
                 onAboutUsClick = ::onAboutUsClick,
                 onSendUsFeedbackClick = ::onSendUsFeedbackClick,
@@ -138,6 +140,11 @@ class SettingsViewModel(
     fun onBack() =
         viewModelScope.launch {
             backNavigationCommand.emit(Unit)
+        }
+
+    private fun onIntegrationsClick() =
+        viewModelScope.launch {
+            navigationCommand.emit(INTEGRATIONS)
         }
 
     private fun onAdvancedSettingsClick() =

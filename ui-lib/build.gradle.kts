@@ -44,6 +44,7 @@ android {
                     "src/main/res/ui/export_data",
                     "src/main/res/ui/home",
                     "src/main/res/ui/choose_server",
+                    "src/main/res/ui/integrations",
                     "src/main/res/ui/new_wallet_recovery",
                     "src/main/res/ui/onboarding",
                     "src/main/res/ui/qr_code",
@@ -77,6 +78,14 @@ androidComponents {
                 type = "boolean",
                 value = project.property("IS_SECURE_SCREEN_PROTECTION_ACTIVE").toString(),
                 comment = "Whether is the SecureScreen sensitive data protection enabled"
+            )
+        )
+        variant.buildConfigFields.put(
+            "ZCASH_FLEXA_KEY",
+            BuildConfigField(
+                type = "String",
+                value = "\"${project.property("ZCASH_FLEXA_KEY")?.toString().orEmpty()}\"",
+                comment = "Publishable key of the Flexa integration"
             )
         )
         variant.buildConfigFields.put(
@@ -127,6 +136,15 @@ dependencies {
     implementation(libs.zcash.bip39)
     implementation(libs.zxing)
 
+    api("com.flexa:core:1.0.4") {
+        // isTransitive = false
+        // exclude("*", "*")
+    }
+    api("com.flexa:spend:1.0.4")  {
+        // isTransitive = false
+        // exclude("*", "*")
+    }
+
     implementation(projects.buildInfoLib)
     implementation(projects.configurationApiLib)
     implementation(projects.crashAndroidLib)
@@ -159,4 +177,3 @@ dependencies {
         }
     }
 }
-
