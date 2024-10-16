@@ -83,6 +83,12 @@ fun Settings(
                 )
                 ZashiHorizontalDivider()
                 ZashiSettingsListItem(
+                    text = stringResource(id = R.string.settings_integrations),
+                    icon = R.drawable.ic_settings_integrations orDark R.drawable.ic_settings_integrations_dark,
+                    onClick = state.onIntegrationsClick
+                )
+                ZashiHorizontalDivider()
+                ZashiSettingsListItem(
                     text = stringResource(id = R.string.settings_advanced_settings),
                     icon = R.drawable.ic_advanced_settings orDark R.drawable.ic_advanced_settings_dark,
                     onClick = state.onAdvancedSettingsClick
@@ -236,7 +242,8 @@ private fun PreviewSettings() {
                     onAdvancedSettingsClick = {},
                     onAboutUsClick = {},
                     onSendUsFeedbackClick = {},
-                    onAddressBookClick = {}
+                    onAddressBookClick = {},
+                    onIntegrationsClick = {}
                 ),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )
@@ -258,7 +265,8 @@ private fun PreviewSettingsLoading() {
                     onAdvancedSettingsClick = {},
                     onAboutUsClick = {},
                     onSendUsFeedbackClick = {},
-                    onAddressBookClick = {}
+                    onAddressBookClick = {},
+                    onIntegrationsClick = {}
                 ),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )

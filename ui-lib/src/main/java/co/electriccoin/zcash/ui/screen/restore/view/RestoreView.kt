@@ -593,7 +593,6 @@ private fun SeedGridWithText(
             keyboardOptions =
                 KeyboardOptions(
                     KeyboardCapitalization.None,
-                    autoCorrect = false,
                     imeAction = ImeAction.Done,
                     keyboardType = KeyboardType.Password
                 ),
@@ -803,7 +802,6 @@ private fun RestoreBirthdayMainContent(
             keyboardOptions =
                 KeyboardOptions(
                     KeyboardCapitalization.None,
-                    autoCorrect = false,
                     imeAction = ImeAction.Done,
                     keyboardType = KeyboardType.Number
                 ),

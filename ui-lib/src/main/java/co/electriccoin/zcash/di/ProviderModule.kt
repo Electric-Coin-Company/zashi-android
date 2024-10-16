@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.di
 
+import co.electriccoin.zcash.ui.common.provider.FlexaAccountIdProvider
 import co.electriccoin.zcash.ui.common.provider.GetDefaultServersProvider
 import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
 import co.electriccoin.zcash.ui.common.provider.GetZcashCurrencyProvider
@@ -15,4 +16,5 @@ val providerModule =
         factoryOf(::GetVersionInfoProvider)
         factoryOf(::GetZcashCurrencyProvider)
         factoryOf(::LocalAddressBookStorageProviderImpl) bind LocalAddressBookStorageProvider::class
+        factoryOf(::FlexaAccountIdProvider)
     }

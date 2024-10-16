@@ -135,6 +135,7 @@ dependencyResolutionManagement {
                 }
             }
         }
+        mavenLocal()
     }
 
     @Suppress("MaxLineLength")
