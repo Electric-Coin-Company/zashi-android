@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.SnackbarHost
@@ -35,7 +34,6 @@ import co.electriccoin.zcash.ui.design.component.AppAlertDialog
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.Body
-import co.electriccoin.zcash.ui.design.component.FormTextField
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.TopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.component.ZashiButton
@@ -134,11 +132,11 @@ private fun SupportTopAppBar(
 ) {
     SmallTopAppBar(
         subTitle =
-        when (subTitleState) {
-            TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
-            TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
-            TopAppBarSubTitleState.None -> null
-        },
+            when (subTitleState) {
+                TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
+                TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
+                TopAppBarSubTitleState.None -> null
+            },
         titleText = stringResource(id = R.string.support_header),
         navigationAction = {
             TopAppBarBackNavigation(
@@ -190,9 +188,9 @@ private fun SupportMainContent(
             value = message,
             onValueChange = setMessage,
             modifier =
-            Modifier
-                .fillMaxWidth()
-                .focusRequester(focusRequester),
+                Modifier
+                    .fillMaxWidth()
+                    .focusRequester(focusRequester),
             placeholder = {
                 Text(
                     text = stringResource(id = R.string.support_hint),
@@ -206,9 +204,9 @@ private fun SupportMainContent(
 
         Spacer(
             modifier =
-            Modifier
-                .fillMaxHeight()
-                .weight(MINIMAL_WEIGHT)
+                Modifier
+                    .fillMaxHeight()
+                    .weight(MINIMAL_WEIGHT)
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
@@ -219,8 +217,8 @@ private fun SupportMainContent(
             onClick = { setShowDialog(true) },
             text = stringResource(id = R.string.support_send),
             modifier =
-            Modifier
-                .fillMaxWidth()
+                Modifier
+                    .fillMaxWidth()
         )
     }
 
@@ -243,9 +241,9 @@ private fun SupportConfirmationDialog(
         onDismissRequest = onDismiss,
         title = stringResource(id = R.string.support_confirmation_dialog_title),
         text =
-        stringResource(
-            id = R.string.support_confirmation_explanation,
-            stringResource(id = R.string.app_name)
-        )
+            stringResource(
+                id = R.string.support_confirmation_explanation,
+                stringResource(id = R.string.app_name)
+            )
     )
 }

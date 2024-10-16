@@ -52,7 +52,7 @@ fun DeleteWallet(
     onConfirm: () -> Unit,
     topAppBarSubTitleState: TopAppBarSubTitleState,
 ) {
-    Scaffold (
+    Scaffold(
         topBar = {
             DeleteWalletDataTopAppBar(
                 onBack = onBack,

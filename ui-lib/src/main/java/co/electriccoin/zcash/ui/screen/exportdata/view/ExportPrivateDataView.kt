@@ -56,7 +56,7 @@ fun ExportPrivateData(
     onConfirm: () -> Unit,
     topAppBarSubTitleState: TopAppBarSubTitleState,
 ) {
-    BlankBgScaffold (
+    BlankBgScaffold(
         topBar = {
             ExportPrivateDataTopAppBar(
                 onBack = onBack,

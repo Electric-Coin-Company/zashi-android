@@ -75,9 +75,9 @@ fun AddressBookView(
                 Empty(
                     state = state,
                     modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .scaffoldPadding(paddingValues)
+                        Modifier
+                            .fillMaxSize()
+                            .scaffoldPadding(paddingValues)
                 )
             }
 
@@ -87,16 +87,16 @@ fun AddressBookView(
                 ) {
                     LazyColumn(
                         modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .weight(1f),
+                            Modifier
+                                .fillMaxWidth()
+                                .weight(1f),
                         contentPadding =
-                        PaddingValues(
-                            top = paddingValues.calculateTopPadding(),
-                            bottom = paddingValues.calculateBottomPadding() + ZashiDimensions.Spacing.spacing3xl,
-                            start = 4.dp,
-                            end = 4.dp
-                        )
+                            PaddingValues(
+                                top = paddingValues.calculateTopPadding(),
+                                bottom = paddingValues.calculateBottomPadding() + ZashiDimensions.Spacing.spacing3xl,
+                                start = 4.dp,
+                                end = 4.dp
+                            )
                     ) {
                         itemsIndexed(state.contacts) { index, item ->
                             ContactItem(state = item)
@@ -110,9 +110,9 @@ fun AddressBookView(
                         AddContactButton(
                             state = state,
                             modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = ZashiDimensions.Spacing.spacing3xl)
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = ZashiDimensions.Spacing.spacing3xl)
                         )
                     }
                 }
@@ -152,11 +152,11 @@ private fun ContactItemLeading(
     ) {
         Text(
             modifier =
-            Modifier
-                .background(ZashiColors.Avatars.avatarBg, CircleShape)
-                .size(40.dp)
-                .padding(top = 11.dp)
-                .align(Alignment.Center),
+                Modifier
+                    .background(ZashiColors.Avatars.avatarBg, CircleShape)
+                    .size(40.dp)
+                    .padding(top = 11.dp)
+                    .align(Alignment.Center),
             text = state.initials.getValue(),
             style = ZashiTypography.textSm,
             color = ZashiColors.Avatars.avatarTextFg,
@@ -166,9 +166,9 @@ private fun ContactItemLeading(
         if (state.isShielded) {
             Image(
                 modifier =
-                Modifier
-                    .align(Alignment.BottomEnd)
-                    .size(24.dp),
+                    Modifier
+                        .align(Alignment.BottomEnd)
+                        .size(24.dp),
                 painter = painterResource(id = R.drawable.ic_address_book_shielded),
                 contentDescription = ""
             )
@@ -226,9 +226,9 @@ private fun Empty(
         AddContactButton(
             state = state,
             modifier =
-            Modifier
-                .align(Alignment.BottomCenter)
-                .fillMaxWidth()
+                Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
         )
     }
 }
@@ -243,16 +243,16 @@ private fun AddContactButton(
     ZashiButton(
         modifier = modifier,
         state =
-        ButtonState(
-            onClick = {
-                if (transitionState.targetState && transitionState.currentState) {
-                    transitionState.targetState = false
-                } else if (!transitionState.targetState && !transitionState.currentState) {
-                    transitionState.targetState = true
-                }
-            },
-            text = stringRes(R.string.address_book_add)
-        )
+            ButtonState(
+                onClick = {
+                    if (transitionState.targetState && transitionState.currentState) {
+                        transitionState.targetState = false
+                    } else if (!transitionState.targetState && !transitionState.currentState) {
+                        transitionState.targetState = true
+                    }
+                },
+                text = stringRes(R.string.address_book_add)
+            )
     ) { scope ->
         Image(
             painter = painterResource(id = R.drawable.ic_address_book_plus),
@@ -286,11 +286,11 @@ private fun AddressBookTopAppBar(
     ZashiSmallTopAppBar(
         title = stringResource(id = R.string.address_book_title),
         subtitle =
-        when (subTitleState) {
-            TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
-            TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
-            TopAppBarSubTitleState.None -> null
-        },
+            when (subTitleState) {
+                TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
+                TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
+                TopAppBarSubTitleState.None -> null
+            },
         modifier = Modifier.testTag(AddressBookTag.TOP_APP_BAR),
         showTitleLogo = true,
         navigationAction = {
@@ -305,29 +305,29 @@ private fun DataPreview() {
     ZcashTheme {
         AddressBookView(
             state =
-            AddressBookState(
-                isLoading = false,
-                version = stringRes("Version 1.2"),
-                onBack = {},
-                contacts =
-                (1..10).map {
-                    AddressBookContactState(
-                        name = stringRes("Name Surname"),
-                        address = stringRes("3iY5ZSkRnevzSMu4hosasdasdasdasd12312312dasd9hw2"),
-                        initials = stringRes("NS"),
-                        isShielded = it % 2 == 0,
-                        onClick = {}
-                    )
-                },
-                scanButton =
-                ButtonState(
-                    text = stringRes("Scan"),
+                AddressBookState(
+                    isLoading = false,
+                    version = stringRes("Version 1.2"),
+                    onBack = {},
+                    contacts =
+                        (1..10).map {
+                            AddressBookContactState(
+                                name = stringRes("Name Surname"),
+                                address = stringRes("3iY5ZSkRnevzSMu4hosasdasdasdasd12312312dasd9hw2"),
+                                initials = stringRes("NS"),
+                                isShielded = it % 2 == 0,
+                                onClick = {}
+                            )
+                        },
+                    scanButton =
+                        ButtonState(
+                            text = stringRes("Scan"),
+                        ),
+                    manualButton =
+                        ButtonState(
+                            text = stringRes("Manual"),
+                        )
                 ),
-                manualButton =
-                ButtonState(
-                    text = stringRes("Manual"),
-                )
-            ),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )
     }
@@ -339,20 +339,20 @@ private fun LoadingPreview() {
     ZcashTheme {
         AddressBookView(
             state =
-            AddressBookState(
-                isLoading = true,
-                version = stringRes("Version 1.2"),
-                onBack = {},
-                contacts = emptyList(),
-                scanButton =
-                ButtonState(
-                    text = stringRes("Scan"),
+                AddressBookState(
+                    isLoading = true,
+                    version = stringRes("Version 1.2"),
+                    onBack = {},
+                    contacts = emptyList(),
+                    scanButton =
+                        ButtonState(
+                            text = stringRes("Scan"),
+                        ),
+                    manualButton =
+                        ButtonState(
+                            text = stringRes("Manual"),
+                        )
                 ),
-                manualButton =
-                ButtonState(
-                    text = stringRes("Manual"),
-                )
-            ),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )
     }
@@ -364,20 +364,20 @@ private fun EmptyPreview() {
     ZcashTheme {
         AddressBookView(
             state =
-            AddressBookState(
-                isLoading = false,
-                version = stringRes("Version 1.2"),
-                onBack = {},
-                contacts = emptyList(),
-                scanButton =
-                ButtonState(
-                    text = stringRes("Scan"),
+                AddressBookState(
+                    isLoading = false,
+                    version = stringRes("Version 1.2"),
+                    onBack = {},
+                    contacts = emptyList(),
+                    scanButton =
+                        ButtonState(
+                            text = stringRes("Scan"),
+                        ),
+                    manualButton =
+                        ButtonState(
+                            text = stringRes("Manual"),
+                        )
                 ),
-                manualButton =
-                ButtonState(
-                    text = stringRes("Manual"),
-                )
-            ),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )
     }

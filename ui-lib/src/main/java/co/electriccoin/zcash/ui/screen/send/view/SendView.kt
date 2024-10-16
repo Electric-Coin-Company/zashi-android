@@ -11,7 +11,6 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -69,7 +68,6 @@ import co.electriccoin.zcash.ui.common.model.canSpend
 import co.electriccoin.zcash.ui.common.model.spendableBalance
 import co.electriccoin.zcash.ui.common.test.CommonTag
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
-import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.AppAlertDialog
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.BlankSurface
@@ -82,7 +80,6 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
-import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.fixture.BalanceStateFixture
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 import co.electriccoin.zcash.ui.screen.send.SendTag
@@ -529,9 +526,9 @@ fun SendButton(
         text = stringResource(id = R.string.send_create),
         enabled = sendButtonEnabled,
         modifier =
-        Modifier
-            .testTag(SendTag.SEND_FORM_BUTTON)
-            .fillMaxWidth()
+            Modifier
+                .testTag(SendTag.SEND_FORM_BUTTON)
+                .fillMaxWidth()
     )
 }
 
@@ -551,11 +548,11 @@ fun SendFormAddressTextField(
 
     Column(
         modifier =
-        Modifier
-            // Animate error show/hide
-            .animateContentSize()
-            // Scroll TextField above ime keyboard
-            .bringIntoViewRequester(bringIntoViewRequester)
+            Modifier
+                // Animate error show/hide
+                .animateContentSize()
+                // Scroll TextField above ime keyboard
+                .bringIntoViewRequester(bringIntoViewRequester)
     ) {
         Text(
             text = stringResource(id = R.string.send_address_label),
@@ -584,15 +581,15 @@ fun SendFormAddressTextField(
                 setRecipientAddress(it)
             },
             modifier =
-            Modifier
-                .fillMaxWidth()
-                .onFocusEvent { focusState ->
-                    if (focusState.isFocused) {
-                        scope.launch {
-                            bringIntoViewRequester.bringIntoView()
+                Modifier
+                    .fillMaxWidth()
+                    .onFocusEvent { focusState ->
+                        if (focusState.isFocused) {
+                            scope.launch {
+                                bringIntoViewRequester.bringIntoView()
+                            }
                         }
-                    }
-                },
+                    },
             error = recipientAddressError,
             placeholder = {
                 Text(

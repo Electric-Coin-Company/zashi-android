@@ -137,12 +137,12 @@ internal fun HistoryContainer(
 ) {
     Column(
         modifier =
-        modifier
-            .then(
-                Modifier
-                    .fillMaxSize()
-                    .background(ZcashTheme.colors.historyBackgroundColor)
-            )
+            modifier
+                .then(
+                    Modifier
+                        .fillMaxSize()
+                        .background(ZcashTheme.colors.historyBackgroundColor)
+                )
     ) {
         if (walletRestoringState == WalletRestoringState.RESTORING) {
             Column(
@@ -158,9 +158,9 @@ internal fun HistoryContainer(
                     testTag = BalancesTag.STATUS,
                     walletSnapshot = walletSnapshot,
                     modifier =
-                    Modifier
-                        .padding(horizontal = ZcashTheme.dimens.spacingDefault)
-                        .animateContentSize()
+                        Modifier
+                            .padding(horizontal = ZcashTheme.dimens.spacingDefault)
+                            .animateContentSize()
                 )
 
                 Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
@@ -276,19 +276,19 @@ private fun ComposableHistoryListItemExpandedPreview() {
                     onAction = {},
                     isHideBalances = false,
                     transaction =
-                    TransactionUiFixture.new(
-                        overview = TransactionOverviewFixture.new().copy(isSentTransaction = true),
-                        expandableState = TrxItemState.EXPANDED
-                    )
+                        TransactionUiFixture.new(
+                            overview = TransactionOverviewFixture.new().copy(isSentTransaction = true),
+                            expandableState = TrxItemState.EXPANDED
+                        )
                 )
                 HistoryItem(
                     onAction = {},
                     isHideBalances = false,
                     transaction =
-                    TransactionUiFixture.new(
-                        overview = TransactionOverviewFixture.new().copy(isSentTransaction = false),
-                        expandableState = TrxItemState.EXPANDED
-                    )
+                        TransactionUiFixture.new(
+                            overview = TransactionOverviewFixture.new().copy(isSentTransaction = false),
+                            expandableState = TrxItemState.EXPANDED
+                        )
                 )
             }
         }
@@ -304,10 +304,10 @@ private fun ComposableHistoryListItemsPreview() {
                 onAction = {},
                 isHideBalances = false,
                 transaction =
-                TransactionUiFixture.new(
-                    messages = persistentListOf("Message 1", "Message 2", "Message 3"),
-                    expandableState = TrxItemState.EXPANDED
-                )
+                    TransactionUiFixture.new(
+                        messages = persistentListOf("Message 1", "Message 2", "Message 3"),
+                        expandableState = TrxItemState.EXPANDED
+                    )
             )
         }
     }
@@ -379,29 +379,29 @@ private fun HistoryItem(
 
     Row(
         modifier =
-        modifier.then(
-            Modifier
-                .background(color = ZcashTheme.colors.historyBackgroundColor)
-                .clickable {
-                    if (transaction.expandableState <= TrxItemState.COLLAPSED) {
-                        onAction(
-                            TrxItemAction.ExpandableStateChange(
-                                transaction.overview.rawId,
-                                TrxItemState.EXPANDED
+            modifier.then(
+                Modifier
+                    .background(color = ZcashTheme.colors.historyBackgroundColor)
+                    .clickable {
+                        if (transaction.expandableState <= TrxItemState.COLLAPSED) {
+                            onAction(
+                                TrxItemAction.ExpandableStateChange(
+                                    transaction.overview.rawId,
+                                    TrxItemState.EXPANDED
+                                )
                             )
-                        )
-                    } else {
-                        onAction(
-                            TrxItemAction.ExpandableStateChange(
-                                transaction.overview.rawId,
-                                TrxItemState.COLLAPSED
+                        } else {
+                            onAction(
+                                TrxItemAction.ExpandableStateChange(
+                                    transaction.overview.rawId,
+                                    TrxItemState.COLLAPSED
+                                )
                             )
-                        )
+                        }
                     }
-                }
-                .padding(24.dp)
-                .animateContentSize()
-        )
+                    .padding(24.dp)
+                    .animateContentSize()
+            )
     ) {
         Image(
             imageVector = typeIcon,
@@ -464,11 +464,11 @@ private fun HistoryItemCollapsedMainPart(
 ) {
     Row(
         modifier =
-        modifier.then(
-            Modifier
-                .fillMaxWidth()
-                .defaultMinSize(minHeight = 24.dp)
-        ),
+            modifier.then(
+                Modifier
+                    .fillMaxWidth()
+                    .defaultMinSize(minHeight = 24.dp)
+            ),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
@@ -514,19 +514,19 @@ private fun HistoryItemCollapsedMainPart(
 
         StyledBalance(
             balanceParts =
-            if (transaction.expandableState.isInAnyExtendedState()) {
-                transaction.overview.netValue.toZecStringFull().asZecAmountTriple(prefix)
-            } else {
-                transaction.overview.netValue.toZecStringAbbreviated(
-                    suffix = stringResource(id = R.string.general_etc)
-                ).asZecAmountTriple(prefix)
-            },
+                if (transaction.expandableState.isInAnyExtendedState()) {
+                    transaction.overview.netValue.toZecStringFull().asZecAmountTriple(prefix)
+                } else {
+                    transaction.overview.netValue.toZecStringAbbreviated(
+                        suffix = stringResource(id = R.string.general_etc)
+                    ).asZecAmountTriple(prefix)
+                },
             isHideBalances = isHideBalances,
             textStyle =
-            StyledBalanceDefaults.textStyles(
-                mostSignificantPart = valueTextStyle,
-                leastSignificantPart = ZashiTypography.textXxs
-            ),
+                StyledBalanceDefaults.textStyles(
+                    mostSignificantPart = valueTextStyle,
+                    leastSignificantPart = ZashiTypography.textXxs
+                ),
             textColor = valueTextColor,
         )
     }
@@ -575,9 +575,9 @@ private fun HistoryItemCollapsedAddressPart(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier =
-                    Modifier
-                        .fillMaxWidth(ADDRESS_IN_TITLE_WIDTH_RATIO)
-                        .then(clickModifier)
+                        Modifier
+                            .fillMaxWidth(ADDRESS_IN_TITLE_WIDTH_RATIO)
+                            .then(clickModifier)
                 )
             }
         }
@@ -600,17 +600,17 @@ private fun HistoryItemExpandedAddressPart(
 ) {
     Column(
         modifier =
-        modifier.then(
-            Modifier.fillMaxWidth()
-        )
+            modifier.then(
+                Modifier.fillMaxWidth()
+            )
     ) {
         Text(
             text = recipient.addressValue,
             style = ZashiTypography.textSm,
             color = ZashiColors.Text.textTertiary,
             modifier =
-            Modifier
-                .fillMaxWidth(EXPANDED_ADDRESS_WIDTH_RATIO)
+                Modifier
+                    .fillMaxWidth(EXPANDED_ADDRESS_WIDTH_RATIO)
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -624,13 +624,13 @@ private fun HistoryItemExpandedAddressPart(
                 iconVector = ImageVector.vectorResource(R.drawable.ic_trx_copy),
                 iconTintColor = ZashiColors.Text.textTertiary,
                 modifier =
-                (if (contact == null) Modifier.weight(1f) else Modifier) then
-                    Modifier
-                        .clickable(
-                            role = Role.Button,
-                            indication = rememberRipple(radius = 2.dp, color = ZashiColors.Text.textTertiary),
-                            interactionSource = remember { MutableInteractionSource() }
-                        ) { onAction(TrxItemAction.AddressClick(recipient)) }
+                    (if (contact == null) Modifier.weight(1f) else Modifier) then
+                        Modifier
+                            .clickable(
+                                role = Role.Button,
+                                indication = rememberRipple(radius = 2.dp, color = ZashiColors.Text.textTertiary),
+                                interactionSource = remember { MutableInteractionSource() }
+                            ) { onAction(TrxItemAction.AddressClick(recipient)) }
             )
 
             if (contact == null) {
@@ -642,13 +642,13 @@ private fun HistoryItemExpandedAddressPart(
                     iconVector = ImageVector.vectorResource(R.drawable.ic_trx_save),
                     iconTintColor = ZashiColors.Text.textTertiary,
                     modifier =
-                    Modifier
-                        .weight(1f)
-                        .clickable(
-                            role = Role.Button,
-                            indication = rememberRipple(radius = 2.dp, color = ZashiColors.Text.textTertiary),
-                            interactionSource = remember { MutableInteractionSource() }
-                        ) { onAction(TrxItemAction.AddToAddressBookClick(recipient)) }
+                        Modifier
+                            .weight(1f)
+                            .clickable(
+                                role = Role.Button,
+                                indication = rememberRipple(radius = 2.dp, color = ZashiColors.Text.textTertiary),
+                                interactionSource = remember { MutableInteractionSource() }
+                            ) { onAction(TrxItemAction.AddToAddressBookClick(recipient)) }
                 )
             }
         }
@@ -690,10 +690,10 @@ private fun HistoryItemExpandedPart(
         if (transaction.messages.containsValidMemo()) {
             Text(
                 text =
-                pluralStringResource(
-                    id = R.plurals.account_history_item_message,
-                    count = transaction.messages!!.size
-                ),
+                    pluralStringResource(
+                        id = R.plurals.account_history_item_message,
+                        count = transaction.messages!!.size
+                    ),
                 style = ZashiTypography.textSm,
                 color = ZashiColors.Text.textTertiary,
             )
@@ -763,9 +763,9 @@ private fun HistoryItemTransactionIdPart(
                 style = ZashiTypography.textSm,
                 color = ZashiColors.Text.textTertiary,
                 modifier =
-                Modifier
-                    .fillMaxWidth(EXPANDED_TRANSACTION_WIDTH_RATIO)
-                    .testTag(HistoryTag.TRANSACTION_ID)
+                    Modifier
+                        .fillMaxWidth(EXPANDED_TRANSACTION_WIDTH_RATIO)
+                        .testTag(HistoryTag.TRANSACTION_ID)
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -778,30 +778,30 @@ private fun HistoryItemTransactionIdPart(
                 iconVector = ImageVector.vectorResource(R.drawable.ic_trx_copy),
                 iconTintColor = ZashiColors.Text.textTertiary,
                 modifier =
-                Modifier
-                    .clickable(
-                        role = Role.Button,
-                        indication = rememberRipple(radius = 2.dp, color = ZashiColors.Text.textTertiary),
-                        interactionSource = remember { MutableInteractionSource() }
-                    ) { onAction(TrxItemAction.TransactionIdClick(txIdString)) }
+                    Modifier
+                        .clickable(
+                            role = Role.Button,
+                            indication = rememberRipple(radius = 2.dp, color = ZashiColors.Text.textTertiary),
+                            interactionSource = remember { MutableInteractionSource() }
+                        ) { onAction(TrxItemAction.TransactionIdClick(txIdString)) }
             )
         } else {
             Row(
                 modifier =
-                Modifier
-                    .clip(RoundedCornerShape(ZcashTheme.dimens.regularRippleEffectCorner))
-                    .clickable {
-                        onAction(
-                            TrxItemAction.ExpandableStateChange(
-                                transaction.overview.rawId,
-                                if (transaction.expandableState == TrxItemState.EXPANDED_ADDRESS) {
-                                    TrxItemState.EXPANDED_ALL
-                                } else {
-                                    TrxItemState.EXPANDED_ID
-                                }
+                    Modifier
+                        .clip(RoundedCornerShape(ZcashTheme.dimens.regularRippleEffectCorner))
+                        .clickable {
+                            onAction(
+                                TrxItemAction.ExpandableStateChange(
+                                    transaction.overview.rawId,
+                                    if (transaction.expandableState == TrxItemState.EXPANDED_ADDRESS) {
+                                        TrxItemState.EXPANDED_ALL
+                                    } else {
+                                        TrxItemState.EXPANDED_ID
+                                    }
+                                )
                             )
-                        )
-                    }
+                        }
             ) {
                 Text(
                     text = stringResource(id = R.string.account_history_item_transaction_id),
@@ -819,9 +819,9 @@ private fun HistoryItemTransactionIdPart(
                     textAlign = TextAlign.End,
                     overflow = TextOverflow.Ellipsis,
                     modifier =
-                    Modifier
-                        .fillMaxWidth(COLLAPSED_TRANSACTION_WIDTH_RATIO)
-                        .testTag(HistoryTag.TRANSACTION_ID)
+                        Modifier
+                            .fillMaxWidth(COLLAPSED_TRANSACTION_WIDTH_RATIO)
+                            .testTag(HistoryTag.TRANSACTION_ID)
                 )
             }
         }
@@ -845,10 +845,10 @@ private fun HistoryItemTransactionFeePart(
         if (fee == null) {
             Text(
                 text =
-                stringResource(
-                    id = R.string.account_history_item_transaction_fee_typical,
-                    DEFAULT_FEE
-                ),
+                    stringResource(
+                        id = R.string.account_history_item_transaction_fee_typical,
+                        DEFAULT_FEE
+                    ),
                 style = ZashiTypography.textSm,
                 color = ZashiColors.Text.textTertiary,
             )
@@ -858,10 +858,10 @@ private fun HistoryItemTransactionFeePart(
                 // Fees are always visible
                 isHideBalances = false,
                 textStyle =
-                StyledBalanceDefaults.textStyles(
-                    mostSignificantPart = ZashiTypography.textSm,
-                    leastSignificantPart = ZashiTypography.textXxs
-                ),
+                    StyledBalanceDefaults.textStyles(
+                        mostSignificantPart = ZashiTypography.textSm,
+                        leastSignificantPart = ZashiTypography.textXxs
+                    ),
                 textColor = ZashiColors.Text.textTertiary
             )
         }
@@ -877,51 +877,58 @@ private fun HistoryItemMessagePart(
 ) {
     Column(modifier = modifier.then(Modifier.fillMaxWidth())) {
         ZashiTextField(
-            textStyle = if (state.isFailed()) {
-                ZashiTypography.textMd.copy(
-                    fontWeight = FontWeight.Medium,
-                    textDecoration = TextDecoration.LineThrough
-                )
-            } else {
-                ZashiTypography.textMd.copy(fontWeight = FontWeight.Medium)
-            },
+            textStyle =
+                if (state.isFailed()) {
+                    ZashiTypography.textMd.copy(
+                        fontWeight = FontWeight.Medium,
+                        textDecoration = TextDecoration.LineThrough
+                    )
+                } else {
+                    ZashiTypography.textMd.copy(fontWeight = FontWeight.Medium)
+                },
             state =
-            TextFieldState(
-                value = stringRes(message), error = if (state.isFailed()) {
-                    stringRes("")
-                } else {
-                    null
-                },
-                isEnabled = false
-            ) {},
+                TextFieldState(
+                    value = stringRes(message),
+                    error =
+                        if (state.isFailed()) {
+                            stringRes("")
+                        } else {
+                            null
+                        },
+                    isEnabled = false
+                ) {},
             modifier =
-            Modifier
-                .fillMaxWidth(),
-            colors = ZashiTextFieldDefaults.defaultColors(
-                disabledTextColor = if (state.isFailed()) {
-                    ZashiColors.Inputs.ErrorFilled.text
-                } else {
-                    ZashiColors.Inputs.Filled.text
-                },
-                disabledHintColor = if (state.isFailed()) {
-                    ZashiColors.Inputs.ErrorDefault.hint
-                } else {
-                    ZashiColors.Inputs.Disabled.hint
-                },
-                disabledBorderColor = if (state.isFailed()) {
-                    ZashiColors.Inputs.ErrorDefault.stroke
-                } else {
-                    ZashiColors.Inputs.Disabled.stroke
-                },
-                disabledContainerColor = Color.Transparent,
-                disabledPlaceholderColor = if (state.isFailed()) {
-                    ZashiColors.Inputs.ErrorDefault.text
-                } else {
-                    ZashiColors.Inputs.Disabled.text
-                },
-            ),
+                Modifier
+                    .fillMaxWidth(),
+            colors =
+                ZashiTextFieldDefaults.defaultColors(
+                    disabledTextColor =
+                        if (state.isFailed()) {
+                            ZashiColors.Inputs.ErrorFilled.text
+                        } else {
+                            ZashiColors.Inputs.Filled.text
+                        },
+                    disabledHintColor =
+                        if (state.isFailed()) {
+                            ZashiColors.Inputs.ErrorDefault.hint
+                        } else {
+                            ZashiColors.Inputs.Disabled.hint
+                        },
+                    disabledBorderColor =
+                        if (state.isFailed()) {
+                            ZashiColors.Inputs.ErrorDefault.stroke
+                        } else {
+                            ZashiColors.Inputs.Disabled.stroke
+                        },
+                    disabledContainerColor = Color.Transparent,
+                    disabledPlaceholderColor =
+                        if (state.isFailed()) {
+                            ZashiColors.Inputs.ErrorDefault.text
+                        } else {
+                            ZashiColors.Inputs.Disabled.text
+                        },
+                ),
         )
-
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -933,13 +940,13 @@ private fun HistoryItemMessagePart(
             iconVector = ImageVector.vectorResource(R.drawable.ic_trx_copy),
             iconTintColor = ZashiColors.Text.textTertiary,
             modifier =
-            Modifier
-                .clickable(
-                    onClick = { onAction(TrxItemAction.MessageClick(message)) },
-                    role = Role.Button,
-                    indication = rememberRipple(radius = 2.dp, color = ZashiColors.Text.textTertiary),
-                    interactionSource = remember { MutableInteractionSource() }
-                )
+                Modifier
+                    .clickable(
+                        onClick = { onAction(TrxItemAction.MessageClick(message)) },
+                        role = Role.Button,
+                        indication = rememberRipple(radius = 2.dp, color = ZashiColors.Text.textTertiary),
+                        interactionSource = remember { MutableInteractionSource() }
+                    )
         )
     }
 }

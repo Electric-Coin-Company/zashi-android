@@ -86,11 +86,11 @@ fun ZashiButton(
                 if (enabled && isLoading) {
                     LottieProgress(
                         loadingRes =
-                        if (isSystemInDarkTheme()) {
-                            R.raw.lottie_loading
-                        } else {
-                            R.raw.lottie_loading_white
-                        }
+                            if (isSystemInDarkTheme()) {
+                                R.raw.lottie_loading
+                            } else {
+                                R.raw.lottie_loading_white
+                            }
                     )
                 }
             }

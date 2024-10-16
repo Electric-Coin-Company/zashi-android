@@ -198,7 +198,7 @@ private fun UpdateBottomAppBar(
                 Modifier
                     .padding(
                         top = ZashiDimensions.Spacing.spacingLg,
-                        bottom =  ZashiDimensions.Spacing.spacing3xl,
+                        bottom = ZashiDimensions.Spacing.spacing3xl,
                         start = ZashiDimensions.Spacing.spacing3xl,
                         end = ZashiDimensions.Spacing.spacing3xl
                     ),

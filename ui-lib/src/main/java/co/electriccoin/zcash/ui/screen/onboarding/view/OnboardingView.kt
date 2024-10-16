@@ -68,21 +68,24 @@ fun Onboarding(
 ) {
     Scaffold { paddingValues ->
         Box(
-            modifier = Modifier.background(
-                if (isSystemInDarkTheme()) {
-                    Brush.verticalGradient(
-                        .0f to ZashiColors.Surfaces.bgSecondary,
-                        .5f to ZashiColors.Surfaces.bgTertiary,
-                        0.75f to ZashiColors.Surfaces.bgPrimary,
-                    )
-                } else {
-                    Brush.verticalGradient(
-                        .0f to ZashiColors.Surfaces.bgSecondary,
-                        .5f to ZashiColors.Surfaces.bgTertiary,
-                        0.75f to ZashiColors.Surfaces.bgPrimary,
-                    )
-                }
-            )
+            modifier =
+                Modifier.background(
+                    if (isSystemInDarkTheme()) {
+                        @Suppress("MagicNumber") // does not make sense to suppress this
+                        Brush.verticalGradient(
+                            .0f to ZashiColors.Surfaces.bgSecondary,
+                            .5f to ZashiColors.Surfaces.bgTertiary,
+                            0.75f to ZashiColors.Surfaces.bgPrimary,
+                        )
+                    } else {
+                        @Suppress("MagicNumber") // does not make sense to suppress this
+                        Brush.verticalGradient(
+                            .0f to ZashiColors.Surfaces.bgSecondary,
+                            .5f to ZashiColors.Surfaces.bgTertiary,
+                            0.75f to ZashiColors.Surfaces.bgPrimary,
+                        )
+                    }
+                )
         ) {
             OnboardingMainContent(
                 isDebugMenuEnabled = isDebugMenuEnabled,
@@ -90,13 +93,13 @@ fun Onboarding(
                 onFixtureWallet = onFixtureWallet,
                 onImportWallet = onImportWallet,
                 modifier =
-                Modifier
-                    .padding(
-                        top = paddingValues.calculateTopPadding() + ZashiDimensions.Spacing.spacing2xl,
-                        bottom = paddingValues.calculateBottomPadding() + ZashiDimensions.Spacing.spacing4xl,
-                        start = ZashiDimensions.Spacing.spacing3xl,
-                        end = ZashiDimensions.Spacing.spacing3xl
-                    )
+                    Modifier
+                        .padding(
+                            top = paddingValues.calculateTopPadding() + ZashiDimensions.Spacing.spacing2xl,
+                            bottom = paddingValues.calculateBottomPadding() + ZashiDimensions.Spacing.spacing4xl,
+                            start = ZashiDimensions.Spacing.spacing3xl,
+                            end = ZashiDimensions.Spacing.spacing3xl
+                        )
             )
         }
     }
@@ -112,10 +115,10 @@ private fun OnboardingMainContent(
 ) {
     Column(
         modifier =
-        Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .then(modifier),
+            Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .then(modifier),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         var imageModifier =
@@ -148,8 +151,7 @@ private fun OnboardingMainContent(
             colorFilter = ColorFilter.tint(color = ZcashTheme.colors.secondaryColor),
             contentDescription = null,
             contentScale = ContentScale.FillWidth,
-
-            )
+        )
 
         Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacing3xl))
 
@@ -160,15 +162,16 @@ private fun OnboardingMainContent(
             color = ZashiColors.Text.textSecondary
         )
 
+        @Suppress("MagicNumber") // does not make sense to suppress this
         Spacer(Modifier.weight(.75f))
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
         Spacer(
             modifier =
-            Modifier
-                .fillMaxHeight()
-                .weight(MINIMAL_WEIGHT)
+                Modifier
+                    .fillMaxHeight()
+                    .weight(MINIMAL_WEIGHT)
         )
 
         ZashiButton(

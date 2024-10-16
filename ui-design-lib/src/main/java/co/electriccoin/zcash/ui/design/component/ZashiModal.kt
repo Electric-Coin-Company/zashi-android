@@ -26,10 +26,11 @@ fun ZashiModal(
         color = ZashiColors.Modals.surfacePrimary
     ) {
         Box(
-            modifier = Modifier
-                .padding(ZashiDimensions.Spacing.spacing3xl)
-                .wrapContentSize()
-                .animateContentSize()
+            modifier =
+                Modifier
+                    .padding(ZashiDimensions.Spacing.spacing3xl)
+                    .wrapContentSize()
+                    .animateContentSize()
         ) {
             content()
         }

@@ -559,7 +559,8 @@ val LightZashiColorsInternal =
                         utilityEspresso800 = Espresso.`800`
                     )
             ),
-        Transparent = Transparent(
-            bgPrimary = TransparentColorPalette.Light
-        )
+        Transparent =
+            Transparent(
+                bgPrimary = TransparentColorPalette.Light
+            )
     )

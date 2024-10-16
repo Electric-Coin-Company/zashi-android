@@ -96,18 +96,18 @@ private fun RestoreSeedPreview() {
             ZcashNetwork.Mainnet,
             restoreState = RestoreState(RestoreStage.Seed),
             completeWordList =
-            persistentHashSetOf(
-                "abandon",
-                "ability",
-                "able",
-                "about",
-                "above",
-                "absent",
-                "absorb",
-                "abstract",
-                "rib",
-                "ribbon"
-            ),
+                persistentHashSetOf(
+                    "abandon",
+                    "ability",
+                    "able",
+                    "about",
+                    "above",
+                    "absent",
+                    "absorb",
+                    "abstract",
+                    "rib",
+                    "ribbon"
+                ),
             userWordList = WordList(listOf("abandon", "absorb")),
             restoreHeight = null,
             setRestoreHeight = {},
@@ -126,18 +126,18 @@ private fun RestoreSeedDarkPreview() {
             ZcashNetwork.Mainnet,
             restoreState = RestoreState(RestoreStage.Seed),
             completeWordList =
-            persistentHashSetOf(
-                "abandon",
-                "ability",
-                "able",
-                "about",
-                "above",
-                "absent",
-                "absorb",
-                "abstract",
-                "rib",
-                "ribbon"
-            ),
+                persistentHashSetOf(
+                    "abandon",
+                    "ability",
+                    "able",
+                    "about",
+                    "above",
+                    "absent",
+                    "absorb",
+                    "abstract",
+                    "rib",
+                    "ribbon"
+                ),
             userWordList = WordList(listOf("abandon", "absorb")),
             restoreHeight = null,
             setRestoreHeight = {},
@@ -156,18 +156,18 @@ private fun RestoreBirthdayPreview() {
             ZcashNetwork.Mainnet,
             restoreState = RestoreState(RestoreStage.Birthday),
             completeWordList =
-            persistentHashSetOf(
-                "abandon",
-                "ability",
-                "able",
-                "about",
-                "above",
-                "absent",
-                "absorb",
-                "abstract",
-                "rib",
-                "ribbon"
-            ),
+                persistentHashSetOf(
+                    "abandon",
+                    "ability",
+                    "able",
+                    "about",
+                    "above",
+                    "absent",
+                    "absorb",
+                    "abstract",
+                    "rib",
+                    "ribbon"
+                ),
             userWordList = WordList(listOf("abandon", "absorb")),
             restoreHeight = null,
             setRestoreHeight = {},
@@ -186,18 +186,18 @@ private fun RestoreBirthdayDarkPreview() {
             ZcashNetwork.Mainnet,
             restoreState = RestoreState(RestoreStage.Birthday),
             completeWordList =
-            persistentHashSetOf(
-                "abandon",
-                "ability",
-                "able",
-                "about",
-                "above",
-                "absent",
-                "absorb",
-                "abstract",
-                "rib",
-                "ribbon"
-            ),
+                persistentHashSetOf(
+                    "abandon",
+                    "ability",
+                    "able",
+                    "about",
+                    "above",
+                    "absent",
+                    "absorb",
+                    "abstract",
+                    "rib",
+                    "ribbon"
+                ),
             userWordList = WordList(listOf("abandon", "absorb")),
             restoreHeight = null,
             setRestoreHeight = {},
@@ -288,11 +288,11 @@ fun RestoreWallet(
                         parseResult = parseResult,
                         setText = { text = it },
                         modifier =
-                        Modifier
-                            .imePadding()
-                            .navigationBarsPadding()
-                            .animateContentSize()
-                            .fillMaxWidth()
+                            Modifier
+                                .imePadding()
+                                .navigationBarsPadding()
+                                .animateContentSize()
+                                .fillMaxWidth()
                     )
                 }
 
@@ -330,9 +330,9 @@ fun RestoreWallet(
                         setRestoreHeight = setRestoreHeight,
                         onDone = onFinished,
                         modifier =
-                        commonModifier
-                            .imePadding()
-                            .navigationBarsPadding()
+                            commonModifier
+                                .imePadding()
+                                .navigationBarsPadding()
                     )
                 }
             }
@@ -425,10 +425,10 @@ private fun RestoreSeedMainContent(
         // Used to calculate necessary scroll to have the seed TextFiled visible
         Column(
             modifier =
-            Modifier.onSizeChanged { size ->
-                textFieldScrollToHeight.intValue = size.height
-                Twig.debug { "TextField scroll height: ${textFieldScrollToHeight.intValue}" }
-            }
+                Modifier.onSizeChanged { size ->
+                    textFieldScrollToHeight.intValue = size.height
+                    Twig.debug { "TextField scroll height: ${textFieldScrollToHeight.intValue}" }
+                }
         ) {
             TopScreenLogoTitle(
                 title = stringResource(R.string.restore_title),
@@ -455,9 +455,9 @@ private fun RestoreSeedMainContent(
 
         Spacer(
             modifier =
-            Modifier
-                .fillMaxHeight()
-                .weight(MINIMAL_WEIGHT)
+                Modifier
+                    .fillMaxHeight()
+                    .weight(MINIMAL_WEIGHT)
         )
 
         Spacer(Modifier.height(ZcashTheme.dimens.spacingLarge))
@@ -505,12 +505,12 @@ private fun RestoreSeedBottomBar(
             Warn(
                 parseResult = parseResult,
                 modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        horizontal = ZcashTheme.dimens.spacingDefault,
-                        vertical = ZcashTheme.dimens.spacingSmall
-                    )
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            horizontal = ZcashTheme.dimens.spacingDefault,
+                            vertical = ZcashTheme.dimens.spacingSmall
+                        )
             )
             Autocomplete(parseResult = parseResult, {
                 setText("")
@@ -549,18 +549,18 @@ private fun SeedGridWithText(
     ) {
         Column(
             modifier =
-            Modifier
-                .border(
-                    border =
-                    BorderStroke(
-                        width = ZcashTheme.dimens.layoutStroke,
-                        color = ZcashTheme.colors.layoutStroke
+                Modifier
+                    .border(
+                        border =
+                            BorderStroke(
+                                width = ZcashTheme.dimens.layoutStroke,
+                                color = ZcashTheme.colors.layoutStroke
+                            )
                     )
-                )
-                .fillMaxWidth()
-                .defaultMinSize(minHeight = ZcashTheme.dimens.textFieldSeedPanelDefaultHeight)
-                .then(modifier)
-                .testTag(RestoreTag.CHIP_LAYOUT)
+                    .fillMaxWidth()
+                    .defaultMinSize(minHeight = ZcashTheme.dimens.textFieldSeedPanelDefaultHeight)
+                    .then(modifier)
+                    .testTag(RestoreTag.CHIP_LAYOUT)
         ) {
             /*
              * Treat the user input as a password for more secure input, but disable the transformation
@@ -569,15 +569,15 @@ private fun SeedGridWithText(
             TextField(
                 textStyle = ZashiTypography.textMd.copy(fontWeight = FontWeight.Medium),
                 modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .testTag(RestoreTag.SEED_WORD_TEXT_FIELD)
-                    .focusRequester(focusRequester),
+                    Modifier
+                        .fillMaxWidth()
+                        .testTag(RestoreTag.SEED_WORD_TEXT_FIELD)
+                        .focusRequester(focusRequester),
                 value =
-                TextFieldValue(
-                    text = currentSeedText,
-                    selection = TextRange(index = currentSeedText.length)
-                ),
+                    TextFieldValue(
+                        text = currentSeedText,
+                        selection = TextRange(index = currentSeedText.length)
+                    ),
                 placeholder = {
                     Text(
                         text = stringResource(id = R.string.restore_seed_hint),
@@ -594,27 +594,27 @@ private fun SeedGridWithText(
                     )
                 },
                 keyboardOptions =
-                KeyboardOptions(
-                    KeyboardCapitalization.None,
-                    autoCorrect = false,
-                    imeAction = ImeAction.Done,
-                    keyboardType = KeyboardType.Password
-                ),
+                    KeyboardOptions(
+                        KeyboardCapitalization.None,
+                        autoCorrect = false,
+                        imeAction = ImeAction.Done,
+                        keyboardType = KeyboardType.Password
+                    ),
                 keyboardActions = KeyboardActions(onAny = {}),
                 isError = parseResult is ParseResult.Warn,
                 colors =
-                TextFieldDefaults.colors(
-                    cursorColor = ZcashTheme.colors.textPrimary,
-                    disabledContainerColor = Color.Transparent,
-                    disabledIndicatorColor = Color.Transparent,
-                    errorContainerColor = Color.Transparent,
-                    focusedContainerColor = Color.Transparent,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedContainerColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    focusedTextColor = ZashiColors.Inputs.Filled.text,
-                    unfocusedTextColor = ZashiColors.Inputs.Filled.text,
-                )
+                    TextFieldDefaults.colors(
+                        cursorColor = ZcashTheme.colors.textPrimary,
+                        disabledContainerColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent,
+                        errorContainerColor = Color.Transparent,
+                        focusedContainerColor = Color.Transparent,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        focusedTextColor = ZashiColors.Inputs.Filled.text,
+                        unfocusedTextColor = ZashiColors.Inputs.Filled.text,
+                    )
             )
         }
     }
@@ -693,9 +693,9 @@ private fun Autocomplete(
     suggestions?.let {
         LazyRow(
             modifier =
-            modifier
-                .testTag(RestoreTag.AUTOCOMPLETE_LAYOUT)
-                .fillMaxWidth(),
+                modifier
+                    .testTag(RestoreTag.AUTOCOMPLETE_LAYOUT)
+                    .fillMaxWidth(),
             contentPadding = PaddingValues(all = ZcashTheme.dimens.spacingSmall),
             horizontalArrangement = Arrangement.Absolute.Center
         ) {
@@ -719,32 +719,32 @@ private fun Warn(
         Surface(
             shape = RoundedCornerShape(size = ZcashTheme.dimens.tinyRippleEffectCorner),
             modifier =
-            modifier.then(
-                Modifier.border(
-                    border =
-                    BorderStroke(
-                        width = ZcashTheme.dimens.chipStroke,
-                        color = ZcashTheme.colors.layoutStrokeSecondary
-                    ),
-                    shape = RoundedCornerShape(size = ZcashTheme.dimens.tinyRippleEffectCorner),
-                )
-            ),
+                modifier.then(
+                    Modifier.border(
+                        border =
+                            BorderStroke(
+                                width = ZcashTheme.dimens.chipStroke,
+                                color = ZcashTheme.colors.layoutStrokeSecondary
+                            ),
+                        shape = RoundedCornerShape(size = ZcashTheme.dimens.tinyRippleEffectCorner),
+                    )
+                ),
             color = ZcashTheme.colors.primaryColor,
             shadowElevation = ZcashTheme.dimens.chipShadowElevation
         ) {
             Text(
                 color = ZcashTheme.colors.textPrimary,
                 modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(ZcashTheme.dimens.spacingSmall),
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(ZcashTheme.dimens.spacingSmall),
                 textAlign = TextAlign.Center,
                 text =
-                if (parseResult.suggestions.isEmpty()) {
-                    stringResource(id = R.string.restore_seed_warning_no_suggestions)
-                } else {
-                    stringResource(id = R.string.restore_seed_warning_suggestions)
-                }
+                    if (parseResult.suggestions.isEmpty()) {
+                        stringResource(id = R.string.restore_seed_warning_no_suggestions)
+                    } else {
+                        stringResource(id = R.string.restore_seed_warning_suggestions)
+                    }
             )
         }
     }
@@ -791,28 +791,28 @@ private fun RestoreBirthdayMainContent(
                 setHeight(filteredHeightString)
             },
             colors =
-            TextFieldDefaults.colors(
-                cursorColor = ZcashTheme.colors.textPrimary,
-                focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent,
-                disabledContainerColor = Color.Transparent,
-                errorContainerColor = Color.Transparent,
-                focusedIndicatorColor = ZcashTheme.colors.secondaryDividerColor,
-                unfocusedIndicatorColor = Color.Transparent,
-                disabledIndicatorColor = Color.Transparent
-            ),
+                TextFieldDefaults.colors(
+                    cursorColor = ZcashTheme.colors.textPrimary,
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
+                    disabledContainerColor = Color.Transparent,
+                    errorContainerColor = Color.Transparent,
+                    focusedIndicatorColor = ZcashTheme.colors.secondaryDividerColor,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent
+                ),
             modifier =
-            Modifier
-                .fillMaxWidth()
-                .focusRequester(focusRequester),
+                Modifier
+                    .fillMaxWidth()
+                    .focusRequester(focusRequester),
             textStyle = ZcashTheme.extendedTypography.textFieldBirthday,
             keyboardOptions =
-            KeyboardOptions(
-                KeyboardCapitalization.None,
-                autoCorrect = false,
-                imeAction = ImeAction.Done,
-                keyboardType = KeyboardType.Number
-            ),
+                KeyboardOptions(
+                    KeyboardCapitalization.None,
+                    autoCorrect = false,
+                    imeAction = ImeAction.Done,
+                    keyboardType = KeyboardType.Number
+                ),
             keyboardActions = KeyboardActions(onAny = {}),
             withBorder = false,
             testTag = RestoreTag.BIRTHDAY_TEXT_FIELD
@@ -820,9 +820,9 @@ private fun RestoreBirthdayMainContent(
 
         Spacer(
             modifier =
-            Modifier
-                .fillMaxHeight()
-                .weight(MINIMAL_WEIGHT)
+                Modifier
+                    .fillMaxHeight()
+                    .weight(MINIMAL_WEIGHT)
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
