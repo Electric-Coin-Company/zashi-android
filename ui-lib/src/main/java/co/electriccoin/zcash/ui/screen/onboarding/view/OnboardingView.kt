@@ -3,7 +3,10 @@
 package co.electriccoin.zcash.ui.screen.onboarding.view
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -14,51 +17,43 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import cash.z.ecc.android.sdk.fixture.WalletFixture
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
-import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
-import co.electriccoin.zcash.ui.design.component.TitleLarge
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
+import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
-
-@Preview("Onboarding")
-@Composable
-private fun OnboardingComposablePreview() {
-    ZcashTheme(forceDarkMode = false) {
-        Onboarding(
-            isDebugMenuEnabled = true,
-            onImportWallet = {},
-            onCreateWallet = {},
-            onFixtureWallet = {}
-        )
-    }
-}
-
-@Preview("Onboarding")
-@Composable
-private fun OnboardingComposableDarkPreview() {
-    ZcashTheme(forceDarkMode = true) {
-        Onboarding(
-            isDebugMenuEnabled = true,
-            onImportWallet = {},
-            onCreateWallet = {},
-            onFixtureWallet = {}
-        )
-    }
-}
+import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
+import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
+import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 
 // TODO [#1001]: Screens in landscape mode
 // TODO [#1001]: https://github.com/Electric-Coin-Company/zashi-android/issues/1001
+@PreviewScreens
+@Composable
+private fun OnboardingComposablePreview() {
+    ZcashTheme {
+        Onboarding(
+            isDebugMenuEnabled = true,
+            onImportWallet = {},
+            onCreateWallet = {},
+            onFixtureWallet = {}
+        )
+    }
+}
 
 /**
  * @param onImportWallet Callback when the user decides to import an existing wallet.
@@ -71,21 +66,39 @@ fun Onboarding(
     onCreateWallet: () -> Unit,
     onFixtureWallet: (String) -> Unit
 ) {
-    BlankBgScaffold { paddingValues ->
-        OnboardingMainContent(
-            isDebugMenuEnabled = isDebugMenuEnabled,
-            onCreateWallet = onCreateWallet,
-            onFixtureWallet = onFixtureWallet,
-            onImportWallet = onImportWallet,
-            modifier =
+    Scaffold { paddingValues ->
+        Box(
+            modifier = Modifier.background(
+                if (isSystemInDarkTheme()) {
+                    Brush.verticalGradient(
+                        .0f to ZashiColors.Surfaces.bgSecondary,
+                        .5f to ZashiColors.Surfaces.bgTertiary,
+                        0.75f to ZashiColors.Surfaces.bgPrimary,
+                    )
+                } else {
+                    Brush.verticalGradient(
+                        .0f to ZashiColors.Surfaces.bgSecondary,
+                        .5f to ZashiColors.Surfaces.bgTertiary,
+                        0.75f to ZashiColors.Surfaces.bgPrimary,
+                    )
+                }
+            )
+        ) {
+            OnboardingMainContent(
+                isDebugMenuEnabled = isDebugMenuEnabled,
+                onCreateWallet = onCreateWallet,
+                onFixtureWallet = onFixtureWallet,
+                onImportWallet = onImportWallet,
+                modifier =
                 Modifier
                     .padding(
-                        top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingHuge,
-                        bottom = paddingValues.calculateBottomPadding() + ZcashTheme.dimens.spacingHuge,
-                        start = ZcashTheme.dimens.screenHorizontalSpacingBig,
-                        end = ZcashTheme.dimens.screenHorizontalSpacingBig
+                        top = paddingValues.calculateTopPadding() + ZashiDimensions.Spacing.spacing2xl,
+                        bottom = paddingValues.calculateBottomPadding() + ZashiDimensions.Spacing.spacing4xl,
+                        start = ZashiDimensions.Spacing.spacing3xl,
+                        end = ZashiDimensions.Spacing.spacing3xl
                     )
-        )
+            )
+        }
     }
 }
 
@@ -99,10 +112,10 @@ private fun OnboardingMainContent(
 ) {
     Column(
         modifier =
-            Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .then(modifier),
+        Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .then(modifier),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         var imageModifier =
@@ -118,6 +131,8 @@ private fun OnboardingMainContent(
                 )
         }
 
+        Spacer(Modifier.weight(1f))
+
         Image(
             painter = painterResource(id = co.electriccoin.zcash.ui.design.R.drawable.zashi_logo_without_text),
             colorFilter = ColorFilter.tint(color = ZcashTheme.colors.secondaryColor),
@@ -125,25 +140,35 @@ private fun OnboardingMainContent(
             modifier = imageModifier
         )
 
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
+        Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingSm))
 
         Image(
+            modifier = Modifier.width(220.dp),
             painter = painterResource(id = co.electriccoin.zcash.ui.design.R.drawable.zashi_text_logo),
             colorFilter = ColorFilter.tint(color = ZcashTheme.colors.secondaryColor),
             contentDescription = null,
+            contentScale = ContentScale.FillWidth,
+
+            )
+
+        Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacing3xl))
+
+        Text(
+            text = stringResource(R.string.onboarding_header),
+            style = ZashiTypography.textXl,
+            textAlign = TextAlign.Center,
+            color = ZashiColors.Text.textSecondary
         )
 
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingUpLarge))
-
-        TitleLarge(text = stringResource(R.string.onboarding_header), textAlign = TextAlign.Center)
+        Spacer(Modifier.weight(.75f))
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
         Spacer(
             modifier =
-                Modifier
-                    .fillMaxHeight()
-                    .weight(MINIMAL_WEIGHT)
+            Modifier
+                .fillMaxHeight()
+                .weight(MINIMAL_WEIGHT)
         )
 
         ZashiButton(
@@ -152,13 +177,13 @@ private fun OnboardingMainContent(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
+        Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingSm))
 
         ZashiButton(
             modifier = Modifier.fillMaxWidth(),
             text = stringResource(R.string.onboarding_import_existing_wallet),
             onClick = onImportWallet,
-            colors = ZashiButtonDefaults.secondaryColors()
+            colors = ZashiButtonDefaults.tertiaryColors()
         )
     }
 }
