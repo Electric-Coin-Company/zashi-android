@@ -19,6 +19,7 @@ dependencies {
     api(libs.zcash.sdk)
     api(libs.zcash.sdk.incubator)
     api(libs.zcash.bip39)
+    api(libs.zip321)
 
     androidTestImplementation(libs.bundles.androidx.test)
     androidTestImplementation(libs.kotlinx.coroutines.test)

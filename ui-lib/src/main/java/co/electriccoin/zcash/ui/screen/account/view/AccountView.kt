@@ -254,7 +254,7 @@ private fun AccountMainContent(
                 animateDpAsState(
                     targetValue =
                         if (balanceState.exchangeRate is ExchangeRateState.OptIn) {
-                            76.dp
+                            96.dp
                         } else {
                             0.dp
                         },
@@ -298,7 +298,7 @@ private fun AccountMainContent(
             exit = fadeOut() + slideOutVertically(),
         ) {
             Column {
-                Spacer(modifier = Modifier.height(80.dp + paddingValues.calculateTopPadding()))
+                Spacer(modifier = Modifier.height(100.dp + paddingValues.calculateTopPadding()))
                 StyledExchangeOptIn(
                     modifier = Modifier.padding(horizontal = 24.dp),
                     state =
