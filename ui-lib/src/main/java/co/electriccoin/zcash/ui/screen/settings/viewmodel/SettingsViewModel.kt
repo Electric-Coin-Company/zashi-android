@@ -7,18 +7,21 @@ import co.electriccoin.zcash.preference.StandardPreferenceProvider
 import co.electriccoin.zcash.preference.model.entry.BooleanPreferenceDefault
 import co.electriccoin.zcash.ui.NavigationTargets.ABOUT
 import co.electriccoin.zcash.ui.NavigationTargets.ADVANCED_SETTINGS
+import co.electriccoin.zcash.ui.NavigationTargets.INTEGRATIONS
 import co.electriccoin.zcash.ui.NavigationTargets.SUPPORT
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
 import co.electriccoin.zcash.ui.common.usecase.ObserveConfigurationUseCase
 import co.electriccoin.zcash.ui.common.usecase.RescanBlockchainUseCase
 import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
+import co.electriccoin.zcash.ui.design.component.ZashiSettingsListItemState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
 import co.electriccoin.zcash.ui.screen.addressbook.AddressBookArgs
 import co.electriccoin.zcash.ui.screen.settings.model.SettingsState
 import co.electriccoin.zcash.ui.screen.settings.model.SettingsTroubleshootingState
 import co.electriccoin.zcash.ui.screen.settings.model.TroubleshootingItemState
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -99,6 +102,13 @@ class SettingsViewModel(
                 version = stringRes(R.string.settings_version, versionInfo.versionName),
                 settingsTroubleshootingState = troubleshootingState,
                 onBack = ::onBack,
+                integrations =
+                    ZashiSettingsListItemState(
+                        text = stringRes(R.string.settings_integrations),
+                        icon = R.drawable.ic_settings_integrations,
+                        onClick = ::onIntegrationsClick,
+                        titleIcons = persistentListOf(R.drawable.ic_integrations_coinbase)
+                    ),
                 onAdvancedSettingsClick = ::onAdvancedSettingsClick,
                 onAboutUsClick = ::onAboutUsClick,
                 onSendUsFeedbackClick = ::onSendUsFeedbackClick,
@@ -138,6 +148,11 @@ class SettingsViewModel(
     fun onBack() =
         viewModelScope.launch {
             backNavigationCommand.emit(Unit)
+        }
+
+    private fun onIntegrationsClick() =
+        viewModelScope.launch {
+            navigationCommand.emit(INTEGRATIONS)
         }
 
     private fun onAdvancedSettingsClick() =
