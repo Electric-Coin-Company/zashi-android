@@ -60,7 +60,7 @@ fun ZashiSettingsListItem(
 }
 
 @Composable
-fun ZashiSettingsListItem(state: ZashiSettingsListItemState,) {
+fun ZashiSettingsListItem(state: ZashiSettingsListItemState) {
     ZashiSettingsListItem(
         leading = { modifier ->
             ZashiSettingsListLeadingItem(
