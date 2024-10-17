@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.common.datasource
 
+import co.electriccoin.zcash.spackle.io.deleteSuspend
 import co.electriccoin.zcash.ui.common.model.AddressBook
 import co.electriccoin.zcash.ui.common.model.AddressBookContact
 import co.electriccoin.zcash.ui.common.provider.AddressBookProvider
@@ -25,6 +26,8 @@ interface LocalAddressBookDataSource {
     suspend fun deleteContact(addressBookContact: AddressBookContact): AddressBook
 
     suspend fun saveContacts(contacts: AddressBook)
+
+    suspend fun deleteAddressBook()
 }
 
 class LocalAddressBookDataSourceImpl(
@@ -126,6 +129,11 @@ class LocalAddressBookDataSourceImpl(
     override suspend fun saveContacts(contacts: AddressBook) {
         writeAddressBookToLocalStorage(contacts)
         this@LocalAddressBookDataSourceImpl.addressBook = contacts
+    }
+
+    override suspend fun deleteAddressBook() {
+        addressBookStorageProvider.getStorageFile()?.deleteSuspend()
+        addressBook = null
     }
 
     private fun readLocalFileToAddressBook(): AddressBook? {
