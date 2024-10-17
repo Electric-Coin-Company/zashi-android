@@ -34,6 +34,7 @@ import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.design.component.ZashiHorizontalDivider
 import co.electriccoin.zcash.ui.design.component.ZashiSettingsListItem
+import co.electriccoin.zcash.ui.design.component.ZashiSettingsListItemState
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
@@ -41,11 +42,11 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
 import co.electriccoin.zcash.ui.design.util.getValue
-import co.electriccoin.zcash.ui.design.util.orDark
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.settings.SettingsTag
 import co.electriccoin.zcash.ui.screen.settings.model.SettingsState
 import co.electriccoin.zcash.ui.screen.settings.model.SettingsTroubleshootingState
+import kotlinx.collections.immutable.persistentListOf
 
 @Suppress("LongMethod")
 @Composable
@@ -83,21 +84,23 @@ fun Settings(
                     onClick = state.onAddressBookClick
                 )
                 ZashiHorizontalDivider()
+                ZashiSettingsListItem(state = state.integrations)
+                ZashiHorizontalDivider()
                 ZashiSettingsListItem(
                     text = stringResource(id = R.string.settings_advanced_settings),
-                    icon = R.drawable.ic_advanced_settings orDark R.drawable.ic_advanced_settings_dark,
+                    icon = R.drawable.ic_advanced_settings,
                     onClick = state.onAdvancedSettingsClick
                 )
                 ZashiHorizontalDivider()
                 ZashiSettingsListItem(
                     text = stringResource(id = R.string.settings_about_us),
-                    icon = R.drawable.ic_settings_info orDark R.drawable.ic_settings_info_dark,
+                    icon = R.drawable.ic_settings_info,
                     onClick = state.onAboutUsClick
                 )
                 ZashiHorizontalDivider()
                 ZashiSettingsListItem(
                     text = stringResource(id = R.string.settings_feedback),
-                    icon = R.drawable.ic_settings_feedback orDark R.drawable.ic_settings_feedback_dark,
+                    icon = R.drawable.ic_settings_feedback,
                     onClick = state.onSendUsFeedbackClick
                 )
                 Spacer(modifier = Modifier.weight(1f))
@@ -105,7 +108,7 @@ fun Settings(
                 Image(
                     modifier = Modifier.align(CenterHorizontally),
                     painter =
-                        painterResource(id = R.drawable.ic_settings_zashi orDark R.drawable.ic_settings_zashi_dark),
+                        painterResource(id = R.drawable.ic_settings_zashi),
                     contentDescription = ""
                 )
                 Spacer(modifier = Modifier.height(16.dp))
@@ -236,7 +239,13 @@ private fun PreviewSettings() {
                     onAdvancedSettingsClick = {},
                     onAboutUsClick = {},
                     onSendUsFeedbackClick = {},
-                    onAddressBookClick = {}
+                    onAddressBookClick = {},
+                    integrations =
+                        ZashiSettingsListItemState(
+                            icon = R.drawable.ic_settings_integrations,
+                            text = stringRes("Integrations"),
+                            titleIcons = persistentListOf(R.drawable.ic_integrations_coinbase)
+                        ) {}
                 ),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )
@@ -258,7 +267,13 @@ private fun PreviewSettingsLoading() {
                     onAdvancedSettingsClick = {},
                     onAboutUsClick = {},
                     onSendUsFeedbackClick = {},
-                    onAddressBookClick = {}
+                    onAddressBookClick = {},
+                    integrations =
+                        ZashiSettingsListItemState(
+                            icon = R.drawable.ic_settings_integrations,
+                            text = stringRes("Integrations"),
+                            titleIcons = persistentListOf(R.drawable.ic_integrations_coinbase)
+                        ) {}
                 ),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )

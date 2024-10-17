@@ -1,7 +1,9 @@
 package co.electriccoin.zcash.ui.screen.settings
 
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
+import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
+import co.electriccoin.zcash.ui.design.component.ZashiSettingsListItemState
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.settings.model.SettingsState
@@ -120,7 +122,12 @@ class SettingsViewTestSetup(
                             },
                             onAddressBookClick = {
                                 onAddressBookCount.incrementAndGet()
-                            }
+                            },
+                            integrations =
+                                ZashiSettingsListItemState(
+                                    stringRes("Integrations"),
+                                    R.drawable.ic_settings_integrations,
+                                )
                         ),
                     topAppBarSubTitleState = TopAppBarSubTitleState.None,
                 )

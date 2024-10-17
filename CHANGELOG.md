@@ -18,6 +18,7 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ### Added
 - Address book local and remote storage support
+- New Integrations screen in settings
 - New QR Code detail screen has been added
 - The new Request ZEC screens have been added. They provide a way to build ZIP 321 Uri consisting of the amount, 
   message, and receiver address and then creates a QR code image of it. 

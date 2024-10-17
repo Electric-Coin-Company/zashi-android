@@ -34,11 +34,14 @@ import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.orDark
 import co.electriccoin.zcash.ui.design.util.stringRes
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun ZashiSettingsListItem(
     text: String,
     @DrawableRes icon: Int,
+    titleIcons: ImmutableList<Int> = persistentListOf(),
     subtitle: String? = null,
     isEnabled: Boolean = true,
     onClick: () -> Unit
@@ -49,22 +52,20 @@ fun ZashiSettingsListItem(
                 text = stringRes(text),
                 subtitle = subtitle?.let { stringRes(it) },
                 isEnabled = isEnabled,
-                onClick = onClick
+                onClick = onClick,
+                icon = icon,
+                titleIcons = titleIcons
             ),
-        icon = icon,
     )
 }
 
 @Composable
-fun ZashiSettingsListItem(
-    state: ZashiSettingsListItemState,
-    @DrawableRes icon: Int
-) {
+fun ZashiSettingsListItem(state: ZashiSettingsListItemState) {
     ZashiSettingsListItem(
         leading = { modifier ->
             ZashiSettingsListLeadingItem(
                 modifier = modifier,
-                icon = icon,
+                icon = state.icon,
                 contentDescription = state.text.getValue()
             )
         },
@@ -72,7 +73,8 @@ fun ZashiSettingsListItem(
             ZashiSettingsListContentItem(
                 modifier = modifier,
                 text = state.text.getValue(),
-                subtitle = state.subtitle?.getValue()
+                subtitle = state.subtitle?.getValue(),
+                titleIcons = state.titleIcons
             )
         },
         trailing = { modifier ->
@@ -127,17 +129,28 @@ fun ZashiSettingsListTrailingItem(
 fun ZashiSettingsListContentItem(
     text: String,
     subtitle: String?,
+    titleIcons: ImmutableList<Int>,
     modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier
     ) {
-        Text(
-            text = text,
-            style = ZashiTypography.textMd,
-            fontWeight = FontWeight.SemiBold,
-            color = ZashiColors.Text.textPrimary
-        )
+        Row {
+            Text(
+                text = text,
+                style = ZashiTypography.textMd,
+                fontWeight = FontWeight.SemiBold,
+                color = ZashiColors.Text.textPrimary
+            )
+            titleIcons.forEach {
+                Spacer(Modifier.width(6.dp))
+                Image(
+                    modifier = Modifier.size(20.dp),
+                    painter = painterResource(it),
+                    contentDescription = null,
+                )
+            }
+        }
         subtitle?.let {
             Spacer(modifier = Modifier.height(2.dp))
             Text(
@@ -185,12 +198,13 @@ fun ZashiSettingsListItem(
 
 data class ZashiSettingsListItemState(
     val text: StringResource,
+    @DrawableRes val icon: Int,
     val subtitle: StringResource? = null,
+    val titleIcons: ImmutableList<Int> = persistentListOf(),
     val isEnabled: Boolean = true,
     val onClick: () -> Unit = {},
 )
 
-@Suppress("UnusedPrivateMember")
 @PreviewScreens
 @Composable
 private fun EnabledPreview() =
@@ -200,12 +214,12 @@ private fun EnabledPreview() =
                 text = "Test",
                 subtitle = "Subtitle",
                 icon = R.drawable.ic_radio_button_checked,
-                onClick = {}
+                onClick = {},
+                titleIcons = persistentListOf(R.drawable.ic_radio_button_checked)
             )
         }
     }
 
-@Suppress("UnusedPrivateMember")
 @PreviewScreens
 @Composable
 private fun DisabledPreview() =
@@ -216,7 +230,7 @@ private fun DisabledPreview() =
                 subtitle = "Subtitle",
                 icon = R.drawable.ic_radio_button_checked,
                 isEnabled = false,
-                onClick = {}
+                onClick = {},
             )
         }
     }
