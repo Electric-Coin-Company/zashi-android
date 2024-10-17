@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.screen.settings.model
 
+import co.electriccoin.zcash.ui.design.component.ZashiSettingsListItemState
 import co.electriccoin.zcash.ui.design.util.StringResource
 
 data class SettingsState(
@@ -8,7 +9,7 @@ data class SettingsState(
     val settingsTroubleshootingState: SettingsTroubleshootingState?,
     val onAddressBookClick: () -> Unit,
     val onBack: () -> Unit,
-    val onIntegrationsClick: () -> Unit,
+    val integrations: ZashiSettingsListItemState,
     val onAdvancedSettingsClick: () -> Unit,
     val onAboutUsClick: () -> Unit,
     val onSendUsFeedbackClick: () -> Unit,

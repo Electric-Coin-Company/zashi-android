@@ -48,6 +48,7 @@ class IntegrationsViewModel(
                     ZashiSettingsListItemState(
                         // Set the wallet currency by app build is more future-proof, although we hide it from the UI
                         // in the Testnet build
+                        icon = R.drawable.ic_integrations_coinbase,
                         text = stringRes(R.string.integrations_coinbase, getZcashCurrency.getLocalizedName()),
                         subtitle =
                             stringRes(

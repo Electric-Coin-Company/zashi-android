@@ -14,6 +14,7 @@ import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
 import co.electriccoin.zcash.ui.common.usecase.ObserveConfigurationUseCase
 import co.electriccoin.zcash.ui.common.usecase.RescanBlockchainUseCase
 import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
+import co.electriccoin.zcash.ui.design.component.ZashiSettingsListItemState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
 import co.electriccoin.zcash.ui.screen.addressbook.AddressBookArgs
@@ -100,7 +101,12 @@ class SettingsViewModel(
                 version = stringRes(R.string.settings_version, versionInfo.versionName),
                 settingsTroubleshootingState = troubleshootingState,
                 onBack = ::onBack,
-                onIntegrationsClick = ::onIntegrationsClick,
+                integrations = ZashiSettingsListItemState(
+                    text = stringRes(R.string.settings_integrations),
+                    icon = R.drawable.ic_settings_integrations,
+                    onClick = ::onIntegrationsClick,
+                    titleIcons = listOf(R.drawable.ic_integrations_coinbase)
+                ),
                 onAdvancedSettingsClick = ::onAdvancedSettingsClick,
                 onAboutUsClick = ::onAboutUsClick,
                 onSendUsFeedbackClick = ::onSendUsFeedbackClick,

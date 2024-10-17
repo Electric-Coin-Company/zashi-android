@@ -62,10 +62,7 @@ fun Integrations(
                     ),
         ) {
             state.coinbase?.let {
-                ZashiSettingsListItem(
-                    state = it,
-                    icon = R.drawable.ic_integrations_coinbase,
-                )
+                ZashiSettingsListItem(state = it)
             }
 
             state.disabledInfo?.let {
@@ -140,6 +137,7 @@ private fun IntegrationSettings() {
                     onBack = {},
                     coinbase =
                         ZashiSettingsListItemState(
+                            icon = R.drawable.ic_integrations_coinbase,
                             text = stringRes("Coinbase"),
                             subtitle = stringRes("Coinbase subtitle"),
                         ) {},
