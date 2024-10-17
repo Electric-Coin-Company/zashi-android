@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -35,10 +34,11 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
-import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.TopAppBarBackNavigation
+import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.fixture.ConfigInfoFixture
 import co.electriccoin.zcash.ui.fixture.VersionInfoFixture
 import co.electriccoin.zcash.ui.screen.support.model.ConfigInfo
@@ -75,12 +75,7 @@ fun About(
                     .verticalScroll(
                         rememberScrollState()
                     )
-                    .padding(
-                        top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
-                        bottom = paddingValues.calculateBottomPadding() + ZcashTheme.dimens.spacingDefault,
-                        start = ZcashTheme.dimens.screenHorizontalSpacingBig,
-                        end = ZcashTheme.dimens.screenHorizontalSpacingBig
-                    )
+                    .scaffoldPadding(paddingValues)
         )
     }
 }
@@ -99,10 +94,10 @@ private fun AboutTopAppBar(
                 TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
                 TopAppBarSubTitleState.None -> null
             },
-        titleText = stringResource(id = R.string.about_title).uppercase(),
+        titleText = stringResource(id = R.string.about_title),
         navigationAction = {
             TopAppBarBackNavigation(
-                backText = stringResource(id = R.string.back_navigation).uppercase(),
+                backText = stringResource(id = R.string.back_navigation),
                 backContentDescriptionText = stringResource(R.string.back_navigation_content_description),
                 onBack = onBack
             )
@@ -193,20 +188,18 @@ fun AboutMainContent(
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingUpLarge))
 
-        PrimaryButton(
+        ZashiButton(
+            modifier = Modifier.fillMaxWidth(),
             onClick = onWhatsNew,
             text = stringResource(R.string.about_button_whats_new),
-            textStyle = ZcashTheme.extendedTypography.buttonTextSmall,
-            minHeight = ZcashTheme.dimens.buttonHeightSmall
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
 
-        PrimaryButton(
+        ZashiButton(
+            modifier = Modifier.fillMaxWidth(),
             onClick = onPrivacyPolicy,
             text = stringResource(R.string.about_button_privacy_policy),
-            textStyle = ZcashTheme.extendedTypography.buttonTextSmall,
-            minHeight = ZcashTheme.dimens.buttonHeightSmall
         )
     }
 }

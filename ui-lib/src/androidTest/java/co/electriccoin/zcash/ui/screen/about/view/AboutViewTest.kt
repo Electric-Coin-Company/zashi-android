@@ -26,9 +26,14 @@ class AboutViewTest {
 
         assertEquals(0, testSetup.getOnBackCount())
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.back_navigation).uppercase()).also {
-            it.assertExists()
-        }
+        composeTestRule
+            .onNodeWithText(
+                getStringResource(R.string.back_navigation),
+                ignoreCase = true
+            )
+            .also {
+                it.assertExists()
+            }
 
         composeTestRule.onNodeWithContentDescription(
             label = getStringResource(R.string.zcash_logo_content_description)

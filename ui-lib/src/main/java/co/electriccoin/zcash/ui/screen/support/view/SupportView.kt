@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.SnackbarHost
@@ -32,14 +31,17 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.AppAlertDialog
+import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.Body
-import co.electriccoin.zcash.ui.design.component.FormTextField
-import co.electriccoin.zcash.ui.design.component.GridBgScaffold
-import co.electriccoin.zcash.ui.design.component.GridBgSmallTopAppBar
-import co.electriccoin.zcash.ui.design.component.PrimaryButton
+import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.TopAppBarBackNavigation
+import co.electriccoin.zcash.ui.design.component.ZashiButton
+import co.electriccoin.zcash.ui.design.component.ZashiTextField
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
+import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 
 @Preview
 @Composable
@@ -98,7 +100,7 @@ fun Support(
 ) {
     val (message, setMessage) = rememberSaveable { mutableStateOf("") }
 
-    GridBgScaffold(
+    BlankBgScaffold(
         topBar = {
             SupportTopAppBar(
                 onBack = onBack,
@@ -111,13 +113,7 @@ fun Support(
             message = message,
             setMessage = setMessage,
             setShowDialog = setShowDialog,
-            modifier =
-                Modifier.padding(
-                    top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
-                    bottom = paddingValues.calculateBottomPadding(),
-                    start = ZcashTheme.dimens.screenHorizontalSpacingRegular,
-                    end = ZcashTheme.dimens.screenHorizontalSpacingRegular
-                )
+            modifier = Modifier.scaffoldPadding(paddingValues)
         )
 
         if (isShowingDialog) {
@@ -134,7 +130,7 @@ private fun SupportTopAppBar(
     onBack: () -> Unit,
     subTitleState: TopAppBarSubTitleState
 ) {
-    GridBgSmallTopAppBar(
+    SmallTopAppBar(
         subTitle =
             when (subTitleState) {
                 TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
@@ -188,14 +184,20 @@ private fun SupportMainContent(
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
 
-        FormTextField(
+        ZashiTextField(
             value = message,
             onValueChange = setMessage,
             modifier =
                 Modifier
                     .fillMaxWidth()
                     .focusRequester(focusRequester),
-            placeholder = { Text(text = stringResource(id = R.string.support_hint)) },
+            placeholder = {
+                Text(
+                    text = stringResource(id = R.string.support_hint),
+                    style = ZashiTypography.textMd,
+                    color = ZashiColors.Inputs.Default.text
+                )
+            },
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
@@ -211,16 +213,13 @@ private fun SupportMainContent(
 
         // TODO [#1467]: Support screen - keep button above keyboard
         // TODO [#1467]: https://github.com/Electric-Coin-Company/zashi-android/issues/1467
-        PrimaryButton(
+        ZashiButton(
             onClick = { setShowDialog(true) },
             text = stringResource(id = R.string.support_send),
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = ZcashTheme.dimens.screenHorizontalSpacingRegular)
         )
-
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingHuge))
     }
 
     LaunchedEffect(Unit) {

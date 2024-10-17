@@ -7,8 +7,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import co.electriccoin.zcash.ui.design.theme.colors.DarkZashiColorsInternal
 import co.electriccoin.zcash.ui.design.theme.colors.LightZashiColorsInternal
 import co.electriccoin.zcash.ui.design.theme.colors.LocalZashiColors
-import co.electriccoin.zcash.ui.design.theme.dimensions.LocalZashiDimensions
-import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensionsInternal
 import co.electriccoin.zcash.ui.design.theme.internal.DarkColorPalette
 import co.electriccoin.zcash.ui.design.theme.internal.DarkExtendedColorPalette
 import co.electriccoin.zcash.ui.design.theme.internal.ExtendedTypography
@@ -41,7 +39,6 @@ fun ZcashTheme(
     CompositionLocalProvider(
         LocalExtendedColors provides extendedColors,
         LocalZashiColors provides zashiColors,
-        LocalZashiDimensions provides ZashiDimensionsInternal,
         LocalZashiTypography provides ZashiTypographyInternal
     ) {
         ProvideDimens {

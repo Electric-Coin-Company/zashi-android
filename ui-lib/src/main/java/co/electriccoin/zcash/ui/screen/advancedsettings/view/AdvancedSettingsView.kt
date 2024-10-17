@@ -34,6 +34,7 @@ import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
+import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
 import co.electriccoin.zcash.ui.design.util.orDark
 import co.electriccoin.zcash.ui.screen.advancedsettings.AdvancedSettingsState
 import co.electriccoin.zcash.ui.screen.advancedsettings.AdvancedSettingsTag
@@ -61,7 +62,7 @@ fun AdvancedSettings(
                     .verticalScroll(rememberScrollState())
                     .padding(
                         top = paddingValues.calculateTopPadding(),
-                        bottom = paddingValues.calculateBottomPadding(),
+                        bottom = paddingValues.calculateBottomPadding() + ZashiDimensions.Spacing.spacing3xl,
                         start = 4.dp,
                         end = 4.dp
                     ),
@@ -122,7 +123,6 @@ fun AdvancedSettings(
                 colors = ZashiButtonDefaults.destructive1Colors(),
                 onClick = state.onDeleteZashiClick
             )
-            Spacer(modifier = Modifier.height(20.dp))
         }
     }
 }

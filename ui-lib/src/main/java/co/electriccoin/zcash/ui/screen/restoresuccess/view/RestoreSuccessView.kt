@@ -4,8 +4,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
@@ -24,24 +24,22 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.BlankSurface
-import co.electriccoin.zcash.ui.design.component.GridBgScaffold
 import co.electriccoin.zcash.ui.design.component.LabeledCheckBox
-import co.electriccoin.zcash.ui.design.component.PrimaryButton
+import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 
 @Composable
 fun RestoreSuccess(state: RestoreSuccessViewState) {
-    GridBgScaffold { paddingValues ->
+    BlankBgScaffold { paddingValues ->
         RestoreSuccessContent(
             state = state,
             modifier =
                 Modifier
                     .fillMaxSize()
-                    .padding(
-                        top = paddingValues.calculateTopPadding(),
-                        bottom = paddingValues.calculateBottomPadding()
-                    )
+                    .scaffoldPadding(paddingValues)
                     .verticalScroll(rememberScrollState())
         )
     }
@@ -54,13 +52,7 @@ private fun RestoreSuccessContent(
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier =
-            modifier.then(
-                Modifier.padding(
-                    start = ZcashTheme.dimens.screenHorizontalSpacingBig,
-                    end = ZcashTheme.dimens.screenHorizontalSpacingBig
-                )
-            ),
+        modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingBig))
@@ -121,12 +113,11 @@ private fun RestoreSuccessContent(
 
         Spacer(Modifier.weight(1f))
 
-        PrimaryButton(
+        ZashiButton(
+            modifier = Modifier.fillMaxWidth(),
             onClick = state.onPositiveClick,
             text = stringResource(id = R.string.restore_success_button)
         )
-
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingBig))
     }
 }
 

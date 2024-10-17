@@ -6,5 +6,5 @@
     <string name="restore_success_note_part_1">Note:</string>
     <string name="restore_success_note_part_2">During the initial sync your funds cannot be sent or
         spent. Depending on the age of your wallet, it may take a few hours to fully sync.</string>
-    <string name="restore_success_button">GOT IT!</string>
+    <string name="restore_success_button">Got it!</string>
 </resources>

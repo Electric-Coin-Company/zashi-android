@@ -174,3 +174,8 @@ internal object Espresso {
     val `900` = Color(0xFF433535)
     val `950` = Color(0xFF332424)
 }
+
+internal object TransparentColorPalette {
+    val Light = Color(0xFFFFFFFF)
+    val Dark = Color(0xFF231F20)
+}

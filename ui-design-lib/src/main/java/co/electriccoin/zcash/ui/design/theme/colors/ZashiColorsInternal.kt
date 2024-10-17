@@ -24,7 +24,8 @@ data class ZashiColorsInternal(
     val Modals: Modals,
     val HintTooltips: HintTooltips,
     val TwoFA: TwoFA,
-    val Utility: Utility
+    val Utility: Utility,
+    val Transparent: Transparent
 )
 
 @Immutable
@@ -660,4 +661,9 @@ data class UtilityEspresso(
     val utilityEspresso300: Color,
     val utilityEspresso900: Color,
     val utilityEspresso800: Color
+)
+
+@Immutable
+data class Transparent(
+    val bgPrimary: Color
 )

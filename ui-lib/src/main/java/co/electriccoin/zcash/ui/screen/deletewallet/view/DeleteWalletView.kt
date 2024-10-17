@@ -7,9 +7,9 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -24,13 +24,13 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.Body
-import co.electriccoin.zcash.ui.design.component.GridBgScaffold
-import co.electriccoin.zcash.ui.design.component.GridBgSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.LabeledCheckBox
-import co.electriccoin.zcash.ui.design.component.PrimaryButton
+import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.TopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.component.TopScreenLogoTitle
+import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 
 @Preview("Delete Wallet")
 @Composable
@@ -52,7 +52,7 @@ fun DeleteWallet(
     onConfirm: () -> Unit,
     topAppBarSubTitleState: TopAppBarSubTitleState,
 ) {
-    GridBgScaffold(
+    Scaffold(
         topBar = {
             DeleteWalletDataTopAppBar(
                 onBack = onBack,
@@ -66,12 +66,7 @@ fun DeleteWallet(
             modifier =
                 Modifier
                     .fillMaxSize()
-                    .padding(
-                        top = paddingValues.calculateTopPadding(),
-                        bottom = paddingValues.calculateBottomPadding(),
-                        start = ZcashTheme.dimens.screenHorizontalSpacingBig,
-                        end = ZcashTheme.dimens.screenHorizontalSpacingBig
-                    )
+                    .scaffoldPadding(paddingValues)
                     .verticalScroll(rememberScrollState())
         )
     }
@@ -82,7 +77,7 @@ private fun DeleteWalletDataTopAppBar(
     onBack: () -> Unit,
     subTitleState: TopAppBarSubTitleState
 ) {
-    GridBgSmallTopAppBar(
+    SmallTopAppBar(
         subTitle =
             when (subTitleState) {
                 TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
@@ -154,13 +149,11 @@ private fun DeleteWalletContent(
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
-        PrimaryButton(
+        ZashiButton(
             onClick = onConfirm,
-            text = stringResource(R.string.delete_wallet_button, appName).uppercase(),
+            text = stringResource(R.string.delete_wallet_button, appName),
             enabled = checkedState.value,
             modifier = Modifier.fillMaxWidth()
         )
-
-        Spacer(Modifier.height(ZcashTheme.dimens.spacingHuge))
     }
 }

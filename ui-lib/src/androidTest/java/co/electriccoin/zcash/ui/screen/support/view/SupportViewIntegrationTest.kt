@@ -8,6 +8,7 @@ import androidx.compose.ui.test.performTextInput
 import androidx.test.filters.MediumTest
 import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.test.getStringResource
 import co.electriccoin.zcash.ui.test.getStringResourceWithArgs
 import org.junit.Rule
@@ -25,7 +26,9 @@ class SupportViewIntegrationTest : UiTestPrerequisites() {
         val testSetup = newTestSetup()
 
         restorationTester.setContent {
-            testSetup.DefaultContent()
+            ZcashTheme {
+                testSetup.DefaultContent()
+            }
         }
 
         composeTestRule.onNodeWithText("I can haz cheezburger?").also {

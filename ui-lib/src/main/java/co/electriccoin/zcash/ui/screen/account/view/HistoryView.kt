@@ -3,7 +3,6 @@
 package co.electriccoin.zcash.ui.screen.account.view
 
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -60,17 +59,19 @@ import co.electriccoin.zcash.ui.common.model.AddressBookContact
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.design.component.BlankSurface
-import co.electriccoin.zcash.ui.design.component.BubbleArrowAlignment
-import co.electriccoin.zcash.ui.design.component.BubbleMessage
 import co.electriccoin.zcash.ui.design.component.CircularMidProgressIndicator
 import co.electriccoin.zcash.ui.design.component.StyledBalance
 import co.electriccoin.zcash.ui.design.component.StyledBalanceDefaults
+import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.component.TextWithIcon
+import co.electriccoin.zcash.ui.design.component.ZashiTextField
+import co.electriccoin.zcash.ui.design.component.ZashiTextFieldDefaults
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
+import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
-import co.electriccoin.zcash.ui.design.util.orDark
+import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 import co.electriccoin.zcash.ui.screen.account.HistoryTag
 import co.electriccoin.zcash.ui.screen.account.fixture.TransactionUiFixture
@@ -245,7 +246,7 @@ private fun HistoryList(
             HorizontalDivider(
                 color = ZcashTheme.colors.primaryDividerColor,
                 thickness = DividerDefaults.Thickness,
-                modifier = Modifier.padding(horizontal = ZcashTheme.dimens.spacingDefault)
+                modifier = Modifier.padding(horizontal = ZashiDimensions.Spacing.spacing3xl)
             )
         }
     }
@@ -874,46 +875,60 @@ private fun HistoryItemMessagePart(
     onAction: (TrxItemAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val textStyle: TextStyle
-    val textColor: Color
-    if (state.isFailed()) {
-        textStyle =
-            ZashiTypography.textSm.copy(
-                textDecoration = TextDecoration.LineThrough
-            )
-        textColor = ZashiColors.Text.textError
-    } else {
-        textStyle = ZashiTypography.textSm
-        textColor = ZashiColors.Text.textPrimary
-    }
-
     Column(modifier = modifier.then(Modifier.fillMaxWidth())) {
-        val bubbleBackgroundColor: Color
-        val bubbleStroke: BorderStroke
-        val arrowAlignment: BubbleArrowAlignment
-        if (state.isSendType()) {
-            bubbleBackgroundColor = ZashiColors.Utility.Gray.utilityGray200 orDark Color.Transparent
-            bubbleStroke = BorderStroke(1.dp, ZashiColors.Text.textPrimary)
-            arrowAlignment = BubbleArrowAlignment.BottomLeft
-        } else {
-            bubbleBackgroundColor = ZashiColors.Utility.Gray.utilityGray200 orDark Color.Transparent
-            bubbleStroke = BorderStroke(1.dp, ZashiColors.Text.textPrimary)
-            arrowAlignment = BubbleArrowAlignment.BottomRight
-        }
-
-        BubbleMessage(
-            modifier = Modifier.fillMaxWidth(),
-            backgroundColor = bubbleBackgroundColor,
-            borderStroke = bubbleStroke,
-            arrowAlignment = arrowAlignment
-        ) {
-            Text(
-                text = message,
-                style = textStyle,
-                color = textColor,
-                modifier = Modifier.padding(all = ZcashTheme.dimens.spacingMid)
-            )
-        }
+        ZashiTextField(
+            textStyle =
+                if (state.isFailed()) {
+                    ZashiTypography.textMd.copy(
+                        fontWeight = FontWeight.Medium,
+                        textDecoration = TextDecoration.LineThrough
+                    )
+                } else {
+                    ZashiTypography.textMd.copy(fontWeight = FontWeight.Medium)
+                },
+            state =
+                TextFieldState(
+                    value = stringRes(message),
+                    error =
+                        if (state.isFailed()) {
+                            stringRes("")
+                        } else {
+                            null
+                        },
+                    isEnabled = false
+                ) {},
+            modifier =
+                Modifier
+                    .fillMaxWidth(),
+            colors =
+                ZashiTextFieldDefaults.defaultColors(
+                    disabledTextColor =
+                        if (state.isFailed()) {
+                            ZashiColors.Inputs.ErrorFilled.text
+                        } else {
+                            ZashiColors.Inputs.Filled.text
+                        },
+                    disabledHintColor =
+                        if (state.isFailed()) {
+                            ZashiColors.Inputs.ErrorDefault.hint
+                        } else {
+                            ZashiColors.Inputs.Disabled.hint
+                        },
+                    disabledBorderColor =
+                        if (state.isFailed()) {
+                            ZashiColors.Inputs.ErrorDefault.stroke
+                        } else {
+                            ZashiColors.Inputs.Disabled.stroke
+                        },
+                    disabledContainerColor = Color.Transparent,
+                    disabledPlaceholderColor =
+                        if (state.isFailed()) {
+                            ZashiColors.Inputs.ErrorDefault.text
+                        } else {
+                            ZashiColors.Inputs.Disabled.text
+                        },
+                ),
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
 

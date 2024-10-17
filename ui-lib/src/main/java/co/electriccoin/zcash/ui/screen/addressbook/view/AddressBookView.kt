@@ -46,8 +46,10 @@ import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
+import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.getValue
+import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.addressbook.AddressBookTag
 import co.electriccoin.zcash.ui.screen.addressbook.model.AddressBookContactState
@@ -75,7 +77,7 @@ fun AddressBookView(
                     modifier =
                         Modifier
                             .fillMaxSize()
-                            .padding(paddingValues)
+                            .scaffoldPadding(paddingValues)
                 )
             }
 
@@ -91,7 +93,7 @@ fun AddressBookView(
                         contentPadding =
                             PaddingValues(
                                 top = paddingValues.calculateTopPadding(),
-                                bottom = paddingValues.calculateBottomPadding(),
+                                bottom = paddingValues.calculateBottomPadding() + ZashiDimensions.Spacing.spacing3xl,
                                 start = 4.dp,
                                 end = 4.dp
                             )
@@ -110,7 +112,7 @@ fun AddressBookView(
                             modifier =
                                 Modifier
                                     .fillMaxWidth()
-                                    .padding(horizontal = 20.dp)
+                                    .padding(horizontal = ZashiDimensions.Spacing.spacing3xl)
                         )
                     }
                 }
@@ -146,14 +148,14 @@ private fun ContactItemLeading(
     modifier: Modifier = Modifier,
 ) {
     Box(
-        modifier.size(height = 50.dp, width = 54.dp)
+        modifier.size(40.dp)
     ) {
         Text(
             modifier =
                 Modifier
                     .background(ZashiColors.Avatars.avatarBg, CircleShape)
                     .size(40.dp)
-                    .padding(top = 10.dp)
+                    .padding(top = 11.dp)
                     .align(Alignment.Center),
             text = state.initials.getValue(),
             style = ZashiTypography.textSm,
@@ -227,7 +229,6 @@ private fun Empty(
                 Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
-                    .padding(20.dp)
         )
     }
 }
