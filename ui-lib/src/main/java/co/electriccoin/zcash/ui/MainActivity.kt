@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package co.electriccoin.zcash.ui
 
 import android.annotation.SuppressLint
@@ -5,6 +7,7 @@ import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.os.SystemClock
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.VisibleForTesting
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,6 +33,7 @@ import co.electriccoin.zcash.ui.common.compose.BindCompLocalProvider
 import co.electriccoin.zcash.ui.common.extension.setContentCompat
 import co.electriccoin.zcash.ui.common.model.OnboardingState
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
+import co.electriccoin.zcash.ui.common.repository.AddressBookRepositoryImpl
 import co.electriccoin.zcash.ui.common.viewmodel.AuthenticationUIState
 import co.electriccoin.zcash.ui.common.viewmodel.AuthenticationViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.HomeViewModel
@@ -51,12 +55,18 @@ import co.electriccoin.zcash.ui.screen.securitywarning.WrapSecurityWarning
 import co.electriccoin.zcash.ui.screen.support.WrapSupport
 import co.electriccoin.zcash.ui.screen.warning.viewmodel.StorageCheckViewModel
 import co.electriccoin.zcash.work.WorkIds
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.Scopes
+import com.google.android.gms.common.api.Scope
+import com.google.android.gms.common.api.Status
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
@@ -75,6 +85,35 @@ class MainActivity : FragmentActivity() {
 
     val configurationOverrideFlow = MutableStateFlow<ConfigurationOverride?>(null)
 
+    private val addressBookRepository by inject<AddressBookRepositoryImpl>()
+
+    private val googleSignInLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            when (result.resultCode) {
+                RESULT_OK -> {
+                    addressBookRepository.onGoogleSignInSuccess()
+                }
+
+                RESULT_CANCELED -> {
+                    val status = result.data?.extras?.getParcelable<Status>("googleSignInStatus")
+                    addressBookRepository.onGoogleSignInCancelled(status)
+                }
+
+                else -> {
+                    addressBookRepository.onGoogleSignInError()
+                }
+            }
+        }
+
+    private val googleConsentLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            when (result.resultCode) {
+                RESULT_OK -> requestGoogleSignIn()
+                RESULT_CANCELED -> addressBookRepository.onGoogleSignInCancelled(null)
+                else -> addressBookRepository.onGoogleSignInError()
+            }
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -85,6 +124,31 @@ class MainActivity : FragmentActivity() {
         setupUiContent()
 
         monitorForBackgroundSync()
+
+        lifecycleScope.launch {
+            addressBookRepository.googleSignInRequest.collect {
+                requestGoogleSignIn()
+            }
+        }
+
+        lifecycleScope.launch {
+            addressBookRepository.googleRemoteConsentRequest.collect { intent ->
+                googleConsentLauncher.launch(intent)
+            }
+        }
+    }
+
+    private fun requestGoogleSignIn() {
+        val googleSignInClient =
+            GoogleSignIn.getClient(
+                this@MainActivity,
+                GoogleSignInOptions
+                    .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .requestScopes(Scope(Scopes.DRIVE_APPFOLDER))
+                    .build()
+            )
+
+        googleSignInLauncher.launch(googleSignInClient.signInIntent)
     }
 
     /**

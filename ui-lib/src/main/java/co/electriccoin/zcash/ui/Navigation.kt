@@ -38,6 +38,7 @@ import co.electriccoin.zcash.ui.NavigationTargets.HOME
 import co.electriccoin.zcash.ui.NavigationTargets.INTEGRATIONS
 import co.electriccoin.zcash.ui.NavigationTargets.NOT_ENOUGH_SPACE
 import co.electriccoin.zcash.ui.NavigationTargets.QR_CODE
+import co.electriccoin.zcash.ui.NavigationTargets.REQUEST
 import co.electriccoin.zcash.ui.NavigationTargets.SEED_RECOVERY
 import co.electriccoin.zcash.ui.NavigationTargets.SEND_CONFIRMATION
 import co.electriccoin.zcash.ui.NavigationTargets.SETTINGS
@@ -72,6 +73,7 @@ import co.electriccoin.zcash.ui.screen.home.WrapHome
 import co.electriccoin.zcash.ui.screen.integrations.WrapIntegrations
 import co.electriccoin.zcash.ui.screen.qrcode.WrapQrCode
 import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressType
+import co.electriccoin.zcash.ui.screen.request.WrapRequest
 import co.electriccoin.zcash.ui.screen.scan.ScanNavigationArgs
 import co.electriccoin.zcash.ui.screen.scan.WrapScanValidator
 import co.electriccoin.zcash.ui.screen.seedrecovery.WrapSeedRecovery
@@ -348,6 +350,13 @@ internal fun MainActivity.Navigation() {
             val addressType = backStackEntry.arguments?.getInt(ADDRESS_TYPE) ?: ReceiveAddressType.Unified.ordinal
             WrapQrCode(addressType)
         }
+        composable(
+            route = "$REQUEST/{$ADDRESS_TYPE}",
+            arguments = listOf(navArgument(ADDRESS_TYPE) { type = NavType.IntType })
+        ) { backStackEntry ->
+            val addressType = backStackEntry.arguments?.getInt(ADDRESS_TYPE) ?: ReceiveAddressType.Unified.ordinal
+            WrapRequest(addressType)
+        }
     }
 }
 
@@ -528,6 +537,7 @@ object NavigationTargets {
     const val CHOOSE_SERVER = "choose_server"
     const val NOT_ENOUGH_SPACE = "not_enough_space"
     const val QR_CODE = "qr_code"
+    const val REQUEST = "request"
     const val SEED_RECOVERY = "seed_recovery"
     const val SEND_CONFIRMATION = "send_confirmation"
     const val SETTINGS = "settings"
