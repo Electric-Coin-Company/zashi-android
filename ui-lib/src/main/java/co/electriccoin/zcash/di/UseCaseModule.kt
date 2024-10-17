@@ -1,6 +1,7 @@
 package co.electriccoin.zcash.di
 
 import co.electriccoin.zcash.ui.common.usecase.CopyToClipboardUseCase
+import co.electriccoin.zcash.ui.common.usecase.DeleteAddressBookUseCase
 import co.electriccoin.zcash.ui.common.usecase.DeleteContactUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetAddressesUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetContactByAddressUseCase
@@ -46,6 +47,7 @@ val useCaseModule =
         singleOf(::RescanBlockchainUseCase)
         singleOf(::GetTransparentAddressUseCase)
         singleOf(::ObserveAddressBookContactsUseCase)
+        singleOf(::DeleteAddressBookUseCase)
         singleOf(::ValidateContactAddressUseCase)
         singleOf(::ValidateContactNameUseCase)
         singleOf(::SaveContactUseCase)

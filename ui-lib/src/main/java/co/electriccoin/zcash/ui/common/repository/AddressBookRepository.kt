@@ -6,24 +6,17 @@ import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.datasource.LocalAddressBookDataSource
 import co.electriccoin.zcash.ui.common.model.AddressBook
 import co.electriccoin.zcash.ui.common.model.AddressBookContact
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.onSubscription
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import kotlin.math.max
-import kotlin.time.Duration.Companion.seconds
 
 interface AddressBookRepository {
     val addressBook: Flow<AddressBook?>
@@ -45,6 +38,8 @@ interface AddressBookRepository {
 
     suspend fun deleteContact(contact: AddressBookContact)
 
+    suspend fun deleteAddressBook()
+
     // fun onGoogleSignInSuccess()
     //
     // fun onGoogleSignInCancelled(status: Status?)
@@ -58,7 +53,7 @@ class AddressBookRepositoryImpl(
     // private val remoteAddressBookDataSource: RemoteAddressBookDataSource,
     // private val context: Context
 ) : AddressBookRepository {
-    private val scope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
+    // private val scope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
 
     private val semaphore = Mutex()
 
@@ -73,7 +68,7 @@ class AddressBookRepositoryImpl(
                     ensureSynchronization()
                 }
             }
-            .stateIn(scope = scope, started = SharingStarted.WhileSubscribed(60.seconds), initialValue = null)
+    // .stateIn(scope = scope, started = SharingStarted.WhileSubscribed(60.seconds), initialValue = null)
 
     // override val googleSignInRequest = MutableSharedFlow<Unit>()
 
@@ -96,6 +91,12 @@ class AddressBookRepositoryImpl(
         withGoogleDrivePermission(
             InternalOperation.Delete(contact = contact)
         )
+
+    override suspend fun deleteAddressBook() =
+        withNonCancellableSemaphore {
+            localAddressBookDataSource.deleteAddressBook()
+            addressBookCache.update { null }
+        }
 
     // override fun onGoogleSignInSuccess() {
     //     scope.launch {
@@ -226,6 +227,7 @@ class AddressBookRepositoryImpl(
     // private suspend fun getRemoteConsent() = remoteAddressBookDataSource.getRemoteConsent()
 
     private suspend fun executeInternalOperation(operation: InternalOperation) {
+        ensureSynchronization()
         val local =
             when (operation) {
                 is InternalOperation.Delete -> {
@@ -248,11 +250,11 @@ class AddressBookRepositoryImpl(
                 }
             }
         addressBookCache.update { local }
-        scope.launch {
-            withNonCancellableSemaphore {
-                ensureSynchronization(forceUpdate = true, operation = operation)
-            }
-        }
+        // scope.launch {
+        //     withNonCancellableSemaphore {
+        //         ensureSynchronization(forceUpdate = true, operation = operation)
+        //     }
+        // }
     }
 
     private suspend fun withNonCancellableSemaphore(block: suspend () -> Unit) {

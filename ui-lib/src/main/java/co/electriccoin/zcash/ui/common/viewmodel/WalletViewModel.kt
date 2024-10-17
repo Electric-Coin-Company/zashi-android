@@ -28,6 +28,7 @@ import co.electriccoin.zcash.ui.common.provider.GetDefaultServersProvider
 import co.electriccoin.zcash.ui.common.repository.BalanceRepository
 import co.electriccoin.zcash.ui.common.repository.ExchangeRateRepository
 import co.electriccoin.zcash.ui.common.repository.WalletRepository
+import co.electriccoin.zcash.ui.common.usecase.DeleteAddressBookUseCase
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
 import co.electriccoin.zcash.ui.screen.account.ext.TransactionOverviewExt
 import co.electriccoin.zcash.ui.screen.account.ext.getSortHeight
@@ -44,7 +45,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -62,6 +62,7 @@ class WalletViewModel(
     private val encryptedPreferenceProvider: EncryptedPreferenceProvider,
     private val standardPreferenceProvider: StandardPreferenceProvider,
     private val getAvailableServers: GetDefaultServersProvider,
+    private val deleteAddressBookUseCase: DeleteAddressBookUseCase,
 ) : AndroidViewModel(application) {
     val navigationCommand = exchangeRateRepository.navigationCommand
 
@@ -209,16 +210,6 @@ class WalletViewModel(
         }
     }
 
-    /**
-     * This method only has an effect if the synchronizer currently is loaded.
-     */
-    fun rescanBlockchain() {
-        viewModelScope.launch {
-            walletCoordinator.rescanBlockchain()
-            persistWalletRestoringState(WalletRestoringState.RESTORING)
-        }
-    }
-
     private fun clearAppStateFlow(): Flow<Boolean> =
         callbackFlow {
             viewModelScope.launch {
@@ -228,6 +219,7 @@ class WalletViewModel(
                 val encryptedPrefsCleared =
                     encryptedPreferenceProvider()
                         .clearPreferences()
+                deleteAddressBookUseCase()
 
                 Twig.info { "Both preferences cleared: ${standardPrefsCleared && encryptedPrefsCleared}" }
 
