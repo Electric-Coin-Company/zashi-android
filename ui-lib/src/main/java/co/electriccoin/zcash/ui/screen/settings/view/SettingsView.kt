@@ -45,6 +45,7 @@ import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.settings.SettingsTag
 import co.electriccoin.zcash.ui.screen.settings.model.SettingsState
 import co.electriccoin.zcash.ui.screen.settings.model.SettingsTroubleshootingState
+import kotlinx.collections.immutable.persistentListOf
 
 @Suppress("LongMethod")
 @Composable
@@ -239,11 +240,12 @@ private fun PreviewSettings() {
                     onAboutUsClick = {},
                     onSendUsFeedbackClick = {},
                     onAddressBookClick = {},
-                    integrations = ZashiSettingsListItemState(
-                        icon = R.drawable.ic_settings_integrations,
-                        text = stringRes("Integrations"),
-                        titleIcons = listOf(R.drawable.ic_integrations_coinbase)
-                    ) {}
+                    integrations =
+                        ZashiSettingsListItemState(
+                            icon = R.drawable.ic_settings_integrations,
+                            text = stringRes("Integrations"),
+                            titleIcons = persistentListOf(R.drawable.ic_integrations_coinbase)
+                        ) {}
                 ),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )
@@ -266,11 +268,12 @@ private fun PreviewSettingsLoading() {
                     onAboutUsClick = {},
                     onSendUsFeedbackClick = {},
                     onAddressBookClick = {},
-                    integrations = ZashiSettingsListItemState(
-                        icon = R.drawable.ic_settings_integrations,
-                        text = stringRes("Integrations"),
-                        titleIcons = listOf(R.drawable.ic_integrations_coinbase)
-                    ) {}
+                    integrations =
+                        ZashiSettingsListItemState(
+                            icon = R.drawable.ic_settings_integrations,
+                            text = stringRes("Integrations"),
+                            titleIcons = persistentListOf(R.drawable.ic_integrations_coinbase)
+                        ) {}
                 ),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )

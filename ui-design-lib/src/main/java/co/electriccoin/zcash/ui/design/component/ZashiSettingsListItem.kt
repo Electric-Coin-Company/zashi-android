@@ -34,33 +34,33 @@ import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.orDark
 import co.electriccoin.zcash.ui.design.util.stringRes
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun ZashiSettingsListItem(
     text: String,
     @DrawableRes icon: Int,
-    titleIcons: List<Int> = emptyList(),
+    titleIcons: ImmutableList<Int> = persistentListOf(),
     subtitle: String? = null,
     isEnabled: Boolean = true,
     onClick: () -> Unit
 ) {
     ZashiSettingsListItem(
         state =
-        ZashiSettingsListItemState(
-            text = stringRes(text),
-            subtitle = subtitle?.let { stringRes(it) },
-            isEnabled = isEnabled,
-            onClick = onClick,
-            icon = icon,
-            titleIcons = titleIcons
-        ),
+            ZashiSettingsListItemState(
+                text = stringRes(text),
+                subtitle = subtitle?.let { stringRes(it) },
+                isEnabled = isEnabled,
+                onClick = onClick,
+                icon = icon,
+                titleIcons = titleIcons
+            ),
     )
 }
 
 @Composable
-fun ZashiSettingsListItem(
-    state: ZashiSettingsListItemState,
-) {
+fun ZashiSettingsListItem(state: ZashiSettingsListItemState,) {
     ZashiSettingsListItem(
         leading = { modifier ->
             ZashiSettingsListLeadingItem(
@@ -129,7 +129,7 @@ fun ZashiSettingsListTrailingItem(
 fun ZashiSettingsListContentItem(
     text: String,
     subtitle: String?,
-    titleIcons: List<Int>,
+    titleIcons: ImmutableList<Int>,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -172,18 +172,18 @@ fun ZashiSettingsListItem(
 ) {
     Row(
         modifier =
-        Modifier
-            .clip(RoundedCornerShape(12.dp)) then
-            if (onClick != null) {
-                Modifier.clickable(
-                    indication = rememberRipple(),
-                    interactionSource = remember { MutableInteractionSource() },
-                    onClick = onClick,
-                    role = Role.Button,
-                )
-            } else {
-                Modifier
-            } then Modifier.padding(contentPadding),
+            Modifier
+                .clip(RoundedCornerShape(12.dp)) then
+                if (onClick != null) {
+                    Modifier.clickable(
+                        indication = rememberRipple(),
+                        interactionSource = remember { MutableInteractionSource() },
+                        onClick = onClick,
+                        role = Role.Button,
+                    )
+                } else {
+                    Modifier
+                } then Modifier.padding(contentPadding),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Spacer(modifier = Modifier.width(20.dp))
@@ -200,7 +200,7 @@ data class ZashiSettingsListItemState(
     val text: StringResource,
     @DrawableRes val icon: Int,
     val subtitle: StringResource? = null,
-    val titleIcons: List<Int> = emptyList(),
+    val titleIcons: ImmutableList<Int> = persistentListOf(),
     val isEnabled: Boolean = true,
     val onClick: () -> Unit = {},
 )
@@ -215,7 +215,7 @@ private fun EnabledPreview() =
                 subtitle = "Subtitle",
                 icon = R.drawable.ic_radio_button_checked,
                 onClick = {},
-                titleIcons = listOf(R.drawable.ic_radio_button_checked)
+                titleIcons = persistentListOf(R.drawable.ic_radio_button_checked)
             )
         }
     }

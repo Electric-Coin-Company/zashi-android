@@ -21,6 +21,7 @@ import co.electriccoin.zcash.ui.screen.addressbook.AddressBookArgs
 import co.electriccoin.zcash.ui.screen.settings.model.SettingsState
 import co.electriccoin.zcash.ui.screen.settings.model.SettingsTroubleshootingState
 import co.electriccoin.zcash.ui.screen.settings.model.TroubleshootingItemState
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -101,12 +102,13 @@ class SettingsViewModel(
                 version = stringRes(R.string.settings_version, versionInfo.versionName),
                 settingsTroubleshootingState = troubleshootingState,
                 onBack = ::onBack,
-                integrations = ZashiSettingsListItemState(
-                    text = stringRes(R.string.settings_integrations),
-                    icon = R.drawable.ic_settings_integrations,
-                    onClick = ::onIntegrationsClick,
-                    titleIcons = listOf(R.drawable.ic_integrations_coinbase)
-                ),
+                integrations =
+                    ZashiSettingsListItemState(
+                        text = stringRes(R.string.settings_integrations),
+                        icon = R.drawable.ic_settings_integrations,
+                        onClick = ::onIntegrationsClick,
+                        titleIcons = persistentListOf(R.drawable.ic_integrations_coinbase)
+                    ),
                 onAdvancedSettingsClick = ::onAdvancedSettingsClick,
                 onAboutUsClick = ::onAboutUsClick,
                 onSendUsFeedbackClick = ::onSendUsFeedbackClick,

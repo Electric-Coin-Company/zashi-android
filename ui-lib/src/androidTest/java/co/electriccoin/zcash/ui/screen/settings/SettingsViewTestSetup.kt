@@ -123,10 +123,11 @@ class SettingsViewTestSetup(
                             onAddressBookClick = {
                                 onAddressBookCount.incrementAndGet()
                             },
-                            integrations = ZashiSettingsListItemState(
-                                stringRes("Integrations"),
-                                R.drawable.ic_settings_integrations,
-                            )
+                            integrations =
+                                ZashiSettingsListItemState(
+                                    stringRes("Integrations"),
+                                    R.drawable.ic_settings_integrations,
+                                )
                         ),
                     topAppBarSubTitleState = TopAppBarSubTitleState.None,
                 )
