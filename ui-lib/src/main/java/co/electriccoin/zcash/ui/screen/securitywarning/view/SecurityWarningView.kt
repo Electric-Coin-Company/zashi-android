@@ -135,7 +135,7 @@ private fun SecurityWarningContent(
 
         ZashiButton(
             onClick = onConfirm,
-            text = stringResource(R.string.security_warning_confirm).uppercase(),
+            text = stringResource(R.string.security_warning_confirm),
             enabled = checkedState.value,
             modifier = Modifier.fillMaxWidth()
         )

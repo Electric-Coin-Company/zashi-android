@@ -155,7 +155,7 @@ private fun ExportPrivateDataContent(
 
         ZashiButton(
             onClick = onConfirm,
-            text = stringResource(R.string.export_data_confirm).uppercase(),
+            text = stringResource(R.string.export_data_confirm),
             enabled = checkedState.value,
             modifier = Modifier.fillMaxWidth()
         )

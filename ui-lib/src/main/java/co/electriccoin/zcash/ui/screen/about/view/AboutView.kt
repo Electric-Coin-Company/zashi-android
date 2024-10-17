@@ -94,10 +94,10 @@ private fun AboutTopAppBar(
                 TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
                 TopAppBarSubTitleState.None -> null
             },
-        titleText = stringResource(id = R.string.about_title).uppercase(),
+        titleText = stringResource(id = R.string.about_title),
         navigationAction = {
             TopAppBarBackNavigation(
-                backText = stringResource(id = R.string.back_navigation).uppercase(),
+                backText = stringResource(id = R.string.back_navigation),
                 backContentDescriptionText = stringResource(R.string.back_navigation_content_description),
                 onBack = onBack
             )

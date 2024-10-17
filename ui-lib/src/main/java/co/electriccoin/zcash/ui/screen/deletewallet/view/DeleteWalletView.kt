@@ -151,7 +151,7 @@ private fun DeleteWalletContent(
 
         ZashiButton(
             onClick = onConfirm,
-            text = stringResource(R.string.delete_wallet_button, appName).uppercase(),
+            text = stringResource(R.string.delete_wallet_button, appName),
             enabled = checkedState.value,
             modifier = Modifier.fillMaxWidth()
         )
