@@ -62,7 +62,11 @@ class NewWalletRecoveryViewTest : UiTestPrerequisites() {
             it.assertExists()
         }
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.new_wallet_recovery_button_finished).uppercase())
+        composeTestRule
+            .onNodeWithText(
+                getStringResource(R.string.new_wallet_recovery_button_finished),
+                ignoreCase = true
+            )
             .also {
                 it.performScrollTo()
                 it.assertExists()
