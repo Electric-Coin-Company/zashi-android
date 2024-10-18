@@ -93,7 +93,7 @@ internal fun PaymentRequestView(
         is RequestState.Prepared -> {
             BlankBgScaffold(
                 topBar = {
-                    RequestTopAppBar(
+                    PaymentRequestTopAppBar(
                         onBack = state.onBack,
                         subTitleState = topAppBarSubTitleState,
                     )
@@ -117,7 +117,7 @@ internal fun PaymentRequestView(
 }
 
 @Composable
-private fun RequestTopAppBar(
+private fun PaymentRequestTopAppBar(
     onBack: () -> Unit,
     subTitleState: TopAppBarSubTitleState,
 ) {
@@ -128,7 +128,7 @@ private fun RequestTopAppBar(
                 TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
                 TopAppBarSubTitleState.None -> null
             },
-        title = stringResource(id = R.string.request_title),
+        title = stringResource(id = R.string.payment_request_title),
         navigationAction = {
             ZashiTopAppBarBackNavigation(onBack = onBack)
         },
@@ -144,7 +144,7 @@ private fun RequestBottomBar(
         when (state) {
             is RequestState.Amount -> {
                 ZashiButton(
-                    text = stringResource(id = R.string.request_amount_btn),
+                    text = stringResource(id = R.string.payment_request_amount_btn),
                     onClick = state.onDone,
                     enabled = state.request.amountState.isValid(),
                     modifier =
@@ -157,7 +157,7 @@ private fun RequestBottomBar(
                 ZashiButton(
                     enabled = state.request.memoState.isValid(),
                     onClick = state.onDone,
-                    text = stringResource(id = R.string.request_memo_btn),
+                    text = stringResource(id = R.string.payment_request_memo_btn),
                     modifier =
                         Modifier
                             .fillMaxWidth()
@@ -166,7 +166,7 @@ private fun RequestBottomBar(
             }
             is RequestState.QrCode -> {
                 ZashiButton(
-                    text = stringResource(id = R.string.request_qr_share_btn),
+                    text = stringResource(id = R.string.payment_request_qr_share_btn),
                     leadingIcon = painterResource(R.drawable.ic_share),
                     enabled = state.request.qrCodeState.isValid(),
                     onClick = { state.onQrCodeShare(state.request.qrCodeState.bitmap!!) },
@@ -181,7 +181,7 @@ private fun RequestBottomBar(
                 ZashiButton(
                     colors = ZashiButtonDefaults.secondaryColors(),
                     onClick = state.onClose,
-                    text = stringResource(id = R.string.request_qr_close_btn),
+                    text = stringResource(id = R.string.payment_request_qr_close_btn),
                     modifier =
                         Modifier
                             .fillMaxWidth()

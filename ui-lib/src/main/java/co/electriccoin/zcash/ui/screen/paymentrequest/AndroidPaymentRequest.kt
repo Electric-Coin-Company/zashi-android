@@ -11,7 +11,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.di.koinActivityViewModel
-import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.LocalNavController
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.paymentrequest.view.PaymentRequestView
@@ -36,15 +35,6 @@ internal fun WrapPaymentRequest(addressType: Int) {
     LaunchedEffect(Unit) {
         requestViewModel.backNavigationCommand.collect {
             navController.popBackStack()
-        }
-    }
-    LaunchedEffect(Unit) {
-        requestViewModel.shareResultCommand.collect { sharedSuccessfully ->
-            if (!sharedSuccessfully) {
-                snackbarHostState.showSnackbar(
-                    message = context.getString(R.string.request_qr_code_data_unable_to_share)
-                )
-            }
         }
     }
 
