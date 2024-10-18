@@ -35,6 +35,7 @@ import co.electriccoin.zcash.ui.NavigationTargets.DELETE_WALLET
 import co.electriccoin.zcash.ui.NavigationTargets.EXCHANGE_RATE_OPT_IN
 import co.electriccoin.zcash.ui.NavigationTargets.EXPORT_PRIVATE_DATA
 import co.electriccoin.zcash.ui.NavigationTargets.HOME
+import co.electriccoin.zcash.ui.NavigationTargets.INTEGRATIONS
 import co.electriccoin.zcash.ui.NavigationTargets.NOT_ENOUGH_SPACE
 import co.electriccoin.zcash.ui.NavigationTargets.QR_CODE
 import co.electriccoin.zcash.ui.NavigationTargets.REQUEST
@@ -69,6 +70,7 @@ import co.electriccoin.zcash.ui.screen.exchangerate.optin.AndroidExchangeRateOpt
 import co.electriccoin.zcash.ui.screen.exchangerate.settings.AndroidSettingsExchangeRateOptIn
 import co.electriccoin.zcash.ui.screen.exportdata.WrapExportPrivateData
 import co.electriccoin.zcash.ui.screen.home.WrapHome
+import co.electriccoin.zcash.ui.screen.integrations.WrapIntegrations
 import co.electriccoin.zcash.ui.screen.qrcode.WrapQrCode
 import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressType
 import co.electriccoin.zcash.ui.screen.request.WrapRequest
@@ -224,6 +226,9 @@ internal fun MainActivity.Navigation() {
         }
         composable(WHATS_NEW) {
             WrapWhatsNew()
+        }
+        composable(INTEGRATIONS) {
+            WrapIntegrations()
         }
         composable(EXCHANGE_RATE_OPT_IN) {
             AndroidExchangeRateOptIn()
@@ -539,6 +544,7 @@ object NavigationTargets {
     const val SETTINGS_EXCHANGE_RATE_OPT_IN = "settings_exchange_rate_opt_in"
     const val SUPPORT = "support"
     const val WHATS_NEW = "whats_new"
+    const val INTEGRATIONS = "integrations"
 }
 
 object NavigationArgs {
