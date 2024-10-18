@@ -250,28 +250,7 @@ internal fun MainActivity.Navigation() {
                 backStackEntry.arguments
                     ?.getSerializableCompat<ScanNavigationArgs>(ScanNavigationArgs.KEY) ?: ScanNavigationArgs.DEFAULT
 
-            WrapScanValidator(
-                onScanValid = { scanResult ->
-                    when (mode) {
-                        ScanNavigationArgs.DEFAULT -> {
-                            navController.previousBackStackEntry?.savedStateHandle?.apply {
-                                set(
-                                    SEND_SCAN_RECIPIENT_ADDRESS,
-                                    Json.encodeToString(SerializableAddress.serializer(), scanResult)
-                                )
-                            }
-                            navController.popBackStackJustOnce(ScanNavigationArgs.ROUTE)
-                        }
-
-                        ScanNavigationArgs.ADDRESS_BOOK -> {
-                            val address = scanResult.address
-                            navController.popBackStack()
-                            navController.navigate(AddContactArgs(address))
-                        }
-                    }
-                },
-                goBack = { navController.popBackStackJustOnce(ScanNavigationArgs.ROUTE) }
-            )
+            WrapScanValidator(args = mode)
         }
         composable(EXPORT_PRIVATE_DATA) {
             WrapExportPrivateData(
@@ -508,7 +487,7 @@ private fun NavHostController.navigateJustOnce(
  *
  * @param currentRouteToBePopped current screen which should be popped up.
  */
-private fun NavHostController.popBackStackJustOnce(currentRouteToBePopped: String) {
+fun NavHostController.popBackStackJustOnce(currentRouteToBePopped: String) {
     if (currentDestination?.route != currentRouteToBePopped) {
         return
     }

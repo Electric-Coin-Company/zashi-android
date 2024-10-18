@@ -19,6 +19,8 @@ import co.electriccoin.zcash.ui.screen.receive.viewmodel.ReceiveViewModel
 import co.electriccoin.zcash.ui.screen.request.viewmodel.RequestViewModel
 import co.electriccoin.zcash.ui.screen.restore.viewmodel.RestoreViewModel
 import co.electriccoin.zcash.ui.screen.restoresuccess.viewmodel.RestoreSuccessViewModel
+import co.electriccoin.zcash.ui.screen.scan.ScanNavigationArgs
+import co.electriccoin.zcash.ui.screen.scan.viewmodel.ScanViewModel
 import co.electriccoin.zcash.ui.screen.sendconfirmation.viewmodel.CreateTransactionsViewModel
 import co.electriccoin.zcash.ui.screen.settings.viewmodel.ScreenBrightnessViewModel
 import co.electriccoin.zcash.ui.screen.settings.viewmodel.SettingsViewModel
@@ -71,4 +73,10 @@ val viewModelModule =
         viewModelOf(::RequestViewModel)
         viewModelOf(::PaymentRequestViewModel)
         viewModelOf(::IntegrationsViewModel)
+        viewModel { (args: ScanNavigationArgs) ->
+            ScanViewModel(
+                args = args,
+                getSynchronizer = get()
+            )
+        }
     }
