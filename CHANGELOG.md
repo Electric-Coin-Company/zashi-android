@@ -7,6 +7,8 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 ## [Unreleased]
 
 ### Changed
+- Global design updates
+- Onboarding screen has been redesigned
 - Scan QR screen has been redesigned
 - The Receive screen UI has been redesigned
 - Send screen redesigned & added a possibility to pick a contact from address book
@@ -15,7 +17,7 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 - Address Book, Create/Update/Delete Contact, Create Contact by QR screens added
 
 ### Added
-- Address book local and remote storage support
+- Address book local storage support
 - New Integrations screen in settings
 - New QR Code detail screen has been added
 - The new Request ZEC screens have been added. They provide a way to build ZIP 321 Uri consisting of the amount, 

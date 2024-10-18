@@ -141,20 +141,20 @@ dependencies {
     api(libs.androidx.fragment)
     api(libs.androidx.fragment.compose)
     api(libs.androidx.activity)
-    api(libs.google.http.client.gson) {
-        exclude(group = "io.grpc")
-    }
-    api(libs.google.api.client.android) {
-        exclude(group = "org.apache.httpcomponents")
-        exclude(group = "io.grpc")
-    }
-    api(libs.google.api.services.drive) {
-        exclude(group = "org.apache.httpcomponents")
-        exclude(group = "io.grpc")
-    }
-    api(libs.play.services.auth) {
-        exclude(group = "io.grpc")
-    }
+    // api(libs.google.http.client.gson) {
+    //     exclude(group = "io.grpc")
+    // }
+    // api(libs.google.api.client.android) {
+    //     exclude(group = "org.apache.httpcomponents")
+    //     exclude(group = "io.grpc")
+    // }
+    // api(libs.google.api.services.drive) {
+    //     exclude(group = "org.apache.httpcomponents")
+    //     exclude(group = "io.grpc")
+    // }
+    // api(libs.play.services.auth) {
+    //     exclude(group = "io.grpc")
+    // }
     api(libs.bundles.androidx.biometric)
 
     androidTestImplementation(projects.testLib)

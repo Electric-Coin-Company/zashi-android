@@ -11,7 +11,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -68,7 +68,6 @@ import co.electriccoin.zcash.ui.common.model.canSpend
 import co.electriccoin.zcash.ui.common.model.spendableBalance
 import co.electriccoin.zcash.ui.common.test.CommonTag
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
-import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.AppAlertDialog
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.BlankSurface
@@ -79,6 +78,7 @@ import co.electriccoin.zcash.ui.design.component.ZashiTextField
 import co.electriccoin.zcash.ui.design.component.ZashiTextFieldDefaults
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
+import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.fixture.BalanceStateFixture
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
@@ -114,7 +114,7 @@ private fun PreviewSendForm() {
                     zatoshi = ZatoshiFixture.new()
                 ),
             setMemoState = {},
-            memoState = MemoState.new("Test message"),
+            memoState = MemoState.new("Test message "),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
             walletSnapshot = WalletSnapshotFixture.new(),
             balanceState = BalanceStateFixture.new(),
@@ -226,10 +226,10 @@ fun Send(
             modifier =
                 Modifier
                     .padding(
-                        top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
-                        bottom = paddingValues.calculateBottomPadding() + ZcashTheme.dimens.spacingHuge,
-                        start = ZcashTheme.dimens.screenHorizontalSpacingRegular,
-                        end = ZcashTheme.dimens.screenHorizontalSpacingRegular
+                        top = paddingValues.calculateTopPadding() + ZashiDimensions.Spacing.spacingLg,
+                        bottom = ZashiDimensions.Spacing.spacing4xl,
+                        start = ZashiDimensions.Spacing.spacing3xl,
+                        end = ZashiDimensions.Spacing.spacing3xl
                     ),
             exchangeRateState = exchangeRateState,
             sendState = sendAddressBookState
@@ -364,7 +364,7 @@ private fun SendForm(
     Column(
         modifier =
             Modifier
-                .fillMaxHeight()
+                .fillMaxSize()
                 .verticalScroll(rememberScrollState())
                 .then(modifier),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -437,12 +437,10 @@ private fun SendForm(
 
         Spacer(
             modifier =
-                Modifier
-                    .fillMaxHeight()
-                    .weight(MINIMAL_WEIGHT)
+                Modifier.weight(1f)
         )
 
-        Spacer(modifier = Modifier.height(54.dp))
+        Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacing3xl))
 
         SendButton(
             amountState = amountState,
@@ -451,8 +449,6 @@ private fun SendForm(
             recipientAddressState = recipientAddressState,
             walletSnapshot = walletSnapshot,
         )
-
-        Spacer(modifier = Modifier.height(78.dp))
     }
 }
 

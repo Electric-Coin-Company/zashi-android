@@ -6,7 +6,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -34,13 +33,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.Body
-import co.electriccoin.zcash.ui.design.component.GridBgScaffold
-import co.electriccoin.zcash.ui.design.component.GridBgSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.Header
-import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.Reference
+import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
+import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
+import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.fixture.UpdateInfoFixture
 import co.electriccoin.zcash.ui.screen.update.UpdateTag
 import co.electriccoin.zcash.ui.screen.update.model.UpdateInfo
@@ -110,7 +111,7 @@ fun Update(
     onLater: () -> Unit,
     onReference: () -> Unit
 ) {
-    GridBgScaffold(
+    BlankBgScaffold(
         topBar = {
             UpdateTopAppBar(updateInfo = updateInfo)
         },
@@ -132,12 +133,7 @@ fun Update(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .padding(
-                        top = paddingValues.calculateTopPadding(),
-                        bottom = paddingValues.calculateBottomPadding(),
-                        start = ZcashTheme.dimens.screenHorizontalSpacingRegular,
-                        end = ZcashTheme.dimens.screenHorizontalSpacingRegular
-                    )
+                    .scaffoldPadding(paddingValues)
         )
     }
     UpdateOverlayRunning(updateInfo)
@@ -166,7 +162,7 @@ fun UpdateOverlayRunning(updateInfo: UpdateInfo) {
 
 @Composable
 private fun UpdateTopAppBar(updateInfo: UpdateInfo) {
-    GridBgSmallTopAppBar(
+    SmallTopAppBar(
         titleText =
             stringResource(
                 updateInfo.isForce.let { force ->
@@ -201,14 +197,14 @@ private fun UpdateBottomAppBar(
             modifier =
                 Modifier
                     .padding(
-                        top = ZcashTheme.dimens.spacingDefault,
-                        bottom = ZcashTheme.dimens.spacingBig,
-                        start = ZcashTheme.dimens.screenHorizontalSpacingBig,
-                        end = ZcashTheme.dimens.screenHorizontalSpacingBig
+                        top = ZashiDimensions.Spacing.spacingLg,
+                        bottom = ZashiDimensions.Spacing.spacing3xl,
+                        start = ZashiDimensions.Spacing.spacing3xl,
+                        end = ZashiDimensions.Spacing.spacing3xl
                     ),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            PrimaryButton(
+            ZashiButton(
                 onClick = { onDownload(UpdateState.Running) },
                 text = stringResource(R.string.update_download_button),
                 modifier =
@@ -216,7 +212,6 @@ private fun UpdateBottomAppBar(
                         .testTag(UpdateTag.BTN_DOWNLOAD)
                         .fillMaxWidth(),
                 enabled = updateInfo.state != UpdateState.Running,
-                outerPaddingValues = PaddingValues(all = ZcashTheme.dimens.spacingNone),
             )
 
             Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
@@ -274,8 +269,6 @@ private fun UpdateContent(
             ),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingBig))
-
         Image(
             imageVector =
                 if (updateInfo.isForce) {

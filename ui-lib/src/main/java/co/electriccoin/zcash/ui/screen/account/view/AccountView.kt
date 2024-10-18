@@ -43,6 +43,7 @@ import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.TopAppBarHideBalancesNavigation
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
 import co.electriccoin.zcash.ui.fixture.BalanceStateFixture
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 import co.electriccoin.zcash.ui.screen.account.AccountTag
@@ -163,7 +164,7 @@ internal fun Account(
             walletSnapshot = walletSnapshot,
             modifier =
                 Modifier.padding(
-                    top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
+                    top = paddingValues.calculateTopPadding() + ZashiDimensions.Spacing.spacingLg,
                     // We intentionally do not set the bottom and horizontal paddings here. Those are set by the
                     // underlying transaction history composable
                 ),
@@ -253,7 +254,7 @@ private fun AccountMainContent(
                 animateDpAsState(
                     targetValue =
                         if (balanceState.exchangeRate is ExchangeRateState.OptIn) {
-                            76.dp
+                            96.dp
                         } else {
                             0.dp
                         },
@@ -297,7 +298,7 @@ private fun AccountMainContent(
             exit = fadeOut() + slideOutVertically(),
         ) {
             Column {
-                Spacer(modifier = Modifier.height(80.dp + paddingValues.calculateTopPadding()))
+                Spacer(modifier = Modifier.height(100.dp + paddingValues.calculateTopPadding()))
                 StyledExchangeOptIn(
                     modifier = Modifier.padding(horizontal = 24.dp),
                     state =
