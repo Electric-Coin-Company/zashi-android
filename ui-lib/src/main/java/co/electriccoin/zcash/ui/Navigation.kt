@@ -23,6 +23,11 @@ import co.electriccoin.zcash.spackle.getSerializableCompat
 import co.electriccoin.zcash.ui.NavigationArgs.ADDRESS_TYPE
 import co.electriccoin.zcash.ui.NavigationArgs.ZIP321_URI
 import co.electriccoin.zcash.ui.NavigationArguments.MULTIPLE_SUBMISSION_CLEAR_FORM
+import co.electriccoin.zcash.ui.NavigationArguments.PAYMENT_REQUEST_AMOUNT
+import co.electriccoin.zcash.ui.NavigationArguments.PAYMENT_REQUEST_MEMO
+import co.electriccoin.zcash.ui.NavigationArguments.PAYMENT_REQUEST_PROPOSAL
+import co.electriccoin.zcash.ui.NavigationArguments.PAYMENT_REQUEST_RECIPIENT_ADDRESS
+import co.electriccoin.zcash.ui.NavigationArguments.PAYMENT_REQUEST_URI
 import co.electriccoin.zcash.ui.NavigationArguments.SEND_CONFIRM_AMOUNT
 import co.electriccoin.zcash.ui.NavigationArguments.SEND_CONFIRM_INITIAL_STAGE
 import co.electriccoin.zcash.ui.NavigationArguments.SEND_CONFIRM_MEMO
@@ -75,6 +80,7 @@ import co.electriccoin.zcash.ui.screen.exportdata.WrapExportPrivateData
 import co.electriccoin.zcash.ui.screen.home.WrapHome
 import co.electriccoin.zcash.ui.screen.integrations.WrapIntegrations
 import co.electriccoin.zcash.ui.screen.paymentrequest.WrapPaymentRequest
+import co.electriccoin.zcash.ui.screen.paymentrequest.model.PaymentRequestArguments
 import co.electriccoin.zcash.ui.screen.qrcode.WrapQrCode
 import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressType
 import co.electriccoin.zcash.ui.screen.request.WrapRequest
@@ -343,7 +349,7 @@ internal fun MainActivity.Navigation() {
         composable(PAYMENT_REQUEST) {
             navController.previousBackStackEntry?.let { backStackEntry ->
                 WrapPaymentRequest(
-                    arguments = SendConfirmationArguments.fromSavedStateHandle(backStackEntry.savedStateHandle)
+                    arguments = PaymentRequestArguments.fromSavedStateHandle(backStackEntry.savedStateHandle)
                 )
             }
         }
@@ -366,13 +372,9 @@ private fun MainActivity.NavigationHome(
             }
             navController.navigateJustOnce(SEND_CONFIRMATION)
         },
-        goPaymentRequest = { zecSend ->
-            navController.currentBackStackEntry?.savedStateHandle?.apply {
-                this[SEND_CONFIRM_RECIPIENT_ADDRESS] =
-                    Json.encodeToString(SerializableAddress.serializer(), zecSend.destination.toSerializableAddress())
-                this[SEND_CONFIRM_AMOUNT] = zecSend.amount.value
-                this[SEND_CONFIRM_MEMO] = zecSend.memo.value
-                this[SEND_CONFIRM_PROPOSAL] = zecSend.proposal?.toByteArray()
+        goPaymentRequest = { zecSend, zip321Uri ->
+            navController.currentBackStackEntry?.savedStateHandle?.let { handle ->
+                fillInHandleForPaymentRequest(handle, zecSend, zip321Uri)
             }
             navController.navigateJustOnce(PAYMENT_REQUEST)
         },
@@ -489,6 +491,21 @@ private fun fillInHandleForConfirmation(
     handle[SEND_CONFIRM_INITIAL_STAGE] = initialStage.toStringName()
 }
 
+private fun fillInHandleForPaymentRequest(
+    handle: SavedStateHandle,
+    zecSend: ZecSend,
+    zip321: String
+) {
+    handle[PAYMENT_REQUEST_RECIPIENT_ADDRESS] =
+        Json.encodeToString(serializer = SerializableAddress.serializer(),
+            value = zecSend.destination.toSerializableAddress()
+        )
+    handle[PAYMENT_REQUEST_AMOUNT] = zecSend.amount.value
+    handle[PAYMENT_REQUEST_MEMO] = zecSend.memo.value
+    handle[PAYMENT_REQUEST_PROPOSAL] = zecSend.proposal?.toByteArray()
+    handle[PAYMENT_REQUEST_URI] = zip321
+}
+
 private fun NavHostController.navigateJustOnce(
     route: String,
     navOptionsBuilder: (NavOptionsBuilder.() -> Unit)? = null
@@ -533,6 +550,7 @@ object NavigationArguments {
     const val PAYMENT_REQUEST_AMOUNT = "payment_request_amount"
     const val PAYMENT_REQUEST_MEMO = "payment_request_memo"
     const val PAYMENT_REQUEST_PROPOSAL = "payment_request_proposal"
+    const val PAYMENT_REQUEST_URI = "payment_request_uri"
 }
 
 object NavigationTargets {

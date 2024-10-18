@@ -7,8 +7,8 @@ import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.common.provider.GetMonetarySeparatorProvider
 import co.electriccoin.zcash.ui.common.usecase.Zip321ProposalFromUriUseCase
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
+import co.electriccoin.zcash.ui.screen.paymentrequest.model.PaymentRequestArguments
 import co.electriccoin.zcash.ui.screen.paymentrequest.model.PaymentRequestState
-import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SendConfirmationArguments
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
@@ -17,8 +17,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class PaymentRequestViewModel(
-    private val zip321Uri: String,
-    private val arguments: SendConfirmationArguments,
+    private val arguments: PaymentRequestArguments,
     getMonetarySeparators: GetMonetarySeparatorProvider,
     walletViewModel: WalletViewModel,
     private val zip321ProposalFromUriUseCase: Zip321ProposalFromUriUseCase,
@@ -27,9 +26,9 @@ class PaymentRequestViewModel(
     internal val state =
         combine(walletViewModel.synchronizer, walletViewModel.exchangeRateUsd) { synchronizer, rate ->
             PaymentRequestState.Prepared(
-                zip321Uri = zip321Uri,
                 arguments = arguments,
                 monetarySeparators = getMonetarySeparators(),
+                exchangeRateState = rate,
                 onClose = ::onClose,
                 onSend = {
                     onSend(it)

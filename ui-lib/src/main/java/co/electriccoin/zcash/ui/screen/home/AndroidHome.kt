@@ -45,7 +45,7 @@ internal fun WrapHome(
     goMultiTrxSubmissionFailure: () -> Unit,
     goScan: () -> Unit,
     goSendConfirmation: (ZecSend) -> Unit,
-    goPaymentRequest: (ZecSend) -> Unit,
+    goPaymentRequest: (ZecSend, String) -> Unit,
     sendArguments: SendArguments
 ) {
     val homeViewModel = koinActivityViewModel<HomeViewModel>()
@@ -107,7 +107,7 @@ internal fun WrapHome(
     goMultiTrxSubmissionFailure: () -> Unit,
     goScan: () -> Unit,
     goSendConfirmation: (ZecSend) -> Unit,
-    goPaymentRequest: (ZecSend) -> Unit,
+    goPaymentRequest: (ZecSend, String) -> Unit,
     isKeepScreenOnWhileSyncing: Boolean?,
     isShowingRestoreSuccess: Boolean,
     sendArguments: SendArguments,

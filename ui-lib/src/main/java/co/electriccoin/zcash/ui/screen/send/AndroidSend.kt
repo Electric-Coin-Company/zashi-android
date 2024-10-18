@@ -66,7 +66,7 @@ internal fun WrapSend(
     goBack: () -> Unit,
     goBalances: () -> Unit,
     goSendConfirmation: (ZecSend) -> Unit,
-    goPaymentRequest: (ZecSend) -> Unit,
+    goPaymentRequest: (ZecSend, String) -> Unit,
     goSettings: () -> Unit,
 ) {
     val activity = LocalActivity.current
@@ -126,7 +126,7 @@ internal fun WrapSend(
     goBalances: () -> Unit,
     goSettings: () -> Unit,
     goSendConfirmation: (ZecSend) -> Unit,
-    goPaymentRequest: (ZecSend) -> Unit,
+    goPaymentRequest: (ZecSend, String) -> Unit,
     hasCameraFeature: Boolean,
     monetarySeparators: MonetarySeparators,
     onHideBalances: () -> Unit,
@@ -389,7 +389,7 @@ private suspend fun processZip321Result(
     account: Account,
     setSendStage: (SendStage) -> Unit,
     setZecSend: (ZecSend?) -> Unit,
-    goPaymentRequest: (ZecSend) -> Unit,
+    goPaymentRequest: (ZecSend, String) -> Unit,
 ) {
     val request = runCatching {
         // At this point there should by only a valid Zcash address coming
@@ -428,7 +428,7 @@ private suspend fun processZip321Result(
         Twig.debug { "Transaction proposal from Zip321 Uri: ${proposal.toPrettyString()}" }
         val enrichedZecSend = zecSend.copy(proposal = proposal)
         setZecSend(enrichedZecSend)
-        goPaymentRequest(enrichedZecSend)
+        goPaymentRequest(enrichedZecSend, zip321Uri)
     }.onFailure {
         Twig.error(it) { "Transaction proposal from Zip321 Uri failed" }
         setSendStage(SendStage.SendFailure(it.message ?: ""))
