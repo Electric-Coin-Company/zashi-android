@@ -21,7 +21,7 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ### Added
 - New Integrations screen in settings
-- Address book local and remote storage support
+- Address book local storage support
 - New QR Code detail screen has been added
 - The new Request ZEC screens have been added. They provide a way to build ZIP 321 Uri consisting of the amount, message, and receiver address and then creates a QR code image of it.
 
