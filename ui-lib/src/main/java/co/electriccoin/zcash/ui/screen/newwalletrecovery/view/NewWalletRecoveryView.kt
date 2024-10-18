@@ -42,13 +42,15 @@ import co.electriccoin.zcash.ui.common.compose.shouldSecureScreen
 import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.common.test.CommonTag.WALLET_BIRTHDAY
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
+import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.BodySmall
 import co.electriccoin.zcash.ui.design.component.ChipGrid
-import co.electriccoin.zcash.ui.design.component.GridBgScaffold
-import co.electriccoin.zcash.ui.design.component.GridBgSmallTopAppBar
-import co.electriccoin.zcash.ui.design.component.PrimaryButton
+import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.TopScreenLogoTitle
+import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
+import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.fixture.VersionInfoFixture
 import kotlinx.collections.immutable.toPersistentList
 
@@ -91,7 +93,7 @@ fun NewWalletRecovery(
     onComplete: () -> Unit,
     versionInfo: VersionInfo,
 ) {
-    GridBgScaffold(
+    BlankBgScaffold(
         topBar = {
             NewWalletRecoveryTopAppBar(
                 onSeedCopy = onSeedCopy,
@@ -108,10 +110,8 @@ fun NewWalletRecovery(
             // Horizontal paddings will be part of each UI element to minimize a possible truncation on very
             // small screens
             modifier =
-                Modifier.padding(
-                    top = paddingValues.calculateTopPadding(),
-                    bottom = paddingValues.calculateBottomPadding()
-                )
+                Modifier
+                    .scaffoldPadding(paddingValues)
         )
     }
 }
@@ -122,7 +122,7 @@ private fun NewWalletRecoveryTopAppBar(
     modifier: Modifier = Modifier,
     onSeedCopy: () -> Unit
 ) {
-    GridBgSmallTopAppBar(
+    SmallTopAppBar(
         modifier = modifier,
         regularActions = {
             if (versionInfo.isDebuggable && !versionInfo.isRunningUnderTestService) {
@@ -178,7 +178,7 @@ private fun NewWalletRecoveryMainContent(
         TopScreenLogoTitle(
             title = stringResource(R.string.new_wallet_recovery_header),
             logoContentDescription = stringResource(R.string.zcash_logo_content_description),
-            modifier = Modifier.padding(horizontal = ZcashTheme.dimens.screenHorizontalSpacingBig)
+            modifier = Modifier.padding(horizontal = ZashiDimensions.Spacing.spacing3xl)
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
@@ -186,7 +186,7 @@ private fun NewWalletRecoveryMainContent(
         BodySmall(
             text = stringResource(R.string.new_wallet_recovery_description),
             textAlign = TextAlign.Center,
-            modifier = Modifier.padding(horizontal = ZcashTheme.dimens.screenHorizontalSpacingBig)
+            modifier = Modifier.padding(horizontal = ZashiDimensions.Spacing.spacing3xl)
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
@@ -207,16 +207,11 @@ private fun NewWalletRecoveryMainContent(
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
 
-        PrimaryButton(
+        ZashiButton(
             onClick = onComplete,
             text = stringResource(R.string.new_wallet_recovery_button_finished),
             modifier =
                 Modifier
-                    .padding(
-                        bottom = ZcashTheme.dimens.spacingHuge,
-                        start = ZcashTheme.dimens.screenHorizontalSpacingBig,
-                        end = ZcashTheme.dimens.screenHorizontalSpacingBig
-                    )
                     .fillMaxWidth()
         )
     }
