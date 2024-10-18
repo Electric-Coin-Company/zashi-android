@@ -20,7 +20,8 @@ import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedEndpointUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveSynchronizerUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveWalletStateUseCase
 import co.electriccoin.zcash.ui.common.usecase.PersistEndpointUseCase
-import co.electriccoin.zcash.ui.common.usecase.ProposalFromZip321UriUseCase
+import co.electriccoin.zcash.ui.common.usecase.Zip321ParseUriValidationUseCase
+import co.electriccoin.zcash.ui.common.usecase.Zip321ProposalFromUriUseCase
 import co.electriccoin.zcash.ui.common.usecase.RefreshFastestServersUseCase
 import co.electriccoin.zcash.ui.common.usecase.RescanBlockchainUseCase
 import co.electriccoin.zcash.ui.common.usecase.SaveContactUseCase
@@ -61,7 +62,8 @@ val useCaseModule =
         singleOf(::CopyToClipboardUseCase)
         singleOf(::ShareImageUseCase)
         singleOf(::Zip321BuildUriUseCase)
-        singleOf(::ProposalFromZip321UriUseCase)
+        singleOf(::Zip321ProposalFromUriUseCase)
+        singleOf(::Zip321ParseUriValidationUseCase)
         singleOf(::ObserveWalletStateUseCase)
         singleOf(::IsCoinbaseAvailableUseCase)
         singleOf(::GetSpendingKeyUseCase)

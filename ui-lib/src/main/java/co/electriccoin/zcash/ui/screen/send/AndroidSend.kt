@@ -17,8 +17,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cash.z.ecc.android.sdk.Synchronizer
+import cash.z.ecc.android.sdk.model.Account
+import cash.z.ecc.android.sdk.model.Memo
 import cash.z.ecc.android.sdk.model.MonetarySeparators
 import cash.z.ecc.android.sdk.model.UnifiedSpendingKey
+import cash.z.ecc.android.sdk.model.WalletAddress
+import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.android.sdk.model.proposeSend
 import cash.z.ecc.android.sdk.model.toZecString
@@ -50,6 +54,7 @@ import co.electriccoin.zcash.ui.screen.send.view.Send
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
+import org.zecdev.zip321.ZIP321
 import java.util.Locale
 import kotlin.time.Duration.Companion.seconds
 
@@ -61,6 +66,7 @@ internal fun WrapSend(
     goBack: () -> Unit,
     goBalances: () -> Unit,
     goSendConfirmation: (ZecSend) -> Unit,
+    goPaymentRequest: (ZecSend) -> Unit,
     goSettings: () -> Unit,
 ) {
     val activity = LocalActivity.current
@@ -100,6 +106,7 @@ internal fun WrapSend(
         goBalances = goBalances,
         goSettings = goSettings,
         goSendConfirmation = goSendConfirmation,
+        goPaymentRequest = goPaymentRequest,
         hasCameraFeature = hasCameraFeature,
         monetarySeparators = monetarySeparators,
         topAppBarSubTitleState = walletState,
@@ -119,6 +126,7 @@ internal fun WrapSend(
     goBalances: () -> Unit,
     goSettings: () -> Unit,
     goSendConfirmation: (ZecSend) -> Unit,
+    goPaymentRequest: (ZecSend) -> Unit,
     hasCameraFeature: Boolean,
     monetarySeparators: MonetarySeparators,
     onHideBalances: () -> Unit,
@@ -154,6 +162,24 @@ internal fun WrapSend(
                 sendArguments.recipientAddress.type
             )
         )
+    }
+
+    // Zip321 Uri scan result processing
+    if (sendArguments?.zip321Uri != null) {
+        if (synchronizer != null && spendingKey != null) {
+            LaunchedEffect(Unit) {
+                scope.launch {
+                    processZip321Result(
+                        zip321Uri = sendArguments.zip321Uri,
+                        synchronizer = synchronizer,
+                        account = spendingKey.account,
+                        setSendStage = setSendStage,
+                        setZecSend = setZecSend,
+                        goPaymentRequest = goPaymentRequest
+                    )
+                }
+            }
+        }
     }
 
     val existingContact: MutableState<AddressBookContact?> = remember { mutableStateOf(null) }
@@ -356,3 +382,63 @@ internal fun WrapSend(
         )
     }
 }
+
+private suspend fun processZip321Result(
+    zip321Uri: String,
+    synchronizer: Synchronizer,
+    account: Account,
+    setSendStage: (SendStage) -> Unit,
+    setZecSend: (ZecSend?) -> Unit,
+    goPaymentRequest: (ZecSend) -> Unit,
+) {
+    val request = runCatching {
+        // At this point there should by only a valid Zcash address coming
+        ZIP321.request(zip321Uri, null)
+    }.onFailure {
+        Twig.error(it) { "Failed to validate address" }
+    }.getOrElse {
+        false
+    }
+    val payment = when (request) {
+        // We support only one payment currently
+        is ZIP321.ParserResult.Request -> { request.paymentRequest.payments[0] }
+        else -> return
+    }
+
+    val address = synchronizer
+        .validateAddress(payment.recipientAddress.value)
+        .toWalletAddress(payment.recipientAddress.value)
+
+    //TODO
+    val amount = Zatoshi(10)//payment.nonNegativeAmount.value.convertZecToZatoshi()
+
+    val memo = Memo(payment.memo?.let { String(it.data, Charsets.UTF_8) } ?: "")
+
+    val zecSend = ZecSend(
+        destination = address,
+        amount = amount,
+        memo = memo,
+        proposal = null
+    )
+    setZecSend(zecSend)
+
+    runCatching {
+        synchronizer.proposeFulfillingPaymentUri(account, zip321Uri)
+    }.onSuccess { proposal ->
+        Twig.debug { "Transaction proposal from Zip321 Uri: ${proposal.toPrettyString()}" }
+        val enrichedZecSend = zecSend.copy(proposal = proposal)
+        setZecSend(enrichedZecSend)
+        goPaymentRequest(enrichedZecSend)
+    }.onFailure {
+        Twig.error(it) { "Transaction proposal from Zip321 Uri failed" }
+        setSendStage(SendStage.SendFailure(it.message ?: ""))
+    }
+}
+
+private suspend fun AddressType.toWalletAddress(value: String) =
+    when (this) {
+        AddressType.Unified -> WalletAddress.Unified.new(value)
+        AddressType.Shielded -> WalletAddress.Sapling.new(value)
+        AddressType.Transparent -> WalletAddress.Transparent.new(value)
+        else -> error("Invalid address type")
+    }

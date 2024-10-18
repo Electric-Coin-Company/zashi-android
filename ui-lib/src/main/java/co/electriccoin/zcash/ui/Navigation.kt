@@ -21,6 +21,7 @@ import cash.z.ecc.android.sdk.model.ZecSend
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.spackle.getSerializableCompat
 import co.electriccoin.zcash.ui.NavigationArgs.ADDRESS_TYPE
+import co.electriccoin.zcash.ui.NavigationArgs.ZIP321_URI
 import co.electriccoin.zcash.ui.NavigationArguments.MULTIPLE_SUBMISSION_CLEAR_FORM
 import co.electriccoin.zcash.ui.NavigationArguments.SEND_CONFIRM_AMOUNT
 import co.electriccoin.zcash.ui.NavigationArguments.SEND_CONFIRM_INITIAL_STAGE
@@ -28,6 +29,7 @@ import co.electriccoin.zcash.ui.NavigationArguments.SEND_CONFIRM_MEMO
 import co.electriccoin.zcash.ui.NavigationArguments.SEND_CONFIRM_PROPOSAL
 import co.electriccoin.zcash.ui.NavigationArguments.SEND_CONFIRM_RECIPIENT_ADDRESS
 import co.electriccoin.zcash.ui.NavigationArguments.SEND_SCAN_RECIPIENT_ADDRESS
+import co.electriccoin.zcash.ui.NavigationArguments.SEND_SCAN_ZIP_321_URI
 import co.electriccoin.zcash.ui.NavigationTargets.ABOUT
 import co.electriccoin.zcash.ui.NavigationTargets.ADVANCED_SETTINGS
 import co.electriccoin.zcash.ui.NavigationTargets.CHOOSE_SERVER
@@ -37,6 +39,7 @@ import co.electriccoin.zcash.ui.NavigationTargets.EXPORT_PRIVATE_DATA
 import co.electriccoin.zcash.ui.NavigationTargets.HOME
 import co.electriccoin.zcash.ui.NavigationTargets.INTEGRATIONS
 import co.electriccoin.zcash.ui.NavigationTargets.NOT_ENOUGH_SPACE
+import co.electriccoin.zcash.ui.NavigationTargets.PAYMENT_REQUEST
 import co.electriccoin.zcash.ui.NavigationTargets.QR_CODE
 import co.electriccoin.zcash.ui.NavigationTargets.REQUEST
 import co.electriccoin.zcash.ui.NavigationTargets.SEED_RECOVERY
@@ -71,6 +74,7 @@ import co.electriccoin.zcash.ui.screen.exchangerate.settings.AndroidSettingsExch
 import co.electriccoin.zcash.ui.screen.exportdata.WrapExportPrivateData
 import co.electriccoin.zcash.ui.screen.home.WrapHome
 import co.electriccoin.zcash.ui.screen.integrations.WrapIntegrations
+import co.electriccoin.zcash.ui.screen.paymentrequest.WrapPaymentRequest
 import co.electriccoin.zcash.ui.screen.qrcode.WrapQrCode
 import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressType
 import co.electriccoin.zcash.ui.screen.request.WrapRequest
@@ -336,6 +340,13 @@ internal fun MainActivity.Navigation() {
             val addressType = backStackEntry.arguments?.getInt(ADDRESS_TYPE) ?: ReceiveAddressType.Unified.ordinal
             WrapRequest(addressType)
         }
+        composable(PAYMENT_REQUEST) {
+            navController.previousBackStackEntry?.let { backStackEntry ->
+                WrapPaymentRequest(
+                    arguments = SendConfirmationArguments.fromSavedStateHandle(backStackEntry.savedStateHandle)
+                )
+            }
+        }
     }
 }
 
@@ -355,6 +366,16 @@ private fun MainActivity.NavigationHome(
             }
             navController.navigateJustOnce(SEND_CONFIRMATION)
         },
+        goPaymentRequest = { zecSend ->
+            navController.currentBackStackEntry?.savedStateHandle?.apply {
+                this[SEND_CONFIRM_RECIPIENT_ADDRESS] =
+                    Json.encodeToString(SerializableAddress.serializer(), zecSend.destination.toSerializableAddress())
+                this[SEND_CONFIRM_AMOUNT] = zecSend.amount.value
+                this[SEND_CONFIRM_MEMO] = zecSend.memo.value
+                this[SEND_CONFIRM_PROPOSAL] = zecSend.proposal?.toByteArray()
+            }
+            navController.navigateJustOnce(PAYMENT_REQUEST)
+        },
         goSettings = { navController.navigateJustOnce(SETTINGS) },
         goMultiTrxSubmissionFailure = {
             // Ultimately we could approach reworking the MultipleTrxFailure screen into a separate
@@ -370,11 +391,13 @@ private fun MainActivity.NavigationHome(
                     backStack.savedStateHandle.get<String>(SEND_SCAN_RECIPIENT_ADDRESS)?.let {
                         Json.decodeFromString<SerializableAddress>(it).toRecipient()
                     },
+                zip321Uri = backStack.savedStateHandle.get<String>(SEND_SCAN_ZIP_321_URI),
                 clearForm = backStack.savedStateHandle.get<Boolean>(MULTIPLE_SUBMISSION_CLEAR_FORM) ?: false
             ).also {
                 // Remove Send screen arguments passed from the Scan or MultipleSubmissionFailure screens if
                 // some exist after we use them
                 backStack.savedStateHandle.remove<String>(SEND_SCAN_RECIPIENT_ADDRESS)
+                backStack.savedStateHandle.remove<String>(SEND_SCAN_ZIP_321_URI)
                 backStack.savedStateHandle.remove<Boolean>(MULTIPLE_SUBMISSION_CLEAR_FORM)
             },
     )
@@ -496,6 +519,7 @@ fun NavHostController.popBackStackJustOnce(currentRouteToBePopped: String) {
 
 object NavigationArguments {
     const val SEND_SCAN_RECIPIENT_ADDRESS = "send_scan_recipient_address"
+    const val SEND_SCAN_ZIP_321_URI = "send_scan_zip_321_uri"
 
     const val SEND_CONFIRM_RECIPIENT_ADDRESS = "send_confirm_recipient_address"
     const val SEND_CONFIRM_AMOUNT = "send_confirm_amount"
@@ -504,6 +528,11 @@ object NavigationArguments {
     const val SEND_CONFIRM_INITIAL_STAGE = "send_confirm_initial_stage"
 
     const val MULTIPLE_SUBMISSION_CLEAR_FORM = "multiple_submission_clear_form"
+
+    const val PAYMENT_REQUEST_RECIPIENT_ADDRESS = "payment_request_recipient_address"
+    const val PAYMENT_REQUEST_AMOUNT = "payment_request_amount"
+    const val PAYMENT_REQUEST_MEMO = "payment_request_memo"
+    const val PAYMENT_REQUEST_PROPOSAL = "payment_request_proposal"
 }
 
 object NavigationTargets {
@@ -514,7 +543,9 @@ object NavigationTargets {
     const val EXPORT_PRIVATE_DATA = "export_private_data"
     const val HOME = "home"
     const val CHOOSE_SERVER = "choose_server"
+    const val INTEGRATIONS = "integrations"
     const val NOT_ENOUGH_SPACE = "not_enough_space"
+    const val PAYMENT_REQUEST = "payment_request"
     const val QR_CODE = "qr_code"
     const val REQUEST = "request"
     const val SEED_RECOVERY = "seed_recovery"
@@ -523,9 +554,9 @@ object NavigationTargets {
     const val SETTINGS_EXCHANGE_RATE_OPT_IN = "settings_exchange_rate_opt_in"
     const val SUPPORT = "support"
     const val WHATS_NEW = "whats_new"
-    const val INTEGRATIONS = "integrations"
 }
 
 object NavigationArgs {
     const val ADDRESS_TYPE = "addressType"
+    const val ZIP321_URI = "zip321Uri"
 }

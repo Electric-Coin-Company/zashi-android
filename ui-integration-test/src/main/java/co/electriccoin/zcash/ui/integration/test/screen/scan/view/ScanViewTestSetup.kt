@@ -8,7 +8,7 @@ import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.integration.test.common.getPermissionNegativeButtonUiObject
 import co.electriccoin.zcash.ui.integration.test.common.getPermissionPositiveButtonUiObject
-import co.electriccoin.zcash.ui.screen.scan.model.ScanState
+import co.electriccoin.zcash.ui.screen.scan.model.ScanScreenState
 import co.electriccoin.zcash.ui.screen.scan.view.Scan
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
@@ -19,14 +19,14 @@ class ScanViewTestSetup(
     private val composeTestRule: ComposeContentTestRule
 ) {
     private val onOpenSettingsCount = AtomicInteger(0)
-    private val scanState = AtomicReference(ScanState.Permission)
+    private val scanState = AtomicReference(ScanScreenState.Permission)
 
     fun getOnOpenSettingsCount(): Int {
         composeTestRule.waitForIdle()
         return onOpenSettingsCount.get()
     }
 
-    fun getScanState(): ScanState {
+    fun getScanState(): ScanScreenState {
         composeTestRule.waitForIdle()
         return scanState.get()
     }
@@ -61,7 +61,7 @@ class ScanViewTestSetup(
                 scanState.set(it)
             },
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
-            addressValidationResult = AddressType.Unified
+            validationResult = AddressType.Unified
         )
     }
 

@@ -76,7 +76,8 @@ val viewModelModule =
         viewModel { (args: ScanNavigationArgs) ->
             ScanViewModel(
                 args = args,
-                getSynchronizer = get()
+                getSynchronizer = get(),
+                zip321ParseUriValidationUseCase = get(),
             )
         }
     }

@@ -3,51 +3,54 @@
 package co.electriccoin.zcash.ui.screen.paymentrequest
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.di.koinActivityViewModel
 import co.electriccoin.zcash.ui.common.compose.LocalNavController
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
+import co.electriccoin.zcash.ui.screen.paymentrequest.model.PaymentRequestState
 import co.electriccoin.zcash.ui.screen.paymentrequest.view.PaymentRequestView
-import co.electriccoin.zcash.ui.screen.request.model.RequestState
-import co.electriccoin.zcash.ui.screen.request.viewmodel.RequestViewModel
+import co.electriccoin.zcash.ui.screen.paymentrequest.viewmodel.PaymentRequestViewModel
+import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SendConfirmationArguments
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 @Composable
-internal fun WrapPaymentRequest(addressType: Int) {
-    val context = LocalContext.current
+internal fun WrapPaymentRequest(arguments: SendConfirmationArguments) {
     val navController = LocalNavController.current
 
     val walletViewModel = koinActivityViewModel<WalletViewModel>()
     val walletState by walletViewModel.walletStateInformation.collectAsStateWithLifecycle()
 
-    val requestViewModel = koinViewModel<RequestViewModel> { parametersOf(addressType) }
-    val requestState by requestViewModel.state.collectAsStateWithLifecycle()
-
-    val snackbarHostState = remember { SnackbarHostState() }
+    //TODO
+    val paymentRequestViewModel = koinViewModel<PaymentRequestViewModel> {
+        parametersOf("zip321Uri", arguments)
+    }
+    val paymentRequestState by paymentRequestViewModel.state.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        requestViewModel.backNavigationCommand.collect {
+        paymentRequestViewModel.closeNavigationCommand.collect {
             navController.popBackStack()
+        }
+    }
+    LaunchedEffect(Unit) {
+        paymentRequestViewModel.sendParametersCommand.collect {
+            //TODO
+            //navController.navigate()
         }
     }
 
     BackHandler {
-        when (requestState) {
-            RequestState.Loading -> {}
-            else -> requestViewModel.onBack()
+        when (paymentRequestState) {
+            PaymentRequestState.Loading -> {}
+            else -> paymentRequestViewModel.onClose()
         }
     }
 
     PaymentRequestView(
-        state = requestState,
+        state = paymentRequestState,
         topAppBarSubTitleState = walletState,
-        snackbarHostState = snackbarHostState
     )
 }
