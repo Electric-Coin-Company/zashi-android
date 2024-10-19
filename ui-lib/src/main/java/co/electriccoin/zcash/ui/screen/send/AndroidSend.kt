@@ -17,6 +17,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cash.z.ecc.android.sdk.Synchronizer
+import cash.z.ecc.android.sdk.ext.convertZecToZatoshi
 import cash.z.ecc.android.sdk.model.Account
 import cash.z.ecc.android.sdk.model.Memo
 import cash.z.ecc.android.sdk.model.MonetarySeparators
@@ -409,8 +410,7 @@ private suspend fun processZip321Result(
         .validateAddress(payment.recipientAddress.value)
         .toWalletAddress(payment.recipientAddress.value)
 
-    //TODO
-    val amount = Zatoshi(10)//payment.nonNegativeAmount.value.convertZecToZatoshi()
+    val amount = payment.nonNegativeAmount.value.convertZecToZatoshi()
 
     val memo = Memo(payment.memo?.let { String(it.data, Charsets.UTF_8) } ?: "")
 

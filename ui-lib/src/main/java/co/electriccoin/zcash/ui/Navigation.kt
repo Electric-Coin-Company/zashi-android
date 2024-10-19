@@ -21,12 +21,11 @@ import cash.z.ecc.android.sdk.model.ZecSend
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.spackle.getSerializableCompat
 import co.electriccoin.zcash.ui.NavigationArgs.ADDRESS_TYPE
-import co.electriccoin.zcash.ui.NavigationArgs.ZIP321_URI
 import co.electriccoin.zcash.ui.NavigationArguments.MULTIPLE_SUBMISSION_CLEAR_FORM
 import co.electriccoin.zcash.ui.NavigationArguments.PAYMENT_REQUEST_AMOUNT
 import co.electriccoin.zcash.ui.NavigationArguments.PAYMENT_REQUEST_MEMO
 import co.electriccoin.zcash.ui.NavigationArguments.PAYMENT_REQUEST_PROPOSAL
-import co.electriccoin.zcash.ui.NavigationArguments.PAYMENT_REQUEST_RECIPIENT_ADDRESS
+import co.electriccoin.zcash.ui.NavigationArguments.PAYMENT_REQUEST_ADDRESS
 import co.electriccoin.zcash.ui.NavigationArguments.PAYMENT_REQUEST_URI
 import co.electriccoin.zcash.ui.NavigationArguments.SEND_CONFIRM_AMOUNT
 import co.electriccoin.zcash.ui.NavigationArguments.SEND_CONFIRM_INITIAL_STAGE
@@ -496,13 +495,13 @@ private fun fillInHandleForPaymentRequest(
     zecSend: ZecSend,
     zip321: String
 ) {
-    handle[PAYMENT_REQUEST_RECIPIENT_ADDRESS] =
+    handle[PAYMENT_REQUEST_ADDRESS] =
         Json.encodeToString(serializer = SerializableAddress.serializer(),
             value = zecSend.destination.toSerializableAddress()
         )
     handle[PAYMENT_REQUEST_AMOUNT] = zecSend.amount.value
     handle[PAYMENT_REQUEST_MEMO] = zecSend.memo.value
-    handle[PAYMENT_REQUEST_PROPOSAL] = zecSend.proposal?.toByteArray()
+    handle[PAYMENT_REQUEST_PROPOSAL] = zecSend.proposal?.toByteArray() ?: byteArrayOf()
     handle[PAYMENT_REQUEST_URI] = zip321
 }
 
@@ -546,7 +545,7 @@ object NavigationArguments {
 
     const val MULTIPLE_SUBMISSION_CLEAR_FORM = "multiple_submission_clear_form"
 
-    const val PAYMENT_REQUEST_RECIPIENT_ADDRESS = "payment_request_recipient_address"
+    const val PAYMENT_REQUEST_ADDRESS = "payment_request_address"
     const val PAYMENT_REQUEST_AMOUNT = "payment_request_amount"
     const val PAYMENT_REQUEST_MEMO = "payment_request_memo"
     const val PAYMENT_REQUEST_PROPOSAL = "payment_request_proposal"
@@ -576,5 +575,4 @@ object NavigationTargets {
 
 object NavigationArgs {
     const val ADDRESS_TYPE = "addressType"
-    const val ZIP321_URI = "zip321Uri"
 }
