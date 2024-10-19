@@ -1,6 +1,10 @@
 package co.electriccoin.zcash.ui.screen.paymentrequest.model
 
 import androidx.lifecycle.SavedStateHandle
+import cash.z.ecc.android.sdk.model.Memo
+import cash.z.ecc.android.sdk.model.Proposal
+import cash.z.ecc.android.sdk.model.Zatoshi
+import cash.z.ecc.android.sdk.model.ZecSend
 import co.electriccoin.zcash.ui.NavigationArguments
 import co.electriccoin.zcash.ui.common.model.SerializableAddress
 import kotlinx.serialization.json.Json
@@ -9,7 +13,7 @@ data class PaymentRequestArguments(
     val address: SerializableAddress,
     val amount: Long,
     val memo: String,
-    val proposal: ByteArray?,
+    val proposal: ByteArray,
     val zip321Uri: String,
 ) {
     companion object {
@@ -39,10 +43,7 @@ data class PaymentRequestArguments(
         if (address != other.address) return false
         if (amount != other.amount) return false
         if (memo != other.memo) return false
-        if (proposal != null) {
-            if (other.proposal == null) return false
-            if (!proposal.contentEquals(other.proposal)) return false
-        } else if (other.proposal != null) return false
+        if (!proposal.contentEquals(other.proposal)) return false
         if (zip321Uri != other.zip321Uri) return false
 
         return true
@@ -56,4 +57,11 @@ data class PaymentRequestArguments(
         result = 31 * result + zip321Uri.hashCode()
         return result
     }
+
+    fun toZecSend() = ZecSend(
+            destination = address.toWalletAddress(),
+            amount = Zatoshi(amount),
+            memo = Memo(memo),
+            proposal = Proposal.fromByteArray(proposal),
+        )
 }

@@ -3,6 +3,7 @@
     <string name="payment_request_title">Payment Request</string>
     <string name="payment_request_close_content_description">Close</string>
     <string name="payment_request_send_btn">Send</string>
+    <string name="payment_request_requested_by">Requested By</string>
 
     <string name="payment_request_privacy_level_shielded">Maximum Privacy</string>
     <string name="payment_request_privacy_level_transparent">Low Privacy</string>

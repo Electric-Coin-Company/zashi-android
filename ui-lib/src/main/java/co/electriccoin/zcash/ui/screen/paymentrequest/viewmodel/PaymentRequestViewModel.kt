@@ -27,6 +27,7 @@ class PaymentRequestViewModel(
         combine(walletViewModel.synchronizer, walletViewModel.exchangeRateUsd) { synchronizer, rate ->
             PaymentRequestState.Prepared(
                 arguments = arguments,
+                zecSend = arguments.toZecSend(),
                 monetarySeparators = getMonetarySeparators(),
                 exchangeRateState = rate,
                 onClose = ::onClose,

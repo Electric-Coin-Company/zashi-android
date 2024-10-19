@@ -4,22 +4,28 @@ package co.electriccoin.zcash.ui.screen.paymentrequest.view
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import cash.z.ecc.android.sdk.fixture.WalletFixture
 import cash.z.ecc.android.sdk.model.MonetarySeparators
-import cash.z.ecc.android.sdk.model.ZcashNetwork
-import cash.z.ecc.android.sdk.type.AddressType
+import cash.z.ecc.sdk.extension.toZecStringFull
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.model.SerializableAddress
+import co.electriccoin.zcash.ui.common.compose.BalanceWidgetBigLineOnly
+import co.electriccoin.zcash.ui.common.extension.asZecAmountTriple
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
@@ -29,7 +35,12 @@ import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
-import co.electriccoin.zcash.ui.screen.paymentrequest.model.PaymentRequestArguments
+import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
+import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
+import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import co.electriccoin.zcash.ui.design.util.scaffoldPadding
+import co.electriccoin.zcash.ui.screen.exchangerate.widget.StyledExchangeLabel
+import co.electriccoin.zcash.ui.screen.paymentrequest.PaymentRequestArgumentsFixture
 import co.electriccoin.zcash.ui.screen.paymentrequest.model.PaymentRequestState
 
 @Composable
@@ -52,16 +63,8 @@ private fun PaymentRequestPreview() =
                     onClose = {},
                     onSend = {},
                     monetarySeparators = MonetarySeparators.current(),
-                    arguments = PaymentRequestArguments(
-                        SerializableAddress(
-                            WalletFixture.Alice.getAddresses(ZcashNetwork.Mainnet).unified,
-                            AddressType.Unified
-                        ),
-                        10000000,
-                        "For the coffee",
-                        byteArrayOf(),
-                        zip321Uri = "zcash:t1duiEGg7b39nfQee3XaTY4f5McqfyJKhBi?amount=1&memo=VGhpcyBpcyBhIHNpbXBsZSBt",
-                    ),
+                    arguments = PaymentRequestArgumentsFixture.new(),
+                    zecSend = PaymentRequestArgumentsFixture.new().toZecSend(),
                     exchangeRateState = ExchangeRateState.Data(onRefresh = {})
                 ),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
@@ -92,10 +95,12 @@ internal fun PaymentRequestView(
                 PaymentRequestContents(
                     state = state,
                     modifier =
-                        Modifier.padding(
-                            top = paddingValues.calculateTopPadding(),
-                            bottom = paddingValues.calculateBottomPadding()
-                        ),
+                    Modifier
+                        .fillMaxHeight()
+                        .verticalScroll(
+                            rememberScrollState()
+                        )
+                        .scaffoldPadding(paddingValues),
                 )
             }
         }
@@ -162,7 +167,34 @@ private fun PaymentRequestContents(
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
-        Text(text = state.arguments.zip321Uri)
-        Text(text = state.arguments.toString())
+        Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingXl))
+
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            BalanceWidgetBigLineOnly(
+                parts = state.zecSend.amount.toZecStringFull().asZecAmountTriple(),
+                // We don't hide any balance in confirmation screen
+                isHideBalances = false
+            )
+
+            StyledExchangeLabel(
+                zatoshi = state.zecSend.amount,
+                state = state.exchangeRateState,
+                isHideBalances = false,
+                style = ZashiTypography.textMd.copy(fontWeight = FontWeight.SemiBold),
+                textColor = ZashiColors.Text.textPrimary
+            )
+        }
+
+        Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacing6xl))
+
+        Text(
+            text = stringResource(id = R.string.payment_request_requested_by),
+            color = ZashiColors.Text.textTertiary,
+            style = ZashiTypography.textSm,
+            fontWeight = FontWeight.Medium
+        )
     }
 }
