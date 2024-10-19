@@ -15,6 +15,10 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -22,6 +26,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import cash.z.ecc.android.sdk.model.MonetarySeparators
+import cash.z.ecc.android.sdk.model.WalletAddress
 import cash.z.ecc.sdk.extension.toZecStringFull
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.BalanceWidgetBigLineOnly
@@ -42,6 +47,7 @@ import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.screen.exchangerate.widget.StyledExchangeLabel
 import co.electriccoin.zcash.ui.screen.paymentrequest.PaymentRequestArgumentsFixture
 import co.electriccoin.zcash.ui.screen.paymentrequest.model.PaymentRequestState
+import co.electriccoin.zcash.ui.screen.send.ext.abbreviated
 
 @Composable
 @PreviewScreens
@@ -166,6 +172,15 @@ private fun PaymentRequestContents(
     state: PaymentRequestState.Prepared,
     modifier: Modifier = Modifier,
 ) {
+    var showFullAddress by rememberSaveable {
+        mutableStateOf(
+            when (state.zecSend.destination) {
+                is WalletAddress.Transparent -> true
+                else -> false
+            }
+        )
+    }
+
     Column(modifier = modifier) {
         Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingXl))
 
@@ -195,6 +210,19 @@ private fun PaymentRequestContents(
             color = ZashiColors.Text.textTertiary,
             style = ZashiTypography.textSm,
             fontWeight = FontWeight.Medium
+        )
+
+        Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingSm))
+
+        Text(
+            text = if (showFullAddress) {
+                state.zecSend.destination.address
+            } else {
+                state.zecSend.destination.abbreviated()
+            },
+            color = ZashiColors.Text.textPrimary,
+            style = ZashiTypography.textXs,
+            fontWeight = FontWeight.Normal
         )
     }
 }
