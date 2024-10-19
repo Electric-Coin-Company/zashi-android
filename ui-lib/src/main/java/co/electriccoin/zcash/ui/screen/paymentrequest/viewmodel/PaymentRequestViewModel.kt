@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import cash.z.ecc.android.sdk.model.Proposal
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.common.provider.GetMonetarySeparatorProvider
+import co.electriccoin.zcash.ui.common.usecase.ObserveAddressBookContactsUseCase
 import co.electriccoin.zcash.ui.common.usecase.Zip321ProposalFromUriUseCase
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.paymentrequest.model.PaymentRequestArguments
@@ -21,19 +22,24 @@ class PaymentRequestViewModel(
     getMonetarySeparators: GetMonetarySeparatorProvider,
     walletViewModel: WalletViewModel,
     private val zip321ProposalFromUriUseCase: Zip321ProposalFromUriUseCase,
+    observeAddressBookContacts: ObserveAddressBookContactsUseCase
 ) : ViewModel() {
 
     internal val state =
-        combine(walletViewModel.synchronizer, walletViewModel.exchangeRateUsd) { synchronizer, rate ->
+        combine(
+            walletViewModel.synchronizer,
+            walletViewModel.exchangeRateUsd,
+            observeAddressBookContacts()
+        ) { synchronizer, rate, contacts ->
             PaymentRequestState.Prepared(
                 arguments = arguments,
-                zecSend = arguments.toZecSend(),
-                monetarySeparators = getMonetarySeparators(),
+                contact = contacts?.find { it.address == arguments.address?.address },
                 exchangeRateState = rate,
+                monetarySeparators = getMonetarySeparators(),
+                onAddToContacts = { onAddToContacts(it) },
                 onClose = ::onClose,
-                onSend = {
-                    onSend(it)
-                },
+                onSend = { onSend(it) },
+                zecSend = arguments.toZecSend(),
             )
         }.stateIn(
             scope = viewModelScope,
@@ -41,12 +47,18 @@ class PaymentRequestViewModel(
             initialValue = PaymentRequestState.Loading
         )
 
-    val closeNavigationCommand = MutableSharedFlow<Unit>()
+    internal val closeNavigationCommand = MutableSharedFlow<Unit>()
 
-    val sendParametersCommand = MutableSharedFlow<Proposal>()
+    internal val addContactNavigationCommand = MutableSharedFlow<String>()
+
+    internal val sendParametersCommand = MutableSharedFlow<Proposal>()
 
     internal fun onClose() = viewModelScope.launch {
         closeNavigationCommand.emit(Unit)
+    }
+
+    internal fun onAddToContacts(address: String) = viewModelScope.launch {
+        addContactNavigationCommand.emit(address)
     }
 
     private fun onSend(zip321Uri: String) = viewModelScope.launch {

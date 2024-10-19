@@ -10,6 +10,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.di.koinActivityViewModel
 import co.electriccoin.zcash.ui.common.compose.LocalNavController
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
+import co.electriccoin.zcash.ui.screen.contact.AddContactArgs
 import co.electriccoin.zcash.ui.screen.paymentrequest.model.PaymentRequestArguments
 import co.electriccoin.zcash.ui.screen.paymentrequest.model.PaymentRequestState
 import co.electriccoin.zcash.ui.screen.paymentrequest.view.PaymentRequestView
@@ -32,6 +33,11 @@ internal fun WrapPaymentRequest(
     LaunchedEffect(Unit) {
         paymentRequestViewModel.closeNavigationCommand.collect {
             navController.popBackStack()
+        }
+    }
+    LaunchedEffect(Unit) {
+        paymentRequestViewModel.addContactNavigationCommand.collect {
+            navController.navigate(AddContactArgs(it))
         }
     }
     LaunchedEffect(Unit) {

@@ -1,6 +1,7 @@
 package co.electriccoin.zcash.ui.screen.paymentrequest.model
 
 import androidx.lifecycle.SavedStateHandle
+import cash.z.ecc.android.sdk.internal.Twig
 import cash.z.ecc.android.sdk.model.Memo
 import cash.z.ecc.android.sdk.model.Proposal
 import cash.z.ecc.android.sdk.model.Zatoshi
@@ -10,11 +11,11 @@ import co.electriccoin.zcash.ui.common.model.SerializableAddress
 import kotlinx.serialization.json.Json
 
 data class PaymentRequestArguments(
-    val address: SerializableAddress,
-    val amount: Long,
-    val memo: String,
-    val proposal: ByteArray,
-    val zip321Uri: String,
+    val address: SerializableAddress?,
+    val amount: Long?,
+    val memo: String?,
+    val proposal: ByteArray?,
+    val zip321Uri: String?,
 ) {
     companion object {
         internal fun fromSavedStateHandle(savedStateHandle: SavedStateHandle) =
@@ -22,46 +23,27 @@ data class PaymentRequestArguments(
                 address =
                     savedStateHandle.get<String>(NavigationArguments.PAYMENT_REQUEST_ADDRESS)?.let {
                         Json.decodeFromString<SerializableAddress>(it)
-                    } ?: error("Invalid address argument"),
-                amount = savedStateHandle.get<Long>(NavigationArguments.PAYMENT_REQUEST_AMOUNT)
-                    ?: error("Invalid amount argument"),
-                memo = savedStateHandle.get<String>(NavigationArguments.PAYMENT_REQUEST_MEMO)
-                    ?: "",
-                proposal = savedStateHandle.get<ByteArray>(NavigationArguments.PAYMENT_REQUEST_PROPOSAL)
-                    ?: error("Invalid proposal argument"),
-                zip321Uri = savedStateHandle.get<String>(NavigationArguments.PAYMENT_REQUEST_URI)
-                    ?: error("Invalid zip321Uri argument"),
-            )
+                    },
+                amount = savedStateHandle.get<Long>(NavigationArguments.PAYMENT_REQUEST_AMOUNT),
+                memo = savedStateHandle.get<String>(NavigationArguments.PAYMENT_REQUEST_MEMO),
+                proposal = savedStateHandle.get<ByteArray>(NavigationArguments.PAYMENT_REQUEST_PROPOSAL),
+                zip321Uri = savedStateHandle.get<String>(NavigationArguments.PAYMENT_REQUEST_URI),
+            ).also {
+                Twig.error { "TTTEST: PaymentRequestArguments: $savedStateHandle" }
+
+                // Remove SendConfirmation screen arguments passed from the other screens if some exist
+                savedStateHandle.remove<String>(NavigationArguments.PAYMENT_REQUEST_ADDRESS)
+                savedStateHandle.remove<Long>(NavigationArguments.PAYMENT_REQUEST_AMOUNT)
+                savedStateHandle.remove<String>(NavigationArguments.PAYMENT_REQUEST_MEMO)
+                savedStateHandle.remove<ByteArray>(NavigationArguments.PAYMENT_REQUEST_PROPOSAL)
+                savedStateHandle.remove<String>(NavigationArguments.PAYMENT_REQUEST_URI)
+            }
     }
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as PaymentRequestArguments
-
-        if (address != other.address) return false
-        if (amount != other.amount) return false
-        if (memo != other.memo) return false
-        if (!proposal.contentEquals(other.proposal)) return false
-        if (zip321Uri != other.zip321Uri) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = address.hashCode()
-        result = 31 * result + amount.hashCode()
-        result = 31 * result + memo.hashCode()
-        result = 31 * result + proposal.contentHashCode()
-        result = 31 * result + zip321Uri.hashCode()
-        return result
-    }
-
-    fun toZecSend() = ZecSend(
-            destination = address.toWalletAddress(),
-            amount = Zatoshi(amount),
-            memo = Memo(memo),
-            proposal = Proposal.fromByteArray(proposal),
+    internal fun toZecSend() = ZecSend(
+            destination = address?.toWalletAddress() ?: error("Address null"),
+            amount = amount?.let { Zatoshi(amount) } ?: error("Amount null"),
+            memo = memo?.let { Memo(memo) } ?: error("Memo null"),
+            proposal = proposal?.let { Proposal.fromByteArray(proposal) } ?: error("Proposal null"),
         )
 }
