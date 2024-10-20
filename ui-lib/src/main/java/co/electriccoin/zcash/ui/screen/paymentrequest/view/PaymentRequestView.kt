@@ -6,6 +6,7 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -184,6 +185,84 @@ private fun PaymentRequestContents(
     state: PaymentRequestState.Prepared,
     modifier: Modifier = Modifier,
 ) {
+    Column(modifier = modifier) {
+        Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingXl))
+
+        PaymentRequestBalances(state)
+
+        Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacing4xl))
+
+        PaymentRequestAddresses(state)
+
+        if (state.zecSend.memo.value.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacing4xl))
+            PaymentRequestMemo(state)
+        }
+
+        Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacing4xl))
+    }
+}
+
+@Composable
+private fun PaymentRequestMemo(
+    state: PaymentRequestState.Prepared,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier.fillMaxWidth()) {
+        Text(
+            text = stringResource(id = R.string.payment_request_memo_header),
+            color = ZashiColors.Text.textPrimary,
+            style = ZashiTypography.textSm,
+            fontWeight = FontWeight.Medium
+        )
+
+        Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingSm))
+
+        Box(
+            modifier = Modifier.fillMaxWidth()
+                .background(ZashiColors.Inputs.Filled.bg, RoundedCornerShape(ZashiDimensions.Radius.radiusIg))
+                .padding(all = ZashiDimensions.Spacing.spacingXl),
+        ) {
+            Text(
+                text = state.zecSend.memo.value,
+                color = ZashiColors.Inputs.Filled.text,
+                style = ZashiTypography.textXs,
+                fontWeight = FontWeight.Medium
+            )
+        }
+    }
+}
+
+@Composable
+private fun PaymentRequestBalances(
+    state: PaymentRequestState.Prepared,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        BalanceWidgetBigLineOnly(
+            parts = state.zecSend.amount.toZecStringFull().asZecAmountTriple(),
+            // We don't hide any balance in confirmation screen
+            isHideBalances = false
+        )
+
+        StyledExchangeLabel(
+            zatoshi = state.zecSend.amount,
+            state = state.exchangeRateState,
+            isHideBalances = false,
+            style = ZashiTypography.textMd.copy(fontWeight = FontWeight.SemiBold),
+            textColor = ZashiColors.Text.textPrimary
+        )
+    }
+}
+
+@Composable
+private fun PaymentRequestAddresses(
+    state: PaymentRequestState.Prepared,
+    modifier: Modifier = Modifier
+) {
     var isShowingFullAddress by rememberSaveable {
         mutableStateOf(
             when (state.zecSend.destination) {
@@ -192,31 +271,7 @@ private fun PaymentRequestContents(
             }
         )
     }
-
     Column(modifier = modifier) {
-        Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingXl))
-
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            BalanceWidgetBigLineOnly(
-                parts = state.zecSend.amount.toZecStringFull().asZecAmountTriple(),
-                // We don't hide any balance in confirmation screen
-                isHideBalances = false
-            )
-
-            StyledExchangeLabel(
-                zatoshi = state.zecSend.amount,
-                state = state.exchangeRateState,
-                isHideBalances = false,
-                style = ZashiTypography.textMd.copy(fontWeight = FontWeight.SemiBold),
-                textColor = ZashiColors.Text.textPrimary
-            )
-        }
-
-        Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacing4xl))
-
         Text(
             text = stringResource(id = R.string.payment_request_requested_by),
             color = ZashiColors.Text.textTertiary,

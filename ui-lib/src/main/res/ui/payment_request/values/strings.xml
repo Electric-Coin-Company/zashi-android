@@ -8,6 +8,8 @@
     <string name="payment_request_btn_hide_address">Hide</string>
     <string name="payment_request_btn_save_contact">Save</string>
 
+    <string name="payment_request_memo_header">For:</string>
+
     <string name="payment_request_send_btn">Send</string>
 
     <string name="payment_request_memo_payment_request_subtitle">Payment Request</string>
