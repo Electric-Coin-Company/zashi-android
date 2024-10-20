@@ -1,7 +1,7 @@
 package co.electriccoin.zcash.ui.screen.paymentrequest.model
 
 import androidx.lifecycle.SavedStateHandle
-import cash.z.ecc.android.sdk.internal.Twig
+import cash.z.ecc.android.sdk.model.FirstClassByteArray
 import cash.z.ecc.android.sdk.model.Memo
 import cash.z.ecc.android.sdk.model.Proposal
 import cash.z.ecc.android.sdk.model.Zatoshi
@@ -14,7 +14,7 @@ data class PaymentRequestArguments(
     val address: SerializableAddress?,
     val amount: Long?,
     val memo: String?,
-    val proposal: ByteArray?,
+    val proposal: FirstClassByteArray?,
     val zip321Uri: String?,
 ) {
     companion object {
@@ -26,12 +26,12 @@ data class PaymentRequestArguments(
                     },
                 amount = savedStateHandle.get<Long>(NavigationArguments.PAYMENT_REQUEST_AMOUNT),
                 memo = savedStateHandle.get<String>(NavigationArguments.PAYMENT_REQUEST_MEMO),
-                proposal = savedStateHandle.get<ByteArray>(NavigationArguments.PAYMENT_REQUEST_PROPOSAL),
+                proposal = savedStateHandle.get<ByteArray>(NavigationArguments.PAYMENT_REQUEST_PROPOSAL)?.let {
+                    FirstClassByteArray(it)
+                },
                 zip321Uri = savedStateHandle.get<String>(NavigationArguments.PAYMENT_REQUEST_URI),
             ).also {
-                Twig.error { "TTTEST: PaymentRequestArguments: $savedStateHandle" }
-
-                // Remove SendConfirmation screen arguments passed from the other screens if some exist
+                // Remove the screen arguments passed from the other screen if some exist
                 savedStateHandle.remove<String>(NavigationArguments.PAYMENT_REQUEST_ADDRESS)
                 savedStateHandle.remove<Long>(NavigationArguments.PAYMENT_REQUEST_AMOUNT)
                 savedStateHandle.remove<String>(NavigationArguments.PAYMENT_REQUEST_MEMO)
@@ -44,6 +44,6 @@ data class PaymentRequestArguments(
             destination = address?.toWalletAddress() ?: error("Address null"),
             amount = amount?.let { Zatoshi(amount) } ?: error("Amount null"),
             memo = memo?.let { Memo(memo) } ?: error("Memo null"),
-            proposal = proposal?.let { Proposal.fromByteArray(proposal) } ?: error("Proposal null"),
+            proposal = proposal?.let { Proposal.fromByteArray(proposal.byteArray) } ?: error("Proposal null"),
         )
 }

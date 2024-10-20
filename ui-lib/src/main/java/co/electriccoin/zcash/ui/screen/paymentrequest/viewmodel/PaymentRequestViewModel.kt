@@ -2,6 +2,7 @@ package co.electriccoin.zcash.ui.screen.paymentrequest.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.model.Proposal
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.common.provider.GetMonetarySeparatorProvider
@@ -14,6 +15,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -27,7 +29,7 @@ class PaymentRequestViewModel(
 
     internal val state =
         combine(
-            walletViewModel.synchronizer,
+            walletViewModel.synchronizer.mapNotNull { it },
             walletViewModel.exchangeRateUsd,
             observeAddressBookContacts()
         ) { synchronizer, rate, contacts ->
@@ -38,7 +40,7 @@ class PaymentRequestViewModel(
                 monetarySeparators = getMonetarySeparators(),
                 onAddToContacts = { onAddToContacts(it) },
                 onClose = ::onClose,
-                onSend = { onSend(it) },
+                onSend = { onSend(it, synchronizer) },
                 zecSend = arguments.toZecSend(),
             )
         }.stateIn(
@@ -61,7 +63,7 @@ class PaymentRequestViewModel(
         addContactNavigationCommand.emit(address)
     }
 
-    private fun onSend(zip321Uri: String) = viewModelScope.launch {
+    private fun onSend(zip321Uri: String, synchronizer: Synchronizer) = viewModelScope.launch {
         val proposal = zip321ProposalFromUriUseCase(zip321Uri)
         sendParametersCommand.emit(proposal)
     }

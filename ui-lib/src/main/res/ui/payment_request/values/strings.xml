@@ -8,21 +8,10 @@
     <string name="payment_request_btn_hide_address">Hide</string>
     <string name="payment_request_btn_save_contact">Save</string>
 
-    <string name="payment_request_memo_header">For:</string>
+    <string name="payment_request_memo">For:</string>
+
+    <string name="payment_request_fee">Fee</string>
+    <string name="payment_request_total">Total</string>
 
     <string name="payment_request_send_btn">Send</string>
-
-    <string name="payment_request_memo_payment_request_subtitle">Payment Request</string>
-    <string name="payment_request_memo_text_field_hint">What\'s this for?</string>
-    <string name="payment_request_memo_bytes_counter">
-        <xliff:g id="typed_bytes" example="12">%1$s</xliff:g>/<xliff:g id="max_bytes" example="512">%2$s</xliff:g>
-    </string>
-
-    <string name="payment_request_qr_code_content_description">Request QR Code</string>
-    <string name="payment_request_qr_code_data_unable_to_share">Unable to find an application for sharing the QR code
-        .</string>
-    <string name="payment_request_qr_code_share_chooser_title">Request ZEC</string>
-    <string name="payment_request_qr_code_share_chooser_text">Hi, scan this QR code to send me a ZEC payment! Download
-        Link:
-        https://play.google.com/store/apps/details?id=co.electriccoin.zcash</string>
 </resources>
