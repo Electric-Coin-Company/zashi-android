@@ -132,12 +132,12 @@ internal fun PaymentRequestView(
                     PaymentRequestContents(
                         state = state,
                         modifier =
-                        Modifier
-                            .fillMaxHeight()
-                            .verticalScroll(
-                                rememberScrollState()
-                            )
-                            .scaffoldPadding(paddingValues),
+                            Modifier
+                                .fillMaxHeight()
+                                .verticalScroll(
+                                    rememberScrollState()
+                                )
+                                .scaffoldPadding(paddingValues),
                     )
                     when (state.stage) {
                         PaymentRequestStage.FailureGrpc -> {
@@ -179,20 +179,20 @@ private fun PaymentRequestTopAppBar(
             IconButton(
                 onClick = onClose,
                 modifier =
-                Modifier
-                    .padding(horizontal = ZcashTheme.dimens.spacingDefault)
-                    // Making the size bigger by 3.dp so the rounded image corners are not stripped out
-                    .size(43.dp),
+                    Modifier
+                        .padding(horizontal = ZcashTheme.dimens.spacingDefault)
+                        // Making the size bigger by 3.dp so the rounded image corners are not stripped out
+                        .size(43.dp),
             ) {
                 Image(
                     painter =
-                    painterResource(
-                        id = co.electriccoin.zcash.ui.design.R.drawable.ic_close_full
-                    ),
+                        painterResource(
+                            id = co.electriccoin.zcash.ui.design.R.drawable.ic_close_full
+                        ),
                     contentDescription = stringResource(id = R.string.payment_request_close_content_description),
                     modifier =
-                    Modifier
-                        .padding(all = 3.dp)
+                        Modifier
+                            .padding(all = 3.dp)
                 )
             }
         },
@@ -211,9 +211,9 @@ private fun PaymentRequestBottomBar(
             enabled = state.stage != PaymentRequestStage.Sending && state.stage != PaymentRequestStage.Confirmed,
             isLoading = state.stage == PaymentRequestStage.Sending,
             modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 24.dp)
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp)
         )
     }
 }
@@ -302,11 +302,12 @@ private fun PaymentRequestAddresses(
         Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingSm))
 
         Text(
-            text = if (isShowingFullAddress) {
-                state.zecSend.destination.address
-            } else {
-                state.zecSend.destination.abbreviated()
-            },
+            text =
+                if (isShowingFullAddress) {
+                    state.zecSend.destination.address
+                } else {
+                    state.zecSend.destination.abbreviated()
+                },
             color = ZashiColors.Text.textPrimary,
             style = ZashiTypography.textXs,
             fontWeight = FontWeight.Normal,
@@ -316,9 +317,10 @@ private fun PaymentRequestAddresses(
         Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingXl))
 
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
         ) {
             if (state.zecSend.destination !is WalletAddress.Transparent) {
                 if (isShowingFullAddress) {
@@ -355,14 +357,18 @@ private fun PaymentRequestChipText(
     modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = modifier
-            .background(ZashiColors.Btns.Tertiary.btnTertiaryBg, RoundedCornerShape(ZashiDimensions.Radius.radiusMd))
-            .clip(RoundedCornerShape(ZashiDimensions.Radius.radiusMd))
-            .clickable { onClick() }
-            .padding(
-                horizontal = ZashiDimensions.Spacing.spacingXl,
-                vertical = 10.dp
-            ),
+        modifier =
+            modifier
+                .background(
+                    ZashiColors.Btns.Tertiary.btnTertiaryBg,
+                    RoundedCornerShape(ZashiDimensions.Radius.radiusMd)
+                )
+                .clip(RoundedCornerShape(ZashiDimensions.Radius.radiusMd))
+                .clickable { onClick() }
+                .padding(
+                    horizontal = ZashiDimensions.Spacing.spacingXl,
+                    vertical = 10.dp
+                ),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
@@ -396,10 +402,11 @@ private fun PaymentRequestMemo(
         Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingSm))
 
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(ZashiColors.Inputs.Filled.bg, RoundedCornerShape(ZashiDimensions.Radius.radiusIg))
-                .padding(all = ZashiDimensions.Spacing.spacingXl),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .background(ZashiColors.Inputs.Filled.bg, RoundedCornerShape(ZashiDimensions.Radius.radiusIg))
+                    .padding(all = ZashiDimensions.Spacing.spacingXl),
         ) {
             Text(
                 text = state.zecSend.memo.value,
@@ -417,7 +424,8 @@ private fun PaymentRequestAmounts(
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
-        Row(modifier = Modifier.fillMaxWidth(),
+        Row(
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
@@ -430,16 +438,18 @@ private fun PaymentRequestAmounts(
             StyledBalance(
                 balanceParts = state.zecSend.proposal!!.totalFeeRequired().toZecStringFull().asZecAmountTriple(),
                 textColor = ZashiColors.Text.textPrimary,
-                textStyle = StyledBalanceDefaults.textStyles(
-                    mostSignificantPart = ZashiTypography.textSm.copy(fontWeight = FontWeight.SemiBold),
-                    leastSignificantPart = ZashiTypography.textXxs.copy(fontWeight = FontWeight.SemiBold),
-                )
+                textStyle =
+                    StyledBalanceDefaults.textStyles(
+                        mostSignificantPart = ZashiTypography.textSm.copy(fontWeight = FontWeight.SemiBold),
+                        leastSignificantPart = ZashiTypography.textXxs.copy(fontWeight = FontWeight.SemiBold),
+                    )
             )
         }
 
         Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacing2xl))
 
-        Row(modifier = Modifier.fillMaxWidth(),
+        Row(
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
@@ -452,10 +462,11 @@ private fun PaymentRequestAmounts(
             StyledBalance(
                 balanceParts = state.zecSend.amount.toZecStringFull().asZecAmountTriple(),
                 textColor = ZashiColors.Text.textPrimary,
-                textStyle = StyledBalanceDefaults.textStyles(
-                    mostSignificantPart = ZashiTypography.textSm.copy(fontWeight = FontWeight.SemiBold),
-                    leastSignificantPart = ZashiTypography.textXxs.copy(fontWeight = FontWeight.SemiBold),
-                )
+                textStyle =
+                    StyledBalanceDefaults.textStyles(
+                        mostSignificantPart = ZashiTypography.textSm.copy(fontWeight = FontWeight.SemiBold),
+                        leastSignificantPart = ZashiTypography.textXxs.copy(fontWeight = FontWeight.SemiBold),
+                    )
             )
         }
     }

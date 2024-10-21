@@ -22,10 +22,10 @@ import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.spackle.getSerializableCompat
 import co.electriccoin.zcash.ui.NavigationArgs.ADDRESS_TYPE
 import co.electriccoin.zcash.ui.NavigationArguments.MULTIPLE_SUBMISSION_CLEAR_FORM
+import co.electriccoin.zcash.ui.NavigationArguments.PAYMENT_REQUEST_ADDRESS
 import co.electriccoin.zcash.ui.NavigationArguments.PAYMENT_REQUEST_AMOUNT
 import co.electriccoin.zcash.ui.NavigationArguments.PAYMENT_REQUEST_MEMO
 import co.electriccoin.zcash.ui.NavigationArguments.PAYMENT_REQUEST_PROPOSAL
-import co.electriccoin.zcash.ui.NavigationArguments.PAYMENT_REQUEST_ADDRESS
 import co.electriccoin.zcash.ui.NavigationArguments.PAYMENT_REQUEST_URI
 import co.electriccoin.zcash.ui.NavigationArguments.SEND_CONFIRM_AMOUNT
 import co.electriccoin.zcash.ui.NavigationArguments.SEND_CONFIRM_INITIAL_STAGE
@@ -496,7 +496,8 @@ private fun fillInHandleForPaymentRequest(
     zip321: String
 ) {
     handle[PAYMENT_REQUEST_ADDRESS] =
-        Json.encodeToString(serializer = SerializableAddress.serializer(),
+        Json.encodeToString(
+            serializer = SerializableAddress.serializer(),
             value = zecSend.destination.toSerializableAddress()
         )
     handle[PAYMENT_REQUEST_AMOUNT] = zecSend.amount.value

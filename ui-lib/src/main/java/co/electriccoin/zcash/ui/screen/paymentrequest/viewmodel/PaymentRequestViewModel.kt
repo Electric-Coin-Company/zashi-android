@@ -36,6 +36,7 @@ import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
+@Suppress("TooManyFunctions")
 class PaymentRequestViewModel(
     private val application: Application,
     private val arguments: PaymentRequestArguments,
@@ -48,7 +49,6 @@ class PaymentRequestViewModel(
     walletViewModel: WalletViewModel,
     observeAddressBookContacts: ObserveAddressBookContactsUseCase,
 ) : ViewModel() {
-
     private val stage = MutableStateFlow<PaymentRequestStage>(PaymentRequestStage.Initial)
 
     internal val state =
@@ -89,49 +89,56 @@ class PaymentRequestViewModel(
 
     internal val sendReportFailedNavigationCommand = MutableSharedFlow<Unit>()
 
-    internal fun onClose() = viewModelScope.launch {
-        closeNavigationCommand.emit(Unit)
-    }
+    internal fun onClose() =
+        viewModelScope.launch {
+            closeNavigationCommand.emit(Unit)
+        }
 
-    internal fun onBack() = viewModelScope.launch {
-        backNavigationCommand.emit(Unit)
-    }
+    internal fun onBack() =
+        viewModelScope.launch {
+            backNavigationCommand.emit(Unit)
+        }
 
-    private fun onHome() = viewModelScope.launch {
-        homeNavigationCommand.emit(Unit)
-    }
+    private fun onHome() =
+        viewModelScope.launch {
+            homeNavigationCommand.emit(Unit)
+        }
 
-    internal fun setStage(newStage: PaymentRequestStage) = viewModelScope.launch {
-        stage.emit(newStage)
-    }
+    internal fun setStage(newStage: PaymentRequestStage) =
+        viewModelScope.launch {
+            stage.emit(newStage)
+        }
 
-    private fun onAddToContacts(address: String) = viewModelScope.launch {
-        addContactNavigationCommand.emit(address)
-    }
+    private fun onAddToContacts(address: String) =
+        viewModelScope.launch {
+            addContactNavigationCommand.emit(address)
+        }
 
-    private fun onSend(proposal: Proposal) = viewModelScope.launch {
-         authenticationViewModel.isSendFundsAuthenticationRequired
-             .filterNotNull()
-             .collect { isProtected ->
-                 if (isProtected) {
-                     authenticationNavigationCommand.emit(proposal)
-                 } else {
-                     onSendAllowed(proposal)
-                 }
-             }
-    }
+    private fun onSend(proposal: Proposal) =
+        viewModelScope.launch {
+            authenticationViewModel.isSendFundsAuthenticationRequired
+                .filterNotNull()
+                .collect { isProtected ->
+                    if (isProtected) {
+                        authenticationNavigationCommand.emit(proposal)
+                    } else {
+                        onSendAllowed(proposal)
+                    }
+                }
+        }
 
-    internal fun onSendAllowed(proposal: Proposal) = viewModelScope.launch {
-        runSendFundsAction(
-            createTransactionsViewModel = createTransactionsViewModel,
-            // The not-null assertion operator is necessary here even if we check its
-            // nullability before due to property is declared in different module. See more
-            // details on the Kotlin forum
-            proposal = proposal,
-            spendingKey = getSpendingKeyUseCase(),
-            synchronizer = getSynchronizer(),
-        )
-    }
+    internal fun onSendAllowed(proposal: Proposal) =
+        viewModelScope.launch {
+            runSendFundsAction(
+                createTransactionsViewModel = createTransactionsViewModel,
+                // The not-null assertion operator is necessary here even if we check its
+                // nullability before due to property is declared in different module. See more
+                // details on the Kotlin forum
+                proposal = proposal,
+                spendingKey = getSpendingKeyUseCase(),
+                synchronizer = getSynchronizer(),
+            )
+        }
 
     private suspend fun runSendFundsAction(
         createTransactionsViewModel: CreateTransactionsViewModel,
@@ -200,13 +207,18 @@ class PaymentRequestViewModel(
         }
     }
 
-    private fun onContactSupport(message: String?, supportInfo: SupportInfo) = viewModelScope.launch {
-        val fullMessage = EmailUtil.formatMessage(
-            body = message,
-            supportInfo = supportInfo.toSupportString(
-                SupportInfoType.entries.toSet()
+    private fun onContactSupport(
+        message: String?,
+        supportInfo: SupportInfo
+    ) = viewModelScope.launch {
+        val fullMessage =
+            EmailUtil.formatMessage(
+                body = message,
+                supportInfo =
+                    supportInfo.toSupportString(
+                        SupportInfoType.entries.toSet()
+                    )
             )
-        )
         val mailIntent =
             EmailUtil.newMailActivityIntent(
                 application.applicationContext.getString(R.string.support_email_address),

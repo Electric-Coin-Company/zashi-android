@@ -11,33 +11,33 @@ internal class Zip321ParseUriValidationUseCase(
     suspend operator fun invoke(zip321Uri: String) = validateZip321Uri(zip321Uri)
 
     private suspend fun validateZip321Uri(zip321Uri: String): Zip321ParseUriValidation {
-        val paymentRequest = runCatching {
-            ZIP321.request(
-                uriString = zip321Uri,
-                validatingRecipients = { address ->
-                    // We should be fine with the blocking implementation here, although we could improve this with
-                    // using e.g. callbackFlow
-                    runBlocking {
-                        getSynchronizerUseCase().validateAddress(address).let { validation ->
-                            when (validation) {
-                                is AddressType.Invalid -> {
-                                    Twig.error { "Address from Zip321 validation failed with: ${validation.reason}" }
-                                    false
-                                }
-                                else -> {
-                                    validation is AddressType.Valid
+        val paymentRequest =
+            runCatching {
+                ZIP321.request(
+                    uriString = zip321Uri,
+                    validatingRecipients = { address ->
+                        // We should be fine with the blocking implementation here, although we could improve this with
+                        // using e.g. callbackFlow
+                        runBlocking {
+                            getSynchronizerUseCase().validateAddress(address).let { validation ->
+                                when (validation) {
+                                    is AddressType.Invalid -> {
+                                        Twig.error { "Address from Zip321 validation failed: ${validation.reason}" }
+                                        false
+                                    }
+                                    else -> {
+                                        validation is AddressType.Valid
+                                    }
                                 }
                             }
-
                         }
                     }
-                }
-            )
-        }.onFailure {
-            Twig.error(it) { "Failed to validate address" }
-        }.getOrElse {
-            false
-        }
+                )
+            }.onFailure {
+                Twig.error(it) { "Failed to validate address" }
+            }.getOrElse {
+                false
+            }
 
         Twig.info { "Payment Request Zip321 validation result: $paymentRequest." }
 
@@ -50,6 +50,7 @@ internal class Zip321ParseUriValidationUseCase(
 
     internal sealed class Zip321ParseUriValidation {
         data class Valid(val zip321Uri: String) : Zip321ParseUriValidation()
+
         data object Invalid : Zip321ParseUriValidation()
     }
 }

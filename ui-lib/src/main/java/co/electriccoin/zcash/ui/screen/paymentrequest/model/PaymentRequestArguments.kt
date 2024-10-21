@@ -26,9 +26,10 @@ data class PaymentRequestArguments(
                     },
                 amount = savedStateHandle.get<Long>(NavigationArguments.PAYMENT_REQUEST_AMOUNT),
                 memo = savedStateHandle.get<String>(NavigationArguments.PAYMENT_REQUEST_MEMO),
-                proposal = savedStateHandle.get<ByteArray>(NavigationArguments.PAYMENT_REQUEST_PROPOSAL)?.let {
-                    FirstClassByteArray(it)
-                },
+                proposal =
+                    savedStateHandle.get<ByteArray>(NavigationArguments.PAYMENT_REQUEST_PROPOSAL)?.let {
+                        FirstClassByteArray(it)
+                    },
                 zip321Uri = savedStateHandle.get<String>(NavigationArguments.PAYMENT_REQUEST_URI),
             ).also {
                 // Remove the screen arguments passed from the other screen if some exist
@@ -40,7 +41,8 @@ data class PaymentRequestArguments(
             }
     }
 
-    internal fun toZecSend() = ZecSend(
+    internal fun toZecSend() =
+        ZecSend(
             destination = address?.toWalletAddress() ?: error("Address null"),
             amount = amount?.let { Zatoshi(amount) } ?: error("Amount null"),
             memo = memo?.let { Memo(memo) } ?: error("Memo null"),

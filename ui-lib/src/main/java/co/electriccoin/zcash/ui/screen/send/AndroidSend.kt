@@ -23,7 +23,6 @@ import cash.z.ecc.android.sdk.model.Memo
 import cash.z.ecc.android.sdk.model.MonetarySeparators
 import cash.z.ecc.android.sdk.model.UnifiedSpendingKey
 import cash.z.ecc.android.sdk.model.WalletAddress
-import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.android.sdk.model.proposeSend
 import cash.z.ecc.android.sdk.model.toZecString
@@ -168,7 +167,7 @@ internal fun WrapSend(
     // Zip321 Uri scan result processing
     if (sendArguments?.zip321Uri != null) {
         if (synchronizer != null && spendingKey != null) {
-            LaunchedEffect(Unit) {
+            LaunchedEffect(goPaymentRequest) {
                 scope.launch {
                     processZip321Result(
                         zip321Uri = sendArguments.zip321Uri,
@@ -392,34 +391,40 @@ private suspend fun processZip321Result(
     setZecSend: (ZecSend?) -> Unit,
     goPaymentRequest: (ZecSend, String) -> Unit,
 ) {
-    val request = runCatching {
-        // At this point there should by only a valid Zcash address coming
-        ZIP321.request(zip321Uri, null)
-    }.onFailure {
-        Twig.error(it) { "Failed to validate address" }
-    }.getOrElse {
-        false
-    }
-    val payment = when (request) {
-        // We support only one payment currently
-        is ZIP321.ParserResult.Request -> { request.paymentRequest.payments[0] }
-        else -> return
-    }
+    val request =
+        runCatching {
+            // At this point there should by only a valid Zcash address coming
+            ZIP321.request(zip321Uri, null)
+        }.onFailure {
+            Twig.error(it) { "Failed to validate address" }
+        }.getOrElse {
+            false
+        }
+    val payment =
+        when (request) {
+            // We support only one payment currently
+            is ZIP321.ParserResult.Request -> {
+                request.paymentRequest.payments[0]
+            }
+            else -> return
+        }
 
-    val address = synchronizer
-        .validateAddress(payment.recipientAddress.value)
-        .toWalletAddress(payment.recipientAddress.value)
+    val address =
+        synchronizer
+            .validateAddress(payment.recipientAddress.value)
+            .toWalletAddress(payment.recipientAddress.value)
 
     val amount = payment.nonNegativeAmount.value.convertZecToZatoshi()
 
     val memo = Memo(payment.memo?.let { String(it.data, Charsets.UTF_8) } ?: "")
 
-    val zecSend = ZecSend(
-        destination = address,
-        amount = amount,
-        memo = memo,
-        proposal = null
-    )
+    val zecSend =
+        ZecSend(
+            destination = address,
+            amount = amount,
+            memo = memo,
+            proposal = null
+        )
     setZecSend(zecSend)
 
     runCatching {

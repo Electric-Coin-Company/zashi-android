@@ -26,7 +26,6 @@ internal class ScanViewModel(
     private val getSynchronizer: GetSynchronizerUseCase,
     private val zip321ParseUriValidationUseCase: Zip321ParseUriValidationUseCase,
 ) : ViewModel() {
-
     val navigateBack = MutableSharedFlow<ScanResultState>()
 
     val navigateCommand = MutableSharedFlow<String>()
@@ -37,60 +36,61 @@ internal class ScanViewModel(
 
     private var hasBeenScannedSuccessfully = false
 
-    fun onScanned(result: String) = viewModelScope.launch {
+    fun onScanned(result: String) =
         viewModelScope.launch {
-            mutex.withLock {
-                if (!hasBeenScannedSuccessfully) {
-                    val addressValidationResult = getSynchronizer().validateAddress(result)
+            viewModelScope.launch {
+                mutex.withLock {
+                    if (!hasBeenScannedSuccessfully) {
+                        val addressValidationResult = getSynchronizer().validateAddress(result)
 
-                    val zip321ValidationResult = zip321ParseUriValidationUseCase(result)
+                        val zip321ValidationResult = zip321ParseUriValidationUseCase(result)
 
-                    state.update {
-                        if (addressValidationResult is AddressType.Valid) {
-                            ScanValidationState.INVALID
-                        } else if (zip321ValidationResult is Zip321ParseUriValidation.Valid) {
-                            ScanValidationState.INVALID
-                        } else {
-                            ScanValidationState.NONE
+                        state.update {
+                            if (addressValidationResult is AddressType.Valid) {
+                                ScanValidationState.INVALID
+                            } else if (zip321ValidationResult is Zip321ParseUriValidation.Valid) {
+                                ScanValidationState.INVALID
+                            } else {
+                                ScanValidationState.NONE
+                            }
                         }
-                    }
 
-                    if (zip321ValidationResult is Zip321ParseUriValidation.Valid) {
-                        hasBeenScannedSuccessfully = true
-                        navigateBack.emit(ScanResultState.Zip321Uri(zip321ValidationResult.zip321Uri))
+                        if (zip321ValidationResult is Zip321ParseUriValidation.Valid) {
+                            hasBeenScannedSuccessfully = true
+                            navigateBack.emit(ScanResultState.Zip321Uri(zip321ValidationResult.zip321Uri))
+                        } else if (addressValidationResult is AddressType.Valid) {
+                            hasBeenScannedSuccessfully = true
 
-                    } else if (addressValidationResult is AddressType.Valid) {
-                        hasBeenScannedSuccessfully = true
+                            val serializableAddress = SerializableAddress(result, addressValidationResult)
 
-                        val serializableAddress = SerializableAddress(result, addressValidationResult)
-
-                        when (args) {
-                            DEFAULT -> {
-                                navigateBack.emit(
-                                    ScanResultState.Address(
-                                        Json.encodeToString(
-                                            SerializableAddress.serializer(),
-                                            serializableAddress
+                            when (args) {
+                                DEFAULT -> {
+                                    navigateBack.emit(
+                                        ScanResultState.Address(
+                                            Json.encodeToString(
+                                                SerializableAddress.serializer(),
+                                                serializableAddress
+                                            )
                                         )
                                     )
-                                )
-                            }
+                                }
 
-                            ADDRESS_BOOK -> {
-                                navigateCommand.emit(AddContactArgs(serializableAddress.address))
+                                ADDRESS_BOOK -> {
+                                    navigateCommand.emit(AddContactArgs(serializableAddress.address))
+                                }
                             }
                         }
                     }
                 }
             }
         }
-    }
 
-    fun onScannedError() = viewModelScope.launch {
-        mutex.withLock {
-            if (!hasBeenScannedSuccessfully) {
-                state.update { ScanValidationState.INVALID }
+    fun onScannedError() =
+        viewModelScope.launch {
+            mutex.withLock {
+                if (!hasBeenScannedSuccessfully) {
+                    state.update { ScanValidationState.INVALID }
+                }
             }
         }
-    }
 }
