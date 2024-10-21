@@ -8,16 +8,15 @@ import org.zecdev.zip321.ZIP321
 internal class Zip321ParseUriValidationUseCase(
     private val getSynchronizerUseCase: GetSynchronizerUseCase
 ) {
-    suspend operator fun invoke(zip321Uri: String) = validateZip321Uri(zip321Uri)
+    operator fun invoke(zip321Uri: String) = validateZip321Uri(zip321Uri)
 
-    private suspend fun validateZip321Uri(zip321Uri: String): Zip321ParseUriValidation {
+    private fun validateZip321Uri(zip321Uri: String): Zip321ParseUriValidation {
         val paymentRequest =
             runCatching {
                 ZIP321.request(
                     uriString = zip321Uri,
                     validatingRecipients = { address ->
-                        // We should be fine with the blocking implementation here, although we could improve this with
-                        // using e.g. callbackFlow
+                        // We should be fine with the blocking implementation here
                         runBlocking {
                             getSynchronizerUseCase().validateAddress(address).let { validation ->
                                 when (validation) {

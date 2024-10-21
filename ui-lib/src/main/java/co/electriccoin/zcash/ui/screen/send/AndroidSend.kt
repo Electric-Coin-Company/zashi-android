@@ -165,19 +165,20 @@ internal fun WrapSend(
     }
 
     // Zip321 Uri scan result processing
-    if (sendArguments?.zip321Uri != null) {
-        if (synchronizer != null && spendingKey != null) {
-            LaunchedEffect(goPaymentRequest) {
-                scope.launch {
-                    processZip321Result(
-                        zip321Uri = sendArguments.zip321Uri,
-                        synchronizer = synchronizer,
-                        account = spendingKey.account,
-                        setSendStage = setSendStage,
-                        setZecSend = setZecSend,
-                        goPaymentRequest = goPaymentRequest
-                    )
-                }
+    if (sendArguments?.zip321Uri != null &&
+        synchronizer != null &&
+        spendingKey != null
+    ) {
+        LaunchedEffect(goPaymentRequest) {
+            scope.launch {
+                processZip321Result(
+                    zip321Uri = sendArguments.zip321Uri,
+                    synchronizer = synchronizer,
+                    account = spendingKey.account,
+                    setSendStage = setSendStage,
+                    setZecSend = setZecSend,
+                    goPaymentRequest = goPaymentRequest
+                )
             }
         }
     }

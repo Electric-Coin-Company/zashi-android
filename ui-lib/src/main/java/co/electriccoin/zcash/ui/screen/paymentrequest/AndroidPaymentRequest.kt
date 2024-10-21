@@ -17,6 +17,7 @@ import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.NavigationTargets
 import co.electriccoin.zcash.ui.NavigationTargets.HOME
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.compose.LocalActivity
 import co.electriccoin.zcash.ui.common.compose.LocalNavController
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.authentication.AuthenticationUseCase
@@ -31,18 +32,8 @@ import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 @Composable
-internal fun MainActivity.WrapPaymentRequest(arguments: PaymentRequestArguments) {
-    PaymentRequest(
-        activity = this,
-        arguments = arguments
-    )
-}
-
-@Composable
-private fun PaymentRequest(
-    activity: MainActivity,
-    arguments: PaymentRequestArguments
-) {
+internal fun WrapPaymentRequest(arguments: PaymentRequestArguments) {
+    val activity = LocalActivity.current as MainActivity
     val navController = LocalNavController.current
 
     val walletViewModel = koinActivityViewModel<WalletViewModel>()
