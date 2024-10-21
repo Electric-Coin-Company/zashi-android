@@ -18,7 +18,7 @@ class AddressBookStorageProviderImpl(
     private val context: Context
 ) : AddressBookStorageProvider {
     override fun getStorageFile(): File? {
-        return File(context.noBackupFilesDir, LOCAL_ADDRESS_BOOK_FILE_NAME)
+        return File(context.filesDir, LOCAL_ADDRESS_BOOK_FILE_NAME)
             .takeIf { it.exists() && it.isFile }
     }
 
@@ -27,7 +27,7 @@ class AddressBookStorageProviderImpl(
     override fun getOrCreateTempStorageFile(): File = getOrCreateFile(REMOTE_ADDRESS_BOOK_FILE_NAME_LOCAL_COPY)
 
     private fun getOrCreateFile(name: String): File {
-        val file = File(context.noBackupFilesDir, name)
+        val file = File(context.filesDir, name)
         if (!file.exists()) {
             file.createNewFile()
         }
