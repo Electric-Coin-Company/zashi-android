@@ -1,5 +1,7 @@
 package co.electriccoin.zcash.ui.screen.paymentrequest.viewmodel
 
+import android.app.Application
+import android.content.Intent
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.android.sdk.SdkSynchronizer
@@ -8,6 +10,7 @@ import cash.z.ecc.android.sdk.model.Proposal
 import cash.z.ecc.android.sdk.model.UnifiedSpendingKey
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.spackle.Twig
+import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.provider.GetMonetarySeparatorProvider
 import co.electriccoin.zcash.ui.common.usecase.GetSpendingKeyUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSynchronizerUseCase
@@ -19,22 +22,29 @@ import co.electriccoin.zcash.ui.screen.paymentrequest.model.PaymentRequestStage
 import co.electriccoin.zcash.ui.screen.paymentrequest.model.PaymentRequestState
 import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SubmitResult
 import co.electriccoin.zcash.ui.screen.sendconfirmation.viewmodel.CreateTransactionsViewModel
+import co.electriccoin.zcash.ui.screen.support.model.SupportInfo
+import co.electriccoin.zcash.ui.screen.support.model.SupportInfoType
+import co.electriccoin.zcash.ui.screen.support.viewmodel.SupportViewModel
+import co.electriccoin.zcash.ui.util.EmailUtil
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class PaymentRequestViewModel(
+    private val application: Application,
     private val arguments: PaymentRequestArguments,
     private val authenticationViewModel: AuthenticationViewModel,
     private val createTransactionsViewModel: CreateTransactionsViewModel,
     getMonetarySeparators: GetMonetarySeparatorProvider,
     private val getSpendingKeyUseCase: GetSpendingKeyUseCase,
     private val getSynchronizer: GetSynchronizerUseCase,
+    private val supportViewModel: SupportViewModel,
     walletViewModel: WalletViewModel,
     observeAddressBookContacts: ObserveAddressBookContactsUseCase,
 ) : ViewModel() {
@@ -45,15 +55,18 @@ class PaymentRequestViewModel(
         combine(
             walletViewModel.exchangeRateUsd,
             observeAddressBookContacts(),
-            stage
-        ) { rate, contacts, currentStage ->
+            stage,
+            supportViewModel.supportInfo.mapNotNull { it },
+        ) { rate, contacts, currentStage, supportInfo ->
             PaymentRequestState.Prepared(
                 arguments = arguments,
                 contact = contacts?.find { it.address == arguments.address?.address },
                 exchangeRateState = rate,
                 monetarySeparators = getMonetarySeparators(),
                 onAddToContacts = { onAddToContacts(it) },
+                onBack = ::onBack,
                 onClose = ::onClose,
+                onContactSupport = { message -> onContactSupport(message, supportInfo) },
                 onSend = { onSend(it) },
                 stage = currentStage,
                 zecSend = arguments.toZecSend(),
@@ -64,6 +77,8 @@ class PaymentRequestViewModel(
             initialValue = PaymentRequestState.Loading
         )
 
+    internal val backNavigationCommand = MutableSharedFlow<Unit>()
+
     internal val closeNavigationCommand = MutableSharedFlow<Unit>()
 
     internal val addContactNavigationCommand = MutableSharedFlow<String>()
@@ -72,12 +87,22 @@ class PaymentRequestViewModel(
 
     internal val authenticationNavigationCommand = MutableSharedFlow<Proposal>()
 
+    internal val sendReportFailedNavigationCommand = MutableSharedFlow<Unit>()
+
     internal fun onClose() = viewModelScope.launch {
         closeNavigationCommand.emit(Unit)
     }
 
+    internal fun onBack() = viewModelScope.launch {
+        backNavigationCommand.emit(Unit)
+    }
+
     private fun onHome() = viewModelScope.launch {
         homeNavigationCommand.emit(Unit)
+    }
+
+    internal fun setStage(newStage: PaymentRequestStage) = viewModelScope.launch {
+        stage.emit(newStage)
     }
 
     private fun onAddToContacts(address: String) = viewModelScope.launch {
@@ -114,7 +139,7 @@ class PaymentRequestViewModel(
         spendingKey: UnifiedSpendingKey,
         synchronizer: Synchronizer,
     ) {
-        stage.value = PaymentRequestStage.Sending
+        setStage(PaymentRequestStage.Sending)
 
         val submitResult =
             submitTransactions(
@@ -157,21 +182,46 @@ class PaymentRequestViewModel(
     private fun processSubmissionResult(submitResult: SubmitResult) {
         when (submitResult) {
             SubmitResult.Success -> {
-                stage.value = PaymentRequestStage.Confirmed
+                setStage(PaymentRequestStage.Confirmed)
                 onHome()
             }
             is SubmitResult.SimpleTrxFailure.SimpleTrxFailureSubmit -> {
-                stage.value = PaymentRequestStage.Failure(submitResult.toErrorMessage(), submitResult.toErrorStacktrace())
+                setStage(PaymentRequestStage.Failure(submitResult.toErrorMessage(), submitResult.toErrorStacktrace()))
             }
             is SubmitResult.SimpleTrxFailure.SimpleTrxFailureGrpc -> {
-                stage.value = PaymentRequestStage.FailureGrpc
+                setStage(PaymentRequestStage.FailureGrpc)
             }
             is SubmitResult.SimpleTrxFailure.SimpleTrxFailureOther -> {
-                stage.value = PaymentRequestStage.Failure(submitResult.toErrorMessage(), submitResult.toErrorStacktrace())
+                setStage(PaymentRequestStage.Failure(submitResult.toErrorMessage(), submitResult.toErrorStacktrace()))
             }
             is SubmitResult.MultipleTrxFailure -> {
                 Twig.error { "$submitResult is currently unsupported submission result" }
             }
+        }
+    }
+
+    private fun onContactSupport(message: String?, supportInfo: SupportInfo) = viewModelScope.launch {
+        val fullMessage = EmailUtil.formatMessage(
+            body = message,
+            supportInfo = supportInfo.toSupportString(
+                SupportInfoType.entries.toSet()
+            )
+        )
+        val mailIntent =
+            EmailUtil.newMailActivityIntent(
+                application.applicationContext.getString(R.string.support_email_address),
+                application.applicationContext.getString(R.string.app_name),
+                fullMessage
+            ).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            }
+        runCatching {
+            application.startActivity(mailIntent)
+        }.onSuccess {
+            setStage(PaymentRequestStage.Initial)
+        }.onFailure {
+            setStage(PaymentRequestStage.Initial)
+            sendReportFailedNavigationCommand.tryEmit(Unit)
         }
     }
 }

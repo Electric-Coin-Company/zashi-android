@@ -3,10 +3,12 @@
 package co.electriccoin.zcash.ui.screen.paymentrequest
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cash.z.ecc.android.sdk.model.Proposal
@@ -14,12 +16,14 @@ import co.electriccoin.zcash.di.koinActivityViewModel
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.NavigationTargets
 import co.electriccoin.zcash.ui.NavigationTargets.HOME
+import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.LocalNavController
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.authentication.AuthenticationUseCase
 import co.electriccoin.zcash.ui.screen.authentication.WrapAuthentication
 import co.electriccoin.zcash.ui.screen.contact.AddContactArgs
 import co.electriccoin.zcash.ui.screen.paymentrequest.model.PaymentRequestArguments
+import co.electriccoin.zcash.ui.screen.paymentrequest.model.PaymentRequestStage
 import co.electriccoin.zcash.ui.screen.paymentrequest.model.PaymentRequestState
 import co.electriccoin.zcash.ui.screen.paymentrequest.view.PaymentRequestView
 import co.electriccoin.zcash.ui.screen.paymentrequest.viewmodel.PaymentRequestViewModel
@@ -51,6 +55,36 @@ private fun PaymentRequest(
 
     val authenticateForProposal = rememberSaveable { mutableStateOf<Proposal?>(null) }
 
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    val onBackAction = {
+        when (paymentRequestState) {
+            PaymentRequestState.Loading -> {}
+            is PaymentRequestState.Prepared -> {
+                val state = (paymentRequestState as PaymentRequestState.Prepared)
+                when (state.stage) {
+                    PaymentRequestStage.Initial,
+                    PaymentRequestStage.Confirmed -> navController.popBackStack()
+                    PaymentRequestStage.Sending -> {
+                        // No action - wait until the sending is done
+                    }
+                    is PaymentRequestStage.Failure -> paymentRequestViewModel.setStage(PaymentRequestStage.Initial)
+                    is PaymentRequestStage.FailureGrpc -> {
+                        paymentRequestViewModel.setStage(PaymentRequestStage.Confirmed)
+                        navController.navigate(HOME)
+                    }
+                }
+            }
+        }
+    }
+
+    BackHandler { onBackAction() }
+
+    LaunchedEffect(Unit) {
+        paymentRequestViewModel.backNavigationCommand.collect {
+            onBackAction()
+        }
+    }
     LaunchedEffect(Unit) {
         paymentRequestViewModel.closeNavigationCommand.collect {
             navController.popBackStack()
@@ -71,17 +105,18 @@ private fun PaymentRequest(
             navController.navigate(HOME)
         }
     }
-
-    BackHandler {
-        when (paymentRequestState) {
-            PaymentRequestState.Loading -> {}
-            else -> paymentRequestViewModel.onClose()
+    LaunchedEffect(Unit) {
+        paymentRequestViewModel.sendReportFailedNavigationCommand.collect {
+            snackbarHostState.showSnackbar(
+                message = activity.getString(R.string.payment_request_send_failed_report_unable_open_email)
+            )
         }
     }
 
     PaymentRequestView(
         state = paymentRequestState,
         topAppBarSubTitleState = walletState,
+        snackbarHostState = snackbarHostState
     )
 
     if (authenticateForProposal.value != null) {

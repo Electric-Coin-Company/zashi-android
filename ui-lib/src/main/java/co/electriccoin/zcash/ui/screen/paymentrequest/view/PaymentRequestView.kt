@@ -22,6 +22,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -35,7 +37,9 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cash.z.ecc.android.sdk.model.MonetarySeparators
 import cash.z.ecc.android.sdk.model.WalletAddress
@@ -45,7 +49,9 @@ import co.electriccoin.zcash.ui.common.compose.BalanceWidgetBigLineOnly
 import co.electriccoin.zcash.ui.common.extension.asZecAmountTriple
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
+import co.electriccoin.zcash.ui.design.component.AppAlertDialog
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
+import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.design.component.StyledBalance
 import co.electriccoin.zcash.ui.design.component.StyledBalanceDefaults
@@ -71,6 +77,7 @@ private fun PaymentRequestLoadingPreview() =
         PaymentRequestView(
             state = PaymentRequestState.Loading,
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
+            snackbarHostState = SnackbarHostState(),
         )
     }
 
@@ -86,12 +93,15 @@ private fun PaymentRequestPreview() =
                     exchangeRateState = ExchangeRateState.Data(onRefresh = {}),
                     monetarySeparators = MonetarySeparators.current(),
                     onAddToContacts = {},
+                    onContactSupport = { _ -> },
+                    onBack = {},
                     onClose = {},
                     onSend = {},
                     zecSend = PaymentRequestArgumentsFixture.new().toZecSend(),
                     stage = PaymentRequestStage.Initial,
                 ),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
+            snackbarHostState = SnackbarHostState(),
         )
     }
 
@@ -99,6 +109,7 @@ private fun PaymentRequestPreview() =
 internal fun PaymentRequestView(
     state: PaymentRequestState,
     topAppBarSubTitleState: TopAppBarSubTitleState,
+    snackbarHostState: SnackbarHostState,
 ) {
     when (state) {
         PaymentRequestState.Loading -> {
@@ -114,18 +125,38 @@ internal fun PaymentRequestView(
                 },
                 bottomBar = {
                     PaymentRequestBottomBar(state = state)
-                }
+                },
+                snackbarHost = { SnackbarHost(snackbarHostState) },
             ) { paddingValues ->
-                PaymentRequestContents(
-                    state = state,
-                    modifier =
-                    Modifier
-                        .fillMaxHeight()
-                        .verticalScroll(
-                            rememberScrollState()
-                        )
-                        .scaffoldPadding(paddingValues),
-                )
+                Box {
+                    PaymentRequestContents(
+                        state = state,
+                        modifier =
+                        Modifier
+                            .fillMaxHeight()
+                            .verticalScroll(
+                                rememberScrollState()
+                            )
+                            .scaffoldPadding(paddingValues),
+                    )
+                    when (state.stage) {
+                        PaymentRequestStage.FailureGrpc -> {
+                            PaymentRequestSendFailureGrpc(
+                                onDone = state.onBack
+                            )
+                        }
+                        is PaymentRequestStage.Failure -> {
+                            PaymentRequestSendFailure(
+                                onDone = state.onBack,
+                                onReport = { status -> state.onContactSupport(status.stackTrace) },
+                                stage = state.stage,
+                            )
+                        }
+                        else -> {
+                            // No action needed
+                        }
+                    }
+                }
             }
         }
     }
@@ -428,4 +459,76 @@ private fun PaymentRequestAmounts(
             )
         }
     }
+}
+
+@Composable
+@Preview("SendConfirmationFailure")
+private fun PreviewSendConfirmationFailure() {
+    ZcashTheme(forceDarkMode = false) {
+        BlankSurface {
+            PaymentRequestSendFailure(
+                onDone = {},
+                onReport = {},
+                stage = PaymentRequestStage.Failure("Failed - network error", "Failed stackTrace"),
+            )
+        }
+    }
+}
+
+@Composable
+private fun PaymentRequestSendFailure(
+    onDone: () -> Unit,
+    onReport: (PaymentRequestStage.Failure) -> Unit,
+    stage: PaymentRequestStage.Failure,
+) {
+    // TODO [#1276]: Once we ensure that the reason contains a localized message, we can leverage it for the UI prompt
+    // TODO [#1276]: Consider adding support for a specific exception in AppAlertDialog
+    // TODO [#1276]: https://github.com/Electric-Coin-Company/zashi-android/issues/1276
+
+    AppAlertDialog(
+        title = stringResource(id = R.string.payment_request_dialog_error_title),
+        text = {
+            Column(
+                Modifier.verticalScroll(rememberScrollState())
+            ) {
+                Text(
+                    text = stringResource(id = R.string.payment_request_dialog_error_text),
+                    color = ZcashTheme.colors.textPrimary,
+                )
+
+                if (stage.error.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
+
+                    Text(
+                        text = stage.error,
+                        fontStyle = FontStyle.Italic,
+                        color = ZcashTheme.colors.textPrimary,
+                    )
+                }
+            }
+        },
+        confirmButtonText = stringResource(id = R.string.payment_request_dialog_error_ok_btn),
+        onConfirmButtonClick = onDone,
+        dismissButtonText = stringResource(id = R.string.payment_request_dialog_error_report_btn),
+        onDismissButtonClick = { onReport(stage) },
+    )
+}
+
+@Composable
+private fun PaymentRequestSendFailureGrpc(onDone: () -> Unit) {
+    AppAlertDialog(
+        title = stringResource(id = R.string.payment_request_dialog_error_grpc_title),
+        text = {
+            Column(
+                Modifier.verticalScroll(rememberScrollState())
+            ) {
+                Text(
+                    text = stringResource(id = R.string.payment_request_dialog_error_grpc_text),
+                    color = ZcashTheme.colors.textPrimary,
+                )
+            }
+        },
+        confirmButtonText = stringResource(id = R.string.payment_request_dialog_error_grpc_btn),
+        onConfirmButtonClick = onDone
+    )
 }

@@ -16,8 +16,10 @@ internal sealed class PaymentRequestState {
         val monetarySeparators: MonetarySeparators,
         val onAddToContacts: (String) -> Unit,
         val onClose: () -> Unit,
+        val onBack: () -> Unit,
         val onSend: (proposal: Proposal) -> Unit,
         val zecSend: ZecSend,
         val stage: PaymentRequestStage,
+        val onContactSupport: (String?) -> Unit,
     ) : PaymentRequestState()
 }
