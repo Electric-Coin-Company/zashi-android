@@ -83,7 +83,7 @@ fun ZashiButton(
 
             @Composable
             override fun Loading() {
-                if (enabled && isLoading) {
+                if (isLoading) {
                     LottieProgress(
                         loadingRes =
                             if (isSystemInDarkTheme()) {

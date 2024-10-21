@@ -60,6 +60,7 @@ import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.screen.exchangerate.widget.StyledExchangeLabel
 import co.electriccoin.zcash.ui.screen.paymentrequest.PaymentRequestArgumentsFixture
+import co.electriccoin.zcash.ui.screen.paymentrequest.model.PaymentRequestStage
 import co.electriccoin.zcash.ui.screen.paymentrequest.model.PaymentRequestState
 import co.electriccoin.zcash.ui.screen.send.ext.abbreviated
 
@@ -88,6 +89,7 @@ private fun PaymentRequestPreview() =
                     onClose = {},
                     onSend = {},
                     zecSend = PaymentRequestArgumentsFixture.new().toZecSend(),
+                    stage = PaymentRequestStage.Initial,
                 ),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )
@@ -174,7 +176,9 @@ private fun PaymentRequestBottomBar(
     ZashiBottomBar(modifier = modifier.fillMaxWidth()) {
         ZashiButton(
             text = stringResource(id = R.string.payment_request_send_btn),
-            onClick = { state.onSend(state.arguments.zip321Uri!!) },
+            onClick = { state.onSend(state.zecSend.proposal!!) },
+            enabled = state.stage != PaymentRequestStage.Sending && state.stage != PaymentRequestStage.Confirmed,
+            isLoading = state.stage == PaymentRequestStage.Sending,
             modifier =
             Modifier
                 .fillMaxWidth()
