@@ -3,68 +3,62 @@ package co.electriccoin.zcash.ui.screen.scan
 import androidx.activity.compose.BackHandler
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import cash.z.ecc.android.sdk.Synchronizer
-import cash.z.ecc.android.sdk.type.AddressType
 import co.electriccoin.zcash.di.koinActivityViewModel
+import co.electriccoin.zcash.ui.NavigationArguments.SEND_SCAN_RECIPIENT_ADDRESS
+import co.electriccoin.zcash.ui.NavigationArguments.SEND_SCAN_ZIP_321_URI
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.model.SerializableAddress
-import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
+import co.electriccoin.zcash.ui.common.compose.LocalNavController
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
+import co.electriccoin.zcash.ui.popBackStackJustOnce
+import co.electriccoin.zcash.ui.screen.scan.model.ScanResultState
 import co.electriccoin.zcash.ui.screen.scan.view.Scan
+import co.electriccoin.zcash.ui.screen.scan.viewmodel.ScanViewModel
 import co.electriccoin.zcash.ui.util.SettingsUtil
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
+import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 @Composable
-internal fun WrapScanValidator(
-    onScanValid: (address: SerializableAddress) -> Unit,
-    goBack: () -> Unit
-) {
+internal fun WrapScanValidator(args: ScanNavigationArgs) {
+    val navController = LocalNavController.current
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
     val walletViewModel = koinActivityViewModel<WalletViewModel>()
-
+    val viewModel = koinViewModel<ScanViewModel> { parametersOf(args) }
     val synchronizer = walletViewModel.synchronizer.collectAsStateWithLifecycle().value
-
     val walletState = walletViewModel.walletStateInformation.collectAsStateWithLifecycle().value
+    val state by viewModel.state.collectAsStateWithLifecycle()
 
     BackHandler {
-        goBack()
+        navController.popBackStackJustOnce(ScanNavigationArgs.ROUTE)
     }
 
-    WrapScan(
-        onScanValid = onScanValid,
-        goBack = goBack,
-        synchronizer = synchronizer,
-        topAppBarSubTitleState = walletState,
-    )
-}
+    LaunchedEffect(Unit) {
+        viewModel.navigateBack.collect { scanResult ->
+            navController.previousBackStackEntry?.savedStateHandle?.apply {
+                when (scanResult) {
+                    is ScanResultState.Address -> set(SEND_SCAN_RECIPIENT_ADDRESS, scanResult.address)
+                    is ScanResultState.Zip321Uri -> set(SEND_SCAN_ZIP_321_URI, scanResult.zip321Uri)
+                }
+            }
+            navController.popBackStackJustOnce(ScanNavigationArgs.ROUTE)
+        }
+    }
 
-@Composable
-fun WrapScan(
-    goBack: () -> Unit,
-    onScanValid: (address: SerializableAddress) -> Unit,
-    synchronizer: Synchronizer?,
-    topAppBarSubTitleState: TopAppBarSubTitleState,
-) {
-    val context = LocalContext.current
-
-    val scope = rememberCoroutineScope()
-
-    val snackbarHostState = remember { SnackbarHostState() }
-
-    var hasBeenScannedSuccessfully by remember { mutableStateOf(false) }
-
-    val mutex = remember { Mutex() }
-
-    var addressValidationResult by remember { mutableStateOf<AddressType?>(null) }
+    LaunchedEffect(Unit) {
+        viewModel.navigateCommand.collect {
+            navController.popBackStack()
+            navController.navigate(it)
+        }
+    }
 
     if (synchronizer == null) {
         // TODO [#1146]: Consider moving CircularScreenProgressIndicator from Android layer to View layer
@@ -74,24 +68,13 @@ fun WrapScan(
     } else {
         Scan(
             snackbarHostState = snackbarHostState,
-            addressValidationResult = addressValidationResult,
-            onBack = goBack,
-            onScanned = { result ->
-                scope.launch {
-                    mutex.withLock {
-                        if (!hasBeenScannedSuccessfully) {
-                            addressValidationResult = synchronizer.validateAddress(result)
-                            val isAddressValid = addressValidationResult?.let { !it.isNotValid } ?: false
-                            if (isAddressValid) {
-                                hasBeenScannedSuccessfully = true
-                                onScanValid(SerializableAddress(result, addressValidationResult!!))
-                            }
-                        }
-                    }
-                }
+            validationResult = state,
+            onBack = { navController.popBackStackJustOnce(ScanNavigationArgs.ROUTE) },
+            onScanned = {
+                viewModel.onScanned(it)
             },
             onScanError = {
-                addressValidationResult = AddressType.Invalid()
+                viewModel.onScannedError()
             },
             onOpenSettings = {
                 runCatching {
@@ -107,7 +90,7 @@ fun WrapScan(
                 }
             },
             onScanStateChanged = {},
-            topAppBarSubTitleState = topAppBarSubTitleState,
+            topAppBarSubTitleState = walletState,
         )
     }
 }

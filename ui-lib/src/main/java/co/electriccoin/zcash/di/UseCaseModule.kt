@@ -29,6 +29,8 @@ import co.electriccoin.zcash.ui.common.usecase.ValidateContactAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.ValidateContactNameUseCase
 import co.electriccoin.zcash.ui.common.usecase.ValidateEndpointUseCase
 import co.electriccoin.zcash.ui.common.usecase.Zip321BuildUriUseCase
+import co.electriccoin.zcash.ui.common.usecase.Zip321ParseUriValidationUseCase
+import co.electriccoin.zcash.ui.common.usecase.Zip321ProposalFromUriUseCase
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
@@ -58,9 +60,11 @@ val useCaseModule =
         singleOf(::ObserveContactPickedUseCase)
         singleOf(::GetAddressesUseCase)
         singleOf(::CopyToClipboardUseCase)
+        singleOf(::ShareImageUseCase)
+        singleOf(::Zip321BuildUriUseCase)
+        singleOf(::Zip321ProposalFromUriUseCase)
+        singleOf(::Zip321ParseUriValidationUseCase)
         singleOf(::ObserveWalletStateUseCase)
         singleOf(::IsCoinbaseAvailableUseCase)
         singleOf(::GetSpendingKeyUseCase)
-        singleOf(::ShareImageUseCase)
-        singleOf(::Zip321BuildUriUseCase)
     }
