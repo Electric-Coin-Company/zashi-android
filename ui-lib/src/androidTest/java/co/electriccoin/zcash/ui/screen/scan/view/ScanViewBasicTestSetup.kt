@@ -7,6 +7,7 @@ import cash.z.ecc.android.sdk.type.AddressType
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.scan.model.ScanScreenState
+import co.electriccoin.zcash.ui.screen.scan.model.ScanValidationState
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicReference
 
@@ -30,7 +31,7 @@ class ScanViewBasicTestSetup(
     @Suppress("TestFunctionName")
     fun DefaultContent() {
         Scan(
-            validationResult = AddressType.Shielded,
+            validationResult = ScanValidationState.VALID,
             onBack = {
                 onBackCount.incrementAndGet()
             },
