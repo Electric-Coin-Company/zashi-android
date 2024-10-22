@@ -9,6 +9,8 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [1.2.1 (760)] - 2024-10-22
+
 ### Changed
 - Global design updates
 - Onboarding screen has been redesigned
