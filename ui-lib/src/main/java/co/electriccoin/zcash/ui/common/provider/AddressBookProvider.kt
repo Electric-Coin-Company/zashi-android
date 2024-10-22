@@ -4,8 +4,8 @@ import co.electriccoin.zcash.ui.common.model.AddressBook
 import co.electriccoin.zcash.ui.common.model.AddressBookContact
 import kotlinx.datetime.Instant
 import java.io.File
-import java.io.FileOutputStream
 import java.io.InputStream
+import java.io.OutputStream
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
@@ -24,18 +24,18 @@ class AddressBookProviderImpl : AddressBookProvider {
         addressBook: AddressBook
     ) {
         file.outputStream().use {
-            serializeAddressBookToByteArrayFile(it, addressBook)
+            serializeAddressBook(it, addressBook)
         }
     }
 
     override fun readAddressBookFromFile(file: File): AddressBook {
         return file.inputStream().use {
-            deserializeByteArrayFileToAddressBook(it)
+            deserializeAddressBook(it)
         }
     }
 
-    private fun serializeAddressBookToByteArrayFile(
-        outputStream: FileOutputStream,
+    private fun serializeAddressBook(
+        outputStream: OutputStream,
         addressBook: AddressBook
     ) {
         outputStream.buffered().use {
@@ -51,7 +51,7 @@ class AddressBookProviderImpl : AddressBookProvider {
         }
     }
 
-    private fun deserializeByteArrayFileToAddressBook(inputStream: InputStream): AddressBook {
+    private fun deserializeAddressBook(inputStream: InputStream): AddressBook {
         return inputStream.buffered().use { stream ->
             AddressBook(
                 version = stream.readInt(),
