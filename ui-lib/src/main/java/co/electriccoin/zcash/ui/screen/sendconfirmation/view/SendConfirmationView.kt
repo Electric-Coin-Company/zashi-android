@@ -44,6 +44,7 @@ import cash.z.ecc.sdk.fixture.ZatoshiFixture
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.BalanceWidgetBigLineOnly
 import co.electriccoin.zcash.ui.common.extension.asZecAmountTriple
+import co.electriccoin.zcash.ui.common.extension.totalAmount
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
@@ -423,7 +424,7 @@ private fun SendConfirmationContent(
         )
 
         BalanceWidgetBigLineOnly(
-            parts = zecSend.amount.toZecStringFull().asZecAmountTriple(),
+            parts = zecSend.totalAmount().toZecStringFull().asZecAmountTriple(),
             // We don't hide any balance in confirmation screen
             isHideBalances = false
         )

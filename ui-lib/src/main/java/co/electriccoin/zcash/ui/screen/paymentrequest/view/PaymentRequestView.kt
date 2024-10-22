@@ -47,6 +47,7 @@ import cash.z.ecc.sdk.extension.toZecStringFull
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.BalanceWidgetBigLineOnly
 import co.electriccoin.zcash.ui.common.extension.asZecAmountTriple
+import co.electriccoin.zcash.ui.common.extension.totalAmount
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.component.AppAlertDialog
@@ -460,7 +461,7 @@ private fun PaymentRequestAmounts(
             )
             Spacer(modifier = Modifier.width(ZashiDimensions.Spacing.spacingMd))
             StyledBalance(
-                balanceParts = state.zecSend.amount.toZecStringFull().asZecAmountTriple(),
+                balanceParts = state.zecSend.totalAmount().toZecStringFull().asZecAmountTriple(),
                 textColor = ZashiColors.Text.textPrimary,
                 textStyle =
                     StyledBalanceDefaults.textStyles(
