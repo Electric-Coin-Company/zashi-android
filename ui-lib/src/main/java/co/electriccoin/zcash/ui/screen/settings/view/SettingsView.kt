@@ -1,6 +1,5 @@
 package co.electriccoin.zcash.ui.screen.settings.view
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,7 +24,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
@@ -37,18 +35,16 @@ import co.electriccoin.zcash.ui.design.component.ZashiSettingsListItem
 import co.electriccoin.zcash.ui.design.component.ZashiSettingsListItemState
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarBackNavigation
+import co.electriccoin.zcash.ui.design.component.ZashiVersion
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
-import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
-import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.settings.SettingsTag
 import co.electriccoin.zcash.ui.screen.settings.model.SettingsState
 import co.electriccoin.zcash.ui.screen.settings.model.SettingsTroubleshootingState
 import kotlinx.collections.immutable.persistentListOf
 
-@Suppress("LongMethod")
 @Composable
 fun Settings(
     state: SettingsState,
@@ -68,55 +64,25 @@ fun Settings(
         } else {
             Column(
                 modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .verticalScroll(rememberScrollState())
-                        .padding(
-                            top = paddingValues.calculateTopPadding(),
-                            bottom = paddingValues.calculateBottomPadding() + ZashiDimensions.Spacing.spacing3xl,
-                            start = 4.dp,
-                            end = 4.dp
-                        ),
+                Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(
+                        top = paddingValues.calculateTopPadding(),
+                        bottom = paddingValues.calculateBottomPadding() + ZashiDimensions.Spacing.spacing3xl,
+                        start = 4.dp,
+                        end = 4.dp
+                    ),
             ) {
-                ZashiSettingsListItem(
-                    text = stringResource(id = R.string.settings_address_book),
-                    icon = R.drawable.ic_settings_address_book,
-                    onClick = state.onAddressBookClick
-                )
-                ZashiHorizontalDivider()
-                ZashiSettingsListItem(state = state.integrations)
-                ZashiHorizontalDivider()
-                ZashiSettingsListItem(
-                    text = stringResource(id = R.string.settings_advanced_settings),
-                    icon = R.drawable.ic_advanced_settings,
-                    onClick = state.onAdvancedSettingsClick
-                )
-                ZashiHorizontalDivider()
-                ZashiSettingsListItem(
-                    text = stringResource(id = R.string.settings_about_us),
-                    icon = R.drawable.ic_settings_info,
-                    onClick = state.onAboutUsClick
-                )
-                ZashiHorizontalDivider()
-                ZashiSettingsListItem(
-                    text = stringResource(id = R.string.settings_feedback),
-                    icon = R.drawable.ic_settings_feedback,
-                    onClick = state.onSendUsFeedbackClick
-                )
+                state.items.forEachIndexed { index, item ->
+                    ZashiSettingsListItem(state = item)
+                    if (index != state.items.lastIndex) {
+                        ZashiHorizontalDivider()
+                    }
+                }
+                Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingXl))
                 Spacer(modifier = Modifier.weight(1f))
-                Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingMin))
-                Image(
-                    modifier = Modifier.align(CenterHorizontally),
-                    painter =
-                        painterResource(id = R.drawable.ic_settings_zashi),
-                    contentDescription = ""
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    modifier = Modifier.align(CenterHorizontally),
-                    text = state.version.getValue(),
-                    color = ZashiColors.Text.textTertiary
-                )
+                ZashiVersion(modifier = Modifier.align(CenterHorizontally), version = state.version)
             }
         }
     }
@@ -131,19 +97,19 @@ private fun SettingsTopAppBar(
     ZashiSmallTopAppBar(
         title = stringResource(id = R.string.settings_title),
         subtitle =
-            when (subTitleState) {
-                TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
-                TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
-                TopAppBarSubTitleState.None -> null
-            },
+        when (subTitleState) {
+            TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
+            TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
+            TopAppBarSubTitleState.None -> null
+        },
         modifier = Modifier.testTag(SettingsTag.SETTINGS_TOP_APP_BAR),
         showTitleLogo = true,
         navigationAction = {
             ZashiTopAppBarBackNavigation(onBack = onBack)
         },
         regularActions = {
-            if (state.settingsTroubleshootingState != null) {
-                TroubleshootingMenu(state = state.settingsTroubleshootingState)
+            if (state.debugMenu != null) {
+                TroubleshootingMenu(state = state.debugMenu)
             }
         },
     )
@@ -224,57 +190,91 @@ private fun AddIcon(enabled: Boolean) {
     }
 }
 
-@Suppress("UnusedPrivateMember")
 @PreviewScreens
 @Composable
 private fun PreviewSettings() {
     ZcashTheme {
         Settings(
             state =
-                SettingsState(
-                    isLoading = false,
-                    version = stringRes("Version 1.2"),
-                    settingsTroubleshootingState = null,
-                    onBack = {},
-                    onAdvancedSettingsClick = {},
-                    onAboutUsClick = {},
-                    onSendUsFeedbackClick = {},
-                    onAddressBookClick = {},
-                    integrations =
-                        ZashiSettingsListItemState(
-                            icon = R.drawable.ic_settings_integrations,
-                            text = stringRes("Integrations"),
-                            titleIcons = persistentListOf(R.drawable.ic_integrations_coinbase)
-                        ) {}
+            SettingsState(
+                isLoading = false,
+                version = stringRes("Version 1.2"),
+                debugMenu = null,
+                onBack = {},
+                items = persistentListOf(
+                    ZashiSettingsListItemState(
+                        text = stringRes(R.string.settings_address_book),
+                        icon = R.drawable.ic_settings_address_book,
+                        onClick = { },
+                    ),
+                    ZashiSettingsListItemState(
+                        text = stringRes(R.string.settings_integrations),
+                        icon = R.drawable.ic_settings_integrations,
+                        onClick = { },
+                        titleIcons = persistentListOf(R.drawable.ic_integrations_coinbase)
+                    ),
+                    ZashiSettingsListItemState(
+                        text = stringRes(R.string.settings_advanced_settings),
+                        icon = R.drawable.ic_advanced_settings,
+                        onClick = { },
+                    ),
+                    ZashiSettingsListItemState(
+                        text = stringRes(R.string.settings_about_us),
+                        icon = R.drawable.ic_settings_info,
+                        onClick = { },
+                    ),
+                    ZashiSettingsListItemState(
+                        text = stringRes(R.string.settings_feedback),
+                        icon = R.drawable.ic_settings_feedback,
+                        onClick = { },
+                    ),
                 ),
+            ),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )
     }
 }
 
-@Suppress("UnusedPrivateMember")
 @PreviewScreens
 @Composable
 private fun PreviewSettingsLoading() {
     ZcashTheme {
         Settings(
             state =
-                SettingsState(
-                    isLoading = true,
-                    version = stringRes("Version 1.2"),
-                    settingsTroubleshootingState = null,
-                    onBack = {},
-                    onAdvancedSettingsClick = {},
-                    onAboutUsClick = {},
-                    onSendUsFeedbackClick = {},
-                    onAddressBookClick = {},
-                    integrations =
-                        ZashiSettingsListItemState(
-                            icon = R.drawable.ic_settings_integrations,
-                            text = stringRes("Integrations"),
-                            titleIcons = persistentListOf(R.drawable.ic_integrations_coinbase)
-                        ) {}
+            SettingsState(
+                isLoading = true,
+                version = stringRes("Version 1.2"),
+                debugMenu = null,
+                onBack = {},
+                items = persistentListOf(
+                    ZashiSettingsListItemState(
+                        text = stringRes(R.string.settings_address_book),
+                        icon = R.drawable.ic_settings_address_book,
+                        onClick = { },
+                    ),
+                    ZashiSettingsListItemState(
+                        text = stringRes(R.string.settings_integrations),
+                        icon = R.drawable.ic_settings_integrations,
+                        onClick = { },
+                        titleIcons = persistentListOf(R.drawable.ic_integrations_coinbase)
+                    ),
+                    ZashiSettingsListItemState(
+                        text = stringRes(R.string.settings_advanced_settings),
+                        icon = R.drawable.ic_advanced_settings,
+                        onClick = { },
+                    ),
+                    ZashiSettingsListItemState(
+                        text = stringRes(R.string.settings_about_us),
+                        icon = R.drawable.ic_settings_info,
+                        onClick = { },
+                    ),
+                    ZashiSettingsListItemState(
+                        text = stringRes(R.string.settings_feedback),
+                        icon = R.drawable.ic_settings_feedback,
+                        onClick = { },
+                    ),
                 ),
+            ),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )
     }

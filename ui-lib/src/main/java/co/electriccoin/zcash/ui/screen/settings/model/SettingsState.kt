@@ -2,15 +2,12 @@ package co.electriccoin.zcash.ui.screen.settings.model
 
 import co.electriccoin.zcash.ui.design.component.ZashiSettingsListItemState
 import co.electriccoin.zcash.ui.design.util.StringResource
+import kotlinx.collections.immutable.ImmutableList
 
 data class SettingsState(
-    val isLoading: Boolean,
     val version: StringResource,
-    val settingsTroubleshootingState: SettingsTroubleshootingState?,
-    val onAddressBookClick: () -> Unit,
+    val isLoading: Boolean,
     val onBack: () -> Unit,
-    val integrations: ZashiSettingsListItemState,
-    val onAdvancedSettingsClick: () -> Unit,
-    val onAboutUsClick: () -> Unit,
-    val onSendUsFeedbackClick: () -> Unit,
+    val debugMenu: SettingsTroubleshootingState?,
+    val items: ImmutableList<ZashiSettingsListItemState>,
 )
