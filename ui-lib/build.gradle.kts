@@ -135,6 +135,7 @@ dependencies {
     implementation(libs.zcash.sdk)
     implementation(libs.zcash.sdk.incubator)
     implementation(libs.zcash.bip39)
+    implementation(libs.tink)
     implementation(libs.zxing)
 
     api(libs.flexa.core)
