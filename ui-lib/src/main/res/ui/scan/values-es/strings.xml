@@ -1,0 +1,14 @@
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="scan_preview_content_description">Camera</string>
+
+    <string name="scan_cancel_button">Cancel</string>
+    <string name="scan_settings_button">Open Settings</string>
+    <string name="scan_settings_open_failed">Unable to launch Settings app.</string>
+
+    <string name="scan_state_permission">The camera is not authorized. Please go to the system settings of Zashi and turn in on.</string>
+    <string name="scan_state_failed">Camera initialization failed. Try it again, please.</string>
+    <string name="scan_address_validation_failed">This QR code is not a valid Zcash Address.</string>
+
+    <string name="scan_torch_content_description">Camera torch toggle</string>
+    <string name="gallery_content_description">Gallery</string>
+</resources>

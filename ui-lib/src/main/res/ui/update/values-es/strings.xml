@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="update_header">Update available</string>
+    <string name="update_critical_header">Update required</string>
+    <string name="update_title_available"><xliff:g id="app_name" example="Zashi">%1$s</xliff:g> here.</string>
+    <string name="update_title_required">It\'s not you, it\'s me.</string>
+    <string name="update_description_required">
+        There is a required update for <xliff:g id="app_name" example="Zashi">%1$s</xliff:g> that makes major
+        improvements to performance and/or security.
+    </string>
+    <string name="update_description_available">
+        There is a new version of <xliff:g id="app_name" example="Zashi">%1$s</xliff:g> that makes minor updates to
+        improve performance and/or security.\n\nPlease take a moment to update to the latest version.
+    </string>
+    <string name="update_link_text">Learn more about this update here.</string>
+    <string name="update_download_button">Update</string>
+    <string name="update_later_enabled_button">Remind me later</string>
+    <string name="update_later_disabled_button">(required)</string>
+</resources>

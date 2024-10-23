@@ -1,0 +1,61 @@
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="balances_title">Balances</string>
+    <string name="balances_shielded_spendable">Shielded zec (spendable)</string>
+    <string name="balances_change_pending">Change pending</string>
+    <string name="balances_pending_transactions">Pending transactions</string>
+    <string name="balances_transparent_balance">Transparent balance</string>
+    <string name="balances_transparent_balance_help" formatted="true">
+        <xliff:g id="app_name" example="Zashi">%1$s</xliff:g> uses the latest network upgrade and does not
+        support sending transparent (unshielded) <xliff:g id="currency" example="ZEC">%2$s</xliff:g>. Use the Shield
+        and Consolidate button to shield your funds, which will add to your available balance and make your <xliff:g
+        id="currency" example="ZEC">%2$s</xliff:g> spendable.</string>
+    <string name="balances_transparent_balance_help_close">I got it!</string>
+    <string name="balances_transparent_help_content_description">Show help</string>
+    <string name="balances_transparent_balance_shield">Shield and consolidate funds</string>
+    <string name="balances_transparent_balance_fee">(Typical Fee &lt; <xliff:g id="fee_amount" example="0.001">%1$s
+    </xliff:g>)</string>
+
+    <string name="balances_status_syncing" formatted="true">Syncing…</string>
+    <string name="balances_status_syncing_amount_suffix" formatted="true"><xliff:g id="amount_prefix" example="123$">%1$s</xliff:g> so far</string>
+    <string name="balances_status_syncing_percentage" formatted="true"><xliff:g id="synced_percent" example="50.25">
+        %1$s</xliff:g>%%</string> <!-- double %% for escaping -->
+    <string name="balances_status_synced">Synced</string>
+    <string name="balances_status_update">Please update <xliff:g id="app_name" example="Zashi">%1$s</xliff:g> using Google Play</string>
+    <string name="balances_status_error_simple"><xliff:g id="app_name" example="Zashi">%1$s</xliff:g> encountered an error while syncing, attempting to resolve…</string>
+    <string name="balances_status_restoring_text">The restore process can take several hours on lower-powered devices, and even on powerful devices is likely to take more than an hour.</string>
+
+    <string name="balances_shielding_successful">Shielding has been successfully submitted</string>
+
+    <string name="balances_status_error_dialog_title">Error</string>
+    <string name="balances_status_error_dialog_connection">
+        Disconnected. Please check your internet connection.
+    </string>
+    <string name="balances_status_error_dialog_cause" formatted="true">Error:
+        <xliff:g id="error_cause" example="Block scanning problem">%1$s</xliff:g>\n\nStacktrace:
+        <xliff:g id="error_stacktrace"
+        example="java.lang.IllegalStateException: Unsupported wallet state
+        at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:104)
+        Caused by: java.lang.RuntimeException: Failure from Rust backend">%2$s</xliff:g>
+    </string>
+    <string name="balances_status_error_dialog_cause_unknown">
+        Unknown cause. Please contact our support team if the problem persists.
+    </string>
+    <string name="balances_status_error_dialog_stacktrace_unknown">Unknown stacktrace.</string>
+    <string name="balances_status_dialog_stopped">Synchronization is stopped. It will resume soon.</string>
+    <string name="balances_status_dialog_ok_button">OK</string>
+    <string name="balances_status_dialog_report_button">Report</string>
+
+    <string name="balances_shielding_dialog_error_title">Transaction Failed</string>
+    <string name="balances_shielding_dialog_error_text">The attempt to shield the transparent funds failed. Try it
+        again, please.</string>
+    <string name="balances_shielding_dialog_error_btn">OK</string>
+    <string name="balances_shielding_dialog_report_btn">Report</string>
+    <string name="balances_shielding_dialog_error_text_below_threshold">The current transparent balance is zero or
+        below the allowed shielding limit.</string>
+
+    <string name="balances_shielding_dialog_error_grpc_title">Connection Error</string>
+    <string name="balances_shielding_dialog_error_grpc_text">Zashi encountered some connection issues when submitting
+        the shielding transaction to the network. It will retry during the next few minutes.</string>
+    <string name="balances_shielding_dialog_error_grpc_btn">OK</string>
+
+</resources>

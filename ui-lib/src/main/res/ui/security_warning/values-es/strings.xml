@@ -1,0 +1,15 @@
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="security_warning_header">Security warning:</string>
+
+    <string name="security_warning_text" formatted="true">Zashi <xliff:g example="0.2.0" id="version_name">%1$s
+    </xliff:g>is a Zcash-only, shielded wallet — built by Zcashers for Zcashers. Zashi has been engineered for your
+        privacy and safety. By installing and using Zashi, you consent to share crash reports with Electric Coin Co.
+        (the wallet developer), which will help us improve the Zashi user experience.*\n\nPlease acknowledge and
+        confirm below to proceed.</string>
+    <string name="security_warning_text_footnote_part_1">*Note:</string>
+    <string name="security_warning_text_footnote_part_2">\u0020Crash reports might reveal the timing of the crash and
+        what events occurred, but it would not reveal spending or viewing keys.</string>
+
+    <string name="security_warning_confirm">Confirm</string>
+    <string name="security_warning_acknowledge">I acknowledge</string>
+</resources>
