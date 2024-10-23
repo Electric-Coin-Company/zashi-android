@@ -16,6 +16,7 @@
     <plurals name="account_history_item_message">
         <item quantity="one">Message</item>
         <item quantity="other">Messages</item>
+        <item quantity="many">Messages</item>
     </plurals>
     <string name="account_history_item_collapse_transaction">Collapse transaction</string>
     <string name="account_history_item_transaction_id">Transaction ID</string>

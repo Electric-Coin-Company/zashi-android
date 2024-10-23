@@ -1,0 +1,15 @@
+<resources>
+    <string name="restore_button_clear">Clear Seed</string>
+
+    <string name="restore_title">Enter secret recovery phrase</string>
+    <string name="restore_seed_instructions">Enter your 24-word seed phrase to restore the associated wallet.</string>
+    <string name="restore_seed_hint">privacy dignity freedom …</string>
+    <string name="restore_seed_button_next">Next</string>
+
+    <string name="restore_seed_warning_suggestions">This word is not in the seed phrase dictionary.  Please select the correct one from the suggestions.</string>
+    <string name="restore_seed_warning_no_suggestions">This word is not in the seed phrase dictionary.</string>
+
+    <string name="restore_birthday_header">Wallet birthday height</string>
+    <string name="restore_birthday_sub_header">(optional)</string>
+    <string name="restore_birthday_button_restore">Restore</string>
+</resources>

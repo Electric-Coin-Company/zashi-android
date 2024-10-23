@@ -1,0 +1,52 @@
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
+    <string name="send_stage_confirmation_title">Confirmation</string>
+    <string name="send_confirmation_amount">Total Amount</string>
+    <string name="send_confirmation_address">Sending to</string>
+    <string name="send_confirmation_memo">Message</string>
+    <string name="send_confirmation_fee">Fee</string>
+    <string name="send_confirmation_amount_item">Amount</string>
+    <string name="send_confirmation_send_button">Send</string>
+    <string name="send_confirmation_back_button">Cancel</string>
+
+    <string name="send_confirmation_dialog_error_title">Transaction Failed</string>
+    <string name="send_confirmation_dialog_error_text">An error occurred and the attempt to send funds failed. Try it again, please.</string>
+    <string name="send_confirmation_dialog_error_ok_btn">OK</string>
+    <string name="send_confirmation_dialog_error_report_btn">Report</string>
+
+    <string name="send_confirmation_dialog_error_grpc_title">Connection Error</string>
+    <string name="send_confirmation_dialog_error_grpc_text">Zashi encountered some connection issues when submitting
+        the transaction to the network. It will retry during the next few minutes.</string>
+    <string name="send_confirmation_dialog_error_grpc_btn">OK</string>
+
+    <string name="send_confirmation_multiple_error_title">Transaction error</string>
+    <string name="send_confirmation_multiple_error_text_1">Sending to this recipient required multiple transactions,
+        but only some of them succeeded. Your funds are safe, but they need to be recovered with the help of Zashi
+        team support.</string>
+    <string name="send_confirmation_multiple_error_text_2">Please use the button below to contact us and recover your
+        funds. Your message to us will be pre-populated with all the data we need to resolve this issue.</string>
+    <string name="send_confirmation_multiple_error_trx_title">TRANSACTION IDs:</string>
+    <string name="send_confirmation_multiple_error_trx_item" formatted="true">
+        <xliff:g id="order" example="1">%1$d. </xliff:g>ID:
+    </string>
+    <string name="send_confirmation_multiple_error_btn">Contact Support</string>
+
+    <string name="send_confirmation_multiple_report_text">Hi, Zashi Team.\n\nWhile sending a transaction to a TEX
+        address, I encountered an error state. I\'m reaching out to get guidance on how to recover my funds.\n\nThank
+        you.</string>
+    <string name="send_confirmation_multiple_report_statuses" formatted="true">Transaction statuses:</string>
+    <string name="send_confirmation_multiple_report_status_success">
+        <xliff:g example="1" id="index">%1$d</xliff:g>: Success
+    </string>
+    <string name="send_confirmation_multiple_report_status_not_attempt" formatted="true">
+        <xliff:g example="2" id="index">%1$d</xliff:g>: Not attempt
+    </string>
+    <string name="send_confirmation_multiple_report_status_failure" formatted="true">
+        <xliff:g example="3" id="index">%1$d</xliff:g>: Failure:
+        gRPC: <xliff:g example="true" id="grpc">%2$s</xliff:g>,
+        code: <xliff:g example="123" id="code">%3$d</xliff:g>,
+        description: <xliff:g example="Network unreachable" id="desc">%4$s</xliff:g>
+    </string>
+    <string name="send_confirmation_multiple_report_unable_open_email">Unable to launch email app.</string>
+
+</resources>
