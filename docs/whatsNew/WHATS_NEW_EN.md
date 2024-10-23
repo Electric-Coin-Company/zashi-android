@@ -10,6 +10,7 @@ directly impact users rather than highlighting other key architectural updates.*
 ## [Unreleased]
 
 ### Changed
+- Redesigned not enough space & forced udpate screens
 - Global design updates
 - Onboarding screen has been redesigned
 - Scan QR screen has been redesigned

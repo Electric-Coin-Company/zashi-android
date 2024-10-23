@@ -7,6 +7,7 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 ## [Unreleased]
 
 ### Changed
+- Redesigned not enough space & forced udpate screens
 - Global design updates
 - Onboarding screen has been redesigned
 - Scan QR screen has been redesigned
