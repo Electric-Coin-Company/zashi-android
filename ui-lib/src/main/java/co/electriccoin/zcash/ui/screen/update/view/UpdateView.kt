@@ -50,15 +50,16 @@ fun Update(
     onSettings: () -> Unit
 ) {
     Box(
-        modifier = Modifier.background(
-            zashiVerticalGradient(
-                if (updateInfo.isForce) {
-                    ZashiColors.Utility.WarningYellow.utilityOrange100
-                } else {
-                    ZashiColors.Utility.Purple.utilityPurple100
-                }
+        modifier =
+            Modifier.background(
+                zashiVerticalGradient(
+                    if (updateInfo.isForce) {
+                        ZashiColors.Utility.WarningYellow.utilityOrange100
+                    } else {
+                        ZashiColors.Utility.Purple.utilityPurple100
+                    }
+                )
             )
-        )
     ) {
         Scaffold(
             topBar = {
@@ -84,62 +85,68 @@ fun Update(
             containerColor = Color.Transparent
         ) {
             Column(modifier = Modifier.scaffoldPadding(it)) {
+                @Suppress("MagicNumber")
                 Spacer(Modifier.weight(.75f))
                 Image(
                     modifier = Modifier.align(Alignment.CenterHorizontally),
-                    painter = painterResource(
-                        if (updateInfo.isForce) {
-                            R.drawable.ic_update_required
-                        } else {
-                            R.drawable.ic_update
-                        }
-                    ),
+                    painter =
+                        painterResource(
+                            if (updateInfo.isForce) {
+                                R.drawable.ic_update_required
+                            } else {
+                                R.drawable.ic_update
+                            }
+                        ),
                     contentDescription = ""
                 )
                 Spacer(Modifier.height(24.dp))
                 Text(
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Center,
-                    text = if (updateInfo.isForce) {
-                        stringResource(id = R.string.update_title_required)
-                    } else {
-                        stringResource(id = R.string.update_title_available)
-                    },
+                    text =
+                        if (updateInfo.isForce) {
+                            stringResource(id = R.string.update_title_required)
+                        } else {
+                            stringResource(id = R.string.update_title_available)
+                        },
                     style = ZashiTypography.header6,
                     fontWeight = FontWeight.SemiBold,
                     color = ZashiColors.Text.textPrimary
                 )
                 Spacer(Modifier.height(12.dp))
 
-                val annotatedString = buildAnnotatedString {
-                    append(
-                        if (updateInfo.isForce) {
-                            stringResource(id = R.string.update_description_required)
-                        } else {
-                            stringResource(id = R.string.update_description_available)
-                        }
-                    )
-                    appendLine()
-                    appendLine()
-
-                    withStyle(
-                        style = SpanStyle(
-                            textDecoration = TextDecoration.Underline
+                val annotatedString =
+                    buildAnnotatedString {
+                        append(
+                            if (updateInfo.isForce) {
+                                stringResource(id = R.string.update_description_required)
+                            } else {
+                                stringResource(id = R.string.update_description_available)
+                            }
                         )
-                    ) {
-                        pushStringAnnotation(stringResource(R.string.update_link_text), CLICKABLE_TAG)
-                        append(stringResource(R.string.update_link_text))
-                        pop()
+                        appendLine()
+                        appendLine()
+
+                        withStyle(
+                            style =
+                                SpanStyle(
+                                    textDecoration = TextDecoration.Underline
+                                )
+                        ) {
+                            pushStringAnnotation(stringResource(R.string.update_link_text), CLICKABLE_TAG)
+                            append(stringResource(R.string.update_link_text))
+                            pop()
+                        }
                     }
-                }
 
                 ClickableText(
                     modifier = Modifier.fillMaxWidth(),
                     text = annotatedString,
-                    style = ZashiTypography.textSm.copy(
-                        textAlign = TextAlign.Center,
-                        color = ZashiColors.Text.textPrimary,
-                    ),
+                    style =
+                        ZashiTypography.textSm.copy(
+                            textAlign = TextAlign.Center,
+                            color = ZashiColors.Text.textPrimary,
+                        ),
                 ) { offset ->
                     annotatedString.getStringAnnotations(tag = CLICKABLE_TAG, start = offset, end = offset)
                         .firstOrNull()
@@ -164,28 +171,30 @@ fun Update(
 
 @PreviewScreens
 @Composable
-private fun UpdatePreview() = ZcashTheme {
-    Update(
-        snackbarHostState = SnackbarHostState(),
-        updateInfo = UpdateInfoFixture.new(appUpdateInfo = null),
-        onDownload = {},
-        onLater = {},
-        onReference = {},
-        onSettings = {}
-    )
-}
+private fun UpdatePreview() =
+    ZcashTheme {
+        Update(
+            snackbarHostState = SnackbarHostState(),
+            updateInfo = UpdateInfoFixture.new(appUpdateInfo = null),
+            onDownload = {},
+            onLater = {},
+            onReference = {},
+            onSettings = {}
+        )
+    }
 
 @PreviewScreens
 @Composable
-private fun UpdateRequiredPreview() = ZcashTheme {
-    Update(
-        snackbarHostState = SnackbarHostState(),
-        updateInfo = UpdateInfoFixture.new(force = true),
-        onDownload = {},
-        onLater = {},
-        onReference = {},
-        onSettings = {}
-    )
-}
+private fun UpdateRequiredPreview() =
+    ZcashTheme {
+        Update(
+            snackbarHostState = SnackbarHostState(),
+            updateInfo = UpdateInfoFixture.new(force = true),
+            onDownload = {},
+            onLater = {},
+            onReference = {},
+            onSettings = {}
+        )
+    }
 
 private const val CLICKABLE_TAG = "clickable"

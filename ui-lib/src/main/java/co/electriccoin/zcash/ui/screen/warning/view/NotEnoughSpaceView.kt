@@ -43,9 +43,10 @@ fun NotEnoughSpaceView(
     snackbarHostState: SnackbarHostState,
 ) {
     Box(
-        modifier = Modifier.background(
-            zashiVerticalGradient(ZashiColors.Utility.ErrorRed.utilityError100)
-        )
+        modifier =
+            Modifier.background(
+                zashiVerticalGradient(ZashiColors.Utility.ErrorRed.utilityError100)
+            )
     ) {
         Scaffold(
             topBar = {
@@ -64,6 +65,7 @@ fun NotEnoughSpaceView(
             containerColor = Color.Transparent
         ) {
             Column(modifier = Modifier.scaffoldPadding(it)) {
+                @Suppress("MagicNumber")
                 Spacer(Modifier.weight(.75f))
                 Image(
                     modifier = Modifier.align(Alignment.CenterHorizontally),
@@ -83,26 +85,31 @@ fun NotEnoughSpaceView(
 
                 Text(
                     modifier = Modifier.fillMaxWidth(),
-                    text = buildAnnotatedString {
-                        append(
-                            stringResource(R.string.not_enough_space_description_1, storageSpaceRequiredGigabytes) + " "
-                        )
-                        withStyle(
-                            SpanStyle(
-                                fontWeight = FontWeight.Bold
-                            )
-                        ) {
+                    text =
+                        buildAnnotatedString {
                             append(
-                                stringResource(R.string.not_enough_space_description_2, spaceAvailableMegabytes)
+                                stringResource(
+                                    R.string.not_enough_space_description_1,
+                                    storageSpaceRequiredGigabytes
+                                ) + " "
                             )
-                        }
-                        append(
-                            stringResource(
-                                R.string.not_enough_space_description_3, storageSpaceRequiredGigabytes *
-                                    1024 - spaceAvailableMegabytes
+                            withStyle(
+                                SpanStyle(
+                                    fontWeight = FontWeight.Bold
+                                )
+                            ) {
+                                append(
+                                    stringResource(R.string.not_enough_space_description_2, spaceAvailableMegabytes)
+                                )
+                            }
+                            append(
+                                stringResource(
+                                    R.string.not_enough_space_description_3,
+                                    storageSpaceRequiredGigabytes *
+                                        GB_TO_MEGABYTES - spaceAvailableMegabytes
+                                )
                             )
-                        )
-                    },
+                        },
                     style = ZashiTypography.textSm,
                     textAlign = TextAlign.Center,
                     color = ZashiColors.Text.textPrimary,
@@ -120,12 +127,15 @@ fun NotEnoughSpaceView(
 
 @PreviewScreens
 @Composable
-private fun NotEnoughSpacePreview() = ZcashTheme {
-    NotEnoughSpaceView(
-        onSettings = {},
-        onSystemSettings = {},
-        snackbarHostState = SnackbarHostState(),
-        spaceAvailableMegabytes = 300,
-        storageSpaceRequiredGigabytes = 1,
-    )
-}
+private fun NotEnoughSpacePreview() =
+    ZcashTheme {
+        NotEnoughSpaceView(
+            onSettings = {},
+            onSystemSettings = {},
+            snackbarHostState = SnackbarHostState(),
+            spaceAvailableMegabytes = 300,
+            storageSpaceRequiredGigabytes = 1,
+        )
+    }
+
+private const val GB_TO_MEGABYTES = 1024

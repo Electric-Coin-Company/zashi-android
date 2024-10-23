@@ -17,27 +17,30 @@ import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 
 @Composable
-fun ZashiTopAppBarBackNavigation(onBack: () -> Unit) = ZashiTopAppBarNavigation(
-    backContentDescriptionText = stringResource(R.string.back_navigation_content_description),
-    drawableRes = R.drawable.ic_zashi_navigation_back,
-    onBack = onBack
-)
+fun ZashiTopAppBarBackNavigation(onBack: () -> Unit) =
+    ZashiTopAppBarNavigation(
+        backContentDescriptionText = stringResource(R.string.back_navigation_content_description),
+        drawableRes = R.drawable.ic_zashi_navigation_back,
+        onBack = onBack
+    )
 
 @Composable
-fun ZashiTopAppBarCloseNavigation(onBack: () -> Unit) = ZashiTopAppBarNavigation(
-    backContentDescriptionText = stringResource(R.string.back_navigation_content_description),
-    drawableRes = R.drawable.ic_navigation_close,
-    onBack = onBack,
-    tint = ZashiColors.Text.textPrimary
-)
+fun ZashiTopAppBarCloseNavigation(onBack: () -> Unit) =
+    ZashiTopAppBarNavigation(
+        backContentDescriptionText = stringResource(R.string.back_navigation_content_description),
+        drawableRes = R.drawable.ic_navigation_close,
+        onBack = onBack,
+        tint = ZashiColors.Text.textPrimary
+    )
 
 @Composable
-fun ZashiTopAppBarHamburgerNavigation(onBack: () -> Unit) = ZashiTopAppBarNavigation(
-    backContentDescriptionText = stringResource(R.string.back_navigation_content_description),
-    drawableRes = R.drawable.ic_navigation_hamburger,
-    onBack = onBack,
-    tint = ZashiColors.Text.textPrimary
-)
+fun ZashiTopAppBarHamburgerNavigation(onBack: () -> Unit) =
+    ZashiTopAppBarNavigation(
+        backContentDescriptionText = stringResource(R.string.back_navigation_content_description),
+        drawableRes = R.drawable.ic_navigation_hamburger,
+        onBack = onBack,
+        tint = ZashiColors.Text.textPrimary
+    )
 
 @Composable
 private fun ZashiTopAppBarNavigation(
@@ -57,4 +60,3 @@ private fun ZashiTopAppBarNavigation(
         }
     }
 }
-
