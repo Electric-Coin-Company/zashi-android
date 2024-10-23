@@ -55,7 +55,6 @@ import co.electriccoin.zcash.ui.screen.addressbook.AddressBookTag
 import co.electriccoin.zcash.ui.screen.addressbook.model.AddressBookContactState
 import co.electriccoin.zcash.ui.screen.addressbook.model.AddressBookState
 
-@Suppress("LongMethod")
 @Composable
 fun AddressBookView(
     state: AddressBookState,
@@ -307,7 +306,6 @@ private fun DataPreview() {
             state =
                 AddressBookState(
                     isLoading = false,
-                    version = stringRes("Version 1.2"),
                     onBack = {},
                     contacts =
                         (1..10).map {
@@ -341,7 +339,6 @@ private fun LoadingPreview() {
             state =
                 AddressBookState(
                     isLoading = true,
-                    version = stringRes("Version 1.2"),
                     onBack = {},
                     contacts = emptyList(),
                     scanButton =
@@ -366,7 +363,6 @@ private fun EmptyPreview() {
             state =
                 AddressBookState(
                     isLoading = false,
-                    version = stringRes("Version 1.2"),
                     onBack = {},
                     contacts = emptyList(),
                     scanButton =
