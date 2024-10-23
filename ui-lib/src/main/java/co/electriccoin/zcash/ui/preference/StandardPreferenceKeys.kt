@@ -42,7 +42,7 @@ object StandardPreferenceKeys {
     val IS_APP_ACCESS_AUTHENTICATION =
         BooleanPreferenceDefault(
             PreferenceKey("IS_APP_ACCESS_AUTHENTICATION"),
-            false
+            true
         )
     val IS_DELETE_WALLET_AUTHENTICATION =
         BooleanPreferenceDefault(
