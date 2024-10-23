@@ -54,15 +54,15 @@ fun Integrations(
     ) { paddingValues ->
         Column(
             modifier =
-            Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(
-                    top = paddingValues.calculateTopPadding(),
-                    bottom = paddingValues.calculateBottomPadding() + ZashiDimensions.Spacing.spacing3xl,
-                    start = 4.dp,
-                    end = 4.dp
-                ),
+                Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(
+                        top = paddingValues.calculateTopPadding(),
+                        bottom = paddingValues.calculateBottomPadding() + ZashiDimensions.Spacing.spacing3xl,
+                        start = 4.dp,
+                        end = 4.dp
+                    ),
         ) {
             state.items.forEachIndexed { index, item ->
                 ZashiSettingsListItem(state = item)
@@ -86,9 +86,10 @@ fun Integrations(
 @Composable
 private fun DisabledInfo(it: StringResource) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 20.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Image(
@@ -113,11 +114,11 @@ private fun IntegrationsTopAppBar(
     ZashiSmallTopAppBar(
         title = stringResource(id = R.string.integrations_title),
         subtitle =
-        when (subTitleState) {
-            TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
-            TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
-            TopAppBarSubTitleState.None -> null
-        },
+            when (subTitleState) {
+                TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
+                TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
+                TopAppBarSubTitleState.None -> null
+            },
         modifier = Modifier.testTag(SettingsTag.SETTINGS_TOP_APP_BAR),
         showTitleLogo = true,
         navigationAction = {
@@ -128,22 +129,24 @@ private fun IntegrationsTopAppBar(
 
 @PreviewScreens
 @Composable
-private fun IntegrationSettings() = ZcashTheme {
-    Integrations(
-        state =
-        IntegrationsState(
-            version = stringRes("Version 1.2"),
-            onBack = {},
-            disabledInfo = stringRes("Disabled info"),
-            items = persistentListOf(
-                ZashiSettingsListItemState(
-                    icon = R.drawable.ic_integrations_coinbase,
-                    text = stringRes("Coinbase"),
-                    subtitle = stringRes("subtitle"),
-                    onClick = {}
-                )
-            )
-        ),
-        topAppBarSubTitleState = TopAppBarSubTitleState.None,
-    )
-}
+private fun IntegrationSettings() =
+    ZcashTheme {
+        Integrations(
+            state =
+                IntegrationsState(
+                    version = stringRes("Version 1.2"),
+                    onBack = {},
+                    disabledInfo = stringRes("Disabled info"),
+                    items =
+                        persistentListOf(
+                            ZashiSettingsListItemState(
+                                icon = R.drawable.ic_integrations_coinbase,
+                                text = stringRes("Coinbase"),
+                                subtitle = stringRes("subtitle"),
+                                onClick = {}
+                            )
+                        )
+                ),
+            topAppBarSubTitleState = TopAppBarSubTitleState.None,
+        )
+    }

@@ -19,14 +19,17 @@ import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.stringRes
 
 @Composable
-fun ZashiVersion(version: StringResource, modifier: Modifier = Modifier) {
+fun ZashiVersion(
+    version: StringResource,
+    modifier: Modifier = Modifier
+) {
     Column(
         modifier = modifier
     ) {
         Image(
             modifier = Modifier.align(CenterHorizontally),
             painter =
-            painterResource(id = R.drawable.img_zashi_version),
+                painterResource(id = R.drawable.img_zashi_version),
             contentDescription = version.getValue()
         )
         Spacer(modifier = Modifier.height(16.dp))
@@ -40,8 +43,9 @@ fun ZashiVersion(version: StringResource, modifier: Modifier = Modifier) {
 
 @PreviewScreens
 @Composable
-private fun ZashiVersionPreview() = ZcashTheme {
-    BlankSurface {
-        ZashiVersion(version = stringRes("Version"))
+private fun ZashiVersionPreview() =
+    ZcashTheme {
+        BlankSurface {
+            ZashiVersion(version = stringRes("Version"))
+        }
     }
-}

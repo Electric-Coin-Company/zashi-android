@@ -101,34 +101,35 @@ class SettingsViewModel(
                 isLoading = isLoading,
                 debugMenu = troubleshootingState,
                 onBack = ::onBack,
-                items = persistentListOf(
-                    ZashiSettingsListItemState(
-                        text = stringRes(R.string.settings_address_book),
-                        icon = R.drawable.ic_settings_address_book,
-                        onClick = ::onAddressBookClick
+                items =
+                    persistentListOf(
+                        ZashiSettingsListItemState(
+                            text = stringRes(R.string.settings_address_book),
+                            icon = R.drawable.ic_settings_address_book,
+                            onClick = ::onAddressBookClick
+                        ),
+                        ZashiSettingsListItemState(
+                            text = stringRes(R.string.settings_integrations),
+                            icon = R.drawable.ic_settings_integrations,
+                            onClick = ::onIntegrationsClick,
+                            titleIcons = persistentListOf(R.drawable.ic_integrations_coinbase)
+                        ),
+                        ZashiSettingsListItemState(
+                            text = stringRes(R.string.settings_advanced_settings),
+                            icon = R.drawable.ic_advanced_settings,
+                            onClick = ::onAdvancedSettingsClick
+                        ),
+                        ZashiSettingsListItemState(
+                            text = stringRes(R.string.settings_about_us),
+                            icon = R.drawable.ic_settings_info,
+                            onClick = ::onAboutUsClick
+                        ),
+                        ZashiSettingsListItemState(
+                            text = stringRes(R.string.settings_feedback),
+                            icon = R.drawable.ic_settings_feedback,
+                            onClick = ::onSendUsFeedbackClick
+                        ),
                     ),
-                    ZashiSettingsListItemState(
-                        text = stringRes(R.string.settings_integrations),
-                        icon = R.drawable.ic_settings_integrations,
-                        onClick = ::onIntegrationsClick,
-                        titleIcons = persistentListOf(R.drawable.ic_integrations_coinbase)
-                    ),
-                    ZashiSettingsListItemState(
-                        text = stringRes(R.string.settings_advanced_settings),
-                        icon = R.drawable.ic_advanced_settings,
-                        onClick = ::onAdvancedSettingsClick
-                    ),
-                    ZashiSettingsListItemState(
-                        text = stringRes(R.string.settings_about_us),
-                        icon = R.drawable.ic_settings_info,
-                        onClick = ::onAboutUsClick
-                    ),
-                    ZashiSettingsListItemState(
-                        text = stringRes(R.string.settings_feedback),
-                        icon = R.drawable.ic_settings_feedback,
-                        onClick = ::onSendUsFeedbackClick
-                    ),
-                ),
                 version = stringRes(R.string.settings_version, versionInfo.versionName)
             )
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT), null)

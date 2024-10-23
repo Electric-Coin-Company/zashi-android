@@ -47,20 +47,21 @@ class IntegrationsViewModel(
                 version = stringRes(R.string.integrations_version, versionInfo.versionName),
                 disabledInfo = stringRes(R.string.integrations_disabled_info).takeIf { isEnabled.not() },
                 onBack = ::onBack,
-                items = listOfNotNull(
-                    ZashiSettingsListItemState(
-                        // Set the wallet currency by app build is more future-proof, although we hide it from the UI
-                        // in the Testnet build
-                        icon = R.drawable.ic_integrations_coinbase,
-                        text = stringRes(R.string.integrations_coinbase, getZcashCurrency.getLocalizedName()),
-                        subtitle =
-                        stringRes(
-                            R.string.integrations_coinbase_subtitle,
-                            getZcashCurrency.getLocalizedName()
-                        ),
-                        onClick = ::onBuyWithCoinbaseClicked
-                    ).takeIf { isCoinbaseAvailable() }
-                ).toImmutableList()
+                items =
+                    listOfNotNull(
+                        ZashiSettingsListItemState(
+                            // Set the wallet currency by app build is more future-proof, although we hide it from
+                            // the UI in the Testnet build
+                            icon = R.drawable.ic_integrations_coinbase,
+                            text = stringRes(R.string.integrations_coinbase, getZcashCurrency.getLocalizedName()),
+                            subtitle =
+                                stringRes(
+                                    R.string.integrations_coinbase_subtitle,
+                                    getZcashCurrency.getLocalizedName()
+                                ),
+                            onClick = ::onBuyWithCoinbaseClicked
+                        ).takeIf { isCoinbaseAvailable() }
+                    ).toImmutableList()
             )
         }.stateIn(
             scope = viewModelScope,

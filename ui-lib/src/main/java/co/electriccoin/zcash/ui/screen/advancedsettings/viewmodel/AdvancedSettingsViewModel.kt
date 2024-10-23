@@ -19,37 +19,36 @@ class AdvancedSettingsViewModel : ViewModel() {
         MutableStateFlow(
             AdvancedSettingsState(
                 onBack = ::onBack,
-                items = persistentListOf(
-                    ZashiSettingsListItemState(
-                        text = stringRes(R.string.advanced_settings_recovery),
-                        icon = R.drawable.ic_advanced_settings_recovery,
+                items =
+                    persistentListOf(
+                        ZashiSettingsListItemState(
+                            text = stringRes(R.string.advanced_settings_recovery),
+                            icon = R.drawable.ic_advanced_settings_recovery,
+                            onClick = {}
+                        ),
+                        ZashiSettingsListItemState(
+                            text = stringRes(R.string.advanced_settings_export),
+                            icon = R.drawable.ic_advanced_settings_export,
+                            onClick = {}
+                        ),
+                        ZashiSettingsListItemState(
+                            text = stringRes(R.string.advanced_settings_choose_server),
+                            icon =
+                                R.drawable.ic_advanced_settings_choose_server,
+                            onClick = ::onChooseServerClick
+                        ),
+                        ZashiSettingsListItemState(
+                            text = stringRes(R.string.advanced_settings_currency_conversion),
+                            icon =
+                                R.drawable.ic_advanced_settings_currency_conversion,
+                            onClick = ::onCurrencyConversionClick
+                        )
+                    ),
+                deleteButton =
+                    ButtonState(
+                        stringRes(R.string.advanced_settings_delete_button),
                         onClick = {}
-                    ),
-
-                    ZashiSettingsListItemState(
-                        text = stringRes(R.string.advanced_settings_export),
-                        icon = R.drawable.ic_advanced_settings_export,
-                        onClick = {}
-                    ),
-
-                    ZashiSettingsListItemState(
-                        text = stringRes(R.string.advanced_settings_choose_server),
-                        icon =
-                        R.drawable.ic_advanced_settings_choose_server,
-                        onClick = ::onChooseServerClick
-                    ),
-
-                    ZashiSettingsListItemState(
-                        text = stringRes(R.string.advanced_settings_currency_conversion),
-                        icon =
-                        R.drawable.ic_advanced_settings_currency_conversion,
-                        onClick = ::onCurrencyConversionClick
                     )
-                ),
-                deleteButton = ButtonState(
-                    stringRes(R.string.advanced_settings_delete_button),
-                    onClick = {}
-                )
             )
         ).asStateFlow()
 

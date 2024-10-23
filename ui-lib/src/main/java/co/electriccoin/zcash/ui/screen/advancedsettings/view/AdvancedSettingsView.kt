@@ -60,15 +60,15 @@ fun AdvancedSettings(
     ) { paddingValues ->
         Column(
             modifier =
-            Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(
-                    top = paddingValues.calculateTopPadding(),
-                    bottom = paddingValues.calculateBottomPadding() + ZashiDimensions.Spacing.spacing3xl,
-                    start = 4.dp,
-                    end = 4.dp
-                ),
+                Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(
+                        top = paddingValues.calculateTopPadding(),
+                        bottom = paddingValues.calculateBottomPadding() + ZashiDimensions.Spacing.spacing3xl,
+                        start = 4.dp,
+                        end = 4.dp
+                    ),
         ) {
             state.items.fastForEachIndexed { index, item ->
                 ZashiSettingsListItem(state = item)
@@ -82,9 +82,9 @@ fun AdvancedSettings(
             Spacer(modifier = Modifier.height(20.dp))
             ZashiButton(
                 modifier =
-                Modifier
-                    .padding(horizontal = 20.dp)
-                    .fillMaxWidth(),
+                    Modifier
+                        .padding(horizontal = 20.dp)
+                        .fillMaxWidth(),
                 colors = ZashiButtonDefaults.destructive1Colors(),
                 state = state.deleteButton
             )
@@ -121,11 +121,11 @@ private fun AdvancedSettingsTopAppBar(
     ZashiSmallTopAppBar(
         title = stringResource(id = R.string.advanced_settings_title),
         subtitle =
-        when (subTitleState) {
-            TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
-            TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
-            TopAppBarSubTitleState.None -> null
-        },
+            when (subTitleState) {
+                TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
+                TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
+                TopAppBarSubTitleState.None -> null
+            },
         modifier = Modifier.testTag(AdvancedSettingsTag.ADVANCED_SETTINGS_TOP_APP_BAR),
         showTitleLogo = true,
         navigationAction = {
@@ -136,42 +136,41 @@ private fun AdvancedSettingsTopAppBar(
 
 @PreviewScreens
 @Composable
-private fun AdvancedSettingsPreview() = ZcashTheme {
-    AdvancedSettings(
-        state =
-        AdvancedSettingsState(
-            onBack = {},
-            items = persistentListOf(
-                ZashiSettingsListItemState(
-                    text = stringRes(R.string.advanced_settings_recovery),
-                    icon = R.drawable.ic_advanced_settings_recovery,
-                    onClick = {}
+private fun AdvancedSettingsPreview() =
+    ZcashTheme {
+        AdvancedSettings(
+            state =
+                AdvancedSettingsState(
+                    onBack = {},
+                    items =
+                        persistentListOf(
+                            ZashiSettingsListItemState(
+                                text = stringRes(R.string.advanced_settings_recovery),
+                                icon = R.drawable.ic_advanced_settings_recovery,
+                                onClick = {}
+                            ),
+                            ZashiSettingsListItemState(
+                                text = stringRes(R.string.advanced_settings_export),
+                                icon = R.drawable.ic_advanced_settings_export,
+                                onClick = {}
+                            ),
+                            ZashiSettingsListItemState(
+                                text = stringRes(R.string.advanced_settings_choose_server),
+                                icon = R.drawable.ic_advanced_settings_choose_server,
+                                onClick = {}
+                            ),
+                            ZashiSettingsListItemState(
+                                text = stringRes(R.string.advanced_settings_currency_conversion),
+                                icon = R.drawable.ic_advanced_settings_currency_conversion,
+                                onClick = {}
+                            )
+                        ),
+                    deleteButton =
+                        ButtonState(
+                            text = stringRes(R.string.advanced_settings_delete_button),
+                            onClick = {}
+                        )
                 ),
-
-                ZashiSettingsListItemState(
-                    text = stringRes(R.string.advanced_settings_export),
-                    icon = R.drawable.ic_advanced_settings_export,
-                    onClick = {}
-                ),
-
-                ZashiSettingsListItemState(
-                    text = stringRes(R.string.advanced_settings_choose_server),
-                    icon = R.drawable.ic_advanced_settings_choose_server,
-                    onClick = {}
-                ),
-
-                ZashiSettingsListItemState(
-                    text = stringRes(R.string.advanced_settings_currency_conversion),
-                    icon = R.drawable.ic_advanced_settings_currency_conversion,
-                    onClick = {}
-                )
-            ),
-            deleteButton = ButtonState(
-                text = stringRes(R.string.advanced_settings_delete_button),
-                onClick = {}
-            )
-        ),
-        topAppBarSubTitleState = TopAppBarSubTitleState.None,
-    )
-}
-
+            topAppBarSubTitleState = TopAppBarSubTitleState.None,
+        )
+    }

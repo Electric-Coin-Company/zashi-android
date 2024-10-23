@@ -35,21 +35,21 @@ class SettingsViewTestSetup(
         if (isTroubleshootingEnabled) {
             SettingsTroubleshootingState(
                 rescan =
-                TroubleshootingItemState(isRescanEnabled) {
-                    onRescanCount.incrementAndGet()
-                },
+                    TroubleshootingItemState(isRescanEnabled) {
+                        onRescanCount.incrementAndGet()
+                    },
                 backgroundSync =
-                TroubleshootingItemState(isBackgroundSyncEnabled) {
-                    onBackgroundSyncChangedCount.incrementAndGet()
-                },
+                    TroubleshootingItemState(isBackgroundSyncEnabled) {
+                        onBackgroundSyncChangedCount.incrementAndGet()
+                    },
                 keepScreenOnDuringSync =
-                TroubleshootingItemState(isKeepScreenOnDuringSyncEnabled) {
-                    onKeepScreenOnChangedCount.incrementAndGet()
-                },
+                    TroubleshootingItemState(isKeepScreenOnDuringSyncEnabled) {
+                        onKeepScreenOnChangedCount.incrementAndGet()
+                    },
                 analytics =
-                TroubleshootingItemState(isAnalyticsEnabled) {
-                    onAnalyticsChangedCount.incrementAndGet()
-                }
+                    TroubleshootingItemState(isAnalyticsEnabled) {
+                        onAnalyticsChangedCount.incrementAndGet()
+                    }
             )
         } else {
             null
@@ -105,50 +105,51 @@ class SettingsViewTestSetup(
             ZcashTheme {
                 Settings(
                     state =
-                    SettingsState(
-                        isLoading = false,
-                        version = stringRes("app_version"),
-                        debugMenu = settingsTroubleshootingState,
-                        onBack = {
-                            onBackCount.incrementAndGet()
-                        },
-                        items = persistentListOf(
-                            ZashiSettingsListItemState(
-                                text = stringRes(R.string.settings_address_book),
-                                icon = R.drawable.ic_settings_address_book,
-                                onClick = {
-                                    onAddressBookCount.incrementAndGet()
-                                },
-                            ),
-                            ZashiSettingsListItemState(
-                                text = stringRes(R.string.settings_integrations),
-                                icon = R.drawable.ic_settings_integrations,
-                                titleIcons = persistentListOf(R.drawable.ic_integrations_coinbase),
-                                onClick = { },
-                            ),
-                            ZashiSettingsListItemState(
-                                text = stringRes(R.string.settings_advanced_settings),
-                                icon = R.drawable.ic_advanced_settings,
-                                onClick = {
-                                    onAdvancedSettingsCount.incrementAndGet()
-                                },
-                            ),
-                            ZashiSettingsListItemState(
-                                text = stringRes(R.string.settings_about_us),
-                                icon = R.drawable.ic_settings_info,
-                                onClick = {
-                                    onAboutCount.incrementAndGet()
-                                },
-                            ),
-                            ZashiSettingsListItemState(
-                                text = stringRes(R.string.settings_feedback),
-                                icon = R.drawable.ic_settings_feedback,
-                                onClick = {
-                                    onFeedbackCount.incrementAndGet()
-                                },
-                            ),
-                        )
-                    ),
+                        SettingsState(
+                            isLoading = false,
+                            version = stringRes("app_version"),
+                            debugMenu = settingsTroubleshootingState,
+                            onBack = {
+                                onBackCount.incrementAndGet()
+                            },
+                            items =
+                                persistentListOf(
+                                    ZashiSettingsListItemState(
+                                        text = stringRes(R.string.settings_address_book),
+                                        icon = R.drawable.ic_settings_address_book,
+                                        onClick = {
+                                            onAddressBookCount.incrementAndGet()
+                                        },
+                                    ),
+                                    ZashiSettingsListItemState(
+                                        text = stringRes(R.string.settings_integrations),
+                                        icon = R.drawable.ic_settings_integrations,
+                                        titleIcons = persistentListOf(R.drawable.ic_integrations_coinbase),
+                                        onClick = { },
+                                    ),
+                                    ZashiSettingsListItemState(
+                                        text = stringRes(R.string.settings_advanced_settings),
+                                        icon = R.drawable.ic_advanced_settings,
+                                        onClick = {
+                                            onAdvancedSettingsCount.incrementAndGet()
+                                        },
+                                    ),
+                                    ZashiSettingsListItemState(
+                                        text = stringRes(R.string.settings_about_us),
+                                        icon = R.drawable.ic_settings_info,
+                                        onClick = {
+                                            onAboutCount.incrementAndGet()
+                                        },
+                                    ),
+                                    ZashiSettingsListItemState(
+                                        text = stringRes(R.string.settings_feedback),
+                                        icon = R.drawable.ic_settings_feedback,
+                                        onClick = {
+                                            onFeedbackCount.incrementAndGet()
+                                        },
+                                    ),
+                                )
+                        ),
                     topAppBarSubTitleState = TopAppBarSubTitleState.None,
                 )
             }
