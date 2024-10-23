@@ -10,9 +10,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.di.koinActivityViewModel
+import co.electriccoin.zcash.ui.NavigationTargets.SETTINGS
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.LocalActivity
+import co.electriccoin.zcash.ui.common.compose.LocalNavController
 import co.electriccoin.zcash.ui.common.viewmodel.CheckUpdateViewModel
+import co.electriccoin.zcash.ui.navigateJustOnce
 import co.electriccoin.zcash.ui.screen.update.model.UpdateInfo
 import co.electriccoin.zcash.ui.screen.update.model.UpdateState
 import co.electriccoin.zcash.ui.screen.update.view.Update
@@ -35,6 +38,7 @@ internal fun WrapCheckForUpdate() {
 
     val viewModel = koinActivityViewModel<UpdateViewModel> { parametersOf(inputUpdateInfo) }
     val updateInfo = viewModel.updateInfo.collectAsStateWithLifecycle().value
+    val navController = LocalNavController.current
 
     if (updateInfo.appUpdateInfo != null && updateInfo.state == UpdateState.Prepared) {
         WrapUpdate(
@@ -46,6 +50,9 @@ internal fun WrapCheckForUpdate() {
                     activity = activity,
                     appUpdateInfo = updateInfo.appUpdateInfo
                 )
+            },
+            onSettings = {
+                navController.navigateJustOnce(SETTINGS)
             }
         )
     }
@@ -64,6 +71,7 @@ internal fun WrapUpdate(
     checkForUpdate: () -> Unit,
     remindLater: () -> Unit,
     goForUpdate: () -> Unit,
+    onSettings: () -> Unit
 ) {
     val activity = LocalActivity.current
 
@@ -111,7 +119,8 @@ internal fun WrapUpdate(
                 snackbarHostState,
                 scope
             )
-        }
+        },
+        onSettings = onSettings
     )
 }
 
