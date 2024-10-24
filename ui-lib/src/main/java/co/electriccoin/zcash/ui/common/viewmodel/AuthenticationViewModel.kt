@@ -68,6 +68,15 @@ class AuthenticationViewModel(
     }
 
     /**
+     * Authentication failed UI state
+     */
+    internal val authFailed: MutableStateFlow<Boolean> = MutableStateFlow(false)
+
+    internal fun setAuthFailed() {
+        authFailed.value = true
+    }
+
+    /**
      * App access authentication logic values
      */
     private val isAppAccessAuthenticationRequired: StateFlow<Boolean?> =
@@ -202,7 +211,7 @@ class AuthenticationViewModel(
                             // returning to biometric authentication, such as a button. The operation was canceled
                             // because [BiometricPrompt.ERROR_LOCKOUT] occurred too many times.
                             BiometricPrompt.ERROR_USER_CANCELED -> {
-                                authenticationResult.value = AuthenticationResult.Canceled
+                                authenticationResult.value = AuthenticationResult.Failed
                                 // The following values are just for testing purposes, so we can easier reproduce other
                                 // non-success results obtained from [BiometricPrompt]
                                 // = AuthenticationResult.Failed
@@ -379,8 +388,6 @@ sealed class AuthenticationUIState {
     data object Required : AuthenticationUIState()
 
     data object NotRequired : AuthenticationUIState()
-
-    data object SupportedRequired : AuthenticationUIState()
 
     data object Successful : AuthenticationUIState()
 }
