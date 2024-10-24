@@ -5,8 +5,6 @@ import android.app.Application
 import android.content.Intent
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import cash.z.ecc.android.bip39.Mnemonics
-import cash.z.ecc.android.bip39.toSeed
 import cash.z.ecc.android.sdk.SdkSynchronizer
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.WalletCoordinator
@@ -18,7 +16,6 @@ import cash.z.ecc.android.sdk.model.TransactionOverview
 import cash.z.ecc.android.sdk.model.TransactionRecipient
 import cash.z.ecc.android.sdk.model.WalletAddresses
 import cash.z.ecc.android.sdk.model.ZcashNetwork
-import cash.z.ecc.android.sdk.tool.DerivationTool
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import cash.z.ecc.sdk.type.fromResources
 import co.electriccoin.zcash.preference.EncryptedPreferenceProvider
@@ -32,12 +29,12 @@ import co.electriccoin.zcash.ui.common.provider.GetDefaultServersProvider
 import co.electriccoin.zcash.ui.common.repository.BalanceRepository
 import co.electriccoin.zcash.ui.common.repository.ExchangeRateRepository
 import co.electriccoin.zcash.ui.common.repository.WalletRepository
+import co.electriccoin.zcash.ui.common.usecase.DeleteAddressBookUseCase
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
 import co.electriccoin.zcash.ui.screen.account.ext.TransactionOverviewExt
 import co.electriccoin.zcash.ui.screen.account.ext.getSortHeight
 import co.electriccoin.zcash.ui.screen.account.state.TransactionHistorySyncState
 import kotlinx.collections.immutable.toPersistentList
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -71,6 +68,7 @@ class WalletViewModel(
     private val encryptedPreferenceProvider: EncryptedPreferenceProvider,
     private val standardPreferenceProvider: StandardPreferenceProvider,
     private val getAvailableServers: GetDefaultServersProvider,
+    private val deleteAddressBookUseCase: DeleteAddressBookUseCase,
 ) : AndroidViewModel(application) {
     val navigationCommand = exchangeRateRepository.navigationCommand
 
@@ -218,16 +216,6 @@ class WalletViewModel(
         }
     }
 
-    /**
-     * This method only has an effect if the synchronizer currently is loaded.
-     */
-    fun rescanBlockchain() {
-        viewModelScope.launch {
-            walletCoordinator.rescanBlockchain()
-            persistWalletRestoringState(WalletRestoringState.RESTORING)
-        }
-    }
-
     private fun clearAppStateFlow(): Flow<Boolean> =
         callbackFlow {
             viewModelScope.launch {
@@ -237,6 +225,7 @@ class WalletViewModel(
                 val encryptedPrefsCleared =
                     encryptedPreferenceProvider()
                         .clearPreferences()
+                deleteAddressBookUseCase()
 
                 Twig.info { "Both preferences cleared: ${standardPrefsCleared && encryptedPrefsCleared}" }
 

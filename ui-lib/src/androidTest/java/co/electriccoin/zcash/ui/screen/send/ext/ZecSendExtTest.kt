@@ -4,7 +4,6 @@ import androidx.compose.runtime.saveable.SaverScope
 import androidx.test.filters.SmallTest
 import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.sdk.fixture.ZecSendFixture
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -12,7 +11,6 @@ import kotlin.test.assertEquals
 class ZecSendExtTest {
     @Test
     @SmallTest
-    @OptIn(ExperimentalCoroutinesApi::class)
     fun round_trip() =
         runTest {
             val original = ZecSendFixture.new()

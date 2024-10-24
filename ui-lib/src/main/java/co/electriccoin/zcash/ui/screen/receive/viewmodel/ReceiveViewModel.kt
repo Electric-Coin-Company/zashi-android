@@ -1,7 +1,6 @@
 package co.electriccoin.zcash.ui.screen.receive.viewmodel
 
 import android.app.Application
-import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
@@ -51,9 +50,10 @@ class ReceiveViewModel(
 
     val navigationCommand = MutableSharedFlow<String>()
 
-    @Suppress("UNUSED_PARAMETER")
     private fun onRequestClick(addressType: ReceiveAddressType) =
-        Toast.makeText(application.applicationContext, "Not implemented yet", Toast.LENGTH_SHORT).show()
+        viewModelScope.launch {
+            navigationCommand.emit("${NavigationTargets.REQUEST}/${addressType.ordinal}")
+        }
 
     private fun onQrCodeClick(addressType: ReceiveAddressType) =
         viewModelScope.launch {

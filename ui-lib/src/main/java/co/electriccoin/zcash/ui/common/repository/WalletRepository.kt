@@ -1,9 +1,9 @@
 package co.electriccoin.zcash.ui.common.repository
 
 import android.app.Application
-import androidx.lifecycle.viewModelScope
 import cash.z.ecc.android.bip39.Mnemonics
 import cash.z.ecc.android.bip39.toSeed
+import androidx.lifecycle.viewModelScope
 import cash.z.ecc.android.sdk.SdkSynchronizer
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.WalletCoordinator

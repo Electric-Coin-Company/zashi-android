@@ -14,12 +14,14 @@ import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
 import co.electriccoin.zcash.ui.common.usecase.ObserveConfigurationUseCase
 import co.electriccoin.zcash.ui.common.usecase.RescanBlockchainUseCase
 import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
+import co.electriccoin.zcash.ui.design.component.ZashiSettingsListItemState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
 import co.electriccoin.zcash.ui.screen.addressbook.AddressBookArgs
 import co.electriccoin.zcash.ui.screen.settings.model.SettingsState
 import co.electriccoin.zcash.ui.screen.settings.model.SettingsTroubleshootingState
 import co.electriccoin.zcash.ui.screen.settings.model.TroubleshootingItemState
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -97,14 +99,38 @@ class SettingsViewModel(
         combine(isLoading, troubleshootingState) { isLoading, troubleshootingState ->
             SettingsState(
                 isLoading = isLoading,
-                version = stringRes(R.string.settings_version, versionInfo.versionName),
-                settingsTroubleshootingState = troubleshootingState,
+                debugMenu = troubleshootingState,
                 onBack = ::onBack,
-                onIntegrationsClick = ::onIntegrationsClick,
-                onAdvancedSettingsClick = ::onAdvancedSettingsClick,
-                onAboutUsClick = ::onAboutUsClick,
-                onSendUsFeedbackClick = ::onSendUsFeedbackClick,
-                onAddressBookClick = ::onAddressBookClick
+                items =
+                    persistentListOf(
+                        ZashiSettingsListItemState(
+                            text = stringRes(R.string.settings_address_book),
+                            icon = R.drawable.ic_settings_address_book,
+                            onClick = ::onAddressBookClick
+                        ),
+                        ZashiSettingsListItemState(
+                            text = stringRes(R.string.settings_integrations),
+                            icon = R.drawable.ic_settings_integrations,
+                            onClick = ::onIntegrationsClick,
+                            titleIcons = persistentListOf(R.drawable.ic_integrations_coinbase)
+                        ),
+                        ZashiSettingsListItemState(
+                            text = stringRes(R.string.settings_advanced_settings),
+                            icon = R.drawable.ic_advanced_settings,
+                            onClick = ::onAdvancedSettingsClick
+                        ),
+                        ZashiSettingsListItemState(
+                            text = stringRes(R.string.settings_about_us),
+                            icon = R.drawable.ic_settings_info,
+                            onClick = ::onAboutUsClick
+                        ),
+                        ZashiSettingsListItemState(
+                            text = stringRes(R.string.settings_feedback),
+                            icon = R.drawable.ic_settings_feedback,
+                            onClick = ::onSendUsFeedbackClick
+                        ),
+                    ),
+                version = stringRes(R.string.settings_version, versionInfo.versionName)
             )
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT), null)
 

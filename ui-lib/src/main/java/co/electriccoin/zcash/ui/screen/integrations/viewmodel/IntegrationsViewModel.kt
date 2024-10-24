@@ -29,6 +29,7 @@ import co.electriccoin.zcash.ui.common.usecase.ObserveWalletStateUseCase
 import co.electriccoin.zcash.ui.design.component.ZashiSettingsListItemState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.integrations.model.IntegrationsState
+import kotlinx.collections.immutable.toImmutableList
 import co.electriccoin.zcash.ui.screen.send.model.RecipientAddressState
 import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SubmitResult
 import com.flexa.spend.Transaction
@@ -68,28 +69,23 @@ class IntegrationsViewModel(
         isEnabled.map { isEnabled ->
             IntegrationsState(
                 version = stringRes(R.string.integrations_version, versionInfo.versionName),
-                coinbase =
-                ZashiSettingsListItemState(
-                    // Set the wallet currency by app build is more future-proof, although we hide it from the UI
-                    // in the Testnet build
-                    text = stringRes(R.string.integrations_coinbase, getZcashCurrency.getLocalizedName()),
-                    subtitle =
-                    stringRes(
-                        R.string.integrations_coinbase_subtitle,
-                        getZcashCurrency.getLocalizedName()
-                    ),
-                    onClick = ::onBuyWithCoinbaseClicked
-                ).takeIf { isCoinbaseAvailable() },
-                flexa =
-                ZashiSettingsListItemState(
-                    text = stringRes(R.string.integrations_flexa),
-                    isEnabled = isEnabled,
-                    subtitle = stringRes(R.string.integrations_flexa_subtitle),
-                    onClick = ::onFlexaClicked
-                ).takeIf { isFlexaAvailable() },
                 disabledInfo = stringRes(R.string.integrations_disabled_info).takeIf { isEnabled.not() },
                 onBack = ::onBack,
-                onFlexaSendCallback = ::onFlexaResultCallback
+                items =
+                    listOfNotNull(
+                        ZashiSettingsListItemState(
+                            // Set the wallet currency by app build is more future-proof, although we hide it from
+                            // the UI in the Testnet build
+                            icon = R.drawable.ic_integrations_coinbase,
+                            text = stringRes(R.string.integrations_coinbase, getZcashCurrency.getLocalizedName()),
+                            subtitle =
+                                stringRes(
+                                    R.string.integrations_coinbase_subtitle,
+                                    getZcashCurrency.getLocalizedName()
+                                ),
+                            onClick = ::onBuyWithCoinbaseClicked
+                        ).takeIf { isCoinbaseAvailable() }
+                    ).toImmutableList()
             )
         }.stateIn(
             scope = viewModelScope,

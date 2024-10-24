@@ -184,13 +184,24 @@ dependencyResolutionManagement {
             val playAppUpdateKtxVersion = extra["PLAY_APP_UPDATE_KTX_VERSION"].toString()
             val zcashBip39Version = extra["ZCASH_BIP39_VERSION"].toString()
             val zcashSdkVersion = extra["ZCASH_SDK_VERSION"].toString()
+            val zip321Version = extra["ZIP_321_VERSION"].toString()
             val zxingVersion = extra["ZXING_VERSION"].toString()
             val koinVersion = extra["KOIN_VERSION"].toString()
+            val googleHttpClientGsonVersion = extra["GOOGLE_HTTP_CLIENT_GSON_VERSION"].toString()
+            val googleApiClientAndroidVersion = extra["GOOGLE_API_CLIENT_ANDROID_VERSION"].toString()
+            val googleApiServicesDriveVersion = extra["GOOGLE_API_SERVICES_DRIVE_VERSION"].toString()
+            val playServicesAuthVersion = extra["PLAY_SERVICES_AUTH_VERSION"].toString()
+
 
             // Standalone versions
             version("flank", flankVersion)
             version("jacoco", jacocoVersion)
             version("java", javaVersion)
+
+            library("google-http-client-gson", "com.google.http-client:google-http-client-gson:$googleHttpClientGsonVersion")
+            library("google-api-client-android", "com.google.api-client:google-api-client-android:$googleApiClientAndroidVersion")
+            library("google-api-services-drive", "com.google.apis:google-api-services-drive:$googleApiServicesDriveVersion")
+            library("play-services-auth", "com.google.android.gms:play-services-auth:$playServicesAuthVersion")
 
             // Aliases
             library("accompanist-permissions", "com.google.accompanist:accompanist-permissions:$accompanistPermissionsVersion")
@@ -212,7 +223,8 @@ dependencyResolutionManagement {
             library("androidx-compose-compiler", "androidx.compose.compiler:compiler:$androidxComposeCompilerVersion")
             library("androidx-core", "androidx.core:core-ktx:$androidxCoreVersion")
             library("androidx-constraintlayout", "androidx.constraintlayout:constraintlayout-compose:$androidxConstraintLayoutVersion")
-            library("androidx-fragment", "androidx.fragment:fragment-compose:$androidxFragmentVersion")
+            library("androidx-fragment", "androidx.fragment:fragment:$androidxFragmentVersion")
+            library("androidx-fragment-compose", "androidx.fragment:fragment-compose:$androidxFragmentVersion")
             library("androidx-lifecycle-livedata", "androidx.lifecycle:lifecycle-livedata-ktx:$androidxLifecycleVersion")
             library("androidx-lifecycle-compose", "androidx.lifecycle:lifecycle-runtime-compose:$androidxLifecycleVersion")
             library("androidx-navigation-compose", "androidx.navigation:navigation-compose:$androidxNavigationComposeVersion")
@@ -244,6 +256,7 @@ dependencyResolutionManagement {
             library("zcash-sdk", "cash.z.ecc.android:zcash-android-sdk:$zcashSdkVersion")
             library("zcash-sdk-incubator", "cash.z.ecc.android:zcash-android-sdk-incubator:$zcashSdkVersion")
             library("zcash-bip39", "cash.z.ecc.android:kotlin-bip39:$zcashBip39Version")
+            library("zip321", "org.zecdev:zip321:$zip321Version")
             library("zxing", "com.google.zxing:core:$zxingVersion")
             library("koin", "io.insert-koin:koin-android:$koinVersion")
             library("koin-compose", "io.insert-koin:koin-androidx-compose:$koinVersion")

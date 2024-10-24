@@ -6,10 +6,12 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -57,7 +59,7 @@ import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
-import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensionsInternal
+import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.screen.qrcode.model.QrCodeState
 import co.electriccoin.zcash.ui.screen.qrcode.util.AndroidQrCodeImageGenerator
@@ -433,7 +435,15 @@ private fun ColumnScope.QrCode(
                             width = 1.dp,
                             color = ZashiColors.Surfaces.strokePrimary
                         ),
-                    shape = RoundedCornerShape(ZashiDimensionsInternal.Radius.radius4xl)
+                    shape = RoundedCornerShape(ZashiDimensions.Radius.radius4xl)
+                )
+                .background(
+                    if (isSystemInDarkTheme()) {
+                        ZashiColors.Surfaces.bgAlt
+                    } else {
+                        ZashiColors.Surfaces.bgPrimary
+                    },
+                    RoundedCornerShape(ZashiDimensions.Radius.radius4xl)
                 )
                 .padding(all = 12.dp)
     )

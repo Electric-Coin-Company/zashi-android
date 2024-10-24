@@ -21,7 +21,7 @@ val repositoryModule =
         singleOf(::WalletRepositoryImpl) bind WalletRepository::class
         singleOf(::ConfigurationRepositoryImpl) bind ConfigurationRepository::class
         singleOf(::ExchangeRateRepositoryImpl) bind ExchangeRateRepository::class
-        singleOf(::FlexaRepositoryImpl) bind FlexaRepository::class
         singleOf(::BalanceRepositoryImpl) bind BalanceRepository::class
         singleOf(::AddressBookRepositoryImpl) bind AddressBookRepository::class
+        singleOf(::FlexaRepositoryImpl) bind FlexaRepository::class
     }

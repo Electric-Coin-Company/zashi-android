@@ -13,10 +13,14 @@ import co.electriccoin.zcash.ui.screen.contact.viewmodel.AddContactViewModel
 import co.electriccoin.zcash.ui.screen.contact.viewmodel.UpdateContactViewModel
 import co.electriccoin.zcash.ui.screen.integrations.viewmodel.IntegrationsViewModel
 import co.electriccoin.zcash.ui.screen.onboarding.viewmodel.OnboardingViewModel
+import co.electriccoin.zcash.ui.screen.paymentrequest.viewmodel.PaymentRequestViewModel
 import co.electriccoin.zcash.ui.screen.qrcode.viewmodel.QrCodeViewModel
 import co.electriccoin.zcash.ui.screen.receive.viewmodel.ReceiveViewModel
+import co.electriccoin.zcash.ui.screen.request.viewmodel.RequestViewModel
 import co.electriccoin.zcash.ui.screen.restore.viewmodel.RestoreViewModel
 import co.electriccoin.zcash.ui.screen.restoresuccess.viewmodel.RestoreSuccessViewModel
+import co.electriccoin.zcash.ui.screen.scan.ScanNavigationArgs
+import co.electriccoin.zcash.ui.screen.scan.viewmodel.ScanViewModel
 import co.electriccoin.zcash.ui.screen.sendconfirmation.viewmodel.CreateTransactionsViewModel
 import co.electriccoin.zcash.ui.screen.settings.viewmodel.ScreenBrightnessViewModel
 import co.electriccoin.zcash.ui.screen.settings.viewmodel.SettingsViewModel
@@ -51,7 +55,6 @@ val viewModelModule =
             AddressBookViewModel(
                 args = args,
                 observeAddressBookContacts = get(),
-                getVersionInfo = get(),
                 observeContactPicked = get(),
             )
         }
@@ -66,5 +69,15 @@ val viewModelModule =
         viewModelOf(::UpdateContactViewModel)
         viewModelOf(::ReceiveViewModel)
         viewModelOf(::QrCodeViewModel)
+        viewModelOf(::RequestViewModel)
+        viewModelOf(::PaymentRequestViewModel)
+        viewModelOf(::IntegrationsViewModel)
+        viewModel { (args: ScanNavigationArgs) ->
+            ScanViewModel(
+                args = args,
+                getSynchronizer = get(),
+                zip321ParseUriValidationUseCase = get(),
+            )
+        }
         viewModelOf(::IntegrationsViewModel)
     }

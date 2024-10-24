@@ -30,16 +30,18 @@ import co.electriccoin.zcash.ui.design.component.ZashiSettingsListItem
 import co.electriccoin.zcash.ui.design.component.ZashiSettingsListItemState
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarBackNavigation
+import co.electriccoin.zcash.ui.design.component.ZashiVersion
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
+import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
+import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.getValue
-import co.electriccoin.zcash.ui.design.util.orDark
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.integrations.model.IntegrationsState
 import co.electriccoin.zcash.ui.screen.settings.SettingsTag
+import kotlinx.collections.immutable.persistentListOf
 
-@Suppress("LongMethod")
 @Composable
 fun Integrations(
     state: IntegrationsState,
@@ -57,62 +59,50 @@ fun Integrations(
                     .verticalScroll(rememberScrollState())
                     .padding(
                         top = paddingValues.calculateTopPadding(),
-                        bottom = paddingValues.calculateBottomPadding(),
+                        bottom = paddingValues.calculateBottomPadding() + ZashiDimensions.Spacing.spacing3xl,
                         start = 4.dp,
                         end = 4.dp
                     ),
         ) {
-            state.coinbase?.let {
-                ZashiSettingsListItem(
-                    state = it,
-                    icon = R.drawable.ic_integrations_coinbase,
-                )
-            }
-
-            state.flexa?.let {
-                ZashiHorizontalDivider()
-                ZashiSettingsListItem(
-                    state = it,
-                    icon = R.drawable.ic_integrations_flexa,
-                )
+            state.items.forEachIndexed { index, item ->
+                ZashiSettingsListItem(state = item)
+                if (index != state.items.lastIndex) {
+                    ZashiHorizontalDivider()
+                }
             }
 
             state.disabledInfo?.let {
                 Spacer(modifier = Modifier.height(28.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_advanced_settings_info),
-                        contentDescription = "",
-                        colorFilter = ColorFilter.tint(ZashiColors.Utility.WarningYellow.utilityOrange700)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = it.getValue(),
-                        fontSize = 12.sp,
-                        color = ZashiColors.Utility.WarningYellow.utilityOrange700,
-                    )
-                }
+                DisabledInfo(it)
             }
 
+            Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingXl))
             Spacer(modifier = Modifier.weight(1f))
-            Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingMin))
-            Image(
-                modifier = Modifier.align(CenterHorizontally),
-                painter =
-                    painterResource(id = R.drawable.ic_settings_zashi orDark R.drawable.ic_settings_zashi_dark),
-                contentDescription = ""
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                modifier = Modifier.align(CenterHorizontally),
-                text = state.version.getValue(),
-                color = ZashiColors.Text.textTertiary
-            )
-            Spacer(modifier = Modifier.height(20.dp))
+            ZashiVersion(modifier = Modifier.align(CenterHorizontally), version = state.version)
         }
+    }
+}
+
+@Composable
+private fun DisabledInfo(it: StringResource) {
+    Row(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.ic_advanced_settings_info),
+            contentDescription = "",
+            colorFilter = ColorFilter.tint(ZashiColors.Utility.WarningYellow.utilityOrange700)
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            text = it.getValue(),
+            fontSize = 12.sp,
+            color = ZashiColors.Utility.WarningYellow.utilityOrange700,
+        )
     }
 }
 
@@ -137,31 +127,26 @@ private fun IntegrationsTopAppBar(
     )
 }
 
-@Suppress("UnusedPrivateMember")
 @PreviewScreens
 @Composable
-private fun IntegrationSettings() {
+private fun IntegrationSettings() =
     ZcashTheme {
         Integrations(
             state =
                 IntegrationsState(
                     version = stringRes("Version 1.2"),
                     onBack = {},
-                    coinbase =
-                        ZashiSettingsListItemState(
-                            text = stringRes("Coinbase"),
-                            subtitle = stringRes("Coinbase subtitle"),
-                        ) {},
-                    flexa =
-                        ZashiSettingsListItemState(
-                            text = stringRes("Flexa"),
-                            subtitle = stringRes("Flexa subtitle"),
-                            isEnabled = false
-                        ) {},
                     disabledInfo = stringRes("Disabled info"),
-                    onFlexaSendCallback = {}
+                    items =
+                        persistentListOf(
+                            ZashiSettingsListItemState(
+                                icon = R.drawable.ic_integrations_coinbase,
+                                text = stringRes("Coinbase"),
+                                subtitle = stringRes("subtitle"),
+                                onClick = {}
+                            )
+                        )
                 ),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )
     }
-}

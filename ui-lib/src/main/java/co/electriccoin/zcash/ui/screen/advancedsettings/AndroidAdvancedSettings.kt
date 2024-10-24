@@ -11,6 +11,7 @@ import co.electriccoin.zcash.ui.common.compose.LocalNavController
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.advancedsettings.view.AdvancedSettings
 import co.electriccoin.zcash.ui.screen.advancedsettings.viewmodel.AdvancedSettingsViewModel
+import kotlinx.collections.immutable.toImmutableList
 import org.koin.androidx.compose.koinViewModel
 
 @Suppress("LongParameterList")
@@ -24,11 +25,18 @@ internal fun WrapAdvancedSettings(
     val walletViewModel = koinActivityViewModel<WalletViewModel>()
     val viewModel = koinViewModel<AdvancedSettingsViewModel>()
     val walletState = walletViewModel.walletStateInformation.collectAsStateWithLifecycle().value
+    val originalState = viewModel.state.collectAsStateWithLifecycle().value
     val state =
-        viewModel.state.collectAsStateWithLifecycle().value.copy(
-            onDeleteZashiClick = goDeleteWallet,
-            onExportPrivateDataClick = goExportPrivateData,
-            onRecoveryPhraseClick = goSeedRecovery
+        originalState.copy(
+            deleteButton = originalState.deleteButton.copy(onClick = goDeleteWallet),
+            items =
+                originalState.items.mapIndexed { index, item ->
+                    when (index) {
+                        0 -> item.copy(onClick = goSeedRecovery)
+                        1 -> item.copy(onClick = goExportPrivateData)
+                        else -> item
+                    }
+                }.toImmutableList()
         )
 
     BackHandler {

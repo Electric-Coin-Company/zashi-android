@@ -6,6 +6,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.filters.MediumTest
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.UpdateInfoFixture
 import co.electriccoin.zcash.ui.screen.update.AppUpdateChecker
 import co.electriccoin.zcash.ui.screen.update.model.UpdateInfo
@@ -36,7 +37,9 @@ class UpdateViewIntegrationTest {
             )
 
         restorationTester.setContent {
-            testSetup.DefaultContent()
+            ZcashTheme {
+                testSetup.DefaultContent()
+            }
         }
 
         assertEquals(testSetup.getUpdateInfo().priority, AppUpdateChecker.Priority.HIGH)

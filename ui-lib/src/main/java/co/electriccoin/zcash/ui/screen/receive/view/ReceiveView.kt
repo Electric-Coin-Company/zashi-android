@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
@@ -38,7 +37,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import cash.z.ecc.android.sdk.fixture.WalletAddressesFixture
 import cash.z.ecc.android.sdk.model.WalletAddress
 import cash.z.ecc.android.sdk.model.WalletAddresses
@@ -51,7 +49,7 @@ import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
-import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensionsInternal
+import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.screen.receive.ext.toReceiveAddressType
 import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressType
@@ -144,18 +142,15 @@ private fun ReceiveTopAppBar(
                 onClick = onSettings,
                 modifier =
                     Modifier
-                        .padding(horizontal = ZcashTheme.dimens.spacingDefault)
-                        // Making the size bigger by 3.dp so the rounded image corners are not stripped out
-                        .size(43.dp)
+                        .padding(end = ZcashTheme.dimens.spacingDefault)
                         .testTag(CommonTag.SETTINGS_TOP_BAR_BUTTON)
             ) {
                 Image(
                     painter =
                         painterResource(
-                            id = co.electriccoin.zcash.ui.design.R.drawable.ic_hamburger_menu_with_bg
+                            id = co.electriccoin.zcash.ui.design.R.drawable.ic_hamburger_menu
                         ),
                     contentDescription = stringResource(id = R.string.settings_menu_content_description),
-                    modifier = Modifier.padding(all = 3.dp)
                 )
             }
         },
@@ -255,9 +250,9 @@ private fun UnifiedAddressPanel(
                 .wrapContentHeight()
                 .background(
                     ZashiColors.Utility.Purple.utilityPurple50,
-                    RoundedCornerShape(ZashiDimensionsInternal.Radius.radius3xl)
+                    RoundedCornerShape(ZashiDimensions.Radius.radius3xl)
                 )
-                .clip(RoundedCornerShape(ZashiDimensionsInternal.Radius.radius3xl))
+                .clip(RoundedCornerShape(ZashiDimensions.Radius.radius3xl))
                 .clickable { onExpand() }
                 .padding(all = ZcashTheme.dimens.spacingLarge)
     ) {
@@ -357,9 +352,9 @@ private fun SaplingAddressPanel(
                 .wrapContentHeight()
                 .background(
                     ZashiColors.Utility.Gray.utilityGray50,
-                    RoundedCornerShape(ZashiDimensionsInternal.Radius.radius3xl)
+                    RoundedCornerShape(ZashiDimensions.Radius.radius3xl)
                 )
-                .clip(RoundedCornerShape(ZashiDimensionsInternal.Radius.radius3xl))
+                .clip(RoundedCornerShape(ZashiDimensions.Radius.radius3xl))
                 .clickable { onExpand() }
                 .padding(all = ZcashTheme.dimens.spacingLarge),
     ) {
@@ -450,9 +445,9 @@ private fun TransparentAddressPanel(
                 .wrapContentHeight()
                 .background(
                     ZashiColors.Utility.Gray.utilityGray50,
-                    RoundedCornerShape(ZashiDimensionsInternal.Radius.radius3xl)
+                    RoundedCornerShape(ZashiDimensions.Radius.radius3xl)
                 )
-                .clip(RoundedCornerShape(ZashiDimensionsInternal.Radius.radius3xl))
+                .clip(RoundedCornerShape(ZashiDimensions.Radius.radius3xl))
                 .clickable { onExpand() }
                 .padding(all = ZcashTheme.dimens.spacingLarge),
     ) {
@@ -539,8 +534,8 @@ private fun ReceiveIconButton(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier =
             modifier
-                .background(containerColor, RoundedCornerShape(ZashiDimensionsInternal.Radius.radiusXl))
-                .clip(RoundedCornerShape(ZashiDimensionsInternal.Radius.radiusXl))
+                .background(containerColor, RoundedCornerShape(ZashiDimensions.Radius.radiusXl))
+                .clip(RoundedCornerShape(ZashiDimensions.Radius.radiusXl))
                 .clickable { onClick() }
                 .padding(ZcashTheme.dimens.spacingMid)
     ) {

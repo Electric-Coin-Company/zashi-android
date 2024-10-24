@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package co.electriccoin.zcash.ui
 
 import android.annotation.SuppressLint
@@ -75,6 +77,35 @@ class MainActivity : FragmentActivity() {
 
     val configurationOverrideFlow = MutableStateFlow<ConfigurationOverride?>(null)
 
+    // private val addressBookRepository by inject<AddressBookRepositoryImpl>()
+
+    // private val googleSignInLauncher =
+    //     registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+    //         when (result.resultCode) {
+    //             RESULT_OK -> {
+    //                 addressBookRepository.onGoogleSignInSuccess()
+    //             }
+    //
+    //             RESULT_CANCELED -> {
+    //                 val status = result.data?.extras?.getParcelable<Status>("googleSignInStatus")
+    //                 addressBookRepository.onGoogleSignInCancelled(status)
+    //             }
+    //
+    //             else -> {
+    //                 addressBookRepository.onGoogleSignInError()
+    //             }
+    //         }
+    //     }
+    //
+    // private val googleConsentLauncher =
+    //     registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+    //         when (result.resultCode) {
+    //             RESULT_OK -> requestGoogleSignIn()
+    //             RESULT_CANCELED -> addressBookRepository.onGoogleSignInCancelled(null)
+    //             else -> addressBookRepository.onGoogleSignInError()
+    //         }
+    //     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -85,7 +116,32 @@ class MainActivity : FragmentActivity() {
         setupUiContent()
 
         monitorForBackgroundSync()
+
+        // lifecycleScope.launch {
+        //     addressBookRepository.googleSignInRequest.collect {
+        //         requestGoogleSignIn()
+        //     }
+        // }
+        //
+        // lifecycleScope.launch {
+        //     addressBookRepository.googleRemoteConsentRequest.collect { intent ->
+        //         googleConsentLauncher.launch(intent)
+        //     }
+        // }
     }
+
+    // private fun requestGoogleSignIn() {
+    //     val googleSignInClient =
+    //         GoogleSignIn.getClient(
+    //             this@MainActivity,
+    //             GoogleSignInOptions
+    //                 .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+    //                 .requestScopes(Scope(Scopes.DRIVE_APPFOLDER))
+    //                 .build()
+    //         )
+    //
+    //     googleSignInLauncher.launch(googleSignInClient.signInIntent)
+    // }
 
     /**
      * Sets whether the screen rotation is enabled or screen orientation is locked in the portrait mode.
