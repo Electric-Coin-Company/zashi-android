@@ -29,10 +29,12 @@ import co.electriccoin.zcash.ui.common.usecase.ObserveWalletStateUseCase
 import co.electriccoin.zcash.ui.design.component.ZashiSettingsListItemState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.integrations.model.IntegrationsState
-import kotlinx.collections.immutable.toImmutableList
 import co.electriccoin.zcash.ui.screen.send.model.RecipientAddressState
 import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SubmitResult
+import com.flexa.core.Flexa
 import com.flexa.spend.Transaction
+import com.flexa.spend.buildSpend
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
@@ -54,7 +56,6 @@ class IntegrationsViewModel(
     val backNavigationCommand = MutableSharedFlow<Unit>()
     val flexaNavigationCommand = MutableSharedFlow<Unit>()
     val coinbaseNavigationCommand = MutableSharedFlow<String>()
-    val flexaTransactionSuccess = MutableSharedFlow<FlexaTransactionSent>()
 
     private val versionInfo = getVersionInfo()
     private val isDebug = versionInfo.let { it.isDebuggable && !it.isRunningUnderTestService }
@@ -89,7 +90,12 @@ class IntegrationsViewModel(
                             // Set the wallet currency by app build is more future-proof, although we hide it from
                             // the UI in the Testnet build
                             isEnabled = isEnabled,
-                            icon = R.drawable.ic_integrations_flexa,
+                            icon =
+                                if (isEnabled) {
+                                    R.drawable.ic_integrations_flexa
+                                } else {
+                                    R.drawable.ic_integrations_flexa_disabled
+                                },
                             text = stringRes(R.string.integrations_flexa),
                             subtitle = stringRes(R.string.integrations_flexa_subtitle),
                             onClick = ::onFlexaClicked
@@ -137,34 +143,33 @@ class IntegrationsViewModel(
             flexaNavigationCommand.emit(Unit)
         }
 
-    fun onFlexaResultCallback(transaction: Result<Transaction>) = viewModelScope.launch {
-        Twig.debug { "Getting send transaction proposal" }
-        runCatching {
-            getSynchronizer().proposeSend(getSpendingKey().account, getZecSend(transaction.getOrNull()))
-        }.onSuccess { proposal ->
-            Twig.debug { "Transaction proposal successful: ${proposal.toPrettyString()}" }
-            val result = submitTransactions(proposal = proposal, spendingKey = getSpendingKey())
+    fun onFlexaResultCallback(transaction: Result<Transaction>) =
+        viewModelScope.launch {
+            Twig.debug { "Getting send transaction proposal" }
+            runCatching {
+                getSynchronizer().proposeSend(getSpendingKey().account, getZecSend(transaction.getOrNull()))
+            }.onSuccess { proposal ->
+                Twig.debug { "Transaction proposal successful: ${proposal.toPrettyString()}" }
+                val result = submitTransactions(proposal = proposal, spendingKey = getSpendingKey())
 
-            when (result.first) {
-                SubmitResult.Success -> {
-                    flexaTransactionSuccess.emit(
-                        FlexaTransactionSent(
-                            txSignature = result.second.orEmpty(),
-                            commerceSessionId = transaction
-                                .getOrNull()?.commerceSessionId.orEmpty()
-                        )
-                    )
-                }
+                when (result.first) {
+                    SubmitResult.Success -> {
+                        Twig.debug { "Transaction successful $result" }
+                        Flexa.buildSpend()
+                            .transactionSent(
+                                commerceSessionId = transaction.getOrNull()?.commerceSessionId.orEmpty(),
+                                txSignature = result.second.orEmpty()
+                            )
+                    }
 
-                else -> {
-                    Twig.error { "Transaction submission failed" }
+                    else -> {
+                        Twig.error { "Transaction submission failed" }
+                    }
                 }
+            }.onFailure {
+                Twig.error(it) { "Transaction proposal failed" }
             }
-
-        }.onFailure {
-            Twig.error(it) { "Transaction proposal failed" }
         }
-    }
 
     private suspend fun submitTransactions(
         proposal: Proposal,
@@ -221,8 +226,9 @@ class IntegrationsViewModel(
                 }
             } else {
                 // All transaction submissions were successful
-                SubmitResult.Success to submitResults.filterIsInstance<TransactionSubmitResult.Success>()
-                    .map { it.txIdString() }.firstOrNull()
+                SubmitResult.Success to
+                    submitResults.filterIsInstance<TransactionSubmitResult.Success>()
+                        .map { it.txIdString() }.firstOrNull()
             }
         }.onSuccess {
             Twig.debug { "Transactions submitted successfully" }
@@ -233,46 +239,51 @@ class IntegrationsViewModel(
         }
     }
 
+    @Suppress("TooGenericExceptionThrown")
     private suspend fun getZecSend(transaction: Transaction?): ZecSend {
         if (transaction == null) throw NullPointerException("Transaction is null")
 
-        val recipientAddressState = RecipientAddressState.new(
-            address = transaction.destinationAddress,
-            // TODO [#342]: Verify Addresses without Synchronizer
-            // TODO [#342]: https://github.com/zcash/zcash-android-wallet-sdk/issues/342
-            type = getSynchronizer().validateAddress(transaction.destinationAddress)
-        )
+        val address = transaction.destinationAddress.split(":").last()
+
+        val recipientAddressState =
+            RecipientAddressState.new(
+                address = address,
+                // TODO [#342]: Verify Addresses without Synchronizer
+                // TODO [#342]: https://github.com/zcash/zcash-android-wallet-sdk/issues/342
+                type = getSynchronizer().validateAddress(address)
+            )
 
         return when (
-            val zecSendValidation = ZecSendExt.new(
-                context = context,
-                destinationString = transaction.destinationAddress,
-                zecString = transaction.amount,
-                // Take memo for a valid non-transparent receiver only
-                memoString = ""
-            )
+            val zecSendValidation =
+                ZecSendExt.new(
+                    context = context,
+                    destinationString = address,
+                    zecString = transaction.amount,
+                    // Take memo for a valid non-transparent receiver only
+                    memoString = ""
+                )
         ) {
             is ZecSendExt.ZecSendValidation.Valid ->
                 zecSendValidation.zecSend.copy(
                     destination =
-                    when (recipientAddressState.type) {
-                        is AddressType.Invalid ->
-                            WalletAddress.Unified.new(recipientAddressState.address)
+                        when (recipientAddressState.type) {
+                            is AddressType.Invalid ->
+                                WalletAddress.Unified.new(recipientAddressState.address)
 
-                        AddressType.Shielded ->
-                            WalletAddress.Unified.new(recipientAddressState.address)
+                            AddressType.Shielded ->
+                                WalletAddress.Unified.new(recipientAddressState.address)
 
-                        AddressType.Tex ->
-                            WalletAddress.Tex.new(recipientAddressState.address)
+                            AddressType.Tex ->
+                                WalletAddress.Tex.new(recipientAddressState.address)
 
-                        AddressType.Transparent ->
-                            WalletAddress.Transparent.new(recipientAddressState.address)
+                            AddressType.Transparent ->
+                                WalletAddress.Transparent.new(recipientAddressState.address)
 
-                        AddressType.Unified ->
-                            WalletAddress.Unified.new(recipientAddressState.address)
+                            AddressType.Unified ->
+                                WalletAddress.Unified.new(recipientAddressState.address)
 
-                        null -> WalletAddress.Unified.new(recipientAddressState.address)
-                    }
+                            null -> WalletAddress.Unified.new(recipientAddressState.address)
+                        }
                 )
 
             is ZecSendExt.ZecSendValidation.Invalid -> {
@@ -285,9 +296,3 @@ class IntegrationsViewModel(
         }
     }
 }
-
-data class FlexaTransactionSent(
-    val commerceSessionId: String,
-    val txSignature: String
-)
-

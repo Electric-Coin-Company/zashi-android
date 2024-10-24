@@ -50,14 +50,8 @@ internal fun WrapIntegrations() {
                 .onTransactionRequest {
                     viewModel.onFlexaResultCallback(it)
                 }
+                .build()
                 .open(activity)
-        }
-    }
-
-    LaunchedEffect(Unit) {
-        viewModel.flexaTransactionSuccess.collect {
-            Flexa.buildSpend()
-                .transactionSent(commerceSessionId = it.commerceSessionId, txSignature = it.txSignature)
         }
     }
 

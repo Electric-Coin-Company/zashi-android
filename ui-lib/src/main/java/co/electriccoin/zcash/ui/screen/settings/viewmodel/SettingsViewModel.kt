@@ -115,10 +115,11 @@ class SettingsViewModel(
                             text = stringRes(R.string.settings_integrations),
                             icon = R.drawable.ic_settings_integrations,
                             onClick = ::onIntegrationsClick,
-                            titleIcons = listOfNotNull(
-                                R.drawable.ic_integrations_coinbase,
-                                R.drawable.ic_integrations_flexa.takeIf { isFlexaAvailable() }
-                            ).toImmutableList()
+                            titleIcons =
+                                listOfNotNull(
+                                    R.drawable.ic_integrations_coinbase,
+                                    R.drawable.ic_integrations_flexa.takeIf { isFlexaAvailable() }
+                                ).toImmutableList()
                         ),
                         ZashiSettingsListItemState(
                             text = stringRes(R.string.settings_advanced_settings),

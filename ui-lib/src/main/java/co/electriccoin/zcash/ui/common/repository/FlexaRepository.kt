@@ -5,7 +5,7 @@ import cash.z.ecc.android.sdk.ext.convertZatoshiToZec
 import cash.z.ecc.android.sdk.internal.Twig
 import co.electriccoin.zcash.ui.BuildConfig
 import com.flexa.core.Flexa
-import com.flexa.core.shared.AppAccount
+import com.flexa.core.shared.AssetAccount
 import com.flexa.core.shared.AvailableAsset
 import com.flexa.core.shared.CustodyModel
 import com.flexa.core.shared.FlexaClientConfiguration
@@ -13,9 +13,9 @@ import com.flexa.core.theme.FlexaTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import java.security.MessageDigest
 import java.util.UUID
 
 interface FlexaRepository {
@@ -39,10 +39,9 @@ class FlexaRepositoryImpl(
                 Twig.info { "Flexa initialized" }
 
                 balanceRepository.state
-                    .map { it.totalBalance }
-                    .distinctUntilChanged()
+                    .map { it.spendableBalance }
                     .collect {
-                        Flexa.updateAppAccounts(
+                        Flexa.updateAssetAccounts(
                             arrayListOf(
                                 createFlexaAccount(
                                     zecBalance = it.convertZatoshiToZec().toDouble()
@@ -59,55 +58,60 @@ class FlexaRepositoryImpl(
     /**
      * @return an instance of [FlexaClientConfiguration] or null if no publishable key set up
      */
-    private suspend fun getFlexaClientConfiguration() =
+    private fun getFlexaClientConfiguration() =
         publishableKey?.let { publishableKey ->
             FlexaClientConfiguration(
                 context = application,
                 publishableKey = publishableKey,
                 theme =
-                FlexaTheme(
-                    useDynamicColorScheme = true,
-                ),
-                appAccounts = arrayListOf(createFlexaAccount(DEFAULT_ZEC_BALANCE)),
+                    FlexaTheme(
+                        useDynamicColorScheme = true,
+                    ),
+                assetAccounts = arrayListOf(createFlexaAccount(DEFAULT_ZEC_BALANCE)),
                 webViewThemeConfig =
-                "{\n" +
-                    "    \"android\": {\n" +
-                    "        \"light\": {\n" +
-                    "            \"backgroundColor\": \"#100e29\",\n" +
-                    "            \"sortTextColor\": \"#ed7f60\",\n" +
-                    "            \"titleColor\": \"#ffffff\",\n" +
-                    "            \"cardColor\": \"#2a254e\",\n" +
-                    "            \"borderRadius\": \"15px\",\n" +
-                    "            \"textColor\": \"#ffffff\"\n" +
-                    "        },\n" +
-                    "        \"dark\": {\n" +
-                    "            \"backgroundColor\": \"#100e29\",\n" +
-                    "            \"sortTextColor\": \"#ed7f60\",\n" +
-                    "            \"titleColor\": \"#ffffff\",\n" +
-                    "            \"cardColor\": \"#2a254e\",\n" +
-                    "            \"borderRadius\": \"15px\",\n" +
-                    "            \"textColor\": \"#ffffff\"\n" +
-                    "        }\n" +
-                    "    }\n" +
-                    "}"
+                    "{\n" +
+                        "    \"android\": {\n" +
+                        "        \"light\": {\n" +
+                        "            \"backgroundColor\": \"#100e29\",\n" +
+                        "            \"sortTextColor\": \"#ed7f60\",\n" +
+                        "            \"titleColor\": \"#ffffff\",\n" +
+                        "            \"cardColor\": \"#2a254e\",\n" +
+                        "            \"borderRadius\": \"15px\",\n" +
+                        "            \"textColor\": \"#ffffff\"\n" +
+                        "        },\n" +
+                        "        \"dark\": {\n" +
+                        "            \"backgroundColor\": \"#100e29\",\n" +
+                        "            \"sortTextColor\": \"#ed7f60\",\n" +
+                        "            \"titleColor\": \"#ffffff\",\n" +
+                        "            \"cardColor\": \"#2a254e\",\n" +
+                        "            \"borderRadius\": \"15px\",\n" +
+                        "            \"textColor\": \"#ffffff\"\n" +
+                        "        }\n" +
+                        "    }\n" +
+                        "}"
             )
         }
 
     private fun createFlexaAccount(zecBalance: Double) =
-        AppAccount(
-            accountId = UUID.randomUUID().toString(),
+        AssetAccount(
             displayName = "My Wallet",
             icon = "https://flexa.network/static/4bbb1733b3ef41240ca0f0675502c4f7/d8419/flexa-logo%403x.png",
             availableAssets =
-            listOf(
-                AvailableAsset(
-                    assetId = "bip122:00040fe8ec8471911baa1db1266ea15d/slip44:133",
-                    balance = zecBalance,
-                    symbol = "ZEC",
-                )
-            ),
-            custodyModel = CustodyModel.LOCAL
+                listOf(
+                    AvailableAsset(
+                        assetId = "bip122:00040fe8ec8471911baa1db1266ea15d/slip44:133",
+                        balance = zecBalance,
+                        symbol = "ZEC",
+                    )
+                ),
+            custodyModel = CustodyModel.LOCAL,
+            assetAccountHash = UUID.randomUUID().toString().toSha256()
         )
+
+    private fun String.toSha256() =
+        MessageDigest.getInstance("SHA-256")
+            .digest(toByteArray())
+            .fold("") { str, value -> str + "%02x".format(value) }
 }
 
 private const val DEFAULT_ZEC_BALANCE = .0
