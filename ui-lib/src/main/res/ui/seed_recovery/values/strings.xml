@@ -9,4 +9,6 @@
     <string name="seed_recovery_copy">Tap to Copy</string>
     <string name="seed_recovery_seed_clipboard_tag">Zcash Seed Phrase</string>
     <string name="seed_recovery_birthday_clipboard_tag">Zcash Wallet Birthday</string>
+    <string name="seed_recovery_reveal_button">Reveal security details</string>
+    <string name="seed_recovery_hide_button">Hide security details</string>
 </resources>
