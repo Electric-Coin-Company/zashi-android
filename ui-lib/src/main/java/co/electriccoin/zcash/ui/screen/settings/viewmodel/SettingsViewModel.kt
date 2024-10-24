@@ -13,6 +13,7 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
 import co.electriccoin.zcash.ui.common.usecase.ObserveConfigurationUseCase
 import co.electriccoin.zcash.ui.common.usecase.RescanBlockchainUseCase
+import co.electriccoin.zcash.ui.common.usecase.SensitiveSettingsVisibleUseCase
 import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
 import co.electriccoin.zcash.ui.design.component.ZashiSettingsListItemState
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -22,12 +23,12 @@ import co.electriccoin.zcash.ui.screen.settings.model.SettingsState
 import co.electriccoin.zcash.ui.screen.settings.model.SettingsTroubleshootingState
 import co.electriccoin.zcash.ui.screen.settings.model.TroubleshootingItemState
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
@@ -36,9 +37,10 @@ import kotlinx.coroutines.launch
 @Suppress("TooManyFunctions")
 class SettingsViewModel(
     observeConfiguration: ObserveConfigurationUseCase,
+    isSensitiveSettingsVisible: SensitiveSettingsVisibleUseCase,
     private val standardPreferenceProvider: StandardPreferenceProvider,
     private val getVersionInfo: GetVersionInfoProvider,
-    private val rescanBlockchain: RescanBlockchainUseCase
+    private val rescanBlockchain: RescanBlockchainUseCase,
 ) : ViewModel() {
     private val versionInfo by lazy { getVersionInfo() }
 
@@ -46,15 +48,6 @@ class SettingsViewModel(
     private val isBackgroundSyncEnabled = booleanStateFlow(StandardPreferenceKeys.IS_BACKGROUND_SYNC_ENABLED)
     private val isKeepScreenOnWhileSyncingEnabled =
         booleanStateFlow(StandardPreferenceKeys.IS_KEEP_SCREEN_ON_DURING_SYNC)
-
-    private val isLoading =
-        combine(
-            isAnalyticsEnabled,
-            isBackgroundSyncEnabled,
-            isKeepScreenOnWhileSyncingEnabled
-        ) { isAnalyticsEnabled, isBackgroundSync, isKeepScreenOnWhileSyncing ->
-            isAnalyticsEnabled == null || isBackgroundSync == null || isKeepScreenOnWhileSyncing == null
-        }.distinctUntilChanged()
 
     @Suppress("ComplexCondition")
     private val troubleshootingState =
@@ -95,44 +88,59 @@ class SettingsViewModel(
             }
         }
 
-    val state: StateFlow<SettingsState?> =
-        combine(isLoading, troubleshootingState) { isLoading, troubleshootingState ->
-            SettingsState(
-                isLoading = isLoading,
-                debugMenu = troubleshootingState,
-                onBack = ::onBack,
-                items =
-                    persistentListOf(
-                        ZashiSettingsListItemState(
-                            text = stringRes(R.string.settings_address_book),
-                            icon = R.drawable.ic_settings_address_book,
-                            onClick = ::onAddressBookClick
-                        ),
-                        ZashiSettingsListItemState(
-                            text = stringRes(R.string.settings_integrations),
-                            icon = R.drawable.ic_settings_integrations,
-                            onClick = ::onIntegrationsClick,
-                            titleIcons = persistentListOf(R.drawable.ic_integrations_coinbase)
-                        ),
-                        ZashiSettingsListItemState(
-                            text = stringRes(R.string.settings_advanced_settings),
-                            icon = R.drawable.ic_advanced_settings,
-                            onClick = ::onAdvancedSettingsClick
-                        ),
-                        ZashiSettingsListItemState(
-                            text = stringRes(R.string.settings_about_us),
-                            icon = R.drawable.ic_settings_info,
-                            onClick = ::onAboutUsClick
-                        ),
-                        ZashiSettingsListItemState(
-                            text = stringRes(R.string.settings_feedback),
-                            icon = R.drawable.ic_settings_feedback,
-                            onClick = ::onSendUsFeedbackClick
-                        ),
-                    ),
-                version = stringRes(R.string.settings_version, versionInfo.versionName)
-            )
-        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT), null)
+    val state: StateFlow<SettingsState> =
+        combine(
+            troubleshootingState,
+            isSensitiveSettingsVisible()
+        ) { troubleshootingState, isSensitiveSettingsVisible ->
+            createState(troubleshootingState, isSensitiveSettingsVisible)
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+            initialValue =
+                createState(
+                    troubleshootingState = null,
+                    isSensitiveSettingsVisible = isSensitiveSettingsVisible().value
+                )
+        )
+
+    private fun createState(
+        troubleshootingState: SettingsTroubleshootingState?,
+        isSensitiveSettingsVisible: Boolean
+    ) = SettingsState(
+        debugMenu = troubleshootingState,
+        onBack = ::onBack,
+        items =
+            listOfNotNull(
+                ZashiSettingsListItemState(
+                    text = stringRes(R.string.settings_address_book),
+                    icon = R.drawable.ic_settings_address_book,
+                    onClick = ::onAddressBookClick
+                ),
+                ZashiSettingsListItemState(
+                    text = stringRes(R.string.settings_integrations),
+                    icon = R.drawable.ic_settings_integrations,
+                    onClick = ::onIntegrationsClick,
+                    titleIcons = persistentListOf(R.drawable.ic_integrations_coinbase)
+                ).takeIf { isSensitiveSettingsVisible },
+                ZashiSettingsListItemState(
+                    text = stringRes(R.string.settings_advanced_settings),
+                    icon = R.drawable.ic_advanced_settings,
+                    onClick = ::onAdvancedSettingsClick
+                ),
+                ZashiSettingsListItemState(
+                    text = stringRes(R.string.settings_about_us),
+                    icon = R.drawable.ic_settings_info,
+                    onClick = ::onAboutUsClick
+                ),
+                ZashiSettingsListItemState(
+                    text = stringRes(R.string.settings_feedback),
+                    icon = R.drawable.ic_settings_feedback,
+                    onClick = ::onSendUsFeedbackClick
+                ),
+            ).toImmutableList(),
+        version = stringRes(R.string.settings_version, versionInfo.versionName)
+    )
 
     val navigationCommand = MutableSharedFlow<String>()
     val backNavigationCommand = MutableSharedFlow<Unit>()

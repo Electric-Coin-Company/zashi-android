@@ -23,6 +23,7 @@ import co.electriccoin.zcash.ui.common.usecase.PersistEndpointUseCase
 import co.electriccoin.zcash.ui.common.usecase.RefreshFastestServersUseCase
 import co.electriccoin.zcash.ui.common.usecase.RescanBlockchainUseCase
 import co.electriccoin.zcash.ui.common.usecase.SaveContactUseCase
+import co.electriccoin.zcash.ui.common.usecase.SensitiveSettingsVisibleUseCase
 import co.electriccoin.zcash.ui.common.usecase.ShareImageUseCase
 import co.electriccoin.zcash.ui.common.usecase.UpdateContactUseCase
 import co.electriccoin.zcash.ui.common.usecase.ValidateContactAddressUseCase
@@ -67,4 +68,5 @@ val useCaseModule =
         singleOf(::ObserveWalletStateUseCase)
         singleOf(::IsCoinbaseAvailableUseCase)
         singleOf(::GetSpendingKeyUseCase)
+        singleOf(::SensitiveSettingsVisibleUseCase)
     }
