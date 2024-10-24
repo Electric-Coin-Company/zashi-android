@@ -4,7 +4,6 @@ import android.app.Application
 import cash.z.ecc.android.sdk.ext.convertZatoshiToZec
 import cash.z.ecc.android.sdk.internal.Twig
 import co.electriccoin.zcash.ui.BuildConfig
-import co.electriccoin.zcash.ui.common.provider.FlexaAccountIdProvider
 import com.flexa.core.Flexa
 import com.flexa.core.shared.AppAccount
 import com.flexa.core.shared.AvailableAsset
@@ -17,6 +16,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 interface FlexaRepository {
     fun init()
@@ -25,7 +25,6 @@ interface FlexaRepository {
 class FlexaRepositoryImpl(
     private val balanceRepository: BalanceRepository,
     private val application: Application,
-    private val getFlexaAccountId: FlexaAccountIdProvider,
 ) : FlexaRepository {
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
@@ -94,9 +93,9 @@ class FlexaRepositoryImpl(
             )
         }
 
-    private suspend fun createFlexaAccount(zecBalance: Double) =
+    private fun createFlexaAccount(zecBalance: Double) =
         AppAccount(
-            accountId = getFlexaAccountId(),
+            accountId = UUID.randomUUID().toString(),
             displayName = "My Wallet",
             icon = "https://flexa.network/static/4bbb1733b3ef41240ca0f0675502c4f7/d8419/flexa-logo%403x.png",
             availableAssets =

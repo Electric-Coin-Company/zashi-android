@@ -5,7 +5,6 @@ import cash.z.ecc.android.sdk.WalletCoordinator
 import co.electriccoin.zcash.configuration.AndroidConfigurationFactory
 import co.electriccoin.zcash.global.newInstance
 import co.electriccoin.zcash.preference.EncryptedPreferenceProvider
-import co.electriccoin.zcash.preference.InstallationPreferenceProvider
 import co.electriccoin.zcash.preference.StandardPreferenceProvider
 import co.electriccoin.zcash.preference.model.entry.PreferenceKey
 import co.electriccoin.zcash.ui.preference.PersistableWalletPreferenceDefault
@@ -32,7 +31,6 @@ val coreModule =
 
         singleOf(::StandardPreferenceProvider)
         singleOf(::EncryptedPreferenceProvider)
-        singleOf(::InstallationPreferenceProvider)
 
         single { BiometricManager.from(get()) }
 

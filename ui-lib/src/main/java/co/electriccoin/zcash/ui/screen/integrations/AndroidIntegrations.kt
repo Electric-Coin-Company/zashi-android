@@ -48,7 +48,7 @@ internal fun WrapIntegrations() {
         viewModel.flexaNavigationCommand.collect {
             Flexa.buildSpend()
                 .onTransactionRequest {
-                    state?.onFlexaSendCallback?.invoke(it)
+                    viewModel.onFlexaResultCallback(it)
                 }
                 .open(activity)
         }

@@ -4,7 +4,6 @@ import co.electriccoin.zcash.ui.common.provider.AddressBookProvider
 import co.electriccoin.zcash.ui.common.provider.AddressBookProviderImpl
 import co.electriccoin.zcash.ui.common.provider.AddressBookStorageProvider
 import co.electriccoin.zcash.ui.common.provider.AddressBookStorageProviderImpl
-import co.electriccoin.zcash.ui.common.provider.FlexaAccountIdProvider
 import co.electriccoin.zcash.ui.common.provider.GetDefaultServersProvider
 import co.electriccoin.zcash.ui.common.provider.GetMonetarySeparatorProvider
 import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
@@ -21,5 +20,4 @@ val providerModule =
         factoryOf(::GetMonetarySeparatorProvider)
         factoryOf(::AddressBookStorageProviderImpl) bind AddressBookStorageProvider::class
         factoryOf(::AddressBookProviderImpl) bind AddressBookProvider::class
-        factoryOf(::FlexaAccountIdProvider)
     }

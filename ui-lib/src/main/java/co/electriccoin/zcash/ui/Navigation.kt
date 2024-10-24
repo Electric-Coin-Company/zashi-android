@@ -84,7 +84,6 @@ import co.electriccoin.zcash.ui.screen.qrcode.WrapQrCode
 import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressType
 import co.electriccoin.zcash.ui.screen.request.WrapRequest
 import co.electriccoin.zcash.ui.screen.scan.ScanNavigationArgs
-import co.electriccoin.zcash.ui.screen.integrations.WrapIntegrations
 import co.electriccoin.zcash.ui.screen.scan.WrapScanValidator
 import co.electriccoin.zcash.ui.screen.seedrecovery.WrapSeedRecovery
 import co.electriccoin.zcash.ui.screen.send.ext.toSerializableAddress
@@ -573,7 +572,6 @@ object NavigationTargets {
     const val SETTINGS_EXCHANGE_RATE_OPT_IN = "settings_exchange_rate_opt_in"
     const val SUPPORT = "support"
     const val WHATS_NEW = "whats_new"
-    const val INTEGRATIONS = "integrations"
 }
 
 object NavigationArgs {

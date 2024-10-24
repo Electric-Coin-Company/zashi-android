@@ -84,7 +84,16 @@ class IntegrationsViewModel(
                                     getZcashCurrency.getLocalizedName()
                                 ),
                             onClick = ::onBuyWithCoinbaseClicked
-                        ).takeIf { isCoinbaseAvailable() }
+                        ).takeIf { isCoinbaseAvailable() },
+                        ZashiSettingsListItemState(
+                            // Set the wallet currency by app build is more future-proof, although we hide it from
+                            // the UI in the Testnet build
+                            isEnabled = isEnabled,
+                            icon = R.drawable.ic_integrations_flexa,
+                            text = stringRes(R.string.integrations_flexa),
+                            subtitle = stringRes(R.string.integrations_flexa_subtitle),
+                            onClick = ::onFlexaClicked
+                        ).takeIf { isFlexaAvailable() }
                     ).toImmutableList()
             )
         }.stateIn(
@@ -128,7 +137,7 @@ class IntegrationsViewModel(
             flexaNavigationCommand.emit(Unit)
         }
 
-    private fun onFlexaResultCallback(transaction: Result<Transaction>) = viewModelScope.launch {
+    fun onFlexaResultCallback(transaction: Result<Transaction>) = viewModelScope.launch {
         Twig.debug { "Getting send transaction proposal" }
         runCatching {
             getSynchronizer().proposeSend(getSpendingKey().account, getZecSend(transaction.getOrNull()))
