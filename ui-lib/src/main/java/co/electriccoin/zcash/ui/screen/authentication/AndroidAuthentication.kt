@@ -15,7 +15,6 @@ import co.electriccoin.zcash.ui.common.viewmodel.AuthenticationResult
 import co.electriccoin.zcash.ui.common.viewmodel.AuthenticationViewModel
 import co.electriccoin.zcash.ui.screen.authentication.view.AppAccessAuthentication
 import co.electriccoin.zcash.ui.screen.authentication.view.AuthenticationErrorDialog
-import co.electriccoin.zcash.ui.screen.authentication.view.AuthenticationFailedDialog
 import kotlin.time.Duration.Companion.milliseconds
 
 private const val APP_ACCESS_TRIGGER_DELAY = 0
@@ -23,15 +22,15 @@ private const val DELETE_WALLET_TRIGGER_DELAY = 0
 private const val EXPORT_PRIVATE_DATA_TRIGGER_DELAY = 0
 private const val SEED_RECOVERY_TRIGGER_DELAY = 0
 private const val SEND_FUNDS_DELAY = 0
-private const val RETRY_TRIGGER_DELAY = 0
+internal const val RETRY_TRIGGER_DELAY = 0
 
 @Composable
 internal fun MainActivity.WrapAuthentication(
-    goSupport: () -> Unit,
     onSuccess: () -> Unit,
     onCancel: () -> Unit,
     onFailed: () -> Unit,
     useCase: AuthenticationUseCase,
+    goSupport: (() -> Unit)? = null,
 ) {
     WrapAuthenticationUseCases(
         activity = this,
@@ -47,11 +46,11 @@ internal fun MainActivity.WrapAuthentication(
 @Suppress("LongParameterList")
 private fun WrapAuthenticationUseCases(
     activity: MainActivity,
-    goSupport: () -> Unit,
     onSuccess: () -> Unit,
     onCancel: () -> Unit,
     onFailed: () -> Unit,
     useCase: AuthenticationUseCase,
+    goSupport: (() -> Unit)? = null,
 ) {
     when (useCase) {
         AuthenticationUseCase.AppAccess -> {
@@ -59,7 +58,6 @@ private fun WrapAuthenticationUseCases(
             WrapAppAccessAuth(
                 activity = activity,
                 goToAppContent = onSuccess,
-                goSupport = goSupport,
                 onCancel = onCancel,
                 onFailed = onFailed
             )
@@ -69,7 +67,7 @@ private fun WrapAuthenticationUseCases(
             WrapAppExportPrivateDataAuth(
                 activity = activity,
                 goExportPrivateData = onSuccess,
-                goSupport = goSupport,
+                goSupport = goSupport ?: {},
                 onCancel = onCancel,
                 onFailed = onFailed
             )
@@ -79,7 +77,7 @@ private fun WrapAuthenticationUseCases(
             WrapDeleteWalletAuth(
                 activity = activity,
                 goDeleteWallet = onSuccess,
-                goSupport = goSupport,
+                goSupport = goSupport ?: {},
                 onCancel = onCancel,
                 onFailed = onFailed
             )
@@ -89,7 +87,7 @@ private fun WrapAuthenticationUseCases(
             WrapSeedRecoveryAuth(
                 activity = activity,
                 goSeedRecovery = onSuccess,
-                goSupport = goSupport,
+                goSupport = goSupport ?: {},
                 onCancel = onCancel,
                 onFailed = onFailed
             )
@@ -99,7 +97,7 @@ private fun WrapAuthenticationUseCases(
             WrapSendFundsAuth(
                 activity = activity,
                 onSendFunds = onSuccess,
-                goSupport = goSupport,
+                goSupport = goSupport ?: {},
                 onCancel = onCancel,
                 onFailed = onFailed
             )
@@ -404,7 +402,6 @@ private fun WrapSendFundsAuth(
 @Suppress("LongMethod")
 private fun WrapAppAccessAuth(
     activity: MainActivity,
-    goSupport: () -> Unit,
     goToAppContent: () -> Unit,
     onCancel: () -> Unit,
     onFailed: () -> Unit,
@@ -413,7 +410,20 @@ private fun WrapAppAccessAuth(
 
     val welcomeAnimVisibility = authenticationViewModel.showWelcomeAnimation.collectAsStateWithLifecycle().value
 
-    AppAccessAuthentication(welcomeAnimVisibility = welcomeAnimVisibility)
+    val authFailed = authenticationViewModel.authFailed.collectAsStateWithLifecycle().value
+
+    AppAccessAuthentication(
+        onRetry = {
+            authenticationViewModel.resetAuthenticationResult()
+            authenticationViewModel.authenticate(
+                activity = activity,
+                initialAuthSystemWindowDelay = RETRY_TRIGGER_DELAY.milliseconds,
+                useCase = AuthenticationUseCase.AppAccess
+            )
+        },
+        showAuthLogo = authFailed,
+        welcomeAnimVisibility = welcomeAnimVisibility
+    )
 
     val authenticationResult =
         authenticationViewModel.authenticationResult
@@ -440,48 +450,12 @@ private fun WrapAppAccessAuth(
         AuthenticationResult.Failed -> {
             Twig.warn { "Authentication result: failed" }
             onFailed()
-            AuthenticationFailedDialog(
-                onDismiss = {
-                    authenticationViewModel.resetAuthenticationResult()
-                    onCancel()
-                },
-                onRetry = {
-                    authenticationViewModel.resetAuthenticationResult()
-                    authenticationViewModel.authenticate(
-                        activity = activity,
-                        initialAuthSystemWindowDelay = RETRY_TRIGGER_DELAY.milliseconds,
-                        useCase = AuthenticationUseCase.AppAccess
-                    )
-                },
-                onSupport = {
-                    authenticationViewModel.resetAuthenticationResult()
-                    goSupport()
-                }
-            )
         }
         is AuthenticationResult.Error -> {
             Twig.error {
                 "Authentication result: error: ${authenticationResult.errorCode}: ${authenticationResult.errorMessage}"
             }
-            AuthenticationErrorDialog(
-                onDismiss = {
-                    authenticationViewModel.resetAuthenticationResult()
-                    onCancel()
-                },
-                onRetry = {
-                    authenticationViewModel.resetAuthenticationResult()
-                    authenticationViewModel.authenticate(
-                        activity = activity,
-                        initialAuthSystemWindowDelay = RETRY_TRIGGER_DELAY.milliseconds,
-                        useCase = AuthenticationUseCase.AppAccess
-                    )
-                },
-                onSupport = {
-                    authenticationViewModel.resetAuthenticationResult()
-                    goSupport()
-                },
-                reason = authenticationResult
-            )
+            onFailed()
         }
     }
 

@@ -2,6 +2,7 @@ package co.electriccoin.zcash.ui.preference
 
 import co.electriccoin.zcash.preference.model.entry.BooleanPreferenceDefault
 import co.electriccoin.zcash.preference.model.entry.IntegerPreferenceDefault
+import co.electriccoin.zcash.preference.model.entry.LongPreferenceDefault
 import co.electriccoin.zcash.preference.model.entry.NullableBooleanPreferenceDefault
 import co.electriccoin.zcash.preference.model.entry.PreferenceKey
 import co.electriccoin.zcash.ui.common.model.OnboardingState
@@ -42,7 +43,7 @@ object StandardPreferenceKeys {
     val IS_APP_ACCESS_AUTHENTICATION =
         BooleanPreferenceDefault(
             PreferenceKey("IS_APP_ACCESS_AUTHENTICATION"),
-            false
+            true
         )
     val IS_DELETE_WALLET_AUTHENTICATION =
         BooleanPreferenceDefault(
@@ -74,4 +75,6 @@ object StandardPreferenceKeys {
             PreferenceKey("EXCHANGE_RATE_OPTED_IN"),
             null
         )
+    val LATEST_APP_BACKGROUND_TIME_MILLIS =
+        LongPreferenceDefault(PreferenceKey("LATEST_APP_BACKGROUND_TIME_MILLIS"), 0)
 }

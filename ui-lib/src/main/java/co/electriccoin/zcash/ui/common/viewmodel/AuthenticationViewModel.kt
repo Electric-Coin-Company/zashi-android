@@ -31,8 +31,10 @@ import kotlinx.coroutines.launch
 import java.util.concurrent.Executor
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.minutes
 
 private const val DEFAULT_INITIAL_DELAY = 0
+private val AUTHENTICATE_TIMEOUT = 15.minutes.inWholeMilliseconds
 
 class AuthenticationViewModel(
     application: Application,
@@ -68,6 +70,15 @@ class AuthenticationViewModel(
     }
 
     /**
+     * Authentication failed UI state
+     */
+    internal val authFailed: MutableStateFlow<Boolean> = MutableStateFlow(false)
+
+    internal fun setAuthFailed() {
+        authFailed.value = true
+    }
+
+    /**
      * App access authentication logic values
      */
     private val isAppAccessAuthenticationRequired: StateFlow<Boolean?> =
@@ -91,6 +102,26 @@ class AuthenticationViewModel(
             SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
             AuthenticationUIState.Initial
         )
+
+    private fun resetEntireAuthenticationState() {
+        appAccessAuthentication.value = AuthenticationUIState.Initial
+        showWelcomeAnimation.value = true
+    }
+
+    fun runAuthenticationRequiredCheck() =
+        viewModelScope.launch {
+            val latestAppBackgroundedTimeMillis =
+                StandardPreferenceKeys.LATEST_APP_BACKGROUND_TIME_MILLIS.getValue(standardPreferenceProvider())
+
+            if ((System.currentTimeMillis() - latestAppBackgroundedTimeMillis) > AUTHENTICATE_TIMEOUT) {
+                resetEntireAuthenticationState()
+            }
+        }
+
+    fun persistGoToBackgroundTime(millis: Long) =
+        viewModelScope.launch {
+            StandardPreferenceKeys.LATEST_APP_BACKGROUND_TIME_MILLIS.putValue(standardPreferenceProvider(), millis)
+        }
 
     /**
      * Other authentication use cases
@@ -202,7 +233,7 @@ class AuthenticationViewModel(
                             // returning to biometric authentication, such as a button. The operation was canceled
                             // because [BiometricPrompt.ERROR_LOCKOUT] occurred too many times.
                             BiometricPrompt.ERROR_USER_CANCELED -> {
-                                authenticationResult.value = AuthenticationResult.Canceled
+                                authenticationResult.value = AuthenticationResult.Failed
                                 // The following values are just for testing purposes, so we can easier reproduce other
                                 // non-success results obtained from [BiometricPrompt]
                                 // = AuthenticationResult.Failed
@@ -379,8 +410,6 @@ sealed class AuthenticationUIState {
     data object Required : AuthenticationUIState()
 
     data object NotRequired : AuthenticationUIState()
-
-    data object SupportedRequired : AuthenticationUIState()
 
     data object Successful : AuthenticationUIState()
 }

@@ -562,5 +562,6 @@ val DarkZashiColorsInternal =
         Transparent =
             Transparent(
                 bgPrimary = TransparentColorPalette.Dark
-            )
+            ),
+        NoTheme = NoTheme(welcomeText = Shark.`50`)
     )
