@@ -11,6 +11,7 @@ import co.electriccoin.zcash.ui.NavigationTargets.INTEGRATIONS
 import co.electriccoin.zcash.ui.NavigationTargets.SUPPORT
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
+import co.electriccoin.zcash.ui.common.usecase.IsFlexaAvailableUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveConfigurationUseCase
 import co.electriccoin.zcash.ui.common.usecase.RescanBlockchainUseCase
 import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
@@ -22,6 +23,7 @@ import co.electriccoin.zcash.ui.screen.settings.model.SettingsState
 import co.electriccoin.zcash.ui.screen.settings.model.SettingsTroubleshootingState
 import co.electriccoin.zcash.ui.screen.settings.model.TroubleshootingItemState
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -38,7 +40,8 @@ class SettingsViewModel(
     observeConfiguration: ObserveConfigurationUseCase,
     private val standardPreferenceProvider: StandardPreferenceProvider,
     private val getVersionInfo: GetVersionInfoProvider,
-    private val rescanBlockchain: RescanBlockchainUseCase
+    private val rescanBlockchain: RescanBlockchainUseCase,
+    private val isFlexaAvailable: IsFlexaAvailableUseCase
 ) : ViewModel() {
     private val versionInfo by lazy { getVersionInfo() }
 
@@ -112,7 +115,11 @@ class SettingsViewModel(
                             text = stringRes(R.string.settings_integrations),
                             icon = R.drawable.ic_settings_integrations,
                             onClick = ::onIntegrationsClick,
-                            titleIcons = persistentListOf(R.drawable.ic_integrations_coinbase)
+                            titleIcons =
+                                listOfNotNull(
+                                    R.drawable.ic_integrations_coinbase,
+                                    R.drawable.ic_integrations_flexa.takeIf { isFlexaAvailable() }
+                                ).toImmutableList()
                         ),
                         ZashiSettingsListItemState(
                             text = stringRes(R.string.settings_advanced_settings),

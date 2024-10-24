@@ -48,6 +48,7 @@ class BalanceRepositoryImpl(
                 ) -> {
                     BalanceState.Loading(
                         totalBalance = snapshot.totalBalance(),
+                        spendableBalance = snapshot.spendableBalance(),
                         exchangeRate = exchangeRateUsd
                     )
                 }

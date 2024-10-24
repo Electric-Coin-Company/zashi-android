@@ -83,6 +83,14 @@ androidComponents {
             )
         )
         variant.buildConfigFields.put(
+            "ZCASH_FLEXA_KEY",
+            BuildConfigField(
+                type = "String",
+                value = "\"${project.property("ZCASH_FLEXA_KEY")?.toString().orEmpty()}\"",
+                comment = "Publishable key of the Flexa integration"
+            )
+        )
+        variant.buildConfigFields.put(
             "ZCASH_COINBASE_APP_ID",
             BuildConfigField(
                 type = "String",
@@ -128,6 +136,15 @@ dependencies {
     implementation(libs.zcash.sdk.incubator)
     implementation(libs.zcash.bip39)
     implementation(libs.zxing)
+
+    api("com.flexa:core:1.0.5") {
+        // isTransitive = false
+        // exclude("*", "*")
+    }
+    api("com.flexa:spend:1.0.5")  {
+        // isTransitive = false
+        // exclude("*", "*")
+    }
 
     implementation(projects.buildInfoLib)
     implementation(projects.configurationApiLib)

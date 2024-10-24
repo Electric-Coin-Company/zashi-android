@@ -112,7 +112,6 @@ private fun HomeContent(
             key = { index ->
                 subScreens[index].title
             },
-            beyondBoundsPageCount = 1,
             modifier =
                 Modifier.constrainAs(pager) {
                     top.linkTo(parent.top)

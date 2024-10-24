@@ -79,4 +79,5 @@ val viewModelModule =
                 zip321ParseUriValidationUseCase = get(),
             )
         }
+        viewModelOf(::IntegrationsViewModel)
     }
