@@ -14,6 +14,7 @@ import co.electriccoin.zcash.ui.common.usecase.ObserveWalletStateUseCase
 import co.electriccoin.zcash.ui.design.component.ZashiSettingsListItemState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.integrations.model.IntegrationsState
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
@@ -44,21 +45,23 @@ class IntegrationsViewModel(
         isEnabled.map { isEnabled ->
             IntegrationsState(
                 version = stringRes(R.string.integrations_version, versionInfo.versionName),
-                coinbase =
-                    ZashiSettingsListItemState(
-                        // Set the wallet currency by app build is more future-proof, although we hide it from the UI
-                        // in the Testnet build
-                        icon = R.drawable.ic_integrations_coinbase,
-                        text = stringRes(R.string.integrations_coinbase, getZcashCurrency.getLocalizedName()),
-                        subtitle =
-                            stringRes(
-                                R.string.integrations_coinbase_subtitle,
-                                getZcashCurrency.getLocalizedName()
-                            ),
-                        onClick = ::onBuyWithCoinbaseClicked
-                    ).takeIf { isCoinbaseAvailable() },
                 disabledInfo = stringRes(R.string.integrations_disabled_info).takeIf { isEnabled.not() },
                 onBack = ::onBack,
+                items =
+                    listOfNotNull(
+                        ZashiSettingsListItemState(
+                            // Set the wallet currency by app build is more future-proof, although we hide it from
+                            // the UI in the Testnet build
+                            icon = R.drawable.ic_integrations_coinbase,
+                            text = stringRes(R.string.integrations_coinbase, getZcashCurrency.getLocalizedName()),
+                            subtitle =
+                                stringRes(
+                                    R.string.integrations_coinbase_subtitle,
+                                    getZcashCurrency.getLocalizedName()
+                                ),
+                            onClick = ::onBuyWithCoinbaseClicked
+                        ).takeIf { isCoinbaseAvailable() }
+                    ).toImmutableList()
             )
         }.stateIn(
             scope = viewModelScope,

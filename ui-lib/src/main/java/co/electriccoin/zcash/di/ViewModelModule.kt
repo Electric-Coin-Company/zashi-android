@@ -55,7 +55,6 @@ val viewModelModule =
             AddressBookViewModel(
                 args = args,
                 observeAddressBookContacts = get(),
-                getVersionInfo = get(),
                 observeContactPicked = get(),
             )
         }
