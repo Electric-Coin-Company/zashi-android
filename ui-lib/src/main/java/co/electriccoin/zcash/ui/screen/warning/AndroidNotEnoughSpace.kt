@@ -12,8 +12,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.di.koinActivityViewModel
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
-import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.warning.view.NotEnoughSpaceView
 import co.electriccoin.zcash.ui.screen.warning.viewmodel.StorageCheckViewModel
 import co.electriccoin.zcash.ui.util.SettingsUtil
@@ -24,11 +22,7 @@ fun MainActivity.WrapNotEnoughSpace(
     goPrevious: () -> Unit,
     goSettings: () -> Unit
 ) {
-    val walletViewModel = koinActivityViewModel<WalletViewModel>()
-
     val storageCheckViewModel = koinActivityViewModel<StorageCheckViewModel>()
-
-    val walletState = walletViewModel.walletStateInformation.collectAsStateWithLifecycle().value
 
     val isEnoughFreeSpace = storageCheckViewModel.isEnoughSpace.collectAsStateWithLifecycle().value
     if (isEnoughFreeSpace == true) {
@@ -46,7 +40,6 @@ fun MainActivity.WrapNotEnoughSpace(
         goSettings = goSettings,
         spaceAvailableMegabytes = spaceAvailableMegabytes.value ?: 0,
         requiredStorageSpaceGigabytes = requiredStorageSpaceGigabytes,
-        walletState = walletState,
     )
 }
 
@@ -55,7 +48,6 @@ private fun WrapNotEnoughFreeSpace(
     goSettings: () -> Unit,
     requiredStorageSpaceGigabytes: Int,
     spaceAvailableMegabytes: Int,
-    walletState: TopAppBarSubTitleState,
 ) {
     val context = LocalContext.current
 
@@ -81,6 +73,5 @@ private fun WrapNotEnoughFreeSpace(
         snackbarHostState = snackbarHostState,
         storageSpaceRequiredGigabytes = requiredStorageSpaceGigabytes,
         spaceAvailableMegabytes = spaceAvailableMegabytes,
-        topAppBarSubTitleState = walletState,
     )
 }

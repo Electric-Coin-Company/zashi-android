@@ -11,6 +11,9 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [1.2.1 (760)] - 2024-10-22
 
+### Changed
+- Redesigned not enough space & forced udpate screens
+
 ### Added
 - Tired of copy pasting addresses? We’ve added an Address Book feature!
 - Introducing the “Request ZEC” feature: easily create a payment request and share it as a QR code!

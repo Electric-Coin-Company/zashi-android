@@ -25,6 +25,7 @@ import co.electriccoin.zcash.ui.screen.sendconfirmation.viewmodel.CreateTransact
 import co.electriccoin.zcash.ui.screen.settings.viewmodel.ScreenBrightnessViewModel
 import co.electriccoin.zcash.ui.screen.settings.viewmodel.SettingsViewModel
 import co.electriccoin.zcash.ui.screen.support.viewmodel.SupportViewModel
+import co.electriccoin.zcash.ui.screen.update.model.UpdateInfo
 import co.electriccoin.zcash.ui.screen.update.viewmodel.UpdateViewModel
 import co.electriccoin.zcash.ui.screen.warning.viewmodel.StorageCheckViewModel
 import co.electriccoin.zcash.ui.screen.whatsnew.viewmodel.WhatsNewViewModel
@@ -49,7 +50,13 @@ val viewModelModule =
         viewModelOf(::CreateTransactionsViewModel)
         viewModelOf(::RestoreSuccessViewModel)
         viewModelOf(::WhatsNewViewModel)
-        viewModelOf(::UpdateViewModel)
+        viewModel { (updateInfo: UpdateInfo) ->
+            UpdateViewModel(
+                application = get(),
+                updateInfo = updateInfo,
+                appUpdateChecker = get(),
+            )
+        }
         viewModelOf(::ChooseServerViewModel)
         viewModel { (args: AddressBookArgs) ->
             AddressBookViewModel(

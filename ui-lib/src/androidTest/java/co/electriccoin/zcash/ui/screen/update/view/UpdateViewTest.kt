@@ -43,13 +43,6 @@ class UpdateViewTest : UiTestPrerequisites() {
         ).also {
             it.assertExists()
         }
-
-        composeTestRule.onNodeWithText(
-            text = getStringResource(R.string.update_later_disabled_button),
-            ignoreCase = true
-        ).also {
-            it.assertExists()
-        }
     }
 
     @Test
@@ -86,13 +79,6 @@ class UpdateViewTest : UiTestPrerequisites() {
 
         composeTestRule.onNodeWithText(
             text = getStringResource(R.string.update_header),
-            ignoreCase = true
-        ).also {
-            it.assertExists()
-        }
-
-        composeTestRule.onNodeWithText(
-            text = getStringResource(R.string.update_later_enabled_button),
             ignoreCase = true
         ).also {
             it.assertExists()

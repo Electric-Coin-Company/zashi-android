@@ -14,7 +14,6 @@ import co.electriccoin.zcash.ui.screen.advancedsettings.viewmodel.AdvancedSettin
 import kotlinx.collections.immutable.toImmutableList
 import org.koin.androidx.compose.koinViewModel
 
-@Suppress("LongParameterList")
 @Composable
 internal fun WrapAdvancedSettings(
     goDeleteWallet: () -> Unit,

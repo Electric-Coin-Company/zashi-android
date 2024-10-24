@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="not_enough_space_title">Not enough free space</string>
-    <string name="not_enough_space_description_1">
-        <xliff:g id="app_name" example="Zashi">%1$s</xliff:g> requires at least
-        <xliff:g example="1" id="required_gigabytes">%2$d</xliff:g> GB of space to operate but there is only
-        <xliff:g example="300" id="available_megabytes">%3$d</xliff:g> MB available.
-    </string>
-    <string name="not_enough_space_description_2">
-        Go to your device settings and make more space available if you wish to use the
-        <xliff:g id="app_name" example="Zashi">%1$s</xliff:g> app.
-    </string>
+    <string name="not_enough_space_description_1">Zashi requires %1$d GB of space to synchronize the Zcash blockchain
+        but there is only</string>
+    <string name="not_enough_space_description_2">%1$d MB available</string>
+    <string name="not_enough_space_description_3">. Syncing will stay paused until more space is available.\n\n~%1$d
+        MB of additional space required to
+        continue</string>
     <string name="not_enough_space_system_settings_btn">System settings</string>
     <string name="not_enough_space_settings_open_failed">Unable to launch Settings app.</string>
 </resources>

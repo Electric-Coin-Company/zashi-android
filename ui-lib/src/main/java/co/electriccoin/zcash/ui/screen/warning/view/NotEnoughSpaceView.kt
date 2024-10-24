@@ -1,189 +1,141 @@
 package co.electriccoin.zcash.ui.screen.warning.view
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
-import co.electriccoin.zcash.ui.common.test.CommonTag
-import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
-import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
-import co.electriccoin.zcash.ui.design.component.Body
-import co.electriccoin.zcash.ui.design.component.Header
-import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.ZashiButton
+import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
+import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarHamburgerNavigation
+import co.electriccoin.zcash.ui.design.component.zashiVerticalGradient
+import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
+import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 
-@Preview
 @Composable
-private fun NotEnoughSpacePreview() {
-    ZcashTheme(forceDarkMode = false) {
-        NotEnoughSpaceView(
-            onSettings = {},
-            onSystemSettings = {},
-            snackbarHostState = SnackbarHostState(),
-            spaceAvailableMegabytes = 300,
-            storageSpaceRequiredGigabytes = 1,
-            topAppBarSubTitleState = TopAppBarSubTitleState.None,
-        )
-    }
-}
-
-@Preview
-@Composable
-private fun NotEnoughSpaceDarkPreview() {
-    ZcashTheme(forceDarkMode = true) {
-        NotEnoughSpaceView(
-            onSettings = {},
-            onSystemSettings = {},
-            snackbarHostState = SnackbarHostState(),
-            spaceAvailableMegabytes = 300,
-            storageSpaceRequiredGigabytes = 1,
-            topAppBarSubTitleState = TopAppBarSubTitleState.None,
-        )
-    }
-}
-
-@Composable
-@Suppress("LongParameterList")
 fun NotEnoughSpaceView(
     onSettings: () -> Unit,
     onSystemSettings: () -> Unit,
     spaceAvailableMegabytes: Int,
     storageSpaceRequiredGigabytes: Int,
-    topAppBarSubTitleState: TopAppBarSubTitleState,
     snackbarHostState: SnackbarHostState,
 ) {
-    BlankBgScaffold(
-        topBar = {
-            NotEnoughSpaceTopAppBar(
-                onSettings = onSettings,
-                subTitleState = topAppBarSubTitleState,
+    Box(
+        modifier =
+            Modifier.background(
+                zashiVerticalGradient(ZashiColors.Utility.ErrorRed.utilityError100)
             )
-        },
-        snackbarHost = { SnackbarHost(snackbarHostState) },
-    ) { paddingValues ->
-        NotEnoughSpaceMainContent(
-            onSystemSettings = onSystemSettings,
-            spaceRequiredToContinueMegabytes = spaceAvailableMegabytes,
-            storageSpaceRequiredGigabytes = storageSpaceRequiredGigabytes,
-            modifier =
-                Modifier
-                    .scaffoldPadding(paddingValues)
-        )
-    }
-}
-
-@Composable
-private fun NotEnoughSpaceTopAppBar(
-    onSettings: () -> Unit,
-    subTitleState: TopAppBarSubTitleState
-) {
-    SmallTopAppBar(
-        subTitle =
-            when (subTitleState) {
-                TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
-                TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
-                TopAppBarSubTitleState.None -> null
+    ) {
+        Scaffold(
+            topBar = {
+                ZashiSmallTopAppBar(
+                    colors = ZcashTheme.colors.topAppBarColors.copyColors(containerColor = Color.Transparent),
+                    title = null,
+                    subtitle = null,
+                    hamburgerMenuActions = {
+                        ZashiTopAppBarHamburgerNavigation(onSettings)
+                    }
+                )
             },
-        titleText = stringResource(id = R.string.not_enough_space_title).uppercase(),
-        hamburgerMenuActions = {
-            IconButton(
-                onClick = onSettings,
-                modifier = Modifier.testTag(CommonTag.SETTINGS_TOP_BAR_BUTTON)
-            ) {
+            snackbarHost = {
+                SnackbarHost(snackbarHostState)
+            },
+            containerColor = Color.Transparent
+        ) {
+            Column(modifier = Modifier.scaffoldPadding(it)) {
+                @Suppress("MagicNumber")
+                Spacer(Modifier.weight(.75f))
                 Image(
-                    painter = painterResource(id = co.electriccoin.zcash.ui.design.R.drawable.ic_hamburger_menu),
-                    contentDescription = stringResource(id = R.string.settings_menu_content_description)
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    painter = painterResource(R.drawable.ic_not_enough_space),
+                    contentDescription = ""
+                )
+                Spacer(Modifier.height(24.dp))
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center,
+                    text = stringResource(id = R.string.not_enough_space_title),
+                    style = ZashiTypography.header6,
+                    fontWeight = FontWeight.SemiBold,
+                    color = ZashiColors.Text.textPrimary
+                )
+                Spacer(Modifier.height(12.dp))
+
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text =
+                        buildAnnotatedString {
+                            append(
+                                stringResource(
+                                    R.string.not_enough_space_description_1,
+                                    storageSpaceRequiredGigabytes
+                                ) + " "
+                            )
+                            withStyle(
+                                SpanStyle(
+                                    fontWeight = FontWeight.Bold
+                                )
+                            ) {
+                                append(
+                                    stringResource(R.string.not_enough_space_description_2, spaceAvailableMegabytes)
+                                )
+                            }
+                            append(
+                                stringResource(
+                                    R.string.not_enough_space_description_3,
+                                    storageSpaceRequiredGigabytes *
+                                        GB_TO_MEGABYTES - spaceAvailableMegabytes
+                                )
+                            )
+                        },
+                    style = ZashiTypography.textSm,
+                    textAlign = TextAlign.Center,
+                    color = ZashiColors.Text.textPrimary,
+                )
+                Spacer(Modifier.weight(1f))
+                ZashiButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = stringResource(R.string.not_enough_space_system_settings_btn),
+                    onClick = onSystemSettings,
                 )
             }
         }
-    )
-}
-
-@Composable
-private fun NotEnoughSpaceMainContent(
-    onSystemSettings: () -> Unit,
-    spaceRequiredToContinueMegabytes: Int,
-    storageSpaceRequiredGigabytes: Int,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier =
-            modifier.then(
-                Modifier
-                    .fillMaxHeight()
-                    .verticalScroll(
-                        rememberScrollState()
-                    )
-            ),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingBig))
-
-        Image(
-            painter = painterResource(id = R.drawable.ic_zashi_logo_sign_warn),
-            colorFilter = ColorFilter.tint(color = ZcashTheme.colors.secondaryColor),
-            contentDescription = null,
-        )
-
-        Spacer(Modifier.height(ZcashTheme.dimens.spacingBig))
-
-        Header(
-            text =
-                stringResource(
-                    id = R.string.not_enough_space_description_1,
-                    stringResource(id = R.string.app_name),
-                    storageSpaceRequiredGigabytes,
-                    spaceRequiredToContinueMegabytes
-                ),
-            textAlign = TextAlign.Center
-        )
-
-        Spacer(Modifier.height(ZcashTheme.dimens.spacingLarge))
-
-        Body(
-            text =
-                stringResource(
-                    id = R.string.not_enough_space_description_2,
-                    stringResource(id = R.string.app_name)
-                ),
-            textAlign = TextAlign.Center
-        )
-
-        Spacer(
-            modifier =
-                Modifier
-                    .fillMaxHeight()
-                    .weight(MINIMAL_WEIGHT)
-        )
-
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
-
-        ZashiButton(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = onSystemSettings,
-            text = stringResource(R.string.not_enough_space_system_settings_btn),
-        )
-
-        Spacer(Modifier.height(ZcashTheme.dimens.spacingHuge))
     }
 }
+
+@PreviewScreens
+@Composable
+private fun NotEnoughSpacePreview() =
+    ZcashTheme {
+        NotEnoughSpaceView(
+            onSettings = {},
+            onSystemSettings = {},
+            snackbarHostState = SnackbarHostState(),
+            spaceAvailableMegabytes = 300,
+            storageSpaceRequiredGigabytes = 1,
+        )
+    }
+
+private const val GB_TO_MEGABYTES = 1024

@@ -506,7 +506,7 @@ private fun fillInHandleForPaymentRequest(
     handle[PAYMENT_REQUEST_URI] = zip321
 }
 
-private fun NavHostController.navigateJustOnce(
+fun NavHostController.navigateJustOnce(
     route: String,
     navOptionsBuilder: (NavOptionsBuilder.() -> Unit)? = null
 ) {
