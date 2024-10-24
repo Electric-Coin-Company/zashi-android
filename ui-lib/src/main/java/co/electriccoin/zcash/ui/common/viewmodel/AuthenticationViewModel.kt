@@ -31,8 +31,10 @@ import kotlinx.coroutines.launch
 import java.util.concurrent.Executor
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.minutes
 
 private const val DEFAULT_INITIAL_DELAY = 0
+private val AUTHENTICATE_TIMEOUT = 15.minutes.inWholeMilliseconds
 
 class AuthenticationViewModel(
     application: Application,
@@ -100,6 +102,26 @@ class AuthenticationViewModel(
             SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
             AuthenticationUIState.Initial
         )
+
+    private fun resetEntireAuthenticationState() {
+        appAccessAuthentication.value = AuthenticationUIState.Initial
+        showWelcomeAnimation.value = true
+    }
+
+    fun runAuthenticationRequiredCheck() =
+        viewModelScope.launch {
+            val latestAppBackgroundedTimeMillis =
+                StandardPreferenceKeys.LATEST_APP_BACKGROUND_TIME_MILLIS.getValue(standardPreferenceProvider())
+
+            if ((System.currentTimeMillis() - latestAppBackgroundedTimeMillis) > AUTHENTICATE_TIMEOUT) {
+                resetEntireAuthenticationState()
+            }
+        }
+
+    fun persistGoToBackgroundTime(millis: Long) =
+        viewModelScope.launch {
+            StandardPreferenceKeys.LATEST_APP_BACKGROUND_TIME_MILLIS.putValue(standardPreferenceProvider(), millis)
+        }
 
     /**
      * Other authentication use cases

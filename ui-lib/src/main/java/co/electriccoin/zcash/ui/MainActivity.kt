@@ -108,6 +108,7 @@ class MainActivity : FragmentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Twig.debug { "Activity state: Create" }
 
         setAllowedScreenOrientation()
 
@@ -128,6 +129,18 @@ class MainActivity : FragmentActivity() {
         //         googleConsentLauncher.launch(intent)
         //     }
         // }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Twig.debug { "Activity state: Resume" }
+        authenticationViewModel.runAuthenticationRequiredCheck()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Twig.debug { "Activity state: Stop" }
+        authenticationViewModel.persistGoToBackgroundTime(System.currentTimeMillis())
     }
 
     // private fun requestGoogleSignIn() {
