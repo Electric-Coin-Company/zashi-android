@@ -96,13 +96,15 @@ fun ZashiButton(
             }
         }
 
+    val borderColor = if (enabled) colors.borderColor else colors.disabledBorderColor
+
     Button(
         onClick = onClick,
         modifier = modifier,
         shape = RoundedCornerShape(12.dp),
         enabled = enabled,
         colors = colors.toButtonColors(),
-        border = colors.borderColor.takeIf { it != Color.Unspecified }?.let { BorderStroke(1.dp, it) },
+        border = borderColor.takeIf { it != Color.Unspecified }?.let { BorderStroke(1.dp, it) },
         content = {
             content(scope)
         }
@@ -139,9 +141,10 @@ object ZashiButtonDefaults {
     ) = ZashiButtonColors(
         containerColor = containerColor,
         contentColor = contentColor,
+        borderColor = Color.Unspecified,
         disabledContainerColor = disabledContainerColor,
         disabledContentColor = disabledContentColor,
-        borderColor = Color.Unspecified
+        disabledBorderColor = Color.Unspecified
     )
 
     @Composable
@@ -153,9 +156,10 @@ object ZashiButtonDefaults {
     ) = ZashiButtonColors(
         containerColor = containerColor,
         contentColor = contentColor,
+        borderColor = Color.Unspecified,
         disabledContainerColor = disabledContainerColor,
         disabledContentColor = disabledContentColor,
-        borderColor = Color.Unspecified
+        disabledBorderColor = Color.Unspecified
     )
 
     @Composable
@@ -167,9 +171,10 @@ object ZashiButtonDefaults {
     ) = ZashiButtonColors(
         containerColor = containerColor,
         contentColor = contentColor,
+        borderColor = Color.Unspecified,
         disabledContainerColor = disabledContainerColor,
         disabledContentColor = disabledContentColor,
-        borderColor = Color.Unspecified
+        disabledBorderColor = Color.Unspecified
     )
 
     @Composable
@@ -184,7 +189,8 @@ object ZashiButtonDefaults {
         contentColor = contentColor,
         disabledContainerColor = disabledContainerColor,
         disabledContentColor = disabledContentColor,
-        borderColor = borderColor
+        borderColor = borderColor,
+        disabledBorderColor = Color.Unspecified
     )
 }
 
@@ -192,9 +198,10 @@ object ZashiButtonDefaults {
 data class ZashiButtonColors(
     val containerColor: Color,
     val contentColor: Color,
+    val borderColor: Color,
     val disabledContainerColor: Color,
     val disabledContentColor: Color,
-    val borderColor: Color,
+    val disabledBorderColor: Color,
 )
 
 @Immutable
