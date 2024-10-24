@@ -230,7 +230,6 @@ internal fun MainActivity.Navigation() {
         composable(ABOUT) {
             WrapAbout(
                 goBack = { navController.popBackStackJustOnce(ABOUT) },
-                goWhatsNew = { navController.navigateJustOnce(WHATS_NEW) }
             )
         }
         composable(WHATS_NEW) {

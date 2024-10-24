@@ -1,11 +1,11 @@
 package co.electriccoin.zcash.ui.screen.about.view
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -14,6 +14,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -22,23 +23,25 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.VersionInfo
-import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
-import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
-import co.electriccoin.zcash.ui.design.component.TopAppBarBackNavigation
-import co.electriccoin.zcash.ui.design.component.ZashiButton
+import co.electriccoin.zcash.ui.design.component.ZashiSettingsListItem
+import co.electriccoin.zcash.ui.design.component.ZashiSettingsListItemState
+import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
+import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarBackNavigation
+import co.electriccoin.zcash.ui.design.component.ZashiVersion
+import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
-import co.electriccoin.zcash.ui.design.util.scaffoldPadding
+import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
+import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
+import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.fixture.ConfigInfoFixture
 import co.electriccoin.zcash.ui.fixture.VersionInfoFixture
 import co.electriccoin.zcash.ui.screen.support.model.ConfigInfo
@@ -49,12 +52,11 @@ fun About(
     onBack: () -> Unit,
     configInfo: ConfigInfo,
     onPrivacyPolicy: () -> Unit,
-    onWhatsNew: () -> Unit,
     snackbarHostState: SnackbarHostState,
     topAppBarSubTitleState: TopAppBarSubTitleState,
     versionInfo: VersionInfo,
 ) {
-    BlankBgScaffold(
+    Scaffold (
         topBar = {
             AboutTopAppBar(
                 onBack = onBack,
@@ -68,14 +70,18 @@ fun About(
         AboutMainContent(
             versionInfo = versionInfo,
             onPrivacyPolicy = onPrivacyPolicy,
-            onWhatsNew = onWhatsNew,
             modifier =
-                Modifier
-                    .fillMaxHeight()
-                    .verticalScroll(
-                        rememberScrollState()
-                    )
-                    .scaffoldPadding(paddingValues)
+            Modifier
+                .fillMaxHeight()
+                .verticalScroll(
+                    rememberScrollState()
+                )
+                .padding(
+                    top = paddingValues.calculateTopPadding() + ZashiDimensions.Spacing.spacingLg,
+                    bottom = paddingValues.calculateBottomPadding() + ZashiDimensions.Spacing.spacing3xl,
+                    start = 4.dp,
+                    end = 4.dp
+                )
         )
     }
 }
@@ -87,20 +93,16 @@ private fun AboutTopAppBar(
     configInfo: ConfigInfo,
     subTitleState: TopAppBarSubTitleState
 ) {
-    SmallTopAppBar(
-        subTitle =
+    ZashiSmallTopAppBar(
+        subtitle =
             when (subTitleState) {
                 TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
                 TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
                 TopAppBarSubTitleState.None -> null
             },
-        titleText = stringResource(id = R.string.about_title),
+        title = stringResource(id = R.string.about_title),
         navigationAction = {
-            TopAppBarBackNavigation(
-                backText = stringResource(id = R.string.back_navigation),
-                backContentDescriptionText = stringResource(R.string.back_navigation_content_description),
-                onBack = onBack
-            )
+            ZashiTopAppBarBackNavigation(onBack = onBack)
         },
         regularActions = {
             if (versionInfo.isDebuggable && !versionInfo.isRunningUnderTestService) {
@@ -149,84 +151,57 @@ private fun DebugMenu(
 
 @Composable
 fun AboutMainContent(
-    onWhatsNew: () -> Unit,
     onPrivacyPolicy: () -> Unit,
     versionInfo: VersionInfo,
     modifier: Modifier = Modifier
 ) {
     Column(modifier) {
-        Image(
-            modifier =
-                Modifier
-                    .height(ZcashTheme.dimens.inScreenZcashTextLogoHeight)
-                    .align(Alignment.CenterHorizontally),
-            painter = painterResource(id = co.electriccoin.zcash.ui.design.R.drawable.zashi_text_logo_small),
-            colorFilter = ColorFilter.tint(color = ZcashTheme.colors.secondaryColor),
-            contentDescription = stringResource(R.string.zcash_logo_content_description)
-        )
-
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
 
         Text(
-            modifier = Modifier.fillMaxWidth(),
-            text =
-                stringResource(
-                    R.string.about_version_format,
-                    versionInfo.versionName
-                ),
-            textAlign = TextAlign.Center,
-            style = ZcashTheme.typography.primary.titleSmall
+            modifier = Modifier.padding(horizontal = ZashiDimensions.Spacing.spacingXl),
+            text = stringResource(id = R.string.about_subtitle),
+            color = ZashiColors.Text.textPrimary,
+            style = ZashiTypography.header6,
+            fontWeight = FontWeight.SemiBold
         )
 
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
+        Spacer(Modifier.height(12.dp))
 
         Text(
+            modifier = Modifier.padding(horizontal = ZashiDimensions.Spacing.spacingXl),
             text = stringResource(id = R.string.about_description),
-            color = ZcashTheme.colors.textDescriptionDark,
-            style = ZcashTheme.extendedTypography.aboutText
+            color = ZashiColors.Text.textPrimary,
+            style = ZashiTypography.textSm
         )
 
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingUpLarge))
+        Spacer(Modifier.height(32.dp))
 
-        ZashiButton(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = onWhatsNew,
-            text = stringResource(R.string.about_button_whats_new),
+        ZashiSettingsListItem(
+            ZashiSettingsListItemState(
+                icon = R.drawable.ic_settings_info,
+                text = stringRes(R.string.about_button_privacy_policy),
+                onClick = onPrivacyPolicy
+            )
         )
 
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
+        Spacer(Modifier.weight(1f))
 
-        ZashiButton(
+        ZashiVersion(
             modifier = Modifier.fillMaxWidth(),
-            onClick = onPrivacyPolicy,
-            text = stringResource(R.string.about_button_privacy_policy),
+            version = stringRes(R.string.settings_version, versionInfo.versionName)
         )
     }
 }
 
+@PreviewScreens
 @Composable
-private fun AboutPreview() {
+private fun AboutPreview() = ZcashTheme {
     About(
         onBack = {},
         configInfo = ConfigInfoFixture.new(),
         onPrivacyPolicy = {},
-        onWhatsNew = {},
         snackbarHostState = SnackbarHostState(),
         topAppBarSubTitleState = TopAppBarSubTitleState.None,
         versionInfo = VersionInfoFixture.new(),
     )
 }
-
-@Preview("About")
-@Composable
-private fun AboutPreviewLight() =
-    ZcashTheme(forceDarkMode = false) {
-        AboutPreview()
-    }
-
-@Preview("About")
-@Composable
-private fun AboutPreviewDark() =
-    ZcashTheme(forceDarkMode = true) {
-        AboutPreview()
-    }

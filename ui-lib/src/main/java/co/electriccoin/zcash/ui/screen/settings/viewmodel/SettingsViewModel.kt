@@ -9,6 +9,7 @@ import co.electriccoin.zcash.ui.NavigationTargets.ABOUT
 import co.electriccoin.zcash.ui.NavigationTargets.ADVANCED_SETTINGS
 import co.electriccoin.zcash.ui.NavigationTargets.INTEGRATIONS
 import co.electriccoin.zcash.ui.NavigationTargets.SUPPORT
+import co.electriccoin.zcash.ui.NavigationTargets.WHATS_NEW
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
 import co.electriccoin.zcash.ui.common.usecase.ObserveConfigurationUseCase
@@ -120,6 +121,11 @@ class SettingsViewModel(
                             onClick = ::onAdvancedSettingsClick
                         ),
                         ZashiSettingsListItemState(
+                            text = stringRes(R.string.settings_whats_new),
+                            icon = R.drawable.ic_settings_whats_new,
+                            onClick = ::onWhatsNewClick
+                        ),
+                        ZashiSettingsListItemState(
                             text = stringRes(R.string.settings_about_us),
                             icon = R.drawable.ic_settings_info,
                             onClick = ::onAboutUsClick
@@ -191,6 +197,12 @@ class SettingsViewModel(
     private fun onAddressBookClick() {
         viewModelScope.launch {
             navigationCommand.emit(AddressBookArgs(AddressBookArgs.DEFAULT))
+        }
+    }
+
+    private fun onWhatsNewClick() {
+        viewModelScope.launch {
+            navigationCommand.emit(WHATS_NEW)
         }
     }
 

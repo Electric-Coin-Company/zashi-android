@@ -26,7 +26,6 @@ import org.koin.compose.koinInject
 @Composable
 internal fun WrapAbout(
     goBack: () -> Unit,
-    goWhatsNew: () -> Unit,
 ) {
     val activity = LocalActivity.current
 
@@ -64,7 +63,6 @@ internal fun WrapAbout(
         },
         snackbarHostState = snackbarHostState,
         topAppBarSubTitleState = walletState,
-        onWhatsNew = goWhatsNew
     )
 }
 
