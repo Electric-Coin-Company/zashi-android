@@ -15,6 +15,7 @@ import co.electriccoin.zcash.spackle.AndroidApiVersion
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
 import co.electriccoin.zcash.ui.screen.authentication.AuthenticationUseCase
 import kotlinx.coroutines.delay
@@ -38,12 +39,14 @@ private val AUTHENTICATE_TIMEOUT = 15.minutes.inWholeMilliseconds
 
 class AuthenticationViewModel(
     application: Application,
-    private val standardPreferenceProvider: StandardPreferenceProvider,
     private val biometricManager: BiometricManager,
+    private val getVersionInfo: GetVersionInfoProvider,
+    private val standardPreferenceProvider: StandardPreferenceProvider,
 ) : AndroidViewModel(application) {
     private val executor: Executor by lazy { ContextCompat.getMainExecutor(application) }
     private lateinit var biometricPrompt: BiometricPrompt
     private lateinit var promptInfo: BiometricPrompt.PromptInfo
+    private val versionInfo by lazy { getVersionInfo() }
 
     // This provides [allowedAuthenticators] on the current user device according to Android Compatibility Definition
     // Document (CDD). See https://source.android.com/docs/compatibility/cdd
@@ -93,7 +96,7 @@ class AuthenticationViewModel(
             appAccessAuthentication,
         ) { required: Boolean, state: AuthenticationUIState ->
             when {
-                !required -> AuthenticationUIState.NotRequired
+                (!required || versionInfo.isRunningUnderTestService) -> AuthenticationUIState.NotRequired
                 state == AuthenticationUIState.Initial -> AuthenticationUIState.Required
                 else -> state
             }
