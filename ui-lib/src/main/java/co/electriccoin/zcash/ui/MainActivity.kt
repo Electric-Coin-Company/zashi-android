@@ -132,15 +132,15 @@ class MainActivity : FragmentActivity() {
     }
 
     override fun onResume() {
-        super.onResume()
         Twig.debug { "Activity state: Resume" }
         authenticationViewModel.runAuthenticationRequiredCheck()
+        super.onResume()
     }
 
     override fun onStop() {
-        super.onStop()
         Twig.debug { "Activity state: Stop" }
         authenticationViewModel.persistGoToBackgroundTime(System.currentTimeMillis())
+        super.onStop()
     }
 
     // private fun requestGoogleSignIn() {
