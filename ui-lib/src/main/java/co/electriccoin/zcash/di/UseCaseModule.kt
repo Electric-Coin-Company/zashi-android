@@ -4,6 +4,7 @@ import co.electriccoin.zcash.ui.common.usecase.CopyToClipboardUseCase
 import co.electriccoin.zcash.ui.common.usecase.DeleteAddressBookUseCase
 import co.electriccoin.zcash.ui.common.usecase.DeleteContactUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetAddressesUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetBackupPersistableWalletUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetContactByAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetPersistableWalletUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSelectedEndpointUseCase
@@ -16,6 +17,8 @@ import co.electriccoin.zcash.ui.common.usecase.ObserveConfigurationUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveContactByAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveContactPickedUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveFastestServersUseCase
+import co.electriccoin.zcash.ui.common.usecase.ObservePersistableWalletUseCase
+import co.electriccoin.zcash.ui.common.usecase.ObserveBackupPersistableWalletUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedEndpointUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveSynchronizerUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveWalletStateUseCase
@@ -67,4 +70,7 @@ val useCaseModule =
         singleOf(::ObserveWalletStateUseCase)
         singleOf(::IsCoinbaseAvailableUseCase)
         singleOf(::GetSpendingKeyUseCase)
+        singleOf(::ObservePersistableWalletUseCase)
+        singleOf(::ObserveBackupPersistableWalletUseCase)
+        singleOf(::GetBackupPersistableWalletUseCase)
     }

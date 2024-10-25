@@ -175,7 +175,7 @@ private fun RequestBottomBar(
             is RequestState.QrCode -> {
                 ZashiButton(
                     text = stringResource(id = R.string.request_qr_share_btn),
-                    leadingIcon = painterResource(R.drawable.ic_share),
+                    icon = R.drawable.ic_share,
                     enabled = state.request.qrCodeState.isValid(),
                     onClick = { state.onQrCodeShare(state.request.qrCodeState.bitmap!!) },
                     modifier =

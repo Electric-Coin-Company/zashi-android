@@ -190,7 +190,7 @@ private fun QrCodeBottomBar(
     ZashiBottomBar {
         ZashiButton(
             text = stringResource(id = R.string.qr_code_share_btn),
-            leadingIcon = painterResource(R.drawable.ic_share),
+            icon = R.drawable.ic_share,
             onClick = { state.onQrCodeShare(qrCodeImage) },
             modifier =
                 Modifier
@@ -202,7 +202,7 @@ private fun QrCodeBottomBar(
 
         ZashiButton(
             text = stringResource(id = R.string.qr_code_copy_btn),
-            leadingIcon = painterResource(R.drawable.ic_copy),
+            icon = R.drawable.ic_copy,
             onClick = { state.onAddressCopy(state.walletAddress.address) },
             colors = ZashiButtonDefaults.secondaryColors(),
             modifier =

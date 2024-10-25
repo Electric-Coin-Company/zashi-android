@@ -11,6 +11,7 @@ import co.electriccoin.zcash.ui.common.compose.ScreenSecurity
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.VersionInfoFixture
+import co.electriccoin.zcash.ui.screen.seed.view.SeedView
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
@@ -43,7 +44,7 @@ class SeedRecoveryRecoveryViewsSecuredScreenTest : UiTestPrerequisites() {
             composeTestRule.setContent {
                 CompositionLocalProvider(LocalScreenSecurity provides screenSecurity) {
                     ZcashTheme {
-                        SeedRecovery(
+                        SeedView(
                             PersistableWalletFixture.new(),
                             onBack = {},
                             onBirthdayCopy = {},

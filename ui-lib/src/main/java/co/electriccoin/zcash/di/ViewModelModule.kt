@@ -21,7 +21,8 @@ import co.electriccoin.zcash.ui.screen.restore.viewmodel.RestoreViewModel
 import co.electriccoin.zcash.ui.screen.restoresuccess.viewmodel.RestoreSuccessViewModel
 import co.electriccoin.zcash.ui.screen.scan.ScanNavigationArgs
 import co.electriccoin.zcash.ui.screen.scan.viewmodel.ScanViewModel
-import co.electriccoin.zcash.ui.screen.seedrecovery.viewmodel.SeedRecoveryViewModel
+import co.electriccoin.zcash.ui.screen.seed.SeedNavigationArgs
+import co.electriccoin.zcash.ui.screen.seed.viewmodel.SeedViewModel
 import co.electriccoin.zcash.ui.screen.sendconfirmation.viewmodel.CreateTransactionsViewModel
 import co.electriccoin.zcash.ui.screen.settings.viewmodel.ScreenBrightnessViewModel
 import co.electriccoin.zcash.ui.screen.settings.viewmodel.SettingsViewModel
@@ -80,5 +81,15 @@ val viewModelModule =
                 zip321ParseUriValidationUseCase = get(),
             )
         }
-        viewModelOf(::SeedRecoveryViewModel)
+        viewModel { (args: SeedNavigationArgs) ->
+            SeedViewModel(
+                observePersistableWallet = get(),
+                args = args,
+                getPersistableWallet = get(),
+                copyToClipboard = get(),
+                walletRepository = get(),
+                observeBackupPersistableWallet = get(),
+                getBackupPersistableWallet = get()
+            )
+        }
     }

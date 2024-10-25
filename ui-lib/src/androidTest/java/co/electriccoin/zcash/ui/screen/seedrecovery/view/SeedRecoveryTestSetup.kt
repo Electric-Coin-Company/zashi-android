@@ -6,6 +6,7 @@ import cash.z.ecc.sdk.fixture.PersistableWalletFixture
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.screen.seed.view.SeedView
 import java.util.concurrent.atomic.AtomicInteger
 
 class SeedRecoveryTestSetup(
@@ -37,7 +38,7 @@ class SeedRecoveryTestSetup(
     @Suppress("TestFunctionName")
     fun DefaultContent() {
         ZcashTheme {
-            SeedRecovery(
+            SeedView(
                 PersistableWalletFixture.new(),
                 onBack = { onBackCount.incrementAndGet() },
                 onBirthdayCopy = { onBirthdayCopyCount.incrementAndGet() },

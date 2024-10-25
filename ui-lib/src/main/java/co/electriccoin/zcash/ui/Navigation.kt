@@ -85,7 +85,8 @@ import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressType
 import co.electriccoin.zcash.ui.screen.request.WrapRequest
 import co.electriccoin.zcash.ui.screen.scan.ScanNavigationArgs
 import co.electriccoin.zcash.ui.screen.scan.WrapScanValidator
-import co.electriccoin.zcash.ui.screen.seedrecovery.WrapSeedRecovery
+import co.electriccoin.zcash.ui.screen.seed.SeedNavigationArgs
+import co.electriccoin.zcash.ui.screen.seed.WrapSeed
 import co.electriccoin.zcash.ui.screen.send.ext.toSerializableAddress
 import co.electriccoin.zcash.ui.screen.send.model.SendArguments
 import co.electriccoin.zcash.ui.screen.sendconfirmation.WrapSendConfirmation
@@ -204,15 +205,11 @@ internal fun MainActivity.Navigation() {
             WrapChooseServer()
         }
         composable(SEED_RECOVERY) {
-            WrapSeedRecovery(
-                goBack = {
+            WrapSeed(
+                args = SeedNavigationArgs.RECOVERY,
+                goBackOverride = {
                     setSeedRecoveryAuthentication(false)
-                    navController.popBackStackJustOnce(SEED_RECOVERY)
-                },
-                onDone = {
-                    setSeedRecoveryAuthentication(false)
-                    navController.popBackStackJustOnce(SEED_RECOVERY)
-                },
+                }
             )
         }
         composable(SUPPORT) {
