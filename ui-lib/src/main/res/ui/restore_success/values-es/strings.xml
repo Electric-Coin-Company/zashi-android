@@ -1,10 +1,9 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="restore_success_title">Keep Zashi open!</string>
-    <string name="restore_success_subtitle">Your wallet has been successfully restored and is now syncing</string>
-    <string name="restore_success_description">To prevent interruption, keep your screen awake, plug your device into a power source, and keep it in a secure place.</string>
-    <string name="restoring_initial_dialog_checkbox">Keep screen on while restoring.</string>
-    <string name="restore_success_note_part_1">Note:</string>
-    <string name="restore_success_note_part_2">During the initial sync your funds cannot be sent or
-        spent. Depending on the age of your wallet, it may take a few hours to fully sync.</string>
-    <string name="restore_success_button">Got it!</string>
+    <string name="restore_success_title">¡Mantén Zashi abierto!</string>
+    <string name="restore_success_subtitle">Tu billetera ha sido restaurada con éxito y ahora se está sincronizando</string>
+    <string name="restore_success_description">Para evitar interrupciones, mantén la pantalla encendida, conecta tu dispositivo a una fuente de energía y guárdalo en un lugar seguro.</string>
+    <string name="restoring_initial_dialog_checkbox">Mantener la pantalla encendida mientras se restaura.</string>
+    <string name="restore_success_note_part_1">Nota:</string>
+    <string name="restore_success_note_part_2">Durante la sincronización inicial, tus fondos no se pueden enviar ni gastar. Dependiendo de la antigüedad de tu billetera, la sincronización completa puede tomar algunas horas.</string>
+    <string name="restore_success_button">¡Entendido!</string>
 </resources>
