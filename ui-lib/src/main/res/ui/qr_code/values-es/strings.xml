@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="qr_code_close_content_description">Close</string>
-    <string name="qr_code_unified_content_description">Unified Address QR code</string>
-    <string name="qr_code_sapling_content_description">Sapling Address QR code</string>
-    <string name="qr_code_transparent_content_description">Transparent Address QR code</string>
-    <string name="qr_code_wallet_address_shielded">Zcash Shielded Address</string>
-    <string name="qr_code_wallet_address_sapling">Zcash Sapling Address</string>
-    <string name="qr_code_wallet_address_transparent">Zcash Transparent Address</string>
-    <string name="qr_code_privacy_level_shielded">Maximum Privacy</string>
-    <string name="qr_code_privacy_level_transparent">Low Privacy</string>
-    <string name="qr_code_share_btn">Share QR Code</string>
-    <string name="qr_code_copy_btn">Copy Address</string>
-    <string name="qr_code_clipboard_tag">Zcash Wallet Address</string>
-    <string name="qr_code_data_unable_to_share">Unable to find an application for sharing the QR code.</string>
-    <string name="qr_code_share_chooser_title">My Zashi ZEC Address</string>
-    <string name="qr_code_share_chooser_text">Hi, scan this QR code to send me a ZEC payment! Download Link:
+    <string name="qr_code_close_content_description">Cerrar</string>
+    <string name="qr_code_unified_content_description">Código QR de Dirección Unificada</string>
+    <string name="qr_code_sapling_content_description">Código QR de Dirección Sapling</string>
+    <string name="qr_code_transparent_content_description">Código QR de Dirección Transparente</string>
+    <string name="qr_code_wallet_address_shielded">Dirección Protegida de Zcash</string>
+    <string name="qr_code_wallet_address_sapling">Dirección Sapling de Zcash</string>
+    <string name="qr_code_wallet_address_transparent">Dirección Transparente de Zcash</string>
+    <string name="qr_code_privacy_level_shielded">Privacidad Máxima</string>
+    <string name="qr_code_privacy_level_transparent">Baja Privacidad</string>
+    <string name="qr_code_share_btn">Compartir Código QR</string>
+    <string name="qr_code_copy_btn">Copiar Dirección</string>
+    <string name="qr_code_clipboard_tag">Dirección de Billetera Zcash</string>
+    <string name="qr_code_data_unable_to_share">No se pudo encontrar una aplicación para compartir el código QR.</string>
+    <string name="qr_code_share_chooser_title">Mi Dirección ZEC de Zashi</string>
+    <string name="qr_code_share_chooser_text">Hola, ¡escanea este código QR para enviarme un pago en ZEC! Enlace de descarga:
         https://play.google.com/store/apps/details?id=co.electriccoin.zcash</string>
 </resources>
