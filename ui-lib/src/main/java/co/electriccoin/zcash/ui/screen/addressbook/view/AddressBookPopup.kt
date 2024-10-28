@@ -146,7 +146,6 @@ private fun PopupContentPreview() =
                 AddressBookState(
                     onBack = {},
                     isLoading = false,
-                    version = stringRes("Version"),
                     contacts = emptyList(),
                     scanButton =
                         ButtonState(

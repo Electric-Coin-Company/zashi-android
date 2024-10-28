@@ -72,7 +72,7 @@ data class SupportInfo(
 
             return SupportInfo(
                 TimeInfo.new(packageInfo),
-                AppInfo.new(packageInfo),
+                AppInfo.new(packageInfo, applicationContext),
                 ConfigInfo.new(androidConfigurationProvider),
                 OperatingSystemInfo.new(),
                 DeviceInfo.new(),
