@@ -40,7 +40,7 @@
     <string name="balances_status_dialog_ok_button">OK</string>
     <string name="balances_status_dialog_report_button">Reportar</string>
 
-    <string name="balances_shielding_dialog_error_title">Transacción fallida</string>
+    <string name="balances_shielding_dialog_error_title">Transacción Fallida</string>
     <string name="balances_shielding_dialog_error_text">El intento de proteger los fondos transparentes falló. Inténtalo de nuevo, por favor.</string>
     <string name="balances_shielding_dialog_error_btn">OK</string>
     <string name="balances_shielding_dialog_report_btn">Reportar</string>
