@@ -1,5 +1,5 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <!-- Esto es reemplazado por una superposición de recursos a través de app/build.gradle.kts -->
+    <!-- This is replaced by a resource overlay via app/build.gradle.kts -->
     <string name="app_name">zashi-ui</string>
 
     <string name="back_navigation">Atrás</string>
@@ -13,7 +13,7 @@
 
     <string name="hide_balances_content_description">Ocultar saldos</string>
 
-    <!-- Esto es reemplazado por una superposición de recursos a través de app/build.gradle.kts -->
+    <!-- This is replaced by a resource overlay via app/build.gradle.kts -->
     <string name="support_email_address" />
     <string name="unable_to_open_email">No se pudo iniciar la aplicación de correo electrónico.</string>
 
