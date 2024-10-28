@@ -10,12 +10,12 @@
     <string name="choose_server_full_server_name_text_field">
         <xliff:g id="hostname" example="example.com">%1$s</xliff:g>:<xliff:g id="port" example="508">%2$d</xliff:g>
     </string>
-    <string name="choose_server_textfield_hint">&lt;hostname&gt;:&lt;puerto&gt;</string>
+    <string name="choose_server_textfield_hint">&lt;nombre del host&gt;:&lt;puerto&gt;</string>
     <string name="choose_server_save">Guardar selección</string>
 
     <string name="choose_server_validation_dialog_error_title">Punto final del servidor no válido</string>
     <string name="choose_server_validation_dialog_error_text">Error: El intento de cambiar el punto final falló.
-        Verifique que el nombre del host y el puerto sean correctos, y estén formateados como &lt;hostname&gt;:&lt;puerto&gt;.</string>
+        Verifique que el nombre del host y el puerto sean correctos, y estén formateados como &lt;nombre del host&gt;:&lt;puerto&gt;.</string>
     <string name="choose_server_validation_dialog_error_btn">OK</string>
 
     <string name="choose_server_save_success_dialog_title">Servidor guardado</string>
