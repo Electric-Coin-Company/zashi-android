@@ -51,7 +51,7 @@ import co.electriccoin.zcash.ui.screen.onboarding.persistExistingWalletWithSeedP
 import co.electriccoin.zcash.ui.screen.securitywarning.WrapSecurityWarning
 import co.electriccoin.zcash.ui.screen.seed.SeedNavigationArgs
 import co.electriccoin.zcash.ui.screen.seed.WrapSeed
-import co.electriccoin.zcash.ui.screen.support.WrapSupport
+import co.electriccoin.zcash.ui.screen.support.AndroidFeedback
 import co.electriccoin.zcash.ui.screen.warning.viewmodel.StorageCheckViewModel
 import co.electriccoin.zcash.work.WorkIds
 import kotlinx.coroutines.delay
@@ -257,9 +257,7 @@ class MainActivity : FragmentActivity() {
 
             AuthenticationUIState.SupportedRequired -> {
                 Twig.debug { "Authentication support required" }
-                WrapSupport(
-                    goBack = { finish() }
-                )
+                AndroidFeedback()
             }
 
             AuthenticationUIState.Successful -> {

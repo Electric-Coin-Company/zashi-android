@@ -26,6 +26,7 @@ import co.electriccoin.zcash.ui.screen.seed.viewmodel.SeedViewModel
 import co.electriccoin.zcash.ui.screen.sendconfirmation.viewmodel.CreateTransactionsViewModel
 import co.electriccoin.zcash.ui.screen.settings.viewmodel.ScreenBrightnessViewModel
 import co.electriccoin.zcash.ui.screen.settings.viewmodel.SettingsViewModel
+import co.electriccoin.zcash.ui.screen.support.viewmodel.FeedbackViewModel
 import co.electriccoin.zcash.ui.screen.support.viewmodel.SupportViewModel
 import co.electriccoin.zcash.ui.screen.update.viewmodel.UpdateViewModel
 import co.electriccoin.zcash.ui.screen.warning.viewmodel.StorageCheckViewModel
@@ -92,4 +93,5 @@ val viewModelModule =
                 getBackupPersistableWallet = get()
             )
         }
+        viewModelOf(::FeedbackViewModel)
     }

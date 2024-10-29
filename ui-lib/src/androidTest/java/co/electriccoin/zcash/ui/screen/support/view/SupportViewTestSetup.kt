@@ -36,7 +36,7 @@ class SupportViewTestSetup(private val composeTestRule: ComposeContentTestRule) 
     @Composable
     @Suppress("TestFunctionName")
     fun DefaultContent() {
-        Support(
+        FeedbackView(
             isShowingDialog = false,
             setShowDialog = {},
             onBack = {
