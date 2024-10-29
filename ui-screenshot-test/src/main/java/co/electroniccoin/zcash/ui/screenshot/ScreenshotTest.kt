@@ -202,7 +202,10 @@ class ScreenshotTest : UiTestPrerequisites() {
         }
 
         // To ensure that the new screen is available, or wait until it is
-        composeTestRule.waitUntilAtLeastOneExists(hasText(resContext.getString(R.string.restore_title)), DEFAULT_TIMEOUT_MILLISECONDS)
+        composeTestRule.waitUntilAtLeastOneExists(
+            hasText(resContext.getString(R.string.restore_title)),
+            DEFAULT_TIMEOUT_MILLISECONDS
+        )
 
         composeTestRule.onNodeWithText(resContext.getString(R.string.restore_title)).also {
             it.assertExists()
