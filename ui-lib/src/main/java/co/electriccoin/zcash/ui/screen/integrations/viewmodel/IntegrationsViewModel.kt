@@ -20,6 +20,10 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
 import co.electriccoin.zcash.ui.common.provider.GetZcashCurrencyProvider
+import co.electriccoin.zcash.ui.common.repository.BiometricRepository
+import co.electriccoin.zcash.ui.common.repository.BiometricRequest
+import co.electriccoin.zcash.ui.common.repository.BiometricsCancelledException
+import co.electriccoin.zcash.ui.common.repository.BiometricsFailureException
 import co.electriccoin.zcash.ui.common.usecase.GetSpendingKeyUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSynchronizerUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTransparentAddressUseCase
@@ -52,6 +56,7 @@ class IntegrationsViewModel(
     private val isCoinbaseAvailable: IsCoinbaseAvailableUseCase,
     private val getSpendingKey: GetSpendingKeyUseCase,
     private val context: Context,
+    private val biometricRepository: BiometricRepository
 ) : ViewModel() {
     val backNavigationCommand = MutableSharedFlow<Unit>()
     val flexaNavigationCommand = MutableSharedFlow<Unit>()
@@ -73,34 +78,34 @@ class IntegrationsViewModel(
                 disabledInfo = stringRes(R.string.integrations_disabled_info).takeIf { isEnabled.not() },
                 onBack = ::onBack,
                 items =
-                    listOfNotNull(
-                        ZashiSettingsListItemState(
-                            // Set the wallet currency by app build is more future-proof, although we hide it from
-                            // the UI in the Testnet build
-                            icon = R.drawable.ic_integrations_coinbase,
-                            text = stringRes(R.string.integrations_coinbase, getZcashCurrency.getLocalizedName()),
-                            subtitle =
-                                stringRes(
-                                    R.string.integrations_coinbase_subtitle,
-                                    getZcashCurrency.getLocalizedName()
-                                ),
-                            onClick = ::onBuyWithCoinbaseClicked
-                        ).takeIf { isCoinbaseAvailable() },
-                        ZashiSettingsListItemState(
-                            // Set the wallet currency by app build is more future-proof, although we hide it from
-                            // the UI in the Testnet build
-                            isEnabled = isEnabled,
-                            icon =
-                                if (isEnabled) {
-                                    R.drawable.ic_integrations_flexa
-                                } else {
-                                    R.drawable.ic_integrations_flexa_disabled
-                                },
-                            text = stringRes(R.string.integrations_flexa),
-                            subtitle = stringRes(R.string.integrations_flexa_subtitle),
-                            onClick = ::onFlexaClicked
-                        ).takeIf { isFlexaAvailable() }
-                    ).toImmutableList()
+                listOfNotNull(
+                    ZashiSettingsListItemState(
+                        // Set the wallet currency by app build is more future-proof, although we hide it from
+                        // the UI in the Testnet build
+                        icon = R.drawable.ic_integrations_coinbase,
+                        text = stringRes(R.string.integrations_coinbase, getZcashCurrency.getLocalizedName()),
+                        subtitle =
+                        stringRes(
+                            R.string.integrations_coinbase_subtitle,
+                            getZcashCurrency.getLocalizedName()
+                        ),
+                        onClick = ::onBuyWithCoinbaseClicked
+                    ).takeIf { isCoinbaseAvailable() },
+                    ZashiSettingsListItemState(
+                        // Set the wallet currency by app build is more future-proof, although we hide it from
+                        // the UI in the Testnet build
+                        isEnabled = isEnabled,
+                        icon =
+                        if (isEnabled) {
+                            R.drawable.ic_integrations_flexa
+                        } else {
+                            R.drawable.ic_integrations_flexa_disabled
+                        },
+                        text = stringRes(R.string.integrations_flexa),
+                        subtitle = stringRes(R.string.integrations_flexa_subtitle),
+                        onClick = ::onFlexaClicked
+                    ).takeIf { isFlexaAvailable() }
+                ).toImmutableList()
             )
         }.stateIn(
             scope = viewModelScope,
@@ -145,13 +150,19 @@ class IntegrationsViewModel(
 
     fun onFlexaResultCallback(transaction: Result<Transaction>) =
         viewModelScope.launch {
-            Twig.debug { "Getting send transaction proposal" }
             runCatching {
-                getSynchronizer().proposeSend(getSpendingKey().account, getZecSend(transaction.getOrNull()))
+                biometricRepository.requestBiometrics(
+                    BiometricRequest(message = stringRes(R.string.integrations_biometric_message))
+                )
+                Twig.debug { "Getting send transaction proposal" }
+                getSynchronizer()
+                    .proposeSend(
+                        account = getSpendingKey().account,
+                        send = getZecSend(transaction.getOrNull())
+                    )
             }.onSuccess { proposal ->
                 Twig.debug { "Transaction proposal successful: ${proposal.toPrettyString()}" }
                 val result = submitTransactions(proposal = proposal, spendingKey = getSpendingKey())
-
                 when (result.first) {
                     SubmitResult.Success -> {
                         Twig.debug { "Transaction successful $result" }
@@ -167,6 +178,13 @@ class IntegrationsViewModel(
                     }
                 }
             }.onFailure {
+                if (it is BiometricsFailureException || it is BiometricsCancelledException) {
+                    Flexa.buildSpend()
+                        .transactionSent(
+                            commerceSessionId = transaction.getOrNull()?.commerceSessionId.orEmpty(),
+                            txSignature = ""
+                        )
+                }
                 Twig.error(it) { "Transaction proposal failed" }
             }
         }
@@ -266,24 +284,24 @@ class IntegrationsViewModel(
             is ZecSendExt.ZecSendValidation.Valid ->
                 zecSendValidation.zecSend.copy(
                     destination =
-                        when (recipientAddressState.type) {
-                            is AddressType.Invalid ->
-                                WalletAddress.Unified.new(recipientAddressState.address)
+                    when (recipientAddressState.type) {
+                        is AddressType.Invalid ->
+                            WalletAddress.Unified.new(recipientAddressState.address)
 
-                            AddressType.Shielded ->
-                                WalletAddress.Unified.new(recipientAddressState.address)
+                        AddressType.Shielded ->
+                            WalletAddress.Unified.new(recipientAddressState.address)
 
-                            AddressType.Tex ->
-                                WalletAddress.Tex.new(recipientAddressState.address)
+                        AddressType.Tex ->
+                            WalletAddress.Tex.new(recipientAddressState.address)
 
-                            AddressType.Transparent ->
-                                WalletAddress.Transparent.new(recipientAddressState.address)
+                        AddressType.Transparent ->
+                            WalletAddress.Transparent.new(recipientAddressState.address)
 
-                            AddressType.Unified ->
-                                WalletAddress.Unified.new(recipientAddressState.address)
+                        AddressType.Unified ->
+                            WalletAddress.Unified.new(recipientAddressState.address)
 
-                            null -> WalletAddress.Unified.new(recipientAddressState.address)
-                        }
+                        null -> WalletAddress.Unified.new(recipientAddressState.address)
+                    }
                 )
 
             is ZecSendExt.ZecSendValidation.Invalid -> {

@@ -4,6 +4,8 @@ import co.electriccoin.zcash.ui.common.repository.AddressBookRepository
 import co.electriccoin.zcash.ui.common.repository.AddressBookRepositoryImpl
 import co.electriccoin.zcash.ui.common.repository.BalanceRepository
 import co.electriccoin.zcash.ui.common.repository.BalanceRepositoryImpl
+import co.electriccoin.zcash.ui.common.repository.BiometricRepository
+import co.electriccoin.zcash.ui.common.repository.BiometricRepositoryImpl
 import co.electriccoin.zcash.ui.common.repository.ConfigurationRepository
 import co.electriccoin.zcash.ui.common.repository.ConfigurationRepositoryImpl
 import co.electriccoin.zcash.ui.common.repository.ExchangeRateRepository
@@ -24,4 +26,5 @@ val repositoryModule =
         singleOf(::BalanceRepositoryImpl) bind BalanceRepository::class
         singleOf(::AddressBookRepositoryImpl) bind AddressBookRepository::class
         singleOf(::FlexaRepositoryImpl) bind FlexaRepository::class
+        singleOf(::BiometricRepositoryImpl) bind BiometricRepository::class
     }

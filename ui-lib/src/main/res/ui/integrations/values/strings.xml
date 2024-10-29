@@ -6,4 +6,5 @@
     <string name="integrations_flexa_subtitle">Pay with Flexa payment clips and explore a new way of spending Zcash.</string>
     <string name="integrations_version">Version %s</string>
     <string name="integrations_disabled_info">During the Restore process, it is not possible to use payment integrations.</string>
+    <string name="integrations_biometric_message">Authenticate yourself to pay with Flexa</string>
 </resources>
