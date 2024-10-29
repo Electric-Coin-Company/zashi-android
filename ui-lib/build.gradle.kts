@@ -30,16 +30,19 @@ android {
         getByName("main").apply {
             res.setSrcDirs(
                 setOf(
+                    // This is a special case as these texts are not translated, they are replaced in build time via
+                    // app/build.gradle.kts instead
+                    "src/main/res/ui/non_translatable",
+
                     "src/main/res/ui/about",
                     "src/main/res/ui/account",
                     "src/main/res/ui/address_book",
-                    "src/main/res/ui/contact",
                     "src/main/res/ui/add_contact",
-                    "src/main/res/ui/update_contact",
                     "src/main/res/ui/advanced_settings",
                     "src/main/res/ui/authentication",
                     "src/main/res/ui/balances",
                     "src/main/res/ui/common",
+                    "src/main/res/ui/contact",
                     "src/main/res/ui/delete_wallet",
                     "src/main/res/ui/export_data",
                     "src/main/res/ui/home",
@@ -61,6 +64,7 @@ android {
                     "src/main/res/ui/settings",
                     "src/main/res/ui/support",
                     "src/main/res/ui/update",
+                    "src/main/res/ui/update_contact",
                     "src/main/res/ui/wallet_address",
                     "src/main/res/ui/warning",
                     "src/main/res/ui/whats_new",
