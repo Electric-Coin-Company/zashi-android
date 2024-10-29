@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="request_title">Request</string>
-    <string name="request_amount_invalid">This transaction amount is invalid</string>
-    <string name="request_amount_btn">Next</string>
-    <string name="request_memo_btn">Request</string>
-    <string name="request_qr_share_btn">Share QR Code</string>
-    <string name="request_qr_close_btn">Close</string>
-    <string name="request_privacy_level_shielded">Maximum Privacy</string>
-    <string name="request_privacy_level_transparent">Low Privacy</string>
+    <string name="request_title">Solicitar</string>
+    <string name="request_amount_invalid">Este monto de transacción no es válido</string>
+    <string name="request_amount_btn">Siguiente</string>
+    <string name="request_memo_btn">Solicitar</string>
+    <string name="request_qr_share_btn">Compartir Código QR</string>
+    <string name="request_qr_close_btn">Cerrar</string>
+    <string name="request_privacy_level_shielded">Máxima Privacidad</string>
+    <string name="request_privacy_level_transparent">Baja Privacidad</string>
 
     <string name="request_amount_empty">0</string>
     <string name="request_amount_keyboard_zero">0</string>
@@ -20,17 +20,17 @@
     <string name="request_amount_keyboard_seven">7</string>
     <string name="request_amount_keyboard_eight">8</string>
     <string name="request_amount_keyboard_nine">9</string>
-    <string name="request_amount_keyboard_delete">Delete</string>
+    <string name="request_amount_keyboard_delete">Eliminar</string>
 
-    <string name="request_memo_payment_request_subtitle">Payment Request</string>
-    <string name="request_memo_text_field_hint">What\'s this for?</string>
+    <string name="request_memo_payment_request_subtitle">Solicitud de Pago</string>
+    <string name="request_memo_text_field_hint">¿Para qué es esto?</string>
     <string name="request_memo_bytes_counter">
         <xliff:g id="typed_bytes" example="12">%1$s</xliff:g>/<xliff:g id="max_bytes" example="512">%2$s</xliff:g>
     </string>
 
-    <string name="request_qr_code_content_description">Request QR Code</string>
-    <string name="request_qr_code_data_unable_to_share">Unable to find an application for sharing the QR code.</string>
-    <string name="request_qr_code_share_chooser_title">Request ZEC</string>
-    <string name="request_qr_code_share_chooser_text">Hi, scan this QR code to send me a ZEC payment! Download Link:
+    <string name="request_qr_code_content_description">Solicitar Código QR</string>
+    <string name="request_qr_code_data_unable_to_share">No se pudo encontrar una aplicación para compartir el código QR.</string>
+    <string name="request_qr_code_share_chooser_title">Solicitar ZEC</string>
+    <string name="request_qr_code_share_chooser_text">Hola, ¡escanea este código QR para enviarme un pago en ZEC! Enlace de descarga:
         https://play.google.com/store/apps/details?id=co.electriccoin.zcash</string>
 </resources>

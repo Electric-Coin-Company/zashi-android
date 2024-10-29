@@ -1,15 +1,10 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="security_warning_header">Security warning:</string>
+    <string name="security_warning_header">Advertencia de seguridad:</string>
 
-    <string name="security_warning_text" formatted="true">Zashi <xliff:g example="0.2.0" id="version_name">%1$s
-    </xliff:g>is a Zcash-only, shielded wallet — built by Zcashers for Zcashers. Zashi has been engineered for your
-        privacy and safety. By installing and using Zashi, you consent to share crash reports with Electric Coin Co.
-        (the wallet developer), which will help us improve the Zashi user experience.*\n\nPlease acknowledge and
-        confirm below to proceed.</string>
-    <string name="security_warning_text_footnote_part_1">*Note:</string>
-    <string name="security_warning_text_footnote_part_2">\u0020Crash reports might reveal the timing of the crash and
-        what events occurred, but it would not reveal spending or viewing keys.</string>
+    <string name="security_warning_text" formatted="true">Zashi <xliff:g example="0.2.0" id="version_name">%1$s</xliff:g> es una billetera exclusiva para Zcash, con protección de privacidad — creada por Zcashers para Zcashers. Zashi ha sido diseñada para tu privacidad y seguridad. Al instalar y usar Zashi, aceptas compartir informes de fallos con Electric Coin Co. (el desarrollador de la billetera), lo que nos ayudará a mejorar la experiencia del usuario de Zashi.*\n\nPor favor, confirma y acepta a continuación para continuar.</string>
+    <string name="security_warning_text_footnote_part_1">*Nota:</string>
+    <string name="security_warning_text_footnote_part_2">\u0020Los informes de fallos podrían revelar la fecha y hora del fallo y los eventos que ocurrieron, pero no revelarían las claves de gasto o de visualización.</string>
 
-    <string name="security_warning_confirm">Confirm</string>
-    <string name="security_warning_acknowledge">I acknowledge</string>
+    <string name="security_warning_confirm">Confirmar</string>
+    <string name="security_warning_acknowledge">Lo reconozco</string>
 </resources>

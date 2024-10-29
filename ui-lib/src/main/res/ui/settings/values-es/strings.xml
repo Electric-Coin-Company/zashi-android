@@ -1,16 +1,15 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="settings_title">Settings</string>
-    <string name="settings_advanced_settings">Advanced Settings</string>
-    <string name="settings_integrations">Integrations</string>
-    <string name="settings_about_us">About Us</string>
-    <string name="settings_feedback">Send Us Feedback</string>
-    <string name="settings_version">Version <xliff:g example="1" id="version">%s</xliff:g></string>
-    <string name="settings_address_book">Address Book</string>
+    <string name="settings_title">Configuración</string>
+    <string name="settings_advanced_settings">Configuración Avanzada</string>
+    <string name="settings_integrations">Integraciones</string>
+    <string name="settings_about_us">Acerca de Nosotros</string>
+    <string name="settings_feedback">Envíanos tus Comentarios</string>
+    <string name="settings_version">Versión <xliff:g example="1" id="version">%s</xliff:g></string>
+    <string name="settings_address_book">Libreta de Direcciones</string>
 
-    <string name="settings_troubleshooting_menu_content_description">Additional settings</string>
-    <string name="settings_troubleshooting_rescan">Rescan blockchain</string>
-    <string name="settings_troubleshooting_enable_background_sync">Background sync</string>
-    <string name="settings_troubleshooting_enable_keep_screen_on">Keep screen on during sync</string>
-    <string name="settings_troubleshooting_enable_analytics">Report crashes</string>
-
+    <string name="settings_troubleshooting_menu_content_description">Configuraciones adicionales</string>
+    <string name="settings_troubleshooting_rescan">Reescanear blockchain</string>
+    <string name="settings_troubleshooting_enable_background_sync">Sincronización en segundo plano</string>
+    <string name="settings_troubleshooting_enable_keep_screen_on">Mantener pantalla encendida durante la sincronización</string>
+    <string name="settings_troubleshooting_enable_analytics">Reportar fallos</string>
 </resources>

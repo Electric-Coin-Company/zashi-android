@@ -1,7 +1,7 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="integrations_title">Integrations</string>
-    <string name="integrations_coinbase">Buy <xliff:g id="currency" example="ZEC">%1$s</xliff:g> with Coinbase</string>
-    <string name="integrations_coinbase_subtitle">A hassle-free way to buy <xliff:g id="currency" example="ZEC">%1$s</xliff:g> and get it directly into your Zashi wallet.</string>
-    <string name="integrations_version">Version %s</string>
-    <string name="integrations_disabled_info">During the Restore process, it is not possible to use payment integrations.</string>
+    <string name="integrations_title">Integraciones</string>
+    <string name="integrations_coinbase">Compra <xliff:g id="currency" example="ZEC">%1$s</xliff:g> con Coinbase</string>
+    <string name="integrations_coinbase_subtitle">Una forma sencilla de comprar <xliff:g id="currency" example="ZEC">%1$s</xliff:g> y recibirlo directamente en tu billetera Zashi.</string>
+    <string name="integrations_version">Versión %s</string>
+    <string name="integrations_disabled_info">Durante el proceso de Restauración, no es posible utilizar integraciones de pago.</string>
 </resources>

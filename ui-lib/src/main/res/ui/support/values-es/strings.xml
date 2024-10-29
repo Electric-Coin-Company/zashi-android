@@ -1,12 +1,11 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="support_header">Support</string>
+    <string name="support_header">Soporte</string>
 
-    <string name="support_hint">How can we help?</string>
-    <string name="support_send">Send</string>
+    <string name="support_hint">¿Cómo podemos ayudarte?</string>
+    <string name="support_send">Enviar</string>
     <string name="support_confirmation_dialog_ok">OK</string>
-    <string name="support_confirmation_dialog_cancel">Cancel</string>
-    <string name="support_confirmation_dialog_title">Open e-mail app</string>
-    <string name="support_confirmation_explanation"><xliff:g id="app_name" example="Zcash">%1$s</xliff:g> is about to
-        open your e-mail app with a pre-filled message.\n\nBe sure to hit send within your e-mail app.</string>
-    <string name="support_information">Please let us know about any problems you have had, or features you want to see in the future.</string>
+    <string name="support_confirmation_dialog_cancel">Cancelar</string>
+    <string name="support_confirmation_dialog_title">Abrir aplicación de correo electrónico</string>
+    <string name="support_confirmation_explanation"><xliff:g id="app_name" example="Zcash">%1$s</xliff:g> está a punto de abrir tu aplicación de correo electrónico con un mensaje pre-rellenado.\n\nAsegúrate de presionar enviar dentro de tu aplicación de correo.</string>
+    <string name="support_information">Por favor, háznos saber sobre cualquier problema que hayas tenido, o funciones que te gustaría ver en el futuro.</string>
 </resources>

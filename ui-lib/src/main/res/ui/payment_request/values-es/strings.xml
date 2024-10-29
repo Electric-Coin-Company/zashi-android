@@ -1,29 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources  xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="payment_request_title">Payment Request</string>
-    <string name="payment_request_close_content_description">Close</string>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="payment_request_title">Solicitud de Pago</string>
+    <string name="payment_request_close_content_description">Cerrar</string>
 
-    <string name="payment_request_requested_by">Requested By</string>
-    <string name="payment_request_btn_show_address">Show</string>
-    <string name="payment_request_btn_hide_address">Hide</string>
-    <string name="payment_request_btn_save_contact">Save</string>
+    <string name="payment_request_requested_by">Solicitado Por</string>
+    <string name="payment_request_btn_show_address">Mostrar</string>
+    <string name="payment_request_btn_hide_address">Ocultar</string>
+    <string name="payment_request_btn_save_contact">Guardar</string>
 
-    <string name="payment_request_memo">For:</string>
+    <string name="payment_request_memo">Para:</string>
 
-    <string name="payment_request_fee">Fee</string>
+    <string name="payment_request_fee">Tarifa</string>
     <string name="payment_request_total">Total</string>
 
-    <string name="payment_request_send_btn">Send</string>
+    <string name="payment_request_send_btn">Enviar</string>
 
-    <string name="payment_request_dialog_error_title">Transaction Failed</string>
-    <string name="payment_request_dialog_error_text">An error occurred and the attempt to send funds failed. Try it again, please.</string>
+    <string name="payment_request_dialog_error_title">Transacción Fallida</string>
+    <string name="payment_request_dialog_error_text">Ocurrió un error y el intento de enviar fondos falló. Inténtelo de nuevo, por favor.</string>
     <string name="payment_request_dialog_error_ok_btn">OK</string>
-    <string name="payment_request_dialog_error_report_btn">Report</string>
+    <string name="payment_request_dialog_error_report_btn">Reportar</string>
 
-    <string name="payment_request_dialog_error_grpc_title">Connection Error</string>
-    <string name="payment_request_dialog_error_grpc_text">Zashi encountered some connection issues when submitting
-        the transaction to the network. It will retry during the next few minutes.</string>
+    <string name="payment_request_dialog_error_grpc_title">Error de Conexión</string>
+    <string name="payment_request_dialog_error_grpc_text">Zashi encontró algunos problemas de conexión al enviar la transacción a la red. Volverá a intentarlo durante los próximos minutos.</string>
     <string name="payment_request_dialog_error_grpc_btn">OK</string>
 
-    <string name="payment_request_send_failed_report_unable_open_email">Unable to launch email app.</string>
+    <string name="payment_request_send_failed_report_unable_open_email">No se pudo iniciar la aplicación de correo.</string>
 </resources>

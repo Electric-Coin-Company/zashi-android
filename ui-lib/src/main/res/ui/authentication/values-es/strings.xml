@@ -1,36 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="authentication_system_ui_title">
-        Authentication for <xliff:g id="app_name" example="Zashi">%1$s</xliff:g>
+        Autenticación para <xliff:g id="app_name" example="Zashi">%1$s</xliff:g>
     </string>
     <string name="authentication_system_ui_subtitle">
-        Use biometric or device credential to access <xliff:g id="use_case" example="Recovery Phrase">%1$s</xliff:g>.
+        Usa credenciales biométricas o del dispositivo para acceder a <xliff:g id="use_case" example="Recovery Phrase">%1$s</xliff:g>.
     </string>
 
-    <string name="authentication_use_case_delete_wallet">Delete Wallet feature</string>
-    <string name="authentication_use_case_export_data">Export Private Data feature</string>
-    <string name="authentication_use_case_seed_recovery">Seed Recovery feature</string>
-    <string name="authentication_use_case_send_funds">Send Funds feature</string>
+    <string name="authentication_use_case_delete_wallet">Función Eliminar Cartera</string>
+    <string name="authentication_use_case_export_data">Función Exportar Datos Privados</string>
+    <string name="authentication_use_case_seed_recovery">Función Recuperación de Semilla</string>
+    <string name="authentication_use_case_send_funds">Función Enviar Fondos</string>
 
-    <string name="authentication_toast_canceled">Authentication canceled</string>
-    <string name="authentication_toast_failed">Authentication failed</string>
+    <string name="authentication_toast_canceled">Autenticación cancelada</string>
+    <string name="authentication_toast_failed">Autenticación fallida</string>
 
-    <string name="authentication_error_title">Authentication error</string>
-    <string name="authentication_error_text">Authentication failed for the following reason. Retry the authentication, or contact the support team for help.</string>
+    <string name="authentication_error_title">Error de autenticación</string>
+    <string name="authentication_error_text">La autenticación falló por la siguiente razón. Reintenta la autenticación o contacta al equipo de soporte para obtener ayuda.</string>
     <string name="authentication_error_details">
-        Error code: <xliff:g id="code" example="-1">%1$d</xliff:g>\nError message: <xliff:g id="message" example="No device credential">%2$s</xliff:g>
+        Código de error: <xliff:g id="code" example="-1">%1$d</xliff:g>\nMensaje de error: <xliff:g id="message" example="No device credential">%2$s</xliff:g>
     </string>
-    <string name="authentication_error_button_retry">Retry</string>
-    <string name="authentication_error_button_support">Contact Support</string>
+    <string name="authentication_error_button_retry">Reintentar</string>
+    <string name="authentication_error_button_support">Contactar Soporte</string>
 
-    <string name="authentication_failed_title">Authentication failed</string>
+    <string name="authentication_failed_title">Autenticación fallida</string>
     <string name="authentication_failed_text">
-        Authentication was presented but not recognized. Retry authentication, or contact the support team for help.
+        La autenticación fue presentada pero no fue reconocida. Reintenta la autenticación o contacta al equipo de soporte para obtener ayuda.
     </string>
-    <string name="authentication_failed_button_retry">Retry</string>
-    <string name="authentication_failed_button_support">Contact Support</string>
+    <string name="authentication_failed_button_retry">Reintentar</string>
+    <string name="authentication_failed_button_support">Contactar Soporte</string>
 
-    <string name="authentication_failed_welcome_icon_cont_desc">Tap to unlock <xliff:g id="app_name" example="Zashi">%1$s</xliff:g> app</string>
-    <string name="authentication_failed_welcome_title">Your Zashi account is secured.</string>
-    <string name="authentication_failed_welcome_subtitle">Tap the key icon to unlock it.</string>
+    <string name="authentication_failed_welcome_icon_cont_desc">Toca para desbloquear la app <xliff:g id="app_name" example="Zashi">%1$s</xliff:g></string>
+    <string name="authentication_failed_welcome_title">Tu cuenta de Zashi está segura.</string>
+    <string name="authentication_failed_welcome_subtitle">Toca el ícono de la llave para desbloquearla.</string>
 </resources>

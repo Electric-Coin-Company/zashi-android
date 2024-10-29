@@ -1,14 +1,9 @@
 <resources>
-    <string name="export_data_header">Consent for Exporting Private Data</string>
-    <string name="export_data_text_1">By clicking \"I Agree\" below, you give your consent to export Zashi’s private
-        data which includes the entire history of the wallet, all private information, memos, amounts and recipient
-        addresses, even for your shielded activity.*\n\nThis private data also gives the ability to see certain future
-        actions you take with Zashi.\n\nSharing this private data is irrevocable — once you have shared this private
-        data with someone, there is no way to revoke their access.</string>
-    <string name="export_data_text_2">*Note that this private data does not give them the ability to spend your
-        funds, only the ability to see what you do with your funds.</string>
-    <string name="export_data_confirm">Export private data</string>
-    <string name="export_data_agree">I agree</string>
-    <string name="export_data_export_data_chooser_title">Share internal Zashi data with:</string>
-    <string name="export_data_unable_to_share">Unable to find an application to share with.</string>
+    <string name="export_data_header">Consentimiento para Exportar Datos Privados</string>
+    <string name="export_data_text_1">Al hacer clic en \"Estoy de acuerdo\" a continuación, das tu consentimiento para exportar los datos privados de Zashi, lo cual incluye todo el historial de la billetera, toda la información privada, los memos, los montos y las direcciones de los destinatarios, incluso para tu actividad protegida.*\n\nEstos datos privados también permiten ver ciertas acciones futuras que realices con Zashi.\n\nCompartir estos datos privados es irrevocable: una vez que hayas compartido estos datos privados con alguien, no hay forma de revocar su acceso.</string>
+    <string name="export_data_text_2">*Ten en cuenta que estos datos privados no les dan la capacidad de gastar tus fondos, solo la capacidad de ver lo que haces con tus fondos.</string>
+    <string name="export_data_confirm">Exportar datos privados</string>
+    <string name="export_data_agree">Estoy de acuerdo</string>
+    <string name="export_data_export_data_chooser_title">Compartir datos internos de Zashi con:</string>
+    <string name="export_data_unable_to_share">No se pudo encontrar una aplicación con la cual compartir.</string>
 </resources>

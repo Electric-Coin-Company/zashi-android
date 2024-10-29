@@ -1,26 +1,25 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="back_navigation">Back</string>
-    <string name="back_navigation_content_description">Back</string>
+    <string name="back_navigation">Atrás</string>
+    <string name="back_navigation_content_description">Atrás</string>
 
-    <string name="fiat_currency_conversion_rate_unavailable">Unavailable</string>
+    <string name="fiat_currency_conversion_rate_unavailable">No disponible</string>
     <string name="empty_char">-</string>
-    <string name="zcash_logo_content_description">Zcash logo</string>
-    <string name="settings_menu_content_description">Open Settings</string>
-    <string name="balance_widget_available">Available Balance:</string>
+    <string name="zcash_logo_content_description">Logotipo de Zcash</string>
+    <string name="settings_menu_content_description">Abrir Configuración</string>
+    <string name="balance_widget_available">Saldo Disponible:</string>
 
-    <string name="hide_balances_content_description">Hide balances</string>
+    <string name="hide_balances_content_description">Ocultar saldos</string>
 
-    <string name="unable_to_open_email">Unable to launch email app.</string>
+    <string name="unable_to_open_email">No se pudo iniciar la aplicación de correo electrónico.</string>
 
-    <string name="restoring_wallet_label">[Restoring Your Wallet…]</string>
-    <string name="disconnected_label">[Disconnected…]</string>
-    <string name="unable_to_open_play_store">Unable to launch Google Play Store app…</string>
+    <string name="restoring_wallet_label">[Restaurando tu billetera…]</string>
+    <string name="disconnected_label">[Desconectado…]</string>
+    <string name="unable_to_open_play_store">No se pudo iniciar la aplicación de Google Play Store…</string>
 
-    <string name="server_disconnected_dialog_title">Heads up</string>
-    <string name="server_disconnected_dialog_message">Your current server is experiencing difficulties. Check your
-        device connection, and/or navigate to Advanced Settings to choose a different server.</string>
-    <string name="server_disconnected_dialog_switch_btn">Switch Server</string>
-    <string name="server_disconnected_dialog_ignore_btn">Ignore</string>
+    <string name="server_disconnected_dialog_title">Aviso</string>
+    <string name="server_disconnected_dialog_message">Tu servidor actual está experimentando dificultades. Verifica la conexión de tu dispositivo y/o navega a Configuración Avanzada para elegir un servidor diferente.</string>
+    <string name="server_disconnected_dialog_switch_btn">Cambiar Servidor</string>
+    <string name="server_disconnected_dialog_ignore_btn">Ignorar</string>
 
     <string name="general_etc">…</string>
 </resources>
