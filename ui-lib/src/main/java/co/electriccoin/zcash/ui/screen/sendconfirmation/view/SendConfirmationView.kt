@@ -65,6 +65,7 @@ import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.ZashiTextField
 import co.electriccoin.zcash.ui.design.component.ZashiTextFieldDefaults
 import co.electriccoin.zcash.ui.design.component.ZecAmountTriple
+import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
@@ -79,19 +80,19 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.runBlocking
 
-@Preview
+@PreviewScreens
 @Composable
 private fun SendConfirmationPreview() {
-    ZcashTheme(forceDarkMode = false) {
+    ZcashTheme {
         SendConfirmation(
             snackbarHostState = SnackbarHostState(),
             zecSend =
-                ZecSend(
-                    destination = runBlocking { WalletAddressFixture.sapling() },
-                    amount = ZatoshiFixture.new(),
-                    memo = MemoFixture.new(),
-                    proposal = null,
-                ),
+            ZecSend(
+                destination = runBlocking { WalletAddressFixture.sapling() },
+                amount = ZatoshiFixture.new(),
+                memo = MemoFixture.new(),
+                proposal = null,
+            ),
             onConfirmation = {},
             onBack = {},
             stage = SendConfirmationStage.Confirmation,
@@ -99,15 +100,15 @@ private fun SendConfirmationPreview() {
             onContactSupport = { _, _ -> },
             submissionResults = emptyList<TransactionSubmitResult>().toImmutableList(),
             exchangeRate = ObserveFiatCurrencyResultFixture.new(),
-            contactName = "Romek"
+            contactName = "Mom"
         )
     }
 }
 
-@Preview
+@PreviewScreens
 @Composable
 private fun SendConfirmationDarkPreview() {
-    ZcashTheme(forceDarkMode = true) {
+    ZcashTheme {
         SendConfirmation(
             snackbarHostState = SnackbarHostState(),
             zecSend =
@@ -129,10 +130,10 @@ private fun SendConfirmationDarkPreview() {
     }
 }
 
-@Preview
+@PreviewScreens
 @Composable
 private fun SendMultipleErrorPreview() {
-    ZcashTheme(forceDarkMode = false) {
+    ZcashTheme {
         SendConfirmation(
             snackbarHostState = SnackbarHostState(),
             zecSend =
@@ -154,10 +155,10 @@ private fun SendMultipleErrorPreview() {
     }
 }
 
-@Preview
+@PreviewScreens
 @Composable
 private fun SendMultipleErrorDarkPreview() {
-    ZcashTheme(forceDarkMode = true) {
+    ZcashTheme {
         SendConfirmation(
             snackbarHostState = SnackbarHostState(),
             zecSend =
@@ -179,10 +180,10 @@ private fun SendMultipleErrorDarkPreview() {
     }
 }
 
+@PreviewScreens
 @Composable
-@Preview("SendConfirmation")
 private fun PreviewSendConfirmation() {
-    ZcashTheme(forceDarkMode = false) {
+    ZcashTheme {
         SendConfirmationContent(
             zecSend =
                 ZecSend(
@@ -200,10 +201,10 @@ private fun PreviewSendConfirmation() {
     }
 }
 
-@Preview
+@PreviewScreens
 @Composable
 private fun SendMultipleTransactionFailurePreview() {
-    ZcashTheme(forceDarkMode = false) {
+    ZcashTheme {
         @Suppress("MagicNumber")
         MultipleSubmissionFailure(
             onContactSupport = {},
@@ -227,10 +228,10 @@ private fun SendMultipleTransactionFailurePreview() {
     }
 }
 
-@Preview
+@PreviewScreens
 @Composable
 private fun SendMultipleTransactionFailureDarkPreview() {
-    ZcashTheme(forceDarkMode = true) {
+    ZcashTheme {
         @Suppress("MagicNumber")
         MultipleSubmissionFailure(
             onContactSupport = {},
@@ -629,15 +630,30 @@ fun SendConfirmationActionButtons(
     }
 }
 
+@PreviewScreens
 @Composable
-@Preview("SendConfirmationFailure")
 private fun PreviewSendConfirmationFailure() {
-    ZcashTheme(forceDarkMode = false) {
+    ZcashTheme {
         BlankSurface {
             SendFailure(
                 onDone = {},
                 onReport = {},
-                stage = SendConfirmationStage.Failure("Failed - network error", "Failed stackTrace"),
+                stage = SendConfirmationStage.Failure(
+                    "The transaction has not been successfully created...",
+                    "Failed stackTrace..."
+                ),
+            )
+        }
+    }
+}
+
+@PreviewScreens
+@Composable
+private fun PreviewSendConfirmationFailureGrpc() {
+    ZcashTheme {
+        BlankSurface {
+            SendFailureGrpc(
+                onDone = {}
             )
         }
     }
