@@ -22,18 +22,19 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -42,6 +43,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.SecureScreen
+import co.electriccoin.zcash.ui.common.compose.ZashiTooltip
+import co.electriccoin.zcash.ui.common.compose.ZashiTooltipBox
+import co.electriccoin.zcash.ui.common.compose.drawCaretWithPath
 import co.electriccoin.zcash.ui.common.compose.shouldSecureScreen
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.component.ButtonState
@@ -59,6 +63,7 @@ import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.seed.model.SeedSecretState
 import co.electriccoin.zcash.ui.screen.seed.model.SeedSecretStateTooltip
 import co.electriccoin.zcash.ui.screen.seed.model.SeedState
+import kotlinx.coroutines.launch
 
 @Composable
 fun SeedView(
@@ -135,11 +140,11 @@ private fun SeedRecoveryMainContent(
 
         Spacer(Modifier.height(ZashiDimensions.Spacing.spacing4xl))
 
-        Secret(modifier = Modifier.fillMaxWidth(), state = state.seed)
+        SeedSecret(modifier = Modifier.fillMaxWidth(), state = state.seed)
 
         Spacer(Modifier.height(ZashiDimensions.Spacing.spacing3xl))
 
-        Secret(modifier = Modifier.fillMaxWidth(), state = state.birthday)
+        SeedSecret(modifier = Modifier.fillMaxWidth(), state = state.birthday)
 
         Spacer(Modifier.weight(1f))
 
@@ -169,18 +174,28 @@ private fun SeedRecoveryMainContent(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun Secret(
+private fun SeedSecret(
     state: SeedSecretState,
     modifier: Modifier = Modifier,
 ) {
-    var isTooltipVisible by remember { mutableStateOf(false) }
+    val tooltipState = rememberTooltipState(isPersistent = true)
+    val scope = rememberCoroutineScope()
     Column(
         modifier = modifier
     ) {
         Row(
             modifier = if (state.tooltip != null) {
-                Modifier.clickable { isTooltipVisible = !isTooltipVisible }
+                Modifier.clickable {
+                    scope.launch {
+                        if (tooltipState.isVisible) {
+                            tooltipState.dismiss()
+                        } else {
+                            tooltipState.show()
+                        }
+                    }
+                }
             } else {
                 Modifier
             }
@@ -192,33 +207,44 @@ private fun Secret(
                 fontWeight = FontWeight.Medium
             )
             if (state.tooltip != null) {
+                val density = LocalDensity.current
+                val configuration = LocalConfiguration.current
+                val containerColor = ZashiColors.HintTooltips.defaultBg
                 Spacer(Modifier.width(2.dp))
-                Image(
-                    painter = painterResource(id = R.drawable.ic_zashi_tooltip),
-                    contentDescription = "",
-                    colorFilter = ColorFilter.tint(ZashiColors.Inputs.Default.icon)
-                )
+                ZashiTooltipBox(
+                    tooltip = {
+                        ZashiTooltip(
+                            modifier = Modifier.drawCaret {
+                                drawCaretWithPath(
+                                    density = density,
+                                    configuration = configuration,
+                                    containerColor = containerColor,
+                                    anchorLayoutCoordinates = it
+                                )
+                            },
+                            showCaret = false,
+                            title = state.tooltip.title,
+                            message = state.tooltip.message,
+                            onDismissRequest = {
+                                scope.launch {
+                                    tooltipState.dismiss()
+                                }
+                            }
+                        )
+                    },
+                    state = tooltipState,
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_zashi_tooltip),
+                        contentDescription = "",
+                        colorFilter = ColorFilter.tint(ZashiColors.Inputs.Default.icon)
+                    )
+                }
             }
         }
         Spacer(Modifier.height(ZashiDimensions.Spacing.spacingSm))
 
         SecretContent(state = state)
-
-        // Box {
-        //     Column {
-        //
-        //     }
-        //     // if (state.tooltip != null) {
-        //     //     ZashiAnimatedTooltip(
-        //     //         isVisible = isTooltipVisible,
-        //     //         title = state.tooltip.title,
-        //     //         message = state.tooltip.message,
-        //     //         onDismissRequest = {
-        //     //             isTooltipVisible = false
-        //     //         }
-        //     //     )
-        //     // }
-        // }
     }
 }
 
@@ -257,7 +283,9 @@ private fun SecretContent(state: SeedSecretState) {
                 exit = fadeOut(),
             ) {
                 Column(
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 18.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 18.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Image(

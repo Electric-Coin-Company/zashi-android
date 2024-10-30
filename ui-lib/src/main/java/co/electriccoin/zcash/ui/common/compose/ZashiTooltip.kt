@@ -1,6 +1,7 @@
 package co.electriccoin.zcash.ui.common.compose
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeIn
@@ -46,32 +47,50 @@ fun ZashiAnimatedTooltip(
 ) {
     AnimatedVisibility(
         visible = isVisible,
-        enter =
-        fadeIn() +
-            slideInVertically(spring(stiffness = Spring.StiffnessHigh)) +
-            scaleIn(spring(stiffness = Spring.StiffnessMedium, dampingRatio = Spring.DampingRatioLowBouncy)),
-        exit =
-        fadeOut() +
-            scaleOut(animationSpec = spring(stiffness = Spring.StiffnessMedium)) +
-            slideOutVertically(),
+        enter = enterTransition(),
+        exit = exitTransition(),
     ) {
         ZashiTooltip(title, message, onDismissRequest)
     }
 }
 
 @Composable
-fun ZashiTooltip(title: StringResource, message: StringResource, onDismissRequest: () -> Unit) {
+fun ZashiAnimatedTooltip(
+    visibleState: MutableTransitionState<Boolean>,
+    title: StringResource,
+    message: StringResource,
+    onDismissRequest: () -> Unit
+) {
+    AnimatedVisibility(
+        visibleState = visibleState,
+        enter = enterTransition(),
+        exit = exitTransition(),
+    ) {
+        ZashiTooltip(title, message, onDismissRequest)
+    }
+}
+
+@Composable
+fun ZashiTooltip(
+    title: StringResource,
+    message: StringResource,
+    onDismissRequest: () -> Unit,
+    modifier: Modifier = Modifier,
+    showCaret: Boolean = true,
+) {
     Column(
-        modifier = Modifier.padding(horizontal = 22.dp),
+        modifier = modifier.padding(horizontal = 22.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Box(
-            modifier =
-            Modifier
-                .width(16.dp)
-                .height(8.dp)
-                .background(ZashiColors.HintTooltips.surfacePrimary, TriangleShape)
-        )
+        if (showCaret) {
+            Box(
+                modifier =
+                Modifier
+                    .width(16.dp)
+                    .height(8.dp)
+                    .background(ZashiColors.HintTooltips.surfacePrimary, TriangleShape)
+            )
+        }
         Box(
             Modifier
                 .fillMaxWidth()
@@ -107,9 +126,19 @@ fun ZashiTooltip(title: StringResource, message: StringResource, onDismissReques
     }
 }
 
+@Composable
+private fun exitTransition() = fadeOut() +
+    scaleOut(animationSpec = spring(stiffness = Spring.StiffnessMedium)) +
+    slideOutVertically()
+
+@Composable
+private fun enterTransition() = fadeIn() +
+    slideInVertically(spring(stiffness = Spring.StiffnessHigh)) +
+    scaleIn(spring(stiffness = Spring.StiffnessMedium, dampingRatio = Spring.DampingRatioLowBouncy))
+
 @PreviewScreens
 @Composable
-private fun PopupContentPreview() =
+private fun Preview() =
     ZcashTheme {
         ZashiTooltip(
             title = stringRes(R.string.exchange_rate_unavailable_title),
