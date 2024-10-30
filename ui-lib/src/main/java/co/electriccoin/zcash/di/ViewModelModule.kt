@@ -11,6 +11,7 @@ import co.electriccoin.zcash.ui.screen.advancedsettings.viewmodel.AdvancedSettin
 import co.electriccoin.zcash.ui.screen.chooseserver.ChooseServerViewModel
 import co.electriccoin.zcash.ui.screen.contact.viewmodel.AddContactViewModel
 import co.electriccoin.zcash.ui.screen.contact.viewmodel.UpdateContactViewModel
+import co.electriccoin.zcash.ui.screen.feedback.viewmodel.FeedbackViewModel
 import co.electriccoin.zcash.ui.screen.integrations.viewmodel.IntegrationsViewModel
 import co.electriccoin.zcash.ui.screen.onboarding.viewmodel.OnboardingViewModel
 import co.electriccoin.zcash.ui.screen.paymentrequest.viewmodel.PaymentRequestViewModel
@@ -26,7 +27,6 @@ import co.electriccoin.zcash.ui.screen.seed.viewmodel.SeedViewModel
 import co.electriccoin.zcash.ui.screen.sendconfirmation.viewmodel.CreateTransactionsViewModel
 import co.electriccoin.zcash.ui.screen.settings.viewmodel.ScreenBrightnessViewModel
 import co.electriccoin.zcash.ui.screen.settings.viewmodel.SettingsViewModel
-import co.electriccoin.zcash.ui.screen.feedback.viewmodel.FeedbackViewModel
 import co.electriccoin.zcash.ui.screen.support.viewmodel.SupportViewModel
 import co.electriccoin.zcash.ui.screen.update.viewmodel.UpdateViewModel
 import co.electriccoin.zcash.ui.screen.warning.viewmodel.StorageCheckViewModel
