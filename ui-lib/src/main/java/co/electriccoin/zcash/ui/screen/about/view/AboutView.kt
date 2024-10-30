@@ -56,7 +56,7 @@ fun About(
     topAppBarSubTitleState: TopAppBarSubTitleState,
     versionInfo: VersionInfo,
 ) {
-    Scaffold (
+    Scaffold(
         topBar = {
             AboutTopAppBar(
                 onBack = onBack,
@@ -71,17 +71,17 @@ fun About(
             versionInfo = versionInfo,
             onPrivacyPolicy = onPrivacyPolicy,
             modifier =
-            Modifier
-                .fillMaxHeight()
-                .verticalScroll(
-                    rememberScrollState()
-                )
-                .padding(
-                    top = paddingValues.calculateTopPadding() + ZashiDimensions.Spacing.spacingLg,
-                    bottom = paddingValues.calculateBottomPadding() + ZashiDimensions.Spacing.spacing3xl,
-                    start = 4.dp,
-                    end = 4.dp
-                )
+                Modifier
+                    .fillMaxHeight()
+                    .verticalScroll(
+                        rememberScrollState()
+                    )
+                    .padding(
+                        top = paddingValues.calculateTopPadding() + ZashiDimensions.Spacing.spacingLg,
+                        bottom = paddingValues.calculateBottomPadding() + ZashiDimensions.Spacing.spacing3xl,
+                        start = 4.dp,
+                        end = 4.dp
+                    )
         )
     }
 }
@@ -156,7 +156,6 @@ fun AboutMainContent(
     modifier: Modifier = Modifier
 ) {
     Column(modifier) {
-
         Text(
             modifier = Modifier.padding(horizontal = ZashiDimensions.Spacing.spacingXl),
             text = stringResource(id = R.string.about_subtitle),
@@ -195,13 +194,14 @@ fun AboutMainContent(
 
 @PreviewScreens
 @Composable
-private fun AboutPreview() = ZcashTheme {
-    About(
-        onBack = {},
-        configInfo = ConfigInfoFixture.new(),
-        onPrivacyPolicy = {},
-        snackbarHostState = SnackbarHostState(),
-        topAppBarSubTitleState = TopAppBarSubTitleState.None,
-        versionInfo = VersionInfoFixture.new(),
-    )
-}
+private fun AboutPreview() =
+    ZcashTheme {
+        About(
+            onBack = {},
+            configInfo = ConfigInfoFixture.new(),
+            onPrivacyPolicy = {},
+            snackbarHostState = SnackbarHostState(),
+            topAppBarSubTitleState = TopAppBarSubTitleState.None,
+            versionInfo = VersionInfoFixture.new(),
+        )
+    }

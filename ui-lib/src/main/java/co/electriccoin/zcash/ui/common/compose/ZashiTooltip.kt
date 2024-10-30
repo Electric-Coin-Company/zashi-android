@@ -85,10 +85,10 @@ fun ZashiTooltip(
         if (showCaret) {
             Box(
                 modifier =
-                Modifier
-                    .width(16.dp)
-                    .height(8.dp)
-                    .background(ZashiColors.HintTooltips.surfacePrimary, TriangleShape)
+                    Modifier
+                        .width(16.dp)
+                        .height(8.dp)
+                        .background(ZashiColors.HintTooltips.surfacePrimary, TriangleShape)
             )
         }
         Box(
@@ -127,14 +127,16 @@ fun ZashiTooltip(
 }
 
 @Composable
-private fun exitTransition() = fadeOut() +
-    scaleOut(animationSpec = spring(stiffness = Spring.StiffnessMedium)) +
-    slideOutVertically()
+private fun exitTransition() =
+    fadeOut() +
+        scaleOut(animationSpec = spring(stiffness = Spring.StiffnessMedium)) +
+        slideOutVertically()
 
 @Composable
-private fun enterTransition() = fadeIn() +
-    slideInVertically(spring(stiffness = Spring.StiffnessHigh)) +
-    scaleIn(spring(stiffness = Spring.StiffnessMedium, dampingRatio = Spring.DampingRatioLowBouncy))
+private fun enterTransition() =
+    fadeIn() +
+        slideInVertically(spring(stiffness = Spring.StiffnessHigh)) +
+        scaleIn(spring(stiffness = Spring.StiffnessMedium, dampingRatio = Spring.DampingRatioLowBouncy))
 
 @PreviewScreens
 @Composable
@@ -159,4 +161,3 @@ private val TriangleShape =
         // 3) Draw a line to the bottom left corner and implicitly close the shape
         lineTo(0f, size.height)
     }
-

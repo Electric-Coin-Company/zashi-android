@@ -41,11 +41,12 @@ fun ZashiCheckbox(
     modifier: Modifier = Modifier,
 ) {
     ZashiCheckbox(
-        state = CheckboxState(
-            text = text,
-            isChecked = isChecked,
-            onClick = onClick,
-        ),
+        state =
+            CheckboxState(
+                text = text,
+                isChecked = isChecked,
+                onClick = onClick,
+            ),
         modifier = modifier,
     )
 }
@@ -56,10 +57,11 @@ fun ZashiCheckbox(
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = modifier
-            .clip(RoundedCornerShape(8.dp))
-            .clickable(onClick = state.onClick)
-            .padding(vertical = 12.dp)
+        modifier =
+            modifier
+                .clip(RoundedCornerShape(8.dp))
+                .clickable(onClick = state.onClick)
+                .padding(vertical = 12.dp)
     ) {
         Box {
             Image(
@@ -69,18 +71,20 @@ fun ZashiCheckbox(
 
             androidx.compose.animation.AnimatedVisibility(
                 visible = state.isChecked,
-                enter = scaleIn(
-                    spring(
-                        stiffness = Spring.StiffnessMedium,
-                        dampingRatio = Spring.DampingRatioMediumBouncy
+                enter =
+                    scaleIn(
+                        spring(
+                            stiffness = Spring.StiffnessMedium,
+                            dampingRatio = Spring.DampingRatioMediumBouncy
+                        )
+                    ),
+                exit =
+                    scaleOut(
+                        spring(
+                            stiffness = Spring.StiffnessHigh,
+                            dampingRatio = Spring.DampingRatioMediumBouncy
+                        )
                     )
-                ),
-                exit = scaleOut(
-                    spring(
-                        stiffness = Spring.StiffnessHigh,
-                        dampingRatio = Spring.DampingRatioMediumBouncy
-                    )
-                )
             ) {
                 Image(
                     painter = painterResource(R.drawable.ic_zashi_checkbox_checked),
@@ -88,7 +92,6 @@ fun ZashiCheckbox(
                 )
             }
         }
-
 
         Spacer(Modifier.width(ZashiDimensions.Spacing.spacingMd))
 
@@ -109,15 +112,17 @@ data class CheckboxState(
 
 @PreviewScreens
 @Composable
-private fun ZashiCheckboxPreview() = ZcashTheme {
-    var isChecked by remember { mutableStateOf(false) }
-    BlankSurface {
-        ZashiCheckbox(
-            state = CheckboxState(
-                text = stringRes("title"),
-                isChecked = isChecked,
-                onClick = { isChecked = isChecked.not() }
+private fun ZashiCheckboxPreview() =
+    ZcashTheme {
+        var isChecked by remember { mutableStateOf(false) }
+        BlankSurface {
+            ZashiCheckbox(
+                state =
+                    CheckboxState(
+                        text = stringRes("title"),
+                        isChecked = isChecked,
+                        onClick = { isChecked = isChecked.not() }
+                    )
             )
-        )
+        }
     }
-}

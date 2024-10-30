@@ -80,11 +80,11 @@ private fun SupportTopAppBar(
 ) {
     ZashiSmallTopAppBar(
         subtitle =
-        when (subTitleState) {
-            TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
-            TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
-            TopAppBarSubTitleState.None -> null
-        },
+            when (subTitleState) {
+                TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
+                TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
+                TopAppBarSubTitleState.None -> null
+            },
         title = stringResource(id = R.string.support_header),
         navigationAction = {
             ZashiTopAppBarBackNavigation(onBack = state.onBack)
@@ -155,9 +155,9 @@ private fun SupportMainContent(
             state = state.feedback,
             minLines = 3,
             modifier =
-            Modifier
-                .fillMaxWidth()
-                .focusRequester(focusRequester),
+                Modifier
+                    .fillMaxWidth()
+                    .focusRequester(focusRequester),
             placeholder = {
                 Text(
                     text = stringResource(id = R.string.support_hint),
@@ -211,22 +211,28 @@ private fun EmojiRow(state: FeedbackEmojiState) {
 }
 
 @Composable
-private fun Emoji(emoji: FeedbackEmoji, isSelected: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
+private fun Emoji(
+    emoji: FeedbackEmoji,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Box(
-        modifier = modifier
-            .aspectRatio(1.25f)
-            .border(
-                width = 2.5.dp,
-                color = if (isSelected) ZashiColors.Text.textPrimary else Color.Transparent,
-                shape = RoundedCornerShape(ZashiDimensions.Radius.radiusXl)
-            )
-            .padding(4.5.dp)
-            .background(
-                color = ZashiColors.Surfaces.bgSecondary,
-                shape = RoundedCornerShape(8.dp)
-            )
-            .clip(RoundedCornerShape(8.dp))
-            .clickable(onClick = onClick),
+        modifier =
+            modifier
+                .aspectRatio(EMOJI_CARD_RATIO)
+                .border(
+                    width = 2.5.dp,
+                    color = if (isSelected) ZashiColors.Text.textPrimary else Color.Transparent,
+                    shape = RoundedCornerShape(ZashiDimensions.Radius.radiusXl)
+                )
+                .padding(4.5.dp)
+                .background(
+                    color = ZashiColors.Surfaces.bgSecondary,
+                    shape = RoundedCornerShape(8.dp)
+                )
+                .clip(RoundedCornerShape(8.dp))
+                .clickable(onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
         Image(
@@ -239,19 +245,24 @@ private fun Emoji(emoji: FeedbackEmoji, isSelected: Boolean, onClick: () -> Unit
 
 @PreviewScreens
 @Composable
-private fun Preview() = ZcashTheme {
-    BlankSurface {
-        FeedbackView(
-            state = FeedbackState(
-                onBack = {},
-                sendButton = ButtonState(stringRes("Button")),
-                feedback = TextFieldState(stringRes("")) {},
-                emojiState = FeedbackEmojiState(
-                    selection = FeedbackEmoji.FIRST,
-                    onSelected = {}
-                )
-            ),
-            topAppBarSubTitleState = TopAppBarSubTitleState.None,
-        )
+private fun Preview() =
+    ZcashTheme {
+        BlankSurface {
+            FeedbackView(
+                state =
+                    FeedbackState(
+                        onBack = {},
+                        sendButton = ButtonState(stringRes("Button")),
+                        feedback = TextFieldState(stringRes("")) {},
+                        emojiState =
+                            FeedbackEmojiState(
+                                selection = FeedbackEmoji.FIRST,
+                                onSelected = {}
+                            )
+                    ),
+                topAppBarSubTitleState = TopAppBarSubTitleState.None,
+            )
+        }
     }
-}
+
+private const val EMOJI_CARD_RATIO = 1.25f

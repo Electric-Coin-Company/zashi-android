@@ -55,15 +55,15 @@ fun WhatsNewView(
     ) { paddingValues ->
         Column(
             modifier =
-            Modifier
-                .fillMaxSize()
-                .padding(
-                    top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
-                    bottom = paddingValues.calculateBottomPadding() + ZcashTheme.dimens.spacingDefault,
-                    start = ZcashTheme.dimens.screenHorizontalSpacingRegular,
-                    end = ZcashTheme.dimens.screenHorizontalSpacingRegular
-                )
-                .verticalScroll(rememberScrollState())
+                Modifier
+                    .fillMaxSize()
+                    .padding(
+                        top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
+                        bottom = paddingValues.calculateBottomPadding() + ZcashTheme.dimens.spacingDefault,
+                        start = ZcashTheme.dimens.screenHorizontalSpacingRegular,
+                        end = ZcashTheme.dimens.screenHorizontalSpacingRegular
+                    )
+                    .verticalScroll(rememberScrollState())
         ) {
             Row {
                 Text(
@@ -73,9 +73,10 @@ fun WhatsNewView(
                     fontWeight = FontWeight.SemiBold
                 )
                 Text(
-                    modifier = Modifier
-                        .weight(1f)
-                        .align(CenterVertically),
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .align(CenterVertically),
                     text = DateTimeFormatter.ISO_LOCAL_DATE.format(state.date.toJavaLocalDate()),
                     textAlign = TextAlign.End,
                     style = ZashiTypography.textSm,
@@ -150,11 +151,11 @@ private fun AppBar(
 ) {
     SmallTopAppBar(
         subTitle =
-        when (walletState) {
-            TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
-            TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
-            TopAppBarSubTitleState.None -> null
-        },
+            when (walletState) {
+                TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
+                TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
+                TopAppBarSubTitleState.None -> null
+            },
         titleText = stringResource(id = R.string.whats_new_title).uppercase(),
         navigationAction = {
             ZashiTopAppBarBackNavigation(onBack = onBack)

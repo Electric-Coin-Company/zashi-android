@@ -244,12 +244,12 @@ internal fun MainActivity.Navigation() {
         composable(
             route = ScanNavigationArgs.ROUTE,
             arguments =
-            listOf(
-                navArgument(ScanNavigationArgs.KEY) {
-                    type = NavType.EnumType(ScanNavigationArgs::class.java)
-                    defaultValue = ScanNavigationArgs.DEFAULT
-                }
-            )
+                listOf(
+                    navArgument(ScanNavigationArgs.KEY) {
+                        type = NavType.EnumType(ScanNavigationArgs::class.java)
+                        defaultValue = ScanNavigationArgs.DEFAULT
+                    }
+                )
         ) { backStackEntry ->
             val mode =
                 backStackEntry.arguments
@@ -293,12 +293,12 @@ internal fun MainActivity.Navigation() {
         composable(
             route = AddressBookArgs.ROUTE,
             arguments =
-            listOf(
-                navArgument(AddressBookArgs.MODE) {
-                    defaultValue = AddressBookArgs.DEFAULT
-                    type = NavType.EnumType(AddressBookArgs::class.java)
-                }
-            )
+                listOf(
+                    navArgument(AddressBookArgs.MODE) {
+                        defaultValue = AddressBookArgs.DEFAULT
+                        type = NavType.EnumType(AddressBookArgs::class.java)
+                    }
+                )
         ) { backStackEntry ->
             val args =
                 backStackEntry.arguments
@@ -309,13 +309,13 @@ internal fun MainActivity.Navigation() {
         composable(
             route = AddContactArgs.ROUTE,
             arguments =
-            listOf(
-                navArgument(AddContactArgs.ADDRESS) {
-                    nullable = true
-                    defaultValue = null
-                    type = NavType.StringType
-                }
-            )
+                listOf(
+                    navArgument(AddContactArgs.ADDRESS) {
+                        nullable = true
+                        defaultValue = null
+                        type = NavType.StringType
+                    }
+                )
         ) { backStackEntry ->
             val address = backStackEntry.arguments?.getString(AddContactArgs.ADDRESS)
             WrapAddContact(address)
@@ -383,20 +383,20 @@ private fun MainActivity.NavigationHome(
             navController.navigateJustOnce(SEND_CONFIRMATION)
         },
         sendArguments =
-        SendArguments(
-            recipientAddress =
-            backStack.savedStateHandle.get<String>(SEND_SCAN_RECIPIENT_ADDRESS)?.let {
-                Json.decodeFromString<SerializableAddress>(it).toRecipient()
+            SendArguments(
+                recipientAddress =
+                    backStack.savedStateHandle.get<String>(SEND_SCAN_RECIPIENT_ADDRESS)?.let {
+                        Json.decodeFromString<SerializableAddress>(it).toRecipient()
+                    },
+                zip321Uri = backStack.savedStateHandle.get<String>(SEND_SCAN_ZIP_321_URI),
+                clearForm = backStack.savedStateHandle.get<Boolean>(MULTIPLE_SUBMISSION_CLEAR_FORM) ?: false
+            ).also {
+                // Remove Send screen arguments passed from the Scan or MultipleSubmissionFailure screens if
+                // some exist after we use them
+                backStack.savedStateHandle.remove<String>(SEND_SCAN_RECIPIENT_ADDRESS)
+                backStack.savedStateHandle.remove<String>(SEND_SCAN_ZIP_321_URI)
+                backStack.savedStateHandle.remove<Boolean>(MULTIPLE_SUBMISSION_CLEAR_FORM)
             },
-            zip321Uri = backStack.savedStateHandle.get<String>(SEND_SCAN_ZIP_321_URI),
-            clearForm = backStack.savedStateHandle.get<Boolean>(MULTIPLE_SUBMISSION_CLEAR_FORM) ?: false
-        ).also {
-            // Remove Send screen arguments passed from the Scan or MultipleSubmissionFailure screens if
-            // some exist after we use them
-            backStack.savedStateHandle.remove<String>(SEND_SCAN_RECIPIENT_ADDRESS)
-            backStack.savedStateHandle.remove<String>(SEND_SCAN_ZIP_321_URI)
-            backStack.savedStateHandle.remove<Boolean>(MULTIPLE_SUBMISSION_CLEAR_FORM)
-        },
     )
 
     val isEnoughSpace by storageCheckViewModel.isEnoughSpace.collectAsStateWithLifecycle()

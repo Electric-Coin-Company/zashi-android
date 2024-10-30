@@ -24,9 +24,7 @@ import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
 @Composable
-internal fun WrapAbout(
-    goBack: () -> Unit,
-) {
+internal fun WrapAbout(goBack: () -> Unit,) {
     val activity = LocalActivity.current
 
     val walletViewModel = koinActivityViewModel<WalletViewModel>()

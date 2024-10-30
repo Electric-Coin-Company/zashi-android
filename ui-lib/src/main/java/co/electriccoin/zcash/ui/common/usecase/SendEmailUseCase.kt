@@ -14,13 +14,14 @@ class SendEmailUseCase(
         subject: StringResource,
         message: StringResource
     ) {
-        val intent = EmailUtil.newMailActivityIntent(
-            recipientAddress = address.getString(context),
-            messageSubject = subject.getString(context),
-            messageBody = message.getString(context)
-        ).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        }
+        val intent =
+            EmailUtil.newMailActivityIntent(
+                recipientAddress = address.getString(context),
+                messageSubject = subject.getString(context),
+                messageBody = message.getString(context)
+            ).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            }
 
         context.startActivity(intent)
     }

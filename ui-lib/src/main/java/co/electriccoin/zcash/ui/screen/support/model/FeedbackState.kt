@@ -4,7 +4,6 @@ import androidx.annotation.DrawableRes
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.TextFieldState
-import java.net.URLEncoder
 
 data class FeedbackState(
     val onBack: () -> Unit,
@@ -28,8 +27,7 @@ enum class FeedbackEmoji(
         order = 1,
         encoding = "😠"
     ),
-    SECOND
-        (
+    SECOND(
         res = R.drawable.ic_emoji_2,
         order = 2,
         encoding = "😒"
@@ -39,8 +37,7 @@ enum class FeedbackEmoji(
         order = 3,
         encoding = "😊"
     ),
-    FOURTH
-        (
+    FOURTH(
         res = R.drawable.ic_emoji_4,
         order = 4,
         encoding = "😄"
@@ -51,4 +48,3 @@ enum class FeedbackEmoji(
         encoding = "😍"
     )
 }
-

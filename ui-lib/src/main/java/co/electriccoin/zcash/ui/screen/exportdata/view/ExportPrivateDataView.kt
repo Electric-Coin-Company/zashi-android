@@ -1,9 +1,7 @@
 package co.electriccoin.zcash.ui.screen.exportdata.view
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -16,28 +14,17 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.sp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
-import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
-import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
-import co.electriccoin.zcash.ui.design.component.Body
-import co.electriccoin.zcash.ui.design.component.LabeledCheckBox
-import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
-import co.electriccoin.zcash.ui.design.component.TopAppBarBackNavigation
-import co.electriccoin.zcash.ui.design.component.TopScreenLogoTitle
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiCheckbox
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreenSizes
-import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
@@ -53,7 +40,7 @@ fun ExportPrivateData(
     onConfirm: () -> Unit,
     topAppBarSubTitleState: TopAppBarSubTitleState,
 ) {
-    Scaffold (
+    Scaffold(
         topBar = {
             ExportPrivateDataTopAppBar(
                 onBack = onBack,
@@ -66,10 +53,10 @@ fun ExportPrivateData(
             onAgree = onAgree,
             onConfirm = onConfirm,
             modifier =
-            Modifier
-                .fillMaxSize()
-                .scaffoldPadding(paddingValues)
-                .verticalScroll(rememberScrollState())
+                Modifier
+                    .fillMaxSize()
+                    .scaffoldPadding(paddingValues)
+                    .verticalScroll(rememberScrollState())
         )
     }
 }
@@ -82,11 +69,11 @@ private fun ExportPrivateDataTopAppBar(
     ZashiSmallTopAppBar(
         title = stringResource(R.string.export_data_title),
         subtitle =
-        when (subTitleState) {
-            TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
-            TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
-            TopAppBarSubTitleState.None -> null
-        },
+            when (subTitleState) {
+                TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
+                TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
+                TopAppBarSubTitleState.None -> null
+            },
         navigationAction = {
             ZashiTopAppBarBackNavigation(onBack = onBack)
         },
@@ -143,12 +130,13 @@ private fun ExportPrivateDataContent(
 
 @PreviewScreenSizes
 @Composable
-private fun ExportPrivateDataPreview() = ZcashTheme {
-    ExportPrivateData(
-        snackbarHostState = SnackbarHostState(),
-        onBack = {},
-        onAgree = {},
-        onConfirm = {},
-        topAppBarSubTitleState = TopAppBarSubTitleState.None,
-    )
-}
+private fun ExportPrivateDataPreview() =
+    ZcashTheme {
+        ExportPrivateData(
+            snackbarHostState = SnackbarHostState(),
+            onBack = {},
+            onAgree = {},
+            onConfirm = {},
+            topAppBarSubTitleState = TopAppBarSubTitleState.None,
+        )
+    }

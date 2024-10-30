@@ -49,12 +49,11 @@ fun ZashiTooltipBox(
 }
 
 @Composable
-fun rememberTooltipPositionProvider(
-    spacingBetweenTooltipAndAnchor: Dp = 0.dp
-): PopupPositionProvider {
-    val tooltipAnchorSpacing = with(LocalDensity.current) {
-        spacingBetweenTooltipAndAnchor.roundToPx()
-    }
+fun rememberTooltipPositionProvider(spacingBetweenTooltipAndAnchor: Dp = 8.dp): PopupPositionProvider {
+    val tooltipAnchorSpacing =
+        with(LocalDensity.current) {
+            spacingBetweenTooltipAndAnchor.roundToPx()
+        }
     return remember(tooltipAnchorSpacing) {
         object : PopupPositionProvider {
             override fun calculatePosition(
@@ -70,8 +69,9 @@ fun rememberTooltipPositionProvider(
                 // then we place it below the anchor
 
                 var y = anchorBounds.bottom + tooltipAnchorSpacing
-                if (y + popupContentSize.height > windowSize.height)
+                if (y + popupContentSize.height > windowSize.height) {
                     y = anchorBounds.top - popupContentSize.height - tooltipAnchorSpacing
+                }
                 return IntOffset(x, y)
             }
         }
@@ -110,11 +110,12 @@ fun CacheDrawScope.drawCaretWithPath(
         val tooltipHeight = this.size.height
 
         val isCaretTop = (anchorBounds.bottom + tooltipAnchorSpacing + tooltipHeight) <= screenHeightPx
-        val caretY = if (isCaretTop) {
-            0f
-        } else {
-            tooltipHeight
-        }
+        val caretY =
+            if (isCaretTop) {
+                0f
+            } else {
+                tooltipHeight
+            }
 
         val position =
             if (anchorMid + tooltipWidth / 2 > screenWidthPx) {

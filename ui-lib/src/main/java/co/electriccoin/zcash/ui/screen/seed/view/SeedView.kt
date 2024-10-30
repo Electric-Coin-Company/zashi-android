@@ -98,11 +98,11 @@ private fun SeedRecoveryTopAppBar(
     ZashiSmallTopAppBar(
         title = stringResource(R.string.seed_recovery_title),
         subtitle =
-        when (subTitleState) {
-            TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
-            TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
-            TopAppBarSubTitleState.None -> null
-        },
+            when (subTitleState) {
+                TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
+                TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
+                TopAppBarSubTitleState.None -> null
+            },
         modifier = modifier,
         navigationAction = {
             if (state.onBack != null) {
@@ -186,19 +186,20 @@ private fun SeedSecret(
         modifier = modifier
     ) {
         Row(
-            modifier = if (state.tooltip != null) {
-                Modifier.clickable {
-                    scope.launch {
-                        if (tooltipState.isVisible) {
-                            tooltipState.dismiss()
-                        } else {
-                            tooltipState.show()
+            modifier =
+                if (state.tooltip != null) {
+                    Modifier.clickable {
+                        scope.launch {
+                            if (tooltipState.isVisible) {
+                                tooltipState.dismiss()
+                            } else {
+                                tooltipState.show()
+                            }
                         }
                     }
+                } else {
+                    Modifier
                 }
-            } else {
-                Modifier
-            }
         ) {
             Text(
                 text = state.title.getValue(),
@@ -214,14 +215,15 @@ private fun SeedSecret(
                 ZashiTooltipBox(
                     tooltip = {
                         ZashiTooltip(
-                            modifier = Modifier.drawCaret {
-                                drawCaretWithPath(
-                                    density = density,
-                                    configuration = configuration,
-                                    containerColor = containerColor,
-                                    anchorLayoutCoordinates = it
-                                )
-                            },
+                            modifier =
+                                Modifier.drawCaret {
+                                    drawCaretWithPath(
+                                        density = density,
+                                        configuration = configuration,
+                                        containerColor = containerColor,
+                                        anchorLayoutCoordinates = it
+                                    )
+                                },
                             showCaret = false,
                             title = state.tooltip.title,
                             message = state.tooltip.message,
@@ -252,8 +254,9 @@ private fun SeedSecret(
 private fun SecretContent(state: SeedSecretState) {
     val blur = animateDpAsState(if (state.isRevealed) 0.dp else 14.dp, label = "")
     Surface(
-        modifier = Modifier
-            .fillMaxWidth(),
+        modifier =
+            Modifier
+                .fillMaxWidth(),
         shape = RoundedCornerShape(10.dp),
         color = ZashiColors.Inputs.Default.bg
     ) {
@@ -262,10 +265,11 @@ private fun SecretContent(state: SeedSecretState) {
             contentAlignment = Alignment.Center
         ) {
             Box(
-                modifier = Modifier
-                    .clickable(onClick = state.onClick)
-                    .blur(blur.value)
-                    .padding(horizontal = 24.dp, vertical = 18.dp)
+                modifier =
+                    Modifier
+                        .clickable(onClick = state.onClick)
+                        .blur(blur.value)
+                        .padding(horizontal = 24.dp, vertical = 18.dp)
             ) {
                 if (state.mode == SeedSecretState.Mode.SEED) {
                     SecretSeedContent(state)
@@ -276,16 +280,18 @@ private fun SecretContent(state: SeedSecretState) {
 
             AnimatedVisibility(
                 modifier = Modifier.fillMaxWidth(),
-                visible = state.isRevealPhraseVisible &&
-                    state.isRevealed.not() &&
-                    state.mode == SeedSecretState.Mode.SEED,
+                visible =
+                    state.isRevealPhraseVisible &&
+                        state.isRevealed.not() &&
+                        state.mode == SeedSecretState.Mode.SEED,
                 enter = fadeIn(),
                 exit = fadeOut(),
             ) {
                 Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 18.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 18.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Image(
@@ -357,64 +363,74 @@ private fun SecretSeedContent(state: SeedSecretState) {
 
 @Composable
 @PreviewScreens
-private fun RevealedPreview() = ZcashTheme {
-    SeedView(
-        topAppBarSubTitleState = TopAppBarSubTitleState.None,
-        state = SeedState(
-            seed = SeedSecretState(
-                title = stringRes("Seed"),
-                text = stringRes((1..24).joinToString(" ") { "trala" }),
-                tooltip = null,
-                isRevealed = true,
-                mode = SeedSecretState.Mode.SEED,
-                isRevealPhraseVisible = true
-            ) {},
-            birthday = SeedSecretState(
-                title = stringRes("Birthday"),
-                text = stringRes(value = "asdads"),
-                tooltip = SeedSecretStateTooltip(title = stringRes(""), message = stringRes("")),
-                isRevealed = true,
-                mode = SeedSecretState.Mode.BIRTHDAY,
-                isRevealPhraseVisible = false
-            ) {},
-            button = ButtonState(
-                text = stringRes("Text"),
-                icon = R.drawable.ic_seed_show,
-                onClick = {},
-            ),
-            onBack = {}
+private fun RevealedPreview() =
+    ZcashTheme {
+        SeedView(
+            topAppBarSubTitleState = TopAppBarSubTitleState.None,
+            state =
+                SeedState(
+                    seed =
+                        SeedSecretState(
+                            title = stringRes("Seed"),
+                            text = stringRes((1..24).joinToString(" ") { "trala" }),
+                            tooltip = null,
+                            isRevealed = true,
+                            mode = SeedSecretState.Mode.SEED,
+                            isRevealPhraseVisible = true
+                        ) {},
+                    birthday =
+                        SeedSecretState(
+                            title = stringRes("Birthday"),
+                            text = stringRes(value = "asdads"),
+                            tooltip = SeedSecretStateTooltip(title = stringRes(""), message = stringRes("")),
+                            isRevealed = true,
+                            mode = SeedSecretState.Mode.BIRTHDAY,
+                            isRevealPhraseVisible = false
+                        ) {},
+                    button =
+                        ButtonState(
+                            text = stringRes("Text"),
+                            icon = R.drawable.ic_seed_show,
+                            onClick = {},
+                        ),
+                    onBack = {}
+                )
         )
-    )
-}
+    }
 
 @Composable
 @PreviewScreens
-private fun HiddenPreview() = ZcashTheme {
-    SeedView(
-        topAppBarSubTitleState = TopAppBarSubTitleState.None,
-        state = SeedState(
-            seed = SeedSecretState(
-                title = stringRes("Seed"),
-                text = stringRes((1..24).joinToString(" ") { "trala" }),
-                tooltip = null,
-                isRevealed = false,
-                mode = SeedSecretState.Mode.SEED,
-                isRevealPhraseVisible = true
-            ) {},
-            birthday = SeedSecretState(
-                title = stringRes("Birthday"),
-                text = stringRes(value = "asdads"),
-                tooltip = SeedSecretStateTooltip(title = stringRes(""), message = stringRes("")),
-                isRevealed = false,
-                mode = SeedSecretState.Mode.BIRTHDAY,
-                isRevealPhraseVisible = false
-            ) {},
-            button = ButtonState(
-                text = stringRes("Text"),
-                icon = R.drawable.ic_seed_show,
-                onClick = {},
-            ),
-            onBack = {}
+private fun HiddenPreview() =
+    ZcashTheme {
+        SeedView(
+            topAppBarSubTitleState = TopAppBarSubTitleState.None,
+            state =
+                SeedState(
+                    seed =
+                        SeedSecretState(
+                            title = stringRes("Seed"),
+                            text = stringRes((1..24).joinToString(" ") { "trala" }),
+                            tooltip = null,
+                            isRevealed = false,
+                            mode = SeedSecretState.Mode.SEED,
+                            isRevealPhraseVisible = true
+                        ) {},
+                    birthday =
+                        SeedSecretState(
+                            title = stringRes("Birthday"),
+                            text = stringRes(value = "asdads"),
+                            tooltip = SeedSecretStateTooltip(title = stringRes(""), message = stringRes("")),
+                            isRevealed = false,
+                            mode = SeedSecretState.Mode.BIRTHDAY,
+                            isRevealPhraseVisible = false
+                        ) {},
+                    button =
+                        ButtonState(
+                            text = stringRes("Text"),
+                            icon = R.drawable.ic_seed_show,
+                            onClick = {},
+                        ),
+                    onBack = {}
+                )
         )
-    )
-}
+    }

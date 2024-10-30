@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.map
 class ObserveBackupPersistableWalletUseCase(
     private val walletRepository: WalletRepository
 ) {
-    operator fun invoke(): Flow<PersistableWallet?> = walletRepository
-        .secretState.map { (it as? SecretState.NeedsBackup)?.persistableWallet }
+    operator fun invoke(): Flow<PersistableWallet?> =
+        walletRepository
+            .secretState.map { (it as? SecretState.NeedsBackup)?.persistableWallet }
 }

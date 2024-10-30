@@ -37,14 +37,15 @@ import co.electriccoin.zcash.ui.design.util.stringRes
 
 @PreviewScreens
 @Composable
-private fun ExportPrivateDataPreview() = ZcashTheme {
-    DeleteWallet(
-        snackbarHostState = SnackbarHostState(),
-        onBack = {},
-        onConfirm = {},
-        topAppBarSubTitleState = TopAppBarSubTitleState.None,
-    )
-}
+private fun ExportPrivateDataPreview() =
+    ZcashTheme {
+        DeleteWallet(
+            snackbarHostState = SnackbarHostState(),
+            onBack = {},
+            onConfirm = {},
+            topAppBarSubTitleState = TopAppBarSubTitleState.None,
+        )
+    }
 
 @Composable
 fun DeleteWallet(
@@ -65,10 +66,10 @@ fun DeleteWallet(
         DeleteWalletContent(
             onConfirm = onConfirm,
             modifier =
-            Modifier
-                .fillMaxSize()
-                .scaffoldPadding(paddingValues)
-                .verticalScroll(rememberScrollState())
+                Modifier
+                    .fillMaxSize()
+                    .scaffoldPadding(paddingValues)
+                    .verticalScroll(rememberScrollState())
         )
     }
 }
@@ -81,11 +82,11 @@ private fun DeleteWalletDataTopAppBar(
     ZashiSmallTopAppBar(
         title = stringResource(R.string.delete_wallet_title),
         subtitle =
-        when (subTitleState) {
-            TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
-            TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
-            TopAppBarSubTitleState.None -> null
-        },
+            when (subTitleState) {
+                TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
+                TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
+                TopAppBarSubTitleState.None -> null
+            },
         navigationAction = {
             ZashiTopAppBarBackNavigation(
                 onBack = onBack
@@ -132,9 +133,9 @@ private fun DeleteWalletContent(
 
         Spacer(
             modifier =
-            Modifier
-                .fillMaxHeight()
-                .weight(MINIMAL_WEIGHT)
+                Modifier
+                    .fillMaxHeight()
+                    .weight(MINIMAL_WEIGHT)
         )
 
         Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingXl))

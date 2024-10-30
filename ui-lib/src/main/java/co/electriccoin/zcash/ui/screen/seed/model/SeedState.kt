@@ -20,7 +20,8 @@ data class SeedSecretState(
     val onClick: () -> Unit,
 ) {
     enum class Mode {
-        SEED, BIRTHDAY
+        SEED,
+        BIRTHDAY
     }
 }
 

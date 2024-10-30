@@ -10,8 +10,8 @@ import co.electriccoin.zcash.ui.common.repository.WalletRepository
 import co.electriccoin.zcash.ui.common.usecase.CopyToClipboardUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetBackupPersistableWalletUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetPersistableWalletUseCase
-import co.electriccoin.zcash.ui.common.usecase.ObservePersistableWalletUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveBackupPersistableWalletUseCase
+import co.electriccoin.zcash.ui.common.usecase.ObservePersistableWalletUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.seed.SeedNavigationArgs
@@ -36,60 +36,68 @@ class SeedViewModel(
     private val copyToClipboard: CopyToClipboardUseCase,
     private val walletRepository: WalletRepository,
 ) : ViewModel() {
-
     private val isRevealed = MutableStateFlow(false)
 
-    private val observableWallet = when (args) {
-        SeedNavigationArgs.NEW_WALLET -> observeBackupPersistableWallet()
-        SeedNavigationArgs.RECOVERY -> observePersistableWallet()
-    }
+    private val observableWallet =
+        when (args) {
+            SeedNavigationArgs.NEW_WALLET -> observeBackupPersistableWallet()
+            SeedNavigationArgs.RECOVERY -> observePersistableWallet()
+        }
 
     val navigateBack = MutableSharedFlow<Unit>()
 
-    val state = combine(isRevealed, observableWallet) { isRevealed, wallet ->
-        SeedState(
-            button = ButtonState(
-                text = when {
-                    args == SeedNavigationArgs.NEW_WALLET -> stringRes(R.string.seed_recovery_next_button)
-                    isRevealed -> stringRes(R.string.seed_recovery_hide_button)
-                    else -> stringRes(R.string.seed_recovery_reveal_button)
-                },
-                onClick = ::onPrimaryButtonClicked,
-                isEnabled = wallet != null,
-                isLoading = wallet == null,
-                icon = when {
-                    args == SeedNavigationArgs.NEW_WALLET -> null
-                    isRevealed -> R.drawable.ic_seed_hide
-                    else -> R.drawable.ic_seed_show
-                }
-            ),
-            seed = SeedSecretState(
-                title = stringRes(R.string.seed_recovery_phrase_title),
-                text = stringRes(wallet?.seedPhrase?.joinToString().orEmpty()),
-                isRevealed = isRevealed,
-                tooltip = null,
-                onClick = ::onSeedClicked,
-                mode = SeedSecretState.Mode.SEED,
-                isRevealPhraseVisible = args == SeedNavigationArgs.NEW_WALLET,
-            ),
-            birthday = SeedSecretState(
-                title = stringRes(R.string.seed_recovery_bday_title),
-                text = stringRes(wallet?.birthday?.value?.toString().orEmpty()),
-                isRevealed = isRevealed,
-                tooltip = SeedSecretStateTooltip(
-                    title = stringRes(R.string.seed_recovery_bday_tooltip_title),
-                    message = stringRes(R.string.seed_recovery_bday_tooltip_message)
-                ),
-                onClick = ::onBirthDayClicked,
-                mode = SeedSecretState.Mode.BIRTHDAY,
-                isRevealPhraseVisible = false,
-            ),
-            onBack = when (args) {
-                SeedNavigationArgs.NEW_WALLET -> null
-                SeedNavigationArgs.RECOVERY -> ::onBack
-            }
-        )
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT), null)
+    val state =
+        combine(isRevealed, observableWallet) { isRevealed, wallet ->
+            SeedState(
+                button =
+                    ButtonState(
+                        text =
+                            when {
+                                args == SeedNavigationArgs.NEW_WALLET -> stringRes(R.string.seed_recovery_next_button)
+                                isRevealed -> stringRes(R.string.seed_recovery_hide_button)
+                                else -> stringRes(R.string.seed_recovery_reveal_button)
+                            },
+                        onClick = ::onPrimaryButtonClicked,
+                        isEnabled = wallet != null,
+                        isLoading = wallet == null,
+                        icon =
+                            when {
+                                args == SeedNavigationArgs.NEW_WALLET -> null
+                                isRevealed -> R.drawable.ic_seed_hide
+                                else -> R.drawable.ic_seed_show
+                            }
+                    ),
+                seed =
+                    SeedSecretState(
+                        title = stringRes(R.string.seed_recovery_phrase_title),
+                        text = stringRes(wallet?.seedPhrase?.joinToString().orEmpty()),
+                        isRevealed = isRevealed,
+                        tooltip = null,
+                        onClick = ::onSeedClicked,
+                        mode = SeedSecretState.Mode.SEED,
+                        isRevealPhraseVisible = args == SeedNavigationArgs.NEW_WALLET,
+                    ),
+                birthday =
+                    SeedSecretState(
+                        title = stringRes(R.string.seed_recovery_bday_title),
+                        text = stringRes(wallet?.birthday?.value?.toString().orEmpty()),
+                        isRevealed = isRevealed,
+                        tooltip =
+                            SeedSecretStateTooltip(
+                                title = stringRes(R.string.seed_recovery_bday_tooltip_title),
+                                message = stringRes(R.string.seed_recovery_bday_tooltip_message)
+                            ),
+                        onClick = ::onBirthDayClicked,
+                        mode = SeedSecretState.Mode.BIRTHDAY,
+                        isRevealPhraseVisible = false,
+                    ),
+                onBack =
+                    when (args) {
+                        SeedNavigationArgs.NEW_WALLET -> null
+                        SeedNavigationArgs.RECOVERY -> ::onBack
+                    }
+            )
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT), null)
 
     private fun onBack() {
         viewModelScope.launch {
@@ -104,38 +112,40 @@ class SeedViewModel(
         }
     }
 
-    private fun onSeedClicked() = viewModelScope.launch {
-        when (args) {
-            SeedNavigationArgs.RECOVERY -> {
-                if (isRevealed.value.not()) return@launch
+    private fun onSeedClicked() =
+        viewModelScope.launch {
+            when (args) {
+                SeedNavigationArgs.RECOVERY -> {
+                    if (isRevealed.value.not()) return@launch
 
-                copyToClipboard(
-                    tag = "SEED",
-                    value = getWallet().seedPhrase.joinToString()
-                )
-            }
-
-            SeedNavigationArgs.NEW_WALLET -> {
-                if (isRevealed.value) {
                     copyToClipboard(
                         tag = "SEED",
                         value = getWallet().seedPhrase.joinToString()
                     )
-                } else {
-                    isRevealed.update { !it }
+                }
+
+                SeedNavigationArgs.NEW_WALLET -> {
+                    if (isRevealed.value) {
+                        copyToClipboard(
+                            tag = "SEED",
+                            value = getWallet().seedPhrase.joinToString()
+                        )
+                    } else {
+                        isRevealed.update { !it }
+                    }
                 }
             }
         }
-    }
 
-    private fun onBirthDayClicked() = viewModelScope.launch {
-        if (isRevealed.value.not()) return@launch
+    private fun onBirthDayClicked() =
+        viewModelScope.launch {
+            if (isRevealed.value.not()) return@launch
 
-        copyToClipboard(
-            tag = "BDAY",
-            value = getWallet().birthday?.value?.toString().orEmpty()
-        )
-    }
+            copyToClipboard(
+                tag = "BDAY",
+                value = getWallet().birthday?.value?.toString().orEmpty()
+            )
+        }
 
     private suspend fun getWallet(): PersistableWallet {
         return when (args) {
