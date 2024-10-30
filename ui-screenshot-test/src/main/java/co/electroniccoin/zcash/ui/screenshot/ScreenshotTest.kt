@@ -287,7 +287,6 @@ class ScreenshotTest : UiTestPrerequisites() {
 
         // These are the home screen bottom navigation sub-screens
         onboardingScreenshots(resContext, tag, composeTestRule)
-        recoveryScreenshots(resContext, tag, composeTestRule)
 
         composeTestRule.navigateInHomeTab(HomeTag.TAB_ACCOUNT)
         accountScreenshots(tag, composeTestRule)
@@ -358,31 +357,6 @@ private fun onboardingScreenshots(
         text = resContext.getString(R.string.security_warning_confirm),
         ignoreCase = true
     ).also {
-        it.performClick()
-    }
-}
-
-@Suppress("LongMethod", "CyclomaticComplexMethod")
-private fun recoveryScreenshots(
-    resContext: Context,
-    tag: String,
-    composeTestRule: AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>
-) {
-    composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) {
-        composeTestRule.activity.walletViewModel.secretState.value is SecretState.NeedsBackup
-    }
-
-    composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_recovery_header)).also {
-        it.assertExists()
-    }
-    ScreenshotTest.takeScreenshot(tag, "Recovery 1")
-
-    composeTestRule.onNodeWithText(
-        text = resContext.getString(R.string.new_wallet_recovery_button_finished),
-        ignoreCase = true
-    ).also {
-        it.assertExists()
-        it.performScrollTo()
         it.performClick()
     }
 }
