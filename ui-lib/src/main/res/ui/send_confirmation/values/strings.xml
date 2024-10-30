@@ -9,6 +9,11 @@
     <string name="send_confirmation_send_button">Send</string>
     <string name="send_confirmation_back_button">Cancel</string>
 
+    <string name="send_confirmation_failure_close_button">Close</string>
+    <string name="send_confirmation_failure_report_button">Report</string>
+
+    <string name="send_confirmation_grpc_failure_close_button">Close</string>
+
     <string name="send_confirmation_dialog_error_title">Transaction Failed</string>
     <string name="send_confirmation_dialog_error_text">An error occurred and the attempt to send funds failed. Try it again, please.</string>
     <string name="send_confirmation_dialog_error_ok_btn">OK</string>

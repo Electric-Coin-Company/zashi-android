@@ -124,25 +124,25 @@ internal fun WrapSendConfirmation(
 
     val (stage, setStage) =
         rememberSaveable(stateSaver = SendConfirmationStage.Saver) {
-            mutableStateOf(arguments.initialStage ?: SendConfirmationStage.Confirmation)
+            mutableStateOf(arguments.initialStage ?: SendConfirmationStage.Prepared)
         }
 
     val submissionResults = createTransactionsViewModel.submissions.collectAsState().value.toImmutableList()
 
     val onBackAction = {
         when (stage) {
-            SendConfirmationStage.Confirmation -> goBack(false)
-            SendConfirmationStage.Sending -> { // no action - wait until the sending is done
-            }
-
-            is SendConfirmationStage.Failure -> setStage(SendConfirmationStage.Confirmation)
-            is SendConfirmationStage.FailureGrpc -> {
-                setStage(SendConfirmationStage.Confirmation)
+            SendConfirmationStage.Prepared -> goBack(false)
+            SendConfirmationStage.Sending -> { /* No action - wait until the sending is done */ }
+            SendConfirmationStage.Success -> {
+                setStage(SendConfirmationStage.Prepared)
                 goHome()
             }
-            is SendConfirmationStage.MultipleTrxFailure -> { // no action - wait until report the result
+            is SendConfirmationStage.Failure -> setStage(SendConfirmationStage.Prepared)
+            is SendConfirmationStage.FailureGrpc -> {
+                setStage(SendConfirmationStage.Prepared)
+                goHome()
             }
-
+            is SendConfirmationStage.MultipleTrxFailure -> { /* No action - wait until the sending is done */ }
             is SendConfirmationStage.MultipleTrxFailureReported -> goBack(true)
         }
     }
@@ -337,7 +337,7 @@ private fun processSubmissionResult(
 ) {
     when (submitResult) {
         SubmitResult.Success -> {
-            setStage(SendConfirmationStage.Confirmation)
+            setStage(SendConfirmationStage.Prepared)
             goHome()
         }
         is SubmitResult.SimpleTrxFailure.SimpleTrxFailureSubmit -> {
