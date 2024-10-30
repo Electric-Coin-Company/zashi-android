@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.support.model
+package co.electriccoin.zcash.ui.screen.feedback.model
 
 import androidx.annotation.DrawableRes
 import co.electriccoin.zcash.ui.R

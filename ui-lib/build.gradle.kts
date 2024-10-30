@@ -58,7 +58,7 @@ android {
                     "src/main/res/ui/send",
                     "src/main/res/ui/send_confirmation",
                     "src/main/res/ui/settings",
-                    "src/main/res/ui/support",
+                    "src/main/res/ui/feedback",
                     "src/main/res/ui/update",
                     "src/main/res/ui/wallet_address",
                     "src/main/res/ui/warning",

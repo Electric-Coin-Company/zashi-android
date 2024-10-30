@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.support.view
+package co.electriccoin.zcash.ui.screen.feedback.view
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -49,9 +49,9 @@ import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.screen.support.model.FeedbackEmoji
-import co.electriccoin.zcash.ui.screen.support.model.FeedbackEmojiState
-import co.electriccoin.zcash.ui.screen.support.model.FeedbackState
+import co.electriccoin.zcash.ui.screen.feedback.model.FeedbackEmoji
+import co.electriccoin.zcash.ui.screen.feedback.model.FeedbackEmojiState
+import co.electriccoin.zcash.ui.screen.feedback.model.FeedbackState
 
 @Composable
 fun FeedbackView(

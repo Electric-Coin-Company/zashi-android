@@ -93,7 +93,7 @@ import co.electriccoin.zcash.ui.screen.sendconfirmation.WrapSendConfirmation
 import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SendConfirmationArguments
 import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SendConfirmationStage
 import co.electriccoin.zcash.ui.screen.settings.WrapSettings
-import co.electriccoin.zcash.ui.screen.support.AndroidFeedback
+import co.electriccoin.zcash.ui.screen.feedback.AndroidFeedback
 import co.electriccoin.zcash.ui.screen.update.WrapCheckForUpdate
 import co.electriccoin.zcash.ui.screen.warning.WrapNotEnoughSpace
 import co.electriccoin.zcash.ui.screen.whatsnew.WrapWhatsNew

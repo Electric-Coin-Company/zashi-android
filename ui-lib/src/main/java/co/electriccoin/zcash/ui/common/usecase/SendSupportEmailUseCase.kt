@@ -5,7 +5,7 @@ import android.content.Intent
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.getString
-import co.electriccoin.zcash.ui.screen.support.model.FeedbackEmoji
+import co.electriccoin.zcash.ui.screen.feedback.model.FeedbackEmoji
 import co.electriccoin.zcash.ui.screen.support.model.SupportInfoType
 import co.electriccoin.zcash.ui.util.EmailUtil
 

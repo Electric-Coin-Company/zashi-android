@@ -1,6 +1,6 @@
 @file:Suppress("ktlint:standard:filename")
 
-package co.electriccoin.zcash.ui.screen.support
+package co.electriccoin.zcash.ui.screen.feedback
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
@@ -11,8 +11,8 @@ import co.electriccoin.zcash.di.koinActivityViewModel
 import co.electriccoin.zcash.ui.common.compose.LocalNavController
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.design.component.AppAlertDialog
-import co.electriccoin.zcash.ui.screen.support.view.FeedbackView
-import co.electriccoin.zcash.ui.screen.support.viewmodel.FeedbackViewModel
+import co.electriccoin.zcash.ui.screen.feedback.view.FeedbackView
+import co.electriccoin.zcash.ui.screen.feedback.viewmodel.FeedbackViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
