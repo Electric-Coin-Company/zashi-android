@@ -78,34 +78,34 @@ class IntegrationsViewModel(
                 disabledInfo = stringRes(R.string.integrations_disabled_info).takeIf { isEnabled.not() },
                 onBack = ::onBack,
                 items =
-                listOfNotNull(
-                    ZashiSettingsListItemState(
-                        // Set the wallet currency by app build is more future-proof, although we hide it from
-                        // the UI in the Testnet build
-                        icon = R.drawable.ic_integrations_coinbase,
-                        text = stringRes(R.string.integrations_coinbase, getZcashCurrency.getLocalizedName()),
-                        subtitle =
-                        stringRes(
-                            R.string.integrations_coinbase_subtitle,
-                            getZcashCurrency.getLocalizedName()
-                        ),
-                        onClick = ::onBuyWithCoinbaseClicked
-                    ).takeIf { isCoinbaseAvailable() },
-                    ZashiSettingsListItemState(
-                        // Set the wallet currency by app build is more future-proof, although we hide it from
-                        // the UI in the Testnet build
-                        isEnabled = isEnabled,
-                        icon =
-                        if (isEnabled) {
-                            R.drawable.ic_integrations_flexa
-                        } else {
-                            R.drawable.ic_integrations_flexa_disabled
-                        },
-                        text = stringRes(R.string.integrations_flexa),
-                        subtitle = stringRes(R.string.integrations_flexa_subtitle),
-                        onClick = ::onFlexaClicked
-                    ).takeIf { isFlexaAvailable() }
-                ).toImmutableList()
+                    listOfNotNull(
+                        ZashiSettingsListItemState(
+                            // Set the wallet currency by app build is more future-proof, although we hide it from
+                            // the UI in the Testnet build
+                            icon = R.drawable.ic_integrations_coinbase,
+                            text = stringRes(R.string.integrations_coinbase, getZcashCurrency.getLocalizedName()),
+                            subtitle =
+                                stringRes(
+                                    R.string.integrations_coinbase_subtitle,
+                                    getZcashCurrency.getLocalizedName()
+                                ),
+                            onClick = ::onBuyWithCoinbaseClicked
+                        ).takeIf { isCoinbaseAvailable() },
+                        ZashiSettingsListItemState(
+                            // Set the wallet currency by app build is more future-proof, although we hide it from
+                            // the UI in the Testnet build
+                            isEnabled = isEnabled,
+                            icon =
+                                if (isEnabled) {
+                                    R.drawable.ic_integrations_flexa
+                                } else {
+                                    R.drawable.ic_integrations_flexa_disabled
+                                },
+                            text = stringRes(R.string.integrations_flexa),
+                            subtitle = stringRes(R.string.integrations_flexa_subtitle),
+                            onClick = ::onFlexaClicked
+                        ).takeIf { isFlexaAvailable() }
+                    ).toImmutableList()
             )
         }.stateIn(
             scope = viewModelScope,
@@ -284,24 +284,24 @@ class IntegrationsViewModel(
             is ZecSendExt.ZecSendValidation.Valid ->
                 zecSendValidation.zecSend.copy(
                     destination =
-                    when (recipientAddressState.type) {
-                        is AddressType.Invalid ->
-                            WalletAddress.Unified.new(recipientAddressState.address)
+                        when (recipientAddressState.type) {
+                            is AddressType.Invalid ->
+                                WalletAddress.Unified.new(recipientAddressState.address)
 
-                        AddressType.Shielded ->
-                            WalletAddress.Unified.new(recipientAddressState.address)
+                            AddressType.Shielded ->
+                                WalletAddress.Unified.new(recipientAddressState.address)
 
-                        AddressType.Tex ->
-                            WalletAddress.Tex.new(recipientAddressState.address)
+                            AddressType.Tex ->
+                                WalletAddress.Tex.new(recipientAddressState.address)
 
-                        AddressType.Transparent ->
-                            WalletAddress.Transparent.new(recipientAddressState.address)
+                            AddressType.Transparent ->
+                                WalletAddress.Transparent.new(recipientAddressState.address)
 
-                        AddressType.Unified ->
-                            WalletAddress.Unified.new(recipientAddressState.address)
+                            AddressType.Unified ->
+                                WalletAddress.Unified.new(recipientAddressState.address)
 
-                        null -> WalletAddress.Unified.new(recipientAddressState.address)
-                    }
+                            null -> WalletAddress.Unified.new(recipientAddressState.address)
+                        }
                 )
 
             is ZecSendExt.ZecSendValidation.Invalid -> {
