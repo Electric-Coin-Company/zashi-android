@@ -137,14 +137,8 @@ dependencies {
     implementation(libs.zcash.bip39)
     implementation(libs.zxing)
 
-    api("com.flexa:core:1.0.5") {
-        // isTransitive = false
-        // exclude("*", "*")
-    }
-    api("com.flexa:spend:1.0.5")  {
-        // isTransitive = false
-        // exclude("*", "*")
-    }
+    api(libs.flexa.core)
+    api(libs.flexa.spend)
 
     implementation(projects.buildInfoLib)
     implementation(projects.configurationApiLib)

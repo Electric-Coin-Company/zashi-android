@@ -135,7 +135,7 @@ dependencyResolutionManagement {
                 }
             }
         }
-        mavenLocal()
+        maven("${rootProject.projectDir}/maven")
     }
 
     @Suppress("MaxLineLength")
@@ -191,6 +191,7 @@ dependencyResolutionManagement {
             val googleApiClientAndroidVersion = extra["GOOGLE_API_CLIENT_ANDROID_VERSION"].toString()
             val googleApiServicesDriveVersion = extra["GOOGLE_API_SERVICES_DRIVE_VERSION"].toString()
             val playServicesAuthVersion = extra["PLAY_SERVICES_AUTH_VERSION"].toString()
+            val flexaVersion = extra["FLEXA_VERSION"].toString()
 
 
             // Standalone versions
@@ -260,6 +261,8 @@ dependencyResolutionManagement {
             library("zxing", "com.google.zxing:core:$zxingVersion")
             library("koin", "io.insert-koin:koin-android:$koinVersion")
             library("koin-compose", "io.insert-koin:koin-androidx-compose:$koinVersion")
+            library("flexa-core", "com.flexa:core:$flexaVersion")
+            library("flexa-spend", "com.flexa:spend:$flexaVersion")
 
             // Test libraries
             library("androidx-compose-test-junit", "androidx.compose.ui:ui-test-junit4:$androidxComposeVersion")

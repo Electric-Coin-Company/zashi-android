@@ -45,6 +45,7 @@ buildscript {
                 }
             }
         }
+        maven("${rootProject.projectDir}/maven")
     }
 
     dependencies {
