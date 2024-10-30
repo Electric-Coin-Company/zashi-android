@@ -9,6 +9,9 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 ### Added
 - The device authentication feature on the Zashi app launch has been added
 
+### Changed
+- Settings redesigned
+
 ## [1.2.1 (760)] - 2024-10-22
 
 ### Changed
