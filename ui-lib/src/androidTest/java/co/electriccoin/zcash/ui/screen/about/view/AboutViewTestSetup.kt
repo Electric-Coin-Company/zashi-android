@@ -30,7 +30,6 @@ class AboutViewTestSetup(
                     snackbarHostState = SnackbarHostState(),
                     topAppBarSubTitleState = TopAppBarSubTitleState.None,
                     versionInfo = versionInfo,
-                    onWhatsNew = {}
                 )
             }
         }
