@@ -7,6 +7,7 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -24,6 +25,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -607,8 +609,8 @@ fun SendFormAddressTextField(
                                     Modifier.clickable(
                                         onClick = sendAddressBookState.onButtonClick,
                                         role = Role.Button,
-                                        // indication = rememberRipple(radius = 4.dp),
-                                        // interactionSource = remember { MutableInteractionSource() }
+                                        indication = ripple(radius = 4.dp),
+                                        interactionSource = remember { MutableInteractionSource() }
                                     ),
                                 painter = painterResource(sendAddressBookState.mode.icon),
                                 contentDescription = "",
@@ -621,8 +623,8 @@ fun SendFormAddressTextField(
                                     Modifier.clickable(
                                         onClick = onQrScannerOpen,
                                         role = Role.Button,
-                                        // indication = rememberRipple(radius = 4.dp),
-                                        // interactionSource = remember { MutableInteractionSource() }
+                                        indication = ripple(radius = 4.dp),
+                                        interactionSource = remember { MutableInteractionSource() }
                                     ),
                                 painter = painterResource(R.drawable.qr_code_icon),
                                 contentDescription = stringResource(R.string.send_scan_content_description),

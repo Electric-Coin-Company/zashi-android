@@ -6,6 +6,7 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -21,7 +22,9 @@ import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -625,8 +628,8 @@ private fun HistoryItemExpandedAddressPart(
                         Modifier
                             .clickable(
                                 role = Role.Button,
-                                // indication = rememberRipple(radius = 2.dp, color = ZashiColors.Text.textTertiary),
-                                // interactionSource = remember { MutableInteractionSource() }
+                                indication = ripple(radius = 2.dp, color = ZashiColors.Text.textTertiary),
+                                interactionSource = remember { MutableInteractionSource() }
                             ) { onAction(TrxItemAction.AddressClick(recipient)) }
             )
 
@@ -643,8 +646,8 @@ private fun HistoryItemExpandedAddressPart(
                             .weight(1f)
                             .clickable(
                                 role = Role.Button,
-                                // indication = rememberRipple(radius = 2.dp, color = ZashiColors.Text.textTertiary),
-                                // interactionSource = remember { MutableInteractionSource() }
+                                indication = ripple(radius = 2.dp, color = ZashiColors.Text.textTertiary),
+                                interactionSource = remember { MutableInteractionSource() }
                             ) { onAction(TrxItemAction.AddToAddressBookClick(recipient)) }
                 )
             }
@@ -778,8 +781,8 @@ private fun HistoryItemTransactionIdPart(
                     Modifier
                         .clickable(
                             role = Role.Button,
-                            // indication = rememberRipple(radius = 2.dp, color = ZashiColors.Text.textTertiary),
-                            // interactionSource = remember { MutableInteractionSource() }
+                            indication = ripple(radius = 2.dp, color = ZashiColors.Text.textTertiary),
+                            interactionSource = remember { MutableInteractionSource() }
                         ) { onAction(TrxItemAction.TransactionIdClick(txIdString)) }
             )
         } else {
@@ -941,8 +944,8 @@ private fun HistoryItemMessagePart(
                     .clickable(
                         onClick = { onAction(TrxItemAction.MessageClick(message)) },
                         role = Role.Button,
-                        // indication = rememberRipple(radius = 2.dp, color = ZashiColors.Text.textTertiary),
-                        // interactionSource = remember { MutableInteractionSource() }
+                        indication = ripple(radius = 2.dp, color = ZashiColors.Text.textTertiary),
+                        interactionSource = remember { MutableInteractionSource() }
                     )
         )
     }
