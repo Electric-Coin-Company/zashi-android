@@ -2,14 +2,10 @@ package co.electriccoin.zcash.ui.screen.seed.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import cash.z.ecc.android.sdk.model.PersistableWallet
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.OnboardingState
 import co.electriccoin.zcash.ui.common.repository.WalletRepository
-import co.electriccoin.zcash.ui.common.usecase.CopyToClipboardUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetBackupPersistableWalletUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetPersistableWalletUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveBackupPersistableWalletUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObservePersistableWalletUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
@@ -31,9 +27,6 @@ class SeedViewModel(
     observeBackupPersistableWallet: ObserveBackupPersistableWalletUseCase,
     observePersistableWallet: ObservePersistableWalletUseCase,
     private val args: SeedNavigationArgs,
-    private val getPersistableWallet: GetPersistableWalletUseCase,
-    private val getBackupPersistableWallet: GetBackupPersistableWalletUseCase,
-    private val copyToClipboard: CopyToClipboardUseCase,
     private val walletRepository: WalletRepository,
 ) : ViewModel() {
     private val isRevealed = MutableStateFlow(false)
@@ -73,7 +66,11 @@ class SeedViewModel(
                         text = stringRes(wallet?.seedPhrase?.joinToString().orEmpty()),
                         isRevealed = isRevealed,
                         tooltip = null,
-                        onClick = ::onSeedClicked,
+                        onClick =
+                            when (args) {
+                                SeedNavigationArgs.NEW_WALLET -> ::onNewWalletSeedClicked
+                                SeedNavigationArgs.RECOVERY -> null
+                            },
                         mode = SeedSecretState.Mode.SEED,
                         isRevealPhraseVisible = args == SeedNavigationArgs.NEW_WALLET,
                     ),
@@ -87,7 +84,7 @@ class SeedViewModel(
                                 title = stringRes(R.string.seed_recovery_bday_tooltip_title),
                                 message = stringRes(R.string.seed_recovery_bday_tooltip_message)
                             ),
-                        onClick = ::onBirthDayClicked,
+                        onClick = null,
                         mode = SeedSecretState.Mode.BIRTHDAY,
                         isRevealPhraseVisible = false,
                     ),
@@ -112,45 +109,9 @@ class SeedViewModel(
         }
     }
 
-    private fun onSeedClicked() =
+    private fun onNewWalletSeedClicked() {
         viewModelScope.launch {
-            when (args) {
-                SeedNavigationArgs.RECOVERY -> {
-                    if (isRevealed.value.not()) return@launch
-
-                    copyToClipboard(
-                        tag = "SEED",
-                        value = getWallet().seedPhrase.joinToString()
-                    )
-                }
-
-                SeedNavigationArgs.NEW_WALLET -> {
-                    if (isRevealed.value) {
-                        copyToClipboard(
-                            tag = "SEED",
-                            value = getWallet().seedPhrase.joinToString()
-                        )
-                    } else {
-                        isRevealed.update { !it }
-                    }
-                }
-            }
-        }
-
-    private fun onBirthDayClicked() =
-        viewModelScope.launch {
-            if (isRevealed.value.not()) return@launch
-
-            copyToClipboard(
-                tag = "BDAY",
-                value = getWallet().birthday?.value?.toString().orEmpty()
-            )
-        }
-
-    private suspend fun getWallet(): PersistableWallet {
-        return when (args) {
-            SeedNavigationArgs.NEW_WALLET -> getBackupPersistableWallet()
-            SeedNavigationArgs.RECOVERY -> getPersistableWallet()
+            isRevealed.update { !it }
         }
     }
 }

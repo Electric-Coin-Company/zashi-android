@@ -17,7 +17,7 @@ data class SeedSecretState(
     val isRevealPhraseVisible: Boolean,
     val mode: Mode,
     val tooltip: SeedSecretStateTooltip?,
-    val onClick: () -> Unit,
+    val onClick: (() -> Unit)?,
 ) {
     enum class Mode {
         SEED,

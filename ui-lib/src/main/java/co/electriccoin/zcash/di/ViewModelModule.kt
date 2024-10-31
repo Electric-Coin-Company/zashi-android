@@ -86,11 +86,8 @@ val viewModelModule =
             SeedViewModel(
                 observePersistableWallet = get(),
                 args = args,
-                getPersistableWallet = get(),
-                copyToClipboard = get(),
                 walletRepository = get(),
                 observeBackupPersistableWallet = get(),
-                getBackupPersistableWallet = get()
             )
         }
         viewModelOf(::FeedbackViewModel)

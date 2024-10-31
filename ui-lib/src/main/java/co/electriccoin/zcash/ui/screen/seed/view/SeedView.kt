@@ -266,10 +266,15 @@ private fun SecretContent(state: SeedSecretState) {
         ) {
             Box(
                 modifier =
-                    Modifier
-                        .clickable(onClick = state.onClick)
-                        .blur(blur.value)
-                        .padding(horizontal = 24.dp, vertical = 18.dp)
+                    Modifier then
+                        if (state.onClick != null) {
+                            Modifier.clickable(onClick = state.onClick)
+                        } else {
+                            Modifier
+                        } then
+                        Modifier
+                            .blur(blur.value)
+                            .padding(horizontal = 24.dp, vertical = 18.dp)
             ) {
                 if (state.mode == SeedSecretState.Mode.SEED) {
                     SecretSeedContent(state)

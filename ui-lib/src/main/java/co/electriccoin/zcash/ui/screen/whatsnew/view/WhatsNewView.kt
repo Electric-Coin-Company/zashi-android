@@ -101,7 +101,7 @@ fun WhatsNewView(
 
 @Composable
 private fun WhatsNewSection(state: WhatsNewSectionState) {
-    val bulletString = "\u2022\t\t"
+    val bulletString = "\u2022  "
     val bulletTextStyle = ZashiTypography.textSm
     val bulletTextMeasurer = rememberTextMeasurer()
     val bulletStringWidth =
@@ -138,6 +138,7 @@ private fun WhatsNewSection(state: WhatsNewSectionState) {
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingMin))
 
         Text(
+            modifier = Modifier.padding(start = ZashiDimensions.Spacing.spacingMd),
             text = bulletStyle,
             style = bulletTextStyle
         )
