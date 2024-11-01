@@ -38,12 +38,6 @@ class BiometricActivity : FragmentActivity() {
                         biometricRepository.onBiometricResult(BiometricResult.Success(requestCode))
                         finish()
                     }
-
-                    override fun onAuthenticationFailed() {
-                        super.onAuthenticationFailed()
-                        biometricRepository.onBiometricResult(BiometricResult.Failure(requestCode))
-                        finish()
-                    }
                 }
             )
 
