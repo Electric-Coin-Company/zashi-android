@@ -158,9 +158,9 @@ internal fun HistoryContainer(
                     testTag = BalancesTag.STATUS,
                     walletSnapshot = walletSnapshot,
                     modifier =
-                    Modifier
-                        .padding(horizontal = ZcashTheme.dimens.spacingDefault)
-                        .animateContentSize()
+                        Modifier
+                            .padding(horizontal = ZcashTheme.dimens.spacingDefault)
+                            .animateContentSize()
                 )
 
                 Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
@@ -575,9 +575,9 @@ private fun HistoryItemCollapsedAddressPart(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier =
-                    Modifier
-                        .fillMaxWidth(ADDRESS_IN_TITLE_WIDTH_RATIO)
-                        .then(clickModifier)
+                        Modifier
+                            .fillMaxWidth(ADDRESS_IN_TITLE_WIDTH_RATIO)
+                            .then(clickModifier)
                 )
             }
         }
@@ -644,13 +644,13 @@ private fun HistoryItemExpandedAddressPart(
                     iconVector = ImageVector.vectorResource(R.drawable.ic_trx_save),
                     iconTintColor = ZashiColors.Text.textTertiary,
                     modifier =
-                    Modifier
-                        .weight(1f)
-                        .clickable(
-                            role = Role.Button,
-                            indication = rememberRipple(radius = 2.dp, color = ZashiColors.Text.textTertiary),
-                            interactionSource = remember { MutableInteractionSource() }
-                        ) { onAction(TrxItemAction.AddToAddressBookClick(recipient)) }
+                        Modifier
+                            .weight(1f)
+                            .clickable(
+                                role = Role.Button,
+                                indication = rememberRipple(radius = 2.dp, color = ZashiColors.Text.textTertiary),
+                                interactionSource = remember { MutableInteractionSource() }
+                            ) { onAction(TrxItemAction.AddToAddressBookClick(recipient)) }
                 )
             }
         }
