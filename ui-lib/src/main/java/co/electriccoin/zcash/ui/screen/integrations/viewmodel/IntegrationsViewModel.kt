@@ -22,8 +22,6 @@ import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
 import co.electriccoin.zcash.ui.common.provider.GetZcashCurrencyProvider
 import co.electriccoin.zcash.ui.common.repository.BiometricRepository
 import co.electriccoin.zcash.ui.common.repository.BiometricRequest
-import co.electriccoin.zcash.ui.common.repository.BiometricsCancelledException
-import co.electriccoin.zcash.ui.common.repository.BiometricsFailureException
 import co.electriccoin.zcash.ui.common.usecase.GetSpendingKeyUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSynchronizerUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTransparentAddressUseCase
@@ -178,13 +176,6 @@ class IntegrationsViewModel(
                     }
                 }
             }.onFailure {
-                if (it is BiometricsFailureException || it is BiometricsCancelledException) {
-                    Flexa.buildSpend()
-                        .transactionSent(
-                            commerceSessionId = transaction.getOrNull()?.commerceSessionId.orEmpty(),
-                            txSignature = ""
-                        )
-                }
                 Twig.error(it) { "Transaction proposal failed" }
             }
         }

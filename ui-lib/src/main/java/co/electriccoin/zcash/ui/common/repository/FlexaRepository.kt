@@ -94,7 +94,7 @@ class FlexaRepositoryImpl(
 
     private fun createFlexaAccount(zecBalance: Double) =
         AssetAccount(
-            displayName = "My Wallet",
+            displayName = "",
             icon = "https://flexa.network/static/4bbb1733b3ef41240ca0f0675502c4f7/d8419/flexa-logo%403x.png",
             availableAssets =
                 listOf(

@@ -45,7 +45,7 @@ buildscript {
                 }
             }
         }
-        maven("${rootProject.projectDir}/maven")
+        maven("${rootProject.projectDir}/maven") // url to a local maven in this repository
     }
 
     dependencies {
