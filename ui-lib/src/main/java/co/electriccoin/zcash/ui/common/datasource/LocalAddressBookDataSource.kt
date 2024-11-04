@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.common.datasource
 
+import co.electriccoin.zcash.ui.common.serialization.addressbook.CURRENT_ADDRESS_BOOK_VERSION
 import co.electriccoin.zcash.spackle.io.deleteSuspend
 import co.electriccoin.zcash.ui.common.model.AddressBook
 import co.electriccoin.zcash.ui.common.model.AddressBookContact
@@ -59,7 +60,7 @@ class LocalAddressBookDataSourceImpl(
                     newAddressBook =
                         AddressBook(
                             lastUpdated = Clock.System.now(),
-                            version = 1,
+                            version = CURRENT_ADDRESS_BOOK_VERSION,
                             contacts = emptyList(),
                         )
                     writeAddressBookToLocalStorage(newAddressBook, addressBookKey)
@@ -80,14 +81,14 @@ class LocalAddressBookDataSourceImpl(
             addressBook =
                 AddressBook(
                     lastUpdated = lastUpdated,
-                    version = 1,
+                    version = CURRENT_ADDRESS_BOOK_VERSION,
                     contacts =
-                        addressBook?.contacts.orEmpty() +
-                            AddressBookContact(
-                                name = name,
-                                address = address,
-                                lastUpdated = lastUpdated,
-                            ),
+                    addressBook?.contacts.orEmpty() +
+                        AddressBookContact(
+                            name = name,
+                            address = address,
+                            lastUpdated = lastUpdated,
+                        ),
                 )
             writeAddressBookToLocalStorage(addressBook!!, addressBookKey)
             addressBook!!
@@ -104,20 +105,20 @@ class LocalAddressBookDataSourceImpl(
             addressBook =
                 AddressBook(
                     lastUpdated = lastUpdated,
-                    version = 1,
+                    version = CURRENT_ADDRESS_BOOK_VERSION,
                     contacts =
-                        addressBook?.contacts.orEmpty().toMutableList()
-                            .apply {
-                                set(
-                                    indexOf(contact),
-                                    AddressBookContact(
-                                        name = name.trim(),
-                                        address = address.trim(),
-                                        lastUpdated = Clock.System.now()
-                                    )
+                    addressBook?.contacts.orEmpty().toMutableList()
+                        .apply {
+                            set(
+                                indexOf(contact),
+                                AddressBookContact(
+                                    name = name.trim(),
+                                    address = address.trim(),
+                                    lastUpdated = Clock.System.now()
                                 )
-                            }
-                            .toList(),
+                            )
+                        }
+                        .toList(),
                 )
             writeAddressBookToLocalStorage(addressBook!!, addressBookKey)
             addressBook!!
@@ -132,13 +133,13 @@ class LocalAddressBookDataSourceImpl(
             addressBook =
                 AddressBook(
                     lastUpdated = lastUpdated,
-                    version = 1,
+                    version = CURRENT_ADDRESS_BOOK_VERSION,
                     contacts =
-                        addressBook?.contacts.orEmpty().toMutableList()
-                            .apply {
-                                remove(addressBookContact)
-                            }
-                            .toList(),
+                    addressBook?.contacts.orEmpty().toMutableList()
+                        .apply {
+                            remove(addressBookContact)
+                        }
+                        .toList(),
                 )
             writeAddressBookToLocalStorage(addressBook!!, addressBookKey)
             addressBook!!

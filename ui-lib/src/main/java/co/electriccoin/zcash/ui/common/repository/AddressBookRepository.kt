@@ -196,11 +196,11 @@ class AddressBookRepositoryImpl(
             lastUpdated = Clock.System.now(),
             version = max(local.version, remote.version),
             contacts =
-                allContacts
-                    .groupBy { it.address }
-                    .map { (_, contacts) ->
-                        contacts.maxBy { it.lastUpdated }
-                    }
+            allContacts
+                .groupBy { it.address }
+                .map { (_, contacts) ->
+                    contacts.maxBy { it.lastUpdated }
+                }
         )
     }
 
