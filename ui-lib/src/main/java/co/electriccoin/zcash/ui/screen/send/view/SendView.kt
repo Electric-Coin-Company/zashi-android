@@ -23,9 +23,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -609,7 +609,7 @@ fun SendFormAddressTextField(
                                     Modifier.clickable(
                                         onClick = sendAddressBookState.onButtonClick,
                                         role = Role.Button,
-                                        indication = rememberRipple(radius = 4.dp),
+                                        indication = ripple(radius = 4.dp),
                                         interactionSource = remember { MutableInteractionSource() }
                                     ),
                                 painter = painterResource(sendAddressBookState.mode.icon),
@@ -623,7 +623,7 @@ fun SendFormAddressTextField(
                                     Modifier.clickable(
                                         onClick = onQrScannerOpen,
                                         role = Role.Button,
-                                        indication = rememberRipple(radius = 4.dp),
+                                        indication = ripple(radius = 4.dp),
                                         interactionSource = remember { MutableInteractionSource() }
                                     ),
                                 painter = painterResource(R.drawable.qr_code_icon),
