@@ -142,10 +142,9 @@ class IntegrationsViewModel(
             }
         }
 
-    @Suppress("UselessCallOnNotNull")
     private fun onFlexaClicked() =
         viewModelScope.launch {
-            if (BuildConfig.ZCASH_FLEXA_KEY.isNullOrEmpty()) {
+            if (BuildConfig.ZCASH_FLEXA_KEY.isEmpty()) {
                 showFlexaErrorToastCommand.emit(Unit)
             } else {
                 flexaNavigationCommand.emit(Unit)
