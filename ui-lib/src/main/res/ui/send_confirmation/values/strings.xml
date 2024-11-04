@@ -24,6 +24,9 @@
         the transaction to the network. It will retry during the next few minutes.</string>
     <string name="send_confirmation_dialog_error_grpc_btn">OK</string>
 
+    <string name="send_confirmation_multiple_trx_failure_copy_button">Copy transaction IDs</string>
+    <string name="send_confirmation_multiple_trx_failure_report_button">Contact Support</string>
+
     <string name="send_confirmation_multiple_error_title">Transaction error</string>
     <string name="send_confirmation_multiple_error_text_1">Sending to this recipient required multiple transactions,
         but only some of them succeeded. Your funds are safe, but they need to be recovered with the help of Zashi
@@ -52,6 +55,9 @@
         code: <xliff:g example="123" id="code">%3$d</xliff:g>,
         description: <xliff:g example="Network unreachable" id="desc">%4$s</xliff:g>
     </string>
-    <string name="send_confirmation_multiple_report_unable_open_email">Unable to launch email app.</string>
+    <string name="send_confirmation_multiple_trx_failure_report_unable_open_email">Unable to launch email app.</string>
+    <string name="send_confirmation_multiple_trx_failure_copy_tag">Transaction IDs</string>
+
+    <string name="send_confirmation_success_btn_close">Close</string>
 
 </resources>

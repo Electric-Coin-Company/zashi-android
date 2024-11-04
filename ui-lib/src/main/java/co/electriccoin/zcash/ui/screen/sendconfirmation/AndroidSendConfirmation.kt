@@ -22,6 +22,7 @@ import cash.z.ecc.android.sdk.model.Proposal
 import cash.z.ecc.android.sdk.model.UnifiedSpendingKey
 import cash.z.ecc.android.sdk.model.ZecSend
 import co.electriccoin.zcash.di.koinActivityViewModel
+import co.electriccoin.zcash.spackle.ClipboardManagerUtil
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
@@ -209,10 +210,18 @@ internal fun WrapSendConfirmation(
                     setStage(stageToGo)
                     scope.launch {
                         snackbarHostState.showSnackbar(
-                            message = activity.getString(R.string.send_confirmation_multiple_report_unable_open_email)
+                            message = activity.getString(R.string.send_confirmation_multiple_trx_failure_report_unable_open_email)
                         )
                     }
                 }
+            },
+            onMultipleTrxFailureIdsCopy = { idsString ->
+                Twig.info { "Multiple Trx IDs copied: $idsString" }
+                ClipboardManagerUtil.copyToClipboard(
+                    activity.applicationContext,
+                    activity.getString(R.string.send_confirmation_multiple_trx_failure_copy_tag),
+                    idsString
+                )
             },
             onConfirmation = {
                 // Check and trigger authentication if required, or just submit transactions otherwise

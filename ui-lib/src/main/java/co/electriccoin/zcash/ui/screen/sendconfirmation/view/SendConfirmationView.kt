@@ -88,13 +88,14 @@ fun SendConfirmation(
     onBack: () -> Unit,
     onConfirmation: () -> Unit,
     onContactSupport: (SendConfirmationStage, String?) -> Unit,
+    onMultipleTrxFailureIdsCopy: (String) -> Unit,
     snackbarHostState: SnackbarHostState,
     stage: SendConfirmationStage,
     submissionResults: ImmutableList<TransactionSubmitResult>,
     topAppBarSubTitleState: TopAppBarSubTitleState,
     zecSend: ZecSend,
     contactName: String?,
-    exchangeRate: ExchangeRateState
+    exchangeRate: ExchangeRateState,
 ) {
     BlankBgScaffold(
         topBar = {
@@ -110,6 +111,11 @@ fun SendConfirmation(
                 onClose = onBack,
                 onConfirmation = onConfirmation,
                 onReport = onContactSupport,
+                onCopyTrxIds = {
+                    onMultipleTrxFailureIdsCopy(
+                        submissionResults.joinToString(separator = ", ") { it.txIdString() }
+                    )
+                },
                 stage = stage,
             )
         }
@@ -147,20 +153,16 @@ private fun SendConfirmationTopAppBar(
             )
         }
         SendConfirmationStage.MultipleTrxFailure -> {
-            SmallTopAppBar(
-                subTitle = subTitle,
-                titleText = stringResource(id = R.string.send_confirmation_multiple_error_title),
-            )
+            SmallTopAppBar(subTitle = subTitle)
         }
         SendConfirmationStage.MultipleTrxFailureReported -> {
             SmallTopAppBar(
                 subTitle = subTitle,
-                titleText = stringResource(id = R.string.send_confirmation_multiple_error_title),
                 navigationAction = {
                     TopAppBarBackNavigation(
-                        backText = stringResource(id = R.string.back_navigation).uppercase(),
-                        backContentDescriptionText = stringResource(R.string.back_navigation_content_description),
-                        onBack = onBack
+                        backContentDescriptionText = stringResource(R.string.close_navigation_content_description),
+                        onBack = onBack,
+                        painter = painterResource(co.electriccoin.zcash.ui.design.R.drawable.ic_close)
                     )
                 },
             )
@@ -238,7 +240,7 @@ private fun SendingContent(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
     ) {
-        Text(text = "SUCCESS")
+        Text(text = "Sending")
         Text(text = destination.address)
     }
 }
@@ -437,8 +439,9 @@ private fun SendConfirmationBottomBarContent(
     onClose: () -> Unit,
     onConfirmation: () -> Unit,
     onReport: (SendConfirmationStage, String?) -> Unit,
+    onCopyTrxIds: () -> Unit,
     stage: SendConfirmationStage,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     when (stage) {
         SendConfirmationStage.Prepared -> {
@@ -451,7 +454,7 @@ private fun SendConfirmationBottomBarContent(
         is SendConfirmationStage.Failure -> {
             SendFailureBottomBar(
                 onClose = onClose,
-                onReport = onReport,
+                onReport = { onReport(SendConfirmationStage.Prepared, stage.stackTrace) },
                 modifier = modifier
             )
         }
@@ -461,15 +464,14 @@ private fun SendConfirmationBottomBarContent(
                 modifier = modifier
             )
         }
-        SendConfirmationStage.MultipleTrxFailure -> {
-            //TODO
-            SendConfirmationBottomBar(
-                onConfirmation = onConfirmation,
-                onBack = onClose,
+        SendConfirmationStage.MultipleTrxFailure,
+        SendConfirmationStage.MultipleTrxFailureReported -> {
+            SendMultipleTrxFailureBottomBar(
+                onCopyTrxIds = onCopyTrxIds,
+                onContactSupport = onReport,
                 modifier = modifier
             )
         }
-        SendConfirmationStage.MultipleTrxFailureReported -> TODO()
         SendConfirmationStage.Sending -> { /* No bottom bar in this stage */ }
         SendConfirmationStage.Success -> {
             SendSuccessBottomBar(
@@ -519,6 +521,38 @@ fun SendConfirmationBottomBar(
 }
 
 @Composable
+fun SendMultipleTrxFailureBottomBar(
+    onCopyTrxIds: () -> Unit,
+    onContactSupport: (SendConfirmationStage, String?) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+    ) {
+        ZashiButton(
+            state =
+            ButtonState(
+                text = stringRes(R.string.send_confirmation_multiple_trx_failure_copy_button),
+                onClick = onCopyTrxIds
+            ),
+            modifier = Modifier.fillMaxWidth(),
+            colors = ZashiButtonDefaults.tertiaryColors()
+        )
+
+        Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingSm))
+
+        ZashiButton(
+            state =
+            ButtonState(
+                text = stringRes(R.string.send_confirmation_multiple_trx_failure_report_button),
+                onClick = { onContactSupport(SendConfirmationStage.MultipleTrxFailureReported, null) },
+            ),
+            modifier = Modifier.fillMaxWidth(),
+        )
+    }
+}
+
+@Composable
 fun SendSuccessBottomBar(
     onClose: () -> Unit,
     modifier: Modifier = Modifier
@@ -529,7 +563,7 @@ fun SendSuccessBottomBar(
         ZashiButton(
             state =
             ButtonState(
-                text = stringRes(R.string.send_confirmation_send_button),
+                text = stringRes(R.string.send_confirmation_success_btn_close),
                 onClick = onClose
             ),
             modifier =
@@ -541,7 +575,7 @@ fun SendSuccessBottomBar(
 @Composable
 fun SendFailureBottomBar(
     onClose: () -> Unit,
-    onReport: (SendConfirmationStage, String?) -> Unit,
+    onReport: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -562,10 +596,7 @@ fun SendFailureBottomBar(
             state =
             ButtonState(
                 text = stringRes(R.string.send_confirmation_failure_report_button),
-                onClick = {
-                    //TODO
-                    onReport
-                },
+                onClick = onReport
             ),
             modifier = Modifier.fillMaxWidth(),
             colors = ZashiButtonDefaults.tertiaryColors()
@@ -589,35 +620,6 @@ fun SendGrpcFailureBottomBar(
             ),
             modifier = Modifier.fillMaxWidth()
         )
-    }
-}
-
-@PreviewScreens
-@Composable
-private fun PreviewSendConfirmationFailure() {
-    ZcashTheme {
-        BlankSurface {
-            SendFailure(
-                onDone = {},
-                onReport = {},
-                stage = SendConfirmationStage.Failure(
-                    "The transaction has not been successfully created...",
-                    "Failed stackTrace..."
-                ),
-            )
-        }
-    }
-}
-
-@PreviewScreens
-@Composable
-private fun PreviewSendConfirmationFailureGrpc() {
-    ZcashTheme {
-        BlankSurface {
-            SendFailureGrpc(
-                onDone = {}
-            )
-        }
     }
 }
 
@@ -781,6 +783,7 @@ private fun SendConfirmationPreview() {
                 proposal = null,
             ),
             onConfirmation = {},
+            onMultipleTrxFailureIdsCopy = {},
             onBack = {},
             stage = SendConfirmationStage.Prepared,
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
@@ -806,8 +809,64 @@ private fun SendingPreview() {
                 proposal = null,
             ),
             onConfirmation = {},
+            onMultipleTrxFailureIdsCopy = {},
             onBack = {},
             stage = SendConfirmationStage.Sending,
+            topAppBarSubTitleState = TopAppBarSubTitleState.None,
+            onContactSupport = { _, _ -> },
+            submissionResults = emptyList<TransactionSubmitResult>().toImmutableList(),
+            exchangeRate = ObserveFiatCurrencyResultFixture.new(),
+            contactName = "Mom"
+        )
+    }
+}
+
+@PreviewScreens
+@Composable
+private fun PreviewSendConfirmationFailure() {
+    ZcashTheme {
+        SendConfirmation(
+            snackbarHostState = SnackbarHostState(),
+            zecSend =
+            ZecSend(
+                destination = runBlocking { WalletAddressFixture.sapling() },
+                amount = ZatoshiFixture.new(),
+                memo = MemoFixture.new(),
+                proposal = null,
+            ),
+            onConfirmation = {},
+            onMultipleTrxFailureIdsCopy = {},
+            onBack = {},
+            stage = SendConfirmationStage.Failure(
+                "The transaction has not been successfully created...",
+                "Failed stackTrace..."
+            ),
+            topAppBarSubTitleState = TopAppBarSubTitleState.None,
+            onContactSupport = { _, _ -> },
+            submissionResults = emptyList<TransactionSubmitResult>().toImmutableList(),
+            exchangeRate = ObserveFiatCurrencyResultFixture.new(),
+            contactName = "Mom"
+        )
+    }
+}
+
+@PreviewScreens
+@Composable
+private fun PreviewSendConfirmationGrpcFailure() {
+    ZcashTheme {
+        SendConfirmation(
+            snackbarHostState = SnackbarHostState(),
+            zecSend =
+            ZecSend(
+                destination = runBlocking { WalletAddressFixture.sapling() },
+                amount = ZatoshiFixture.new(),
+                memo = MemoFixture.new(),
+                proposal = null,
+            ),
+            onConfirmation = {},
+            onMultipleTrxFailureIdsCopy = {},
+            onBack = {},
+            stage = SendConfirmationStage.FailureGrpc,
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
             onContactSupport = { _, _ -> },
             submissionResults = emptyList<TransactionSubmitResult>().toImmutableList(),
@@ -832,6 +891,7 @@ private fun SendMultipleErrorPreview() {
             ),
             onConfirmation = {},
             onBack = {},
+            onMultipleTrxFailureIdsCopy = {},
             stage = SendConfirmationStage.MultipleTrxFailure,
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
             onContactSupport = { _, _ -> },
