@@ -20,6 +20,7 @@ import cash.z.ecc.sdk.type.fromResources
 import co.electriccoin.zcash.preference.EncryptedPreferenceProvider
 import co.electriccoin.zcash.preference.StandardPreferenceProvider
 import co.electriccoin.zcash.spackle.Twig
+import co.electriccoin.zcash.ui.BuildConfig
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.common.model.OnboardingState
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
@@ -276,7 +277,7 @@ class WalletViewModel(
 
     private suspend fun disconnectFlexa() =
         suspendCoroutine { cont ->
-            if (isFlexaAvailable()) {
+            if (isFlexaAvailable() && BuildConfig.ZCASH_FLEXA_KEY.isNotEmpty()) {
                 Flexa.buildIdentity().build().disconnect()
                 cont.resume(Unit)
             } else {

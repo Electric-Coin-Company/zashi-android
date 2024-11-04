@@ -7,4 +7,5 @@
     <string name="integrations_version">Version <xliff:g id="version" example="1.2.1">%1$s</xliff:g></string>
     <string name="integrations_disabled_info">During the Restore process, it is not possible to use payment integrations.</string>
     <string name="integrations_biometric_message">Authenticate yourself to pay with Flexa</string>
+    <string name="integrations_flexa_key_missing">Flexa key missing</string>
 </resources>
