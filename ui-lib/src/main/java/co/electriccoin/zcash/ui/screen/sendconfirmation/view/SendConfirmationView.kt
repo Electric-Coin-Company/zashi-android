@@ -2,7 +2,9 @@
 
 package co.electriccoin.zcash.ui.screen.sendconfirmation.view
 
+import androidx.annotation.RawRes
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
@@ -20,6 +23,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -76,6 +80,11 @@ import co.electriccoin.zcash.ui.fixture.ObserveFiatCurrencyResultFixture
 import co.electriccoin.zcash.ui.screen.exchangerate.widget.StyledExchangeLabel
 import co.electriccoin.zcash.ui.screen.sendconfirmation.SendConfirmationTag
 import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SendConfirmationStage
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -190,26 +199,12 @@ private fun SendConfirmationTopAppBar(
 ) {
     Box(modifier = modifier) {
         when (stage) {
-            SendConfirmationStage.Prepared,
-            is SendConfirmationStage.Failure,
-            is SendConfirmationStage.FailureGrpc -> {
+            SendConfirmationStage.Prepared -> {
                 SendConfirmationContent(
                     contactName = contactName,
                     zecSend = zecSend,
                     exchangeRate = exchangeRate
                 )
-                if (stage is SendConfirmationStage.FailureGrpc) {
-                    SendFailureGrpc(onDone = onBack)
-                } else if (stage is SendConfirmationStage.Failure) {
-                    SendFailure(
-                        onDone = onBack,
-                        onReport = { status ->
-                            // Using [SendConfirmationStage.Confirmation] to dismiss the error dialog
-                            onContactSupport(SendConfirmationStage.Prepared, status.stackTrace)
-                        },
-                        stage = stage,
-                    )
-                }
             }
             SendConfirmationStage.Sending -> {
                 SendingContent(destination = zecSend.destination)
@@ -217,7 +212,21 @@ private fun SendConfirmationTopAppBar(
             SendConfirmationStage.Success -> {
                 SuccessContent(destination = zecSend.destination)
             }
-            is SendConfirmationStage.MultipleTrxFailure, SendConfirmationStage.MultipleTrxFailureReported -> {
+            is SendConfirmationStage.Failure -> {
+                SendFailure(
+                    onDone = onBack,
+                    onReport = { status ->
+                        // Using [SendConfirmationStage.Confirmation] to dismiss the error dialog
+                        onContactSupport(SendConfirmationStage.Prepared, status.stackTrace)
+                    },
+                    stage = stage,
+                )
+            }
+            is SendConfirmationStage.FailureGrpc -> {
+                SendFailureGrpc(onDone = onBack)
+            }
+            is SendConfirmationStage.MultipleTrxFailure,
+            SendConfirmationStage.MultipleTrxFailureReported -> {
                 MultipleSubmissionFailure(
                     onContactSupport = {
                         onContactSupport(SendConfirmationStage.MultipleTrxFailureReported, null)
@@ -239,9 +248,35 @@ private fun SendingContent(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
+            .fillMaxSize()
+            .padding(all = ZashiDimensions.Spacing.spacing2xl)
     ) {
-        Text(text = "Sending")
-        Text(text = destination.address)
+        val lottieRes: Int = if (isSystemInDarkTheme()) {
+            co.electriccoin.zcash.ui.design.R.raw.lottie_loading_white
+        } else {
+            co.electriccoin.zcash.ui.design.R.raw.lottie_loading
+        }
+
+        val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(lottieRes))
+        val progress by animateLottieCompositionAsState(
+            iterations = LottieConstants.IterateForever,
+            composition = composition
+        )
+
+        LottieAnimation(
+            modifier = modifier.size(200.dp),
+            composition = composition,
+            progress = { progress },
+            maintainOriginalImageBounds = true
+        )
+
+        Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingSm))
+
+        Text(text = stringResource(id = R.string.send_confirmation_sending_title))
+
+        Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingSm))
+
+        Text(text = stringResource(id = R.string.send_confirmation_sending_subtitle, destination.address))
     }
 }
 
@@ -257,6 +292,152 @@ private fun SuccessContent(
     ) {
         Text(text = "SUCCESS")
         Text(text = destination.address)
+    }
+}
+
+@Composable
+private fun SendFailure(
+    onDone: () -> Unit,
+    onReport: (SendConfirmationStage.Failure) -> Unit,
+    stage: SendConfirmationStage.Failure,
+) {
+    // TODO [#1276]: Once we ensure that the reason contains a localized message, we can leverage it for the UI prompt
+    // TODO [#1276]: Consider adding support for a specific exception in AppAlertDialog
+    // TODO [#1276]: https://github.com/Electric-Coin-Company/zashi-android/issues/1276
+
+    AppAlertDialog(
+        title = stringResource(id = R.string.send_confirmation_dialog_error_title),
+        text = {
+            Column(
+                Modifier.verticalScroll(rememberScrollState())
+            ) {
+                Text(
+                    text = stringResource(id = R.string.send_confirmation_dialog_error_text),
+                    color = ZcashTheme.colors.textPrimary,
+                )
+
+                if (stage.error.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
+
+                    Text(
+                        text = stage.error,
+                        fontStyle = FontStyle.Italic,
+                        color = ZcashTheme.colors.textPrimary,
+                    )
+                }
+            }
+        },
+        confirmButtonText = stringResource(id = R.string.send_confirmation_dialog_error_ok_btn),
+        onConfirmButtonClick = onDone,
+        dismissButtonText = stringResource(id = R.string.send_confirmation_dialog_error_report_btn),
+        onDismissButtonClick = { onReport(stage) },
+    )
+}
+
+@Composable
+private fun SendFailureGrpc(onDone: () -> Unit) {
+    AppAlertDialog(
+        title = stringResource(id = R.string.send_confirmation_dialog_error_grpc_title),
+        text = {
+            Column(
+                Modifier.verticalScroll(rememberScrollState())
+            ) {
+                Text(
+                    text = stringResource(id = R.string.send_confirmation_dialog_error_grpc_text),
+                    color = ZcashTheme.colors.textPrimary,
+                )
+            }
+        },
+        confirmButtonText = stringResource(id = R.string.send_confirmation_dialog_error_grpc_btn),
+        onConfirmButtonClick = onDone
+    )
+}
+
+@Composable
+fun MultipleSubmissionFailure(
+    onContactSupport: () -> Unit,
+    submissionResults: ImmutableList<TransactionSubmitResult>,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier =
+        modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()),
+    ) {
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
+
+        Image(
+            imageVector = ImageVector.vectorResource(R.drawable.ic_zashi_logo_sign_warn),
+            colorFilter = ColorFilter.tint(color = ZcashTheme.colors.secondaryColor),
+            contentDescription = null,
+        )
+
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingBig))
+
+        Body(
+            text = stringResource(id = R.string.send_confirmation_multiple_error_text_1),
+            textAlign = TextAlign.Center
+        )
+
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
+
+        Body(
+            text = stringResource(id = R.string.send_confirmation_multiple_error_text_2),
+            textAlign = TextAlign.Center
+        )
+
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingBig))
+
+        if (submissionResults.isNotEmpty()) {
+            TransactionSubmitResultWidget(submissionResults)
+        }
+
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
+
+        Spacer(modifier = Modifier.weight(1f, true))
+
+        ZashiButton(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = onContactSupport,
+            text = stringResource(id = R.string.send_confirmation_multiple_error_btn)
+        )
+
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingHuge))
+    }
+}
+
+@Composable
+fun TransactionSubmitResultWidget(
+    submissionResults: ImmutableList<TransactionSubmitResult>,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+    ) {
+        Small(text = stringResource(id = R.string.send_confirmation_multiple_error_trx_title))
+
+        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
+
+        submissionResults.forEachIndexed { index, item ->
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Small(
+                    text =
+                    stringResource(
+                        id = R.string.send_confirmation_multiple_error_trx_item,
+                        index + 1
+                    ),
+                    modifier = Modifier.wrapContentSize()
+                )
+                Spacer(modifier = Modifier.width(ZcashTheme.dimens.spacingTiny))
+                Small(text = item.txIdString())
+            }
+        }
     }
 }
 
@@ -631,152 +812,6 @@ fun SendGrpcFailureBottomBar(
                 .fillMaxWidth()
                 .padding(horizontal = ZashiDimensions.Spacing.spacing2xl)
         )
-    }
-}
-
-@Composable
-private fun SendFailure(
-    onDone: () -> Unit,
-    onReport: (SendConfirmationStage.Failure) -> Unit,
-    stage: SendConfirmationStage.Failure,
-) {
-    // TODO [#1276]: Once we ensure that the reason contains a localized message, we can leverage it for the UI prompt
-    // TODO [#1276]: Consider adding support for a specific exception in AppAlertDialog
-    // TODO [#1276]: https://github.com/Electric-Coin-Company/zashi-android/issues/1276
-
-    AppAlertDialog(
-        title = stringResource(id = R.string.send_confirmation_dialog_error_title),
-        text = {
-            Column(
-                Modifier.verticalScroll(rememberScrollState())
-            ) {
-                Text(
-                    text = stringResource(id = R.string.send_confirmation_dialog_error_text),
-                    color = ZcashTheme.colors.textPrimary,
-                )
-
-                if (stage.error.isNotEmpty()) {
-                    Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
-
-                    Text(
-                        text = stage.error,
-                        fontStyle = FontStyle.Italic,
-                        color = ZcashTheme.colors.textPrimary,
-                    )
-                }
-            }
-        },
-        confirmButtonText = stringResource(id = R.string.send_confirmation_dialog_error_ok_btn),
-        onConfirmButtonClick = onDone,
-        dismissButtonText = stringResource(id = R.string.send_confirmation_dialog_error_report_btn),
-        onDismissButtonClick = { onReport(stage) },
-    )
-}
-
-@Composable
-private fun SendFailureGrpc(onDone: () -> Unit) {
-    AppAlertDialog(
-        title = stringResource(id = R.string.send_confirmation_dialog_error_grpc_title),
-        text = {
-            Column(
-                Modifier.verticalScroll(rememberScrollState())
-            ) {
-                Text(
-                    text = stringResource(id = R.string.send_confirmation_dialog_error_grpc_text),
-                    color = ZcashTheme.colors.textPrimary,
-                )
-            }
-        },
-        confirmButtonText = stringResource(id = R.string.send_confirmation_dialog_error_grpc_btn),
-        onConfirmButtonClick = onDone
-    )
-}
-
-@Composable
-fun MultipleSubmissionFailure(
-    onContactSupport: () -> Unit,
-    submissionResults: ImmutableList<TransactionSubmitResult>,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier =
-        modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState()),
-    ) {
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
-
-        Image(
-            imageVector = ImageVector.vectorResource(R.drawable.ic_zashi_logo_sign_warn),
-            colorFilter = ColorFilter.tint(color = ZcashTheme.colors.secondaryColor),
-            contentDescription = null,
-        )
-
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingBig))
-
-        Body(
-            text = stringResource(id = R.string.send_confirmation_multiple_error_text_1),
-            textAlign = TextAlign.Center
-        )
-
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
-
-        Body(
-            text = stringResource(id = R.string.send_confirmation_multiple_error_text_2),
-            textAlign = TextAlign.Center
-        )
-
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingBig))
-
-        if (submissionResults.isNotEmpty()) {
-            TransactionSubmitResultWidget(submissionResults)
-        }
-
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
-
-        Spacer(modifier = Modifier.weight(1f, true))
-
-        ZashiButton(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = onContactSupport,
-            text = stringResource(id = R.string.send_confirmation_multiple_error_btn)
-        )
-
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingHuge))
-    }
-}
-
-@Composable
-fun TransactionSubmitResultWidget(
-    submissionResults: ImmutableList<TransactionSubmitResult>,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
-    ) {
-        Small(text = stringResource(id = R.string.send_confirmation_multiple_error_trx_title))
-
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
-
-        submissionResults.forEachIndexed { index, item ->
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Small(
-                    text =
-                        stringResource(
-                            id = R.string.send_confirmation_multiple_error_trx_item,
-                            index + 1
-                        ),
-                    modifier = Modifier.wrapContentSize()
-                )
-                Spacer(modifier = Modifier.width(ZcashTheme.dimens.spacingTiny))
-                Small(text = item.txIdString())
-            }
-        }
     }
 }
 
