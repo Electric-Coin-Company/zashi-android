@@ -38,19 +38,19 @@ import co.electriccoin.zcash.ui.common.viewmodel.HomeViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.SecretState
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.configuration.RemoteConfig
-import co.electriccoin.zcash.ui.design.component.AnimationConstants
 import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.ConfigurationOverride
 import co.electriccoin.zcash.ui.design.component.Override
-import co.electriccoin.zcash.ui.design.component.WelcomeAnimationAutostart
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.authentication.AuthenticationUseCase
+import co.electriccoin.zcash.ui.screen.authentication.RETRY_TRIGGER_DELAY
 import co.electriccoin.zcash.ui.screen.authentication.WrapAuthentication
+import co.electriccoin.zcash.ui.screen.authentication.view.AnimationConstants
+import co.electriccoin.zcash.ui.screen.authentication.view.WelcomeAnimationAutostart
 import co.electriccoin.zcash.ui.screen.newwalletrecovery.WrapNewWalletRecovery
 import co.electriccoin.zcash.ui.screen.onboarding.WrapOnboarding
 import co.electriccoin.zcash.ui.screen.onboarding.persistExistingWalletWithSeedPhrase
 import co.electriccoin.zcash.ui.screen.securitywarning.WrapSecurityWarning
-import co.electriccoin.zcash.ui.screen.support.WrapSupport
 import co.electriccoin.zcash.ui.screen.warning.viewmodel.StorageCheckViewModel
 import co.electriccoin.zcash.work.WorkIds
 import kotlinx.coroutines.delay
@@ -108,6 +108,7 @@ class MainActivity : FragmentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Twig.debug { "Activity state: Create" }
 
         setAllowedScreenOrientation()
 
@@ -128,6 +129,18 @@ class MainActivity : FragmentActivity() {
         //         googleConsentLauncher.launch(intent)
         //     }
         // }
+    }
+
+    override fun onResume() {
+        Twig.debug { "Activity state: Resume" }
+        authenticationViewModel.runAuthenticationRequiredCheck()
+        super.onResume()
+    }
+
+    override fun onStop() {
+        Twig.debug { "Activity state: Stop" }
+        authenticationViewModel.persistGoToBackgroundTime(System.currentTimeMillis())
+        super.onStop()
     }
 
     // private fun requestGoogleSignIn() {
@@ -207,36 +220,42 @@ class MainActivity : FragmentActivity() {
     private fun AuthenticationForAppAccess() {
         val authState = authenticationViewModel.appAccessAuthenticationResultState.collectAsStateWithLifecycle().value
         val animateAppAccess = authenticationViewModel.showWelcomeAnimation.collectAsStateWithLifecycle().value
+        val authFailed = authenticationViewModel.authFailed.collectAsStateWithLifecycle().value
+
+        if (animateAppAccess) {
+            WelcomeAnimationAutostart(
+                delay = AnimationConstants.INITIAL_DELAY.milliseconds,
+                showAuthLogo = authFailed,
+                onRetry = {
+                    authenticationViewModel.resetAuthenticationResult()
+                    authenticationViewModel.authenticate(
+                        activity = this,
+                        initialAuthSystemWindowDelay = RETRY_TRIGGER_DELAY.milliseconds,
+                        useCase = AuthenticationUseCase.AppAccess
+                    )
+                }
+            )
+        }
 
         when (authState) {
             AuthenticationUIState.Initial -> {
                 Twig.debug { "Authentication initial state" }
                 // Wait for the state update
             }
-
             AuthenticationUIState.NotRequired -> {
                 Twig.debug { "App access authentication NOT required - welcome animation only" }
-                if (animateAppAccess) {
-                    WelcomeAnimationAutostart(
-                        delay = AnimationConstants.INITIAL_DELAY.milliseconds
-                    )
-                    // Wait until the welcome animation finishes then mark it was shown
-                    LaunchedEffect(key1 = authenticationViewModel.showWelcomeAnimation) {
-                        delay(AnimationConstants.together())
-                        authenticationViewModel.setWelcomeAnimationDisplayed()
-                    }
+                // Wait until the welcome animation finishes then mark it was shown
+                LaunchedEffect(key1 = authenticationViewModel.showWelcomeAnimation) {
+                    delay(AnimationConstants.together())
+                    authenticationViewModel.setWelcomeAnimationDisplayed()
                 }
             }
-
             AuthenticationUIState.Required -> {
                 Twig.debug { "App access authentication required" }
 
                 // Check and trigger app access authentication if required
                 // Note that the Welcome animation is part of its logic
                 WrapAuthentication(
-                    goSupport = {
-                        authenticationViewModel.appAccessAuthentication.value = AuthenticationUIState.SupportedRequired
-                    },
                     onSuccess = {
                         lifecycleScope.launch {
                             // Wait until the welcome animation finishes, then mark it as presented to the user
@@ -245,22 +264,14 @@ class MainActivity : FragmentActivity() {
                         }
                     },
                     onCancel = {
-                        finish()
+                        authenticationViewModel.setAuthFailed()
                     },
                     onFailed = {
-                        // No subsequent action required. User is prompted with an explanation dialog.
+                        authenticationViewModel.setAuthFailed()
                     },
                     useCase = AuthenticationUseCase.AppAccess
                 )
             }
-
-            AuthenticationUIState.SupportedRequired -> {
-                Twig.debug { "Authentication support required" }
-                WrapSupport(
-                    goBack = { finish() }
-                )
-            }
-
             AuthenticationUIState.Successful -> {
                 Twig.debug { "Authentication successful - entering the app" }
                 // No action is needed - the main app content is laid out now
