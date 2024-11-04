@@ -154,9 +154,6 @@ private fun SendConfirmationTopAppBar(
                 subtitle = subTitle,
             )
         }
-        SendConfirmationStage.MultipleTrxFailure -> {
-            SmallTopAppBar(subTitle = subTitle)
-        }
         SendConfirmationStage.MultipleTrxFailureReported -> {
             SmallTopAppBar(
                 subTitle = subTitle,
@@ -169,11 +166,12 @@ private fun SendConfirmationTopAppBar(
                 },
             )
         }
+        SendConfirmationStage.MultipleTrxFailure,
         SendConfirmationStage.Sending,
         SendConfirmationStage.Success,
         is SendConfirmationStage.Failure,
         is SendConfirmationStage.FailureGrpc -> {
-            // No top app bar for these stages
+            SmallTopAppBar(subTitle = subTitle)
         }
     }
 }
