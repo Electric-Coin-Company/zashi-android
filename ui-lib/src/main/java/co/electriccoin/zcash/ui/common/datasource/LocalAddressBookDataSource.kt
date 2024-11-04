@@ -3,6 +3,7 @@ package co.electriccoin.zcash.ui.common.datasource
 import co.electriccoin.zcash.spackle.io.deleteSuspend
 import co.electriccoin.zcash.ui.common.model.AddressBook
 import co.electriccoin.zcash.ui.common.model.AddressBookContact
+import co.electriccoin.zcash.ui.common.serialization.addressbook.AddressBookKey
 import co.electriccoin.zcash.ui.common.provider.AddressBookProvider
 import co.electriccoin.zcash.ui.common.provider.AddressBookStorageProvider
 import kotlinx.coroutines.Dispatchers
@@ -10,22 +11,32 @@ import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 
 interface LocalAddressBookDataSource {
-    suspend fun getContacts(): AddressBook
+    suspend fun getContacts(
+        addressBookKey: AddressBookKey
+    ): AddressBook
 
     suspend fun saveContact(
         name: String,
-        address: String
+        address: String,
+        addressBookKey: AddressBookKey
     ): AddressBook
 
     suspend fun updateContact(
         contact: AddressBookContact,
         name: String,
-        address: String
+        address: String,
+        addressBookKey: AddressBookKey
     ): AddressBook
 
-    suspend fun deleteContact(addressBookContact: AddressBookContact): AddressBook
+    suspend fun deleteContact(
+        addressBookContact: AddressBookContact,
+        addressBookKey: AddressBookKey
+    ): AddressBook
 
-    suspend fun saveContacts(contacts: AddressBook)
+    suspend fun saveContacts(
+        contacts: AddressBook,
+        addressBookKey: AddressBookKey
+    )
 
     suspend fun deleteAddressBook()
 }
@@ -36,12 +47,14 @@ class LocalAddressBookDataSourceImpl(
 ) : LocalAddressBookDataSource {
     private var addressBook: AddressBook? = null
 
-    override suspend fun getContacts(): AddressBook =
+    override suspend fun getContacts(
+        addressBookKey: AddressBookKey
+    ): AddressBook =
         withContext(Dispatchers.IO) {
             val addressBook = this@LocalAddressBookDataSourceImpl.addressBook
 
             if (addressBook == null) {
-                var newAddressBook: AddressBook? = readLocalFileToAddressBook()
+                var newAddressBook: AddressBook? = readLocalFileToAddressBook(addressBookKey)
                 if (newAddressBook == null) {
                     newAddressBook =
                         AddressBook(
@@ -49,7 +62,7 @@ class LocalAddressBookDataSourceImpl(
                             version = 1,
                             contacts = emptyList(),
                         )
-                    writeAddressBookToLocalStorage(newAddressBook)
+                    writeAddressBookToLocalStorage(newAddressBook, addressBookKey)
                 }
                 newAddressBook
             } else {
@@ -59,7 +72,8 @@ class LocalAddressBookDataSourceImpl(
 
     override suspend fun saveContact(
         name: String,
-        address: String
+        address: String,
+        addressBookKey: AddressBookKey
     ): AddressBook =
         withContext(Dispatchers.IO) {
             val lastUpdated = Clock.System.now()
@@ -75,14 +89,15 @@ class LocalAddressBookDataSourceImpl(
                                 lastUpdated = lastUpdated,
                             ),
                 )
-            writeAddressBookToLocalStorage(addressBook!!)
+            writeAddressBookToLocalStorage(addressBook!!, addressBookKey)
             addressBook!!
         }
 
     override suspend fun updateContact(
         contact: AddressBookContact,
         name: String,
-        address: String
+        address: String,
+        addressBookKey: AddressBookKey
     ): AddressBook =
         withContext(Dispatchers.IO) {
             val lastUpdated = Clock.System.now()
@@ -104,11 +119,14 @@ class LocalAddressBookDataSourceImpl(
                             }
                             .toList(),
                 )
-            writeAddressBookToLocalStorage(addressBook!!)
+            writeAddressBookToLocalStorage(addressBook!!, addressBookKey)
             addressBook!!
         }
 
-    override suspend fun deleteContact(addressBookContact: AddressBookContact): AddressBook =
+    override suspend fun deleteContact(
+        addressBookContact: AddressBookContact,
+        addressBookKey: AddressBookKey
+        ): AddressBook =
         withContext(Dispatchers.IO) {
             val lastUpdated = Clock.System.now()
             addressBook =
@@ -122,12 +140,12 @@ class LocalAddressBookDataSourceImpl(
                             }
                             .toList(),
                 )
-            writeAddressBookToLocalStorage(addressBook!!)
+            writeAddressBookToLocalStorage(addressBook!!, addressBookKey)
             addressBook!!
         }
 
-    override suspend fun saveContacts(contacts: AddressBook) {
-        writeAddressBookToLocalStorage(contacts)
+    override suspend fun saveContacts(contacts: AddressBook, addressBookKey: AddressBookKey) {
+        writeAddressBookToLocalStorage(contacts, addressBookKey)
         this@LocalAddressBookDataSourceImpl.addressBook = contacts
     }
 
@@ -136,13 +154,13 @@ class LocalAddressBookDataSourceImpl(
         addressBook = null
     }
 
-    private fun readLocalFileToAddressBook(): AddressBook? {
+    private fun readLocalFileToAddressBook(addressBookKey: AddressBookKey): AddressBook? {
         val file = addressBookStorageProvider.getStorageFile() ?: return null
-        return addressBookProvider.readAddressBookFromFile(file)
+        return addressBookProvider.readAddressBookFromFile(file, addressBookKey)
     }
 
-    private fun writeAddressBookToLocalStorage(addressBook: AddressBook) {
+    private fun writeAddressBookToLocalStorage(addressBook: AddressBook, addressBookKey: AddressBookKey) {
         val file = addressBookStorageProvider.getOrCreateStorageFile()
-        addressBookProvider.writeAddressBookToFile(file, addressBook)
+        addressBookProvider.writeAddressBookToFile(file, addressBook, addressBookKey)
     }
 }
