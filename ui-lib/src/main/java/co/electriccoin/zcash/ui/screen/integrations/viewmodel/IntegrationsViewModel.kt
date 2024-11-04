@@ -59,6 +59,7 @@ class IntegrationsViewModel(
     val backNavigationCommand = MutableSharedFlow<Unit>()
     val flexaNavigationCommand = MutableSharedFlow<Unit>()
     val coinbaseNavigationCommand = MutableSharedFlow<String>()
+    val showFlexaErrorToastCommand = MutableSharedFlow<Unit>()
 
     private val versionInfo = getVersionInfo()
     private val isDebug = versionInfo.let { it.isDebuggable && !it.isRunningUnderTestService }
@@ -141,9 +142,14 @@ class IntegrationsViewModel(
             }
         }
 
+    @Suppress("UselessCallOnNotNull")
     private fun onFlexaClicked() =
         viewModelScope.launch {
-            flexaNavigationCommand.emit(Unit)
+            if (BuildConfig.ZCASH_FLEXA_KEY.isNullOrEmpty()) {
+                showFlexaErrorToastCommand.emit(Unit)
+            } else {
+                flexaNavigationCommand.emit(Unit)
+            }
         }
 
     fun onFlexaResultCallback(transaction: Result<Transaction>) =
