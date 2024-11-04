@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
@@ -57,6 +58,7 @@ import co.electriccoin.zcash.ui.design.component.StyledBalance
 import co.electriccoin.zcash.ui.design.component.StyledBalanceDefaults
 import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.component.TopAppBarBackNavigation
+import co.electriccoin.zcash.ui.design.component.ZashiBottomBar
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
@@ -443,41 +445,38 @@ private fun SendConfirmationBottomBarContent(
     stage: SendConfirmationStage,
     modifier: Modifier = Modifier,
 ) {
-    when (stage) {
-        SendConfirmationStage.Prepared -> {
-            SendConfirmationBottomBar(
-                onConfirmation = onConfirmation,
-                onBack = onClose,
-                modifier = modifier
-            )
-        }
-        is SendConfirmationStage.Failure -> {
-            SendFailureBottomBar(
-                onClose = onClose,
-                onReport = { onReport(SendConfirmationStage.Prepared, stage.stackTrace) },
-                modifier = modifier
-            )
-        }
-        SendConfirmationStage.FailureGrpc -> {
-            SendGrpcFailureBottomBar(
-                onClose = onClose,
-                modifier = modifier
-            )
-        }
-        SendConfirmationStage.MultipleTrxFailure,
-        SendConfirmationStage.MultipleTrxFailureReported -> {
-            SendMultipleTrxFailureBottomBar(
-                onCopyTrxIds = onCopyTrxIds,
-                onContactSupport = onReport,
-                modifier = modifier
-            )
-        }
-        SendConfirmationStage.Sending -> { /* No bottom bar in this stage */ }
-        SendConfirmationStage.Success -> {
-            SendSuccessBottomBar(
-                onClose = onClose,
-                modifier = modifier
-            )
+    ZashiBottomBar(modifier = modifier) {
+        when (stage) {
+            SendConfirmationStage.Prepared -> {
+                SendConfirmationBottomBar(
+                    onConfirmation = onConfirmation,
+                    onBack = onClose,
+                )
+            }
+            is SendConfirmationStage.Failure -> {
+                SendFailureBottomBar(
+                    onClose = onClose,
+                    onReport = { onReport(SendConfirmationStage.Prepared, stage.stackTrace) },
+                )
+            }
+            SendConfirmationStage.FailureGrpc -> {
+                SendGrpcFailureBottomBar(
+                    onClose = onClose,
+                )
+            }
+            SendConfirmationStage.MultipleTrxFailure,
+            SendConfirmationStage.MultipleTrxFailureReported -> {
+                SendMultipleTrxFailureBottomBar(
+                    onCopyTrxIds = onCopyTrxIds,
+                    onContactSupport = onReport,
+                )
+            }
+            SendConfirmationStage.Sending -> { /* No bottom bar in this stage */ }
+            SendConfirmationStage.Success -> {
+                SendSuccessBottomBar(
+                    onClose = onClose,
+                )
+            }
         }
     }
 }
@@ -500,6 +499,7 @@ fun SendConfirmationBottomBar(
             modifier =
             Modifier
                 .fillMaxWidth()
+                .padding(horizontal = ZashiDimensions.Spacing.spacing2xl)
                 .testTag(SendConfirmationTag.SEND_CONFIRMATION_SEND_BUTTON)
         )
 
@@ -514,6 +514,7 @@ fun SendConfirmationBottomBar(
             modifier =
             Modifier
                 .fillMaxWidth()
+                .padding(horizontal = ZashiDimensions.Spacing.spacing2xl)
                 .testTag(SendConfirmationTag.SEND_CONFIRMATION_BACK_BUTTON),
             colors = ZashiButtonDefaults.tertiaryColors()
         )
@@ -535,7 +536,9 @@ fun SendMultipleTrxFailureBottomBar(
                 text = stringRes(R.string.send_confirmation_multiple_trx_failure_copy_button),
                 onClick = onCopyTrxIds
             ),
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = ZashiDimensions.Spacing.spacing2xl),
             colors = ZashiButtonDefaults.tertiaryColors()
         )
 
@@ -547,7 +550,9 @@ fun SendMultipleTrxFailureBottomBar(
                 text = stringRes(R.string.send_confirmation_multiple_trx_failure_report_button),
                 onClick = { onContactSupport(SendConfirmationStage.MultipleTrxFailureReported, null) },
             ),
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = ZashiDimensions.Spacing.spacing2xl),
         )
     }
 }
@@ -567,7 +572,9 @@ fun SendSuccessBottomBar(
                 onClick = onClose
             ),
             modifier =
-            Modifier.fillMaxWidth()
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = ZashiDimensions.Spacing.spacing2xl)
         )
     }
 }
@@ -587,7 +594,9 @@ fun SendFailureBottomBar(
                 text = stringRes(R.string.send_confirmation_failure_close_button),
                 onClick = onClose
             ),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = ZashiDimensions.Spacing.spacing2xl)
         )
 
         Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingLg))
@@ -598,7 +607,9 @@ fun SendFailureBottomBar(
                 text = stringRes(R.string.send_confirmation_failure_report_button),
                 onClick = onReport
             ),
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = ZashiDimensions.Spacing.spacing2xl),
             colors = ZashiButtonDefaults.tertiaryColors()
         )
     }
@@ -618,7 +629,9 @@ fun SendGrpcFailureBottomBar(
                 text = stringRes(R.string.send_confirmation_grpc_failure_close_button),
                 onClick = onClose
             ),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = ZashiDimensions.Spacing.spacing2xl)
         )
     }
 }
