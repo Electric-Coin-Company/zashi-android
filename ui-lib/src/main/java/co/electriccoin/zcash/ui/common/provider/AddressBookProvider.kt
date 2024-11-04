@@ -1,13 +1,9 @@
 package co.electriccoin.zcash.ui.common.provider
 
 import co.electriccoin.zcash.ui.common.model.AddressBook
-import co.electriccoin.zcash.ui.common.model.AddressBookContact
-import kotlinx.datetime.Instant
+import co.electriccoin.zcash.ui.common.serialization.addressbook.AddressBookV1Serializer
 import java.io.File
-import java.io.InputStream
-import java.io.OutputStream
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
+import kotlin.LazyThreadSafetyMode.NONE
 
 interface AddressBookProvider {
     fun writeAddressBookToFile(
@@ -19,82 +15,22 @@ interface AddressBookProvider {
 }
 
 class AddressBookProviderImpl : AddressBookProvider {
+    private val addressBookV1Serializer by lazy(NONE) { AddressBookV1Serializer() }
+
     override fun writeAddressBookToFile(
         file: File,
         addressBook: AddressBook
     ) {
-        file.outputStream().use {
-            serializeAddressBook(it, addressBook)
+        file.outputStream().buffered().use { stream ->
+            addressBookV1Serializer.serializeAddressBook(stream, addressBook)
+            stream.flush()
         }
     }
 
     override fun readAddressBookFromFile(file: File): AddressBook {
-        return file.inputStream().use {
-            deserializeAddressBook(it)
+        return file.inputStream().use { stream ->
+            addressBookV1Serializer.deserializeAddressBook(stream)
         }
-    }
-
-    private fun serializeAddressBook(
-        outputStream: OutputStream,
-        addressBook: AddressBook
-    ) {
-        outputStream.buffered().use {
-            it.write(addressBook.version.createByteArray())
-            it.write(addressBook.lastUpdated.toEpochMilliseconds().createByteArray())
-            it.write(addressBook.contacts.size.createByteArray())
-
-            addressBook.contacts.forEach { contact ->
-                it.write(contact.lastUpdated.toEpochMilliseconds().createByteArray())
-                it.write(contact.address.createByteArray())
-                it.write(contact.name.createByteArray())
-            }
-        }
-    }
-
-    private fun deserializeAddressBook(inputStream: InputStream): AddressBook {
-        return inputStream.buffered().use { stream ->
-            AddressBook(
-                version = stream.readInt(),
-                lastUpdated = stream.readLong().let { Instant.fromEpochMilliseconds(it) },
-                contacts =
-                    stream.readInt().let { contactsSize ->
-                        (0 until contactsSize).map { _ ->
-                            AddressBookContact(
-                                lastUpdated = stream.readLong().let { Instant.fromEpochMilliseconds(it) },
-                                address = stream.readString(),
-                                name = stream.readString(),
-                            )
-                        }
-                    }
-            )
-        }
-    }
-
-    private fun Int.createByteArray(): ByteArray = this.toLong().createByteArray()
-
-    private fun Long.createByteArray(): ByteArray =
-        ByteBuffer
-            .allocate(Long.SIZE_BYTES).order(BYTE_ORDER).putLong(this).array()
-
-    private fun String.createByteArray(): ByteArray {
-        val byteArray = this.toByteArray()
-        return byteArray.size.createByteArray() + byteArray
-    }
-
-    private fun InputStream.readInt(): Int = readLong().toInt()
-
-    private fun InputStream.readLong(): Long {
-        val buffer = ByteArray(Long.SIZE_BYTES)
-        this.read(buffer)
-        return ByteBuffer.wrap(buffer).order(BYTE_ORDER).getLong()
-    }
-
-    private fun InputStream.readString(): String {
-        val size = this.readInt()
-        val buffer = ByteArray(size)
-        this.read(buffer)
-        return String(buffer)
     }
 }
 
-private val BYTE_ORDER = ByteOrder.BIG_ENDIAN
