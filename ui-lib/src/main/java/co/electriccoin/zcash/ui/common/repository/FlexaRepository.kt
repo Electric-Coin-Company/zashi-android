@@ -32,6 +32,8 @@ class FlexaRepositoryImpl(
         get() = BuildConfig.ZCASH_FLEXA_KEY.takeIf { it.isNotEmpty() }
 
     override fun init() {
+        if (publishableKey == null) return
+
         scope.launch {
             val configuration = getFlexaClientConfiguration()
             if (configuration != null) {
@@ -102,6 +104,7 @@ class FlexaRepositoryImpl(
                         assetId = "bip122:00040fe8ec8471911baa1db1266ea15d/slip44:133",
                         balance = zecBalance,
                         symbol = "ZEC",
+                        icon = "https://cryptologos.cc/logos/zcash-zec-logo.png"
                     )
                 ),
             custodyModel = CustodyModel.LOCAL,
