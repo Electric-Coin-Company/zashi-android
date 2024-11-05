@@ -92,6 +92,7 @@ private fun HistoryListComposablePreview() {
                 BalanceState.Available(
                     totalBalance = Zatoshi(value = 123_000_000L),
                     spendableBalance = Zatoshi(value = 123_000_000L),
+                    totalSpendableBalance = Zatoshi(value = 123_000_000L),
                     exchangeRate =
                         ExchangeRateState.Data(
                             isLoading = false,

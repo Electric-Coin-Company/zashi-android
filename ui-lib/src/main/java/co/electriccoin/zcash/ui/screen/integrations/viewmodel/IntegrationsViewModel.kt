@@ -166,13 +166,21 @@ class IntegrationsViewModel(
             }.onSuccess { proposal ->
                 Twig.debug { "Transaction proposal successful: ${proposal.toPrettyString()}" }
                 val result = submitTransactions(proposal = proposal, spendingKey = getSpendingKey())
-                when (result.first) {
+                when (val output = result.first) {
                     SubmitResult.Success -> {
                         Twig.debug { "Transaction successful $result" }
                         Flexa.buildSpend()
                             .transactionSent(
                                 commerceSessionId = transaction.getOrNull()?.commerceSessionId.orEmpty(),
                                 txSignature = result.second.orEmpty()
+                            )
+                    }
+                    is SubmitResult.SimpleTrxFailure.SimpleTrxFailureGrpc -> {
+                        Twig.debug { "Transaction grpc failure $result" }
+                        Flexa.buildSpend()
+                            .transactionSent(
+                                commerceSessionId = transaction.getOrNull()?.commerceSessionId.orEmpty(),
+                                txSignature = output.result.txIdString()
                             )
                     }
 
