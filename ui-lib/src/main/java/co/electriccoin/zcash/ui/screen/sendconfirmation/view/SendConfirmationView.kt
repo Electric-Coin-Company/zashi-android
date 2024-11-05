@@ -2,7 +2,6 @@
 
 package co.electriccoin.zcash.ui.screen.sendconfirmation.view
 
-import androidx.annotation.RawRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -53,7 +52,6 @@ import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.component.AppAlertDialog
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
-import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.Small
@@ -137,7 +135,10 @@ fun SendConfirmation(
             stage = stage,
             submissionResults = submissionResults,
             zecSend = zecSend,
-            modifier = Modifier.scaffoldPadding(paddingValues),
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .scaffoldPadding(paddingValues),
             exchangeRate = exchangeRate,
             contactName = contactName
         )
@@ -247,9 +248,7 @@ private fun SendingContent(
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
-            .fillMaxSize()
-            .padding(all = ZashiDimensions.Spacing.spacing2xl)
+        modifier = modifier.fillMaxSize()
     ) {
         val lottieRes: Int = if (isSystemInDarkTheme()) {
             co.electriccoin.zcash.ui.design.R.raw.lottie_loading_white
@@ -451,10 +450,7 @@ private fun SendConfirmationContent(
 ) {
     Column(
         horizontalAlignment = Alignment.Start,
-        modifier =
-        modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState()),
+        modifier = modifier.fillMaxSize(),
     ) {
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
 
