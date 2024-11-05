@@ -8,18 +8,18 @@ object BalanceStateFixture {
     private const val BALANCE_VALUE = 0L
 
     val TOTAL_BALANCE = Zatoshi(BALANCE_VALUE)
-    val TOTAL_SPENDABLE_BALANCE = Zatoshi(BALANCE_VALUE)
+    val TOTAL_SHIELDED_BALANCE = Zatoshi(BALANCE_VALUE)
     val SPENDABLE_BALANCE = Zatoshi(BALANCE_VALUE)
 
     fun new(
         totalBalance: Zatoshi = TOTAL_BALANCE,
-        totalSpendableBalance: Zatoshi = TOTAL_SPENDABLE_BALANCE,
+        totalShieldedBalance: Zatoshi = TOTAL_SHIELDED_BALANCE,
         spendableBalance: Zatoshi = SPENDABLE_BALANCE,
         exchangeRate: ExchangeRateState = ObserveFiatCurrencyResultFixture.new()
     ) = BalanceState.Available(
         totalBalance = totalBalance,
         spendableBalance = spendableBalance,
         exchangeRate = exchangeRate,
-        totalSpendableBalance = totalSpendableBalance
+        totalShieldedBalance = totalShieldedBalance
     )
 }

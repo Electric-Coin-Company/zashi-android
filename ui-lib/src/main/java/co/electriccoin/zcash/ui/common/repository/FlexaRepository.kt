@@ -41,7 +41,7 @@ class FlexaRepositoryImpl(
                 Twig.info { "Flexa initialized" }
 
                 balanceRepository.state
-                    .map { it.totalSpendableBalance to it.spendableBalance }
+                    .map { it.totalShieldedBalance to it.spendableBalance }
                     .collect { (total, available) ->
                         val totalZec = total.convertZatoshiToZec().toDouble()
                         val availableZec = available.convertZatoshiToZec().toDouble()

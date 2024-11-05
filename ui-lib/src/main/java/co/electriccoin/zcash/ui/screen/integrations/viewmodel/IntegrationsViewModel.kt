@@ -176,7 +176,7 @@ class IntegrationsViewModel(
                             )
                     }
                     is SubmitResult.SimpleTrxFailure.SimpleTrxFailureGrpc -> {
-                        Twig.debug { "Transaction grpc failure $result" }
+                        Twig.warn { "Transaction grpc failure $result" }
                         Flexa.buildSpend()
                             .transactionSent(
                                 commerceSessionId = transaction.getOrNull()?.commerceSessionId.orEmpty(),
