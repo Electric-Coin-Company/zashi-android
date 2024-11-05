@@ -225,27 +225,30 @@ internal fun WrapSendConfirmation(
             },
             onConfirmation = {
                 // Check and trigger authentication if required, or just submit transactions otherwise
-                lifecycleScope.launch {
-                    authenticationViewModel.isSendFundsAuthenticationRequired
-                        .filterNotNull()
-                        .collect { isProtected ->
-                            if (isProtected) {
-                                sendFundsAuthentication.value = true
-                            } else {
-                                runSendFundsAction(
-                                    createTransactionsViewModel = createTransactionsViewModel,
-                                    goHome = goHome,
-                                    // The not-null assertion operator is necessary here even if we check its
-                                    // nullability before due to property is declared in different module. See more
-                                    // details on the Kotlin forum
-                                    proposal = zecSend!!.proposal!!,
-                                    setStage = setStage,
-                                    spendingKey = spendingKey,
-                                    synchronizer = synchronizer,
-                                )
-                            }
-                        }
-                }
+                //TODO
+                setStage(SendConfirmationStage.Sending)
+
+                // lifecycleScope.launch {
+                //     authenticationViewModel.isSendFundsAuthenticationRequired
+                //         .filterNotNull()
+                //         .collect { isProtected ->
+                //             if (isProtected) {
+                //                 sendFundsAuthentication.value = true
+                //             } else {
+                //                 runSendFundsAction(
+                //                     createTransactionsViewModel = createTransactionsViewModel,
+                //                     goHome = goHome,
+                //                     // The not-null assertion operator is necessary here even if we check its
+                //                     // nullability before due to property is declared in different module. See more
+                //                     // details on the Kotlin forum
+                //                     proposal = zecSend!!.proposal!!,
+                //                     setStage = setStage,
+                //                     spendingKey = spendingKey,
+                //                     synchronizer = synchronizer,
+                //                 )
+                //             }
+                //         }
+                // }
             },
             topAppBarSubTitleState = topAppBarSubTitleState,
             exchangeRate = exchangeRateState,

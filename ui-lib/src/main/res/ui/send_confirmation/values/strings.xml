@@ -10,7 +10,7 @@
     <string name="send_confirmation_back_button">Cancel</string>
 
     <string name="send_confirmation_sending_title">Sending…</string>
-    <string name="send_confirmation_sending_subtitle">Your tokens are being sent to
+    <string name="send_confirmation_sending_subtitle">Your tokens are being sent to\n
         <xliff:g example="zs12ghrbdjfs24383x5T…" id="index">%1$s</xliff:g>
     </string>
 

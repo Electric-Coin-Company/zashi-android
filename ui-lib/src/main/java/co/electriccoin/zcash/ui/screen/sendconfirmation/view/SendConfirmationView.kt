@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -36,6 +37,8 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import cash.z.ecc.android.sdk.fixture.WalletAddressFixture
 import cash.z.ecc.android.sdk.model.FirstClassByteArray
 import cash.z.ecc.android.sdk.model.TransactionSubmitResult
@@ -76,6 +79,7 @@ import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.fixture.ObserveFiatCurrencyResultFixture
 import co.electriccoin.zcash.ui.screen.exchangerate.widget.StyledExchangeLabel
+import co.electriccoin.zcash.ui.screen.send.ext.abbreviated
 import co.electriccoin.zcash.ui.screen.sendconfirmation.SendConfirmationTag
 import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SendConfirmationStage
 import com.airbnb.lottie.compose.LottieAnimation
@@ -245,46 +249,67 @@ private fun SendingContent(
     destination: WalletAddress,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier.fillMaxSize()
-    ) {
-        // TODO: Change this lottie resource once we have it
-        val lottieRes: Int = if (isSystemInDarkTheme()) {
-            co.electriccoin.zcash.ui.design.R.raw.lottie_loading_white
-        } else {
-            co.electriccoin.zcash.ui.design.R.raw.lottie_loading
+    ConstraintLayout(modifier = modifier.fillMaxSize()) {
+        val (content, spaceTop) = createRefs()
+
+        Spacer(modifier = Modifier.constrainAs(spaceTop) {
+            height = Dimension.percent(0.2f)
+            width = Dimension.fillToConstraints
+            top.linkTo(parent.top)
+            bottom.linkTo(content.top)
+            start.linkTo(parent.start)
+            end.linkTo(parent.end)
+        })
+
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .constrainAs(content) {
+                    top.linkTo(spaceTop.bottom)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                    width = Dimension.fillToConstraints
+                    height = Dimension.wrapContent
+                }
+        ) {
+            // TODO: Change this lottie resource once we have it
+            val lottieRes: Int = if (isSystemInDarkTheme()) {
+                co.electriccoin.zcash.ui.design.R.raw.lottie_loading_white
+            } else {
+                co.electriccoin.zcash.ui.design.R.raw.lottie_loading
+            }
+
+            val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(lottieRes))
+            val progress by animateLottieCompositionAsState(
+                iterations = LottieConstants.IterateForever,
+                composition = composition
+            )
+
+            LottieAnimation(
+                modifier = Modifier.size(200.dp),
+                composition = composition,
+                progress = { progress },
+                maintainOriginalImageBounds = true
+            )
+
+            Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacing2xl))
+
+            Text(
+                fontWeight = FontWeight.SemiBold,
+                style = ZashiTypography.header5,
+                text = stringResource(id = R.string.send_confirmation_sending_title),
+            )
+
+            Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingLg))
+
+            Text(
+                fontWeight = FontWeight.Normal,
+                style = ZashiTypography.textSm,
+                text = stringResource(id = R.string.send_confirmation_sending_subtitle, destination.abbreviated()),
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center
+            )
         }
-
-        val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(lottieRes))
-        val progress by animateLottieCompositionAsState(
-            iterations = LottieConstants.IterateForever,
-            composition = composition
-        )
-
-        LottieAnimation(
-            modifier = modifier.size(200.dp),
-            composition = composition,
-            progress = { progress },
-            maintainOriginalImageBounds = true
-        )
-
-        Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingSm))
-
-        Text(
-            fontWeight = FontWeight.SemiBold,
-            style = ZashiTypography.header5,
-            text = stringResource(id = R.string.send_confirmation_sending_title),
-        )
-
-        Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingSm))
-
-        Text(
-            fontWeight = FontWeight.Normal,
-            style = ZashiTypography.textSm,
-            text = stringResource(id = R.string.send_confirmation_sending_subtitle, destination.address)
-        )
     }
 }
 
@@ -308,6 +333,7 @@ private fun SendFailure(
     onDone: () -> Unit,
     onReport: (SendConfirmationStage.Failure) -> Unit,
     stage: SendConfirmationStage.Failure,
+    modifier: Modifier = Modifier
 ) {
     // TODO [#1276]: Once we ensure that the reason contains a localized message, we can leverage it for the UI prompt
     // TODO [#1276]: Consider adding support for a specific exception in AppAlertDialog
@@ -343,7 +369,10 @@ private fun SendFailure(
 }
 
 @Composable
-private fun SendFailureGrpc(onDone: () -> Unit) {
+private fun SendFailureGrpc(
+    onDone: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     AppAlertDialog(
         title = stringResource(id = R.string.send_confirmation_dialog_error_grpc_title),
         text = {
