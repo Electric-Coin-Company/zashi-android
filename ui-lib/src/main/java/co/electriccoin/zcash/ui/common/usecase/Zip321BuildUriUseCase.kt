@@ -42,15 +42,13 @@ class Zip321BuildUriUseCase {
 
         val paymentRequest = PaymentRequest(payments = listOf(payment))
 
-        // TODO [#1636]: Use fixed ZIP321 library version
-        // TODO [#1636]: https://github.com/Electric-Coin-Company/zashi-android/issues/1636
         val zip321Uri =
             ZIP321.uriString(
                 paymentRequest,
                 ZIP321.FormattingOptions.UseEmptyParamIndex(omitAddressLabel = true)
             )
 
-        Twig.info { "Request Zip321 uri: $zip321Uri" }
+        Twig.debug { "Request Zip321 uri: $zip321Uri" }
 
         return zip321Uri
     }

@@ -1,6 +1,6 @@
 package co.electriccoin.zcash.ui.screen.scan.model
 
-enum class ScanState {
+enum class ScanScreenState {
     Failed,
     Permission,
     Scanning

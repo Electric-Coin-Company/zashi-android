@@ -62,7 +62,6 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalInspectionMode
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -74,7 +73,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.core.content.ContextCompat
-import cash.z.ecc.android.sdk.type.AddressType
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
@@ -86,7 +85,8 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.screen.scan.ScanTag
-import co.electriccoin.zcash.ui.screen.scan.model.ScanState
+import co.electriccoin.zcash.ui.screen.scan.model.ScanScreenState
+import co.electriccoin.zcash.ui.screen.scan.model.ScanValidationState
 import co.electriccoin.zcash.ui.screen.scan.util.ImageUriToQrCodeConverter
 import co.electriccoin.zcash.ui.screen.scan.util.QrCodeAnalyzer
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -111,9 +111,9 @@ fun Scan(
     onScanned: (String) -> Unit,
     onScanError: () -> Unit,
     onOpenSettings: () -> Unit,
-    onScanStateChanged: (ScanState) -> Unit,
+    onScanStateChanged: (ScanScreenState) -> Unit,
     topAppBarSubTitleState: TopAppBarSubTitleState,
-    addressValidationResult: AddressType?
+    validationResult: ScanValidationState
 ) = ZcashTheme(forceDarkMode = true) { // forces dark theme for this screen
     val permissionState =
         if (LocalInspectionMode.current) {
@@ -134,15 +134,15 @@ fun Scan(
     val (scanState, setScanState) =
         if (LocalInspectionMode.current) {
             remember {
-                mutableStateOf(ScanState.Scanning)
+                mutableStateOf(ScanScreenState.Scanning)
             }
         } else {
             rememberSaveable {
                 mutableStateOf(
                     if (permissionState.status.isGranted) {
-                        ScanState.Scanning
+                        ScanScreenState.Scanning
                     } else {
-                        ScanState.Permission
+                        ScanScreenState.Permission
                     }
                 )
             }
@@ -153,7 +153,7 @@ fun Scan(
     ) { _ ->
         Box {
             ScanMainContent(
-                addressValidationResult = addressValidationResult,
+                validationResult = validationResult,
                 onScanned = onScanned,
                 onScanError = onScanError,
                 onOpenSettings = onOpenSettings,
@@ -166,7 +166,7 @@ fun Scan(
                     Modifier
                         .fillMaxSize()
                         .background(
-                            if (scanState != ScanState.Scanning) {
+                            if (scanState != ScanScreenState.Scanning) {
                                 ZcashTheme.colors.cameraDisabledBackgroundColor
                             } else {
                                 Color.Black
@@ -177,7 +177,7 @@ fun Scan(
 
             ScanTopAppBar(
                 onBack = onBack,
-                showBack = scanState != ScanState.Scanning,
+                showBack = scanState != ScanScreenState.Scanning,
                 subTitleState = topAppBarSubTitleState,
             )
         }
@@ -186,8 +186,8 @@ fun Scan(
 
 @Composable
 fun ScanBottomItems(
-    addressValidationResult: AddressType?,
-    scanState: ScanState,
+    validationResult: ScanValidationState,
+    scanState: ScanScreenState,
     onOpenSettings: () -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
@@ -195,22 +195,21 @@ fun ScanBottomItems(
     Column(modifier) {
         var failureText: String? = null
 
-        // Check validation result, if any
-        if (addressValidationResult is AddressType.Invalid) {
+        if (validationResult == ScanValidationState.INVALID) {
             failureText = stringResource(id = R.string.scan_address_validation_failed)
         }
 
         // Check permission request result, if any
         failureText =
             when (scanState) {
-                ScanState.Permission ->
+                ScanScreenState.Permission ->
                     stringResource(
                         id = R.string.scan_state_permission,
                         stringResource(id = R.string.app_name)
                     )
 
-                ScanState.Failed -> stringResource(id = R.string.scan_state_failed)
-                ScanState.Scanning -> failureText
+                ScanScreenState.Failed -> stringResource(id = R.string.scan_state_failed)
+                ScanScreenState.Scanning -> failureText
             }
 
         if (failureText != null) {
@@ -236,7 +235,7 @@ fun ScanBottomItems(
         Spacer(modifier = Modifier.height(24.dp))
 
         when (scanState) {
-            ScanState.Scanning, ScanState.Failed -> {
+            ScanScreenState.Scanning, ScanScreenState.Failed -> {
                 ZashiButton(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = onBack,
@@ -244,7 +243,7 @@ fun ScanBottomItems(
                 )
             }
 
-            ScanState.Permission -> {
+            ScanScreenState.Permission -> {
                 ZashiButton(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = onOpenSettings,
@@ -306,20 +305,20 @@ data class FramePosition(
 )
 @Composable
 private fun ScanMainContent(
-    addressValidationResult: AddressType?,
+    validationResult: ScanValidationState,
     onScanned: (String) -> Unit,
     onScanError: () -> Unit,
     onOpenSettings: () -> Unit,
     onBack: () -> Unit,
-    onScanStateChanged: (ScanState) -> Unit,
+    onScanStateChanged: (ScanScreenState) -> Unit,
     permissionState: PermissionState,
-    scanState: ScanState,
-    setScanState: (ScanState) -> Unit,
+    scanState: ScanScreenState,
+    setScanState: (ScanScreenState) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     when {
         (!permissionState.status.isGranted) -> {
-            setScanState(ScanState.Permission)
+            setScanState(ScanScreenState.Permission)
             if (permissionState.status.shouldShowRationale) {
                 // Keep dark screen with a link to the app settings - user denied the permission previously
             } else {
@@ -329,13 +328,13 @@ private fun ScanMainContent(
             }
         }
 
-        (scanState == ScanState.Failed) -> {
+        (scanState == ScanScreenState.Failed) -> {
             // Keep current state
         }
 
         (permissionState.status.isGranted) -> {
-            if (scanState != ScanState.Scanning) {
-                setScanState(ScanState.Scanning)
+            if (scanState != ScanScreenState.Scanning) {
+                setScanState(ScanScreenState.Scanning)
             }
         }
     }
@@ -411,13 +410,13 @@ private fun ScanMainContent(
         val (frame, frameWindow, bottomItems, topAnchor) = createRefs()
 
         when (scanState) {
-            ScanState.Permission -> {
+            ScanScreenState.Permission -> {
                 // Keep initial ui state
-                onScanStateChanged(ScanState.Permission)
+                onScanStateChanged(ScanScreenState.Permission)
             }
 
-            ScanState.Scanning -> {
-                onScanStateChanged(ScanState.Scanning)
+            ScanScreenState.Scanning -> {
+                onScanStateChanged(ScanScreenState.Scanning)
 
                 if (!LocalInspectionMode.current) {
                     ScanCameraView(
@@ -487,8 +486,8 @@ private fun ScanMainContent(
                 }
             }
 
-            ScanState.Failed -> {
-                onScanStateChanged(ScanState.Failed)
+            ScanScreenState.Failed -> {
+                onScanStateChanged(ScanScreenState.Failed)
             }
         }
 
@@ -542,7 +541,7 @@ private fun ScanMainContent(
                     .constrainAs(bottomItems) { bottom.linkTo(parent.bottom) }
         ) {
             ScanBottomItems(
-                addressValidationResult = addressValidationResult,
+                validationResult = validationResult,
                 onBack = onBack,
                 onOpenSettings = onOpenSettings,
                 scanState = scanState,
@@ -627,7 +626,7 @@ fun ScanCameraView(
     isTorchOn: Boolean,
     onScanned: (result: String) -> Unit,
     permissionState: PermissionState,
-    setScanState: (ScanState) -> Unit,
+    setScanState: (ScanScreenState) -> Unit,
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -691,7 +690,7 @@ fun ScanCameraView(
                         ).cameraControl
                 }.onFailure {
                     Twig.error { "Scan QR failed in bind phase with: ${it.message}" }
-                    setScanState(ScanState.Failed)
+                    setScanState(ScanScreenState.Failed)
                 }
 
                 previewView
@@ -755,7 +754,7 @@ private fun ScanPreview() =
                 onOpenSettings = {},
                 onScanStateChanged = {},
                 topAppBarSubTitleState = TopAppBarSubTitleState.None,
-                addressValidationResult = AddressType.Invalid(),
+                validationResult = ScanValidationState.INVALID,
             )
         }
     }

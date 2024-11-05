@@ -18,6 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.getValue
 
@@ -109,8 +110,9 @@ fun AppAlertDialog(
         text = text,
         icon = icon?.let { { Icon(imageVector = icon, null) } },
         properties = properties,
-        titleContentColor = ZcashTheme.colors.textPrimary,
-        textContentColor = ZcashTheme.colors.textPrimary,
+        containerColor = ZashiColors.Surfaces.bgPrimary,
+        titleContentColor = ZashiColors.Text.textPrimary,
+        textContentColor = ZashiColors.Text.textPrimary,
         modifier = modifier,
     )
 }

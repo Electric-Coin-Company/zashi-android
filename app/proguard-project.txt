@@ -10,12 +10,13 @@
 -printconfiguration build/outputs/proguard-config.txt
 
 # This is generated automatically by the Android Gradle plugin.
--dontwarn com.google.j2objc.annotations.ReflectionSupport
--dontwarn com.google.j2objc.annotations.RetainedWith
 -dontwarn androidx.compose.ui.util.MathHelpersKt
 -dontwarn com.google.common.util.concurrent.ListenableFuture
 -dontwarn com.google.errorprone.annotations.InlineMe
 -dontwarn com.google.errorprone.annotations.MustBeClosed
+-dontwarn com.google.j2objc.annotations.ReflectionSupport
+-dontwarn com.google.j2objc.annotations.ReflectionSupport$Level
+-dontwarn com.google.j2objc.annotations.RetainedWith
 -dontwarn javax.naming.directory.Attribute
 -dontwarn javax.naming.directory.Attributes
 -dontwarn javax.naming.directory.DirContext

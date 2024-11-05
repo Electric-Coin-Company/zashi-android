@@ -10,6 +10,7 @@ import co.electriccoin.zcash.ui.screen.settings.model.SettingsState
 import co.electriccoin.zcash.ui.screen.settings.model.SettingsTroubleshootingState
 import co.electriccoin.zcash.ui.screen.settings.model.TroubleshootingItemState
 import co.electriccoin.zcash.ui.screen.settings.view.Settings
+import kotlinx.collections.immutable.persistentListOf
 import java.util.concurrent.atomic.AtomicInteger
 
 class SettingsViewTestSetup(
@@ -107,26 +108,46 @@ class SettingsViewTestSetup(
                         SettingsState(
                             isLoading = false,
                             version = stringRes("app_version"),
-                            settingsTroubleshootingState = settingsTroubleshootingState,
+                            debugMenu = settingsTroubleshootingState,
                             onBack = {
                                 onBackCount.incrementAndGet()
                             },
-                            onSendUsFeedbackClick = {
-                                onFeedbackCount.incrementAndGet()
-                            },
-                            onAdvancedSettingsClick = {
-                                onAdvancedSettingsCount.incrementAndGet()
-                            },
-                            onAboutUsClick = {
-                                onAboutCount.incrementAndGet()
-                            },
-                            onAddressBookClick = {
-                                onAddressBookCount.incrementAndGet()
-                            },
-                            integrations =
-                                ZashiSettingsListItemState(
-                                    stringRes("Integrations"),
-                                    R.drawable.ic_settings_integrations,
+                            items =
+                                persistentListOf(
+                                    ZashiSettingsListItemState(
+                                        text = stringRes(R.string.settings_address_book),
+                                        icon = R.drawable.ic_settings_address_book,
+                                        onClick = {
+                                            onAddressBookCount.incrementAndGet()
+                                        },
+                                    ),
+                                    ZashiSettingsListItemState(
+                                        text = stringRes(R.string.settings_integrations),
+                                        icon = R.drawable.ic_settings_integrations,
+                                        titleIcons = persistentListOf(R.drawable.ic_integrations_coinbase),
+                                        onClick = { },
+                                    ),
+                                    ZashiSettingsListItemState(
+                                        text = stringRes(R.string.settings_advanced_settings),
+                                        icon = R.drawable.ic_advanced_settings,
+                                        onClick = {
+                                            onAdvancedSettingsCount.incrementAndGet()
+                                        },
+                                    ),
+                                    ZashiSettingsListItemState(
+                                        text = stringRes(R.string.settings_about_us),
+                                        icon = R.drawable.ic_settings_info,
+                                        onClick = {
+                                            onAboutCount.incrementAndGet()
+                                        },
+                                    ),
+                                    ZashiSettingsListItemState(
+                                        text = stringRes(R.string.settings_feedback),
+                                        icon = R.drawable.ic_settings_feedback,
+                                        onClick = {
+                                            onFeedbackCount.incrementAndGet()
+                                        },
+                                    ),
                                 )
                         ),
                     topAppBarSubTitleState = TopAppBarSubTitleState.None,

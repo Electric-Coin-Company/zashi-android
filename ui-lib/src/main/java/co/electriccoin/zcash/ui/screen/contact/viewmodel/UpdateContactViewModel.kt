@@ -14,14 +14,12 @@ import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.contact.model.ContactState
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -34,7 +32,7 @@ class UpdateContactViewModel(
     private val deleteContact: DeleteContactUseCase,
     private val getContactByAddress: GetContactByAddressUseCase
 ) : ViewModel() {
-    private var contact: AddressBookContact? = null
+    private var contact = MutableStateFlow<AddressBookContact?>(null)
     private val contactAddress = MutableStateFlow("")
     private val contactName = MutableStateFlow("")
 
@@ -42,10 +40,9 @@ class UpdateContactViewModel(
     private val isDeletingContact = MutableStateFlow(false)
     private val isLoadingContact = MutableStateFlow(true)
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     private val contactAddressError =
-        contactAddress.mapLatest { address ->
-            if (address.isEmpty()) {
+        combine(contact, contactAddress) { contact, address ->
+            if (address.isEmpty() || contact == null) {
                 null
             } else {
                 when (validateContactAddress(address = address, exclude = contact)) {
@@ -75,10 +72,9 @@ class UpdateContactViewModel(
             )
         }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     private val contactNameError =
-        contactName.mapLatest { name ->
-            if (name.isEmpty()) {
+        combine(contactName, contact) { name, contact ->
+            if (name.isEmpty() || contact == null) {
                 null
             } else {
                 when (validateContactName(name = name, exclude = contact)) {
@@ -105,7 +101,8 @@ class UpdateContactViewModel(
         }
 
     private val updateButtonState =
-        combine(contactAddressState, contactNameState, isUpdatingContact) { address, name, isUpdatingContact ->
+        combine(contactAddressState, contactNameState, isUpdatingContact, contact) { address, name,
+                                                                                     isUpdatingContact, contact ->
             ButtonState(
                 text = stringRes(R.string.update_contact_primary_btn),
                 isEnabled =
@@ -113,7 +110,7 @@ class UpdateContactViewModel(
                         name.error == null &&
                         contactAddress.value.isNotEmpty() &&
                         contactName.value.isNotEmpty() &&
-                        (contactName.value.trim() != contact?.name || contactAddress.value.trim() != contact?.address),
+                        (contactName.value.trim() != contact?.name || contactAddress.value.trim() != contact.address),
                 onClick = ::onUpdateButtonClick,
                 isLoading = isUpdatingContact
             )
@@ -160,7 +157,7 @@ class UpdateContactViewModel(
             getContactByAddress(originalContactAddress).let { contact ->
                 contactAddress.update { contact?.address.orEmpty() }
                 contactName.update { contact?.name.orEmpty() }
-                this@UpdateContactViewModel.contact = contact
+                this@UpdateContactViewModel.contact.update { contact }
             }
             isLoadingContact.update { false }
         }
@@ -174,7 +171,7 @@ class UpdateContactViewModel(
     private fun onUpdateButtonClick() =
         viewModelScope.launch {
             if (isDeletingContact.value || isUpdatingContact.value) return@launch
-            contact?.let {
+            contact.value?.let {
                 isUpdatingContact.update { true }
                 updateContact(contact = it, name = contactName.value, address = contactAddress.value)
                 backNavigationCommand.emit(Unit)
@@ -185,7 +182,7 @@ class UpdateContactViewModel(
     private fun onDeleteButtonClick() =
         viewModelScope.launch {
             if (isDeletingContact.value || isUpdatingContact.value) return@launch
-            contact?.let {
+            contact.value?.let {
                 isDeletingContact.update { true }
                 deleteContact(it)
                 backNavigationCommand.emit(Unit)

@@ -6,6 +6,12 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+### Added
+- The device authentication feature on the Zashi app launch has been added
+- The Flexa SDK has been adopted to enable payments using the embedded Flexa UI
+
+## [1.2.1 (760)] - 2024-10-22
+
 ### Changed
 - Global design updates
 - Onboarding screen has been redesigned
@@ -15,6 +21,7 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 - Confirmation screen redesigned & added a contact name to the transaction if the contact is in address book
 - History item redesigned & added an option to create a contact from unknown address
 - Address Book, Create/Update/Delete Contact, Create Contact by QR screens added
+- The Scan QR code screen now supports scanning of ZIP 321 Uris
 
 ### Added
 - Address book local storage support

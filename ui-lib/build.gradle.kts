@@ -33,13 +33,12 @@ android {
                     "src/main/res/ui/about",
                     "src/main/res/ui/account",
                     "src/main/res/ui/address_book",
-                    "src/main/res/ui/contact",
                     "src/main/res/ui/add_contact",
-                    "src/main/res/ui/update_contact",
                     "src/main/res/ui/advanced_settings",
                     "src/main/res/ui/authentication",
                     "src/main/res/ui/balances",
                     "src/main/res/ui/common",
+                    "src/main/res/ui/contact",
                     "src/main/res/ui/delete_wallet",
                     "src/main/res/ui/export_data",
                     "src/main/res/ui/home",
@@ -47,6 +46,7 @@ android {
                     "src/main/res/ui/integrations",
                     "src/main/res/ui/new_wallet_recovery",
                     "src/main/res/ui/onboarding",
+                    "src/main/res/ui/payment_request",
                     "src/main/res/ui/qr_code",
                     "src/main/res/ui/request",
                     "src/main/res/ui/receive",
@@ -60,6 +60,7 @@ android {
                     "src/main/res/ui/settings",
                     "src/main/res/ui/support",
                     "src/main/res/ui/update",
+                    "src/main/res/ui/update_contact",
                     "src/main/res/ui/wallet_address",
                     "src/main/res/ui/warning",
                     "src/main/res/ui/whats_new",
@@ -79,6 +80,14 @@ androidComponents {
                 type = "boolean",
                 value = project.property("IS_SECURE_SCREEN_PROTECTION_ACTIVE").toString(),
                 comment = "Whether is the SecureScreen sensitive data protection enabled"
+            )
+        )
+        variant.buildConfigFields.put(
+            "ZCASH_FLEXA_KEY",
+            BuildConfigField(
+                type = "String",
+                value = "\"${project.property("ZCASH_FLEXA_KEY")?.toString().orEmpty()}\"",
+                comment = "Publishable key of the Flexa integration"
             )
         )
         variant.buildConfigFields.put(
@@ -127,6 +136,9 @@ dependencies {
     implementation(libs.zcash.sdk.incubator)
     implementation(libs.zcash.bip39)
     implementation(libs.zxing)
+
+    api(libs.flexa.core)
+    api(libs.flexa.spend)
 
     implementation(projects.buildInfoLib)
     implementation(projects.configurationApiLib)

@@ -253,7 +253,7 @@ private fun ExchangeRateButton(
                     if (isEnabled && enableBorder) {
                         ZashiColors.Surfaces.bgPrimary orDark ZashiColors.Surfaces.bgTertiary
                     } else {
-                        Color.Unspecified
+                        Color.Transparent
                     },
                 disabledContainerColor = Color.Transparent,
                 disabledContentColor = textColor,

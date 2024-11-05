@@ -13,9 +13,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -145,7 +146,7 @@ fun ZashiSettingsListContentItem(
             titleIcons.forEach {
                 Spacer(Modifier.width(6.dp))
                 Image(
-                    modifier = Modifier.size(20.dp),
+                    modifier = Modifier.size(20.dp).clip(CircleShape),
                     painter = painterResource(it),
                     contentDescription = null,
                 )
@@ -176,7 +177,7 @@ fun ZashiSettingsListItem(
                 .clip(RoundedCornerShape(12.dp)) then
                 if (onClick != null) {
                     Modifier.clickable(
-                        indication = rememberRipple(),
+                        indication = ripple(),
                         interactionSource = remember { MutableInteractionSource() },
                         onClick = onClick,
                         role = Role.Button,

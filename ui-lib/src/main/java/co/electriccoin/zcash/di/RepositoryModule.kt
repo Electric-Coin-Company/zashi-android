@@ -4,10 +4,14 @@ import co.electriccoin.zcash.ui.common.repository.AddressBookRepository
 import co.electriccoin.zcash.ui.common.repository.AddressBookRepositoryImpl
 import co.electriccoin.zcash.ui.common.repository.BalanceRepository
 import co.electriccoin.zcash.ui.common.repository.BalanceRepositoryImpl
+import co.electriccoin.zcash.ui.common.repository.BiometricRepository
+import co.electriccoin.zcash.ui.common.repository.BiometricRepositoryImpl
 import co.electriccoin.zcash.ui.common.repository.ConfigurationRepository
 import co.electriccoin.zcash.ui.common.repository.ConfigurationRepositoryImpl
 import co.electriccoin.zcash.ui.common.repository.ExchangeRateRepository
 import co.electriccoin.zcash.ui.common.repository.ExchangeRateRepositoryImpl
+import co.electriccoin.zcash.ui.common.repository.FlexaRepository
+import co.electriccoin.zcash.ui.common.repository.FlexaRepositoryImpl
 import co.electriccoin.zcash.ui.common.repository.WalletRepository
 import co.electriccoin.zcash.ui.common.repository.WalletRepositoryImpl
 import org.koin.core.module.dsl.singleOf
@@ -21,4 +25,6 @@ val repositoryModule =
         singleOf(::ExchangeRateRepositoryImpl) bind ExchangeRateRepository::class
         singleOf(::BalanceRepositoryImpl) bind BalanceRepository::class
         singleOf(::AddressBookRepositoryImpl) bind AddressBookRepository::class
+        singleOf(::FlexaRepositoryImpl) bind FlexaRepository::class
+        singleOf(::BiometricRepositoryImpl) bind BiometricRepository::class
     }

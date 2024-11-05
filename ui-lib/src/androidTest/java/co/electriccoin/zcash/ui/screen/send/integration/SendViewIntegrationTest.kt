@@ -39,6 +39,7 @@ class SendViewIntegrationTest {
                 goBack = {},
                 goBalances = {},
                 goSettings = {},
+                goPaymentRequest = { _, _ -> },
                 goSendConfirmation = {},
             )
         }

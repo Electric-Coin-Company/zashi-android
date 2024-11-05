@@ -100,10 +100,6 @@ internal class MockSynchronizer : CloseableSynchronizer {
         error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
 
-    override suspend fun getNearestRewindHeight(height: BlockHeight): BlockHeight {
-        error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
-    }
-
     override fun getRecipients(transactionOverview: TransactionOverview): Flow<TransactionRecipient> {
         error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
@@ -165,10 +161,6 @@ internal class MockSynchronizer : CloseableSynchronizer {
         error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} yet.")
     }
 
-    override suspend fun quickRewind() {
-        error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
-    }
-
     override suspend fun refreshExchangeRateUsd() {
         error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
@@ -180,7 +172,7 @@ internal class MockSynchronizer : CloseableSynchronizer {
         error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
 
-    override suspend fun rewindToNearestHeight(height: BlockHeight) {
+    override suspend fun rewindToNearestHeight(height: BlockHeight): BlockHeight? {
         error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
 
