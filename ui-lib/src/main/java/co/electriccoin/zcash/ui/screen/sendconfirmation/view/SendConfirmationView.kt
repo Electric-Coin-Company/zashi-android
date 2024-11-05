@@ -250,6 +250,7 @@ private fun SendingContent(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier.fillMaxSize()
     ) {
+        // TODO: Change this lottie resource once we have it
         val lottieRes: Int = if (isSystemInDarkTheme()) {
             co.electriccoin.zcash.ui.design.R.raw.lottie_loading_white
         } else {
@@ -271,11 +272,19 @@ private fun SendingContent(
 
         Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingSm))
 
-        Text(text = stringResource(id = R.string.send_confirmation_sending_title))
+        Text(
+            fontWeight = FontWeight.SemiBold,
+            style = ZashiTypography.header5,
+            text = stringResource(id = R.string.send_confirmation_sending_title),
+        )
 
         Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingSm))
 
-        Text(text = stringResource(id = R.string.send_confirmation_sending_subtitle, destination.address))
+        Text(
+            fontWeight = FontWeight.Normal,
+            style = ZashiTypography.textSm,
+            text = stringResource(id = R.string.send_confirmation_sending_subtitle, destination.address)
+        )
     }
 }
 
