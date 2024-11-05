@@ -49,6 +49,7 @@ private fun BalanceWidgetPreview() {
                         BalanceState.Available(
                             totalBalance = Zatoshi(1234567891234567L),
                             spendableBalance = Zatoshi(1234567891234567L),
+                            totalShieldedBalance = Zatoshi(0L),
                             exchangeRate = ObserveFiatCurrencyResultFixture.new()
                         ),
                     isHideBalances = false,
@@ -74,6 +75,7 @@ private fun BalanceWidgetNotAvailableYetPreview() {
                     BalanceState.Loading(
                         totalBalance = Zatoshi(value = 0L),
                         spendableBalance = Zatoshi(value = 0L),
+                        totalShieldedBalance = Zatoshi(0L),
                         exchangeRate = ObserveFiatCurrencyResultFixture.new()
                     ),
                 isHideBalances = false,
@@ -98,6 +100,7 @@ private fun BalanceWidgetHiddenAmountPreview() {
                     BalanceState.Loading(
                         totalBalance = Zatoshi(0L),
                         spendableBalance = Zatoshi(0L),
+                        totalShieldedBalance = Zatoshi(0L),
                         exchangeRate = ObserveFiatCurrencyResultFixture.new()
                     ),
                 isHideBalances = true,
@@ -111,6 +114,7 @@ private fun BalanceWidgetHiddenAmountPreview() {
 
 sealed interface BalanceState {
     val totalBalance: Zatoshi
+    val totalShieldedBalance: Zatoshi
     val spendableBalance: Zatoshi
     val exchangeRate: ExchangeRateState
 
@@ -118,19 +122,22 @@ sealed interface BalanceState {
         override val exchangeRate: ExchangeRateState
     ) : BalanceState {
         override val totalBalance: Zatoshi = Zatoshi(0L)
+        override val totalShieldedBalance: Zatoshi = Zatoshi(0L)
         override val spendableBalance: Zatoshi = Zatoshi(0L)
     }
 
     data class Loading(
         override val totalBalance: Zatoshi,
         override val spendableBalance: Zatoshi,
-        override val exchangeRate: ExchangeRateState
+        override val exchangeRate: ExchangeRateState,
+        override val totalShieldedBalance: Zatoshi
     ) : BalanceState
 
     data class Available(
         override val totalBalance: Zatoshi,
         override val spendableBalance: Zatoshi,
-        override val exchangeRate: ExchangeRateState
+        override val exchangeRate: ExchangeRateState,
+        override val totalShieldedBalance: Zatoshi
     ) : BalanceState
 }
 

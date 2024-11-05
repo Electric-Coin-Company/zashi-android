@@ -41,17 +41,19 @@ class FlexaRepositoryImpl(
                 Twig.info { "Flexa initialized" }
 
                 balanceRepository.state
-                    .map { it.spendableBalance }
-                    .collect {
+                    .map { it.totalShieldedBalance to it.spendableBalance }
+                    .collect { (total, available) ->
+                        val totalZec = total.convertZatoshiToZec().toDouble()
+                        val availableZec = available.convertZatoshiToZec().toDouble()
                         Flexa.updateAssetAccounts(
                             arrayListOf(
                                 createFlexaAccount(
-                                    zecBalance = it.convertZatoshiToZec().toDouble()
+                                    total = totalZec,
+                                    available = availableZec
                                 )
                             )
                         )
-
-                        Twig.info { "Flexa updated by ${it.convertZatoshiToZec().toDouble()}" }
+                        Twig.info { "Flexa updated by total:$totalZec available:$availableZec" }
                     }
             }
         }
@@ -69,7 +71,7 @@ class FlexaRepositoryImpl(
                     FlexaTheme(
                         useDynamicColorScheme = true,
                     ),
-                assetAccounts = arrayListOf(createFlexaAccount(DEFAULT_ZEC_BALANCE)),
+                assetAccounts = arrayListOf(createFlexaAccount(DEFAULT_BALANCE, DEFAULT_BALANCE)),
                 webViewThemeConfig =
                     "{\n" +
                         "    \"android\": {\n" +
@@ -94,22 +96,25 @@ class FlexaRepositoryImpl(
             )
         }
 
-    private fun createFlexaAccount(zecBalance: Double) =
-        AssetAccount(
-            displayName = "",
-            icon = "https://flexa.network/static/4bbb1733b3ef41240ca0f0675502c4f7/d8419/flexa-logo%403x.png",
-            availableAssets =
-                listOf(
-                    AvailableAsset(
-                        assetId = "bip122:00040fe8ec8471911baa1db1266ea15d/slip44:133",
-                        balance = zecBalance,
-                        symbol = "ZEC",
-                        icon = "https://cryptologos.cc/logos/zcash-zec-logo.png"
-                    )
-                ),
-            custodyModel = CustodyModel.LOCAL,
-            assetAccountHash = UUID.randomUUID().toString().toSha256()
-        )
+    private fun createFlexaAccount(
+        total: Double,
+        available: Double
+    ) = AssetAccount(
+        displayName = "",
+        icon = "https://flexa.network/static/4bbb1733b3ef41240ca0f0675502c4f7/d8419/flexa-logo%403x.png",
+        availableAssets =
+            listOf(
+                AvailableAsset(
+                    assetId = "bip122:00040fe8ec8471911baa1db1266ea15d/slip44:133",
+                    balance = total,
+                    balanceAvailable = available,
+                    symbol = "ZEC",
+                    icon = "https://z.cash/wp-content/uploads/2023/11/Brandmark-Yellow.png",
+                )
+            ),
+        custodyModel = CustodyModel.LOCAL,
+        assetAccountHash = UUID.randomUUID().toString().toSha256()
+    )
 
     private fun String.toSha256() =
         MessageDigest.getInstance("SHA-256")
@@ -117,4 +122,4 @@ class FlexaRepositoryImpl(
             .fold("") { str, value -> str + "%02x".format(value) }
 }
 
-private const val DEFAULT_ZEC_BALANCE = .0
+private const val DEFAULT_BALANCE = .0

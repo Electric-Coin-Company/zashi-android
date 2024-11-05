@@ -7,6 +7,7 @@ import co.electriccoin.zcash.ui.common.model.hasChangePending
 import co.electriccoin.zcash.ui.common.model.hasValuePending
 import co.electriccoin.zcash.ui.common.model.spendableBalance
 import co.electriccoin.zcash.ui.common.model.totalBalance
+import co.electriccoin.zcash.ui.common.model.totalShieldedBalance
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -49,7 +50,8 @@ class BalanceRepositoryImpl(
                     BalanceState.Loading(
                         totalBalance = snapshot.totalBalance(),
                         spendableBalance = snapshot.spendableBalance(),
-                        exchangeRate = exchangeRateUsd
+                        exchangeRate = exchangeRateUsd,
+                        totalShieldedBalance = snapshot.totalShieldedBalance()
                     )
                 }
 
@@ -57,7 +59,8 @@ class BalanceRepositoryImpl(
                     BalanceState.Available(
                         totalBalance = snapshot.totalBalance(),
                         spendableBalance = snapshot.spendableBalance(),
-                        exchangeRate = exchangeRateUsd
+                        exchangeRate = exchangeRateUsd,
+                        totalShieldedBalance = snapshot.totalShieldedBalance()
                     )
                 }
             }
