@@ -52,7 +52,6 @@ import co.electriccoin.zcash.ui.common.extension.asZecAmountTriple
 import co.electriccoin.zcash.ui.common.extension.totalAmount
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
-import co.electriccoin.zcash.ui.design.component.AppAlertDialog
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.ButtonState
@@ -226,7 +225,7 @@ private fun SendConfirmationMainContent(
                 SendFailure(onViewTransactions = onViewTransactions)
             }
             is SendConfirmationStage.FailureGrpc -> {
-                SendFailureGrpc(onDone = onBack)
+                SendGrpcFailure()
             }
             is SendConfirmationStage.MultipleTrxFailure,
             SendConfirmationStage.MultipleTrxFailureReported -> {
@@ -475,25 +474,71 @@ private fun SendFailure(
 }
 
 @Composable
-private fun SendFailureGrpc(
-    onDone: () -> Unit,
+private fun SendGrpcFailure(
     modifier: Modifier = Modifier
 ) {
-    AppAlertDialog(
-        title = stringResource(id = R.string.send_confirmation_dialog_error_grpc_title),
-        text = {
-            Column(
-                Modifier.verticalScroll(rememberScrollState())
-            ) {
-                Text(
-                    text = stringResource(id = R.string.send_confirmation_dialog_error_grpc_text),
-                    color = ZcashTheme.colors.textPrimary,
-                )
+    ConstraintLayout(modifier = modifier.fillMaxSize()) {
+        val (content, spaceTop) = createRefs()
+
+        Spacer(modifier = Modifier.constrainAs(spaceTop) {
+            height = Dimension.percent(0.2f)
+            width = Dimension.fillToConstraints
+            top.linkTo(parent.top)
+            bottom.linkTo(content.top)
+            start.linkTo(parent.start)
+            end.linkTo(parent.end)
+        })
+
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .constrainAs(content) {
+                    top.linkTo(spaceTop.bottom)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                    width = Dimension.fillToConstraints
+                    height = Dimension.wrapContent
+                }
+        ) {
+            // TODO: Change this lottie resource once we have it
+            val lottieRes: Int = if (isSystemInDarkTheme()) {
+                co.electriccoin.zcash.ui.design.R.raw.lottie_loading_white
+            } else {
+                co.electriccoin.zcash.ui.design.R.raw.lottie_loading
             }
-        },
-        confirmButtonText = stringResource(id = R.string.send_confirmation_dialog_error_grpc_btn),
-        onConfirmButtonClick = onDone
-    )
+
+            val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(lottieRes))
+            val progress by animateLottieCompositionAsState(
+                iterations = LottieConstants.IterateForever,
+                composition = composition
+            )
+
+            LottieAnimation(
+                modifier = Modifier.size(200.dp),
+                composition = composition,
+                progress = { progress },
+                maintainOriginalImageBounds = true
+            )
+
+            Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacing2xl))
+
+            Text(
+                fontWeight = FontWeight.SemiBold,
+                style = ZashiTypography.header5,
+                text = stringResource(id = R.string.send_confirmation_failure_grpc_title),
+            )
+
+            Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingLg))
+
+            Text(
+                fontWeight = FontWeight.Normal,
+                style = ZashiTypography.textSm,
+                text = stringResource(id = R.string.send_confirmation_failure_grpc_subtitle),
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center
+            )
+        }
+    }
 }
 
 @Composable
@@ -945,7 +990,7 @@ fun SendGrpcFailureBottomBar(
         ZashiButton(
             state =
             ButtonState(
-                text = stringRes(R.string.send_confirmation_grpc_failure_close_button),
+                text = stringRes(R.string.send_confirmation_failure_grpc_close_button),
                 onClick = onClose
             ),
             modifier = Modifier

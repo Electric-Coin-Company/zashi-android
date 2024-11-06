@@ -28,12 +28,10 @@
     <string name="send_confirmation_failure_close_button">Close</string>
     <string name="send_confirmation_failure_report_button">Report</string>
 
-    <string name="send_confirmation_grpc_failure_close_button">Close</string>
-
-    <string name="send_confirmation_dialog_error_grpc_title">Connection Error</string>
-    <string name="send_confirmation_dialog_error_grpc_text">Zashi encountered some connection issues when submitting
-        the transaction to the network. It will retry during the next few minutes.</string>
-    <string name="send_confirmation_dialog_error_grpc_btn">OK</string>
+    <string name="send_confirmation_failure_grpc_title">Connection Error</string>
+    <string name="send_confirmation_failure_grpc_subtitle">Zashi encountered connection issues when submitting the
+        transaction. It will retry in the next few minutes.</string>
+    <string name="send_confirmation_failure_grpc_close_button">Close</string>
 
     <string name="send_confirmation_multiple_trx_failure_copy_button">Copy transaction IDs</string>
     <string name="send_confirmation_multiple_trx_failure_report_button">Contact Support</string>

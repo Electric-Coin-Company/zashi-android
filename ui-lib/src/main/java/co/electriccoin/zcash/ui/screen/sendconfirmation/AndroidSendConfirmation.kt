@@ -134,12 +134,10 @@ internal fun WrapSendConfirmation(
             SendConfirmationStage.Prepared -> goBack(false)
             SendConfirmationStage.Sending -> { /* No action - wait until the sending is done */ }
             SendConfirmationStage.Success -> {
-                setStage(SendConfirmationStage.Prepared)
                 goHome()
             }
             is SendConfirmationStage.Failure -> setStage(SendConfirmationStage.Prepared)
             is SendConfirmationStage.FailureGrpc -> {
-                setStage(SendConfirmationStage.Prepared)
                 goHome()
             }
             is SendConfirmationStage.MultipleTrxFailure -> { /* No action - wait until the sending is done */ }
@@ -225,7 +223,7 @@ internal fun WrapSendConfirmation(
             onConfirmation = {
                 // Check and trigger authentication if required, or just submit transactions otherwise
                 //TODO
-                setStage(SendConfirmationStage.FailureGrpc)
+                setStage(SendConfirmationStage.MultipleTrxFailure)
 
                 // lifecycleScope.launch {
                 //     authenticationViewModel.isSendFundsAuthenticationRequired
