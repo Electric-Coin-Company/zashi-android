@@ -136,6 +136,8 @@ internal fun WrapSendConfirmation(
             SendConfirmationStage.Sending -> { /* No action - wait until the sending is done */ }
             SendConfirmationStage.Success -> {
                 setStage(SendConfirmationStage.Prepared)
+                // TODO pass successfully submitted results
+                // submissionResults.map { it.txIdString() }
                 goHome()
             }
             is SendConfirmationStage.Failure -> setStage(SendConfirmationStage.Prepared)
@@ -226,7 +228,7 @@ internal fun WrapSendConfirmation(
             onConfirmation = {
                 // Check and trigger authentication if required, or just submit transactions otherwise
                 //TODO
-                setStage(SendConfirmationStage.Sending)
+                setStage(SendConfirmationStage.Success)
 
                 // lifecycleScope.launch {
                 //     authenticationViewModel.isSendFundsAuthenticationRequired

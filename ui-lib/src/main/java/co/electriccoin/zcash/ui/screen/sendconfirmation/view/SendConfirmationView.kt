@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -17,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.SnackbarHost
@@ -134,6 +134,8 @@ fun SendConfirmation(
         }
     ) { paddingValues ->
         SendConfirmationMainContent(
+            contactName = contactName,
+            exchangeRate = exchangeRate,
             onBack = onBack,
             onContactSupport = onContactSupport,
             stage = stage,
@@ -143,8 +145,6 @@ fun SendConfirmation(
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
                 .scaffoldPadding(paddingValues),
-            exchangeRate = exchangeRate,
-            contactName = contactName
         )
     }
 }
@@ -192,14 +192,14 @@ private fun SendConfirmationTopAppBar(
 
 @Composable
 @Suppress("LongParameterList")
-    private fun SendConfirmationMainContent(
+private fun SendConfirmationMainContent(
     contactName: String?,
+    exchangeRate: ExchangeRateState,
+    onBack: () -> Unit,
+    onContactSupport: (SendConfirmationStage, String?) -> Unit,
     stage: SendConfirmationStage,
     submissionResults: ImmutableList<TransactionSubmitResult>,
     zecSend: ZecSend,
-    onBack: () -> Unit,
-    onContactSupport: (SendConfirmationStage, String?) -> Unit,
-    exchangeRate: ExchangeRateState,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier) {
@@ -215,7 +215,10 @@ private fun SendConfirmationTopAppBar(
                 SendingContent(destination = zecSend.destination)
             }
             SendConfirmationStage.Success -> {
-                SuccessContent(destination = zecSend.destination)
+                SuccessContent(
+                    destination = zecSend.destination,
+                    onViewTransaction = onBack
+                )
             }
             is SendConfirmationStage.Failure -> {
                 SendFailure(
@@ -316,15 +319,82 @@ private fun SendingContent(
 @Composable
 private fun SuccessContent(
     destination: WalletAddress,
+    onViewTransaction: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
-    ) {
-        Text(text = "SUCCESS")
-        Text(text = destination.address)
+    ConstraintLayout(modifier = modifier.fillMaxSize()) {
+        val (content, spaceTop) = createRefs()
+
+        Spacer(modifier = Modifier.constrainAs(spaceTop) {
+            height = Dimension.percent(0.2f)
+            width = Dimension.fillToConstraints
+            top.linkTo(parent.top)
+            bottom.linkTo(content.top)
+            start.linkTo(parent.start)
+            end.linkTo(parent.end)
+        })
+
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .constrainAs(content) {
+                    top.linkTo(spaceTop.bottom)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                    width = Dimension.fillToConstraints
+                    height = Dimension.wrapContent
+                }
+        ) {
+            // TODO: Change this lottie resource once we have it
+            val lottieRes: Int = if (isSystemInDarkTheme()) {
+                co.electriccoin.zcash.ui.design.R.raw.lottie_loading_white
+            } else {
+                co.electriccoin.zcash.ui.design.R.raw.lottie_loading
+            }
+
+            val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(lottieRes))
+            val progress by animateLottieCompositionAsState(
+                iterations = LottieConstants.IterateForever,
+                composition = composition
+            )
+
+            LottieAnimation(
+                modifier = Modifier.size(200.dp),
+                composition = composition,
+                progress = { progress },
+                maintainOriginalImageBounds = true
+            )
+
+            Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacing2xl))
+
+            Text(
+                fontWeight = FontWeight.SemiBold,
+                style = ZashiTypography.header5,
+                text = stringResource(id = R.string.send_confirmation_success_title),
+            )
+
+            Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingLg))
+
+            Text(
+                fontWeight = FontWeight.Normal,
+                style = ZashiTypography.textSm,
+                text = stringResource(id = R.string.send_confirmation_success_subtitle, destination.abbreviated()),
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingXl))
+
+            ZashiButton(
+                state = ButtonState(
+                    text = stringRes(R.string.send_confirmation_success_view_trx),
+                    onClick = onViewTransaction,
+                ),
+                modifier =
+                Modifier.wrapContentWidth(),
+                colors = ZashiButtonDefaults.tertiaryColors()
+            )
+        }
     }
 }
 
@@ -892,6 +962,32 @@ private fun SendingPreview() {
             onMultipleTrxFailureIdsCopy = {},
             onBack = {},
             stage = SendConfirmationStage.Sending,
+            topAppBarSubTitleState = TopAppBarSubTitleState.None,
+            onContactSupport = { _, _ -> },
+            submissionResults = emptyList<TransactionSubmitResult>().toImmutableList(),
+            exchangeRate = ObserveFiatCurrencyResultFixture.new(),
+            contactName = "Mom"
+        )
+    }
+}
+
+@PreviewScreens
+@Composable
+private fun SuccessPreview() {
+    ZcashTheme {
+        SendConfirmation(
+            snackbarHostState = SnackbarHostState(),
+            zecSend =
+            ZecSend(
+                destination = runBlocking { WalletAddressFixture.sapling() },
+                amount = ZatoshiFixture.new(),
+                memo = MemoFixture.new(),
+                proposal = null,
+            ),
+            onConfirmation = {},
+            onMultipleTrxFailureIdsCopy = {},
+            onBack = {},
+            stage = SendConfirmationStage.Success,
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
             onContactSupport = { _, _ -> },
             submissionResults = emptyList<TransactionSubmitResult>().toImmutableList(),
