@@ -101,6 +101,7 @@ fun SendConfirmation(
     onConfirmation: () -> Unit,
     onContactSupport: (SendConfirmationStage) -> Unit,
     onMultipleTrxFailureIdsCopy: (String) -> Unit,
+    onViewTransactions: () -> Unit,
     snackbarHostState: SnackbarHostState,
     stage: SendConfirmationStage,
     submissionResults: ImmutableList<TransactionSubmitResult>,
@@ -137,6 +138,7 @@ fun SendConfirmation(
             exchangeRate = exchangeRate,
             onBack = onBack,
             onContactSupport = onContactSupport,
+            onViewTransactions = onViewTransactions,
             stage = stage,
             submissionResults = submissionResults,
             zecSend = zecSend,
@@ -196,6 +198,7 @@ private fun SendConfirmationMainContent(
     exchangeRate: ExchangeRateState,
     onBack: () -> Unit,
     onContactSupport: (SendConfirmationStage) -> Unit,
+    onViewTransactions: () -> Unit,
     stage: SendConfirmationStage,
     submissionResults: ImmutableList<TransactionSubmitResult>,
     zecSend: ZecSend,
@@ -216,11 +219,11 @@ private fun SendConfirmationMainContent(
             SendConfirmationStage.Success -> {
                 SuccessContent(
                     destination = zecSend.destination,
-                    onViewTransaction = onBack
+                    onViewTransactions = onViewTransactions
                 )
             }
             is SendConfirmationStage.Failure -> {
-                SendFailure(onViewTransaction = onBack)
+                SendFailure(onViewTransactions = onViewTransactions)
             }
             is SendConfirmationStage.FailureGrpc -> {
                 SendFailureGrpc(onDone = onBack)
@@ -311,7 +314,7 @@ private fun SendingContent(
 @Composable
 private fun SuccessContent(
     destination: WalletAddress,
-    onViewTransaction: () -> Unit,
+    onViewTransactions: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     ConstraintLayout(modifier = modifier.fillMaxSize()) {
@@ -380,7 +383,7 @@ private fun SuccessContent(
             ZashiButton(
                 state = ButtonState(
                     text = stringRes(R.string.send_confirmation_success_view_trx),
-                    onClick = onViewTransaction,
+                    onClick = onViewTransactions,
                 ),
                 modifier =
                 Modifier.wrapContentWidth(),
@@ -392,7 +395,7 @@ private fun SuccessContent(
 
 @Composable
 private fun SendFailure(
-    onViewTransaction: () -> Unit,
+    onViewTransactions: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     ConstraintLayout(modifier = modifier.fillMaxSize()) {
@@ -461,7 +464,7 @@ private fun SendFailure(
             ZashiButton(
                 state = ButtonState(
                     text = stringRes(R.string.send_confirmation_failure_view_trx),
-                    onClick = onViewTransaction,
+                    onClick = onViewTransactions,
                 ),
                 modifier =
                 Modifier.wrapContentWidth(),
@@ -967,6 +970,7 @@ private fun SendConfirmationPreview() {
             ),
             onConfirmation = {},
             onMultipleTrxFailureIdsCopy = {},
+            onViewTransactions = {},
             onBack = {},
             stage = SendConfirmationStage.Prepared,
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
@@ -991,9 +995,10 @@ private fun SendingPreview() {
                 memo = MemoFixture.new(),
                 proposal = null,
             ),
+            onBack = {},
             onConfirmation = {},
             onMultipleTrxFailureIdsCopy = {},
-            onBack = {},
+            onViewTransactions = {},
             stage = SendConfirmationStage.Sending,
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
             onContactSupport = { _ -> },
@@ -1017,9 +1022,10 @@ private fun SuccessPreview() {
                 memo = MemoFixture.new(),
                 proposal = null,
             ),
+            onBack = {},
             onConfirmation = {},
             onMultipleTrxFailureIdsCopy = {},
-            onBack = {},
+            onViewTransactions = {},
             stage = SendConfirmationStage.Success,
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
             onContactSupport = { _ -> },
@@ -1043,9 +1049,10 @@ private fun PreviewSendConfirmationFailure() {
                 memo = MemoFixture.new(),
                 proposal = null,
             ),
+            onBack = {},
             onConfirmation = {},
             onMultipleTrxFailureIdsCopy = {},
-            onBack = {},
+            onViewTransactions = {},
             stage = SendConfirmationStage.Failure(
                 "The transaction has not been successfully created...",
                 "Failed stackTrace..."
@@ -1072,9 +1079,10 @@ private fun PreviewSendConfirmationGrpcFailure() {
                 memo = MemoFixture.new(),
                 proposal = null,
             ),
+            onBack = {},
             onConfirmation = {},
             onMultipleTrxFailureIdsCopy = {},
-            onBack = {},
+            onViewTransactions = {},
             stage = SendConfirmationStage.FailureGrpc,
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
             onContactSupport = { _ -> },
@@ -1098,9 +1106,10 @@ private fun SendMultipleErrorPreview() {
                 memo = MemoFixture.new(),
                 proposal = null,
             ),
-            onConfirmation = {},
             onBack = {},
+            onConfirmation = {},
             onMultipleTrxFailureIdsCopy = {},
+            onViewTransactions = {},
             stage = SendConfirmationStage.MultipleTrxFailure,
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
             onContactSupport = { _ -> },

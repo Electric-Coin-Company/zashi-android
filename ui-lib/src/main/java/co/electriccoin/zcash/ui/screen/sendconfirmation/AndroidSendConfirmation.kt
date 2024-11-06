@@ -135,8 +135,6 @@ internal fun WrapSendConfirmation(
             SendConfirmationStage.Sending -> { /* No action - wait until the sending is done */ }
             SendConfirmationStage.Success -> {
                 setStage(SendConfirmationStage.Prepared)
-                // TODO pass successfully submitted results
-                // submissionResults.map { it.txIdString() }
                 goHome()
             }
             is SendConfirmationStage.Failure -> setStage(SendConfirmationStage.Prepared)
@@ -227,7 +225,7 @@ internal fun WrapSendConfirmation(
             onConfirmation = {
                 // Check and trigger authentication if required, or just submit transactions otherwise
                 //TODO
-                setStage(SendConfirmationStage.Failure("Test Error", "Test Stacktrace"))
+                setStage(SendConfirmationStage.FailureGrpc)
 
                 // lifecycleScope.launch {
                 //     authenticationViewModel.isSendFundsAuthenticationRequired
@@ -250,6 +248,12 @@ internal fun WrapSendConfirmation(
                 //             }
                 //         }
                 // }
+            },
+            onViewTransactions = {
+                val trxIds = submissionResults.map { it.txIdString() }
+                Twig.debug { "Transactions IDs passing to a new Transaction Details: $trxIds" }
+                // TODO pass trx ids to a transaction detail destination once it's implemented
+                goHome()
             },
             topAppBarSubTitleState = topAppBarSubTitleState,
             exchangeRate = exchangeRateState,
