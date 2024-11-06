@@ -48,7 +48,6 @@ import co.electriccoin.zcash.ui.screen.support.viewmodel.SupportViewModel
 import co.electriccoin.zcash.ui.util.EmailUtil
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
@@ -174,12 +173,12 @@ internal fun WrapSendConfirmation(
             submissionResults = submissionResults,
             snackbarHostState = snackbarHostState,
             onBack = onBackAction,
-            onContactSupport = { stageToGo, body ->
+            onContactSupport = { stageToGo ->
                 val fullMessage =
                     when (stageToGo) {
                         is SendConfirmationStage.Failure -> {
                             EmailUtil.formatMessage(
-                                body = body,
+                                body = stageToGo.stackTrace,
                                 supportInfo = supportMessage?.toSupportString(SupportInfoType.entries.toSet())
                             )
                         }
@@ -228,7 +227,7 @@ internal fun WrapSendConfirmation(
             onConfirmation = {
                 // Check and trigger authentication if required, or just submit transactions otherwise
                 //TODO
-                setStage(SendConfirmationStage.Success)
+                setStage(SendConfirmationStage.Failure("Test Error", "Test Stacktrace"))
 
                 // lifecycleScope.launch {
                 //     authenticationViewModel.isSendFundsAuthenticationRequired

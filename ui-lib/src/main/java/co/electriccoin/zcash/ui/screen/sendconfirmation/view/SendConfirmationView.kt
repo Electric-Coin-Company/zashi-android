@@ -33,7 +33,6 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -100,7 +99,7 @@ import kotlinx.coroutines.runBlocking
 fun SendConfirmation(
     onBack: () -> Unit,
     onConfirmation: () -> Unit,
-    onContactSupport: (SendConfirmationStage, String?) -> Unit,
+    onContactSupport: (SendConfirmationStage) -> Unit,
     onMultipleTrxFailureIdsCopy: (String) -> Unit,
     snackbarHostState: SnackbarHostState,
     stage: SendConfirmationStage,
@@ -196,7 +195,7 @@ private fun SendConfirmationMainContent(
     contactName: String?,
     exchangeRate: ExchangeRateState,
     onBack: () -> Unit,
-    onContactSupport: (SendConfirmationStage, String?) -> Unit,
+    onContactSupport: (SendConfirmationStage) -> Unit,
     stage: SendConfirmationStage,
     submissionResults: ImmutableList<TransactionSubmitResult>,
     zecSend: ZecSend,
@@ -221,14 +220,7 @@ private fun SendConfirmationMainContent(
                 )
             }
             is SendConfirmationStage.Failure -> {
-                SendFailure(
-                    onDone = onBack,
-                    onReport = { status ->
-                        // Using [SendConfirmationStage.Confirmation] to dismiss the error dialog
-                        onContactSupport(SendConfirmationStage.Prepared, status.stackTrace)
-                    },
-                    stage = stage,
-                )
+                SendFailure(onViewTransaction = onBack)
             }
             is SendConfirmationStage.FailureGrpc -> {
                 SendFailureGrpc(onDone = onBack)
@@ -237,7 +229,7 @@ private fun SendConfirmationMainContent(
             SendConfirmationStage.MultipleTrxFailureReported -> {
                 MultipleSubmissionFailure(
                     onContactSupport = {
-                        onContactSupport(SendConfirmationStage.MultipleTrxFailureReported, null)
+                        onContactSupport(stage)
                     },
                     submissionResults = submissionResults,
                     modifier = modifier
@@ -400,42 +392,83 @@ private fun SuccessContent(
 
 @Composable
 private fun SendFailure(
-    onDone: () -> Unit,
-    onReport: (SendConfirmationStage.Failure) -> Unit,
-    stage: SendConfirmationStage.Failure,
+    onViewTransaction: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    // TODO [#1276]: Once we ensure that the reason contains a localized message, we can leverage it for the UI prompt
-    // TODO [#1276]: Consider adding support for a specific exception in AppAlertDialog
-    // TODO [#1276]: https://github.com/Electric-Coin-Company/zashi-android/issues/1276
+    ConstraintLayout(modifier = modifier.fillMaxSize()) {
+        val (content, spaceTop) = createRefs()
 
-    AppAlertDialog(
-        title = stringResource(id = R.string.send_confirmation_dialog_error_title),
-        text = {
-            Column(
-                Modifier.verticalScroll(rememberScrollState())
-            ) {
-                Text(
-                    text = stringResource(id = R.string.send_confirmation_dialog_error_text),
-                    color = ZcashTheme.colors.textPrimary,
-                )
+        Spacer(modifier = Modifier.constrainAs(spaceTop) {
+            height = Dimension.percent(0.2f)
+            width = Dimension.fillToConstraints
+            top.linkTo(parent.top)
+            bottom.linkTo(content.top)
+            start.linkTo(parent.start)
+            end.linkTo(parent.end)
+        })
 
-                if (stage.error.isNotEmpty()) {
-                    Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
-
-                    Text(
-                        text = stage.error,
-                        fontStyle = FontStyle.Italic,
-                        color = ZcashTheme.colors.textPrimary,
-                    )
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .constrainAs(content) {
+                    top.linkTo(spaceTop.bottom)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                    width = Dimension.fillToConstraints
+                    height = Dimension.wrapContent
                 }
+        ) {
+            // TODO: Change this lottie resource once we have it
+            val lottieRes: Int = if (isSystemInDarkTheme()) {
+                co.electriccoin.zcash.ui.design.R.raw.lottie_loading_white
+            } else {
+                co.electriccoin.zcash.ui.design.R.raw.lottie_loading
             }
-        },
-        confirmButtonText = stringResource(id = R.string.send_confirmation_dialog_error_ok_btn),
-        onConfirmButtonClick = onDone,
-        dismissButtonText = stringResource(id = R.string.send_confirmation_dialog_error_report_btn),
-        onDismissButtonClick = { onReport(stage) },
-    )
+
+            val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(lottieRes))
+            val progress by animateLottieCompositionAsState(
+                iterations = LottieConstants.IterateForever,
+                composition = composition
+            )
+
+            LottieAnimation(
+                modifier = Modifier.size(200.dp),
+                composition = composition,
+                progress = { progress },
+                maintainOriginalImageBounds = true
+            )
+
+            Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacing2xl))
+
+            Text(
+                fontWeight = FontWeight.SemiBold,
+                style = ZashiTypography.header5,
+                text = stringResource(id = R.string.send_confirmation_failure_title),
+            )
+
+            Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingLg))
+
+            Text(
+                fontWeight = FontWeight.Normal,
+                style = ZashiTypography.textSm,
+                text = stringResource(id = R.string.send_confirmation_failure_subtitle),
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingXl))
+
+            ZashiButton(
+                state = ButtonState(
+                    text = stringRes(R.string.send_confirmation_failure_view_trx),
+                    onClick = onViewTransaction,
+                ),
+                modifier =
+                Modifier.wrapContentWidth(),
+                colors = ZashiButtonDefaults.tertiaryColors()
+            )
+        }
+    }
 }
 
 @Composable
@@ -723,7 +756,7 @@ private fun SendConfirmationContent(
 private fun SendConfirmationBottomBarContent(
     onClose: () -> Unit,
     onConfirmation: () -> Unit,
-    onReport: (SendConfirmationStage, String?) -> Unit,
+    onReport: (SendConfirmationStage) -> Unit,
     onCopyTrxIds: () -> Unit,
     stage: SendConfirmationStage,
     modifier: Modifier = Modifier,
@@ -739,7 +772,7 @@ private fun SendConfirmationBottomBarContent(
             is SendConfirmationStage.Failure -> {
                 SendFailureBottomBar(
                     onClose = onClose,
-                    onReport = { onReport(SendConfirmationStage.Prepared, stage.stackTrace) },
+                    onReport = { onReport(stage) },
                 )
             }
             SendConfirmationStage.FailureGrpc -> {
@@ -807,7 +840,7 @@ fun SendConfirmationBottomBar(
 @Composable
 fun SendMultipleTrxFailureBottomBar(
     onCopyTrxIds: () -> Unit,
-    onContactSupport: (SendConfirmationStage, String?) -> Unit,
+    onContactSupport: (SendConfirmationStage) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -831,7 +864,7 @@ fun SendMultipleTrxFailureBottomBar(
             state =
             ButtonState(
                 text = stringRes(R.string.send_confirmation_multiple_trx_failure_report_button),
-                onClick = { onContactSupport(SendConfirmationStage.MultipleTrxFailureReported, null) },
+                onClick = { onContactSupport(SendConfirmationStage.MultipleTrxFailureReported) },
             ),
             modifier = Modifier
                 .fillMaxWidth()
@@ -937,7 +970,7 @@ private fun SendConfirmationPreview() {
             onBack = {},
             stage = SendConfirmationStage.Prepared,
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
-            onContactSupport = { _, _ -> },
+            onContactSupport = { _ -> },
             submissionResults = emptyList<TransactionSubmitResult>().toImmutableList(),
             exchangeRate = ObserveFiatCurrencyResultFixture.new(),
             contactName = "Mom"
@@ -963,7 +996,7 @@ private fun SendingPreview() {
             onBack = {},
             stage = SendConfirmationStage.Sending,
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
-            onContactSupport = { _, _ -> },
+            onContactSupport = { _ -> },
             submissionResults = emptyList<TransactionSubmitResult>().toImmutableList(),
             exchangeRate = ObserveFiatCurrencyResultFixture.new(),
             contactName = "Mom"
@@ -989,7 +1022,7 @@ private fun SuccessPreview() {
             onBack = {},
             stage = SendConfirmationStage.Success,
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
-            onContactSupport = { _, _ -> },
+            onContactSupport = { _ -> },
             submissionResults = emptyList<TransactionSubmitResult>().toImmutableList(),
             exchangeRate = ObserveFiatCurrencyResultFixture.new(),
             contactName = "Mom"
@@ -1018,7 +1051,7 @@ private fun PreviewSendConfirmationFailure() {
                 "Failed stackTrace..."
             ),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
-            onContactSupport = { _, _ -> },
+            onContactSupport = { _ -> },
             submissionResults = emptyList<TransactionSubmitResult>().toImmutableList(),
             exchangeRate = ObserveFiatCurrencyResultFixture.new(),
             contactName = "Mom"
@@ -1044,7 +1077,7 @@ private fun PreviewSendConfirmationGrpcFailure() {
             onBack = {},
             stage = SendConfirmationStage.FailureGrpc,
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
-            onContactSupport = { _, _ -> },
+            onContactSupport = { _ -> },
             submissionResults = emptyList<TransactionSubmitResult>().toImmutableList(),
             exchangeRate = ObserveFiatCurrencyResultFixture.new(),
             contactName = "Mom"
@@ -1070,7 +1103,7 @@ private fun SendMultipleErrorPreview() {
             onMultipleTrxFailureIdsCopy = {},
             stage = SendConfirmationStage.MultipleTrxFailure,
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
-            onContactSupport = { _, _ -> },
+            onContactSupport = { _ -> },
             submissionResults = emptyList<TransactionSubmitResult>().toImmutableList(),
             exchangeRate = ObserveFiatCurrencyResultFixture.new(),
             contactName = "Romek"
