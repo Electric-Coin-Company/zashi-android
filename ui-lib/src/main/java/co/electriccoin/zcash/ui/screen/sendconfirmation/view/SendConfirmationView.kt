@@ -229,13 +229,7 @@ private fun SendConfirmationMainContent(
             }
             is SendConfirmationStage.MultipleTrxFailure,
             SendConfirmationStage.MultipleTrxFailureReported -> {
-                MultipleSubmissionFailure(
-                    onContactSupport = {
-                        onContactSupport(stage)
-                    },
-                    submissionResults = submissionResults,
-                    modifier = modifier
-                )
+                MultipleSubmissionFailure(submissionResults = submissionResults)
             }
         }
     }
@@ -543,16 +537,12 @@ private fun SendGrpcFailure(
 
 @Composable
 fun MultipleSubmissionFailure(
-    onContactSupport: () -> Unit,
     submissionResults: ImmutableList<TransactionSubmitResult>,
     modifier: Modifier = Modifier
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier =
-        modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState()),
+        modifier = modifier,
     ) {
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
 
@@ -564,15 +554,31 @@ fun MultipleSubmissionFailure(
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingBig))
 
+        Text(
+            fontWeight = FontWeight.SemiBold,
+            style = ZashiTypography.header5,
+            text = stringResource(id = R.string.send_confirmation_failure_grpc_title),
+        )
+
+        Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingLg))
+
+        Text(
+            fontWeight = FontWeight.Normal,
+            style = ZashiTypography.textSm,
+            text = stringResource(id = R.string.send_confirmation_failure_grpc_subtitle),
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Center
+        )
+
         Body(
-            text = stringResource(id = R.string.send_confirmation_multiple_error_text_1),
+            text = stringResource(id = R.string.send_confirmation_multiple_trx_failure_text_1),
             textAlign = TextAlign.Center
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
         Body(
-            text = stringResource(id = R.string.send_confirmation_multiple_error_text_2),
+            text = stringResource(id = R.string.send_confirmation_multiple_trx_failure_text_2),
             textAlign = TextAlign.Center
         )
 
@@ -581,18 +587,6 @@ fun MultipleSubmissionFailure(
         if (submissionResults.isNotEmpty()) {
             TransactionSubmitResultWidget(submissionResults)
         }
-
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
-
-        Spacer(modifier = Modifier.weight(1f, true))
-
-        ZashiButton(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = onContactSupport,
-            text = stringResource(id = R.string.send_confirmation_multiple_error_btn)
-        )
-
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingHuge))
     }
 }
 
@@ -605,7 +599,7 @@ fun TransactionSubmitResultWidget(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
     ) {
-        Small(text = stringResource(id = R.string.send_confirmation_multiple_error_trx_title))
+        Small(text = stringResource(id = R.string.send_confirmation_multiple_trx_failure_ids_title))
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
 
@@ -1158,36 +1152,23 @@ private fun SendMultipleErrorPreview() {
             stage = SendConfirmationStage.MultipleTrxFailure,
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
             onContactSupport = { _ -> },
-            submissionResults = emptyList<TransactionSubmitResult>().toImmutableList(),
-            exchangeRate = ObserveFiatCurrencyResultFixture.new(),
-            contactName = "Romek"
-        )
-    }
-}
-
-@PreviewScreens
-@Composable
-private fun SendMultipleTransactionFailurePreview() {
-    ZcashTheme {
-        @Suppress("MagicNumber")
-        MultipleSubmissionFailure(
-            onContactSupport = {},
-            // Rework this into a test fixture
-            submissionResults =
-            persistentListOf(
+            submissionResults = listOf(
+                TransactionSubmitResult.Success(FirstClassByteArray("test_transaction_id_1".toByteArray())),
                 TransactionSubmitResult.Failure(
-                    FirstClassByteArray("test_transaction_id_1".toByteArray()),
+                    FirstClassByteArray("test_transaction_id_2".toByteArray()),
                     true,
                     123,
                     "test transaction id failure"
                 ),
                 TransactionSubmitResult.NotAttempted(
-                    FirstClassByteArray("test_transaction_id_2".toByteArray())
+                    FirstClassByteArray("test_transaction_id_3".toByteArray())
                 ),
                 TransactionSubmitResult.NotAttempted(
-                    FirstClassByteArray("test_transaction_id_3".toByteArray())
+                    FirstClassByteArray("test_transaction_id_4".toByteArray())
                 )
-            )
+            ).toImmutableList(),
+            exchangeRate = ObserveFiatCurrencyResultFixture.new(),
+            contactName = "Romek"
         )
     }
 }
