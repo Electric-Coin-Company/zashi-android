@@ -53,7 +53,7 @@ class SendViewModel(
                         SendAddressBookState(
                             mode = mode,
                             isHintVisible = isHintVisible,
-                            onButtonClick = { onButtonClick(mode, recipientAddressState) }
+                            onButtonClick = { onAddressBookButtonClicked(mode, recipientAddressState) }
                         )
                     )
 
@@ -63,7 +63,7 @@ class SendViewModel(
                             SendAddressBookState(
                                 mode = mode,
                                 isHintVisible = false,
-                                onButtonClick = { onButtonClick(mode, recipientAddressState) }
+                                onButtonClick = { onAddressBookButtonClicked(mode, recipientAddressState) }
                             )
                         )
                     }
@@ -76,7 +76,7 @@ class SendViewModel(
                 mode = SendAddressBookState.Mode.PICK_FROM_ADDRESS_BOOK,
                 isHintVisible = false,
                 onButtonClick = {
-                    onButtonClick(
+                    onAddressBookButtonClicked(
                         mode = SendAddressBookState.Mode.PICK_FROM_ADDRESS_BOOK,
                         recipient = recipientAddressState.value
                     )
@@ -84,7 +84,15 @@ class SendViewModel(
             )
         )
 
-    private fun onButtonClick(
+    init {
+        viewModelScope.launch {
+            observeContactPicked().collect {
+                onRecipientAddressChanged(it)
+            }
+        }
+    }
+
+    private fun onAddressBookButtonClicked(
         mode: SendAddressBookState.Mode,
         recipient: RecipientAddressState
     ) {
@@ -98,14 +106,6 @@ class SendViewModel(
                 viewModelScope.launch {
                     navigateCommand.emit(AddContactArgs(recipient.address))
                 }
-        }
-    }
-
-    init {
-        viewModelScope.launch {
-            observeContactPicked().collect {
-                onRecipientAddressChanged(it)
-            }
         }
     }
 
