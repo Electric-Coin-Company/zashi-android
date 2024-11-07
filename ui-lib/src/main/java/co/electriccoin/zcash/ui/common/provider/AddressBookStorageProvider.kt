@@ -30,8 +30,9 @@ class AddressBookStorageProviderImpl(
             .takeIf { it.exists() && it.isFile }
     }
 
-    override fun getOrCreateStorageFile(addressBookKey: AddressBookKey): File =
-        getOrCreateFile(addressBookKey.fileIdentifier())
+    override fun getOrCreateStorageFile(addressBookKey: AddressBookKey): File {
+        return getOrCreateFile(addressBookKey.fileIdentifier())
+    }
 
     override fun getOrCreateTempStorageFile(): File = getOrCreateFile(REMOTE_ADDRESS_BOOK_FILE_NAME_LOCAL_COPY)
 

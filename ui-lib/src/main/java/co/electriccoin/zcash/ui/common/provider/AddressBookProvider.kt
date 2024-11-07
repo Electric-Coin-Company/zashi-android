@@ -1,9 +1,9 @@
 package co.electriccoin.zcash.ui.common.provider
 
 import co.electriccoin.zcash.ui.common.model.AddressBook
-import co.electriccoin.zcash.ui.common.serialization.addressbook.AddressBookKey
-import co.electriccoin.zcash.ui.common.serialization.addressbook.AddressBookV1Serializer
 import co.electriccoin.zcash.ui.common.serialization.addressbook.AddressBookEncryptor
+import co.electriccoin.zcash.ui.common.serialization.addressbook.AddressBookKey
+import co.electriccoin.zcash.ui.common.serialization.addressbook.AddressBookSerializer
 import java.io.File
 import kotlin.LazyThreadSafetyMode.NONE
 
@@ -23,7 +23,7 @@ interface AddressBookProvider {
 }
 
 class AddressBookProviderImpl : AddressBookProvider {
-    private val addressBookV1Serializer by lazy(NONE) { AddressBookV1Serializer() }
+    private val addressBookSerializer by lazy(NONE) { AddressBookSerializer() }
     private val addressBookEncryptor by lazy(NONE) { AddressBookEncryptor() }
 
     override fun writeAddressBookToFile(
@@ -34,7 +34,7 @@ class AddressBookProviderImpl : AddressBookProvider {
         file.outputStream().buffered().use { stream ->
             addressBookEncryptor.encryptAddressBook(
                 addressBookKey,
-                addressBookV1Serializer,
+                addressBookSerializer,
                 stream,
                 addressBook
             )
@@ -49,7 +49,7 @@ class AddressBookProviderImpl : AddressBookProvider {
         return file.inputStream().use { stream ->
             addressBookEncryptor.decryptAddressBook(
                 addressBookKey,
-                addressBookV1Serializer,
+                addressBookSerializer,
                 stream
             )
         }
@@ -57,8 +57,7 @@ class AddressBookProviderImpl : AddressBookProvider {
 
     override fun readLegacyUnencryptedAddressBookFromFile(file: File): AddressBook {
         return file.inputStream().use { stream ->
-            addressBookV1Serializer.deserializeAddressBook(stream)
+            addressBookSerializer.deserializeAddressBook(stream)
         }
     }
 }
-

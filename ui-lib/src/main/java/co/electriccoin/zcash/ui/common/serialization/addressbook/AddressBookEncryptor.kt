@@ -6,13 +6,11 @@ import com.google.crypto.tink.subtle.Random
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import java.io.OutputStream
-import java.nio.ByteBuffer
 
-internal class AddressBookEncryptor {
-
+internal class AddressBookEncryptor : BaseAddressBookSerializer() {
     fun encryptAddressBook(
         addressBookKey: AddressBookKey,
-        serializer: AddressBookV1Serializer,
+        serializer: AddressBookSerializer,
         outputStream: OutputStream,
         addressBook: AddressBook
     ) {
@@ -30,33 +28,23 @@ internal class AddressBookEncryptor {
                     cipher.encrypt(it, null)
                 }
 
-        outputStream.write(
-            ByteBuffer.allocate(Int.SIZE_BYTES)
-                .order(ADDRESS_BOOK_BYTE_ORDER)
-                .putInt(ADDRESS_BOOK_ENCRYPTION_V1)
-                .array()
-        )
+        outputStream.write(ADDRESS_BOOK_ENCRYPTION_V1.createByteArray())
         outputStream.write(salt)
         outputStream.write(cipherText)
     }
 
     fun decryptAddressBook(
         addressBookKey: AddressBookKey,
-        serializer: AddressBookV1Serializer,
+        serializer: AddressBookSerializer,
         inputStream: InputStream
     ): AddressBook {
-        val version = ByteArray(Int.SIZE_BYTES)
-        if (inputStream.read(version) != version.size) {
-            throw IllegalArgumentException("input is too short")
-        }
-        if (ByteBuffer.wrap(version).order(ADDRESS_BOOK_BYTE_ORDER).getInt() != ADDRESS_BOOK_ENCRYPTION_V1) {
-            throw RuntimeException("Unknown address book encryption version")
+        val version = inputStream.readInt()
+        if (version != ADDRESS_BOOK_ENCRYPTION_V1) {
+            throw UnknownAddressBookEncryptionVersionException()
         }
 
         val salt = ByteArray(ADDRESS_BOOK_SALT_SIZE)
-        if (inputStream.read(salt) != salt.size) {
-            throw IllegalArgumentException("input is too short")
-        }
+        require(inputStream.read(salt) == salt.size) { "Input is too short" }
 
         val ciphertext = inputStream.readBytes()
 
@@ -69,3 +57,5 @@ internal class AddressBookEncryptor {
         }
     }
 }
+
+class UnknownAddressBookEncryptionVersionException : RuntimeException("Unknown address book encryption version")

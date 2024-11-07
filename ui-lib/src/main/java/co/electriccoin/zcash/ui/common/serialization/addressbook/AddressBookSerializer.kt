@@ -1,37 +1,41 @@
 package co.electriccoin.zcash.ui.common.serialization.addressbook
 
+import co.electriccoin.zcash.ui.common.model.AddressBook
+import co.electriccoin.zcash.ui.common.model.AddressBookContact
+import kotlinx.datetime.Instant
 import java.io.InputStream
-import java.nio.ByteBuffer
+import java.io.OutputStream
 
-internal abstract class AddressBookSerializer {
+internal class AddressBookSerializer : BaseAddressBookSerializer() {
+    fun serializeAddressBook(
+        outputStream: OutputStream,
+        addressBook: AddressBook
+    ) {
+        outputStream.write(addressBook.version.createByteArray())
+        outputStream.write(addressBook.lastUpdated.toEpochMilliseconds().createByteArray())
+        outputStream.write(addressBook.contacts.size.createByteArray())
 
-    protected fun Int.createByteArray(): ByteArray {
-        return this.toLong().createByteArray()
+        addressBook.contacts.forEach { contact ->
+            outputStream.write(contact.lastUpdated.toEpochMilliseconds().createByteArray())
+            outputStream.write(contact.address.createByteArray())
+            outputStream.write(contact.name.createByteArray())
+        }
     }
 
-    protected fun Long.createByteArray(): ByteArray {
-        return ByteBuffer.allocate(Long.SIZE_BYTES).order(ADDRESS_BOOK_BYTE_ORDER).putLong(this).array()
-    }
-
-    protected fun String.createByteArray(): ByteArray {
-        val byteArray = this.toByteArray()
-        return byteArray.size.createByteArray() + byteArray
-    }
-
-    protected fun InputStream.readInt(): Int {
-        return readLong().toInt()
-    }
-
-    protected fun InputStream.readLong(): Long {
-        val buffer = ByteArray(Long.SIZE_BYTES)
-        this.read(buffer)
-        return ByteBuffer.wrap(buffer).order(ADDRESS_BOOK_BYTE_ORDER).getLong()
-    }
-
-    protected fun InputStream.readString(): String {
-        val size = this.readInt()
-        val buffer = ByteArray(size)
-        this.read(buffer)
-        return String(buffer)
+    fun deserializeAddressBook(inputStream: InputStream): AddressBook {
+        return AddressBook(
+            version = inputStream.readInt(),
+            lastUpdated = inputStream.readLong().let { Instant.fromEpochMilliseconds(it) },
+            contacts =
+                inputStream.readInt().let { contactsSize ->
+                    (0 until contactsSize).map { _ ->
+                        AddressBookContact(
+                            lastUpdated = inputStream.readLong().let { Instant.fromEpochMilliseconds(it) },
+                            address = inputStream.readString(),
+                            name = inputStream.readString(),
+                        )
+                    }
+                }
+        )
     }
 }

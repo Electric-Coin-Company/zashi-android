@@ -31,15 +31,13 @@ class AddressBookKeyStorageProviderImpl(
     }
 }
 
-private class AddressBookKeyPreferenceDefault: PreferenceDefault<AddressBookKey?> {
-
+private class AddressBookKeyPreferenceDefault : PreferenceDefault<AddressBookKey?> {
     private val secretKeyAccess: SecretKeyAccess?
         get() = InsecureSecretKeyAccess.get()
 
     override val key: PreferenceKey = PreferenceKey("address_book_key")
 
-    override suspend fun getValue(preferenceProvider: PreferenceProvider) =
-        preferenceProvider.getString(key)?.decode()
+    override suspend fun getValue(preferenceProvider: PreferenceProvider) = preferenceProvider.getString(key)?.decode()
 
     override suspend fun putValue(
         preferenceProvider: PreferenceProvider,
@@ -47,16 +45,18 @@ private class AddressBookKeyPreferenceDefault: PreferenceDefault<AddressBookKey?
     ) = preferenceProvider.putString(key, newValue?.encode())
 
     @OptIn(ExperimentalEncodingApi::class)
-    private fun AddressBookKey?.encode() = if (this != null) {
-        Base64.encode(this.key.toByteArray(secretKeyAccess))
-    } else {
-        null
-    }
+    private fun AddressBookKey?.encode() =
+        if (this != null) {
+            Base64.encode(this.key.toByteArray(secretKeyAccess))
+        } else {
+            null
+        }
 
     @OptIn(ExperimentalEncodingApi::class)
-    private fun String?.decode() = if (this != null) {
-        AddressBookKey(SecretBytes.copyFrom(Base64.decode(this), secretKeyAccess))
-    } else {
-        null
-    }
+    private fun String?.decode() =
+        if (this != null) {
+            AddressBookKey(SecretBytes.copyFrom(Base64.decode(this), secretKeyAccess))
+        } else {
+            null
+        }
 }

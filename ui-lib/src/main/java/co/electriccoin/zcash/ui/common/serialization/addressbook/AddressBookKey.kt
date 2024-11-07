@@ -19,13 +19,14 @@ class AddressBookKey(val key: SecretBytes) {
     @OptIn(ExperimentalStdlibApi::class)
     fun fileIdentifier(): String {
         val access = InsecureSecretKeyAccess.get()
-        val fileIdentifier = Hkdf.computeHkdf(
-            "HMACSHA256",
-            key.toByteArray(access),
-            null,
-            "file_identifier".toByteArray(),
-            ADDRESS_BOOK_FILE_IDENTIFIER_SIZE
-        )
+        val fileIdentifier =
+            Hkdf.computeHkdf(
+                "HMACSHA256",
+                key.toByteArray(access),
+                null,
+                "file_identifier".toByteArray(),
+                ADDRESS_BOOK_FILE_IDENTIFIER_SIZE
+            )
         return "zashi-address-book-" + fileIdentifier.toHexString()
     }
 
@@ -38,13 +39,14 @@ class AddressBookKey(val key: SecretBytes) {
     fun deriveEncryptionKey(salt: ByteArray): ChaCha20Poly1305Key {
         assert(salt.size == ADDRESS_BOOK_SALT_SIZE)
         val access = InsecureSecretKeyAccess.get()
-        val subKey = Hkdf.computeHkdf(
-            "HMACSHA256",
-            key.toByteArray(access),
-            null,
-            salt + "encryption_key".toByteArray(),
-            ADDRESS_BOOK_ENCRYPTION_KEY_SIZE
-        )
+        val subKey =
+            Hkdf.computeHkdf(
+                "HMACSHA256",
+                key.toByteArray(access),
+                null,
+                salt + "encryption_key".toByteArray(),
+                ADDRESS_BOOK_ENCRYPTION_KEY_SIZE
+            )
         return ChaCha20Poly1305Key.create(SecretBytes.copyFrom(subKey, access))
     }
 

@@ -1,20 +1,18 @@
 package co.electriccoin.zcash.ui.common.datasource
 
-import co.electriccoin.zcash.ui.common.serialization.addressbook.CURRENT_ADDRESS_BOOK_VERSION
 import co.electriccoin.zcash.spackle.io.deleteSuspend
 import co.electriccoin.zcash.ui.common.model.AddressBook
 import co.electriccoin.zcash.ui.common.model.AddressBookContact
-import co.electriccoin.zcash.ui.common.serialization.addressbook.AddressBookKey
 import co.electriccoin.zcash.ui.common.provider.AddressBookProvider
 import co.electriccoin.zcash.ui.common.provider.AddressBookStorageProvider
+import co.electriccoin.zcash.ui.common.serialization.addressbook.ADDRESS_BOOK_SERIALIZATION_V1
+import co.electriccoin.zcash.ui.common.serialization.addressbook.AddressBookKey
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 
 interface LocalAddressBookDataSource {
-    suspend fun getContacts(
-        addressBookKey: AddressBookKey
-    ): AddressBook
+    suspend fun getContacts(addressBookKey: AddressBookKey): AddressBook
 
     suspend fun saveContact(
         name: String,
@@ -48,9 +46,7 @@ class LocalAddressBookDataSourceImpl(
 ) : LocalAddressBookDataSource {
     private var addressBook: AddressBook? = null
 
-    override suspend fun getContacts(
-        addressBookKey: AddressBookKey
-    ): AddressBook =
+    override suspend fun getContacts(addressBookKey: AddressBookKey): AddressBook =
         withContext(Dispatchers.IO) {
             val addressBook = this@LocalAddressBookDataSourceImpl.addressBook
 
@@ -60,7 +56,7 @@ class LocalAddressBookDataSourceImpl(
                     newAddressBook =
                         AddressBook(
                             lastUpdated = Clock.System.now(),
-                            version = CURRENT_ADDRESS_BOOK_VERSION,
+                            version = ADDRESS_BOOK_SERIALIZATION_V1,
                             contacts = emptyList(),
                         )
                     writeAddressBookToLocalStorage(newAddressBook, addressBookKey)
@@ -81,14 +77,14 @@ class LocalAddressBookDataSourceImpl(
             addressBook =
                 AddressBook(
                     lastUpdated = lastUpdated,
-                    version = CURRENT_ADDRESS_BOOK_VERSION,
+                    version = ADDRESS_BOOK_SERIALIZATION_V1,
                     contacts =
-                    addressBook?.contacts.orEmpty() +
-                        AddressBookContact(
-                            name = name,
-                            address = address,
-                            lastUpdated = lastUpdated,
-                        ),
+                        addressBook?.contacts.orEmpty() +
+                            AddressBookContact(
+                                name = name,
+                                address = address,
+                                lastUpdated = lastUpdated,
+                            ),
                 )
             writeAddressBookToLocalStorage(addressBook!!, addressBookKey)
             addressBook!!
@@ -105,20 +101,20 @@ class LocalAddressBookDataSourceImpl(
             addressBook =
                 AddressBook(
                     lastUpdated = lastUpdated,
-                    version = CURRENT_ADDRESS_BOOK_VERSION,
+                    version = ADDRESS_BOOK_SERIALIZATION_V1,
                     contacts =
-                    addressBook?.contacts.orEmpty().toMutableList()
-                        .apply {
-                            set(
-                                indexOf(contact),
-                                AddressBookContact(
-                                    name = name.trim(),
-                                    address = address.trim(),
-                                    lastUpdated = Clock.System.now()
+                        addressBook?.contacts.orEmpty().toMutableList()
+                            .apply {
+                                set(
+                                    indexOf(contact),
+                                    AddressBookContact(
+                                        name = name.trim(),
+                                        address = address.trim(),
+                                        lastUpdated = Clock.System.now()
+                                    )
                                 )
-                            )
-                        }
-                        .toList(),
+                            }
+                            .toList(),
                 )
             writeAddressBookToLocalStorage(addressBook!!, addressBookKey)
             addressBook!!
@@ -127,25 +123,28 @@ class LocalAddressBookDataSourceImpl(
     override suspend fun deleteContact(
         addressBookContact: AddressBookContact,
         addressBookKey: AddressBookKey
-        ): AddressBook =
+    ): AddressBook =
         withContext(Dispatchers.IO) {
             val lastUpdated = Clock.System.now()
             addressBook =
                 AddressBook(
                     lastUpdated = lastUpdated,
-                    version = CURRENT_ADDRESS_BOOK_VERSION,
+                    version = ADDRESS_BOOK_SERIALIZATION_V1,
                     contacts =
-                    addressBook?.contacts.orEmpty().toMutableList()
-                        .apply {
-                            remove(addressBookContact)
-                        }
-                        .toList(),
+                        addressBook?.contacts.orEmpty().toMutableList()
+                            .apply {
+                                remove(addressBookContact)
+                            }
+                            .toList(),
                 )
             writeAddressBookToLocalStorage(addressBook!!, addressBookKey)
             addressBook!!
         }
 
-    override suspend fun saveContacts(contacts: AddressBook, addressBookKey: AddressBookKey) {
+    override suspend fun saveContacts(
+        contacts: AddressBook,
+        addressBookKey: AddressBookKey
+    ) {
         writeAddressBookToLocalStorage(contacts, addressBookKey)
         this@LocalAddressBookDataSourceImpl.addressBook = contacts
     }
@@ -156,6 +155,7 @@ class LocalAddressBookDataSourceImpl(
         addressBook = null
     }
 
+    @Suppress("ReturnCount")
     private suspend fun readLocalFileToAddressBook(addressBookKey: AddressBookKey): AddressBook? {
         addressBookStorageProvider.getStorageFile(addressBookKey)?.let {
             return addressBookProvider.readAddressBookFromFile(it, addressBookKey)
@@ -168,7 +168,10 @@ class LocalAddressBookDataSourceImpl(
         } ?: return null
     }
 
-    private fun writeAddressBookToLocalStorage(addressBook: AddressBook, addressBookKey: AddressBookKey) {
+    private fun writeAddressBookToLocalStorage(
+        addressBook: AddressBook,
+        addressBookKey: AddressBookKey
+    ) {
         val file = addressBookStorageProvider.getOrCreateStorageFile(addressBookKey)
         addressBookProvider.writeAddressBookToFile(file, addressBook, addressBookKey)
     }

@@ -7,8 +7,8 @@ import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.datasource.LocalAddressBookDataSource
 import co.electriccoin.zcash.ui.common.model.AddressBook
 import co.electriccoin.zcash.ui.common.model.AddressBookContact
-import co.electriccoin.zcash.ui.common.serialization.addressbook.AddressBookKey
 import co.electriccoin.zcash.ui.common.provider.AddressBookKeyStorageProvider
+import co.electriccoin.zcash.ui.common.serialization.addressbook.AddressBookKey
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.Flow
@@ -157,9 +157,10 @@ class AddressBookRepositoryImpl(
             //     }
             val merged =
                 mergeContacts(
-                    local = localAddressBookDataSource.getContacts(
-                        addressBookKey = getAddressBookKey()
-                    ),
+                    local =
+                        localAddressBookDataSource.getContacts(
+                            addressBookKey = getAddressBookKey()
+                        ),
                     // remote = remote,
                     remote = null,
                     fromOperation = operation
@@ -198,11 +199,11 @@ class AddressBookRepositoryImpl(
             lastUpdated = Clock.System.now(),
             version = max(local.version, remote.version),
             contacts =
-            allContacts
-                .groupBy { it.address }
-                .map { (_, contacts) ->
-                    contacts.maxBy { it.lastUpdated }
-                }
+                allContacts
+                    .groupBy { it.address }
+                    .map { (_, contacts) ->
+                        contacts.maxBy { it.lastUpdated }
+                    }
         )
     }
 
@@ -290,11 +291,12 @@ class AddressBookRepositoryImpl(
             key
         } else {
             val wallet = walletRepository.getPersistableWallet()
-            val newKey = AddressBookKey.derive(
-                seedPhrase = wallet.seedPhrase,
-                network = wallet.network,
-                account = Account.DEFAULT
-            )
+            val newKey =
+                AddressBookKey.derive(
+                    seedPhrase = wallet.seedPhrase,
+                    network = wallet.network,
+                    account = Account.DEFAULT
+                )
             addressBookKeyStorageProvider.storeAddressBookKey(newKey)
             newKey
         }
