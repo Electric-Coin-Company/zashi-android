@@ -52,9 +52,8 @@ import co.electriccoin.zcash.ui.common.extension.asZecAmountTriple
 import co.electriccoin.zcash.ui.common.extension.totalAmount
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
-import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.ButtonState
-import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
+import co.electriccoin.zcash.ui.design.component.GradientBgScaffold
 import co.electriccoin.zcash.ui.design.component.StyledBalance
 import co.electriccoin.zcash.ui.design.component.StyledBalanceDefaults
 import co.electriccoin.zcash.ui.design.component.TextFieldState
@@ -106,7 +105,22 @@ fun SendConfirmation(
     contactName: String?,
     exchangeRate: ExchangeRateState,
 ) {
-    BlankBgScaffold(
+    val gradientColors = Pair(
+        when (stage) {
+            SendConfirmationStage.Prepared,
+            SendConfirmationStage.Sending -> ZashiColors.Surfaces.bgPrimary
+            SendConfirmationStage.Success -> ZashiColors.Utility.SuccessGreen.utilitySuccess100
+            is SendConfirmationStage.Failure,
+            is SendConfirmationStage.FailureGrpc,
+            SendConfirmationStage.MultipleTrxFailure,
+            SendConfirmationStage.MultipleTrxFailureReported -> ZashiColors.Utility.ErrorRed.utilityError100
+        },
+        ZashiColors.Surfaces.bgPrimary
+    )
+
+    GradientBgScaffold(
+        startColor = gradientColors.first,
+        endColor = gradientColors.second,
         topBar = {
             SendConfirmationTopAppBar(
                 onBack = onBack,
@@ -132,8 +146,6 @@ fun SendConfirmation(
         SendConfirmationMainContent(
             contactName = contactName,
             exchangeRate = exchangeRate,
-            onBack = onBack,
-            onContactSupport = onContactSupport,
             onViewTransactions = onViewTransactions,
             stage = stage,
             submissionResults = submissionResults,
@@ -165,9 +177,20 @@ private fun SendConfirmationTopAppBar(
                 subtitle = subTitle,
             )
         }
+        SendConfirmationStage.Sending -> {
+            ZashiSmallTopAppBar(subtitle = subTitle)
+        }
+        SendConfirmationStage.Success -> {
+            ZashiSmallTopAppBar(
+                subtitle = subTitle,
+                colors = ZcashTheme.colors.topAppBarColors.copyColors(
+                    containerColor = Color.Transparent
+                ),
+            )
+        }
         SendConfirmationStage.MultipleTrxFailureReported -> {
-            SmallTopAppBar(
-                subTitle = subTitle,
+            ZashiSmallTopAppBar(
+                subtitle = subTitle,
                 navigationAction = {
                     TopAppBarBackNavigation(
                         backContentDescriptionText = stringResource(R.string.close_navigation_content_description),
@@ -175,14 +198,20 @@ private fun SendConfirmationTopAppBar(
                         painter = painterResource(co.electriccoin.zcash.ui.design.R.drawable.ic_close)
                     )
                 },
+                colors = ZcashTheme.colors.topAppBarColors.copyColors(
+                    containerColor = Color.Transparent
+                ),
             )
         }
         SendConfirmationStage.MultipleTrxFailure,
-        SendConfirmationStage.Sending,
-        SendConfirmationStage.Success,
         is SendConfirmationStage.Failure,
         is SendConfirmationStage.FailureGrpc -> {
-            SmallTopAppBar(subTitle = subTitle)
+            ZashiSmallTopAppBar(
+                subtitle = subTitle,
+                colors = ZcashTheme.colors.topAppBarColors.copyColors(
+                    containerColor = Color.Transparent
+                ),
+            )
         }
     }
 }
@@ -192,8 +221,6 @@ private fun SendConfirmationTopAppBar(
 private fun SendConfirmationMainContent(
     contactName: String?,
     exchangeRate: ExchangeRateState,
-    onBack: () -> Unit,
-    onContactSupport: (SendConfirmationStage) -> Unit,
     onViewTransactions: () -> Unit,
     stage: SendConfirmationStage,
     submissionResults: ImmutableList<TransactionSubmitResult>,
@@ -544,7 +571,7 @@ fun MultipleSubmissionFailure(
         Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingLg))
 
         Image(
-            imageVector = ImageVector.vectorResource(R.drawable.send_failed_icon_light),
+            imageVector = ImageVector.vectorResource(R.drawable.ic_multi_trx_send_failed),
             contentDescription = null,
         )
 
@@ -611,7 +638,8 @@ fun TransactionSubmitResultWidget(
                     .background(
                         shape = RoundedCornerShape(ZashiDimensions.Radius.radiusIg),
                         color = ZashiColors.Inputs.Default.bg
-                    ).padding(
+                    )
+                    .padding(
                         horizontal = ZashiDimensions.Spacing.spacingLg,
                         vertical = ZashiDimensions.Spacing.spacingMd
                     )
