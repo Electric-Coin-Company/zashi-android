@@ -39,7 +39,7 @@ interface LocalAddressBookDataSource {
         addressBookKey: AddressBookKey
     )
 
-    suspend fun deleteAddressBook()
+    suspend fun deleteAddressBook(addressBookKey: AddressBookKey)
 }
 
 class LocalAddressBookDataSourceImpl(
@@ -150,18 +150,26 @@ class LocalAddressBookDataSourceImpl(
         this@LocalAddressBookDataSourceImpl.addressBook = contacts
     }
 
-    override suspend fun deleteAddressBook() {
-        addressBookStorageProvider.getStorageFile()?.deleteSuspend()
+    override suspend fun deleteAddressBook(addressBookKey: AddressBookKey) {
+        addressBookStorageProvider.getStorageFile(addressBookKey)?.deleteSuspend()
+        addressBookStorageProvider.getLegacyUnencryptedStorageFile()?.deleteSuspend()
         addressBook = null
     }
 
-    private fun readLocalFileToAddressBook(addressBookKey: AddressBookKey): AddressBook? {
-        val file = addressBookStorageProvider.getStorageFile() ?: return null
-        return addressBookProvider.readAddressBookFromFile(file, addressBookKey)
+    private suspend fun readLocalFileToAddressBook(addressBookKey: AddressBookKey): AddressBook? {
+        addressBookStorageProvider.getStorageFile(addressBookKey)?.let {
+            return addressBookProvider.readAddressBookFromFile(it, addressBookKey)
+        } ?: addressBookStorageProvider.getLegacyUnencryptedStorageFile()?.let { unencryptedFile ->
+            // If we have an unencrypted file, convert it into an encrypted file.
+            val addressBook = addressBookProvider.readLegacyUnencryptedAddressBookFromFile(unencryptedFile)
+            writeAddressBookToLocalStorage(addressBook, addressBookKey)
+            unencryptedFile.deleteSuspend()
+            return addressBook
+        } ?: return null
     }
 
     private fun writeAddressBookToLocalStorage(addressBook: AddressBook, addressBookKey: AddressBookKey) {
-        val file = addressBookStorageProvider.getOrCreateStorageFile()
+        val file = addressBookStorageProvider.getOrCreateStorageFile(addressBookKey)
         addressBookProvider.writeAddressBookToFile(file, addressBook, addressBookKey)
     }
 }

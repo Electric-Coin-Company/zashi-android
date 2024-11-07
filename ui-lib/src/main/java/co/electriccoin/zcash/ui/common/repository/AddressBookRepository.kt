@@ -99,7 +99,9 @@ class AddressBookRepositoryImpl(
 
     override suspend fun deleteAddressBook() =
         withNonCancellableSemaphore {
-            localAddressBookDataSource.deleteAddressBook()
+            localAddressBookDataSource.deleteAddressBook(
+                addressBookKey = getAddressBookKey()
+            )
             addressBookCache.update { null }
         }
 

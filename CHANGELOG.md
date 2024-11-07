@@ -7,6 +7,7 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 ## [Unreleased]
 
 ### Added
+- Address book encryption
 - The device authentication feature on the Zashi app launch has been added
 - The Flexa SDK has been adopted to enable payments using the embedded Flexa UI
 

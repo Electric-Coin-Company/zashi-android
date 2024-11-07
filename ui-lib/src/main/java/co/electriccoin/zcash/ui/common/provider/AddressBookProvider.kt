@@ -3,6 +3,7 @@ package co.electriccoin.zcash.ui.common.provider
 import co.electriccoin.zcash.ui.common.model.AddressBook
 import co.electriccoin.zcash.ui.common.serialization.addressbook.AddressBookKey
 import co.electriccoin.zcash.ui.common.serialization.addressbook.AddressBookV1Serializer
+import co.electriccoin.zcash.ui.common.serialization.addressbook.AddressBookEncryptor
 import java.io.File
 import kotlin.LazyThreadSafetyMode.NONE
 
@@ -17,10 +18,13 @@ interface AddressBookProvider {
         file: File,
         addressBookKey: AddressBookKey
     ): AddressBook
+
+    fun readLegacyUnencryptedAddressBookFromFile(file: File): AddressBook
 }
 
 class AddressBookProviderImpl : AddressBookProvider {
     private val addressBookV1Serializer by lazy(NONE) { AddressBookV1Serializer() }
+    private val addressBookEncryptor by lazy(NONE) { AddressBookEncryptor() }
 
     override fun writeAddressBookToFile(
         file: File,
@@ -28,7 +32,12 @@ class AddressBookProviderImpl : AddressBookProvider {
         addressBookKey: AddressBookKey
     ) {
         file.outputStream().buffered().use { stream ->
-            addressBookV1Serializer.serializeAddressBook(stream, addressBook)
+            addressBookEncryptor.encryptAddressBook(
+                addressBookKey,
+                addressBookV1Serializer,
+                stream,
+                addressBook
+            )
             stream.flush()
         }
     }
@@ -37,6 +46,16 @@ class AddressBookProviderImpl : AddressBookProvider {
         file: File,
         addressBookKey: AddressBookKey
     ): AddressBook {
+        return file.inputStream().use { stream ->
+            addressBookEncryptor.decryptAddressBook(
+                addressBookKey,
+                addressBookV1Serializer,
+                stream
+            )
+        }
+    }
+
+    override fun readLegacyUnencryptedAddressBookFromFile(file: File): AddressBook {
         return file.inputStream().use { stream ->
             addressBookV1Serializer.deserializeAddressBook(stream)
         }
