@@ -1,5 +1,3 @@
-@file:Suppress("DEPRECATION")
-
 package co.electriccoin.zcash.ui.common.repository
 
 import cash.z.ecc.android.sdk.model.Account
@@ -41,7 +39,7 @@ interface AddressBookRepository {
 
     suspend fun deleteContact(contact: AddressBookContact)
 
-    suspend fun deleteAddressBook()
+    suspend fun resetAddressBook()
 
     // fun onGoogleSignInSuccess()
     //
@@ -97,11 +95,9 @@ class AddressBookRepositoryImpl(
             InternalOperation.Delete(contact = contact)
         )
 
-    override suspend fun deleteAddressBook() =
+    override suspend fun resetAddressBook() =
         withNonCancellableSemaphore {
-            localAddressBookDataSource.deleteAddressBook(
-                addressBookKey = getAddressBookKey()
-            )
+            localAddressBookDataSource.resetAddressBook()
             addressBookCache.update { null }
         }
 

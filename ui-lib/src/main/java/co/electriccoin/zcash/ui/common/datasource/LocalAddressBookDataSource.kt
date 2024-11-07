@@ -37,7 +37,7 @@ interface LocalAddressBookDataSource {
         addressBookKey: AddressBookKey
     )
 
-    suspend fun deleteAddressBook(addressBookKey: AddressBookKey)
+    suspend fun resetAddressBook()
 }
 
 class LocalAddressBookDataSourceImpl(
@@ -149,9 +149,7 @@ class LocalAddressBookDataSourceImpl(
         this@LocalAddressBookDataSourceImpl.addressBook = contacts
     }
 
-    override suspend fun deleteAddressBook(addressBookKey: AddressBookKey) {
-        addressBookStorageProvider.getStorageFile(addressBookKey)?.deleteSuspend()
-        addressBookStorageProvider.getLegacyUnencryptedStorageFile()?.deleteSuspend()
+    override suspend fun resetAddressBook() {
         addressBook = null
     }
 
