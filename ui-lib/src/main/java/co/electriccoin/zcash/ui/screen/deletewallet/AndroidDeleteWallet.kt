@@ -17,7 +17,10 @@ import co.electriccoin.zcash.ui.screen.deletewallet.view.DeleteWallet
 import kotlinx.coroutines.launch
 
 @Composable
-internal fun MainActivity.WrapDeleteWallet(goBack: () -> Unit) {
+internal fun MainActivity.WrapDeleteWallet(
+    goBack: () -> Unit,
+    onConfirm: () -> Unit,
+) {
     val walletViewModel = koinActivityViewModel<WalletViewModel>()
 
     val walletState = walletViewModel.walletStateInformation.collectAsStateWithLifecycle().value
@@ -27,6 +30,7 @@ internal fun MainActivity.WrapDeleteWallet(goBack: () -> Unit) {
         goBack = goBack,
         topAppBarSubTitleState = walletState,
         walletViewModel = walletViewModel,
+        onConfirm = onConfirm
     )
 }
 
@@ -34,6 +38,7 @@ internal fun MainActivity.WrapDeleteWallet(goBack: () -> Unit) {
 internal fun WrapDeleteWallet(
     activity: Activity,
     goBack: () -> Unit,
+    onConfirm: () -> Unit,
     topAppBarSubTitleState: TopAppBarSubTitleState,
     walletViewModel: WalletViewModel,
 ) {
@@ -52,6 +57,7 @@ internal fun WrapDeleteWallet(
             scope.launch {
                 walletViewModel.deleteWalletFlow(activity).collect { isWalletDeleted ->
                     if (isWalletDeleted) {
+                        onConfirm()
                         Twig.info { "Wallet deleted successfully" }
                         // The app flows move to the Onboarding screens reactively
                     } else {
