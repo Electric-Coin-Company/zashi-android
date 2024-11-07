@@ -3,8 +3,8 @@
 package co.electriccoin.zcash.ui.screen.sendconfirmation.view
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,10 +14,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -35,6 +34,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
@@ -53,9 +53,7 @@ import co.electriccoin.zcash.ui.common.extension.totalAmount
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
-import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.ButtonState
-import co.electriccoin.zcash.ui.design.component.Small
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.StyledBalance
 import co.electriccoin.zcash.ui.design.component.StyledBalanceDefaults
@@ -86,7 +84,6 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.runBlocking
 
@@ -544,45 +541,43 @@ fun MultipleSubmissionFailure(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier,
     ) {
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
+        Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingLg))
 
         Image(
-            imageVector = ImageVector.vectorResource(R.drawable.ic_zashi_logo_sign_warn),
-            colorFilter = ColorFilter.tint(color = ZcashTheme.colors.secondaryColor),
+            imageVector = ImageVector.vectorResource(R.drawable.send_failed_icon_light),
             contentDescription = null,
         )
 
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingBig))
+        Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingXl))
 
         Text(
             fontWeight = FontWeight.SemiBold,
-            style = ZashiTypography.header5,
-            text = stringResource(id = R.string.send_confirmation_failure_grpc_title),
+            style = ZashiTypography.header6,
+            text = stringResource(id = R.string.send_confirmation_multiple_trx_failure_title),
+            color = ZashiColors.Text.textPrimary
         )
 
         Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingLg))
 
         Text(
-            fontWeight = FontWeight.Normal,
             style = ZashiTypography.textSm,
-            text = stringResource(id = R.string.send_confirmation_failure_grpc_subtitle),
-            modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center
-        )
-
-        Body(
             text = stringResource(id = R.string.send_confirmation_multiple_trx_failure_text_1),
-            textAlign = TextAlign.Center
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Center,
+            color = ZashiColors.Text.textPrimary
         )
 
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
+        Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingLg))
 
-        Body(
+        Text(
+            style = ZashiTypography.textSm,
             text = stringResource(id = R.string.send_confirmation_multiple_trx_failure_text_2),
-            textAlign = TextAlign.Center
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Center,
+            color = ZashiColors.Text.textPrimary
         )
 
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingBig))
+        Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacing4xl))
 
         if (submissionResults.isNotEmpty()) {
             TransactionSubmitResultWidget(submissionResults)
@@ -595,30 +590,33 @@ fun TransactionSubmitResultWidget(
     submissionResults: ImmutableList<TransactionSubmitResult>,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
-    ) {
-        Small(text = stringResource(id = R.string.send_confirmation_multiple_trx_failure_ids_title))
+    Column(modifier = modifier) {
+        Text(
+            text = stringResource(id = R.string.send_confirmation_multiple_trx_failure_ids_title),
+            fontWeight = FontWeight.Medium,
+            style = ZashiTypography.textSm,
+            color = ZashiColors.Inputs.Default.label
+        )
 
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
+        Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingSm))
 
-        submissionResults.forEachIndexed { index, item ->
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Small(
-                    text =
-                    stringResource(
-                        id = R.string.send_confirmation_multiple_error_trx_item,
-                        index + 1
-                    ),
-                    modifier = Modifier.wrapContentSize()
-                )
-                Spacer(modifier = Modifier.width(ZcashTheme.dimens.spacingTiny))
-                Small(text = item.txIdString())
-            }
+        submissionResults.forEach { item ->
+            Text(
+                text = item.txIdString(),
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1,
+                style = ZashiTypography.textMd,
+                color = ZashiColors.Inputs.Default.text,
+                modifier = Modifier
+                    .background(
+                        shape = RoundedCornerShape(ZashiDimensions.Radius.radiusIg),
+                        color = ZashiColors.Inputs.Default.bg
+                    ).padding(
+                        horizontal = ZashiDimensions.Spacing.spacingLg,
+                        vertical = ZashiDimensions.Spacing.spacingMd
+                    )
+            )
+            Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingMd))
         }
     }
 }

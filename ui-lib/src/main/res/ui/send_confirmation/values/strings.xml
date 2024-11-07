@@ -42,9 +42,6 @@
     <string name="send_confirmation_multiple_trx_failure_copy_button">Copy transaction IDs</string>
     <string name="send_confirmation_multiple_trx_failure_report_button">Contact Support</string>
     <string name="send_confirmation_multiple_trx_failure_ids_title">Transaction IDs</string>
-    <string name="send_confirmation_multiple_error_trx_item" formatted="true">
-        <xliff:g id="order" example="1">%1$d. </xliff:g>ID:
-    </string>
     <string name="send_confirmation_multiple_report_text">Hi, Zashi Team.\n\nWhile sending a transaction to a TEX
         address, I encountered an error state. I\'m reaching out to get guidance on how to recover my funds.\n\nThank
         you.</string>

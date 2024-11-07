@@ -18,7 +18,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import cash.z.ecc.android.sdk.SdkSynchronizer
 import cash.z.ecc.android.sdk.Synchronizer
+import cash.z.ecc.android.sdk.model.FirstClassByteArray
 import cash.z.ecc.android.sdk.model.Proposal
+import cash.z.ecc.android.sdk.model.TransactionSubmitResult
 import cash.z.ecc.android.sdk.model.UnifiedSpendingKey
 import cash.z.ecc.android.sdk.model.ZecSend
 import co.electriccoin.zcash.di.koinActivityViewModel
@@ -49,6 +51,7 @@ import co.electriccoin.zcash.ui.util.EmailUtil
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import okhttp3.internal.immutableListOf
 import org.koin.compose.koinInject
 
 @Composable
@@ -127,7 +130,23 @@ internal fun WrapSendConfirmation(
             mutableStateOf(arguments.initialStage ?: SendConfirmationStage.Prepared)
         }
 
-    val submissionResults = createTransactionsViewModel.submissions.collectAsState().value.toImmutableList()
+    val submissionResults = listOf(
+        TransactionSubmitResult.Success(FirstClassByteArray("test_transaction_id_1".toByteArray())),
+        TransactionSubmitResult.Failure(
+            FirstClassByteArray("test_transaction_id_2".toByteArray()),
+            true,
+            123,
+            "test transaction id failure"
+        ),
+        TransactionSubmitResult.NotAttempted(
+            FirstClassByteArray("test_transaction_id_3".toByteArray())
+        ),
+        TransactionSubmitResult.NotAttempted(
+            FirstClassByteArray("test_transaction_id_4".toByteArray())
+        )
+    ).toImmutableList()
+    // TODO fix this mocked list
+    //createTransactionsViewModel.submissions.collectAsState().value.toImmutableList()
 
     val onBackAction = {
         when (stage) {
