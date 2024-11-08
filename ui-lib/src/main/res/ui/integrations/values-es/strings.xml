@@ -1,11 +1,11 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="integrations_title">Integraciones</string>
     <string name="integrations_coinbase">Compra <xliff:g id="currency" example="ZEC">%1$s</xliff:g> con Coinbase</string>
-    <string name="integrations_coinbase_subtitle">Una forma sencilla de comprar <xliff:g id="currency" example="ZEC">%1$s</xliff:g> y recibirlo directamente en tu billetera Zashi.</string>
+    <string name="integrations_coinbase_subtitle">Una forma sencilla de comprar <xliff:g id="currency" example="ZEC">%1$s</xliff:g> y recibirlo directamente en tu billetera Zcash.</string>
     <string name="integrations_version">Versión <xliff:g id="version" example="1.2.1">%1$s</xliff:g></string>
-    <string name="integrations_disabled_info">Durante el proceso de Restauración, no es posible utilizar integraciones de pago.</string>
-    <string name="integrations_flexa">Pay with Flexa</string>
-    <string name="integrations_flexa_subtitle">Pay with Flexa payment clips and explore a new way of spending Zcash.</string>
-    <string name="integrations_flexa_biometric_message">Authenticate yourself to pay with Flexa</string>
-    <string name="integrations_flexa_key_missing">Flexa key missing</string>
+    <string name="integrations_disabled_info">Durante el proceso de restauración, no es posible utilizar integraciones de pago.</string>
+    <string name="integrations_flexa">Paga con Flexa</string>
+    <string name="integrations_flexa_subtitle">Paga con clips de pago de Flexa y explora una nueva forma de gastar Zcash.</string>
+    <string name="integrations_flexa_biometric_message">Autentifícate para pagar con Flexa</string>
+    <string name="integrations_flexa_key_missing">Clave de Flexa faltante</string>
 </resources>
