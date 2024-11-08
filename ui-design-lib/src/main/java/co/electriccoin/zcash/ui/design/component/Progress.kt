@@ -92,10 +92,12 @@ fun SmallLinearProgressIndicator(
     modifier: Modifier = Modifier
 ) {
     LinearProgressIndicator(
+        drawStopIndicator = {},
         progress = { progress },
         color = ZcashTheme.colors.linearProgressBarBackground,
         trackColor = ZcashTheme.colors.linearProgressBarTrack,
         strokeCap = StrokeCap.Butt,
+        gapSize = 0.dp,
         modifier =
             Modifier
                 .fillMaxWidth()

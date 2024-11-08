@@ -16,8 +16,6 @@ import co.electriccoin.zcash.ui.screen.contact.AddContactArgs
 import co.electriccoin.zcash.ui.screen.contact.UpdateContactArgs
 import co.electriccoin.zcash.ui.screen.scan.ScanNavigationArgs
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.NonCancellable
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
@@ -25,8 +23,6 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import kotlin.time.Duration.Companion.seconds
 
 class AddressBookViewModel(
     observeAddressBookContacts: ObserveAddressBookContactsUseCase,
@@ -97,13 +93,8 @@ class AddressBookViewModel(
                 }
 
                 AddressBookArgs.PICK_CONTACT -> {
-                    // receiver screen (send) does not have a VM by which to observe so we have to force
-                    // non-cancellable coroutine due to back navigation
-                    withContext(NonCancellable) {
-                        backNavigationCommand.emit(Unit)
-                        delay(.75.seconds) // wait for the receiver screen to display
-                        observeContactPicked.onContactPicked(contact)
-                    }
+                    observeContactPicked.onContactPicked(contact)
+                    backNavigationCommand.emit(Unit)
                 }
             }
         }

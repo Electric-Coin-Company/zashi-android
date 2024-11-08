@@ -45,6 +45,7 @@ buildscript {
                 }
             }
         }
+        maven("${rootProject.projectDir}/maven") // url to a local maven in this repository
     }
 
     dependencies {
@@ -121,6 +122,7 @@ tasks {
             "ZCASH_GOOGLE_PLAY_DEPLOY_TRACK" to "internal",
             "ZCASH_GOOGLE_PLAY_DEPLOY_STATUS" to "draft",
 
+            "ZCASH_FLEXA_KEY" to "",
             "ZCASH_COINBASE_APP_ID" to "",
             "SDK_INCLUDED_BUILD_PATH" to "",
             "BIP_39_INCLUDED_BUILD_PATH" to ""

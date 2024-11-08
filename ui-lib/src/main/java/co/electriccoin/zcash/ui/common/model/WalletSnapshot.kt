@@ -42,6 +42,8 @@ fun WalletSnapshot.canSpend(amount: Zatoshi): Boolean = spendableBalance() >= am
 
 fun WalletSnapshot.totalBalance() = orchardBalance.total + saplingBalance.total + transparentBalance
 
+fun WalletSnapshot.totalShieldedBalance() = orchardBalance.total + saplingBalance.total
+
 // Note that considering both to be spendable is subject to change.
 // The user experience could be confusing, and in the future we might prefer to ask users
 // to transfer their balance to the latest balance type to make it spendable.

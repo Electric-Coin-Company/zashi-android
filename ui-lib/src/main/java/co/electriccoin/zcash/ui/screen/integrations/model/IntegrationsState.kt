@@ -8,5 +8,5 @@ data class IntegrationsState(
     val version: StringResource,
     val disabledInfo: StringResource?,
     val onBack: () -> Unit,
-    val items: ImmutableList<ZashiSettingsListItemState>
+    val items: ImmutableList<ZashiSettingsListItemState>,
 )

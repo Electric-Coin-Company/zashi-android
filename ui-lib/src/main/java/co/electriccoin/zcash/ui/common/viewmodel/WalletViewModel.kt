@@ -20,6 +20,7 @@ import cash.z.ecc.sdk.type.fromResources
 import co.electriccoin.zcash.preference.EncryptedPreferenceProvider
 import co.electriccoin.zcash.preference.StandardPreferenceProvider
 import co.electriccoin.zcash.spackle.Twig
+import co.electriccoin.zcash.ui.BuildConfig
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.common.model.OnboardingState
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
@@ -29,11 +30,15 @@ import co.electriccoin.zcash.ui.common.repository.BalanceRepository
 import co.electriccoin.zcash.ui.common.repository.ExchangeRateRepository
 import co.electriccoin.zcash.ui.common.repository.WalletRepository
 import co.electriccoin.zcash.ui.common.usecase.DeleteAddressBookUseCase
+import co.electriccoin.zcash.ui.common.usecase.IsFlexaAvailableUseCase
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
 import co.electriccoin.zcash.ui.screen.account.ext.TransactionOverviewExt
 import co.electriccoin.zcash.ui.screen.account.ext.getSortHeight
 import co.electriccoin.zcash.ui.screen.account.state.TransactionHistorySyncState
+import com.flexa.core.Flexa
+import com.flexa.identity.buildIdentity
 import kotlinx.collections.immutable.toPersistentList
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -45,8 +50,11 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 // To make this more multiplatform compatible, we need to remove the dependency on Context
 // for loading the preferences.
@@ -63,6 +71,7 @@ class WalletViewModel(
     private val standardPreferenceProvider: StandardPreferenceProvider,
     private val getAvailableServers: GetDefaultServersProvider,
     private val deleteAddressBookUseCase: DeleteAddressBookUseCase,
+    private val isFlexaAvailable: IsFlexaAvailableUseCase
 ) : AndroidViewModel(application) {
     val navigationCommand = exchangeRateRepository.navigationCommand
 
@@ -234,29 +243,27 @@ class WalletViewModel(
     fun deleteWalletFlow(activity: Activity): Flow<Boolean> =
         callbackFlow {
             Twig.info { "Delete wallet: Requested" }
-
+            disconnectFlexa()
             val synchronizer = synchronizer.value
             if (null != synchronizer) {
-                viewModelScope.launch {
-                    (synchronizer as SdkSynchronizer).closeFlow().collect {
-                        Twig.info { "Delete wallet: SDK closed" }
+                (synchronizer as SdkSynchronizer).closeFlow().collect {
+                    Twig.info { "Delete wallet: SDK closed" }
 
-                        walletCoordinator.deleteSdkDataFlow().collect { isSdkErased ->
-                            Twig.info { "Delete wallet: Erase SDK result: $isSdkErased" }
-                            if (!isSdkErased) {
+                    walletCoordinator.deleteSdkDataFlow().collect { isSdkErased ->
+                        Twig.info { "Delete wallet: Erase SDK result: $isSdkErased" }
+                        if (!isSdkErased) {
+                            trySend(false)
+                        }
+
+                        clearAppStateFlow().collect { isAppErased ->
+                            Twig.info { "Delete wallet: Erase App result: $isAppErased" }
+                            if (!isAppErased) {
                                 trySend(false)
-                            }
-
-                            clearAppStateFlow().collect { isAppErased ->
-                                Twig.info { "Delete wallet: Erase App result: $isAppErased" }
-                                if (!isAppErased) {
-                                    trySend(false)
-                                } else {
-                                    trySend(true)
-                                    activity.run {
-                                        finish()
-                                        startActivity(Intent(this, MainActivity::class.java))
-                                    }
+                            } else {
+                                trySend(true)
+                                activity.run {
+                                    finish()
+                                    startActivity(Intent(this, MainActivity::class.java))
                                 }
                             }
                         }
@@ -265,6 +272,16 @@ class WalletViewModel(
             }
             awaitClose {
                 // Nothing to close
+            }
+        }.flowOn(Dispatchers.Main)
+
+    private suspend fun disconnectFlexa() =
+        suspendCoroutine { cont ->
+            if (isFlexaAvailable() && BuildConfig.ZCASH_FLEXA_KEY.isNotEmpty()) {
+                Flexa.buildIdentity().build().disconnect()
+                cont.resume(Unit)
+            } else {
+                cont.resume(Unit)
             }
         }
 }
