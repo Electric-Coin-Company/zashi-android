@@ -155,7 +155,7 @@ class IntegrationsViewModel(
         viewModelScope.launch {
             runCatching {
                 biometricRepository.requestBiometrics(
-                    BiometricRequest(message = stringRes(R.string.integrations_biometric_message))
+                    BiometricRequest(message = stringRes(R.string.integrations_flexa_biometric_message))
                 )
                 Twig.debug { "Getting send transaction proposal" }
                 getSynchronizer()
