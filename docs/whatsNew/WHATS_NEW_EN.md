@@ -14,8 +14,8 @@ directly impact users rather than highlighting other key architectural updates.*
 - The Flexa SDK has been adopted to enable payments using the embedded Flexa UI
 
 ### Fixed
-- The application now correctly navigates to homepage after deleting a wallet and creating a new one
-- The application now correctly navigates to homepage after deleting a wallet and recovering another one
+- The application now correctly navigates to the homepage after deleting the current wallet and creating a new or
+  recovering an older one
 
 ## [1.2.1 (760)] - 2024-10-22
 
