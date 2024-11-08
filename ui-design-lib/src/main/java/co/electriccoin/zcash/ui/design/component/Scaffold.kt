@@ -40,12 +40,12 @@ fun BlankBgScaffold(
 
 @Composable
 fun GradientBgScaffold(
+    startColor: Color,
+    endColor: Color,
     modifier: Modifier = Modifier,
     topBar: @Composable () -> Unit = {},
     bottomBar: @Composable () -> Unit = {},
     snackbarHost: @Composable () -> Unit = {},
-    startColor: Color,
-    endColor: Color,
     content: @Composable (PaddingValues) -> Unit
 ) {
     Scaffold(
@@ -54,7 +54,8 @@ fun GradientBgScaffold(
         snackbarHost = snackbarHost,
         bottomBar = bottomBar,
         content = content,
-        modifier = modifier
-            .background(zashiVerticalGradient(startColor, endColor)),
+        modifier =
+            modifier
+                .background(zashiVerticalGradient(startColor, endColor)),
     )
 }

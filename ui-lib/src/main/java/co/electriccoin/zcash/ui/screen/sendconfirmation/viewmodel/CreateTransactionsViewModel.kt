@@ -46,9 +46,7 @@ class CreateTransactionsViewModel : ViewModel() {
                 }
             } else {
                 // All transaction submissions were successful
-                // fixme
-                // SubmitResult.Success
-                SubmitResult.MultipleTrxFailure
+                SubmitResult.Success
             }
         }.onSuccess {
             Twig.debug { "Transactions submitted successfully" }

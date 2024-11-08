@@ -18,9 +18,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import cash.z.ecc.android.sdk.SdkSynchronizer
 import cash.z.ecc.android.sdk.Synchronizer
-import cash.z.ecc.android.sdk.model.FirstClassByteArray
 import cash.z.ecc.android.sdk.model.Proposal
-import cash.z.ecc.android.sdk.model.TransactionSubmitResult
 import cash.z.ecc.android.sdk.model.UnifiedSpendingKey
 import cash.z.ecc.android.sdk.model.ZecSend
 import co.electriccoin.zcash.di.koinActivityViewModel
@@ -50,8 +48,8 @@ import co.electriccoin.zcash.ui.screen.support.viewmodel.SupportViewModel
 import co.electriccoin.zcash.ui.util.EmailUtil
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
-import okhttp3.internal.immutableListOf
 import org.koin.compose.koinInject
 
 @Composable
@@ -130,23 +128,7 @@ internal fun WrapSendConfirmation(
             mutableStateOf(arguments.initialStage ?: SendConfirmationStage.Prepared)
         }
 
-    val submissionResults = listOf(
-        TransactionSubmitResult.Success(FirstClassByteArray("test_transaction_id_1".toByteArray())),
-        TransactionSubmitResult.Failure(
-            FirstClassByteArray("test_transaction_id_2".toByteArray()),
-            true,
-            123,
-            "test transaction id failure"
-        ),
-        TransactionSubmitResult.NotAttempted(
-            FirstClassByteArray("test_transaction_id_3".toByteArray())
-        ),
-        TransactionSubmitResult.NotAttempted(
-            FirstClassByteArray("test_transaction_id_4".toByteArray())
-        )
-    ).toImmutableList()
-    // TODO fix this mocked list
-    //createTransactionsViewModel.submissions.collectAsState().value.toImmutableList()
+    val submissionResults = createTransactionsViewModel.submissions.collectAsState().value.toImmutableList()
 
     val onBackAction = {
         when (stage) {
@@ -226,7 +208,10 @@ internal fun WrapSendConfirmation(
                     setStage(stageToGo)
                     scope.launch {
                         snackbarHostState.showSnackbar(
-                            message = activity.getString(R.string.send_confirmation_multiple_trx_failure_report_unable_open_email)
+                            message =
+                                activity.getString(
+                                    R.string.send_confirmation_multiple_trx_failure_report_unable_open_email
+                                )
                         )
                     }
                 }
@@ -241,35 +226,31 @@ internal fun WrapSendConfirmation(
             },
             onConfirmation = {
                 // Check and trigger authentication if required, or just submit transactions otherwise
-                //TODO
-                setStage(SendConfirmationStage.MultipleTrxFailure)
-
-                // lifecycleScope.launch {
-                //     authenticationViewModel.isSendFundsAuthenticationRequired
-                //         .filterNotNull()
-                //         .collect { isProtected ->
-                //             if (isProtected) {
-                //                 sendFundsAuthentication.value = true
-                //             } else {
-                //                 runSendFundsAction(
-                //                     createTransactionsViewModel = createTransactionsViewModel,
-                //                     goHome = goHome,
-                //                     // The not-null assertion operator is necessary here even if we check its
-                //                     // nullability before due to property is declared in different module. See more
-                //                     // details on the Kotlin forum
-                //                     proposal = zecSend!!.proposal!!,
-                //                     setStage = setStage,
-                //                     spendingKey = spendingKey,
-                //                     synchronizer = synchronizer,
-                //                 )
-                //             }
-                //         }
-                // }
+                lifecycleScope.launch {
+                    authenticationViewModel.isSendFundsAuthenticationRequired
+                        .filterNotNull()
+                        .collect { isProtected ->
+                            if (isProtected) {
+                                sendFundsAuthentication.value = true
+                            } else {
+                                runSendFundsAction(
+                                    createTransactionsViewModel = createTransactionsViewModel,
+                                    // The not-null assertion operator is necessary here even if we check its
+                                    // nullability before due to property is declared in different module. See more
+                                    // details on the Kotlin forum
+                                    proposal = zecSend!!.proposal!!,
+                                    setStage = setStage,
+                                    spendingKey = spendingKey,
+                                    synchronizer = synchronizer,
+                                )
+                            }
+                        }
+                }
             },
             onViewTransactions = {
                 val trxIds = submissionResults.map { it.txIdString() }
                 Twig.debug { "Transactions IDs passing to a new Transaction Details: $trxIds" }
-                // TODO pass trx ids to a transaction detail destination once it's implemented
+                // Once we implement transaction details screen we can start passing the trx ids to its destination
                 goHome()
             },
             topAppBarSubTitleState = topAppBarSubTitleState,
@@ -287,7 +268,6 @@ internal fun WrapSendConfirmation(
                     lifecycleScope.launch {
                         runSendFundsAction(
                             createTransactionsViewModel = createTransactionsViewModel,
-                            goHome = goHome,
                             // The not-null assertion operator is necessary here even if we check its
                             // nullability before due to property is declared in different module. See more
                             // details on the Kotlin forum
@@ -314,7 +294,6 @@ internal fun WrapSendConfirmation(
 @Suppress("LongParameterList")
 suspend fun runSendFundsAction(
     createTransactionsViewModel: CreateTransactionsViewModel,
-    goHome: () -> Unit,
     proposal: Proposal,
     setStage: (SendConfirmationStage) -> Unit,
     spendingKey: UnifiedSpendingKey,
@@ -333,7 +312,6 @@ suspend fun runSendFundsAction(
     Twig.debug { "Transactions submitted with result: $submitResult" }
 
     processSubmissionResult(
-        goHome = goHome,
         setStage = setStage,
         submitResult = submitResult
     )
@@ -366,13 +344,11 @@ private suspend fun submitTransactions(
 
 private fun processSubmissionResult(
     submitResult: SubmitResult,
-    setStage: (SendConfirmationStage) -> Unit,
-    goHome: () -> Unit
+    setStage: (SendConfirmationStage) -> Unit
 ) {
     when (submitResult) {
         SubmitResult.Success -> {
-            setStage(SendConfirmationStage.Prepared)
-            goHome()
+            setStage(SendConfirmationStage.Success)
         }
         is SubmitResult.SimpleTrxFailure.SimpleTrxFailureSubmit -> {
             setStage(SendConfirmationStage.Failure(submitResult.toErrorMessage(), submitResult.toErrorStacktrace()))

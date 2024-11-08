@@ -236,7 +236,7 @@ class AuthenticationViewModel(
                             // returning to biometric authentication, such as a button. The operation was canceled
                             // because [BiometricPrompt.ERROR_LOCKOUT] occurred too many times.
                             BiometricPrompt.ERROR_USER_CANCELED -> {
-                                authenticationResult.value = AuthenticationResult.Failed
+                                authenticationResult.value = AuthenticationResult.Canceled
                                 // The following values are just for testing purposes, so we can easier reproduce other
                                 // non-success results obtained from [BiometricPrompt]
                                 // = AuthenticationResult.Failed

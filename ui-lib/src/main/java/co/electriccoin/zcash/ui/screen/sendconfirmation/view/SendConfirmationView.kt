@@ -4,7 +4,6 @@ package co.electriccoin.zcash.ui.screen.sendconfirmation.view
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -77,11 +75,6 @@ import co.electriccoin.zcash.ui.screen.exchangerate.widget.StyledExchangeLabel
 import co.electriccoin.zcash.ui.screen.send.ext.abbreviated
 import co.electriccoin.zcash.ui.screen.sendconfirmation.SendConfirmationTag
 import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SendConfirmationStage
-import com.airbnb.lottie.compose.LottieAnimation
-import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.LottieConstants
-import com.airbnb.lottie.compose.animateLottieCompositionAsState
-import com.airbnb.lottie.compose.rememberLottieComposition
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.runBlocking
@@ -105,18 +98,19 @@ fun SendConfirmation(
     contactName: String?,
     exchangeRate: ExchangeRateState,
 ) {
-    val gradientColors = Pair(
-        when (stage) {
-            SendConfirmationStage.Prepared,
-            SendConfirmationStage.Sending -> ZashiColors.Surfaces.bgPrimary
-            SendConfirmationStage.Success -> ZashiColors.Utility.SuccessGreen.utilitySuccess100
-            is SendConfirmationStage.Failure,
-            is SendConfirmationStage.FailureGrpc,
-            SendConfirmationStage.MultipleTrxFailure,
-            SendConfirmationStage.MultipleTrxFailureReported -> ZashiColors.Utility.ErrorRed.utilityError100
-        },
-        ZashiColors.Surfaces.bgPrimary
-    )
+    val gradientColors =
+        Pair(
+            when (stage) {
+                SendConfirmationStage.Prepared,
+                SendConfirmationStage.Sending -> ZashiColors.Surfaces.bgPrimary
+                SendConfirmationStage.Success -> ZashiColors.Utility.SuccessGreen.utilitySuccess100
+                is SendConfirmationStage.Failure,
+                is SendConfirmationStage.FailureGrpc,
+                SendConfirmationStage.MultipleTrxFailure,
+                SendConfirmationStage.MultipleTrxFailureReported -> ZashiColors.Utility.ErrorRed.utilityError100
+            },
+            ZashiColors.Surfaces.bgPrimary
+        )
 
     GradientBgScaffold(
         startColor = gradientColors.first,
@@ -150,10 +144,11 @@ fun SendConfirmation(
             stage = stage,
             submissionResults = submissionResults,
             zecSend = zecSend,
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .scaffoldPadding(paddingValues),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .scaffoldPadding(paddingValues),
         )
     }
 }
@@ -183,9 +178,10 @@ private fun SendConfirmationTopAppBar(
         SendConfirmationStage.Success -> {
             ZashiSmallTopAppBar(
                 subtitle = subTitle,
-                colors = ZcashTheme.colors.topAppBarColors.copyColors(
-                    containerColor = Color.Transparent
-                ),
+                colors =
+                    ZcashTheme.colors.topAppBarColors.copyColors(
+                        containerColor = Color.Transparent
+                    ),
             )
         }
         SendConfirmationStage.MultipleTrxFailureReported -> {
@@ -198,9 +194,10 @@ private fun SendConfirmationTopAppBar(
                         painter = painterResource(co.electriccoin.zcash.ui.design.R.drawable.ic_close)
                     )
                 },
-                colors = ZcashTheme.colors.topAppBarColors.copyColors(
-                    containerColor = Color.Transparent
-                ),
+                colors =
+                    ZcashTheme.colors.topAppBarColors.copyColors(
+                        containerColor = Color.Transparent
+                    ),
             )
         }
         SendConfirmationStage.MultipleTrxFailure,
@@ -208,9 +205,10 @@ private fun SendConfirmationTopAppBar(
         is SendConfirmationStage.FailureGrpc -> {
             ZashiSmallTopAppBar(
                 subtitle = subTitle,
-                colors = ZcashTheme.colors.topAppBarColors.copyColors(
-                    containerColor = Color.Transparent
-                ),
+                colors =
+                    ZcashTheme.colors.topAppBarColors.copyColors(
+                        containerColor = Color.Transparent
+                    ),
             )
         }
     }
@@ -259,6 +257,8 @@ private fun SendConfirmationMainContent(
     }
 }
 
+private const val TOP_BLANK_SPACE_RATIO = 0.2f
+
 @Composable
 private fun SendingContent(
     destination: WalletAddress,
@@ -267,32 +267,38 @@ private fun SendingContent(
     ConstraintLayout(modifier = modifier.fillMaxSize()) {
         val (content, spaceTop) = createRefs()
 
-        Spacer(modifier = Modifier.constrainAs(spaceTop) {
-            height = Dimension.percent(0.2f)
-            width = Dimension.fillToConstraints
-            top.linkTo(parent.top)
-            bottom.linkTo(content.top)
-            start.linkTo(parent.start)
-            end.linkTo(parent.end)
-        })
+        Spacer(
+            modifier =
+                Modifier.constrainAs(spaceTop) {
+                    height = Dimension.percent(TOP_BLANK_SPACE_RATIO)
+                    width = Dimension.fillToConstraints
+                    top.linkTo(parent.top)
+                    bottom.linkTo(content.top)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                }
+        )
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .constrainAs(content) {
-                    top.linkTo(spaceTop.bottom)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                    width = Dimension.fillToConstraints
-                    height = Dimension.wrapContent
-                }
+            modifier =
+                Modifier
+                    .constrainAs(content) {
+                        top.linkTo(spaceTop.bottom)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                        width = Dimension.fillToConstraints
+                        height = Dimension.wrapContent
+                    }
         ) {
-            // TODO: Change this lottie resource once we have it
-            val lottieRes: Int = if (isSystemInDarkTheme()) {
-                co.electriccoin.zcash.ui.design.R.raw.lottie_loading_white
-            } else {
-                co.electriccoin.zcash.ui.design.R.raw.lottie_loading
-            }
+            /* TODO [#1667]: Add lottie animation once we have it
+               TODO [#1667]: https://github.com/Electric-Coin-Company/zashi-android/issues/1667
+            val lottieRes: Int =
+                if (isSystemInDarkTheme()) {
+                    co.electriccoin.zcash.ui.design.R.raw.lottie_loading_white
+                } else {
+                    co.electriccoin.zcash.ui.design.R.raw.lottie_loading
+                }
 
             val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(lottieRes))
             val progress by animateLottieCompositionAsState(
@@ -305,6 +311,11 @@ private fun SendingContent(
                 composition = composition,
                 progress = { progress },
                 maintainOriginalImageBounds = true
+            )
+             */
+            Image(
+                painter = painterResource(id = R.drawable.zashi_logo_sign),
+                contentDescription = null
             )
 
             Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacing2xl))
@@ -337,32 +348,38 @@ private fun SuccessContent(
     ConstraintLayout(modifier = modifier.fillMaxSize()) {
         val (content, spaceTop) = createRefs()
 
-        Spacer(modifier = Modifier.constrainAs(spaceTop) {
-            height = Dimension.percent(0.2f)
-            width = Dimension.fillToConstraints
-            top.linkTo(parent.top)
-            bottom.linkTo(content.top)
-            start.linkTo(parent.start)
-            end.linkTo(parent.end)
-        })
+        Spacer(
+            modifier =
+                Modifier.constrainAs(spaceTop) {
+                    height = Dimension.percent(TOP_BLANK_SPACE_RATIO)
+                    width = Dimension.fillToConstraints
+                    top.linkTo(parent.top)
+                    bottom.linkTo(content.top)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                }
+        )
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .constrainAs(content) {
-                    top.linkTo(spaceTop.bottom)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                    width = Dimension.fillToConstraints
-                    height = Dimension.wrapContent
-                }
+            modifier =
+                Modifier
+                    .constrainAs(content) {
+                        top.linkTo(spaceTop.bottom)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                        width = Dimension.fillToConstraints
+                        height = Dimension.wrapContent
+                    }
         ) {
-            // TODO: Change this lottie resource once we have it
-            val lottieRes: Int = if (isSystemInDarkTheme()) {
-                co.electriccoin.zcash.ui.design.R.raw.lottie_loading_white
-            } else {
-                co.electriccoin.zcash.ui.design.R.raw.lottie_loading
-            }
+            /* TODO [#1667]: Add lottie animation once we have it
+               TODO [#1667]: https://github.com/Electric-Coin-Company/zashi-android/issues/1667
+            val lottieRes: Int =
+                if (isSystemInDarkTheme()) {
+                    co.electriccoin.zcash.ui.design.R.raw.lottie_loading_white
+                } else {
+                    co.electriccoin.zcash.ui.design.R.raw.lottie_loading
+                }
 
             val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(lottieRes))
             val progress by animateLottieCompositionAsState(
@@ -375,6 +392,11 @@ private fun SuccessContent(
                 composition = composition,
                 progress = { progress },
                 maintainOriginalImageBounds = true
+            )
+             */
+            Image(
+                painter = painterResource(id = R.drawable.zashi_logo_sign),
+                contentDescription = null
             )
 
             Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacing2xl))
@@ -398,12 +420,13 @@ private fun SuccessContent(
             Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingXl))
 
             ZashiButton(
-                state = ButtonState(
-                    text = stringRes(R.string.send_confirmation_success_view_trx),
-                    onClick = onViewTransactions,
-                ),
+                state =
+                    ButtonState(
+                        text = stringRes(R.string.send_confirmation_success_view_trx),
+                        onClick = onViewTransactions,
+                    ),
                 modifier =
-                Modifier.wrapContentWidth(),
+                    Modifier.wrapContentWidth(),
                 colors = ZashiButtonDefaults.tertiaryColors()
             )
         }
@@ -418,32 +441,38 @@ private fun SendFailure(
     ConstraintLayout(modifier = modifier.fillMaxSize()) {
         val (content, spaceTop) = createRefs()
 
-        Spacer(modifier = Modifier.constrainAs(spaceTop) {
-            height = Dimension.percent(0.2f)
-            width = Dimension.fillToConstraints
-            top.linkTo(parent.top)
-            bottom.linkTo(content.top)
-            start.linkTo(parent.start)
-            end.linkTo(parent.end)
-        })
+        Spacer(
+            modifier =
+                Modifier.constrainAs(spaceTop) {
+                    height = Dimension.percent(TOP_BLANK_SPACE_RATIO)
+                    width = Dimension.fillToConstraints
+                    top.linkTo(parent.top)
+                    bottom.linkTo(content.top)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                }
+        )
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .constrainAs(content) {
-                    top.linkTo(spaceTop.bottom)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                    width = Dimension.fillToConstraints
-                    height = Dimension.wrapContent
-                }
+            modifier =
+                Modifier
+                    .constrainAs(content) {
+                        top.linkTo(spaceTop.bottom)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                        width = Dimension.fillToConstraints
+                        height = Dimension.wrapContent
+                    }
         ) {
-            // TODO: Change this lottie resource once we have it
-            val lottieRes: Int = if (isSystemInDarkTheme()) {
-                co.electriccoin.zcash.ui.design.R.raw.lottie_loading_white
-            } else {
-                co.electriccoin.zcash.ui.design.R.raw.lottie_loading
-            }
+            /* TODO [#1667]: Add lottie animation once we have it
+               TODO [#1667]: https://github.com/Electric-Coin-Company/zashi-android/issues/1667
+            val lottieRes: Int =
+                if (isSystemInDarkTheme()) {
+                    co.electriccoin.zcash.ui.design.R.raw.lottie_loading_white
+                } else {
+                    co.electriccoin.zcash.ui.design.R.raw.lottie_loading
+                }
 
             val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(lottieRes))
             val progress by animateLottieCompositionAsState(
@@ -456,6 +485,11 @@ private fun SendFailure(
                 composition = composition,
                 progress = { progress },
                 maintainOriginalImageBounds = true
+            )
+             */
+            Image(
+                painter = painterResource(id = R.drawable.zashi_logo_sign),
+                contentDescription = null
             )
 
             Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacing2xl))
@@ -479,12 +513,13 @@ private fun SendFailure(
             Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingXl))
 
             ZashiButton(
-                state = ButtonState(
-                    text = stringRes(R.string.send_confirmation_failure_view_trx),
-                    onClick = onViewTransactions,
-                ),
+                state =
+                    ButtonState(
+                        text = stringRes(R.string.send_confirmation_failure_view_trx),
+                        onClick = onViewTransactions,
+                    ),
                 modifier =
-                Modifier.wrapContentWidth(),
+                    Modifier.wrapContentWidth(),
                 colors = ZashiButtonDefaults.tertiaryColors()
             )
         }
@@ -492,38 +527,42 @@ private fun SendFailure(
 }
 
 @Composable
-private fun SendGrpcFailure(
-    modifier: Modifier = Modifier
-) {
+private fun SendGrpcFailure(modifier: Modifier = Modifier) {
     ConstraintLayout(modifier = modifier.fillMaxSize()) {
         val (content, spaceTop) = createRefs()
 
-        Spacer(modifier = Modifier.constrainAs(spaceTop) {
-            height = Dimension.percent(0.2f)
-            width = Dimension.fillToConstraints
-            top.linkTo(parent.top)
-            bottom.linkTo(content.top)
-            start.linkTo(parent.start)
-            end.linkTo(parent.end)
-        })
+        Spacer(
+            modifier =
+                Modifier.constrainAs(spaceTop) {
+                    height = Dimension.percent(TOP_BLANK_SPACE_RATIO)
+                    width = Dimension.fillToConstraints
+                    top.linkTo(parent.top)
+                    bottom.linkTo(content.top)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                }
+        )
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .constrainAs(content) {
-                    top.linkTo(spaceTop.bottom)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                    width = Dimension.fillToConstraints
-                    height = Dimension.wrapContent
-                }
+            modifier =
+                Modifier
+                    .constrainAs(content) {
+                        top.linkTo(spaceTop.bottom)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                        width = Dimension.fillToConstraints
+                        height = Dimension.wrapContent
+                    }
         ) {
-            // TODO: Change this lottie resource once we have it
-            val lottieRes: Int = if (isSystemInDarkTheme()) {
-                co.electriccoin.zcash.ui.design.R.raw.lottie_loading_white
-            } else {
-                co.electriccoin.zcash.ui.design.R.raw.lottie_loading
-            }
+            /* TODO [#1667]: Add lottie animation once we have it
+               TODO [#1667]: https://github.com/Electric-Coin-Company/zashi-android/issues/1667
+            val lottieRes: Int =
+                if (isSystemInDarkTheme()) {
+                    co.electriccoin.zcash.ui.design.R.raw.lottie_loading_white
+                } else {
+                    co.electriccoin.zcash.ui.design.R.raw.lottie_loading
+                }
 
             val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(lottieRes))
             val progress by animateLottieCompositionAsState(
@@ -536,6 +575,11 @@ private fun SendGrpcFailure(
                 composition = composition,
                 progress = { progress },
                 maintainOriginalImageBounds = true
+            )
+             */
+            Image(
+                painter = painterResource(id = R.drawable.zashi_logo_sign),
+                contentDescription = null
             )
 
             Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacing2xl))
@@ -634,15 +678,16 @@ fun TransactionSubmitResultWidget(
                 maxLines = 1,
                 style = ZashiTypography.textMd,
                 color = ZashiColors.Inputs.Default.text,
-                modifier = Modifier
-                    .background(
-                        shape = RoundedCornerShape(ZashiDimensions.Radius.radiusIg),
-                        color = ZashiColors.Inputs.Default.bg
-                    )
-                    .padding(
-                        horizontal = ZashiDimensions.Spacing.spacingLg,
-                        vertical = ZashiDimensions.Spacing.spacingMd
-                    )
+                modifier =
+                    Modifier
+                        .background(
+                            shape = RoundedCornerShape(ZashiDimensions.Radius.radiusIg),
+                            color = ZashiColors.Inputs.Default.bg
+                        )
+                        .padding(
+                            horizontal = ZashiDimensions.Spacing.spacingLg,
+                            vertical = ZashiDimensions.Spacing.spacingMd
+                        )
             )
             Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingMd))
         }
@@ -881,10 +926,10 @@ fun SendConfirmationBottomBar(
                     onClick = onConfirmation
                 ),
             modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(horizontal = ZashiDimensions.Spacing.spacing2xl)
-                .testTag(SendConfirmationTag.SEND_CONFIRMATION_SEND_BUTTON)
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = ZashiDimensions.Spacing.spacing2xl)
+                    .testTag(SendConfirmationTag.SEND_CONFIRMATION_SEND_BUTTON)
         )
 
         Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingLg))
@@ -896,10 +941,10 @@ fun SendConfirmationBottomBar(
                     onClick = onBack,
                 ),
             modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(horizontal = ZashiDimensions.Spacing.spacing2xl)
-                .testTag(SendConfirmationTag.SEND_CONFIRMATION_BACK_BUTTON),
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = ZashiDimensions.Spacing.spacing2xl)
+                    .testTag(SendConfirmationTag.SEND_CONFIRMATION_BACK_BUTTON),
             colors = ZashiButtonDefaults.tertiaryColors()
         )
     }
@@ -916,13 +961,14 @@ fun SendMultipleTrxFailureBottomBar(
     ) {
         ZashiButton(
             state =
-            ButtonState(
-                text = stringRes(R.string.send_confirmation_multiple_trx_failure_copy_button),
-                onClick = onCopyTrxIds
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = ZashiDimensions.Spacing.spacing2xl),
+                ButtonState(
+                    text = stringRes(R.string.send_confirmation_multiple_trx_failure_copy_button),
+                    onClick = onCopyTrxIds
+                ),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = ZashiDimensions.Spacing.spacing2xl),
             colors = ZashiButtonDefaults.tertiaryColors()
         )
 
@@ -930,13 +976,14 @@ fun SendMultipleTrxFailureBottomBar(
 
         ZashiButton(
             state =
-            ButtonState(
-                text = stringRes(R.string.send_confirmation_multiple_trx_failure_report_button),
-                onClick = { onContactSupport(SendConfirmationStage.MultipleTrxFailureReported) },
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = ZashiDimensions.Spacing.spacing2xl),
+                ButtonState(
+                    text = stringRes(R.string.send_confirmation_multiple_trx_failure_report_button),
+                    onClick = { onContactSupport(SendConfirmationStage.MultipleTrxFailureReported) },
+                ),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = ZashiDimensions.Spacing.spacing2xl),
         )
     }
 }
@@ -951,14 +998,14 @@ fun SendSuccessBottomBar(
     ) {
         ZashiButton(
             state =
-            ButtonState(
-                text = stringRes(R.string.send_confirmation_success_btn_close),
-                onClick = onClose
-            ),
+                ButtonState(
+                    text = stringRes(R.string.send_confirmation_success_btn_close),
+                    onClick = onClose
+                ),
             modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(horizontal = ZashiDimensions.Spacing.spacing2xl)
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = ZashiDimensions.Spacing.spacing2xl)
         )
     }
 }
@@ -974,26 +1021,28 @@ fun SendFailureBottomBar(
     ) {
         ZashiButton(
             state =
-            ButtonState(
-                text = stringRes(R.string.send_confirmation_failure_close_button),
-                onClick = onClose
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = ZashiDimensions.Spacing.spacing2xl)
+                ButtonState(
+                    text = stringRes(R.string.send_confirmation_failure_close_button),
+                    onClick = onClose
+                ),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = ZashiDimensions.Spacing.spacing2xl)
         )
 
         Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingLg))
 
         ZashiButton(
             state =
-            ButtonState(
-                text = stringRes(R.string.send_confirmation_failure_report_button),
-                onClick = onReport
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = ZashiDimensions.Spacing.spacing2xl),
+                ButtonState(
+                    text = stringRes(R.string.send_confirmation_failure_report_button),
+                    onClick = onReport
+                ),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = ZashiDimensions.Spacing.spacing2xl),
             colors = ZashiButtonDefaults.tertiaryColors()
         )
     }
@@ -1009,13 +1058,14 @@ fun SendGrpcFailureBottomBar(
     ) {
         ZashiButton(
             state =
-            ButtonState(
-                text = stringRes(R.string.send_confirmation_failure_grpc_close_button),
-                onClick = onClose
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = ZashiDimensions.Spacing.spacing2xl)
+                ButtonState(
+                    text = stringRes(R.string.send_confirmation_failure_grpc_close_button),
+                    onClick = onClose
+                ),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = ZashiDimensions.Spacing.spacing2xl)
         )
     }
 }
@@ -1027,12 +1077,12 @@ private fun SendConfirmationPreview() {
         SendConfirmation(
             snackbarHostState = SnackbarHostState(),
             zecSend =
-            ZecSend(
-                destination = runBlocking { WalletAddressFixture.sapling() },
-                amount = ZatoshiFixture.new(),
-                memo = MemoFixture.new(),
-                proposal = null,
-            ),
+                ZecSend(
+                    destination = runBlocking { WalletAddressFixture.sapling() },
+                    amount = ZatoshiFixture.new(),
+                    memo = MemoFixture.new(),
+                    proposal = null,
+                ),
             onConfirmation = {},
             onMultipleTrxFailureIdsCopy = {},
             onViewTransactions = {},
@@ -1054,12 +1104,12 @@ private fun SendingPreview() {
         SendConfirmation(
             snackbarHostState = SnackbarHostState(),
             zecSend =
-            ZecSend(
-                destination = runBlocking { WalletAddressFixture.sapling() },
-                amount = ZatoshiFixture.new(),
-                memo = MemoFixture.new(),
-                proposal = null,
-            ),
+                ZecSend(
+                    destination = runBlocking { WalletAddressFixture.sapling() },
+                    amount = ZatoshiFixture.new(),
+                    memo = MemoFixture.new(),
+                    proposal = null,
+                ),
             onBack = {},
             onConfirmation = {},
             onMultipleTrxFailureIdsCopy = {},
@@ -1081,12 +1131,12 @@ private fun SuccessPreview() {
         SendConfirmation(
             snackbarHostState = SnackbarHostState(),
             zecSend =
-            ZecSend(
-                destination = runBlocking { WalletAddressFixture.sapling() },
-                amount = ZatoshiFixture.new(),
-                memo = MemoFixture.new(),
-                proposal = null,
-            ),
+                ZecSend(
+                    destination = runBlocking { WalletAddressFixture.sapling() },
+                    amount = ZatoshiFixture.new(),
+                    memo = MemoFixture.new(),
+                    proposal = null,
+                ),
             onBack = {},
             onConfirmation = {},
             onMultipleTrxFailureIdsCopy = {},
@@ -1108,20 +1158,21 @@ private fun PreviewSendConfirmationFailure() {
         SendConfirmation(
             snackbarHostState = SnackbarHostState(),
             zecSend =
-            ZecSend(
-                destination = runBlocking { WalletAddressFixture.sapling() },
-                amount = ZatoshiFixture.new(),
-                memo = MemoFixture.new(),
-                proposal = null,
-            ),
+                ZecSend(
+                    destination = runBlocking { WalletAddressFixture.sapling() },
+                    amount = ZatoshiFixture.new(),
+                    memo = MemoFixture.new(),
+                    proposal = null,
+                ),
             onBack = {},
             onConfirmation = {},
             onMultipleTrxFailureIdsCopy = {},
             onViewTransactions = {},
-            stage = SendConfirmationStage.Failure(
-                "The transaction has not been successfully created...",
-                "Failed stackTrace..."
-            ),
+            stage =
+                SendConfirmationStage.Failure(
+                    "The transaction has not been successfully created...",
+                    "Failed stackTrace..."
+                ),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
             onContactSupport = { _ -> },
             submissionResults = emptyList<TransactionSubmitResult>().toImmutableList(),
@@ -1138,12 +1189,12 @@ private fun PreviewSendConfirmationGrpcFailure() {
         SendConfirmation(
             snackbarHostState = SnackbarHostState(),
             zecSend =
-            ZecSend(
-                destination = runBlocking { WalletAddressFixture.sapling() },
-                amount = ZatoshiFixture.new(),
-                memo = MemoFixture.new(),
-                proposal = null,
-            ),
+                ZecSend(
+                    destination = runBlocking { WalletAddressFixture.sapling() },
+                    amount = ZatoshiFixture.new(),
+                    memo = MemoFixture.new(),
+                    proposal = null,
+                ),
             onBack = {},
             onConfirmation = {},
             onMultipleTrxFailureIdsCopy = {},
@@ -1165,12 +1216,12 @@ private fun SendMultipleErrorPreview() {
         SendConfirmation(
             snackbarHostState = SnackbarHostState(),
             zecSend =
-            ZecSend(
-                destination = runBlocking { WalletAddressFixture.sapling() },
-                amount = ZatoshiFixture.new(),
-                memo = MemoFixture.new(),
-                proposal = null,
-            ),
+                ZecSend(
+                    destination = runBlocking { WalletAddressFixture.sapling() },
+                    amount = ZatoshiFixture.new(),
+                    memo = MemoFixture.new(),
+                    proposal = null,
+                ),
             onBack = {},
             onConfirmation = {},
             onMultipleTrxFailureIdsCopy = {},
@@ -1178,21 +1229,22 @@ private fun SendMultipleErrorPreview() {
             stage = SendConfirmationStage.MultipleTrxFailure,
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
             onContactSupport = { _ -> },
-            submissionResults = listOf(
-                TransactionSubmitResult.Success(FirstClassByteArray("test_transaction_id_1".toByteArray())),
-                TransactionSubmitResult.Failure(
-                    FirstClassByteArray("test_transaction_id_2".toByteArray()),
-                    true,
-                    123,
-                    "test transaction id failure"
-                ),
-                TransactionSubmitResult.NotAttempted(
-                    FirstClassByteArray("test_transaction_id_3".toByteArray())
-                ),
-                TransactionSubmitResult.NotAttempted(
-                    FirstClassByteArray("test_transaction_id_4".toByteArray())
-                )
-            ).toImmutableList(),
+            submissionResults =
+                listOf(
+                    TransactionSubmitResult.Success(FirstClassByteArray("test_transaction_id_1".toByteArray())),
+                    TransactionSubmitResult.Failure(
+                        FirstClassByteArray("test_transaction_id_2".toByteArray()),
+                        true,
+                        Int.MIN_VALUE,
+                        "test transaction id failure"
+                    ),
+                    TransactionSubmitResult.NotAttempted(
+                        FirstClassByteArray("test_transaction_id_3".toByteArray())
+                    ),
+                    TransactionSubmitResult.NotAttempted(
+                        FirstClassByteArray("test_transaction_id_4".toByteArray())
+                    )
+                ).toImmutableList(),
             exchangeRate = ObserveFiatCurrencyResultFixture.new(),
             contactName = "Romek"
         )
