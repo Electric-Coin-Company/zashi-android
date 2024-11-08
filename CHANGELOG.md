@@ -10,6 +10,9 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 - The device authentication feature on the Zashi app launch has been added
 - The Flexa SDK has been adopted to enable payments using the embedded Flexa UI
 
+### Fixed
+- Address book toast now correctly shows on send screen when adding both new and known addresses to text field  
+
 ## [1.2.1 (760)] - 2024-10-22
 
 ### Changed
