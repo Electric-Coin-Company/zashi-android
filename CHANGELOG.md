@@ -9,6 +9,8 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 ### Added
 - The device authentication feature on the Zashi app launch has been added
 - The Flexa SDK has been adopted to enable payments using the embedded Flexa UI
+- New Sending, Success, Failure, and GrpcFailure subscreens of the Send Confirmation screen have been added
+- New Copy Transaction IDs feature has been added to the MultipleTransactionFailure screen 
 
 ## [1.2.1 (760)] - 2024-10-22
 
