@@ -4,6 +4,7 @@ package co.electriccoin.zcash.ui.screen.sendconfirmation.view
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -75,6 +77,11 @@ import co.electriccoin.zcash.ui.screen.exchangerate.widget.StyledExchangeLabel
 import co.electriccoin.zcash.ui.screen.send.ext.abbreviated
 import co.electriccoin.zcash.ui.screen.sendconfirmation.SendConfirmationTag
 import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SendConfirmationStage
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.runBlocking
@@ -291,8 +298,8 @@ private fun SendingContent(
                         height = Dimension.wrapContent
                     }
         ) {
-            /* TODO [#1667]: Add lottie animation once we have it
-               TODO [#1667]: https://github.com/Electric-Coin-Company/zashi-android/issues/1667
+            // TODO [#1667]: Change lottie animation once we have it
+            // TODO [#1667]: https://github.com/Electric-Coin-Company/zashi-android/issues/1667
             val lottieRes: Int =
                 if (isSystemInDarkTheme()) {
                     co.electriccoin.zcash.ui.design.R.raw.lottie_loading_white
@@ -311,11 +318,6 @@ private fun SendingContent(
                 composition = composition,
                 progress = { progress },
                 maintainOriginalImageBounds = true
-            )
-             */
-            Image(
-                painter = painterResource(id = R.drawable.zashi_logo_sign),
-                contentDescription = null
             )
 
             Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacing2xl))
@@ -338,6 +340,8 @@ private fun SendingContent(
         }
     }
 }
+
+private fun provideRandomResourceFrom(resources: List<Int>) = resources.random()
 
 @Composable
 private fun SuccessContent(
@@ -372,30 +376,17 @@ private fun SuccessContent(
                         height = Dimension.wrapContent
                     }
         ) {
-            /* TODO [#1667]: Add lottie animation once we have it
-               TODO [#1667]: https://github.com/Electric-Coin-Company/zashi-android/issues/1667
-            val lottieRes: Int =
-                if (isSystemInDarkTheme()) {
-                    co.electriccoin.zcash.ui.design.R.raw.lottie_loading_white
-                } else {
-                    co.electriccoin.zcash.ui.design.R.raw.lottie_loading
-                }
-
-            val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(lottieRes))
-            val progress by animateLottieCompositionAsState(
-                iterations = LottieConstants.IterateForever,
-                composition = composition
-            )
-
-            LottieAnimation(
-                modifier = Modifier.size(200.dp),
-                composition = composition,
-                progress = { progress },
-                maintainOriginalImageBounds = true
-            )
-             */
             Image(
-                painter = painterResource(id = R.drawable.zashi_logo_sign),
+                painter =
+                    painterResource(
+                        id =
+                            provideRandomResourceFrom(
+                                listOf(
+                                    R.drawable.ic_fist_punch,
+                                    R.drawable.ic_face_star
+                                )
+                            )
+                    ),
                 contentDescription = null
             )
 
@@ -465,30 +456,18 @@ private fun SendFailure(
                         height = Dimension.wrapContent
                     }
         ) {
-            /* TODO [#1667]: Add lottie animation once we have it
-               TODO [#1667]: https://github.com/Electric-Coin-Company/zashi-android/issues/1667
-            val lottieRes: Int =
-                if (isSystemInDarkTheme()) {
-                    co.electriccoin.zcash.ui.design.R.raw.lottie_loading_white
-                } else {
-                    co.electriccoin.zcash.ui.design.R.raw.lottie_loading
-                }
-
-            val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(lottieRes))
-            val progress by animateLottieCompositionAsState(
-                iterations = LottieConstants.IterateForever,
-                composition = composition
-            )
-
-            LottieAnimation(
-                modifier = Modifier.size(200.dp),
-                composition = composition,
-                progress = { progress },
-                maintainOriginalImageBounds = true
-            )
-             */
             Image(
-                painter = painterResource(id = R.drawable.zashi_logo_sign),
+                painter =
+                    painterResource(
+                        id =
+                            provideRandomResourceFrom(
+                                listOf(
+                                    R.drawable.ic_skull,
+                                    R.drawable.ic_cloud_eyes,
+                                    R.drawable.ic_face_horns
+                                )
+                            )
+                    ),
                 contentDescription = null
             )
 
@@ -555,30 +534,16 @@ private fun SendGrpcFailure(modifier: Modifier = Modifier) {
                         height = Dimension.wrapContent
                     }
         ) {
-            /* TODO [#1667]: Add lottie animation once we have it
-               TODO [#1667]: https://github.com/Electric-Coin-Company/zashi-android/issues/1667
-            val lottieRes: Int =
-                if (isSystemInDarkTheme()) {
-                    co.electriccoin.zcash.ui.design.R.raw.lottie_loading_white
-                } else {
-                    co.electriccoin.zcash.ui.design.R.raw.lottie_loading
-                }
-
-            val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(lottieRes))
-            val progress by animateLottieCompositionAsState(
-                iterations = LottieConstants.IterateForever,
-                composition = composition
-            )
-
-            LottieAnimation(
-                modifier = Modifier.size(200.dp),
-                composition = composition,
-                progress = { progress },
-                maintainOriginalImageBounds = true
-            )
-             */
             Image(
-                painter = painterResource(id = R.drawable.zashi_logo_sign),
+                painter =
+                    painterResource(
+                        provideRandomResourceFrom(
+                            listOf(
+                                R.drawable.ic_frame,
+                                R.drawable.ic_phone
+                            )
+                        )
+                    ),
                 contentDescription = null
             )
 
