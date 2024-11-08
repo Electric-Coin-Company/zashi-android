@@ -1,6 +1,6 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="new_wallet_recovery_header">Tu frase secreta de recuperación</string>
-    <string name="new_wallet_recovery_description">Las siguientes 24 palabras son las claves para tus fondos y son la única forma de recuperar tus fondos si pierdes el acceso o adquieres un nuevo dispositivo. ¡Protege tu ZEC almacenando esta frase en un lugar de confianza y nunca la compartas con nadie!</string>
+    <string name="new_wallet_recovery_description">Las siguientes 24 palabras son la clave para tus fondos y constituyen la única forma de recuperarlos si pierdes el acceso o adquieres un nuevo dispositivo. ¡Protege tu ZEC almacenando esta frase en un lugar de confianza y nunca la compartas con nadie!</string>
     <string name="new_wallet_recovery_birthday_height" formatted="true">Altura de cumpleaños de la billetera: <xliff:g example="419200" id="birthday_height">%1$d</xliff:g></string>
     <string name="new_wallet_recovery_button_finished">Ya la he guardado</string>
     <string name="new_wallet_recovery_copy">Toca para copiar</string>

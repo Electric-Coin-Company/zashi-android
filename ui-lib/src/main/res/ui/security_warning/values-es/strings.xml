@@ -6,5 +6,5 @@
     <string name="security_warning_text_footnote_part_2">\u0020Los informes de fallos podrían revelar la fecha y hora del fallo y los eventos que ocurrieron, pero no revelarían las claves de gasto o de visualización.</string>
 
     <string name="security_warning_confirm">Confirmar</string>
-    <string name="security_warning_acknowledge">Lo reconozco</string>
+    <string name="security_warning_acknowledge">Acepto</string>
 </resources>
