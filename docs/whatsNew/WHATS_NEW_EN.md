@@ -15,6 +15,9 @@ directly impact users rather than highlighting other key architectural updates.*
 - New Sending, Success, Failure, and GrpcFailure subscreens of the Send Confirmation screen have been added
 - New Copy Transaction IDs feature has been added to the MultipleTransactionFailure screen
 
+### Fixed
+- Address book toast now correctly shows on send screen when adding both new and known addresses to text field
+
 ## [1.2.1 (760)] - 2024-10-22
 
 ### Added
