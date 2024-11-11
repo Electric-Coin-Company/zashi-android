@@ -27,7 +27,7 @@ open class AbstractProcessNameContentProvider : ContentProvider() {
         super.attachInfo(context, info)
 
         val processName: String =
-            if (AndroidApiVersion.isAtLeastT) {
+            if (AndroidApiVersion.isAtLeastTiramisu) {
                 getProcessNameTPlus()
             } else if (AndroidApiVersion.isAtLeastP) {
                 getProcessNamePPlus()

@@ -3,6 +3,7 @@ package co.electriccoin.zcash.ui.screen.account.model
 import cash.z.ecc.android.sdk.model.TransactionOverview
 import cash.z.ecc.android.sdk.model.TransactionRecipient
 import cash.z.ecc.android.sdk.type.AddressType
+import co.electriccoin.zcash.ui.common.model.AddressBookContact
 import co.electriccoin.zcash.ui.screen.account.ext.TransactionOverviewExt
 
 data class TransactionUi(
@@ -10,19 +11,22 @@ data class TransactionUi(
     val recipient: TransactionRecipient?,
     val recipientAddressType: AddressType?,
     val expandableState: TrxItemState,
-    val messages: List<String>?
+    val messages: List<String>?,
+    val addressBookContact: AddressBookContact?
 ) {
     companion object {
         fun new(
             data: TransactionOverviewExt,
             expandableState: TrxItemState,
-            messages: List<String>?
+            messages: List<String>?,
+            addressBookContact: AddressBookContact?
         ) = TransactionUi(
             overview = data.overview,
             recipient = data.recipient,
             recipientAddressType = data.recipientAddressType,
             expandableState = expandableState,
-            messages = messages
+            messages = messages,
+            addressBookContact = addressBookContact
         )
     }
 }

@@ -12,7 +12,7 @@ import androidx.test.rule.GrantPermissionRule
 import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.screen.scan.ScanTag
-import co.electriccoin.zcash.ui.screen.scan.model.ScanState
+import co.electriccoin.zcash.ui.screen.scan.model.ScanScreenState
 import co.electriccoin.zcash.ui.test.getStringResource
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -37,7 +37,7 @@ class ScanViewBasicTest : UiTestPrerequisites() {
 
         assertEquals(0, testSetup.getOnBackCount())
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.scan_cancel_button).uppercase()).also {
+        composeTestRule.onNodeWithText(getStringResource(R.string.scan_cancel_button)).also {
             it.performClick()
         }
 
@@ -51,7 +51,7 @@ class ScanViewBasicTest : UiTestPrerequisites() {
 
         // Permission granted ui items (visible):
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.scan_cancel_button).uppercase()).also {
+        composeTestRule.onNodeWithText(getStringResource(R.string.scan_cancel_button)).also {
             it.assertIsDisplayed()
         }
 
@@ -80,7 +80,7 @@ class ScanViewBasicTest : UiTestPrerequisites() {
     fun scan_state() {
         val testSetup = newTestSetup()
 
-        assertEquals(ScanState.Scanning, testSetup.getScanState())
+        assertEquals(ScanScreenState.Scanning, testSetup.getScanState())
     }
 
     private fun newTestSetup() =

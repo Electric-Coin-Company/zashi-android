@@ -79,6 +79,7 @@ class AccountTestSetup(
                 onHideBalancesCount.incrementAndGet()
             },
             isHideBalances = isHideBalances,
+            onContactSupport = {},
             onTransactionItemAction = {
                 onItemClickCount.incrementAndGet()
             },

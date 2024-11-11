@@ -4,11 +4,10 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -25,12 +24,13 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.test.CommonTag
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
+import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.Body
-import co.electriccoin.zcash.ui.design.component.GridBgScaffold
 import co.electriccoin.zcash.ui.design.component.Header
-import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
+import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 
 @Preview
 @Composable
@@ -72,7 +72,7 @@ fun NotEnoughSpaceView(
     topAppBarSubTitleState: TopAppBarSubTitleState,
     snackbarHostState: SnackbarHostState,
 ) {
-    GridBgScaffold(
+    BlankBgScaffold(
         topBar = {
             NotEnoughSpaceTopAppBar(
                 onSettings = onSettings,
@@ -87,12 +87,7 @@ fun NotEnoughSpaceView(
             storageSpaceRequiredGigabytes = storageSpaceRequiredGigabytes,
             modifier =
                 Modifier
-                    .padding(
-                        top = paddingValues.calculateTopPadding(),
-                        bottom = paddingValues.calculateBottomPadding(),
-                        start = ZcashTheme.dimens.screenHorizontalSpacingBig,
-                        end = ZcashTheme.dimens.screenHorizontalSpacingBig
-                    )
+                    .scaffoldPadding(paddingValues)
         )
     }
 }
@@ -115,8 +110,8 @@ private fun NotEnoughSpaceTopAppBar(
                 onClick = onSettings,
                 modifier = Modifier.testTag(CommonTag.SETTINGS_TOP_BAR_BUTTON)
             ) {
-                Icon(
-                    painter = painterResource(id = co.electriccoin.zcash.ui.design.R.drawable.hamburger_menu_icon),
+                Image(
+                    painter = painterResource(id = co.electriccoin.zcash.ui.design.R.drawable.ic_hamburger_menu),
                     contentDescription = stringResource(id = R.string.settings_menu_content_description)
                 )
             }
@@ -183,7 +178,8 @@ private fun NotEnoughSpaceMainContent(
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
-        PrimaryButton(
+        ZashiButton(
+            modifier = Modifier.fillMaxWidth(),
             onClick = onSystemSettings,
             text = stringResource(R.string.not_enough_space_system_settings_btn),
         )

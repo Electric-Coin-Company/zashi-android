@@ -1,16 +1,18 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
     <string name="send_stage_confirmation_title">Confirmation</string>
-    <string name="send_confirmation_amount">Amount:</string>
-    <string name="send_confirmation_address">To:</string>
+    <string name="send_confirmation_amount">Total Amount</string>
+    <string name="send_confirmation_address">Sending to</string>
     <string name="send_confirmation_memo">Message</string>
-    <string name="send_confirmation_fee">Fee:</string>
+    <string name="send_confirmation_fee">Fee</string>
+    <string name="send_confirmation_amount_item">Amount</string>
     <string name="send_confirmation_send_button">Send</string>
-    <string name="send_confirmation_back_button">Go Back</string>
+    <string name="send_confirmation_back_button">Cancel</string>
 
     <string name="send_confirmation_dialog_error_title">Transaction Failed</string>
     <string name="send_confirmation_dialog_error_text">An error occurred and the attempt to send funds failed. Try it again, please.</string>
-    <string name="send_confirmation_dialog_error_btn">OK</string>
+    <string name="send_confirmation_dialog_error_ok_btn">OK</string>
+    <string name="send_confirmation_dialog_error_report_btn">Report</string>
 
     <string name="send_confirmation_dialog_error_grpc_title">Connection Error</string>
     <string name="send_confirmation_dialog_error_grpc_text">Zashi encountered some connection issues when submitting

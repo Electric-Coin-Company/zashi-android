@@ -1,3 +1,5 @@
+@file:Suppress("UnusedPrivateMember")
+
 package co.electriccoin.zcash.ui.util
 
 import android.content.Intent
@@ -24,7 +26,7 @@ object EmailUtil {
         recipientAddress: String,
         messageSubject: String,
         messageBody: String
-    ): Intent = newIntentAsUri(recipientAddress, messageSubject, messageBody)
+    ): Intent = newIntentAsUriAndExtras(recipientAddress, messageSubject, messageBody)
 
     private fun newIntentAsUri(
         recipientAddress: String,
@@ -68,4 +70,46 @@ object EmailUtil {
             putExtra(Intent.EXTRA_TEXT, messageBody)
         }
     }
+
+    // This approach combines both adding data to Uri and Extras to ensure that most of the available e-mail client
+    // apps can understand the output Intent. Tested with Gmail, Proton mail, Yahoo, and Seznam.cz.
+    private fun newIntentAsUriAndExtras(
+        recipientAddress: String,
+        messageSubject: String,
+        messageBody: String
+    ) = Intent(Intent.ACTION_SENDTO).apply {
+        data = Uri.parse(newMailToUriString(recipientAddress, messageSubject, messageBody))
+        putExtra(
+            Intent.EXTRA_EMAIL,
+            arrayOf(
+                recipientAddress
+            )
+        )
+        putExtra(Intent.EXTRA_SUBJECT, messageSubject)
+        putExtra(Intent.EXTRA_TEXT, messageBody)
+    }
+
+    internal fun formatMessage(
+        prefix: String? = null,
+        body: String? = null,
+        supportInfo: String? = null,
+        suffix: String? = null,
+    ): String =
+        buildString {
+            if (!prefix.isNullOrEmpty()) {
+                appendLine(prefix)
+                appendLine()
+            }
+            if (!body.isNullOrEmpty()) {
+                appendLine(body)
+                appendLine()
+            }
+            if (supportInfo != null) {
+                appendLine(supportInfo)
+                appendLine()
+            }
+            if (!suffix.isNullOrEmpty()) {
+                appendLine(suffix)
+            }
+        }
 }

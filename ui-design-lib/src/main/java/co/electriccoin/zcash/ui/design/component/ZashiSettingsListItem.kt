@@ -4,14 +4,19 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -21,104 +26,212 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
+import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.orDark
-
-@Composable
-fun ZashiSettingsListItem(
-    state: ButtonState,
-    @DrawableRes icon: Int,
-    trailing: @Composable () -> Unit = {
-        Image(
-            painter = painterResource(R.drawable.ic_chevron_right orDark R.drawable.ic_chevron_right_dark),
-            contentDescription = state.text.getValue(),
-        )
-    }
-) {
-    ZashiSettingsListItem(
-        text = state.text.getValue(),
-        icon = icon,
-        trailing = trailing,
-        onClick = state.onClick
-    )
-}
+import co.electriccoin.zcash.ui.design.util.stringRes
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun ZashiSettingsListItem(
     text: String,
     @DrawableRes icon: Int,
-    trailing: @Composable () -> Unit = {
-        Image(
-            painter = painterResource(R.drawable.ic_chevron_right orDark R.drawable.ic_chevron_right_dark),
-            contentDescription = text,
-        )
-    },
+    titleIcons: ImmutableList<Int> = persistentListOf(),
+    subtitle: String? = null,
+    isEnabled: Boolean = true,
     onClick: () -> Unit
 ) {
     ZashiSettingsListItem(
-        leading = {
-            Image(
-                modifier = Modifier.size(40.dp),
-                painter = painterResource(icon),
-                contentDescription = text
-            )
-        },
-        content = {
-            Text(
-                text = text,
-                style = ZcashTheme.typography.primary.titleSmall.copy(fontWeight = FontWeight.SemiBold),
-                fontSize = 16.sp
-            )
-        },
-        trailing = trailing,
-        onClick = onClick
+        state =
+            ZashiSettingsListItemState(
+                text = stringRes(text),
+                subtitle = subtitle?.let { stringRes(it) },
+                isEnabled = isEnabled,
+                onClick = onClick,
+                icon = icon,
+                titleIcons = titleIcons
+            ),
     )
 }
 
 @Composable
+fun ZashiSettingsListItem(state: ZashiSettingsListItemState) {
+    ZashiSettingsListItem(
+        leading = { modifier ->
+            ZashiSettingsListLeadingItem(
+                modifier = modifier,
+                icon = state.icon,
+                contentDescription = state.text.getValue()
+            )
+        },
+        content = { modifier ->
+            ZashiSettingsListContentItem(
+                modifier = modifier,
+                text = state.text.getValue(),
+                subtitle = state.subtitle?.getValue(),
+                titleIcons = state.titleIcons
+            )
+        },
+        trailing = { modifier ->
+            ZashiSettingsListTrailingItem(
+                modifier = modifier,
+                isEnabled = state.isEnabled,
+                contentDescription = state.text.getValue()
+            )
+        },
+        onClick = state.onClick.takeIf { state.isEnabled }
+    )
+}
+
+@Composable
+fun ZashiSettingsListLeadingItem(
+    icon: Int,
+    contentDescription: String,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier,
+        contentAlignment = Alignment.Center
+    ) {
+        Image(
+            modifier = Modifier.size(40.dp),
+            painter = painterResource(icon),
+            contentDescription = contentDescription,
+        )
+    }
+}
+
+@Composable
+fun ZashiSettingsListTrailingItem(
+    isEnabled: Boolean,
+    contentDescription: String,
+    modifier: Modifier = Modifier
+) {
+    if (isEnabled) {
+        Box(
+            modifier = modifier,
+            contentAlignment = Alignment.Center
+        ) {
+            Image(
+                painter = painterResource(R.drawable.ic_chevron_right orDark R.drawable.ic_chevron_right_dark),
+                contentDescription = contentDescription,
+            )
+        }
+    }
+}
+
+@Composable
+fun ZashiSettingsListContentItem(
+    text: String,
+    subtitle: String?,
+    titleIcons: ImmutableList<Int>,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier
+    ) {
+        Row {
+            Text(
+                text = text,
+                style = ZashiTypography.textMd,
+                fontWeight = FontWeight.SemiBold,
+                color = ZashiColors.Text.textPrimary
+            )
+            titleIcons.forEach {
+                Spacer(Modifier.width(6.dp))
+                Image(
+                    modifier = Modifier.size(20.dp).clip(CircleShape),
+                    painter = painterResource(it),
+                    contentDescription = null,
+                )
+            }
+        }
+        subtitle?.let {
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(
+                text = it,
+                style = ZashiTypography.textXs,
+                color = ZashiColors.Text.textTertiary
+            )
+        }
+    }
+}
+
+@Composable
 fun ZashiSettingsListItem(
-    leading: @Composable () -> Unit,
-    content: @Composable () -> Unit,
-    trailing: @Composable () -> Unit,
-    onClick: () -> Unit
+    leading: @Composable (Modifier) -> Unit,
+    content: @Composable (Modifier) -> Unit,
+    trailing: @Composable (Modifier) -> Unit,
+    contentPadding: PaddingValues = PaddingValues(vertical = 12.dp),
+    onClick: (() -> Unit)?
 ) {
     Row(
         modifier =
             Modifier
-                .clip(RoundedCornerShape(12.dp))
-                .clickable(
-                    indication = rememberRipple(),
-                    interactionSource = remember { MutableInteractionSource() },
-                    onClick = onClick,
-                    role = Role.Button,
-                )
-                .padding(vertical = 12.dp),
+                .clip(RoundedCornerShape(12.dp)) then
+                if (onClick != null) {
+                    Modifier.clickable(
+                        indication = ripple(),
+                        interactionSource = remember { MutableInteractionSource() },
+                        onClick = onClick,
+                        role = Role.Button,
+                    )
+                } else {
+                    Modifier
+                } then Modifier.padding(contentPadding),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Spacer(modifier = Modifier.width(20.dp))
-        leading()
+        leading(Modifier)
         Spacer(modifier = Modifier.width(16.dp))
-        content()
-        Spacer(modifier = Modifier.weight(1f))
-        trailing()
+        content(Modifier.weight(1f))
+        Spacer(modifier = Modifier.width(16.dp))
+        trailing(Modifier)
         Spacer(modifier = Modifier.width(20.dp))
     }
 }
 
-@Suppress("UnusedPrivateMember")
+data class ZashiSettingsListItemState(
+    val text: StringResource,
+    @DrawableRes val icon: Int,
+    val subtitle: StringResource? = null,
+    val titleIcons: ImmutableList<Int> = persistentListOf(),
+    val isEnabled: Boolean = true,
+    val onClick: () -> Unit = {},
+)
+
 @PreviewScreens
 @Composable
-private fun ZashiSettingsListItemPreview() =
+private fun EnabledPreview() =
     ZcashTheme {
         BlankSurface {
             ZashiSettingsListItem(
                 text = "Test",
+                subtitle = "Subtitle",
                 icon = R.drawable.ic_radio_button_checked,
-                onClick = {}
+                onClick = {},
+                titleIcons = persistentListOf(R.drawable.ic_radio_button_checked)
+            )
+        }
+    }
+
+@PreviewScreens
+@Composable
+private fun DisabledPreview() =
+    ZcashTheme {
+        BlankSurface {
+            ZashiSettingsListItem(
+                text = "Test",
+                subtitle = "Subtitle",
+                icon = R.drawable.ic_radio_button_checked,
+                isEnabled = false,
+                onClick = {},
             )
         }
     }

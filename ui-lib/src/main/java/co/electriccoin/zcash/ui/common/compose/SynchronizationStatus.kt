@@ -32,6 +32,7 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 import co.electriccoin.zcash.ui.screen.balances.model.StatusAction
 import co.electriccoin.zcash.ui.screen.balances.model.WalletDisplayValues
+import co.electriccoin.zcash.ui.screen.balances.model.isReportable
 
 @Preview(device = Devices.PIXEL_4_XL)
 @Composable
@@ -105,7 +106,8 @@ fun SynchronizationStatus(
 @Composable
 fun StatusDialog(
     statusAction: StatusAction.Detailed,
-    onDone: () -> Unit
+    onDone: () -> Unit,
+    onReport: (StatusAction.Error) -> Unit,
 ) {
     AppAlertDialog(
         title = stringResource(id = R.string.balances_status_error_dialog_title),
@@ -119,7 +121,20 @@ fun StatusDialog(
                 )
             }
         },
-        confirmButtonText = stringResource(id = R.string.balances_status_dialog_button),
-        onConfirmButtonClick = onDone
+        confirmButtonText = stringResource(id = R.string.balances_status_dialog_ok_button),
+        onConfirmButtonClick = onDone,
+        // Add the report button only for the StatusAction.Error type and non-null full stacktrace value
+        dismissButtonText =
+            if (statusAction.isReportable()) {
+                stringResource(id = R.string.balances_status_dialog_report_button)
+            } else {
+                null
+            },
+        onDismissButtonClick =
+            if (statusAction.isReportable()) {
+                { onReport(statusAction as StatusAction.Error) }
+            } else {
+                null
+            },
     )
 }

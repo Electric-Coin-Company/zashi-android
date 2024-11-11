@@ -137,4 +137,6 @@ data class TextFieldState(
     val error: StringResource? = null,
     val isEnabled: Boolean = true,
     val onValueChange: (String) -> Unit,
-)
+) {
+    val isError = error != null
+}

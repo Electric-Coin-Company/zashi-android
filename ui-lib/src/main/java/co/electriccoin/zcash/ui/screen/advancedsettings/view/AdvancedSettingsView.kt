@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -23,25 +22,29 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.util.fastForEachIndexed
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.ButtonState
+import co.electriccoin.zcash.ui.design.component.ZashiButton
+import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
+import co.electriccoin.zcash.ui.design.component.ZashiHorizontalDivider
 import co.electriccoin.zcash.ui.design.component.ZashiSettingsListItem
+import co.electriccoin.zcash.ui.design.component.ZashiSettingsListItemState
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
-import co.electriccoin.zcash.ui.design.util.orDark
+import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
+import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.screen.advancedsettings.AdvancedSettingsState
 import co.electriccoin.zcash.ui.screen.advancedsettings.AdvancedSettingsTag
-import co.electriccoin.zcash.ui.screen.exchangerate.ZashiButton
-import co.electriccoin.zcash.ui.screen.exchangerate.ZashiButtonDefaults
+import co.electriccoin.zcash.ui.screen.advancedsettings.model.AdvancedSettingsState
+import kotlinx.collections.immutable.persistentListOf
 
 // TODO [#1271]: Add AdvancedSettingsView Tests
 // TODO [#1271]: https://github.com/Electric-Coin-Company/zashi-android/issues/1271
-@Suppress("LongMethod")
 @Composable
 fun AdvancedSettings(
     state: AdvancedSettingsState,
@@ -62,76 +65,51 @@ fun AdvancedSettings(
                     .verticalScroll(rememberScrollState())
                     .padding(
                         top = paddingValues.calculateTopPadding(),
-                        bottom = paddingValues.calculateBottomPadding(),
+                        bottom = paddingValues.calculateBottomPadding() + ZashiDimensions.Spacing.spacing3xl,
                         start = 4.dp,
                         end = 4.dp
                     ),
         ) {
-            ZashiSettingsListItem(
-                text = stringResource(id = R.string.advanced_settings_recovery),
-                icon = R.drawable.ic_advanced_settings_recovery orDark R.drawable.ic_advanced_settings_recovery_dark,
-                onClick = state.onRecoveryPhraseClick
-            )
-            HorizontalDivider(color = ZcashTheme.zashiColors.divider)
-            ZashiSettingsListItem(
-                text = stringResource(id = R.string.advanced_settings_export),
-                icon = R.drawable.ic_advanced_settings_export orDark R.drawable.ic_advanced_settings_export_dark,
-                onClick = state.onExportPrivateDataClick
-            )
-            HorizontalDivider(color = ZcashTheme.zashiColors.divider)
-            ZashiSettingsListItem(
-                text = stringResource(id = R.string.advanced_settings_choose_server),
-                icon =
-                    R.drawable.ic_advanced_settings_choose_server orDark
-                        R.drawable.ic_advanced_settings_choose_server_dark,
-                onClick = state.onChooseServerClick
-            )
-            HorizontalDivider(color = ZcashTheme.zashiColors.divider)
-            ZashiSettingsListItem(
-                text = stringResource(id = R.string.advanced_settings_currency_conversion),
-                icon =
-                    R.drawable.ic_advanced_settings_currency_conversion orDark
-                        R.drawable.ic_advanced_settings_currency_conversion_dark,
-                onClick = state.onCurrencyConversionClick
-            )
-            if (state.coinbaseButton != null) {
-                HorizontalDivider(color = ZcashTheme.zashiColors.divider)
-                ZashiSettingsListItem(
-                    icon = R.drawable.ic_advanced_settings_coinbase,
-                    state = state.coinbaseButton
-                )
+            state.items.fastForEachIndexed { index, item ->
+                ZashiSettingsListItem(state = item)
+                if (index != state.items.lastIndex) {
+                    ZashiHorizontalDivider()
+                }
             }
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingXl))
             Spacer(modifier = Modifier.weight(1f))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_advanced_settings_info),
-                    contentDescription = "",
-                    colorFilter = ColorFilter.tint(ZcashTheme.zashiColors.textTertiary)
-                )
-                Spacer(modifier = Modifier.width(12.dp))
-                Text(
-                    text = stringResource(id = R.string.advanced_settings_info),
-                    fontSize = 12.sp,
-                    color = ZcashTheme.zashiColors.textTertiary,
-                )
-            }
+            Info()
             Spacer(modifier = Modifier.height(20.dp))
             ZashiButton(
                 modifier =
                     Modifier
                         .padding(horizontal = 20.dp)
                         .fillMaxWidth(),
-                text = stringResource(R.string.advanced_settings_delete_button),
-                colors = ZashiButtonDefaults.destroyButtonColors(),
-                onClick = state.onDeleteZashiClick
+                colors = ZashiButtonDefaults.destructive1Colors(),
+                state = state.deleteButton
             )
-            Spacer(modifier = Modifier.height(20.dp))
         }
+    }
+}
+
+@Composable
+private fun Info() {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.ic_advanced_settings_info),
+            contentDescription = "",
+            colorFilter = ColorFilter.tint(ZashiColors.Text.textTertiary)
+        )
+        Spacer(modifier = Modifier.width(12.dp))
+        Text(
+            text = stringResource(id = R.string.advanced_settings_info),
+            fontSize = 12.sp,
+            color = ZashiColors.Text.textTertiary,
+        )
     }
 }
 
@@ -156,7 +134,6 @@ private fun AdvancedSettingsTopAppBar(
     )
 }
 
-@Suppress("UnusedPrivateMember")
 @PreviewScreens
 @Composable
 private fun AdvancedSettingsPreview() =
@@ -165,14 +142,32 @@ private fun AdvancedSettingsPreview() =
             state =
                 AdvancedSettingsState(
                     onBack = {},
-                    onRecoveryPhraseClick = {},
-                    onExportPrivateDataClick = {},
-                    onChooseServerClick = {},
-                    onCurrencyConversionClick = {},
-                    onDeleteZashiClick = {},
-                    coinbaseButton =
+                    items =
+                        persistentListOf(
+                            ZashiSettingsListItemState(
+                                text = stringRes(R.string.advanced_settings_recovery),
+                                icon = R.drawable.ic_advanced_settings_recovery,
+                                onClick = {}
+                            ),
+                            ZashiSettingsListItemState(
+                                text = stringRes(R.string.advanced_settings_export),
+                                icon = R.drawable.ic_advanced_settings_export,
+                                onClick = {}
+                            ),
+                            ZashiSettingsListItemState(
+                                text = stringRes(R.string.advanced_settings_choose_server),
+                                icon = R.drawable.ic_advanced_settings_choose_server,
+                                onClick = {}
+                            ),
+                            ZashiSettingsListItemState(
+                                text = stringRes(R.string.advanced_settings_currency_conversion),
+                                icon = R.drawable.ic_advanced_settings_currency_conversion,
+                                onClick = {}
+                            )
+                        ),
+                    deleteButton =
                         ButtonState(
-                            text = stringRes("Coinbase"),
+                            text = stringRes(R.string.advanced_settings_delete_button),
                             onClick = {}
                         )
                 ),

@@ -15,7 +15,7 @@ import co.electriccoin.zcash.ui.integration.test.common.getStringResource
 import co.electriccoin.zcash.ui.integration.test.common.getStringResourceWithArgs
 import co.electriccoin.zcash.ui.integration.test.common.waitForDeviceIdle
 import co.electriccoin.zcash.ui.screen.scan.ScanTag
-import co.electriccoin.zcash.ui.screen.scan.model.ScanState
+import co.electriccoin.zcash.ui.screen.scan.model.ScanScreenState
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
@@ -62,7 +62,7 @@ class ScanViewTest : UiTestPrerequisites() {
     @Test
     @LargeTest
     fun grant_camera_permission() {
-        assertEquals(ScanState.Permission, testSetup.getScanState())
+        assertEquals(ScanScreenState.Permission, testSetup.getScanState())
 
         composeTestRule.onNodeWithTag(ScanTag.CAMERA_VIEW).also {
             it.assertDoesNotExist()
@@ -70,7 +70,7 @@ class ScanViewTest : UiTestPrerequisites() {
 
         testSetup.grantPermission()
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.scan_cancel_button).uppercase()).also {
+        composeTestRule.onNodeWithText(getStringResource(R.string.scan_cancel_button)).also {
             it.assertIsDisplayed()
         }
 
@@ -78,7 +78,7 @@ class ScanViewTest : UiTestPrerequisites() {
             it.assertIsDisplayed()
         }
 
-        assertEquals(ScanState.Scanning, testSetup.getScanState())
+        assertEquals(ScanScreenState.Scanning, testSetup.getScanState())
 
         // we need to actively wait for the camera preview initialization
         waitForDeviceIdle(timeout = 5000.milliseconds)
@@ -91,11 +91,11 @@ class ScanViewTest : UiTestPrerequisites() {
     @Test
     @LargeTest
     fun deny_camera_permission() {
-        assertEquals(ScanState.Permission, testSetup.getScanState())
+        assertEquals(ScanScreenState.Permission, testSetup.getScanState())
 
         testSetup.denyPermission()
 
-        assertEquals(ScanState.Permission, testSetup.getScanState())
+        assertEquals(ScanScreenState.Permission, testSetup.getScanState())
 
         composeTestRule.onNodeWithTag(ScanTag.CAMERA_VIEW).also {
             it.assertDoesNotExist()

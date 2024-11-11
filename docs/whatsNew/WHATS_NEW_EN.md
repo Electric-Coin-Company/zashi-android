@@ -10,17 +10,66 @@ directly impact users rather than highlighting other key architectural updates.*
 ## [Unreleased]
 
 ### Added
-- Transaction resubmission feature has been added. It periodically searches for unmined sent transactions that
-  are still within their expiry window and resubmits them if there are any.
-- The Choose server screen now provides a new search for the three fastest servers feature
-- Android 15 (Android SDK API level 35) support for 16 KB memory page size has been added
-- Coinbase Onramp integration button has been added to the Advanced Settings screen
 - Shielded transactions are properly indicated in transaction history
+- The device authentication feature on the Zashi app launch has been added
+- Zashi app now supports Spanish language
+- The Flexa SDK has been adopted to enable payments using the embedded Flexa UI
+
+### Fixed
+- Address book toast now correctly shows on send screen when adding both new and known addresses to text field
+- The application now correctly navigates to the homepage after deleting the current wallet and creating a new or
+  recovering an older one
+
+## [1.2.1 (760)] - 2024-10-22
+
+### Added
+- Tired of copy pasting addresses? We’ve added an Address Book feature!
+- Introducing the “Request ZEC” feature: easily create a payment request and share it as a QR code!
 
 ### Changed
-- Choose server screen has been redesigned
-- Settings and Advanced Settings screens have been redesigned
-- Android `compileSdkVersion` and `targetSdkVersion` have been updated to version 35
+- The Receive tab got some love—we redesigned it based on your feedback.
+- We tweaked the Send form.
+- We updated the transaction history to simplify your experience.
+- And that’s not all—the Scan UI has been redesigned, too.
+- We also made many other minor UI/UX tweaks and fixes along the way. Enjoy!
+
+## [1.2 (739)] - 2024-09-27
+
+### Changed
+- Adopted snapshot Zcash SDK version 2.2.5 which includes a fix for block synchronization issues caused by incorrect check of the block height component.
+
+## [1.2 (735)] - 2024-09-20
+
+### Added:
+- All Zashi's error dialogs now have a Report button that prefills the error stack trace in a selected email client.
+
+### Changed:
+- The Message input field on the Send screen has been updated to provide a Return key on the software keyboard, and make auto-capitalization at the beginning of every sentence or a new line.
+
+### Fixed:
+- We fixed the Send Feedback feature and made it compatible with more e-mail clients.
+
+## [1.2 (731)] - 2024-09-16
+
+### Added
+- We added an experimental feature which allows you to buy ZEC with Coinbase Onramp integration - find it in the Advanced Settings.
+- No need to keep guessing which server performs best. We added a dynamic server switch, which identifies the best performing servers for you.
+- We improved UX for unsent transactions. The SDK now checks whether there are any unsent transactions, and it attempts to resubmit such transactions.
+- We also added support for Android 15.
+
+### Changed
+- We updated our Settings UI.
+
+## [1.2 (729)] - 2024-09-13
+
+### Added
+- We added an experimental feature which allows you to buy ZEC with Coinbase Onramp integration - find it in the Advanced Settings.
+- No need to keep guessing which server performs best. We added a dynamic server switch, which identifies the best performing servers for you.
+- We improved UX for unsent transactions. The SDK now checks whether there are any unsent transactions, and it attempts to resubmit such transactions.
+- We also added support for Android 15.
+
+### Changed
+- We updated our Settings UI. 
 
 ## [1.1.7 (718)] - 2024-09-06
 

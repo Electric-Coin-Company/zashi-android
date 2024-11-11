@@ -15,11 +15,11 @@
     <string name="account_history_item_sent_prefix">-</string>
     <string name="account_history_item_received_prefix">+</string>
     <string name="account_history_item_tap_to_copy">Tap to copy</string>
-n     <plurals name="account_history_item_message">
+    <string name="account_history_item_save_address">Save address</string>
+    <plurals name="account_history_item_message">
         <item quantity="one">Message</item>
         <item quantity="other">Messages</item>
     </plurals>
-    <string name="account_history_item_no_message">No message included in transaction</string>
     <string name="account_history_item_collapse_transaction">Collapse transaction</string>
     <string name="account_history_item_transaction_id">Transaction ID</string>
     <string name="account_history_item_transaction_fee">Transaction Fee</string>

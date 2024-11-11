@@ -42,8 +42,11 @@ import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.LottieProgress
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
+import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.getValue
+import co.electriccoin.zcash.ui.design.util.orDark
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.fixture.ObserveFiatCurrencyResultFixture
 import kotlinx.datetime.Clock
@@ -57,8 +60,8 @@ fun StyledExchangeBalance(
     isHideBalances: Boolean = false,
     hiddenBalancePlaceholder: StringResource =
         stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
-    textColor: Color = ZcashTheme.zashiColors.exchangeRateColors.btnSecondaryFg,
-    style: TextStyle = ZcashTheme.typography.primary.titleSmall.copy(fontWeight = FontWeight.SemiBold)
+    textColor: Color = ZashiColors.Text.textPrimary,
+    style: TextStyle = ZashiTypography.textSm.copy(fontWeight = FontWeight.SemiBold)
 ) {
     when (state) {
         is ExchangeRateState.Data ->
@@ -136,7 +139,7 @@ private fun ExchangeAvailableRateLabelInternal(
                         if (state.isRefreshEnabled) {
                             textColor
                         } else {
-                            ZcashTheme.zashiColors.exchangeRateColors.btnSpinnerDisabled
+                            ZashiColors.Text.textDisabled
                         }
                     )
             )
@@ -248,9 +251,9 @@ private fun ExchangeRateButton(
             ButtonDefaults.elevatedButtonColors(
                 containerColor =
                     if (isEnabled && enableBorder) {
-                        ZcashTheme.zashiColors.exchangeRateColors.btnSecondaryBg
+                        ZashiColors.Surfaces.bgPrimary orDark ZashiColors.Surfaces.bgTertiary
                     } else {
-                        Color.Unspecified
+                        Color.Transparent
                     },
                 disabledContainerColor = Color.Transparent,
                 disabledContentColor = textColor,
@@ -258,7 +261,7 @@ private fun ExchangeRateButton(
             ),
         border =
             if (isEnabled && enableBorder) {
-                BorderStroke(1.dp, ZcashTheme.zashiColors.exchangeRateColors.btnSecondaryBorder)
+                BorderStroke(1.dp, ZashiColors.Surfaces.strokePrimary)
             } else {
                 BorderStroke(1.dp, Color.Transparent)
             },

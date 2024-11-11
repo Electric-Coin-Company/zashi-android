@@ -3,7 +3,6 @@ package co.electriccoin.zcash.ui.util
 import android.content.Context
 import android.content.Intent
 import androidx.core.content.FileProvider
-import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.VersionInfo
 import java.io.File
 
@@ -28,10 +27,13 @@ object FileShareUtil {
      *
      * @return Intent for launching an app for sharing
      */
+    @Suppress("LongParameterList")
     internal fun newShareContentIntent(
         context: Context,
         dataFilePath: String,
         fileType: String,
+        shareText: String? = null,
+        sharePickerText: String,
         versionInfo: VersionInfo,
     ): Intent {
         val fileUri =
@@ -45,13 +47,16 @@ object FileShareUtil {
             Intent().apply {
                 action = Intent.ACTION_SEND
                 putExtra(Intent.EXTRA_STREAM, fileUri)
+                if (shareText != null) {
+                    putExtra(Intent.EXTRA_TEXT, shareText)
+                }
                 type = fileType
             }
 
         val shareDataIntent =
             Intent.createChooser(
                 dataIntent,
-                context.getString(R.string.export_data_export_data_chooser_title)
+                sharePickerText
             ).apply {
                 addFlags(
                     SHARE_CONTENT_PERMISSION_FLAGS or

@@ -24,7 +24,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -41,6 +40,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -50,7 +50,6 @@ import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.R.drawable
 import co.electriccoin.zcash.ui.design.component.AlertDialogState
 import co.electriccoin.zcash.ui.design.component.AppAlertDialog
-import co.electriccoin.zcash.ui.design.component.Badge
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
@@ -61,14 +60,20 @@ import co.electriccoin.zcash.ui.design.component.RadioButtonState
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.component.TopAppBarBackNavigation
+import co.electriccoin.zcash.ui.design.component.ZashiBadge
+import co.electriccoin.zcash.ui.design.component.ZashiBottomBar
+import co.electriccoin.zcash.ui.design.component.ZashiButton
+import co.electriccoin.zcash.ui.design.component.ZashiHorizontalDivider
+import co.electriccoin.zcash.ui.design.component.ZashiTextField
+import co.electriccoin.zcash.ui.design.component.ZashiTextFieldDefaults
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
+import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.getValue
+import co.electriccoin.zcash.ui.design.util.orDark
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.screen.exchangerate.BottomBar
-import co.electriccoin.zcash.ui.screen.exchangerate.ZashiButton
-import co.electriccoin.zcash.ui.screen.exchangerate.ZashiTextField
 
 @Composable
 fun ChooseServerView(
@@ -138,14 +143,15 @@ private fun ServerLoading() {
         Spacer(modifier = Modifier.height(20.dp))
         Text(
             text = stringResource(id = R.string.choose_server_loading_title),
-            style = ZcashTheme.typography.primary.headlineLarge,
-            fontSize = 20.sp
+            style = ZashiTypography.textXl,
+            color = ZashiColors.Text.textPrimary,
+            fontWeight = FontWeight.SemiBold,
         )
         Spacer(modifier = Modifier.height(12.dp))
         Text(
             text = stringResource(id = R.string.choose_server_loading_subtitle),
             fontSize = 14.sp,
-            color = ZcashTheme.zashiColors.textTertiary
+            color = ZashiColors.Text.textTertiary
         )
         Spacer(modifier = Modifier.height(24.dp))
     }
@@ -186,7 +192,7 @@ private fun ErrorDialog(dialogState: ServerDialogState) {
 
 @Composable
 fun ChooseServerBottomBar(saveButtonState: ButtonState) {
-    BottomBar {
+    ZashiBottomBar {
         ZashiButton(
             state = saveButtonState,
             modifier =
@@ -244,7 +250,7 @@ private fun LazyListScope.serverListItems(state: ServerListState) {
                             .padding(start = 4.dp, end = 4.dp)
                             .then(
                                 if (item.radioButtonState.isChecked) {
-                                    Modifier.background(ZcashTheme.zashiColors.bgSecondary, RoundedCornerShape(12.dp))
+                                    Modifier.background(ZashiColors.Surfaces.bgSecondary, RoundedCornerShape(12.dp))
                                 } else {
                                     Modifier
                                 }
@@ -261,7 +267,7 @@ private fun LazyListScope.serverListItems(state: ServerListState) {
                             .padding(horizontal = 4.dp)
                             .then(
                                 if (item.radioButtonState.isChecked && item.badge == null) {
-                                    Modifier.background(ZcashTheme.zashiColors.bgSecondary, RoundedCornerShape(12.dp))
+                                    Modifier.background(ZashiColors.Surfaces.bgSecondary, RoundedCornerShape(12.dp))
                                 } else {
                                     Modifier
                                 }
@@ -286,7 +292,7 @@ private fun LazyListScope.serverListItems(state: ServerListState) {
                     },
                     trailingContent = {
                         if (item.badge != null) {
-                            Badge(text = item.badge)
+                            ZashiBadge(text = item.badge)
                         }
                     }
                 )
@@ -294,9 +300,7 @@ private fun LazyListScope.serverListItems(state: ServerListState) {
 
         if (index != state.servers.lastIndex) {
             Spacer(modifier = Modifier.height(4.dp))
-            HorizontalDivider(
-                color = ZcashTheme.zashiColors.divider,
-            )
+            ZashiHorizontalDivider()
             Spacer(modifier = Modifier.height(4.dp))
         }
     }
@@ -315,8 +319,9 @@ private fun FastestServersHeader(state: ServerListState.Fastest) {
             TextButton(onClick = state.retryButton.onClick) {
                 Text(
                     text = state.retryButton.text.getValue(),
-                    style = ZcashTheme.typography.primary.headlineLarge,
-                    fontSize = 14.sp
+                    style = ZashiTypography.textSm,
+                    fontWeight = FontWeight.SemiBold,
+                    color = ZashiColors.Text.textPrimary
                 )
                 Spacer(modifier = Modifier.width(6.dp))
 
@@ -326,7 +331,7 @@ private fun FastestServersHeader(state: ServerListState.Fastest) {
                     Image(
                         painter = painterResource(id = R.drawable.ic_retry),
                         contentDescription = state.retryButton.text.getValue(),
-                        colorFilter = ColorFilter.tint(ZcashTheme.zashiColors.textPrimary)
+                        colorFilter = ColorFilter.tint(ZashiColors.Text.textPrimary)
                     )
                 }
             }
@@ -350,8 +355,9 @@ private fun OtherServersHeader(state: ServerListState.Other) {
 private fun ServerHeader(text: StringResource) {
     Text(
         text = text.getValue(),
-        style = ZcashTheme.typography.primary.headlineLarge,
-        fontSize = 18.sp
+        style = ZashiTypography.textLg,
+        fontWeight = FontWeight.SemiBold,
+        color = ZashiColors.Text.textPrimary
     )
 }
 
@@ -385,7 +391,7 @@ private fun CustomServerRadioButton(
             },
             trailingContent = {
                 if (state.badge != null) {
-                    Badge(
+                    ZashiBadge(
                         text = state.badge,
                     )
                     Spacer(
@@ -404,7 +410,7 @@ private fun CustomServerRadioButton(
                             .rotate(iconAngle.value),
                     painter = painterResource(id = R.drawable.ic_expand),
                     contentDescription = state.radioButtonState.text.getValue(),
-                    colorFilter = ColorFilter.tint(ZcashTheme.zashiColors.textPrimary)
+                    colorFilter = ColorFilter.tint(ZashiColors.Text.textPrimary)
                 )
             }
         )
@@ -426,6 +432,18 @@ private fun CustomServerRadioButton(
                             start = 52.dp,
                             end = 20.dp,
                             bottom = 16.dp
+                        ),
+                colors =
+                    ZashiTextFieldDefaults.defaultColors(
+                        containerColor = ZashiColors.Surfaces.bgPrimary,
+                        textColor = ZashiColors.Text.textPrimary,
+                        borderColor = ZashiColors.Inputs.Default.stroke,
+                    ) orDark
+                        ZashiTextFieldDefaults.defaultColors(
+                            containerColor = ZashiColors.Surfaces.bgSecondary,
+                            hintColor = ZashiColors.Utility.Gray.utilityGray400,
+                            textColor = ZashiColors.Text.textPrimary,
+                            borderColor = ZashiColors.Utility.Gray.utilityGray600
                         )
             )
         }

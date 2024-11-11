@@ -7,6 +7,7 @@ import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -14,7 +15,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -43,6 +43,7 @@ import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.TopAppBarHideBalancesNavigation
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
 import co.electriccoin.zcash.ui.fixture.BalanceStateFixture
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 import co.electriccoin.zcash.ui.screen.account.AccountTag
@@ -68,6 +69,7 @@ private fun HistoryLoadingComposablePreview() {
             hideStatusDialog = {},
             onHideBalances = {},
             onStatusClick = {},
+            onContactSupport = {},
             onTransactionItemAction = {},
             showStatusDialog = null,
             snackbarHostState = SnackbarHostState(),
@@ -90,6 +92,7 @@ private fun HistoryListComposablePreview() {
                 BalanceState.Available(
                     totalBalance = Zatoshi(value = 123_000_000L),
                     spendableBalance = Zatoshi(value = 123_000_000L),
+                    totalShieldedBalance = Zatoshi(value = 123_000_000L),
                     exchangeRate =
                         ExchangeRateState.Data(
                             isLoading = false,
@@ -107,6 +110,7 @@ private fun HistoryListComposablePreview() {
             hideStatusDialog = {},
             onHideBalances = {},
             onStatusClick = {},
+            onContactSupport = {},
             onTransactionItemAction = {},
             showStatusDialog = null,
             snackbarHostState = SnackbarHostState(),
@@ -128,6 +132,7 @@ internal fun Account(
     hideStatusDialog: () -> Unit,
     onHideBalances: () -> Unit,
     onStatusClick: (StatusAction) -> Unit,
+    onContactSupport: (StatusAction.Error) -> Unit,
     onTransactionItemAction: (TrxItemAction) -> Unit,
     showStatusDialog: StatusAction.Detailed?,
     snackbarHostState: SnackbarHostState,
@@ -160,7 +165,7 @@ internal fun Account(
             walletSnapshot = walletSnapshot,
             modifier =
                 Modifier.padding(
-                    top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
+                    top = paddingValues.calculateTopPadding() + ZashiDimensions.Spacing.spacingLg,
                     // We intentionally do not set the bottom and horizontal paddings here. Those are set by the
                     // underlying transaction history composable
                 ),
@@ -171,7 +176,11 @@ internal fun Account(
         if (showStatusDialog != null) {
             StatusDialog(
                 statusAction = showStatusDialog,
-                onDone = hideStatusDialog
+                onDone = hideStatusDialog,
+                onReport = { status ->
+                    hideStatusDialog()
+                    onContactSupport(status)
+                }
             )
         }
     }
@@ -197,8 +206,8 @@ private fun AccountTopAppBar(
                 onClick = onSettings,
                 modifier = Modifier.testTag(CommonTag.SETTINGS_TOP_BAR_BUTTON)
             ) {
-                Icon(
-                    painter = painterResource(id = co.electriccoin.zcash.ui.design.R.drawable.hamburger_menu_icon),
+                Image(
+                    painter = painterResource(id = co.electriccoin.zcash.ui.design.R.drawable.ic_hamburger_menu),
                     contentDescription = stringResource(id = R.string.settings_menu_content_description)
                 )
             }
@@ -246,7 +255,7 @@ private fun AccountMainContent(
                 animateDpAsState(
                     targetValue =
                         if (balanceState.exchangeRate is ExchangeRateState.OptIn) {
-                            76.dp
+                            96.dp
                         } else {
                             0.dp
                         },
@@ -290,7 +299,7 @@ private fun AccountMainContent(
             exit = fadeOut() + slideOutVertically(),
         ) {
             Column {
-                Spacer(modifier = Modifier.height(80.dp + paddingValues.calculateTopPadding()))
+                Spacer(modifier = Modifier.height(100.dp + paddingValues.calculateTopPadding()))
                 StyledExchangeOptIn(
                     modifier = Modifier.padding(horizontal = 24.dp),
                     state =

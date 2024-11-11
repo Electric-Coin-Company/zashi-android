@@ -3,10 +3,10 @@
 package co.electriccoin.zcash.ui.screen.account.view
 
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -21,9 +21,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,8 +35,11 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -45,23 +49,29 @@ import cash.z.ecc.android.sdk.model.TransactionOverview
 import cash.z.ecc.android.sdk.model.TransactionRecipient
 import cash.z.ecc.android.sdk.model.TransactionState
 import cash.z.ecc.android.sdk.model.Zatoshi
-import cash.z.ecc.android.sdk.type.AddressType
 import cash.z.ecc.sdk.extension.DEFAULT_FEE
 import cash.z.ecc.sdk.extension.toZecStringAbbreviated
 import cash.z.ecc.sdk.extension.toZecStringFull
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.SynchronizationStatus
 import co.electriccoin.zcash.ui.common.extension.asZecAmountTriple
+import co.electriccoin.zcash.ui.common.model.AddressBookContact
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.design.component.BlankSurface
-import co.electriccoin.zcash.ui.design.component.BubbleArrowAlignment
-import co.electriccoin.zcash.ui.design.component.BubbleMessage
 import co.electriccoin.zcash.ui.design.component.CircularMidProgressIndicator
 import co.electriccoin.zcash.ui.design.component.StyledBalance
 import co.electriccoin.zcash.ui.design.component.StyledBalanceDefaults
+import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.component.TextWithIcon
+import co.electriccoin.zcash.ui.design.component.ZashiTextField
+import co.electriccoin.zcash.ui.design.component.ZashiTextFieldDefaults
+import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
+import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
+import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 import co.electriccoin.zcash.ui.screen.account.HistoryTag
 import co.electriccoin.zcash.ui.screen.account.fixture.TransactionUiFixture
@@ -236,7 +246,7 @@ private fun HistoryList(
             HorizontalDivider(
                 color = ZcashTheme.colors.primaryDividerColor,
                 thickness = DividerDefaults.Thickness,
-                modifier = Modifier.padding(horizontal = ZcashTheme.dimens.spacingDefault)
+                modifier = Modifier.padding(horizontal = ZashiDimensions.Spacing.spacing3xl)
             )
         }
     }
@@ -257,7 +267,7 @@ private fun ComposableHistoryListItemPreview() {
 }
 
 @Composable
-@Preview("History List Item Expanded")
+@PreviewScreens
 private fun ComposableHistoryListItemExpandedPreview() {
     ZcashTheme(forceDarkMode = false) {
         BlankSurface {
@@ -321,43 +331,49 @@ private fun HistoryItem(
         TransactionExtendedState.SENT -> {
             typeText = stringResource(id = R.string.account_history_item_sent)
             typeIcon = ImageVector.vectorResource(R.drawable.ic_trx_send_icon)
-            textColor = MaterialTheme.colorScheme.onBackground
-            textStyle = ZcashTheme.extendedTypography.transactionItemStyles.titleRegular
+            textColor = ZashiColors.Text.textPrimary
+            textStyle = ZashiTypography.textSm
         }
 
         TransactionExtendedState.SENDING -> {
             typeText = stringResource(id = R.string.account_history_item_sending)
             typeIcon = ImageVector.vectorResource(R.drawable.ic_trx_send_icon)
-            textColor = ZcashTheme.colors.textDescription
-            textStyle = ZcashTheme.extendedTypography.transactionItemStyles.titleRunning
+            textColor = ZashiColors.Text.textPrimary
+            textStyle = ZashiTypography.textSm
         }
 
         TransactionExtendedState.SEND_FAILED -> {
             typeText = stringResource(id = R.string.account_history_item_send_failed)
             typeIcon = ImageVector.vectorResource(R.drawable.ic_trx_send_icon)
-            textColor = ZcashTheme.colors.historyRedColor
-            textStyle = ZcashTheme.extendedTypography.transactionItemStyles.titleFailed
+            textColor = ZashiColors.Text.textError
+            textStyle =
+                ZashiTypography.textSm.copy(
+                    textDecoration = TextDecoration.LineThrough
+                )
         }
 
         TransactionExtendedState.RECEIVED -> {
             typeText = stringResource(id = R.string.account_history_item_received)
             typeIcon = ImageVector.vectorResource(R.drawable.ic_trx_receive_icon)
-            textColor = MaterialTheme.colorScheme.onBackground
-            textStyle = ZcashTheme.extendedTypography.transactionItemStyles.titleRegular
+            textColor = ZashiColors.Text.textPrimary
+            textStyle = ZashiTypography.textSm
         }
 
         TransactionExtendedState.RECEIVING -> {
             typeText = stringResource(id = R.string.account_history_item_receiving)
             typeIcon = ImageVector.vectorResource(R.drawable.ic_trx_receive_icon)
-            textColor = ZcashTheme.colors.textDescription
-            textStyle = ZcashTheme.extendedTypography.transactionItemStyles.titleRunning
+            textColor = ZashiColors.Text.textPrimary
+            textStyle = ZashiTypography.textSm
         }
 
         TransactionExtendedState.RECEIVE_FAILED -> {
             typeText = stringResource(id = R.string.account_history_item_receive_failed)
             typeIcon = ImageVector.vectorResource(R.drawable.ic_trx_receive_icon)
-            textColor = ZcashTheme.colors.historyRedColor
-            textStyle = ZcashTheme.extendedTypography.transactionItemStyles.titleFailed
+            textColor = ZashiColors.Text.textError
+            textStyle =
+                ZashiTypography.textSm.copy(
+                    textDecoration = TextDecoration.LineThrough
+                )
         }
 
         TransactionExtendedState.SHIELDED -> {
@@ -395,15 +411,22 @@ private fun HistoryItem(
                                     TrxItemState.EXPANDED
                                 )
                             )
+                        } else {
+                            onAction(
+                                TrxItemAction.ExpandableStateChange(
+                                    transaction.overview.rawId,
+                                    TrxItemState.COLLAPSED
+                                )
+                            )
                         }
                     }
-                    .padding(all = ZcashTheme.dimens.spacingLarge)
+                    .padding(24.dp)
                     .animateContentSize()
             )
     ) {
         Image(
             imageVector = typeIcon,
-            colorFilter = ColorFilter.tint(color = ZcashTheme.colors.secondaryColor),
+            colorFilter = ColorFilter.tint(ZashiColors.Text.textPrimary),
             contentDescription = typeText,
             modifier = Modifier.padding(top = ZcashTheme.dimens.spacingTiny)
         )
@@ -420,12 +443,10 @@ private fun HistoryItem(
                 onAction = onAction
             )
 
-            Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingXtiny))
+            Spacer(modifier = Modifier.height(2.dp))
 
             // To add an extra spacing at the end
-            Column(
-                modifier = Modifier.padding(end = ZcashTheme.dimens.spacingUpLarge)
-            ) {
+            Column {
                 val isInExpectedState =
                     transaction.expandableState == TrxItemState.EXPANDED_ADDRESS ||
                         transaction.expandableState == TrxItemState.EXPANDED_ALL
@@ -434,15 +455,15 @@ private fun HistoryItem(
                     transaction.recipient != null &&
                     transaction.recipient is TransactionRecipient.Address
                 ) {
-                    HistoryItemExpandedAddressPart(onAction, transaction.recipient)
+                    HistoryItemExpandedAddressPart(onAction, transaction.recipient, transaction.addressBookContact)
 
-                    Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
+                    Spacer(modifier = Modifier.height(16.dp))
                 }
 
                 HistoryItemDatePart(transaction)
 
                 if (transaction.expandableState.isInAnyExtendedState()) {
-                    Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
+                    Spacer(modifier = Modifier.height(32.dp))
 
                     HistoryItemExpandedPart(onAction, transaction)
                 }
@@ -452,7 +473,7 @@ private fun HistoryItem(
 }
 
 @Composable
-@Suppress("LongParameterList")
+@Suppress("LongParameterList", "LongMethod")
 private fun HistoryItemCollapsedMainPart(
     transaction: TransactionUi,
     typeText: String,
@@ -475,6 +496,7 @@ private fun HistoryItemCollapsedMainPart(
             text = typeText,
             style = textStyle,
             color = textColor,
+            fontWeight = FontWeight.Bold,
             modifier = Modifier.testTag(HistoryTag.TRANSACTION_ITEM_TITLE)
         )
 
@@ -489,15 +511,18 @@ private fun HistoryItemCollapsedMainPart(
         val valueTextStyle: TextStyle
         val valueTextColor: Color
         if (transaction.overview.getExtendedState().isFailed()) {
-            valueTextStyle = ZcashTheme.extendedTypography.transactionItemStyles.contentLineThrough
-            valueTextColor = ZcashTheme.colors.historyRedColor
+            valueTextStyle =
+                ZashiTypography.textSm.copy(
+                    textDecoration = TextDecoration.LineThrough
+                )
+            valueTextColor = ZashiColors.Text.textError
         } else {
-            valueTextStyle = ZcashTheme.extendedTypography.transactionItemStyles.valueFirstPart
+            valueTextStyle = ZashiTypography.textSm
             valueTextColor =
                 if (transaction.overview.isSentTransaction) {
-                    ZcashTheme.colors.historyRedColor
+                    ZashiColors.Text.textError
                 } else {
-                    ZcashTheme.colors.textPrimary
+                    ZashiColors.Text.textPrimary
                 }
         }
 
@@ -521,7 +546,7 @@ private fun HistoryItemCollapsedMainPart(
             textStyle =
                 StyledBalanceDefaults.textStyles(
                     mostSignificantPart = valueTextStyle,
-                    leastSignificantPart = ZcashTheme.extendedTypography.transactionItemStyles.valueSecondPart
+                    leastSignificantPart = ZashiTypography.textXxs
                 ),
             textColor = valueTextColor,
         )
@@ -566,8 +591,8 @@ private fun HistoryItemCollapsedAddressPart(
 
                 Text(
                     text = transaction.recipient.addressValue,
-                    style = ZcashTheme.extendedTypography.transactionItemStyles.addressCollapsed,
-                    color = ZcashTheme.colors.textDescription,
+                    style = ZashiTypography.textSm,
+                    color = ZashiColors.Text.textTertiary,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier =
@@ -591,6 +616,7 @@ const val EXPANDED_ADDRESS_WIDTH_RATIO = 0.75f
 private fun HistoryItemExpandedAddressPart(
     onAction: (TrxItemAction) -> Unit,
     recipient: TransactionRecipient.Address,
+    contact: AddressBookContact?,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -601,27 +627,54 @@ private fun HistoryItemExpandedAddressPart(
     ) {
         Text(
             text = recipient.addressValue,
-            style = ZcashTheme.extendedTypography.transactionItemStyles.content,
-            color = ZcashTheme.colors.textPrimary,
+            style = ZashiTypography.textSm,
+            color = ZashiColors.Text.textTertiary,
             modifier =
                 Modifier
                     .fillMaxWidth(EXPANDED_ADDRESS_WIDTH_RATIO)
         )
 
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingTiny))
+        Spacer(modifier = Modifier.height(16.dp))
 
-        TextWithIcon(
-            text = stringResource(id = R.string.account_history_item_tap_to_copy),
-            style = ZcashTheme.extendedTypography.transactionItemStyles.content,
-            color = ZcashTheme.colors.textDescription,
-            iconVector = ImageVector.vectorResource(R.drawable.ic_trx_copy),
-            iconTintColor = ZcashTheme.colors.secondaryColor,
-            modifier =
-                Modifier
-                    .clip(RoundedCornerShape(ZcashTheme.dimens.regularRippleEffectCorner))
-                    .clickable { onAction(TrxItemAction.AddressClick(recipient)) }
-                    .padding(all = ZcashTheme.dimens.spacingTiny)
-        )
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            TextWithIcon(
+                text = stringResource(id = R.string.account_history_item_tap_to_copy),
+                style = ZashiTypography.textSm,
+                color = ZashiColors.Btns.Tertiary.btnTertiaryFg,
+                fontWeight = FontWeight.SemiBold,
+                iconVector = ImageVector.vectorResource(R.drawable.ic_trx_copy),
+                iconTintColor = ZashiColors.Text.textTertiary,
+                modifier =
+                    (if (contact == null) Modifier.weight(1f) else Modifier) then
+                        Modifier
+                            .clickable(
+                                role = Role.Button,
+                                indication = ripple(radius = 2.dp, color = ZashiColors.Text.textTertiary),
+                                interactionSource = remember { MutableInteractionSource() }
+                            ) { onAction(TrxItemAction.AddressClick(recipient)) }
+            )
+
+            Spacer(modifier = Modifier.width(ZashiDimensions.Spacing.spacingSm))
+
+            if (contact == null) {
+                TextWithIcon(
+                    text = stringResource(id = R.string.account_history_item_save_address),
+                    style = ZashiTypography.textSm,
+                    color = ZashiColors.Btns.Tertiary.btnTertiaryFg,
+                    fontWeight = FontWeight.SemiBold,
+                    iconVector = ImageVector.vectorResource(R.drawable.ic_trx_save),
+                    iconTintColor = ZashiColors.Text.textTertiary,
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .clickable(
+                                role = Role.Button,
+                                indication = ripple(radius = 2.dp, color = ZashiColors.Text.textTertiary),
+                                interactionSource = remember { MutableInteractionSource() }
+                            ) { onAction(TrxItemAction.AddToAddressBookClick(recipient)) }
+                )
+            }
+        }
     }
 }
 
@@ -640,8 +693,8 @@ private fun HistoryItemDatePart(
     if (formattedDate != null) {
         Text(
             text = formattedDate,
-            style = ZcashTheme.extendedTypography.transactionItemStyles.content,
-            color = ZcashTheme.colors.textDescription,
+            style = ZashiTypography.textSm,
+            color = ZashiColors.Text.textTertiary,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             modifier = modifier
@@ -664,8 +717,8 @@ private fun HistoryItemExpandedPart(
                         id = R.plurals.account_history_item_message,
                         count = transaction.messages!!.size
                     ),
-                style = ZcashTheme.extendedTypography.transactionItemStyles.contentMedium,
-                color = ZcashTheme.colors.textPrimary
+                style = ZashiTypography.textSm,
+                color = ZashiColors.Text.textTertiary,
             )
 
             Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
@@ -683,50 +736,16 @@ private fun HistoryItemExpandedPart(
                 )
                 Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
             }
-        } else if (transaction.overview.isShielding.not() &&
-            (transaction.recipientAddressType == null || transaction.recipientAddressType == AddressType.Shielded)
-        ) {
-            Text(
-                text = stringResource(id = R.string.account_history_item_no_message),
-                style = ZcashTheme.extendedTypography.transactionItemStyles.contentItalic,
-                color = ZcashTheme.colors.textPrimary,
-                modifier = Modifier.fillMaxWidth(EXPANDED_TRANSACTION_WIDTH_RATIO)
-            )
-
-            Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
         }
 
-        HistoryItemTransactionIdPart(
-            transaction = transaction,
-            onAction = onAction
-        )
+        HistoryItemTransactionIdPart(transaction = transaction, onAction = onAction)
 
-        Spacer(modifier = (Modifier.height(ZcashTheme.dimens.spacingDefault)))
-
-        HistoryItemTransactionFeePart(fee = transaction.overview.feePaid)
-
-        Spacer(modifier = (Modifier.height(ZcashTheme.dimens.spacingLarge)))
-
-        TextWithIcon(
-            text = stringResource(id = R.string.account_history_item_collapse_transaction),
-            style = ZcashTheme.extendedTypography.transactionItemStyles.contentUnderline,
-            color = ZcashTheme.colors.textDescription,
-            iconVector = ImageVector.vectorResource(id = R.drawable.ic_trx_collapse),
-            modifier =
-                Modifier
-                    .clip(RoundedCornerShape(ZcashTheme.dimens.regularRippleEffectCorner))
-                    .clickable {
-                        if (transaction.expandableState >= TrxItemState.EXPANDED) {
-                            onAction(
-                                TrxItemAction.ExpandableStateChange(
-                                    transaction.overview.rawId,
-                                    TrxItemState.COLLAPSED
-                                )
-                            )
-                        }
-                    }
-                    .padding(all = ZcashTheme.dimens.spacingTiny)
-        )
+        if (transaction.overview.getExtendedState() !in
+            listOf(TransactionExtendedState.RECEIVING, TransactionExtendedState.RECEIVED)
+        ) {
+            Spacer(modifier = Modifier.height(16.dp))
+            HistoryItemTransactionFeePart(fee = transaction.overview.feePaid)
+        }
     }
 }
 
@@ -756,35 +775,38 @@ private fun HistoryItemTransactionIdPart(
         ) {
             Text(
                 text = stringResource(id = R.string.account_history_item_transaction_id),
-                style = ZcashTheme.extendedTypography.transactionItemStyles.content,
-                color = ZcashTheme.colors.textDescription,
+                style = ZashiTypography.textSm,
+                color = ZashiColors.Text.textTertiary,
             )
 
-            Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingTiny))
+            Spacer(modifier = Modifier.height(8.dp))
 
             Text(
                 text = txIdString,
-                style = ZcashTheme.extendedTypography.transactionItemStyles.content,
-                color = ZcashTheme.colors.textPrimary,
+                style = ZashiTypography.textSm,
+                color = ZashiColors.Text.textTertiary,
                 modifier =
                     Modifier
                         .fillMaxWidth(EXPANDED_TRANSACTION_WIDTH_RATIO)
                         .testTag(HistoryTag.TRANSACTION_ID)
             )
 
-            Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingTiny))
+            Spacer(modifier = Modifier.height(16.dp))
 
             TextWithIcon(
                 text = stringResource(id = R.string.account_history_item_tap_to_copy),
-                style = ZcashTheme.extendedTypography.transactionItemStyles.content,
-                color = ZcashTheme.colors.textDescription,
+                style = ZashiTypography.textSm,
+                color = ZashiColors.Btns.Tertiary.btnTertiaryFg,
+                fontWeight = FontWeight.SemiBold,
                 iconVector = ImageVector.vectorResource(R.drawable.ic_trx_copy),
-                iconTintColor = ZcashTheme.colors.secondaryColor,
+                iconTintColor = ZashiColors.Text.textTertiary,
                 modifier =
                     Modifier
-                        .clip(RoundedCornerShape(ZcashTheme.dimens.regularRippleEffectCorner))
-                        .clickable { onAction(TrxItemAction.TransactionIdClick(txIdString)) }
-                        .padding(all = ZcashTheme.dimens.spacingTiny)
+                        .clickable(
+                            role = Role.Button,
+                            indication = ripple(radius = 2.dp, color = ZashiColors.Text.textTertiary),
+                            interactionSource = remember { MutableInteractionSource() }
+                        ) { onAction(TrxItemAction.TransactionIdClick(txIdString)) }
             )
         } else {
             Row(
@@ -803,21 +825,21 @@ private fun HistoryItemTransactionIdPart(
                                 )
                             )
                         }
-                        .padding(all = ZcashTheme.dimens.spacingTiny)
             ) {
                 Text(
                     text = stringResource(id = R.string.account_history_item_transaction_id),
-                    style = ZcashTheme.extendedTypography.transactionItemStyles.content,
-                    color = ZcashTheme.colors.textDescription,
+                    style = ZashiTypography.textSm,
+                    color = ZashiColors.Text.textTertiary,
                 )
 
-                Spacer(modifier = Modifier.width(ZcashTheme.dimens.spacingSmall))
+                Spacer(modifier = Modifier.weight(1f))
 
                 Text(
                     text = txIdString,
-                    style = ZcashTheme.extendedTypography.transactionItemStyles.content,
-                    color = ZcashTheme.colors.textDescription,
+                    style = ZashiTypography.textSm,
+                    color = ZashiColors.Text.textTertiary,
                     maxLines = 1,
+                    textAlign = TextAlign.End,
                     overflow = TextOverflow.Ellipsis,
                     modifier =
                         Modifier
@@ -834,14 +856,14 @@ private fun HistoryItemTransactionFeePart(
     fee: Zatoshi?,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier = modifier) {
+    Row(modifier = modifier) {
         Text(
             text = stringResource(id = R.string.account_history_item_transaction_fee),
-            style = ZcashTheme.extendedTypography.transactionItemStyles.content,
-            color = ZcashTheme.colors.textDescription,
+            style = ZashiTypography.textSm,
+            color = ZashiColors.Text.textTertiary,
         )
 
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingTiny))
+        Spacer(modifier = Modifier.weight(1f))
 
         if (fee == null) {
             Text(
@@ -850,8 +872,8 @@ private fun HistoryItemTransactionFeePart(
                         id = R.string.account_history_item_transaction_fee_typical,
                         DEFAULT_FEE
                     ),
-                style = ZcashTheme.extendedTypography.transactionItemStyles.feeFirstPart,
-                color = ZcashTheme.colors.textDescription,
+                style = ZashiTypography.textSm,
+                color = ZashiColors.Text.textTertiary,
             )
         } else {
             StyledBalance(
@@ -860,10 +882,10 @@ private fun HistoryItemTransactionFeePart(
                 isHideBalances = false,
                 textStyle =
                     StyledBalanceDefaults.textStyles(
-                        mostSignificantPart = ZcashTheme.extendedTypography.transactionItemStyles.feeFirstPart,
-                        leastSignificantPart = ZcashTheme.extendedTypography.transactionItemStyles.feeSecondPart
+                        mostSignificantPart = ZashiTypography.textSm,
+                        leastSignificantPart = ZashiTypography.textXxs
                     ),
-                textColor = ZcashTheme.colors.textDescription
+                textColor = ZashiColors.Text.textTertiary
             )
         }
     }
@@ -876,57 +898,78 @@ private fun HistoryItemMessagePart(
     onAction: (TrxItemAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val textStyle: TextStyle
-    val textColor: Color
-    if (state.isFailed()) {
-        textStyle = ZcashTheme.extendedTypography.transactionItemStyles.contentLineThrough
-        textColor = ZcashTheme.colors.historyRedColor
-    } else {
-        textStyle = ZcashTheme.extendedTypography.transactionItemStyles.content
-        textColor = ZcashTheme.colors.textPrimary
-    }
-
     Column(modifier = modifier.then(Modifier.fillMaxWidth())) {
-        val bubbleBackgroundColor: Color
-        val bubbleStroke: BorderStroke
-        val arrowAlignment: BubbleArrowAlignment
-        if (state.isSendType()) {
-            bubbleBackgroundColor = Color.Transparent
-            bubbleStroke = BorderStroke(1.dp, ZcashTheme.colors.textFieldFrame)
-            arrowAlignment = BubbleArrowAlignment.BottomLeft
-        } else {
-            bubbleBackgroundColor = ZcashTheme.colors.historyMessageBubbleColor
-            bubbleStroke = BorderStroke(1.dp, ZcashTheme.colors.historyMessageBubbleStrokeColor)
-            arrowAlignment = BubbleArrowAlignment.BottomRight
-        }
+        ZashiTextField(
+            textStyle =
+                if (state.isFailed()) {
+                    ZashiTypography.textMd.copy(
+                        fontWeight = FontWeight.Medium,
+                        textDecoration = TextDecoration.LineThrough
+                    )
+                } else {
+                    ZashiTypography.textMd.copy(fontWeight = FontWeight.Medium)
+                },
+            state =
+                TextFieldState(
+                    value = stringRes(message),
+                    error =
+                        if (state.isFailed()) {
+                            stringRes("")
+                        } else {
+                            null
+                        },
+                    isEnabled = false
+                ) {},
+            modifier =
+                Modifier
+                    .fillMaxWidth(),
+            colors =
+                ZashiTextFieldDefaults.defaultColors(
+                    disabledTextColor =
+                        if (state.isFailed()) {
+                            ZashiColors.Inputs.ErrorFilled.text
+                        } else {
+                            ZashiColors.Inputs.Filled.text
+                        },
+                    disabledHintColor =
+                        if (state.isFailed()) {
+                            ZashiColors.Inputs.ErrorDefault.hint
+                        } else {
+                            ZashiColors.Inputs.Disabled.hint
+                        },
+                    disabledBorderColor =
+                        if (state.isFailed()) {
+                            ZashiColors.Inputs.ErrorDefault.stroke
+                        } else {
+                            ZashiColors.Inputs.Disabled.stroke
+                        },
+                    disabledContainerColor = Color.Transparent,
+                    disabledPlaceholderColor =
+                        if (state.isFailed()) {
+                            ZashiColors.Inputs.ErrorDefault.text
+                        } else {
+                            ZashiColors.Inputs.Disabled.text
+                        },
+                ),
+        )
 
-        BubbleMessage(
-            modifier = Modifier.fillMaxWidth(),
-            backgroundColor = bubbleBackgroundColor,
-            borderStroke = bubbleStroke,
-            arrowAlignment = arrowAlignment
-        ) {
-            Text(
-                text = message,
-                style = textStyle,
-                color = textColor,
-                modifier = Modifier.padding(all = ZcashTheme.dimens.spacingMid)
-            )
-        }
-
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingTiny))
+        Spacer(modifier = Modifier.height(16.dp))
 
         TextWithIcon(
             text = stringResource(id = R.string.account_history_item_tap_to_copy),
-            style = ZcashTheme.extendedTypography.transactionItemStyles.content,
-            color = ZcashTheme.colors.textDescription,
+            style = ZashiTypography.textSm,
+            color = ZashiColors.Btns.Tertiary.btnTertiaryFg,
+            fontWeight = FontWeight.SemiBold,
             iconVector = ImageVector.vectorResource(R.drawable.ic_trx_copy),
-            iconTintColor = ZcashTheme.colors.secondaryColor,
+            iconTintColor = ZashiColors.Text.textTertiary,
             modifier =
                 Modifier
-                    .clip(RoundedCornerShape(ZcashTheme.dimens.regularRippleEffectCorner))
-                    .clickable { onAction(TrxItemAction.MessageClick(message)) }
-                    .padding(all = ZcashTheme.dimens.spacingTiny)
+                    .clickable(
+                        onClick = { onAction(TrxItemAction.MessageClick(message)) },
+                        role = Role.Button,
+                        indication = ripple(radius = 2.dp, color = ZashiColors.Text.textTertiary),
+                        interactionSource = remember { MutableInteractionSource() }
+                    )
         )
     }
 }
@@ -940,6 +983,8 @@ internal sealed class TrxItemAction {
     ) : TrxItemAction()
 
     data class AddressClick(val address: TransactionRecipient.Address) : TrxItemAction()
+
+    data class AddToAddressBookClick(val address: TransactionRecipient.Address) : TrxItemAction()
 
     data class MessageClick(val memo: String) : TrxItemAction()
 }

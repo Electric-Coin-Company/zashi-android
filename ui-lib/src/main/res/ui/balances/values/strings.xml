@@ -42,12 +42,14 @@
     </string>
     <string name="balances_status_error_dialog_stacktrace_unknown">Unknown stacktrace.</string>
     <string name="balances_status_dialog_stopped">Synchronization is stopped. It will resume soon.</string>
-    <string name="balances_status_dialog_button">OK</string>
+    <string name="balances_status_dialog_ok_button">OK</string>
+    <string name="balances_status_dialog_report_button">Report</string>
 
     <string name="balances_shielding_dialog_error_title">Transaction Failed</string>
     <string name="balances_shielding_dialog_error_text">The attempt to shield the transparent funds failed. Try it
         again, please.</string>
     <string name="balances_shielding_dialog_error_btn">OK</string>
+    <string name="balances_shielding_dialog_report_btn">Report</string>
     <string name="balances_shielding_dialog_error_text_below_threshold">The current transparent balance is zero or
         below the allowed shielding limit.</string>
 

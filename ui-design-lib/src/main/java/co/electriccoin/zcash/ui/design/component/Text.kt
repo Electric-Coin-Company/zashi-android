@@ -218,13 +218,12 @@ fun TextWithIcon(
     textAlign: TextAlign = TextAlign.Start,
     style: TextStyle = LocalTextStyle.current,
     color: Color = ZcashTheme.colors.textPrimary,
+    fontWeight: FontWeight? = null,
 ) {
     Row(
         modifier =
-            Modifier
-                .wrapContentSize()
-                .then(modifier),
-        verticalAlignment = Alignment.CenterVertically
+            Modifier.then(modifier),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         if (iconTintColor != null) {
             Image(
@@ -248,6 +247,7 @@ fun TextWithIcon(
             overflow = overflow,
             textAlign = textAlign,
             style = style,
+            fontWeight = fontWeight
         )
     }
 }

@@ -1,0 +1,76 @@
+package co.electriccoin.zcash.ui.screen.integrations
+
+import android.net.Uri
+import android.widget.Toast
+import androidx.activity.compose.BackHandler
+import androidx.browser.customtabs.CustomTabsIntent
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import co.electriccoin.zcash.di.koinActivityViewModel
+import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.compose.LocalActivity
+import co.electriccoin.zcash.ui.common.compose.LocalNavController
+import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
+import co.electriccoin.zcash.ui.screen.integrations.view.Integrations
+import co.electriccoin.zcash.ui.screen.integrations.viewmodel.IntegrationsViewModel
+import com.flexa.core.Flexa
+import com.flexa.spend.buildSpend
+import org.koin.androidx.compose.koinViewModel
+
+@Composable
+internal fun WrapIntegrations() {
+    val activity = LocalActivity.current
+    val navController = LocalNavController.current
+    val walletViewModel = koinActivityViewModel<WalletViewModel>()
+    val viewModel = koinViewModel<IntegrationsViewModel>()
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val walletState = walletViewModel.walletStateInformation.collectAsStateWithLifecycle().value
+
+    LaunchedEffect(Unit) {
+        viewModel.backNavigationCommand.collect {
+            navController.popBackStack()
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.coinbaseNavigationCommand.collect { uri ->
+            val intent =
+                CustomTabsIntent.Builder()
+                    .setUrlBarHidingEnabled(true)
+                    .setShowTitle(true)
+                    .setShareState(CustomTabsIntent.SHARE_STATE_OFF)
+                    .build()
+            intent.launchUrl(activity, Uri.parse(uri))
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.flexaNavigationCommand.collect {
+            Flexa.buildSpend()
+                .onTransactionRequest {
+                    viewModel.onFlexaResultCallback(it)
+                }
+                .build()
+                .open(activity)
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.showFlexaErrorToastCommand.collect {
+            Toast.makeText(activity, R.string.integrations_flexa_key_missing, Toast.LENGTH_LONG).show()
+        }
+    }
+
+    BackHandler {
+        viewModel.onBack()
+    }
+
+    state?.let {
+        Integrations(
+            state = it,
+            topAppBarSubTitleState = walletState,
+        )
+    }
+}

@@ -5,10 +5,7 @@
     <string name="scan_settings_button">Open Settings</string>
     <string name="scan_settings_open_failed">Unable to launch Settings app.</string>
 
-    <string name="scan_state_permission">
-        <xliff:g id="app_name" example="Zashi">%1$s</xliff:g> does not have access to your camera. Please go to your
-        system settings and authorize <xliff:g id="app_name" example="Zashi">%1$s</xliff:g>.
-    </string>
+    <string name="scan_state_permission">The camera is not authorized. Please go to the system settings of Zashi and turn in on.</string>
     <string name="scan_state_failed">Camera initialization failed. Try it again, please.</string>
     <string name="scan_address_validation_failed">This QR code is not a valid Zcash Address.</string>
 

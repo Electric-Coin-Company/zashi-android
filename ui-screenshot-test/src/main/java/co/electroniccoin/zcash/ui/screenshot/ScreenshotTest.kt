@@ -8,7 +8,6 @@ import android.os.LocaleList
 import androidx.activity.viewModels
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsEnabled
-import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
@@ -34,21 +33,21 @@ import cash.z.ecc.android.sdk.model.MonetarySeparators
 import cash.z.ecc.android.sdk.model.SeedPhrase
 import cash.z.ecc.sdk.fixture.MemoFixture
 import cash.z.ecc.sdk.fixture.SeedPhraseFixture
-import cash.z.ecc.sdk.type.ZcashCurrency
 import co.electriccoin.zcash.spackle.FirebaseTestLabUtil
 import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.NavigationTargets
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.viewmodel.SecretState
-import co.electriccoin.zcash.ui.design.component.AnimationConstants.WELCOME_ANIM_TEST_TAG
 import co.electriccoin.zcash.ui.design.component.ConfigurationOverride
 import co.electriccoin.zcash.ui.design.component.UiMode
 import co.electriccoin.zcash.ui.screen.account.AccountTag
+import co.electriccoin.zcash.ui.screen.authentication.view.AnimationConstants.WELCOME_ANIM_TEST_TAG
 import co.electriccoin.zcash.ui.screen.home.HomeTag
 import co.electriccoin.zcash.ui.screen.restore.RestoreTag
 import co.electriccoin.zcash.ui.screen.restore.viewmodel.RestoreViewModel
 import co.electriccoin.zcash.ui.screen.securitywarning.view.SecurityScreenTag.ACKNOWLEDGE_CHECKBOX_TAG
+import co.electriccoin.zcash.ui.screen.send.SendTag
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -147,11 +146,27 @@ class ScreenshotTest : UiTestPrerequisites() {
         }
     }
 
+    @Test
+    @LargeTest
+    fun takeScreenshotsForRestoreWalletLightEsSP() {
+        runWith(UiMode.Light, "es-SP") { context, tag ->
+            takeScreenshotsForRestoreWallet(context, tag)
+        }
+    }
+
     // Dark mode was introduced in Android Q
     @Test
     @LargeTest
     fun takeScreenshotsForRestoreWalletDarkEnUS() {
         runWith(UiMode.Dark, "en-US") { context, tag ->
+            takeScreenshotsForRestoreWallet(context, tag)
+        }
+    }
+
+    @Test
+    @LargeTest
+    fun takeScreenshotsForRestoreWalletDarkEsSP() {
+        runWith(UiMode.Dark, "es-SP") { context, tag ->
             takeScreenshotsForRestoreWallet(context, tag)
         }
     }
@@ -185,6 +200,12 @@ class ScreenshotTest : UiTestPrerequisites() {
             it.assertExists()
             it.performClick()
         }
+
+        // To ensure that the new screen is available, or wait until it is
+        composeTestRule.waitUntilAtLeastOneExists(
+            hasText(resContext.getString(R.string.restore_title)),
+            DEFAULT_TIMEOUT_MILLISECONDS
+        )
 
         composeTestRule.onNodeWithText(resContext.getString(R.string.restore_title)).also {
             it.assertExists()
@@ -266,6 +287,14 @@ class ScreenshotTest : UiTestPrerequisites() {
         }
     }
 
+    @Test
+    @LargeTest
+    fun takeScreenshotsForNewWalletAndRestOfAppLightEsSP() {
+        runWith(UiMode.Light, "es-SP") { context, tag ->
+            takeScreenshotsForNewWalletAndRestOfApp(context, tag)
+        }
+    }
+
     // Dark mode was introduced in Android Q
     @Test
     @LargeTest
@@ -276,6 +305,16 @@ class ScreenshotTest : UiTestPrerequisites() {
         }
     }
 
+    @Test
+    @LargeTest
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.Q)
+    fun takeScreenshotsForNewWalletAndRestOfAppDarkEsSP() {
+        runWith(UiMode.Dark, "es-SP") { context, tag ->
+            takeScreenshotsForNewWalletAndRestOfApp(context, tag)
+        }
+    }
+
+    @OptIn(ExperimentalTestApi::class)
     private fun takeScreenshotsForNewWalletAndRestOfApp(
         resContext: Context,
         tag: String
@@ -289,6 +328,9 @@ class ScreenshotTest : UiTestPrerequisites() {
         // These are the home screen bottom navigation sub-screens
         onboardingScreenshots(resContext, tag, composeTestRule)
         recoveryScreenshots(resContext, tag, composeTestRule)
+
+        // To ensure that the bottom tab is available, or wait until it is
+        composeTestRule.waitUntilAtLeastOneExists(hasTestTag(HomeTag.TAB_ACCOUNT), DEFAULT_TIMEOUT_MILLISECONDS)
 
         composeTestRule.navigateInHomeTab(HomeTag.TAB_ACCOUNT)
         accountScreenshots(tag, composeTestRule)
@@ -443,8 +485,8 @@ private fun receiveZecScreenshots(
     }
 
     composeTestRule.onNode(
-        hasContentDescription(
-            value = resContext.getString(R.string.receive_unified_content_description),
+        hasText(
+            text = resContext.getString(R.string.receive_header),
             ignoreCase = true
         )
     ).also {
@@ -476,11 +518,8 @@ private fun sendZecScreenshots(
     // Screenshot: Empty form
     ScreenshotTest.takeScreenshot(tag, "Send 1")
 
-    composeTestRule.onNodeWithText(
-        resContext.getString(
-            R.string.send_amount_hint,
-            ZcashCurrency.fromResources(resContext).name
-        )
+    composeTestRule.onNode(
+        hasTestTag(SendTag.SEND_AMOUNT_FIELD)
     ).also {
         val separators = MonetarySeparators.current()
 

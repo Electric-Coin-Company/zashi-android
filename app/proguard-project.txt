@@ -10,18 +10,29 @@
 -printconfiguration build/outputs/proguard-config.txt
 
 # This is generated automatically by the Android Gradle plugin.
--dontwarn com.google.j2objc.annotations.ReflectionSupport
--dontwarn com.google.j2objc.annotations.RetainedWith
 -dontwarn androidx.compose.ui.util.MathHelpersKt
 -dontwarn com.google.common.util.concurrent.ListenableFuture
 -dontwarn com.google.errorprone.annotations.InlineMe
 -dontwarn com.google.errorprone.annotations.MustBeClosed
+-dontwarn com.google.j2objc.annotations.ReflectionSupport
+-dontwarn com.google.j2objc.annotations.ReflectionSupport$Level
+-dontwarn com.google.j2objc.annotations.RetainedWith
 -dontwarn javax.naming.directory.Attribute
 -dontwarn javax.naming.directory.Attributes
 -dontwarn javax.naming.directory.DirContext
 -dontwarn javax.naming.directory.InitialDirContext
 -dontwarn javax.naming.NamingEnumeration
 -dontwarn javax.naming.NamingException
+
+-dontwarn javax.naming.InvalidNameException
+-dontwarn javax.naming.ldap.LdapName
+-dontwarn javax.naming.ldap.Rdn
+-dontwarn org.ietf.jgss.GSSContext
+-dontwarn org.ietf.jgss.GSSCredential
+-dontwarn org.ietf.jgss.GSSException
+-dontwarn org.ietf.jgss.GSSManager
+-dontwarn org.ietf.jgss.GSSName
+-dontwarn org.ietf.jgss.Oid
 
 # kotlinx.datetime supports kotlinx.serialization, but we don't use kotlinx.serialization elsewhere
 # in the projects, so the classes aren't present.  These warnings are safe to suppress.

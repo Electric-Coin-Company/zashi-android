@@ -7,6 +7,61 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 ## [Unreleased]
 
 ### Added
+- The device authentication feature on the Zashi app launch has been added
+- Zashi app now supports Spanish language
+- The Flexa SDK has been adopted to enable payments using the embedded Flexa UI
+
+### Fixed
+- Address book toast now correctly shows on send screen when adding both new and known addresses to text field
+- The application now correctly navigates to the homepage after deleting the current wallet and creating a new or 
+  recovering an older one
+
+## [1.2.1 (760)] - 2024-10-22
+
+### Changed
+- Global design updates
+- Onboarding screen has been redesigned
+- Scan QR screen has been redesigned
+- The Receive screen UI has been redesigned
+- Send screen redesigned & added a possibility to pick a contact from address book
+- Confirmation screen redesigned & added a contact name to the transaction if the contact is in address book
+- History item redesigned & added an option to create a contact from unknown address
+- Address Book, Create/Update/Delete Contact, Create Contact by QR screens added
+- The Scan QR code screen now supports scanning of ZIP 321 Uris
+
+### Added
+- Address book local storage support
+- New Integrations screen in settings
+- New QR Code detail screen has been added
+- The new Request ZEC screens have been added. They provide a way to build ZIP 321 Uri consisting of the amount, 
+  message, and receiver address and then creates a QR code image of it. 
+
+## [1.2 (739)] - 2024-09-27 
+
+### Changed
+- Adopted snapshot Zcash SDK version 2.2.5, which brings fix for the incorrect check inside the `BlockHeight` component
+
+## [1.2 (735)] - 2024-09-20
+
+### Added
+- All app's error dialogs now have a new Report error button that opens and prefills users' email clients
+
+### Changed
+- The Message text field on the Send Form screen has been updated to provide the Return key on the software keyboard 
+  and make auto-capitalization on the beginning of every sentence or new line. 
+
+### Fixed
+- `EmailUtils.newMailActivityIntent` has been updated to produce an `Intent` that more e-mail clients can understand
+
+## [1.2 (731)] - 2024-09-16
+
+### Changed
+- Adopted the latest snapshot Zcash SDK version 2.2.4 that brings improvements in the disposal logic of its 
+  internal `TorClient` component
+
+## [1.2 (729)] - 2024-09-13
+
+### Added
 - Transaction resubmission feature has been added. It periodically searches for unmined sent transactions that 
   are still within their expiry window and resubmits them if there are any.
 - The Choose server screen now provides a new search for the three fastest servers feature
@@ -18,6 +73,9 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 - Settings and Advanced Settings screens have been redesigned
 - Android `compileSdkVersion` and `targetSdkVersion` have been updated to version 35
 - Shielded transactions are properly indicated in transaction history
+
+### Fixed
+- The issue of printing the stacktrace of errors in dialogs has been resolved
 
 ## [1.1.7 (718)] - 2024-09-06
 

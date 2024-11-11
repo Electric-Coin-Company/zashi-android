@@ -47,12 +47,14 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cash.z.ecc.android.sdk.model.BlockHeight
 import cash.z.ecc.android.sdk.model.ZcashNetwork
@@ -62,16 +64,20 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.SecureScreen
 import co.electriccoin.zcash.ui.common.compose.shouldSecureScreen
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
+import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.ChipOnSurface
 import co.electriccoin.zcash.ui.design.component.FormTextField
-import co.electriccoin.zcash.ui.design.component.GridBgScaffold
-import co.electriccoin.zcash.ui.design.component.GridBgSmallTopAppBar
-import co.electriccoin.zcash.ui.design.component.PrimaryButton
 import co.electriccoin.zcash.ui.design.component.Reference
+import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.TopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.component.TopScreenLogoTitle
+import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
+import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
+import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.screen.restore.RestoreTag
 import co.electriccoin.zcash.ui.screen.restore.model.ParseResult
 import co.electriccoin.zcash.ui.screen.restore.model.RestoreStage
@@ -246,7 +252,7 @@ fun RestoreWallet(
         }
     }
 
-    GridBgScaffold(
+    BlankBgScaffold(
         modifier = Modifier.navigationBarsPadding(),
         topBar = {
             when (currentStage) {
@@ -298,12 +304,7 @@ fun RestoreWallet(
         content = { paddingValues ->
             val commonModifier =
                 Modifier
-                    .padding(
-                        top = paddingValues.calculateTopPadding(),
-                        bottom = paddingValues.calculateBottomPadding(),
-                        start = ZcashTheme.dimens.screenHorizontalSpacingBig,
-                        end = ZcashTheme.dimens.screenHorizontalSpacingBig
-                    )
+                    .scaffoldPadding(paddingValues)
 
             when (currentStage) {
                 RestoreStage.Seed -> {
@@ -358,7 +359,7 @@ private fun RestoreSeedTopAppBar(
     onClear: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    GridBgSmallTopAppBar(
+    SmallTopAppBar(
         modifier = modifier,
         navigationAction = {
             TopAppBarBackNavigation(
@@ -380,7 +381,7 @@ private fun RestoreSeedBirthdayTopAppBar(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    GridBgSmallTopAppBar(
+    SmallTopAppBar(
         modifier = modifier,
         navigationAction = {
             TopAppBarBackNavigation(
@@ -461,15 +462,12 @@ private fun RestoreSeedMainContent(
 
         Spacer(Modifier.height(ZcashTheme.dimens.spacingLarge))
 
-        PrimaryButton(
+        ZashiButton(
             onClick = goNext,
             enabled = isSeedValid,
             text = stringResource(id = R.string.restore_seed_button_next),
-            outerPaddingValues = PaddingValues(top = ZcashTheme.dimens.spacingSmall),
             modifier = Modifier.fillMaxWidth()
         )
-
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingHuge))
     }
 
     LaunchedEffect(isSeedValid) {
@@ -543,74 +541,82 @@ private fun SeedGridWithText(
             }
         }
 
-    Column(
-        modifier =
-            Modifier
-                .border(
-                    border =
-                        BorderStroke(
-                            width = ZcashTheme.dimens.layoutStroke,
-                            color = ZcashTheme.colors.layoutStroke
-                        )
-                )
-                .fillMaxWidth()
-                .defaultMinSize(minHeight = ZcashTheme.dimens.textFieldSeedPanelDefaultHeight)
-                .then(modifier)
-                .testTag(RestoreTag.CHIP_LAYOUT)
+    Surface(
+        modifier = modifier,
+        shape = RoundedCornerShape(ZashiDimensions.Radius.radius2xl),
+        border = BorderStroke(1.dp, ZashiColors.Modals.surfaceStroke),
+        color = ZashiColors.Modals.surfacePrimary
     ) {
-        /*
-         * Treat the user input as a password for more secure input, but disable the transformation
-         * to obscure typing.
-         */
-        TextField(
-            textStyle = ZcashTheme.extendedTypography.textFieldValue,
+        Column(
             modifier =
                 Modifier
+                    .border(
+                        border =
+                            BorderStroke(
+                                width = ZcashTheme.dimens.layoutStroke,
+                                color = ZcashTheme.colors.layoutStroke
+                            )
+                    )
                     .fillMaxWidth()
-                    .padding(ZcashTheme.dimens.spacingTiny)
-                    .testTag(RestoreTag.SEED_WORD_TEXT_FIELD)
-                    .focusRequester(focusRequester),
-            value =
-                TextFieldValue(
-                    text = currentSeedText,
-                    selection = TextRange(index = currentSeedText.length)
-                ),
-            placeholder = {
-                Text(
-                    text = stringResource(id = R.string.restore_seed_hint),
-                    style = ZcashTheme.extendedTypography.textFieldHint,
-                    color = ZcashTheme.colors.textFieldHint
-                )
-            },
-            onValueChange = {
-                processTextInput(
-                    currentSeedText = currentSeedText,
-                    updateSeedText = it.text,
-                    userWordList = userWordList,
-                    setText = setText
-                )
-            },
-            keyboardOptions =
-                KeyboardOptions(
-                    KeyboardCapitalization.None,
-                    autoCorrect = false,
-                    imeAction = ImeAction.Done,
-                    keyboardType = KeyboardType.Password
-                ),
-            keyboardActions = KeyboardActions(onAny = {}),
-            isError = parseResult is ParseResult.Warn,
-            colors =
-                TextFieldDefaults.colors(
-                    cursorColor = ZcashTheme.colors.textPrimary,
-                    disabledContainerColor = Color.Transparent,
-                    disabledIndicatorColor = Color.Transparent,
-                    errorContainerColor = Color.Transparent,
-                    focusedContainerColor = Color.Transparent,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedContainerColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                )
-        )
+                    .defaultMinSize(minHeight = ZcashTheme.dimens.textFieldSeedPanelDefaultHeight)
+                    .then(modifier)
+                    .testTag(RestoreTag.CHIP_LAYOUT)
+        ) {
+            /*
+             * Treat the user input as a password for more secure input, but disable the transformation
+             * to obscure typing.
+             */
+            TextField(
+                textStyle = ZashiTypography.textMd.copy(fontWeight = FontWeight.Medium),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .testTag(RestoreTag.SEED_WORD_TEXT_FIELD)
+                        .focusRequester(focusRequester),
+                value =
+                    TextFieldValue(
+                        text = currentSeedText,
+                        selection = TextRange(index = currentSeedText.length)
+                    ),
+                placeholder = {
+                    Text(
+                        text = stringResource(id = R.string.restore_seed_hint),
+                        style = ZashiTypography.textMd,
+                        color = ZashiColors.Inputs.Default.text
+                    )
+                },
+                onValueChange = {
+                    processTextInput(
+                        currentSeedText = currentSeedText,
+                        updateSeedText = it.text,
+                        userWordList = userWordList,
+                        setText = setText
+                    )
+                },
+                keyboardOptions =
+                    KeyboardOptions(
+                        KeyboardCapitalization.None,
+                        autoCorrectEnabled = false,
+                        imeAction = ImeAction.Done,
+                        keyboardType = KeyboardType.Password
+                    ),
+                keyboardActions = KeyboardActions(onAny = {}),
+                isError = parseResult is ParseResult.Warn,
+                colors =
+                    TextFieldDefaults.colors(
+                        cursorColor = ZcashTheme.colors.textPrimary,
+                        disabledContainerColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent,
+                        errorContainerColor = Color.Transparent,
+                        focusedContainerColor = Color.Transparent,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        focusedTextColor = ZashiColors.Inputs.Filled.text,
+                        unfocusedTextColor = ZashiColors.Inputs.Filled.text,
+                    )
+            )
+        }
     }
 }
 
@@ -803,7 +809,7 @@ private fun RestoreBirthdayMainContent(
             keyboardOptions =
                 KeyboardOptions(
                     KeyboardCapitalization.None,
-                    autoCorrect = false,
+                    autoCorrectEnabled = false,
                     imeAction = ImeAction.Done,
                     keyboardType = KeyboardType.Number
                 ),
@@ -829,12 +835,12 @@ private fun RestoreBirthdayMainContent(
 
         val isEmptyBirthday = height.isEmpty()
 
-        PrimaryButton(
+        ZashiButton(
             onClick = {
                 if (isEmptyBirthday) {
                     setRestoreHeight(null)
                 } else if (isBirthdayValid) {
-                    setRestoreHeight(BlockHeight.new(zcashNetwork, height.toLong()))
+                    setRestoreHeight(BlockHeight.new(height.toLong()))
                 } else {
                     error("The restore button should not expect click events")
                 }
@@ -844,8 +850,6 @@ private fun RestoreBirthdayMainContent(
             enabled = isBirthdayValid,
             modifier = Modifier.fillMaxWidth()
         )
-
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingHuge))
     }
 
     LaunchedEffect(Unit) {

@@ -6,14 +6,20 @@ import android.content.pm.PackageManager
 import androidx.annotation.VisibleForTesting
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cash.z.ecc.android.sdk.Synchronizer
+import cash.z.ecc.android.sdk.ext.convertZecToZatoshi
+import cash.z.ecc.android.sdk.model.Account
+import cash.z.ecc.android.sdk.model.Memo
 import cash.z.ecc.android.sdk.model.MonetarySeparators
 import cash.z.ecc.android.sdk.model.UnifiedSpendingKey
+import cash.z.ecc.android.sdk.model.WalletAddress
 import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.android.sdk.model.proposeSend
 import cash.z.ecc.android.sdk.model.toZecString
@@ -22,6 +28,7 @@ import co.electriccoin.zcash.di.koinActivityViewModel
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.compose.BalanceState
 import co.electriccoin.zcash.ui.common.compose.LocalActivity
+import co.electriccoin.zcash.ui.common.compose.LocalNavController
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.viewmodel.HomeViewModel
@@ -36,6 +43,8 @@ import co.electriccoin.zcash.ui.screen.send.model.SendArguments
 import co.electriccoin.zcash.ui.screen.send.model.SendStage
 import co.electriccoin.zcash.ui.screen.send.view.Send
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
+import org.zecdev.zip321.ZIP321
 import java.util.Locale
 
 @Composable
@@ -46,6 +55,7 @@ internal fun WrapSend(
     goBack: () -> Unit,
     goBalances: () -> Unit,
     goSendConfirmation: (ZecSend) -> Unit,
+    goPaymentRequest: (ZecSend, String) -> Unit,
     goSettings: () -> Unit,
 ) {
     val activity = LocalActivity.current
@@ -85,6 +95,7 @@ internal fun WrapSend(
         goBalances = goBalances,
         goSettings = goSettings,
         goSendConfirmation = goSendConfirmation,
+        goPaymentRequest = goPaymentRequest,
         hasCameraFeature = hasCameraFeature,
         monetarySeparators = monetarySeparators,
         topAppBarSubTitleState = walletState,
@@ -104,6 +115,7 @@ internal fun WrapSend(
     goBalances: () -> Unit,
     goSettings: () -> Unit,
     goSendConfirmation: (ZecSend) -> Unit,
+    goPaymentRequest: (ZecSend, String) -> Unit,
     hasCameraFeature: Boolean,
     monetarySeparators: MonetarySeparators,
     onHideBalances: () -> Unit,
@@ -115,6 +127,18 @@ internal fun WrapSend(
 ) {
     val scope = rememberCoroutineScope()
 
+    val navController = LocalNavController.current
+
+    val viewModel = koinViewModel<SendViewModel>()
+
+    LaunchedEffect(Unit) {
+        viewModel.navigateCommand.collect {
+            navController.navigate(it)
+        }
+    }
+
+    val sendAddressBookState by viewModel.sendAddressBookState.collectAsStateWithLifecycle()
+
     val context = LocalContext.current
 
     val (sendStage, setSendStage) =
@@ -122,18 +146,34 @@ internal fun WrapSend(
 
     val (zecSend, setZecSend) = rememberSaveable(stateSaver = ZecSend.Saver) { mutableStateOf(null) }
 
-    // Address computation:
-    val (recipientAddressState, setRecipientAddressState) =
-        rememberSaveable(stateSaver = RecipientAddressState.Saver) {
-            mutableStateOf(RecipientAddressState.new(zecSend?.destination?.address ?: "", null))
-        }
+    val recipientAddressState by viewModel.recipientAddressState.collectAsStateWithLifecycle()
+
     if (sendArguments?.recipientAddress != null) {
-        setRecipientAddressState(
+        viewModel.onRecipientAddressChanged(
             RecipientAddressState.new(
                 sendArguments.recipientAddress.address,
                 sendArguments.recipientAddress.type
             )
         )
+    }
+
+    // Zip321 Uri scan result processing
+    if (sendArguments?.zip321Uri != null &&
+        synchronizer != null &&
+        spendingKey != null
+    ) {
+        LaunchedEffect(goPaymentRequest) {
+            scope.launch {
+                processZip321Result(
+                    zip321Uri = sendArguments.zip321Uri,
+                    synchronizer = synchronizer,
+                    account = spendingKey.account,
+                    setSendStage = setSendStage,
+                    setZecSend = setZecSend,
+                    goPaymentRequest = goPaymentRequest
+                )
+            }
+        }
     }
 
     // Amount computation:
@@ -193,7 +233,7 @@ internal fun WrapSend(
     if (sendArguments?.clearForm == true) {
         setSendStage(SendStage.Form)
         setZecSend(null)
-        setRecipientAddressState(RecipientAddressState.new("", null))
+        viewModel.onRecipientAddressChanged(RecipientAddressState.new("", null))
         setAmountState(
             AmountState.newFromZec(
                 context = context,
@@ -213,6 +253,7 @@ internal fun WrapSend(
             SendStage.Proposing -> {
                 // no action - wait until the sending is done
             }
+
             is SendStage.SendFailure -> setSendStage(SendStage.Form)
         }
     }
@@ -249,7 +290,7 @@ internal fun WrapSend(
             recipientAddressState = recipientAddressState,
             onRecipientAddressChange = {
                 scope.launch {
-                    setRecipientAddressState(
+                    viewModel.onRecipientAddressChanged(
                         RecipientAddressState.new(
                             address = it,
                             // TODO [#342]: Verify Addresses without Synchronizer
@@ -268,7 +309,73 @@ internal fun WrapSend(
             hasCameraFeature = hasCameraFeature,
             topAppBarSubTitleState = topAppBarSubTitleState,
             walletSnapshot = walletSnapshot,
-            exchangeRateState = exchangeRateState
+            exchangeRateState = exchangeRateState,
+            sendAddressBookState = sendAddressBookState
         )
     }
 }
+
+private suspend fun processZip321Result(
+    zip321Uri: String,
+    synchronizer: Synchronizer,
+    account: Account,
+    setSendStage: (SendStage) -> Unit,
+    setZecSend: (ZecSend?) -> Unit,
+    goPaymentRequest: (ZecSend, String) -> Unit,
+) {
+    val request =
+        runCatching {
+            // At this point there should by only a valid Zcash address coming
+            ZIP321.request(zip321Uri, null)
+        }.onFailure {
+            Twig.error(it) { "Failed to validate address" }
+        }.getOrElse {
+            false
+        }
+    val payment =
+        when (request) {
+            // We support only one payment currently
+            is ZIP321.ParserResult.Request -> {
+                request.paymentRequest.payments[0]
+            }
+            else -> return
+        }
+
+    val address =
+        synchronizer
+            .validateAddress(payment.recipientAddress.value)
+            .toWalletAddress(payment.recipientAddress.value)
+
+    val amount = payment.nonNegativeAmount.value.convertZecToZatoshi()
+
+    val memo = Memo(payment.memo?.let { String(it.data, Charsets.UTF_8) } ?: "")
+
+    val zecSend =
+        ZecSend(
+            destination = address,
+            amount = amount,
+            memo = memo,
+            proposal = null
+        )
+    setZecSend(zecSend)
+
+    runCatching {
+        synchronizer.proposeFulfillingPaymentUri(account, zip321Uri)
+    }.onSuccess { proposal ->
+        Twig.debug { "Transaction proposal from Zip321 Uri: ${proposal.toPrettyString()}" }
+        val enrichedZecSend = zecSend.copy(proposal = proposal)
+        setZecSend(enrichedZecSend)
+        goPaymentRequest(enrichedZecSend, zip321Uri)
+    }.onFailure {
+        Twig.error(it) { "Transaction proposal from Zip321 Uri failed" }
+        setSendStage(SendStage.SendFailure(it.message ?: ""))
+    }
+}
+
+private suspend fun AddressType.toWalletAddress(value: String) =
+    when (this) {
+        AddressType.Unified -> WalletAddress.Unified.new(value)
+        AddressType.Shielded -> WalletAddress.Sapling.new(value)
+        AddressType.Transparent -> WalletAddress.Transparent.new(value)
+        else -> error("Invalid address type")
+    }
