@@ -45,7 +45,7 @@ class PaymentRequestViewModel(
     getMonetarySeparators: GetMonetarySeparatorProvider,
     private val getSpendingKeyUseCase: GetSpendingKeyUseCase,
     private val getSynchronizer: GetSynchronizerUseCase,
-    private val supportViewModel: SupportViewModel,
+    supportViewModel: SupportViewModel,
     walletViewModel: WalletViewModel,
     observeAddressBookContacts: ObserveAddressBookContactsUseCase,
 ) : ViewModel() {
