@@ -32,7 +32,8 @@ class UpdateViewAndroidTestSetup(
                 updateInfo = updateInfo,
                 checkForUpdate = viewModel::checkForAppUpdate,
                 remindLater = viewModel::remindLater,
-                goForUpdate = {}
+                goForUpdate = {},
+                onSettings = {}
             )
         }
     }
