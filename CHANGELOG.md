@@ -8,6 +8,12 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ### Added
 - The device authentication feature on the Zashi app launch has been added
+- The Flexa SDK has been adopted to enable payments using the embedded Flexa UI
+
+### Fixed
+- Address book toast now correctly shows on send screen when adding both new and known addresses to text field
+- The application now correctly navigates to the homepage after deleting the current wallet and creating a new or 
+  recovering an older one
 
 ### Changed
 - Settings redesigned

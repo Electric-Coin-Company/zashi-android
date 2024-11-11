@@ -1,10 +1,9 @@
 package co.electriccoin.zcash.ui.common.compose
 
 import android.content.res.Configuration
-import androidx.compose.material3.CaretProperties
-import androidx.compose.material3.CaretScope
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipScope
 import androidx.compose.material3.TooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -19,6 +18,7 @@ import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
@@ -29,7 +29,7 @@ import androidx.compose.ui.window.PopupPositionProvider
 @Composable
 @ExperimentalMaterial3Api
 fun ZashiTooltipBox(
-    tooltip: @Composable CaretScope.() -> Unit,
+    tooltip: @Composable TooltipScope.() -> Unit,
     state: TooltipState,
     modifier: Modifier = Modifier,
     positionProvider: PopupPositionProvider = rememberTooltipPositionProvider(),
@@ -83,7 +83,7 @@ fun CacheDrawScope.drawCaretWithPath(
     density: Density,
     configuration: Configuration,
     containerColor: Color,
-    caretProperties: CaretProperties = CaretProperties(caretHeight = 8.dp, caretWidth = 16.dp),
+    caretProperties: DpSize = DpSize(height = 8.dp, width = 16.dp),
     anchorLayoutCoordinates: LayoutCoordinates?
 ): DrawResult {
     val path = Path()
@@ -95,8 +95,8 @@ fun CacheDrawScope.drawCaretWithPath(
         val screenHeightPx: Int
         val tooltipAnchorSpacing: Int
         with(density) {
-            caretHeightPx = caretProperties.caretHeight.roundToPx()
-            caretWidthPx = caretProperties.caretWidth.roundToPx()
+            caretHeightPx = caretProperties.height.roundToPx()
+            caretWidthPx = caretProperties.width.roundToPx()
             screenWidthPx = configuration.screenWidthDp.dp.roundToPx()
             screenHeightPx = configuration.screenHeightDp.dp.roundToPx()
             tooltipAnchorSpacing = 4.dp.roundToPx()

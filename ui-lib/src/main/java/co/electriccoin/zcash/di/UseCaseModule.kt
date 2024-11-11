@@ -13,6 +13,7 @@ import co.electriccoin.zcash.ui.common.usecase.GetSupportUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSynchronizerUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTransparentAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsCoinbaseAvailableUseCase
+import co.electriccoin.zcash.ui.common.usecase.IsFlexaAvailableUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveAddressBookContactsUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveBackupPersistableWalletUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveConfigurationUseCase
@@ -80,4 +81,5 @@ val useCaseModule =
         factoryOf(::GetSupportUseCase)
         factoryOf(::SendEmailUseCase)
         factoryOf(::SendSupportEmailUseCase)
+        singleOf(::IsFlexaAvailableUseCase)
     }

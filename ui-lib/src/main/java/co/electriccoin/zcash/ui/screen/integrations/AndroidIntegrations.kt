@@ -1,6 +1,7 @@
 package co.electriccoin.zcash.ui.screen.integrations
 
 import android.net.Uri
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.runtime.Composable
@@ -8,11 +9,14 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.di.koinActivityViewModel
+import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.LocalActivity
 import co.electriccoin.zcash.ui.common.compose.LocalNavController
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.integrations.view.Integrations
 import co.electriccoin.zcash.ui.screen.integrations.viewmodel.IntegrationsViewModel
+import com.flexa.core.Flexa
+import com.flexa.spend.buildSpend
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -39,6 +43,23 @@ internal fun WrapIntegrations() {
                     .setShareState(CustomTabsIntent.SHARE_STATE_OFF)
                     .build()
             intent.launchUrl(activity, Uri.parse(uri))
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.flexaNavigationCommand.collect {
+            Flexa.buildSpend()
+                .onTransactionRequest {
+                    viewModel.onFlexaResultCallback(it)
+                }
+                .build()
+                .open(activity)
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.showFlexaErrorToastCommand.collect {
+            Toast.makeText(activity, R.string.integrations_flexa_key_missing, Toast.LENGTH_LONG).show()
         }
     }
 

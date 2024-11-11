@@ -221,6 +221,10 @@ internal fun MainActivity.Navigation() {
                 goBack = {
                     setDeleteWalletAuthentication(false)
                     navController.popBackStackJustOnce(DELETE_WALLET)
+                },
+                onConfirm = {
+                    setDeleteWalletAuthentication(false)
+                    navController.popBackStackJustOnce(DELETE_WALLET)
                 }
             )
         }
