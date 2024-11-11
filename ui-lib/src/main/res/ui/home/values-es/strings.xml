@@ -1,0 +1,6 @@
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="home_tab_account">Cuenta</string>
+    <string name="home_tab_send">Enviar</string>
+    <string name="home_tab_receive">Recibir</string>
+    <string name="home_tab_balances">Saldos</string>
+</resources>

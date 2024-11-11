@@ -615,7 +615,7 @@ private fun HistoryItemExpandedAddressPart(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Row {
+        Row(verticalAlignment = Alignment.CenterVertically) {
             TextWithIcon(
                 text = stringResource(id = R.string.account_history_item_tap_to_copy),
                 style = ZashiTypography.textSm,
@@ -632,6 +632,8 @@ private fun HistoryItemExpandedAddressPart(
                                 interactionSource = remember { MutableInteractionSource() }
                             ) { onAction(TrxItemAction.AddressClick(recipient)) }
             )
+
+            Spacer(modifier = Modifier.width(ZashiDimensions.Spacing.spacingSm))
 
             if (contact == null) {
                 TextWithIcon(
