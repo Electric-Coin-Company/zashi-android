@@ -10,6 +10,7 @@ import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.ComposeTestRule
@@ -235,6 +236,21 @@ class ScreenshotTest : UiTestPrerequisites() {
         }
 
         composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) {
+            composeTestRule.onNodeWithText(
+                text = resContext.getString(R.string.restore_success_button),
+                ignoreCase = true
+            ).isDisplayed()
+        }
+
+        composeTestRule.onNodeWithText(
+            text = resContext.getString(R.string.restore_success_button),
+            ignoreCase = true
+        ).also {
+            it.performScrollTo()
+            it.performClick()
+        }
+
+        composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) {
             composeTestRule.activity.walletViewModel.walletSnapshot.value != null
         }
 
@@ -330,7 +346,10 @@ private fun onboardingScreenshots(
     }
 
     // Welcome screen
-    composeTestRule.onNodeWithText(resContext.getString(R.string.onboarding_header)).also {
+    composeTestRule.onNodeWithText(
+        resContext.getString(R.string.onboarding_header),
+        useUnmergedTree = true
+    ).also {
         it.assertExists()
         ScreenshotTest.takeScreenshot(tag, "Onboarding 1")
     }
@@ -339,7 +358,8 @@ private fun onboardingScreenshots(
 
     composeTestRule.onNodeWithText(
         text = resContext.getString(R.string.onboarding_create_new_wallet),
-        ignoreCase = true
+        ignoreCase = true,
+        useUnmergedTree = true
     ).also {
         it.performClick()
     }
@@ -347,7 +367,8 @@ private fun onboardingScreenshots(
     // Security Warning screen
     composeTestRule.onNodeWithText(
         text = resContext.getString(R.string.security_warning_acknowledge),
-        ignoreCase = true
+        ignoreCase = true,
+        useUnmergedTree = true
     ).also {
         it.assertExists()
         it.performClick()
@@ -355,10 +376,16 @@ private fun onboardingScreenshots(
     }
     composeTestRule.onNodeWithText(
         text = resContext.getString(R.string.security_warning_confirm),
-        ignoreCase = true
+        ignoreCase = true,
+        useUnmergedTree = true
     ).also {
         it.performClick()
     }
+
+    composeTestRule.onNodeWithText(
+        text = resContext.getString(R.string.seed_recovery_next_button),
+        useUnmergedTree = true
+    ).performClick()
 }
 
 private fun accountScreenshots(
