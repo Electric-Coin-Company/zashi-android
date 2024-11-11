@@ -7,21 +7,23 @@ This file covers all the store listing texts for Zashi's presence in the Google 
 
 ### App name
 
-Zashi: Zcash Wallet
+Zashi: Billetera de Zcash
 
 ### Short description
 
-Zashi is a Zcash wallet that keeps your transaction and message history private.
+Zashi es una billetera de Zcash que mantiene privado el historial de tus transacciones y mensajes.
 
 ### Full description
 
-Zashi is a Zcash wallet that keeps your transaction and message history private.
+Zashi es una billetera de Zcash que mantiene privado el historial de tus transacciones y mensajes.
 
-Built and maintained by Electric Coin Co. (ECC), the inventor of Zcash, Zashi is the easiest way to use $ZEC.
+Creada y gestionada por Electric Coin Co. (ECC), los creadores de Zcash, Zashi es la manera más sencilla de usar $ZEC.
 
-Why use the Zashi Zcash wallet?
-* You can send and receive ZEC and private memos. (Zashi your mom! Zashi your barista!)
-* It’s reliable and fast, and it includes the ability to Spend before Sync. (Funds are available before sync completes.)
-* The UI is fully updated — simple and clean.
-* It supports Sapling and Orchard pools, plus Unified Addresses, a single address type that works across all Zcash pools, transparent and shielded.
-* It has built-in mechanisms for user support and developer feedback.
+¿Por qué usar la billetera Zashi de Zcash?
+* Puedes enviar y recibir ZEC y mensajes privados. (¡Envía Zashi a tu mamá! ¡Envía Zashi a tu barista!)
+* Es confiable y rápida, e incluye la función "Gastar antes de Sincronizar" (los fondos están disponibles antes de 
+  que se complete la sincronización).
+* La interfaz está completamente actualizada: simple y clara.
+* Soporta los pools Sapling y Orchard, además de Direcciones Unificadas, un tipo de dirección única que funciona en 
+  todos los pools de Zcash, tanto transparentes como protegidos.
+* Cuenta con funciones integradas para soporte al usuario y feedback de desarrolladores.
