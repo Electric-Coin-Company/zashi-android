@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -18,11 +17,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withLink
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
@@ -115,47 +116,41 @@ fun Update(
                 )
                 Spacer(Modifier.height(12.dp))
 
-                val annotatedString =
-                    buildAnnotatedString {
-                        append(
-                            if (updateInfo.isForce) {
-                                stringResource(id = R.string.update_description_required)
-                            } else {
-                                stringResource(id = R.string.update_description_available)
-                            }
-                        )
-                        appendLine()
-                        appendLine()
-
-                        withStyle(
-                            style =
-                                SpanStyle(
-                                    textDecoration = TextDecoration.Underline
-                                )
-                        ) {
-                            pushStringAnnotation(stringResource(R.string.update_link_text), CLICKABLE_TAG)
-                            append(stringResource(R.string.update_link_text))
-                            pop()
-                        }
-                    }
-
-                ClickableText(
+                Text(
                     modifier = Modifier.fillMaxWidth(),
-                    text = annotatedString,
-                    style =
-                        ZashiTypography.textSm.copy(
-                            textAlign = TextAlign.Center,
-                            color = ZashiColors.Text.textPrimary,
-                        ),
-                ) { offset ->
-                    annotatedString.getStringAnnotations(tag = CLICKABLE_TAG, start = offset, end = offset)
-                        .firstOrNull()
-                        ?.let {
-                            if (updateInfo.state != UpdateState.Running) {
-                                onReference()
+                    text =
+                        buildAnnotatedString {
+                            append(
+                                if (updateInfo.isForce) {
+                                    stringResource(id = R.string.update_description_required)
+                                } else {
+                                    stringResource(id = R.string.update_description_available)
+                                }
+                            )
+                            appendLine()
+                            appendLine()
+
+                            withStyle(
+                                style =
+                                    SpanStyle(
+                                        textDecoration = TextDecoration.Underline
+                                    )
+                            ) {
+                                withLink(
+                                    LinkAnnotation.Clickable(CLICKABLE_TAG) {
+                                        if (updateInfo.state != UpdateState.Running) {
+                                            onReference()
+                                        }
+                                    }
+                                ) {
+                                    append(stringResource(R.string.update_link_text))
+                                }
                             }
-                        }
-                }
+                        },
+                    style = ZashiTypography.textSm,
+                    textAlign = TextAlign.Center,
+                    color = ZashiColors.Text.textPrimary,
+                )
                 Spacer(Modifier.weight(1f))
                 ZashiButton(
                     modifier = Modifier.fillMaxWidth(),

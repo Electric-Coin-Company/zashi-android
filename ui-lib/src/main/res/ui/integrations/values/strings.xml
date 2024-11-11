@@ -2,6 +2,10 @@
     <string name="integrations_title">Integrations</string>
     <string name="integrations_coinbase">Buy <xliff:g id="currency" example="ZEC">%1$s</xliff:g> with Coinbase</string>
     <string name="integrations_coinbase_subtitle">A hassle-free way to buy <xliff:g id="currency" example="ZEC">%1$s</xliff:g> and get it directly into your Zashi wallet.</string>
-    <string name="integrations_version">Version %s</string>
+    <string name="integrations_version">Version <xliff:g id="version" example="1.2.1">%1$s</xliff:g></string>
     <string name="integrations_disabled_info">During the Restore process, it is not possible to use payment integrations.</string>
+    <string name="integrations_flexa">Pay with Flexa</string>
+    <string name="integrations_flexa_subtitle">Pay with Flexa payment clips and explore a new way of spending Zcash.</string>
+    <string name="integrations_flexa_biometric_message">Authenticate yourself to pay with Flexa</string>
+    <string name="integrations_flexa_key_missing">Flexa key missing</string>
 </resources>

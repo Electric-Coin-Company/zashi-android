@@ -8,8 +8,8 @@
         There is a required update\nfor Zashi that makes major improvements to\nperformance and/or security.
     </string>
     <string name="update_description_available">
-        There is a new version of\nZashi that makes minor updates to improve\nperformance and/or security.\n\nPlease
-        take a moment to update to the latest version.
+        There is a new version of Zashi that makes minor updates to
+        improve performance and/or security.\n\nPlease take a moment to update to the latest version.
     </string>
     <string name="update_link_text">Learn more about this update here.</string>
     <string name="update_download_button">Update</string>

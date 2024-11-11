@@ -25,7 +25,8 @@ data class ZashiColorsInternal(
     val HintTooltips: HintTooltips,
     val TwoFA: TwoFA,
     val Utility: Utility,
-    val Transparent: Transparent
+    val Transparent: Transparent,
+    val NoTheme: NoTheme
 )
 
 @Immutable
@@ -666,4 +667,9 @@ data class UtilityEspresso(
 @Immutable
 data class Transparent(
     val bgPrimary: Color
+)
+
+@Immutable
+data class NoTheme(
+    val welcomeText: Color
 )

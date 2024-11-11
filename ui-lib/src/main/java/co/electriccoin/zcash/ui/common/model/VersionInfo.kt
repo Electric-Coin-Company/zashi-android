@@ -2,9 +2,11 @@ package co.electriccoin.zcash.ui.common.model
 
 import android.content.Context
 import android.content.pm.ApplicationInfo
+import cash.z.ecc.android.sdk.model.Locale
 import co.electriccoin.zcash.build.gitCommitCount
 import co.electriccoin.zcash.build.gitSha
 import co.electriccoin.zcash.build.releaseNotesEn
+import co.electriccoin.zcash.build.releaseNotesEs
 import co.electriccoin.zcash.spackle.EmulatorWtfUtil
 import co.electriccoin.zcash.spackle.FirebaseTestLabUtil
 import co.electriccoin.zcash.spackle.getPackageInfoCompat
@@ -38,8 +40,16 @@ data class VersionInfo(
                 isTestnet = context.resources.getBoolean(cash.z.ecc.sdk.ext.R.bool.zcash_is_testnet),
                 gitSha = gitSha,
                 gitCommitCount = gitCommitCount.toLong(),
-                changelog = Changelog.new(json = releaseNotesEn)
+                changelog = Changelog.new(json = resolveBestReleaseNotes())
             )
+        }
+
+        private fun resolveBestReleaseNotes(): String {
+            return if (Locale.getDefault().language.contains("es", ignoreCase = true)) {
+                releaseNotesEs
+            } else {
+                releaseNotesEn
+            }
         }
     }
 }

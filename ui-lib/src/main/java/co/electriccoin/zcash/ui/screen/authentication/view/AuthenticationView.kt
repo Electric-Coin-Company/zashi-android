@@ -8,6 +8,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -15,8 +16,8 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.viewmodel.AuthenticationResult
 import co.electriccoin.zcash.ui.design.component.AppAlertDialog
 import co.electriccoin.zcash.ui.design.component.BlankSurface
-import co.electriccoin.zcash.ui.design.component.WelcomeAnimation
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.screen.authentication.view.AnimationConstants.WELCOME_ANIM_TEST_TAG
 
 @Preview("App Access Authentication")
 @Composable
@@ -24,7 +25,9 @@ private fun PreviewAppAccessAuthentication() {
     ZcashTheme(forceDarkMode = false) {
         BlankSurface {
             AppAccessAuthentication(
-                welcomeAnimVisibility = true
+                onRetry = {},
+                showAuthLogo = false,
+                welcomeAnimVisibility = true,
             )
         }
     }
@@ -62,12 +65,16 @@ private fun ErrorAuthenticationDarkPreview() {
 
 @Composable
 fun AppAccessAuthentication(
+    onRetry: (() -> Unit),
+    showAuthLogo: Boolean,
     welcomeAnimVisibility: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    WelcomeAnimation(
+    WelcomeScreenView(
         animationState = welcomeAnimVisibility,
-        modifier = modifier
+        onRetry = onRetry,
+        showAuthLogo = showAuthLogo,
+        modifier = modifier.testTag(WELCOME_ANIM_TEST_TAG),
     )
 }
 
