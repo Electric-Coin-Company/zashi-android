@@ -53,6 +53,7 @@ fun WrapRestore() {
                         SeedPhrase(restoreViewModel.userWordList.current.value),
                         restoreViewModel.userBirthdayHeight.value
                     )
+                    onboardingViewModel.setIsImporting(false)
                 }
             )
         }
