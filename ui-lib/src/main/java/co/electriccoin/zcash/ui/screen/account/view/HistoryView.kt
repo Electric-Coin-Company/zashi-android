@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import cash.z.ecc.android.sdk.fixture.TransactionOverviewFixture
 import cash.z.ecc.android.sdk.model.FirstClassByteArray
 import cash.z.ecc.android.sdk.model.TransactionOverview
+import cash.z.ecc.android.sdk.model.TransactionPool
 import cash.z.ecc.android.sdk.model.TransactionRecipient
 import cash.z.ecc.android.sdk.model.TransactionState
 import cash.z.ecc.android.sdk.model.Zatoshi
@@ -379,22 +380,25 @@ private fun HistoryItem(
         TransactionExtendedState.SHIELDED -> {
             typeText = stringResource(id = R.string.account_history_item_shielded_funds)
             typeIcon = ImageVector.vectorResource(R.drawable.ic_trx_shielded_funds)
-            textColor = MaterialTheme.colorScheme.onBackground
-            textStyle = ZcashTheme.extendedTypography.transactionItemStyles.titleRegular
+            textColor = ZashiColors.Text.textPrimary
+            textStyle = ZashiTypography.textSm
         }
 
         TransactionExtendedState.SHIELDING -> {
             typeText = stringResource(id = R.string.account_history_item_shielding_funds)
             typeIcon = ImageVector.vectorResource(R.drawable.ic_trx_shielded_funds)
-            textColor = ZcashTheme.colors.textDescription
-            textStyle = ZcashTheme.extendedTypography.transactionItemStyles.titleRunning
+            textColor = ZashiColors.Text.textPrimary
+            textStyle = ZashiTypography.textSm
         }
 
         TransactionExtendedState.SHIELDING_FAILED -> {
             typeText = stringResource(id = R.string.account_history_item_shielding_failed)
             typeIcon = ImageVector.vectorResource(R.drawable.ic_trx_shielded_funds)
-            textColor = ZcashTheme.colors.historyRedColor
-            textStyle = ZcashTheme.extendedTypography.transactionItemStyles.titleFailed
+            textColor = ZashiColors.Text.textError
+            textStyle =
+                ZashiTypography.textSm.copy(
+                    textDecoration = TextDecoration.LineThrough
+                )
         }
     }
 
@@ -602,7 +606,10 @@ private fun HistoryItemCollapsedAddressPart(
                 )
             }
         }
-    } else if (!transaction.overview.isShielding) {
+    } else if (
+        transaction.outputs.none { it.pool == TransactionPool.TRANSPARENT } &&
+        !transaction.overview.isShielding
+    ) {
         Icon(
             imageVector = ImageVector.vectorResource(R.drawable.ic_trx_shielded),
             contentDescription = stringResource(id = R.string.account_history_item_shielded)
