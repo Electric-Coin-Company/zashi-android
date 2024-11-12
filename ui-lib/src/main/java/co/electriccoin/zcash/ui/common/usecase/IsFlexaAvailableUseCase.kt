@@ -1,14 +1,9 @@
 package co.electriccoin.zcash.ui.common.usecase
 
-import co.electriccoin.zcash.ui.BuildConfig
-import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
+import co.electriccoin.zcash.ui.common.repository.ConfigurationRepository
 
 class IsFlexaAvailableUseCase(
-    private val getVersionInfo: GetVersionInfoProvider,
+    private val configurationRepository: ConfigurationRepository
 ) {
-    operator fun invoke(): Boolean {
-        val versionInfo = getVersionInfo()
-        val isDebug = versionInfo.let { it.isDebuggable && !it.isRunningUnderTestService }
-        return !versionInfo.isTestnet && (BuildConfig.ZCASH_FLEXA_KEY.isNotEmpty() || isDebug)
-    }
+    suspend operator fun invoke() = configurationRepository.isFlexaAvailable()
 }

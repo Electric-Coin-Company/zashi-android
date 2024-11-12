@@ -15,4 +15,6 @@ object ConfigurationEntries {
      * A troubleshooting step. If we fix our bugs, this should be unnecessary.
      */
     val IS_RESCAN_ENABLED = BooleanConfigurationEntry(ConfigKey("is_rescan_enabled"), true)
+
+    val IS_FLEXA_AVAILABLE = BooleanConfigurationEntry(ConfigKey("is_flexa_available"), false)
 }

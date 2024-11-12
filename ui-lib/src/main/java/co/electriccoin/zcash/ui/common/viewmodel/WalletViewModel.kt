@@ -17,7 +17,6 @@ import cash.z.ecc.sdk.type.fromResources
 import co.electriccoin.zcash.preference.EncryptedPreferenceProvider
 import co.electriccoin.zcash.preference.StandardPreferenceProvider
 import co.electriccoin.zcash.spackle.Twig
-import co.electriccoin.zcash.ui.BuildConfig
 import co.electriccoin.zcash.ui.common.model.OnboardingState
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
@@ -50,8 +49,6 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 // To make this more multiplatform compatible, we need to remove the dependency on Context
 // for loading the preferences.
@@ -267,15 +264,11 @@ class WalletViewModel(
         }
     }
 
-    private suspend fun disconnectFlexa() =
-        suspendCoroutine { cont ->
-            if (isFlexaAvailable() && BuildConfig.ZCASH_FLEXA_KEY.isNotEmpty()) {
-                Flexa.buildIdentity().build().disconnect()
-                cont.resume(Unit)
-            } else {
-                cont.resume(Unit)
-            }
+    private suspend inline fun disconnectFlexa() {
+        if (isFlexaAvailable()) {
+            Flexa.buildIdentity().build().disconnect()
         }
+    }
 }
 
 /**
