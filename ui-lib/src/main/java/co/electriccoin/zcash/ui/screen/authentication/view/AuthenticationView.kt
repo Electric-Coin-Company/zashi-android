@@ -118,6 +118,7 @@ fun AuthenticationErrorDialog(
     )
 }
 
+// Currently unused, we keep it for further iterations
 @Composable
 fun AuthenticationFailedDialog(
     onDismiss: () -> Unit,
