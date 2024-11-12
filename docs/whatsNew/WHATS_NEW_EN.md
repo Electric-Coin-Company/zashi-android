@@ -20,6 +20,9 @@ directly impact users rather than highlighting other key architectural updates.*
 - The application now correctly navigates to the homepage after deleting the current wallet and creating a new or
   recovering an older one
 
+### Changelog
+- Shielded transactions are properly indicated in transaction history
+
 ## [1.2.1 (760)] - 2024-10-22
 
 ### Added
