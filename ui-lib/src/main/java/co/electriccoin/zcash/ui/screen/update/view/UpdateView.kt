@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.LinkAnnotation
@@ -38,6 +39,8 @@ import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.fixture.UpdateInfoFixture
+import co.electriccoin.zcash.ui.screen.update.UpdateTag.BTN_DOWNLOAD
+import co.electriccoin.zcash.ui.screen.update.UpdateTag.BTN_LATER
 import co.electriccoin.zcash.ui.screen.update.model.UpdateInfo
 import co.electriccoin.zcash.ui.screen.update.model.UpdateState
 
@@ -70,7 +73,7 @@ fun Update(
                     colors = ZcashTheme.colors.topAppBarColors.copyColors(containerColor = Color.Transparent),
                     navigationAction = {
                         if (updateInfo.isForce.not()) {
-                            ZashiTopAppBarCloseNavigation(onLater)
+                            ZashiTopAppBarCloseNavigation(modifier = Modifier.testTag(BTN_LATER), onBack = onLater)
                         }
                     },
                     hamburgerMenuActions = {
@@ -153,7 +156,7 @@ fun Update(
                 )
                 Spacer(Modifier.weight(1f))
                 ZashiButton(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().testTag(BTN_DOWNLOAD),
                     text = stringResource(R.string.update_download_button),
                     onClick = { onDownload(UpdateState.Running) },
                     enabled = updateInfo.state != UpdateState.Running,
