@@ -30,6 +30,10 @@ android {
         getByName("main").apply {
             res.setSrcDirs(
                 setOf(
+                    // This is a special case as these texts are not translated, they are replaced in build time via
+                    // app/build.gradle.kts instead
+                    "src/main/res/ui/non_translatable",
+
                     "src/main/res/ui/about",
                     "src/main/res/ui/account",
                     "src/main/res/ui/address_book",

@@ -108,6 +108,8 @@ class WalletViewModel(
                                 it.getSortHeight(networkHeight)
                             }
                             .map {
+                                val outputs = synchronizer.getTransactionOutputs(it)
+
                                 if (it.isSentTransaction) {
                                     val recipient = synchronizer.getRecipients(it).firstOrNull()
                                     TransactionOverviewExt(
@@ -118,14 +120,16 @@ class WalletViewModel(
                                                 synchronizer.validateAddress(recipient.addressValue)
                                             } else {
                                                 null
-                                            }
+                                            },
+                                        transactionOutputs = outputs,
                                     )
                                 } else {
                                     // Note that recipients can only be queried for sent transactions
                                     TransactionOverviewExt(
                                         overview = it,
                                         recipient = null,
-                                        recipientAddressType = null
+                                        recipientAddressType = null,
+                                        transactionOutputs = outputs,
                                     )
                                 }
                             }

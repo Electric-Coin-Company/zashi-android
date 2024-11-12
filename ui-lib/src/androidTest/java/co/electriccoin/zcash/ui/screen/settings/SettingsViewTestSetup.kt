@@ -106,7 +106,6 @@ class SettingsViewTestSetup(
                 Settings(
                     state =
                         SettingsState(
-                            isLoading = false,
                             version = stringRes("app_version"),
                             debugMenu = settingsTroubleshootingState,
                             onBack = {

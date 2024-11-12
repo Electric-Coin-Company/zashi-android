@@ -14,7 +14,7 @@ pluginManager.withPlugin("com.android.application") {
             // The rest of the locales provides an explicit list of the languages to keep in the
             // final app.  Doing this will strip out additional locales from libraries like
             // Google Play Services and Firebase, which add unnecessary bloat.
-            resourceConfigurations.addAll(listOf("en", "en-rUS", "en-rGB", "en-rAU", "en_XA", "ar_XB"))
+            resourceConfigurations.addAll(listOf("en", "en-rUS", "en-rGB", "en-rAU", "es", "en_XA", "ar_XB"))
 
             testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -39,7 +39,7 @@ pluginManager.withPlugin("com.android.library") {
             // If we add other localizations, they should be included in this list.
             // By explicitly setting supported locales, we strip out unused localizations from third party
             // libraries (e.g. play services)
-            resourceConfigurations.addAll(listOf("en", "en-rUS", "en-rGB", "en-rAU", "en_XA", "ar_XB"))
+            resourceConfigurations.addAll(listOf("en", "en-rUS", "en-rGB", "en-rAU", "es", "en_XA", "ar_XB"))
 
             testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
             consumerProguardFiles("proguard-consumer.txt")
@@ -68,7 +68,7 @@ pluginManager.withPlugin("com.android.test") {
             // If we add other localizations, they should be included in this list.
             // By explicitly setting supported locales, we strip out unused localizations from third party
             // libraries (e.g. play services)
-            resourceConfigurations.addAll(listOf("en", "en-rUS", "en-rGB", "en-rAU", "en_XA", "ar_XB"))
+            resourceConfigurations.addAll(listOf("en", "en-rUS", "en-rGB", "en-rAU", "es", "en_XA", "ar_XB"))
 
             testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
