@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.common.datasource
 
+import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.spackle.io.deleteSuspend
 import co.electriccoin.zcash.ui.common.model.AddressBook
 import co.electriccoin.zcash.ui.common.model.AddressBookContact
@@ -10,6 +11,8 @@ import co.electriccoin.zcash.ui.common.serialization.addressbook.AddressBookKey
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
+import java.io.IOException
+import java.security.GeneralSecurityException
 
 interface LocalAddressBookDataSource {
     suspend fun getContacts(addressBookKey: AddressBookKey): AddressBook
@@ -155,15 +158,29 @@ class LocalAddressBookDataSourceImpl(
 
     @Suppress("ReturnCount")
     private suspend fun readLocalFileToAddressBook(addressBookKey: AddressBookKey): AddressBook? {
-        addressBookStorageProvider.getStorageFile(addressBookKey)?.let {
-            return addressBookProvider.readAddressBookFromFile(it, addressBookKey)
-        } ?: addressBookStorageProvider.getLegacyUnencryptedStorageFile()?.let { unencryptedFile ->
-            // If we have an unencrypted file, convert it into an encrypted file.
+        val encryptedFile = addressBookStorageProvider.getStorageFile(addressBookKey)
+        if (encryptedFile != null) {
+            return try {
+                addressBookProvider.readAddressBookFromFile(encryptedFile, addressBookKey)
+            } catch (e: GeneralSecurityException) {
+                Twig.warn(e) { "Failed to decrypt address book" }
+                null
+            } catch (e: IOException) {
+                Twig.warn(e) { "Failed to decrypt address book" }
+                null
+            }
+        }
+
+        val unencryptedFile = addressBookStorageProvider.getLegacyUnencryptedStorageFile()
+
+        return if (unencryptedFile != null) {
             val addressBook = addressBookProvider.readLegacyUnencryptedAddressBookFromFile(unencryptedFile)
             writeAddressBookToLocalStorage(addressBook, addressBookKey)
             unencryptedFile.deleteSuspend()
             return addressBook
-        } ?: return null
+        } else {
+            null
+        }
     }
 
     private fun writeAddressBookToLocalStorage(
