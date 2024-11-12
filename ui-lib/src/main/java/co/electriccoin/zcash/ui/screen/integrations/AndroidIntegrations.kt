@@ -1,9 +1,7 @@
 package co.electriccoin.zcash.ui.screen.integrations
 
-import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
-import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -13,6 +11,7 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.LocalActivity
 import co.electriccoin.zcash.ui.common.compose.LocalNavController
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
+import co.electriccoin.zcash.ui.screen.about.util.WebBrowserUtil
 import co.electriccoin.zcash.ui.screen.integrations.view.Integrations
 import co.electriccoin.zcash.ui.screen.integrations.viewmodel.IntegrationsViewModel
 import com.flexa.core.Flexa
@@ -36,13 +35,7 @@ internal fun WrapIntegrations() {
 
     LaunchedEffect(Unit) {
         viewModel.coinbaseNavigationCommand.collect { uri ->
-            val intent =
-                CustomTabsIntent.Builder()
-                    .setUrlBarHidingEnabled(true)
-                    .setShowTitle(true)
-                    .setShareState(CustomTabsIntent.SHARE_STATE_OFF)
-                    .build()
-            intent.launchUrl(activity, Uri.parse(uri))
+            WebBrowserUtil.startActivity(activity, uri)
         }
     }
 
