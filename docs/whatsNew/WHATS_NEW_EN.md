@@ -15,7 +15,7 @@ directly impact users rather than highlighting other key architectural updates.*
 - The Flexa SDK has been adopted to enable payments using the embedded Flexa UI
 
 ### Changed
-- Redesigned not enough space & forced udpate screens
+- The Not enough space and In-app udpate screens have been redesigned
 
 ### Fixed
 - Address book toast now correctly shows on send screen when adding both new and known addresses to text field

@@ -4,6 +4,7 @@ import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.test.filters.MediumTest
 import co.electriccoin.zcash.test.UiTestPrerequisites
@@ -15,6 +16,7 @@ import co.electriccoin.zcash.ui.screen.update.model.UpdateInfo
 import co.electriccoin.zcash.ui.screen.update.model.UpdateState
 import co.electriccoin.zcash.ui.test.getStringResource
 import org.junit.Assert.assertEquals
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 
@@ -116,24 +118,24 @@ class UpdateViewTest : UiTestPrerequisites() {
         assertEquals(1, testSetup.getOnDownloadCount())
     }
 
-    // commenting out the test for now -> we have no way to click a clickable span right now
-    // @Test
-    // @MediumTest
-    // fun play_store_ref_test() {
-    //     val updateInfo = UpdateInfoFixture.new(appUpdateInfo = null)
-    //
-    //     val testSetup = newTestSetup(updateInfo)
-    //
-    //     assertEquals(0, testSetup.getOnReferenceCount())
-    //     composeTestRule.onRoot().assertExists()
-    //
-    //     composeTestRule.onNodeWithText(getStringResource(R.string.update_link_text), substring = true,).also {
-    //         it.assertExists()
-    //         it.performClick()
-    //     }
-    //
-    //     assertEquals(1, testSetup.getOnReferenceCount())
-    // }
+    @Test
+    @MediumTest
+    @Ignore("Disable the test for now -> we have no way to click a clickable span right now")
+    fun play_store_ref_test() {
+        val updateInfo = UpdateInfoFixture.new(appUpdateInfo = null)
+
+        val testSetup = newTestSetup(updateInfo)
+
+        assertEquals(0, testSetup.getOnReferenceCount())
+        composeTestRule.onRoot().assertExists()
+
+        composeTestRule.onNodeWithText(getStringResource(R.string.update_link_text), substring = true,).also {
+            it.assertExists()
+            it.performClick()
+        }
+
+        assertEquals(1, testSetup.getOnReferenceCount())
+    }
 
     private fun newTestSetup(updateInfo: UpdateInfo) =
         UpdateViewTestSetup(

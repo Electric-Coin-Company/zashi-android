@@ -18,3 +18,6 @@ directly impact users rather than highlighting other key architectural updates.*
 - Address book toast now correctly shows on send screen when adding both new and known addresses to text field
 - The application now correctly navigates to the homepage after deleting the current wallet and creating a new or
   recovering an older one
+
+### Changed
+- The Not enough space and In-app udpate screens have been redesigned
