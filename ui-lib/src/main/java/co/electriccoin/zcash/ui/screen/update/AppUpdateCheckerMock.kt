@@ -19,11 +19,9 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import kotlin.time.Duration.Companion.milliseconds
 
-class AppUpdateCheckerMock private constructor() : AppUpdateChecker {
+class AppUpdateCheckerMock : AppUpdateChecker {
     companion object {
         private const val DEFAULT_STALENESS_DAYS = 3
-
-        fun new() = AppUpdateCheckerMock()
 
         // Used mostly for tests
         val resultUpdateInfo =

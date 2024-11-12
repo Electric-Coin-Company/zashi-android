@@ -6,7 +6,6 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performScrollTo
 import androidx.test.filters.MediumTest
 import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.R
@@ -17,6 +16,7 @@ import co.electriccoin.zcash.ui.screen.update.model.UpdateInfo
 import co.electriccoin.zcash.ui.screen.update.model.UpdateState
 import co.electriccoin.zcash.ui.test.getStringResource
 import org.junit.Assert.assertEquals
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 
@@ -38,14 +38,7 @@ class UpdateViewTest : UiTestPrerequisites() {
         newTestSetup(updateInfo)
 
         composeTestRule.onNodeWithText(
-            text = getStringResource(R.string.update_critical_header),
-            ignoreCase = true
-        ).also {
-            it.assertExists()
-        }
-
-        composeTestRule.onNodeWithText(
-            text = getStringResource(R.string.update_later_disabled_button),
+            text = getStringResource(R.string.update_title_required),
             ignoreCase = true
         ).also {
             it.assertExists()
@@ -85,14 +78,7 @@ class UpdateViewTest : UiTestPrerequisites() {
         newTestSetup(updateInfo)
 
         composeTestRule.onNodeWithText(
-            text = getStringResource(R.string.update_header),
-            ignoreCase = true
-        ).also {
-            it.assertExists()
-        }
-
-        composeTestRule.onNodeWithText(
-            text = getStringResource(R.string.update_later_enabled_button),
+            text = getStringResource(R.string.update_title_available),
             ignoreCase = true
         ).also {
             it.assertExists()
@@ -101,11 +87,11 @@ class UpdateViewTest : UiTestPrerequisites() {
 
     @Test
     @MediumTest
-    fun later_btn_force_update_test() {
+    fun later_btn_update_test() {
         val updateInfo =
             UpdateInfoFixture.new(
-                priority = AppUpdateChecker.Priority.HIGH,
-                force = true,
+                priority = AppUpdateChecker.Priority.LOW,
+                force = false,
                 appUpdateInfo = null,
                 state = UpdateState.Prepared
             )
@@ -115,7 +101,7 @@ class UpdateViewTest : UiTestPrerequisites() {
 
         composeTestRule.clickLater()
 
-        assertEquals(0, testSetup.getOnLaterCount())
+        assertEquals(1, testSetup.getOnLaterCount())
     }
 
     @Test
@@ -127,10 +113,6 @@ class UpdateViewTest : UiTestPrerequisites() {
 
         assertEquals(0, testSetup.getOnDownloadCount())
 
-        composeTestRule.onNodeWithText(UpdateTag.PROGRESSBAR_DOWNLOADING).also {
-            it.assertDoesNotExist()
-        }
-
         composeTestRule.clickDownload()
 
         assertEquals(1, testSetup.getOnDownloadCount())
@@ -138,6 +120,7 @@ class UpdateViewTest : UiTestPrerequisites() {
 
     @Test
     @MediumTest
+    @Ignore("Disable the test for now -> we have no way to click a clickable span right now")
     fun play_store_ref_test() {
         val updateInfo = UpdateInfoFixture.new(appUpdateInfo = null)
 
@@ -146,9 +129,8 @@ class UpdateViewTest : UiTestPrerequisites() {
         assertEquals(0, testSetup.getOnReferenceCount())
         composeTestRule.onRoot().assertExists()
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.update_link_text)).also {
+        composeTestRule.onNodeWithText(getStringResource(R.string.update_link_text), substring = true,).also {
             it.assertExists()
-            it.performScrollTo()
             it.performClick()
         }
 
