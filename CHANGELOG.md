@@ -11,7 +11,9 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 - Zashi app now supports Spanish language
 - The Flexa SDK has been adopted to enable payments using the embedded Flexa UI
 
-### Changed
+### Changelog
+- Shielded transactions are properly indicated in transaction history
+- The in-app update logic has been fixed and is now correctly requested with every app launch
 - The Not enough space and In-app udpate screens have been redesigned
 
 ### Fixed

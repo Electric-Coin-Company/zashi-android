@@ -14,11 +14,13 @@ directly impact users rather than highlighting other key architectural updates.*
 - Zashi app now supports Spanish language
 - The Flexa SDK has been adopted to enable payments using the embedded Flexa UI
 
+### Changelog
+- Shielded transactions are properly indicated in transaction history
+- The in-app update logic has been fixed and is now correctly requested with every app launch
+- The Not enough space and In-app udpate screens have been redesigned
+
 ### Fixed
 - Address book toast now correctly shows on send screen when adding both new and known addresses to text field
 - The application now correctly navigates to the homepage after deleting the current wallet and creating a new or
   recovering an older one
 - The in-app update logic has been fixed and is now correctly requested with every app launch
-
-### Changed
-- The Not enough space and In-app udpate screens have been redesigned
