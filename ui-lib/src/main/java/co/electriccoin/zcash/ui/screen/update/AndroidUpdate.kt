@@ -32,6 +32,12 @@ internal fun WrapCheckForUpdate() {
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     val checkUpdateViewModel = koinActivityViewModel<CheckUpdateViewModel>()
 
+    // Check for an app update asynchronously. We create an effect that matches the activity
+    // lifecycle. If the wrapping compose recomposes, the check shouldn't run again.
+    LaunchedEffect(true) {
+        checkUpdateViewModel.checkForAppUpdate()
+    }
+
     val activity = LocalActivity.current
 
     val inputUpdateInfo = checkUpdateViewModel.updateInfo.collectAsStateWithLifecycle().value ?: return
@@ -55,12 +61,6 @@ internal fun WrapCheckForUpdate() {
                 navController.navigateJustOnce(SETTINGS)
             }
         )
-    }
-
-    // Check for an app update asynchronously. We create an effect that matches the activity
-    // lifecycle. If the wrapping compose recomposes, the check shouldn't run again.
-    LaunchedEffect(true) {
-        checkUpdateViewModel.checkForAppUpdate()
     }
 }
 

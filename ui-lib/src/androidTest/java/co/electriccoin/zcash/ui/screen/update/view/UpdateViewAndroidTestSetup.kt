@@ -19,7 +19,7 @@ class UpdateViewAndroidTestSetup(
         UpdateViewModel(
             application = composeTestRule.activity.application,
             updateInfo = updateInfo,
-            appUpdateChecker = AppUpdateCheckerMock.new()
+            appUpdateChecker = AppUpdateCheckerMock()
         )
 
     @Composable
