@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="not_enough_space_title">No hay suficiente espacio libre</string>
+    <string name="not_enough_space_description_1">
+        <xliff:g id="app_name" example="Zashi">%1$s</xliff:g> requiere al menos
+        <xliff:g example="1" id="required_gigabytes">%2$d</xliff:g> GB de espacio para funcionar, pero solo hay
+        <xliff:g example="300" id="available_megabytes">%3$d</xliff:g> MB disponibles.
+    </string>
+    <string name="not_enough_space_description_2">
+        Ve a la configuración de tu dispositivo y libera más espacio si deseas usar la aplicación
+        <xliff:g id="app_name" example="Zashi">%1$s</xliff:g>.
+    </string>
+    <string name="not_enough_space_system_settings_btn">Configuración del sistema</string>
+    <string name="not_enough_space_settings_open_failed">No se pudo iniciar la aplicación de Configuración.</string>
+</resources>

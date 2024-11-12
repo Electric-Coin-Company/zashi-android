@@ -71,7 +71,7 @@ internal fun BaseExchangeRateOptIn(
                 Image(painter = painterResource(R.drawable.exchange_rate), contentDescription = "")
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = "Currency Conversion",
+                    text = stringResource(id = R.string.exchange_rate_opt_in_subtitle),
                     color = ZashiColors.Text.textPrimary,
                     style = ZashiTypography.header6,
                     fontWeight = FontWeight.SemiBold
