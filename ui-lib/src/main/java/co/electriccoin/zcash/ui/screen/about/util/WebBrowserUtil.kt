@@ -1,30 +1,22 @@
 package co.electriccoin.zcash.ui.screen.about.util
 
-import android.content.Intent
+import android.app.Activity
 import android.net.Uri
+import androidx.browser.customtabs.CustomTabsIntent
 
 object WebBrowserUtil {
-    const val FLAGS =
-        Intent.FLAG_ACTIVITY_NO_HISTORY or
-            Intent.FLAG_ACTIVITY_NEW_TASK or
-            Intent.FLAG_ACTIVITY_MULTIPLE_TASK
-
     const val ZCASH_PRIVACY_POLICY_URI = "https://electriccoin.co/zashi-privacy-policy/" // NON-NLS
 
-    /**
-     * Returns new action view app intent. We assume the a web browser app is installed.
-     *
-     * @param url The webpage url to open
-     *
-     * @return Intent for launching in a browser app.
-     */
-    internal fun newActivityIntent(url: String): Intent {
-        val storeUri = Uri.parse(url)
-        val storeIntent = Intent(Intent.ACTION_VIEW, storeUri)
-
-        // To properly handle the browser backstack while navigate back to our app
-        storeIntent.addFlags(FLAGS)
-
-        return storeIntent
+    internal fun startActivity(
+        activity: Activity,
+        url: String
+    ) {
+        val intent =
+            CustomTabsIntent.Builder()
+                .setUrlBarHidingEnabled(true)
+                .setShowTitle(true)
+                .setShareState(CustomTabsIntent.SHARE_STATE_OFF)
+                .build()
+        intent.launchUrl(activity, Uri.parse(url))
     }
 }

@@ -16,10 +16,11 @@ directly impact users rather than highlighting other key architectural updates.*
 - New Sending, Success, Failure, and GrpcFailure subscreens of the Send Confirmation screen have been added
 - New Copy Transaction IDs feature has been added to the MultipleTransactionFailure screen
 
-### Changelog
+### Changed
 - Shielded transactions are properly indicated in transaction history
 - The in-app update logic has been fixed and is now correctly requested with every app launch
 - The Not enough space and In-app udpate screens have been redesigned
+- External links now open in in-app browser
 
 ### Fixed
 - Address book toast now correctly shows on send screen when adding both new and known addresses to text field
