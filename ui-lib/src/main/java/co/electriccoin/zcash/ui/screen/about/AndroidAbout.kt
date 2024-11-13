@@ -1,6 +1,6 @@
 package co.electriccoin.zcash.ui.screen.about
 
-import android.content.Context
+import android.app.Activity
 import androidx.activity.compose.BackHandler
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -51,7 +51,7 @@ internal fun AndroidAbout(goBack: () -> Unit) {
         configInfo = configInfo,
         onPrivacyPolicy = {
             openPrivacyPolicyInWebBrowser(
-                activity.applicationContext,
+                activity,
                 snackbarHostState,
                 scope
             )
@@ -62,17 +62,16 @@ internal fun AndroidAbout(goBack: () -> Unit) {
 }
 
 fun openPrivacyPolicyInWebBrowser(
-    context: Context,
+    activity: Activity,
     snackbarHostState: SnackbarHostState,
     scope: CoroutineScope
 ) {
-    val storeIntent = WebBrowserUtil.newActivityIntent(WebBrowserUtil.ZCASH_PRIVACY_POLICY_URI)
     runCatching {
-        context.startActivity(storeIntent)
+        WebBrowserUtil.startActivity(activity, WebBrowserUtil.ZCASH_PRIVACY_POLICY_URI)
     }.onFailure {
         scope.launch {
             snackbarHostState.showSnackbar(
-                message = context.getString(R.string.about_unable_to_web_browser)
+                message = activity.getString(R.string.about_unable_to_web_browser)
             )
         }
     }
