@@ -2,6 +2,7 @@ package co.electriccoin.zcash.ui.screen.account.fixture
 
 import cash.z.ecc.android.sdk.fixture.TransactionOverviewFixture
 import cash.z.ecc.android.sdk.fixture.WalletFixture
+import cash.z.ecc.android.sdk.model.TransactionOutput
 import cash.z.ecc.android.sdk.model.TransactionOverview
 import cash.z.ecc.android.sdk.model.TransactionRecipient
 import cash.z.ecc.android.sdk.model.ZcashNetwork
@@ -26,6 +27,8 @@ object TransactionUiFixture {
 
     val ADDRESS_BOOK_CONTACT: AddressBookContact? = null
 
+    val OUTPUTS: List<TransactionOutput> = emptyList()
+
     @Suppress("LongParameterList")
     internal fun new(
         overview: TransactionOverview = OVERVIEW,
@@ -33,13 +36,15 @@ object TransactionUiFixture {
         recipientAddressType: AddressType = RECIPIENT_ADDRESS_TYPE,
         expandableState: TrxItemState = EXPANDABLE_STATE,
         messages: List<String> = MESSAGES,
-        addressBookContact: AddressBookContact? = ADDRESS_BOOK_CONTACT
+        addressBookContact: AddressBookContact? = ADDRESS_BOOK_CONTACT,
+        outputs: List<TransactionOutput> = OUTPUTS
     ) = TransactionUi(
         overview = overview,
         recipient = recipient,
         recipientAddressType = recipientAddressType,
         expandableState = expandableState,
         messages = messages,
-        addressBookContact = addressBookContact
+        addressBookContact = addressBookContact,
+        outputs = outputs
     )
 }

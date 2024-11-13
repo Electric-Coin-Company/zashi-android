@@ -2,106 +2,47 @@ package co.electriccoin.zcash.ui.screen.update.view
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DividerDefaults
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.LinkAnnotation
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withLink
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
-import co.electriccoin.zcash.ui.design.component.Body
-import co.electriccoin.zcash.ui.design.component.Header
-import co.electriccoin.zcash.ui.design.component.Reference
-import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.ZashiButton
+import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
+import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarCloseNavigation
+import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarHamburgerNavigation
+import co.electriccoin.zcash.ui.design.component.zashiVerticalGradient
+import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
-import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
+import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
+import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.fixture.UpdateInfoFixture
-import co.electriccoin.zcash.ui.screen.update.UpdateTag
+import co.electriccoin.zcash.ui.screen.update.UpdateTag.BTN_DOWNLOAD
+import co.electriccoin.zcash.ui.screen.update.UpdateTag.BTN_LATER
 import co.electriccoin.zcash.ui.screen.update.model.UpdateInfo
 import co.electriccoin.zcash.ui.screen.update.model.UpdateState
-
-@Preview
-@Composable
-private fun UpdatePreview() {
-    ZcashTheme(forceDarkMode = false) {
-        Update(
-            snackbarHostState = SnackbarHostState(),
-            UpdateInfoFixture.new(appUpdateInfo = null),
-            onDownload = {},
-            onLater = {},
-            onReference = {}
-        )
-    }
-}
-
-@Preview
-@Composable
-private fun UpdateRequiredPreview() {
-    ZcashTheme(forceDarkMode = false) {
-        Update(
-            snackbarHostState = SnackbarHostState(),
-            UpdateInfoFixture.new(force = true),
-            onDownload = {},
-            onLater = {},
-            onReference = {}
-        )
-    }
-}
-
-@Preview
-@Composable
-private fun UpdateAvailableDarkPreview() {
-    ZcashTheme(forceDarkMode = true) {
-        Update(
-            snackbarHostState = SnackbarHostState(),
-            UpdateInfoFixture.new(appUpdateInfo = null),
-            onDownload = {},
-            onLater = {},
-            onReference = {}
-        )
-    }
-}
-
-@Preview
-@Composable
-private fun UpdateRequiredDarkPreview() {
-    ZcashTheme(forceDarkMode = true) {
-        Update(
-            snackbarHostState = SnackbarHostState(),
-            UpdateInfoFixture.new(force = true),
-            onDownload = {},
-            onLater = {},
-            onReference = {}
-        )
-    }
-}
 
 @Composable
 fun Update(
@@ -109,220 +50,149 @@ fun Update(
     updateInfo: UpdateInfo,
     onDownload: (state: UpdateState) -> Unit,
     onLater: () -> Unit,
-    onReference: () -> Unit
+    onReference: () -> Unit,
+    onSettings: () -> Unit
 ) {
-    BlankBgScaffold(
-        topBar = {
-            UpdateTopAppBar(updateInfo = updateInfo)
-        },
-        snackbarHost = {
-            SnackbarHost(snackbarHostState)
-        },
-        bottomBar = {
-            UpdateBottomAppBar(
-                updateInfo,
-                onDownload,
-                onLater,
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
-    ) { paddingValues ->
-        UpdateContent(
-            onReference = onReference,
-            updateInfo = updateInfo,
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .scaffoldPadding(paddingValues)
-        )
-    }
-    UpdateOverlayRunning(updateInfo)
-}
-
-@Suppress("MagicNumber")
-@Composable
-fun UpdateOverlayRunning(updateInfo: UpdateInfo) {
-    if (updateInfo.state == UpdateState.Running) {
-        Column(
-            Modifier
-                .background(ZcashTheme.colors.overlay.copy(0.65f))
-                .fillMaxSize()
-                .clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null // Set indication to null to disable ripple effect
-                ) {}
-                .testTag(UpdateTag.PROGRESSBAR_DOWNLOADING),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            CircularProgressIndicator(color = ZcashTheme.colors.overlayProgressBar)
-        }
-    }
-}
-
-@Composable
-private fun UpdateTopAppBar(updateInfo: UpdateInfo) {
-    SmallTopAppBar(
-        titleText =
-            stringResource(
-                updateInfo.isForce.let { force ->
-                    if (force) {
-                        R.string.update_critical_header
+    Box(
+        modifier =
+            Modifier.background(
+                zashiVerticalGradient(
+                    if (updateInfo.isForce) {
+                        ZashiColors.Utility.WarningYellow.utilityOrange100
                     } else {
-                        R.string.update_header
+                        ZashiColors.Utility.Purple.utilityPurple100
                     }
-                }
-            ),
-    )
-}
-
-@Composable
-@Suppress("LongMethod")
-private fun UpdateBottomAppBar(
-    updateInfo: UpdateInfo,
-    onDownload: (state: UpdateState) -> Unit,
-    onLater: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        HorizontalDivider(
-            thickness = DividerDefaults.Thickness,
-            color = ZcashTheme.colors.primaryDividerColor
-        )
-
-        Column(
-            modifier =
-                Modifier
-                    .padding(
-                        top = ZashiDimensions.Spacing.spacingLg,
-                        bottom = ZashiDimensions.Spacing.spacing3xl,
-                        start = ZashiDimensions.Spacing.spacing3xl,
-                        end = ZashiDimensions.Spacing.spacing3xl
-                    ),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            ZashiButton(
-                onClick = { onDownload(UpdateState.Running) },
-                text = stringResource(R.string.update_download_button),
-                modifier =
-                    Modifier
-                        .testTag(UpdateTag.BTN_DOWNLOAD)
-                        .fillMaxWidth(),
-                enabled = updateInfo.state != UpdateState.Running,
-            )
-
-            Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
-
-            if (updateInfo.isForce) {
-                Text(
-                    text = stringResource(R.string.update_later_disabled_button),
-                    textAlign = TextAlign.Center,
-                    style = ZcashTheme.typography.primary.bodyLarge,
-                    fontWeight = FontWeight.SemiBold,
-                    color = ZcashTheme.colors.textPrimary,
-                    modifier =
-                        Modifier
-                            .padding(all = ZcashTheme.dimens.spacingDefault)
-                            .testTag(UpdateTag.BTN_LATER)
                 )
-            } else {
-                Reference(
-                    text = stringResource(R.string.update_later_enabled_button),
-                    onClick = {
-                        if (updateInfo.state != UpdateState.Running) {
-                            onLater()
-                        } else {
-                            // Keep current state
+            )
+    ) {
+        Scaffold(
+            topBar = {
+                ZashiSmallTopAppBar(
+                    title = null,
+                    subtitle = null,
+                    colors = ZcashTheme.colors.topAppBarColors.copyColors(containerColor = Color.Transparent),
+                    navigationAction = {
+                        if (updateInfo.isForce.not()) {
+                            ZashiTopAppBarCloseNavigation(modifier = Modifier.testTag(BTN_LATER), onBack = onLater)
                         }
                     },
+                    hamburgerMenuActions = {
+                        if (updateInfo.isForce) {
+                            ZashiTopAppBarHamburgerNavigation(onSettings)
+                        }
+                    }
+                )
+            },
+            snackbarHost = {
+                SnackbarHost(snackbarHostState)
+            },
+            containerColor = Color.Transparent
+        ) {
+            Column(modifier = Modifier.scaffoldPadding(it)) {
+                @Suppress("MagicNumber")
+                Spacer(Modifier.weight(.75f))
+                Image(
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    painter =
+                        painterResource(
+                            if (updateInfo.isForce) {
+                                R.drawable.ic_update_required
+                            } else {
+                                R.drawable.ic_update
+                            }
+                        ),
+                    contentDescription = ""
+                )
+                Spacer(Modifier.height(24.dp))
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Center,
-                    modifier =
-                        Modifier
-                            .padding(all = ZcashTheme.dimens.spacingDefault)
-                            .testTag(UpdateTag.BTN_LATER)
+                    text =
+                        if (updateInfo.isForce) {
+                            stringResource(id = R.string.update_title_required)
+                        } else {
+                            stringResource(id = R.string.update_title_available)
+                        },
+                    style = ZashiTypography.header6,
+                    fontWeight = FontWeight.SemiBold,
+                    color = ZashiColors.Text.textPrimary
+                )
+                Spacer(Modifier.height(12.dp))
+
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text =
+                        buildAnnotatedString {
+                            append(
+                                if (updateInfo.isForce) {
+                                    stringResource(id = R.string.update_description_required)
+                                } else {
+                                    stringResource(id = R.string.update_description_available)
+                                }
+                            )
+                            appendLine()
+                            appendLine()
+
+                            withStyle(
+                                style =
+                                    SpanStyle(
+                                        textDecoration = TextDecoration.Underline
+                                    )
+                            ) {
+                                withLink(
+                                    LinkAnnotation.Clickable(CLICKABLE_TAG) {
+                                        if (updateInfo.state != UpdateState.Running) {
+                                            onReference()
+                                        }
+                                    }
+                                ) {
+                                    append(stringResource(R.string.update_link_text))
+                                }
+                            }
+                        },
+                    style = ZashiTypography.textSm,
+                    textAlign = TextAlign.Center,
+                    color = ZashiColors.Text.textPrimary,
+                )
+                Spacer(Modifier.weight(1f))
+                ZashiButton(
+                    modifier = Modifier.fillMaxWidth().testTag(BTN_DOWNLOAD),
+                    text = stringResource(R.string.update_download_button),
+                    onClick = { onDownload(UpdateState.Running) },
+                    enabled = updateInfo.state != UpdateState.Running,
+                    isLoading = updateInfo.state == UpdateState.Running
                 )
             }
         }
     }
 }
 
+@PreviewScreens
 @Composable
-@Suppress("LongMethod")
-private fun UpdateContent(
-    onReference: () -> Unit,
-    updateInfo: UpdateInfo,
-    modifier: Modifier = Modifier,
-) {
-    val appName = stringResource(id = R.string.app_name)
-
-    Column(
-        modifier =
-            modifier.then(
-                Modifier
-                    .fillMaxHeight()
-                    .verticalScroll(
-                        rememberScrollState()
-                    )
-            ),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Image(
-            imageVector =
-                if (updateInfo.isForce) {
-                    ImageVector.vectorResource(R.drawable.ic_zashi_logo_sign_warn)
-                } else {
-                    ImageVector.vectorResource(R.drawable.ic_zashi_logo_update_available)
-                },
-            colorFilter = ColorFilter.tint(color = ZcashTheme.colors.secondaryColor),
-            contentDescription = null
+private fun UpdatePreview() =
+    ZcashTheme {
+        Update(
+            snackbarHostState = SnackbarHostState(),
+            updateInfo = UpdateInfoFixture.new(appUpdateInfo = null),
+            onDownload = {},
+            onLater = {},
+            onReference = {},
+            onSettings = {}
         )
-
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingBig))
-
-        Header(
-            text =
-                if (updateInfo.isForce) {
-                    stringResource(id = R.string.update_title_required)
-                } else {
-                    stringResource(id = R.string.update_title_available, appName)
-                },
-            textAlign = TextAlign.Center
-        )
-
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
-
-        Body(
-            text =
-                if (updateInfo.isForce) {
-                    stringResource(id = R.string.update_description_required, appName)
-                } else {
-                    stringResource(id = R.string.update_description_available, appName)
-                },
-            textAlign = TextAlign.Center,
-            color = ZcashTheme.colors.textDescriptionDark
-        )
-
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
-
-        Reference(
-            text = stringResource(id = R.string.update_link_text),
-            onClick = {
-                if (updateInfo.state != UpdateState.Running) {
-                    onReference()
-                } else {
-                    // Keep current state
-                }
-            },
-            fontWeight = FontWeight.Normal,
-            textStyle = ZcashTheme.typography.primary.bodyMedium,
-            textAlign = TextAlign.Center,
-            color = ZcashTheme.colors.textDescriptionDark,
-            modifier = Modifier.padding(all = ZcashTheme.dimens.spacingDefault)
-        )
-
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
     }
-}
+
+@PreviewScreens
+@Composable
+private fun UpdateRequiredPreview() =
+    ZcashTheme {
+        Update(
+            snackbarHostState = SnackbarHostState(),
+            updateInfo = UpdateInfoFixture.new(force = true),
+            onDownload = {},
+            onLater = {},
+            onReference = {},
+            onSettings = {}
+        )
+    }
+
+private const val CLICKABLE_TAG = "clickable"

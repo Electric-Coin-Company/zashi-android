@@ -19,7 +19,7 @@ class UpdateViewAndroidTestSetup(
         UpdateViewModel(
             application = composeTestRule.activity.application,
             updateInfo = updateInfo,
-            appUpdateChecker = AppUpdateCheckerMock.new()
+            appUpdateChecker = AppUpdateCheckerMock()
         )
 
     @Composable
@@ -32,7 +32,8 @@ class UpdateViewAndroidTestSetup(
                 updateInfo = updateInfo,
                 checkForUpdate = viewModel::checkForAppUpdate,
                 remindLater = viewModel::remindLater,
-                goForUpdate = {}
+                goForUpdate = {},
+                onSettings = {}
             )
         }
     }

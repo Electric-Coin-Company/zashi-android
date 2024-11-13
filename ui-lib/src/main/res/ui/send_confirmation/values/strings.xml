@@ -9,28 +9,39 @@
     <string name="send_confirmation_send_button">Send</string>
     <string name="send_confirmation_back_button">Cancel</string>
 
-    <string name="send_confirmation_dialog_error_title">Transaction Failed</string>
-    <string name="send_confirmation_dialog_error_text">An error occurred and the attempt to send funds failed. Try it again, please.</string>
-    <string name="send_confirmation_dialog_error_ok_btn">OK</string>
-    <string name="send_confirmation_dialog_error_report_btn">Report</string>
-
-    <string name="send_confirmation_dialog_error_grpc_title">Connection Error</string>
-    <string name="send_confirmation_dialog_error_grpc_text">Zashi encountered some connection issues when submitting
-        the transaction to the network. It will retry during the next few minutes.</string>
-    <string name="send_confirmation_dialog_error_grpc_btn">OK</string>
-
-    <string name="send_confirmation_multiple_error_title">Transaction error</string>
-    <string name="send_confirmation_multiple_error_text_1">Sending to this recipient required multiple transactions,
-        but only some of them succeeded. Your funds are safe, but they need to be recovered with the help of Zashi
-        team support.</string>
-    <string name="send_confirmation_multiple_error_text_2">Please use the button below to contact us and recover your
-        funds. Your message to us will be pre-populated with all the data we need to resolve this issue.</string>
-    <string name="send_confirmation_multiple_error_trx_title">TRANSACTION IDs:</string>
-    <string name="send_confirmation_multiple_error_trx_item" formatted="true">
-        <xliff:g id="order" example="1">%1$d. </xliff:g>ID:
+    <string name="send_confirmation_sending_title">Sending…</string>
+    <string name="send_confirmation_sending_subtitle">Your tokens are being sent to\n
+        <xliff:g example="zs12ghrbdjfs24383x5T…" id="index">%1$s</xliff:g>
     </string>
-    <string name="send_confirmation_multiple_error_btn">Contact Support</string>
 
+    <string name="send_confirmation_success_title">Sent!</string>
+    <string name="send_confirmation_success_subtitle">Your tokens were successfully sent to\n
+        <xliff:g example="zs12ghrbdjfs24383x5T…" id="index">%1$s</xliff:g>
+    </string>
+    <string name="send_confirmation_success_view_trx">View Transaction</string>
+    <string name="send_confirmation_success_btn_close">Close</string>
+
+    <string name="send_confirmation_failure_title">Send Failed</string>
+    <string name="send_confirmation_failure_subtitle">There was an error attempting to send tokens.\n
+        Try it again, please.</string>
+    <string name="send_confirmation_failure_view_trx">View Transaction</string>
+    <string name="send_confirmation_failure_close_button">Close</string>
+    <string name="send_confirmation_failure_report_button">Report</string>
+
+    <string name="send_confirmation_failure_grpc_title">Connection Error</string>
+    <string name="send_confirmation_failure_grpc_subtitle">Zashi encountered connection issues when submitting the
+        transaction. It will retry in the next few minutes.</string>
+    <string name="send_confirmation_failure_grpc_close_button">Close</string>
+
+    <string name="send_confirmation_multiple_trx_failure_title">Send Failed</string>
+    <string name="send_confirmation_multiple_trx_failure_text_1">Send to this recipient required multiple
+        transactions but only some of them succeeded and the rest failed. Your funds are safe but need to be
+        recovered with assistance from our side.</string>
+    <string name="send_confirmation_multiple_trx_failure_text_2">Please use the button below to contact us. it
+        automatically prepares all the data we need in order to help you restore your funds.</string>
+    <string name="send_confirmation_multiple_trx_failure_copy_button">Copy transaction IDs</string>
+    <string name="send_confirmation_multiple_trx_failure_report_button">Contact Support</string>
+    <string name="send_confirmation_multiple_trx_failure_ids_title">Transaction IDs</string>
     <string name="send_confirmation_multiple_report_text">Hi, Zashi Team.\n\nWhile sending a transaction to a TEX
         address, I encountered an error state. I\'m reaching out to get guidance on how to recover my funds.\n\nThank
         you.</string>
@@ -47,6 +58,7 @@
         code: <xliff:g example="123" id="code">%3$d</xliff:g>,
         description: <xliff:g example="Network unreachable" id="desc">%4$s</xliff:g>
     </string>
-    <string name="send_confirmation_multiple_report_unable_open_email">Unable to launch email app.</string>
+    <string name="send_confirmation_multiple_trx_failure_report_unable_open_email">Unable to launch email app.</string>
+    <string name="send_confirmation_multiple_trx_failure_copy_tag">Transaction IDs</string>
 
 </resources>

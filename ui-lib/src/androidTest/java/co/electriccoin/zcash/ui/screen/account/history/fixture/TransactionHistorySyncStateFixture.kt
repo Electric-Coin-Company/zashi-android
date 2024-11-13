@@ -15,17 +15,20 @@ internal object TransactionHistorySyncStateFixture {
             TransactionOverviewExt(
                 TransactionOverviewFixture.new(),
                 TransactionRecipient.Account(Account.DEFAULT),
-                AddressType.Shielded
+                AddressType.Shielded,
+                emptyList()
             ),
             TransactionOverviewExt(
                 TransactionOverviewFixture.new(),
                 TransactionRecipient.Account(Account(1)),
-                AddressType.Transparent
+                AddressType.Transparent,
+                emptyList()
             ),
             TransactionOverviewExt(
                 TransactionOverviewFixture.new(),
                 null,
-                AddressType.Unified
+                AddressType.Unified,
+                emptyList()
             ),
         )
     val STATE = TransactionHistorySyncState.Syncing(TRANSACTIONS)

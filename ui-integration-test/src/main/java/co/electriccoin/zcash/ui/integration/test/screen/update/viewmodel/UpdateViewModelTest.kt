@@ -35,7 +35,7 @@ class UpdateViewModelTest : UiTestPrerequisites() {
 
     @Before
     fun setup() {
-        checker = AppUpdateCheckerMock.new()
+        checker = AppUpdateCheckerMock()
 
         initialUpdateInfo =
             UpdateInfoFixture.new(

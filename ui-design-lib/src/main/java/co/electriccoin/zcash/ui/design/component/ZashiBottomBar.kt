@@ -24,10 +24,10 @@ fun ZashiBottomBar(
     content: @Composable () -> Unit,
 ) {
     Surface(
-        modifier = modifier,
         shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
         shadowElevation = 4.dp,
-        color = ZashiColors.Surfaces.bgPrimary
+        color = ZashiColors.Surfaces.bgPrimary,
+        modifier = modifier,
     ) {
         Column {
             Spacer(modifier = Modifier.height(16.dp))

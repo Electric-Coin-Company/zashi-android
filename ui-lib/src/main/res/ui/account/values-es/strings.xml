@@ -3,6 +3,9 @@
     <string name="account_history_empty">Sin historial de transacciones</string>
 
     <string name="account_history_item_sent">Enviado</string>
+    <string name="account_history_item_shielded_funds">Fondos Protegidos</string>
+    <string name="account_history_item_shielding_funds">Protegiendo fondos…</string>
+    <string name="account_history_item_shielding_failed">Fondos Protegidos Fallidos…</string>
     <string name="account_history_item_received">Recibido</string>
     <string name="account_history_item_sending">Enviando…</string>
     <string name="account_history_item_receiving">Recibiendo…</string>
