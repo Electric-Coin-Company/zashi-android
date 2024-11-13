@@ -87,7 +87,6 @@ fun Home(
 
 @Composable
 @Suppress("LongMethod")
-@OptIn(ExperimentalFoundationApi::class)
 private fun HomeContent(
     pagerState: PagerState,
     subScreens: ImmutableList<TabItem>

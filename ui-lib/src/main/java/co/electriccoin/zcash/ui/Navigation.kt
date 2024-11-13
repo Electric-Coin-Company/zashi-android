@@ -371,7 +371,7 @@ private fun MainActivity.NavigationHome(
         goScan = { navController.navigateJustOnce(ScanNavigationArgs(ScanNavigationArgs.DEFAULT)) },
         goSendConfirmation = { zecSend ->
             navController.currentBackStackEntry?.savedStateHandle?.let { handle ->
-                fillInHandleForConfirmation(handle, zecSend, SendConfirmationStage.Confirmation)
+                fillInHandleForConfirmation(handle, zecSend, SendConfirmationStage.Prepared)
             }
             navController.navigateJustOnce(SEND_CONFIRMATION)
         },

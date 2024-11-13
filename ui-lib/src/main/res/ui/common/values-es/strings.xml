@@ -1,6 +1,7 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="back_navigation">Atrás</string>
     <string name="back_navigation_content_description">Atrás</string>
+    <string name="close_navigation_content_description">Close</string>
 
     <string name="fiat_currency_conversion_rate_unavailable">No disponible</string>
     <string name="empty_char">-</string>
