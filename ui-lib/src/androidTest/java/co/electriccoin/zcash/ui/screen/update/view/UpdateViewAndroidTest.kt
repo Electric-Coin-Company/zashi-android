@@ -41,13 +41,13 @@ class UpdateViewAndroidTest : UiTestPrerequisites() {
             )
         newTestSetup(updateInfo)
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.update_header), ignoreCase = true).also {
+        composeTestRule.onNodeWithText(getStringResource(R.string.update_title_available), ignoreCase = true).also {
             it.assertExists()
         }
 
         Espresso.pressBack()
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.update_header), ignoreCase = true).also {
+        composeTestRule.onNodeWithText(getStringResource(R.string.update_title_available), ignoreCase = true).also {
             it.assertDoesNotExist()
         }
     }
@@ -64,13 +64,13 @@ class UpdateViewAndroidTest : UiTestPrerequisites() {
             )
         newTestSetup(updateInfo)
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.update_critical_header), ignoreCase = true).also {
+        composeTestRule.onNodeWithText(getStringResource(R.string.update_title_required), ignoreCase = true).also {
             it.assertExists()
         }
 
         Espresso.pressBack()
 
-        composeTestRule.onNodeWithText(getStringResource(R.string.update_critical_header), ignoreCase = true).also {
+        composeTestRule.onNodeWithText(getStringResource(R.string.update_title_required), ignoreCase = true).also {
             it.assertExists()
         }
     }

@@ -7,5 +7,4 @@
     <string name="integrations_flexa">Paga con Flexa</string>
     <string name="integrations_flexa_subtitle">Paga con clips de pago de Flexa y explora una nueva forma de gastar Zcash.</string>
     <string name="integrations_flexa_biometric_message">Autentifícate para pagar con Flexa</string>
-    <string name="integrations_flexa_key_missing">Clave de Flexa faltante</string>
 </resources>

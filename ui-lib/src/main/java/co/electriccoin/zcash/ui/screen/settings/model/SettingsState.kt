@@ -6,7 +6,6 @@ import kotlinx.collections.immutable.ImmutableList
 
 data class SettingsState(
     val version: StringResource,
-    val isLoading: Boolean,
     val onBack: () -> Unit,
     val debugMenu: SettingsTroubleshootingState?,
     val items: ImmutableList<ZashiSettingsListItemState>,

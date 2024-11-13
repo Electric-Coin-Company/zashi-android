@@ -27,7 +27,6 @@ class BalancesViewIntegrationTest : UiTestPrerequisites() {
         BalancesTestSetup(
             composeTestRule,
             walletSnapshot,
-            isShowFiatConversion = true
         )
 
     // This is just basic sanity check that we still have UI set up as expected after the state restore

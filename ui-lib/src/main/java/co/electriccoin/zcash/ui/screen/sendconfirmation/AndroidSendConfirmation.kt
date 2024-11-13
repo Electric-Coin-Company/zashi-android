@@ -22,6 +22,7 @@ import cash.z.ecc.android.sdk.model.Proposal
 import cash.z.ecc.android.sdk.model.UnifiedSpendingKey
 import cash.z.ecc.android.sdk.model.ZecSend
 import co.electriccoin.zcash.di.koinActivityViewModel
+import co.electriccoin.zcash.spackle.ClipboardManagerUtil
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
@@ -124,25 +125,23 @@ internal fun WrapSendConfirmation(
 
     val (stage, setStage) =
         rememberSaveable(stateSaver = SendConfirmationStage.Saver) {
-            mutableStateOf(arguments.initialStage ?: SendConfirmationStage.Confirmation)
+            mutableStateOf(arguments.initialStage ?: SendConfirmationStage.Prepared)
         }
 
     val submissionResults = createTransactionsViewModel.submissions.collectAsState().value.toImmutableList()
 
     val onBackAction = {
         when (stage) {
-            SendConfirmationStage.Confirmation -> goBack(false)
-            SendConfirmationStage.Sending -> { // no action - wait until the sending is done
-            }
-
-            is SendConfirmationStage.Failure -> setStage(SendConfirmationStage.Confirmation)
-            is SendConfirmationStage.FailureGrpc -> {
-                setStage(SendConfirmationStage.Confirmation)
+            SendConfirmationStage.Prepared -> goBack(false)
+            SendConfirmationStage.Sending -> { /* No action - wait until the sending is done */ }
+            SendConfirmationStage.Success -> {
                 goHome()
             }
-            is SendConfirmationStage.MultipleTrxFailure -> { // no action - wait until report the result
+            is SendConfirmationStage.Failure -> setStage(SendConfirmationStage.Prepared)
+            is SendConfirmationStage.FailureGrpc -> {
+                goHome()
             }
-
+            is SendConfirmationStage.MultipleTrxFailure -> { /* No action - wait until the sending is done */ }
             is SendConfirmationStage.MultipleTrxFailureReported -> goBack(true)
         }
     }
@@ -171,12 +170,12 @@ internal fun WrapSendConfirmation(
             submissionResults = submissionResults,
             snackbarHostState = snackbarHostState,
             onBack = onBackAction,
-            onContactSupport = { stageToGo, body ->
+            onContactSupport = { stageToGo ->
                 val fullMessage =
                     when (stageToGo) {
                         is SendConfirmationStage.Failure -> {
                             EmailUtil.formatMessage(
-                                body = body,
+                                body = stageToGo.stackTrace,
                                 supportInfo = supportMessage?.toSupportString(SupportInfoType.entries.toSet())
                             )
                         }
@@ -209,10 +208,21 @@ internal fun WrapSendConfirmation(
                     setStage(stageToGo)
                     scope.launch {
                         snackbarHostState.showSnackbar(
-                            message = activity.getString(R.string.send_confirmation_multiple_report_unable_open_email)
+                            message =
+                                activity.getString(
+                                    R.string.send_confirmation_multiple_trx_failure_report_unable_open_email
+                                )
                         )
                     }
                 }
+            },
+            onMultipleTrxFailureIdsCopy = { idsString ->
+                Twig.info { "Multiple Trx IDs copied: $idsString" }
+                ClipboardManagerUtil.copyToClipboard(
+                    activity.applicationContext,
+                    activity.getString(R.string.send_confirmation_multiple_trx_failure_copy_tag),
+                    idsString
+                )
             },
             onConfirmation = {
                 // Check and trigger authentication if required, or just submit transactions otherwise
@@ -225,7 +235,6 @@ internal fun WrapSendConfirmation(
                             } else {
                                 runSendFundsAction(
                                     createTransactionsViewModel = createTransactionsViewModel,
-                                    goHome = goHome,
                                     // The not-null assertion operator is necessary here even if we check its
                                     // nullability before due to property is declared in different module. See more
                                     // details on the Kotlin forum
@@ -237,6 +246,12 @@ internal fun WrapSendConfirmation(
                             }
                         }
                 }
+            },
+            onViewTransactions = {
+                val trxIds = submissionResults.map { it.txIdString() }
+                Twig.debug { "Transactions IDs passing to a new Transaction Details: $trxIds" }
+                // Once we implement transaction details screen we can start passing the trx ids to its destination
+                goHome()
             },
             topAppBarSubTitleState = topAppBarSubTitleState,
             exchangeRate = exchangeRateState,
@@ -253,7 +268,6 @@ internal fun WrapSendConfirmation(
                     lifecycleScope.launch {
                         runSendFundsAction(
                             createTransactionsViewModel = createTransactionsViewModel,
-                            goHome = goHome,
                             // The not-null assertion operator is necessary here even if we check its
                             // nullability before due to property is declared in different module. See more
                             // details on the Kotlin forum
@@ -280,7 +294,6 @@ internal fun WrapSendConfirmation(
 @Suppress("LongParameterList")
 suspend fun runSendFundsAction(
     createTransactionsViewModel: CreateTransactionsViewModel,
-    goHome: () -> Unit,
     proposal: Proposal,
     setStage: (SendConfirmationStage) -> Unit,
     spendingKey: UnifiedSpendingKey,
@@ -299,7 +312,6 @@ suspend fun runSendFundsAction(
     Twig.debug { "Transactions submitted with result: $submitResult" }
 
     processSubmissionResult(
-        goHome = goHome,
         setStage = setStage,
         submitResult = submitResult
     )
@@ -332,13 +344,11 @@ private suspend fun submitTransactions(
 
 private fun processSubmissionResult(
     submitResult: SubmitResult,
-    setStage: (SendConfirmationStage) -> Unit,
-    goHome: () -> Unit
+    setStage: (SendConfirmationStage) -> Unit
 ) {
     when (submitResult) {
         SubmitResult.Success -> {
-            setStage(SendConfirmationStage.Confirmation)
-            goHome()
+            setStage(SendConfirmationStage.Success)
         }
         is SubmitResult.SimpleTrxFailure.SimpleTrxFailureSubmit -> {
             setStage(SendConfirmationStage.Failure(submitResult.toErrorMessage(), submitResult.toErrorStacktrace()))

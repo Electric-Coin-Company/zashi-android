@@ -29,8 +29,6 @@ import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.viewmodel.CheckUpdateViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.HomeViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
-import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
-import co.electriccoin.zcash.ui.configuration.RemoteConfig
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.screen.balances.model.ShieldState
 import co.electriccoin.zcash.ui.screen.balances.model.StatusAction
@@ -133,8 +131,6 @@ internal fun WrapBalances(
             it?.appUpdateInfo != null && it.state == UpdateState.Prepared
         }
 
-    val isFiatConversionEnabled = ConfigurationEntries.IS_FIAT_CONVERSION_ENABLED.getValue(RemoteConfig.current)
-
     val (shieldState, setShieldState) =
         rememberSaveable(stateSaver = ShieldState.Saver) { mutableStateOf(ShieldState.None) }
 
@@ -171,7 +167,6 @@ internal fun WrapBalances(
     } else {
         Balances(
             balanceState = balanceState,
-            isFiatConversionEnabled = isFiatConversionEnabled,
             isHideBalances = isHideBalances,
             isUpdateAvailable = isUpdateAvailable,
             onHideBalances = onHideBalances,

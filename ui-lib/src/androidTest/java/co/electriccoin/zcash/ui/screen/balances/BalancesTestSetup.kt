@@ -15,7 +15,6 @@ import java.util.concurrent.atomic.AtomicInteger
 class BalancesTestSetup(
     private val composeTestRule: ComposeContentTestRule,
     private val walletSnapshot: WalletSnapshot,
-    private val isShowFiatConversion: Boolean
 ) {
     private val onSettingsCount = AtomicInteger(0)
 
@@ -43,7 +42,6 @@ class BalancesTestSetup(
             showStatusDialog = null,
             onStatusClick = {},
             snackbarHostState = SnackbarHostState(),
-            isFiatConversionEnabled = isShowFiatConversion,
             isUpdateAvailable = false,
             isShowingErrorDialog = false,
             setShowErrorDialog = {},
