@@ -11,8 +11,8 @@ import co.electriccoin.zcash.ui.NavigationTargets.INTEGRATIONS
 import co.electriccoin.zcash.ui.NavigationTargets.SUPPORT
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
-import co.electriccoin.zcash.ui.common.usecase.IsFlexaAvailableUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveConfigurationUseCase
+import co.electriccoin.zcash.ui.common.usecase.ObserveIsFlexaAvailableUseCase
 import co.electriccoin.zcash.ui.common.usecase.RescanBlockchainUseCase
 import co.electriccoin.zcash.ui.common.usecase.SensitiveSettingsVisibleUseCase
 import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
@@ -38,10 +38,10 @@ import kotlinx.coroutines.launch
 class SettingsViewModel(
     observeConfiguration: ObserveConfigurationUseCase,
     isSensitiveSettingsVisible: SensitiveSettingsVisibleUseCase,
+    observeIsFlexaAvailable: ObserveIsFlexaAvailableUseCase,
     private val standardPreferenceProvider: StandardPreferenceProvider,
     private val getVersionInfo: GetVersionInfoProvider,
     private val rescanBlockchain: RescanBlockchainUseCase,
-    private val isFlexaAvailable: IsFlexaAvailableUseCase
 ) : ViewModel() {
     private val versionInfo by lazy { getVersionInfo() }
 
@@ -92,22 +92,29 @@ class SettingsViewModel(
     val state: StateFlow<SettingsState> =
         combine(
             troubleshootingState,
-            isSensitiveSettingsVisible()
-        ) { troubleshootingState, isSensitiveSettingsVisible ->
-            createState(troubleshootingState, isSensitiveSettingsVisible)
+            isSensitiveSettingsVisible(),
+            observeIsFlexaAvailable(),
+        ) { troubleshootingState, isSensitiveSettingsVisible, isFlexaAvailable ->
+            createState(
+                troubleshootingState = troubleshootingState,
+                isSensitiveSettingsVisible = isSensitiveSettingsVisible,
+                isFlexaAvailable = isFlexaAvailable == true
+            )
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
             initialValue =
                 createState(
                     troubleshootingState = null,
-                    isSensitiveSettingsVisible = isSensitiveSettingsVisible().value
+                    isSensitiveSettingsVisible = isSensitiveSettingsVisible().value,
+                    isFlexaAvailable = observeIsFlexaAvailable().value == true
                 )
         )
 
     private fun createState(
         troubleshootingState: SettingsTroubleshootingState?,
-        isSensitiveSettingsVisible: Boolean
+        isSensitiveSettingsVisible: Boolean,
+        isFlexaAvailable: Boolean
     ) = SettingsState(
         debugMenu = troubleshootingState,
         onBack = ::onBack,
@@ -125,7 +132,7 @@ class SettingsViewModel(
                     titleIcons =
                         listOfNotNull(
                             R.drawable.ic_integrations_coinbase,
-                            R.drawable.ic_integrations_flexa.takeIf { isFlexaAvailable() }
+                            R.drawable.ic_integrations_flexa.takeIf { isFlexaAvailable }
                         ).toImmutableList()
                 ).takeIf { isSensitiveSettingsVisible },
                 ZashiSettingsListItemState(
