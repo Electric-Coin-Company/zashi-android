@@ -2,8 +2,8 @@ package co.electriccoin.zcash.ui.common.usecase
 
 import co.electriccoin.zcash.ui.common.repository.ConfigurationRepository
 
-class IsFlexaAvailableUseCase(
+class ObserveIsFlexaAvailableUseCase(
     private val configurationRepository: ConfigurationRepository
 ) {
-    suspend operator fun invoke() = configurationRepository.isFlexaAvailable()
+    operator fun invoke() = configurationRepository.isFlexaAvailable
 }

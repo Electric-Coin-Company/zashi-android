@@ -17,6 +17,7 @@ import co.electriccoin.zcash.ui.common.usecase.ObserveConfigurationUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveContactByAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveContactPickedUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveFastestServersUseCase
+import co.electriccoin.zcash.ui.common.usecase.ObserveIsFlexaAvailableUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedEndpointUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveSynchronizerUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveWalletStateUseCase
@@ -63,6 +64,7 @@ val useCaseModule =
         singleOf(::GetAddressesUseCase)
         singleOf(::CopyToClipboardUseCase)
         singleOf(::IsFlexaAvailableUseCase)
+        singleOf(::ObserveIsFlexaAvailableUseCase)
         singleOf(::ShareImageUseCase)
         singleOf(::Zip321BuildUriUseCase)
         singleOf(::Zip321ProposalFromUriUseCase)

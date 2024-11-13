@@ -25,6 +25,7 @@ interface FlexaRepository {
 class FlexaRepositoryImpl(
     private val balanceRepository: BalanceRepository,
     private val application: Application,
+    private val configurationRepository: ConfigurationRepository,
 ) : FlexaRepository {
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
@@ -32,9 +33,8 @@ class FlexaRepositoryImpl(
         get() = BuildConfig.ZCASH_FLEXA_KEY.takeIf { it.isNotEmpty() }
 
     override fun init() {
-        if (publishableKey == null) return
-
         scope.launch {
+            if (!configurationRepository.isFlexaAvailable()) return@launch
             val configuration = getFlexaClientConfiguration()
             if (configuration != null) {
                 Flexa.init(configuration)
