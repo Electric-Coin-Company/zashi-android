@@ -30,7 +30,6 @@ import java.io.FileInputStream
 import java.io.IOException
 import java.security.GeneralSecurityException
 import java.security.KeyStore
-import java.util.Locale
 
 @CacheableTask
 abstract class PublishToGooglePlay @Inject constructor(
@@ -241,15 +240,9 @@ abstract class PublishToGooglePlay @Inject constructor(
         // In-app update priority of the release. Can take values in the range [0, 5], with 5 the highest priority.
         val inAppUpdatePriority = project.property("ZCASH_IN_APP_UPDATE_PRIORITY").toString().toInt()
 
-        // A description of what is new in this release in form of [LocalizedText]
-        val localizedText = LocalizedText().apply {
-            language = Locale.ENGLISH.toLanguageTag()
-            text = ChangelogParser.getChangelogEntry(
-                filePath = "docs/whatsNew/WHATS_NEW_EN.md",
-                versionNameFallback = gradleVersionName
-            ).toInAppUpdateReleaseNotesText()
-        }
-        val releaseNotes: MutableList<LocalizedText> = arrayListOf(localizedText)
+        val releaseNotes: List<LocalizedText> = getReleaseNotesFor(
+            gradleVersionName, listOf("EN", "ES")
+        )
 
         log("Publish - Version: $versionName has been uploaded")
 
@@ -281,6 +274,24 @@ abstract class PublishToGooglePlay @Inject constructor(
         )
         val appEdit: AppEdit = commitRequest.execute()
         log("App edit with id ${appEdit.id} has been committed")
+    }
+
+    private val releaseNotesFilePath = "docs/whatsNew/WHATS_NEW_"
+    private val releaseNotesFileSuffix = ".md"
+
+    private fun getReleaseNotesFor(gradleVersionName: String, languageTags: List<String>): MutableList<LocalizedText> {
+        return buildList {
+            languageTags.forEach { languageTag ->
+                // A description of what is new in this release in form of [LocalizedText]
+                add(LocalizedText().apply {
+                    language = languageTag
+                    text = ChangelogParser.getChangelogEntry(
+                        filePath = releaseNotesFilePath + languageTag + releaseNotesFileSuffix,
+                        versionNameFallback = gradleVersionName
+                    ).toInAppUpdateReleaseNotesText()
+                })
+            }
+        }.toMutableList()
     }
 
     @TaskAction

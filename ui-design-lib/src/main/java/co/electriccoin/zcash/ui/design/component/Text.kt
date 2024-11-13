@@ -297,19 +297,6 @@ fun Reference(
     }
 }
 
-@Composable
-fun BodyWithFiatCurrencySymbol(
-    amount: String,
-    modifier: Modifier = Modifier
-) {
-    Text(
-        text = amount,
-        style = MaterialTheme.typography.bodyLarge,
-        color = ZcashTheme.colors.textPrimary,
-        modifier = modifier
-    )
-}
-
 @Preview
 @Composable
 private fun NavigationTabTextPreview() {

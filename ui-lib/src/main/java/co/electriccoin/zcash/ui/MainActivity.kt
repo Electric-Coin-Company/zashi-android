@@ -260,7 +260,7 @@ class MainActivity : FragmentActivity() {
                     onSuccess = {
                         lifecycleScope.launch {
                             // Wait until the welcome animation finishes, then mark it as presented to the user
-                            delay((AnimationConstants.together()).milliseconds)
+                            delay((AnimationConstants.durationOnly()).milliseconds)
                             authenticationViewModel.appAccessAuthentication.value = AuthenticationUIState.Successful
                         }
                     },

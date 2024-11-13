@@ -8,7 +8,6 @@ import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.design.component.CommonTag
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
-import co.electriccoin.zcash.ui.screen.balances.BalancesTag
 import co.electriccoin.zcash.ui.screen.balances.BalancesTestSetup
 import co.electriccoin.zcash.ui.screen.send.clickSettingsTopAppBarMenu
 import org.junit.Assert
@@ -23,6 +22,14 @@ class BalancesViewTest : UiTestPrerequisites() {
     @get:Rule
     val composeTestRule = createComposeRule()
 
+    private fun newTestSetup(walletSnapshot: WalletSnapshot = WalletSnapshotFixture.new()) =
+        BalancesTestSetup(
+            composeTestRule,
+            walletSnapshot = walletSnapshot,
+        ).apply {
+            setDefaultContent()
+        }
+
     @Test
     @MediumTest
     fun check_all_elementary_ui_elements_displayed() {
@@ -36,16 +43,6 @@ class BalancesViewTest : UiTestPrerequisites() {
 
     @Test
     @MediumTest
-    fun hide_fiat_conversion() {
-        newTestSetup(isShowFiatConversion = false)
-
-        composeTestRule.onNodeWithTag(BalancesTag.FIAT_CONVERSION).also {
-            it.assertDoesNotExist()
-        }
-    }
-
-    @Test
-    @MediumTest
     fun hamburger_settings_test() {
         val testSetup = newTestSetup()
 
@@ -54,16 +51,5 @@ class BalancesViewTest : UiTestPrerequisites() {
         composeTestRule.clickSettingsTopAppBarMenu()
 
         Assert.assertEquals(1, testSetup.getOnSettingsCount())
-    }
-
-    private fun newTestSetup(
-        isShowFiatConversion: Boolean = true,
-        walletSnapshot: WalletSnapshot = WalletSnapshotFixture.new()
-    ) = BalancesTestSetup(
-        composeTestRule,
-        walletSnapshot = walletSnapshot,
-        isShowFiatConversion = isShowFiatConversion
-    ).apply {
-        setDefaultContent()
     }
 }

@@ -1,0 +1,23 @@
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="delete_wallet_title">
+        Eliminar <xliff:g id="app_name" example="Zashi">%1$s</xliff:g>
+    </string>
+
+    <string name="delete_wallet_text_1">
+        Por favor, no elimine esta aplicación a menos que esté seguro de comprender los efectos.
+    </string>
+    <string name="delete_wallet_text_2">
+        Eliminar la aplicación <xliff:g id="app_name" example="Zashi">%1$s</xliff:g> eliminará la base de datos y los datos
+        almacenados en caché. Cualquier fondo que tenga en esta billetera se perderá y solo podrá recuperarse utilizando su frase de
+        recuperación secreta de <xliff:g id="app_name" example="Zashi">%1$s</xliff:g> en <xliff:g id="app_name"
+        example="Zashi">%1$s</xliff:g> u otra billetera Zcash.
+    </string>
+
+    <string name="delete_wallet_acknowledge">Entiendo</string>
+
+    <string name="delete_wallet_button">
+        Eliminar <xliff:g id="app_name" example="Zashi">%1$s</xliff:g>
+    </string>
+
+    <string name="delete_wallet_failed">La eliminación de la billetera falló. Inténtelo de nuevo, por favor.</string>
+</resources>

@@ -1,0 +1,14 @@
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="about_title">Acerca de</string>
+    <string name="about_version_format" formatted="true">Versión de Zashi <xliff:g example="1" id="version">%s</xliff:g></string>
+    <string name="about_debug_menu_app_name">Nombre de la app:<xliff:g example="Zashi" id="app_name">%1$s</xliff:g></string>
+    <string name="about_debug_menu_build">Compilación: <xliff:g example="635dac0eb9ddc2bc6da5177f0dd495d8b76af4dc" id="git_commit_hash">%1$s</xliff:g></string>
+    <string name="about_description">¡Envía y recibe ZEC en Zashi!\nZashi es una billetera de diseño minimalista y autogestionada, exclusivamente para ZEC, que mantiene tu historial de transacciones y saldo de la billetera privados. Construida por Zcashers, para Zcashers. Desarrollada y mantenida por Electric Coin Co., el inventor de Zcash, Zashi cuenta con un mecanismo de retroalimentación integrado para habilitar más funciones, más rápidamente.</string>
+
+    <string name="about_pp_part_1">Consulta nuestra Política de Privacidad\u0020</string>
+    <string name="about_pp_part_2">aquí</string>
+    <string name="about_pp_part_3">.</string>
+    <string name="about_unable_to_web_browser">No se pudo encontrar una aplicación de navegador web.</string>
+    <string name="about_button_whats_new">Novedades</string>
+    <string name="about_button_privacy_policy">Política de Privacidad</string>
+</resources>

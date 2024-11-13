@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import cash.z.ecc.android.sdk.fixture.TransactionOverviewFixture
 import cash.z.ecc.android.sdk.model.FirstClassByteArray
 import cash.z.ecc.android.sdk.model.TransactionOverview
+import cash.z.ecc.android.sdk.model.TransactionPool
 import cash.z.ecc.android.sdk.model.TransactionRecipient
 import cash.z.ecc.android.sdk.model.TransactionState
 import cash.z.ecc.android.sdk.model.Zatoshi
@@ -316,7 +317,7 @@ private fun ComposableHistoryListItemsPreview() {
 const val ADDRESS_IN_TITLE_WIDTH_RATIO = 0.5f
 
 @Composable
-@Suppress("LongMethod")
+@Suppress("LongMethod", "CyclomaticComplexMethod")
 private fun HistoryItem(
     transaction: TransactionUi,
     isHideBalances: Boolean,
@@ -369,6 +370,30 @@ private fun HistoryItem(
         TransactionExtendedState.RECEIVE_FAILED -> {
             typeText = stringResource(id = R.string.account_history_item_receive_failed)
             typeIcon = ImageVector.vectorResource(R.drawable.ic_trx_receive_icon)
+            textColor = ZashiColors.Text.textError
+            textStyle =
+                ZashiTypography.textSm.copy(
+                    textDecoration = TextDecoration.LineThrough
+                )
+        }
+
+        TransactionExtendedState.SHIELDED -> {
+            typeText = stringResource(id = R.string.account_history_item_shielded_funds)
+            typeIcon = ImageVector.vectorResource(R.drawable.ic_trx_shielded_funds)
+            textColor = ZashiColors.Text.textPrimary
+            textStyle = ZashiTypography.textSm
+        }
+
+        TransactionExtendedState.SHIELDING -> {
+            typeText = stringResource(id = R.string.account_history_item_shielding_funds)
+            typeIcon = ImageVector.vectorResource(R.drawable.ic_trx_shielded_funds)
+            textColor = ZashiColors.Text.textPrimary
+            textStyle = ZashiTypography.textSm
+        }
+
+        TransactionExtendedState.SHIELDING_FAILED -> {
+            typeText = stringResource(id = R.string.account_history_item_shielding_failed)
+            typeIcon = ImageVector.vectorResource(R.drawable.ic_trx_shielded_funds)
             textColor = ZashiColors.Text.textError
             textStyle =
                 ZashiTypography.textSm.copy(
@@ -581,7 +606,10 @@ private fun HistoryItemCollapsedAddressPart(
                 )
             }
         }
-    } else {
+    } else if (
+        transaction.outputs.none { it.pool == TransactionPool.TRANSPARENT } &&
+        !transaction.overview.isShielding
+    ) {
         Icon(
             imageVector = ImageVector.vectorResource(R.drawable.ic_trx_shielded),
             contentDescription = stringResource(id = R.string.account_history_item_shielded)
@@ -615,7 +643,7 @@ private fun HistoryItemExpandedAddressPart(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Row {
+        Row(verticalAlignment = Alignment.CenterVertically) {
             TextWithIcon(
                 text = stringResource(id = R.string.account_history_item_tap_to_copy),
                 style = ZashiTypography.textSm,
@@ -632,6 +660,8 @@ private fun HistoryItemExpandedAddressPart(
                                 interactionSource = remember { MutableInteractionSource() }
                             ) { onAction(TrxItemAction.AddressClick(recipient)) }
             )
+
+            Spacer(modifier = Modifier.width(ZashiDimensions.Spacing.spacingSm))
 
             if (contact == null) {
                 TextWithIcon(
@@ -687,7 +717,7 @@ private fun HistoryItemExpandedPart(
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
-        if (transaction.messages.containsValidMemo()) {
+        if (transaction.overview.isShielding.not() && transaction.messages.containsValidMemo()) {
             Text(
                 text =
                     pluralStringResource(
@@ -972,41 +1002,41 @@ internal enum class TransactionExtendedState {
     SEND_FAILED,
     RECEIVED,
     RECEIVING,
-    RECEIVE_FAILED;
+    RECEIVE_FAILED,
+    SHIELDED,
+    SHIELDING,
+    SHIELDING_FAILED;
 
-    fun isFailed(): Boolean = this == SEND_FAILED || this == RECEIVE_FAILED
+    fun isShielding() = this in listOf(SHIELDED, RECEIVE_FAILED, SHIELDING_FAILED)
 
-    fun isSendType(): Boolean = this == SENDING || this == SENT || this == SEND_FAILED
+    fun isFailed(): Boolean = this in listOf(SEND_FAILED, RECEIVE_FAILED, SHIELDING_FAILED)
+
+    fun isSendType(): Boolean = this in listOf(SENDING, SENT, SEND_FAILED, SHIELDED, SHIELDING_FAILED, SHIELDING)
 }
 
 private fun TransactionOverview.getExtendedState(): TransactionExtendedState {
     return when (transactionState) {
-        TransactionState.Expired -> {
-            if (isSentTransaction) {
-                TransactionExtendedState.SEND_FAILED
-            } else {
-                TransactionExtendedState.RECEIVE_FAILED
+        TransactionState.Expired ->
+            when {
+                isShielding -> TransactionExtendedState.SHIELDING_FAILED
+                isSentTransaction -> TransactionExtendedState.SEND_FAILED
+                else -> TransactionExtendedState.RECEIVE_FAILED
             }
-        }
 
-        TransactionState.Confirmed -> {
-            if (isSentTransaction) {
-                TransactionExtendedState.SENT
-            } else {
-                TransactionExtendedState.RECEIVED
+        TransactionState.Confirmed ->
+            when {
+                isShielding -> TransactionExtendedState.SHIELDED
+                isSentTransaction -> TransactionExtendedState.SENT
+                else -> TransactionExtendedState.RECEIVED
             }
-        }
 
-        TransactionState.Pending -> {
-            if (isSentTransaction) {
-                TransactionExtendedState.SENDING
-            } else {
-                TransactionExtendedState.RECEIVING
+        TransactionState.Pending ->
+            when {
+                isShielding -> TransactionExtendedState.SHIELDING
+                isSentTransaction -> TransactionExtendedState.SENDING
+                else -> TransactionExtendedState.RECEIVING
             }
-        }
 
-        else -> {
-            error("Unexpected transaction state found while calculating its extended state.")
-        }
+        else -> error("Unexpected transaction state found while calculating its extended state.")
     }
 }

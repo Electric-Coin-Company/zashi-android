@@ -131,7 +131,7 @@ class TransactionHistoryViewModel(
             data = data,
             expandableState = existingTransaction?.expandableState ?: TrxItemState.COLLAPSED,
             messages = existingTransaction?.messages,
-            addressBookContact = addressBookContact
+            addressBookContact = addressBookContact,
         )
     }
 

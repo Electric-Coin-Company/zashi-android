@@ -27,6 +27,7 @@ import co.electriccoin.zcash.ui.common.usecase.GetSynchronizerUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTransparentAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsCoinbaseAvailableUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsFlexaAvailableUseCase
+import co.electriccoin.zcash.ui.common.usecase.ObserveIsFlexaAvailableUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveWalletStateUseCase
 import co.electriccoin.zcash.ui.design.component.ZashiSettingsListItemState
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -40,6 +41,7 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -48,6 +50,7 @@ class IntegrationsViewModel(
     getVersionInfo: GetVersionInfoProvider,
     getZcashCurrency: GetZcashCurrencyProvider,
     observeWalletState: ObserveWalletStateUseCase,
+    observeIsFlexaAvailableUseCase: ObserveIsFlexaAvailableUseCase,
     private val getSynchronizer: GetSynchronizerUseCase,
     private val getTransparentAddress: GetTransparentAddressUseCase,
     private val isFlexaAvailable: IsFlexaAvailableUseCase,
@@ -59,7 +62,6 @@ class IntegrationsViewModel(
     val backNavigationCommand = MutableSharedFlow<Unit>()
     val flexaNavigationCommand = MutableSharedFlow<Unit>()
     val coinbaseNavigationCommand = MutableSharedFlow<String>()
-    val showFlexaErrorToastCommand = MutableSharedFlow<Unit>()
 
     private val versionInfo = getVersionInfo()
     private val isDebug = versionInfo.let { it.isDebuggable && !it.isRunningUnderTestService }
@@ -71,7 +73,7 @@ class IntegrationsViewModel(
             }
 
     val state =
-        isEnabled.map { isEnabled ->
+        combine(observeIsFlexaAvailableUseCase(), isEnabled) { isFlexaAvailable, isEnabled ->
             IntegrationsState(
                 version = stringRes(R.string.integrations_version, versionInfo.versionName),
                 disabledInfo = stringRes(R.string.integrations_disabled_info).takeIf { isEnabled.not() },
@@ -103,7 +105,7 @@ class IntegrationsViewModel(
                             text = stringRes(R.string.integrations_flexa),
                             subtitle = stringRes(R.string.integrations_flexa_subtitle),
                             onClick = ::onFlexaClicked
-                        ).takeIf { isFlexaAvailable() }
+                        ).takeIf { isFlexaAvailable == true }
                     ).toImmutableList()
             )
         }.stateIn(
@@ -144,9 +146,7 @@ class IntegrationsViewModel(
 
     private fun onFlexaClicked() =
         viewModelScope.launch {
-            if (BuildConfig.ZCASH_FLEXA_KEY.isEmpty()) {
-                showFlexaErrorToastCommand.emit(Unit)
-            } else {
+            if (isFlexaAvailable()) {
                 flexaNavigationCommand.emit(Unit)
             }
         }
@@ -155,7 +155,7 @@ class IntegrationsViewModel(
         viewModelScope.launch {
             runCatching {
                 biometricRepository.requestBiometrics(
-                    BiometricRequest(message = stringRes(R.string.integrations_biometric_message))
+                    BiometricRequest(message = stringRes(R.string.integrations_flexa_biometric_message))
                 )
                 Twig.debug { "Getting send transaction proposal" }
                 getSynchronizer()
