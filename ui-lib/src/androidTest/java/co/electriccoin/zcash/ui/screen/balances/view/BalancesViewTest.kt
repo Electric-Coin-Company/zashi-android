@@ -22,6 +22,14 @@ class BalancesViewTest : UiTestPrerequisites() {
     @get:Rule
     val composeTestRule = createComposeRule()
 
+    private fun newTestSetup(walletSnapshot: WalletSnapshot = WalletSnapshotFixture.new()) =
+        BalancesTestSetup(
+            composeTestRule,
+            walletSnapshot = walletSnapshot,
+        ).apply {
+            setDefaultContent()
+        }
+
     @Test
     @MediumTest
     fun check_all_elementary_ui_elements_displayed() {
@@ -44,12 +52,4 @@ class BalancesViewTest : UiTestPrerequisites() {
 
         Assert.assertEquals(1, testSetup.getOnSettingsCount())
     }
-
-    private fun newTestSetup(walletSnapshot: WalletSnapshot = WalletSnapshotFixture.new()) =
-        BalancesTestSetup(
-            composeTestRule,
-            walletSnapshot = walletSnapshot,
-        ).apply {
-            setDefaultContent()
-        }
 }
