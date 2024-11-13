@@ -143,11 +143,11 @@ class SettingsViewModel(
                 ),
                 ZashiSettingsListItemState(
                     text = stringRes(R.string.settings_whats_new),
-                            icon = R.drawable.ic_settings_whats_new,
-                            onClick = ::onWhatsNewClick
-                        ),
-                        ZashiSettingsListItemState(
-                            text = stringRes(R.string.settings_about_us),
+                    icon = R.drawable.ic_settings_whats_new,
+                    onClick = ::onWhatsNewClick
+                ),
+                ZashiSettingsListItemState(
+                    text = stringRes(R.string.settings_about_us),
                     icon = R.drawable.ic_settings_info,
                     onClick = ::onAboutUsClick
                 ),
