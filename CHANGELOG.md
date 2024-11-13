@@ -18,15 +18,13 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 - The in-app update logic has been fixed and is now correctly requested with every app launch
 - The Not enough space and In-app udpate screens have been redesigned
 - External links now open in in-app browser
+- All the Settings screens have been redesigned
 
 ### Fixed
 - Address book toast now correctly shows on send screen when adding both new and known addresses to text field
 - The application now correctly navigates to the homepage after deleting the current wallet and creating a new or 
   recovering an older one
 - The in-app update logic has been fixed and is now correctly requested with every app launch
-
-### Changed
-- Settings redesigned
 
 ## [1.2.1 (760)] - 2024-10-22
 
