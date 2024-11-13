@@ -1,3 +1,5 @@
+@file:Suppress("ktlint:standard:filename")
+
 package co.electriccoin.zcash.ui.screen.about
 
 import android.app.Activity
@@ -22,7 +24,7 @@ import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
 @Composable
-internal fun AndroidAbout(goBack: () -> Unit) {
+internal fun WrapAbout(goBack: () -> Unit) {
     val activity = LocalActivity.current
     val walletViewModel = koinActivityViewModel<WalletViewModel>()
 

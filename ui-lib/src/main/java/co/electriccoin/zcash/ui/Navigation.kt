@@ -60,7 +60,7 @@ import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.enterTransition
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.exitTransition
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.popEnterTransition
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.popExitTransition
-import co.electriccoin.zcash.ui.screen.about.AndroidAbout
+import co.electriccoin.zcash.ui.screen.about.WrapAbout
 import co.electriccoin.zcash.ui.screen.addressbook.AddressBookArgs
 import co.electriccoin.zcash.ui.screen.addressbook.WrapAddressBook
 import co.electriccoin.zcash.ui.screen.advancedsettings.WrapAdvancedSettings
@@ -76,7 +76,7 @@ import co.electriccoin.zcash.ui.screen.disconnected.WrapDisconnected
 import co.electriccoin.zcash.ui.screen.exchangerate.optin.AndroidExchangeRateOptIn
 import co.electriccoin.zcash.ui.screen.exchangerate.settings.AndroidSettingsExchangeRateOptIn
 import co.electriccoin.zcash.ui.screen.exportdata.WrapExportPrivateData
-import co.electriccoin.zcash.ui.screen.feedback.AndroidFeedback
+import co.electriccoin.zcash.ui.screen.feedback.WrapFeedback
 import co.electriccoin.zcash.ui.screen.home.WrapHome
 import co.electriccoin.zcash.ui.screen.integrations.WrapIntegrations
 import co.electriccoin.zcash.ui.screen.paymentrequest.WrapPaymentRequest
@@ -214,7 +214,7 @@ internal fun MainActivity.Navigation() {
         }
         composable(SUPPORT) {
             // Pop back stack won't be right if we deep link into support
-            AndroidFeedback()
+            WrapFeedback()
         }
         composable(DELETE_WALLET) {
             WrapDeleteWallet(
@@ -229,7 +229,7 @@ internal fun MainActivity.Navigation() {
             )
         }
         composable(ABOUT) {
-            AndroidAbout(
+            WrapAbout(
                 goBack = { navController.popBackStackJustOnce(ABOUT) },
             )
         }

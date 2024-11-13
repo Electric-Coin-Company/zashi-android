@@ -422,7 +422,7 @@ private fun RestoreSeedMainContent(
             .then(modifier),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Used to calculate necessary scroll to have the seed TextFiled visible
+        // Used to calculate necessary scroll to have the seed TextField visible
         Column(
             modifier =
                 Modifier.onSizeChanged { size ->
@@ -478,7 +478,7 @@ private fun RestoreSeedMainContent(
     }
 
     LaunchedEffect(parseResult) {
-        // Causes the TextFiled to refocus
+        // Causes the TextField to refocus
         if (!isSeedValid) {
             focusRequester.requestFocus()
         }
@@ -853,7 +853,7 @@ private fun RestoreBirthdayMainContent(
     }
 
     LaunchedEffect(Unit) {
-        // Causes the TextFiled to focus on the first screen visit
+        // Causes the TextField to focus on the first screen visit
         focusRequester.requestFocus()
     }
 }

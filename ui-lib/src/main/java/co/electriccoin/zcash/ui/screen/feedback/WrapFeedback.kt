@@ -16,7 +16,7 @@ import co.electriccoin.zcash.ui.screen.feedback.viewmodel.FeedbackViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-internal fun AndroidFeedback() {
+internal fun WrapFeedback() {
     val navController = LocalNavController.current
     val walletViewModel = koinActivityViewModel<WalletViewModel>()
     val viewModel = koinViewModel<FeedbackViewModel>()

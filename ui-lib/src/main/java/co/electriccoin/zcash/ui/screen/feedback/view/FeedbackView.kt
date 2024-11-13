@@ -182,7 +182,7 @@ private fun SupportMainContent(
     }
 
     LaunchedEffect(Unit) {
-        // Causes the TextFiled to focus on the first screen visit
+        // Causes the TextField to focus on the first screen visit
         focusRequester.requestFocus()
     }
 }
