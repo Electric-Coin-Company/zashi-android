@@ -15,6 +15,7 @@ directly impact users rather than highlighting other key architectural updates.*
 - The Flexa SDK has been adopted to enable payments using the embedded Flexa UI
 - New Sending, Success, Failure, and GrpcFailure subscreens of the Send Confirmation screen have been added
 - New Copy Transaction IDs feature has been added to the MultipleTransactionFailure screen
+- System settings options to pick supported language
 
 ### Changed
 - Shielded transactions are properly indicated in transaction history
