@@ -132,10 +132,10 @@ class MainActivity : FragmentActivity() {
         // }
     }
 
-    override fun onResume() {
-        Twig.debug { "Activity state: Resume" }
+    override fun onStart() {
+        Twig.debug { "Activity state: Start" }
         authenticationViewModel.runAuthenticationRequiredCheck()
-        super.onResume()
+        super.onStart()
     }
 
     override fun onStop() {

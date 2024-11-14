@@ -264,7 +264,7 @@ private fun SendConfirmationMainContent(
     }
 }
 
-private const val TOP_BLANK_SPACE_RATIO = 0.2f
+private const val TOP_BLANK_SPACE_RATIO = 0.35f
 
 @Composable
 private fun SendingContent(
@@ -298,13 +298,11 @@ private fun SendingContent(
                         height = Dimension.wrapContent
                     }
         ) {
-            // TODO [#1667]: Change lottie animation once we have it
-            // TODO [#1667]: https://github.com/Electric-Coin-Company/zashi-android/issues/1667
             val lottieRes: Int =
                 if (isSystemInDarkTheme()) {
-                    co.electriccoin.zcash.ui.design.R.raw.lottie_loading_white
+                    R.raw.send_confirmation_sending_dark_v1
                 } else {
-                    co.electriccoin.zcash.ui.design.R.raw.lottie_loading
+                    R.raw.send_confirmation_sending_v1
                 }
 
             val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(lottieRes))
@@ -314,7 +312,7 @@ private fun SendingContent(
             )
 
             LottieAnimation(
-                modifier = Modifier.size(200.dp),
+                modifier = Modifier.size(150.dp),
                 composition = composition,
                 progress = { progress },
                 maintainOriginalImageBounds = true
