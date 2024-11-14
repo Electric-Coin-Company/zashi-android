@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.LocaleList
 import androidx.activity.viewModels
 import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
@@ -172,7 +173,7 @@ class ScreenshotTest : UiTestPrerequisites() {
     }
 
     @OptIn(ExperimentalTestApi::class)
-    @Suppress("LongMethod", "CyclomaticComplexMethod", "TooGenericExceptionCaught", "SwallowedException")
+    @Suppress("LongMethod", "CyclomaticComplexMethod")
     private fun takeScreenshotsForRestoreWallet(
         resContext: Context,
         tag: String
@@ -257,15 +258,10 @@ class ScreenshotTest : UiTestPrerequisites() {
         }
 
         composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) {
-            try {
-                composeTestRule.onNodeWithText(
-                    text = resContext.getString(R.string.restore_success_button),
-                    ignoreCase = true
-                ).assertExists()
-                true
-            } catch (e: Throwable) {
-                false
-            }
+            composeTestRule.onNodeWithText(
+                text = resContext.getString(R.string.restore_success_button),
+                ignoreCase = true
+            ).exists()
         }
 
         composeTestRule.onNodeWithText(
@@ -429,11 +425,22 @@ private fun onboardingScreenshots(
 
     composeTestRule.waitForIdle()
 
+    composeTestRule.waitUntil {
+        composeTestRule.onNodeWithText(
+            text = resContext.getString(R.string.seed_recovery_next_button),
+            ignoreCase = true,
+            useUnmergedTree = true
+        ).exists()
+    }
+
     composeTestRule.onNodeWithText(
         text = resContext.getString(R.string.seed_recovery_next_button),
         ignoreCase = true,
         useUnmergedTree = true
-    ).performClick()
+    ).also {
+        it.performScrollTo()
+        it.performClick()
+    }
 }
 
 private fun accountScreenshots(
@@ -598,4 +605,14 @@ private fun seedScreenshots(
     }
 
     ScreenshotTest.takeScreenshot(tag, "Seed 1")
+}
+
+@Suppress("SwallowedException", "TooGenericExceptionCaught")
+private fun SemanticsNodeInteraction.exists(): Boolean {
+    return try {
+        this.assertExists()
+        true
+    } catch (e: Throwable) {
+        false
+    }
 }
