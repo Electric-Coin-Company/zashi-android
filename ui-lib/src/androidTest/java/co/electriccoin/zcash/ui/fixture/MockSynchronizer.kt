@@ -109,10 +109,6 @@ internal class MockSynchronizer : CloseableSynchronizer {
         error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
 
-    override suspend fun getTransactionOutputs(transactionOverview: TransactionOverview): List<TransactionOutput> {
-        error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
-    }
-
     override suspend fun getTransparentAddress(account: Account): String {
         error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
