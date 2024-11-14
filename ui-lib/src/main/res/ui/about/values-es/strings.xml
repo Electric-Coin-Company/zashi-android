@@ -9,7 +9,7 @@
         Zcashers, for Zcashers. Developed and maintained by Electric Coin Co., the inventor of Zcash, Zashi features
         a built-in user-feedback mechanism to enable more features, more quickly.
     </string>
-    
+
     <string name="about_unable_to_web_browser">No se pudo encontrar una aplicación de navegador web.</string>
     <string name="about_button_privacy_policy">Política de Privacidad</string>
 </resources>

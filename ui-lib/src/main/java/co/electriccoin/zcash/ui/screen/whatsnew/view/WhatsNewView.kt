@@ -169,10 +169,11 @@ private fun AppBar(
 private fun WhatsNewViewPreview() {
     BlankSurface {
         WhatsNewView(
-            state = WhatsNewState.new(
-                changelog = ChangelogFixture.new(),
-                version = VersionInfoFixture.new().versionName
-            ),
+            state =
+                WhatsNewState.new(
+                    changelog = ChangelogFixture.new(),
+                    version = VersionInfoFixture.new().versionName
+                ),
             walletState = TopAppBarSubTitleState.None,
             onBack = {}
         )
