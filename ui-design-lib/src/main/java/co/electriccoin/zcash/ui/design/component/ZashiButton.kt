@@ -3,11 +3,13 @@ package co.electriccoin.zcash.ui.design.component
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -100,6 +102,7 @@ fun ZashiButton(
         onClick = onClick,
         modifier = modifier,
         shape = RoundedCornerShape(12.dp),
+        contentPadding = PaddingValues(horizontal = 10.dp),
         enabled = enabled,
         colors = colors.toButtonColors(),
         border = colors.borderColor.takeIf { it != Color.Unspecified }?.let { BorderStroke(1.dp, it) },
@@ -264,6 +267,20 @@ private fun DestroyPreview() =
             ZashiButton(
                 modifier = Modifier.fillMaxWidth(),
                 text = "Primary",
+                colors = ZashiButtonDefaults.destructive1Colors(),
+                onClick = {},
+            )
+        }
+    }
+
+@PreviewScreens
+@Composable
+private fun SmallWidthPreview() =
+    ZcashTheme {
+        BlankSurface {
+            ZashiButton(
+                modifier = Modifier.wrapContentWidth(),
+                text = "Small Width Button",
                 colors = ZashiButtonDefaults.destructive1Colors(),
                 onClick = {},
             )

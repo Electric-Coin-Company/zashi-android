@@ -36,10 +36,8 @@ internal fun WrapSettings() {
         settingsViewModel.onBack()
     }
 
-    state?.let {
-        Settings(
-            state = it,
-            topAppBarSubTitleState = walletState,
-        )
-    }
+    Settings(
+        state = state,
+        topAppBarSubTitleState = walletState,
+    )
 }

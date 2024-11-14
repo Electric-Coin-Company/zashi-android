@@ -239,6 +239,10 @@ internal class MockSynchronizer : CloseableSynchronizer {
         error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
 
+    override suspend fun getTransactionOutputs(transactionOverview: TransactionOverview): List<TransactionOutput> {
+        error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
+    }
+
     companion object {
         fun new() = MockSynchronizer()
     }

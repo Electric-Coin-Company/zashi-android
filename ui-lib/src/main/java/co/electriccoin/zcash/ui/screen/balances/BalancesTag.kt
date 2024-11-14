@@ -5,5 +5,4 @@ package co.electriccoin.zcash.ui.screen.balances
  */
 object BalancesTag {
     const val STATUS = "status"
-    const val FIAT_CONVERSION = "fiat_conversion"
 }
