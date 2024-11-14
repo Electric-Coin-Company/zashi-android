@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.LocaleList
 import androidx.activity.viewModels
 import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
@@ -257,6 +258,21 @@ class ScreenshotTest : UiTestPrerequisites() {
         }
 
         composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) {
+            composeTestRule.onNodeWithText(
+                text = resContext.getString(R.string.restore_success_button),
+                ignoreCase = true
+            ).exists()
+        }
+
+        composeTestRule.onNodeWithText(
+            text = resContext.getString(R.string.restore_success_button),
+            ignoreCase = true
+        ).also {
+            it.performScrollTo()
+            it.performClick()
+        }
+
+        composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) {
             composeTestRule.activity.walletViewModel.walletSnapshot.value != null
         }
 
@@ -327,7 +343,6 @@ class ScreenshotTest : UiTestPrerequisites() {
 
         // These are the home screen bottom navigation sub-screens
         onboardingScreenshots(resContext, tag, composeTestRule)
-        recoveryScreenshots(resContext, tag, composeTestRule)
 
         // To ensure that the bottom tab is available, or wait until it is
         composeTestRule.waitUntilAtLeastOneExists(hasTestTag(HomeTag.TAB_ACCOUNT), DEFAULT_TIMEOUT_MILLISECONDS)
@@ -374,7 +389,10 @@ private fun onboardingScreenshots(
     }
 
     // Welcome screen
-    composeTestRule.onNodeWithText(resContext.getString(R.string.onboarding_header)).also {
+    composeTestRule.onNodeWithText(
+        resContext.getString(R.string.onboarding_header),
+        useUnmergedTree = true
+    ).also {
         it.assertExists()
         ScreenshotTest.takeScreenshot(tag, "Onboarding 1")
     }
@@ -383,7 +401,8 @@ private fun onboardingScreenshots(
 
     composeTestRule.onNodeWithText(
         text = resContext.getString(R.string.onboarding_create_new_wallet),
-        ignoreCase = true
+        ignoreCase = true,
+        useUnmergedTree = true
     ).also {
         it.performClick()
     }
@@ -391,7 +410,8 @@ private fun onboardingScreenshots(
     // Security Warning screen
     composeTestRule.onNodeWithText(
         text = resContext.getString(R.string.security_warning_acknowledge),
-        ignoreCase = true
+        ignoreCase = true,
+        useUnmergedTree = true
     ).also {
         it.assertExists()
         it.performClick()
@@ -399,32 +419,25 @@ private fun onboardingScreenshots(
     }
     composeTestRule.onNodeWithText(
         text = resContext.getString(R.string.security_warning_confirm),
-        ignoreCase = true
-    ).also {
-        it.performClick()
-    }
-}
+        ignoreCase = true,
+        useUnmergedTree = true
+    ).performClick()
 
-@Suppress("LongMethod", "CyclomaticComplexMethod")
-private fun recoveryScreenshots(
-    resContext: Context,
-    tag: String,
-    composeTestRule: AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>
-) {
-    composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) {
-        composeTestRule.activity.walletViewModel.secretState.value is SecretState.NeedsBackup
-    }
+    composeTestRule.waitForIdle()
 
-    composeTestRule.onNodeWithText(resContext.getString(R.string.new_wallet_recovery_header)).also {
-        it.assertExists()
+    composeTestRule.waitUntil {
+        composeTestRule.onNodeWithText(
+            text = resContext.getString(R.string.seed_recovery_next_button),
+            ignoreCase = true,
+            useUnmergedTree = true
+        ).exists()
     }
-    ScreenshotTest.takeScreenshot(tag, "Recovery 1")
 
     composeTestRule.onNodeWithText(
-        text = resContext.getString(R.string.new_wallet_recovery_button_finished),
-        ignoreCase = true
+        text = resContext.getString(R.string.seed_recovery_next_button),
+        ignoreCase = true,
+        useUnmergedTree = true
     ).also {
-        it.assertExists()
         it.performScrollTo()
         it.performClick()
     }
@@ -592,4 +605,14 @@ private fun seedScreenshots(
     }
 
     ScreenshotTest.takeScreenshot(tag, "Seed 1")
+}
+
+@Suppress("SwallowedException", "TooGenericExceptionCaught")
+private fun SemanticsNodeInteraction.exists(): Boolean {
+    return try {
+        this.assertExists()
+        true
+    } catch (e: Throwable) {
+        false
+    }
 }

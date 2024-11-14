@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.design.component
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -13,12 +14,13 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -39,7 +41,7 @@ fun ZashiButton(
 ) {
     ZashiButton(
         text = state.text.getValue(),
-        leadingIcon = state.leadingIconVector,
+        icon = state.icon,
         onClick = state.onClick,
         modifier = modifier,
         enabled = state.isEnabled,
@@ -55,7 +57,7 @@ fun ZashiButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    leadingIcon: Painter? = null,
+    @DrawableRes icon: Int? = null,
     enabled: Boolean = true,
     isLoading: Boolean = false,
     colors: ZashiButtonColors = ZashiButtonDefaults.primaryColors(),
@@ -65,11 +67,12 @@ fun ZashiButton(
         object : ZashiButtonScope {
             @Composable
             override fun LeadingIcon() {
-                if (leadingIcon != null) {
+                if (icon != null) {
                     Image(
-                        painter = leadingIcon,
+                        painter = painterResource(icon),
                         contentDescription = null,
-                        modifier = Modifier.size(20.dp)
+                        modifier = Modifier.size(20.dp),
+                        colorFilter = ColorFilter.tint(LocalContentColor.current)
                     )
                 }
             }
@@ -98,6 +101,8 @@ fun ZashiButton(
             }
         }
 
+    val borderColor = if (enabled) colors.borderColor else colors.disabledBorderColor
+
     Button(
         onClick = onClick,
         modifier = modifier,
@@ -105,7 +110,7 @@ fun ZashiButton(
         contentPadding = PaddingValues(horizontal = 10.dp),
         enabled = enabled,
         colors = colors.toButtonColors(),
-        border = colors.borderColor.takeIf { it != Color.Unspecified }?.let { BorderStroke(1.dp, it) },
+        border = borderColor.takeIf { it != Color.Unspecified }?.let { BorderStroke(1.dp, it) },
         content = {
             content(scope)
         }
@@ -142,9 +147,10 @@ object ZashiButtonDefaults {
     ) = ZashiButtonColors(
         containerColor = containerColor,
         contentColor = contentColor,
+        borderColor = Color.Unspecified,
         disabledContainerColor = disabledContainerColor,
         disabledContentColor = disabledContentColor,
-        borderColor = Color.Unspecified
+        disabledBorderColor = Color.Unspecified
     )
 
     @Composable
@@ -156,9 +162,10 @@ object ZashiButtonDefaults {
     ) = ZashiButtonColors(
         containerColor = containerColor,
         contentColor = contentColor,
+        borderColor = Color.Unspecified,
         disabledContainerColor = disabledContainerColor,
         disabledContentColor = disabledContentColor,
-        borderColor = Color.Unspecified
+        disabledBorderColor = Color.Unspecified
     )
 
     @Composable
@@ -170,9 +177,10 @@ object ZashiButtonDefaults {
     ) = ZashiButtonColors(
         containerColor = containerColor,
         contentColor = contentColor,
+        borderColor = Color.Unspecified,
         disabledContainerColor = disabledContainerColor,
         disabledContentColor = disabledContentColor,
-        borderColor = Color.Unspecified
+        disabledBorderColor = Color.Unspecified
     )
 
     @Composable
@@ -187,7 +195,8 @@ object ZashiButtonDefaults {
         contentColor = contentColor,
         disabledContainerColor = disabledContainerColor,
         disabledContentColor = disabledContentColor,
-        borderColor = borderColor
+        borderColor = borderColor,
+        disabledBorderColor = Color.Unspecified
     )
 }
 
@@ -195,15 +204,16 @@ object ZashiButtonDefaults {
 data class ZashiButtonColors(
     val containerColor: Color,
     val contentColor: Color,
+    val borderColor: Color,
     val disabledContainerColor: Color,
     val disabledContentColor: Color,
-    val borderColor: Color,
+    val disabledBorderColor: Color,
 )
 
 @Immutable
 data class ButtonState(
     val text: StringResource,
-    val leadingIconVector: Painter? = null,
+    @DrawableRes val icon: Int? = null,
     val isEnabled: Boolean = true,
     val isLoading: Boolean = false,
     val onClick: () -> Unit = {},
@@ -239,7 +249,7 @@ private fun PrimaryWithIconPreview() =
             ZashiButton(
                 modifier = Modifier.fillMaxWidth(),
                 text = "Primary",
-                leadingIcon = painterResource(id = android.R.drawable.ic_secure),
+                icon = android.R.drawable.ic_secure,
                 onClick = {},
             )
         }

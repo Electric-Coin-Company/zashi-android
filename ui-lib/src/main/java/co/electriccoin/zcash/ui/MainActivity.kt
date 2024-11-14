@@ -47,10 +47,11 @@ import co.electriccoin.zcash.ui.screen.authentication.RETRY_TRIGGER_DELAY
 import co.electriccoin.zcash.ui.screen.authentication.WrapAuthentication
 import co.electriccoin.zcash.ui.screen.authentication.view.AnimationConstants
 import co.electriccoin.zcash.ui.screen.authentication.view.WelcomeAnimationAutostart
-import co.electriccoin.zcash.ui.screen.newwalletrecovery.WrapNewWalletRecovery
 import co.electriccoin.zcash.ui.screen.onboarding.WrapOnboarding
 import co.electriccoin.zcash.ui.screen.onboarding.persistExistingWalletWithSeedPhrase
 import co.electriccoin.zcash.ui.screen.securitywarning.WrapSecurityWarning
+import co.electriccoin.zcash.ui.screen.seed.SeedNavigationArgs
+import co.electriccoin.zcash.ui.screen.seed.WrapSeed
 import co.electriccoin.zcash.ui.screen.warning.viewmodel.StorageCheckViewModel
 import co.electriccoin.zcash.work.WorkIds
 import kotlinx.coroutines.delay
@@ -320,9 +321,9 @@ class MainActivity : FragmentActivity() {
                     }
 
                     is SecretState.NeedsBackup -> {
-                        WrapNewWalletRecovery(
-                            secretState.persistableWallet,
-                            onBackupComplete = { walletViewModel.persistOnboardingState(OnboardingState.READY) }
+                        WrapSeed(
+                            args = SeedNavigationArgs.NEW_WALLET,
+                            goBackOverride = null
                         )
                     }
 

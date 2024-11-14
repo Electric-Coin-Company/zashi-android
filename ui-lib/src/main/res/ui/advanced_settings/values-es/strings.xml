@@ -5,5 +5,5 @@
     <string name="advanced_settings_choose_server">Elegir un servidor</string>
     <string name="advanced_settings_currency_conversion">Conversión de moneda</string>
     <string name="advanced_settings_info">Se te pedirá confirmación en la siguiente pantalla</string>
-    <string name="advanced_settings_delete_button">Eliminar Zashi</string>
+    <string name="advanced_settings_delete_button">Reset Zashi</string>
 </resources>

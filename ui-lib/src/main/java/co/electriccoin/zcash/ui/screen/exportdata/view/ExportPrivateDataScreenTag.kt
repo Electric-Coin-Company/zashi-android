@@ -6,5 +6,4 @@ package co.electriccoin.zcash.ui.screen.exportdata.view
 object ExportPrivateDataScreenTag {
     const val AGREE_CHECKBOX_TAG = "agree_checkbox"
     const val WARNING_TEXT_TAG = "warning_text"
-    const val ADDITIONAL_TEXT_TAG = "additional_text"
 }
