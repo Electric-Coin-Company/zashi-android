@@ -10,7 +10,6 @@ import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
-import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.ComposeTestRule
@@ -173,7 +172,7 @@ class ScreenshotTest : UiTestPrerequisites() {
     }
 
     @OptIn(ExperimentalTestApi::class)
-    @Suppress("LongMethod", "CyclomaticComplexMethod")
+    @Suppress("LongMethod", "CyclomaticComplexMethod", "TooGenericExceptionCaught", "SwallowedException")
     private fun takeScreenshotsForRestoreWallet(
         resContext: Context,
         tag: String
@@ -258,10 +257,15 @@ class ScreenshotTest : UiTestPrerequisites() {
         }
 
         composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) {
-            composeTestRule.onNodeWithText(
-                text = resContext.getString(R.string.restore_success_button),
-                ignoreCase = true
-            ).isDisplayed()
+            try {
+                composeTestRule.onNodeWithText(
+                    text = resContext.getString(R.string.restore_success_button),
+                    ignoreCase = true
+                ).assertExists()
+                true
+            } catch (e: Throwable) {
+                false
+            }
         }
 
         composeTestRule.onNodeWithText(
