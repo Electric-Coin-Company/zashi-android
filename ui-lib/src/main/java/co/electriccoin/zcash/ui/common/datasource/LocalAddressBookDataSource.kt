@@ -82,12 +82,12 @@ class LocalAddressBookDataSourceImpl(
                     lastUpdated = lastUpdated,
                     version = ADDRESS_BOOK_SERIALIZATION_V1,
                     contacts =
-                        addressBook?.contacts.orEmpty() +
-                            AddressBookContact(
-                                name = name,
-                                address = address,
-                                lastUpdated = lastUpdated,
-                            ),
+                    addressBook?.contacts.orEmpty() +
+                        AddressBookContact(
+                            name = name,
+                            address = address,
+                            lastUpdated = lastUpdated,
+                        ),
                 )
             writeAddressBookToLocalStorage(newAddressBook, addressBookKey)
             newAddressBook
@@ -106,18 +106,18 @@ class LocalAddressBookDataSourceImpl(
                     lastUpdated = lastUpdated,
                     version = ADDRESS_BOOK_SERIALIZATION_V1,
                     contacts =
-                        addressBook?.contacts.orEmpty().toMutableList()
-                            .apply {
-                                set(
-                                    indexOf(contact),
-                                    AddressBookContact(
-                                        name = name.trim(),
-                                        address = address.trim(),
-                                        lastUpdated = Clock.System.now()
-                                    )
+                    addressBook?.contacts.orEmpty().toMutableList()
+                        .apply {
+                            set(
+                                indexOf(contact),
+                                AddressBookContact(
+                                    name = name.trim(),
+                                    address = address.trim(),
+                                    lastUpdated = Clock.System.now()
                                 )
-                            }
-                            .toList(),
+                            )
+                        }
+                        .toList(),
                 )
             writeAddressBookToLocalStorage(newAddressBook, addressBookKey)
             newAddressBook
@@ -134,11 +134,11 @@ class LocalAddressBookDataSourceImpl(
                     lastUpdated = lastUpdated,
                     version = ADDRESS_BOOK_SERIALIZATION_V1,
                     contacts =
-                        addressBook?.contacts.orEmpty().toMutableList()
-                            .apply {
-                                remove(addressBookContact)
-                            }
-                            .toList(),
+                    addressBook?.contacts.orEmpty().toMutableList()
+                        .apply {
+                            remove(addressBookContact)
+                        }
+                        .toList(),
                 )
             writeAddressBookToLocalStorage(newAddressBook, addressBookKey)
             newAddressBook
@@ -159,9 +159,14 @@ class LocalAddressBookDataSourceImpl(
     @Suppress("ReturnCount")
     private suspend fun readLocalFileToAddressBook(addressBookKey: AddressBookKey): AddressBook? {
         val encryptedFile = addressBookStorageProvider.getStorageFile(addressBookKey)
+        val unencryptedFile = addressBookStorageProvider.getLegacyUnencryptedStorageFile()
+
         if (encryptedFile != null) {
             return try {
                 addressBookProvider.readAddressBookFromFile(encryptedFile, addressBookKey)
+                    .also {
+                        unencryptedFile?.deleteSuspend()
+                    }
             } catch (e: GeneralSecurityException) {
                 Twig.warn(e) { "Failed to decrypt address book" }
                 null
@@ -171,13 +176,12 @@ class LocalAddressBookDataSourceImpl(
             }
         }
 
-        val unencryptedFile = addressBookStorageProvider.getLegacyUnencryptedStorageFile()
-
         return if (unencryptedFile != null) {
-            val addressBook = addressBookProvider.readLegacyUnencryptedAddressBookFromFile(unencryptedFile)
-            writeAddressBookToLocalStorage(addressBook, addressBookKey)
-            unencryptedFile.deleteSuspend()
-            return addressBook
+            addressBookProvider.readLegacyUnencryptedAddressBookFromFile(unencryptedFile)
+                .also { unencryptedAddressBook ->
+                    writeAddressBookToLocalStorage(unencryptedAddressBook, addressBookKey)
+                    unencryptedFile.deleteSuspend()
+                }
         } else {
             null
         }
