@@ -161,8 +161,8 @@ class AddressBookRepositoryImpl(
                     remote = null,
                     fromOperation = operation
                 )
-            localAddressBookDataSource.saveContacts(
-                contacts = merged,
+            localAddressBookDataSource.saveAddressBook(
+                addressBook = merged,
                 addressBookKey = getAddressBookKey()
             )
             // executeRemoteAddressBookSafe {
