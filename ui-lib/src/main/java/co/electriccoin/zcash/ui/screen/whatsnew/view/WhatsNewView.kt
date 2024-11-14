@@ -37,6 +37,7 @@ import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.fixture.ChangelogFixture
+import co.electriccoin.zcash.ui.fixture.VersionInfoFixture
 import co.electriccoin.zcash.ui.screen.whatsnew.model.WhatsNewSectionState
 import co.electriccoin.zcash.ui.screen.whatsnew.model.WhatsNewState
 import kotlinx.datetime.toJavaLocalDate
@@ -168,7 +169,10 @@ private fun AppBar(
 private fun WhatsNewViewPreview() {
     BlankSurface {
         WhatsNewView(
-            state = WhatsNewState.new(ChangelogFixture.new()),
+            state = WhatsNewState.new(
+                changelog = ChangelogFixture.new(),
+                version = VersionInfoFixture.new().versionName
+            ),
             walletState = TopAppBarSubTitleState.None,
             onBack = {}
         )

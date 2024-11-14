@@ -15,7 +15,12 @@ import kotlinx.coroutines.flow.stateIn
 class WhatsNewViewModel(application: Application) : AndroidViewModel(application) {
     val state: StateFlow<WhatsNewState?> =
         flow {
-            val changelog = VersionInfo.new(application).changelog
-            emit(WhatsNewState.new(changelog))
+            val versionInfo = VersionInfo.new(application)
+            emit(
+                WhatsNewState.new(
+                    changelog = versionInfo.changelog,
+                    version =  versionInfo.versionName
+                )
+            )
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT), null)
 }

@@ -13,10 +13,10 @@ data class WhatsNewState(
     val sections: List<WhatsNewSectionState>
 ) {
     companion object {
-        fun new(changelog: Changelog) =
+        fun new(changelog: Changelog, version: String) =
             WhatsNewState(
                 titleVersion = stringRes(R.string.whats_new_version, changelog.version),
-                bottomVersion = stringRes(R.string.settings_version, changelog.version),
+                bottomVersion = stringRes(R.string.settings_version, version),
                 date = changelog.date,
                 sections =
                     listOfNotNull(changelog.added, changelog.changed, changelog.fixed, changelog.removed)
