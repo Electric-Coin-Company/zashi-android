@@ -32,6 +32,13 @@ style:
     ignoreAnnotated:
       - 'Preview'
       - 'PreviewScreens'
+      - 'PreviewScreenSizes'
+  MagicNumber:
+    active: true
+    ignoreAnnotated:
+      - 'Preview'
+      - 'PreviewScreens'
+      - 'PreviewScreenSizes'
 
 complexity:
   LongMethod:
@@ -39,11 +46,13 @@ complexity:
     ignoreAnnotated:
       - 'Preview'
       - 'PreviewScreens'
+      - 'PreviewScreenSizes'
   LongParameterList:
     active: false
     ignoreAnnotated:
       - 'Preview'
       - 'PreviewScreens'
+      - 'PreviewScreenSizes'
 
 Compose:
   ModifierMissing:

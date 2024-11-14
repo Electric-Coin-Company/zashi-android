@@ -33,7 +33,6 @@ class ReceiveViewModel(
                 isTestnet = getVersionInfo().isTestnet,
                 onAddressCopy = { address ->
                     copyToClipboard(
-                        context = application.applicationContext,
                         tag = application.getString(R.string.receive_clipboard_tag),
                         value = address
                     )
