@@ -421,12 +421,13 @@ private fun onboardingScreenshots(
         text = resContext.getString(R.string.security_warning_confirm),
         ignoreCase = true,
         useUnmergedTree = true
-    ).also {
-        it.performClick()
-    }
+    ).performClick()
+
+    composeTestRule.waitForIdle()
 
     composeTestRule.onNodeWithText(
         text = resContext.getString(R.string.seed_recovery_next_button),
+        ignoreCase = true,
         useUnmergedTree = true
     ).performClick()
 }
