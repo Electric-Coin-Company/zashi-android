@@ -31,6 +31,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalConfiguration
@@ -39,8 +40,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
+import co.electriccoin.zcash.spackle.AndroidApiVersion
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.SecureScreen
 import co.electriccoin.zcash.ui.common.compose.ZashiTooltip
@@ -52,7 +55,7 @@ import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarBackNavigation
-import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
+import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreenSizes
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
@@ -147,6 +150,8 @@ private fun SeedRecoveryMainContent(
         SeedSecret(modifier = Modifier.fillMaxWidth(), state = state.birthday)
 
         Spacer(Modifier.weight(1f))
+
+        Spacer(Modifier.height(ZashiDimensions.Spacing.spacing3xl))
 
         Row {
             Image(
@@ -273,7 +278,7 @@ private fun SecretContent(state: SeedSecretState) {
                             Modifier
                         } then
                         Modifier
-                            .blur(blur.value)
+                            .blurCompat(blur.value, 14.dp)
                             .padding(horizontal = 24.dp, vertical = 18.dp)
             ) {
                 if (state.mode == SeedSecretState.Mode.SEED) {
@@ -319,6 +324,19 @@ private fun SecretContent(state: SeedSecretState) {
     }
 }
 
+private fun Modifier.blurCompat(
+    radius: Dp,
+    max: Dp
+): Modifier {
+    return if (AndroidApiVersion.isAtLeastS) {
+        this.blur(radius)
+    } else {
+        val progression = 1 - (radius.value / max.value)
+        this
+            .alpha(progression)
+    }
+}
+
 @Composable
 private fun SecretBirthdayContent(state: SeedSecretState) {
     Text(
@@ -335,14 +353,18 @@ private fun SecretBirthdayContent(state: SeedSecretState) {
 @OptIn(ExperimentalLayoutApi::class)
 private fun SecretSeedContent(state: SeedSecretState) {
     FlowColumn(
-        modifier = Modifier.fillMaxWidth(),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(end = 8.dp),
         maxItemsInEachColumn = 8,
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        verticalArrangement = spacedBy(6.dp)
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalArrangement = spacedBy(6.dp),
+        maxLines = 8
     ) {
         state.text.getValue().split(" ").fastForEachIndexed { i, s ->
             Row(
-                modifier = Modifier.width(99.dp)
+                modifier = Modifier
             ) {
                 Text(
                     modifier = Modifier.width(18.dp),
@@ -350,7 +372,8 @@ private fun SecretSeedContent(state: SeedSecretState) {
                     text = "${i + 1}",
                     style = ZashiTypography.textSm,
                     fontWeight = FontWeight.Normal,
-                    color = ZashiColors.Text.textPrimary
+                    color = ZashiColors.Text.textPrimary,
+                    maxLines = 1
                 )
 
                 Spacer(modifier = Modifier.width(ZashiDimensions.Spacing.spacingLg))
@@ -359,7 +382,8 @@ private fun SecretSeedContent(state: SeedSecretState) {
                     text = s,
                     style = ZashiTypography.textSm,
                     fontWeight = FontWeight.Normal,
-                    color = ZashiColors.Text.textPrimary
+                    color = ZashiColors.Text.textPrimary,
+                    maxLines = 1
                 )
             }
         }
@@ -367,7 +391,7 @@ private fun SecretSeedContent(state: SeedSecretState) {
 }
 
 @Composable
-@PreviewScreens
+@PreviewScreenSizes
 private fun RevealedPreview() =
     ZcashTheme {
         SeedView(
@@ -404,7 +428,7 @@ private fun RevealedPreview() =
     }
 
 @Composable
-@PreviewScreens
+@PreviewScreenSizes
 private fun HiddenPreview() =
     ZcashTheme {
         SeedView(
