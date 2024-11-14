@@ -6,6 +6,7 @@
     <string name="settings_feedback">Envíanos tus Comentarios</string>
     <string name="settings_version">Versión <xliff:g example="1" id="version">%s</xliff:g></string>
     <string name="settings_address_book">Libreta de Direcciones</string>
+    <string name="settings_whats_new">What\'s New</string>
 
     <string name="settings_troubleshooting_menu_content_description">Configuraciones adicionales</string>
     <string name="settings_troubleshooting_rescan">Reescanear blockchain</string>
