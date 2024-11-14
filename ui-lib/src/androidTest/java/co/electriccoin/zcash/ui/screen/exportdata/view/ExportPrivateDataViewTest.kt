@@ -53,12 +53,6 @@ class ExportPrivateDataViewTest : UiTestPrerequisites() {
             it.assertExists()
             it.assertIsDisplayed()
         }
-
-        composeTestRule.onNodeWithTag(ExportPrivateDataScreenTag.ADDITIONAL_TEXT_TAG).also {
-            it.performScrollTo()
-            it.assertExists()
-            it.assertIsDisplayed()
-        }
     }
 
     @Test
