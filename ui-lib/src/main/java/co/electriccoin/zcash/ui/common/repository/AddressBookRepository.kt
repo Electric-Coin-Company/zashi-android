@@ -280,7 +280,7 @@ class AddressBookRepositoryImpl(
         }
     }
 
-    private suspend fun getAddressBookKey(): AddressBookKey {
+    private suspend fun getAddressBookKey(account: Account = Account.DEFAULT): AddressBookKey {
         val key = addressBookKeyStorageProvider.getAddressBookKey()
 
         return if (key != null) {
@@ -291,7 +291,7 @@ class AddressBookRepositoryImpl(
                 AddressBookKey.derive(
                     seedPhrase = wallet.seedPhrase,
                     network = wallet.network,
-                    account = Account.DEFAULT
+                    account = account
                 )
             addressBookKeyStorageProvider.storeAddressBookKey(newKey)
             newKey
