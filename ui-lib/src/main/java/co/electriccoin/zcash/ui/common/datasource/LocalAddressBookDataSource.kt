@@ -82,12 +82,12 @@ class LocalAddressBookDataSourceImpl(
                     lastUpdated = lastUpdated,
                     version = ADDRESS_BOOK_SERIALIZATION_V1,
                     contacts =
-                    addressBook?.contacts.orEmpty() +
-                        AddressBookContact(
-                            name = name,
-                            address = address,
-                            lastUpdated = lastUpdated,
-                        ),
+                        addressBook?.contacts.orEmpty() +
+                            AddressBookContact(
+                                name = name,
+                                address = address,
+                                lastUpdated = lastUpdated,
+                            ),
                 )
             writeAddressBookToLocalStorage(newAddressBook, addressBookKey)
             newAddressBook
@@ -106,18 +106,18 @@ class LocalAddressBookDataSourceImpl(
                     lastUpdated = lastUpdated,
                     version = ADDRESS_BOOK_SERIALIZATION_V1,
                     contacts =
-                    addressBook?.contacts.orEmpty().toMutableList()
-                        .apply {
-                            set(
-                                indexOf(contact),
-                                AddressBookContact(
-                                    name = name.trim(),
-                                    address = address.trim(),
-                                    lastUpdated = Clock.System.now()
+                        addressBook?.contacts.orEmpty().toMutableList()
+                            .apply {
+                                set(
+                                    indexOf(contact),
+                                    AddressBookContact(
+                                        name = name.trim(),
+                                        address = address.trim(),
+                                        lastUpdated = Clock.System.now()
+                                    )
                                 )
-                            )
-                        }
-                        .toList(),
+                            }
+                            .toList(),
                 )
             writeAddressBookToLocalStorage(newAddressBook, addressBookKey)
             newAddressBook
@@ -134,11 +134,11 @@ class LocalAddressBookDataSourceImpl(
                     lastUpdated = lastUpdated,
                     version = ADDRESS_BOOK_SERIALIZATION_V1,
                     contacts =
-                    addressBook?.contacts.orEmpty().toMutableList()
-                        .apply {
-                            remove(addressBookContact)
-                        }
-                        .toList(),
+                        addressBook?.contacts.orEmpty().toMutableList()
+                            .apply {
+                                remove(addressBookContact)
+                            }
+                            .toList(),
                 )
             writeAddressBookToLocalStorage(newAddressBook, addressBookKey)
             newAddressBook
