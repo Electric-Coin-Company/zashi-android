@@ -10,6 +10,7 @@
         android:backupInForeground="true"
         android:icon="@mipmap/ic_launcher_square"
         android:roundIcon="@mipmap/ic_launcher_round"
+        android:localeConfig="@xml/locales_config"
         android:label="@string/app_name">
 
         <!-- Alias acts as the entrypoint to the application.
