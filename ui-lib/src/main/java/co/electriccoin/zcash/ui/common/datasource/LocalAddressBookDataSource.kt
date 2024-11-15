@@ -11,8 +11,6 @@ import co.electriccoin.zcash.ui.common.serialization.addressbook.AddressBookKey
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
-import java.io.IOException
-import java.security.GeneralSecurityException
 
 interface LocalAddressBookDataSource {
     suspend fun getContacts(addressBookKey: AddressBookKey): AddressBook
@@ -158,22 +156,15 @@ class LocalAddressBookDataSourceImpl(
 
     @Suppress("ReturnCount")
     private suspend fun readLocalFileToAddressBook(addressBookKey: AddressBookKey): AddressBook? {
-        val encryptedFile = addressBookStorageProvider.getStorageFile(addressBookKey)
-        val unencryptedFile = addressBookStorageProvider.getLegacyUnencryptedStorageFile()
+        val encryptedFile = runCatching { addressBookStorageProvider.getStorageFile(addressBookKey) }.getOrNull()
+        val unencryptedFile = runCatching { addressBookStorageProvider.getLegacyUnencryptedStorageFile() }.getOrNull()
 
         if (encryptedFile != null) {
-            return try {
-                addressBookProvider.readAddressBookFromFile(encryptedFile, addressBookKey)
-                    .also {
-                        unencryptedFile?.deleteSuspend()
-                    }
-            } catch (e: GeneralSecurityException) {
-                Twig.warn(e) { "Failed to decrypt address book" }
-                null
-            } catch (e: IOException) {
-                Twig.warn(e) { "Failed to decrypt address book" }
-                null
-            }
+            return runCatching {
+                addressBookProvider
+                    .readAddressBookFromFile(encryptedFile, addressBookKey)
+                    .also { unencryptedFile?.deleteSuspend() }
+            }.onFailure { e -> Twig.warn(e) { "Failed to decrypt address book" } }.getOrNull()
         }
 
         return if (unencryptedFile != null) {
@@ -191,7 +182,9 @@ class LocalAddressBookDataSourceImpl(
         addressBook: AddressBook,
         addressBookKey: AddressBookKey
     ) {
-        val file = addressBookStorageProvider.getOrCreateStorageFile(addressBookKey)
-        addressBookProvider.writeAddressBookToFile(file, addressBook, addressBookKey)
+        runCatching {
+            val file = addressBookStorageProvider.getOrCreateStorageFile(addressBookKey)
+            addressBookProvider.writeAddressBookToFile(file, addressBook, addressBookKey)
+        }.onFailure { e -> Twig.warn(e) { "Failed to write address book" } }
     }
 }
