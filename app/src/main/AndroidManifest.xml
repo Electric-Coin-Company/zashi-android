@@ -4,7 +4,10 @@
 
     <application
         android:name="co.electriccoin.zcash.app.ZcashApplication"
-        android:allowBackup="false"
+        android:allowBackup="true"
+        android:fullBackupContent="@xml/auto_backup_config"
+        android:dataExtractionRules="@xml/auto_backup_config_android_12"
+        android:backupInForeground="true"
         android:icon="@mipmap/ic_launcher_square"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:localeConfig="@xml/locales_config"
