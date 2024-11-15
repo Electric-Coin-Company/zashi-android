@@ -21,7 +21,7 @@ class AddressBookStorageProviderImpl(
     private val context: Context
 ) : AddressBookStorageProvider {
     override fun getStorageFile(addressBookKey: AddressBookKey): File? {
-        return File(context.filesDir, addressBookKey.fileIdentifier())
+        return File(getOrCreateAddressBookDir(), addressBookKey.fileIdentifier())
             .takeIf { it.exists() && it.isFile }
     }
 
@@ -31,7 +31,11 @@ class AddressBookStorageProviderImpl(
     }
 
     override fun getOrCreateStorageFile(addressBookKey: AddressBookKey): File {
-        return getOrCreateFile(addressBookKey.fileIdentifier())
+        val file = File(getOrCreateAddressBookDir(), addressBookKey.fileIdentifier())
+        if (!file.exists()) {
+            file.createNewFile()
+        }
+        return file
     }
 
     // override fun getOrCreateTempStorageFile(): File {
@@ -42,12 +46,13 @@ class AddressBookStorageProviderImpl(
     //     return file
     // }
 
-    private fun getOrCreateFile(name: String): File {
-        val file = File(context.filesDir, name)
-        if (!file.exists()) {
-            file.createNewFile()
+    private fun getOrCreateAddressBookDir(): File {
+        val filesDir = context.filesDir
+        val addressBookDir = File(filesDir, "address_book")
+        if (!addressBookDir.exists()) {
+            addressBookDir.mkdir()
         }
-        return file
+        return addressBookDir
     }
 }
 

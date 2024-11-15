@@ -3,6 +3,6 @@
     <cloud-backup disableIfNoEncryptionCapabilities="false">
         <include
             domain="file"
-            path="." />
+            path="address_book/." />
     </cloud-backup>
 </data-extraction-rules>

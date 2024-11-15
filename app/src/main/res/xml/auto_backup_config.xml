@@ -2,5 +2,5 @@
 <full-backup-content>
     <include
         domain="file"
-        path="." />
+        path="address_book/." />
 </full-backup-content>
