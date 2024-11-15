@@ -1,12 +1,15 @@
 package co.electriccoin.zcash.ui.common.provider
 
 import android.content.Context
+import co.electriccoin.zcash.ui.common.serialization.addressbook.AddressBookKey
 import java.io.File
 
 interface AddressBookStorageProvider {
-    fun getStorageFile(): File?
+    fun getStorageFile(addressBookKey: AddressBookKey): File?
 
-    fun getOrCreateStorageFile(): File
+    fun getLegacyUnencryptedStorageFile(): File?
+
+    fun getOrCreateStorageFile(addressBookKey: AddressBookKey): File
 
     /**
      * Create a temporary file into which data from remote is written. This file is removed after usage.
@@ -17,12 +20,19 @@ interface AddressBookStorageProvider {
 class AddressBookStorageProviderImpl(
     private val context: Context
 ) : AddressBookStorageProvider {
-    override fun getStorageFile(): File? {
-        return File(context.noBackupFilesDir, LOCAL_ADDRESS_BOOK_FILE_NAME)
+    override fun getStorageFile(addressBookKey: AddressBookKey): File? {
+        return File(context.noBackupFilesDir, addressBookKey.fileIdentifier())
             .takeIf { it.exists() && it.isFile }
     }
 
-    override fun getOrCreateStorageFile(): File = getOrCreateFile(LOCAL_ADDRESS_BOOK_FILE_NAME)
+    override fun getLegacyUnencryptedStorageFile(): File? {
+        return File(context.noBackupFilesDir, LEGACY_UNENCRYPTED_ADDRESS_BOOK_FILE_NAME)
+            .takeIf { it.exists() && it.isFile }
+    }
+
+    override fun getOrCreateStorageFile(addressBookKey: AddressBookKey): File {
+        return getOrCreateFile(addressBookKey.fileIdentifier())
+    }
 
     override fun getOrCreateTempStorageFile(): File = getOrCreateFile(REMOTE_ADDRESS_BOOK_FILE_NAME_LOCAL_COPY)
 
@@ -35,5 +45,5 @@ class AddressBookStorageProviderImpl(
     }
 }
 
-private const val LOCAL_ADDRESS_BOOK_FILE_NAME = "address_book"
+private const val LEGACY_UNENCRYPTED_ADDRESS_BOOK_FILE_NAME = "address_book"
 private const val REMOTE_ADDRESS_BOOK_FILE_NAME_LOCAL_COPY = "address_book_temp"

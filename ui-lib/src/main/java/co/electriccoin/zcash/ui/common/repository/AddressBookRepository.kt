@@ -1,11 +1,12 @@
-@file:Suppress("DEPRECATION")
-
 package co.electriccoin.zcash.ui.common.repository
 
+import cash.z.ecc.android.sdk.model.Account
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.datasource.LocalAddressBookDataSource
 import co.electriccoin.zcash.ui.common.model.AddressBook
 import co.electriccoin.zcash.ui.common.model.AddressBookContact
+import co.electriccoin.zcash.ui.common.provider.AddressBookKeyStorageProvider
+import co.electriccoin.zcash.ui.common.serialization.addressbook.AddressBookKey
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.Flow
@@ -38,7 +39,7 @@ interface AddressBookRepository {
 
     suspend fun deleteContact(contact: AddressBookContact)
 
-    suspend fun deleteAddressBook()
+    suspend fun resetAddressBook()
 
     // fun onGoogleSignInSuccess()
     //
@@ -50,6 +51,8 @@ interface AddressBookRepository {
 @Suppress("TooManyFunctions")
 class AddressBookRepositoryImpl(
     private val localAddressBookDataSource: LocalAddressBookDataSource,
+    private val addressBookKeyStorageProvider: AddressBookKeyStorageProvider,
+    private val walletRepository: WalletRepository,
     // private val remoteAddressBookDataSource: RemoteAddressBookDataSource,
     // private val context: Context
 ) : AddressBookRepository {
@@ -92,9 +95,9 @@ class AddressBookRepositoryImpl(
             InternalOperation.Delete(contact = contact)
         )
 
-    override suspend fun deleteAddressBook() =
+    override suspend fun resetAddressBook() =
         withNonCancellableSemaphore {
-            localAddressBookDataSource.deleteAddressBook()
+            localAddressBookDataSource.resetAddressBook()
             addressBookCache.update { null }
         }
 
@@ -150,12 +153,18 @@ class AddressBookRepositoryImpl(
             //     }
             val merged =
                 mergeContacts(
-                    local = localAddressBookDataSource.getContacts(),
+                    local =
+                        localAddressBookDataSource.getContacts(
+                            addressBookKey = getAddressBookKey()
+                        ),
                     // remote = remote,
                     remote = null,
                     fromOperation = operation
                 )
-            localAddressBookDataSource.saveContacts(merged)
+            localAddressBookDataSource.saveAddressBook(
+                addressBook = merged,
+                addressBookKey = getAddressBookKey()
+            )
             // executeRemoteAddressBookSafe {
             //     remoteAddressBookDataSource.uploadContacts()
             //     Twig.info { "Address Book: ensureSynchronization - remote address book uploaded" }
@@ -232,12 +241,19 @@ class AddressBookRepositoryImpl(
             when (operation) {
                 is InternalOperation.Delete -> {
                     Twig.info { "Address Book: executeInternalOperation - delete" }
-                    localAddressBookDataSource.deleteContact(addressBookContact = operation.contact)
+                    localAddressBookDataSource.deleteContact(
+                        addressBookContact = operation.contact,
+                        addressBookKey = getAddressBookKey()
+                    )
                 }
 
                 is InternalOperation.Save -> {
                     Twig.info { "Address Book: executeInternalOperation - save" }
-                    localAddressBookDataSource.saveContact(name = operation.name, address = operation.address)
+                    localAddressBookDataSource.saveContact(
+                        name = operation.name,
+                        address = operation.address,
+                        addressBookKey = getAddressBookKey()
+                    )
                 }
 
                 is InternalOperation.Update -> {
@@ -245,7 +261,8 @@ class AddressBookRepositoryImpl(
                     localAddressBookDataSource.updateContact(
                         contact = operation.contact,
                         name = operation.name,
-                        address = operation.address
+                        address = operation.address,
+                        addressBookKey = getAddressBookKey()
                     )
                 }
             }
@@ -260,6 +277,24 @@ class AddressBookRepositoryImpl(
     private suspend fun withNonCancellableSemaphore(block: suspend () -> Unit) {
         withContext(NonCancellable + Dispatchers.Default) {
             semaphore.withLock { block() }
+        }
+    }
+
+    private suspend fun getAddressBookKey(account: Account = Account.DEFAULT): AddressBookKey {
+        val key = addressBookKeyStorageProvider.getAddressBookKey()
+
+        return if (key != null) {
+            key
+        } else {
+            val wallet = walletRepository.getPersistableWallet()
+            val newKey =
+                AddressBookKey.derive(
+                    seedPhrase = wallet.seedPhrase,
+                    network = wallet.network,
+                    account = account
+                )
+            addressBookKeyStorageProvider.storeAddressBookKey(newKey)
+            newKey
         }
     }
 

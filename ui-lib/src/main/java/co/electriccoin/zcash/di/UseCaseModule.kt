@@ -1,7 +1,6 @@
 package co.electriccoin.zcash.di
 
 import co.electriccoin.zcash.ui.common.usecase.CopyToClipboardUseCase
-import co.electriccoin.zcash.ui.common.usecase.DeleteAddressBookUseCase
 import co.electriccoin.zcash.ui.common.usecase.DeleteContactUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetAddressesUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetBackupPersistableWalletUseCase
@@ -28,6 +27,7 @@ import co.electriccoin.zcash.ui.common.usecase.ObserveWalletStateUseCase
 import co.electriccoin.zcash.ui.common.usecase.PersistEndpointUseCase
 import co.electriccoin.zcash.ui.common.usecase.RefreshFastestServersUseCase
 import co.electriccoin.zcash.ui.common.usecase.RescanBlockchainUseCase
+import co.electriccoin.zcash.ui.common.usecase.ResetAddressBookUseCase
 import co.electriccoin.zcash.ui.common.usecase.SaveContactUseCase
 import co.electriccoin.zcash.ui.common.usecase.SendEmailUseCase
 import co.electriccoin.zcash.ui.common.usecase.SendSupportEmailUseCase
@@ -59,7 +59,7 @@ val useCaseModule =
         factoryOf(::RescanBlockchainUseCase)
         factoryOf(::GetTransparentAddressUseCase)
         factoryOf(::ObserveAddressBookContactsUseCase)
-        factoryOf(::DeleteAddressBookUseCase)
+        factoryOf(::ResetAddressBookUseCase)
         factoryOf(::ValidateContactAddressUseCase)
         factoryOf(::ValidateContactNameUseCase)
         factoryOf(::SaveContactUseCase)

@@ -1,33 +1,46 @@
 package co.electriccoin.zcash.ui.common.datasource
 
+import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.spackle.io.deleteSuspend
 import co.electriccoin.zcash.ui.common.model.AddressBook
 import co.electriccoin.zcash.ui.common.model.AddressBookContact
 import co.electriccoin.zcash.ui.common.provider.AddressBookProvider
 import co.electriccoin.zcash.ui.common.provider.AddressBookStorageProvider
+import co.electriccoin.zcash.ui.common.serialization.addressbook.ADDRESS_BOOK_SERIALIZATION_V1
+import co.electriccoin.zcash.ui.common.serialization.addressbook.AddressBookKey
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
+import java.io.IOException
+import java.security.GeneralSecurityException
 
 interface LocalAddressBookDataSource {
-    suspend fun getContacts(): AddressBook
+    suspend fun getContacts(addressBookKey: AddressBookKey): AddressBook
 
     suspend fun saveContact(
         name: String,
-        address: String
+        address: String,
+        addressBookKey: AddressBookKey
     ): AddressBook
 
     suspend fun updateContact(
         contact: AddressBookContact,
         name: String,
-        address: String
+        address: String,
+        addressBookKey: AddressBookKey
     ): AddressBook
 
-    suspend fun deleteContact(addressBookContact: AddressBookContact): AddressBook
+    suspend fun deleteContact(
+        addressBookContact: AddressBookContact,
+        addressBookKey: AddressBookKey
+    ): AddressBook
 
-    suspend fun saveContacts(contacts: AddressBook)
+    suspend fun saveAddressBook(
+        addressBook: AddressBook,
+        addressBookKey: AddressBookKey
+    )
 
-    suspend fun deleteAddressBook()
+    suspend fun resetAddressBook()
 }
 
 class LocalAddressBookDataSourceImpl(
@@ -36,20 +49,20 @@ class LocalAddressBookDataSourceImpl(
 ) : LocalAddressBookDataSource {
     private var addressBook: AddressBook? = null
 
-    override suspend fun getContacts(): AddressBook =
+    override suspend fun getContacts(addressBookKey: AddressBookKey): AddressBook =
         withContext(Dispatchers.IO) {
             val addressBook = this@LocalAddressBookDataSourceImpl.addressBook
 
             if (addressBook == null) {
-                var newAddressBook: AddressBook? = readLocalFileToAddressBook()
+                var newAddressBook: AddressBook? = readLocalFileToAddressBook(addressBookKey)
                 if (newAddressBook == null) {
                     newAddressBook =
                         AddressBook(
                             lastUpdated = Clock.System.now(),
-                            version = 1,
+                            version = ADDRESS_BOOK_SERIALIZATION_V1,
                             contacts = emptyList(),
                         )
-                    writeAddressBookToLocalStorage(newAddressBook)
+                    writeAddressBookToLocalStorage(newAddressBook, addressBookKey)
                 }
                 newAddressBook
             } else {
@@ -59,14 +72,15 @@ class LocalAddressBookDataSourceImpl(
 
     override suspend fun saveContact(
         name: String,
-        address: String
+        address: String,
+        addressBookKey: AddressBookKey
     ): AddressBook =
         withContext(Dispatchers.IO) {
             val lastUpdated = Clock.System.now()
-            addressBook =
+            val newAddressBook =
                 AddressBook(
                     lastUpdated = lastUpdated,
-                    version = 1,
+                    version = ADDRESS_BOOK_SERIALIZATION_V1,
                     contacts =
                         addressBook?.contacts.orEmpty() +
                             AddressBookContact(
@@ -75,21 +89,22 @@ class LocalAddressBookDataSourceImpl(
                                 lastUpdated = lastUpdated,
                             ),
                 )
-            writeAddressBookToLocalStorage(addressBook!!)
-            addressBook!!
+            writeAddressBookToLocalStorage(newAddressBook, addressBookKey)
+            newAddressBook
         }
 
     override suspend fun updateContact(
         contact: AddressBookContact,
         name: String,
-        address: String
+        address: String,
+        addressBookKey: AddressBookKey
     ): AddressBook =
         withContext(Dispatchers.IO) {
             val lastUpdated = Clock.System.now()
-            addressBook =
+            val newAddressBook =
                 AddressBook(
                     lastUpdated = lastUpdated,
-                    version = 1,
+                    version = ADDRESS_BOOK_SERIALIZATION_V1,
                     contacts =
                         addressBook?.contacts.orEmpty().toMutableList()
                             .apply {
@@ -104,17 +119,20 @@ class LocalAddressBookDataSourceImpl(
                             }
                             .toList(),
                 )
-            writeAddressBookToLocalStorage(addressBook!!)
-            addressBook!!
+            writeAddressBookToLocalStorage(newAddressBook, addressBookKey)
+            newAddressBook
         }
 
-    override suspend fun deleteContact(addressBookContact: AddressBookContact): AddressBook =
+    override suspend fun deleteContact(
+        addressBookContact: AddressBookContact,
+        addressBookKey: AddressBookKey
+    ): AddressBook =
         withContext(Dispatchers.IO) {
             val lastUpdated = Clock.System.now()
-            addressBook =
+            val newAddressBook =
                 AddressBook(
                     lastUpdated = lastUpdated,
-                    version = 1,
+                    version = ADDRESS_BOOK_SERIALIZATION_V1,
                     contacts =
                         addressBook?.contacts.orEmpty().toMutableList()
                             .apply {
@@ -122,27 +140,58 @@ class LocalAddressBookDataSourceImpl(
                             }
                             .toList(),
                 )
-            writeAddressBookToLocalStorage(addressBook!!)
-            addressBook!!
+            writeAddressBookToLocalStorage(newAddressBook, addressBookKey)
+            newAddressBook
         }
 
-    override suspend fun saveContacts(contacts: AddressBook) {
-        writeAddressBookToLocalStorage(contacts)
-        this@LocalAddressBookDataSourceImpl.addressBook = contacts
+    override suspend fun saveAddressBook(
+        addressBook: AddressBook,
+        addressBookKey: AddressBookKey
+    ) {
+        writeAddressBookToLocalStorage(addressBook, addressBookKey)
+        this.addressBook = addressBook
     }
 
-    override suspend fun deleteAddressBook() {
-        addressBookStorageProvider.getStorageFile()?.deleteSuspend()
+    override suspend fun resetAddressBook() {
         addressBook = null
     }
 
-    private fun readLocalFileToAddressBook(): AddressBook? {
-        val file = addressBookStorageProvider.getStorageFile() ?: return null
-        return addressBookProvider.readAddressBookFromFile(file)
+    @Suppress("ReturnCount")
+    private suspend fun readLocalFileToAddressBook(addressBookKey: AddressBookKey): AddressBook? {
+        val encryptedFile = addressBookStorageProvider.getStorageFile(addressBookKey)
+        val unencryptedFile = addressBookStorageProvider.getLegacyUnencryptedStorageFile()
+
+        if (encryptedFile != null) {
+            return try {
+                addressBookProvider.readAddressBookFromFile(encryptedFile, addressBookKey)
+                    .also {
+                        unencryptedFile?.deleteSuspend()
+                    }
+            } catch (e: GeneralSecurityException) {
+                Twig.warn(e) { "Failed to decrypt address book" }
+                null
+            } catch (e: IOException) {
+                Twig.warn(e) { "Failed to decrypt address book" }
+                null
+            }
+        }
+
+        return if (unencryptedFile != null) {
+            addressBookProvider.readLegacyUnencryptedAddressBookFromFile(unencryptedFile)
+                .also { unencryptedAddressBook ->
+                    writeAddressBookToLocalStorage(unencryptedAddressBook, addressBookKey)
+                    unencryptedFile.deleteSuspend()
+                }
+        } else {
+            null
+        }
     }
 
-    private fun writeAddressBookToLocalStorage(addressBook: AddressBook) {
-        val file = addressBookStorageProvider.getOrCreateStorageFile()
-        addressBookProvider.writeAddressBookToFile(file, addressBook)
+    private fun writeAddressBookToLocalStorage(
+        addressBook: AddressBook,
+        addressBookKey: AddressBookKey
+    ) {
+        val file = addressBookStorageProvider.getOrCreateStorageFile(addressBookKey)
+        addressBookProvider.writeAddressBookToFile(file, addressBook, addressBookKey)
     }
 }
