@@ -59,7 +59,9 @@ class LocalAddressBookDataSourceImpl(
                             lastUpdated = Clock.System.now(),
                             version = ADDRESS_BOOK_SERIALIZATION_V1,
                             contacts = emptyList(),
-                        )
+                        ).also {
+                            this@LocalAddressBookDataSourceImpl.addressBook = it
+                        }
                     writeAddressBookToLocalStorage(newAddressBook, addressBookKey)
                 }
                 newAddressBook
@@ -86,7 +88,9 @@ class LocalAddressBookDataSourceImpl(
                                 address = address,
                                 lastUpdated = lastUpdated,
                             ),
-                )
+                ).also {
+                    addressBook = it
+                }
             writeAddressBookToLocalStorage(newAddressBook, addressBookKey)
             newAddressBook
         }
@@ -116,7 +120,9 @@ class LocalAddressBookDataSourceImpl(
                                 )
                             }
                             .toList(),
-                )
+                ).also {
+                    addressBook = it
+                }
             writeAddressBookToLocalStorage(newAddressBook, addressBookKey)
             newAddressBook
         }
@@ -137,7 +143,9 @@ class LocalAddressBookDataSourceImpl(
                                 remove(addressBookContact)
                             }
                             .toList(),
-                )
+                ).also {
+                    addressBook = it
+                }
             writeAddressBookToLocalStorage(newAddressBook, addressBookKey)
             newAddressBook
         }
