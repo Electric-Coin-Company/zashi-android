@@ -12,7 +12,7 @@ directly impact users rather than highlighting other key architectural updates.*
 ### Added
 - Address book encryption
 - The device authentication feature on the Zashi app launch has been added
-- Zashi app now supports Spanish language
+- Zashi app now supports Spanish language. It can be changed in the System settings options.
 - The Flexa SDK has been adopted to enable payments using the embedded Flexa UI
 - New Sending, Success, Failure, and GrpcFailure subscreens of the Send Confirmation screen have been added
 - New Copy Transaction IDs feature has been added to the MultipleTransactionFailure screen
