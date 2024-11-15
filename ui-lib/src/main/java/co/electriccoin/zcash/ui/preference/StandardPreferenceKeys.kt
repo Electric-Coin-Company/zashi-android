@@ -76,5 +76,8 @@ object StandardPreferenceKeys {
             null
         )
     val LATEST_APP_BACKGROUND_TIME_MILLIS =
-        LongPreferenceDefault(PreferenceKey("LATEST_APP_BACKGROUND_TIME_MILLIS"), 0)
+        LongPreferenceDefault(
+            PreferenceKey("LATEST_APP_BACKGROUND_TIME_MILLIS"),
+            Long.MAX_VALUE
+        )
 }
