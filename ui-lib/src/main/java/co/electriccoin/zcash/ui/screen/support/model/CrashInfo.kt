@@ -9,7 +9,7 @@ import co.electriccoin.zcash.spackle.io.listFilesSuspend
 import kotlinx.datetime.Instant
 import java.io.File
 
-// TODO [#1301]: Localize support text content
+// TODO [#1301]: Localize feedback text content
 // TODO [#1301]: https://github.com/Electric-Coin-Company/zashi-android/issues/1301
 
 data class CrashInfo(val exceptionClassName: String, val isUncaught: Boolean, val timestamp: Instant) {

@@ -76,6 +76,7 @@ import co.electriccoin.zcash.ui.screen.disconnected.WrapDisconnected
 import co.electriccoin.zcash.ui.screen.exchangerate.optin.AndroidExchangeRateOptIn
 import co.electriccoin.zcash.ui.screen.exchangerate.settings.AndroidSettingsExchangeRateOptIn
 import co.electriccoin.zcash.ui.screen.exportdata.WrapExportPrivateData
+import co.electriccoin.zcash.ui.screen.feedback.WrapFeedback
 import co.electriccoin.zcash.ui.screen.home.WrapHome
 import co.electriccoin.zcash.ui.screen.integrations.WrapIntegrations
 import co.electriccoin.zcash.ui.screen.paymentrequest.WrapPaymentRequest
@@ -85,14 +86,14 @@ import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressType
 import co.electriccoin.zcash.ui.screen.request.WrapRequest
 import co.electriccoin.zcash.ui.screen.scan.ScanNavigationArgs
 import co.electriccoin.zcash.ui.screen.scan.WrapScanValidator
-import co.electriccoin.zcash.ui.screen.seedrecovery.WrapSeedRecovery
+import co.electriccoin.zcash.ui.screen.seed.SeedNavigationArgs
+import co.electriccoin.zcash.ui.screen.seed.WrapSeed
 import co.electriccoin.zcash.ui.screen.send.ext.toSerializableAddress
 import co.electriccoin.zcash.ui.screen.send.model.SendArguments
 import co.electriccoin.zcash.ui.screen.sendconfirmation.WrapSendConfirmation
 import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SendConfirmationArguments
 import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SendConfirmationStage
 import co.electriccoin.zcash.ui.screen.settings.WrapSettings
-import co.electriccoin.zcash.ui.screen.support.WrapSupport
 import co.electriccoin.zcash.ui.screen.update.WrapCheckForUpdate
 import co.electriccoin.zcash.ui.screen.warning.WrapNotEnoughSpace
 import co.electriccoin.zcash.ui.screen.whatsnew.WrapWhatsNew
@@ -204,24 +205,24 @@ internal fun MainActivity.Navigation() {
             WrapChooseServer()
         }
         composable(SEED_RECOVERY) {
-            WrapSeedRecovery(
-                goBack = {
+            WrapSeed(
+                args = SeedNavigationArgs.RECOVERY,
+                goBackOverride = {
                     setSeedRecoveryAuthentication(false)
-                    navController.popBackStackJustOnce(SEED_RECOVERY)
-                },
-                onDone = {
-                    setSeedRecoveryAuthentication(false)
-                    navController.popBackStackJustOnce(SEED_RECOVERY)
-                },
+                }
             )
         }
         composable(SUPPORT) {
             // Pop back stack won't be right if we deep link into support
-            WrapSupport(goBack = { navController.popBackStackJustOnce(SUPPORT) })
+            WrapFeedback()
         }
         composable(DELETE_WALLET) {
             WrapDeleteWallet(
                 goBack = {
+                    setDeleteWalletAuthentication(false)
+                    navController.popBackStackJustOnce(DELETE_WALLET)
+                },
+                onConfirm = {
                     setDeleteWalletAuthentication(false)
                     navController.popBackStackJustOnce(DELETE_WALLET)
                 }
@@ -230,7 +231,6 @@ internal fun MainActivity.Navigation() {
         composable(ABOUT) {
             WrapAbout(
                 goBack = { navController.popBackStackJustOnce(ABOUT) },
-                goWhatsNew = { navController.navigateJustOnce(WHATS_NEW) }
             )
         }
         composable(WHATS_NEW) {
@@ -367,7 +367,7 @@ private fun MainActivity.NavigationHome(
         goScan = { navController.navigateJustOnce(ScanNavigationArgs(ScanNavigationArgs.DEFAULT)) },
         goSendConfirmation = { zecSend ->
             navController.currentBackStackEntry?.savedStateHandle?.let { handle ->
-                fillInHandleForConfirmation(handle, zecSend, SendConfirmationStage.Confirmation)
+                fillInHandleForConfirmation(handle, zecSend, SendConfirmationStage.Prepared)
             }
             navController.navigateJustOnce(SEND_CONFIRMATION)
         },
@@ -506,7 +506,7 @@ private fun fillInHandleForPaymentRequest(
     handle[PAYMENT_REQUEST_URI] = zip321
 }
 
-private fun NavHostController.navigateJustOnce(
+fun NavHostController.navigateJustOnce(
     route: String,
     navOptionsBuilder: (NavOptionsBuilder.() -> Unit)? = null
 ) {

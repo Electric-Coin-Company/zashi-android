@@ -1,16 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<full-backup-content xmlns:android="http://schemas.android.com/apk/res/android">
+<full-backup-content>
     <include
         domain="file"
-        path="files/address_book" />
-    <include
-        domain="file"
-        path="address_book" />
-<!--    <exclude-->
-<!--        domain="file"-->
-<!--        path="files/*" />-->
-    <!--    <include domain="file" path="address-book"/>-->
-<!--    <exclude-->
-<!--        domain="file"-->
-<!--        path="files/*" />-->
+        path="." />
 </full-backup-content>

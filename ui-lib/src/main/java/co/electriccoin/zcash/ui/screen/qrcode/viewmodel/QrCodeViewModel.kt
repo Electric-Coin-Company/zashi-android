@@ -87,7 +87,6 @@ class QrCodeViewModel(
 
     private fun onAddressCopyClick(address: String) =
         copyToClipboard(
-            context = application.applicationContext,
             tag = application.getString(R.string.qr_code_clipboard_tag),
             value = address
         )

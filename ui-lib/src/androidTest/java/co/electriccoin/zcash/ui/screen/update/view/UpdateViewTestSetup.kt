@@ -58,7 +58,8 @@ class UpdateViewTestSetup(
             },
             onReference = {
                 onReferenceCount.incrementAndGet()
-            }
+            },
+            onSettings = {}
         )
     }
 

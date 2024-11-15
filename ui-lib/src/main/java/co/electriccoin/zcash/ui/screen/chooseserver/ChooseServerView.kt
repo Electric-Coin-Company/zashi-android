@@ -57,15 +57,15 @@ import co.electriccoin.zcash.ui.design.component.LottieProgress
 import co.electriccoin.zcash.ui.design.component.RadioButton
 import co.electriccoin.zcash.ui.design.component.RadioButtonCheckedContent
 import co.electriccoin.zcash.ui.design.component.RadioButtonState
-import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.TextFieldState
-import co.electriccoin.zcash.ui.design.component.TopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.component.ZashiBadge
 import co.electriccoin.zcash.ui.design.component.ZashiBottomBar
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiHorizontalDivider
+import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.ZashiTextField
 import co.electriccoin.zcash.ui.design.component.ZashiTextFieldDefaults
+import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
@@ -208,9 +208,9 @@ private fun ChooseServerTopAppBar(
     onBack: () -> Unit,
     subTitleState: TopAppBarSubTitleState
 ) {
-    SmallTopAppBar(
-        titleText = stringResource(id = R.string.choose_server_title),
-        subTitle =
+    ZashiSmallTopAppBar(
+        title = stringResource(id = R.string.choose_server_title),
+        subtitle =
             when (subTitleState) {
                 TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
                 TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
@@ -219,11 +219,7 @@ private fun ChooseServerTopAppBar(
         modifier = Modifier.testTag(CHOOSE_SERVER_TOP_APP_BAR),
         showTitleLogo = true,
         navigationAction = {
-            TopAppBarBackNavigation(
-                backText = stringResource(id = R.string.back_navigation).uppercase(),
-                backContentDescriptionText = stringResource(R.string.back_navigation_content_description),
-                onBack = onBack
-            )
+            ZashiTopAppBarBackNavigation(onBack = onBack)
         }
     )
 }

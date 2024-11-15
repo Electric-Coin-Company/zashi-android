@@ -45,7 +45,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import cash.z.ecc.android.sdk.model.FiatCurrencyConversionRateState
 import cash.z.ecc.sdk.extension.DEFAULT_FEE
 import cash.z.ecc.sdk.extension.toZecStringFull
 import cash.z.ecc.sdk.type.ZcashCurrency
@@ -67,9 +66,7 @@ import co.electriccoin.zcash.ui.common.test.CommonTag
 import co.electriccoin.zcash.ui.design.component.AppAlertDialog
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.BlankSurface
-import co.electriccoin.zcash.ui.design.component.Body
 import co.electriccoin.zcash.ui.design.component.BodySmall
-import co.electriccoin.zcash.ui.design.component.BodyWithFiatCurrencySymbol
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.design.component.CircularSmallProgressIndicator
 import co.electriccoin.zcash.ui.design.component.Reference
@@ -88,7 +85,6 @@ import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 import co.electriccoin.zcash.ui.screen.balances.BalancesTag
 import co.electriccoin.zcash.ui.screen.balances.model.ShieldState
 import co.electriccoin.zcash.ui.screen.balances.model.StatusAction
-import co.electriccoin.zcash.ui.screen.balances.model.WalletDisplayValues
 
 @Preview
 @Composable
@@ -96,7 +92,6 @@ private fun ComposableBalancesPreview() {
     ZcashTheme(forceDarkMode = false) {
         Balances(
             balanceState = BalanceStateFixture.new(),
-            isFiatConversionEnabled = false,
             isHideBalances = false,
             isUpdateAvailable = false,
             isShowingErrorDialog = false,
@@ -123,7 +118,6 @@ private fun ComposableBalancesShieldDarkPreview() {
     ZcashTheme(forceDarkMode = true) {
         Balances(
             balanceState = BalanceStateFixture.new(),
-            isFiatConversionEnabled = false,
             isHideBalances = false,
             isUpdateAvailable = false,
             isShowingErrorDialog = true,
@@ -162,7 +156,6 @@ private fun ComposableBalancesShieldErrorDialogPreview() {
 @Composable
 fun Balances(
     balanceState: BalanceState,
-    isFiatConversionEnabled: Boolean,
     isHideBalances: Boolean,
     isUpdateAvailable: Boolean,
     isShowingErrorDialog: Boolean,
@@ -198,7 +191,6 @@ fun Balances(
         } else {
             BalancesMainContent(
                 balanceState = balanceState,
-                isFiatConversionEnabled = isFiatConversionEnabled,
                 isHideBalances = isHideBalances,
                 isUpdateAvailable = isUpdateAvailable,
                 onShielding = onShielding,
@@ -353,7 +345,6 @@ private fun BalancesTopAppBar(
 @Composable
 private fun BalancesMainContent(
     balanceState: BalanceState,
-    isFiatConversionEnabled: Boolean,
     isHideBalances: Boolean,
     isUpdateAvailable: Boolean,
     onShielding: () -> Unit,
@@ -390,7 +381,6 @@ private fun BalancesMainContent(
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
 
         BalancesOverview(
-            isFiatConversionEnabled = isFiatConversionEnabled,
             isHideBalances = isHideBalances,
             walletSnapshot = walletSnapshot,
         )
@@ -571,7 +561,6 @@ fun TransparentBalanceHelpPanel(onHideHelpPanel: () -> Unit) {
 @Composable
 fun BalancesOverview(
     walletSnapshot: WalletSnapshot,
-    isFiatConversionEnabled: Boolean,
     isHideBalances: Boolean,
 ) {
     Column {
@@ -585,38 +574,6 @@ fun BalancesOverview(
 
         //  aka value pending
         PendingTransactionsRow(isHideBalances, walletSnapshot)
-
-        if (isFiatConversionEnabled) {
-            val walletDisplayValues =
-                WalletDisplayValues.getNextValues(
-                    context = LocalContext.current,
-                    walletSnapshot = walletSnapshot,
-                    isUpdateAvailable = false,
-                )
-
-            Column(Modifier.testTag(BalancesTag.FIAT_CONVERSION)) {
-                Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
-
-                when (walletDisplayValues.fiatCurrencyAmountState) {
-                    is FiatCurrencyConversionRateState.Current -> {
-                        BodyWithFiatCurrencySymbol(
-                            amount = walletDisplayValues.fiatCurrencyAmountText
-                        )
-                    }
-
-                    is FiatCurrencyConversionRateState.Stale -> {
-                        // Note: we should show information about staleness too
-                        BodyWithFiatCurrencySymbol(
-                            amount = walletDisplayValues.fiatCurrencyAmountText
-                        )
-                    }
-
-                    is FiatCurrencyConversionRateState.Unavailable -> {
-                        Body(text = walletDisplayValues.fiatCurrencyAmountText)
-                    }
-                }
-            }
-        }
     }
 }
 

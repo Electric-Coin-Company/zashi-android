@@ -1,30 +1,46 @@
 package co.electriccoin.zcash.ui.common.provider
 
 import android.content.Context
+import co.electriccoin.zcash.ui.common.serialization.addressbook.AddressBookKey
 import java.io.File
 
 interface AddressBookStorageProvider {
-    fun getStorageFile(): File?
+    fun getStorageFile(addressBookKey: AddressBookKey): File?
 
-    fun getOrCreateStorageFile(): File
+    fun getLegacyUnencryptedStorageFile(): File?
 
-    /**
-     * Create a temporary file into which data from remote is written. This file is removed after usage.
-     */
-    fun getOrCreateTempStorageFile(): File
+    fun getOrCreateStorageFile(addressBookKey: AddressBookKey): File
+
+    // /**
+    //  * Create a temporary file into which data from remote is written. This file is removed after usage.
+    //  */
+    // fun getOrCreateTempStorageFile(): File
 }
 
 class AddressBookStorageProviderImpl(
     private val context: Context
 ) : AddressBookStorageProvider {
-    override fun getStorageFile(): File? {
-        return File(context.filesDir, LOCAL_ADDRESS_BOOK_FILE_NAME)
+    override fun getStorageFile(addressBookKey: AddressBookKey): File? {
+        return File(context.filesDir, addressBookKey.fileIdentifier())
             .takeIf { it.exists() && it.isFile }
     }
 
-    override fun getOrCreateStorageFile(): File = getOrCreateFile(LOCAL_ADDRESS_BOOK_FILE_NAME)
+    override fun getLegacyUnencryptedStorageFile(): File? {
+        return File(context.noBackupFilesDir, LEGACY_UNENCRYPTED_ADDRESS_BOOK_FILE_NAME)
+            .takeIf { it.exists() && it.isFile }
+    }
 
-    override fun getOrCreateTempStorageFile(): File = getOrCreateFile(REMOTE_ADDRESS_BOOK_FILE_NAME_LOCAL_COPY)
+    override fun getOrCreateStorageFile(addressBookKey: AddressBookKey): File {
+        return getOrCreateFile(addressBookKey.fileIdentifier())
+    }
+
+    // override fun getOrCreateTempStorageFile(): File {
+    //     val file = File(context.noBackupFilesDir, REMOTE_ADDRESS_BOOK_FILE_NAME_LOCAL_COPY)
+    //     if (!file.exists()) {
+    //         file.createNewFile()
+    //     }
+    //     return file
+    // }
 
     private fun getOrCreateFile(name: String): File {
         val file = File(context.filesDir, name)
@@ -35,5 +51,5 @@ class AddressBookStorageProviderImpl(
     }
 }
 
-private const val LOCAL_ADDRESS_BOOK_FILE_NAME = "address_book"
-private const val REMOTE_ADDRESS_BOOK_FILE_NAME_LOCAL_COPY = "address_book_temp"
+private const val LEGACY_UNENCRYPTED_ADDRESS_BOOK_FILE_NAME = "address_book"
+// private const val REMOTE_ADDRESS_BOOK_FILE_NAME_LOCAL_COPY = "address_book_temp"

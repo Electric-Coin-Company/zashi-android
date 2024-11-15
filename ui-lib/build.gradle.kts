@@ -30,6 +30,10 @@ android {
         getByName("main").apply {
             res.setSrcDirs(
                 setOf(
+                    // This is a special case as these texts are not translated, they are replaced in build time via
+                    // app/build.gradle.kts instead
+                    "src/main/res/ui/non_translatable",
+
                     "src/main/res/ui/about",
                     "src/main/res/ui/account",
                     "src/main/res/ui/address_book",
@@ -44,7 +48,6 @@ android {
                     "src/main/res/ui/home",
                     "src/main/res/ui/choose_server",
                     "src/main/res/ui/integrations",
-                    "src/main/res/ui/new_wallet_recovery",
                     "src/main/res/ui/onboarding",
                     "src/main/res/ui/payment_request",
                     "src/main/res/ui/qr_code",
@@ -58,7 +61,7 @@ android {
                     "src/main/res/ui/send",
                     "src/main/res/ui/send_confirmation",
                     "src/main/res/ui/settings",
-                    "src/main/res/ui/support",
+                    "src/main/res/ui/feedback",
                     "src/main/res/ui/update",
                     "src/main/res/ui/update_contact",
                     "src/main/res/ui/wallet_address",
@@ -135,6 +138,7 @@ dependencies {
     implementation(libs.zcash.sdk)
     implementation(libs.zcash.sdk.incubator)
     implementation(libs.zcash.bip39)
+    implementation(libs.tink)
     implementation(libs.zxing)
 
     api(libs.flexa.core)

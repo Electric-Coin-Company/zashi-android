@@ -1,0 +1,63 @@
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
+    <string name="send_stage_confirmation_title">Confirmación</string>
+    <string name="send_confirmation_amount">Monto Total</string>
+    <string name="send_confirmation_address">Enviando a</string>
+    <string name="send_confirmation_memo">Mensaje</string>
+    <string name="send_confirmation_fee">Tarifa</string>
+    <string name="send_confirmation_amount_item">Monto</string>
+    <string name="send_confirmation_send_button">Enviar</string>
+    <string name="send_confirmation_back_button">Cancelar</string>
+
+    <string name="send_confirmation_sending_title">Sending…</string>
+    <string name="send_confirmation_sending_subtitle">Your tokens are being sent to\n
+        <xliff:g example="zs12ghrbdjfs24383x5T…" id="index">%1$s</xliff:g>
+    </string>
+
+    <string name="send_confirmation_success_title">Sent!</string>
+    <string name="send_confirmation_success_subtitle">Your tokens were successfully sent to\n
+        <xliff:g example="zs12ghrbdjfs24383x5T…" id="index">%1$s</xliff:g>
+    </string>
+    <string name="send_confirmation_success_view_trx">View Transaction</string>
+    <string name="send_confirmation_success_btn_close">Close</string>
+
+    <string name="send_confirmation_failure_title">Send Failed</string>
+    <string name="send_confirmation_failure_subtitle">There was an error attempting to send tokens.\n
+        Try it again, please.</string>
+    <string name="send_confirmation_failure_view_trx">View Transaction</string>
+    <string name="send_confirmation_failure_close_button">Close</string>
+    <string name="send_confirmation_failure_report_button">Report</string>
+
+    <string name="send_confirmation_failure_grpc_title">Connection Error</string>
+    <string name="send_confirmation_failure_grpc_subtitle">Zashi encountered connection issues when submitting the
+        transaction. It will retry in the next few minutes.</string>
+    <string name="send_confirmation_failure_grpc_close_button">Close</string>
+
+    <string name="send_confirmation_multiple_trx_failure_title">Send Failed</string>
+    <string name="send_confirmation_multiple_trx_failure_text_1">Send to this recipient required multiple
+        transactions but only some of them succeeded and the rest failed. Your funds are safe but need to be
+        recovered with assistance from our side.</string>
+    <string name="send_confirmation_multiple_trx_failure_text_2">Please use the button below to contact us. it
+        automatically prepares all the data we need in order to help you restore your funds.</string>
+    <string name="send_confirmation_multiple_trx_failure_copy_button">Copy transaction IDs</string>
+    <string name="send_confirmation_multiple_trx_failure_report_button">Contact Support</string>
+    <string name="send_confirmation_multiple_trx_failure_ids_title">Transaction IDs</string>
+
+    <string name="send_confirmation_multiple_report_text">Hola, equipo de Zashi.\n\nAl enviar una transacción a una dirección TEX, encontré un estado de error. Me pongo en contacto para recibir orientación sobre cómo recuperar mis fondos.\n\nGracias.</string>
+    <string name="send_confirmation_multiple_report_statuses" formatted="true">Estados de la transacción:</string>
+    <string name="send_confirmation_multiple_report_status_success">
+        <xliff:g example="1" id="index">%1$d</xliff:g>: Éxito
+    </string>
+    <string name="send_confirmation_multiple_report_status_not_attempt" formatted="true">
+        <xliff:g example="2" id="index">%1$d</xliff:g>: Sin intentar
+    </string>
+    <string name="send_confirmation_multiple_report_status_failure" formatted="true">
+        <xliff:g example="3" id="index">%1$d</xliff:g>: Fallo:
+        gRPC: <xliff:g example="true" id="grpc">%2$s</xliff:g>,
+        código: <xliff:g example="123" id="code">%3$d</xliff:g>,
+        descripción: <xliff:g example="Network unreachable" id="desc">%4$s</xliff:g>
+    </string>
+    <string name="send_confirmation_multiple_trx_failure_report_unable_open_email">Unable to launch email app.</string>
+    <string name="send_confirmation_multiple_trx_failure_copy_tag">Transaction IDs</string>
+
+</resources>

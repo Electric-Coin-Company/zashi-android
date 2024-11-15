@@ -1,11 +1,8 @@
 package co.electriccoin.zcash.ui.common.viewmodel
 
-import android.app.Activity
 import android.app.Application
-import android.content.Intent
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import cash.z.ecc.android.sdk.SdkSynchronizer
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.WalletCoordinator
 import cash.z.ecc.android.sdk.WalletInitMode
@@ -20,8 +17,6 @@ import cash.z.ecc.sdk.type.fromResources
 import co.electriccoin.zcash.preference.EncryptedPreferenceProvider
 import co.electriccoin.zcash.preference.StandardPreferenceProvider
 import co.electriccoin.zcash.spackle.Twig
-import co.electriccoin.zcash.ui.BuildConfig
-import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.common.model.OnboardingState
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
@@ -29,8 +24,9 @@ import co.electriccoin.zcash.ui.common.provider.GetDefaultServersProvider
 import co.electriccoin.zcash.ui.common.repository.BalanceRepository
 import co.electriccoin.zcash.ui.common.repository.ExchangeRateRepository
 import co.electriccoin.zcash.ui.common.repository.WalletRepository
-import co.electriccoin.zcash.ui.common.usecase.DeleteAddressBookUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetSynchronizerUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsFlexaAvailableUseCase
+import co.electriccoin.zcash.ui.common.usecase.ResetAddressBookUseCase
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
 import co.electriccoin.zcash.ui.screen.account.ext.TransactionOverviewExt
 import co.electriccoin.zcash.ui.screen.account.ext.getSortHeight
@@ -48,13 +44,11 @@ import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 // To make this more multiplatform compatible, we need to remove the dependency on Context
 // for loading the preferences.
@@ -70,8 +64,9 @@ class WalletViewModel(
     private val encryptedPreferenceProvider: EncryptedPreferenceProvider,
     private val standardPreferenceProvider: StandardPreferenceProvider,
     private val getAvailableServers: GetDefaultServersProvider,
-    private val deleteAddressBookUseCase: DeleteAddressBookUseCase,
-    private val isFlexaAvailable: IsFlexaAvailableUseCase
+    private val resetAddressBook: ResetAddressBookUseCase,
+    private val isFlexaAvailable: IsFlexaAvailableUseCase,
+    private val getSynchronizer: GetSynchronizerUseCase
 ) : AndroidViewModel(application) {
     val navigationCommand = exchangeRateRepository.navigationCommand
 
@@ -110,6 +105,8 @@ class WalletViewModel(
                                 it.getSortHeight(networkHeight)
                             }
                             .map {
+                                val outputs = synchronizer.getTransactionOutputs(it)
+
                                 if (it.isSentTransaction) {
                                     val recipient = synchronizer.getRecipients(it).firstOrNull()
                                     TransactionOverviewExt(
@@ -120,14 +117,16 @@ class WalletViewModel(
                                                 synchronizer.validateAddress(recipient.addressValue)
                                             } else {
                                                 null
-                                            }
+                                            },
+                                        transactionOutputs = outputs,
                                     )
                                 } else {
                                     // Note that recipients can only be queried for sent transactions
                                     TransactionOverviewExt(
                                         overview = it,
                                         recipient = null,
-                                        recipientAddressType = null
+                                        recipientAddressType = null,
+                                        transactionOutputs = outputs,
                                     )
                                 }
                             }
@@ -228,7 +227,7 @@ class WalletViewModel(
                 val encryptedPrefsCleared =
                     encryptedPreferenceProvider()
                         .clearPreferences()
-                deleteAddressBookUseCase()
+                resetAddressBook()
 
                 Twig.info { "Both preferences cleared: ${standardPrefsCleared && encryptedPrefsCleared}" }
 
@@ -240,50 +239,40 @@ class WalletViewModel(
             }
         }
 
-    fun deleteWalletFlow(activity: Activity): Flow<Boolean> =
-        callbackFlow {
-            Twig.info { "Delete wallet: Requested" }
-            disconnectFlexa()
-            val synchronizer = synchronizer.value
-            if (null != synchronizer) {
-                (synchronizer as SdkSynchronizer).closeFlow().collect {
-                    Twig.info { "Delete wallet: SDK closed" }
+    fun deleteWallet(
+        onError: () -> Unit,
+        onSuccess: () -> Unit
+    ) = viewModelScope.launch(Dispatchers.Main) {
+        Twig.info { "Delete wallet: Requested" }
+        disconnectFlexa()
 
-                    walletCoordinator.deleteSdkDataFlow().collect { isSdkErased ->
-                        Twig.info { "Delete wallet: Erase SDK result: $isSdkErased" }
-                        if (!isSdkErased) {
-                            trySend(false)
-                        }
+        getSynchronizer.getSdkSynchronizer()?.closeFlow()?.first()
+        Twig.info { "Delete wallet: SDK closed" }
+        val isSdkErased = walletCoordinator.deleteSdkDataFlow().first()
+        Twig.info { "Delete wallet: Erase SDK result: $isSdkErased" }
 
-                        clearAppStateFlow().collect { isAppErased ->
-                            Twig.info { "Delete wallet: Erase App result: $isAppErased" }
-                            if (!isAppErased) {
-                                trySend(false)
-                            } else {
-                                trySend(true)
-                                activity.run {
-                                    finish()
-                                    startActivity(Intent(this, MainActivity::class.java))
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            awaitClose {
-                // Nothing to close
-            }
-        }.flowOn(Dispatchers.Main)
-
-    private suspend fun disconnectFlexa() =
-        suspendCoroutine { cont ->
-            if (isFlexaAvailable() && BuildConfig.ZCASH_FLEXA_KEY.isNotEmpty()) {
-                Flexa.buildIdentity().build().disconnect()
-                cont.resume(Unit)
-            } else {
-                cont.resume(Unit)
-            }
+        if (!isSdkErased) {
+            Twig.error { "Wallet deletion failed" }
+            onError()
+            return@launch
         }
+
+        val isAppErased = clearAppStateFlow().first()
+        Twig.info { "Delete wallet: Erase App result: $isAppErased" }
+        if (isAppErased) {
+            Twig.info { "Wallet deleted successfully" }
+            onSuccess()
+        } else {
+            Twig.error { "Wallet deletion failed" }
+            onError()
+        }
+    }
+
+    private suspend inline fun disconnectFlexa() {
+        if (isFlexaAvailable()) {
+            Flexa.buildIdentity().build().disconnect()
+        }
+    }
 }
 
 /**

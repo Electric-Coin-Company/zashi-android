@@ -57,6 +57,8 @@ object AnimationConstants {
     const val WELCOME_ANIM_TEST_TAG = "WELCOME_ANIM_TEST_TAG"
 
     fun together() = (ANIMATION_DURATION + INITIAL_DELAY).toLong()
+
+    fun durationOnly() = (ANIMATION_DURATION).toLong()
 }
 
 // TODO [#1002]: Welcome screen animation masking

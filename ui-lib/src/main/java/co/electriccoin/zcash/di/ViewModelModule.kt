@@ -11,6 +11,7 @@ import co.electriccoin.zcash.ui.screen.advancedsettings.viewmodel.AdvancedSettin
 import co.electriccoin.zcash.ui.screen.chooseserver.ChooseServerViewModel
 import co.electriccoin.zcash.ui.screen.contact.viewmodel.AddContactViewModel
 import co.electriccoin.zcash.ui.screen.contact.viewmodel.UpdateContactViewModel
+import co.electriccoin.zcash.ui.screen.feedback.viewmodel.FeedbackViewModel
 import co.electriccoin.zcash.ui.screen.integrations.viewmodel.IntegrationsViewModel
 import co.electriccoin.zcash.ui.screen.onboarding.viewmodel.OnboardingViewModel
 import co.electriccoin.zcash.ui.screen.paymentrequest.viewmodel.PaymentRequestViewModel
@@ -21,10 +22,14 @@ import co.electriccoin.zcash.ui.screen.restore.viewmodel.RestoreViewModel
 import co.electriccoin.zcash.ui.screen.restoresuccess.viewmodel.RestoreSuccessViewModel
 import co.electriccoin.zcash.ui.screen.scan.ScanNavigationArgs
 import co.electriccoin.zcash.ui.screen.scan.viewmodel.ScanViewModel
+import co.electriccoin.zcash.ui.screen.seed.SeedNavigationArgs
+import co.electriccoin.zcash.ui.screen.seed.viewmodel.SeedViewModel
+import co.electriccoin.zcash.ui.screen.send.SendViewModel
 import co.electriccoin.zcash.ui.screen.sendconfirmation.viewmodel.CreateTransactionsViewModel
 import co.electriccoin.zcash.ui.screen.settings.viewmodel.ScreenBrightnessViewModel
 import co.electriccoin.zcash.ui.screen.settings.viewmodel.SettingsViewModel
 import co.electriccoin.zcash.ui.screen.support.viewmodel.SupportViewModel
+import co.electriccoin.zcash.ui.screen.update.model.UpdateInfo
 import co.electriccoin.zcash.ui.screen.update.viewmodel.UpdateViewModel
 import co.electriccoin.zcash.ui.screen.warning.viewmodel.StorageCheckViewModel
 import co.electriccoin.zcash.ui.screen.whatsnew.viewmodel.WhatsNewViewModel
@@ -49,7 +54,13 @@ val viewModelModule =
         viewModelOf(::CreateTransactionsViewModel)
         viewModelOf(::RestoreSuccessViewModel)
         viewModelOf(::WhatsNewViewModel)
-        viewModelOf(::UpdateViewModel)
+        viewModel { (updateInfo: UpdateInfo) ->
+            UpdateViewModel(
+                application = get(),
+                updateInfo = updateInfo,
+                appUpdateChecker = get(),
+            )
+        }
         viewModelOf(::ChooseServerViewModel)
         viewModel { (args: AddressBookArgs) ->
             AddressBookViewModel(
@@ -80,4 +91,14 @@ val viewModelModule =
             )
         }
         viewModelOf(::IntegrationsViewModel)
+        viewModelOf(::SendViewModel)
+        viewModel { (args: SeedNavigationArgs) ->
+            SeedViewModel(
+                observePersistableWallet = get(),
+                args = args,
+                walletRepository = get(),
+                observeBackupPersistableWallet = get(),
+            )
+        }
+        viewModelOf(::FeedbackViewModel)
     }

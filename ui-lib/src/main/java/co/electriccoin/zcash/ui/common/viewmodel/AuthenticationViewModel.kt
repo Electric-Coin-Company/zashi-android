@@ -42,6 +42,7 @@ class AuthenticationViewModel(
     private val biometricManager: BiometricManager,
     private val getVersionInfo: GetVersionInfoProvider,
     private val standardPreferenceProvider: StandardPreferenceProvider,
+    private val walletViewModel: WalletViewModel,
 ) : AndroidViewModel(application) {
     private val executor: Executor by lazy { ContextCompat.getMainExecutor(application) }
     private lateinit var biometricPrompt: BiometricPrompt
@@ -94,10 +95,20 @@ class AuthenticationViewModel(
         combine(
             isAppAccessAuthenticationRequired.filterNotNull(),
             appAccessAuthentication,
-        ) { required: Boolean, state: AuthenticationUIState ->
+            walletViewModel.secretState,
+        ) { required: Boolean, state: AuthenticationUIState, secretState: SecretState ->
             when {
                 (!required || versionInfo.isRunningUnderTestService) -> AuthenticationUIState.NotRequired
-                state == AuthenticationUIState.Initial -> AuthenticationUIState.Required
+                (state == AuthenticationUIState.Initial) -> {
+                    if (secretState == SecretState.None ||
+                        secretState == SecretState.NeedsWarning
+                    ) {
+                        appAccessAuthentication.value = AuthenticationUIState.NotRequired
+                        AuthenticationUIState.NotRequired
+                    } else {
+                        AuthenticationUIState.Required
+                    }
+                }
                 else -> state
             }
         }.stateIn(
@@ -236,7 +247,7 @@ class AuthenticationViewModel(
                             // returning to biometric authentication, such as a button. The operation was canceled
                             // because [BiometricPrompt.ERROR_LOCKOUT] occurred too many times.
                             BiometricPrompt.ERROR_USER_CANCELED -> {
-                                authenticationResult.value = AuthenticationResult.Failed
+                                authenticationResult.value = AuthenticationResult.Canceled
                                 // The following values are just for testing purposes, so we can easier reproduce other
                                 // non-success results obtained from [BiometricPrompt]
                                 // = AuthenticationResult.Failed

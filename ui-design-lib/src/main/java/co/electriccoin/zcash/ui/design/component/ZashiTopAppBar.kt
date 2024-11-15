@@ -12,9 +12,9 @@ import co.electriccoin.zcash.ui.design.theme.internal.TopAppBarColors
 @Composable
 @Suppress("LongParameterList")
 fun ZashiSmallTopAppBar(
-    title: String?,
-    subtitle: String?,
     modifier: Modifier = Modifier,
+    title: String? = null,
+    subtitle: String? = null,
     showTitleLogo: Boolean = false,
     colors: TopAppBarColors = ZcashTheme.colors.topAppBarColors,
     navigationAction: @Composable () -> Unit = {},

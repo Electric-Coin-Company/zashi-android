@@ -1,0 +1,16 @@
+<resources>
+    <string name="export_data_title">Data Export</string>
+    <string name="export_data_header">Consentimiento para Exportar Datos Privados</string>
+    <string name="export_data_text">
+        By clicking “I Agree” below, you give your consent to export Zashi\’s private data which includes the entire
+        history of the wallet, sll private information, memos, amounts, and recipient addresses, even for your
+        shielded activity.*\n\nThe private data also gives the ability to see certain future actions you take with
+        Zashi.\n\nSharing this private data is irrevocable - once you have shared this private data with someone, there
+        is no way to revoke their access.\n\n*Note that this private data does not give them the ability to spend your
+        funds, only the ability to see what you do with your funds.
+    </string>
+    <string name="export_data_confirm">Export Private Data</string>
+    <string name="export_data_agree">I agree to Zashi\'s Export Private Data Policies and Privacy Policy</string>
+    <string name="export_data_export_data_chooser_title">Compartir datos internos de Zashi con:</string>
+    <string name="export_data_unable_to_share">No se pudo encontrar una aplicación con la cual compartir.</string>
+</resources>
