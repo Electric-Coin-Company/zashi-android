@@ -3,6 +3,7 @@ package co.electriccoin.zcash.ui.screen.seed.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
+import co.electriccoin.zcash.spackle.AndroidApiVersion
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.OnboardingState
 import co.electriccoin.zcash.ui.common.repository.WalletRepository
@@ -69,10 +70,12 @@ class SeedViewModel(
                         onClick =
                             when (args) {
                                 SeedNavigationArgs.NEW_WALLET -> ::onNewWalletSeedClicked
-                                SeedNavigationArgs.RECOVERY -> null
+                                SeedNavigationArgs.RECOVERY ->
+                                    if (AndroidApiVersion.isAtLeastS) null else ::onNewWalletSeedClicked
                             },
                         mode = SeedSecretState.Mode.SEED,
-                        isRevealPhraseVisible = args == SeedNavigationArgs.NEW_WALLET,
+                        isRevealPhraseVisible =
+                            if (AndroidApiVersion.isAtLeastS) args == SeedNavigationArgs.NEW_WALLET else true,
                     ),
                 birthday =
                     SeedSecretState(
