@@ -3,7 +3,7 @@
     <string name="export_data_header">Consentimiento para Exportar Datos Privados</string>
     <string name="export_data_text">
         Al hacer clic en "Acepto" a continuación, das tu consentimiento para exportar los datos privados de Zashi, los cuales incluyen
-        todo el historial de la billetera, toda la información privada, notas, montos y direcciones de destinatarios, incluso para tu
+        todo el historial de la billetera, toda la información privada, memorandos, montos y direcciones de destinatarios, incluso para tu
         actividad protegida.*\n\nEstos datos privados también permiten ver ciertas acciones futuras que realices con
         Zashi.\n\nCompartir estos datos privados es irreversible: una vez que compartas estos datos privados con alguien, no hay forma
         de revocar su acceso.\n\n*Ten en cuenta que estos datos privados no les otorgan la capacidad de gastar tus fondos, solo la capacidad
