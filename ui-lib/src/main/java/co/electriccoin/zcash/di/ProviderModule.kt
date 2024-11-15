@@ -1,5 +1,7 @@
 package co.electriccoin.zcash.di
 
+import co.electriccoin.zcash.ui.common.provider.AddressBookKeyStorageProvider
+import co.electriccoin.zcash.ui.common.provider.AddressBookKeyStorageProviderImpl
 import co.electriccoin.zcash.ui.common.provider.AddressBookProvider
 import co.electriccoin.zcash.ui.common.provider.AddressBookProviderImpl
 import co.electriccoin.zcash.ui.common.provider.AddressBookStorageProvider
@@ -20,4 +22,5 @@ val providerModule =
         factoryOf(::GetMonetarySeparatorProvider)
         factoryOf(::AddressBookStorageProviderImpl) bind AddressBookStorageProvider::class
         factoryOf(::AddressBookProviderImpl) bind AddressBookProvider::class
+        factoryOf(::AddressBookKeyStorageProviderImpl) bind AddressBookKeyStorageProvider::class
     }

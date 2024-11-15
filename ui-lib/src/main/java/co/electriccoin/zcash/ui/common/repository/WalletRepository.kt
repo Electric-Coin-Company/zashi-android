@@ -99,6 +99,8 @@ interface WalletRepository {
     suspend fun getAllServers(): List<LightWalletEndpoint>
 
     suspend fun getSynchronizer(): Synchronizer
+
+    suspend fun getPersistableWallet(): PersistableWallet
 }
 
 class WalletRepositoryImpl(
@@ -355,6 +357,8 @@ class WalletRepositoryImpl(
     }
 
     override suspend fun getSynchronizer(): Synchronizer = synchronizer.filterNotNull().first()
+
+    override suspend fun getPersistableWallet(): PersistableWallet = persistableWallet.filterNotNull().first()
 }
 
 private fun Synchronizer.toCommonError(): Flow<SynchronizerError?> =
