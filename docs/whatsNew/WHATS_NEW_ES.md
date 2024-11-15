@@ -11,6 +11,7 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ### Added
 - Address book encryption
+- Android auto backup support for address book encryption
 - The device authentication feature on the Zashi app launch has been added
 - Zashi app now supports Spanish language
 - The Flexa SDK has been adopted to enable payments using the embedded Flexa UI
