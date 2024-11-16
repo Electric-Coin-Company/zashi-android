@@ -1,12 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="delete_wallet_title">Reset Zashi</string>
+    <string name="delete_wallet_title">Restablecer Zashi</string>
     <string name="delete_wallet_text_1">
-        Please don\'t reset this app unless you\'re sure you understand the effects.
+        Por favor, no restablezcas esta aplicación a menos que estés seguro de entender los efectos.
     </string>
     <string name="delete_wallet_text_2">
-        Resetting the Zashi app will delete the database and cached data. Any funds you have in this wallet will be lost and can only be recovered by using your Zashi secret recovery phrase in another Zcash wallet.
+        Restablecer la aplicación Zashi eliminará la base de datos y los datos en caché. Cualquier fondo que tengas en esta billetera se perderá y solo podrá ser recuperado utilizando tu frase secreta de recuperación de Zashi en otra billetera de Zcash.
     </string>
-    <string name="delete_wallet_acknowledge">I understand</string>
-    <string name="delete_wallet_button">Reset Zashi</string>
-    <string name="delete_wallet_failed">Wallet deletion failed. Try it again, please.</string>
+    <string name="delete_wallet_acknowledge">Entiendo</string>
+    <string name="delete_wallet_button">Restablecer Zashi</string>
+    <string name="delete_wallet_failed">La eliminación de la billetera falló. Por favor, intenta nuevamente.</string>
 </resources>
