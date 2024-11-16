@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="restore_success_title">Keep Zashi open!</string>
     <string name="restore_success_subtitle">Your wallet has been successfully restored and is now syncing</string>

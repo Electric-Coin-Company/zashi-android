@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="advanced_settings_title">Advanced Settings</string>
     <string name="advanced_settings_recovery">Recovery Phrase</string>

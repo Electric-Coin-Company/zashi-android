@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="choose_server_title">Server</string>
     <string name="choose_server_default_label">default: <xliff:g id="server" example="example.com:123">%1$s</xliff:g></string>

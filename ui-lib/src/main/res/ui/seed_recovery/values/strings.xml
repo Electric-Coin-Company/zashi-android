@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="seed_recovery_title">Recovery Phrase</string>
     <string name="seed_recovery_header">Secure Your Wallet</string>
