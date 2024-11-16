@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="export_data_title">Exportación de Datos</string>
     <string name="export_data_header">Consentimiento para Exportar Datos Privados</string>
@@ -12,5 +13,5 @@
     <string name="export_data_confirm">Exportar Datos Privados</string>
     <string name="export_data_agree">Acepto las Políticas de Exportación de Datos Privados y la Política de Privacidad de Zashi</string>
     <string name="export_data_export_data_chooser_title">Compartir datos internos de Zashi con:</string>
-    <string name="export_data_unable_to_share">No se pudo encontrar una aplicación para compartir.</string>
+    <string name="export_data_unable_to_share">No se encontró una aplicación para compartir.</string>
 </resources>
