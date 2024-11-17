@@ -1,9 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="advanced_settings_title">Configuración avanzada</string>
-    <string name="advanced_settings_recovery">Frase de recuperación</string>
-    <string name="advanced_settings_export">Exportar datos privados</string>
-    <string name="advanced_settings_choose_server">Elegir un servidor</string>
-    <string name="advanced_settings_currency_conversion">Conversión de moneda</string>
+    <string name="advanced_settings_title">Configuración Avanzada</string>
+    <string name="advanced_settings_recovery">Frase de Recuperación</string>
+    <string name="advanced_settings_export">Exportar Datos Privados</string>
+    <string name="advanced_settings_choose_server">Elegir un Servidor</string>
+    <string name="advanced_settings_currency_conversion">Conversión de Moneda</string>
     <string name="advanced_settings_info">Se te pedirá confirmación en la siguiente pantalla</string>
-    <string name="advanced_settings_delete_button">Reset Zashi</string>
+    <string name="advanced_settings_delete_button">Restablecer Zashi</string>
 </resources>

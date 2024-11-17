@@ -1,13 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="back_navigation">Atrás</string>
     <string name="back_navigation_content_description">Atrás</string>
-    <string name="close_navigation_content_description">Close</string>
+    <string name="close_navigation_content_description">Cerrar</string>
 
     <string name="fiat_currency_conversion_rate_unavailable">No disponible</string>
     <string name="empty_char">-</string>
     <string name="zcash_logo_content_description">Logotipo de Zcash</string>
-    <string name="settings_menu_content_description">Abrir Configuración</string>
-    <string name="balance_widget_available">Saldo Disponible:</string>
+    <string name="settings_menu_content_description">Abrir configuración</string>
+    <string name="balance_widget_available">Saldo disponible:</string>
 
     <string name="hide_balances_content_description">Ocultar saldos</string>
 
@@ -19,7 +20,7 @@
 
     <string name="server_disconnected_dialog_title">Aviso</string>
     <string name="server_disconnected_dialog_message">Tu servidor actual está experimentando dificultades. Verifica la conexión de tu dispositivo y/o navega a Configuración Avanzada para elegir un servidor diferente.</string>
-    <string name="server_disconnected_dialog_switch_btn">Cambiar Servidor</string>
+    <string name="server_disconnected_dialog_switch_btn">Cambiar servidor</string>
     <string name="server_disconnected_dialog_ignore_btn">Ignorar</string>
 
     <string name="general_etc">…</string>

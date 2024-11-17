@@ -1,16 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="settings_title">Configuración</string>
-    <string name="settings_advanced_settings">Configuración Avanzada</string>
+    <string name="settings_advanced_settings">Configuración avanzada</string>
     <string name="settings_integrations">Integraciones</string>
-    <string name="settings_about_us">Acerca de Nosotros</string>
-    <string name="settings_feedback">Envíanos tus Comentarios</string>
+    <string name="settings_about_us">Acerca de nosotros</string>
+    <string name="settings_feedback">Envíanos tus comentarios</string>
     <string name="settings_version">Versión <xliff:g example="1" id="version">%s</xliff:g></string>
-    <string name="settings_address_book">Libreta de Direcciones</string>
-    <string name="settings_whats_new">What\'s New</string>
+    <string name="settings_address_book">Libreta de direcciones</string>
+    <string name="settings_whats_new">Novedades</string>
 
     <string name="settings_troubleshooting_menu_content_description">Configuraciones adicionales</string>
     <string name="settings_troubleshooting_rescan">Reescanear blockchain</string>
     <string name="settings_troubleshooting_enable_background_sync">Sincronización en segundo plano</string>
-    <string name="settings_troubleshooting_enable_keep_screen_on">Mantener pantalla encendida durante la sincronización</string>
+    <string name="settings_troubleshooting_enable_keep_screen_on">Mantener la pantalla encendida durante la sincronización</string>
     <string name="settings_troubleshooting_enable_analytics">Reportar fallos</string>
 </resources>
