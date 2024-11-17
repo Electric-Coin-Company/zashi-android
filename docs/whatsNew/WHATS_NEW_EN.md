@@ -9,6 +9,8 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [1.2.2 (788)] - 2024-11-17
+
 ### Added
 - Address book encryption
 - Android auto backup support for address book encryption
@@ -24,6 +26,7 @@ directly impact users rather than highlighting other key architectural updates.*
 - The Not enough space and In-app udpate screens have been redesigned
 - External links now open in in-app browser
 - All the Settings screens have been redesigned
+- Adopted Zcash SDK version 2.2.6
 
 ### Fixed
 - Address book toast now correctly shows on send screen when adding both new and known addresses to text field
