@@ -293,7 +293,7 @@ abstract class PublishToGooglePlay @Inject constructor(
                 add(LocalizedText().apply {
                     language = languageTag.tag
                     text = ChangelogParser.getChangelogEntry(
-                        filePath = releaseNotesFilePath + languageTag + releaseNotesFileSuffix,
+                        filePath = releaseNotesFilePath + languageTag.tag + releaseNotesFileSuffix,
                         languageTag = languageTag,
                         versionNameFallback = gradleVersionName
                     ).toInAppUpdateReleaseNotesText()
