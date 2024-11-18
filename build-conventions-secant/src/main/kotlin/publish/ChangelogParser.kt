@@ -100,7 +100,8 @@ object ChangelogParser {
         return if (this.contains("## [Unreleased]")) {
             versionNameFallback
         } else {
-            this[0].split("[")[1].split("]")[0].trim()
+            // Parse just version name omitting version code as we currently don't need it in the UI
+            this[0].split("[")[1].split(" ")[0].trim()
         }
     }
 
