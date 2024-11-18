@@ -218,7 +218,8 @@ private fun Empty(
                 text = stringResource(id = R.string.address_book_empty),
                 fontWeight = FontWeight.SemiBold,
                 color = ZashiColors.Text.textPrimary,
-                style = ZashiTypography.header6
+                style = ZashiTypography.header6,
+                textAlign = TextAlign.Center
             )
         }
 

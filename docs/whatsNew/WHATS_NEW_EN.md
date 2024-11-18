@@ -9,27 +9,21 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [1.2.2 (788)] - 2024-11-17
+
 ### Added
-- Address book encryption
-- Android auto backup support for address book encryption
-- The device authentication feature on the Zashi app launch has been added
-- Zashi app now supports Spanish language. It can be changed in the System settings options.
-- The Flexa SDK has been adopted to enable payments using the embedded Flexa UI
-- New Sending, Success, Failure, and GrpcFailure subscreens of the Send Confirmation screen have been added
-- New Copy Transaction IDs feature has been added to the MultipleTransactionFailure screen
+- Hola! We taught Zashi to speak Spanish!
+- We adopted SDK release 2.2.6 which should help speed up sending multiple transactions.
+- We implemented encryption and remote storage for Address Book!
+- We added device authentication to app launch.
+- We added animated progress screen and new success and failure screens.
 
 ### Changed
-- Shielded transactions are properly indicated in transaction history
-- The in-app update logic has been fixed and is now correctly requested with every app launch
-- The Not enough space and In-app udpate screens have been redesigned
-- External links now open in in-app browser
-- All the Settings screens have been redesigned
+- We made Settings and status screens pretty.
+- Let us know how you like Zashi with the improved Send Feedback feature.
 
 ### Fixed
-- Address book toast now correctly shows on send screen when adding both new and known addresses to text field
-- The application now correctly navigates to the homepage after deleting the current wallet and creating a new or
-  recovering an older one
-- The in-app update logic has been fixed and is now correctly requested with every app launch
+- We fixed the shield icon behaviour in Transaction History.
 
 ## [1.2.1 (760)] - 2024-10-22
 
