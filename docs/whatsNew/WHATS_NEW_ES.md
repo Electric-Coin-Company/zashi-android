@@ -9,7 +9,7 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
-## [1.2.2 (788)] - 2024-11-17
+## [1.2.2 (789)] - 2024-11-18
 
 ### Agregado
 - ¡Hola!, Zashi aprendió Español.

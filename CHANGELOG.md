@@ -6,7 +6,7 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
-## [1.2.2 (788)] - 2024-11-17
+## [1.2.2 (789)] - 2024-11-18
 
 ### Added
 - Address book encryption
