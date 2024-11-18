@@ -1,5 +1,6 @@
 import co.electriccoin.zcash.Git
 import publish.ChangelogParser
+import publish.LanguageTag
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.TimeZone
@@ -103,14 +104,16 @@ fun fillInReleaseNotes(inputs: TaskInputs) {
 
     val releaseNotesEnJson = ChangelogParser.getChangelogEntry(
         filePath = releaseNotesEnPath,
-        versionNameFallback = gradleVersionName
+        versionNameFallback = gradleVersionName,
+        languageTag = LanguageTag.English()
     ).toJsonString()
 
     inputs.property(releaseNotesEn, releaseNotesEnJson)
 
     val releaseNotesEsJson = ChangelogParser.getChangelogEntry(
         filePath = releaseNotesEsPath,
-        versionNameFallback = gradleVersionName
+        versionNameFallback = gradleVersionName,
+        languageTag = LanguageTag.Spanish()
     ).toJsonString()
 
     inputs.property(releaseNotesEs, releaseNotesEsJson)
