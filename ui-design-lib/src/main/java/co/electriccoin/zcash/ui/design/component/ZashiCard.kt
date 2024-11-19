@@ -17,10 +17,11 @@ fun ZashiCard(
 ) {
     Card(
         modifier = modifier,
-        colors = CardDefaults.cardColors(
-            containerColor = ZashiColors.Surfaces.bgSecondary,
-            contentColor = ZashiColors.Text.textTertiary
-        ),
+        colors =
+            CardDefaults.cardColors(
+                containerColor = ZashiColors.Surfaces.bgSecondary,
+                contentColor = ZashiColors.Text.textTertiary
+            ),
     ) {
         Column(
             Modifier.padding(24.dp)
