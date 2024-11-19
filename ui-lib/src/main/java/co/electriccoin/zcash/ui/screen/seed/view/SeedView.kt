@@ -243,7 +243,7 @@ private fun SeedSecret(
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.ic_zashi_tooltip),
-                        contentDescription = "",
+                        contentDescription = null,
                         colorFilter = ColorFilter.tint(ZashiColors.Inputs.Default.icon)
                     )
                 }
@@ -306,7 +306,7 @@ private fun SecretContent(state: SeedSecretState) {
                 ) {
                     Image(
                         painter = painterResource(R.drawable.ic_reveal),
-                        contentDescription = "",
+                        contentDescription = null,
                         colorFilter = ColorFilter.tint(ZashiColors.Text.textPrimary)
                     )
 
