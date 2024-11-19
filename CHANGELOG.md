@@ -6,8 +6,11 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+## [1.2.2 (789)] - 2024-11-18
+
 ### Added
 - Address book encryption
+- Android auto backup support for address book encryption
 - The device authentication feature on the Zashi app launch has been added
 - Zashi app now supports Spanish language. It can be changed in the System settings options.
 - The Flexa SDK has been adopted to enable payments using the embedded Flexa UI
@@ -20,6 +23,7 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 - The Not enough space and In-app udpate screens have been redesigned
 - External links now open in in-app browser
 - All the Settings screens have been redesigned
+- Adopted Zcash SDK version 2.2.6
 
 ### Fixed
 - Address book toast now correctly shows on send screen when adding both new and known addresses to text field

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="export_data_title">Data Export</string>
     <string name="export_data_header">Consent for Exporting Private Data</string>

@@ -11,17 +11,17 @@ interface AddressBookStorageProvider {
 
     fun getOrCreateStorageFile(addressBookKey: AddressBookKey): File
 
-    /**
-     * Create a temporary file into which data from remote is written. This file is removed after usage.
-     */
-    fun getOrCreateTempStorageFile(): File
+    // /**
+    //  * Create a temporary file into which data from remote is written. This file is removed after usage.
+    //  */
+    // fun getOrCreateTempStorageFile(): File
 }
 
 class AddressBookStorageProviderImpl(
     private val context: Context
 ) : AddressBookStorageProvider {
     override fun getStorageFile(addressBookKey: AddressBookKey): File? {
-        return File(context.noBackupFilesDir, addressBookKey.fileIdentifier())
+        return File(getOrCreateAddressBookDir(), addressBookKey.fileIdentifier())
             .takeIf { it.exists() && it.isFile }
     }
 
@@ -31,19 +31,30 @@ class AddressBookStorageProviderImpl(
     }
 
     override fun getOrCreateStorageFile(addressBookKey: AddressBookKey): File {
-        return getOrCreateFile(addressBookKey.fileIdentifier())
-    }
-
-    override fun getOrCreateTempStorageFile(): File = getOrCreateFile(REMOTE_ADDRESS_BOOK_FILE_NAME_LOCAL_COPY)
-
-    private fun getOrCreateFile(name: String): File {
-        val file = File(context.noBackupFilesDir, name)
+        val file = File(getOrCreateAddressBookDir(), addressBookKey.fileIdentifier())
         if (!file.exists()) {
             file.createNewFile()
         }
         return file
     }
+
+    // override fun getOrCreateTempStorageFile(): File {
+    //     val file = File(context.noBackupFilesDir, REMOTE_ADDRESS_BOOK_FILE_NAME_LOCAL_COPY)
+    //     if (!file.exists()) {
+    //         file.createNewFile()
+    //     }
+    //     return file
+    // }
+
+    private fun getOrCreateAddressBookDir(): File {
+        val filesDir = context.filesDir
+        val addressBookDir = File(filesDir, "address_book")
+        if (!addressBookDir.exists()) {
+            addressBookDir.mkdir()
+        }
+        return addressBookDir
+    }
 }
 
 private const val LEGACY_UNENCRYPTED_ADDRESS_BOOK_FILE_NAME = "address_book"
-private const val REMOTE_ADDRESS_BOOK_FILE_NAME_LOCAL_COPY = "address_book_temp"
+// private const val REMOTE_ADDRESS_BOOK_FILE_NAME_LOCAL_COPY = "address_book_temp"

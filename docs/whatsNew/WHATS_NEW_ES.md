@@ -9,23 +9,18 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
-### Added
-- Address book encryption
-- The device authentication feature on the Zashi app launch has been added
-- Zashi app now supports Spanish language. It can be changed in the System settings options.
-- The Flexa SDK has been adopted to enable payments using the embedded Flexa UI
-- New Sending, Success, Failure, and GrpcFailure subscreens of the Send Confirmation screen have been added
-- New Copy Transaction IDs feature has been added to the MultipleTransactionFailure screen
+## [1.2.2 (789)] - 2024-11-18
 
-### Changed
-- Shielded transactions are properly indicated in transaction history
-- The in-app update logic has been fixed and is now correctly requested with every app launch
-- The Not enough space and In-app udpate screens have been redesigned
-- External links now open in in-app browser
-- All the Settings screens have been redesigned
+### Agregado
+- ¡Hola!, Zashi aprendió Español.
+- Nuevo manejo de transacciones de baja denominación, esto hace transacciones más rápidas y uso eficiente del saldo.
+- Implementación de encriptado  y almacenamiento remoto de información en agenda.
+- Se agrego una barra de progreso y nuevas pantallas de éxito y falla.
+- Inicio de aplicación con autenticación implementada.
 
-### Fixed
-- Address book toast now correctly shows on send screen when adding both new and known addresses to text field
-- The application now correctly navigates to the homepage after deleting the current wallet and creating a new or
-  recovering an older one
-- The in-app update logic has been fixed and is now correctly requested with every app launch
+### Cambiado
+- Mejora en pantalla de configuración y estatus.
+- Comentarios y sugerencias mejoradas.
+
+### Arreglado
+- Icono de transacciones privadas arreglado.

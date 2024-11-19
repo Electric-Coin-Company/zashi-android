@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data-extraction-rules>
+    <cloud-backup disableIfNoEncryptionCapabilities="false">
+        <include
+            domain="file"
+            path="address_book/." />
+    </cloud-backup>
+</data-extraction-rules>

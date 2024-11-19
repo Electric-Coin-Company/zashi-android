@@ -241,7 +241,11 @@ abstract class PublishToGooglePlay @Inject constructor(
         val inAppUpdatePriority = project.property("ZCASH_IN_APP_UPDATE_PRIORITY").toString().toInt()
 
         val releaseNotes: List<LocalizedText> = getReleaseNotesFor(
-            gradleVersionName, listOf("EN", "ES")
+            gradleVersionName = gradleVersionName,
+            languageTags = listOf(
+                LanguageTag.English(),
+                LanguageTag.Spanish()
+            )
         )
 
         log("Publish - Version: $versionName has been uploaded")
@@ -279,14 +283,18 @@ abstract class PublishToGooglePlay @Inject constructor(
     private val releaseNotesFilePath = "docs/whatsNew/WHATS_NEW_"
     private val releaseNotesFileSuffix = ".md"
 
-    private fun getReleaseNotesFor(gradleVersionName: String, languageTags: List<String>): MutableList<LocalizedText> {
+    private fun getReleaseNotesFor(
+        gradleVersionName: String,
+        languageTags: List<LanguageTag>
+    ): MutableList<LocalizedText> {
         return buildList {
             languageTags.forEach { languageTag ->
                 // A description of what is new in this release in form of [LocalizedText]
                 add(LocalizedText().apply {
-                    language = languageTag
+                    language = languageTag.tag
                     text = ChangelogParser.getChangelogEntry(
-                        filePath = releaseNotesFilePath + languageTag + releaseNotesFileSuffix,
+                        filePath = releaseNotesFilePath + languageTag.tag + releaseNotesFileSuffix,
+                        languageTag = languageTag,
                         versionNameFallback = gradleVersionName
                     ).toInAppUpdateReleaseNotesText()
                 })
