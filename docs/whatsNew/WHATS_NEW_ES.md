@@ -9,6 +9,10 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+### Added
+- Flexa feature has been turned on
+- Disclaimer added to integrations screen
+
 ## [1.2.2 (789)] - 2024-11-18
 
 ### Agregado
