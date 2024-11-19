@@ -172,6 +172,8 @@ dependencies {
     // }
     api(libs.bundles.androidx.biometric)
 
+    api("com.github.KeystoneHQ:keystone-sdk-android:0.6.5")
+
     androidTestImplementation(projects.testLib)
     androidTestImplementation(libs.bundles.androidx.test)
     androidTestImplementation(libs.androidx.compose.test.junit)

@@ -32,6 +32,8 @@ import co.electriccoin.zcash.ui.common.usecase.ObserveWalletStateUseCase
 import co.electriccoin.zcash.ui.design.component.ZashiSettingsListItemState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.integrations.model.IntegrationsState
+import co.electriccoin.zcash.ui.screen.keystoneqr.KeystoneQrNavigationArgs
+import co.electriccoin.zcash.ui.screen.scan.ScanKeystoneNavigationArgs
 import co.electriccoin.zcash.ui.screen.send.model.RecipientAddressState
 import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SubmitResult
 import com.flexa.core.Flexa
@@ -59,6 +61,7 @@ class IntegrationsViewModel(
     private val context: Context,
     private val biometricRepository: BiometricRepository
 ) : ViewModel() {
+    val navigationCommand = MutableSharedFlow<String>()
     val backNavigationCommand = MutableSharedFlow<Unit>()
     val flexaNavigationCommand = MutableSharedFlow<Unit>()
     val coinbaseNavigationCommand = MutableSharedFlow<String>()
@@ -105,7 +108,21 @@ class IntegrationsViewModel(
                             text = stringRes(R.string.integrations_flexa),
                             subtitle = stringRes(R.string.integrations_flexa_subtitle),
                             onClick = ::onFlexaClicked
-                        ).takeIf { isFlexaAvailable == true }
+                        ).takeIf { isFlexaAvailable == true },
+                        ZashiSettingsListItemState(
+                            // Set the wallet currency by app build is more future-proof, although we hide it from
+                            // the UI in the Testnet build
+                            icon = R.drawable.ic_settings_integrations,
+                            text = stringRes("Scan Keystone QR"),
+                            onClick = ::onScanKeystoneQRClicked
+                        ),
+                        ZashiSettingsListItemState(
+                            // Set the wallet currency by app build is more future-proof, although we hide it from
+                            // the UI in the Testnet build
+                            icon = R.drawable.ic_settings_integrations,
+                            text = stringRes("Generate Keystone QR"),
+                            onClick = ::onGenerateKeystoneQRClicked
+                        )
                     ).toImmutableList()
             )
         }.stateIn(
@@ -118,6 +135,14 @@ class IntegrationsViewModel(
         viewModelScope.launch {
             backNavigationCommand.emit(Unit)
         }
+
+    private fun onGenerateKeystoneQRClicked() = viewModelScope.launch {
+        navigationCommand.emit(KeystoneQrNavigationArgs.PATH)
+    }
+
+    private fun onScanKeystoneQRClicked() = viewModelScope.launch {
+        navigationCommand.emit(ScanKeystoneNavigationArgs.PATH)
+    }
 
     private fun onBuyWithCoinbaseClicked() =
         viewModelScope.launch {

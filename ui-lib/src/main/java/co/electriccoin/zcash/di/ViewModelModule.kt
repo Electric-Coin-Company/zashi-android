@@ -13,6 +13,7 @@ import co.electriccoin.zcash.ui.screen.contact.viewmodel.AddContactViewModel
 import co.electriccoin.zcash.ui.screen.contact.viewmodel.UpdateContactViewModel
 import co.electriccoin.zcash.ui.screen.feedback.viewmodel.FeedbackViewModel
 import co.electriccoin.zcash.ui.screen.integrations.viewmodel.IntegrationsViewModel
+import co.electriccoin.zcash.ui.screen.keystoneqr.KeystoneQrViewModel
 import co.electriccoin.zcash.ui.screen.onboarding.viewmodel.OnboardingViewModel
 import co.electriccoin.zcash.ui.screen.paymentrequest.viewmodel.PaymentRequestViewModel
 import co.electriccoin.zcash.ui.screen.qrcode.viewmodel.QrCodeViewModel
@@ -21,6 +22,7 @@ import co.electriccoin.zcash.ui.screen.request.viewmodel.RequestViewModel
 import co.electriccoin.zcash.ui.screen.restore.viewmodel.RestoreViewModel
 import co.electriccoin.zcash.ui.screen.restoresuccess.viewmodel.RestoreSuccessViewModel
 import co.electriccoin.zcash.ui.screen.scan.ScanNavigationArgs
+import co.electriccoin.zcash.ui.screen.scan.viewmodel.ScanKeystoneViewModel
 import co.electriccoin.zcash.ui.screen.scan.viewmodel.ScanViewModel
 import co.electriccoin.zcash.ui.screen.seed.SeedNavigationArgs
 import co.electriccoin.zcash.ui.screen.seed.viewmodel.SeedViewModel
@@ -90,6 +92,7 @@ val viewModelModule =
                 zip321ParseUriValidationUseCase = get(),
             )
         }
+        viewModelOf(::ScanKeystoneViewModel)
         viewModelOf(::IntegrationsViewModel)
         viewModelOf(::SendViewModel)
         viewModel { (args: SeedNavigationArgs) ->
@@ -101,4 +104,5 @@ val viewModelModule =
             )
         }
         viewModelOf(::FeedbackViewModel)
+        viewModelOf(::KeystoneQrViewModel)
     }

@@ -136,6 +136,7 @@ dependencyResolutionManagement {
             }
         }
         maven("${rootProject.projectDir}/maven") // url to a local maven in this repository
+        maven("https://jitpack.io")
     }
 
     @Suppress("MaxLineLength")

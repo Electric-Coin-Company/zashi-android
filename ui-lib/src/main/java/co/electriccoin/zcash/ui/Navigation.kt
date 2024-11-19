@@ -79,12 +79,16 @@ import co.electriccoin.zcash.ui.screen.exportdata.WrapExportPrivateData
 import co.electriccoin.zcash.ui.screen.feedback.WrapFeedback
 import co.electriccoin.zcash.ui.screen.home.WrapHome
 import co.electriccoin.zcash.ui.screen.integrations.WrapIntegrations
+import co.electriccoin.zcash.ui.screen.keystoneqr.AndroidKeystoneQr
+import co.electriccoin.zcash.ui.screen.keystoneqr.KeystoneQrNavigationArgs
 import co.electriccoin.zcash.ui.screen.paymentrequest.WrapPaymentRequest
 import co.electriccoin.zcash.ui.screen.paymentrequest.model.PaymentRequestArguments
 import co.electriccoin.zcash.ui.screen.qrcode.WrapQrCode
 import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressType
 import co.electriccoin.zcash.ui.screen.request.WrapRequest
+import co.electriccoin.zcash.ui.screen.scan.ScanKeystoneNavigationArgs
 import co.electriccoin.zcash.ui.screen.scan.ScanNavigationArgs
+import co.electriccoin.zcash.ui.screen.scan.WrapScanKeystone
 import co.electriccoin.zcash.ui.screen.scan.WrapScanValidator
 import co.electriccoin.zcash.ui.screen.seed.SeedNavigationArgs
 import co.electriccoin.zcash.ui.screen.seed.WrapSeed
@@ -244,6 +248,12 @@ internal fun MainActivity.Navigation() {
         }
         composable(SETTINGS_EXCHANGE_RATE_OPT_IN) {
             AndroidSettingsExchangeRateOptIn()
+        }
+        composable(ScanKeystoneNavigationArgs.PATH) {
+            WrapScanKeystone()
+        }
+        composable(KeystoneQrNavigationArgs.PATH) {
+            AndroidKeystoneQr()
         }
         composable(
             route = ScanNavigationArgs.ROUTE,
