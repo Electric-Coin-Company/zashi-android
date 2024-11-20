@@ -6,8 +6,12 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+### Added
+- Flexa feature has been turned on
+- Disclaimer added to integrations screen
+
 ### Fixed
-- The Seed screen recovery phrase has been improved to properly display on small screens 
+- The Seed screen recovery phrase has been improved to properly display on small screens
 
 ## [1.2.2 (789)] - 2024-11-18
 

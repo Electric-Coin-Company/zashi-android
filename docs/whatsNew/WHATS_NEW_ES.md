@@ -9,6 +9,10 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+### Added
+- Flexa feature has been turned on
+- Disclaimer added to integrations screen
+
 ### Fixed
 - The Seed screen recovery phrase has been improved to properly display on small screens
 
