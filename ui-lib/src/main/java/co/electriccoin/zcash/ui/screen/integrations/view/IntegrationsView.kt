@@ -20,21 +20,23 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
+import co.electriccoin.zcash.ui.design.component.ZashiCard
 import co.electriccoin.zcash.ui.design.component.ZashiHorizontalDivider
 import co.electriccoin.zcash.ui.design.component.ZashiSettingsListItem
 import co.electriccoin.zcash.ui.design.component.ZashiSettingsListItemState
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarBackNavigation
-import co.electriccoin.zcash.ui.design.component.ZashiVersion
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
+import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -78,7 +80,23 @@ fun Integrations(
 
             Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingXl))
             Spacer(modifier = Modifier.weight(1f))
-            ZashiVersion(modifier = Modifier.align(CenterHorizontally), version = state.version)
+            ZashiCard(
+                modifier = Modifier.padding(horizontal = 20.dp).fillMaxWidth(),
+            ) {
+                Image(
+                    modifier = Modifier.align(CenterHorizontally),
+                    painter = painterResource(R.drawable.ic_integrations_info),
+                    contentDescription = "",
+                    colorFilter = ColorFilter.tint(ZashiColors.Text.textSecondary)
+                )
+                Spacer(Modifier.height(16.dp))
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = stringResource(id = R.string.integrations_info),
+                    textAlign = TextAlign.Center,
+                    style = ZashiTypography.textMd
+                )
+            }
         }
     }
 }
@@ -134,7 +152,6 @@ private fun IntegrationSettings() =
         Integrations(
             state =
                 IntegrationsState(
-                    version = stringRes("Version 1.2"),
                     onBack = {},
                     disabledInfo = stringRes("Disabled info"),
                     items =
