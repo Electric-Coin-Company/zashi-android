@@ -34,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.blur
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
@@ -194,17 +195,26 @@ private fun SeedSecret(
         Row(
             modifier =
                 if (state.tooltip != null) {
-                    Modifier.clickable {
-                        scope.launch {
-                            if (tooltipState.isVisible) {
-                                tooltipState.dismiss()
-                            } else {
-                                tooltipState.show()
+                    Modifier
+                        .clip(RoundedCornerShape(ZashiDimensions.Radius.radiusMd))
+                        .clickable {
+                            scope.launch {
+                                if (tooltipState.isVisible) {
+                                    tooltipState.dismiss()
+                                } else {
+                                    tooltipState.show()
+                                }
                             }
                         }
-                    }
+                        .padding(
+                            horizontal = ZashiDimensions.Spacing.spacingXs,
+                            vertical = ZashiDimensions.Spacing.spacingSm
+                        )
                 } else {
-                    Modifier
+                    Modifier.padding(
+                        horizontal = ZashiDimensions.Spacing.spacingXs,
+                        vertical = ZashiDimensions.Spacing.spacingSm
+                    )
                 }
         ) {
             Text(
@@ -244,13 +254,12 @@ private fun SeedSecret(
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.ic_zashi_tooltip),
-                        contentDescription = "",
+                        contentDescription = null,
                         colorFilter = ColorFilter.tint(ZashiColors.Inputs.Default.icon)
                     )
                 }
             }
         }
-        Spacer(Modifier.height(ZashiDimensions.Spacing.spacingSm))
 
         SecretContent(state = state)
     }
@@ -307,7 +316,7 @@ private fun SecretContent(state: SeedSecretState) {
                 ) {
                     Image(
                         painter = painterResource(R.drawable.ic_reveal),
-                        contentDescription = "",
+                        contentDescription = null,
                         colorFilter = ColorFilter.tint(ZashiColors.Text.textPrimary)
                     )
 
