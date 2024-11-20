@@ -9,6 +9,9 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+### Fixed
+- The Seed screen recovery phrase has been improved to properly display on small screens
+
 ## [1.2.2 (789)] - 2024-11-18
 
 ### Agregado
