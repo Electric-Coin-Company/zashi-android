@@ -344,9 +344,10 @@ private fun SecretBirthdayContent(
     modifier: Modifier = Modifier
 ) {
     Text(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 24.dp),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp),
         textAlign = TextAlign.Start,
         text = state.text.getValue(),
         style = ZashiTypography.textMd,
@@ -406,9 +407,10 @@ private fun RevealedPreview() =
                     seed =
                         SeedSecretState(
                             title = stringRes("Seed"),
-                            text = stringRes(
-                                (1..24).joinToString(" ") { "trala" } + "longer_tralala"
-                            ),
+                            text =
+                                stringRes(
+                                    (1..24).joinToString(" ") { "trala" } + "longer_tralala"
+                                ),
                             tooltip = null,
                             isRevealed = true,
                             mode = SeedSecretState.Mode.SEED,
