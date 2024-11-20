@@ -78,7 +78,6 @@ class IntegrationsViewModel(
     val state =
         combine(observeIsFlexaAvailableUseCase(), isEnabled) { isFlexaAvailable, isEnabled ->
             IntegrationsState(
-                version = stringRes(R.string.integrations_version, versionInfo.versionName),
                 disabledInfo = stringRes(R.string.integrations_disabled_info).takeIf { isEnabled.not() },
                 onBack = ::onBack,
                 items =

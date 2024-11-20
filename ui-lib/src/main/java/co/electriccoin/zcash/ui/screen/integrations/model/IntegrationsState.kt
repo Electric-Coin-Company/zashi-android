@@ -5,7 +5,6 @@ import co.electriccoin.zcash.ui.design.util.StringResource
 import kotlinx.collections.immutable.ImmutableList
 
 data class IntegrationsState(
-    val version: StringResource,
     val disabledInfo: StringResource?,
     val onBack: () -> Unit,
     val items: ImmutableList<ZashiSettingsListItemState>,
