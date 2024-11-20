@@ -21,6 +21,7 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.model.ZecSend
+import co.electriccoin.zcash.di.koinActivityViewModel
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.spackle.getSerializableCompat
 import co.electriccoin.zcash.ui.NavigationArgs.ADDRESS_TYPE
@@ -57,6 +58,7 @@ import co.electriccoin.zcash.ui.NavigationTargets.SUPPORT
 import co.electriccoin.zcash.ui.NavigationTargets.WHATS_NEW
 import co.electriccoin.zcash.ui.common.compose.LocalNavController
 import co.electriccoin.zcash.ui.common.model.SerializableAddress
+import co.electriccoin.zcash.ui.common.viewmodel.ZashiMainTopAppBarViewModel
 import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
 import co.electriccoin.zcash.ui.configuration.RemoteConfig
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.enterTransition
@@ -119,6 +121,8 @@ import kotlinx.serialization.json.Json
 internal fun MainActivity.Navigation() {
     val navController = LocalNavController.current
 
+    val topAppBarViewModel = koinActivityViewModel<ZashiMainTopAppBarViewModel>()
+
     // Helper properties for triggering the system security UI from callbacks
     val (exportPrivateDataAuthentication, setExportPrivateDataAuthentication) =
         rememberSaveable { mutableStateOf(false) }
@@ -136,6 +140,12 @@ internal fun MainActivity.Navigation() {
     LaunchedEffect(Unit) {
         walletViewModel.backNavigationCommand.collect {
             navController.popBackStack()
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        topAppBarViewModel.navigationCommand.collect {
+            navController.navigateJustOnce(it)
         }
     }
 
@@ -401,7 +411,6 @@ private fun MainActivity.NavigationHome(
             }
             navController.navigateJustOnce(PAYMENT_REQUEST)
         },
-        goSettings = { navController.navigateJustOnce(SETTINGS) },
         goMultiTrxSubmissionFailure = {
             // Ultimately we could approach reworking the MultipleTrxFailure screen into a separate
             // navigation endpoint

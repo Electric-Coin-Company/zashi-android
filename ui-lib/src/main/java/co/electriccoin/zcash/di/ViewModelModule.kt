@@ -4,6 +4,7 @@ import co.electriccoin.zcash.ui.common.viewmodel.AuthenticationViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.CheckUpdateViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.HomeViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
+import co.electriccoin.zcash.ui.common.viewmodel.ZashiMainTopAppBarViewModel
 import co.electriccoin.zcash.ui.screen.account.viewmodel.TransactionHistoryViewModel
 import co.electriccoin.zcash.ui.screen.accountlist.AccountListViewModel
 import co.electriccoin.zcash.ui.screen.addressbook.AddressBookArgs
@@ -107,4 +108,5 @@ val viewModelModule =
         viewModelOf(::FeedbackViewModel)
         viewModelOf(::KeystoneQrViewModel)
         viewModelOf(::AccountListViewModel)
+        viewModelOf(::ZashiMainTopAppBarViewModel)
     }
