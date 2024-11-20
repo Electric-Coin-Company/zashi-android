@@ -159,12 +159,13 @@ object ZashiButtonDefaults {
     fun secondaryColors(
         containerColor: Color = ZashiColors.Btns.Secondary.btnSecondaryBg,
         contentColor: Color = ZashiColors.Btns.Secondary.btnSecondaryFg,
+        borderColor: Color = Color.Unspecified,
         disabledContainerColor: Color = ZashiColors.Btns.Secondary.btnSecondaryBgDisabled,
         disabledContentColor: Color = ZashiColors.Btns.Secondary.btnSecondaryFg,
     ) = ZashiButtonColors(
         containerColor = containerColor,
         contentColor = contentColor,
-        borderColor = Color.Unspecified,
+        borderColor = borderColor,
         disabledContainerColor = disabledContainerColor,
         disabledContentColor = disabledContentColor,
         disabledBorderColor = Color.Unspecified

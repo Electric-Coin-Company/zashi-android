@@ -31,6 +31,7 @@ import co.electriccoin.zcash.ui.common.usecase.ObserveIsFlexaAvailableUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveWalletStateUseCase
 import co.electriccoin.zcash.ui.design.component.ZashiSettingsListItemState
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.screen.accountlist.AccountListArgs
 import co.electriccoin.zcash.ui.screen.integrations.model.IntegrationsState
 import co.electriccoin.zcash.ui.screen.keystoneqr.KeystoneQrNavigationArgs
 import co.electriccoin.zcash.ui.screen.scan.ScanKeystoneNavigationArgs
@@ -109,18 +110,19 @@ class IntegrationsViewModel(
                             onClick = ::onFlexaClicked
                         ).takeIf { isFlexaAvailable == true },
                         ZashiSettingsListItemState(
-                            // Set the wallet currency by app build is more future-proof, although we hide it from
-                            // the UI in the Testnet build
                             icon = R.drawable.ic_settings_integrations,
                             text = stringRes("Scan Keystone QR"),
                             onClick = ::onScanKeystoneQRClicked
                         ),
                         ZashiSettingsListItemState(
-                            // Set the wallet currency by app build is more future-proof, although we hide it from
-                            // the UI in the Testnet build
                             icon = R.drawable.ic_settings_integrations,
                             text = stringRes("Generate Keystone QR"),
                             onClick = ::onGenerateKeystoneQRClicked
+                        ),
+                        ZashiSettingsListItemState(
+                            icon = R.drawable.ic_settings_integrations,
+                            text = stringRes("Open Accounts"),
+                            onClick = ::onOpenAccountsClicked
                         )
                     ).toImmutableList()
             )
@@ -134,6 +136,10 @@ class IntegrationsViewModel(
         viewModelScope.launch {
             backNavigationCommand.emit(Unit)
         }
+
+    private fun onOpenAccountsClicked() = viewModelScope.launch {
+        navigationCommand.emit(AccountListArgs.PATH)
+    }
 
     private fun onGenerateKeystoneQRClicked() = viewModelScope.launch {
         navigationCommand.emit(KeystoneQrNavigationArgs.PATH)
