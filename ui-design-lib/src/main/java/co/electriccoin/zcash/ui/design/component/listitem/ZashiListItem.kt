@@ -1,32 +1,31 @@
-package co.electriccoin.zcash.ui.design.component
+package co.electriccoin.zcash.ui.design.component.listitem
 
 import androidx.annotation.DrawableRes
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
-import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.isUnspecified
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.design.R
+import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
@@ -40,9 +39,10 @@ import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun ZashiListItem(
-    text: String,
+    title: String,
     @DrawableRes icon: Int,
     modifier: Modifier = Modifier,
+    type: ZashiListItemType = ZashiListItemType.PRIMARY,
     contentPadding: PaddingValues = ZashiListItemDefaults.contentPadding,
     titleIcons: ImmutableList<Int> = persistentListOf(),
     subtitle: String? = null,
@@ -54,12 +54,13 @@ fun ZashiListItem(
         contentPadding = contentPadding,
         state =
             ZashiListItemState(
-                text = stringRes(text),
+                title = stringRes(title),
                 subtitle = subtitle?.let { stringRes(it) },
                 isEnabled = isEnabled,
                 onClick = onClick,
                 icon = icon,
-                titleIcons = titleIcons
+                titleIcons = titleIcons,
+                type = type
             ),
     )
 }
@@ -70,20 +71,26 @@ fun ZashiListItem(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = ZashiListItemDefaults.contentPadding,
 ) {
-    ZashiListItem(
+    val colors =
+        when (state.type) {
+            ZashiListItemType.PRIMARY -> ZashiListItemDefaults.primaryColors()
+            ZashiListItemType.SECONDARY -> ZashiListItemDefaults.secondaryColors()
+        }
+
+    BaseListItem(
         modifier = modifier,
         contentPadding = contentPadding,
         leading = {
             ZashiListItemDefaults.LeadingItem(
                 modifier = it,
                 icon = state.icon,
-                contentDescription = state.text.getValue()
+                contentDescription = state.title.getValue()
             )
         },
         content = {
             ZashiListItemDefaults.ContentItem(
                 modifier = it,
-                text = state.text.getValue(),
+                text = state.title.getValue(),
                 subtitle = state.subtitle?.getValue(),
                 titleIcons = state.titleIcons
             )
@@ -92,10 +99,11 @@ fun ZashiListItem(
             ZashiListItemDefaults.TrailingItem(
                 modifier = it,
                 isEnabled = state.isEnabled && state.onClick != null,
-                contentDescription = state.text.getValue()
+                contentDescription = state.title.getValue()
             )
         },
-        onClick = state.onClick.takeIf { state.isEnabled }
+        onClick = state.onClick.takeIf { state.isEnabled },
+        border = colors.borderColor.takeIf { !it.isUnspecified }?.let { BorderStroke(1.dp, it) }
     )
 }
 
@@ -110,7 +118,7 @@ private fun ZashiListLeadingItem(
         contentAlignment = Alignment.Center
     ) {
         Image(
-            modifier = Modifier.size(40.dp),
+            modifier = Modifier.sizeIn(maxWidth = 48.dp, maxHeight = 48.dp),
             painter = painterResource(icon),
             contentDescription = contentDescription,
         )
@@ -156,7 +164,10 @@ private fun ZashiListContentItem(
             titleIcons.forEach {
                 Spacer(Modifier.width(6.dp))
                 Image(
-                    modifier = Modifier.size(20.dp).clip(CircleShape),
+                    modifier =
+                        Modifier
+                            .size(20.dp)
+                            .clip(CircleShape),
                     painter = painterResource(it),
                     contentDescription = null,
                 )
@@ -173,46 +184,20 @@ private fun ZashiListContentItem(
     }
 }
 
-@Composable
-fun ZashiListItem(
-    leading: @Composable (Modifier) -> Unit,
-    content: @Composable (Modifier) -> Unit,
-    trailing: @Composable (Modifier) -> Unit,
-    modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = ZashiListItemDefaults.contentPadding,
-    onClick: (() -> Unit)?
-) {
-    Row(
-        modifier =
-            modifier
-                .clip(RoundedCornerShape(12.dp)) then
-                if (onClick != null) {
-                    Modifier.clickable(
-                        indication = ripple(),
-                        interactionSource = remember { MutableInteractionSource() },
-                        onClick = onClick,
-                        role = Role.Button,
-                    )
-                } else {
-                    Modifier
-                } then Modifier.padding(contentPadding),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        leading(Modifier)
-        Spacer(modifier = Modifier.width(16.dp))
-        content(Modifier.weight(1f))
-        Spacer(modifier = Modifier.width(16.dp))
-        trailing(Modifier)
-    }
-}
-
 data class ZashiListItemState(
-    val text: StringResource,
+    val title: StringResource,
     @DrawableRes val icon: Int,
+    val type: ZashiListItemType = ZashiListItemType.PRIMARY,
     val subtitle: StringResource? = null,
     val titleIcons: ImmutableList<Int> = persistentListOf(),
     val isEnabled: Boolean = true,
     val onClick: (() -> Unit)? = null,
+)
+
+enum class ZashiListItemType { PRIMARY, SECONDARY }
+
+internal data class ZashiListItemColors(
+    val borderColor: Color,
 )
 
 object ZashiListItemDefaults {
@@ -240,34 +225,68 @@ object ZashiListItemDefaults {
         titleIcons: ImmutableList<Int>,
         modifier: Modifier = Modifier,
     ) = ZashiListContentItem(text, subtitle, titleIcons, modifier)
+
+    @Composable
+    internal fun primaryColors(borderColor: Color = Color.Unspecified): ZashiListItemColors {
+        return ZashiListItemColors(borderColor)
+    }
+
+    @Composable
+    internal fun secondaryColors(borderColor: Color = ZashiColors.Surfaces.strokeSecondary): ZashiListItemColors {
+        return ZashiListItemColors(borderColor)
+    }
 }
 
 @PreviewScreens
 @Composable
-private fun EnabledPreview() =
+private fun PrimaryPreview() =
     ZcashTheme {
         BlankSurface {
-            ZashiListItem(
-                text = "Test",
-                subtitle = "Subtitle",
-                icon = R.drawable.ic_radio_button_checked,
-                onClick = {},
-                titleIcons = persistentListOf(R.drawable.ic_radio_button_checked)
-            )
+            Column(
+                verticalArrangement = spacedBy(16.dp)
+            ) {
+                ZashiListItem(
+                    title = "Test",
+                    subtitle = "Subtitle",
+                    icon = R.drawable.ic_radio_button_checked,
+                    onClick = {},
+                    titleIcons = persistentListOf(R.drawable.ic_radio_button_checked)
+                )
+                ZashiListItem(
+                    title = "Test",
+                    subtitle = "Subtitle",
+                    icon = R.drawable.ic_radio_button_checked,
+                    isEnabled = false,
+                    onClick = {},
+                )
+            }
         }
     }
 
 @PreviewScreens
 @Composable
-private fun DisabledPreview() =
+private fun SecondaryPreview() =
     ZcashTheme {
         BlankSurface {
-            ZashiListItem(
-                text = "Test",
-                subtitle = "Subtitle",
-                icon = R.drawable.ic_radio_button_checked,
-                isEnabled = false,
-                onClick = {},
-            )
+            Column(
+                verticalArrangement = spacedBy(16.dp)
+            ) {
+                ZashiListItem(
+                    title = "Test",
+                    subtitle = "Subtitle",
+                    type = ZashiListItemType.SECONDARY,
+                    icon = R.drawable.ic_radio_button_checked,
+                    onClick = {},
+                    titleIcons = persistentListOf(R.drawable.ic_radio_button_checked)
+                )
+                ZashiListItem(
+                    title = "Test",
+                    subtitle = "Subtitle",
+                    type = ZashiListItemType.SECONDARY,
+                    icon = R.drawable.ic_radio_button_checked,
+                    isEnabled = false,
+                    onClick = {},
+                )
+            }
         }
     }

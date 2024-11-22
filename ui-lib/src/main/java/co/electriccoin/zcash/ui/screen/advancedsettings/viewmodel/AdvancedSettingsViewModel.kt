@@ -7,7 +7,7 @@ import co.electriccoin.zcash.ui.NavigationTargets
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.usecase.SensitiveSettingsVisibleUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
-import co.electriccoin.zcash.ui.design.component.ZashiListItemState
+import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.advancedsettings.model.AdvancedSettingsState
 import kotlinx.collections.immutable.toImmutableList
@@ -39,23 +39,23 @@ class AdvancedSettingsViewModel(
             items =
                 listOfNotNull(
                     ZashiListItemState(
-                        text = stringRes(R.string.advanced_settings_recovery),
+                        title = stringRes(R.string.advanced_settings_recovery),
                         icon = R.drawable.ic_advanced_settings_recovery,
                         onClick = {}
                     ),
                     ZashiListItemState(
-                        text = stringRes(R.string.advanced_settings_export),
+                        title = stringRes(R.string.advanced_settings_export),
                         icon = R.drawable.ic_advanced_settings_export,
                         onClick = {}
                     ),
                     ZashiListItemState(
-                        text = stringRes(R.string.advanced_settings_choose_server),
+                        title = stringRes(R.string.advanced_settings_choose_server),
                         icon =
                             R.drawable.ic_advanced_settings_choose_server,
                         onClick = ::onChooseServerClick
                     ).takeIf { isSensitiveSettingsVisible },
                     ZashiListItemState(
-                        text = stringRes(R.string.advanced_settings_currency_conversion),
+                        title = stringRes(R.string.advanced_settings_currency_conversion),
                         icon =
                             R.drawable.ic_advanced_settings_currency_conversion,
                         onClick = ::onCurrencyConversionClick

@@ -1,7 +1,6 @@
 package co.electriccoin.zcash.ui.screen.accountlist.view
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,16 +25,23 @@ import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.LottieProgress
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
-import co.electriccoin.zcash.ui.design.component.ZashiListItem
-import co.electriccoin.zcash.ui.design.component.ZashiListItemState
 import co.electriccoin.zcash.ui.design.component.ZashiModalBottomSheet
+import co.electriccoin.zcash.ui.design.component.listitem.BaseListItem
+import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItem
+import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemDefaults
+import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemState
+import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemType
 import co.electriccoin.zcash.ui.design.component.rememberModalBottomSheetState
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.screen.accountlist.model.AccountListItem
 import co.electriccoin.zcash.ui.screen.accountlist.model.AccountListState
+import co.electriccoin.zcash.ui.screen.accountlist.model.ZashiAccountListItemState
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -55,7 +61,7 @@ internal fun AccountListView(
 }
 
 @Composable
-private fun ColumnScope.BottomSheetContent(state: AccountListState) {
+private fun BottomSheetContent(state: AccountListState) {
     Column {
         Text(
             modifier = Modifier.padding(horizontal = 24.dp),
@@ -71,11 +77,23 @@ private fun ColumnScope.BottomSheetContent(state: AccountListState) {
                     .weight(1f, false)
                     .verticalScroll(rememberScrollState())
         ) {
-            state.accounts?.forEach {
-                ZashiListItem(
-                    modifier = Modifier.padding(horizontal = 4.dp),
-                    state = it,
-                )
+            state.items?.forEachIndexed { index, item ->
+                if (index != 0) {
+                    Spacer(Modifier.height(8.dp))
+                }
+
+                when (item) {
+                    is AccountListItem.Account ->
+                        ZashiAccountListItem(
+                            modifier = Modifier.padding(horizontal = 4.dp),
+                            state = item.item,
+                        )
+                    is AccountListItem.Other ->
+                        ZashiListItem(
+                            modifier = Modifier.padding(horizontal = 4.dp),
+                            state = item.item,
+                        )
+                }
             }
             if (state.isLoading) {
                 Spacer(Modifier.height(24.dp))
@@ -101,6 +119,42 @@ private fun ColumnScope.BottomSheetContent(state: AccountListState) {
     }
 }
 
+@Composable
+private fun ZashiAccountListItem(
+    state: ZashiAccountListItemState,
+    modifier: Modifier = Modifier,
+) {
+    BaseListItem(
+        modifier = modifier,
+        contentPadding = ZashiListItemDefaults.contentPadding,
+        leading = {
+            ZashiListItemDefaults.LeadingItem(
+                modifier = it,
+                icon = state.icon,
+                contentDescription = state.title.getValue()
+            )
+        },
+        content = {
+            ZashiListItemDefaults.ContentItem(
+                modifier = it,
+                text = state.title.getValue(),
+                subtitle = state.subtitle.getValue(),
+                titleIcons = persistentListOf()
+            )
+        },
+        trailing = {
+            // empty
+        },
+        color =
+            if (state.isSelected) {
+                ZashiColors.Surfaces.bgSecondary
+            } else {
+                Color.Transparent
+            },
+        onClick = state.onClick
+    )
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @PreviewScreens
 @Composable
@@ -109,14 +163,27 @@ private fun Preview() =
         AccountListView(
             state =
                 AccountListState(
-                    accounts =
-                        (1..20).map {
-                            ZashiListItemState(
-                                text = stringRes("title"),
-                                subtitle = stringRes("subtitle"),
-                                icon = R.drawable.ic_radio_button_checked
+                    items =
+                        listOf(
+                            AccountListItem.Account(
+                                ZashiAccountListItemState(
+                                    title = stringRes("Zashi"),
+                                    subtitle = stringRes("u1078r23uvtj8xj6dpdx..."),
+                                    icon = co.electriccoin.zcash.ui.R.drawable.ic_item_zashi,
+                                    isSelected = true,
+                                    onClick = {}
+                                )
+                            ),
+                            AccountListItem.Other(
+                                ZashiListItemState(
+                                    title = stringRes("Keystone Hardware Wallet"),
+                                    subtitle = stringRes("Get a Keystone Hardware Wallet and secure your Zcash."),
+                                    icon = co.electriccoin.zcash.ui.R.drawable.ic_item_keystone,
+                                    type = ZashiListItemType.SECONDARY,
+                                    onClick = {}
+                                )
                             )
-                        },
+                        ),
                     isLoading = true,
                     addWalletButton =
                         ButtonState(

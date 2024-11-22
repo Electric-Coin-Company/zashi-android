@@ -3,11 +3,13 @@ package co.electriccoin.zcash.ui.screen.accountlist.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
-import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.component.ButtonState
-import co.electriccoin.zcash.ui.design.component.ZashiListItemState
+import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemState
+import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemType
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.screen.accountlist.model.AccountListItem
 import co.electriccoin.zcash.ui.screen.accountlist.model.AccountListState
+import co.electriccoin.zcash.ui.screen.accountlist.model.ZashiAccountListItemState
 import co.electriccoin.zcash.ui.screen.connectkeystone.ConnectKeystoneArgs
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,17 +27,25 @@ class AccountListViewModel : ViewModel() {
     val state =
         isLoading.map { isLoading ->
             AccountListState(
-                accounts =
+                items =
                     listOf(
-                        ZashiListItemState(
-                            text = stringRes("title"),
-                            subtitle = stringRes("subtitle"),
-                            icon = R.drawable.ic_radio_button_checked
+                        AccountListItem.Account(
+                            ZashiAccountListItemState(
+                                title = stringRes("Zashi"),
+                                subtitle = stringRes("u1078r23uvtj8xj6dpdx..."),
+                                icon = co.electriccoin.zcash.ui.R.drawable.ic_item_zashi,
+                                isSelected = true,
+                                onClick = {}
+                            )
                         ),
-                        ZashiListItemState(
-                            text = stringRes("title"),
-                            subtitle = stringRes("subtitle"),
-                            icon = R.drawable.ic_radio_button_checked
+                        AccountListItem.Other(
+                            ZashiListItemState(
+                                title = stringRes("Keystone Hardware Wallet"),
+                                subtitle = stringRes("Get a Keystone Hardware Wallet and secure your Zcash."),
+                                icon = co.electriccoin.zcash.ui.R.drawable.ic_item_keystone,
+                                type = ZashiListItemType.SECONDARY,
+                                onClick = ::onAddWalletButtonClicked
+                            )
                         )
                     ),
                 isLoading = isLoading,

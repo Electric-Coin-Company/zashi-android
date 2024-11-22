@@ -30,10 +30,10 @@ import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
 import co.electriccoin.zcash.ui.design.component.ZashiHorizontalDivider
-import co.electriccoin.zcash.ui.design.component.ZashiListItem
-import co.electriccoin.zcash.ui.design.component.ZashiListItemState
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarBackNavigation
+import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItem
+import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemState
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
@@ -145,22 +145,22 @@ private fun AdvancedSettingsPreview() =
                     items =
                         persistentListOf(
                             ZashiListItemState(
-                                text = stringRes(R.string.advanced_settings_recovery),
+                                title = stringRes(R.string.advanced_settings_recovery),
                                 icon = R.drawable.ic_advanced_settings_recovery,
                                 onClick = {}
                             ),
                             ZashiListItemState(
-                                text = stringRes(R.string.advanced_settings_export),
+                                title = stringRes(R.string.advanced_settings_export),
                                 icon = R.drawable.ic_advanced_settings_export,
                                 onClick = {}
                             ),
                             ZashiListItemState(
-                                text = stringRes(R.string.advanced_settings_choose_server),
+                                title = stringRes(R.string.advanced_settings_choose_server),
                                 icon = R.drawable.ic_advanced_settings_choose_server,
                                 onClick = {}
                             ),
                             ZashiListItemState(
-                                text = stringRes(R.string.advanced_settings_currency_conversion),
+                                title = stringRes(R.string.advanced_settings_currency_conversion),
                                 icon = R.drawable.ic_advanced_settings_currency_conversion,
                                 onClick = {}
                             )

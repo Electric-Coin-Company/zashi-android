@@ -39,10 +39,10 @@ import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.design.component.ZashiBottomBar
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiHorizontalDivider
-import co.electriccoin.zcash.ui.design.component.ZashiListItem
-import co.electriccoin.zcash.ui.design.component.ZashiListItemDefaults
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarBackNavigation
+import co.electriccoin.zcash.ui.design.component.listitem.BaseListItem
+import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemDefaults
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
@@ -98,7 +98,7 @@ fun AddressBookView(
                             )
                     ) {
                         itemsIndexed(state.contacts) { index, item ->
-                            ContactItem(state = item)
+                            ZashiContactListItem(state = item)
                             if (index != state.contacts.lastIndex) {
                                 ZashiHorizontalDivider()
                             }
@@ -121,8 +121,8 @@ fun AddressBookView(
 }
 
 @Composable
-private fun ContactItem(state: AddressBookContactState) {
-    ZashiListItem(
+private fun ZashiContactListItem(state: AddressBookContactState) {
+    BaseListItem(
         leading = { modifier ->
             ContactItemLeading(modifier = modifier, state = state)
         },
@@ -137,7 +137,18 @@ private fun ContactItem(state: AddressBookContactState) {
             )
         },
         onClick = state.onClick,
-        contentPadding = PaddingValues(top = 12.dp, bottom = if (state.isShielded) 8.dp else 12.dp)
+        contentPadding =
+            PaddingValues(
+                start = 20.dp,
+                top = 12.dp,
+                end = 20.dp,
+                bottom =
+                    if (state.isShielded) {
+                        8.dp
+                    } else {
+                        12.dp
+                    }
+            )
     )
 }
 

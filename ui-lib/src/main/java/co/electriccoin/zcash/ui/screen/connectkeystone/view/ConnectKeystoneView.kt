@@ -25,9 +25,9 @@ import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.ZashiButton
-import co.electriccoin.zcash.ui.design.component.ZashiListItem
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarCloseNavigation
+import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItem
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.HyperBlue
@@ -89,22 +89,22 @@ private fun ColumnScope.HowToConnectSection() {
     )
     Spacer(Modifier.height(4.dp))
     ZashiListItem(
-        text = "Unlock your Keystone",
+        title = "Unlock your Keystone",
         contentPadding = PaddingValues(top = 8.dp, end = 20.dp, bottom = 8.dp),
         icon = R.drawable.ic_connect_keystone_1
     )
     ZashiListItem(
-        text = "Tap the menu icon",
+        title = "Tap the menu icon",
         contentPadding = PaddingValues(top = 8.dp, end = 20.dp, bottom = 8.dp),
         icon = R.drawable.ic_connect_keystone_2
     )
     ZashiListItem(
-        text = "Select Watch-only Wallet",
+        title = "Select Watch-only Wallet",
         contentPadding = PaddingValues(top = 8.dp, end = 20.dp, bottom = 8.dp),
         icon = R.drawable.ic_connect_keystone_3
     )
     ZashiListItem(
-        text = "Select Zashi app",
+        title = "Select Zashi app",
         contentPadding = PaddingValues(top = 8.dp, end = 20.dp, bottom = 8.dp),
         icon = R.drawable.ic_connect_keystone_4
     )
@@ -136,12 +136,13 @@ private fun ColumnScope.HeaderSection(state: ConnectKeystoneState) {
                 LinkAnnotation.Clickable("CLICKABLE") { state.onViewKeystoneTutorialClicked() }
             ) {
                 withStyle(
-                    style =
-                        SpanStyle(
+                    style = ZashiTypography.textSm
+                        .copy(
                             textDecoration = TextDecoration.Underline,
                             fontWeight = FontWeight.SemiBold,
-                            color = HyperBlue.`700`
+                            color = HyperBlue.`700`,
                         )
+                        .toSpanStyle()
                 ) {
                     append("View Keystone tutorial")
                 }

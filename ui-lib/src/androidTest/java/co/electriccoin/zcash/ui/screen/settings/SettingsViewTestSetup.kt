@@ -3,7 +3,7 @@ package co.electriccoin.zcash.ui.screen.settings
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
-import co.electriccoin.zcash.ui.design.component.ZashiListItemState
+import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemState
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.settings.model.SettingsState
@@ -114,34 +114,34 @@ class SettingsViewTestSetup(
                             items =
                                 persistentListOf(
                                     ZashiListItemState(
-                                        text = stringRes(R.string.settings_address_book),
+                                        title = stringRes(R.string.settings_address_book),
                                         icon = R.drawable.ic_settings_address_book,
                                         onClick = {
                                             onAddressBookCount.incrementAndGet()
                                         },
                                     ),
                                     ZashiListItemState(
-                                        text = stringRes(R.string.settings_integrations),
+                                        title = stringRes(R.string.settings_integrations),
                                         icon = R.drawable.ic_settings_integrations,
                                         titleIcons = persistentListOf(R.drawable.ic_integrations_coinbase),
                                         onClick = { },
                                     ),
                                     ZashiListItemState(
-                                        text = stringRes(R.string.settings_advanced_settings),
+                                        title = stringRes(R.string.settings_advanced_settings),
                                         icon = R.drawable.ic_advanced_settings,
                                         onClick = {
                                             onAdvancedSettingsCount.incrementAndGet()
                                         },
                                     ),
                                     ZashiListItemState(
-                                        text = stringRes(R.string.settings_about_us),
+                                        title = stringRes(R.string.settings_about_us),
                                         icon = R.drawable.ic_settings_info,
                                         onClick = {
                                             onAboutCount.incrementAndGet()
                                         },
                                     ),
                                     ZashiListItemState(
-                                        text = stringRes(R.string.settings_feedback),
+                                        title = stringRes(R.string.settings_feedback),
                                         icon = R.drawable.ic_settings_feedback,
                                         onClick = {
                                             onFeedbackCount.incrementAndGet()
