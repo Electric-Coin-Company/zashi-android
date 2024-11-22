@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowColumn
+import androidx.compose.foundation.layout.FlowColumnOverflow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.blur
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
@@ -193,17 +195,26 @@ private fun SeedSecret(
         Row(
             modifier =
                 if (state.tooltip != null) {
-                    Modifier.clickable {
-                        scope.launch {
-                            if (tooltipState.isVisible) {
-                                tooltipState.dismiss()
-                            } else {
-                                tooltipState.show()
+                    Modifier
+                        .clip(RoundedCornerShape(ZashiDimensions.Radius.radiusMd))
+                        .clickable {
+                            scope.launch {
+                                if (tooltipState.isVisible) {
+                                    tooltipState.dismiss()
+                                } else {
+                                    tooltipState.show()
+                                }
                             }
                         }
-                    }
+                        .padding(
+                            horizontal = ZashiDimensions.Spacing.spacingXs,
+                            vertical = ZashiDimensions.Spacing.spacingSm
+                        )
                 } else {
-                    Modifier
+                    Modifier.padding(
+                        horizontal = ZashiDimensions.Spacing.spacingXs,
+                        vertical = ZashiDimensions.Spacing.spacingSm
+                    )
                 }
         ) {
             Text(
@@ -249,7 +260,6 @@ private fun SeedSecret(
                 }
             }
         }
-        Spacer(Modifier.height(ZashiDimensions.Spacing.spacingSm))
 
         SecretContent(state = state)
     }
@@ -279,7 +289,7 @@ private fun SecretContent(state: SeedSecretState) {
                         } then
                         Modifier
                             .blurCompat(blur.value, 14.dp)
-                            .padding(horizontal = 24.dp, vertical = 18.dp)
+                            .padding(vertical = 18.dp)
             ) {
                 if (state.mode == SeedSecretState.Mode.SEED) {
                     SecretSeedContent(state)
@@ -338,9 +348,15 @@ private fun Modifier.blurCompat(
 }
 
 @Composable
-private fun SecretBirthdayContent(state: SeedSecretState) {
+private fun SecretBirthdayContent(
+    state: SeedSecretState,
+    modifier: Modifier = Modifier
+) {
     Text(
-        modifier = Modifier.fillMaxWidth(),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp),
         textAlign = TextAlign.Start,
         text = state.text.getValue(),
         style = ZashiTypography.textMd,
@@ -358,14 +374,13 @@ private fun SecretSeedContent(state: SeedSecretState) {
                 .fillMaxWidth()
                 .padding(end = 8.dp),
         maxItemsInEachColumn = 8,
-        horizontalArrangement = Arrangement.SpaceBetween,
+        horizontalArrangement = Arrangement.SpaceAround,
         verticalArrangement = spacedBy(6.dp),
-        maxLines = 8
+        maxLines = 8,
+        overflow = FlowColumnOverflow.Visible,
     ) {
         state.text.getValue().split(" ").fastForEachIndexed { i, s ->
-            Row(
-                modifier = Modifier
-            ) {
+            Row {
                 Text(
                     modifier = Modifier.width(18.dp),
                     textAlign = TextAlign.End,
@@ -401,7 +416,10 @@ private fun RevealedPreview() =
                     seed =
                         SeedSecretState(
                             title = stringRes("Seed"),
-                            text = stringRes((1..24).joinToString(" ") { "trala" }),
+                            text =
+                                stringRes(
+                                    (1..24).joinToString(" ") { "trala" } + "longer_tralala"
+                                ),
                             tooltip = null,
                             isRevealed = true,
                             mode = SeedSecretState.Mode.SEED,
