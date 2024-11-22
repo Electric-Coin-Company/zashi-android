@@ -30,34 +30,41 @@ class ZashiMainTopAppBarViewModel(
 
     val navigationCommand = MutableSharedFlow<String>()
 
-    val state = isHideBalances.map {
-        createState(it)
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT), createState(false))
+    val state =
+        isHideBalances.map {
+            createState(it)
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT), createState(false))
 
-    private fun createState(it: Boolean?) = ZashiMainTopAppBarState(
-        accountType = ZashiMainTopAppBarState.AccountType.ZASHI,
-        balanceVisibilityButton = IconButtonState(
-            icon = if (it == true) R.drawable.ic_hide_balances_on else R.drawable.ic_hide_balances_off,
-            onClick = ::onShowOrHideBalancesClicked
-        ),
-        settingsButton = IconButtonState(
-            icon = R.drawable.ic_app_bar_settings,
-            onClick = ::onSettingsClicked
-        ),
-        onAccountTypeClick = ::onAccountTypeClicked
-    )
+    private fun createState(it: Boolean?) =
+        ZashiMainTopAppBarState(
+            accountType = ZashiMainTopAppBarState.AccountType.ZASHI,
+            balanceVisibilityButton =
+                IconButtonState(
+                    icon = if (it == true) R.drawable.ic_hide_balances_on else R.drawable.ic_hide_balances_off,
+                    onClick = ::onShowOrHideBalancesClicked
+                ),
+            settingsButton =
+                IconButtonState(
+                    icon = R.drawable.ic_app_bar_settings,
+                    onClick = ::onSettingsClicked
+                ),
+            onAccountTypeClick = ::onAccountTypeClicked
+        )
 
-    private fun onAccountTypeClicked() = viewModelScope.launch {
-        navigationCommand.emit(AccountListArgs.PATH)
-    }
+    private fun onAccountTypeClicked() =
+        viewModelScope.launch {
+            navigationCommand.emit(AccountListArgs.PATH)
+        }
 
-    private fun onSettingsClicked() = viewModelScope.launch {
-        navigationCommand.emit(SETTINGS)
-    }
+    private fun onSettingsClicked() =
+        viewModelScope.launch {
+            navigationCommand.emit(SETTINGS)
+        }
 
-    private fun onShowOrHideBalancesClicked() = viewModelScope.launch {
-        setBooleanPreference(StandardPreferenceKeys.IS_HIDE_BALANCES, isHideBalances.filterNotNull().first().not())
-    }
+    private fun onShowOrHideBalancesClicked() =
+        viewModelScope.launch {
+            setBooleanPreference(StandardPreferenceKeys.IS_HIDE_BALANCES, isHideBalances.filterNotNull().first().not())
+        }
 
     private fun booleanStateFlow(default: BooleanPreferenceDefault): StateFlow<Boolean?> =
         flow<Boolean?> {

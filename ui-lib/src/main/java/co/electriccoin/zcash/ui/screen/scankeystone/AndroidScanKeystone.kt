@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.scan
+package co.electriccoin.zcash.ui.screen.scankeystone
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.material3.SnackbarHostState
@@ -14,8 +14,8 @@ import co.electriccoin.zcash.ui.common.compose.LocalNavController
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.popBackStackJustOnce
-import co.electriccoin.zcash.ui.screen.scan.view.Scan
-import co.electriccoin.zcash.ui.screen.scan.viewmodel.ScanKeystoneViewModel
+import co.electriccoin.zcash.ui.screen.scankeystone.view.ScanKeystoneView
+import co.electriccoin.zcash.ui.screen.scankeystone.viewmodel.ScanKeystoneViewModel
 import co.electriccoin.zcash.ui.util.SettingsUtil
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -36,40 +36,18 @@ internal fun WrapScanKeystone() {
         navController.popBackStackJustOnce(ScanKeystoneNavigationArgs.PATH)
     }
 
-    // LaunchedEffect(Unit) {
-    //     viewModel.navigateBack.collect { scanResult ->
-    //         navController.previousBackStackEntry?.savedStateHandle?.apply {
-    //             when (scanResult) {
-    //                 is ScanResultState.Address -> set(SEND_SCAN_RECIPIENT_ADDRESS, scanResult.address)
-    //                 is ScanResultState.Zip321Uri -> set(SEND_SCAN_ZIP_321_URI, scanResult.zip321Uri)
-    //             }
-    //         }
-    //         navController.popBackStackJustOnce(ScanNavigationArgs.ROUTE)
-    //     }
-    // }
-
-    // LaunchedEffect(Unit) {
-    //     viewModel.navigateCommand.collect {
-    //         navController.popBackStack()
-    //         navController.navigate(it)
-    //     }
-    // }
-
     if (synchronizer == null) {
         // TODO [#1146]: Consider moving CircularScreenProgressIndicator from Android layer to View layer
         // TODO [#1146]: Improve this by allowing screen composition and updating it after the data is available
         // TODO [#1146]: https://github.com/Electric-Coin-Company/zashi-android/issues/1146
         CircularScreenProgressIndicator()
     } else {
-        Scan(
+        ScanKeystoneView(
             snackbarHostState = snackbarHostState,
             validationResult = state,
             onBack = { navController.popBackStackJustOnce(ScanKeystoneNavigationArgs.PATH) },
             onScanned = {
                 viewModel.onScanned(it)
-            },
-            onScanError = {
-                viewModel.onScannedError()
             },
             onOpenSettings = {
                 runCatching {

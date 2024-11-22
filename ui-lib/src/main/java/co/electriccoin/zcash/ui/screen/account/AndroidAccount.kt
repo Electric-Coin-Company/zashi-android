@@ -20,7 +20,6 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.BalanceState
 import co.electriccoin.zcash.ui.common.compose.LocalActivity
 import co.electriccoin.zcash.ui.common.compose.LocalNavController
-import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.viewmodel.HomeViewModel
@@ -44,9 +43,7 @@ import kotlinx.coroutines.launch
 import org.jetbrains.annotations.VisibleForTesting
 
 @Composable
-internal fun WrapAccount(
-    goBalances: () -> Unit,
-) {
+internal fun WrapAccount(goBalances: () -> Unit) {
     val activity = LocalActivity.current
 
     val walletViewModel = koinActivityViewModel<WalletViewModel>()
@@ -68,7 +65,6 @@ internal fun WrapAccount(
     }
 
     val walletRestoringState = walletViewModel.walletRestoringState.collectAsStateWithLifecycle().value
-
 
     val balanceState = walletViewModel.balanceState.collectAsStateWithLifecycle().value
 

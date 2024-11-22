@@ -180,7 +180,7 @@ fun ZashiSettingsListItem(
 ) {
     Row(
         modifier =
-        modifier
+            modifier
                 .clip(RoundedCornerShape(12.dp)) then
                 if (onClick != null) {
                     Modifier.clickable(

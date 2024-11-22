@@ -23,7 +23,6 @@ import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.BalanceState
 import co.electriccoin.zcash.ui.common.compose.LocalActivity
-import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.viewmodel.CheckUpdateViewModel
@@ -49,9 +48,7 @@ import kotlinx.coroutines.launch
 import org.jetbrains.annotations.VisibleForTesting
 
 @Composable
-internal fun WrapBalances(
-    goMultiTrxSubmissionFailure: () -> Unit,
-) {
+internal fun WrapBalances(goMultiTrxSubmissionFailure: () -> Unit) {
     val activity = LocalActivity.current
 
     val walletViewModel = koinActivityViewModel<WalletViewModel>()

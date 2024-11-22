@@ -11,7 +11,10 @@ import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.getValue
 
 @Composable
-fun ZashiIconButton(state: IconButtonState, modifier: Modifier = Modifier) {
+fun ZashiIconButton(
+    state: IconButtonState,
+    modifier: Modifier = Modifier
+) {
     IconButton(
         modifier = modifier,
         onClick = state.onClick

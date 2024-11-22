@@ -34,7 +34,7 @@ import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.accountlist.AccountListArgs
 import co.electriccoin.zcash.ui.screen.integrations.model.IntegrationsState
 import co.electriccoin.zcash.ui.screen.keystoneqr.KeystoneQrNavigationArgs
-import co.electriccoin.zcash.ui.screen.scan.ScanKeystoneNavigationArgs
+import co.electriccoin.zcash.ui.screen.scankeystone.ScanKeystoneNavigationArgs
 import co.electriccoin.zcash.ui.screen.send.model.RecipientAddressState
 import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SubmitResult
 import com.flexa.core.Flexa
@@ -137,17 +137,20 @@ class IntegrationsViewModel(
             backNavigationCommand.emit(Unit)
         }
 
-    private fun onOpenAccountsClicked() = viewModelScope.launch {
-        navigationCommand.emit(AccountListArgs.PATH)
-    }
+    private fun onOpenAccountsClicked() =
+        viewModelScope.launch {
+            navigationCommand.emit(AccountListArgs.PATH)
+        }
 
-    private fun onGenerateKeystoneQRClicked() = viewModelScope.launch {
-        navigationCommand.emit(KeystoneQrNavigationArgs.PATH)
-    }
+    private fun onGenerateKeystoneQRClicked() =
+        viewModelScope.launch {
+            navigationCommand.emit(KeystoneQrNavigationArgs.PATH)
+        }
 
-    private fun onScanKeystoneQRClicked() = viewModelScope.launch {
-        navigationCommand.emit(ScanKeystoneNavigationArgs.PATH)
-    }
+    private fun onScanKeystoneQRClicked() =
+        viewModelScope.launch {
+            navigationCommand.emit(ScanKeystoneNavigationArgs.PATH)
+        }
 
     private fun onBuyWithCoinbaseClicked() =
         viewModelScope.launch {

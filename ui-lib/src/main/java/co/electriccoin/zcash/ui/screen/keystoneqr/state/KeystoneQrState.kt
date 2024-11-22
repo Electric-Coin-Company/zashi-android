@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.keystoneqr
+package co.electriccoin.zcash.ui.screen.keystoneqr.state
 
 data class KeystoneQrState(
     val qrData: String,

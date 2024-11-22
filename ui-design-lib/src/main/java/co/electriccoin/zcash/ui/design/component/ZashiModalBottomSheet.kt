@@ -53,17 +53,19 @@ fun ZashiModalBottomSheet(
 @Composable
 fun ZashiModalBottomSheetDragHandle() {
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(40.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(40.dp),
         contentAlignment = Alignment.TopCenter
     ) {
         Box(
-            modifier = Modifier
-                .padding(top = 8.dp)
-                .height(6.dp)
-                .width(42.dp)
-                .background(ZashiColors.Surfaces.bgQuaternary, CircleShape)
+            modifier =
+                Modifier
+                    .padding(top = 8.dp)
+                    .height(6.dp)
+                    .width(42.dp)
+                    .background(ZashiColors.Surfaces.bgQuaternary, CircleShape)
         )
     }
 }
@@ -75,13 +77,12 @@ fun rememberModalBottomSheetState(
     skipHiddenState: Boolean = false,
     skipPartiallyExpanded: Boolean = false,
     confirmValueChange: (SheetValue) -> Boolean = { true },
-) =
-    rememberSheetState(
-        skipPartiallyExpanded = skipPartiallyExpanded,
-        confirmValueChange = confirmValueChange,
-        initialValue = initialValue,
-        skipHiddenState = skipHiddenState,
-    )
+) = rememberSheetState(
+    skipPartiallyExpanded = skipPartiallyExpanded,
+    confirmValueChange = confirmValueChange,
+    initialValue = initialValue,
+    skipHiddenState = skipHiddenState,
+)
 
 @Composable
 @ExperimentalMaterial3Api
@@ -97,12 +98,12 @@ private fun rememberSheetState(
         confirmValueChange,
         skipHiddenState,
         saver =
-        SheetState.Saver(
-            skipPartiallyExpanded = skipPartiallyExpanded,
-            confirmValueChange = confirmValueChange,
-            density = density,
-            skipHiddenState = skipHiddenState,
-        )
+            SheetState.Saver(
+                skipPartiallyExpanded = skipPartiallyExpanded,
+                confirmValueChange = confirmValueChange,
+                density = density,
+                skipHiddenState = skipHiddenState,
+            )
     ) {
         SheetState(
             skipPartiallyExpanded,
@@ -128,20 +129,22 @@ object ZashiModalBottomSheetDefaults {
 @OptIn(ExperimentalMaterial3Api::class)
 @PreviewScreens
 @Composable
-private fun ZashiModalBottomSheetPreview() = ZcashTheme {
-    val sheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = true,
-        confirmValueChange = { false },
-        skipHiddenState = true,
-        initialValue = Expanded
-    )
+private fun ZashiModalBottomSheetPreview() =
+    ZcashTheme {
+        val sheetState =
+            rememberModalBottomSheetState(
+                skipPartiallyExpanded = true,
+                confirmValueChange = { false },
+                skipHiddenState = true,
+                initialValue = Expanded
+            )
 
-    LaunchedEffect(Unit) { sheetState.show() }
+        LaunchedEffect(Unit) { sheetState.show() }
 
-    ZashiModalBottomSheet(
-        onDismissRequest = {},
-        sheetState = sheetState
-    ) {
-        Text("Content")
+        ZashiModalBottomSheet(
+            onDismissRequest = {},
+            sheetState = sheetState
+        ) {
+            Text("Content")
+        }
     }
-}

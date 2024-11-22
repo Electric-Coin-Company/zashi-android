@@ -22,7 +22,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -37,7 +36,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontStyle
@@ -54,7 +52,6 @@ import co.electriccoin.zcash.ui.common.compose.BalanceWidget
 import co.electriccoin.zcash.ui.common.compose.StatusDialog
 import co.electriccoin.zcash.ui.common.compose.SynchronizationStatus
 import co.electriccoin.zcash.ui.common.extension.asZecAmountTriple
-import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.model.changePendingBalance
@@ -62,7 +59,6 @@ import co.electriccoin.zcash.ui.common.model.hasChangePending
 import co.electriccoin.zcash.ui.common.model.hasValuePending
 import co.electriccoin.zcash.ui.common.model.spendableBalance
 import co.electriccoin.zcash.ui.common.model.valuePendingBalance
-import co.electriccoin.zcash.ui.common.test.CommonTag
 import co.electriccoin.zcash.ui.design.component.AppAlertDialog
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.BlankSurface
@@ -71,10 +67,8 @@ import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.design.component.CircularSmallProgressIndicator
 import co.electriccoin.zcash.ui.design.component.Reference
 import co.electriccoin.zcash.ui.design.component.Small
-import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.StyledBalance
 import co.electriccoin.zcash.ui.design.component.StyledBalanceDefaults
-import co.electriccoin.zcash.ui.design.component.TopAppBarHideBalancesNavigation
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiMainTopAppBar
 import co.electriccoin.zcash.ui.design.component.ZashiMainTopAppBarState

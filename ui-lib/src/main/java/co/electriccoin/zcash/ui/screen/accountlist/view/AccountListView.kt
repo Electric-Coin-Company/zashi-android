@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.accountlist
+package co.electriccoin.zcash.ui.screen.accountlist.view
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -35,6 +35,7 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.screen.accountlist.model.AccountListState
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -65,9 +66,10 @@ private fun ColumnScope.BottomSheetContent(state: AccountListState) {
         )
         Spacer(Modifier.height(24.dp))
         Column(
-            modifier = Modifier
-                .weight(1f, false)
-                .verticalScroll(rememberScrollState())
+            modifier =
+                Modifier
+                    .weight(1f, false)
+                    .verticalScroll(rememberScrollState())
         ) {
             state.accounts?.forEach {
                 ZashiSettingsListItem(
@@ -84,13 +86,15 @@ private fun ColumnScope.BottomSheetContent(state: AccountListState) {
         }
         Spacer(Modifier.height(32.dp))
         ZashiButton(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 24.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp),
             state = state.addWalletButton,
-            colors = ZashiButtonDefaults.secondaryColors(
-                borderColor = ZashiColors.Btns.Secondary.btnSecondaryBorder
-            )
+            colors =
+                ZashiButtonDefaults.secondaryColors(
+                    borderColor = ZashiColors.Btns.Secondary.btnSecondaryBorder
+                )
         )
         Spacer(modifier = Modifier.height(24.dp))
         Spacer(modifier = Modifier.windowInsetsBottomHeight(WindowInsets.systemBars))
@@ -100,26 +104,31 @@ private fun ColumnScope.BottomSheetContent(state: AccountListState) {
 @OptIn(ExperimentalMaterial3Api::class)
 @PreviewScreens
 @Composable
-private fun Preview() = ZcashTheme {
-    AccountListView(
-        state = AccountListState(
-            accounts = (1..20).map {
-                ZashiSettingsListItemState(
-                    text = stringRes("title"),
-                    subtitle = stringRes("subtitle"),
-                    icon = R.drawable.ic_radio_button_checked
+private fun Preview() =
+    ZcashTheme {
+        AccountListView(
+            state =
+                AccountListState(
+                    accounts =
+                        (1..20).map {
+                            ZashiSettingsListItemState(
+                                text = stringRes("title"),
+                                subtitle = stringRes("subtitle"),
+                                icon = R.drawable.ic_radio_button_checked
+                            )
+                        },
+                    isLoading = true,
+                    addWalletButton =
+                        ButtonState(
+                            text = stringRes("Add hardware wallet")
+                        )
+                ),
+            onDismissRequest = {},
+            sheetState =
+                rememberModalBottomSheetState(
+                    skipHiddenState = true,
+                    initialValue = SheetValue.Expanded,
+                    confirmValueChange = { false }
                 )
-            },
-            isLoading = true,
-            addWalletButton = ButtonState(
-                text = stringRes("Add hardware wallet")
-            )
-        ),
-        onDismissRequest = {},
-        sheetState = rememberModalBottomSheetState(
-            skipHiddenState = true,
-            initialValue = SheetValue.Expanded,
-            confirmValueChange = { false }
         )
-    )
-}
+    }

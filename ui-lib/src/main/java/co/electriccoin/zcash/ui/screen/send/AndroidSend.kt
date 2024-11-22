@@ -29,7 +29,6 @@ import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.compose.BalanceState
 import co.electriccoin.zcash.ui.common.compose.LocalActivity
 import co.electriccoin.zcash.ui.common.compose.LocalNavController
-import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.viewmodel.HomeViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel

@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.keystoneqr
+package co.electriccoin.zcash.ui.screen.keystoneqr.view
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
+import co.electriccoin.zcash.ui.screen.keystoneqr.state.KeystoneQrState
 import co.electriccoin.zcash.ui.screen.qrcode.util.AndroidQrCodeImageGenerator
 import co.electriccoin.zcash.ui.screen.qrcode.util.JvmQrCodeGenerator
 import kotlinx.coroutines.delay
@@ -40,7 +41,10 @@ fun KeystoneQrView(state: KeystoneQrState) {
     }
 }
 
-private fun getQrCode(address: String, size: Int): ImageBitmap {
+private fun getQrCode(
+    address: String,
+    size: Int
+): ImageBitmap {
     val qrCodePixelArray = JvmQrCodeGenerator.generate(address, size)
     return AndroidQrCodeImageGenerator.generate(qrCodePixelArray, size)
 }

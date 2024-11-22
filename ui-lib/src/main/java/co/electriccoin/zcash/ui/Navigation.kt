@@ -17,7 +17,6 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
-import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.model.ZecSend
@@ -93,10 +92,10 @@ import co.electriccoin.zcash.ui.screen.paymentrequest.model.PaymentRequestArgume
 import co.electriccoin.zcash.ui.screen.qrcode.WrapQrCode
 import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressType
 import co.electriccoin.zcash.ui.screen.request.WrapRequest
-import co.electriccoin.zcash.ui.screen.scan.ScanKeystoneNavigationArgs
 import co.electriccoin.zcash.ui.screen.scan.ScanNavigationArgs
-import co.electriccoin.zcash.ui.screen.scan.WrapScanKeystone
 import co.electriccoin.zcash.ui.screen.scan.WrapScanValidator
+import co.electriccoin.zcash.ui.screen.scankeystone.ScanKeystoneNavigationArgs
+import co.electriccoin.zcash.ui.screen.scankeystone.WrapScanKeystone
 import co.electriccoin.zcash.ui.screen.seed.SeedNavigationArgs
 import co.electriccoin.zcash.ui.screen.seed.WrapSeed
 import co.electriccoin.zcash.ui.screen.send.ext.toSerializableAddress
@@ -272,10 +271,11 @@ internal fun MainActivity.Navigation() {
         }
         dialog(
             route = AccountListArgs.PATH,
-            dialogProperties = DialogProperties(
-                dismissOnBackPress = false,
-                dismissOnClickOutside = false,
-            )
+            dialogProperties =
+                DialogProperties(
+                    dismissOnBackPress = false,
+                    dismissOnClickOutside = false,
+                )
         ) {
             AndroidAccountList()
         }

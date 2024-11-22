@@ -9,6 +9,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.ui.common.compose.LocalNavController
 import co.electriccoin.zcash.ui.design.component.rememberModalBottomSheetState
+import co.electriccoin.zcash.ui.screen.accountlist.view.AccountListView
+import co.electriccoin.zcash.ui.screen.accountlist.viewmodel.AccountListViewModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
@@ -20,9 +22,10 @@ fun AndroidAccountList() {
     val viewModel = koinViewModel<AccountListViewModel>()
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    val sheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = true,
-    )
+    val sheetState =
+        rememberModalBottomSheetState(
+            skipPartiallyExpanded = true,
+        )
 
     BackHandler {
         scope.launch {

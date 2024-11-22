@@ -1,8 +1,9 @@
-package co.electriccoin.zcash.ui.screen.keystoneqr
+package co.electriccoin.zcash.ui.screen.keystoneqr.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
+import co.electriccoin.zcash.ui.screen.keystoneqr.state.KeystoneQrState
 import com.keystone.module.SolSignRequest
 import com.keystone.sdk.KeystoneSDK
 import com.keystone.sdk.KeystoneSolanaSDK
@@ -15,20 +16,21 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 
 class KeystoneQrViewModel : ViewModel() {
-
     private val qr = genSolanaQRCode()
 
     private val currentQrPart = MutableStateFlow(qr.nextPart())
 
-    val state = currentQrPart.map {
-        KeystoneQrState(
-            qrData = it,
-            generateNextQrCode = {
-                currentQrPart.update { qr.nextPart() }
-            }
-        )
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT), null)
+    val state =
+        currentQrPart.map {
+            KeystoneQrState(
+                qrData = it,
+                generateNextQrCode = {
+                    currentQrPart.update { qr.nextPart() }
+                }
+            )
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT), null)
 
+    @Suppress("MaxLineLength", "MagicNumber")
     private fun genSolanaQRCode(): UREncoder {
         val requestId = "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
         val signData =
