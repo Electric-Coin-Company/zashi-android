@@ -10,8 +10,11 @@ directly impact users rather than highlighting other key architectural updates.*
 ## [Unreleased]
 
 ### Added
-- Flexa feature has been turned on
-- Disclaimer added to integrations screen
+- Disclaimer widget has been added to the Integrations screen
+
+### Changed
+- The Flexa integration has been turned on
+- Both the Flexa Core and Spend libraries have been bumped to version 1.0.7
 
 ### Fixed
 - The Seed screen recovery phrase has been improved to properly display on small screens
