@@ -30,8 +30,8 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.ZashiHorizontalDivider
-import co.electriccoin.zcash.ui.design.component.ZashiSettingsListItem
-import co.electriccoin.zcash.ui.design.component.ZashiSettingsListItemState
+import co.electriccoin.zcash.ui.design.component.ZashiListItem
+import co.electriccoin.zcash.ui.design.component.ZashiListItemState
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.component.ZashiVersion
@@ -71,7 +71,7 @@ fun Settings(
                     ),
         ) {
             state.items.forEachIndexed { index, item ->
-                ZashiSettingsListItem(state = item)
+                ZashiListItem(state = item)
                 if (index != state.items.lastIndex) {
                     ZashiHorizontalDivider()
                 }
@@ -197,28 +197,28 @@ private fun PreviewSettings() {
                     onBack = {},
                     items =
                         persistentListOf(
-                            ZashiSettingsListItemState(
+                            ZashiListItemState(
                                 text = stringRes(R.string.settings_address_book),
                                 icon = R.drawable.ic_settings_address_book,
                                 onClick = { },
                             ),
-                            ZashiSettingsListItemState(
+                            ZashiListItemState(
                                 text = stringRes(R.string.settings_integrations),
                                 icon = R.drawable.ic_settings_integrations,
                                 onClick = { },
                                 titleIcons = persistentListOf(R.drawable.ic_integrations_coinbase)
                             ),
-                            ZashiSettingsListItemState(
+                            ZashiListItemState(
                                 text = stringRes(R.string.settings_advanced_settings),
                                 icon = R.drawable.ic_advanced_settings,
                                 onClick = { },
                             ),
-                            ZashiSettingsListItemState(
+                            ZashiListItemState(
                                 text = stringRes(R.string.settings_about_us),
                                 icon = R.drawable.ic_settings_info,
                                 onClick = { },
                             ),
-                            ZashiSettingsListItemState(
+                            ZashiListItemState(
                                 text = stringRes(R.string.settings_feedback),
                                 icon = R.drawable.ic_settings_feedback,
                                 onClick = { },

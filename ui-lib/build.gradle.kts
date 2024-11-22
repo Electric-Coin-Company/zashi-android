@@ -43,6 +43,7 @@ android {
                     "src/main/res/ui/balances",
                     "src/main/res/ui/common",
                     "src/main/res/ui/contact",
+                    "src/main/res/ui/connect_keystone",
                     "src/main/res/ui/delete_wallet",
                     "src/main/res/ui/export_data",
                     "src/main/res/ui/home",

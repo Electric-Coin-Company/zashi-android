@@ -73,6 +73,8 @@ import co.electriccoin.zcash.ui.screen.advancedsettings.WrapAdvancedSettings
 import co.electriccoin.zcash.ui.screen.authentication.AuthenticationUseCase
 import co.electriccoin.zcash.ui.screen.authentication.WrapAuthentication
 import co.electriccoin.zcash.ui.screen.chooseserver.WrapChooseServer
+import co.electriccoin.zcash.ui.screen.connectkeystone.AndroidConnectKeystone
+import co.electriccoin.zcash.ui.screen.connectkeystone.ConnectKeystoneArgs
 import co.electriccoin.zcash.ui.screen.contact.AddContactArgs
 import co.electriccoin.zcash.ui.screen.contact.UpdateContactArgs
 import co.electriccoin.zcash.ui.screen.contact.WrapAddContact
@@ -385,6 +387,9 @@ internal fun MainActivity.Navigation() {
                     arguments = PaymentRequestArguments.fromSavedStateHandle(backStackEntry.savedStateHandle)
                 )
             }
+        }
+        composable(ConnectKeystoneArgs.PATH) {
+            AndroidConnectKeystone()
         }
     }
 }

@@ -34,6 +34,13 @@ fun AndroidAccountList() {
         }
     }
 
+    LaunchedEffect(Unit) {
+        viewModel.navigationCommand.collect {
+            sheetState.hide()
+            navController.navigate(it)
+        }
+    }
+
     state?.let {
         AccountListView(
             state = it,

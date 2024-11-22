@@ -26,9 +26,9 @@ import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.LottieProgress
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
+import co.electriccoin.zcash.ui.design.component.ZashiListItem
+import co.electriccoin.zcash.ui.design.component.ZashiListItemState
 import co.electriccoin.zcash.ui.design.component.ZashiModalBottomSheet
-import co.electriccoin.zcash.ui.design.component.ZashiSettingsListItem
-import co.electriccoin.zcash.ui.design.component.ZashiSettingsListItemState
 import co.electriccoin.zcash.ui.design.component.rememberModalBottomSheetState
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
@@ -72,7 +72,7 @@ private fun ColumnScope.BottomSheetContent(state: AccountListState) {
                     .verticalScroll(rememberScrollState())
         ) {
             state.accounts?.forEach {
-                ZashiSettingsListItem(
+                ZashiListItem(
                     modifier = Modifier.padding(horizontal = 4.dp),
                     state = it,
                 )
@@ -111,7 +111,7 @@ private fun Preview() =
                 AccountListState(
                     accounts =
                         (1..20).map {
-                            ZashiSettingsListItemState(
+                            ZashiListItemState(
                                 text = stringRes("title"),
                                 subtitle = stringRes("subtitle"),
                                 icon = R.drawable.ic_radio_button_checked

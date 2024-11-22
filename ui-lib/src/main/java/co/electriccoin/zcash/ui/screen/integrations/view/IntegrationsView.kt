@@ -28,8 +28,8 @@ import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.ZashiCard
 import co.electriccoin.zcash.ui.design.component.ZashiHorizontalDivider
-import co.electriccoin.zcash.ui.design.component.ZashiSettingsListItem
-import co.electriccoin.zcash.ui.design.component.ZashiSettingsListItemState
+import co.electriccoin.zcash.ui.design.component.ZashiListItem
+import co.electriccoin.zcash.ui.design.component.ZashiListItemState
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
@@ -67,7 +67,7 @@ fun Integrations(
                     ),
         ) {
             state.items.forEachIndexed { index, item ->
-                ZashiSettingsListItem(state = item)
+                ZashiListItem(state = item)
                 if (index != state.items.lastIndex) {
                     ZashiHorizontalDivider()
                 }
@@ -156,7 +156,7 @@ private fun IntegrationSettings() =
                     disabledInfo = stringRes("Disabled info"),
                     items =
                         persistentListOf(
-                            ZashiSettingsListItemState(
+                            ZashiListItemState(
                                 icon = R.drawable.ic_integrations_coinbase,
                                 text = stringRes("Coinbase"),
                                 subtitle = stringRes("subtitle"),

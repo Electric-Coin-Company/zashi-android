@@ -39,8 +39,8 @@ import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.design.component.ZashiBottomBar
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiHorizontalDivider
-import co.electriccoin.zcash.ui.design.component.ZashiSettingsListItem
-import co.electriccoin.zcash.ui.design.component.ZashiSettingsListTrailingItem
+import co.electriccoin.zcash.ui.design.component.ZashiListItem
+import co.electriccoin.zcash.ui.design.component.ZashiListItemDefaults
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
@@ -122,7 +122,7 @@ fun AddressBookView(
 
 @Composable
 private fun ContactItem(state: AddressBookContactState) {
-    ZashiSettingsListItem(
+    ZashiListItem(
         leading = { modifier ->
             ContactItemLeading(modifier = modifier, state = state)
         },
@@ -130,7 +130,7 @@ private fun ContactItem(state: AddressBookContactState) {
             ContactItemContent(modifier = modifier, state = state)
         },
         trailing = { modifier ->
-            ZashiSettingsListTrailingItem(
+            ZashiListItemDefaults.TrailingItem(
                 modifier = modifier,
                 isEnabled = true,
                 contentDescription = state.name.getValue()

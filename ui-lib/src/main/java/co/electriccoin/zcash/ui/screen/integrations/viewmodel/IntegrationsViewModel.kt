@@ -29,7 +29,7 @@ import co.electriccoin.zcash.ui.common.usecase.IsCoinbaseAvailableUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsFlexaAvailableUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveIsFlexaAvailableUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveWalletStateUseCase
-import co.electriccoin.zcash.ui.design.component.ZashiSettingsListItemState
+import co.electriccoin.zcash.ui.design.component.ZashiListItemState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.accountlist.AccountListArgs
 import co.electriccoin.zcash.ui.screen.integrations.model.IntegrationsState
@@ -83,7 +83,7 @@ class IntegrationsViewModel(
                 onBack = ::onBack,
                 items =
                     listOfNotNull(
-                        ZashiSettingsListItemState(
+                        ZashiListItemState(
                             // Set the wallet currency by app build is more future-proof, although we hide it from
                             // the UI in the Testnet build
                             icon = R.drawable.ic_integrations_coinbase,
@@ -95,7 +95,7 @@ class IntegrationsViewModel(
                                 ),
                             onClick = ::onBuyWithCoinbaseClicked
                         ).takeIf { isCoinbaseAvailable() },
-                        ZashiSettingsListItemState(
+                        ZashiListItemState(
                             // Set the wallet currency by app build is more future-proof, although we hide it from
                             // the UI in the Testnet build
                             isEnabled = isEnabled,
@@ -109,17 +109,17 @@ class IntegrationsViewModel(
                             subtitle = stringRes(R.string.integrations_flexa_subtitle),
                             onClick = ::onFlexaClicked
                         ).takeIf { isFlexaAvailable == true },
-                        ZashiSettingsListItemState(
+                        ZashiListItemState(
                             icon = R.drawable.ic_settings_integrations,
                             text = stringRes("Scan Keystone QR"),
                             onClick = ::onScanKeystoneQRClicked
                         ),
-                        ZashiSettingsListItemState(
+                        ZashiListItemState(
                             icon = R.drawable.ic_settings_integrations,
                             text = stringRes("Generate Keystone QR"),
                             onClick = ::onGenerateKeystoneQRClicked
                         ),
-                        ZashiSettingsListItemState(
+                        ZashiListItemState(
                             icon = R.drawable.ic_settings_integrations,
                             text = stringRes("Open Accounts"),
                             onClick = ::onOpenAccountsClicked

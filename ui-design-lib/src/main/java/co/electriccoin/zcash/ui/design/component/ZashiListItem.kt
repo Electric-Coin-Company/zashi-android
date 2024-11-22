@@ -39,19 +39,21 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
-fun ZashiSettingsListItem(
+fun ZashiListItem(
     text: String,
     @DrawableRes icon: Int,
     modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = ZashiListItemDefaults.contentPadding,
     titleIcons: ImmutableList<Int> = persistentListOf(),
     subtitle: String? = null,
     isEnabled: Boolean = true,
-    onClick: () -> Unit
+    onClick: (() -> Unit)? = null
 ) {
-    ZashiSettingsListItem(
+    ZashiListItem(
         modifier = modifier,
+        contentPadding = contentPadding,
         state =
-            ZashiSettingsListItemState(
+            ZashiListItemState(
                 text = stringRes(text),
                 subtitle = subtitle?.let { stringRes(it) },
                 isEnabled = isEnabled,
@@ -63,21 +65,23 @@ fun ZashiSettingsListItem(
 }
 
 @Composable
-fun ZashiSettingsListItem(
-    state: ZashiSettingsListItemState,
+fun ZashiListItem(
+    state: ZashiListItemState,
     modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = ZashiListItemDefaults.contentPadding,
 ) {
-    ZashiSettingsListItem(
+    ZashiListItem(
         modifier = modifier,
+        contentPadding = contentPadding,
         leading = {
-            ZashiSettingsListLeadingItem(
+            ZashiListItemDefaults.LeadingItem(
                 modifier = it,
                 icon = state.icon,
                 contentDescription = state.text.getValue()
             )
         },
         content = {
-            ZashiSettingsListContentItem(
+            ZashiListItemDefaults.ContentItem(
                 modifier = it,
                 text = state.text.getValue(),
                 subtitle = state.subtitle?.getValue(),
@@ -85,9 +89,9 @@ fun ZashiSettingsListItem(
             )
         },
         trailing = {
-            ZashiSettingsListTrailingItem(
+            ZashiListItemDefaults.TrailingItem(
                 modifier = it,
-                isEnabled = state.isEnabled,
+                isEnabled = state.isEnabled && state.onClick != null,
                 contentDescription = state.text.getValue()
             )
         },
@@ -96,7 +100,7 @@ fun ZashiSettingsListItem(
 }
 
 @Composable
-fun ZashiSettingsListLeadingItem(
+private fun ZashiListLeadingItem(
     icon: Int,
     contentDescription: String,
     modifier: Modifier = Modifier,
@@ -114,7 +118,7 @@ fun ZashiSettingsListLeadingItem(
 }
 
 @Composable
-fun ZashiSettingsListTrailingItem(
+private fun ZashiListTrailingItem(
     isEnabled: Boolean,
     contentDescription: String,
     modifier: Modifier = Modifier
@@ -133,7 +137,7 @@ fun ZashiSettingsListTrailingItem(
 }
 
 @Composable
-fun ZashiSettingsListContentItem(
+private fun ZashiListContentItem(
     text: String,
     subtitle: String?,
     titleIcons: ImmutableList<Int>,
@@ -170,12 +174,12 @@ fun ZashiSettingsListContentItem(
 }
 
 @Composable
-fun ZashiSettingsListItem(
+fun ZashiListItem(
     leading: @Composable (Modifier) -> Unit,
     content: @Composable (Modifier) -> Unit,
     trailing: @Composable (Modifier) -> Unit,
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(vertical = 12.dp),
+    contentPadding: PaddingValues = ZashiListItemDefaults.contentPadding,
     onClick: (() -> Unit)?
 ) {
     Row(
@@ -194,31 +198,56 @@ fun ZashiSettingsListItem(
                 } then Modifier.padding(contentPadding),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Spacer(modifier = Modifier.width(20.dp))
         leading(Modifier)
         Spacer(modifier = Modifier.width(16.dp))
         content(Modifier.weight(1f))
         Spacer(modifier = Modifier.width(16.dp))
         trailing(Modifier)
-        Spacer(modifier = Modifier.width(20.dp))
     }
 }
 
-data class ZashiSettingsListItemState(
+data class ZashiListItemState(
     val text: StringResource,
     @DrawableRes val icon: Int,
     val subtitle: StringResource? = null,
     val titleIcons: ImmutableList<Int> = persistentListOf(),
     val isEnabled: Boolean = true,
-    val onClick: () -> Unit = {},
+    val onClick: (() -> Unit)? = null,
 )
+
+object ZashiListItemDefaults {
+    val contentPadding: PaddingValues
+        get() = PaddingValues(horizontal = 20.dp, vertical = 12.dp)
+
+    @Composable
+    fun LeadingItem(
+        icon: Int,
+        contentDescription: String,
+        modifier: Modifier = Modifier,
+    ) = ZashiListLeadingItem(icon, contentDescription, modifier)
+
+    @Composable
+    fun TrailingItem(
+        isEnabled: Boolean,
+        contentDescription: String,
+        modifier: Modifier = Modifier
+    ) = ZashiListTrailingItem(isEnabled, contentDescription, modifier)
+
+    @Composable
+    fun ContentItem(
+        text: String,
+        subtitle: String?,
+        titleIcons: ImmutableList<Int>,
+        modifier: Modifier = Modifier,
+    ) = ZashiListContentItem(text, subtitle, titleIcons, modifier)
+}
 
 @PreviewScreens
 @Composable
 private fun EnabledPreview() =
     ZcashTheme {
         BlankSurface {
-            ZashiSettingsListItem(
+            ZashiListItem(
                 text = "Test",
                 subtitle = "Subtitle",
                 icon = R.drawable.ic_radio_button_checked,
@@ -233,7 +262,7 @@ private fun EnabledPreview() =
 private fun DisabledPreview() =
     ZcashTheme {
         BlankSurface {
-            ZashiSettingsListItem(
+            ZashiListItem(
                 text = "Test",
                 subtitle = "Subtitle",
                 icon = R.drawable.ic_radio_button_checked,

@@ -31,8 +31,8 @@ import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.VersionInfo
-import co.electriccoin.zcash.ui.design.component.ZashiSettingsListItem
-import co.electriccoin.zcash.ui.design.component.ZashiSettingsListItemState
+import co.electriccoin.zcash.ui.design.component.ZashiListItem
+import co.electriccoin.zcash.ui.design.component.ZashiListItemState
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.component.ZashiVersion
@@ -175,8 +175,8 @@ fun AboutMainContent(
 
         Spacer(Modifier.height(32.dp))
 
-        ZashiSettingsListItem(
-            ZashiSettingsListItemState(
+        ZashiListItem(
+            ZashiListItemState(
                 icon = R.drawable.ic_settings_info,
                 text = stringRes(R.string.about_button_privacy_policy),
                 onClick = onPrivacyPolicy
