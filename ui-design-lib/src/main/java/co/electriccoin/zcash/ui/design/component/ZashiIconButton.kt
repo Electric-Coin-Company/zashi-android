@@ -1,12 +1,14 @@
 package co.electriccoin.zcash.ui.design.component
 
 import androidx.annotation.DrawableRes
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.getValue
 
@@ -16,7 +18,7 @@ fun ZashiIconButton(
     modifier: Modifier = Modifier
 ) {
     IconButton(
-        modifier = modifier,
+        modifier = modifier.size(40.dp),
         onClick = state.onClick
     ) {
         Icon(

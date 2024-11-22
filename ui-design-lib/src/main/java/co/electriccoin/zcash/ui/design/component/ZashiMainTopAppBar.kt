@@ -4,8 +4,12 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
@@ -21,6 +25,7 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 @Composable
 fun ZashiMainTopAppBar(state: ZashiMainTopAppBarState) {
     ZashiSmallTopAppBar(
+        windowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top),
         hamburgerMenuActions = {
             ZashiIconButton(state.balanceVisibilityButton)
             Spacer(Modifier.width(4.dp))
@@ -32,7 +37,7 @@ fun ZashiMainTopAppBar(state: ZashiMainTopAppBarState) {
                 modifier =
                     Modifier
                         .defaultMinSize(40.dp, 40.dp)
-                        .padding(start = 20.dp)
+                        .padding(start = 16.dp)
                         .clip(RoundedCornerShape(8.dp))
                         .clickable(
                             onClick =
