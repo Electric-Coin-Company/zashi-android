@@ -67,6 +67,7 @@ val viewModelModule =
                 args = args,
                 observeAddressBookContacts = get(),
                 observeContactPicked = get(),
+                navigationRouter = get()
             )
         }
         viewModel { (address: String?) ->
@@ -75,6 +76,7 @@ val viewModelModule =
                 validateContactAddress = get(),
                 validateContactName = get(),
                 saveContact = get(),
+                navigationRouter = get()
             )
         }
         viewModelOf(::UpdateContactViewModel)

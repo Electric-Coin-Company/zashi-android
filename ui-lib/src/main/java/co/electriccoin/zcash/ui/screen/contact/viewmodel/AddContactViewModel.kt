@@ -3,6 +3,7 @@ package co.electriccoin.zcash.ui.screen.contact.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
+import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.usecase.SaveContactUseCase
 import co.electriccoin.zcash.ui.common.usecase.ValidateContactAddressUseCase
@@ -12,7 +13,6 @@ import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.contact.model.ContactState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
@@ -26,7 +26,8 @@ class AddContactViewModel(
     address: String? = null,
     private val validateContactAddress: ValidateContactAddressUseCase,
     private val validateContactName: ValidateContactNameUseCase,
-    private val saveContact: SaveContactUseCase
+    private val saveContact: SaveContactUseCase,
+    private val navigationRouter: NavigationRouter,
 ) : ViewModel() {
     private val contactAddress = MutableStateFlow(address.orEmpty())
     private val contactName = MutableStateFlow("")
@@ -131,14 +132,7 @@ class AddContactViewModel(
             initialValue = null
         )
 
-    val navigationCommand = MutableSharedFlow<String>()
-
-    val backNavigationCommand = MutableSharedFlow<Unit>()
-
-    private fun onBack() =
-        viewModelScope.launch {
-            backNavigationCommand.emit(Unit)
-        }
+    private fun onBack() = navigationRouter.back()
 
     private fun onSaveButtonClick() =
         viewModelScope.launch {
@@ -146,7 +140,7 @@ class AddContactViewModel(
 
             isSavingContact.update { true }
             saveContact(name = contactName.value, address = contactAddress.value)
-            backNavigationCommand.emit(Unit)
+            navigationRouter.back()
             isSavingContact.update { false }
         }
 }

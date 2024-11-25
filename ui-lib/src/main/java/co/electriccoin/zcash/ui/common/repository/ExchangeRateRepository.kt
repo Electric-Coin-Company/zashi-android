@@ -5,6 +5,7 @@ import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.preference.StandardPreferenceProvider
 import co.electriccoin.zcash.preference.model.entry.NullableBooleanPreferenceDefault
 import co.electriccoin.zcash.spackle.Twig
+import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.NavigationTargets.EXCHANGE_RATE_OPT_IN
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.common.wallet.RefreshLock
@@ -15,7 +16,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
@@ -36,10 +36,6 @@ import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.minutes
 
 interface ExchangeRateRepository {
-    val navigationCommand: MutableSharedFlow<String>
-
-    val backNavigationCommand: MutableSharedFlow<Unit>
-
     val isExchangeRateUsdOptedIn: StateFlow<Boolean?>
 
     val state: StateFlow<ExchangeRateState>
@@ -54,6 +50,7 @@ interface ExchangeRateRepository {
 class ExchangeRateRepositoryImpl(
     private val walletRepository: WalletRepository,
     private val standardPreferenceProvider: StandardPreferenceProvider,
+    private val navigationRouter: NavigationRouter,
 ) : ExchangeRateRepository {
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
@@ -164,10 +161,6 @@ class ExchangeRateRepositoryImpl(
             initialValue = ExchangeRateState.OptedOut
         )
 
-    override val navigationCommand = MutableSharedFlow<String>()
-
-    override val backNavigationCommand = MutableSharedFlow<Unit>()
-
     override fun refreshExchangeRateUsd() {
         refreshExchangeRateUsdInternal()
     }
@@ -182,27 +175,20 @@ class ExchangeRateRepositoryImpl(
         }
 
     override fun optInExchangeRateUsd(optIn: Boolean) {
-        scope.launch {
-            setNullableBooleanPreference(StandardPreferenceKeys.EXCHANGE_RATE_OPTED_IN, optIn)
-            backNavigationCommand.emit(Unit)
-        }
+        setNullableBooleanPreference(StandardPreferenceKeys.EXCHANGE_RATE_OPTED_IN, optIn)
+        navigationRouter.back()
     }
 
     override fun dismissOptInExchangeRateUsd() {
-        scope.launch {
-            setNullableBooleanPreference(StandardPreferenceKeys.EXCHANGE_RATE_OPTED_IN, false)
-            backNavigationCommand.emit(Unit)
-        }
+        setNullableBooleanPreference(StandardPreferenceKeys.EXCHANGE_RATE_OPTED_IN, false)
+        navigationRouter.back()
     }
 
     private fun dismissWidgetOptInExchangeRateUsd() {
         setNullableBooleanPreference(StandardPreferenceKeys.EXCHANGE_RATE_OPTED_IN, false)
     }
 
-    private fun showOptInExchangeRateUsd() =
-        scope.launch {
-            navigationCommand.emit(EXCHANGE_RATE_OPT_IN)
-        }
+    private fun showOptInExchangeRateUsd() = navigationRouter.forward(EXCHANGE_RATE_OPT_IN)
 
     private fun nullableBooleanStateFlow(default: NullableBooleanPreferenceDefault): StateFlow<Boolean?> =
         flow {

@@ -3,6 +3,7 @@ package co.electriccoin.zcash.ui.screen.addressbook.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
+import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.AddressBookContact
 import co.electriccoin.zcash.ui.common.usecase.ObserveAddressBookContactsUseCase
@@ -16,7 +17,6 @@ import co.electriccoin.zcash.ui.screen.contact.AddContactArgs
 import co.electriccoin.zcash.ui.screen.contact.UpdateContactArgs
 import co.electriccoin.zcash.ui.screen.scan.ScanNavigationArgs
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.flowOn
@@ -27,7 +27,8 @@ import kotlinx.coroutines.launch
 class AddressBookViewModel(
     observeAddressBookContacts: ObserveAddressBookContactsUseCase,
     private val args: AddressBookArgs,
-    private val observeContactPicked: ObserveContactPickedUseCase
+    private val observeContactPicked: ObserveContactPickedUseCase,
+    private val navigationRouter: NavigationRouter,
 ) : ViewModel() {
     val state =
         observeAddressBookContacts()
@@ -38,10 +39,6 @@ class AddressBookViewModel(
                 started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
                 initialValue = createState(contacts = null)
             )
-
-    val navigationCommand = MutableSharedFlow<String>()
-
-    val backNavigationCommand = MutableSharedFlow<Unit>()
 
     private fun createState(contacts: List<AddressBookContact>?) =
         AddressBookState(
@@ -80,34 +77,25 @@ class AddressBookViewModel(
                 .joinToString(separator = "")
         )
 
-    private fun onBack() =
-        viewModelScope.launch {
-            backNavigationCommand.emit(Unit)
-        }
+    private fun onBack() = navigationRouter.back()
 
     private fun onContactClick(contact: AddressBookContact) =
         viewModelScope.launch {
             when (args) {
                 AddressBookArgs.DEFAULT -> {
-                    navigationCommand.emit(UpdateContactArgs(contact.address))
+                    navigationRouter.forward(UpdateContactArgs(contact.address))
                 }
 
                 AddressBookArgs.PICK_CONTACT -> {
                     observeContactPicked.onContactPicked(contact)
-                    backNavigationCommand.emit(Unit)
+                    navigationRouter.back()
                 }
             }
         }
 
-    private fun onAddContactManuallyClick() =
-        viewModelScope.launch {
-            navigationCommand.emit(AddContactArgs(null))
-        }
+    private fun onAddContactManuallyClick() = navigationRouter.forward(AddContactArgs(null))
 
-    private fun onScanContactClick() =
-        viewModelScope.launch {
-            navigationCommand.emit(ScanNavigationArgs(ScanNavigationArgs.ADDRESS_BOOK))
-        }
+    private fun onScanContactClick() = navigationRouter.forward(ScanNavigationArgs(ScanNavigationArgs.ADDRESS_BOOK))
 }
 
 private const val ADDRESS_MAX_LENGTH = 20

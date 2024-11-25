@@ -16,6 +16,7 @@ import cash.z.ecc.android.sdk.type.AddressType
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.BuildConfig
+import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
@@ -57,9 +58,9 @@ class IntegrationsViewModel(
     private val isCoinbaseAvailable: IsCoinbaseAvailableUseCase,
     private val getSpendingKey: GetSpendingKeyUseCase,
     private val context: Context,
-    private val biometricRepository: BiometricRepository
+    private val biometricRepository: BiometricRepository,
+    private val navigationRouter: NavigationRouter
 ) : ViewModel() {
-    val backNavigationCommand = MutableSharedFlow<Unit>()
     val flexaNavigationCommand = MutableSharedFlow<Unit>()
     val coinbaseNavigationCommand = MutableSharedFlow<String>()
 
@@ -113,10 +114,7 @@ class IntegrationsViewModel(
             initialValue = null
         )
 
-    fun onBack() =
-        viewModelScope.launch {
-            backNavigationCommand.emit(Unit)
-        }
+    fun onBack() = navigationRouter.back()
 
     private fun onBuyWithCoinbaseClicked() =
         viewModelScope.launch {

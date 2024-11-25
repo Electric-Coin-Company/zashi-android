@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.spackle.getInternalCacheDirSuspend
+import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
@@ -39,6 +40,7 @@ class QrCodeViewModel(
     getAddresses: GetAddressesUseCase,
     getVersionInfo: GetVersionInfoProvider,
     private val copyToClipboard: CopyToClipboardUseCase,
+    private val navigationRouter: NavigationRouter,
 ) : ViewModel() {
     private val versionInfo by lazy { getVersionInfo() }
 
@@ -57,14 +59,9 @@ class QrCodeViewModel(
             initialValue = QrCodeState.Loading
         )
 
-    val backNavigationCommand = MutableSharedFlow<Unit>()
-
     val shareResultCommand = MutableSharedFlow<Boolean>()
 
-    private fun onBack() =
-        viewModelScope.launch {
-            backNavigationCommand.emit(Unit)
-        }
+    private fun onBack() = navigationRouter.back()
 
     private fun onQrCodeShareClick(
         bitmap: ImageBitmap,
