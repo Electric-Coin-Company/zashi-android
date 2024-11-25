@@ -58,7 +58,7 @@ fun BaseListItem(
     }
 }
 
-private fun clickableModifier(
+internal fun clickableModifier(
     interactionSource: MutableInteractionSource,
     onClick: (() -> Unit)?
 ) = if (onClick != null) {
