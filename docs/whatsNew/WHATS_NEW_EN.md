@@ -14,7 +14,7 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ### Changed
 - The Flexa integration has been turned on
-- Both the Flexa Core and Spend libraries have been bumped to version 1.0.7
+- Both the Flexa Core and Spend libraries have been bumped to version 1.0.8
 
 ### Fixed
 - The Seed screen recovery phrase has been improved to properly display on small screens
