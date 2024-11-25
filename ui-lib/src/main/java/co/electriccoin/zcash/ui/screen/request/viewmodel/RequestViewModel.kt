@@ -18,8 +18,8 @@ import co.electriccoin.zcash.ui.common.usecase.Zip321BuildUriUseCase
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.screen.qrcode.ext.fromReceiveAddressType
-import co.electriccoin.zcash.ui.screen.qrcode.util.AndroidQrCodeImageGenerator
-import co.electriccoin.zcash.ui.screen.qrcode.util.JvmQrCodeGenerator
+import co.electriccoin.zcash.ui.design.util.AndroidQrCodeImageGenerator
+import co.electriccoin.zcash.ui.design.util.JvmQrCodeGenerator
 import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressType
 import co.electriccoin.zcash.ui.screen.request.ext.convertToDouble
 import co.electriccoin.zcash.ui.screen.request.model.AmountState

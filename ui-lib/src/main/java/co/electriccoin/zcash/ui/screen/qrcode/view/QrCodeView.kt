@@ -62,8 +62,8 @@ import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.screen.qrcode.model.QrCodeState
-import co.electriccoin.zcash.ui.screen.qrcode.util.AndroidQrCodeImageGenerator
-import co.electriccoin.zcash.ui.screen.qrcode.util.JvmQrCodeGenerator
+import co.electriccoin.zcash.ui.design.util.AndroidQrCodeImageGenerator
+import co.electriccoin.zcash.ui.design.util.JvmQrCodeGenerator
 import kotlinx.coroutines.runBlocking
 import kotlin.math.roundToInt
 

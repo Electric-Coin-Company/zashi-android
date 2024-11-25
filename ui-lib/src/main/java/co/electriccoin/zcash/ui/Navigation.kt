@@ -87,8 +87,8 @@ import co.electriccoin.zcash.ui.screen.exportdata.WrapExportPrivateData
 import co.electriccoin.zcash.ui.screen.feedback.WrapFeedback
 import co.electriccoin.zcash.ui.screen.home.WrapHome
 import co.electriccoin.zcash.ui.screen.integrations.WrapIntegrations
-import co.electriccoin.zcash.ui.screen.keystoneqr.AndroidKeystoneQr
-import co.electriccoin.zcash.ui.screen.keystoneqr.KeystoneQrNavigationArgs
+import co.electriccoin.zcash.ui.screen.signkeystonetransaction.AndroidSignKeystoneTransaction
+import co.electriccoin.zcash.ui.screen.signkeystonetransaction.KeystoneSignTransactionArgs
 import co.electriccoin.zcash.ui.screen.paymentrequest.WrapPaymentRequest
 import co.electriccoin.zcash.ui.screen.paymentrequest.model.PaymentRequestArguments
 import co.electriccoin.zcash.ui.screen.qrcode.WrapQrCode
@@ -268,8 +268,8 @@ internal fun MainActivity.Navigation() {
         composable(ScanKeystoneNavigationArgs.PATH) {
             WrapScanKeystone()
         }
-        composable(KeystoneQrNavigationArgs.PATH) {
-            AndroidKeystoneQr()
+        composable(KeystoneSignTransactionArgs.PATH) {
+            AndroidSignKeystoneTransaction()
         }
         dialog(
             route = AccountListArgs.PATH,

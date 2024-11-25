@@ -42,6 +42,7 @@ dependencies {
     implementation(libs.zcash.sdk.incubator)
     implementation(projects.spackleAndroidLib)
     api(libs.lottie)
+    implementation(libs.zxing)
 
     androidTestImplementation(libs.bundles.androidx.test)
     androidTestImplementation(libs.androidx.compose.test.junit)

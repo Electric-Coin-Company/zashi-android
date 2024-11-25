@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.qrcode.util
+package co.electriccoin.zcash.ui.design.util
 
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType

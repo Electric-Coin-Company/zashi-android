@@ -33,10 +33,10 @@ import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.accountlist.AccountListArgs
 import co.electriccoin.zcash.ui.screen.integrations.model.IntegrationsState
-import co.electriccoin.zcash.ui.screen.keystoneqr.KeystoneQrNavigationArgs
 import co.electriccoin.zcash.ui.screen.scankeystone.ScanKeystoneNavigationArgs
 import co.electriccoin.zcash.ui.screen.send.model.RecipientAddressState
 import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SubmitResult
+import co.electriccoin.zcash.ui.screen.signkeystonetransaction.KeystoneSignTransactionArgs
 import com.flexa.core.Flexa
 import com.flexa.spend.Transaction
 import com.flexa.spend.buildSpend
@@ -111,19 +111,9 @@ class IntegrationsViewModel(
                         ).takeIf { isFlexaAvailable == true },
                         ZashiListItemState(
                             icon = R.drawable.ic_settings_integrations,
-                            title = stringRes("Scan Keystone QR"),
-                            onClick = ::onScanKeystoneQRClicked
-                        ),
-                        ZashiListItemState(
-                            icon = R.drawable.ic_settings_integrations,
                             title = stringRes("Generate Keystone QR"),
                             onClick = ::onGenerateKeystoneQRClicked
                         ),
-                        ZashiListItemState(
-                            icon = R.drawable.ic_settings_integrations,
-                            title = stringRes("Open Accounts"),
-                            onClick = ::onOpenAccountsClicked
-                        )
                     ).toImmutableList()
             )
         }.stateIn(
@@ -144,7 +134,7 @@ class IntegrationsViewModel(
 
     private fun onGenerateKeystoneQRClicked() =
         viewModelScope.launch {
-            navigationCommand.emit(KeystoneQrNavigationArgs.PATH)
+            navigationCommand.emit(KeystoneSignTransactionArgs.PATH)
         }
 
     private fun onScanKeystoneQRClicked() =

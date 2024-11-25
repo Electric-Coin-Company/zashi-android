@@ -15,7 +15,7 @@ import co.electriccoin.zcash.ui.screen.contact.viewmodel.AddContactViewModel
 import co.electriccoin.zcash.ui.screen.contact.viewmodel.UpdateContactViewModel
 import co.electriccoin.zcash.ui.screen.feedback.viewmodel.FeedbackViewModel
 import co.electriccoin.zcash.ui.screen.integrations.viewmodel.IntegrationsViewModel
-import co.electriccoin.zcash.ui.screen.keystoneqr.viewmodel.KeystoneQrViewModel
+import co.electriccoin.zcash.ui.screen.signkeystonetransaction.viewmodel.SignKeystoneTransactionViewModel
 import co.electriccoin.zcash.ui.screen.onboarding.viewmodel.OnboardingViewModel
 import co.electriccoin.zcash.ui.screen.paymentrequest.viewmodel.PaymentRequestViewModel
 import co.electriccoin.zcash.ui.screen.qrcode.viewmodel.QrCodeViewModel
@@ -106,7 +106,7 @@ val viewModelModule =
             )
         }
         viewModelOf(::FeedbackViewModel)
-        viewModelOf(::KeystoneQrViewModel)
+        viewModelOf(::SignKeystoneTransactionViewModel)
         viewModelOf(::AccountListViewModel)
         viewModelOf(::ZashiMainTopAppBarViewModel)
     }

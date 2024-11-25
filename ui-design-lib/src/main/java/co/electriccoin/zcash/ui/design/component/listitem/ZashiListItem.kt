@@ -196,7 +196,7 @@ data class ZashiListItemState(
 
 enum class ZashiListItemType { PRIMARY, SECONDARY }
 
-internal data class ZashiListItemColors(
+data class ZashiListItemColors(
     val borderColor: Color,
 )
 
@@ -227,12 +227,12 @@ object ZashiListItemDefaults {
     ) = ZashiListContentItem(text, subtitle, titleIcons, modifier)
 
     @Composable
-    internal fun primaryColors(borderColor: Color = Color.Unspecified): ZashiListItemColors {
+    fun primaryColors(borderColor: Color = Color.Unspecified): ZashiListItemColors {
         return ZashiListItemColors(borderColor)
     }
 
     @Composable
-    internal fun secondaryColors(borderColor: Color = ZashiColors.Surfaces.strokeSecondary): ZashiListItemColors {
+    fun secondaryColors(borderColor: Color = ZashiColors.Surfaces.strokeSecondary): ZashiListItemColors {
         return ZashiListItemColors(borderColor)
     }
 }

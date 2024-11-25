@@ -1,34 +1,44 @@
-package co.electriccoin.zcash.ui.screen.keystoneqr.viewmodel
+package co.electriccoin.zcash.ui.screen.signkeystonetransaction.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
-import co.electriccoin.zcash.ui.screen.keystoneqr.state.KeystoneQrState
+import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.design.component.ButtonState
+import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.screen.signkeystonetransaction.state.SignKeystoneTransactionState
+import co.electriccoin.zcash.ui.screen.signkeystonetransaction.state.ZashiAccountInfoListItemState
 import com.keystone.module.SolSignRequest
 import com.keystone.sdk.KeystoneSDK
 import com.keystone.sdk.KeystoneSolanaSDK
 import com.sparrowwallet.hummingbird.UREncoder
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 
-class KeystoneQrViewModel : ViewModel() {
+class SignKeystoneTransactionViewModel : ViewModel() {
     private val qr = genSolanaQRCode()
 
     private val currentQrPart = MutableStateFlow(qr.nextPart())
 
-    val state =
-        currentQrPart.map {
-            KeystoneQrState(
-                qrData = it,
-                generateNextQrCode = {
-                    currentQrPart.update { qr.nextPart() }
-                }
-            )
-        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT), null)
+    val state: StateFlow<SignKeystoneTransactionState?> = currentQrPart.map {
+        SignKeystoneTransactionState(
+            accountInfo = ZashiAccountInfoListItemState(
+                icon = R.drawable.ic_settings_info,
+                title = stringRes("title"),
+                subtitle = stringRes("subtitle"),
+            ),
+            generateNextQrCode = { currentQrPart.update { qr.nextPart() } },
+            qrData = it,
+            positiveButton = ButtonState(stringRes("Get Signature")),
+            negativeButton = ButtonState(stringRes("Reject")),
+            onBack = {}
+        )
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT), null)
 
     @Suppress("MaxLineLength", "MagicNumber")
     private fun genSolanaQRCode(): UREncoder {
