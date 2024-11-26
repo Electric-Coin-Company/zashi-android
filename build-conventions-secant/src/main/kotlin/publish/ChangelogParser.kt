@@ -15,7 +15,7 @@ object ChangelogParser {
     private const val DEBUG_LOGS_ENABLED = false
 
     private const val CHANGELOG_TITLE_POSITION = 0
-    private const val UNRELEASED_TITLE_POSITION = 4
+    private const val UNRELEASED_TITLE_POSITION = 6
 
     internal const val ENGLISH_TAG = "EN"
     internal const val SPANISH_TAG = "ES"
