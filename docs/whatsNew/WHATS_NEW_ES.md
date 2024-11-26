@@ -12,7 +12,7 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
-## [1.2.3 (796)] - 2024-11-26
+## [1.2.3 (799)] - 2024-11-26
 
 ### Añadido
 - ¡Finalmente está aquí! ¡La integración de Flexa a tu servicio!
