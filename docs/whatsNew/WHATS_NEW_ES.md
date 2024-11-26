@@ -12,14 +12,9 @@ directly impact users rather than highlighting other key architectural updates.*
 ## [1.2.3 (796)] - 2024-11-26
 
 ### Added
-- Disclaimer widget has been added to the Integrations screen
-
-### Changed
-- The Flexa integration has been turned on
-- Both the Flexa Core and Spend libraries have been bumped to version 1.0.8
-
-### Fixed
-- The Seed screen recovery phrase has been improved to properly display on small screens
+- ¡Finalmente está aquí! ¡La integración de Flexa a tu servicio!
+- Paga con Flexa en comercios compatibles en Estados Unidos, Canadá y El Salvador.
+- Te está esperando en la configuración de Zashi.
 
 ## [1.2.2 (789)] - 2024-11-18
 
