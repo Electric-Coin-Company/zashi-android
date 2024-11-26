@@ -142,7 +142,7 @@ private fun SinglePreview() =
                         title = stringRes("title"),
                         subtitle = stringRes("subtitle"),
                         icon = co.electriccoin.zcash.ui.design.R.drawable.ic_radio_button_checked,
-                        isSelected = true,
+                        isSelected = false,
                         info = ZashiExpandedCheckboxRowState(
                             title = stringRes("title"),
                             subtitle = stringRes("subtitle")
@@ -170,7 +170,7 @@ private fun MultiplePreview() =
                         title = stringRes("title"),
                         subtitle = stringRes("subtitle"),
                         icon = imageRes("1"),
-                        isSelected = false,
+                        isSelected = true,
                         onClick = {}
                     ),
                     ZashiCheckboxListItemState(

@@ -10,7 +10,7 @@ import co.electriccoin.zcash.ui.common.usecase.ObserveContactPickedUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.addressbook.AddressBookArgs
-import co.electriccoin.zcash.ui.screen.addressbook.model.AddressBookContactState
+import co.electriccoin.zcash.ui.screen.addressbook.model.AddressBookItem
 import co.electriccoin.zcash.ui.screen.addressbook.model.AddressBookState
 import co.electriccoin.zcash.ui.screen.contact.AddContactArgs
 import co.electriccoin.zcash.ui.screen.contact.UpdateContactArgs
@@ -48,7 +48,7 @@ class AddressBookViewModel(
             isLoading = contacts == null,
             contacts =
                 contacts?.map { contact ->
-                    AddressBookContactState(
+                    AddressBookItem.Contact(
                         initials = getContactInitials(contact),
                         isShielded = false,
                         name = stringRes(contact.name),
