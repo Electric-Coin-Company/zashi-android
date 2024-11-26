@@ -3,11 +3,11 @@
   <groupId>com.flexa</groupId>
   <artifactId>core</artifactId>
   <versioning>
-    <latest>1.0.8</latest>
-    <release>1.0.8</release>
+    <latest>1.0.9</latest>
+    <release>1.0.9</release>
     <versions>
-      <version>1.0.8</version>
+      <version>1.0.9</version>
     </versions>
-    <lastUpdated>20241125103837</lastUpdated>
+    <lastUpdated>20241126103837</lastUpdated>
   </versioning>
 </metadata>
