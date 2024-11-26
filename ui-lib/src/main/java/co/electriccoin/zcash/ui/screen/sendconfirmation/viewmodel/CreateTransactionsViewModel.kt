@@ -6,6 +6,10 @@ import cash.z.ecc.android.sdk.model.Proposal
 import cash.z.ecc.android.sdk.model.TransactionSubmitResult
 import cash.z.ecc.android.sdk.model.UnifiedSpendingKey
 import co.electriccoin.zcash.spackle.Twig
+import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SendConfirmationExpandedInfoState
+import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SendConfirmationState
 import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SubmitResult
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -13,6 +17,16 @@ class CreateTransactionsViewModel : ViewModel() {
     // Technically this value will not survive process dead, but will survive all possible configuration changes
     // Possible solution would be storing the value within [SavedStateHandle]
     val submissions: MutableStateFlow<List<TransactionSubmitResult>> = MutableStateFlow(emptyList())
+
+    val state = MutableStateFlow(
+        SendConfirmationState(
+            from = SendConfirmationExpandedInfoState(
+                stringRes("Sending from"),
+                R.drawable.ic_item_keystone,
+                stringRes("Keystone wallet")
+            )
+        )
+    )
 
     suspend fun runCreateTransactions(
         synchronizer: Synchronizer,

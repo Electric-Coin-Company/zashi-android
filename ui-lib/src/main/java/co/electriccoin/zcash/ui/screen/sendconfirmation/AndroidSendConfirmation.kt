@@ -128,7 +128,10 @@ internal fun WrapSendConfirmation(
             mutableStateOf(arguments.initialStage ?: SendConfirmationStage.Prepared)
         }
 
-    val submissionResults = createTransactionsViewModel.submissions.collectAsState().value.toImmutableList()
+    val submissionResults = createTransactionsViewModel
+        .submissions.collectAsStateWithLifecycle().value.toImmutableList()
+
+    val state = createTransactionsViewModel.state.collectAsStateWithLifecycle().value
 
     val onBackAction = {
         when (stage) {
@@ -255,7 +258,8 @@ internal fun WrapSendConfirmation(
             },
             topAppBarSubTitleState = topAppBarSubTitleState,
             exchangeRate = exchangeRateState,
-            contactName = foundContact.value?.name
+            contactName = foundContact.value?.name,
+            state = state
         )
 
         if (sendFundsAuthentication.value) {
