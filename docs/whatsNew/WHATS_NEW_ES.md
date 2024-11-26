@@ -14,14 +14,14 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [1.2.3 (796)] - 2024-11-26
 
-### Agregado
+### Añadido
 - ¡Finalmente está aquí! ¡La integración de Flexa a tu servicio!
 - Paga con Flexa en comercios compatibles en Estados Unidos, Canadá y El Salvador.
 - Te está esperando en la configuración de Zashi.
 
 ## [1.2.2 (789)] - 2024-11-18
 
-### Agregado
+### Añadido
 - ¡Hola!, Zashi aprendió Español.
 - Nuevo manejo de transacciones de baja denominación, esto hace transacciones más rápidas y uso eficiente del saldo.
 - Implementación de encriptado  y almacenamiento remoto de información en agenda.
@@ -32,5 +32,5 @@ directly impact users rather than highlighting other key architectural updates.*
 - Mejora en pantalla de configuración y estatus.
 - Comentarios y sugerencias mejoradas.
 
-### Arreglado
+### Corregido
 - Icono de transacciones privadas arreglado.

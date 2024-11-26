@@ -21,11 +21,11 @@ object ChangelogParser {
     internal const val SPANISH_TAG = "ES"
 
     private const val ADDED_PART_EN = "Added"
-    private const val ADDED_PART_ES = "Agregado"
+    private const val ADDED_PART_ES = "Añadido"
     private const val CHANGED_PART_EN = "Changed"
     private const val CHANGED_PART_ES = "Cambiado"
     private const val FIXED_PART_EN = "Fixed"
-    private const val FIXED_PART_ES = "Arreglado"
+    private const val FIXED_PART_ES = "Corregido"
     private const val REMOVED_PART_EN = "Removed"
     private const val REMOVED_PART_ES = "Removido"
 
