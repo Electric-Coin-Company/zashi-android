@@ -9,6 +9,8 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [1.2.3 (796)] - 2024-11-26
+
 ### Added
 - Disclaimer widget has been added to the Integrations screen
 

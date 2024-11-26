@@ -6,6 +6,8 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+## [1.2.3 (796)] - 2024-11-26
+
 ### Added
 - Disclaimer widget has been added to the Integrations screen
 
