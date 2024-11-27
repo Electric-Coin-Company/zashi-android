@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,6 +30,7 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.getValue
+import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.contact.ContactTag
 import co.electriccoin.zcash.ui.screen.contact.model.ContactState
@@ -53,12 +53,7 @@ fun ContactView(
                 modifier =
                     Modifier
                         .fillMaxSize()
-                        .padding(
-                            top = paddingValues.calculateTopPadding() + 24.dp,
-                            bottom = paddingValues.calculateBottomPadding() + 24.dp,
-                            start = 20.dp,
-                            end = 20.dp,
-                        )
+                        .scaffoldPadding(paddingValues)
             )
         }
     }
