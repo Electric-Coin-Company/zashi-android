@@ -79,13 +79,14 @@ class AddressBookRepositoryImpl(
         )
     }
 
-    override suspend fun deleteContact(contact: AddressBookContact) = mutateAddressBook {
-        Twig.info { "Address Book: deleting a contact" }
-        localAddressBookDataSource.deleteContact(
-            addressBookContact = contact,
-            addressBookKey = getAddressBookKey()
-        )
-    }
+    override suspend fun deleteContact(contact: AddressBookContact) =
+        mutateAddressBook {
+            Twig.info { "Address Book: deleting a contact" }
+            localAddressBookDataSource.deleteContact(
+                addressBookContact = contact,
+                addressBookKey = getAddressBookKey()
+            )
+        }
 
     override suspend fun resetAddressBook() =
         withNonCancellableSemaphore {
@@ -107,11 +108,12 @@ class AddressBookRepositoryImpl(
         }
     }
 
-    private suspend fun mutateAddressBook(block: suspend () -> AddressBook) = withNonCancellableSemaphore {
-        ensureSynchronization()
-        val newAddressBook = block()
-        addressBookCache.update { newAddressBook }
-    }
+    private suspend fun mutateAddressBook(block: suspend () -> AddressBook) =
+        withNonCancellableSemaphore {
+            ensureSynchronization()
+            val newAddressBook = block()
+            addressBookCache.update { newAddressBook }
+        }
 
     private suspend fun withNonCancellableSemaphore(block: suspend () -> Unit) =
         withContext(NonCancellable + Dispatchers.Default) {
