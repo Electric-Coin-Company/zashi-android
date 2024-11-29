@@ -6,7 +6,7 @@ import cash.z.ecc.android.sdk.model.Proposal
 import cash.z.ecc.android.sdk.model.TransactionSubmitResult
 import cash.z.ecc.android.sdk.model.UnifiedSpendingKey
 import co.electriccoin.zcash.spackle.Twig
-import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SendConfirmationExpandedInfoState
 import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SendConfirmationState

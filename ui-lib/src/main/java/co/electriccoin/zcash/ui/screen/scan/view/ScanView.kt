@@ -89,6 +89,7 @@ import co.electriccoin.zcash.ui.screen.scan.model.ScanScreenState
 import co.electriccoin.zcash.ui.screen.scan.model.ScanValidationState
 import co.electriccoin.zcash.ui.screen.scan.util.ImageUriToQrCodeConverter
 import co.electriccoin.zcash.ui.screen.scan.util.QrCodeAnalyzer
+import co.electriccoin.zcash.ui.screen.scankeystone.view.FramePosition
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.PermissionStatus
@@ -283,18 +284,6 @@ private fun ScanTopAppBar(
     )
 }
 
-const val CAMERA_TRANSLUCENT_BORDER = 0.5f
-
-data class FramePosition(
-    val left: Float,
-    val top: Float,
-    val right: Float,
-    val bottom: Float,
-) {
-    val width: Float = right - left
-    val height: Float = bottom - top
-}
-
 @OptIn(ExperimentalPermissionsApi::class)
 @Suppress(
     "LongMethod",
@@ -419,7 +408,7 @@ private fun ScanMainContent(
                 onScanStateChanged(ScanScreenState.Scanning)
 
                 if (!LocalInspectionMode.current) {
-                    ScanCameraView(
+                    co.electriccoin.zcash.ui.screen.scankeystone.view.ScanCameraView(
                         framePosition = framePosition,
                         isTorchOn = isTorchOn,
                         onScanned = onScanned,
@@ -448,7 +437,7 @@ private fun ScanMainContent(
                                 )
                             }
                     ) {
-                        drawRect(Color.Black.copy(alpha = CAMERA_TRANSLUCENT_BORDER))
+                        drawRect(Color.Black.copy(alpha = co.electriccoin.zcash.ui.screen.scankeystone.view.CAMERA_TRANSLUCENT_BORDER))
                     }
                 }
 
@@ -523,7 +512,7 @@ private fun ScanMainContent(
                     },
             contentAlignment = Alignment.Center
         ) {
-            ScanFrame(modifier = Modifier.fillMaxSize())
+            co.electriccoin.zcash.ui.screen.scankeystone.view.ScanFrame(modifier = Modifier.fillMaxSize())
         }
 
         Spacer(
@@ -540,17 +529,17 @@ private fun ScanMainContent(
                 Modifier
                     .constrainAs(bottomItems) { bottom.linkTo(parent.bottom) }
         ) {
-            ScanBottomItems(
+            co.electriccoin.zcash.ui.screen.scankeystone.view.ScanBottomItems(
                 validationResult = validationResult,
                 onBack = onBack,
                 onOpenSettings = onOpenSettings,
                 scanState = scanState,
                 modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(
-                            horizontal = 24.dp
-                        )
+                Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        horizontal = 24.dp
+                    )
             )
         }
     }

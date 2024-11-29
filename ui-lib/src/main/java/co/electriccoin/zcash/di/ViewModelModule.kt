@@ -9,6 +9,7 @@ import co.electriccoin.zcash.ui.screen.account.viewmodel.TransactionHistoryViewM
 import co.electriccoin.zcash.ui.screen.accountlist.viewmodel.AccountListViewModel
 import co.electriccoin.zcash.ui.screen.addressbook.AddressBookArgs
 import co.electriccoin.zcash.ui.screen.addressbook.viewmodel.AddressBookViewModel
+import co.electriccoin.zcash.ui.screen.addressbook.viewmodel.SelectRecipientViewModel
 import co.electriccoin.zcash.ui.screen.advancedsettings.viewmodel.AdvancedSettingsViewModel
 import co.electriccoin.zcash.ui.screen.chooseserver.ChooseServerViewModel
 import co.electriccoin.zcash.ui.screen.contact.viewmodel.AddContactViewModel
@@ -66,13 +67,8 @@ val viewModelModule =
             )
         }
         viewModelOf(::ChooseServerViewModel)
-        viewModel { (args: AddressBookArgs) ->
-            AddressBookViewModel(
-                args = args,
-                observeAddressBookContacts = get(),
-                observeContactPicked = get(),
-            )
-        }
+        viewModelOf(::AddressBookViewModel)
+        viewModelOf(::SelectRecipientViewModel)
         viewModel { (address: String?) ->
             AddContactViewModel(
                 address = address,

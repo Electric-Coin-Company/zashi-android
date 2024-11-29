@@ -154,7 +154,8 @@ private fun PopupContentPreview() =
                     manualButton =
                         ButtonState(
                             text = stringRes("Manual entry"),
-                        )
+                        ),
+                    title = stringRes("Address book")
                 ),
             onDismissRequest = {}
         )

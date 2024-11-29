@@ -42,7 +42,7 @@ fun ZashiListItem(
     title: String,
     @DrawableRes icon: Int,
     modifier: Modifier = Modifier,
-    type: ZashiListItemType = ZashiListItemType.PRIMARY,
+    type: ZashiListItemDesignType = ZashiListItemDesignType.PRIMARY,
     contentPadding: PaddingValues = ZashiListItemDefaults.contentPadding,
     titleIcons: ImmutableList<Int> = persistentListOf(),
     subtitle: String? = null,
@@ -60,7 +60,7 @@ fun ZashiListItem(
                 onClick = onClick,
                 icon = icon,
                 titleIcons = titleIcons,
-                type = type
+                design = type
             ),
     )
 }
@@ -72,9 +72,9 @@ fun ZashiListItem(
     contentPadding: PaddingValues = ZashiListItemDefaults.contentPadding,
 ) {
     val colors =
-        when (state.type) {
-            ZashiListItemType.PRIMARY -> ZashiListItemDefaults.primaryColors()
-            ZashiListItemType.SECONDARY -> ZashiListItemDefaults.secondaryColors()
+        when (state.design) {
+            ZashiListItemDesignType.PRIMARY -> ZashiListItemDefaults.primaryColors()
+            ZashiListItemDesignType.SECONDARY -> ZashiListItemDefaults.secondaryColors()
         }
 
     BaseListItem(
@@ -187,14 +187,12 @@ private fun ZashiListContentItem(
 data class ZashiListItemState(
     val title: StringResource,
     @DrawableRes val icon: Int,
-    val type: ZashiListItemType = ZashiListItemType.PRIMARY,
+    val design: ZashiListItemDesignType = ZashiListItemDesignType.PRIMARY,
     val subtitle: StringResource? = null,
     val titleIcons: ImmutableList<Int> = persistentListOf(),
     val isEnabled: Boolean = true,
     val onClick: (() -> Unit)? = null,
 )
-
-enum class ZashiListItemType { PRIMARY, SECONDARY }
 
 data class ZashiListItemColors(
     val borderColor: Color,
@@ -274,7 +272,7 @@ private fun SecondaryPreview() =
                 ZashiListItem(
                     title = "Test",
                     subtitle = "Subtitle",
-                    type = ZashiListItemType.SECONDARY,
+                    type = ZashiListItemDesignType.SECONDARY,
                     icon = R.drawable.ic_radio_button_checked,
                     onClick = {},
                     titleIcons = persistentListOf(R.drawable.ic_radio_button_checked)
@@ -282,7 +280,7 @@ private fun SecondaryPreview() =
                 ZashiListItem(
                     title = "Test",
                     subtitle = "Subtitle",
-                    type = ZashiListItemType.SECONDARY,
+                    type = ZashiListItemDesignType.SECONDARY,
                     icon = R.drawable.ic_radio_button_checked,
                     isEnabled = false,
                     onClick = {},

@@ -7,6 +7,7 @@ import co.electriccoin.zcash.ui.screen.scan.model.ScanValidationState
 import com.google.gson.Gson
 import com.keystone.sdk.KeystoneSDK
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock

@@ -8,7 +8,7 @@ object ZashiMainTopAppBarStateFixture {
     fun new() =
         ZashiMainTopAppBarState(
             accountType = ZashiMainTopAppBarState.AccountType.ZASHI,
-            balanceVisibilityButton = IconButtonState(R.drawable.ic_hide_balances_on) {},
+            balanceVisibilityButton = IconButtonState(R.drawable.ic_app_bar_balances_hide) {},
             settingsButton = IconButtonState(R.drawable.ic_app_bar_settings) {},
             onAccountTypeClick = {}
         )

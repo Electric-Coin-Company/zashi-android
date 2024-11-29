@@ -3,9 +3,8 @@ package co.electriccoin.zcash.ui.screen.accountlist.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
-import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemState
-import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemType
+import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemDesignType
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.accountlist.model.AccountListItem
 import co.electriccoin.zcash.ui.screen.accountlist.model.AccountListState
@@ -18,6 +17,8 @@ import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import co.electriccoin.zcash.ui.design.R
+
 
 class AccountListViewModel : ViewModel() {
     private val isLoading = MutableStateFlow(true)
@@ -33,7 +34,7 @@ class AccountListViewModel : ViewModel() {
                             ZashiAccountListItemState(
                                 title = stringRes("Zashi"),
                                 subtitle = stringRes("u1078r23uvtj8xj6dpdx..."),
-                                icon = co.electriccoin.zcash.ui.R.drawable.ic_item_zashi,
+                                icon = R.drawable.ic_item_zashi,
                                 isSelected = true,
                                 onClick = {}
                             )
@@ -42,18 +43,13 @@ class AccountListViewModel : ViewModel() {
                             ZashiListItemState(
                                 title = stringRes("Keystone Hardware Wallet"),
                                 subtitle = stringRes("Get a Keystone Hardware Wallet and secure your Zcash."),
-                                icon = co.electriccoin.zcash.ui.R.drawable.ic_item_keystone,
-                                type = ZashiListItemType.SECONDARY,
+                                icon = R.drawable.ic_item_keystone,
+                                design = ZashiListItemDesignType.SECONDARY,
                                 onClick = ::onAddWalletButtonClicked
                             )
                         )
                     ),
                 isLoading = isLoading,
-                addWalletButton =
-                    ButtonState(
-                        text = stringRes("Add hardware wallet"),
-                        onClick = ::onAddWalletButtonClicked
-                    )
             )
         }.stateIn(
             scope = viewModelScope,

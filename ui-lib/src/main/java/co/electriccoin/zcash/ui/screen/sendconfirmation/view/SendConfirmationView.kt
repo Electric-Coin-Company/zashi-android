@@ -740,6 +740,7 @@ private fun SendConfirmationContent(
                 modifier = Modifier.weight(1f),
                 text = stringResource(R.string.send_confirmation_amount_item),
                 style = ZashiTypography.textSm,
+                fontWeight = FontWeight.Medium,
                 color = ZashiColors.Text.textTertiary
             )
 
@@ -765,6 +766,7 @@ private fun SendConfirmationContent(
                 modifier = Modifier.weight(1f),
                 text = stringResource(R.string.send_confirmation_fee),
                 style = ZashiTypography.textSm,
+                fontWeight = FontWeight.Medium,
                 color = ZashiColors.Text.textTertiary
             )
 
@@ -795,6 +797,7 @@ private fun SendConfirmationContent(
             Text(
                 stringResource(R.string.send_confirmation_memo),
                 style = ZashiTypography.textSm,
+                fontWeight = FontWeight.Medium,
                 color = ZashiColors.Text.textTertiary
             )
 

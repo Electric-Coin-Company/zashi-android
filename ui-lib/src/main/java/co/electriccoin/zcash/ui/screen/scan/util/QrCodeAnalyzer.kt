@@ -4,7 +4,7 @@ import android.graphics.ImageFormat
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import co.electriccoin.zcash.spackle.Twig
-import co.electriccoin.zcash.ui.screen.scan.view.FramePosition
+import co.electriccoin.zcash.ui.screen.scankeystone.view.FramePosition
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.BinaryBitmap
 import com.google.zxing.DecodeHintType

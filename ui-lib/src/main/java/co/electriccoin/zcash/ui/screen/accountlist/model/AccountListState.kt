@@ -1,14 +1,12 @@
 package co.electriccoin.zcash.ui.screen.accountlist.model
 
 import androidx.annotation.DrawableRes
-import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemState
 import co.electriccoin.zcash.ui.design.util.StringResource
 
 data class AccountListState(
     val items: List<AccountListItem>?,
     val isLoading: Boolean,
-    val addWalletButton: ButtonState
 )
 
 data class ZashiAccountListItemState(

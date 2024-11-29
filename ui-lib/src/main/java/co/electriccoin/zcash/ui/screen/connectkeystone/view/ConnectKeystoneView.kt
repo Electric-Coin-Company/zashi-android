@@ -33,6 +33,7 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.HyperBlue
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import co.electriccoin.zcash.ui.design.util.orDark
 import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.screen.connectkeystone.model.ConnectKeystoneState
 
@@ -49,10 +50,10 @@ fun ConnectKeystoneView(state: ConnectKeystoneState) {
     ) {
         Column(
             modifier =
-                Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .scaffoldPadding(it)
+            Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .scaffoldPadding(it)
         ) {
             HeaderSection(state)
             Spacer(Modifier.height(24.dp))
@@ -65,92 +66,93 @@ fun ConnectKeystoneView(state: ConnectKeystoneState) {
 }
 
 @Composable
-private fun ColumnScope.BottomSection(state: ConnectKeystoneState) {
-    Image(
-        modifier = Modifier.fillMaxWidth(),
-        painter = painterResource(id = R.drawable.image_keystone_security),
-        contentDescription = null
-    )
-    Spacer(Modifier.height(24.dp))
-    ZashiButton(
-        modifier = Modifier.fillMaxWidth(),
-        text = "Continue",
-        onClick = state.onContinueClick
-    )
+private fun BottomSection(state: ConnectKeystoneState) {
+    Column {
+        ZashiButton(
+            modifier = Modifier.fillMaxWidth(),
+            text = "Continue",
+            onClick = state.onContinueClick
+        )
+    }
 }
 
 @Composable
-private fun ColumnScope.HowToConnectSection() {
-    Text(
-        "How to connect:",
-        style = ZashiTypography.textLg,
-        color = ZashiColors.Text.textPrimary,
-        fontWeight = FontWeight.SemiBold
-    )
-    Spacer(Modifier.height(4.dp))
-    ZashiListItem(
-        title = "Unlock your Keystone",
-        contentPadding = PaddingValues(top = 8.dp, end = 20.dp, bottom = 8.dp),
-        icon = R.drawable.ic_connect_keystone_1
-    )
-    ZashiListItem(
-        title = "Tap the menu icon",
-        contentPadding = PaddingValues(top = 8.dp, end = 20.dp, bottom = 8.dp),
-        icon = R.drawable.ic_connect_keystone_2
-    )
-    ZashiListItem(
-        title = "Select Watch-only Wallet",
-        contentPadding = PaddingValues(top = 8.dp, end = 20.dp, bottom = 8.dp),
-        icon = R.drawable.ic_connect_keystone_3
-    )
-    ZashiListItem(
-        title = "Select Zashi app",
-        contentPadding = PaddingValues(top = 8.dp, end = 20.dp, bottom = 8.dp),
-        icon = R.drawable.ic_connect_keystone_4
-    )
+private fun HowToConnectSection() {
+    val listItemContentPadding = PaddingValues(top = 8.dp, end = 20.dp, bottom = 8.dp)
+    Column {
+        Text(
+            "How to connect:",
+            style = ZashiTypography.textLg,
+            color = ZashiColors.Text.textPrimary,
+            fontWeight = FontWeight.SemiBold
+        )
+        Spacer(Modifier.height(8.dp))
+        ZashiListItem(
+            title = "Unlock your Keystone",
+            contentPadding = listItemContentPadding,
+            icon = R.drawable.ic_connect_keystone_1
+        )
+        ZashiListItem(
+            title = "Tap the menu icon",
+            contentPadding = listItemContentPadding,
+            icon = R.drawable.ic_connect_keystone_2
+        )
+        ZashiListItem(
+            title = "Select Watch-only Wallet",
+            contentPadding = listItemContentPadding,
+            icon = R.drawable.ic_connect_keystone_3
+        )
+        ZashiListItem(
+            title = "Select Zashi app",
+            contentPadding = listItemContentPadding,
+            icon = R.drawable.ic_connect_keystone_4
+        )
+    }
 }
 
 @Composable
-private fun ColumnScope.HeaderSection(state: ConnectKeystoneState) {
-    Image(
-        modifier = Modifier.height(32.dp),
-        painter = painterResource(R.drawable.image_keystone_header),
-        contentDescription = null
-    )
-    Spacer(Modifier.height(24.dp))
-    Text(
-        "Connect Hardware Wallet",
-        style = ZashiTypography.header6,
-        color = ZashiColors.Text.textPrimary,
-        fontWeight = FontWeight.SemiBold
-    )
-    Spacer(Modifier.height(8.dp))
-    Text(
-        buildAnnotatedString {
-            append("Connect an airgapped hardware wallet that communicates through QR-code.")
-            appendLine()
-            appendLine()
-            append("Have questions?")
-            appendLine()
-            withLink(
-                LinkAnnotation.Clickable("CLICKABLE") { state.onViewKeystoneTutorialClicked() }
-            ) {
-                withStyle(
-                    style = ZashiTypography.textSm
-                        .copy(
-                            textDecoration = TextDecoration.Underline,
-                            fontWeight = FontWeight.SemiBold,
-                            color = HyperBlue.`700`,
-                        )
-                        .toSpanStyle()
+private fun HeaderSection(state: ConnectKeystoneState) {
+    Column {
+        Image(
+            modifier = Modifier.height(32.dp),
+            painter = painterResource(co.electriccoin.zcash.ui.design.R.drawable.image_keystone),
+            contentDescription = null
+        )
+        Spacer(Modifier.height(24.dp))
+        Text(
+            "Connect Hardware Wallet",
+            style = ZashiTypography.header6,
+            color = ZashiColors.Text.textPrimary,
+            fontWeight = FontWeight.SemiBold
+        )
+        Spacer(Modifier.height(8.dp))
+        Text(
+            buildAnnotatedString {
+                append("Connect an airgapped hardware wallet that communicates through QR-code.")
+                appendLine()
+                appendLine()
+                append("Have questions?")
+                appendLine()
+                withLink(
+                    LinkAnnotation.Clickable("CLICKABLE") { state.onViewKeystoneTutorialClicked() }
                 ) {
-                    append("View Keystone tutorial")
+                    withStyle(
+                        style = ZashiTypography.textSm
+                            .copy(
+                                textDecoration = TextDecoration.Underline,
+                                fontWeight = FontWeight.SemiBold,
+                                color = HyperBlue.`700` orDark HyperBlue.`400`,
+                            )
+                            .toSpanStyle()
+                    ) {
+                        append("View Keystone tutorial")
+                    }
                 }
-            }
-        },
-        style = ZashiTypography.textSm,
-        color = ZashiColors.Text.textTertiary,
-    )
+            },
+            style = ZashiTypography.textSm,
+            color = ZashiColors.Text.textTertiary,
+        )
+    }
 }
 
 @PreviewScreens

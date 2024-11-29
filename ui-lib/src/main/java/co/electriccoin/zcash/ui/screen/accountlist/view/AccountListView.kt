@@ -3,7 +3,6 @@ package co.electriccoin.zcash.ui.screen.accountlist.view
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
@@ -21,16 +20,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.design.R
-import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.LottieProgress
-import co.electriccoin.zcash.ui.design.component.ZashiButton
-import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
 import co.electriccoin.zcash.ui.design.component.ZashiModalBottomSheet
 import co.electriccoin.zcash.ui.design.component.listitem.BaseListItem
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItem
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemDefaults
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemState
-import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemType
+import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemDesignType
 import co.electriccoin.zcash.ui.design.component.rememberModalBottomSheetState
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
@@ -102,18 +98,6 @@ private fun BottomSheetContent(state: AccountListState) {
                 )
             }
         }
-        Spacer(Modifier.height(32.dp))
-        ZashiButton(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp),
-            state = state.addWalletButton,
-            colors =
-                ZashiButtonDefaults.secondaryColors(
-                    borderColor = ZashiColors.Btns.Secondary.btnSecondaryBorder
-                )
-        )
         Spacer(modifier = Modifier.height(24.dp))
         Spacer(modifier = Modifier.windowInsetsBottomHeight(WindowInsets.systemBars))
     }
@@ -169,7 +153,7 @@ private fun Preview() =
                                 ZashiAccountListItemState(
                                     title = stringRes("Zashi"),
                                     subtitle = stringRes("u1078r23uvtj8xj6dpdx..."),
-                                    icon = co.electriccoin.zcash.ui.R.drawable.ic_item_zashi,
+                                    icon = R.drawable.ic_item_zashi,
                                     isSelected = true,
                                     onClick = {}
                                 )
@@ -178,17 +162,13 @@ private fun Preview() =
                                 ZashiListItemState(
                                     title = stringRes("Keystone Hardware Wallet"),
                                     subtitle = stringRes("Get a Keystone Hardware Wallet and secure your Zcash."),
-                                    icon = co.electriccoin.zcash.ui.R.drawable.ic_item_keystone,
-                                    type = ZashiListItemType.SECONDARY,
+                                    icon = R.drawable.ic_item_keystone,
+                                    design = ZashiListItemDesignType.SECONDARY,
                                     onClick = {}
                                 )
                             )
                         ),
                     isLoading = true,
-                    addWalletButton =
-                        ButtonState(
-                            text = stringRes("Add hardware wallet")
-                        )
                 ),
             onDismissRequest = {},
             sheetState =

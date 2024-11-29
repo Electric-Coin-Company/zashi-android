@@ -6,13 +6,13 @@ import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.AddressBookContact
 import co.electriccoin.zcash.ui.common.usecase.ObserveAddressBookContactsUseCase
+import co.electriccoin.zcash.ui.common.usecase.ObserveContactPickedUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiContactListItemState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.addressbook.model.AddressBookItem
 import co.electriccoin.zcash.ui.screen.addressbook.model.AddressBookState
 import co.electriccoin.zcash.ui.screen.contact.AddContactArgs
-import co.electriccoin.zcash.ui.screen.contact.UpdateContactArgs
 import co.electriccoin.zcash.ui.screen.scan.ScanNavigationArgs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -23,8 +23,9 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class AddressBookViewModel(
+class SelectRecipientViewModel(
     observeAddressBookContacts: ObserveAddressBookContactsUseCase,
+    private val observeContactPicked: ObserveContactPickedUseCase
 ) : ViewModel() {
     val state =
         observeAddressBookContacts()
@@ -43,8 +44,8 @@ class AddressBookViewModel(
     private fun createState(contacts: List<AddressBookContact>?) =
         AddressBookState(
             isLoading = contacts == null,
-            contacts =
-                contacts?.map { contact ->
+            contacts = if (contacts != null) {
+                listOf(AddressBookItem.Title(stringRes("Contacts"))) + contacts.map { contact ->
                     AddressBookItem.Contact(
                         ZashiContactListItemState(
                             initials = getContactInitials(contact),
@@ -54,19 +55,22 @@ class AddressBookViewModel(
                             onClick = { onContactClick(contact) }
                         )
                     )
-                }.orEmpty(),
+                }
+            } else {
+                listOf(AddressBookItem.Empty)
+            },
             onBack = ::onBack,
             manualButton =
-                ButtonState(
-                    onClick = ::onAddContactManuallyClick,
-                    text = stringRes(R.string.address_book_manual_btn)
-                ),
+            ButtonState(
+                onClick = ::onAddContactManuallyClick,
+                text = stringRes(R.string.address_book_manual_btn)
+            ),
             scanButton =
-                ButtonState(
-                    onClick = ::onScanContactClick,
-                    text = stringRes(R.string.address_book_scan_btn)
-                ),
-            title = stringRes(R.string.address_book_title)
+            ButtonState(
+                onClick = ::onScanContactClick,
+                text = stringRes(R.string.address_book_scan_btn)
+            ),
+            title = stringRes("Select recipient")
         )
 
     private fun getContactInitials(contact: AddressBookContact) =
@@ -87,7 +91,8 @@ class AddressBookViewModel(
 
     private fun onContactClick(contact: AddressBookContact) =
         viewModelScope.launch {
-            navigationCommand.emit(UpdateContactArgs(contact.address))
+            observeContactPicked.onContactPicked(contact)
+            backNavigationCommand.emit(Unit)
         }
 
     private fun onAddContactManuallyClick() =
@@ -100,5 +105,3 @@ class AddressBookViewModel(
             navigationCommand.emit(ScanNavigationArgs(ScanNavigationArgs.ADDRESS_BOOK))
         }
 }
-
-internal const val ADDRESS_MAX_LENGTH = 20

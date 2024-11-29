@@ -18,7 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.ZashiBadge
@@ -150,7 +150,7 @@ private fun Preview() = ZcashTheme {
     SignKeystoneTransactionView(
         state = SignKeystoneTransactionState(
             accountInfo = ZashiAccountInfoListItemState(
-                icon = R.drawable.ic_settings_info,
+                icon = R.drawable.ic_item_keystone,
                 title = stringRes("title"),
                 subtitle = stringRes("subtitle"),
             ),

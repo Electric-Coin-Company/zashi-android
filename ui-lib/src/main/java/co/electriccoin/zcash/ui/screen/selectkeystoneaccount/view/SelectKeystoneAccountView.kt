@@ -15,7 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.design.R
+
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.ZashiButton
@@ -109,7 +110,7 @@ private fun HeaderSection(state: SelectKeystoneAccountState, modifier: Modifier 
     Column(modifier) {
         Image(
             modifier = Modifier.height(32.dp),
-            painter = painterResource(R.drawable.image_keystone_header),
+            painter = painterResource(R.drawable.image_keystone),
             contentDescription = null
         )
         Spacer(Modifier.height(24.dp))
@@ -141,7 +142,7 @@ private fun SinglePreview() =
                     ZashiExpandedCheckboxListItemState(
                         title = stringRes("title"),
                         subtitle = stringRes("subtitle"),
-                        icon = co.electriccoin.zcash.ui.design.R.drawable.ic_radio_button_checked,
+                        icon = R.drawable.ic_item_zashi,
                         isSelected = false,
                         info = ZashiExpandedCheckboxRowState(
                             title = stringRes("title"),
