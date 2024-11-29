@@ -77,7 +77,6 @@ private fun ReceivePreview() =
                     isTestnet = false,
                     onAddressCopy = {},
                     onQrCode = {},
-                    onSettings = {},
                     onRequest = {},
                 ),
             snackbarHostState = SnackbarHostState(),

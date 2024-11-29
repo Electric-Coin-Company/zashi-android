@@ -39,7 +39,6 @@ class ReceiveViewModel(
                 },
                 onQrCode = { addressType -> onQrCodeClick(addressType) },
                 onRequest = { addressType -> onRequestClick(addressType) },
-                onSettings = ::onSettingsClick,
             )
         }.stateIn(
             scope = viewModelScope,
@@ -57,10 +56,5 @@ class ReceiveViewModel(
     private fun onQrCodeClick(addressType: ReceiveAddressType) =
         viewModelScope.launch {
             navigationCommand.emit("${NavigationTargets.QR_CODE}/${addressType.ordinal}")
-        }
-
-    private fun onSettingsClick() =
-        viewModelScope.launch {
-            navigationCommand.emit(NavigationTargets.SETTINGS)
         }
 }
