@@ -15,19 +15,19 @@ import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.popBackStackJustOnce
 import co.electriccoin.zcash.ui.screen.scankeystone.view.ScanKeystoneView
-import co.electriccoin.zcash.ui.screen.scankeystone.viewmodel.ScanKeystoneViewModel
+import co.electriccoin.zcash.ui.screen.scankeystone.viewmodel.ScanKeystoneSignInRequestViewModel
 import co.electriccoin.zcash.ui.util.SettingsUtil
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-internal fun WrapScanKeystone() {
+internal fun WrapScanKeystoneSignInRequestViewModel() {
     val navController = LocalNavController.current
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
     val walletViewModel = koinActivityViewModel<WalletViewModel>()
-    val viewModel = koinViewModel<ScanKeystoneViewModel>()
+    val viewModel = koinViewModel<ScanKeystoneSignInRequestViewModel>()
     val synchronizer = walletViewModel.synchronizer.collectAsStateWithLifecycle().value
     val walletState = walletViewModel.walletStateInformation.collectAsStateWithLifecycle().value
     val state by viewModel.state.collectAsStateWithLifecycle()

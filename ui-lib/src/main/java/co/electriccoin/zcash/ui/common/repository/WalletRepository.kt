@@ -1,8 +1,6 @@
 package co.electriccoin.zcash.ui.common.repository
 
 import android.app.Application
-import cash.z.ecc.android.bip39.Mnemonics
-import cash.z.ecc.android.bip39.toSeed
 import cash.z.ecc.android.sdk.SdkSynchronizer
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.WalletCoordinator
@@ -12,7 +10,6 @@ import cash.z.ecc.android.sdk.model.PercentDecimal
 import cash.z.ecc.android.sdk.model.PersistableWallet
 import cash.z.ecc.android.sdk.model.UnifiedSpendingKey
 import cash.z.ecc.android.sdk.model.WalletAddresses
-import cash.z.ecc.android.sdk.tool.DerivationTool
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.lightwallet.client.model.LightWalletEndpoint
 import co.electriccoin.zcash.preference.EncryptedPreferenceProvider
@@ -61,7 +58,6 @@ import kotlinx.coroutines.flow.withIndex
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlinx.coroutines.withContext
 import kotlin.time.Duration.Companion.seconds
 
 interface WalletRepository {
@@ -74,11 +70,11 @@ interface WalletRepository {
     val persistableWallet: Flow<PersistableWallet?>
     val onboardingState: Flow<OnboardingState>
 
-    val allAccounts: StateFlow<List<WalletAccount>?>
-    val currentAccount: StateFlow<WalletAccount?>
+    val allAccounts: Flow<List<WalletAccount>?>
+    val currentAccount: Flow<WalletAccount?>
     val currentAddresses: StateFlow<WalletAddresses?>
     val currentWalletSnapshot: StateFlow<WalletSnapshot?>
-    val currentSpendingKey: StateFlow<UnifiedSpendingKey?>
+    val zashiSpendingKey: Flow<UnifiedSpendingKey?>
 
     /**
      * A flow of the wallet block synchronization state.
@@ -131,7 +127,7 @@ class WalletRepositoryImpl(
                 }
             )
         }
-    override val currentAccount: StateFlow<WalletAccount?> = accountDataSource.selectedAccount
+    override val currentAccount: Flow<WalletAccount?> = accountDataSource.selectedAccount
 
     override val synchronizer: StateFlow<Synchronizer?> = walletCoordinator.synchronizer
 
@@ -161,26 +157,7 @@ class WalletRepositoryImpl(
             initialValue = SecretState.Loading
         )
 
-    override val currentSpendingKey =
-        secretState
-            .filterIsInstance<SecretState.Ready>()
-            .map { it.persistableWallet }
-            .map {
-                // val bip39Seed =
-                //     withContext(Dispatchers.IO) {
-                //         Mnemonics.MnemonicCode(it.seedPhrase.joinToString()).toSeed()
-                //     }
-                // DerivationTool.getInstance().deriveUnifiedSpendingKey(
-                //     seed = bip39Seed,
-                //     network = it.network,
-                //     accountIndex = 0,
-                // )
-                null
-            }.stateIn(
-                scope = scope,
-                started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-                initialValue = null
-            )
+    override val zashiSpendingKey = accountDataSource.zashiAccount.map { it?.spendingKey }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override val fastestServers =

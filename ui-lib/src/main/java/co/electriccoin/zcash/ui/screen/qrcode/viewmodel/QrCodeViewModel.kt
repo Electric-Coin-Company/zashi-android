@@ -11,8 +11,9 @@ import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.spackle.getInternalCacheDirSuspend
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.VersionInfo
-import co.electriccoin.zcash.ui.common.model.WalletAccount
+import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
 import co.electriccoin.zcash.ui.common.usecase.CopyToClipboardUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetAddressesUseCase
@@ -53,8 +54,8 @@ class QrCodeViewModel(
                 onQrCodeShare = { onQrCodeShareClick(it, versionInfo) },
                 onBack = ::onBack,
                 qrCodeType = when (wallet) {
-                    is WalletAccount.Keystone -> QrCodeType.KEYSTONE
-                    is WalletAccount.Zashi -> QrCodeType.ZASHI
+                    is KeystoneAccount -> QrCodeType.KEYSTONE
+                    is ZashiAccount -> QrCodeType.ZASHI
                     null -> QrCodeType.ZASHI
                 }
             )

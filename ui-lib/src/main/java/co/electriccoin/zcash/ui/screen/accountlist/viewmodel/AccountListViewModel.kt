@@ -3,7 +3,9 @@ package co.electriccoin.zcash.ui.screen.accountlist.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
+import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.WalletAccount
+import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.usecase.ObserveWalletAccountsUseCase
 import co.electriccoin.zcash.ui.common.usecase.SelectWalletAccountUseCase
 import co.electriccoin.zcash.ui.design.R
@@ -37,14 +39,14 @@ class AccountListViewModel(
                         AccountListItem.Account(
                             ZashiAccountListItemState(
                                 title = when (account) {
-                                    is WalletAccount.Keystone -> stringRes("Keystone")
-                                    is WalletAccount.Zashi -> stringRes("Zashi")
+                                    is KeystoneAccount -> stringRes("Keystone")
+                                    is ZashiAccount -> stringRes("Zashi")
                                 },
                                 subtitle =
                                 stringRes("${account.unifiedAddress.address.take(ADDRESS_MAX_LENGTH)}..."),
                                 icon = when (account) {
-                                    is WalletAccount.Keystone -> R.drawable.ic_item_keystone
-                                    is WalletAccount.Zashi -> R.drawable.ic_item_zashi
+                                    is KeystoneAccount -> R.drawable.ic_item_keystone
+                                    is ZashiAccount -> R.drawable.ic_item_zashi
                                 },
                                 isSelected = account.isSelected,
                                 onClick = { onAccountClicked(account) }
@@ -60,7 +62,7 @@ class AccountListViewModel(
                         onClick = ::onAddWalletButtonClicked
                     )
                 ).takeIf {
-                    accounts.orEmpty().none { it is WalletAccount.Keystone }
+                    accounts.orEmpty().none { it is KeystoneAccount }
                 }
             )
 

@@ -6,7 +6,9 @@ import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.preference.StandardPreferenceProvider
 import co.electriccoin.zcash.preference.model.entry.BooleanPreferenceDefault
 import co.electriccoin.zcash.ui.NavigationTargets.SETTINGS
+import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.WalletAccount
+import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.repository.WalletRepository
 import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.component.IconButtonState
@@ -47,8 +49,8 @@ class ZashiMainTopAppBarViewModel(
     private fun createState(currentAccount: WalletAccount?, isHideBalances: Boolean?) =
         ZashiMainTopAppBarState(
             accountType = when (currentAccount) {
-                is WalletAccount.Keystone -> ZashiMainTopAppBarState.AccountType.KEYSTONE
-                is WalletAccount.Zashi -> ZashiMainTopAppBarState.AccountType.ZASHI
+                is KeystoneAccount -> ZashiMainTopAppBarState.AccountType.KEYSTONE
+                is ZashiAccount -> ZashiMainTopAppBarState.AccountType.ZASHI
                 null -> ZashiMainTopAppBarState.AccountType.ZASHI
             },
             balanceVisibilityButton =

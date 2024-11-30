@@ -69,7 +69,7 @@ internal fun WrapSend(
 
     val walletSnapshot = walletViewModel.walletSnapshot.collectAsStateWithLifecycle().value
 
-    val spendingKey = walletViewModel.spendingKey.collectAsStateWithLifecycle().value
+    val spendingKey = walletViewModel.spendingKey.collectAsStateWithLifecycle(null).value
 
     val monetarySeparators = MonetarySeparators.current(Locale.getDefault())
 

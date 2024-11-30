@@ -1,6 +1,5 @@
 package co.electriccoin.zcash.ui.common.repository
 
-import cash.z.ecc.android.sdk.model.Account
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.datasource.LocalAddressBookDataSource
@@ -53,7 +52,6 @@ interface AddressBookRepository {
 class AddressBookRepositoryImpl(
     private val localAddressBookDataSource: LocalAddressBookDataSource,
     private val addressBookKeyStorageProvider: AddressBookKeyStorageProvider,
-    private val walletRepository: WalletRepository,
     private val accountDataSource: AccountDataSource,
     // private val remoteAddressBookDataSource: RemoteAddressBookDataSource,
     // private val context: Context
@@ -288,12 +286,11 @@ class AddressBookRepositoryImpl(
         return if (key != null) {
             key
         } else {
-            val wallet = walletRepository.getPersistableWallet()
-            val newKey =
-                AddressBookKey.derive(
-                    seedPhrase = wallet.seedPhrase,
-                    network = wallet.network,
-                    account = accountDataSource.getZashiAccount().sdkAccount
+            val account = accountDataSource.getZashiAccount()
+            val newKey = AddressBookKey.derive(
+                    seedPhrase = account.persistableWallet.seedPhrase,
+                    network = account.persistableWallet.network,
+                    account = account.sdkAccount
                 )
             addressBookKeyStorageProvider.storeAddressBookKey(newKey)
             newKey

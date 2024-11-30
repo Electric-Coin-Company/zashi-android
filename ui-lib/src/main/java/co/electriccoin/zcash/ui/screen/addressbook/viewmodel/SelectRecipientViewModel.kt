@@ -5,12 +5,15 @@ import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.AddressBookContact
+import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.WalletAccount
+import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.usecase.ObserveAddressBookContactsUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveContactPickedUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveWalletAccountsUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiContactListItemState
+import co.electriccoin.zcash.ui.design.util.ImageResource
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.addressbook.model.AddressBookItem
@@ -32,38 +35,43 @@ class SelectRecipientViewModel(
     private val observeContactPicked: ObserveContactPickedUseCase,
 ) : ViewModel() {
     val state =
-        combine(observeAddressBookContacts(), observeWalletAccountsUseCase()) { contact, account ->
-            createState(contact, account)
-        }
-            .flowOn(Dispatchers.Default)
+        combine(observeAddressBookContacts(), observeWalletAccountsUseCase()) { contacts, accounts ->
+            if (accounts != null && accounts.size > 1) {
+                createStateWithAccounts(contacts, accounts)
+            } else {
+                createStateWithoutAccounts(contacts)
+            }
+        }.flowOn(Dispatchers.Default)
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-                initialValue = createState(contacts = null, accounts = null)
+                initialValue = createStateWithoutAccounts(contacts = null)
             )
 
     val navigationCommand = MutableSharedFlow<String>()
 
     val backNavigationCommand = MutableSharedFlow<Unit>()
 
-    private fun createState(contacts: List<AddressBookContact>?, accounts: List<WalletAccount>?): AddressBookState {
-
+    private fun createStateWithAccounts(
+        contacts: List<AddressBookContact>?,
+        accounts: List<WalletAccount>
+    ): AddressBookState {
         val accountItems = listOf(
             AddressBookItem.Title(stringRes("Your Wallets")),
-            *accounts.orEmpty().map { account ->
+            *accounts.map { account ->
                 AddressBookItem.Contact(
                     ZashiContactListItemState(
                         icon = imageRes(
                             when (account) {
-                                is WalletAccount.Keystone -> co.electriccoin.zcash.ui.design.R.drawable.ic_item_keystone
-                                is WalletAccount.Zashi -> co.electriccoin.zcash.ui.design.R.drawable.ic_item_zashi
+                                is KeystoneAccount -> co.electriccoin.zcash.ui.design.R.drawable.ic_item_keystone
+                                is ZashiAccount -> co.electriccoin.zcash.ui.design.R.drawable.ic_item_zashi
                             }
                         ),
                         isShielded = false,
                         name = stringRes(
                             when (account) {
-                                is WalletAccount.Keystone -> "Keystone"
-                                is WalletAccount.Zashi -> "Zashi"
+                                is KeystoneAccount -> "Keystone"
+                                is ZashiAccount -> "Zashi"
                             }
                         ),
                         address = stringRes("${account.unifiedAddress.address.take(ADDRESS_MAX_LENGTH)}..."),
@@ -81,7 +89,7 @@ class SelectRecipientViewModel(
                 *contacts.map { contact ->
                     AddressBookItem.Contact(
                         ZashiContactListItemState(
-                            icon = imageRes(getContactInitials(contact)),
+                            icon = getContactInitials(contact),
                             isShielded = false,
                             name = stringRes(contact.name),
                             address = stringRes("${contact.address.take(ADDRESS_MAX_LENGTH)}..."),
@@ -110,20 +118,52 @@ class SelectRecipientViewModel(
         )
     }
 
+    private fun createStateWithoutAccounts(contacts: List<AddressBookContact>?): AddressBookState {
+        return AddressBookState(
+            isLoading = contacts == null,
+            items =
+            contacts?.map { contact ->
+                AddressBookItem.Contact(
+                    ZashiContactListItemState(
+                        icon = getContactInitials(contact),
+                        isShielded = false,
+                        name = stringRes(contact.name),
+                        address = stringRes("${contact.address.take(ADDRESS_MAX_LENGTH)}..."),
+                        onClick = { onContactClick(contact) }
+                    )
+                )
+            }.orEmpty(),
+            onBack = ::onBack,
+            manualButton =
+            ButtonState(
+                onClick = ::onAddContactManuallyClick,
+                text = stringRes(R.string.address_book_manual_btn)
+            ),
+            scanButton =
+            ButtonState(
+                onClick = ::onScanContactClick,
+                text = stringRes(R.string.address_book_scan_btn)
+            ),
+            title = stringRes("Select recipient")
+        )
+    }
+
     private fun onWalletAccountClick(account: WalletAccount) =
         viewModelScope.launch {
             observeContactPicked.onWalletAccountPicked(account)
             backNavigationCommand.emit(Unit)
         }
 
-    private fun getContactInitials(contact: AddressBookContact): String {
-        return contact.name
-            .split(" ")
-            .mapNotNull { part ->
-                part.takeIf { it.isNotEmpty() }?.first()?.toString()
-            }
-            .take(2)
-            .joinToString(separator = "")
+    private fun getContactInitials(contact: AddressBookContact): ImageResource {
+        return imageRes(
+            contact.name
+                .split(" ")
+                .mapNotNull { part ->
+                    part.takeIf { it.isNotEmpty() }?.first()?.toString()
+                }
+                .take(2)
+                .joinToString(separator = "")
+        )
     }
 
     private fun onBack() =

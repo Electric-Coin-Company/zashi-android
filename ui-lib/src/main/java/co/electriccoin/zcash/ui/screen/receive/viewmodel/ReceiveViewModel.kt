@@ -3,11 +3,12 @@ package co.electriccoin.zcash.ui.screen.receive.viewmodel
 import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import cash.z.ecc.android.sdk.model.WalletAddress
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationTargets
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.WalletAccount
+import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.usecase.CopyToClipboardUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -63,16 +64,16 @@ class ReceiveViewModel(
         type: ReceiveAddressType
     ) = ReceiveAddressState(
         icon = when (account) {
-            is WalletAccount.Keystone -> co.electriccoin.zcash.ui.design.R.drawable.ic_item_keystone
-            is WalletAccount.Zashi -> if (type == ReceiveAddressType.Unified) {
+            is KeystoneAccount -> co.electriccoin.zcash.ui.design.R.drawable.ic_item_keystone
+            is ZashiAccount -> if (type == ReceiveAddressType.Unified) {
                 R.drawable.ic_zec_round_full
             } else {
                 R.drawable.ic_zec_round_stroke
             }
         },
         title = when (account) {
-            is WalletAccount.Keystone -> stringRes("Keystone Address")
-            is WalletAccount.Zashi -> if (type == ReceiveAddressType.Unified) {
+            is KeystoneAccount -> stringRes("Keystone Address")
+            is ZashiAccount -> if (type == ReceiveAddressType.Unified) {
                 stringRes(R.string.receive_wallet_address_shielded)
             } else {
                 stringRes(R.string.receive_wallet_address_transparent)

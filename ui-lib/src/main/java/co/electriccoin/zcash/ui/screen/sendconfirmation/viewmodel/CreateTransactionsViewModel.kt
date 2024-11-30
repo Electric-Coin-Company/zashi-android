@@ -8,7 +8,8 @@ import cash.z.ecc.android.sdk.model.TransactionSubmitResult
 import cash.z.ecc.android.sdk.model.UnifiedSpendingKey
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.spackle.Twig
-import co.electriccoin.zcash.ui.common.model.WalletAccount
+import co.electriccoin.zcash.ui.common.model.KeystoneAccount
+import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -30,7 +31,7 @@ class CreateTransactionsViewModel(
 
     val state = observeSelectedWalletAccountUseCase().map {
         when (it) {
-            is WalletAccount.Keystone -> SendConfirmationState(
+            is KeystoneAccount -> SendConfirmationState(
                 SendConfirmationExpandedInfoState(
                     stringRes("Sending from"),
                     icon = R.drawable.ic_item_keystone,
@@ -38,7 +39,7 @@ class CreateTransactionsViewModel(
                 )
             )
 
-            is WalletAccount.Zashi -> SendConfirmationState(
+            is ZashiAccount -> SendConfirmationState(
                 SendConfirmationExpandedInfoState(
                     stringRes("Sending from"),
                     icon = R.drawable.ic_item_zashi,

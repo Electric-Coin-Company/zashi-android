@@ -69,7 +69,7 @@ internal fun MainActivity.WrapSendConfirmation(
 
     val synchronizer = walletViewModel.synchronizer.collectAsStateWithLifecycle().value
 
-    val spendingKey = walletViewModel.spendingKey.collectAsStateWithLifecycle().value
+    val spendingKey = walletViewModel.spendingKey.collectAsStateWithLifecycle(null).value
 
     val supportMessage = supportViewModel.supportInfo.collectAsStateWithLifecycle().value
 

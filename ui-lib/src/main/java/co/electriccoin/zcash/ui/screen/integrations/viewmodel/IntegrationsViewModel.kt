@@ -24,7 +24,7 @@ import co.electriccoin.zcash.ui.common.repository.BiometricRepository
 import co.electriccoin.zcash.ui.common.repository.BiometricRequest
 import co.electriccoin.zcash.ui.common.usecase.GetSpendingKeyUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSynchronizerUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetTransparentAddressUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetZashiAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsCoinbaseAvailableUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsFlexaAvailableUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveIsFlexaAvailableUseCase
@@ -52,7 +52,7 @@ class IntegrationsViewModel(
     observeWalletState: ObserveWalletStateUseCase,
     observeIsFlexaAvailableUseCase: ObserveIsFlexaAvailableUseCase,
     private val getSynchronizer: GetSynchronizerUseCase,
-    private val getTransparentAddress: GetTransparentAddressUseCase,
+    private val getZashiAccount: GetZashiAccountUseCase,
     private val isFlexaAvailable: IsFlexaAvailableUseCase,
     private val isCoinbaseAvailable: IsCoinbaseAvailableUseCase,
     private val getSpendingKey: GetSpendingKeyUseCase,
@@ -132,7 +132,7 @@ class IntegrationsViewModel(
                 }
 
                 appId.isNotEmpty() -> {
-                    val address = getTransparentAddress().address
+                    val address = getZashiAccount().transparentAddress
                     val url =
                         "https://pay.coinbase.com/buy/select-asset?appId=$appId&addresses={\"${address}\":[\"zcash\"]}"
                     coinbaseNavigationCommand.emit(url)

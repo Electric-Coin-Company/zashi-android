@@ -7,5 +7,5 @@ import kotlinx.coroutines.flow.first
 class GetSpendingKeyUseCase(
     private val walletRepository: WalletRepository
 ) {
-    suspend operator fun invoke() = walletRepository.currentSpendingKey.filterNotNull().first()
+    suspend operator fun invoke() = walletRepository.zashiSpendingKey.filterNotNull().first()
 }

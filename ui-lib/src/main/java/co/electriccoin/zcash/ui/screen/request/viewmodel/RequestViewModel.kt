@@ -3,7 +3,6 @@ package co.electriccoin.zcash.ui.screen.request.viewmodel
 import android.app.Application
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asAndroidBitmap
-import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.android.sdk.model.FiatCurrencyConversion
@@ -11,7 +10,8 @@ import cash.z.ecc.android.sdk.model.WalletAddress
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.model.WalletAccount
+import co.electriccoin.zcash.ui.common.model.KeystoneAccount
+import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.provider.GetMonetarySeparatorProvider
 import co.electriccoin.zcash.ui.common.provider.GetZcashCurrencyProvider
 import co.electriccoin.zcash.ui.common.usecase.GetAddressesUseCase
@@ -23,7 +23,6 @@ import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.screen.qrcode.ext.fromReceiveAddressType
 import co.electriccoin.zcash.ui.design.util.AndroidQrCodeImageGenerator
 import co.electriccoin.zcash.ui.design.util.JvmQrCodeGenerator
-import co.electriccoin.zcash.ui.screen.qrcode.model.QrCodeType
 import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressType
 import co.electriccoin.zcash.ui.screen.request.ext.convertToDouble
 import co.electriccoin.zcash.ui.screen.request.model.AmountState
@@ -113,8 +112,8 @@ class RequestViewModel(
                 RequestStage.MEMO -> {
                     RequestState.Memo(
                         icon = when (account) {
-                            is WalletAccount.Keystone -> co.electriccoin.zcash.ui.design.R.drawable.ic_item_keystone
-                            is WalletAccount.Zashi -> R.drawable.ic_zec_round_full
+                            is KeystoneAccount -> co.electriccoin.zcash.ui.design.R.drawable.ic_item_keystone
+                            is ZashiAccount -> R.drawable.ic_zec_round_full
                             null -> R.drawable.ic_zec_round_full
                         },
                         walletAddress = walletAddress,
@@ -128,9 +127,9 @@ class RequestViewModel(
                 RequestStage.QR_CODE -> {
                     RequestState.QrCode(
                         icon = when (account) {
-                            is WalletAccount.Keystone -> co.electriccoin.zcash.ui.design.R.drawable
+                            is KeystoneAccount -> co.electriccoin.zcash.ui.design.R.drawable
                                 .ic_item_keystone_qr
-                            is WalletAccount.Zashi -> R.drawable.logo_zec_fill_stroke
+                            is ZashiAccount -> R.drawable.logo_zec_fill_stroke
                             null -> R.drawable.logo_zec_fill_stroke
                         },
                         walletAddress = walletAddress,

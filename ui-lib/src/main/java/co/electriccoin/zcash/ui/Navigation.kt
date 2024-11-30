@@ -97,7 +97,7 @@ import co.electriccoin.zcash.ui.screen.request.WrapRequest
 import co.electriccoin.zcash.ui.screen.scan.ScanNavigationArgs
 import co.electriccoin.zcash.ui.screen.scan.WrapScanValidator
 import co.electriccoin.zcash.ui.screen.scankeystone.ScanKeystoneNavigationArgs
-import co.electriccoin.zcash.ui.screen.scankeystone.WrapScanKeystone
+import co.electriccoin.zcash.ui.screen.scankeystone.WrapScanKeystoneSignInRequestViewModel
 import co.electriccoin.zcash.ui.screen.seed.SeedNavigationArgs
 import co.electriccoin.zcash.ui.screen.seed.WrapSeed
 import co.electriccoin.zcash.ui.screen.send.ext.toSerializableAddress
@@ -266,7 +266,7 @@ internal fun MainActivity.Navigation() {
             AndroidSettingsExchangeRateOptIn()
         }
         composable(ScanKeystoneNavigationArgs.PATH) {
-            WrapScanKeystone()
+            WrapScanKeystoneSignInRequestViewModel()
         }
         composable(KeystoneSignTransactionArgs.PATH) {
             AndroidSignKeystoneTransaction()

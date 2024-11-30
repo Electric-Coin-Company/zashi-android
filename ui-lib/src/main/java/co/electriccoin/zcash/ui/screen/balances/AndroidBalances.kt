@@ -63,7 +63,7 @@ internal fun WrapBalances(goMultiTrxSubmissionFailure: () -> Unit) {
 
     val walletSnapshot = walletViewModel.walletSnapshot.collectAsStateWithLifecycle().value
 
-    val spendingKey = walletViewModel.spendingKey.collectAsStateWithLifecycle().value
+    val spendingKey = walletViewModel.spendingKey.collectAsStateWithLifecycle(null).value
 
     val walletRestoringState = walletViewModel.walletRestoringState.collectAsStateWithLifecycle().value
 
