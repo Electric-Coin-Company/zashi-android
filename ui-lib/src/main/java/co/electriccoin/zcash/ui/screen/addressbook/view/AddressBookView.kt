@@ -56,6 +56,7 @@ import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.getValue
+import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.addressbook.AddressBookTag
@@ -77,10 +78,10 @@ fun AddressBookView(
         }
     ) { paddingValues ->
         when {
-            state.contacts.isEmpty() && state.isLoading -> {
+            state.items.isEmpty() && state.isLoading -> {
                 CircularScreenProgressIndicator()
             }
-            state.contacts.isEmpty() && !state.isLoading -> {
+            state.items.isEmpty() && !state.isLoading -> {
                 EmptyFullscreen(
                     state = state,
                     modifier =
@@ -108,13 +109,13 @@ fun AddressBookView(
                     ) {
                         itemsIndexed(
                             contentType = { _, item -> item.contentType },
-                            items = state.contacts,
+                            items = state.items,
                         ) { index, item ->
                             when (item) {
                                 is AddressBookItem.Contact -> {
                                     ZashiContactListItem(state = item.state)
-                                    if (index != state.contacts.lastIndex &&
-                                        state.contacts[index + 1] is AddressBookItem.Contact
+                                    if (index != state.items.lastIndex &&
+                                        state.items[index + 1] is AddressBookItem.Contact
                                     ) {
                                         ZashiHorizontalDivider()
                                     }
@@ -344,14 +345,14 @@ private fun AddressBookDataPreview() {
             AddressBookState(
                 isLoading = false,
                 onBack = {},
-                contacts =
+                items =
                 listOf(
                     AddressBookItem.Title(stringRes("Title")),
                     AddressBookItem.Contact(
                         ZashiContactListItemState(
                             name = stringRes("Name Surname"),
                             address = stringRes("3iY5ZSkRnevzSMu4hosasdasdasdasd12312312dasd9hw2"),
-                            initials = stringRes("NS"),
+                            icon = imageRes("NS"),
                             isShielded = false,
                             onClick = {}
                         )
@@ -360,7 +361,7 @@ private fun AddressBookDataPreview() {
                         ZashiContactListItemState(
                             name = stringRes("Name Surname"),
                             address = stringRes("3iY5ZSkRnevzSMu4hosasdasdasdasd12312312dasd9hw2"),
-                            initials = stringRes("NS"),
+                            icon = imageRes("NS"),
                             isShielded = false,
                             onClick = {}
                         )
@@ -390,14 +391,14 @@ private fun SelectRecipientDataPreview() {
             AddressBookState(
                 isLoading = false,
                 onBack = {},
-                contacts =
+                items =
                 listOf(
                     AddressBookItem.Title(stringRes("Title")),
                     AddressBookItem.Contact(
                         ZashiContactListItemState(
                             name = stringRes("Name Surname"),
                             address = stringRes("3iY5ZSkRnevzSMu4hosasdasdasdasd12312312dasd9hw2"),
-                            initials = stringRes("NS"),
+                            icon = imageRes("NS"),
                             isShielded = false,
                             onClick = {}
                         )
@@ -406,7 +407,7 @@ private fun SelectRecipientDataPreview() {
                         ZashiContactListItemState(
                             name = stringRes("Name Surname"),
                             address = stringRes("3iY5ZSkRnevzSMu4hosasdasdasdasd12312312dasd9hw2"),
-                            initials = stringRes("NS"),
+                            icon = imageRes("NS"),
                             isShielded = false,
                             onClick = {}
                         )
@@ -416,7 +417,7 @@ private fun SelectRecipientDataPreview() {
                         ZashiContactListItemState(
                             name = stringRes("Name Surname"),
                             address = stringRes("3iY5ZSkRnevzSMu4hosasdasdasdasd12312312dasd9hw2"),
-                            initials = stringRes("NS"),
+                            icon = imageRes("NS"),
                             isShielded = false,
                             onClick = {}
                         )
@@ -425,7 +426,7 @@ private fun SelectRecipientDataPreview() {
                         ZashiContactListItemState(
                             name = stringRes("Name Surname"),
                             address = stringRes("3iY5ZSkRnevzSMu4hosasdasdasdasd12312312dasd9hw2"),
-                            initials = stringRes("NS"),
+                            icon = imageRes("NS"),
                             isShielded = false,
                             onClick = {}
                         )
@@ -455,7 +456,7 @@ private fun LoadingPreview() {
             AddressBookState(
                 isLoading = true,
                 onBack = {},
-                contacts = emptyList(),
+                items = emptyList(),
                 scanButton =
                 ButtonState(
                     text = stringRes("Scan"),
@@ -480,7 +481,7 @@ private fun EmptyAddressBookPreview() {
             AddressBookState(
                 isLoading = false,
                 onBack = {},
-                contacts = emptyList(),
+                items = emptyList(),
                 scanButton =
                 ButtonState(
                     text = stringRes("Scan"),
@@ -505,13 +506,13 @@ private fun EmptySelectRecipientPreview() {
             AddressBookState(
                 isLoading = false,
                 onBack = {},
-                contacts = listOf(
+                items = listOf(
                     AddressBookItem.Title(stringRes("Title")),
                     AddressBookItem.Contact(
                         ZashiContactListItemState(
                             name = stringRes("Name Surname"),
                             address = stringRes("3iY5ZSkRnevzSMu4hosasdasdasdasd12312312dasd9hw2"),
-                            initials = stringRes("NS"),
+                            icon = imageRes("NS"),
                             isShielded = false,
                             onClick = {}
                         )

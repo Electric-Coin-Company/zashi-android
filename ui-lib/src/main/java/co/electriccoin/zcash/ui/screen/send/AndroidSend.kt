@@ -253,7 +253,7 @@ internal fun WrapSend(
         }
     }
 
-    if (null == synchronizer || null == walletSnapshot || null == spendingKey) {
+    if (null == synchronizer || null == walletSnapshot) {
         // TODO [#1146]: Consider moving CircularScreenProgressIndicator from Android layer to View layer
         // TODO [#1146]: Improve this by allowing screen composition and updating it after the data is available
         // TODO [#1146]: https://github.com/Electric-Coin-Company/zashi-android/issues/1146
@@ -265,17 +265,19 @@ internal fun WrapSend(
             sendStage = sendStage,
             onCreateZecSend = { newZecSend ->
                 scope.launch {
-                    Twig.debug { "Getting send transaction proposal" }
-                    runCatching {
-                        synchronizer.proposeSend(spendingKey.account, newZecSend)
-                    }.onSuccess { proposal ->
-                        Twig.debug { "Transaction proposal successful: ${proposal.toPrettyString()}" }
-                        val enrichedZecSend = newZecSend.copy(proposal = proposal)
-                        setZecSend(enrichedZecSend)
-                        goSendConfirmation(enrichedZecSend)
-                    }.onFailure {
-                        Twig.error(it) { "Transaction proposal failed" }
-                        setSendStage(SendStage.SendFailure(it.message ?: ""))
+                    spendingKey?.let {
+                        Twig.debug { "Getting send transaction proposal" }
+                        runCatching {
+                            synchronizer.proposeSend(spendingKey.account, newZecSend)
+                        }.onSuccess { proposal ->
+                            Twig.debug { "Transaction proposal successful: ${proposal.toPrettyString()}" }
+                            val enrichedZecSend = newZecSend.copy(proposal = proposal)
+                            setZecSend(enrichedZecSend)
+                            goSendConfirmation(enrichedZecSend)
+                        }.onFailure {
+                            Twig.error(it) { "Transaction proposal failed" }
+                            setSendStage(SendStage.SendFailure(it.message ?: ""))
+                        }
                     }
                 }
             },

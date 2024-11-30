@@ -89,6 +89,7 @@ import co.electriccoin.zcash.ui.screen.scan.model.ScanScreenState
 import co.electriccoin.zcash.ui.screen.scan.model.ScanValidationState
 import co.electriccoin.zcash.ui.screen.scan.util.ImageUriToQrCodeConverter
 import co.electriccoin.zcash.ui.screen.scan.util.QrCodeAnalyzer
+import co.electriccoin.zcash.ui.screen.scankeystone.view.CAMERA_TRANSLUCENT_BORDER
 import co.electriccoin.zcash.ui.screen.scankeystone.view.FramePosition
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
@@ -408,7 +409,7 @@ private fun ScanMainContent(
                 onScanStateChanged(ScanScreenState.Scanning)
 
                 if (!LocalInspectionMode.current) {
-                    co.electriccoin.zcash.ui.screen.scankeystone.view.ScanCameraView(
+                    ScanCameraView(
                         framePosition = framePosition,
                         isTorchOn = isTorchOn,
                         onScanned = onScanned,
@@ -437,7 +438,7 @@ private fun ScanMainContent(
                                 )
                             }
                     ) {
-                        drawRect(Color.Black.copy(alpha = co.electriccoin.zcash.ui.screen.scankeystone.view.CAMERA_TRANSLUCENT_BORDER))
+                        drawRect(Color.Black.copy(alpha = CAMERA_TRANSLUCENT_BORDER))
                     }
                 }
 
@@ -512,7 +513,7 @@ private fun ScanMainContent(
                     },
             contentAlignment = Alignment.Center
         ) {
-            co.electriccoin.zcash.ui.screen.scankeystone.view.ScanFrame(modifier = Modifier.fillMaxSize())
+            ScanFrame(modifier = Modifier.fillMaxSize())
         }
 
         Spacer(
@@ -529,7 +530,7 @@ private fun ScanMainContent(
                 Modifier
                     .constrainAs(bottomItems) { bottom.linkTo(parent.bottom) }
         ) {
-            co.electriccoin.zcash.ui.screen.scankeystone.view.ScanBottomItems(
+            ScanBottomItems(
                 validationResult = validationResult,
                 onBack = onBack,
                 onOpenSettings = onOpenSettings,

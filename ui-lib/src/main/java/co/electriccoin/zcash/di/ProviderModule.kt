@@ -10,6 +10,8 @@ import co.electriccoin.zcash.ui.common.provider.GetDefaultServersProvider
 import co.electriccoin.zcash.ui.common.provider.GetMonetarySeparatorProvider
 import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
 import co.electriccoin.zcash.ui.common.provider.GetZcashCurrencyProvider
+import co.electriccoin.zcash.ui.common.provider.SelectedAccountUUIDProvider
+import co.electriccoin.zcash.ui.common.provider.SelectedAccountUUIDProviderImpl
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -23,4 +25,5 @@ val providerModule =
         factoryOf(::AddressBookStorageProviderImpl) bind AddressBookStorageProvider::class
         factoryOf(::AddressBookProviderImpl) bind AddressBookProvider::class
         factoryOf(::AddressBookKeyStorageProviderImpl) bind AddressBookKeyStorageProvider::class
+        factoryOf(::SelectedAccountUUIDProviderImpl) bind SelectedAccountUUIDProvider::class
     }

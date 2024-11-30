@@ -31,12 +31,9 @@ import co.electriccoin.zcash.ui.common.usecase.ObserveIsFlexaAvailableUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveWalletStateUseCase
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemState
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.screen.accountlist.AccountListArgs
 import co.electriccoin.zcash.ui.screen.integrations.model.IntegrationsState
-import co.electriccoin.zcash.ui.screen.scankeystone.ScanKeystoneNavigationArgs
 import co.electriccoin.zcash.ui.screen.send.model.RecipientAddressState
 import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SubmitResult
-import co.electriccoin.zcash.ui.screen.signkeystonetransaction.KeystoneSignTransactionArgs
 import com.flexa.core.Flexa
 import com.flexa.spend.Transaction
 import com.flexa.spend.buildSpend
@@ -109,11 +106,6 @@ class IntegrationsViewModel(
                             subtitle = stringRes(R.string.integrations_flexa_subtitle),
                             onClick = ::onFlexaClicked
                         ).takeIf { isFlexaAvailable == true },
-                        ZashiListItemState(
-                            icon = R.drawable.ic_settings_integrations,
-                            title = stringRes("Generate Keystone QR"),
-                            onClick = ::onGenerateKeystoneQRClicked
-                        ),
                     ).toImmutableList()
             )
         }.stateIn(
@@ -125,21 +117,6 @@ class IntegrationsViewModel(
     fun onBack() =
         viewModelScope.launch {
             backNavigationCommand.emit(Unit)
-        }
-
-    private fun onOpenAccountsClicked() =
-        viewModelScope.launch {
-            navigationCommand.emit(AccountListArgs.PATH)
-        }
-
-    private fun onGenerateKeystoneQRClicked() =
-        viewModelScope.launch {
-            navigationCommand.emit(KeystoneSignTransactionArgs.PATH)
-        }
-
-    private fun onScanKeystoneQRClicked() =
-        viewModelScope.launch {
-            navigationCommand.emit(ScanKeystoneNavigationArgs.PATH)
         }
 
     private fun onBuyWithCoinbaseClicked() =

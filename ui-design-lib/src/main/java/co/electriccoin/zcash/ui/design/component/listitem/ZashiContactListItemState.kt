@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import co.electriccoin.zcash.ui.design.util.ImageResource
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.getValue
 
@@ -66,31 +67,39 @@ private fun ContactItemLeading(
     state: ZashiContactListItemState,
     modifier: Modifier = Modifier,
 ) {
-    Box(
-        modifier.size(40.dp)
-    ) {
-        Text(
-            modifier =
-            Modifier
-                .background(ZashiColors.Avatars.avatarBg, CircleShape)
-                .size(40.dp)
-                .padding(top = 11.dp)
-                .align(Alignment.Center),
-            text = state.initials.getValue(),
-            style = ZashiTypography.textSm,
-            color = ZashiColors.Avatars.avatarTextFg,
-            textAlign = TextAlign.Center,
-            fontWeight = FontWeight.SemiBold,
+    when (state.icon) {
+        is ImageResource.ByDrawable -> Image(
+            painter = painterResource(state.icon.resource),
+            contentDescription = null,
+            modifier = modifier.size(40.dp)
         )
-        if (state.isShielded) {
-            Image(
+
+        is ImageResource.DisplayString -> Box(
+            modifier.size(40.dp)
+        ) {
+            Text(
                 modifier =
                 Modifier
-                    .align(Alignment.BottomEnd)
-                    .size(24.dp),
-                painter = painterResource(id = R.drawable.ic_address_book_shielded),
-                contentDescription = ""
+                    .background(ZashiColors.Avatars.avatarBg, CircleShape)
+                    .size(40.dp)
+                    .padding(top = 11.dp)
+                    .align(Alignment.Center),
+                text = state.icon.value,
+                style = ZashiTypography.textSm,
+                color = ZashiColors.Avatars.avatarTextFg,
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.SemiBold,
             )
+            if (state.isShielded) {
+                Image(
+                    modifier =
+                    Modifier
+                        .align(Alignment.BottomEnd)
+                        .size(24.dp),
+                    painter = painterResource(id = R.drawable.ic_address_book_shielded),
+                    contentDescription = ""
+                )
+            }
         }
     }
 }
@@ -121,7 +130,7 @@ private fun ContactItemContent(
 }
 
 data class ZashiContactListItemState(
-    val initials: StringResource,
+    val icon: ImageResource,
     val isShielded: Boolean,
     val name: StringResource,
     val address: StringResource,

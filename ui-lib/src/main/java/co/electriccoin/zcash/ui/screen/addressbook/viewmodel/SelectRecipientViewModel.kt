@@ -5,10 +5,13 @@ import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.AddressBookContact
+import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.usecase.ObserveAddressBookContactsUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveContactPickedUseCase
+import co.electriccoin.zcash.ui.common.usecase.ObserveWalletAccountsUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiContactListItemState
+import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.addressbook.model.AddressBookItem
 import co.electriccoin.zcash.ui.screen.addressbook.model.AddressBookState
@@ -18,47 +21,80 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class SelectRecipientViewModel(
     observeAddressBookContacts: ObserveAddressBookContactsUseCase,
-    private val observeContactPicked: ObserveContactPickedUseCase
+    observeWalletAccountsUseCase: ObserveWalletAccountsUseCase,
+    private val observeContactPicked: ObserveContactPickedUseCase,
 ) : ViewModel() {
     val state =
-        observeAddressBookContacts()
-            .map { contacts -> createState(contacts = contacts) }
+        combine(observeAddressBookContacts(), observeWalletAccountsUseCase()) { contact, account ->
+            createState(contact, account)
+        }
             .flowOn(Dispatchers.Default)
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-                initialValue = createState(contacts = null)
+                initialValue = createState(contacts = null, accounts = null)
             )
 
     val navigationCommand = MutableSharedFlow<String>()
 
     val backNavigationCommand = MutableSharedFlow<Unit>()
 
-    private fun createState(contacts: List<AddressBookContact>?) =
-        AddressBookState(
-            isLoading = contacts == null,
-            contacts = if (contacts != null) {
-                listOf(AddressBookItem.Title(stringRes("Contacts"))) + contacts.map { contact ->
+    private fun createState(contacts: List<AddressBookContact>?, accounts: List<WalletAccount>?): AddressBookState {
+
+        val accountItems = listOf(
+            AddressBookItem.Title(stringRes("Your Wallets")),
+            *accounts.orEmpty().map { account ->
+                AddressBookItem.Contact(
+                    ZashiContactListItemState(
+                        icon = imageRes(
+                            when (account) {
+                                is WalletAccount.Keystone -> co.electriccoin.zcash.ui.design.R.drawable.ic_item_keystone
+                                is WalletAccount.Zashi -> co.electriccoin.zcash.ui.design.R.drawable.ic_item_zashi
+                            }
+                        ),
+                        isShielded = false,
+                        name = stringRes(
+                            when (account) {
+                                is WalletAccount.Keystone -> "Keystone"
+                                is WalletAccount.Zashi -> "Zashi"
+                            }
+                        ),
+                        address = stringRes("${account.unifiedAddress.address.take(ADDRESS_MAX_LENGTH)}..."),
+                        onClick = { onWalletAccountClick(account) }
+                    )
+                )
+            }.toTypedArray()
+        )
+
+        val addressBookItems = if (contacts.isNullOrEmpty()) {
+            listOf(AddressBookItem.Empty)
+        } else {
+            listOf(
+                AddressBookItem.Title(stringRes("Address Book Contacts")),
+                *contacts.map { contact ->
                     AddressBookItem.Contact(
                         ZashiContactListItemState(
-                            initials = getContactInitials(contact),
+                            icon = imageRes(getContactInitials(contact)),
                             isShielded = false,
                             name = stringRes(contact.name),
                             address = stringRes("${contact.address.take(ADDRESS_MAX_LENGTH)}..."),
                             onClick = { onContactClick(contact) }
                         )
                     )
-                }
-            } else {
-                listOf(AddressBookItem.Empty)
-            },
+                }.toTypedArray()
+            )
+        }
+
+        return AddressBookState(
+            isLoading = contacts == null,
+            items = accountItems + addressBookItems,
             onBack = ::onBack,
             manualButton =
             ButtonState(
@@ -72,17 +108,23 @@ class SelectRecipientViewModel(
             ),
             title = stringRes("Select recipient")
         )
+    }
 
-    private fun getContactInitials(contact: AddressBookContact) =
-        stringRes(
-            contact.name
-                .split(" ")
-                .mapNotNull { part ->
-                    part.takeIf { it.isNotEmpty() }?.first()?.toString()
-                }
-                .take(2)
-                .joinToString(separator = "")
-        )
+    private fun onWalletAccountClick(account: WalletAccount) =
+        viewModelScope.launch {
+            observeContactPicked.onWalletAccountPicked(account)
+            backNavigationCommand.emit(Unit)
+        }
+
+    private fun getContactInitials(contact: AddressBookContact): String {
+        return contact.name
+            .split(" ")
+            .mapNotNull { part ->
+                part.takeIf { it.isNotEmpty() }?.first()?.toString()
+            }
+            .take(2)
+            .joinToString(separator = "")
+    }
 
     private fun onBack() =
         viewModelScope.launch {

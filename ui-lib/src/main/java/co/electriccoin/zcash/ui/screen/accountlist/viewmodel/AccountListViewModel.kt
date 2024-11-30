@@ -3,59 +3,81 @@ package co.electriccoin.zcash.ui.screen.accountlist.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
-import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemState
+import co.electriccoin.zcash.ui.common.model.WalletAccount
+import co.electriccoin.zcash.ui.common.usecase.ObserveWalletAccountsUseCase
+import co.electriccoin.zcash.ui.common.usecase.SelectWalletAccountUseCase
+import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemDesignType
+import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.accountlist.model.AccountListItem
 import co.electriccoin.zcash.ui.screen.accountlist.model.AccountListState
 import co.electriccoin.zcash.ui.screen.accountlist.model.ZashiAccountListItemState
+import co.electriccoin.zcash.ui.screen.addressbook.viewmodel.ADDRESS_MAX_LENGTH
 import co.electriccoin.zcash.ui.screen.connectkeystone.ConnectKeystoneArgs
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import co.electriccoin.zcash.ui.design.R
 
-
-class AccountListViewModel : ViewModel() {
-    private val isLoading = MutableStateFlow(true)
-
+class AccountListViewModel(
+    observeWalletAccounts: ObserveWalletAccountsUseCase,
+    private val selectWalletAccount: SelectWalletAccountUseCase,
+) : ViewModel() {
     val navigationCommand = MutableSharedFlow<String>()
+    val backNavigationCommand = MutableSharedFlow<Unit>()
 
     val state =
-        isLoading.map { isLoading ->
-            AccountListState(
-                items =
-                    listOf(
+        observeWalletAccounts().map { accounts ->
+            val items = listOfNotNull(
+                *accounts.orEmpty()
+                    .map<WalletAccount, AccountListItem> { account ->
                         AccountListItem.Account(
                             ZashiAccountListItemState(
-                                title = stringRes("Zashi"),
-                                subtitle = stringRes("u1078r23uvtj8xj6dpdx..."),
-                                icon = R.drawable.ic_item_zashi,
-                                isSelected = true,
-                                onClick = {}
-                            )
-                        ),
-                        AccountListItem.Other(
-                            ZashiListItemState(
-                                title = stringRes("Keystone Hardware Wallet"),
-                                subtitle = stringRes("Get a Keystone Hardware Wallet and secure your Zcash."),
-                                icon = R.drawable.ic_item_keystone,
-                                design = ZashiListItemDesignType.SECONDARY,
-                                onClick = ::onAddWalletButtonClicked
+                                title = when (account) {
+                                    is WalletAccount.Keystone -> stringRes("Keystone")
+                                    is WalletAccount.Zashi -> stringRes("Zashi")
+                                },
+                                subtitle =
+                                stringRes("${account.unifiedAddress.address.take(ADDRESS_MAX_LENGTH)}..."),
+                                icon = when (account) {
+                                    is WalletAccount.Keystone -> R.drawable.ic_item_keystone
+                                    is WalletAccount.Zashi -> R.drawable.ic_item_zashi
+                                },
+                                isSelected = account.isSelected,
+                                onClick = { onAccountClicked(account) }
                             )
                         )
-                    ),
-                isLoading = isLoading,
+                    }.toTypedArray(),
+                AccountListItem.Other(
+                    ZashiListItemState(
+                        title = stringRes("Keystone Hardware Wallet"),
+                        subtitle = stringRes("Get a Keystone Hardware Wallet and secure your Zcash."),
+                        icon = R.drawable.ic_item_keystone,
+                        design = ZashiListItemDesignType.SECONDARY,
+                        onClick = ::onAddWalletButtonClicked
+                    )
+                ).takeIf {
+                    accounts.orEmpty().none { it is WalletAccount.Keystone }
+                }
+            )
+
+            AccountListState(
+                items = items,
+                isLoading = accounts == null,
             )
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
             initialValue = null
         )
+
+    private fun onAccountClicked(account: WalletAccount) = viewModelScope.launch {
+        selectWalletAccount(account)
+        backNavigationCommand.emit(Unit)
+    }
 
     private fun onAddWalletButtonClicked() {
         viewModelScope.launch {

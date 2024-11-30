@@ -7,24 +7,23 @@ import cash.z.ecc.android.sdk.SdkSynchronizer
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.WalletCoordinator
 import cash.z.ecc.android.sdk.block.processor.CompactBlockProcessor
-import cash.z.ecc.android.sdk.model.Account
 import cash.z.ecc.android.sdk.model.FastestServersResult
 import cash.z.ecc.android.sdk.model.PercentDecimal
 import cash.z.ecc.android.sdk.model.PersistableWallet
 import cash.z.ecc.android.sdk.model.UnifiedSpendingKey
 import cash.z.ecc.android.sdk.model.WalletAddresses
-import cash.z.ecc.android.sdk.model.WalletBalance
-import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.tool.DerivationTool
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.lightwallet.client.model.LightWalletEndpoint
 import co.electriccoin.zcash.preference.EncryptedPreferenceProvider
 import co.electriccoin.zcash.preference.StandardPreferenceProvider
 import co.electriccoin.zcash.spackle.Twig
+import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.extension.throttle
 import co.electriccoin.zcash.ui.common.model.FastestServersState
 import co.electriccoin.zcash.ui.common.model.OnboardingState
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
+import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.provider.GetDefaultServersProvider
@@ -73,10 +72,13 @@ interface WalletRepository {
     val secretState: StateFlow<SecretState>
     val fastestServers: StateFlow<FastestServersState>
     val persistableWallet: Flow<PersistableWallet?>
-    val addresses: StateFlow<WalletAddresses?>
-    val walletSnapshot: StateFlow<WalletSnapshot?>
     val onboardingState: Flow<OnboardingState>
-    val spendingKey: StateFlow<UnifiedSpendingKey?>
+
+    val allAccounts: StateFlow<List<WalletAccount>?>
+    val currentAccount: StateFlow<WalletAccount?>
+    val currentAddresses: StateFlow<WalletAddresses?>
+    val currentWalletSnapshot: StateFlow<WalletSnapshot?>
+    val currentSpendingKey: StateFlow<UnifiedSpendingKey?>
 
     /**
      * A flow of the wallet block synchronization state.
@@ -105,6 +107,7 @@ interface WalletRepository {
 
 class WalletRepositoryImpl(
     walletCoordinator: WalletCoordinator,
+    accountDataSource: AccountDataSource,
     private val application: Application,
     private val getDefaultServers: GetDefaultServersProvider,
     private val standardPreferenceProvider: StandardPreferenceProvider,
@@ -128,13 +131,11 @@ class WalletRepositoryImpl(
                 }
             )
         }
+    override val currentAccount: StateFlow<WalletAccount?> = accountDataSource.selectedAccount
 
-    override val synchronizer: StateFlow<Synchronizer?> =
-        walletCoordinator.synchronizer.stateIn(
-            scope = scope,
-            started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            initialValue = null
-        )
+    override val synchronizer: StateFlow<Synchronizer?> = walletCoordinator.synchronizer
+
+    override val allAccounts: StateFlow<List<WalletAccount>?> = accountDataSource.allAccounts
 
     override val secretState: StateFlow<SecretState> =
         combine(
@@ -160,20 +161,21 @@ class WalletRepositoryImpl(
             initialValue = SecretState.Loading
         )
 
-    override val spendingKey =
+    override val currentSpendingKey =
         secretState
             .filterIsInstance<SecretState.Ready>()
             .map { it.persistableWallet }
             .map {
-                val bip39Seed =
-                    withContext(Dispatchers.IO) {
-                        Mnemonics.MnemonicCode(it.seedPhrase.joinToString()).toSeed()
-                    }
-                DerivationTool.getInstance().deriveUnifiedSpendingKey(
-                    seed = bip39Seed,
-                    network = it.network,
-                    account = Account.DEFAULT
-                )
+                // val bip39Seed =
+                //     withContext(Dispatchers.IO) {
+                //         Mnemonics.MnemonicCode(it.seedPhrase.joinToString()).toSeed()
+                //     }
+                // DerivationTool.getInstance().deriveUnifiedSpendingKey(
+                //     seed = bip39Seed,
+                //     network = it.network,
+                //     accountIndex = 0,
+                // )
+                null
             }.stateIn(
                 scope = scope,
                 started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
@@ -223,36 +225,40 @@ class WalletRepositoryImpl(
             (it as? SecretState.Ready?)?.persistableWallet
         }
 
-    override val addresses: StateFlow<WalletAddresses?> =
-        synchronizer
-            .filterNotNull()
-            .map {
-                runCatching {
-                    WalletAddresses.new(it)
-                }.onFailure {
-                    Twig.warn { "Wait until the SDK starts providing the addresses" }
-                }.getOrNull()
-            }.stateIn(
-                scope,
-                SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-                null
+    override val currentAddresses: StateFlow<WalletAddresses?> =
+        currentAccount
+            .map { currentAccount ->
+                currentAccount?.let {
+                    WalletAddresses(
+                        unified = it.unifiedAddress,
+                        sapling = it.saplingAddress,
+                        transparent = it.transparentAddress
+                    )
+                }
+            }
+            .stateIn(
+                scope = scope,
+                started = SharingStarted.WhileSubscribed(),
+                initialValue = null
             )
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    override val walletSnapshot: StateFlow<WalletSnapshot?> =
-        synchronizer
-            .flatMapLatest {
-                if (null == it) {
+    override val currentWalletSnapshot: StateFlow<WalletSnapshot?> =
+        combine(synchronizer, currentAccount) { synchronizer, currentAccount ->
+            synchronizer to currentAccount
+        }
+            .flatMapLatest { (synchronizer, currentAccount) ->
+                if (synchronizer == null || currentAccount == null) {
                     flowOf(null)
                 } else {
-                    it.toWalletSnapshot()
+                    toWalletSnapshot(synchronizer, currentAccount)
                 }
             }
             .throttle(1.seconds)
             .stateIn(
-                scope,
-                SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-                null
+                scope = scope,
+                started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+                initialValue = null
             )
 
     /**
@@ -398,36 +404,26 @@ private fun Synchronizer.toCommonError(): Flow<SynchronizerError?> =
 
 // No good way around needing magic numbers for the indices
 @Suppress("MagicNumber")
-private fun Synchronizer.toWalletSnapshot() =
+private fun toWalletSnapshot(synchronizer: Synchronizer, account: WalletAccount) =
     combine(
         // 0
-        status,
+        synchronizer.status,
         // 1
-        processorInfo,
+        synchronizer.processorInfo,
         // 2
-        orchardBalances,
+        synchronizer.progress,
         // 3
-        saplingBalances,
-        // 4
-        transparentBalance,
-        // 5
-        progress,
-        // 6
-        toCommonError()
+        synchronizer.toCommonError()
     ) { flows ->
-        val orchardBalance = flows[2] as WalletBalance?
-        val saplingBalance = flows[3] as WalletBalance?
-        val transparentBalance = flows[4] as Zatoshi?
-
-        val progressPercentDecimal = (flows[5] as PercentDecimal)
+        val progressPercentDecimal = (flows[2] as PercentDecimal)
 
         WalletSnapshot(
             status = flows[0] as Synchronizer.Status,
             processorInfo = flows[1] as CompactBlockProcessor.ProcessorInfo,
-            orchardBalance = orchardBalance ?: WalletBalance(Zatoshi(0), Zatoshi(0), Zatoshi(0)),
-            saplingBalance = saplingBalance ?: WalletBalance(Zatoshi(0), Zatoshi(0), Zatoshi(0)),
-            transparentBalance = transparentBalance ?: Zatoshi(0),
+            orchardBalance = account.orchardBalance,
+            saplingBalance = account.saplingBalance,
+            transparentBalance = account.transparentBalance,
             progress = progressPercentDecimal,
-            synchronizerError = flows[6] as SynchronizerError?
+            synchronizerError = flows[3] as SynchronizerError?
         )
     }

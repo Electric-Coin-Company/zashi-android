@@ -7,7 +7,7 @@ import co.electriccoin.zcash.ui.design.util.StringResource
 
 data class AddressBookState(
     val title: StringResource,
-    val contacts: List<AddressBookItem>,
+    val items: List<AddressBookItem>,
     val isLoading: Boolean,
     val onBack: () -> Unit,
     val scanButton: ButtonState,

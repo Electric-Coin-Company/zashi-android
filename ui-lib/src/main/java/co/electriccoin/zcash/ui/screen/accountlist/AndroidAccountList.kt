@@ -41,6 +41,13 @@ fun AndroidAccountList() {
         }
     }
 
+    LaunchedEffect(Unit) {
+        viewModel.backNavigationCommand.collect {
+            sheetState.hide()
+            navController.popBackStack()
+        }
+    }
+
     state?.let {
         AccountListView(
             state = it,

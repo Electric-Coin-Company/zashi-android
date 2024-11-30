@@ -18,12 +18,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -34,10 +32,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
-import cash.z.ecc.android.sdk.fixture.WalletAddressesFixture
-import cash.z.ecc.android.sdk.model.WalletAddress
-import cash.z.ecc.android.sdk.model.WalletAddresses
+import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
@@ -48,71 +43,35 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import co.electriccoin.zcash.ui.design.util.getValue
+import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.fixture.ZashiMainTopAppBarStateFixture
-import co.electriccoin.zcash.ui.screen.receive.ext.toReceiveAddressType
-import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressType
+import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressState
 import co.electriccoin.zcash.ui.screen.receive.model.ReceiveState
-import co.electriccoin.zcash.ui.screen.send.ext.abbreviated
-import kotlinx.coroutines.runBlocking
-
-@Composable
-@PreviewScreens
-private fun ReceiveLoadingPreview() =
-    ZcashTheme(forceDarkMode = true) {
-        ReceiveView(
-            state = ReceiveState.Loading,
-            snackbarHostState = SnackbarHostState(),
-            zashiMainTopAppBarState = ZashiMainTopAppBarStateFixture.new()
-        )
-    }
-
-@Preview
-@Composable
-private fun ReceivePreview() =
-    ZcashTheme(forceDarkMode = false) {
-        ReceiveView(
-            state =
-                ReceiveState.Prepared(
-                    walletAddresses = runBlocking { WalletAddressesFixture.new() },
-                    isTestnet = false,
-                    onAddressCopy = {},
-                    onQrCode = {},
-                    onSettings = {},
-                    onRequest = {},
-                ),
-            snackbarHostState = SnackbarHostState(),
-            zashiMainTopAppBarState = ZashiMainTopAppBarStateFixture.new()
-        )
-    }
 
 @Composable
 internal fun ReceiveView(
     state: ReceiveState,
-    snackbarHostState: SnackbarHostState,
     zashiMainTopAppBarState: ZashiMainTopAppBarState,
 ) {
-    when (state) {
-        ReceiveState.Loading -> {
+    when {
+        state.items.isNullOrEmpty() && state.isLoading -> {
             CircularScreenProgressIndicator()
         }
-        is ReceiveState.Prepared -> {
+
+        else -> {
             BlankBgScaffold(
                 topBar = {
-                    ZashiMainTopAppBar(zashiMainTopAppBarState)
+                    ZashiMainTopAppBar(state = zashiMainTopAppBarState, showHideBalances = false)
                 },
-                snackbarHost = { SnackbarHost(snackbarHostState) },
             ) { paddingValues ->
                 ReceiveContents(
-                    walletAddresses = state.walletAddresses,
-                    onAddressCopyToClipboard = state.onAddressCopy,
-                    onQrCode = state.onQrCode,
-                    onRequest = state.onRequest,
-                    isTestnet = state.isTestnet,
+                    items = state.items.orEmpty(),
                     modifier =
-                        Modifier.padding(
-                            top = paddingValues.calculateTopPadding()
-                            // We intentionally do not set the rest paddings, those are set by the underlying composable
-                        ),
+                    Modifier.padding(
+                        top = paddingValues.calculateTopPadding()
+                        // We intentionally do not set the rest paddings, those are set by the underlying composable
+                    ),
                 )
             }
         }
@@ -120,23 +79,18 @@ internal fun ReceiveView(
 }
 
 @Composable
-@Suppress("LongParameterList")
 private fun ReceiveContents(
-    walletAddresses: WalletAddresses,
-    onAddressCopyToClipboard: (String) -> Unit,
-    onQrCode: (ReceiveAddressType) -> Unit,
-    onRequest: (ReceiveAddressType) -> Unit,
-    isTestnet: Boolean,
+    items: List<ReceiveAddressState>,
     modifier: Modifier = Modifier,
 ) {
-    var expandedAddressPanel by rememberSaveable { mutableStateOf(ReceiveAddressType.Unified) }
+    var expandedIndex by rememberSaveable { mutableIntStateOf(0) }
 
     Column(
         modifier =
-            modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(all = ZcashTheme.dimens.spacingSmall),
+        modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(all = ZcashTheme.dimens.spacingSmall),
     ) {
         Spacer(Modifier.height(ZcashTheme.dimens.spacingDefault))
 
@@ -159,48 +113,24 @@ private fun ReceiveContents(
 
         Spacer(Modifier.height(ZcashTheme.dimens.spacingLarge))
 
-        UnifiedAddressPanel(
-            walletAddress = walletAddresses.unified,
-            onAddressCopyToClipboard = onAddressCopyToClipboard,
-            onQrCode = onQrCode,
-            onRequest = onRequest,
-            expanded = expandedAddressPanel == ReceiveAddressType.Unified,
-            onExpand = { expandedAddressPanel = ReceiveAddressType.Unified }
-        )
+        items.forEachIndexed { index, state ->
+            if (index != 0) {
+                Spacer(Modifier.height(8.dp))
+            }
 
-        if (isTestnet) {
-            Spacer(Modifier.height(ZcashTheme.dimens.spacingSmall))
-
-            SaplingAddressPanel(
-                walletAddress = walletAddresses.sapling,
-                onAddressCopyToClipboard = onAddressCopyToClipboard,
-                onQrCode = onQrCode,
-                onRequest = onRequest,
-                expanded = expandedAddressPanel == ReceiveAddressType.Sapling,
-                onExpand = { expandedAddressPanel = ReceiveAddressType.Sapling }
+            AddressPanel(
+                state = state,
+                expanded = index == expandedIndex,
+                onExpand = { expandedIndex = index },
+                modifier = Modifier.fillMaxWidth()
             )
         }
-
-        Spacer(Modifier.height(ZcashTheme.dimens.spacingSmall))
-
-        TransparentAddressPanel(
-            walletAddress = walletAddresses.transparent,
-            onAddressCopyToClipboard = onAddressCopyToClipboard,
-            onQrCode = onQrCode,
-            onRequest = onRequest,
-            expanded = expandedAddressPanel == ReceiveAddressType.Transparent,
-            onExpand = { expandedAddressPanel = ReceiveAddressType.Transparent }
-        )
     }
 }
 
 @Composable
-@Suppress("LongParameterList", "LongMethod")
-private fun UnifiedAddressPanel(
-    walletAddress: WalletAddress,
-    onAddressCopyToClipboard: (String) -> Unit,
-    onQrCode: (ReceiveAddressType) -> Unit,
-    onRequest: (ReceiveAddressType) -> Unit,
+private fun AddressPanel(
+    state: ReceiveAddressState,
     expanded: Boolean,
     onExpand: () -> Unit,
     modifier: Modifier = Modifier,
@@ -208,19 +138,23 @@ private fun UnifiedAddressPanel(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier =
-            modifier
-                .wrapContentHeight()
-                .background(
-                    ZashiColors.Utility.Purple.utilityPurple50,
-                    RoundedCornerShape(ZashiDimensions.Radius.radius3xl)
-                )
-                .clip(RoundedCornerShape(ZashiDimensions.Radius.radius3xl))
-                .clickable { onExpand() }
-                .padding(all = ZcashTheme.dimens.spacingLarge)
+        modifier
+            .wrapContentHeight()
+            .background(
+                if (state.isShielded) {
+                    ZashiColors.Utility.Purple.utilityPurple50
+                } else {
+                    ZashiColors.Utility.Gray.utilityGray50
+                },
+                RoundedCornerShape(ZashiDimensions.Radius.radius3xl)
+            )
+            .clip(RoundedCornerShape(ZashiDimensions.Radius.radius3xl))
+            .clickable { onExpand() }
+            .padding(all = ZcashTheme.dimens.spacingLarge)
     ) {
         Row(modifier = Modifier.fillMaxWidth()) {
             Image(
-                painter = painterResource(id = R.drawable.ic_zec_round_full),
+                painter = painterResource(id = state.icon),
                 contentDescription = null
             )
 
@@ -228,7 +162,7 @@ private fun UnifiedAddressPanel(
 
             Column {
                 Text(
-                    text = stringResource(id = R.string.receive_wallet_address_shielded),
+                    text = state.title.getValue(),
                     color = ZashiColors.Text.textPrimary,
                     style = ZashiTypography.textMd,
                     fontWeight = FontWeight.SemiBold
@@ -237,7 +171,7 @@ private fun UnifiedAddressPanel(
                 Spacer(Modifier.height(ZcashTheme.dimens.spacingTiny))
 
                 Text(
-                    text = walletAddress.abbreviated(),
+                    text = state.subtitle.getValue(),
                     color = ZashiColors.Text.textTertiary,
                     style = ZashiTypography.textSm
                 )
@@ -247,25 +181,27 @@ private fun UnifiedAddressPanel(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            Image(
-                painter = painterResource(id = R.drawable.ic_check_shielded_solid),
-                contentDescription = null
-            )
+            if (state.isShielded) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_check_shielded_solid),
+                    contentDescription = null
+                )
+            }
         }
 
         AnimatedVisibility(visible = expanded) {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(top = ZcashTheme.dimens.spacingDefault)
+                Modifier
+                    .fillMaxWidth()
+                    .padding(top = ZcashTheme.dimens.spacingDefault)
             ) {
                 ReceiveIconButton(
                     containerColor = ZashiColors.Utility.Purple.utilityPurple100,
                     contentColor = ZashiColors.Utility.Purple.utilityPurple800,
                     iconPainter = painterResource(id = R.drawable.ic_copy_shielded),
-                    onClick = { onAddressCopyToClipboard(walletAddress.address) },
+                    onClick = state.onCopyClicked,
                     text = stringResource(id = R.string.receive_copy),
                     modifier = Modifier.weight(1f)
                 )
@@ -276,7 +212,7 @@ private fun UnifiedAddressPanel(
                     containerColor = ZashiColors.Utility.Purple.utilityPurple100,
                     contentColor = ZashiColors.Utility.Purple.utilityPurple800,
                     iconPainter = painterResource(id = R.drawable.ic_qr_code_shielded),
-                    onClick = { onQrCode(walletAddress.toReceiveAddressType()) },
+                    onClick = state.onQrClicked,
                     text = stringResource(id = R.string.receive_qr_code),
                     modifier = Modifier.weight(1f)
                 )
@@ -287,193 +223,7 @@ private fun UnifiedAddressPanel(
                     containerColor = ZashiColors.Utility.Purple.utilityPurple100,
                     contentColor = ZashiColors.Utility.Purple.utilityPurple800,
                     iconPainter = painterResource(id = R.drawable.ic_request_shielded),
-                    onClick = { onRequest(walletAddress.toReceiveAddressType()) },
-                    text = stringResource(id = R.string.receive_request),
-                    modifier = Modifier.weight(1f)
-                )
-            }
-        }
-    }
-}
-
-@Composable
-@Suppress("LongParameterList", "LongMethod")
-private fun SaplingAddressPanel(
-    walletAddress: WalletAddress,
-    onAddressCopyToClipboard: (String) -> Unit,
-    onQrCode: (ReceiveAddressType) -> Unit,
-    onRequest: (ReceiveAddressType) -> Unit,
-    expanded: Boolean,
-    onExpand: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier =
-            modifier
-                .wrapContentHeight()
-                .background(
-                    ZashiColors.Utility.Gray.utilityGray50,
-                    RoundedCornerShape(ZashiDimensions.Radius.radius3xl)
-                )
-                .clip(RoundedCornerShape(ZashiDimensions.Radius.radius3xl))
-                .clickable { onExpand() }
-                .padding(all = ZcashTheme.dimens.spacingLarge),
-    ) {
-        Row(modifier = Modifier.fillMaxWidth()) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_zec_round_stroke),
-                contentDescription = null
-            )
-
-            Spacer(Modifier.width(ZcashTheme.dimens.spacingDefault))
-
-            Column {
-                Text(
-                    text = stringResource(id = R.string.receive_wallet_address_sapling),
-                    color = ZashiColors.Text.textPrimary,
-                    style = ZashiTypography.textMd,
-                    fontWeight = FontWeight.SemiBold
-                )
-
-                Spacer(Modifier.height(ZcashTheme.dimens.spacingTiny))
-
-                Text(
-                    text = walletAddress.abbreviated(),
-                    color = ZashiColors.Text.textTertiary,
-                    style = ZashiTypography.textSm
-                )
-            }
-        }
-
-        AnimatedVisibility(visible = expanded) {
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(top = ZcashTheme.dimens.spacingDefault)
-            ) {
-                ReceiveIconButton(
-                    containerColor = ZashiColors.Surfaces.bgTertiary,
-                    contentColor = ZashiColors.Text.textPrimary,
-                    iconPainter = painterResource(id = R.drawable.ic_copy_other),
-                    onClick = { onAddressCopyToClipboard(walletAddress.address) },
-                    text = stringResource(id = R.string.receive_copy),
-                    modifier = Modifier.weight(1f)
-                )
-
-                Spacer(modifier = Modifier.width(ZcashTheme.dimens.spacingSmall))
-
-                ReceiveIconButton(
-                    containerColor = ZashiColors.Surfaces.bgTertiary,
-                    contentColor = ZashiColors.Text.textPrimary,
-                    iconPainter = painterResource(id = R.drawable.ic_qr_code_other),
-                    onClick = { onQrCode(walletAddress.toReceiveAddressType()) },
-                    text = stringResource(id = R.string.receive_qr_code),
-                    modifier = Modifier.weight(1f)
-                )
-
-                Spacer(modifier = Modifier.width(ZcashTheme.dimens.spacingSmall))
-
-                ReceiveIconButton(
-                    containerColor = ZashiColors.Surfaces.bgTertiary,
-                    contentColor = ZashiColors.Text.textPrimary,
-                    iconPainter = painterResource(id = R.drawable.ic_request_other),
-                    onClick = { onRequest(walletAddress.toReceiveAddressType()) },
-                    text = stringResource(id = R.string.receive_request),
-                    modifier = Modifier.weight(1f)
-                )
-            }
-        }
-    }
-}
-
-@Composable
-@Suppress("LongParameterList", "LongMethod")
-private fun TransparentAddressPanel(
-    walletAddress: WalletAddress,
-    onAddressCopyToClipboard: (String) -> Unit,
-    onQrCode: (ReceiveAddressType) -> Unit,
-    onRequest: (ReceiveAddressType) -> Unit,
-    expanded: Boolean,
-    onExpand: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier =
-            modifier
-                .wrapContentHeight()
-                .background(
-                    ZashiColors.Utility.Gray.utilityGray50,
-                    RoundedCornerShape(ZashiDimensions.Radius.radius3xl)
-                )
-                .clip(RoundedCornerShape(ZashiDimensions.Radius.radius3xl))
-                .clickable { onExpand() }
-                .padding(all = ZcashTheme.dimens.spacingLarge),
-    ) {
-        Row(modifier = Modifier.fillMaxWidth()) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_zec_round_stroke),
-                contentDescription = null
-            )
-
-            Spacer(Modifier.width(ZcashTheme.dimens.spacingDefault))
-
-            Column {
-                Text(
-                    text = stringResource(id = R.string.receive_wallet_address_transparent),
-                    color = ZashiColors.Text.textPrimary,
-                    style = ZashiTypography.textMd,
-                    fontWeight = FontWeight.SemiBold
-                )
-
-                Spacer(Modifier.height(ZcashTheme.dimens.spacingTiny))
-
-                Text(
-                    text = walletAddress.abbreviated(),
-                    color = ZashiColors.Text.textTertiary,
-                    style = ZashiTypography.textSm
-                )
-            }
-        }
-
-        AnimatedVisibility(visible = expanded) {
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(top = ZcashTheme.dimens.spacingDefault)
-            ) {
-                ReceiveIconButton(
-                    containerColor = ZashiColors.Surfaces.bgTertiary,
-                    contentColor = ZashiColors.Text.textPrimary,
-                    iconPainter = painterResource(id = R.drawable.ic_copy_other),
-                    onClick = { onAddressCopyToClipboard(walletAddress.address) },
-                    text = stringResource(id = R.string.receive_copy),
-                    modifier = Modifier.weight(1f)
-                )
-
-                Spacer(modifier = Modifier.width(ZcashTheme.dimens.spacingSmall))
-
-                ReceiveIconButton(
-                    containerColor = ZashiColors.Surfaces.bgTertiary,
-                    contentColor = ZashiColors.Text.textPrimary,
-                    iconPainter = painterResource(id = R.drawable.ic_qr_code_other),
-                    onClick = { onQrCode(walletAddress.toReceiveAddressType()) },
-                    text = stringResource(id = R.string.receive_qr_code),
-                    modifier = Modifier.weight(1f)
-                )
-
-                Spacer(modifier = Modifier.width(ZcashTheme.dimens.spacingSmall))
-
-                ReceiveIconButton(
-                    containerColor = ZashiColors.Surfaces.bgTertiary,
-                    contentColor = ZashiColors.Text.textPrimary,
-                    iconPainter = painterResource(id = R.drawable.ic_request_other),
-                    onClick = { onRequest(walletAddress.toReceiveAddressType()) },
+                    onClick = state.onRequestClicked,
                     text = stringResource(id = R.string.receive_request),
                     modifier = Modifier.weight(1f)
                 )
@@ -495,11 +245,11 @@ private fun ReceiveIconButton(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier =
-            modifier
-                .background(containerColor, RoundedCornerShape(ZashiDimensions.Radius.radiusXl))
-                .clip(RoundedCornerShape(ZashiDimensions.Radius.radiusXl))
-                .clickable { onClick() }
-                .padding(ZcashTheme.dimens.spacingMid)
+        modifier
+            .background(containerColor, RoundedCornerShape(ZashiDimensions.Radius.radiusXl))
+            .clip(RoundedCornerShape(ZashiDimensions.Radius.radiusXl))
+            .clickable { onClick() }
+            .padding(ZcashTheme.dimens.spacingMid)
     ) {
         Icon(
             painter = iconPainter,
@@ -517,3 +267,70 @@ private fun ReceiveIconButton(
         )
     }
 }
+
+@Composable
+@PreviewScreens
+private fun LoadingPreview() =
+    ZcashTheme(forceDarkMode = true) {
+        ReceiveView(
+            state = ReceiveState(items = null, isLoading = true),
+            zashiMainTopAppBarState = ZashiMainTopAppBarStateFixture.new()
+        )
+    }
+
+@PreviewScreens
+@Composable
+private fun ZashiPreview() =
+    ZcashTheme() {
+        ReceiveView(
+            state = ReceiveState(
+                items = listOf(
+                    ReceiveAddressState(
+                        icon = R.drawable.ic_zec_round_full,
+                        title = stringRes("Zashi"),
+                        subtitle = stringRes("subtitle"),
+                        isShielded = true,
+                        onCopyClicked = {},
+                        onQrClicked = { },
+                        onRequestClicked = {},
+                    ),
+                    ReceiveAddressState(
+                        icon = R.drawable.ic_zec_round_stroke,
+                        title = stringRes("Zashi"),
+                        subtitle = stringRes("subtitle"),
+                        isShielded = false,
+                        onCopyClicked = {},
+                        onQrClicked = { },
+                        onRequestClicked = { },
+                    )
+                ),
+                isLoading = false
+            ),
+            zashiMainTopAppBarState = ZashiMainTopAppBarStateFixture.new()
+        )
+    }
+
+@PreviewScreens
+@Composable
+private fun KeystonePreview() =
+    ZcashTheme {
+        ReceiveView(
+            state = ReceiveState(
+                items = listOf(
+                    ReceiveAddressState(
+                        icon = co.electriccoin.zcash.ui.design.R.drawable.ic_item_keystone,
+                        title = stringRes("Keystone Address"),
+                        subtitle = stringRes("subtitle"),
+                        isShielded = true,
+                        onCopyClicked = {},
+                        onQrClicked = {},
+                        onRequestClicked = {},
+                    ),
+                ),
+                isLoading = false
+            ),
+            zashiMainTopAppBarState = ZashiMainTopAppBarStateFixture.new()
+        )
+    }
+
+

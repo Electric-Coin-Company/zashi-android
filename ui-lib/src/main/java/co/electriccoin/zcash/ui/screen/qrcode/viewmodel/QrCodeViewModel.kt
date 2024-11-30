@@ -12,22 +12,24 @@ import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.spackle.getInternalCacheDirSuspend
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.VersionInfo
+import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
 import co.electriccoin.zcash.ui.common.usecase.CopyToClipboardUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetAddressesUseCase
+import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.screen.qrcode.ext.fromReceiveAddressType
 import co.electriccoin.zcash.ui.screen.qrcode.model.QrCodeState
+import co.electriccoin.zcash.ui.screen.qrcode.model.QrCodeType
 import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressType
 import co.electriccoin.zcash.ui.util.FileShareUtil
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -39,17 +41,22 @@ class QrCodeViewModel(
     getAddresses: GetAddressesUseCase,
     getVersionInfo: GetVersionInfoProvider,
     private val copyToClipboard: CopyToClipboardUseCase,
+    private val observeSelectedWalletAccount: ObserveSelectedWalletAccountUseCase
 ) : ViewModel() {
     private val versionInfo by lazy { getVersionInfo() }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     internal val state =
-        getAddresses().mapLatest { addresses ->
+        combine(observeSelectedWalletAccount(), getAddresses()) { wallet, addresses ->
             QrCodeState.Prepared(
                 walletAddress = addresses.fromReceiveAddressType(ReceiveAddressType.fromOrdinal(addressTypeOrdinal)),
                 onAddressCopy = { address -> onAddressCopyClick(address) },
                 onQrCodeShare = { onQrCodeShareClick(it, versionInfo) },
                 onBack = ::onBack,
+                qrCodeType = when (wallet) {
+                    is WalletAccount.Keystone -> QrCodeType.KEYSTONE
+                    is WalletAccount.Zashi -> QrCodeType.ZASHI
+                    null -> QrCodeType.ZASHI
+                }
             )
         }.stateIn(
             scope = viewModelScope,

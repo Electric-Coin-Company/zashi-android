@@ -2,6 +2,7 @@ package co.electriccoin.zcash.ui.common.repository
 
 import cash.z.ecc.android.sdk.model.Account
 import co.electriccoin.zcash.spackle.Twig
+import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.datasource.LocalAddressBookDataSource
 import co.electriccoin.zcash.ui.common.model.AddressBook
 import co.electriccoin.zcash.ui.common.model.AddressBookContact
@@ -53,6 +54,7 @@ class AddressBookRepositoryImpl(
     private val localAddressBookDataSource: LocalAddressBookDataSource,
     private val addressBookKeyStorageProvider: AddressBookKeyStorageProvider,
     private val walletRepository: WalletRepository,
+    private val accountDataSource: AccountDataSource,
     // private val remoteAddressBookDataSource: RemoteAddressBookDataSource,
     // private val context: Context
 ) : AddressBookRepository {
@@ -280,7 +282,7 @@ class AddressBookRepositoryImpl(
         }
     }
 
-    private suspend fun getAddressBookKey(account: Account = Account.DEFAULT): AddressBookKey {
+    private suspend fun getAddressBookKey(): AddressBookKey {
         val key = addressBookKeyStorageProvider.getAddressBookKey()
 
         return if (key != null) {
@@ -291,7 +293,7 @@ class AddressBookRepositoryImpl(
                 AddressBookKey.derive(
                     seedPhrase = wallet.seedPhrase,
                     network = wallet.network,
-                    account = account
+                    account = accountDataSource.getZashiAccount().sdkAccount
                 )
             addressBookKeyStorageProvider.storeAddressBookKey(newKey)
             newKey

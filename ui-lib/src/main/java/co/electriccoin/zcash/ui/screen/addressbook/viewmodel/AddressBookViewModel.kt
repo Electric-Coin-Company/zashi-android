@@ -8,6 +8,7 @@ import co.electriccoin.zcash.ui.common.model.AddressBookContact
 import co.electriccoin.zcash.ui.common.usecase.ObserveAddressBookContactsUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiContactListItemState
+import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.addressbook.model.AddressBookItem
 import co.electriccoin.zcash.ui.screen.addressbook.model.AddressBookState
@@ -43,11 +44,11 @@ class AddressBookViewModel(
     private fun createState(contacts: List<AddressBookContact>?) =
         AddressBookState(
             isLoading = contacts == null,
-            contacts =
+            items =
                 contacts?.map { contact ->
                     AddressBookItem.Contact(
                         ZashiContactListItemState(
-                            initials = getContactInitials(contact),
+                            icon = getContactInitials(contact),
                             isShielded = false,
                             name = stringRes(contact.name),
                             address = stringRes("${contact.address.take(ADDRESS_MAX_LENGTH)}..."),
@@ -70,7 +71,7 @@ class AddressBookViewModel(
         )
 
     private fun getContactInitials(contact: AddressBookContact) =
-        stringRes(
+        imageRes(
             contact.name
                 .split(" ")
                 .mapNotNull { part ->
