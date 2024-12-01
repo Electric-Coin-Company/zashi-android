@@ -4,10 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.screen.scan.model.ScanValidationState
+import co.electriccoin.zcash.ui.screen.selectkeystoneaccount.SelectKeystoneAccount
 import com.google.gson.Gson
-import com.keystone.module.DecodeResult
-import com.keystone.module.ZcashAccounts
 import com.keystone.sdk.KeystoneSDK
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
@@ -20,39 +20,24 @@ internal class ScanKeystoneSignInRequestViewModel : ViewModel() {
 
     private val sdk = KeystoneSDK()
 
-    private val gson = Gson()
+    val navigationCommand = MutableSharedFlow<SelectKeystoneAccount>()
+
+    private var scanSuccess = false
 
     fun onScanned(result: String) =
         viewModelScope.launch {
             mutex.withLock {
+                if (scanSuccess) return@withLock
+
                 val decodedResult = sdk.decodeQR(result)
                 Twig.debug { "=========> progress: " + decodedResult.progress }
 
-                val accounts = getAccountsFromKeystone(decodedResult) ?: getAccountsFromURResult(decodedResult)
+                val ur = decodedResult.ur?.toString()
 
-                Twig.debug { "=========> progress: $accounts"}
+                if (ur != null) {
+                    scanSuccess = true
+                    navigationCommand.emit(SelectKeystoneAccount(ur))
+                }
             }
         }
-
-    @Suppress("TooGenericExceptionCaught")
-    private fun getAccountsFromKeystone(decodedResult: DecodeResult): ZcashAccounts? {
-        val ur = decodedResult.ur ?: return null
-        return try {
-            val accounts = sdk.parseZcashAccounts(ur)
-            Twig.debug { "=========> progress: " + Gson().toJson(accounts).toString() }
-            accounts
-        } catch (_: Exception) {
-            null
-        }
-    }
-
-    @OptIn(ExperimentalStdlibApi::class)
-    private fun getAccountsFromURResult(decodedResult: DecodeResult): ZcashAccounts? {
-        val ur = decodedResult.ur ?: return null
-        val json = gson.toJson(UR(ur.type, ur.cborBytes.toHexString()))
-        Twig.debug { "=========> progress: $json" }
-        return gson.fromJson(json, ZcashAccounts::class.java)
-    }
 }
-
-private data class UR(val type: String, val cbor: String)

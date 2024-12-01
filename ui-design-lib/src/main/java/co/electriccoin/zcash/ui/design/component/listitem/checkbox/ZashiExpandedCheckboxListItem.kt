@@ -70,22 +70,25 @@ fun ZashiExpandedCheckboxListItem(state: ZashiExpandedCheckboxListItemState, mod
             ZashiCheckboxIndicator(state.isSelected)
         },
         below = {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    modifier = Modifier.weight(1f),
-                    text = state.info.title.getValue(),
-                    style = ZashiTypography.textSm,
-                    color = ZashiColors.Text.textPrimary,
-                    fontWeight = FontWeight.SemiBold,
-                )
-                Spacer(Modifier.width(8.dp))
-                Text(
-                    text = state.info.subtitle.getValue(),
-                    style = ZashiTypography.textXs,
-                    color = ZashiColors.Text.textTertiary,
-                )
+            state.info?.let {
+                Spacer(Modifier.height(16.dp))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        modifier = Modifier.weight(1f),
+                        text = it.title.getValue(),
+                        style = ZashiTypography.textSm,
+                        color = ZashiColors.Text.textPrimary,
+                        fontWeight = FontWeight.SemiBold,
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text(
+                        text = it.subtitle.getValue(),
+                        style = ZashiTypography.textXs,
+                        color = ZashiColors.Text.textTertiary,
+                    )
+                }
             }
         },
         border = BorderStroke(
@@ -134,7 +137,6 @@ private fun ExpandedBaseListItem(
                 Spacer(modifier = Modifier.width(16.dp))
                 trailing(Modifier)
             }
-            Spacer(Modifier.height(16.dp))
             below(Modifier)
         }
     }
@@ -145,7 +147,7 @@ data class ZashiExpandedCheckboxListItemState(
     val subtitle: StringResource,
     val icon: Int,
     val isSelected: Boolean,
-    val info: ZashiExpandedCheckboxRowState,
+    val info: ZashiExpandedCheckboxRowState?,
     val onClick: () -> Unit
 ): CheckboxListItemState
 
@@ -174,6 +176,25 @@ fun ExpandedPreviewChecked() = ZcashTheme {
         )
     }
 }
+
+@Composable
+@PreviewScreens
+fun PreviewWithNoInfo() = ZcashTheme {
+    BlankSurface {
+        ZashiExpandedCheckboxListItem(
+            modifier = Modifier.fillMaxWidth(),
+            state = ZashiExpandedCheckboxListItemState(
+                title = stringRes("title"),
+                subtitle = stringRes("subtitle"),
+                icon = R.drawable.ic_radio_button_checked,
+                isSelected = true,
+                info = null,
+                onClick = {}
+            )
+        )
+    }
+}
+
 
 @Composable
 @PreviewScreens

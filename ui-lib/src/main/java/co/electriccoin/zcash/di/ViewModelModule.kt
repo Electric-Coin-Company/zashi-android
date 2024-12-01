@@ -27,6 +27,8 @@ import co.electriccoin.zcash.ui.screen.scan.viewmodel.ScanViewModel
 import co.electriccoin.zcash.ui.screen.scankeystone.viewmodel.ScanKeystoneSignInRequestViewModel
 import co.electriccoin.zcash.ui.screen.seed.SeedNavigationArgs
 import co.electriccoin.zcash.ui.screen.seed.viewmodel.SeedViewModel
+import co.electriccoin.zcash.ui.screen.selectkeystoneaccount.SelectKeystoneAccount
+import co.electriccoin.zcash.ui.screen.selectkeystoneaccount.viewmodel.SelectKeystoneAccountViewModel
 import co.electriccoin.zcash.ui.screen.send.SendViewModel
 import co.electriccoin.zcash.ui.screen.sendconfirmation.viewmodel.CreateTransactionsViewModel
 import co.electriccoin.zcash.ui.screen.settings.viewmodel.ScreenBrightnessViewModel
@@ -103,4 +105,12 @@ val viewModelModule =
         viewModelOf(::SignKeystoneTransactionViewModel)
         viewModelOf(::AccountListViewModel)
         viewModelOf(::ZashiMainTopAppBarViewModel)
+        viewModel { (args: SelectKeystoneAccount) ->
+            SelectKeystoneAccountViewModel(
+                args = args,
+                createKeystoneAccount = get(),
+                deriveKeystoneAccountUnifiedAddress = get(),
+                decodeUrToZashiAccounts = get()
+            )
+        }
     }

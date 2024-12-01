@@ -3,6 +3,7 @@ package co.electriccoin.zcash.ui.screen.scankeystone
 import androidx.activity.compose.BackHandler
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -34,6 +35,12 @@ internal fun WrapScanKeystoneSignInRequestViewModel() {
 
     BackHandler {
         navController.popBackStackJustOnce(ScanKeystoneNavigationArgs.PATH)
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.navigationCommand.collect {
+            navController.navigate(it)
+        }
     }
 
     if (synchronizer == null) {

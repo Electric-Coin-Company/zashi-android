@@ -1,7 +1,10 @@
 package co.electriccoin.zcash.di
 
 import co.electriccoin.zcash.ui.common.usecase.CopyToClipboardUseCase
+import co.electriccoin.zcash.ui.common.usecase.CreateKeystoneAccountUseCase
+import co.electriccoin.zcash.ui.common.usecase.DecodeUrToZashiAccountsUseCase
 import co.electriccoin.zcash.ui.common.usecase.DeleteContactUseCase
+import co.electriccoin.zcash.ui.common.usecase.DeriveKeystoneAccountUnifiedAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetAddressesUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetBackupPersistableWalletUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetContactByAddressUseCase
@@ -94,4 +97,7 @@ val useCaseModule =
         factoryOf(::ObserveKeystoneAccountUseCase)
         factoryOf(::ObserveZashiAccountUseCase)
         factoryOf(::GetZashiAccountUseCase)
+        factoryOf(::CreateKeystoneAccountUseCase)
+        factoryOf(::DeriveKeystoneAccountUnifiedAddressUseCase)
+        factoryOf(::DecodeUrToZashiAccountsUseCase)
     }
