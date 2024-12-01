@@ -10,7 +10,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cash.z.ecc.android.sdk.Synchronizer
@@ -67,9 +66,9 @@ internal fun WrapSend(
 
     val synchronizer = walletViewModel.synchronizer.collectAsStateWithLifecycle().value
 
-    val walletSnapshot = walletViewModel.walletSnapshot.collectAsStateWithLifecycle().value
+    val walletSnapshot = walletViewModel.currentWalletSnapshot.collectAsStateWithLifecycle().value
 
-    val spendingKey = walletViewModel.spendingKey.collectAsStateWithLifecycle(null).value
+    val spendingKey = walletViewModel.zashiSpendingKey.collectAsStateWithLifecycle(null).value
 
     val monetarySeparators = MonetarySeparators.current(Locale.getDefault())
 

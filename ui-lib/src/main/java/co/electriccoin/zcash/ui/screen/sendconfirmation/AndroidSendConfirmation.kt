@@ -8,7 +8,6 @@ import androidx.annotation.VisibleForTesting
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -69,7 +68,7 @@ internal fun MainActivity.WrapSendConfirmation(
 
     val synchronizer = walletViewModel.synchronizer.collectAsStateWithLifecycle().value
 
-    val spendingKey = walletViewModel.spendingKey.collectAsStateWithLifecycle(null).value
+    val spendingKey = walletViewModel.zashiSpendingKey.collectAsStateWithLifecycle(null).value
 
     val supportMessage = supportViewModel.supportInfo.collectAsStateWithLifecycle().value
 

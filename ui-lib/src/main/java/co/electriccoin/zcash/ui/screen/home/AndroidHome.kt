@@ -52,7 +52,7 @@ internal fun WrapHome(
 
     val isKeepScreenOnWhileSyncing = homeViewModel.isKeepScreenOnWhileSyncing.collectAsStateWithLifecycle().value
 
-    val walletSnapshot = walletViewModel.walletSnapshot.collectAsStateWithLifecycle().value
+    val walletSnapshot = walletViewModel.currentWalletSnapshot.collectAsStateWithLifecycle().value
 
     val walletRestoringState = walletViewModel.walletRestoringState.collectAsStateWithLifecycle().value
 

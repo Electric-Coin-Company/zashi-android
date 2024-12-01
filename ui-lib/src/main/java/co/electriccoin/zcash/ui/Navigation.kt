@@ -450,7 +450,7 @@ private fun MainActivity.NavigationHome(
 
     val isEnoughSpace by storageCheckViewModel.isEnoughSpace.collectAsStateWithLifecycle()
 
-    val sdkStatus = walletViewModel.walletSnapshot.collectAsStateWithLifecycle().value?.status
+    val sdkStatus = walletViewModel.currentWalletSnapshot.collectAsStateWithLifecycle().value?.status
 
     if (isEnoughSpace == false) {
         Twig.info { "Not enough free space" }

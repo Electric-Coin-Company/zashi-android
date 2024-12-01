@@ -274,7 +274,7 @@ class ScreenshotTest : UiTestPrerequisites() {
         }
 
         composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) {
-            composeTestRule.activity.walletViewModel.walletSnapshot.value != null
+            composeTestRule.activity.walletViewModel.currentWalletSnapshot.value != null
         }
 
         composeTestRule.waitUntilDoesNotExist(hasTestTag(ACKNOWLEDGE_CHECKBOX_TAG), DEFAULT_TIMEOUT_MILLISECONDS)
@@ -452,7 +452,7 @@ private fun accountScreenshots(
         composeTestRule.activity.walletViewModel.secretState.value is SecretState.Ready
     }
     composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) {
-        composeTestRule.activity.walletViewModel.walletSnapshot.value != null
+        composeTestRule.activity.walletViewModel.currentWalletSnapshot.value != null
     }
 
     composeTestRule.onNodeWithTag(AccountTag.BALANCE_VIEWS).also {
@@ -495,7 +495,7 @@ private fun receiveZecScreenshots(
     composeTestRule: AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>
 ) {
     composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) {
-        composeTestRule.activity.walletViewModel.addresses.value != null
+        composeTestRule.activity.walletViewModel.currentAddresses.value != null
     }
 
     composeTestRule.onNode(
@@ -520,11 +520,11 @@ private fun sendZecScreenshots(
     }
     composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) {
         runBlocking {
-            composeTestRule.activity.walletViewModel.spendingKey.first() != null
+            composeTestRule.activity.walletViewModel.zashiSpendingKey.first() != null
         }
     }
     composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) {
-        composeTestRule.activity.walletViewModel.walletSnapshot.value != null
+        composeTestRule.activity.walletViewModel.currentWalletSnapshot.value != null
     }
 
     composeTestRule.onNode(hasText(resContext.getString(R.string.send_stage_send_title))).also {
