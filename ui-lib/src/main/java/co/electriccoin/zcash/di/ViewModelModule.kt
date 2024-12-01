@@ -22,6 +22,8 @@ import co.electriccoin.zcash.ui.screen.receive.viewmodel.ReceiveViewModel
 import co.electriccoin.zcash.ui.screen.request.viewmodel.RequestViewModel
 import co.electriccoin.zcash.ui.screen.restore.viewmodel.RestoreViewModel
 import co.electriccoin.zcash.ui.screen.restoresuccess.viewmodel.RestoreSuccessViewModel
+import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewKeystoneTransaction
+import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewKeystoneTransactionViewModel
 import co.electriccoin.zcash.ui.screen.scan.ScanNavigationArgs
 import co.electriccoin.zcash.ui.screen.scan.viewmodel.ScanViewModel
 import co.electriccoin.zcash.ui.screen.scankeystone.viewmodel.ScanKeystoneSignInRequestViewModel
@@ -111,6 +113,13 @@ val viewModelModule =
                 createKeystoneAccount = get(),
                 deriveKeystoneAccountUnifiedAddress = get(),
                 decodeUrToZashiAccounts = get()
+            )
+        }
+        viewModel { (args: ReviewKeystoneTransaction) ->
+            ReviewKeystoneTransactionViewModel(
+                args = args,
+                observeContactByAddress = get(),
+                getLoadedExchangeRate = get(),
             )
         }
     }

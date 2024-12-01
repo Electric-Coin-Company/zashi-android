@@ -31,6 +31,7 @@ import co.electriccoin.zcash.ui.screen.balances.WrapBalances
 import co.electriccoin.zcash.ui.screen.home.model.TabItem
 import co.electriccoin.zcash.ui.screen.home.view.Home
 import co.electriccoin.zcash.ui.screen.receive.WrapReceive
+import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewKeystoneTransaction
 import co.electriccoin.zcash.ui.screen.send.WrapSend
 import co.electriccoin.zcash.ui.screen.send.model.SendArguments
 import kotlinx.collections.immutable.persistentListOf
@@ -43,6 +44,7 @@ internal fun WrapHome(
     goMultiTrxSubmissionFailure: () -> Unit,
     goScan: () -> Unit,
     goSendConfirmation: (ZecSend) -> Unit,
+    goReviewKeystoneTransaction: (ReviewKeystoneTransaction) -> Unit,
     goPaymentRequest: (ZecSend, String) -> Unit,
     sendArguments: SendArguments
 ) {
@@ -92,7 +94,8 @@ internal fun WrapHome(
         isShowingRestoreSuccess = isShowingRestoreSuccess,
         sendArguments = sendArguments,
         setShowingRestoreSuccess = setShowingRestoreSuccess,
-        walletSnapshot = walletSnapshot
+        walletSnapshot = walletSnapshot,
+        goReviewKeystoneTransaction = goReviewKeystoneTransaction,
     )
 }
 
@@ -102,6 +105,7 @@ internal fun WrapHome(
     goMultiTrxSubmissionFailure: () -> Unit,
     goScan: () -> Unit,
     goSendConfirmation: (ZecSend) -> Unit,
+    goReviewKeystoneTransaction: (ReviewKeystoneTransaction) -> Unit,
     goPaymentRequest: (ZecSend, String) -> Unit,
     isKeepScreenOnWhileSyncing: Boolean?,
     isShowingRestoreSuccess: Boolean,
@@ -180,7 +184,8 @@ internal fun WrapHome(
                         },
                         goSendConfirmation = goSendConfirmation,
                         goPaymentRequest = goPaymentRequest,
-                        sendArguments = sendArguments
+                        sendArguments = sendArguments,
+                        goReviewKeystoneTransaction = goReviewKeystoneTransaction
                     )
                 }
             ),

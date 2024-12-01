@@ -1,6 +1,8 @@
 package co.electriccoin.zcash.ui.common.datasource
 
+import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.WalletCoordinator
+import cash.z.ecc.android.sdk.model.Account
 import cash.z.ecc.android.sdk.model.PersistableWallet
 import cash.z.ecc.android.sdk.model.UnifiedSpendingKey
 import cash.z.ecc.android.sdk.model.WalletAddress
@@ -14,6 +16,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -23,10 +26,12 @@ import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
 interface AccountDataSource {
 
@@ -73,7 +78,7 @@ class AccountDataSourceImpl(
         if (synchronizer == null || walletBalances == null || persistableWallet == null) {
             null
         } else {
-            synchronizer.getAccounts().mapIndexed { index, account ->
+            synchronizer.getAccountsSafe().mapIndexed { index, account ->
                 val balance = walletBalances.getValue(account)
                 val spendingKey = deriveSpendingKey(persistableWallet)
 
@@ -91,11 +96,26 @@ class AccountDataSourceImpl(
                 )
             }
         }
-    }.stateIn(
-        scope = scope,
-        started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT, Duration.ZERO),
-        initialValue = null
-    )
+    }.flowOn(Dispatchers.Default)
+        .stateIn(
+            scope = scope,
+            started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT, Duration.ZERO),
+            initialValue = null
+        )
+
+    private suspend fun Synchronizer.getAccountsSafe(): List<Account> {
+        var accounts: List<Account>? = null
+
+        while (accounts == null) {
+            try {
+                accounts = getAccounts()
+            } catch (_: Throwable) {
+                delay(1.seconds)
+            }
+        }
+
+        return accounts
+    }
 
     private suspend fun deriveSpendingKey(persistableWallet: PersistableWallet): UnifiedSpendingKey? {
         // crashes currently

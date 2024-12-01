@@ -93,6 +93,8 @@ import co.electriccoin.zcash.ui.screen.paymentrequest.model.PaymentRequestArgume
 import co.electriccoin.zcash.ui.screen.qrcode.WrapQrCode
 import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressType
 import co.electriccoin.zcash.ui.screen.request.WrapRequest
+import co.electriccoin.zcash.ui.screen.reviewtransaction.AndroidReviewKeystoneTransaction
+import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewKeystoneTransaction
 import co.electriccoin.zcash.ui.screen.scan.ScanNavigationArgs
 import co.electriccoin.zcash.ui.screen.scan.WrapScanValidator
 import co.electriccoin.zcash.ui.screen.scankeystone.ScanKeystoneNavigationArgs
@@ -394,9 +396,11 @@ internal fun MainActivity.Navigation() {
         composable(ConnectKeystoneArgs.PATH) {
             AndroidConnectKeystone()
         }
-        composable<SelectKeystoneAccount> { backStackEntry ->
-            val args = backStackEntry.toRoute<SelectKeystoneAccount>()
-            AndroidSelectKeystoneAccount(args)
+        composable<SelectKeystoneAccount> {
+            AndroidSelectKeystoneAccount(it.toRoute())
+        }
+        composable<ReviewKeystoneTransaction> {
+            AndroidReviewKeystoneTransaction(it.toRoute())
         }
     }
 }
@@ -416,6 +420,9 @@ private fun MainActivity.NavigationHome(
                 fillInHandleForConfirmation(handle, zecSend, SendConfirmationStage.Prepared)
             }
             navController.navigateJustOnce(SEND_CONFIRMATION)
+        },
+        goReviewKeystoneTransaction = {
+            navController.navigate(it)
         },
         goPaymentRequest = { zecSend, zip321Uri ->
             navController.currentBackStackEntry?.savedStateHandle?.let { handle ->

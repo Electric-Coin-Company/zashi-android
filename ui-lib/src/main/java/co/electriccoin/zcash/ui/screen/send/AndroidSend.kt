@@ -28,12 +28,16 @@ import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.compose.BalanceState
 import co.electriccoin.zcash.ui.common.compose.LocalActivity
 import co.electriccoin.zcash.ui.common.compose.LocalNavController
+import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
+import co.electriccoin.zcash.ui.common.model.ZashiAccount
+import co.electriccoin.zcash.ui.common.usecase.GetSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.common.viewmodel.HomeViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.ZashiMainTopAppBarViewModel
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
+import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewKeystoneTransaction
 import co.electriccoin.zcash.ui.screen.send.ext.Saver
 import co.electriccoin.zcash.ui.screen.send.model.AmountState
 import co.electriccoin.zcash.ui.screen.send.model.MemoState
@@ -43,6 +47,7 @@ import co.electriccoin.zcash.ui.screen.send.model.SendStage
 import co.electriccoin.zcash.ui.screen.send.view.Send
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 import org.zecdev.zip321.ZIP321
 import java.util.Locale
 
@@ -54,6 +59,7 @@ internal fun WrapSend(
     goBack: () -> Unit,
     goBalances: () -> Unit,
     goSendConfirmation: (ZecSend) -> Unit,
+    goReviewKeystoneTransaction: (ReviewKeystoneTransaction) -> Unit,
     goPaymentRequest: (ZecSend, String) -> Unit,
 ) {
     val activity = LocalActivity.current
@@ -93,6 +99,7 @@ internal fun WrapSend(
         hasCameraFeature = hasCameraFeature,
         monetarySeparators = monetarySeparators,
         exchangeRateState = exchangeRateState,
+        goReviewKeystoneTransaction = goReviewKeystoneTransaction
     )
 }
 
@@ -107,6 +114,7 @@ internal fun WrapSend(
     goBack: () -> Unit,
     goBalances: () -> Unit,
     goSendConfirmation: (ZecSend) -> Unit,
+    goReviewKeystoneTransaction: (ReviewKeystoneTransaction) -> Unit,
     goPaymentRequest: (ZecSend, String) -> Unit,
     hasCameraFeature: Boolean,
     monetarySeparators: MonetarySeparators,
@@ -120,6 +128,8 @@ internal fun WrapSend(
     val navController = LocalNavController.current
 
     val viewModel = koinViewModel<SendViewModel>()
+
+    val getSelectedWalletAccount = koinInject<GetSelectedWalletAccountUseCase>()
 
     LaunchedEffect(Unit) {
         viewModel.navigateCommand.collect {
@@ -263,21 +273,49 @@ internal fun WrapSend(
             isHideBalances = isHideBalances,
             sendStage = sendStage,
             onCreateZecSend = { newZecSend ->
+                goReviewKeystoneTransaction(
+                    ReviewKeystoneTransaction(
+                        addressString = newZecSend.destination.address,
+                        addressType = cash.z.ecc.sdk.model.AddressType.fromWalletAddress(newZecSend.destination),
+                        amountLong = newZecSend.amount.value,
+                        memoString = newZecSend.memo.value.takeIf { it.isNotEmpty() },
+                    )
+                )
                 scope.launch {
-                    spendingKey?.let {
-                        Twig.debug { "Getting send transaction proposal" }
-                        runCatching {
-                            synchronizer.proposeSend(spendingKey.account, newZecSend)
-                        }.onSuccess { proposal ->
-                            Twig.debug { "Transaction proposal successful: ${proposal.toPrettyString()}" }
-                            val enrichedZecSend = newZecSend.copy(proposal = proposal)
-                            setZecSend(enrichedZecSend)
-                            goSendConfirmation(enrichedZecSend)
-                        }.onFailure {
-                            Twig.error(it) { "Transaction proposal failed" }
-                            setSendStage(SendStage.SendFailure(it.message ?: ""))
-                        }
-                    }
+                    // goReviewKeystoneTransaction(
+                    //     ReviewKeystoneTransaction(
+                    //         addressString = newZecSend.destination.address,
+                    //         addressType = cash.z.ecc.sdk.model.AddressType.fromWalletAddress(newZecSend.destination),
+                    //         amountLong = newZecSend.amount.value,
+                    //         memoString = newZecSend.memo.value,
+                    //     )
+                    // )
+                    // when (getSelectedWalletAccount()) {
+                    //     is KeystoneAccount -> {
+                    //         goReviewKeystoneTransaction(
+                    //             ReviewKeystoneTransaction(
+                    //                 addressString = newZecSend.destination.address,
+                    //                 addressType = cash.z.ecc.sdk.model.AddressType.fromWalletAddress(newZecSend.destination),
+                    //                 amountLong = newZecSend.amount.value,
+                    //                 memoString = newZecSend.memo.value,
+                    //             )
+                    //         )
+                    //     }
+                    //     is ZashiAccount -> spendingKey?.let {
+                    //         Twig.debug { "Getting send transaction proposal" }
+                    //         runCatching {
+                    //             synchronizer.proposeSend(spendingKey.account, newZecSend)
+                    //         }.onSuccess { proposal ->
+                    //             Twig.debug { "Transaction proposal successful: ${proposal.toPrettyString()}" }
+                    //             val enrichedZecSend = newZecSend.copy(proposal = proposal)
+                    //             setZecSend(enrichedZecSend)
+                    //             goSendConfirmation(enrichedZecSend)
+                    //         }.onFailure {
+                    //             Twig.error(it) { "Transaction proposal failed" }
+                    //             setSendStage(SendStage.SendFailure(it.message ?: ""))
+                    //         }
+                    //     }
+                    // }
                 }
             },
             onBack = onBackAction,
