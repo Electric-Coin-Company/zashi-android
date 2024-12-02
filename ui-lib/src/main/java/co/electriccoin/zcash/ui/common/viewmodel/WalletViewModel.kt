@@ -68,10 +68,6 @@ class WalletViewModel(
     private val isFlexaAvailable: IsFlexaAvailableUseCase,
     private val getSynchronizer: GetSynchronizerUseCase
 ) : AndroidViewModel(application) {
-    val navigationCommand = exchangeRateRepository.navigationCommand
-
-    val backNavigationCommand = exchangeRateRepository.backNavigationCommand
-
     val synchronizer = walletRepository.synchronizer
 
     val walletRestoringState = walletRepository.walletRestoringState

@@ -7,6 +7,8 @@ import co.electriccoin.zcash.global.newInstance
 import co.electriccoin.zcash.preference.EncryptedPreferenceProvider
 import co.electriccoin.zcash.preference.StandardPreferenceProvider
 import co.electriccoin.zcash.preference.model.entry.PreferenceKey
+import co.electriccoin.zcash.ui.NavigationRouter
+import co.electriccoin.zcash.ui.NavigationRouterImpl
 import co.electriccoin.zcash.ui.preference.PersistableWalletPreferenceDefault
 import co.electriccoin.zcash.ui.screen.update.AppUpdateChecker
 import co.electriccoin.zcash.ui.screen.update.AppUpdateCheckerImpl
@@ -37,4 +39,6 @@ val coreModule =
         factoryOf(::AppUpdateCheckerImpl) bind AppUpdateChecker::class
 
         factory { AndroidConfigurationFactory.new() }
+
+        singleOf(::NavigationRouterImpl) bind NavigationRouter::class
     }
