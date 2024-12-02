@@ -7,6 +7,7 @@ import co.electriccoin.zcash.ui.common.model.AddressBook
 import co.electriccoin.zcash.ui.common.model.AddressBookContact
 import co.electriccoin.zcash.ui.common.provider.AddressBookKeyStorageProvider
 import co.electriccoin.zcash.ui.common.serialization.addressbook.AddressBookKey
+import co.electriccoin.zcash.ui.common.usecase.PersistableWalletProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.Flow
@@ -53,6 +54,7 @@ class AddressBookRepositoryImpl(
     private val localAddressBookDataSource: LocalAddressBookDataSource,
     private val addressBookKeyStorageProvider: AddressBookKeyStorageProvider,
     private val accountDataSource: AccountDataSource,
+    private val persistableWalletProvider: PersistableWalletProvider,
     // private val remoteAddressBookDataSource: RemoteAddressBookDataSource,
     // private val context: Context
 ) : AddressBookRepository {
@@ -287,9 +289,10 @@ class AddressBookRepositoryImpl(
             key
         } else {
             val account = accountDataSource.getZashiAccount()
+            val persistableWallet = persistableWalletProvider.getPersistableWallet()
             val newKey = AddressBookKey.derive(
-                    seedPhrase = account.persistableWallet.seedPhrase,
-                    network = account.persistableWallet.network,
+                    seedPhrase = persistableWallet.seedPhrase,
+                    network = persistableWallet.network,
                     account = account.sdkAccount
                 )
             addressBookKeyStorageProvider.storeAddressBookKey(newKey)

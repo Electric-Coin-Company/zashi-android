@@ -8,7 +8,6 @@ import cash.z.ecc.android.sdk.block.processor.CompactBlockProcessor
 import cash.z.ecc.android.sdk.model.FastestServersResult
 import cash.z.ecc.android.sdk.model.PercentDecimal
 import cash.z.ecc.android.sdk.model.PersistableWallet
-import cash.z.ecc.android.sdk.model.UnifiedSpendingKey
 import cash.z.ecc.android.sdk.model.WalletAddresses
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.lightwallet.client.model.LightWalletEndpoint
@@ -43,7 +42,6 @@ import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.emptyFlow
-import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
@@ -74,7 +72,6 @@ interface WalletRepository {
     val currentAccount: Flow<WalletAccount?>
     val currentAddresses: StateFlow<WalletAddresses?>
     val currentWalletSnapshot: StateFlow<WalletSnapshot?>
-    val zashiSpendingKey: Flow<UnifiedSpendingKey?>
 
     /**
      * A flow of the wallet block synchronization state.
@@ -156,8 +153,6 @@ class WalletRepositoryImpl(
             started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
             initialValue = SecretState.Loading
         )
-
-    override val zashiSpendingKey = accountDataSource.zashiAccount.map { it?.spendingKey }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override val fastestServers =

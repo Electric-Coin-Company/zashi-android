@@ -3,8 +3,6 @@ package co.electriccoin.zcash.ui.common.datasource
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.WalletCoordinator
 import cash.z.ecc.android.sdk.model.Account
-import cash.z.ecc.android.sdk.model.PersistableWallet
-import cash.z.ecc.android.sdk.model.UnifiedSpendingKey
 import cash.z.ecc.android.sdk.model.WalletAddress
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.common.model.KeystoneAccount
@@ -70,17 +68,15 @@ class AccountDataSourceImpl(
 
     override val allAccounts: StateFlow<List<WalletAccount>?> = combine(
         walletCoordinator.synchronizer,
-        walletCoordinator.persistableWallet,
         selectedAccountUUIDProvider.uuid,
         walletBalances,
-    ) { synchronizer, persistableWallet, uuid, walletBalances ->
+    ) { synchronizer, uuid, walletBalances ->
 
-        if (synchronizer == null || walletBalances == null || persistableWallet == null) {
+        if (synchronizer == null || walletBalances == null) {
             null
         } else {
             synchronizer.getAccountsSafe().mapIndexed { index, account ->
                 val balance = walletBalances.getValue(account)
-                val spendingKey = deriveSpendingKey(persistableWallet)
 
                 ZashiAccount(
                     sdkAccount = account,
@@ -91,8 +87,6 @@ class AccountDataSourceImpl(
                     transparentBalance = balance.unshielded,
                     saplingBalance = balance.sapling,
                     isSelected = index == 0 && uuid == null || account.accountUuid.contentEquals(uuid),
-                    persistableWallet = persistableWallet,
-                    spendingKey = spendingKey
                 )
             }
         }
@@ -115,21 +109,6 @@ class AccountDataSourceImpl(
         }
 
         return accounts
-    }
-
-    private suspend fun deriveSpendingKey(persistableWallet: PersistableWallet): UnifiedSpendingKey? {
-        // crashes currently
-        // val bip39Seed =
-        //     withContext(Dispatchers.IO) {
-        //         Mnemonics.MnemonicCode(persistableWallet.seedPhrase.joinToString()).toSeed()
-        //     }
-        // val spendingKey = DerivationTool.getInstance().deriveUnifiedSpendingKey(
-        //     seed = bip39Seed,
-        //     network = persistableWallet.network,
-        //     accountIndex = 0,
-        // )
-        // return spendingKey
-        return null
     }
 
     override val selectedAccount: Flow<WalletAccount?> = allAccounts

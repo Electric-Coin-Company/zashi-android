@@ -80,9 +80,6 @@ class WalletViewModel(
 
     val secretState: StateFlow<SecretState> = walletRepository.secretState
 
-    // This needs to be refactored once we support pin lock
-    val zashiSpendingKey = walletRepository.zashiSpendingKey
-
     val currentWalletSnapshot: StateFlow<WalletSnapshot?> = walletRepository.currentWalletSnapshot
 
     val currentAddresses: StateFlow<WalletAddresses?> = walletRepository.currentAddresses

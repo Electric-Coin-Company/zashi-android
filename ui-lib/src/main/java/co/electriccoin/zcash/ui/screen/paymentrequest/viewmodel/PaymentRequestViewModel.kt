@@ -12,7 +12,7 @@ import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.provider.GetMonetarySeparatorProvider
-import co.electriccoin.zcash.ui.common.usecase.GetSpendingKeyUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetZashiSpendingKeyUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSynchronizerUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveAddressBookContactsUseCase
 import co.electriccoin.zcash.ui.common.viewmodel.AuthenticationViewModel
@@ -43,7 +43,7 @@ class PaymentRequestViewModel(
     private val authenticationViewModel: AuthenticationViewModel,
     private val createTransactionsViewModel: CreateTransactionsViewModel,
     getMonetarySeparators: GetMonetarySeparatorProvider,
-    private val getSpendingKeyUseCase: GetSpendingKeyUseCase,
+    private val getZashiSpendingKeyUseCase: GetZashiSpendingKeyUseCase,
     private val getSynchronizer: GetSynchronizerUseCase,
     supportViewModel: SupportViewModel,
     walletViewModel: WalletViewModel,
@@ -135,7 +135,7 @@ class PaymentRequestViewModel(
                 // nullability before due to property is declared in different module. See more
                 // details on the Kotlin forum
                 proposal = proposal,
-                spendingKey = getSpendingKeyUseCase(),
+                spendingKey = getZashiSpendingKeyUseCase(),
                 synchronizer = getSynchronizer(),
             )
         }

@@ -22,7 +22,7 @@ import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
 import co.electriccoin.zcash.ui.common.provider.GetZcashCurrencyProvider
 import co.electriccoin.zcash.ui.common.repository.BiometricRepository
 import co.electriccoin.zcash.ui.common.repository.BiometricRequest
-import co.electriccoin.zcash.ui.common.usecase.GetSpendingKeyUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetZashiSpendingKeyUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSynchronizerUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetZashiAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsCoinbaseAvailableUseCase
@@ -55,7 +55,7 @@ class IntegrationsViewModel(
     private val getZashiAccount: GetZashiAccountUseCase,
     private val isFlexaAvailable: IsFlexaAvailableUseCase,
     private val isCoinbaseAvailable: IsCoinbaseAvailableUseCase,
-    private val getSpendingKey: GetSpendingKeyUseCase,
+    private val getSpendingKey: GetZashiSpendingKeyUseCase,
     private val context: Context,
     private val biometricRepository: BiometricRepository
 ) : ViewModel() {

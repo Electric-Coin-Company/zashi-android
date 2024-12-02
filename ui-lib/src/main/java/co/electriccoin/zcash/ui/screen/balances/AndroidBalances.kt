@@ -63,8 +63,6 @@ internal fun WrapBalances(goMultiTrxSubmissionFailure: () -> Unit) {
 
     val walletSnapshot = walletViewModel.currentWalletSnapshot.collectAsStateWithLifecycle().value
 
-    val spendingKey = walletViewModel.zashiSpendingKey.collectAsStateWithLifecycle(null).value
-
     val walletRestoringState = walletViewModel.walletRestoringState.collectAsStateWithLifecycle().value
 
     val isHideBalances = homeViewModel.isHideBalances.collectAsStateWithLifecycle().value ?: false
@@ -86,7 +84,6 @@ internal fun WrapBalances(goMultiTrxSubmissionFailure: () -> Unit) {
         goMultiTrxSubmissionFailure = goMultiTrxSubmissionFailure,
         isHideBalances = isHideBalances,
         lifecycleScope = activity.lifecycleScope,
-        spendingKey = spendingKey,
         supportInfo = supportInfo,
         synchronizer = synchronizer,
         walletSnapshot = walletSnapshot,
@@ -108,7 +105,6 @@ internal fun WrapBalances(
     goMultiTrxSubmissionFailure: () -> Unit,
     lifecycleScope: CoroutineScope,
     isHideBalances: Boolean,
-    spendingKey: UnifiedSpendingKey?,
     supportInfo: SupportInfo?,
     synchronizer: Synchronizer?,
     walletSnapshot: WalletSnapshot?,
@@ -177,6 +173,9 @@ internal fun WrapBalances(
                     Twig.debug { "Shielding transparent funds" }
 
                     runCatching {
+                        // TODO keystone spending key
+                        val spendingKey: UnifiedSpendingKey = TODO()
+
                         spendingKey?.let {
                             synchronizer.proposeShielding(
                                 account = spendingKey.account,
@@ -201,6 +200,8 @@ internal fun WrapBalances(
                                 )
                             )
                         } else {
+                            val spendingKey: UnifiedSpendingKey = TODO()
+
                             if (spendingKey == null) return@onSuccess
 
                             val result =

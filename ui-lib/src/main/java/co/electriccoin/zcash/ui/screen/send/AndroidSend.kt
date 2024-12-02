@@ -74,8 +74,6 @@ internal fun WrapSend(
 
     val walletSnapshot = walletViewModel.currentWalletSnapshot.collectAsStateWithLifecycle().value
 
-    val spendingKey = walletViewModel.zashiSpendingKey.collectAsStateWithLifecycle(null).value
-
     val monetarySeparators = MonetarySeparators.current(Locale.getDefault())
 
     val balanceState = walletViewModel.balanceState.collectAsStateWithLifecycle().value
@@ -90,7 +88,6 @@ internal fun WrapSend(
         sendArguments = sendArguments,
         synchronizer = synchronizer,
         walletSnapshot = walletSnapshot,
-        spendingKey = spendingKey,
         goToQrScanner = goToQrScanner,
         goBack = goBack,
         goBalances = goBalances,
@@ -119,7 +116,6 @@ internal fun WrapSend(
     hasCameraFeature: Boolean,
     monetarySeparators: MonetarySeparators,
     sendArguments: SendArguments?,
-    spendingKey: UnifiedSpendingKey?,
     synchronizer: Synchronizer?,
     walletSnapshot: WalletSnapshot?,
 ) {
@@ -163,21 +159,20 @@ internal fun WrapSend(
 
     // Zip321 Uri scan result processing
     if (sendArguments?.zip321Uri != null &&
-        synchronizer != null &&
-        spendingKey != null
-    ) {
-        LaunchedEffect(goPaymentRequest) {
-            scope.launch {
-                processZip321Result(
-                    zip321Uri = sendArguments.zip321Uri,
-                    synchronizer = synchronizer,
-                    account = spendingKey.account,
-                    setSendStage = setSendStage,
-                    setZecSend = setZecSend,
-                    goPaymentRequest = goPaymentRequest
-                )
-            }
-        }
+        synchronizer != null) {
+        // TODO keystone spending key
+        // LaunchedEffect(goPaymentRequest) {
+        //     scope.launch {
+        //         processZip321Result(
+        //             zip321Uri = sendArguments.zip321Uri,
+        //             synchronizer = synchronizer,
+        //             account = spendingKey.account,
+        //             setSendStage = setSendStage,
+        //             setZecSend = setZecSend,
+        //             goPaymentRequest = goPaymentRequest
+        //         )
+        //     }
+        // }
     }
 
     // Amount computation:

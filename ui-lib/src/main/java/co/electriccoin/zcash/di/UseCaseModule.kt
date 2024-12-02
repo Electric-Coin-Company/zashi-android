@@ -12,7 +12,7 @@ import co.electriccoin.zcash.ui.common.usecase.GetLoadedExchangeRateUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetPersistableWalletUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSelectedEndpointUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSelectedWalletAccountUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetSpendingKeyUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetZashiSpendingKeyUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSupportUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSynchronizerUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTransparentAddressUseCase
@@ -84,7 +84,7 @@ val useCaseModule =
         factoryOf(::Zip321ParseUriValidationUseCase)
         factoryOf(::ObserveWalletStateUseCase)
         factoryOf(::IsCoinbaseAvailableUseCase)
-        factoryOf(::GetSpendingKeyUseCase)
+        factoryOf(::GetZashiSpendingKeyUseCase)
         factoryOf(::ObservePersistableWalletUseCase)
         factoryOf(::GetBackupPersistableWalletUseCase)
         factoryOf(::GetSupportUseCase)

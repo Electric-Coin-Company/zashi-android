@@ -50,7 +50,6 @@ import co.electriccoin.zcash.ui.screen.restore.viewmodel.RestoreViewModel
 import co.electriccoin.zcash.ui.screen.securitywarning.view.SecurityScreenTag.ACKNOWLEDGE_CHECKBOX_TAG
 import co.electriccoin.zcash.ui.screen.send.SendTag
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.junit.Rule
@@ -517,11 +516,6 @@ private fun sendZecScreenshots(
 ) {
     composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) {
         composeTestRule.activity.walletViewModel.synchronizer.value != null
-    }
-    composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) {
-        runBlocking {
-            composeTestRule.activity.walletViewModel.zashiSpendingKey.first() != null
-        }
     }
     composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) {
         composeTestRule.activity.walletViewModel.currentWalletSnapshot.value != null
