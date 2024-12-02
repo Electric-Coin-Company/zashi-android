@@ -15,5 +15,4 @@ val dataSourceModule =
         singleOf(::LocalAddressBookDataSourceImpl) bind LocalAddressBookDataSource::class
         singleOf(::AccountDataSourceImpl) bind AccountDataSource::class
         singleOf(::ZashiSpendingKeyDataSourceImpl) bind ZashiSpendingKeyDataSource::class
-        // singleOf(::RemoteAddressBookDataSourceImpl) bind RemoteAddressBookDataSource::class
     }

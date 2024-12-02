@@ -23,3 +23,19 @@ fun Modifier.scaffoldScrollPadding(paddingValues: PaddingValues) =
         start = 0.dp,
         end = 0.dp
     )
+
+@Stable
+fun PaddingValues.asScaffoldPaddingValues() = PaddingValues(
+    top = calculateTopPadding() + ZashiDimensions.Spacing.spacingLg,
+    bottom = calculateBottomPadding() + ZashiDimensions.Spacing.spacing3xl,
+    start = ZashiDimensions.Spacing.spacing3xl,
+    end = ZashiDimensions.Spacing.spacing3xl
+)
+
+@Stable
+fun PaddingValues.asScaffoldScrollPaddingValues() = PaddingValues(
+    top = calculateTopPadding() + ZashiDimensions.Spacing.spacingLg,
+    bottom = calculateBottomPadding() + ZashiDimensions.Spacing.spacing3xl,
+    start = 0.dp,
+    end = 0.dp
+)

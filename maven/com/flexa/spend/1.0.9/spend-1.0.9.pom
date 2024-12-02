@@ -3,13 +3,13 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.flexa</groupId>
   <artifactId>spend</artifactId>
-  <version>1.0.6</version>
+  <version>1.0.9</version>
   <packaging>aar</packaging>
   <dependencies>
     <dependency>
       <groupId>com.flexa</groupId>
       <artifactId>core</artifactId>
-      <version>1.0.6</version>
+      <version>1.0.9</version>
     </dependency>
     <dependency>
       <groupId>androidx.core</groupId>
@@ -99,7 +99,7 @@
     <dependency>
       <groupId>com.flexa</groupId>
       <artifactId>core</artifactId>
-      <version>1.0.6</version>
+      <version>1.0.9</version>
     </dependency>
   </dependencies>
 </project>

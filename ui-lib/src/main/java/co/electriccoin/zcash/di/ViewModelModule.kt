@@ -78,6 +78,7 @@ val viewModelModule =
                 validateContactAddress = get(),
                 validateContactName = get(),
                 saveContact = get(),
+                navigationRouter = get()
             )
         }
         viewModelOf(::UpdateContactViewModel)

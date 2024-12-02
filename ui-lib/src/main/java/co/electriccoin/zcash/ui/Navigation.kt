@@ -11,6 +11,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.NavType
@@ -118,6 +119,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
+import org.koin.compose.koinInject
 
 // TODO [#1297]: Consider: Navigation passing complex data arguments different way
 // TODO [#1297]: https://github.com/Electric-Coin-Company/zashi-android/issues/1297
@@ -136,16 +138,21 @@ internal fun MainActivity.Navigation() {
         rememberSaveable { mutableStateOf(false) }
     val (deleteWalletAuthentication, setDeleteWalletAuthentication) =
         rememberSaveable { mutableStateOf(false) }
+    val navigationRouter = koinInject<NavigationRouter>()
 
     LaunchedEffect(Unit) {
-        walletViewModel.navigationCommand.collect {
-            navController.navigateJustOnce(it)
-        }
-    }
-
-    LaunchedEffect(Unit) {
-        walletViewModel.backNavigationCommand.collect {
-            navController.popBackStack()
+        navigationRouter.observe().collect {
+            when (it) {
+                is NavigationCommand.Forward -> navController.navigate(it.route)
+                is NavigationCommand.Replace ->
+                    navController.navigate(it.route) {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
+                        }
+                        restoreState = true
+                    }
+                NavigationCommand.Back -> navController.popBackStack()
+            }
         }
     }
 

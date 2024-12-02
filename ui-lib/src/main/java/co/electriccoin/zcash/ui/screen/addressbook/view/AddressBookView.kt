@@ -5,7 +5,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -55,6 +54,7 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import co.electriccoin.zcash.ui.design.util.asScaffoldScrollPaddingValues
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.scaffoldPadding
@@ -81,6 +81,7 @@ fun AddressBookView(
             state.items.isEmpty() && state.isLoading -> {
                 CircularScreenProgressIndicator()
             }
+
             state.items.isEmpty() && !state.isLoading -> {
                 EmptyFullscreen(
                     state = state,
@@ -90,6 +91,7 @@ fun AddressBookView(
                         .scaffoldPadding(paddingValues)
                 )
             }
+
             else -> {
                 Column(
                     modifier = Modifier.fillMaxSize(),
@@ -99,13 +101,7 @@ fun AddressBookView(
                         Modifier
                             .fillMaxWidth()
                             .weight(1f),
-                        contentPadding =
-                        PaddingValues(
-                            top = paddingValues.calculateTopPadding(),
-                            bottom = paddingValues.calculateBottomPadding() + ZashiDimensions.Spacing.spacing3xl,
-                            start = 4.dp,
-                            end = 4.dp
-                        )
+                        contentPadding = paddingValues.asScaffoldScrollPaddingValues()
                     ) {
                         itemsIndexed(
                             contentType = { _, item -> item.contentType },
@@ -113,11 +109,16 @@ fun AddressBookView(
                         ) { index, item ->
                             when (item) {
                                 is AddressBookItem.Contact -> {
-                                    ZashiContactListItem(state = item.state)
+                                    ZashiContactListItem(
+                                        modifier = Modifier.padding(horizontal = 4.dp),
+                                        state = item.state,
+                                    )
                                     if (index != state.items.lastIndex &&
                                         state.items[index + 1] is AddressBookItem.Contact
                                     ) {
-                                        ZashiHorizontalDivider()
+                                        ZashiHorizontalDivider(
+                                            modifier = Modifier.padding(horizontal = 4.dp),
+                                        )
                                     }
                                 }
 

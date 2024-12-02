@@ -3,6 +3,7 @@ package co.electriccoin.zcash.ui.screen.addressbook.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
+import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.AddressBookContact
 import co.electriccoin.zcash.ui.common.model.KeystoneAccount
@@ -33,6 +34,7 @@ class SelectRecipientViewModel(
     observeAddressBookContacts: ObserveAddressBookContactsUseCase,
     observeWalletAccountsUseCase: ObserveWalletAccountsUseCase,
     private val observeContactPicked: ObserveContactPickedUseCase,
+    private val navigationRouter: NavigationRouter
 ) : ViewModel() {
     val state =
         combine(observeAddressBookContacts(), observeWalletAccountsUseCase()) { contacts, accounts ->
@@ -47,10 +49,6 @@ class SelectRecipientViewModel(
                 started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
                 initialValue = createStateWithoutAccounts(contacts = null)
             )
-
-    val navigationCommand = MutableSharedFlow<String>()
-
-    val backNavigationCommand = MutableSharedFlow<Unit>()
 
     private fun createStateWithAccounts(
         contacts: List<AddressBookContact>?,
@@ -146,7 +144,7 @@ class SelectRecipientViewModel(
     private fun onWalletAccountClick(account: WalletAccount) =
         viewModelScope.launch {
             observeContactPicked.onWalletAccountPicked(account)
-            backNavigationCommand.emit(Unit)
+            navigationRouter.back()
         }
 
     private fun getContactInitials(contact: AddressBookContact): ImageResource {
@@ -161,24 +159,15 @@ class SelectRecipientViewModel(
         )
     }
 
-    private fun onBack() =
-        viewModelScope.launch {
-            backNavigationCommand.emit(Unit)
-        }
+    private fun onBack() = navigationRouter.back()
 
     private fun onContactClick(contact: AddressBookContact) =
         viewModelScope.launch {
             observeContactPicked.onContactPicked(contact)
-            backNavigationCommand.emit(Unit)
+            navigationRouter.back()
         }
 
-    private fun onAddContactManuallyClick() =
-        viewModelScope.launch {
-            navigationCommand.emit(AddContactArgs(null))
-        }
+    private fun onAddContactManuallyClick() = navigationRouter.forward(AddContactArgs(null))
 
-    private fun onScanContactClick() =
-        viewModelScope.launch {
-            navigationCommand.emit(ScanNavigationArgs(ScanNavigationArgs.ADDRESS_BOOK))
-        }
+    private fun onScanContactClick() = navigationRouter.forward(ScanNavigationArgs(ScanNavigationArgs.ADDRESS_BOOK))
 }

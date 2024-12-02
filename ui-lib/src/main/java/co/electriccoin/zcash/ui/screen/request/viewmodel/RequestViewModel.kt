@@ -9,6 +9,7 @@ import cash.z.ecc.android.sdk.model.FiatCurrencyConversion
 import cash.z.ecc.android.sdk.model.WalletAddress
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.spackle.Twig
+import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
@@ -51,7 +52,8 @@ class RequestViewModel(
     getMonetarySeparators: GetMonetarySeparatorProvider,
     shareImageBitmap: ShareImageUseCase,
     zip321BuildUriUseCase: Zip321BuildUriUseCase,
-    observeSelectedWalletAccount: ObserveSelectedWalletAccountUseCase
+    observeSelectedWalletAccount: ObserveSelectedWalletAccountUseCase,
+    private val navigationRouter: NavigationRouter,
 ) : ViewModel() {
     companion object {
         private const val MAX_ZCASH_SUPPLY = 21_000_000
@@ -147,8 +149,6 @@ class RequestViewModel(
             started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
             initialValue = RequestState.Loading
         )
-
-    val backNavigationCommand = MutableSharedFlow<Unit>()
 
     val shareResultCommand = MutableSharedFlow<Boolean>()
 
@@ -263,7 +263,7 @@ class RequestViewModel(
         viewModelScope.launch {
             when (stage.value) {
                 RequestStage.AMOUNT -> {
-                    backNavigationCommand.emit(Unit)
+                    navigationRouter.back()
                 }
                 RequestStage.MEMO -> {
                     stage.emit(RequestStage.AMOUNT)
@@ -281,10 +281,7 @@ class RequestViewModel(
             }
         }
 
-    private fun onClose() =
-        viewModelScope.launch {
-            backNavigationCommand.emit(Unit)
-        }
+    private fun onClose() = navigationRouter.back()
 
     private fun onAmountDone(conversion: FiatCurrencyConversion?) =
         viewModelScope.launch {

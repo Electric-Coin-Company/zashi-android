@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.preference.StandardPreferenceProvider
 import co.electriccoin.zcash.preference.model.entry.BooleanPreferenceDefault
+import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.NavigationTargets.ABOUT
 import co.electriccoin.zcash.ui.NavigationTargets.ADVANCED_SETTINGS
 import co.electriccoin.zcash.ui.NavigationTargets.INTEGRATIONS
@@ -25,7 +26,6 @@ import co.electriccoin.zcash.ui.screen.settings.model.SettingsState
 import co.electriccoin.zcash.ui.screen.settings.model.SettingsTroubleshootingState
 import co.electriccoin.zcash.ui.screen.settings.model.TroubleshootingItemState
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
@@ -43,6 +43,7 @@ class SettingsViewModel(
     private val standardPreferenceProvider: StandardPreferenceProvider,
     private val getVersionInfo: GetVersionInfoProvider,
     private val rescanBlockchain: RescanBlockchainUseCase,
+    private val navigationRouter: NavigationRouter,
 ) : ViewModel() {
     private val versionInfo by lazy { getVersionInfo() }
 
@@ -160,9 +161,6 @@ class SettingsViewModel(
         version = stringRes(R.string.settings_version, versionInfo.versionName)
     )
 
-    val navigationCommand = MutableSharedFlow<String>()
-    val backNavigationCommand = MutableSharedFlow<Unit>()
-
     private fun setAnalyticsEnabled(enabled: Boolean) {
         setBooleanPreference(StandardPreferenceKeys.IS_ANALYTICS_ENABLED, enabled)
     }
@@ -189,42 +187,19 @@ class SettingsViewModel(
         }
     }
 
-    fun onBack() =
-        viewModelScope.launch {
-            backNavigationCommand.emit(Unit)
-        }
+    fun onBack() = navigationRouter.back()
 
-    private fun onIntegrationsClick() =
-        viewModelScope.launch {
-            navigationCommand.emit(INTEGRATIONS)
-        }
+    private fun onIntegrationsClick() = navigationRouter.forward(INTEGRATIONS)
 
-    private fun onAdvancedSettingsClick() =
-        viewModelScope.launch {
-            navigationCommand.emit(ADVANCED_SETTINGS)
-        }
+    private fun onAdvancedSettingsClick() = navigationRouter.forward(ADVANCED_SETTINGS)
 
-    private fun onAboutUsClick() =
-        viewModelScope.launch {
-            navigationCommand.emit(ABOUT)
-        }
+    private fun onAboutUsClick() = navigationRouter.forward(ABOUT)
 
-    private fun onSendUsFeedbackClick() =
-        viewModelScope.launch {
-            navigationCommand.emit(SUPPORT)
-        }
+    private fun onSendUsFeedbackClick() = navigationRouter.forward(SUPPORT)
 
-    private fun onAddressBookClick() {
-        viewModelScope.launch {
-            navigationCommand.emit(AddressBookArgs(AddressBookArgs.DEFAULT))
-        }
-    }
+    private fun onAddressBookClick() = navigationRouter.forward(AddressBookArgs(AddressBookArgs.DEFAULT))
 
-    private fun onWhatsNewClick() {
-        viewModelScope.launch {
-            navigationCommand.emit(WHATS_NEW)
-        }
-    }
+    private fun onWhatsNewClick() = navigationRouter.forward(WHATS_NEW)
 
     private fun booleanStateFlow(default: BooleanPreferenceDefault): StateFlow<Boolean?> =
         flow<Boolean?> {

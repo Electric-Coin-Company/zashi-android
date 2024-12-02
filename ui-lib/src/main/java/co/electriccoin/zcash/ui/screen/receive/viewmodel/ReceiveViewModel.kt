@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
+import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.NavigationTargets
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.KeystoneAccount
@@ -17,17 +18,16 @@ import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressState
 import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressType
 import co.electriccoin.zcash.ui.screen.receive.model.ReceiveState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 
 class ReceiveViewModel(
     observeSelectedWalletAccount: ObserveSelectedWalletAccountUseCase,
     private val application: Application,
     private val copyToClipboard: CopyToClipboardUseCase,
+    private val navigationRouter: NavigationRouter,
 ) : ViewModel() {
     @OptIn(ExperimentalCoroutinesApi::class)
     internal val state =
@@ -91,15 +91,9 @@ class ReceiveViewModel(
         onRequestClicked = { onRequestClick(type) },
     )
 
-    val navigationCommand = MutableSharedFlow<String>()
-
     private fun onRequestClick(addressType: ReceiveAddressType) =
-        viewModelScope.launch {
-            navigationCommand.emit("${NavigationTargets.REQUEST}/${addressType.ordinal}")
-        }
+        navigationRouter.forward("${NavigationTargets.REQUEST}/${addressType.ordinal}")
 
     private fun onQrCodeClick(addressType: ReceiveAddressType) =
-        viewModelScope.launch {
-            navigationCommand.emit("${NavigationTargets.QR_CODE}/${addressType.ordinal}")
-        }
+        navigationRouter.forward("${NavigationTargets.QR_CODE}/${addressType.ordinal}")
 }

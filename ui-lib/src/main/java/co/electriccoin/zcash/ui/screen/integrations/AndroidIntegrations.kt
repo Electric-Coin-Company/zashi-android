@@ -7,7 +7,6 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.di.koinActivityViewModel
 import co.electriccoin.zcash.ui.common.compose.LocalActivity
-import co.electriccoin.zcash.ui.common.compose.LocalNavController
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.about.util.WebBrowserUtil
 import co.electriccoin.zcash.ui.screen.integrations.view.Integrations
@@ -19,23 +18,10 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 internal fun WrapIntegrations() {
     val activity = LocalActivity.current
-    val navController = LocalNavController.current
     val walletViewModel = koinActivityViewModel<WalletViewModel>()
     val viewModel = koinViewModel<IntegrationsViewModel>()
     val state by viewModel.state.collectAsStateWithLifecycle()
     val walletState = walletViewModel.walletStateInformation.collectAsStateWithLifecycle().value
-
-    LaunchedEffect(Unit) {
-        viewModel.navigationCommand.collect {
-            navController.navigate(it)
-        }
-    }
-
-    LaunchedEffect(Unit) {
-        viewModel.backNavigationCommand.collect {
-            navController.popBackStack()
-        }
-    }
 
     LaunchedEffect(Unit) {
         viewModel.coinbaseNavigationCommand.collect { uri ->
