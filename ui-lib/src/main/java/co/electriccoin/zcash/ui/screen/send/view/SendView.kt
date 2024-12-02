@@ -23,7 +23,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
@@ -35,13 +34,11 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.ImeAction
@@ -62,18 +59,16 @@ import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.BalanceState
 import co.electriccoin.zcash.ui.common.compose.BalanceWidget
-import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.model.canSpend
 import co.electriccoin.zcash.ui.common.model.spendableBalance
-import co.electriccoin.zcash.ui.common.test.CommonTag
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.component.AppAlertDialog
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.BlankSurface
-import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
-import co.electriccoin.zcash.ui.design.component.TopAppBarHideBalancesNavigation
 import co.electriccoin.zcash.ui.design.component.ZashiButton
+import co.electriccoin.zcash.ui.design.component.ZashiMainTopAppBar
+import co.electriccoin.zcash.ui.design.component.ZashiMainTopAppBarState
 import co.electriccoin.zcash.ui.design.component.ZashiTextField
 import co.electriccoin.zcash.ui.design.component.ZashiTextFieldDefaults
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
@@ -82,6 +77,7 @@ import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.fixture.BalanceStateFixture
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
+import co.electriccoin.zcash.ui.fixture.ZashiMainTopAppBarStateFixture
 import co.electriccoin.zcash.ui.screen.send.SendTag
 import co.electriccoin.zcash.ui.screen.send.model.AmountState
 import co.electriccoin.zcash.ui.screen.send.model.MemoState
@@ -99,8 +95,6 @@ private fun PreviewSendForm() {
             sendStage = SendStage.Form,
             onCreateZecSend = {},
             onBack = {},
-            onHideBalances = {},
-            onSettings = {},
             onQrScannerOpen = {},
             goBalances = {},
             hasCameraFeature = true,
@@ -115,7 +109,6 @@ private fun PreviewSendForm() {
                 ),
             setMemoState = {},
             memoState = MemoState.new("Test message "),
-            topAppBarSubTitleState = TopAppBarSubTitleState.None,
             walletSnapshot = WalletSnapshotFixture.new(),
             balanceState = BalanceStateFixture.new(),
             isHideBalances = false,
@@ -125,7 +118,8 @@ private fun PreviewSendForm() {
                     mode = SendAddressBookState.Mode.ADD_TO_ADDRESS_BOOK,
                     isHintVisible = true,
                     onButtonClick = {}
-                )
+                ),
+            zashiMainTopAppBarState = ZashiMainTopAppBarStateFixture.new()
         )
     }
 }
@@ -138,8 +132,6 @@ private fun SendFormTransparentAddressPreview() {
             sendStage = SendStage.Form,
             onCreateZecSend = {},
             onBack = {},
-            onHideBalances = {},
-            onSettings = {},
             onQrScannerOpen = {},
             goBalances = {},
             hasCameraFeature = true,
@@ -158,7 +150,6 @@ private fun SendFormTransparentAddressPreview() {
                 ),
             setMemoState = {},
             memoState = MemoState.new("Test message"),
-            topAppBarSubTitleState = TopAppBarSubTitleState.None,
             walletSnapshot = WalletSnapshotFixture.new(),
             balanceState = BalanceStateFixture.new(),
             isHideBalances = false,
@@ -168,7 +159,8 @@ private fun SendFormTransparentAddressPreview() {
                     mode = SendAddressBookState.Mode.ADD_TO_ADDRESS_BOOK,
                     isHintVisible = true,
                     onButtonClick = {}
-                )
+                ),
+            zashiMainTopAppBarState = ZashiMainTopAppBarStateFixture.new()
         )
     }
 }
@@ -180,11 +172,9 @@ private fun SendFormTransparentAddressPreview() {
 fun Send(
     balanceState: BalanceState,
     isHideBalances: Boolean,
-    onHideBalances: () -> Unit,
     sendStage: SendStage,
     onCreateZecSend: (ZecSend) -> Unit,
     onBack: () -> Unit,
-    onSettings: () -> Unit,
     onQrScannerOpen: () -> Unit,
     goBalances: () -> Unit,
     hasCameraFeature: Boolean,
@@ -194,18 +184,13 @@ fun Send(
     amountState: AmountState,
     setMemoState: (MemoState) -> Unit,
     memoState: MemoState,
-    topAppBarSubTitleState: TopAppBarSubTitleState,
     walletSnapshot: WalletSnapshot,
     exchangeRateState: ExchangeRateState,
     sendAddressBookState: SendAddressBookState,
+    zashiMainTopAppBarState: ZashiMainTopAppBarState,
 ) {
     BlankBgScaffold(topBar = {
-        SendTopAppBar(
-            isHideBalances = isHideBalances,
-            onHideBalances = onHideBalances,
-            subTitleState = topAppBarSubTitleState,
-            onSettings = onSettings
-        )
+        ZashiMainTopAppBar(zashiMainTopAppBarState)
     }) { paddingValues ->
         SendMainContent(
             balanceState = balanceState,
@@ -235,50 +220,6 @@ fun Send(
             sendState = sendAddressBookState
         )
     }
-}
-
-@Composable
-private fun SendTopAppBar(
-    isHideBalances: Boolean,
-    onHideBalances: () -> Unit,
-    onSettings: () -> Unit,
-    subTitleState: TopAppBarSubTitleState
-) {
-    SmallTopAppBar(
-        subTitle =
-            when (subTitleState) {
-                TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
-                TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
-                TopAppBarSubTitleState.None -> null
-            },
-        titleText = stringResource(id = R.string.send_stage_send_title),
-        hamburgerMenuActions = {
-            IconButton(
-                onClick = onSettings,
-                modifier = Modifier.testTag(CommonTag.SETTINGS_TOP_BAR_BUTTON)
-            ) {
-                Image(
-                    painter = painterResource(id = co.electriccoin.zcash.ui.design.R.drawable.ic_hamburger_menu),
-                    contentDescription = stringResource(id = R.string.settings_menu_content_description)
-                )
-            }
-        },
-        navigationAction = {
-            TopAppBarHideBalancesNavigation(
-                contentDescription = stringResource(id = R.string.hide_balances_content_description),
-                iconVector =
-                    ImageVector.vectorResource(
-                        if (isHideBalances) {
-                            R.drawable.ic_hide_balances_on
-                        } else {
-                            R.drawable.ic_hide_balances_off
-                        }
-                    ),
-                onClick = onHideBalances,
-                modifier = Modifier.testTag(CommonTag.HIDE_BALANCES_TOP_BAR_BUTTON)
-            )
-        },
-    )
 }
 
 @Suppress("LongParameterList")

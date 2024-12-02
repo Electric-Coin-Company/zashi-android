@@ -18,7 +18,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -32,7 +31,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -41,16 +39,16 @@ import cash.z.ecc.android.sdk.fixture.WalletAddressesFixture
 import cash.z.ecc.android.sdk.model.WalletAddress
 import cash.z.ecc.android.sdk.model.WalletAddresses
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
-import co.electriccoin.zcash.ui.common.test.CommonTag
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
-import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
+import co.electriccoin.zcash.ui.design.component.ZashiMainTopAppBar
+import co.electriccoin.zcash.ui.design.component.ZashiMainTopAppBarState
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import co.electriccoin.zcash.ui.fixture.ZashiMainTopAppBarStateFixture
 import co.electriccoin.zcash.ui.screen.receive.ext.toReceiveAddressType
 import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressType
 import co.electriccoin.zcash.ui.screen.receive.model.ReceiveState
@@ -64,7 +62,7 @@ private fun ReceiveLoadingPreview() =
         ReceiveView(
             state = ReceiveState.Loading,
             snackbarHostState = SnackbarHostState(),
-            topAppBarSubTitleState = TopAppBarSubTitleState.None,
+            zashiMainTopAppBarState = ZashiMainTopAppBarStateFixture.new()
         )
     }
 
@@ -79,11 +77,10 @@ private fun ReceivePreview() =
                     isTestnet = false,
                     onAddressCopy = {},
                     onQrCode = {},
-                    onSettings = {},
                     onRequest = {},
                 ),
             snackbarHostState = SnackbarHostState(),
-            topAppBarSubTitleState = TopAppBarSubTitleState.None,
+            zashiMainTopAppBarState = ZashiMainTopAppBarStateFixture.new()
         )
     }
 
@@ -91,7 +88,7 @@ private fun ReceivePreview() =
 internal fun ReceiveView(
     state: ReceiveState,
     snackbarHostState: SnackbarHostState,
-    topAppBarSubTitleState: TopAppBarSubTitleState,
+    zashiMainTopAppBarState: ZashiMainTopAppBarState,
 ) {
     when (state) {
         ReceiveState.Loading -> {
@@ -100,10 +97,7 @@ internal fun ReceiveView(
         is ReceiveState.Prepared -> {
             BlankBgScaffold(
                 topBar = {
-                    ReceiveTopAppBar(
-                        onSettings = state.onSettings,
-                        subTitleState = topAppBarSubTitleState,
-                    )
+                    ZashiMainTopAppBar(zashiMainTopAppBarState)
                 },
                 snackbarHost = { SnackbarHost(snackbarHostState) },
             ) { paddingValues ->
@@ -122,39 +116,6 @@ internal fun ReceiveView(
             }
         }
     }
-}
-
-@Composable
-private fun ReceiveTopAppBar(
-    onSettings: () -> Unit,
-    subTitleState: TopAppBarSubTitleState,
-) {
-    ZashiSmallTopAppBar(
-        subtitle =
-            when (subTitleState) {
-                TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
-                TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
-                TopAppBarSubTitleState.None -> null
-            },
-        title = stringResource(id = R.string.receive_title),
-        hamburgerMenuActions = {
-            IconButton(
-                onClick = onSettings,
-                modifier =
-                    Modifier
-                        .padding(end = ZcashTheme.dimens.spacingDefault)
-                        .testTag(CommonTag.SETTINGS_TOP_BAR_BUTTON)
-            ) {
-                Image(
-                    painter =
-                        painterResource(
-                            id = co.electriccoin.zcash.ui.design.R.drawable.ic_hamburger_menu
-                        ),
-                    contentDescription = stringResource(id = R.string.settings_menu_content_description),
-                )
-            }
-        },
-    )
 }
 
 @Composable

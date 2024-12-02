@@ -136,6 +136,7 @@ dependencyResolutionManagement {
             }
         }
         maven("${rootProject.projectDir}/maven") // url to a local maven in this repository
+        maven("https://jitpack.io")
     }
 
     @Suppress("MaxLineLength")
@@ -193,6 +194,7 @@ dependencyResolutionManagement {
             val googleApiServicesDriveVersion = extra["GOOGLE_API_SERVICES_DRIVE_VERSION"].toString()
             val playServicesAuthVersion = extra["PLAY_SERVICES_AUTH_VERSION"].toString()
             val flexaVersion = extra["FLEXA_VERSION"].toString()
+            val keystoneVersion = extra["KEYSTONE_VERSION"].toString()
 
 
             // Standalone versions
@@ -265,6 +267,7 @@ dependencyResolutionManagement {
             library("koin-compose", "io.insert-koin:koin-androidx-compose:$koinVersion")
             library("flexa-core", "com.flexa:core:$flexaVersion")
             library("flexa-spend", "com.flexa:spend:$flexaVersion")
+            library("keystone", "com.github.KeystoneHQ:keystone-sdk-android:$keystoneVersion")
 
             // Test libraries
             library("androidx-compose-test-junit", "androidx.compose.ui:ui-test-junit4:$androidxComposeVersion")

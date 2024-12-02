@@ -26,6 +26,12 @@ internal fun WrapIntegrations() {
     val walletState = walletViewModel.walletStateInformation.collectAsStateWithLifecycle().value
 
     LaunchedEffect(Unit) {
+        viewModel.navigationCommand.collect {
+            navController.navigate(it)
+        }
+    }
+
+    LaunchedEffect(Unit) {
         viewModel.backNavigationCommand.collect {
             navController.popBackStack()
         }

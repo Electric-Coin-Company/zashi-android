@@ -59,6 +59,7 @@ class IntegrationsViewModel(
     private val context: Context,
     private val biometricRepository: BiometricRepository
 ) : ViewModel() {
+    val navigationCommand = MutableSharedFlow<String>()
     val backNavigationCommand = MutableSharedFlow<Unit>()
     val flexaNavigationCommand = MutableSharedFlow<Unit>()
     val coinbaseNavigationCommand = MutableSharedFlow<String>()

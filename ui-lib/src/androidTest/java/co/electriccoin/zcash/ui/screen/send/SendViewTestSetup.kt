@@ -11,11 +11,11 @@ import cash.z.ecc.android.sdk.model.MonetarySeparators
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.android.sdk.type.AddressType
-import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.fixture.BalanceStateFixture
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
+import co.electriccoin.zcash.ui.fixture.ZashiMainTopAppBarStateFixture
 import co.electriccoin.zcash.ui.screen.send.ext.Saver
 import co.electriccoin.zcash.ui.screen.send.model.AmountState
 import co.electriccoin.zcash.ui.screen.send.model.MemoState
@@ -108,7 +108,6 @@ class SendViewTestSetup(
                 sendStage = sendStage,
                 onCreateZecSend = setZecSend,
                 onBack = onBackAction,
-                onSettings = { onSettingsCount.incrementAndGet() },
                 onQrScannerOpen = {
                     onScannerCount.incrementAndGet()
                 },
@@ -117,7 +116,6 @@ class SendViewTestSetup(
                     // TODO [#1194]: https://github.com/Electric-Coin-Company/zashi-android/issues/1194
                 },
                 isHideBalances = false,
-                onHideBalances = {},
                 hasCameraFeature = hasCameraFeature,
                 recipientAddressState = RecipientAddressState("", AddressType.Invalid()),
                 onRecipientAddressChange = {
@@ -136,7 +134,6 @@ class SendViewTestSetup(
                     ),
                 setMemoState = {},
                 memoState = MemoState.new(""),
-                topAppBarSubTitleState = TopAppBarSubTitleState.None,
                 walletSnapshot =
                     WalletSnapshotFixture.new(
                         saplingBalance =
@@ -150,6 +147,10 @@ class SendViewTestSetup(
                         mode = SendAddressBookState.Mode.PICK_FROM_ADDRESS_BOOK,
                         isHintVisible = false,
                         onButtonClick = {}
+                    ),
+                zashiMainTopAppBarState =
+                    ZashiMainTopAppBarStateFixture.new(
+                        onSettingsClick = { onSettingsCount.incrementAndGet() }
                     )
             )
         }

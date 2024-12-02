@@ -23,13 +23,14 @@ import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.BalanceState
 import co.electriccoin.zcash.ui.common.compose.LocalActivity
-import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.viewmodel.CheckUpdateViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.HomeViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
+import co.electriccoin.zcash.ui.common.viewmodel.ZashiMainTopAppBarViewModel
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
+import co.electriccoin.zcash.ui.design.component.ZashiMainTopAppBarState
 import co.electriccoin.zcash.ui.screen.balances.model.ShieldState
 import co.electriccoin.zcash.ui.screen.balances.model.StatusAction
 import co.electriccoin.zcash.ui.screen.balances.view.Balances
@@ -47,10 +48,7 @@ import kotlinx.coroutines.launch
 import org.jetbrains.annotations.VisibleForTesting
 
 @Composable
-internal fun WrapBalances(
-    goSettings: () -> Unit,
-    goMultiTrxSubmissionFailure: () -> Unit,
-) {
+internal fun WrapBalances(goMultiTrxSubmissionFailure: () -> Unit) {
     val activity = LocalActivity.current
 
     val walletViewModel = koinActivityViewModel<WalletViewModel>()
@@ -69,8 +67,6 @@ internal fun WrapBalances(
 
     val walletRestoringState = walletViewModel.walletRestoringState.collectAsStateWithLifecycle().value
 
-    val walletState = walletViewModel.walletStateInformation.collectAsStateWithLifecycle().value
-
     val isHideBalances = homeViewModel.isHideBalances.collectAsStateWithLifecycle().value ?: false
 
     val checkUpdateViewModel = koinActivityViewModel<CheckUpdateViewModel>()
@@ -79,21 +75,23 @@ internal fun WrapBalances(
 
     val supportInfo = supportViewModel.supportInfo.collectAsStateWithLifecycle().value
 
+    val zashiMainTopAppBarViewModel = koinActivityViewModel<ZashiMainTopAppBarViewModel>()
+
+    val zashiMainTopAppBarState = zashiMainTopAppBarViewModel.state.collectAsStateWithLifecycle().value
+
     WrapBalances(
         balanceState = balanceState,
         createTransactionsViewModel = createTransactionsViewModel,
         checkUpdateViewModel = checkUpdateViewModel,
-        goSettings = goSettings,
         goMultiTrxSubmissionFailure = goMultiTrxSubmissionFailure,
         isHideBalances = isHideBalances,
         lifecycleScope = activity.lifecycleScope,
-        onHideBalances = { homeViewModel.showOrHideBalances() },
         spendingKey = spendingKey,
         supportInfo = supportInfo,
         synchronizer = synchronizer,
-        topAppBarSubTitleState = walletState,
         walletSnapshot = walletSnapshot,
         walletRestoringState = walletRestoringState,
+        zashiMainTopAppBarState = zashiMainTopAppBarState
     )
 }
 
@@ -107,17 +105,15 @@ internal fun WrapBalances(
     balanceState: BalanceState,
     checkUpdateViewModel: CheckUpdateViewModel,
     createTransactionsViewModel: CreateTransactionsViewModel,
-    goSettings: () -> Unit,
     goMultiTrxSubmissionFailure: () -> Unit,
     lifecycleScope: CoroutineScope,
     isHideBalances: Boolean,
-    onHideBalances: () -> Unit,
     spendingKey: UnifiedSpendingKey?,
     supportInfo: SupportInfo?,
     synchronizer: Synchronizer?,
-    topAppBarSubTitleState: TopAppBarSubTitleState,
     walletSnapshot: WalletSnapshot?,
     walletRestoringState: WalletRestoringState,
+    zashiMainTopAppBarState: ZashiMainTopAppBarState
 ) {
     val scope = rememberCoroutineScope()
 
@@ -169,8 +165,6 @@ internal fun WrapBalances(
             balanceState = balanceState,
             isHideBalances = isHideBalances,
             isUpdateAvailable = isUpdateAvailable,
-            onHideBalances = onHideBalances,
-            onSettings = goSettings,
             isShowingErrorDialog = isShowingErrorDialog,
             setShowErrorDialog = setShowErrorDialog,
             showStatusDialog = showStatusDialog.value,
@@ -293,9 +287,9 @@ internal fun WrapBalances(
                 }
             },
             shieldState = shieldState,
-            topAppBarSubTitleState = topAppBarSubTitleState,
             walletSnapshot = walletSnapshot,
             walletRestoringState = walletRestoringState,
+            zashiMainTopAppBarState = zashiMainTopAppBarState
         )
     }
 }

@@ -42,12 +42,14 @@ import kotlinx.collections.immutable.persistentListOf
 fun ZashiSettingsListItem(
     text: String,
     @DrawableRes icon: Int,
+    modifier: Modifier = Modifier,
     titleIcons: ImmutableList<Int> = persistentListOf(),
     subtitle: String? = null,
     isEnabled: Boolean = true,
     onClick: () -> Unit
 ) {
     ZashiSettingsListItem(
+        modifier = modifier,
         state =
             ZashiSettingsListItemState(
                 text = stringRes(text),
@@ -61,26 +63,30 @@ fun ZashiSettingsListItem(
 }
 
 @Composable
-fun ZashiSettingsListItem(state: ZashiSettingsListItemState) {
+fun ZashiSettingsListItem(
+    state: ZashiSettingsListItemState,
+    modifier: Modifier = Modifier,
+) {
     ZashiSettingsListItem(
-        leading = { modifier ->
+        modifier = modifier,
+        leading = {
             ZashiSettingsListLeadingItem(
-                modifier = modifier,
+                modifier = it,
                 icon = state.icon,
                 contentDescription = state.text.getValue()
             )
         },
-        content = { modifier ->
+        content = {
             ZashiSettingsListContentItem(
-                modifier = modifier,
+                modifier = it,
                 text = state.text.getValue(),
                 subtitle = state.subtitle?.getValue(),
                 titleIcons = state.titleIcons
             )
         },
-        trailing = { modifier ->
+        trailing = {
             ZashiSettingsListTrailingItem(
-                modifier = modifier,
+                modifier = it,
                 isEnabled = state.isEnabled,
                 contentDescription = state.text.getValue()
             )
@@ -168,12 +174,13 @@ fun ZashiSettingsListItem(
     leading: @Composable (Modifier) -> Unit,
     content: @Composable (Modifier) -> Unit,
     trailing: @Composable (Modifier) -> Unit,
+    modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(vertical = 12.dp),
     onClick: (() -> Unit)?
 ) {
     Row(
         modifier =
-            Modifier
+            modifier
                 .clip(RoundedCornerShape(12.dp)) then
                 if (onClick != null) {
                     Modifier.clickable(
