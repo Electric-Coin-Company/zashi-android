@@ -38,10 +38,7 @@ class AccountListViewModel(
                     .map<WalletAccount, AccountListItem> { account ->
                         AccountListItem.Account(
                             ZashiAccountListItemState(
-                                title = when (account) {
-                                    is KeystoneAccount -> stringRes("Keystone") // TODO keystone string
-                                    is ZashiAccount -> stringRes("Zashi") // TODO keystone string
-                                },
+                                title = account.name,
                                 subtitle =
                                 stringRes("${account.unifiedAddress.address.take(ADDRESS_MAX_LENGTH)}..."),
                                 icon = when (account) {

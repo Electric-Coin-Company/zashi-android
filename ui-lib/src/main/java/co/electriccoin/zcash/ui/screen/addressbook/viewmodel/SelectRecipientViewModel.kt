@@ -68,12 +68,7 @@ class SelectRecipientViewModel(
                             }
                         ),
                         isShielded = false,
-                        name = stringRes(
-                            when (account) {
-                                is KeystoneAccount -> "Keystone" // TODO keystone string
-                                is ZashiAccount -> "Zashi" // TODO keystone string
-                            }
-                        ),
+                        name = account.name,
                         address = stringRes("${account.unifiedAddress.address.take(ADDRESS_MAX_LENGTH)}..."),
                         onClick = { onWalletAccountClick(account) }
                     )

@@ -33,17 +33,17 @@ class CreateTransactionsViewModel(
         when (it) {
             is KeystoneAccount -> SendConfirmationState(
                 SendConfirmationExpandedInfoState(
-                    stringRes("Sending from"), // TODO keystone string
+                    title = stringRes("Sending from"), // TODO keystone string
                     icon = R.drawable.ic_item_keystone,
-                    text = stringRes("Keystone wallet") // TODO keystone string
+                    text = it.name
                 )
             )
 
             is ZashiAccount -> SendConfirmationState(
                 SendConfirmationExpandedInfoState(
-                    stringRes("Sending from"), // TODO keystone string
+                    title = stringRes("Sending from"), // TODO keystone string
                     icon = R.drawable.ic_item_zashi,
-                    stringRes("Zashi") // TODO keystone string
+                    text = it.name
                 )
             )
 

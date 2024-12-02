@@ -11,6 +11,8 @@ import cash.z.ecc.android.sdk.model.WalletBalance
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.ZcashNetwork
 import co.electriccoin.lightwallet.client.model.LightWalletEndpoint
+import co.electriccoin.zcash.ui.design.util.StringResource
+import co.electriccoin.zcash.ui.design.util.stringRes
 
 sealed interface WalletAccount {
 
@@ -23,6 +25,7 @@ sealed interface WalletAccount {
     val orchardBalance: WalletBalance
     val transparentBalance: Zatoshi
     val isSelected: Boolean
+    val name: StringResource
 
     val totalBalance: Zatoshi
         get() = orchardBalance.total + saplingBalance.total + transparentBalance
@@ -51,7 +54,9 @@ data class ZashiAccount(
     override val orchardBalance: WalletBalance,
     override val transparentBalance: Zatoshi,
     override val isSelected: Boolean,
-): WalletAccount
+): WalletAccount {
+    override val name: StringResource = stringRes("Zashi")
+}
 
 data class KeystoneAccount(
     override val sdkAccount: Account,
@@ -62,4 +67,6 @@ data class KeystoneAccount(
     override val orchardBalance: WalletBalance,
     override val transparentBalance: Zatoshi,
     override val isSelected: Boolean,
-): WalletAccount
+): WalletAccount {
+    override val name: StringResource = stringRes("Keystone")
+}
