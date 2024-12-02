@@ -7,6 +7,8 @@ import co.electriccoin.zcash.ui.design.util.StringResource
 data class AccountListState(
     val items: List<AccountListItem>?,
     val isLoading: Boolean,
+    val onBottomSheetHidden: () -> Unit,
+    val onBack: () -> Unit,
 )
 
 data class ZashiAccountListItemState(

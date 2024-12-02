@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.preference.StandardPreferenceProvider
 import co.electriccoin.zcash.preference.model.entry.BooleanPreferenceDefault
+import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.NavigationTargets.SETTINGS
 import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.WalletAccount
@@ -14,8 +15,7 @@ import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.component.ZashiMainTopAppBarState
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
-import co.electriccoin.zcash.ui.screen.accountlist.AccountListArgs
-import kotlinx.coroutines.flow.MutableSharedFlow
+import co.electriccoin.zcash.ui.screen.accountlist.AccountList
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
@@ -30,10 +30,9 @@ import kotlinx.coroutines.launch
 class ZashiMainTopAppBarViewModel(
     walletRepository: WalletRepository,
     private val standardPreferenceProvider: StandardPreferenceProvider,
+    private val navigationRouter: NavigationRouter,
 ) : ViewModel() {
     private val isHideBalances: StateFlow<Boolean?> = booleanStateFlow(StandardPreferenceKeys.IS_HIDE_BALANCES)
-
-    val navigationCommand = MutableSharedFlow<String>()
 
     val state = combine(walletRepository.currentAccount, isHideBalances) { currentAccount, isHideBalances ->
         createState(currentAccount, isHideBalances)
@@ -66,15 +65,9 @@ class ZashiMainTopAppBarViewModel(
             onAccountTypeClick = ::onAccountTypeClicked
         )
 
-    private fun onAccountTypeClicked() =
-        viewModelScope.launch {
-            navigationCommand.emit(AccountListArgs.PATH)
-        }
+    private fun onAccountTypeClicked() = navigationRouter.forward(AccountList)
 
-    private fun onSettingsClicked() =
-        viewModelScope.launch {
-            navigationCommand.emit(SETTINGS)
-        }
+    private fun onSettingsClicked() = navigationRouter.forward(SETTINGS)
 
     private fun onShowOrHideBalancesClicked() =
         viewModelScope.launch {

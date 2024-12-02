@@ -170,6 +170,8 @@ private fun Preview() =
                             )
                         ),
                     isLoading = true,
+                    onBottomSheetHidden = {},
+                    onBack = {}
                 ),
             onDismissRequest = {},
             sheetState =

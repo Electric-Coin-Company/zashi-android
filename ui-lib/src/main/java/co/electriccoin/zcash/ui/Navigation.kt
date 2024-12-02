@@ -67,7 +67,7 @@ import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.exitTransition
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.popEnterTransition
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.popExitTransition
 import co.electriccoin.zcash.ui.screen.about.WrapAbout
-import co.electriccoin.zcash.ui.screen.accountlist.AccountListArgs
+import co.electriccoin.zcash.ui.screen.accountlist.AccountList
 import co.electriccoin.zcash.ui.screen.accountlist.AndroidAccountList
 import co.electriccoin.zcash.ui.screen.addressbook.AddressBookArgs
 import co.electriccoin.zcash.ui.screen.addressbook.WrapAddressBook
@@ -76,7 +76,7 @@ import co.electriccoin.zcash.ui.screen.authentication.AuthenticationUseCase
 import co.electriccoin.zcash.ui.screen.authentication.WrapAuthentication
 import co.electriccoin.zcash.ui.screen.chooseserver.WrapChooseServer
 import co.electriccoin.zcash.ui.screen.connectkeystone.AndroidConnectKeystone
-import co.electriccoin.zcash.ui.screen.connectkeystone.ConnectKeystoneArgs
+import co.electriccoin.zcash.ui.screen.connectkeystone.ConnectKeystone
 import co.electriccoin.zcash.ui.screen.contact.AddContactArgs
 import co.electriccoin.zcash.ui.screen.contact.UpdateContactArgs
 import co.electriccoin.zcash.ui.screen.contact.WrapAddContact
@@ -143,22 +143,32 @@ internal fun MainActivity.Navigation() {
     LaunchedEffect(Unit) {
         navigationRouter.observe().collect {
             when (it) {
-                is NavigationCommand.Forward -> navController.navigate(it.route)
-                is NavigationCommand.Replace ->
+                is NavigationCommand.Forward.ByRoute -> {
+                    navController.navigate(it.route)
+                }
+                is NavigationCommand.Forward.ByTypeSafetyRoute<*> -> {
+                    navController.navigate(it.route)
+                }
+                is NavigationCommand.Replace.ByRoute -> {
                     navController.navigate(it.route) {
                         popUpTo(navController.graph.findStartDestination().id) {
                             saveState = true
                         }
                         restoreState = true
                     }
-                NavigationCommand.Back -> navController.popBackStack()
+                }
+                is NavigationCommand.Replace.ByTypeSafetyRoute<*> -> {
+                    navController.navigate(it.route) {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
+                        }
+                        restoreState = true
+                    }
+                }
+                NavigationCommand.Back -> {
+                    navController.popBackStack()
+                }
             }
-        }
-    }
-
-    LaunchedEffect(Unit) {
-        topAppBarViewModel.navigationCommand.collect {
-            navController.navigateJustOnce(it)
         }
     }
 
@@ -277,14 +287,13 @@ internal fun MainActivity.Navigation() {
         composable(SETTINGS_EXCHANGE_RATE_OPT_IN) {
             AndroidSettingsExchangeRateOptIn()
         }
-        composable(ScanKeystoneSignInRequest.PATH) {
+        composable<ScanKeystoneSignInRequest> {
             WrapScanKeystoneSignInRequest()
         }
-        composable(KeystoneSignTransactionArgs.PATH) {
+        composable<KeystoneSignTransactionArgs> {
             AndroidSignKeystoneTransaction()
         }
-        dialog(
-            route = AccountListArgs.PATH,
+        dialog<AccountList>(
             dialogProperties =
                 DialogProperties(
                     dismissOnBackPress = false,
@@ -400,7 +409,7 @@ internal fun MainActivity.Navigation() {
                 )
             }
         }
-        composable(ConnectKeystoneArgs.PATH) {
+        composable<ConnectKeystone> {
             AndroidConnectKeystone()
         }
         composable<SelectKeystoneAccount> {

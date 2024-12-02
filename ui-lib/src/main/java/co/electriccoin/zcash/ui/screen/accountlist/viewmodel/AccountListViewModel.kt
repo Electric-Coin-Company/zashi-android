@@ -3,6 +3,7 @@ package co.electriccoin.zcash.ui.screen.accountlist.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
+import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
@@ -16,10 +17,11 @@ import co.electriccoin.zcash.ui.screen.accountlist.model.AccountListItem
 import co.electriccoin.zcash.ui.screen.accountlist.model.AccountListState
 import co.electriccoin.zcash.ui.screen.accountlist.model.ZashiAccountListItemState
 import co.electriccoin.zcash.ui.screen.addressbook.viewmodel.ADDRESS_MAX_LENGTH
-import co.electriccoin.zcash.ui.screen.connectkeystone.ConnectKeystoneArgs
+import co.electriccoin.zcash.ui.screen.connectkeystone.ConnectKeystone
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -27,9 +29,12 @@ import kotlinx.coroutines.launch
 class AccountListViewModel(
     observeWalletAccounts: ObserveWalletAccountsUseCase,
     private val selectWalletAccount: SelectWalletAccountUseCase,
+    private val navigationRouter: NavigationRouter,
 ) : ViewModel() {
-    val navigationCommand = MutableSharedFlow<String>()
-    val backNavigationCommand = MutableSharedFlow<Unit>()
+
+    val hideBottomSheetRequest = MutableSharedFlow<Unit>()
+
+    private val bottomSheetHiddenResponse = MutableSharedFlow<Unit>()
 
     val state =
         observeWalletAccounts().map { accounts ->
@@ -66,6 +71,8 @@ class AccountListViewModel(
             AccountListState(
                 items = items,
                 isLoading = accounts == null,
+                onBottomSheetHidden = ::onBottomSheetHidden,
+                onBack = ::onBack
             )
         }.stateIn(
             scope = viewModelScope,
@@ -73,14 +80,28 @@ class AccountListViewModel(
             initialValue = null
         )
 
-    private fun onAccountClicked(account: WalletAccount) = viewModelScope.launch {
-        selectWalletAccount(account)
-        backNavigationCommand.emit(Unit)
+    private suspend fun hideBottomSheet() {
+        hideBottomSheetRequest.emit(Unit)
+        bottomSheetHiddenResponse.first()
     }
 
-    private fun onAddWalletButtonClicked() {
-        viewModelScope.launch {
-            navigationCommand.emit(ConnectKeystoneArgs.PATH)
-        }
+    private fun onAccountClicked(account: WalletAccount) = viewModelScope.launch {
+        selectWalletAccount(account)
+        hideBottomSheet()
+        navigationRouter.back()
+    }
+
+    private fun onAddWalletButtonClicked() = viewModelScope.launch {
+        hideBottomSheet()
+        navigationRouter.forward(ConnectKeystone)
+    }
+
+    private fun onBottomSheetHidden() = viewModelScope.launch {
+        bottomSheetHiddenResponse.emit(Unit)
+    }
+
+    private fun onBack() = viewModelScope.launch {
+        hideBottomSheet()
+        navigationRouter.back()
     }
 }

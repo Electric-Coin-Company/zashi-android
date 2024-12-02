@@ -16,6 +16,3 @@ fun AndroidSignKeystoneTransaction() {
     }
 }
 
-object KeystoneSignTransactionArgs {
-    const val PATH = "KeystoneSignTransaction"
-}

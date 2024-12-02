@@ -2,17 +2,18 @@ package co.electriccoin.zcash.ui.screen.connectkeystone
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
-import co.electriccoin.zcash.ui.common.compose.LocalNavController
+import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.screen.connectkeystone.model.ConnectKeystoneState
 import co.electriccoin.zcash.ui.screen.connectkeystone.view.ConnectKeystoneView
 import co.electriccoin.zcash.ui.screen.scankeystone.ScanKeystoneSignInRequest
+import org.koin.compose.koinInject
 
 @Composable
 fun AndroidConnectKeystone() {
-    val navController = LocalNavController.current
+    val navigationRouter = koinInject<NavigationRouter>()
 
     BackHandler {
-        navController.popBackStack()
+        navigationRouter.back()
     }
 
     ConnectKeystoneView(
@@ -22,15 +23,12 @@ fun AndroidConnectKeystone() {
                     // do nothing
                 },
                 onBackClick = {
-                    navController.popBackStack()
+                    navigationRouter.back()
                 },
                 onContinueClick = {
-                    navController.navigate(ScanKeystoneSignInRequest.PATH)
+                    navigationRouter.forward(ScanKeystoneSignInRequest)
                 },
             )
     )
 }
 
-object ConnectKeystoneArgs {
-    const val PATH = "connect_keystone"
-}

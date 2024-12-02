@@ -11,7 +11,11 @@ import kotlinx.coroutines.launch
 interface NavigationRouter {
     fun forward(route: String)
 
+    fun <T: Any> forward(route: T)
+
     fun replace(route: String)
+
+    fun <T: Any> replace(route: T)
 
     fun back()
 
@@ -25,13 +29,25 @@ class NavigationRouterImpl : NavigationRouter {
 
     override fun forward(route: String) {
         scope.launch {
-            channel.send(NavigationCommand.Forward(route))
+            channel.send(NavigationCommand.Forward.ByRoute(route))
+        }
+    }
+
+    override fun <T: Any> forward(route: T) {
+        scope.launch {
+            channel.send(NavigationCommand.Forward.ByTypeSafetyRoute(route))
         }
     }
 
     override fun replace(route: String) {
         scope.launch {
-            channel.send(NavigationCommand.Replace(route))
+            channel.send(NavigationCommand.Replace.ByRoute(route))
+        }
+    }
+
+    override fun <T: Any> replace(route: T) {
+        scope.launch {
+            channel.send(NavigationCommand.Replace.ByTypeSafetyRoute(route))
         }
     }
 
@@ -45,9 +61,16 @@ class NavigationRouterImpl : NavigationRouter {
 }
 
 sealed interface NavigationCommand {
-    data class Forward(val route: String) : NavigationCommand
 
-    data class Replace(val route: String) : NavigationCommand
+    sealed interface Forward: NavigationCommand {
+        data class ByRoute(val route: String) : Forward
+        data class ByTypeSafetyRoute<T: Any>(val route: T) : Forward
+    }
+
+    sealed interface Replace: NavigationCommand {
+        data class ByRoute(val route: String) : Replace
+        data class ByTypeSafetyRoute<T: Any>(val route: T) : Replace
+    }
 
     data object Back : NavigationCommand
 }
