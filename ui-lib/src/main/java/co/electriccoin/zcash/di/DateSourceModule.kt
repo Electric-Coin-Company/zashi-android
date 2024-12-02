@@ -9,5 +9,4 @@ import org.koin.dsl.module
 val dataSourceModule =
     module {
         singleOf(::LocalAddressBookDataSourceImpl) bind LocalAddressBookDataSource::class
-        // singleOf(::RemoteAddressBookDataSourceImpl) bind RemoteAddressBookDataSource::class
     }

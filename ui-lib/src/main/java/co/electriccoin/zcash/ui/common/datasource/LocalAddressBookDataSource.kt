@@ -13,7 +13,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 
 interface LocalAddressBookDataSource {
-    suspend fun getContacts(addressBookKey: AddressBookKey): AddressBook
+    suspend fun getAddressBook(addressBookKey: AddressBookKey): AddressBook
 
     suspend fun saveContact(
         name: String,
@@ -47,7 +47,7 @@ class LocalAddressBookDataSourceImpl(
 ) : LocalAddressBookDataSource {
     private var addressBook: AddressBook? = null
 
-    override suspend fun getContacts(addressBookKey: AddressBookKey): AddressBook =
+    override suspend fun getAddressBook(addressBookKey: AddressBookKey): AddressBook =
         withContext(Dispatchers.IO) {
             val addressBook = this@LocalAddressBookDataSourceImpl.addressBook
 
