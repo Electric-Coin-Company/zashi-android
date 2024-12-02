@@ -5,6 +5,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -16,9 +17,11 @@ import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.dialog
 import androidx.navigation.navArgument
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.model.ZecSend
+import co.electriccoin.zcash.di.koinActivityViewModel
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.spackle.getSerializableCompat
 import co.electriccoin.zcash.ui.NavigationArgs.ADDRESS_TYPE
@@ -55,6 +58,7 @@ import co.electriccoin.zcash.ui.NavigationTargets.SUPPORT
 import co.electriccoin.zcash.ui.NavigationTargets.WHATS_NEW
 import co.electriccoin.zcash.ui.common.compose.LocalNavController
 import co.electriccoin.zcash.ui.common.model.SerializableAddress
+import co.electriccoin.zcash.ui.common.viewmodel.ZashiMainTopAppBarViewModel
 import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
 import co.electriccoin.zcash.ui.configuration.RemoteConfig
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.enterTransition
@@ -62,6 +66,8 @@ import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.exitTransition
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.popEnterTransition
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.popExitTransition
 import co.electriccoin.zcash.ui.screen.about.WrapAbout
+import co.electriccoin.zcash.ui.screen.accountlist.AccountListArgs
+import co.electriccoin.zcash.ui.screen.accountlist.AndroidAccountList
 import co.electriccoin.zcash.ui.screen.addressbook.AddressBookArgs
 import co.electriccoin.zcash.ui.screen.addressbook.WrapAddressBook
 import co.electriccoin.zcash.ui.screen.advancedsettings.WrapAdvancedSettings
@@ -80,6 +86,8 @@ import co.electriccoin.zcash.ui.screen.exportdata.WrapExportPrivateData
 import co.electriccoin.zcash.ui.screen.feedback.WrapFeedback
 import co.electriccoin.zcash.ui.screen.home.WrapHome
 import co.electriccoin.zcash.ui.screen.integrations.WrapIntegrations
+import co.electriccoin.zcash.ui.screen.keystoneqr.AndroidKeystoneQr
+import co.electriccoin.zcash.ui.screen.keystoneqr.KeystoneQrNavigationArgs
 import co.electriccoin.zcash.ui.screen.paymentrequest.WrapPaymentRequest
 import co.electriccoin.zcash.ui.screen.paymentrequest.model.PaymentRequestArguments
 import co.electriccoin.zcash.ui.screen.qrcode.WrapQrCode
@@ -87,6 +95,8 @@ import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressType
 import co.electriccoin.zcash.ui.screen.request.WrapRequest
 import co.electriccoin.zcash.ui.screen.scan.ScanNavigationArgs
 import co.electriccoin.zcash.ui.screen.scan.WrapScanValidator
+import co.electriccoin.zcash.ui.screen.scankeystone.ScanKeystoneNavigationArgs
+import co.electriccoin.zcash.ui.screen.scankeystone.WrapScanKeystone
 import co.electriccoin.zcash.ui.screen.seed.SeedNavigationArgs
 import co.electriccoin.zcash.ui.screen.seed.WrapSeed
 import co.electriccoin.zcash.ui.screen.send.ext.toSerializableAddress
@@ -112,6 +122,8 @@ import org.koin.compose.koinInject
 internal fun MainActivity.Navigation() {
     val navController = LocalNavController.current
 
+    val topAppBarViewModel = koinActivityViewModel<ZashiMainTopAppBarViewModel>()
+
     // Helper properties for triggering the system security UI from callbacks
     val (exportPrivateDataAuthentication, setExportPrivateDataAuthentication) =
         rememberSaveable { mutableStateOf(false) }
@@ -134,6 +146,12 @@ internal fun MainActivity.Navigation() {
                     }
                 NavigationCommand.Back -> navController.popBackStack()
             }
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        topAppBarViewModel.navigationCommand.collect {
+            navController.navigateJustOnce(it)
         }
     }
 
@@ -251,6 +269,22 @@ internal fun MainActivity.Navigation() {
         }
         composable(SETTINGS_EXCHANGE_RATE_OPT_IN) {
             AndroidSettingsExchangeRateOptIn()
+        }
+        composable(ScanKeystoneNavigationArgs.PATH) {
+            WrapScanKeystone()
+        }
+        composable(KeystoneQrNavigationArgs.PATH) {
+            AndroidKeystoneQr()
+        }
+        dialog(
+            route = AccountListArgs.PATH,
+            dialogProperties =
+                DialogProperties(
+                    dismissOnBackPress = false,
+                    dismissOnClickOutside = false,
+                )
+        ) {
+            AndroidAccountList()
         }
         composable(
             route = ScanNavigationArgs.ROUTE,
@@ -384,7 +418,6 @@ private fun MainActivity.NavigationHome(
             }
             navController.navigateJustOnce(PAYMENT_REQUEST)
         },
-        goSettings = { navController.navigateJustOnce(SETTINGS) },
         goMultiTrxSubmissionFailure = {
             // Ultimately we could approach reworking the MultipleTrxFailure screen into a separate
             // navigation endpoint

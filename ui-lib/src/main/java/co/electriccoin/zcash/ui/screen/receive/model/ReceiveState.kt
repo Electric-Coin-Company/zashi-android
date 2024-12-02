@@ -10,7 +10,6 @@ internal sealed class ReceiveState {
         val onAddressCopy: (String) -> Unit,
         val onQrCode: (ReceiveAddressType) -> Unit,
         val onRequest: (ReceiveAddressType) -> Unit,
-        val onSettings: () -> Unit,
         val isTestnet: Boolean,
     ) : ReceiveState()
 }

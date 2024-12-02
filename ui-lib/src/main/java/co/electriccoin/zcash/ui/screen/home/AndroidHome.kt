@@ -3,7 +3,6 @@
 package co.electriccoin.zcash.ui.screen.home
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -41,7 +40,6 @@ import kotlinx.coroutines.launch
 @Composable
 @Suppress("LongParameterList")
 internal fun WrapHome(
-    goSettings: () -> Unit,
     goMultiTrxSubmissionFailure: () -> Unit,
     goScan: () -> Unit,
     goSendConfirmation: (ZecSend) -> Unit,
@@ -89,7 +87,6 @@ internal fun WrapHome(
         goScan = goScan,
         goSendConfirmation = goSendConfirmation,
         goPaymentRequest = goPaymentRequest,
-        goSettings = goSettings,
         goMultiTrxSubmissionFailure = goMultiTrxSubmissionFailure,
         isKeepScreenOnWhileSyncing = isKeepScreenOnWhileSyncing,
         isShowingRestoreSuccess = isShowingRestoreSuccess,
@@ -99,11 +96,9 @@ internal fun WrapHome(
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Suppress("LongParameterList", "LongMethod")
 @Composable
 internal fun WrapHome(
-    goSettings: () -> Unit,
     goMultiTrxSubmissionFailure: () -> Unit,
     goScan: () -> Unit,
     goSendConfirmation: (ZecSend) -> Unit,
@@ -167,7 +162,6 @@ internal fun WrapHome(
                                 pagerState.animateScrollToPage(HomeScreenIndex.BALANCES.pageIndex)
                             }
                         },
-                        goSettings = goSettings
                     )
                 }
             ),
@@ -186,7 +180,6 @@ internal fun WrapHome(
                         },
                         goSendConfirmation = goSendConfirmation,
                         goPaymentRequest = goPaymentRequest,
-                        goSettings = goSettings,
                         sendArguments = sendArguments
                     )
                 }
@@ -205,7 +198,6 @@ internal fun WrapHome(
                 testTag = HomeTag.TAB_BALANCES,
                 screenContent = {
                     WrapBalances(
-                        goSettings = goSettings,
                         goMultiTrxSubmissionFailure = goMultiTrxSubmissionFailure
                     )
                 }

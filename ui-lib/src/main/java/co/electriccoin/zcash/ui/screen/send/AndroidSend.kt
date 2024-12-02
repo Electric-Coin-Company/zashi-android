@@ -29,10 +29,10 @@ import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.compose.BalanceState
 import co.electriccoin.zcash.ui.common.compose.LocalActivity
 import co.electriccoin.zcash.ui.common.compose.LocalNavController
-import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.viewmodel.HomeViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
+import co.electriccoin.zcash.ui.common.viewmodel.ZashiMainTopAppBarViewModel
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.screen.send.ext.Saver
@@ -56,7 +56,6 @@ internal fun WrapSend(
     goBalances: () -> Unit,
     goSendConfirmation: (ZecSend) -> Unit,
     goPaymentRequest: (ZecSend, String) -> Unit,
-    goSettings: () -> Unit,
 ) {
     val activity = LocalActivity.current
 
@@ -74,8 +73,6 @@ internal fun WrapSend(
 
     val monetarySeparators = MonetarySeparators.current(Locale.getDefault())
 
-    val walletState = walletViewModel.walletStateInformation.collectAsStateWithLifecycle().value
-
     val balanceState = walletViewModel.balanceState.collectAsStateWithLifecycle().value
 
     val isHideBalances = homeViewModel.isHideBalances.collectAsStateWithLifecycle().value ?: false
@@ -85,7 +82,6 @@ internal fun WrapSend(
     WrapSend(
         balanceState = balanceState,
         isHideBalances = isHideBalances,
-        onHideBalances = { homeViewModel.showOrHideBalances() },
         sendArguments = sendArguments,
         synchronizer = synchronizer,
         walletSnapshot = walletSnapshot,
@@ -93,12 +89,10 @@ internal fun WrapSend(
         goToQrScanner = goToQrScanner,
         goBack = goBack,
         goBalances = goBalances,
-        goSettings = goSettings,
         goSendConfirmation = goSendConfirmation,
         goPaymentRequest = goPaymentRequest,
         hasCameraFeature = hasCameraFeature,
         monetarySeparators = monetarySeparators,
-        topAppBarSubTitleState = walletState,
         exchangeRateState = exchangeRateState,
     )
 }
@@ -113,16 +107,13 @@ internal fun WrapSend(
     goToQrScanner: () -> Unit,
     goBack: () -> Unit,
     goBalances: () -> Unit,
-    goSettings: () -> Unit,
     goSendConfirmation: (ZecSend) -> Unit,
     goPaymentRequest: (ZecSend, String) -> Unit,
     hasCameraFeature: Boolean,
     monetarySeparators: MonetarySeparators,
-    onHideBalances: () -> Unit,
     sendArguments: SendArguments?,
     spendingKey: UnifiedSpendingKey?,
     synchronizer: Synchronizer?,
-    topAppBarSubTitleState: TopAppBarSubTitleState,
     walletSnapshot: WalletSnapshot?,
 ) {
     val scope = rememberCoroutineScope()
@@ -138,6 +129,10 @@ internal fun WrapSend(
     }
 
     val sendAddressBookState by viewModel.sendAddressBookState.collectAsStateWithLifecycle()
+
+    val topAppBarViewModel = koinActivityViewModel<ZashiMainTopAppBarViewModel>()
+
+    val zashiMainTopAppBarState by topAppBarViewModel.state.collectAsStateWithLifecycle()
 
     val context = LocalContext.current
 
@@ -285,8 +280,6 @@ internal fun WrapSend(
                 }
             },
             onBack = onBackAction,
-            onHideBalances = onHideBalances,
-            onSettings = goSettings,
             recipientAddressState = recipientAddressState,
             onRecipientAddressChange = {
                 scope.launch {
@@ -307,10 +300,10 @@ internal fun WrapSend(
             onQrScannerOpen = goToQrScanner,
             goBalances = goBalances,
             hasCameraFeature = hasCameraFeature,
-            topAppBarSubTitleState = topAppBarSubTitleState,
             walletSnapshot = walletSnapshot,
             exchangeRateState = exchangeRateState,
-            sendAddressBookState = sendAddressBookState
+            sendAddressBookState = sendAddressBookState,
+            zashiMainTopAppBarState = zashiMainTopAppBarState
         )
     }
 }
