@@ -18,8 +18,8 @@ fun Modifier.scaffoldPadding(paddingValues: PaddingValues) =
 
 fun Modifier.scaffoldScrollPadding(paddingValues: PaddingValues) =
     this.padding(
-        top = paddingValues.calculateTopPadding(),
+        top = paddingValues.calculateTopPadding() + ZashiDimensions.Spacing.spacingLg,
         bottom = paddingValues.calculateBottomPadding() + ZashiDimensions.Spacing.spacing3xl,
-        start = 4.dp,
-        end = 4.dp
+        start = 0.dp,
+        end = 0.dp
     )

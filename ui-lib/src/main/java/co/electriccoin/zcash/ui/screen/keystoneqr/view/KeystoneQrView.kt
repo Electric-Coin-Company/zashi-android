@@ -12,9 +12,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
+import co.electriccoin.zcash.ui.design.util.AndroidQrCodeImageGenerator
+import co.electriccoin.zcash.ui.design.util.JvmQrCodeGenerator
 import co.electriccoin.zcash.ui.screen.keystoneqr.state.KeystoneQrState
-import co.electriccoin.zcash.ui.screen.qrcode.util.AndroidQrCodeImageGenerator
-import co.electriccoin.zcash.ui.screen.qrcode.util.JvmQrCodeGenerator
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
 

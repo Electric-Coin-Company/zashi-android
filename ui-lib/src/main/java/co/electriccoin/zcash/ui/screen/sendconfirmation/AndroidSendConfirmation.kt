@@ -8,7 +8,6 @@ import androidx.annotation.VisibleForTesting
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -69,7 +68,7 @@ internal fun MainActivity.WrapSendConfirmation(
 
     val synchronizer = walletViewModel.synchronizer.collectAsStateWithLifecycle().value
 
-    val spendingKey = walletViewModel.spendingKey.collectAsStateWithLifecycle().value
+    val spendingKey = walletViewModel.zashiSpendingKey.collectAsStateWithLifecycle(null).value
 
     val supportMessage = supportViewModel.supportInfo.collectAsStateWithLifecycle().value
 
@@ -128,7 +127,10 @@ internal fun WrapSendConfirmation(
             mutableStateOf(arguments.initialStage ?: SendConfirmationStage.Prepared)
         }
 
-    val submissionResults = createTransactionsViewModel.submissions.collectAsState().value.toImmutableList()
+    val submissionResults = createTransactionsViewModel
+        .submissions.collectAsStateWithLifecycle().value.toImmutableList()
+
+    val state = createTransactionsViewModel.state.collectAsStateWithLifecycle().value
 
     val onBackAction = {
         when (stage) {
@@ -158,7 +160,7 @@ internal fun WrapSendConfirmation(
         onBackAction()
     }
 
-    if (null == synchronizer || null == spendingKey) {
+    if (null == synchronizer) {
         // TODO [#1146]: Consider moving CircularScreenProgressIndicator from Android layer to View layer
         // TODO [#1146]: Improve this by allowing screen composition and updating it after the data is available
         // TODO [#1146]: https://github.com/Electric-Coin-Company/zashi-android/issues/1146
@@ -233,16 +235,18 @@ internal fun WrapSendConfirmation(
                             if (isProtected) {
                                 sendFundsAuthentication.value = true
                             } else {
-                                runSendFundsAction(
-                                    createTransactionsViewModel = createTransactionsViewModel,
-                                    // The not-null assertion operator is necessary here even if we check its
-                                    // nullability before due to property is declared in different module. See more
-                                    // details on the Kotlin forum
-                                    proposal = zecSend!!.proposal!!,
-                                    setStage = setStage,
-                                    spendingKey = spendingKey,
-                                    synchronizer = synchronizer,
-                                )
+                                spendingKey?.let {
+                                    runSendFundsAction(
+                                        createTransactionsViewModel = createTransactionsViewModel,
+                                        // The not-null assertion operator is necessary here even if we check its
+                                        // nullability before due to property is declared in different module. See more
+                                        // details on the Kotlin forum
+                                        proposal = zecSend!!.proposal!!,
+                                        setStage = setStage,
+                                        spendingKey = spendingKey,
+                                        synchronizer = synchronizer,
+                                    )
+                                }
                             }
                         }
                 }
@@ -255,7 +259,8 @@ internal fun WrapSendConfirmation(
             },
             topAppBarSubTitleState = topAppBarSubTitleState,
             exchangeRate = exchangeRateState,
-            contactName = foundContact.value?.name
+            contactName = foundContact.value?.name,
+            state = state
         )
 
         if (sendFundsAuthentication.value) {
@@ -266,16 +271,18 @@ internal fun WrapSendConfirmation(
                 },
                 onSuccess = {
                     lifecycleScope.launch {
-                        runSendFundsAction(
-                            createTransactionsViewModel = createTransactionsViewModel,
-                            // The not-null assertion operator is necessary here even if we check its
-                            // nullability before due to property is declared in different module. See more
-                            // details on the Kotlin forum
-                            proposal = zecSend!!.proposal!!,
-                            setStage = setStage,
-                            spendingKey = spendingKey,
-                            synchronizer = synchronizer,
-                        )
+                        spendingKey?.let {
+                            runSendFundsAction(
+                                createTransactionsViewModel = createTransactionsViewModel,
+                                // The not-null assertion operator is necessary here even if we check its
+                                // nullability before due to property is declared in different module. See more
+                                // details on the Kotlin forum
+                                proposal = zecSend!!.proposal!!,
+                                setStage = setStage,
+                                spendingKey = spendingKey,
+                                synchronizer = synchronizer,
+                            )
+                        }
                     }
                     sendFundsAuthentication.value = false
                 },

@@ -10,7 +10,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cash.z.ecc.android.sdk.Synchronizer
@@ -29,12 +28,16 @@ import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.compose.BalanceState
 import co.electriccoin.zcash.ui.common.compose.LocalActivity
 import co.electriccoin.zcash.ui.common.compose.LocalNavController
+import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
+import co.electriccoin.zcash.ui.common.model.ZashiAccount
+import co.electriccoin.zcash.ui.common.usecase.GetSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.common.viewmodel.HomeViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.ZashiMainTopAppBarViewModel
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
+import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewKeystoneTransaction
 import co.electriccoin.zcash.ui.screen.send.ext.Saver
 import co.electriccoin.zcash.ui.screen.send.model.AmountState
 import co.electriccoin.zcash.ui.screen.send.model.MemoState
@@ -44,6 +47,7 @@ import co.electriccoin.zcash.ui.screen.send.model.SendStage
 import co.electriccoin.zcash.ui.screen.send.view.Send
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 import org.zecdev.zip321.ZIP321
 import java.util.Locale
 
@@ -55,6 +59,7 @@ internal fun WrapSend(
     goBack: () -> Unit,
     goBalances: () -> Unit,
     goSendConfirmation: (ZecSend) -> Unit,
+    goReviewKeystoneTransaction: (ReviewKeystoneTransaction) -> Unit,
     goPaymentRequest: (ZecSend, String) -> Unit,
 ) {
     val activity = LocalActivity.current
@@ -67,9 +72,9 @@ internal fun WrapSend(
 
     val synchronizer = walletViewModel.synchronizer.collectAsStateWithLifecycle().value
 
-    val walletSnapshot = walletViewModel.walletSnapshot.collectAsStateWithLifecycle().value
+    val walletSnapshot = walletViewModel.currentWalletSnapshot.collectAsStateWithLifecycle().value
 
-    val spendingKey = walletViewModel.spendingKey.collectAsStateWithLifecycle().value
+    val spendingKey = walletViewModel.zashiSpendingKey.collectAsStateWithLifecycle(null).value
 
     val monetarySeparators = MonetarySeparators.current(Locale.getDefault())
 
@@ -94,6 +99,7 @@ internal fun WrapSend(
         hasCameraFeature = hasCameraFeature,
         monetarySeparators = monetarySeparators,
         exchangeRateState = exchangeRateState,
+        goReviewKeystoneTransaction = goReviewKeystoneTransaction
     )
 }
 
@@ -108,6 +114,7 @@ internal fun WrapSend(
     goBack: () -> Unit,
     goBalances: () -> Unit,
     goSendConfirmation: (ZecSend) -> Unit,
+    goReviewKeystoneTransaction: (ReviewKeystoneTransaction) -> Unit,
     goPaymentRequest: (ZecSend, String) -> Unit,
     hasCameraFeature: Boolean,
     monetarySeparators: MonetarySeparators,
@@ -121,6 +128,8 @@ internal fun WrapSend(
     val navController = LocalNavController.current
 
     val viewModel = koinViewModel<SendViewModel>()
+
+    val getSelectedWalletAccount = koinInject<GetSelectedWalletAccountUseCase>()
 
     LaunchedEffect(Unit) {
         viewModel.navigateCommand.collect {
@@ -253,7 +262,7 @@ internal fun WrapSend(
         }
     }
 
-    if (null == synchronizer || null == walletSnapshot || null == spendingKey) {
+    if (null == synchronizer || null == walletSnapshot) {
         // TODO [#1146]: Consider moving CircularScreenProgressIndicator from Android layer to View layer
         // TODO [#1146]: Improve this by allowing screen composition and updating it after the data is available
         // TODO [#1146]: https://github.com/Electric-Coin-Company/zashi-android/issues/1146
@@ -264,19 +273,49 @@ internal fun WrapSend(
             isHideBalances = isHideBalances,
             sendStage = sendStage,
             onCreateZecSend = { newZecSend ->
+                goReviewKeystoneTransaction(
+                    ReviewKeystoneTransaction(
+                        addressString = newZecSend.destination.address,
+                        addressType = cash.z.ecc.sdk.model.AddressType.fromWalletAddress(newZecSend.destination),
+                        amountLong = newZecSend.amount.value,
+                        memoString = newZecSend.memo.value.takeIf { it.isNotEmpty() },
+                    )
+                )
                 scope.launch {
-                    Twig.debug { "Getting send transaction proposal" }
-                    runCatching {
-                        synchronizer.proposeSend(spendingKey.account, newZecSend)
-                    }.onSuccess { proposal ->
-                        Twig.debug { "Transaction proposal successful: ${proposal.toPrettyString()}" }
-                        val enrichedZecSend = newZecSend.copy(proposal = proposal)
-                        setZecSend(enrichedZecSend)
-                        goSendConfirmation(enrichedZecSend)
-                    }.onFailure {
-                        Twig.error(it) { "Transaction proposal failed" }
-                        setSendStage(SendStage.SendFailure(it.message ?: ""))
-                    }
+                    // goReviewKeystoneTransaction(
+                    //     ReviewKeystoneTransaction(
+                    //         addressString = newZecSend.destination.address,
+                    //         addressType = cash.z.ecc.sdk.model.AddressType.fromWalletAddress(newZecSend.destination),
+                    //         amountLong = newZecSend.amount.value,
+                    //         memoString = newZecSend.memo.value,
+                    //     )
+                    // )
+                    // when (getSelectedWalletAccount()) {
+                    //     is KeystoneAccount -> {
+                    //         goReviewKeystoneTransaction(
+                    //             ReviewKeystoneTransaction(
+                    //                 addressString = newZecSend.destination.address,
+                    //                 addressType = cash.z.ecc.sdk.model.AddressType.fromWalletAddress(newZecSend.destination),
+                    //                 amountLong = newZecSend.amount.value,
+                    //                 memoString = newZecSend.memo.value,
+                    //             )
+                    //         )
+                    //     }
+                    //     is ZashiAccount -> spendingKey?.let {
+                    //         Twig.debug { "Getting send transaction proposal" }
+                    //         runCatching {
+                    //             synchronizer.proposeSend(spendingKey.account, newZecSend)
+                    //         }.onSuccess { proposal ->
+                    //             Twig.debug { "Transaction proposal successful: ${proposal.toPrettyString()}" }
+                    //             val enrichedZecSend = newZecSend.copy(proposal = proposal)
+                    //             setZecSend(enrichedZecSend)
+                    //             goSendConfirmation(enrichedZecSend)
+                    //         }.onFailure {
+                    //             Twig.error(it) { "Transaction proposal failed" }
+                    //             setSendStage(SendStage.SendFailure(it.message ?: ""))
+                    //         }
+                    //     }
+                    // }
                 }
             },
             onBack = onBackAction,

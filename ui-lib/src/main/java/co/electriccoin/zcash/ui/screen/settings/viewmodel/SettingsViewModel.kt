@@ -17,7 +17,7 @@ import co.electriccoin.zcash.ui.common.usecase.ObserveIsFlexaAvailableUseCase
 import co.electriccoin.zcash.ui.common.usecase.RescanBlockchainUseCase
 import co.electriccoin.zcash.ui.common.usecase.SensitiveSettingsVisibleUseCase
 import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
-import co.electriccoin.zcash.ui.design.component.ZashiSettingsListItemState
+import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
 import co.electriccoin.zcash.ui.screen.addressbook.AddressBookArgs
@@ -121,13 +121,13 @@ class SettingsViewModel(
         onBack = ::onBack,
         items =
             listOfNotNull(
-                ZashiSettingsListItemState(
-                    text = stringRes(R.string.settings_address_book),
+                ZashiListItemState(
+                    title = stringRes(R.string.settings_address_book),
                     icon = R.drawable.ic_settings_address_book,
                     onClick = ::onAddressBookClick
                 ),
-                ZashiSettingsListItemState(
-                    text = stringRes(R.string.settings_integrations),
+                ZashiListItemState(
+                    title = stringRes(R.string.settings_integrations),
                     icon = R.drawable.ic_settings_integrations,
                     onClick = ::onIntegrationsClick,
                     titleIcons =
@@ -136,23 +136,23 @@ class SettingsViewModel(
                             R.drawable.ic_integrations_flexa.takeIf { isFlexaAvailable }
                         ).toImmutableList()
                 ).takeIf { isSensitiveSettingsVisible },
-                ZashiSettingsListItemState(
-                    text = stringRes(R.string.settings_advanced_settings),
+                ZashiListItemState(
+                    title = stringRes(R.string.settings_advanced_settings),
                     icon = R.drawable.ic_advanced_settings,
                     onClick = ::onAdvancedSettingsClick
                 ),
-                ZashiSettingsListItemState(
-                    text = stringRes(R.string.settings_whats_new),
+                ZashiListItemState(
+                    title = stringRes(R.string.settings_whats_new),
                     icon = R.drawable.ic_settings_whats_new,
                     onClick = ::onWhatsNewClick
                 ),
-                ZashiSettingsListItemState(
-                    text = stringRes(R.string.settings_about_us),
+                ZashiListItemState(
+                    title = stringRes(R.string.settings_about_us),
                     icon = R.drawable.ic_settings_info,
                     onClick = ::onAboutUsClick
                 ),
-                ZashiSettingsListItemState(
-                    text = stringRes(R.string.settings_feedback),
+                ZashiListItemState(
+                    title = stringRes(R.string.settings_feedback),
                     icon = R.drawable.ic_settings_feedback,
                     onClick = ::onSendUsFeedbackClick
                 ),

@@ -61,9 +61,9 @@ internal fun WrapBalances(goMultiTrxSubmissionFailure: () -> Unit) {
 
     val synchronizer = walletViewModel.synchronizer.collectAsStateWithLifecycle().value
 
-    val walletSnapshot = walletViewModel.walletSnapshot.collectAsStateWithLifecycle().value
+    val walletSnapshot = walletViewModel.currentWalletSnapshot.collectAsStateWithLifecycle().value
 
-    val spendingKey = walletViewModel.spendingKey.collectAsStateWithLifecycle().value
+    val spendingKey = walletViewModel.zashiSpendingKey.collectAsStateWithLifecycle(null).value
 
     val walletRestoringState = walletViewModel.walletRestoringState.collectAsStateWithLifecycle().value
 
@@ -155,7 +155,7 @@ internal fun WrapBalances(
     // dialog dismissing in such cases is not critical, and it would require creating StatusAction custom Saver
     val showStatusDialog = remember { mutableStateOf<StatusAction.Detailed?>(null) }
 
-    if (null == synchronizer || null == walletSnapshot || null == spendingKey) {
+    if (null == synchronizer || null == walletSnapshot) {
         // TODO [#1146]: Consider moving CircularScreenProgressIndicator from Android layer to View layer
         // TODO [#1146]: Improve this by allowing screen composition and updating it after the data is available
         // TODO [#1146]: https://github.com/Electric-Coin-Company/zashi-android/issues/1146
@@ -177,14 +177,16 @@ internal fun WrapBalances(
                     Twig.debug { "Shielding transparent funds" }
 
                     runCatching {
-                        synchronizer.proposeShielding(
-                            account = spendingKey.account,
-                            shieldingThreshold = Zatoshi(DEFAULT_SHIELDING_THRESHOLD),
-                            // Using empty string for memo to clear the default memo prefix value defined in the SDK
-                            memo = "",
-                            // Using null will select whichever of the account's trans. receivers has funds to shield
-                            transparentReceiver = null
-                        )
+                        spendingKey?.let {
+                            synchronizer.proposeShielding(
+                                account = spendingKey.account,
+                                shieldingThreshold = Zatoshi(DEFAULT_SHIELDING_THRESHOLD),
+                                // Using empty string for memo to clear the default memo prefix value defined in the SDK
+                                memo = "",
+                                // Using null will select whichever of the account's trans. receivers has funds to shield
+                                transparentReceiver = null
+                            )
+                        }
                     }.onSuccess { newProposal ->
                         Twig.info { "Shielding proposal result: ${newProposal?.toPrettyString()}" }
 
@@ -199,6 +201,8 @@ internal fun WrapBalances(
                                 )
                             )
                         } else {
+                            if (spendingKey == null) return@onSuccess
+
                             val result =
                                 createTransactionsViewModel.runCreateTransactions(
                                     synchronizer = synchronizer,

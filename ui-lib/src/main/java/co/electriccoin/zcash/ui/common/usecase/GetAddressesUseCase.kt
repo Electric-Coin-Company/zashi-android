@@ -6,5 +6,5 @@ import kotlinx.coroutines.flow.filterNotNull
 class GetAddressesUseCase(
     private val walletRepository: WalletRepository
 ) {
-    operator fun invoke() = walletRepository.addresses.filterNotNull()
+    operator fun invoke() = walletRepository.currentAddresses.filterNotNull()
 }

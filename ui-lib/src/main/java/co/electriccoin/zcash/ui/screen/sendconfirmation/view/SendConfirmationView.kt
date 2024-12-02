@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -70,13 +71,17 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.fixture.ObserveFiatCurrencyResultFixture
+import co.electriccoin.zcash.ui.fixture.SendConfirmationStateFixture
 import co.electriccoin.zcash.ui.screen.exchangerate.widget.StyledExchangeLabel
 import co.electriccoin.zcash.ui.screen.send.ext.abbreviated
 import co.electriccoin.zcash.ui.screen.sendconfirmation.SendConfirmationTag
+import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SendConfirmationExpandedInfoState
 import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SendConfirmationStage
+import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SendConfirmationState
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
@@ -104,6 +109,7 @@ fun SendConfirmation(
     zecSend: ZecSend,
     contactName: String?,
     exchangeRate: ExchangeRateState,
+    state: SendConfirmationState
 ) {
     val gradientColors =
         Pair(
@@ -156,6 +162,7 @@ fun SendConfirmation(
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
                     .scaffoldPadding(paddingValues),
+            state = state,
         )
     }
 }
@@ -231,6 +238,7 @@ private fun SendConfirmationMainContent(
     submissionResults: ImmutableList<TransactionSubmitResult>,
     zecSend: ZecSend,
     modifier: Modifier = Modifier,
+    state: SendConfirmationState,
 ) {
     Box(modifier = modifier) {
         when (stage) {
@@ -238,7 +246,8 @@ private fun SendConfirmationMainContent(
                 SendConfirmationContent(
                     contactName = contactName,
                     zecSend = zecSend,
-                    exchangeRate = exchangeRate
+                    exchangeRate = exchangeRate,
+                    state = state
                 )
             }
             SendConfirmationStage.Sending -> {
@@ -664,6 +673,7 @@ private fun SendConfirmationContent(
     zecSend: ZecSend,
     exchangeRate: ExchangeRateState,
     modifier: Modifier = Modifier,
+    state: SendConfirmationState
 ) {
     Column(
         horizontalAlignment = Alignment.Start,
@@ -696,7 +706,8 @@ private fun SendConfirmationContent(
         Text(
             stringResource(R.string.send_confirmation_address),
             style = ZashiTypography.textSm,
-            color = ZashiColors.Text.textTertiary
+            color = ZashiColors.Text.textTertiary,
+            fontWeight = FontWeight.Medium
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -717,6 +728,11 @@ private fun SendConfirmationContent(
             color = ZashiColors.Text.textPrimary
         )
 
+        state.from?.let {
+            Spacer(modifier = Modifier.height(20.dp))
+            SendConfirmationExpandedInfo(it)
+        }
+
         Spacer(modifier = Modifier.height(20.dp))
 
         Row {
@@ -724,6 +740,7 @@ private fun SendConfirmationContent(
                 modifier = Modifier.weight(1f),
                 text = stringResource(R.string.send_confirmation_amount_item),
                 style = ZashiTypography.textSm,
+                fontWeight = FontWeight.Medium,
                 color = ZashiColors.Text.textTertiary
             )
 
@@ -749,6 +766,7 @@ private fun SendConfirmationContent(
                 modifier = Modifier.weight(1f),
                 text = stringResource(R.string.send_confirmation_fee),
                 style = ZashiTypography.textSm,
+                fontWeight = FontWeight.Medium,
                 color = ZashiColors.Text.textTertiary
             )
 
@@ -779,6 +797,7 @@ private fun SendConfirmationContent(
             Text(
                 stringResource(R.string.send_confirmation_memo),
                 style = ZashiTypography.textSm,
+                fontWeight = FontWeight.Medium,
                 color = ZashiColors.Text.textTertiary
             )
 
@@ -825,6 +844,35 @@ private fun SendConfirmationContent(
 
             Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingUpLarge))
         }
+    }
+}
+
+@Composable
+private fun SendConfirmationExpandedInfo(state: SendConfirmationExpandedInfoState, ) {
+    Text(
+        text = state.title.getValue(),
+        style = ZashiTypography.textSm,
+        color = ZashiColors.Text.textTertiary,
+        fontWeight = FontWeight.Medium
+    )
+
+    Spacer(modifier = Modifier.height(6.dp))
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Image(
+            modifier = Modifier.size(32.dp),
+            painter = painterResource(id = state.icon),
+            contentDescription = null
+        )
+        Spacer(Modifier.width(16.dp))
+        Text(
+            text = state.text.getValue(),
+            style = ZashiTypography.textMd,
+            color = ZashiColors.Text.textPrimary,
+            fontWeight = FontWeight.SemiBold
+        )
     }
 }
 
@@ -1055,7 +1103,8 @@ private fun SendConfirmationPreview() {
             onContactSupport = { _ -> },
             submissionResults = emptyList<TransactionSubmitResult>().toImmutableList(),
             exchangeRate = ObserveFiatCurrencyResultFixture.new(),
-            contactName = "Mom"
+            contactName = "Mom",
+            state = SendConfirmationStateFixture.new()
         )
     }
 }
@@ -1082,7 +1131,8 @@ private fun SendingPreview() {
             onContactSupport = { _ -> },
             submissionResults = emptyList<TransactionSubmitResult>().toImmutableList(),
             exchangeRate = ObserveFiatCurrencyResultFixture.new(),
-            contactName = "Mom"
+            contactName = "Mom",
+            state = SendConfirmationStateFixture.new()
         )
     }
 }
@@ -1109,7 +1159,8 @@ private fun SuccessPreview() {
             onContactSupport = { _ -> },
             submissionResults = emptyList<TransactionSubmitResult>().toImmutableList(),
             exchangeRate = ObserveFiatCurrencyResultFixture.new(),
-            contactName = "Mom"
+            contactName = "Mom",
+            state = SendConfirmationStateFixture.new()
         )
     }
 }
@@ -1140,7 +1191,8 @@ private fun PreviewSendConfirmationFailure() {
             onContactSupport = { _ -> },
             submissionResults = emptyList<TransactionSubmitResult>().toImmutableList(),
             exchangeRate = ObserveFiatCurrencyResultFixture.new(),
-            contactName = "Mom"
+            contactName = "Mom",
+            state = SendConfirmationStateFixture.new()
         )
     }
 }
@@ -1167,7 +1219,8 @@ private fun PreviewSendConfirmationGrpcFailure() {
             onContactSupport = { _ -> },
             submissionResults = emptyList<TransactionSubmitResult>().toImmutableList(),
             exchangeRate = ObserveFiatCurrencyResultFixture.new(),
-            contactName = "Mom"
+            contactName = "Mom",
+            state = SendConfirmationStateFixture.new()
         )
     }
 }
@@ -1209,7 +1262,8 @@ private fun SendMultipleErrorPreview() {
                     )
                 ).toImmutableList(),
             exchangeRate = ObserveFiatCurrencyResultFixture.new(),
-            contactName = "Romek"
+            contactName = "Romek",
+            state = SendConfirmationStateFixture.new()
         )
     }
 }

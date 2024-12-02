@@ -6,9 +6,14 @@ import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationTargets
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
+import co.electriccoin.zcash.ui.common.model.KeystoneAccount
+import co.electriccoin.zcash.ui.common.model.WalletAccount
+import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.usecase.CopyToClipboardUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetAddressesUseCase
+import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedWalletAccountUseCase
+import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.screen.addressbook.viewmodel.ADDRESS_MAX_LENGTH
+import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressState
 import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressType
 import co.electriccoin.zcash.ui.screen.receive.model.ReceiveState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -20,31 +25,71 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class ReceiveViewModel(
+    observeSelectedWalletAccount: ObserveSelectedWalletAccountUseCase,
     private val application: Application,
-    getVersionInfo: GetVersionInfoProvider,
-    getAddresses: GetAddressesUseCase,
     private val copyToClipboard: CopyToClipboardUseCase,
 ) : ViewModel() {
     @OptIn(ExperimentalCoroutinesApi::class)
     internal val state =
-        getAddresses().mapLatest { addresses ->
-            ReceiveState.Prepared(
-                walletAddresses = addresses,
-                isTestnet = getVersionInfo().isTestnet,
-                onAddressCopy = { address ->
-                    copyToClipboard(
-                        tag = application.getString(R.string.receive_clipboard_tag),
-                        value = address
-                    )
-                },
-                onQrCode = { addressType -> onQrCodeClick(addressType) },
-                onRequest = { addressType -> onRequestClick(addressType) },
+        observeSelectedWalletAccount().mapLatest { account ->
+            ReceiveState(
+                items = listOfNotNull(
+                    account?.unifiedAddress?.let {
+                        createAddressState(
+                            account = account,
+                            address = it.address,
+                            type = ReceiveAddressType.Unified
+                        )
+                    },
+                    account?.transparentAddress?.let {
+                        createAddressState(
+                            account = account,
+                            address = it.address,
+                            type = ReceiveAddressType.Transparent
+                        )
+                    },
+
+                ),
+                isLoading = account == null
             )
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            initialValue = ReceiveState.Loading
+            initialValue = ReceiveState(items = null, isLoading = true)
         )
+
+    private fun createAddressState(
+        account: WalletAccount,
+        address: String,
+        type: ReceiveAddressType
+    ) = ReceiveAddressState(
+        icon = when (account) {
+            is KeystoneAccount -> co.electriccoin.zcash.ui.design.R.drawable.ic_item_keystone
+            is ZashiAccount -> if (type == ReceiveAddressType.Unified) {
+                R.drawable.ic_zec_round_full
+            } else {
+                R.drawable.ic_zec_round_stroke
+            }
+        },
+        title = when (account) {
+            is KeystoneAccount -> stringRes("Keystone Address") // TODO keystone string
+            is ZashiAccount -> if (type == ReceiveAddressType.Unified) {
+                stringRes(R.string.receive_wallet_address_shielded)
+            } else {
+                stringRes(R.string.receive_wallet_address_transparent)
+            }
+        },
+        subtitle = stringRes("${address.take(ADDRESS_MAX_LENGTH)}..."),
+        isShielded = type == ReceiveAddressType.Unified,
+        onCopyClicked = {
+            copyToClipboard(
+                tag = application.getString(R.string.receive_clipboard_tag),
+                value = address
+            )
+        },
+        onQrClicked = { onQrCodeClick(type) },
+        onRequestClicked = { onRequestClick(type) },
+    )
 
     val navigationCommand = MutableSharedFlow<String>()
 

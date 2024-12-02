@@ -62,8 +62,9 @@ import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.screen.qrcode.model.QrCodeState
-import co.electriccoin.zcash.ui.screen.qrcode.util.AndroidQrCodeImageGenerator
-import co.electriccoin.zcash.ui.screen.qrcode.util.JvmQrCodeGenerator
+import co.electriccoin.zcash.ui.design.util.AndroidQrCodeImageGenerator
+import co.electriccoin.zcash.ui.design.util.JvmQrCodeGenerator
+import co.electriccoin.zcash.ui.screen.qrcode.model.QrCodeType
 import kotlinx.coroutines.runBlocking
 import kotlin.math.roundToInt
 
@@ -80,11 +81,12 @@ private fun QrCodeLoadingPreview() =
 
 @Composable
 @PreviewScreens
-private fun QrCodePreview() =
+private fun ZashiPreview() =
     ZcashTheme(forceDarkMode = false) {
         QrCodeView(
             state =
                 QrCodeState.Prepared(
+                    qrCodeType = QrCodeType.ZASHI,
                     walletAddress = runBlocking { WalletAddressFixture.unified() },
                     onAddressCopy = {},
                     onQrCodeShare = {},
@@ -94,6 +96,25 @@ private fun QrCodePreview() =
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )
     }
+
+@Composable
+@PreviewScreens
+private fun KeystonePreview() =
+    ZcashTheme(forceDarkMode = false) {
+        QrCodeView(
+            state =
+            QrCodeState.Prepared(
+                qrCodeType = QrCodeType.KEYSTONE,
+                walletAddress = runBlocking { WalletAddressFixture.unified() },
+                onAddressCopy = {},
+                onQrCodeShare = {},
+                onBack = {},
+            ),
+            snackbarHostState = SnackbarHostState(),
+            topAppBarSubTitleState = TopAppBarSubTitleState.None,
+        )
+    }
+
 
 @Composable
 internal fun QrCodeView(
@@ -131,6 +152,7 @@ internal fun QrCodeView(
                 }
             ) { paddingValues ->
                 QrCodeContents(
+                    qrCodeType = state.qrCodeType,
                     walletAddress = state.walletAddress,
                     onAddressCopy = state.onAddressCopy,
                     onQrCodeShare = state.onQrCodeShare,
@@ -215,6 +237,7 @@ private fun QrCodeBottomBar(
 
 @Composable
 private fun QrCodeContents(
+    qrCodeType: QrCodeType,
     walletAddress: WalletAddress,
     onAddressCopy: (String) -> Unit,
     onQrCodeShare: (ImageBitmap) -> Unit,
@@ -232,10 +255,10 @@ private fun QrCodeContents(
         when (walletAddress) {
             // We use the same design for the Sapling address for the Testnet app variant
             is WalletAddress.Unified, is WalletAddress.Sapling -> {
-                UnifiedQrCodePanel(walletAddress, onAddressCopy, onQrCodeShare)
+                UnifiedQrCodePanel(qrCodeType, walletAddress, onAddressCopy, onQrCodeShare)
             }
             is WalletAddress.Transparent -> {
-                TransparentQrCodePanel(walletAddress, onAddressCopy, onQrCodeShare)
+                TransparentQrCodePanel(qrCodeType, walletAddress, onAddressCopy, onQrCodeShare)
             }
             else -> {
                 error("Unsupported address type: $walletAddress")
@@ -247,6 +270,7 @@ private fun QrCodeContents(
 @Composable
 @Suppress("LongMethod")
 fun UnifiedQrCodePanel(
+    qrCodeType: QrCodeType,
     walletAddress: WalletAddress,
     onAddressCopy: (String) -> Unit,
     onQrCodeShare: (ImageBitmap) -> Unit,
@@ -266,6 +290,7 @@ fun UnifiedQrCodePanel(
             modifier =
                 Modifier
                     .padding(horizontal = 24.dp),
+            qrCodeType = qrCodeType,
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingUpLarge))
@@ -286,7 +311,10 @@ fun UnifiedQrCodePanel(
         Text(
             text =
                 when (walletAddress) {
-                    is WalletAddress.Unified -> stringResource(id = R.string.qr_code_wallet_address_shielded)
+                    is WalletAddress.Unified -> when (qrCodeType) {
+                        QrCodeType.ZASHI -> stringResource(id = R.string.qr_code_wallet_address_shielded)
+                        QrCodeType.KEYSTONE -> "Keystone Wallet" // TODO keystone string
+                    }
                     is WalletAddress.Sapling -> stringResource(id = R.string.qr_code_wallet_address_sapling)
                     else -> error("Unsupported address type: $walletAddress")
                 },
@@ -327,6 +355,7 @@ fun UnifiedQrCodePanel(
 @Composable
 @Suppress("LongMethod")
 fun TransparentQrCodePanel(
+    qrCodeType: QrCodeType,
     walletAddress: WalletAddress,
     onAddressCopy: (String) -> Unit,
     onQrCodeShare: (ImageBitmap) -> Unit,
@@ -346,6 +375,7 @@ fun TransparentQrCodePanel(
             modifier =
                 Modifier
                     .padding(horizontal = 24.dp),
+            qrCodeType = qrCodeType,
         )
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingUpLarge))
@@ -401,6 +431,7 @@ fun TransparentQrCodePanel(
 
 @Composable
 private fun ColumnScope.QrCode(
+    qrCodeType: QrCodeType,
     walletAddress: WalletAddress,
     onQrImageShare: (ImageBitmap) -> Unit,
     modifier: Modifier = Modifier
@@ -445,7 +476,8 @@ private fun ColumnScope.QrCode(
                     },
                     RoundedCornerShape(ZashiDimensions.Radius.radius4xl)
                 )
-                .padding(all = 12.dp)
+                .padding(all = 12.dp),
+        qrCodeType = qrCodeType
     )
 }
 
@@ -466,6 +498,7 @@ private fun qrCodeForAddress(
 
 @Composable
 private fun QrCode(
+    qrCodeType: QrCodeType,
     contentDescription: String,
     qrCodeImage: ImageBitmap,
     onQrImageBitmapShare: (ImageBitmap) -> Unit,
@@ -488,7 +521,12 @@ private fun QrCode(
         )
 
         Image(
-            painter = painterResource(id = R.drawable.logo_zec_fill_stroke),
+            modifier = Modifier.size(64.dp),
+            painter = when (qrCodeType) {
+                QrCodeType.ZASHI -> painterResource(id = R.drawable.logo_zec_fill_stroke)
+                QrCodeType.KEYSTONE -> painterResource(id = co.electriccoin.zcash.ui.design.R.drawable
+                    .ic_item_keystone_qr)
+            },
             contentDescription = contentDescription,
         )
     }

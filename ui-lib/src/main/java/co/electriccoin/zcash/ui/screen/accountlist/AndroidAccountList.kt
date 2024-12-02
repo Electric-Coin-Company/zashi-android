@@ -34,6 +34,20 @@ fun AndroidAccountList() {
         }
     }
 
+    LaunchedEffect(Unit) { // TODO keystone navigation
+        viewModel.navigationCommand.collect {
+            sheetState.hide()
+            navController.navigate(it)
+        }
+    }
+
+    LaunchedEffect(Unit) { // TODO keystone navigation
+        viewModel.backNavigationCommand.collect {
+            sheetState.hide()
+            navController.popBackStack()
+        }
+    }
+
     state?.let {
         AccountListView(
             state = it,

@@ -24,12 +24,12 @@ import co.electriccoin.zcash.ui.common.repository.BiometricRepository
 import co.electriccoin.zcash.ui.common.repository.BiometricRequest
 import co.electriccoin.zcash.ui.common.usecase.GetSpendingKeyUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSynchronizerUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetTransparentAddressUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetZashiAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsCoinbaseAvailableUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsFlexaAvailableUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveIsFlexaAvailableUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveWalletStateUseCase
-import co.electriccoin.zcash.ui.design.component.ZashiSettingsListItemState
+import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.integrations.model.IntegrationsState
 import co.electriccoin.zcash.ui.screen.send.model.RecipientAddressState
@@ -52,7 +52,7 @@ class IntegrationsViewModel(
     observeWalletState: ObserveWalletStateUseCase,
     observeIsFlexaAvailableUseCase: ObserveIsFlexaAvailableUseCase,
     private val getSynchronizer: GetSynchronizerUseCase,
-    private val getTransparentAddress: GetTransparentAddressUseCase,
+    private val getZashiAccount: GetZashiAccountUseCase,
     private val isFlexaAvailable: IsFlexaAvailableUseCase,
     private val isCoinbaseAvailable: IsCoinbaseAvailableUseCase,
     private val getSpendingKey: GetSpendingKeyUseCase,
@@ -80,11 +80,11 @@ class IntegrationsViewModel(
                 onBack = ::onBack,
                 items =
                     listOfNotNull(
-                        ZashiSettingsListItemState(
+                        ZashiListItemState(
                             // Set the wallet currency by app build is more future-proof, although we hide it from
                             // the UI in the Testnet build
                             icon = R.drawable.ic_integrations_coinbase,
-                            text = stringRes(R.string.integrations_coinbase, getZcashCurrency.getLocalizedName()),
+                            title = stringRes(R.string.integrations_coinbase, getZcashCurrency.getLocalizedName()),
                             subtitle =
                                 stringRes(
                                     R.string.integrations_coinbase_subtitle,
@@ -92,7 +92,7 @@ class IntegrationsViewModel(
                                 ),
                             onClick = ::onBuyWithCoinbaseClicked
                         ).takeIf { isCoinbaseAvailable() },
-                        ZashiSettingsListItemState(
+                        ZashiListItemState(
                             // Set the wallet currency by app build is more future-proof, although we hide it from
                             // the UI in the Testnet build
                             isEnabled = isEnabled,
@@ -102,10 +102,10 @@ class IntegrationsViewModel(
                                 } else {
                                     R.drawable.ic_integrations_flexa_disabled
                                 },
-                            text = stringRes(R.string.integrations_flexa),
+                            title = stringRes(R.string.integrations_flexa),
                             subtitle = stringRes(R.string.integrations_flexa_subtitle),
                             onClick = ::onFlexaClicked
-                        ).takeIf { isFlexaAvailable == true }
+                        ).takeIf { isFlexaAvailable == true },
                     ).toImmutableList()
             )
         }.stateIn(
@@ -132,7 +132,7 @@ class IntegrationsViewModel(
                 }
 
                 appId.isNotEmpty() -> {
-                    val address = getTransparentAddress().address
+                    val address = getZashiAccount().transparentAddress
                     val url =
                         "https://pay.coinbase.com/buy/select-asset?appId=$appId&addresses={\"${address}\":[\"zcash\"]}"
                     coinbaseNavigationCommand.emit(url)

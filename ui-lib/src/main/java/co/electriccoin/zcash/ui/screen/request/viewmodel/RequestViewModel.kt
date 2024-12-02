@@ -10,16 +10,19 @@ import cash.z.ecc.android.sdk.model.WalletAddress
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.model.KeystoneAccount
+import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.provider.GetMonetarySeparatorProvider
 import co.electriccoin.zcash.ui.common.provider.GetZcashCurrencyProvider
 import co.electriccoin.zcash.ui.common.usecase.GetAddressesUseCase
+import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.ShareImageUseCase
 import co.electriccoin.zcash.ui.common.usecase.Zip321BuildUriUseCase
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.screen.qrcode.ext.fromReceiveAddressType
-import co.electriccoin.zcash.ui.screen.qrcode.util.AndroidQrCodeImageGenerator
-import co.electriccoin.zcash.ui.screen.qrcode.util.JvmQrCodeGenerator
+import co.electriccoin.zcash.ui.design.util.AndroidQrCodeImageGenerator
+import co.electriccoin.zcash.ui.design.util.JvmQrCodeGenerator
 import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressType
 import co.electriccoin.zcash.ui.screen.request.ext.convertToDouble
 import co.electriccoin.zcash.ui.screen.request.model.AmountState
@@ -48,6 +51,7 @@ class RequestViewModel(
     getMonetarySeparators: GetMonetarySeparatorProvider,
     shareImageBitmap: ShareImageUseCase,
     zip321BuildUriUseCase: Zip321BuildUriUseCase,
+    observeSelectedWalletAccount: ObserveSelectedWalletAccountUseCase
 ) : ViewModel() {
     companion object {
         private const val MAX_ZCASH_SUPPLY = 21_000_000
@@ -74,7 +78,8 @@ class RequestViewModel(
             request,
             stage,
             walletViewModel.exchangeRateUsd,
-        ) { addresses, request, currentStage, exchangeRateUsd ->
+            observeSelectedWalletAccount()
+        ) { addresses, request, currentStage, exchangeRateUsd, account ->
             val walletAddress = addresses.fromReceiveAddressType(ReceiveAddressType.fromOrdinal(addressTypeOrdinal))
 
             when (currentStage) {
@@ -106,6 +111,11 @@ class RequestViewModel(
                 }
                 RequestStage.MEMO -> {
                     RequestState.Memo(
+                        icon = when (account) {
+                            is KeystoneAccount -> co.electriccoin.zcash.ui.design.R.drawable.ic_item_keystone
+                            is ZashiAccount -> R.drawable.ic_zec_round_full
+                            null -> R.drawable.ic_zec_round_full
+                        },
                         walletAddress = walletAddress,
                         request = request,
                         onMemo = { onMemo(it) },
@@ -116,6 +126,12 @@ class RequestViewModel(
                 }
                 RequestStage.QR_CODE -> {
                     RequestState.QrCode(
+                        icon = when (account) {
+                            is KeystoneAccount -> co.electriccoin.zcash.ui.design.R.drawable
+                                .ic_item_keystone_qr
+                            is ZashiAccount -> R.drawable.logo_zec_fill_stroke
+                            null -> R.drawable.logo_zec_fill_stroke
+                        },
                         walletAddress = walletAddress,
                         request = request,
                         onQrCodeGenerate = { qrCodeForValue(request.qrCodeState.requestUri, it) },

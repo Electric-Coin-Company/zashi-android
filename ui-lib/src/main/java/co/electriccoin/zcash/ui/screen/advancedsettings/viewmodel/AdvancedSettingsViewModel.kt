@@ -7,7 +7,7 @@ import co.electriccoin.zcash.ui.NavigationTargets
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.usecase.SensitiveSettingsVisibleUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
-import co.electriccoin.zcash.ui.design.component.ZashiSettingsListItemState
+import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.advancedsettings.model.AdvancedSettingsState
 import kotlinx.collections.immutable.toImmutableList
@@ -38,24 +38,24 @@ class AdvancedSettingsViewModel(
             onBack = ::onBack,
             items =
                 listOfNotNull(
-                    ZashiSettingsListItemState(
-                        text = stringRes(R.string.advanced_settings_recovery),
+                    ZashiListItemState(
+                        title = stringRes(R.string.advanced_settings_recovery),
                         icon = R.drawable.ic_advanced_settings_recovery,
                         onClick = {}
                     ),
-                    ZashiSettingsListItemState(
-                        text = stringRes(R.string.advanced_settings_export),
+                    ZashiListItemState(
+                        title = stringRes(R.string.advanced_settings_export),
                         icon = R.drawable.ic_advanced_settings_export,
                         onClick = {}
                     ),
-                    ZashiSettingsListItemState(
-                        text = stringRes(R.string.advanced_settings_choose_server),
+                    ZashiListItemState(
+                        title = stringRes(R.string.advanced_settings_choose_server),
                         icon =
                             R.drawable.ic_advanced_settings_choose_server,
                         onClick = ::onChooseServerClick
                     ).takeIf { isSensitiveSettingsVisible },
-                    ZashiSettingsListItemState(
-                        text = stringRes(R.string.advanced_settings_currency_conversion),
+                    ZashiListItemState(
+                        title = stringRes(R.string.advanced_settings_currency_conversion),
                         icon =
                             R.drawable.ic_advanced_settings_currency_conversion,
                         onClick = ::onCurrencyConversionClick

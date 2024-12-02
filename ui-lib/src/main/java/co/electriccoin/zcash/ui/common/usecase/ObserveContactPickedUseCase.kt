@@ -1,6 +1,7 @@
 package co.electriccoin.zcash.ui.common.usecase
 
 import co.electriccoin.zcash.ui.common.model.AddressBookContact
+import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.screen.send.model.RecipientAddressState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -13,7 +14,7 @@ import kotlinx.coroutines.launch
 class ObserveContactPickedUseCase(
     private val getSynchronizer: GetSynchronizerUseCase
 ) {
-    private val bus = MutableSharedFlow<AddressBookContact>()
+    private val bus = MutableSharedFlow<String>()
 
     private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
@@ -21,15 +22,20 @@ class ObserveContactPickedUseCase(
     operator fun invoke() =
         bus.mapLatest {
             val synchronizer = getSynchronizer()
-            val type = synchronizer.validateAddress(it.address)
+            val type = synchronizer.validateAddress(it)
             RecipientAddressState.new(
-                address = it.address,
+                address = it,
                 type = type
             )
         }
 
     fun onContactPicked(contact: AddressBookContact) =
         scope.launch {
-            bus.emit(contact)
+            bus.emit(contact.address)
+        }
+
+    fun onWalletAccountPicked(account: WalletAccount) =
+        scope.launch {
+            bus.emit(account.unifiedAddress.address)
         }
 }

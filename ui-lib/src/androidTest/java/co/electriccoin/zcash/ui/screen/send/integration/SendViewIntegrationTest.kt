@@ -40,6 +40,7 @@ class SendViewIntegrationTest {
                 goBalances = {},
                 goPaymentRequest = { _, _ -> },
                 goSendConfirmation = {},
+                goReviewKeystoneTransaction = {},
             )
         }
 

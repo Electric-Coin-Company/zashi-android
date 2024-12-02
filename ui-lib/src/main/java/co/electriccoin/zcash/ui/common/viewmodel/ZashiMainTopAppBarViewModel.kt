@@ -6,51 +6,63 @@ import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.preference.StandardPreferenceProvider
 import co.electriccoin.zcash.preference.model.entry.BooleanPreferenceDefault
 import co.electriccoin.zcash.ui.NavigationTargets.SETTINGS
+import co.electriccoin.zcash.ui.common.model.KeystoneAccount
+import co.electriccoin.zcash.ui.common.model.WalletAccount
+import co.electriccoin.zcash.ui.common.model.ZashiAccount
+import co.electriccoin.zcash.ui.common.repository.WalletRepository
 import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.component.ZashiMainTopAppBarState
-import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
 import co.electriccoin.zcash.ui.screen.accountlist.AccountListArgs
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class ZashiMainTopAppBarViewModel(
+    walletRepository: WalletRepository,
     private val standardPreferenceProvider: StandardPreferenceProvider,
 ) : ViewModel() {
     private val isHideBalances: StateFlow<Boolean?> = booleanStateFlow(StandardPreferenceKeys.IS_HIDE_BALANCES)
 
     val navigationCommand = MutableSharedFlow<String>()
 
-    val state =
-        isHideBalances.map {
-            createState(it)
-        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT), createState(false))
+    val state = combine(walletRepository.currentAccount, isHideBalances) { currentAccount, isHideBalances ->
+        createState(currentAccount, isHideBalances)
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+        initialValue = createState(
+            currentAccount = null,
+            isHideBalances = null
+        )
+    )
 
-    private fun createState(it: Boolean?) =
+    private fun createState(currentAccount: WalletAccount?, isHideBalances: Boolean?) =
         ZashiMainTopAppBarState(
-            accountType = ZashiMainTopAppBarState.AccountType.ZASHI,
+            accountType = when (currentAccount) {
+                is KeystoneAccount -> ZashiMainTopAppBarState.AccountType.KEYSTONE
+                is ZashiAccount -> ZashiMainTopAppBarState.AccountType.ZASHI
+                null -> ZashiMainTopAppBarState.AccountType.ZASHI
+            },
             balanceVisibilityButton =
-                IconButtonState(
-                    icon = if (it == true) R.drawable.ic_hide_balances_on else R.drawable.ic_hide_balances_off,
-                    onClick = ::onShowOrHideBalancesClicked,
-                    contentDescription = stringRes(co.electriccoin.zcash.ui.R.string.hide_balances_content_description)
-                ),
+            IconButtonState(
+                icon = if (isHideBalances == true) R.drawable.ic_app_bar_balances_hide else R.drawable.ic_app_bar_balances_hide,
+                onClick = ::onShowOrHideBalancesClicked
+            ),
             settingsButton =
-                IconButtonState(
-                    icon = R.drawable.ic_app_bar_settings,
-                    onClick = ::onSettingsClicked,
-                    contentDescription = stringRes(co.electriccoin.zcash.ui.R.string.settings_menu_content_description)
-                ),
+            IconButtonState(
+                icon = R.drawable.ic_app_bar_settings,
+                onClick = ::onSettingsClicked
+            ),
             onAccountTypeClick = ::onAccountTypeClicked
         )
 
