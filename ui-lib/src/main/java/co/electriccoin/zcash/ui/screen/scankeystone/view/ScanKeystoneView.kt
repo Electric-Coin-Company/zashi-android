@@ -182,7 +182,7 @@ fun ScanBottomItems(
         var failureText: String? = null
 
         if (validationResult == ScanValidationState.INVALID) {
-            failureText = "This QR code is not a valid Keystone wallet."
+            failureText = stringResource(R.string.scan_keystone_failure)
         }
 
         // Check permission request result, if any
@@ -190,18 +190,18 @@ fun ScanBottomItems(
             when (scanState) {
                 ScanScreenState.Permission ->
                     stringResource(
-                        id = R.string.scan_state_permission,
+                        id = R.string.scan_keystone_state_permission,
                         stringResource(id = R.string.app_name)
                     )
 
-                ScanScreenState.Failed -> stringResource(id = R.string.scan_state_failed)
+                ScanScreenState.Failed -> stringResource(id = R.string.scan_keystone_state_failed)
                 ScanScreenState.Scanning -> failureText
             }
 
         Text(
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center,
-            text = "Scan your Keystone wallet to connect",
+            text = stringResource(R.string.scan_keystone_info),
             style = ZashiTypography.textXl,
             fontWeight = FontWeight.SemiBold
         )
@@ -235,7 +235,7 @@ fun ScanBottomItems(
                 ZashiButton(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = onOpenSettings,
-                    text = stringResource(id = R.string.scan_settings_button)
+                    text = stringResource(id = R.string.scan_keystone_settings_button)
                 )
             }
             else -> {
@@ -545,7 +545,7 @@ fun ScanCameraView(
     if (null == collectedCameraProvider) {
         // Show loading indicator
     } else {
-        val contentDescription = stringResource(id = R.string.scan_preview_content_description)
+        val contentDescription = stringResource(id = R.string.scan_keystone_preview_content_description)
 
         val imageAnalysis =
             ImageAnalysis.Builder()

@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.design.R
@@ -59,7 +60,7 @@ private fun ColumnScope.BottomSheetContent(state: AccountListState) {
     Column {
         Text(
             modifier = Modifier.padding(horizontal = 24.dp),
-            text = "Wallets & Hardware",
+            text = stringResource(co.electriccoin.zcash.ui.R.string.account_list_title),
             style = ZashiTypography.textXl,
             fontWeight = FontWeight.SemiBold,
             color = ZashiColors.Text.textPrimary

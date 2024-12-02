@@ -30,7 +30,7 @@ fun KeystoneQrView(state: KeystoneQrState) {
         ) {
             Image(
                 bitmap = it,
-                contentDescription = "",
+                contentDescription = null,
             )
         }
     }
