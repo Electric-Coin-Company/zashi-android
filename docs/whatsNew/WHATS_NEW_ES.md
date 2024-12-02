@@ -4,21 +4,24 @@ All notable changes to this application will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this application adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+Supported section titles:
+- Agregado, Cambiado, Arreglado, Removido
+
 **Please be aware that this changelog primarily focuses on user-related modifications, emphasizing changes that can
 directly impact users rather than highlighting other key architectural updates.**
 
 ## [Unreleased]
 
-### Added
-- Flexa feature has been turned on
-- Disclaimer added to integrations screen
+## [1.2.3 (799)] - 2024-11-26
 
-### Fixed
-- The Seed screen recovery phrase has been improved to properly display on small screens
+### Añadido
+- ¡Finalmente está aquí! ¡La integración de Flexa a tu servicio!
+- Paga con Flexa en comercios compatibles en Estados Unidos, Canadá y El Salvador.
+- Te está esperando en la configuración de Zashi.
 
 ## [1.2.2 (789)] - 2024-11-18
 
-### Agregado
+### Añadido
 - ¡Hola!, Zashi aprendió Español.
 - Nuevo manejo de transacciones de baja denominación, esto hace transacciones más rápidas y uso eficiente del saldo.
 - Implementación de encriptado  y almacenamiento remoto de información en agenda.
@@ -29,5 +32,5 @@ directly impact users rather than highlighting other key architectural updates.*
 - Mejora en pantalla de configuración y estatus.
 - Comentarios y sugerencias mejoradas.
 
-### Arreglado
+### Corregido
 - Icono de transacciones privadas arreglado.

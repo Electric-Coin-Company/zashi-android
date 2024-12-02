@@ -4,17 +4,20 @@ All notable changes to this application will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this application adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+Supported section titles:
+- Added, Changed, Fixed, Removed
+
 **Please be aware that this changelog primarily focuses on user-related modifications, emphasizing changes that can
 directly impact users rather than highlighting other key architectural updates.**
 
 ## [Unreleased]
 
-### Added
-- Flexa feature has been turned on
-- Disclaimer added to integrations screen
+## [1.2.3 (799)] - 2024-11-26
 
-### Fixed
-- The Seed screen recovery phrase has been improved to properly display on small screens
+### Added
+- It is finally here! Flexa integration at your service!
+- Pay with Flexa at supported merchants in the US, Canada, and El Salvador.
+- It's waiting for you in Zashi Settings.
 
 ## [1.2.2 (789)] - 2024-11-18
 

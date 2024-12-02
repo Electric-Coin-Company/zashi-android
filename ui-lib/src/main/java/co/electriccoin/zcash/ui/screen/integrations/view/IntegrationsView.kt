@@ -39,6 +39,7 @@ import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.getValue
+import co.electriccoin.zcash.ui.design.util.scaffoldScrollPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.integrations.model.IntegrationsState
 import co.electriccoin.zcash.ui.screen.settings.SettingsTag
@@ -59,17 +60,17 @@ fun Integrations(
                 Modifier
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
-                    .padding(
-                        top = paddingValues.calculateTopPadding(),
-                        bottom = paddingValues.calculateBottomPadding() + ZashiDimensions.Spacing.spacing3xl,
-                        start = 4.dp,
-                        end = 4.dp
-                    ),
+                    .scaffoldScrollPadding(paddingValues),
         ) {
             state.items.forEachIndexed { index, item ->
-                ZashiSettingsListItem(state = item)
+                ZashiSettingsListItem(
+                    state = item,
+                    modifier = Modifier.padding(horizontal = 4.dp)
+                )
                 if (index != state.items.lastIndex) {
-                    ZashiHorizontalDivider()
+                    ZashiHorizontalDivider(
+                        modifier = Modifier.padding(horizontal = 4.dp)
+                    )
                 }
             }
 
@@ -81,7 +82,10 @@ fun Integrations(
             Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingXl))
             Spacer(modifier = Modifier.weight(1f))
             ZashiCard(
-                modifier = Modifier.padding(horizontal = 20.dp).fillMaxWidth(),
+                modifier =
+                    Modifier
+                        .padding(horizontal = 24.dp)
+                        .fillMaxWidth(),
             ) {
                 Image(
                     modifier = Modifier.align(CenterHorizontally),
@@ -107,7 +111,7 @@ private fun DisabledInfo(it: StringResource) {
         modifier =
             Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp),
+                .padding(horizontal = 24.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Image(

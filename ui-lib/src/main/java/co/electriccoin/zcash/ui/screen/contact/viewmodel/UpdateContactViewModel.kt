@@ -3,6 +3,7 @@ package co.electriccoin.zcash.ui.screen.contact.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
+import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.AddressBookContact
 import co.electriccoin.zcash.ui.common.usecase.DeleteContactUseCase
@@ -14,7 +15,6 @@ import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.contact.model.ContactState
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
@@ -30,7 +30,8 @@ class UpdateContactViewModel(
     private val validateContactName: ValidateContactNameUseCase,
     private val updateContact: UpdateContactUseCase,
     private val deleteContact: DeleteContactUseCase,
-    private val getContactByAddress: GetContactByAddressUseCase
+    private val getContactByAddress: GetContactByAddressUseCase,
+    private val navigationRouter: NavigationRouter,
 ) : ViewModel() {
     private var contact = MutableStateFlow<AddressBookContact?>(null)
     private val contactAddress = MutableStateFlow("")
@@ -148,10 +149,6 @@ class UpdateContactViewModel(
             initialValue = null
         )
 
-    val navigationCommand = MutableSharedFlow<String>()
-
-    val backNavigationCommand = MutableSharedFlow<Unit>()
-
     init {
         viewModelScope.launch {
             getContactByAddress(originalContactAddress).let { contact ->
@@ -163,10 +160,7 @@ class UpdateContactViewModel(
         }
     }
 
-    private fun onBack() =
-        viewModelScope.launch {
-            backNavigationCommand.emit(Unit)
-        }
+    private fun onBack() = navigationRouter.back()
 
     private fun onUpdateButtonClick() =
         viewModelScope.launch {
@@ -174,7 +168,7 @@ class UpdateContactViewModel(
             contact.value?.let {
                 isUpdatingContact.update { true }
                 updateContact(contact = it, name = contactName.value, address = contactAddress.value)
-                backNavigationCommand.emit(Unit)
+                navigationRouter.back()
                 isUpdatingContact.update { false }
             }
         }
@@ -185,7 +179,7 @@ class UpdateContactViewModel(
             contact.value?.let {
                 isDeletingContact.update { true }
                 deleteContact(it)
-                backNavigationCommand.emit(Unit)
+                navigationRouter.back()
                 isDeletingContact.update { false }
             }
         }

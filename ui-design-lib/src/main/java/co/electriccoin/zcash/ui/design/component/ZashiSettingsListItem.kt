@@ -152,7 +152,10 @@ fun ZashiSettingsListContentItem(
             titleIcons.forEach {
                 Spacer(Modifier.width(6.dp))
                 Image(
-                    modifier = Modifier.size(20.dp).clip(CircleShape),
+                    modifier =
+                        Modifier
+                            .size(20.dp)
+                            .clip(CircleShape),
                     painter = painterResource(it),
                     contentDescription = null,
                 )

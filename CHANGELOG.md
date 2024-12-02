@@ -6,9 +6,14 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+## [1.2.3 (798)] - 2024-11-26
+
 ### Added
-- Flexa feature has been turned on
-- Disclaimer added to integrations screen
+- Disclaimer widget has been added to the Integrations screen
+
+### Changed
+- The Flexa integration has been turned on
+- Both the Flexa Core and Spend libraries have been bumped to version 1.0.9
 
 ### Fixed
 - The Seed screen recovery phrase has been improved to properly display on small screens
