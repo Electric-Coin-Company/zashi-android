@@ -48,6 +48,7 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import co.electriccoin.zcash.ui.design.util.asScaffoldScrollPaddingValues
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -89,18 +90,14 @@ fun AddressBookView(
                             Modifier
                                 .fillMaxWidth()
                                 .weight(1f),
-                        contentPadding =
-                            PaddingValues(
-                                top = paddingValues.calculateTopPadding(),
-                                bottom = paddingValues.calculateBottomPadding() + ZashiDimensions.Spacing.spacing3xl,
-                                start = 4.dp,
-                                end = 4.dp
-                            )
+                        contentPadding = paddingValues.asScaffoldScrollPaddingValues()
                     ) {
                         itemsIndexed(state.contacts) { index, item ->
                             ContactItem(state = item)
                             if (index != state.contacts.lastIndex) {
-                                ZashiHorizontalDivider()
+                                ZashiHorizontalDivider(
+                                    modifier = Modifier.padding(horizontal = 4.dp),
+                                )
                             }
                         }
                     }
@@ -123,6 +120,7 @@ fun AddressBookView(
 @Composable
 private fun ContactItem(state: AddressBookContactState) {
     ZashiSettingsListItem(
+        modifier = Modifier.padding(horizontal = 4.dp),
         leading = { modifier ->
             ContactItemLeading(modifier = modifier, state = state)
         },

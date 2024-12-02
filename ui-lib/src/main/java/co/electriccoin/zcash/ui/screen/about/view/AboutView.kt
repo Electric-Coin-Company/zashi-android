@@ -41,6 +41,7 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import co.electriccoin.zcash.ui.design.util.scaffoldScrollPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.fixture.ConfigInfoFixture
 import co.electriccoin.zcash.ui.fixture.VersionInfoFixture
@@ -76,12 +77,7 @@ fun About(
                     .verticalScroll(
                         rememberScrollState()
                     )
-                    .padding(
-                        top = paddingValues.calculateTopPadding() + ZashiDimensions.Spacing.spacingLg,
-                        bottom = paddingValues.calculateBottomPadding() + ZashiDimensions.Spacing.spacing3xl,
-                        start = 4.dp,
-                        end = 4.dp
-                    )
+                    .scaffoldScrollPadding(paddingValues)
         )
     }
 }
@@ -157,7 +153,7 @@ fun AboutMainContent(
 ) {
     Column(modifier) {
         Text(
-            modifier = Modifier.padding(horizontal = ZashiDimensions.Spacing.spacingXl),
+            modifier = Modifier.padding(horizontal = ZashiDimensions.Spacing.spacing3xl),
             text = stringResource(id = R.string.about_subtitle),
             color = ZashiColors.Text.textPrimary,
             style = ZashiTypography.header6,
@@ -167,7 +163,7 @@ fun AboutMainContent(
         Spacer(Modifier.height(12.dp))
 
         Text(
-            modifier = Modifier.padding(horizontal = ZashiDimensions.Spacing.spacingXl),
+            modifier = Modifier.padding(horizontal = ZashiDimensions.Spacing.spacing3xl),
             text = stringResource(id = R.string.about_description),
             color = ZashiColors.Text.textPrimary,
             style = ZashiTypography.textSm
@@ -176,11 +172,13 @@ fun AboutMainContent(
         Spacer(Modifier.height(32.dp))
 
         ZashiSettingsListItem(
-            ZashiSettingsListItemState(
-                icon = R.drawable.ic_settings_info,
-                text = stringRes(R.string.about_button_privacy_policy),
-                onClick = onPrivacyPolicy
-            )
+            modifier = Modifier.padding(horizontal = 4.dp),
+            state =
+                ZashiSettingsListItemState(
+                    icon = R.drawable.ic_settings_info,
+                    text = stringRes(R.string.about_button_privacy_policy),
+                    onClick = onPrivacyPolicy
+                )
         )
 
         Spacer(Modifier.weight(1f))

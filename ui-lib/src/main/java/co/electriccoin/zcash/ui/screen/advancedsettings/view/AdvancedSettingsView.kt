@@ -38,6 +38,7 @@ import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
+import co.electriccoin.zcash.ui.design.util.scaffoldScrollPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.advancedsettings.AdvancedSettingsTag
 import co.electriccoin.zcash.ui.screen.advancedsettings.model.AdvancedSettingsState
@@ -63,17 +64,17 @@ fun AdvancedSettings(
                 Modifier
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
-                    .padding(
-                        top = paddingValues.calculateTopPadding(),
-                        bottom = paddingValues.calculateBottomPadding() + ZashiDimensions.Spacing.spacing3xl,
-                        start = 4.dp,
-                        end = 4.dp
-                    ),
+                    .scaffoldScrollPadding(paddingValues),
         ) {
             state.items.fastForEachIndexed { index, item ->
-                ZashiSettingsListItem(state = item)
+                ZashiSettingsListItem(
+                    state = item,
+                    modifier = Modifier.padding(horizontal = 4.dp)
+                )
                 if (index != state.items.lastIndex) {
-                    ZashiHorizontalDivider()
+                    ZashiHorizontalDivider(
+                        modifier = Modifier.padding(horizontal = 4.dp)
+                    )
                 }
             }
             Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingXl))
@@ -83,7 +84,7 @@ fun AdvancedSettings(
             ZashiButton(
                 modifier =
                     Modifier
-                        .padding(horizontal = 20.dp)
+                        .padding(horizontal = 24.dp)
                         .fillMaxWidth(),
                 colors = ZashiButtonDefaults.destructive1Colors(),
                 state = state.deleteButton
