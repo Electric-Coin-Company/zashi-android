@@ -12,9 +12,10 @@ class DeriveKeystoneAccountUnifiedAddressUseCase(
 ) {
     suspend operator fun invoke(account: ZcashAccount): String {
         // TODO keystone derivation
-        return DerivationTool.getInstance().deriveUnifiedAddress(
-            viewingKey = account.ufvk,
-            network = walletCoordinator.persistableWallet.filterNotNull().first().network
-        )
+        // return DerivationTool.getInstance().deriveUnifiedAddress(
+        //     viewingKey = account.ufvk,
+        //     network = walletCoordinator.persistableWallet.filterNotNull().first().network
+        // )
+        return "placeholder because sdk crashes" // TODO keystone
     }
 }

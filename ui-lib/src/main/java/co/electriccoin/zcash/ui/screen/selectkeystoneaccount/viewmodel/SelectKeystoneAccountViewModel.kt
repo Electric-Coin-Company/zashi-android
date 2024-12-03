@@ -3,6 +3,7 @@ package co.electriccoin.zcash.ui.screen.selectkeystoneaccount.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
+import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.common.usecase.CreateKeystoneAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.DecodeUrToZashiAccountsUseCase
 import co.electriccoin.zcash.ui.common.usecase.DeriveKeystoneAccountUnifiedAddressUseCase
@@ -27,6 +28,7 @@ class SelectKeystoneAccountViewModel(
     decodeUrToZashiAccounts: DecodeUrToZashiAccountsUseCase,
     private val createKeystoneAccount: CreateKeystoneAccountUseCase,
     private val deriveKeystoneAccountUnifiedAddress: DeriveKeystoneAccountUnifiedAddressUseCase,
+    private val navigationRouter: NavigationRouter,
 ) : ViewModel() {
 
     private val accounts = decodeUrToZashiAccounts(args.ur)
@@ -92,17 +94,15 @@ class SelectKeystoneAccountViewModel(
     )
 
     private fun onBackClick() {
-        // navigate to root
+        navigationRouter.backToRoot()
     }
 
     private fun onUnlockClick(account: ZcashAccount?) = viewModelScope.launch {
         if (account == null) return@launch
 
         createKeystoneAccount(account)
-        // navigate to root
+        navigationRouter.backToRoot()
     }
 
-    private fun onForgetDeviceClick() {
-        // navigate to root
-    }
+    private fun onForgetDeviceClick() = navigationRouter.backToRoot()
 }

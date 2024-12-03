@@ -3,11 +3,13 @@ package co.electriccoin.zcash.ui.screen.reviewtransaction
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
+import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.common.usecase.GetLoadedExchangeRateUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveContactByAddressUseCase
 import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.screen.signkeystonetransaction.KeystoneSignTransaction
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.map
@@ -16,7 +18,8 @@ import kotlinx.coroutines.flow.stateIn
 class ReviewKeystoneTransactionViewModel(
     args: ReviewKeystoneTransaction,
     observeContactByAddress: ObserveContactByAddressUseCase,
-    private val getLoadedExchangeRate: GetLoadedExchangeRateUseCase
+    private val getLoadedExchangeRate: GetLoadedExchangeRateUseCase,
+    private val navigationRouter: NavigationRouter,
 ) : ViewModel() {
     val state = observeContactByAddress(args.addressString).map { addressBookContact ->
         ReviewTransactionState(
@@ -65,14 +68,14 @@ class ReviewKeystoneTransactionViewModel(
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT), null)
 
     private fun onBack() {
-        TODO("Not yet implemented")
+        navigationRouter.backToRoot()
     }
 
     private fun onCancelClick() {
-        TODO("Not yet implemented")
+        navigationRouter.backToRoot()
     }
 
     private fun onConfirmClick() {
-        TODO("Not yet implemented")
+        navigationRouter.forward(KeystoneSignTransaction)
     }
 }

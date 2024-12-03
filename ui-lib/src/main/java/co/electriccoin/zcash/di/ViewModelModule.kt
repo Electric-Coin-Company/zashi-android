@@ -113,7 +113,8 @@ val viewModelModule =
                 args = args,
                 createKeystoneAccount = get(),
                 deriveKeystoneAccountUnifiedAddress = get(),
-                decodeUrToZashiAccounts = get()
+                decodeUrToZashiAccounts = get(),
+                navigationRouter = get()
             )
         }
         viewModel { (args: ReviewKeystoneTransaction) ->
@@ -121,6 +122,7 @@ val viewModelModule =
                 args = args,
                 observeContactByAddress = get(),
                 getLoadedExchangeRate = get(),
+                navigationRouter = get()
             )
         }
     }

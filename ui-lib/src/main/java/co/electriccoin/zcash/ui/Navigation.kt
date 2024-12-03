@@ -111,7 +111,7 @@ import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SendConfirmationAr
 import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SendConfirmationStage
 import co.electriccoin.zcash.ui.screen.settings.WrapSettings
 import co.electriccoin.zcash.ui.screen.signkeystonetransaction.AndroidSignKeystoneTransaction
-import co.electriccoin.zcash.ui.screen.signkeystonetransaction.KeystoneSignTransactionArgs
+import co.electriccoin.zcash.ui.screen.signkeystonetransaction.KeystoneSignTransaction
 import co.electriccoin.zcash.ui.screen.update.WrapCheckForUpdate
 import co.electriccoin.zcash.ui.screen.warning.WrapNotEnoughSpace
 import co.electriccoin.zcash.ui.screen.whatsnew.WrapWhatsNew
@@ -167,6 +167,13 @@ internal fun MainActivity.Navigation() {
                 }
                 NavigationCommand.Back -> {
                     navController.popBackStack()
+                }
+
+                NavigationCommand.BackToRoot -> {
+                    navController.popBackStack(
+                        destinationId = navController.graph.startDestinationId,
+                        inclusive = false
+                    )
                 }
             }
         }
@@ -290,7 +297,7 @@ internal fun MainActivity.Navigation() {
         composable<ScanKeystoneSignInRequest> {
             WrapScanKeystoneSignInRequest()
         }
-        composable<KeystoneSignTransactionArgs> {
+        composable<KeystoneSignTransaction> {
             AndroidSignKeystoneTransaction()
         }
         dialog<AccountList>(

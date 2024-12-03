@@ -3,6 +3,7 @@ package co.electriccoin.zcash.ui.screen.signkeystonetransaction.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
+import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -20,7 +21,9 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 
-class SignKeystoneTransactionViewModel : ViewModel() {
+class SignKeystoneTransactionViewModel(
+    private val navigationRouter: NavigationRouter
+) : ViewModel() {
     private val qr = genSolanaQRCode()
 
     private val currentQrPart = MutableStateFlow(qr.nextPart())
@@ -34,11 +37,21 @@ class SignKeystoneTransactionViewModel : ViewModel() {
             ),
             generateNextQrCode = { currentQrPart.update { qr.nextPart() } },
             qrData = it,
-            positiveButton = ButtonState(stringRes("Get Signature")), // TODO keystone string
-            negativeButton = ButtonState(stringRes("Reject")), // TODO keystone string
+            positiveButton = ButtonState(stringRes("Get Signature"), onClick = ::onSignTransactionClick), // TODO
+            // keystone
+            // string
+            negativeButton = ButtonState(stringRes("Reject"), onClick = ::onRejectClick), // TODO keystone string
             onBack = {}
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT), null)
+
+    private fun onRejectClick() {
+        navigationRouter.backToRoot()
+    }
+
+    private fun onSignTransactionClick() {
+        navigationRouter.backToRoot()
+    }
 
     @Suppress("MaxLineLength", "MagicNumber")
     private fun genSolanaQRCode(): UREncoder {
