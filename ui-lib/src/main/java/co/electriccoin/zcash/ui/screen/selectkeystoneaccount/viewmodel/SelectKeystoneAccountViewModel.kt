@@ -64,7 +64,6 @@ class SelectKeystoneAccountViewModel(
             negativeButtonState = ButtonState(
                 text = stringRes("Forget this device"), // TODO keystone string
                 onClick = ::onForgetDeviceClick,
-                isEnabled = selection != null
             ),
         )
     }
