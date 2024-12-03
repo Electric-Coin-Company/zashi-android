@@ -11,7 +11,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.NavType
@@ -22,7 +21,6 @@ import androidx.navigation.navArgument
 import androidx.navigation.toRoute
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.model.ZecSend
-import co.electriccoin.zcash.di.koinActivityViewModel
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.spackle.getSerializableCompat
 import co.electriccoin.zcash.ui.NavigationArgs.ADDRESS_TYPE
@@ -59,7 +57,6 @@ import co.electriccoin.zcash.ui.NavigationTargets.SUPPORT
 import co.electriccoin.zcash.ui.NavigationTargets.WHATS_NEW
 import co.electriccoin.zcash.ui.common.compose.LocalNavController
 import co.electriccoin.zcash.ui.common.model.SerializableAddress
-import co.electriccoin.zcash.ui.common.viewmodel.ZashiMainTopAppBarViewModel
 import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
 import co.electriccoin.zcash.ui.configuration.RemoteConfig
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.enterTransition
@@ -129,8 +126,6 @@ import org.koin.compose.koinInject
 internal fun MainActivity.Navigation() {
     val navController = LocalNavController.current
 
-    val topAppBarViewModel = koinActivityViewModel<ZashiMainTopAppBarViewModel>()
-
     // Helper properties for triggering the system security UI from callbacks
     val (exportPrivateDataAuthentication, setExportPrivateDataAuthentication) =
         rememberSaveable { mutableStateOf(false) }
@@ -151,18 +146,16 @@ internal fun MainActivity.Navigation() {
                 }
                 is NavigationCommand.Replace.ByRoute -> {
                     navController.navigate(it.route) {
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
+                        popUpTo(navController.currentBackStackEntry?.destination?.id ?: 0) {
+                            inclusive = true
                         }
-                        restoreState = true
                     }
                 }
                 is NavigationCommand.Replace.ByTypeSafetyRoute<*> -> {
                     navController.navigate(it.route) {
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
+                        popUpTo(navController.currentBackStackEntry?.destination?.id ?: 0) {
+                            inclusive = true
                         }
-                        restoreState = true
                     }
                 }
                 NavigationCommand.Back -> {
