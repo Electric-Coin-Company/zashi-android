@@ -3,12 +3,15 @@ package co.electriccoin.zcash.ui.common.repository
 import android.app.Application
 import cash.z.ecc.android.sdk.SdkSynchronizer
 import cash.z.ecc.android.sdk.Synchronizer
-import cash.z.ecc.android.sdk.WalletCoordinator
+import cash.z.ecc.android.sdk.WalletInitMode
 import cash.z.ecc.android.sdk.block.processor.CompactBlockProcessor
+import cash.z.ecc.android.sdk.model.BlockHeight
 import cash.z.ecc.android.sdk.model.FastestServersResult
 import cash.z.ecc.android.sdk.model.PercentDecimal
 import cash.z.ecc.android.sdk.model.PersistableWallet
+import cash.z.ecc.android.sdk.model.SeedPhrase
 import cash.z.ecc.android.sdk.model.WalletAddresses
+import cash.z.ecc.android.sdk.model.ZcashNetwork
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.lightwallet.client.model.LightWalletEndpoint
 import co.electriccoin.zcash.preference.EncryptedPreferenceProvider
@@ -23,10 +26,13 @@ import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.provider.GetDefaultServersProvider
+import co.electriccoin.zcash.ui.common.provider.PersistableWalletProvider
+import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import co.electriccoin.zcash.ui.common.viewmodel.SecretState
 import co.electriccoin.zcash.ui.common.viewmodel.SynchronizerError
 import co.electriccoin.zcash.ui.preference.PersistableWalletPreferenceDefault
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
+import co.electriccoin.zcash.ui.screen.chooseserver.AvailableServerProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -96,11 +102,18 @@ interface WalletRepository {
     suspend fun getSynchronizer(): Synchronizer
 
     suspend fun getPersistableWallet(): PersistableWallet
+
+    fun persistExistingWalletWithSeedPhrase(
+        network: ZcashNetwork,
+        seedPhrase: SeedPhrase,
+        birthday: BlockHeight?
+    )
 }
 
 class WalletRepositoryImpl(
-    walletCoordinator: WalletCoordinator,
     accountDataSource: AccountDataSource,
+    persistableWalletProvider: PersistableWalletProvider,
+    private val synchronizerProvider: SynchronizerProvider,
     private val application: Application,
     private val getDefaultServers: GetDefaultServersProvider,
     private val standardPreferenceProvider: StandardPreferenceProvider,
@@ -126,13 +139,13 @@ class WalletRepositoryImpl(
         }
     override val currentAccount: Flow<WalletAccount?> = accountDataSource.selectedAccount
 
-    override val synchronizer: StateFlow<Synchronizer?> = walletCoordinator.synchronizer
+    override val synchronizer: StateFlow<Synchronizer?> = synchronizerProvider.synchronizer
 
     override val allAccounts: StateFlow<List<WalletAccount>?> = accountDataSource.allAccounts
 
     override val secretState: StateFlow<SecretState> =
         combine(
-            walletCoordinator.persistableWallet,
+            persistableWalletProvider.persistableWallet,
             onboardingState
         ) { persistableWallet: PersistableWallet?, onboardingState: OnboardingState ->
             when {
@@ -279,10 +292,14 @@ class WalletRepositoryImpl(
     override fun persistWallet(persistableWallet: PersistableWallet) {
         scope.launch {
             walletMutex.withLock {
-                synchronizer.value?.let { (it as? SdkSynchronizer)?.close() }
-                persistableWalletPreference.putValue(encryptedPreferenceProvider(), persistableWallet)
+                persistWalletInternal(persistableWallet)
             }
         }
+    }
+
+    private suspend fun persistWalletInternal(persistableWallet: PersistableWallet) {
+        synchronizer.value?.let { (it as? SdkSynchronizer)?.close() }
+        persistableWalletPreference.putValue(encryptedPreferenceProvider(), persistableWallet)
     }
 
     /**
@@ -297,13 +314,17 @@ class WalletRepositoryImpl(
             // complete quickly, it isn't guaranteed to complete before persistExistingWallet()
             // unless a mutex is used here.
             walletMutex.withLock {
-                StandardPreferenceKeys.ONBOARDING_STATE.putValue(
-                    standardPreferenceProvider(),
-                    onboardingState
-                        .toNumber()
-                )
+                persistOnboardingStateInternal(onboardingState)
             }
         }
+    }
+
+    private suspend fun WalletRepositoryImpl.persistOnboardingStateInternal(onboardingState: OnboardingState) {
+        StandardPreferenceKeys.ONBOARDING_STATE.putValue(
+            standardPreferenceProvider(),
+            onboardingState
+                .toNumber()
+        )
     }
 
     override fun refreshFastestServers() {
@@ -334,9 +355,35 @@ class WalletRepositoryImpl(
         }
     }
 
-    override suspend fun getSynchronizer(): Synchronizer = synchronizer.filterNotNull().first()
+    override suspend fun getSynchronizer(): Synchronizer = synchronizerProvider.getSynchronizer()
 
     override suspend fun getPersistableWallet(): PersistableWallet = persistableWallet.filterNotNull().first()
+
+    override fun persistExistingWalletWithSeedPhrase(
+        network: ZcashNetwork,
+        seedPhrase: SeedPhrase,
+        birthday: BlockHeight?
+    ) {
+        scope.launch {
+            walletMutex.withLock {
+                persistOnboardingStateInternal(OnboardingState.READY)
+
+                val restoredWallet =
+                    PersistableWallet(
+                        network = network,
+                        birthday = birthday,
+                        endpoint = AvailableServerProvider.getDefaultServer(),
+                        seedPhrase = seedPhrase,
+                        walletInitMode = WalletInitMode.RestoreWallet
+                    )
+                persistWalletInternal(restoredWallet)
+                StandardPreferenceKeys.WALLET_RESTORING_STATE.putValue(
+                    standardPreferenceProvider(),
+                    WalletRestoringState.RESTORING.toNumber()
+                )
+            }
+        }
+    }
 }
 
 private fun Synchronizer.toCommonError(): Flow<SynchronizerError?> =

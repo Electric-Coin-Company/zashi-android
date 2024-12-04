@@ -8,6 +8,7 @@ import cash.z.ecc.android.sdk.WalletCoordinator
 import cash.z.ecc.android.sdk.WalletInitMode
 import cash.z.ecc.android.sdk.model.BlockHeight
 import cash.z.ecc.android.sdk.model.PersistableWallet
+import cash.z.ecc.android.sdk.model.SeedPhrase
 import cash.z.ecc.android.sdk.model.TransactionOverview
 import cash.z.ecc.android.sdk.model.TransactionRecipient
 import cash.z.ecc.android.sdk.model.WalletAddresses
@@ -209,6 +210,14 @@ class WalletViewModel(
                 walletRestoringState.toNumber()
             )
         }
+    }
+
+    fun persistExistingWalletWithSeedPhrase(
+        network: ZcashNetwork,
+        seedPhrase: SeedPhrase,
+        birthday: BlockHeight?
+    ) {
+        walletRepository.persistExistingWalletWithSeedPhrase(network, seedPhrase, birthday)
     }
 
     private fun clearAppStateFlow(): Flow<Boolean> =

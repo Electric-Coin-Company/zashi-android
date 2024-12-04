@@ -1,8 +1,7 @@
-package co.electriccoin.zcash.ui.common.usecase
+package co.electriccoin.zcash.ui.common.provider
 
 import cash.z.ecc.android.sdk.WalletCoordinator
 import cash.z.ecc.android.sdk.model.PersistableWallet
-import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -29,7 +28,7 @@ class PersistableWalletProviderImpl(
     override val persistableWallet: Flow<PersistableWallet?> = walletCoordinator.persistableWallet
         .stateIn(
             scope = scope,
-            started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT, Duration.ZERO),
+            started = SharingStarted.WhileSubscribed(Duration.ZERO, Duration.ZERO),
             initialValue = null
         )
 

@@ -2,7 +2,7 @@ package co.electriccoin.zcash.ui.common.datasource
 
 import cash.z.ecc.android.sdk.model.PersistableWallet
 import cash.z.ecc.android.sdk.model.UnifiedSpendingKey
-import co.electriccoin.zcash.ui.common.usecase.PersistableWalletProvider
+import co.electriccoin.zcash.ui.common.provider.PersistableWalletProvider
 
 interface ZashiSpendingKeyDataSource {
     suspend fun getZashiSpendingKey(): UnifiedSpendingKey

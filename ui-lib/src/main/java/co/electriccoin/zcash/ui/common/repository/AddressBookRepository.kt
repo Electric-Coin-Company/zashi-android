@@ -7,7 +7,7 @@ import co.electriccoin.zcash.ui.common.model.AddressBook
 import co.electriccoin.zcash.ui.common.model.AddressBookContact
 import co.electriccoin.zcash.ui.common.provider.AddressBookKeyStorageProvider
 import co.electriccoin.zcash.ui.common.serialization.addressbook.AddressBookKey
-import co.electriccoin.zcash.ui.common.usecase.PersistableWalletProvider
+import co.electriccoin.zcash.ui.common.provider.PersistableWalletProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.Flow
