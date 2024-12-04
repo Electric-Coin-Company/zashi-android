@@ -109,6 +109,8 @@ import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SendConfirmationSt
 import co.electriccoin.zcash.ui.screen.settings.WrapSettings
 import co.electriccoin.zcash.ui.screen.signkeystonetransaction.AndroidSignKeystoneTransaction
 import co.electriccoin.zcash.ui.screen.signkeystonetransaction.KeystoneSignTransaction
+import co.electriccoin.zcash.ui.screen.transactionprogress.AndroidKeystoneTransactionProgress
+import co.electriccoin.zcash.ui.screen.transactionprogress.KeystoneTransactionProgress
 import co.electriccoin.zcash.ui.screen.update.WrapCheckForUpdate
 import co.electriccoin.zcash.ui.screen.warning.WrapNotEnoughSpace
 import co.electriccoin.zcash.ui.screen.whatsnew.WrapWhatsNew
@@ -416,7 +418,10 @@ internal fun MainActivity.Navigation() {
             AndroidSelectKeystoneAccount(it.toRoute())
         }
         composable<ReviewKeystoneTransaction> {
-            AndroidReviewKeystoneTransaction(it.toRoute())
+            AndroidReviewKeystoneTransaction()
+        }
+        composable<KeystoneTransactionProgress> {
+            AndroidKeystoneTransactionProgress(it.toRoute())
         }
     }
 }

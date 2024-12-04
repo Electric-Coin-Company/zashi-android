@@ -30,25 +30,13 @@ class CreateTransactionsViewModel(
     val submissions: MutableStateFlow<List<TransactionSubmitResult>> = MutableStateFlow(emptyList())
 
     val state = observeSelectedWalletAccountUseCase().map {
-        when (it) {
-            is KeystoneAccount -> SendConfirmationState(
-                SendConfirmationExpandedInfoState(
-                    title = stringRes("Sending from"), // TODO keystone string
-                    icon = R.drawable.ic_item_keystone,
-                    text = it.name
-                )
+        SendConfirmationState(
+            SendConfirmationExpandedInfoState(
+                title = stringRes("Sending from"), // TODO keystone string
+                icon = it.icon,
+                text = it.name
             )
-
-            is ZashiAccount -> SendConfirmationState(
-                SendConfirmationExpandedInfoState(
-                    title = stringRes("Sending from"), // TODO keystone string
-                    icon = R.drawable.ic_item_zashi,
-                    text = it.name
-                )
-            )
-
-            null -> SendConfirmationState(from = null)
-        }
+        )
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
@@ -83,7 +71,7 @@ class CreateTransactionsViewModel(
                 } else {
                     // Any subsequent transaction submission failed - user needs to resolve this manually. Multiple
                     // transaction failure screen presented
-                    SubmitResult.MultipleTrxFailure
+                    SubmitResult.MultipleTrxFailure(submitResults)
                 }
             } else {
                 // All transaction submissions were successful
@@ -97,7 +85,7 @@ class CreateTransactionsViewModel(
             SubmitResult.SimpleTrxFailure.SimpleTrxFailureOther(it)
         }.also {
             // Save the submission results for the later MultipleSubmissionError screen
-            if (it == SubmitResult.MultipleTrxFailure) {
+            if (it is SubmitResult.MultipleTrxFailure) {
                 submissions.value = submitResults
             }
         }

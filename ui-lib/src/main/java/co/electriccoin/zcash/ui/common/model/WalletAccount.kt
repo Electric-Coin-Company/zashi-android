@@ -1,16 +1,11 @@
 package co.electriccoin.zcash.ui.common.model
 
-import cash.z.ecc.android.sdk.WalletInitMode
+import androidx.annotation.DrawableRes
 import cash.z.ecc.android.sdk.model.Account
-import cash.z.ecc.android.sdk.model.BlockHeight
-import cash.z.ecc.android.sdk.model.PersistableWallet
-import cash.z.ecc.android.sdk.model.SeedPhrase
-import cash.z.ecc.android.sdk.model.UnifiedSpendingKey
 import cash.z.ecc.android.sdk.model.WalletAddress
 import cash.z.ecc.android.sdk.model.WalletBalance
 import cash.z.ecc.android.sdk.model.Zatoshi
-import cash.z.ecc.android.sdk.model.ZcashNetwork
-import co.electriccoin.lightwallet.client.model.LightWalletEndpoint
+import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.stringRes
 
@@ -26,6 +21,7 @@ sealed interface WalletAccount {
     val transparentBalance: Zatoshi
     val isSelected: Boolean
     val name: StringResource
+    @get:DrawableRes val icon: Int
 
     val totalBalance: Zatoshi
         get() = orchardBalance.total + saplingBalance.total + transparentBalance
@@ -56,6 +52,7 @@ data class ZashiAccount(
     override val isSelected: Boolean,
 ): WalletAccount {
     override val name: StringResource = stringRes("Zashi")
+    override val icon: Int = R.drawable.ic_item_zashi
 }
 
 data class KeystoneAccount(
@@ -69,4 +66,5 @@ data class KeystoneAccount(
     override val isSelected: Boolean,
 ): WalletAccount {
     override val name: StringResource = stringRes("Keystone")
+    override val icon: Int = R.drawable.ic_item_keystone
 }

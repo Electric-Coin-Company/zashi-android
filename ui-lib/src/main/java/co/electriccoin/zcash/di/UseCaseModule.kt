@@ -20,6 +20,7 @@ import co.electriccoin.zcash.ui.common.usecase.GetZashiAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsCoinbaseAvailableUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsFlexaAvailableUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveAddressBookContactsUseCase
+import co.electriccoin.zcash.ui.common.usecase.ObserveClearSendUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveConfigurationUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveContactByAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveContactPickedUseCase
@@ -104,4 +105,5 @@ val useCaseModule =
         factoryOf(::DecodeUrToZashiAccountsUseCase)
         factoryOf(::GetLoadedExchangeRateUseCase)
         factoryOf(::GetSelectedWalletAccountUseCase)
+        singleOf(::ObserveClearSendUseCase)
     }

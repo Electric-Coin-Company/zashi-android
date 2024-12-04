@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.common.provider
 
+import cash.z.ecc.android.sdk.SdkSynchronizer
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.WalletCoordinator
 import kotlinx.coroutines.flow.StateFlow
@@ -10,6 +11,8 @@ interface SynchronizerProvider {
     val synchronizer: StateFlow<Synchronizer?>
 
     suspend fun getSynchronizer(): Synchronizer
+
+    suspend fun getSdkSynchronizer() = getSynchronizer() as SdkSynchronizer
 }
 
 class SynchronizerProviderImpl(walletCoordinator: WalletCoordinator) : SynchronizerProvider {

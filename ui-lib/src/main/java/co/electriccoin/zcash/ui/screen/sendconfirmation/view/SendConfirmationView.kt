@@ -158,10 +158,10 @@ fun SendConfirmation(
             submissionResults = submissionResults,
             zecSend = zecSend,
             modifier =
-                Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .scaffoldPadding(paddingValues),
+            Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .scaffoldPadding(paddingValues),
             state = state,
         )
     }
@@ -651,15 +651,15 @@ fun TransactionSubmitResultWidget(
                 style = ZashiTypography.textMd,
                 color = ZashiColors.Inputs.Default.text,
                 modifier =
-                    Modifier
-                        .background(
-                            shape = RoundedCornerShape(ZashiDimensions.Radius.radiusIg),
-                            color = ZashiColors.Inputs.Default.bg
-                        )
-                        .padding(
-                            horizontal = ZashiDimensions.Spacing.spacingLg,
-                            vertical = ZashiDimensions.Spacing.spacingMd
-                        )
+                Modifier
+                    .background(
+                        shape = RoundedCornerShape(ZashiDimensions.Radius.radiusIg),
+                        color = ZashiColors.Inputs.Default.bg
+                    )
+                    .padding(
+                        horizontal = ZashiDimensions.Spacing.spacingLg,
+                        vertical = ZashiDimensions.Spacing.spacingMd
+                    )
             )
             Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingMd))
         }
@@ -681,25 +681,30 @@ private fun SendConfirmationContent(
     ) {
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
 
-        Text(
-            stringResource(R.string.send_confirmation_amount),
-            style = ZashiTypography.textSm,
-            color = ZashiColors.Text.textPrimary
-        )
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                stringResource(R.string.send_confirmation_amount),
+                style = ZashiTypography.textSm,
+                color = ZashiColors.Text.textPrimary
+            )
 
-        BalanceWidgetBigLineOnly(
-            parts = zecSend.totalAmount().toZecStringFull().asZecAmountTriple(),
-            // We don't hide any balance in confirmation screen
-            isHideBalances = false
-        )
+            BalanceWidgetBigLineOnly(
+                parts = zecSend.totalAmount().toZecStringFull().asZecAmountTriple(),
+                // We don't hide any balance in confirmation screen
+                isHideBalances = false
+            )
 
-        StyledExchangeLabel(
-            zatoshi = zecSend.amount,
-            state = exchangeRate,
-            isHideBalances = false,
-            style = ZashiTypography.textMd.copy(fontWeight = FontWeight.SemiBold),
-            textColor = ZashiColors.Text.textPrimary
-        )
+            StyledExchangeLabel(
+                zatoshi = zecSend.amount,
+                state = exchangeRate,
+                isHideBalances = false,
+                style = ZashiTypography.textMd.copy(fontWeight = FontWeight.SemiBold),
+                textColor = ZashiColors.Text.textPrimary
+            )
+        }
 
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -937,10 +942,10 @@ fun SendConfirmationBottomBar(
                     onClick = onConfirmation
                 ),
             modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = ZashiDimensions.Spacing.spacing2xl)
-                    .testTag(SendConfirmationTag.SEND_CONFIRMATION_SEND_BUTTON)
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = ZashiDimensions.Spacing.spacing2xl)
+                .testTag(SendConfirmationTag.SEND_CONFIRMATION_SEND_BUTTON)
         )
 
         Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingLg))
@@ -952,10 +957,10 @@ fun SendConfirmationBottomBar(
                     onClick = onBack,
                 ),
             modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = ZashiDimensions.Spacing.spacing2xl)
-                    .testTag(SendConfirmationTag.SEND_CONFIRMATION_BACK_BUTTON),
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = ZashiDimensions.Spacing.spacing2xl)
+                .testTag(SendConfirmationTag.SEND_CONFIRMATION_BACK_BUTTON),
             colors = ZashiButtonDefaults.tertiaryColors()
         )
     }
@@ -977,9 +982,9 @@ fun SendMultipleTrxFailureBottomBar(
                     onClick = onCopyTrxIds
                 ),
             modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = ZashiDimensions.Spacing.spacing2xl),
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = ZashiDimensions.Spacing.spacing2xl),
             colors = ZashiButtonDefaults.tertiaryColors()
         )
 
@@ -992,9 +997,9 @@ fun SendMultipleTrxFailureBottomBar(
                     onClick = { onContactSupport(SendConfirmationStage.MultipleTrxFailureReported) },
                 ),
             modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = ZashiDimensions.Spacing.spacing2xl),
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = ZashiDimensions.Spacing.spacing2xl),
         )
     }
 }
@@ -1014,9 +1019,9 @@ fun SendSuccessBottomBar(
                     onClick = onClose
                 ),
             modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = ZashiDimensions.Spacing.spacing2xl)
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = ZashiDimensions.Spacing.spacing2xl)
         )
     }
 }
@@ -1037,9 +1042,9 @@ fun SendFailureBottomBar(
                     onClick = onClose
                 ),
             modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = ZashiDimensions.Spacing.spacing2xl)
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = ZashiDimensions.Spacing.spacing2xl)
         )
 
         Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingLg))
@@ -1051,9 +1056,9 @@ fun SendFailureBottomBar(
                     onClick = onReport
                 ),
             modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = ZashiDimensions.Spacing.spacing2xl),
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = ZashiDimensions.Spacing.spacing2xl),
             colors = ZashiButtonDefaults.tertiaryColors()
         )
     }
@@ -1074,9 +1079,9 @@ fun SendGrpcFailureBottomBar(
                     onClick = onClose
                 ),
             modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = ZashiDimensions.Spacing.spacing2xl)
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = ZashiDimensions.Spacing.spacing2xl)
         )
     }
 }

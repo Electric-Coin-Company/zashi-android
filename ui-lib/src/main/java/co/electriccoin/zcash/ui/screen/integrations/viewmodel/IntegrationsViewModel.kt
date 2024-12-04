@@ -241,7 +241,7 @@ class IntegrationsViewModel(
                 } else {
                     // Any subsequent transaction submission failed - user needs to resolve this manually. Multiple
                     // transaction failure screen presented
-                    SubmitResult.MultipleTrxFailure to null
+                    SubmitResult.MultipleTrxFailure(submitResults) to null
                 }
             } else {
                 // All transaction submissions were successful

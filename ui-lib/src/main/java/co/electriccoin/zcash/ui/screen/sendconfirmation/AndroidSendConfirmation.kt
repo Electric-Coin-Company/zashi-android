@@ -28,6 +28,7 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.AddressBookContact
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.usecase.GetContactByAddressUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetZashiSpendingKeyUseCase
 import co.electriccoin.zcash.ui.common.viewmodel.AuthenticationViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
@@ -110,6 +111,8 @@ internal fun WrapSendConfirmation(
     val scope = rememberCoroutineScope()
 
     val snackbarHostState = remember { SnackbarHostState() }
+
+    val getZashiSpendingKey = koinInject<GetZashiSpendingKeyUseCase>()
 
     // Helper property for triggering the system security UI from callbacks
     val sendFundsAuthentication = rememberSaveable { mutableStateOf(false) }
@@ -231,19 +234,17 @@ internal fun WrapSendConfirmation(
                             if (isProtected) {
                                 sendFundsAuthentication.value = true
                             } else {
-                                // TODO keystone spending key
-                                // spendingKey?.let {
-                                //     runSendFundsAction(
-                                //         createTransactionsViewModel = createTransactionsViewModel,
-                                //         // The not-null assertion operator is necessary here even if we check its
-                                //         // nullability before due to property is declared in different module. See more
-                                //         // details on the Kotlin forum
-                                //         proposal = zecSend!!.proposal!!,
-                                //         setStage = setStage,
-                                //         spendingKey = spendingKey,
-                                //         synchronizer = synchronizer,
-                                //     )
-                                // }
+                                val spendingKey = getZashiSpendingKey()
+                                runSendFundsAction(
+                                    createTransactionsViewModel = createTransactionsViewModel,
+                                    // The not-null assertion operator is necessary here even if we check its
+                                    // nullability before due to property is declared in different module. See more
+                                    // details on the Kotlin forum
+                                    proposal = zecSend!!.proposal!!,
+                                    setStage = setStage,
+                                    spendingKey = spendingKey,
+                                    synchronizer = synchronizer,
+                                )
                             }
                         }
                 }
@@ -268,19 +269,17 @@ internal fun WrapSendConfirmation(
                 },
                 onSuccess = {
                     lifecycleScope.launch {
-                        // TODO keystone spending key
-                        // spendingKey?.let {
-                        //     runSendFundsAction(
-                        //         createTransactionsViewModel = createTransactionsViewModel,
-                        //         // The not-null assertion operator is necessary here even if we check its
-                        //         // nullability before due to property is declared in different module. See more
-                        //         // details on the Kotlin forum
-                        //         proposal = zecSend!!.proposal!!,
-                        //         setStage = setStage,
-                        //         spendingKey = spendingKey,
-                        //         synchronizer = synchronizer,
-                        //     )
-                        // }
+                        val spendingKey = getZashiSpendingKey()
+                        runSendFundsAction(
+                            createTransactionsViewModel = createTransactionsViewModel,
+                            // The not-null assertion operator is necessary here even if we check its
+                            // nullability before due to property is declared in different module. See more
+                            // details on the Kotlin forum
+                            proposal = zecSend!!.proposal!!,
+                            setStage = setStage,
+                            spendingKey = spendingKey,
+                            synchronizer = synchronizer,
+                        )
                     }
                     sendFundsAuthentication.value = false
                 },

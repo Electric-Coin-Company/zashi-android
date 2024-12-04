@@ -17,10 +17,8 @@ import cash.z.ecc.android.sdk.ext.convertZecToZatoshi
 import cash.z.ecc.android.sdk.model.Account
 import cash.z.ecc.android.sdk.model.Memo
 import cash.z.ecc.android.sdk.model.MonetarySeparators
-import cash.z.ecc.android.sdk.model.UnifiedSpendingKey
 import cash.z.ecc.android.sdk.model.WalletAddress
 import cash.z.ecc.android.sdk.model.ZecSend
-import cash.z.ecc.android.sdk.model.proposeSend
 import cash.z.ecc.android.sdk.model.toZecString
 import cash.z.ecc.android.sdk.type.AddressType
 import co.electriccoin.zcash.di.koinActivityViewModel
@@ -28,10 +26,9 @@ import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.compose.BalanceState
 import co.electriccoin.zcash.ui.common.compose.LocalActivity
 import co.electriccoin.zcash.ui.common.compose.LocalNavController
-import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
-import co.electriccoin.zcash.ui.common.model.ZashiAccount
-import co.electriccoin.zcash.ui.common.usecase.GetSelectedWalletAccountUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetZashiSpendingKeyUseCase
+import co.electriccoin.zcash.ui.common.usecase.ObserveClearSendUseCase
 import co.electriccoin.zcash.ui.common.viewmodel.HomeViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.ZashiMainTopAppBarViewModel
@@ -45,6 +42,7 @@ import co.electriccoin.zcash.ui.screen.send.model.RecipientAddressState
 import co.electriccoin.zcash.ui.screen.send.model.SendArguments
 import co.electriccoin.zcash.ui.screen.send.model.SendStage
 import co.electriccoin.zcash.ui.screen.send.view.Send
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
@@ -125,8 +123,6 @@ internal fun WrapSend(
 
     val viewModel = koinViewModel<SendViewModel>()
 
-    val getSelectedWalletAccount = koinInject<GetSelectedWalletAccountUseCase>()
-
     LaunchedEffect(Unit) {
         viewModel.navigateCommand.collect {
             navController.navigate(it)
@@ -148,6 +144,10 @@ internal fun WrapSend(
 
     val recipientAddressState by viewModel.recipientAddressState.collectAsStateWithLifecycle()
 
+    val getZashiSpendingKey = koinInject<GetZashiSpendingKeyUseCase>()
+
+    val observeClearSend = koinInject<ObserveClearSendUseCase>()
+
     if (sendArguments?.recipientAddress != null) {
         viewModel.onRecipientAddressChanged(
             RecipientAddressState.new(
@@ -160,19 +160,18 @@ internal fun WrapSend(
     // Zip321 Uri scan result processing
     if (sendArguments?.zip321Uri != null &&
         synchronizer != null) {
-        // TODO keystone spending key
-        // LaunchedEffect(goPaymentRequest) {
-        //     scope.launch {
-        //         processZip321Result(
-        //             zip321Uri = sendArguments.zip321Uri,
-        //             synchronizer = synchronizer,
-        //             account = spendingKey.account,
-        //             setSendStage = setSendStage,
-        //             setZecSend = setZecSend,
-        //             goPaymentRequest = goPaymentRequest
-        //         )
-        //     }
-        // }
+        LaunchedEffect(goPaymentRequest) {
+            scope.launch {
+                processZip321Result(
+                    zip321Uri = sendArguments.zip321Uri,
+                    synchronizer = synchronizer,
+                    account = getZashiSpendingKey().account,
+                    setSendStage = setSendStage,
+                    setZecSend = setZecSend,
+                    goPaymentRequest = goPaymentRequest
+                )
+            }
+        }
     }
 
     // Amount computation:
@@ -228,6 +227,25 @@ internal fun WrapSend(
             mutableStateOf(MemoState.new(zecSend?.memo?.value ?: ""))
         }
 
+    LaunchedEffect(Unit) {
+        observeClearSend().collect {
+            setSendStage(SendStage.Form)
+            setZecSend(null)
+            viewModel.onRecipientAddressChanged(RecipientAddressState.new("", null))
+            setAmountState(
+                AmountState.newFromZec(
+                    context = context,
+                    monetarySeparators = monetarySeparators,
+                    value = "",
+                    fiatValue = "",
+                    isTransparentOrTextRecipient = false,
+                    exchangeRateState = exchangeRateState
+                )
+            )
+            setMemoState(MemoState.new(""))
+        }
+    }
+
     // Clearing form from the previous navigation destination if required
     if (sendArguments?.clearForm == true) {
         setSendStage(SendStage.Form)
@@ -268,50 +286,12 @@ internal fun WrapSend(
             isHideBalances = isHideBalances,
             sendStage = sendStage,
             onCreateZecSend = { newZecSend ->
-                goReviewKeystoneTransaction(
-                    ReviewKeystoneTransaction(
-                        addressString = newZecSend.destination.address,
-                        addressType = cash.z.ecc.sdk.model.AddressType.fromWalletAddress(newZecSend.destination),
-                        amountLong = newZecSend.amount.value,
-                        memoString = newZecSend.memo.value.takeIf { it.isNotEmpty() },
-                    )
+                viewModel.onCreateZecSendClick(
+                    newZecSend = newZecSend,
+                    setZecSend = setZecSend,
+                    goSendConfirmation = goSendConfirmation,
+                    setSendStage = setSendStage
                 )
-                scope.launch {
-                    // goReviewKeystoneTransaction(
-                    //     ReviewKeystoneTransaction(
-                    //         addressString = newZecSend.destination.address,
-                    //         addressType = cash.z.ecc.sdk.model.AddressType.fromWalletAddress(newZecSend.destination),
-                    //         amountLong = newZecSend.amount.value,
-                    //         memoString = newZecSend.memo.value,
-                    //     )
-                    // )
-                    // when (getSelectedWalletAccount()) {
-                    //     is KeystoneAccount -> {
-                    //         goReviewKeystoneTransaction(
-                    //             ReviewKeystoneTransaction(
-                    //                 addressString = newZecSend.destination.address,
-                    //                 addressType = cash.z.ecc.sdk.model.AddressType.fromWalletAddress(newZecSend.destination),
-                    //                 amountLong = newZecSend.amount.value,
-                    //                 memoString = newZecSend.memo.value,
-                    //             )
-                    //         )
-                    //     }
-                    //     is ZashiAccount -> spendingKey?.let {
-                    //         Twig.debug { "Getting send transaction proposal" }
-                    //         runCatching {
-                    //             synchronizer.proposeSend(spendingKey.account, newZecSend)
-                    //         }.onSuccess { proposal ->
-                    //             Twig.debug { "Transaction proposal successful: ${proposal.toPrettyString()}" }
-                    //             val enrichedZecSend = newZecSend.copy(proposal = proposal)
-                    //             setZecSend(enrichedZecSend)
-                    //             goSendConfirmation(enrichedZecSend)
-                    //         }.onFailure {
-                    //             Twig.error(it) { "Transaction proposal failed" }
-                    //             setSendStage(SendStage.SendFailure(it.message ?: ""))
-                    //         }
-                    //     }
-                    // }
-                }
             },
             onBack = onBackAction,
             recipientAddressState = recipientAddressState,

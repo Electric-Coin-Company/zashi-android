@@ -25,6 +25,7 @@ import co.electriccoin.zcash.ui.common.compose.BalanceState
 import co.electriccoin.zcash.ui.common.compose.LocalActivity
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
+import co.electriccoin.zcash.ui.common.usecase.GetZashiSpendingKeyUseCase
 import co.electriccoin.zcash.ui.common.viewmodel.CheckUpdateViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.HomeViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
@@ -46,6 +47,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.annotations.VisibleForTesting
+import org.koin.compose.koinInject
 
 @Composable
 internal fun WrapBalances(goMultiTrxSubmissionFailure: () -> Unit) {
@@ -151,6 +153,8 @@ internal fun WrapBalances(
     // dialog dismissing in such cases is not critical, and it would require creating StatusAction custom Saver
     val showStatusDialog = remember { mutableStateOf<StatusAction.Detailed?>(null) }
 
+    val getZashiSpendingKey = koinInject<GetZashiSpendingKeyUseCase>()
+
     if (null == synchronizer || null == walletSnapshot) {
         // TODO [#1146]: Consider moving CircularScreenProgressIndicator from Android layer to View layer
         // TODO [#1146]: Improve this by allowing screen composition and updating it after the data is available
@@ -168,24 +172,20 @@ internal fun WrapBalances(
             snackbarHostState = snackbarHostState,
             onShielding = {
                 lifecycleScope.launch {
+                    val spendingKey = getZashiSpendingKey()
                     setShieldState(ShieldState.Running)
 
                     Twig.debug { "Shielding transparent funds" }
 
                     runCatching {
-                        // TODO keystone spending key
-                        val spendingKey: UnifiedSpendingKey = TODO()
-
-                        spendingKey?.let {
-                            synchronizer.proposeShielding(
-                                account = spendingKey.account,
-                                shieldingThreshold = Zatoshi(DEFAULT_SHIELDING_THRESHOLD),
-                                // Using empty string for memo to clear the default memo prefix value defined in the SDK
-                                memo = "",
-                                // Using null will select whichever of the account's trans. receivers has funds to shield
-                                transparentReceiver = null
-                            )
-                        }
+                        synchronizer.proposeShielding(
+                            account = spendingKey.account,
+                            shieldingThreshold = Zatoshi(DEFAULT_SHIELDING_THRESHOLD),
+                            // Using empty string for memo to clear the default memo prefix value defined in the SDK
+                            memo = "",
+                            // Using null will select whichever of the account's trans. receivers has funds to shield
+                            transparentReceiver = null
+                        )
                     }.onSuccess { newProposal ->
                         Twig.info { "Shielding proposal result: ${newProposal?.toPrettyString()}" }
 
@@ -200,10 +200,6 @@ internal fun WrapBalances(
                                 )
                             )
                         } else {
-                            val spendingKey: UnifiedSpendingKey = TODO()
-
-                            if (spendingKey == null) return@onSuccess
-
                             val result =
                                 createTransactionsViewModel.runCreateTransactions(
                                     synchronizer = synchronizer,

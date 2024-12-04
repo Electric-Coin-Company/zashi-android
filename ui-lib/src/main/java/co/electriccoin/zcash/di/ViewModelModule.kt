@@ -22,7 +22,6 @@ import co.electriccoin.zcash.ui.screen.receive.viewmodel.ReceiveViewModel
 import co.electriccoin.zcash.ui.screen.request.viewmodel.RequestViewModel
 import co.electriccoin.zcash.ui.screen.restore.viewmodel.RestoreViewModel
 import co.electriccoin.zcash.ui.screen.restoresuccess.viewmodel.RestoreSuccessViewModel
-import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewKeystoneTransaction
 import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewKeystoneTransactionViewModel
 import co.electriccoin.zcash.ui.screen.scan.ScanNavigationArgs
 import co.electriccoin.zcash.ui.screen.scan.viewmodel.ScanViewModel
@@ -37,6 +36,7 @@ import co.electriccoin.zcash.ui.screen.settings.viewmodel.ScreenBrightnessViewMo
 import co.electriccoin.zcash.ui.screen.settings.viewmodel.SettingsViewModel
 import co.electriccoin.zcash.ui.screen.signkeystonetransaction.viewmodel.SignKeystoneTransactionViewModel
 import co.electriccoin.zcash.ui.screen.support.viewmodel.SupportViewModel
+import co.electriccoin.zcash.ui.screen.transactionprogress.KeystoneTransactionProgressViewModel
 import co.electriccoin.zcash.ui.screen.update.model.UpdateInfo
 import co.electriccoin.zcash.ui.screen.update.viewmodel.UpdateViewModel
 import co.electriccoin.zcash.ui.screen.warning.viewmodel.StorageCheckViewModel
@@ -117,12 +117,6 @@ val viewModelModule =
                 navigationRouter = get()
             )
         }
-        viewModel { (args: ReviewKeystoneTransaction) ->
-            ReviewKeystoneTransactionViewModel(
-                args = args,
-                observeContactByAddress = get(),
-                getLoadedExchangeRate = get(),
-                navigationRouter = get()
-            )
-        }
+        viewModelOf(::ReviewKeystoneTransactionViewModel)
+        viewModelOf(::KeystoneTransactionProgressViewModel)
     }

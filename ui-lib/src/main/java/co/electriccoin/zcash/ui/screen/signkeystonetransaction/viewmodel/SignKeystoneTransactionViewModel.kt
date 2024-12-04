@@ -5,10 +5,15 @@ import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.repository.KeystoneProposalRepository
+import co.electriccoin.zcash.ui.common.usecase.ObserveClearSendUseCase
+import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.screen.addressbook.viewmodel.ADDRESS_MAX_LENGTH
 import co.electriccoin.zcash.ui.screen.signkeystonetransaction.state.SignKeystoneTransactionState
 import co.electriccoin.zcash.ui.screen.signkeystonetransaction.state.ZashiAccountInfoListItemState
+import co.electriccoin.zcash.ui.screen.transactionprogress.KeystoneTransactionProgress
 import com.keystone.module.SolSignRequest
 import com.keystone.sdk.KeystoneSDK
 import com.keystone.sdk.KeystoneSolanaSDK
@@ -17,40 +22,58 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 
 class SignKeystoneTransactionViewModel(
-    private val navigationRouter: NavigationRouter
+    private val navigationRouter: NavigationRouter,
+    observeSelectedWalletAccount: ObserveSelectedWalletAccountUseCase,
+    private val keystoneProposalRepository: KeystoneProposalRepository,
+    private val observeClearSend: ObserveClearSendUseCase
 ) : ViewModel() {
     private val qr = genSolanaQRCode()
 
     private val currentQrPart = MutableStateFlow(qr.nextPart())
 
-    val state: StateFlow<SignKeystoneTransactionState?> = currentQrPart.map {
+    val state: StateFlow<SignKeystoneTransactionState?> = combine(observeSelectedWalletAccount(), currentQrPart) {
+        wallet, qrData ->
         SignKeystoneTransactionState(
             accountInfo = ZashiAccountInfoListItemState(
                 icon = R.drawable.ic_settings_info,
-                title = stringRes("title"), // TODO keystone string
-                subtitle = stringRes("subtitle"), // TODO keystone string
+                title = wallet.name,
+                subtitle = stringRes("${wallet.unifiedAddress.address.take(ADDRESS_MAX_LENGTH)}...")
             ),
             generateNextQrCode = { currentQrPart.update { qr.nextPart() } },
-            qrData = it,
-            positiveButton = ButtonState(stringRes("Get Signature"), onClick = ::onSignTransactionClick), // TODO
-            // keystone
-            // string
-            negativeButton = ButtonState(stringRes("Reject"), onClick = ::onRejectClick), // TODO keystone string
-            onBack = {}
+            qrData = qrData,
+            positiveButton = ButtonState(
+                text = stringRes("Get Signature"),
+                onClick = ::onSignTransactionClick
+            ), // TODO keystone string
+            negativeButton = ButtonState(
+                text = stringRes("Reject"),
+                onClick = ::onRejectClick
+            ), // TODO keystone string
+            onBack = ::onBack
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT), null)
 
+    private fun onBack() {
+        keystoneProposalRepository.clear()
+        observeClearSend.requestClear()
+        navigationRouter.backToRoot()
+    }
+
     private fun onRejectClick() {
+        keystoneProposalRepository.clear()
+        observeClearSend.requestClear()
         navigationRouter.backToRoot()
     }
 
     private fun onSignTransactionClick() {
-        navigationRouter.backToRoot()
+        // TODO keystone
+        keystoneProposalRepository.signAndCompleteProposalTemp()
+        navigationRouter.forward(KeystoneTransactionProgress)
     }
 
     @Suppress("MaxLineLength", "MagicNumber")

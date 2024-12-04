@@ -46,6 +46,8 @@ interface AccountDataSource {
 
     suspend fun getZashiAccount(): ZashiAccount
 
+    suspend fun getKeystoneAccount(): KeystoneAccount
+
     suspend fun selectAccount(account: WalletAccount)
 }
 
@@ -107,16 +109,28 @@ class AccountDataSourceImpl(
         internalAccounts,
         selectedAccountUUIDProvider.uuid,
     ) { accounts, uuid ->
-        accounts?.mapIndexed { index, account ->
-            ZashiAccount(
-                sdkAccount = account.sdkAccount,
-                unifiedAddress = account.unifiedAddress,
-                saplingAddress = account.saplingAddress,
-                transparentAddress = account.transparentAddress,
-                orchardBalance = account.orchardBalance,
-                transparentBalance = account.transparentBalance,
-                saplingBalance = account.saplingBalance,
-                isSelected = index == 0 && uuid == null || account.sdkAccount.accountUuid.contentEquals(uuid),
+        accounts?.flatMapIndexed { index, account ->
+            listOf(
+                ZashiAccount(
+                    sdkAccount = account.sdkAccount,
+                    unifiedAddress = account.unifiedAddress,
+                    saplingAddress = account.saplingAddress,
+                    transparentAddress = account.transparentAddress,
+                    orchardBalance = account.orchardBalance,
+                    transparentBalance = account.transparentBalance,
+                    saplingBalance = account.saplingBalance,
+                    isSelected = false,
+                ),
+                KeystoneAccount(
+                    sdkAccount = account.sdkAccount,
+                    unifiedAddress = account.unifiedAddress,
+                    saplingAddress = account.saplingAddress,
+                    transparentAddress = account.transparentAddress,
+                    orchardBalance = account.orchardBalance,
+                    transparentBalance = account.transparentBalance,
+                    saplingBalance = account.saplingBalance,
+                    isSelected = true,
+                )
             )
         }
     }.flowOn(Dispatchers.Default)
@@ -146,6 +160,8 @@ class AccountDataSourceImpl(
     override suspend fun getSelectedAccount() = selectedAccount.filterNotNull().first()
 
     override suspend fun getZashiAccount() = zashiAccount.filterNotNull().first()
+
+    override suspend fun getKeystoneAccount() = keystoneAccount.filterNotNull().first()
 
     override suspend fun selectAccount(account: WalletAccount) = withContext(NonCancellable) {
         selectedAccountUUIDProvider.setUUID(account.sdkAccount.accountUuid)
