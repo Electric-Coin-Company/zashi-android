@@ -81,73 +81,52 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        timeout-minutes: 1
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        uses: actions/checkout@v3
         with:
           ref: main
           fetch-depth: 0  # To fetch all commits
-      - name: Set up Java
-        uses: actions/setup-java@8df1039502a15bceb9433410b1a100fbe190c53b
         timeout-minutes: 1
+  
+      - name: Set up Java
+        uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: 17
+        timeout-minutes: 1
+  
       - name: Set up Gradle
-        uses: gradle/gradle-build-action@ac2d340dc04d9e1113182899e983b5400c17cda1
-        timeout-minutes: 10
+        uses: gradle/actions/setup-gradle@v2
         with:
-          gradle-home-cache-cleanup: true
+          gradle-version: 8.11
+          cache-gradle-home: true
+        timeout-minutes: 10
+  
       - name: Export Google Services JSON
         env:
           FIREBASE_DEBUG_JSON_BASE64: ${{ secrets.FIREBASE_DEBUG_JSON_BASE64 }}
           FIREBASE_RELEASE_JSON_BASE64: ${{ secrets.FIREBASE_RELEASE_JSON_BASE64 }}
-        if: "${{ env.FIREBASE_DEBUG_JSON_BASE64 != '' && env.FIREBASE_RELEASE_JSON_BASE64 != '' }}"
-        shell: bash
+        if: ${{ env.FIREBASE_DEBUG_JSON_BASE64 != '' && env.FIREBASE_RELEASE_JSON_BASE64 != '' }}
         run: |
           mkdir -p app/src/debug/
           mkdir -p app/src/release/
-          echo ${FIREBASE_DEBUG_JSON_BASE64} | base64 --decode > app/src/debug/google-services.json
-          echo ${FIREBASE_RELEASE_JSON_BASE64} | base64 --decode > app/src/release/google-services.json
-      - name: Authenticate to Google Cloud for Google Play
-        # TODO [#1033]: Use token-based authorization on Google Play for automated deployment
-        # TODO [#1033]: https://github.com/Electric-Coin-Company/zashi-android/issues/1033
-        # Note that this step is not currently used due to #1033
-        if: false
-        id: auth_google_play
-        uses: google-github-actions/auth@6fc4af4b145ae7821d527454aa9bd537d1f2dc5f
-        with:
-          create_credentials_file: true
-          project_id: ${{ secrets.GOOGLE_PLAY_CLOUD_PROJECT }}
-          service_account: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT }}
-          workload_identity_provider: ${{ secrets.GOOGLE_PLAY_WORKLOAD_IDENTITY_PROVIDER }}
-          access_token_lifetime: '1500s'
+          echo $FIREBASE_DEBUG_JSON_BASE64 | base64 --decode > app/src/debug/google-services.json
+          echo $FIREBASE_RELEASE_JSON_BASE64 | base64 --decode > app/src/release/google-services.json
+  
       - name: Set Env
-        shell: bash
         run: |
           echo "home=${HOME}" >> "$GITHUB_ENV"
+  
       - name: Export Signing Key
         env:
-          # The upload key must be exported using `base64 -w 0 <filename.jks>` for use
-          # as a Github Secrets value; if the key is exported with standard wrapping,
-          # it will fail to import correctly.
-          # NOTE: This is the upload signing key, which may be replaced at will, not
-          # the application signing key which is escrowed by Google and may only be
-          # replaced once a year (and has a bunch of additional hassles associated with
-          # replacing it.)
           SIGNING_KEYSTORE_BASE_64: ${{ secrets.UPLOAD_KEYSTORE_BASE_64 }}
           SIGNING_KEY_PATH: ${{ format('{0}/release.jks', env.home) }}
-        shell: bash
         run: |
-          echo ${SIGNING_KEYSTORE_BASE_64} | base64 --decode > ${SIGNING_KEY_PATH}
+          echo $SIGNING_KEYSTORE_BASE_64 | base64 --decode > $SIGNING_KEY_PATH
+  
       - name: Upload to Play Store
         timeout-minutes: 25
         env:
           ORG_GRADLE_PROJECT_ZCASH_SUPPORT_EMAIL_ADDRESS: ${{ vars.SUPPORT_EMAIL_ADDRESS }}
-          # TODO [#1033]: Use token-based authorization on Google Play for automated deployment
-          # TODO [#1033]: https://github.com/Electric-Coin-Company/zashi-android/issues/1033
-          # Note that these properties are not currently used due to #1033
-          # ORG_GRADLE_PROJECT_ZCASH_GOOGLE_PLAY_SERVICE_ACCOUNT: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT }}
-          # ORG_GRADLE_PROJECT_ZCASH_GOOGLE_PLAY_SERVICE_KEY_FILE_PATH: ${{ steps.auth_google_play.outputs.credentials_file_path }}
           ORG_GRADLE_PROJECT_ZCASH_GOOGLE_PLAY_SERVICE_ACCOUNT_KEY: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_KEY }}
           ORG_GRADLE_PROJECT_ZCASH_GOOGLE_PLAY_PUBLISHER_API_KEY: ${{ secrets.GOOGLE_PLAY_PUBLISHER_API_KEY }}
           ORG_GRADLE_PROJECT_ZCASH_GOOGLE_PLAY_DEPLOY_TRACK: internal
@@ -160,22 +139,24 @@ jobs:
           ORG_GRADLE_PROJECT_ZCASH_FLEXA_KEY: ${{ secrets.FLEXA_PUBLISHABLE_KEY }}
         run: |
           ./gradlew :app:publishToGooglePlay
+  
       - name: Collect Artifacts
-        timeout-minutes: 1
         env:
           ARTIFACTS_DIR_PATH: ${{ format('{0}/artifacts', env.home) }}
           BINARIES_ZIP_PATH: ${{ format('{0}/artifacts/binaries.zip', env.home) }}
           MAPPINGS_ZIP_PATH: ${{ format('{0}/artifacts/mappings.zip', env.home) }}
         run: |
-          mkdir ${ARTIFACTS_DIR_PATH}
-          zip -r ${BINARIES_ZIP_PATH} . -i app/build/outputs/apk/\*/\*.apk app/build/outputs/apk_from_bundle/\*/\*.apk app/build/outputs/bundle/\*/\*.aab
-          zip -r ${MAPPINGS_ZIP_PATH} . -i app/build/outputs/mapping/\*/mapping.txt
+          mkdir $ARTIFACTS_DIR_PATH
+          zip -r $BINARIES_ZIP_PATH . -i app/build/outputs/apk/*/*.apk app/build/outputs/apk_from_bundle/*/*.apk app/build/outputs/bundle/*/*.aab
+          zip -r $MAPPINGS_ZIP_PATH . -i app/build/outputs/mapping/*/mapping.txt
+  
       - name: Upload Artifacts
-        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882
-        timeout-minutes: 5
+        uses: actions/upload-artifact@v3
         with:
           name: Binaries
           path: ~/artifacts
+        timeout-minutes: 5
+
 
 # Due to how the Gradle publishing plugin works, this scan happens after the upload to Google Play.
 # Rather than being preventative, this is primarily an "early warning system" to verify that our
