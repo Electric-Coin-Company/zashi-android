@@ -36,6 +36,8 @@ import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.component.ZashiBottomBar
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
+import co.electriccoin.zcash.ui.design.component.ZashiChipButton
+import co.electriccoin.zcash.ui.design.component.ZashiChipButtonState
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.ZashiTextField
 import co.electriccoin.zcash.ui.design.component.ZashiTextFieldDefaults
@@ -85,6 +87,11 @@ fun ReviewTransactionView(state: ReviewTransactionState) {
                             Spacer(Modifier.height(16.dp))
                         }
 
+                        is ReceiverExpandedState -> {
+                            Spacer(Modifier.height(8.dp))
+                            ReceiverExpandedWidget(item)
+                        }
+
                         is FinancialInfoState -> {
                             Spacer(Modifier.height(16.dp))
                             FinancialInfoWidget(item)
@@ -100,6 +107,51 @@ fun ReviewTransactionView(state: ReviewTransactionState) {
                 Spacer(Modifier.height(32.dp))
             }
             BottomBar(state)
+        }
+    }
+}
+
+@Composable
+fun ReceiverExpandedWidget(state: ReceiverExpandedState) {
+    Column {
+        Text(
+            state.title.getValue(),
+            style = ZashiTypography.textSm,
+            color = ZashiColors.Text.textTertiary,
+            fontWeight = FontWeight.Medium
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        if (state.name != null) {
+            Text(
+                state.name.getValue(),
+                style = ZashiTypography.textSm,
+                color = ZashiColors.Inputs.Filled.label,
+                fontWeight = FontWeight.Medium
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+        }
+
+        Text(
+            state.address.getValue(),
+            style = ZashiTypography.textXs,
+            color = ZashiColors.Text.textPrimary
+        )
+
+        Spacer(Modifier.height(16.dp))
+
+        Row {
+            ZashiChipButton(
+                state = state.showButton,
+                modifier = Modifier.padding(end = 8.dp)
+            )
+            Spacer(Modifier.width(12.dp))
+            state.saveButton?.let {
+                ZashiChipButton(
+                    state = it
+                )
+            }
         }
     }
 }
@@ -224,11 +276,13 @@ fun AmountWidget(state: AmountState) {
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = state.title.getValue(),
-            style = ZashiTypography.textSm,
-            color = ZashiColors.Text.textPrimary
-        )
+        state.title?.let {
+            Text(
+                text = state.title.getValue(),
+                style = ZashiTypography.textSm,
+                color = ZashiColors.Text.textPrimary
+            )
+        }
         BalanceWidgetBigLineOnly(
             parts = state.amount.toZecStringFull().asZecAmountTriple(),
             isHideBalances = false
@@ -317,5 +371,66 @@ private fun Preview() = ZcashTheme {
             onBack = {},
 
             )
+    )
+}
+
+@PreviewScreens
+@Composable
+private fun Zip321Preview() = ZcashTheme {
+    ReviewTransactionView(
+        state = ReviewTransactionState(
+            title = stringRes(co.electriccoin.zcash.ui.R.string.payment_request_title),
+            items = listOf(
+                AmountState(
+                    title = null,
+                    amount = ZatoshiFixture.new(),
+                    exchangeRate = ExchangeRateState.Data(
+                        currencyConversion = FiatCurrencyConversion(
+                            timestamp = Clock.System.now(),
+                            priceOfZec = 50.0
+                        ),
+                        isLoading = false,
+                        isStale = false,
+                        isRefreshEnabled = false,
+                        onRefresh = {}
+                    ),
+                ),
+                SenderState(
+                    title = stringRes(co.electriccoin.zcash.ui.R.string.send_confirmation_address_from),
+                    icon = R.drawable.ic_item_keystone,
+                    name = stringRes("Keystone wallet"),
+                ),
+                ReceiverExpandedState(
+                    title = stringRes(co.electriccoin.zcash.ui.R.string.payment_request_requested_by),
+                    name = stringRes("Name"),
+                    address = stringRes("Address"),
+                    ZashiChipButtonState(
+                        icon = co.electriccoin.zcash.ui.R.drawable.ic_chevron_down,
+                        text = stringRes(co.electriccoin.zcash.ui.R.string.payment_request_btn_show_address),
+                        onClick = {}
+                    ),
+                    ZashiChipButtonState(
+                        icon = co.electriccoin.zcash.ui.R.drawable.ic_user_plus,
+                        text = stringRes(co.electriccoin.zcash.ui.R.string.payment_request_btn_save_contact),
+                        onClick = {}
+                    )
+                ),
+                MessageState(
+                    title = stringRes(co.electriccoin.zcash.ui.R.string.payment_request_memo),
+                    message = stringRes("Message")
+                ),
+                FinancialInfoState(
+                    title = stringRes(co.electriccoin.zcash.ui.R.string.payment_request_fee),
+                    amount = ZatoshiFixture.new()
+                )
+            ),
+            primaryButton = ButtonState(
+                stringRes(co.electriccoin.zcash.ui.R.string.review_keystone_transaction_positive)
+            ),
+            negativeButton = ButtonState(
+                stringRes(co.electriccoin.zcash.ui.R.string.review_keystone_transaction_negative)
+            ),
+            onBack = {},
+        )
     )
 }

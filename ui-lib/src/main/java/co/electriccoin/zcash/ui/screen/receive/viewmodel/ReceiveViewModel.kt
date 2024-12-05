@@ -72,7 +72,11 @@ class ReceiveViewModel(
             }
         },
         title = when (account) {
-            is KeystoneAccount -> stringRes("Keystone Address") // TODO keystone string
+            is KeystoneAccount -> if (type == ReceiveAddressType.Unified) {
+                stringRes(R.string.receive_wallet_address_shielded_keystone)
+            } else {
+                stringRes(R.string.receive_wallet_address_transparent_keystone)
+            }
             is ZashiAccount -> if (type == ReceiveAddressType.Unified) {
                 stringRes(R.string.receive_wallet_address_shielded)
             } else {

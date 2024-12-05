@@ -44,9 +44,8 @@ class SelectKeystoneAccountViewModel(
 
         return SelectKeystoneAccountState(
             onBackClick = ::onBackClick,
-            title = stringRes("Confirm Account to Access"), // TODO keystone string
-            subtitle = stringRes("Select the wallet you'd like to connect to proceed. Once connected, you’ll be able " +
-                "to wirelessly sign transactions with your hardware wallet."), // TODO keystone string
+            title = stringRes(co.electriccoin.zcash.ui.R.string.select_keystone_account_title),
+            subtitle = stringRes(co.electriccoin.zcash.ui.R.string.select_keystone_account_subtitle),
             items = accounts?.accounts
                 ?.mapIndexed { index, account ->
                     if (alternativeStyle) {
@@ -57,12 +56,12 @@ class SelectKeystoneAccountViewModel(
                 }
                 .orEmpty(),
             positiveButtonState = ButtonState(
-                text = stringRes("Unlock"), // TODO keystone string
+                text = stringRes(co.electriccoin.zcash.ui.R.string.select_keystone_account_positive),
                 onClick = { onUnlockClick(selection) },
                 isEnabled = selection != null
             ),
             negativeButtonState = ButtonState(
-                text = stringRes("Forget this device"), // TODO keystone string
+                text = stringRes(co.electriccoin.zcash.ui.R.string.select_keystone_account_negative),
                 onClick = ::onForgetDeviceClick,
             ),
         )
@@ -73,7 +72,8 @@ class SelectKeystoneAccountViewModel(
         index: Int,
         selection: ZcashAccount?
     ) = ZashiCheckboxListItemState(
-        title = stringRes(account.name ?: "Keystone Wallet"), // TODO keystone string
+        title = account.name?.let { stringRes(it) } ?:
+        stringRes(co.electriccoin.zcash.ui.R.string.select_keystone_account_default),
         subtitle = stringRes(deriveKeystoneAccountUnifiedAddress(account)),
         icon = imageRes((index + 1).toString()),
         isSelected = selection == account,
@@ -84,7 +84,8 @@ class SelectKeystoneAccountViewModel(
         account: ZcashAccount,
         selection: ZcashAccount?
     ) = ZashiExpandedCheckboxListItemState(
-        title = stringRes(account.name ?: "Keystone Wallet"), // TODO keystone string
+        title = account.name?.let { stringRes(it) } ?:
+        stringRes(co.electriccoin.zcash.ui.R.string.select_keystone_account_default),
         subtitle = stringRes(deriveKeystoneAccountUnifiedAddress(account)),
         icon = R.drawable.ic_item_keystone,
         isSelected = selection == account,

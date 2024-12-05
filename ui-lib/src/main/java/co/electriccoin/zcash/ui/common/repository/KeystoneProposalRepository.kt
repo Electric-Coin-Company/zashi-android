@@ -174,7 +174,8 @@ data class CompleteZecSend(
     val destination: WalletAddress,
     val amount: Zatoshi,
     val memo: Memo,
-    val proposal: Proposal
+    val proposal: Proposal,
+    val isZip321: Boolean = false,
 ) {
     fun toZecSend() = ZecSend(destination, amount, memo, proposal)
 }

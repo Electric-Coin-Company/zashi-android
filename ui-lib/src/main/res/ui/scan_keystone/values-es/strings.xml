@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="scan_keystone_failure"></string>
+    <string name="scan_keystone_preview_content_description"></string>
+    <string name="scan_keystone_cancel_button"></string>
+    <string name="scan_keystone_settings_button"></string>
+    <string name="scan_keystone_settings_open_failed"></string>
+    <string name="scan_keystone_state_permission"></string>
+    <string name="scan_keystone_state_failed"></string>
+    <string name="scan_keystone_address_validation_failed"></string>
+    <string name="scan_keystone_torch_content_description"></string>
+    <string name="scan_keystone_gallery_content_description"></string>
+    <string name="scan_keystone_info"></string>
+
+</resources>

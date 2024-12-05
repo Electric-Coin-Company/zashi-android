@@ -312,10 +312,13 @@ fun UnifiedQrCodePanel(
             text =
                 when (walletAddress) {
                     is WalletAddress.Unified -> when (qrCodeType) {
-                        QrCodeType.ZASHI -> stringResource(id = R.string.qr_code_wallet_address_shielded)
-                        QrCodeType.KEYSTONE -> "Keystone Wallet" // TODO keystone string
+                        QrCodeType.ZASHI -> stringResource(R.string.qr_code_wallet_address_shielded)
+                        QrCodeType.KEYSTONE -> stringResource(R.string.qr_code_wallet_address_shielded_keystone)
                     }
-                    is WalletAddress.Sapling -> stringResource(id = R.string.qr_code_wallet_address_sapling)
+                    is WalletAddress.Sapling -> when (qrCodeType) {
+                        QrCodeType.ZASHI -> stringResource(id = R.string.qr_code_wallet_address_sapling)
+                        QrCodeType.KEYSTONE -> stringResource(id = R.string.qr_code_wallet_address_sapling_keystone)
+                    }
                     else -> error("Unsupported address type: $walletAddress")
                 },
             color = ZashiColors.Text.textPrimary,

@@ -57,8 +57,8 @@ class AccountListViewModel(
                     }.toTypedArray(),
                 AccountListItem.Other(
                     ZashiListItemState(
-                        title = stringRes("Keystone Hardware Wallet"), // TODO keystone string
-                        subtitle = stringRes("Get 10% off airgapped hardware wallet"), // TODO keystone string
+                        title = stringRes(co.electriccoin.zcash.ui.R.string.account_list_keystone_promo_title),
+                        subtitle = stringRes(co.electriccoin.zcash.ui.R.string.account_list_keystone_promo_subtitle),
                         icon = R.drawable.ic_item_keystone,
                         design = ZashiListItemDesignType.SECONDARY,
                         onClick = ::onAddWalletButtonClicked

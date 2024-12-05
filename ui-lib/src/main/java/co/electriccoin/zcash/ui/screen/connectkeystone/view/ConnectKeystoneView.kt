@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -70,7 +71,7 @@ private fun BottomSection(state: ConnectKeystoneState) {
     Column {
         ZashiButton(
             modifier = Modifier.fillMaxWidth(),
-            text = "Ready to Scan", // TODO keystone strings
+            text = stringResource(R.string.connect_keystone_positive),
             onClick = state.onContinueClick
         )
     }
@@ -81,29 +82,29 @@ private fun HowToConnectSection() {
     val listItemContentPadding = PaddingValues(top = 8.dp, end = 20.dp, bottom = 8.dp)
     Column {
         Text(
-            "Instructions:", // TODO keystone strings
+            stringResource(R.string.connect_keystone_item_title),
             style = ZashiTypography.textLg,
             color = ZashiColors.Text.textPrimary,
             fontWeight = FontWeight.SemiBold
         )
         Spacer(Modifier.height(8.dp))
         ZashiListItem(
-            title = "Unlock your Keystone", // TODO keystone strings
+            title = stringResource(R.string.connect_keystone_item_1),
             contentPadding = listItemContentPadding,
             icon = R.drawable.ic_connect_keystone_1
         )
         ZashiListItem(
-            title = "Tap the menu icon", // TODO keystone strings
+            title = stringResource(R.string.connect_keystone_item_2),
             contentPadding = listItemContentPadding,
             icon = R.drawable.ic_connect_keystone_2
         )
         ZashiListItem(
-            title = "Select Watch-only Wallet", // TODO keystone strings
+            title = stringResource(R.string.connect_keystone_item_3),
             contentPadding = listItemContentPadding,
             icon = R.drawable.ic_connect_keystone_3
         )
         ZashiListItem(
-            title = "Select Zashi app and scan QR code", // TODO keystone strings
+            title = stringResource(R.string.connect_keystone_item_4),
             contentPadding = listItemContentPadding,
             icon = R.drawable.ic_connect_keystone_4
         )
@@ -120,7 +121,7 @@ private fun HeaderSection(state: ConnectKeystoneState) {
         )
         Spacer(Modifier.height(24.dp))
         Text(
-            "Connect Hardware Wallet", // TODO keystone strings
+            stringResource(R.string.connect_keystone_title),
             style = ZashiTypography.header6,
             color = ZashiColors.Text.textPrimary,
             fontWeight = FontWeight.SemiBold
@@ -128,7 +129,7 @@ private fun HeaderSection(state: ConnectKeystoneState) {
         Spacer(Modifier.height(8.dp))
         Text(
             buildAnnotatedString {
-                append("Scan your device’s QR code to connect. ") // TODO keystone strings
+                append(stringResource(R.string.connect_keystone_subtitle))
                 appendLine()
                 appendLine()
                 withLink(
@@ -143,7 +144,7 @@ private fun HeaderSection(state: ConnectKeystoneState) {
                             )
                             .toSpanStyle()
                     ) {
-                        append("View Keystone tutorial") // TODO keystone strings
+                        append(stringResource(R.string.connect_keystone_subtitle_clickable))
                     }
                 }
             },

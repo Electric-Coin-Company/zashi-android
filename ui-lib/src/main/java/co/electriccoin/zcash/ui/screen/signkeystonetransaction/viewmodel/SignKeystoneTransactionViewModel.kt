@@ -47,13 +47,13 @@ class SignKeystoneTransactionViewModel(
             generateNextQrCode = { currentQrPart.update { qr.nextPart() } },
             qrData = qrData,
             positiveButton = ButtonState(
-                text = stringRes("Get Signature"),
+                text = stringRes(R.string.sign_keystone_transaction_positive),
                 onClick = ::onSignTransactionClick
-            ), // TODO keystone string
+            ),
             negativeButton = ButtonState(
-                text = stringRes("Reject"),
+                text = stringRes(R.string.sign_keystone_transaction_negative),
                 onClick = ::onRejectClick
-            ), // TODO keystone string
+            ),
             onBack = ::onBack
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT), null)

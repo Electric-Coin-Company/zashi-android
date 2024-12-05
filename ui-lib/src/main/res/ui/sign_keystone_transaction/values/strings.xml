@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sign_keystone_transaction_title">Scan with your Keystone wallet</string>
+    <string name="sign_keystone_transaction_subtitle">After you have signed with Keystone, tap on the Get Signature button below.</string>
+    <string name="sign_keystone_transaction_bar_title">Sign Transaction</string>
+    <string name="sign_keystone_transaction_badge">Hardware</string>
+    <string name="sign_keystone_transaction_positive">Get Signature</string>
+    <string name="sign_keystone_transaction_negative">Reject</string>
+</resources>

@@ -16,4 +16,7 @@
     <string name="qr_code_share_chooser_title">Mi Dirección ZEC de Zashi</string>
     <string name="qr_code_share_chooser_text">Hola, ¡escanea este código QR para enviarme un pago en ZEC! Enlace de descarga:
         https://play.google.com/store/apps/details?id=co.electriccoin.zcash</string>
+    <string name="qr_code_wallet_address_shielded_keystone"></string>
+    <string name="qr_code_wallet_address_sapling_keystone"></string>
+    <string name="qr_code_wallet_address_transparent_keystone"></string>
 </resources>

@@ -10,4 +10,7 @@
     <string name="receive_qr_code">QR Code</string>
     <string name="receive_request">Request</string>
     <string name="receive_clipboard_tag">Zcash Wallet Address</string>
+    <string name="receive_wallet_address_shielded_keystone">Keystone Shielded Address</string>
+    <string name="receive_wallet_address_sapling_keystone">Keystone Sapling Address</string>
+    <string name="receive_wallet_address_transparent_keystone">Keystone Transparent Address</string>
 </resources>

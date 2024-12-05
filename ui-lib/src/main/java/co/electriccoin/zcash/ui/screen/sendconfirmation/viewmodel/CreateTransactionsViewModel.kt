@@ -32,7 +32,7 @@ class CreateTransactionsViewModel(
     val state = observeSelectedWalletAccountUseCase().map {
         SendConfirmationState(
             SendConfirmationExpandedInfoState(
-                title = stringRes("Sending from"), // TODO keystone string
+                title = stringRes(co.electriccoin.zcash.ui.R.string.send_confirmation_address_from),
                 icon = it.icon,
                 text = it.name
             )

@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -47,7 +48,7 @@ fun SignKeystoneTransactionView(state: SignKeystoneTransactionState) {
     BlankBgScaffold(
         topBar = {
             ZashiSmallTopAppBar(
-                title = "Sign Transaction", // TODO keystone string
+                title = stringResource(co.electriccoin.zcash.ui.R.string.sign_keystone_transaction_bar_title),
             )
         }
     ) {
@@ -65,7 +66,7 @@ fun SignKeystoneTransactionView(state: SignKeystoneTransactionState) {
             Text(
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
-                text = "Scan with your Keystone wallet", // TODO keystone string
+                text = stringResource(co.electriccoin.zcash.ui.R.string.sign_keystone_transaction_title),
                 style = ZashiTypography.textMd,
                 fontWeight = FontWeight.Medium,
                 color = ZashiColors.Text.textPrimary
@@ -74,7 +75,7 @@ fun SignKeystoneTransactionView(state: SignKeystoneTransactionState) {
             Text(
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
-                text = "After you have signed with Keystone, tap on the Get Signature button below.", // TODO keystone string
+                text = stringResource(co.electriccoin.zcash.ui.R.string.sign_keystone_transaction_subtitle),
                 style = ZashiTypography.textSm,
                 color = ZashiColors.Text.textTertiary
             )
@@ -111,7 +112,10 @@ private fun ZashiAccountInfoListItem(
             )
         },
         trailing = {
-            ZashiBadge("Hardware", colors = ZashiBadgeDefaults.hyperBlueColors())
+            ZashiBadge(
+                text = stringResource(co.electriccoin.zcash.ui.R.string.sign_keystone_transaction_badge),
+                colors = ZashiBadgeDefaults.hyperBlueColors()
+            )
         },
         border = BorderStroke(1.dp, color.borderColor),
         onClick = null

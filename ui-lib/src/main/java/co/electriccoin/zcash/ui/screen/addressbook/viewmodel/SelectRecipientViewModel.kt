@@ -22,7 +22,6 @@ import co.electriccoin.zcash.ui.screen.addressbook.model.AddressBookState
 import co.electriccoin.zcash.ui.screen.contact.AddContactArgs
 import co.electriccoin.zcash.ui.screen.scan.ScanNavigationArgs
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.combine
@@ -55,7 +54,7 @@ class SelectRecipientViewModel(
         accounts: List<WalletAccount>
     ): AddressBookState {
         val accountItems = listOf(
-            AddressBookItem.Title(stringRes("Your Wallets")), // TODO keystone string
+            AddressBookItem.Title(stringRes(R.string.address_book_multiple_wallets_title)),
             *accounts.map { account ->
                 AddressBookItem.Contact(
                     ZashiContactListItemState(
@@ -78,7 +77,7 @@ class SelectRecipientViewModel(
             listOf(AddressBookItem.Empty)
         } else {
             listOf(
-                AddressBookItem.Title(stringRes("Address Book Contacts")), // TODO keystone string
+                AddressBookItem.Title(stringRes(R.string.address_book_multiple_wallets_contacts_title)),
                 *contacts.map { contact ->
                     AddressBookItem.Contact(
                         ZashiContactListItemState(
@@ -107,7 +106,7 @@ class SelectRecipientViewModel(
                 onClick = ::onScanContactClick,
                 text = stringRes(R.string.address_book_scan_btn)
             ),
-            title = stringRes("Select recipient") // TODO keystone string
+            title = stringRes(R.string.address_book_select_recipient_title)
         )
     }
 
@@ -137,7 +136,7 @@ class SelectRecipientViewModel(
                 onClick = ::onScanContactClick,
                 text = stringRes(R.string.address_book_scan_btn)
             ),
-            title = stringRes("Select recipient") // TODO keystone string
+            title = stringRes(R.string.address_book_select_recipient_title)
         )
     }
 
