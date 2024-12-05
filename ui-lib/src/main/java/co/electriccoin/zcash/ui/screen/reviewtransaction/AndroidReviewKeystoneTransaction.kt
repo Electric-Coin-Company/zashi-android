@@ -12,7 +12,7 @@ fun AndroidReviewKeystoneTransaction() {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     BackHandler {
-        state?.onBack
+        state?.onBack?.invoke()
     }
 
     state?.let {

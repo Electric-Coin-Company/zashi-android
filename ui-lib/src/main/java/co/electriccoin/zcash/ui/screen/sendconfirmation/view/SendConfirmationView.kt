@@ -853,7 +853,7 @@ private fun SendConfirmationContent(
 }
 
 @Composable
-private fun SendConfirmationExpandedInfo(state: SendConfirmationExpandedInfoState, ) {
+fun SendConfirmationExpandedInfo(state: SendConfirmationExpandedInfoState, ) {
     Text(
         text = state.title.getValue(),
         style = ZashiTypography.textSm,

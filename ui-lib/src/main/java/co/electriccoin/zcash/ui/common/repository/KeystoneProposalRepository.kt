@@ -1,6 +1,7 @@
 package co.electriccoin.zcash.ui.common.repository
 
 import cash.z.ecc.android.sdk.Synchronizer
+import cash.z.ecc.android.sdk.ext.convertZecToZatoshi
 import cash.z.ecc.android.sdk.model.Memo
 import cash.z.ecc.android.sdk.model.Proposal
 import cash.z.ecc.android.sdk.model.TransactionSubmitResult
@@ -9,6 +10,7 @@ import cash.z.ecc.android.sdk.model.WalletAddress
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.android.sdk.model.proposeSend
+import cash.z.ecc.android.sdk.type.AddressType
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.datasource.ZashiSpendingKeyDataSource
@@ -16,6 +18,7 @@ import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SubmitResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -24,6 +27,8 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.zecdev.zip321.ZIP321
 import kotlin.time.Duration.Companion.seconds
 
 interface KeystoneProposalRepository {
@@ -32,6 +37,8 @@ interface KeystoneProposalRepository {
     val submitState: Flow<SubmitProposalState?>
 
     suspend fun createProposal(zecSend: ZecSend): Boolean
+
+    suspend fun createZip321Proposal(zip321Uri: String): Boolean
 
     suspend fun getCompleteZecSend(): CompleteZecSend
 
@@ -59,23 +66,70 @@ class KeystoneProposalRepositoryImpl(
     override val completeZecSend = MutableStateFlow<CompleteZecSend?>(null)
     override val submitState = MutableStateFlow<SubmitProposalState?>(null)
 
-    override suspend fun createProposal(zecSend: ZecSend): Boolean {
+    override suspend fun createProposal(zecSend: ZecSend): Boolean = withContext(NonCancellable) {
         val result = runCatching {
             val newProposal = synchronizerProvider.getSynchronizer().proposeSend(
                 account = accountDataSource.getKeystoneAccount().sdkAccount,
                 send = zecSend
             )
 
-            CompleteZecSend(
+            RegularZecSend(
                 destination = zecSend.destination,
                 amount = zecSend.amount,
                 memo = zecSend.memo,
-                proposal = newProposal
+                proposal = newProposal,
             )
         }.getOrNull()
 
         completeZecSend.update { result }
-        return result != null
+        result != null
+    }
+
+    override suspend fun createZip321Proposal(zip321Uri: String): Boolean = withContext(NonCancellable) {
+        val synchronizer = synchronizerProvider.getSynchronizer()
+        val account = accountDataSource.getSelectedAccount()
+
+        val request =
+            runCatching {
+                // At this point there should by only a valid Zcash address coming
+                ZIP321.request(zip321Uri, null)
+            }.onFailure {
+                Twig.error(it) { "Failed to validate address" }
+            }.getOrNull()
+        val payment =
+            when (request) {
+                // We support only one payment currently
+                is ZIP321.ParserResult.Request -> {
+                    request.paymentRequest.payments[0]
+                }
+
+                else -> {
+                    completeZecSend.update { null }
+                    return@withContext false
+                }
+            }
+        val proposal = runCatching {
+            synchronizer.proposeFulfillingPaymentUri(account.sdkAccount, zip321Uri)
+        }.getOrNull()
+
+        if (proposal == null) {
+            completeZecSend.update { null }
+            return@withContext false
+        }
+
+        val result = runCatching {
+            Zip321ZecSend(
+                destination = synchronizer
+                    .validateAddress(payment.recipientAddress.value)
+                    .toWalletAddress(payment.recipientAddress.value),
+                amount = payment.nonNegativeAmount.value.convertZecToZatoshi(),
+                memo = Memo(payment.memo?.let { String(it.data, Charsets.UTF_8) } ?: ""),
+                proposal = proposal,
+            )
+        }.getOrNull()
+
+        completeZecSend.update { result }
+        return@withContext result != null
     }
 
     override suspend fun getCompleteZecSend(): CompleteZecSend = completeZecSend.filterNotNull().first()
@@ -168,14 +222,33 @@ class KeystoneProposalRepositoryImpl(
             SubmitResult.SimpleTrxFailure.SimpleTrxFailureOther(it)
         }
     }
+
+    private suspend fun AddressType.toWalletAddress(value: String) =
+        when (this) {
+            AddressType.Unified -> WalletAddress.Unified.new(value)
+            AddressType.Shielded -> WalletAddress.Sapling.new(value)
+            AddressType.Transparent -> WalletAddress.Transparent.new(value)
+            else -> error("Invalid address type")
+        }
 }
 
-data class CompleteZecSend(
-    val destination: WalletAddress,
-    val amount: Zatoshi,
-    val memo: Memo,
-    val proposal: Proposal,
-    val isZip321: Boolean = false,
-) {
-    fun toZecSend() = ZecSend(destination, amount, memo, proposal)
+sealed interface CompleteZecSend {
+    val destination: WalletAddress
+    val amount: Zatoshi
+    val memo: Memo
+    val proposal: Proposal
 }
+
+data class RegularZecSend(
+    override val destination: WalletAddress,
+    override val amount: Zatoshi,
+    override val memo: Memo,
+    override val proposal: Proposal
+) : CompleteZecSend
+
+data class Zip321ZecSend(
+    override val destination: WalletAddress,
+    override val amount: Zatoshi,
+    override val memo: Memo,
+    override val proposal: Proposal
+) : CompleteZecSend
