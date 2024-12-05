@@ -59,7 +59,6 @@ class PaymentRequestViewModel(
             supportViewModel.supportInfo.mapNotNull { it },
         ) { rate, contacts, currentStage, supportInfo ->
             PaymentRequestState.Prepared(
-                arguments = arguments,
                 contact = contacts?.find { it.address == arguments.address?.address },
                 exchangeRateState = rate,
                 monetarySeparators = getMonetarySeparators(),

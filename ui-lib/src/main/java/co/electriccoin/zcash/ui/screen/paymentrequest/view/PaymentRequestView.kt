@@ -89,7 +89,6 @@ private fun PaymentRequestPreview() =
         PaymentRequestView(
             state =
                 PaymentRequestState.Prepared(
-                    arguments = PaymentRequestArgumentsFixture.new(),
                     contact = null,
                     exchangeRateState = ExchangeRateState.Data(onRefresh = {}),
                     monetarySeparators = MonetarySeparators.current(),

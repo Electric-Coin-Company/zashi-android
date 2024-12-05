@@ -68,7 +68,7 @@ fun ReviewTransactionView(state: ReviewTransactionState) {
                     .verticalScroll(rememberScrollState())
                     .scaffoldPadding(it)
             ) {
-                state.items.forEachIndexed { index, item ->
+                state.items.forEach { item ->
                     when (item) {
                         is AmountState -> {
                             AmountWidget(item)

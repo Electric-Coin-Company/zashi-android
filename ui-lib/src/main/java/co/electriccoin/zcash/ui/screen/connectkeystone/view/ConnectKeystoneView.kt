@@ -70,7 +70,7 @@ private fun BottomSection(state: ConnectKeystoneState) {
     Column {
         ZashiButton(
             modifier = Modifier.fillMaxWidth(),
-            text = "Continue",
+            text = "Ready to Scan", // TODO keystone strings
             onClick = state.onContinueClick
         )
     }
@@ -81,29 +81,29 @@ private fun HowToConnectSection() {
     val listItemContentPadding = PaddingValues(top = 8.dp, end = 20.dp, bottom = 8.dp)
     Column {
         Text(
-            "How to connect:",
+            "Instructions:", // TODO keystone strings
             style = ZashiTypography.textLg,
             color = ZashiColors.Text.textPrimary,
             fontWeight = FontWeight.SemiBold
         )
         Spacer(Modifier.height(8.dp))
         ZashiListItem(
-            title = "Unlock your Keystone",
+            title = "Unlock your Keystone", // TODO keystone strings
             contentPadding = listItemContentPadding,
             icon = R.drawable.ic_connect_keystone_1
         )
         ZashiListItem(
-            title = "Tap the menu icon",
+            title = "Tap the menu icon", // TODO keystone strings
             contentPadding = listItemContentPadding,
             icon = R.drawable.ic_connect_keystone_2
         )
         ZashiListItem(
-            title = "Select Watch-only Wallet",
+            title = "Select Watch-only Wallet", // TODO keystone strings
             contentPadding = listItemContentPadding,
             icon = R.drawable.ic_connect_keystone_3
         )
         ZashiListItem(
-            title = "Select Zashi app",
+            title = "Select Zashi app and scan QR code", // TODO keystone strings
             contentPadding = listItemContentPadding,
             icon = R.drawable.ic_connect_keystone_4
         )
@@ -120,7 +120,7 @@ private fun HeaderSection(state: ConnectKeystoneState) {
         )
         Spacer(Modifier.height(24.dp))
         Text(
-            "Connect Hardware Wallet",
+            "Connect Hardware Wallet", // TODO keystone strings
             style = ZashiTypography.header6,
             color = ZashiColors.Text.textPrimary,
             fontWeight = FontWeight.SemiBold
@@ -128,10 +128,8 @@ private fun HeaderSection(state: ConnectKeystoneState) {
         Spacer(Modifier.height(8.dp))
         Text(
             buildAnnotatedString {
-                append("Connect an airgapped hardware wallet that communicates through QR-code.")
+                append("Scan your device’s QR code to connect. ") // TODO keystone strings
                 appendLine()
-                appendLine()
-                append("Have questions?")
                 appendLine()
                 withLink(
                     LinkAnnotation.Clickable("CLICKABLE") { state.onViewKeystoneTutorialClicked() }
@@ -145,7 +143,7 @@ private fun HeaderSection(state: ConnectKeystoneState) {
                             )
                             .toSpanStyle()
                     ) {
-                        append("View Keystone tutorial")
+                        append("View Keystone tutorial") // TODO keystone strings
                     }
                 }
             },
