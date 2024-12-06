@@ -8,6 +8,7 @@ import cash.z.ecc.android.sdk.WalletCoordinator
 import cash.z.ecc.android.sdk.WalletInitMode
 import cash.z.ecc.android.sdk.model.BlockHeight
 import cash.z.ecc.android.sdk.model.PersistableWallet
+import cash.z.ecc.android.sdk.model.SeedPhrase
 import cash.z.ecc.android.sdk.model.TransactionOverview
 import cash.z.ecc.android.sdk.model.TransactionRecipient
 import cash.z.ecc.android.sdk.model.WalletAddresses
@@ -76,12 +77,9 @@ class WalletViewModel(
 
     val secretState: StateFlow<SecretState> = walletRepository.secretState
 
-    // This needs to be refactored once we support pin lock
-    val spendingKey = walletRepository.spendingKey
+    val currentWalletSnapshot: StateFlow<WalletSnapshot?> = walletRepository.currentWalletSnapshot
 
-    val walletSnapshot: StateFlow<WalletSnapshot?> = walletRepository.walletSnapshot
-
-    val addresses: StateFlow<WalletAddresses?> = walletRepository.addresses
+    val currentAddresses: StateFlow<WalletAddresses?> = walletRepository.currentAddresses
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val transactionHistoryState =
@@ -212,6 +210,14 @@ class WalletViewModel(
                 walletRestoringState.toNumber()
             )
         }
+    }
+
+    fun persistExistingWalletWithSeedPhrase(
+        network: ZcashNetwork,
+        seedPhrase: SeedPhrase,
+        birthday: BlockHeight?
+    ) {
+        walletRepository.persistExistingWalletWithSeedPhrase(network, seedPhrase, birthday)
     }
 
     private fun clearAppStateFlow(): Flow<Boolean> =

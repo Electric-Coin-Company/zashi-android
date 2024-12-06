@@ -10,13 +10,38 @@ import co.electriccoin.zcash.di.koinActivityViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.addressbook.view.AddressBookView
 import co.electriccoin.zcash.ui.screen.addressbook.viewmodel.AddressBookViewModel
+import co.electriccoin.zcash.ui.screen.addressbook.viewmodel.SelectRecipientViewModel
 import org.koin.androidx.compose.koinViewModel
-import org.koin.core.parameter.parametersOf
 
 @Composable
 internal fun WrapAddressBook(args: AddressBookArgs) {
+    when (args) {
+        AddressBookArgs.DEFAULT -> WrapAddressBook()
+        AddressBookArgs.PICK_CONTACT -> WrapSelectRecipient()
+    }
+}
+
+@Composable
+private fun WrapAddressBook() {
     val walletViewModel = koinActivityViewModel<WalletViewModel>()
-    val viewModel = koinViewModel<AddressBookViewModel> { parametersOf(args) }
+    val viewModel = koinViewModel<AddressBookViewModel>()
+    val walletState by walletViewModel.walletStateInformation.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsStateWithLifecycle()
+
+    BackHandler {
+        state.onBack()
+    }
+
+    AddressBookView(
+        state = state,
+        topAppBarSubTitleState = walletState,
+    )
+}
+
+@Composable
+private fun WrapSelectRecipient() {
+    val walletViewModel = koinActivityViewModel<WalletViewModel>()
+    val viewModel = koinViewModel<SelectRecipientViewModel>()
     val walletState by walletViewModel.walletStateInformation.collectAsStateWithLifecycle()
     val state by viewModel.state.collectAsStateWithLifecycle()
 

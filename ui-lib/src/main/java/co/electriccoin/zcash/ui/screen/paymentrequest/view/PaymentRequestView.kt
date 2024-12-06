@@ -65,11 +65,14 @@ import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.scaffoldPadding
+import co.electriccoin.zcash.ui.fixture.SendConfirmationStateFixture
 import co.electriccoin.zcash.ui.screen.exchangerate.widget.StyledExchangeLabel
 import co.electriccoin.zcash.ui.screen.paymentrequest.PaymentRequestArgumentsFixture
 import co.electriccoin.zcash.ui.screen.paymentrequest.model.PaymentRequestStage
 import co.electriccoin.zcash.ui.screen.paymentrequest.model.PaymentRequestState
 import co.electriccoin.zcash.ui.screen.send.ext.abbreviated
+import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SendConfirmationState
+import co.electriccoin.zcash.ui.screen.sendconfirmation.view.SendConfirmationExpandedInfo
 
 @Composable
 @PreviewScreens
@@ -79,6 +82,7 @@ private fun PaymentRequestLoadingPreview() =
             state = PaymentRequestState.Loading,
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
             snackbarHostState = SnackbarHostState(),
+            infoState = SendConfirmationStateFixture.new()
         )
     }
 
@@ -89,7 +93,6 @@ private fun PaymentRequestPreview() =
         PaymentRequestView(
             state =
                 PaymentRequestState.Prepared(
-                    arguments = PaymentRequestArgumentsFixture.new(),
                     contact = null,
                     exchangeRateState = ExchangeRateState.Data(onRefresh = {}),
                     monetarySeparators = MonetarySeparators.current(),
@@ -103,6 +106,7 @@ private fun PaymentRequestPreview() =
                 ),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
             snackbarHostState = SnackbarHostState(),
+            infoState = SendConfirmationStateFixture.new()
         )
     }
 
@@ -111,6 +115,7 @@ internal fun PaymentRequestView(
     state: PaymentRequestState,
     topAppBarSubTitleState: TopAppBarSubTitleState,
     snackbarHostState: SnackbarHostState,
+    infoState: SendConfirmationState
 ) {
     when (state) {
         PaymentRequestState.Loading -> {
@@ -132,6 +137,7 @@ internal fun PaymentRequestView(
                 Box {
                     PaymentRequestContents(
                         state = state,
+                        infoState = infoState,
                         modifier =
                             Modifier
                                 .fillMaxHeight()
@@ -222,6 +228,7 @@ private fun PaymentRequestBottomBar(
 @Composable
 private fun PaymentRequestContents(
     state: PaymentRequestState.Prepared,
+    infoState: SendConfirmationState,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
@@ -229,7 +236,12 @@ private fun PaymentRequestContents(
 
         PaymentRequestBalances(state)
 
-        Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacing4xl))
+        Spacer(modifier = Modifier.height(24.dp))
+
+        infoState.from?.let {
+            SendConfirmationExpandedInfo(it)
+            Spacer(modifier = Modifier.height(24.dp))
+        }
 
         PaymentRequestAddresses(state)
 

@@ -66,10 +66,10 @@ class AddressBookKey(val key: SecretBytes) {
         ): AddressBookKey {
             val key =
                 DerivationTool.getInstance().deriveArbitraryAccountKey(
-                    "ZashiAddressBookEncryptionV1".toByteArray(),
-                    seedPhrase.toByteArray(),
-                    network,
-                    account,
+                    contextString = "ZashiAddressBookEncryptionV1".toByteArray(),
+                    seed = seedPhrase.toByteArray(),
+                    network = network,
+                    accountIndex = 0, // TODO keystone
                 )
             return AddressBookKey(SecretBytes.copyFrom(key, InsecureSecretKeyAccess.get()))
         }

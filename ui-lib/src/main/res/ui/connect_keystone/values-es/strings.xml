@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="connect_keystone_title"></string>
+    <string name="connect_keystone_subtitle"></string>
+    <string name="connect_keystone_subtitle_clickable"></string>
+    <string name="connect_keystone_item_1"></string>
+    <string name="connect_keystone_item_2"></string>
+    <string name="connect_keystone_item_3"></string>
+    <string name="connect_keystone_item_4"></string>
+    <string name="connect_keystone_item_title"></string>
+    <string name="connect_keystone_positive"></string>
+</resources>

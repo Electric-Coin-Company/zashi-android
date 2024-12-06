@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sign_keystone_transaction_title"></string>
+    <string name="sign_keystone_transaction_subtitle"></string>
+    <string name="sign_keystone_transaction_bar_title"></string>
+    <string name="sign_keystone_transaction_badge"></string>
+    <string name="sign_keystone_transaction_positive"></string>
+    <string name="sign_keystone_transaction_negative"></string>
+</resources>

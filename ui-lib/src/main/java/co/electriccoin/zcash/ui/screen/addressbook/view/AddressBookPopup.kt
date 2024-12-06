@@ -146,7 +146,7 @@ private fun PopupContentPreview() =
                 AddressBookState(
                     onBack = {},
                     isLoading = false,
-                    contacts = emptyList(),
+                    items = emptyList(),
                     scanButton =
                         ButtonState(
                             text = stringRes("Scan QR code"),
@@ -154,7 +154,8 @@ private fun PopupContentPreview() =
                     manualButton =
                         ButtonState(
                             text = stringRes("Manual entry"),
-                        )
+                        ),
+                    title = stringRes("Address book")
                 ),
             onDismissRequest = {}
         )

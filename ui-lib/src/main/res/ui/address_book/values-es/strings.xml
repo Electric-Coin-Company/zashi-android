@@ -6,4 +6,7 @@
     <string name="address_book_version">Versión <xliff:g example="1" id="version">%s</xliff:g></string>
     <string name="address_book_scan_btn">Escanear código QR</string>
     <string name="address_book_manual_btn">Entrada manual</string>
+    <string name="address_book_multiple_wallets_title"></string>
+    <string name="address_book_multiple_wallets_contacts_title"></string>
+    <string name="address_book_select_recipient_title"></string>
 </resources>

@@ -25,6 +25,7 @@ import co.electriccoin.zcash.ui.common.compose.BalanceState
 import co.electriccoin.zcash.ui.common.compose.LocalActivity
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
+import co.electriccoin.zcash.ui.common.usecase.GetZashiSpendingKeyUseCase
 import co.electriccoin.zcash.ui.common.viewmodel.CheckUpdateViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.HomeViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
@@ -46,6 +47,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.annotations.VisibleForTesting
+import org.koin.compose.koinInject
 
 @Composable
 internal fun WrapBalances(goMultiTrxSubmissionFailure: () -> Unit) {
@@ -61,9 +63,7 @@ internal fun WrapBalances(goMultiTrxSubmissionFailure: () -> Unit) {
 
     val synchronizer = walletViewModel.synchronizer.collectAsStateWithLifecycle().value
 
-    val walletSnapshot = walletViewModel.walletSnapshot.collectAsStateWithLifecycle().value
-
-    val spendingKey = walletViewModel.spendingKey.collectAsStateWithLifecycle().value
+    val walletSnapshot = walletViewModel.currentWalletSnapshot.collectAsStateWithLifecycle().value
 
     val walletRestoringState = walletViewModel.walletRestoringState.collectAsStateWithLifecycle().value
 
@@ -86,7 +86,6 @@ internal fun WrapBalances(goMultiTrxSubmissionFailure: () -> Unit) {
         goMultiTrxSubmissionFailure = goMultiTrxSubmissionFailure,
         isHideBalances = isHideBalances,
         lifecycleScope = activity.lifecycleScope,
-        spendingKey = spendingKey,
         supportInfo = supportInfo,
         synchronizer = synchronizer,
         walletSnapshot = walletSnapshot,
@@ -108,7 +107,6 @@ internal fun WrapBalances(
     goMultiTrxSubmissionFailure: () -> Unit,
     lifecycleScope: CoroutineScope,
     isHideBalances: Boolean,
-    spendingKey: UnifiedSpendingKey?,
     supportInfo: SupportInfo?,
     synchronizer: Synchronizer?,
     walletSnapshot: WalletSnapshot?,
@@ -155,7 +153,9 @@ internal fun WrapBalances(
     // dialog dismissing in such cases is not critical, and it would require creating StatusAction custom Saver
     val showStatusDialog = remember { mutableStateOf<StatusAction.Detailed?>(null) }
 
-    if (null == synchronizer || null == walletSnapshot || null == spendingKey) {
+    val getZashiSpendingKey = koinInject<GetZashiSpendingKeyUseCase>()
+
+    if (null == synchronizer || null == walletSnapshot) {
         // TODO [#1146]: Consider moving CircularScreenProgressIndicator from Android layer to View layer
         // TODO [#1146]: Improve this by allowing screen composition and updating it after the data is available
         // TODO [#1146]: https://github.com/Electric-Coin-Company/zashi-android/issues/1146
@@ -172,6 +172,7 @@ internal fun WrapBalances(
             snackbarHostState = snackbarHostState,
             onShielding = {
                 lifecycleScope.launch {
+                    val spendingKey = getZashiSpendingKey()
                     setShieldState(ShieldState.Running)
 
                     Twig.debug { "Shielding transparent funds" }

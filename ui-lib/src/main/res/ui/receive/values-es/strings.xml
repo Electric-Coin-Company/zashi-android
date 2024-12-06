@@ -10,4 +10,7 @@
     <string name="receive_qr_code">Código QR</string>
     <string name="receive_request">Solicitar</string>
     <string name="receive_clipboard_tag">Dirección de Billetera Zcash</string>
+    <string name="receive_wallet_address_shielded_keystone"></string>
+    <string name="receive_wallet_address_sapling_keystone"></string>
+    <string name="receive_wallet_address_transparent_keystone"></string>
 </resources>

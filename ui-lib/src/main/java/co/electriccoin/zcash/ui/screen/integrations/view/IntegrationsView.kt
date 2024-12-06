@@ -28,10 +28,10 @@ import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.ZashiCard
 import co.electriccoin.zcash.ui.design.component.ZashiHorizontalDivider
-import co.electriccoin.zcash.ui.design.component.ZashiSettingsListItem
-import co.electriccoin.zcash.ui.design.component.ZashiSettingsListItemState
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarBackNavigation
+import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItem
+import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemState
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
@@ -63,7 +63,7 @@ fun Integrations(
                     .scaffoldScrollPadding(paddingValues),
         ) {
             state.items.forEachIndexed { index, item ->
-                ZashiSettingsListItem(
+                ZashiListItem(
                     state = item,
                     modifier = Modifier.padding(horizontal = 4.dp)
                 )
@@ -160,9 +160,9 @@ private fun IntegrationSettings() =
                     disabledInfo = stringRes("Disabled info"),
                     items =
                         persistentListOf(
-                            ZashiSettingsListItemState(
+                            ZashiListItemState(
                                 icon = R.drawable.ic_integrations_coinbase,
-                                text = stringRes("Coinbase"),
+                                title = stringRes("Coinbase"),
                                 subtitle = stringRes("subtitle"),
                                 onClick = {}
                             )
