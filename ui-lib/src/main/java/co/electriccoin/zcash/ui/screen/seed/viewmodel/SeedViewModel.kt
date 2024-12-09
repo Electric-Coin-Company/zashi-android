@@ -7,7 +7,6 @@ import co.electriccoin.zcash.spackle.AndroidApiVersion
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.OnboardingState
 import co.electriccoin.zcash.ui.common.repository.WalletRepository
-import co.electriccoin.zcash.ui.common.usecase.ObserveBackupPersistableWalletUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObservePersistableWalletUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -25,18 +24,13 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class SeedViewModel(
-    observeBackupPersistableWallet: ObserveBackupPersistableWalletUseCase,
     observePersistableWallet: ObservePersistableWalletUseCase,
     private val args: SeedNavigationArgs,
     private val walletRepository: WalletRepository,
 ) : ViewModel() {
     private val isRevealed = MutableStateFlow(false)
 
-    private val observableWallet =
-        when (args) {
-            SeedNavigationArgs.NEW_WALLET -> observeBackupPersistableWallet()
-            SeedNavigationArgs.RECOVERY -> observePersistableWallet()
-        }
+    private val observableWallet = observePersistableWallet()
 
     val navigateBack = MutableSharedFlow<Unit>()
 

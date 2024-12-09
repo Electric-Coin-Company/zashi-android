@@ -31,11 +31,11 @@ import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.VersionInfo
-import co.electriccoin.zcash.ui.design.component.ZashiSettingsListItem
-import co.electriccoin.zcash.ui.design.component.ZashiSettingsListItemState
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.component.ZashiVersion
+import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItem
+import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemState
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
@@ -171,14 +171,13 @@ fun AboutMainContent(
 
         Spacer(Modifier.height(32.dp))
 
-        ZashiSettingsListItem(
+        ZashiListItem(
             modifier = Modifier.padding(horizontal = 4.dp),
-            state =
-                ZashiSettingsListItemState(
-                    icon = R.drawable.ic_settings_info,
-                    text = stringRes(R.string.about_button_privacy_policy),
-                    onClick = onPrivacyPolicy
-                )
+            state = ZashiListItemState(
+                icon = R.drawable.ic_settings_info,
+                title = stringRes(R.string.about_button_privacy_policy),
+                onClick = onPrivacyPolicy
+            )
         )
 
         Spacer(Modifier.weight(1f))

@@ -79,7 +79,7 @@ class TransactionHistoryViewModel(
                                             val contact =
                                                 contacts?.find { contact ->
                                                     contact.address ==
-                                                        (data.recipient as? TransactionRecipient.Address)
+                                                        (data.recipient as? TransactionRecipient.RecipientAddress)
                                                             ?.addressValue
                                                 }
                                             getOrUpdateTransactionItem(data, contact)
@@ -104,7 +104,7 @@ class TransactionHistoryViewModel(
                                             val contact =
                                                 contacts?.find { contact ->
                                                     contact.address ==
-                                                        (data.recipient as? TransactionRecipient.Address)
+                                                        (data.recipient as? TransactionRecipient.RecipientAddress)
                                                             ?.addressValue
                                                 }
                                             getOrUpdateTransactionItem(data, contact)

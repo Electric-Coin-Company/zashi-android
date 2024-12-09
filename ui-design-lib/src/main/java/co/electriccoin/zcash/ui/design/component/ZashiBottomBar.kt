@@ -1,6 +1,7 @@
 package co.electriccoin.zcash.ui.design.component
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,7 +22,7 @@ import co.electriccoin.zcash.ui.design.util.stringRes
 @Composable
 fun ZashiBottomBar(
     modifier: Modifier = Modifier,
-    content: @Composable () -> Unit,
+    content: @Composable ColumnScope.() -> Unit,
 ) {
     Surface(
         shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),

@@ -8,5 +8,5 @@ import kotlinx.coroutines.flow.map
 class GetTransparentAddressUseCase(
     private val walletRepository: WalletRepository
 ) {
-    suspend operator fun invoke() = walletRepository.addresses.filterNotNull().map { it.transparent }.first()
+    suspend operator fun invoke() = walletRepository.currentAddresses.filterNotNull().map { it.transparent }.first()
 }

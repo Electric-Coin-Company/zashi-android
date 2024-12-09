@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sign_keystone_transaction_title">Escanea con tu wallet Keystone</string>
+    <string name="sign_keystone_transaction_subtitle">Después de firmar con Keystone, toca el botón Obtener Firma a continuación.</string>
+    <string name="sign_keystone_transaction_bar_title">Firmar Transacción</string>
+    <string name="sign_keystone_transaction_badge">Hardware</string>
+    <string name="sign_keystone_transaction_positive">Obtener Firma</string>
+    <string name="sign_keystone_transaction_negative">Rechazar</string>
+</resources>

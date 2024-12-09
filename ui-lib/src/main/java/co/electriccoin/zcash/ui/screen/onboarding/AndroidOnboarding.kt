@@ -95,17 +95,9 @@ internal fun persistExistingWalletWithSeedPhrase(
     seedPhrase: SeedPhrase,
     birthday: BlockHeight?
 ) {
-    walletViewModel.persistOnboardingState(OnboardingState.READY)
-
-    val network = ZcashNetwork.fromResources(context)
-    val restoredWallet =
-        PersistableWallet(
-            network = network,
-            birthday = birthday,
-            endpoint = AvailableServerProvider.getDefaultServer(),
-            seedPhrase = seedPhrase,
-            walletInitMode = WalletInitMode.RestoreWallet
-        )
-    walletViewModel.persistExistingWallet(restoredWallet)
-    walletViewModel.persistWalletRestoringState(WalletRestoringState.RESTORING)
+    walletViewModel.persistExistingWalletWithSeedPhrase(
+        network = ZcashNetwork.fromResources(context),
+        seedPhrase = seedPhrase,
+        birthday = birthday
+    )
 }

@@ -89,6 +89,8 @@ import co.electriccoin.zcash.ui.screen.scan.model.ScanScreenState
 import co.electriccoin.zcash.ui.screen.scan.model.ScanValidationState
 import co.electriccoin.zcash.ui.screen.scan.util.ImageUriToQrCodeConverter
 import co.electriccoin.zcash.ui.screen.scan.util.QrCodeAnalyzer
+import co.electriccoin.zcash.ui.screen.scankeystone.view.CAMERA_TRANSLUCENT_BORDER
+import co.electriccoin.zcash.ui.screen.scankeystone.view.FramePosition
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.PermissionStatus
@@ -281,18 +283,6 @@ private fun ScanTopAppBar(
         },
         colors = ZcashTheme.colors.transparentTopAppBarColors,
     )
-}
-
-const val CAMERA_TRANSLUCENT_BORDER = 0.5f
-
-data class FramePosition(
-    val left: Float,
-    val top: Float,
-    val right: Float,
-    val bottom: Float,
-) {
-    val width: Float = right - left
-    val height: Float = bottom - top
 }
 
 @OptIn(ExperimentalPermissionsApi::class)
@@ -546,11 +536,11 @@ private fun ScanMainContent(
                 onOpenSettings = onOpenSettings,
                 scanState = scanState,
                 modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(
-                            horizontal = 24.dp
-                        )
+                Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        horizontal = 24.dp
+                    )
             )
         }
     }

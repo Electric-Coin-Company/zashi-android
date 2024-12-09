@@ -115,7 +115,7 @@ internal object WarningYellow {
     val `950` = Color(0xFF511C10)
 }
 
-internal object HyperBlue {
+object HyperBlue {
     val `25` = Color(0xFFF5F8FF)
     val `50` = Color(0xFFEFF4FF)
     val `100` = Color(0xFFD1E0FF)

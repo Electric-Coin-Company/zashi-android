@@ -8,12 +8,15 @@
     <string name="qr_code_wallet_address_sapling">Dirección Sapling de Zcash</string>
     <string name="qr_code_wallet_address_transparent">Dirección Transparente de Zcash</string>
     <string name="qr_code_privacy_level_shielded">Privacidad Máxima</string>
-    <string name="qr_code_privacy_level_transparent">Baja Privacidad</string>
+    <string name="qr_code_privacy_level_transparent">Privacidad Baja</string>
     <string name="qr_code_share_btn">Compartir Código QR</string>
     <string name="qr_code_copy_btn">Copiar Dirección</string>
-    <string name="qr_code_clipboard_tag">Dirección de Billetera Zcash</string>
+    <string name="qr_code_clipboard_tag">Dirección de Wallet Zcash</string>
     <string name="qr_code_data_unable_to_share">No se pudo encontrar una aplicación para compartir el código QR.</string>
-    <string name="qr_code_share_chooser_title">Mi Dirección ZEC de Zashi</string>
+    <string name="qr_code_share_chooser_title">Mi Dirección ZEC en Zashi</string>
     <string name="qr_code_share_chooser_text">Hola, ¡escanea este código QR para enviarme un pago en ZEC! Enlace de descarga:
         https://play.google.com/store/apps/details?id=co.electriccoin.zcash</string>
+    <string name="qr_code_wallet_address_shielded_keystone">Dirección Protegida de Keystone</string>
+    <string name="qr_code_wallet_address_sapling_keystone">Dirección Sapling de Keystone</string>
+    <string name="qr_code_wallet_address_transparent_keystone">Dirección Transparente de Keystone</string>
 </resources>

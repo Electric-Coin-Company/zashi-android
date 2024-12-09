@@ -4,6 +4,7 @@
     <string name="send_stage_confirmation_title">Confirmation</string>
     <string name="send_confirmation_amount">Total Amount</string>
     <string name="send_confirmation_address">Sending to</string>
+    <string name="send_confirmation_address_from">Sending from</string>
     <string name="send_confirmation_memo">Message</string>
     <string name="send_confirmation_fee">Fee</string>
     <string name="send_confirmation_amount_item">Amount</string>

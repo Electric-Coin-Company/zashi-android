@@ -5,7 +5,7 @@ import cash.z.ecc.android.sdk.model.TransactionSubmitResult
 sealed class SubmitResult {
     data object Success : SubmitResult()
 
-    data object MultipleTrxFailure : SubmitResult()
+    data class MultipleTrxFailure(val results: List<TransactionSubmitResult>) : SubmitResult()
 
     sealed class SimpleTrxFailure : SubmitResult() {
         abstract fun toErrorMessage(): String

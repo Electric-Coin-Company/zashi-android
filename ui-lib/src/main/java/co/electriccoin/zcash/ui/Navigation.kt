@@ -11,7 +11,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.NavType
@@ -19,9 +18,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
 import androidx.navigation.navArgument
+import androidx.navigation.toRoute
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.model.ZecSend
-import co.electriccoin.zcash.di.koinActivityViewModel
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.spackle.getSerializableCompat
 import co.electriccoin.zcash.ui.NavigationArgs.ADDRESS_TYPE
@@ -58,7 +57,6 @@ import co.electriccoin.zcash.ui.NavigationTargets.SUPPORT
 import co.electriccoin.zcash.ui.NavigationTargets.WHATS_NEW
 import co.electriccoin.zcash.ui.common.compose.LocalNavController
 import co.electriccoin.zcash.ui.common.model.SerializableAddress
-import co.electriccoin.zcash.ui.common.viewmodel.ZashiMainTopAppBarViewModel
 import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
 import co.electriccoin.zcash.ui.configuration.RemoteConfig
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.enterTransition
@@ -66,7 +64,7 @@ import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.exitTransition
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.popEnterTransition
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.popExitTransition
 import co.electriccoin.zcash.ui.screen.about.WrapAbout
-import co.electriccoin.zcash.ui.screen.accountlist.AccountListArgs
+import co.electriccoin.zcash.ui.screen.accountlist.AccountList
 import co.electriccoin.zcash.ui.screen.accountlist.AndroidAccountList
 import co.electriccoin.zcash.ui.screen.addressbook.AddressBookArgs
 import co.electriccoin.zcash.ui.screen.addressbook.WrapAddressBook
@@ -74,6 +72,8 @@ import co.electriccoin.zcash.ui.screen.advancedsettings.WrapAdvancedSettings
 import co.electriccoin.zcash.ui.screen.authentication.AuthenticationUseCase
 import co.electriccoin.zcash.ui.screen.authentication.WrapAuthentication
 import co.electriccoin.zcash.ui.screen.chooseserver.WrapChooseServer
+import co.electriccoin.zcash.ui.screen.connectkeystone.AndroidConnectKeystone
+import co.electriccoin.zcash.ui.screen.connectkeystone.ConnectKeystone
 import co.electriccoin.zcash.ui.screen.contact.AddContactArgs
 import co.electriccoin.zcash.ui.screen.contact.UpdateContactArgs
 import co.electriccoin.zcash.ui.screen.contact.WrapAddContact
@@ -86,25 +86,31 @@ import co.electriccoin.zcash.ui.screen.exportdata.WrapExportPrivateData
 import co.electriccoin.zcash.ui.screen.feedback.WrapFeedback
 import co.electriccoin.zcash.ui.screen.home.WrapHome
 import co.electriccoin.zcash.ui.screen.integrations.WrapIntegrations
-import co.electriccoin.zcash.ui.screen.keystoneqr.AndroidKeystoneQr
-import co.electriccoin.zcash.ui.screen.keystoneqr.KeystoneQrNavigationArgs
 import co.electriccoin.zcash.ui.screen.paymentrequest.WrapPaymentRequest
 import co.electriccoin.zcash.ui.screen.paymentrequest.model.PaymentRequestArguments
 import co.electriccoin.zcash.ui.screen.qrcode.WrapQrCode
 import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressType
 import co.electriccoin.zcash.ui.screen.request.WrapRequest
+import co.electriccoin.zcash.ui.screen.reviewtransaction.AndroidReviewKeystoneTransaction
+import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewKeystoneTransaction
 import co.electriccoin.zcash.ui.screen.scan.ScanNavigationArgs
 import co.electriccoin.zcash.ui.screen.scan.WrapScanValidator
-import co.electriccoin.zcash.ui.screen.scankeystone.ScanKeystoneNavigationArgs
-import co.electriccoin.zcash.ui.screen.scankeystone.WrapScanKeystone
+import co.electriccoin.zcash.ui.screen.scankeystone.ScanKeystoneSignInRequest
+import co.electriccoin.zcash.ui.screen.scankeystone.WrapScanKeystoneSignInRequest
 import co.electriccoin.zcash.ui.screen.seed.SeedNavigationArgs
 import co.electriccoin.zcash.ui.screen.seed.WrapSeed
+import co.electriccoin.zcash.ui.screen.selectkeystoneaccount.AndroidSelectKeystoneAccount
+import co.electriccoin.zcash.ui.screen.selectkeystoneaccount.SelectKeystoneAccount
 import co.electriccoin.zcash.ui.screen.send.ext.toSerializableAddress
 import co.electriccoin.zcash.ui.screen.send.model.SendArguments
 import co.electriccoin.zcash.ui.screen.sendconfirmation.WrapSendConfirmation
 import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SendConfirmationArguments
 import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SendConfirmationStage
 import co.electriccoin.zcash.ui.screen.settings.WrapSettings
+import co.electriccoin.zcash.ui.screen.signkeystonetransaction.AndroidSignKeystoneTransaction
+import co.electriccoin.zcash.ui.screen.signkeystonetransaction.KeystoneSignTransaction
+import co.electriccoin.zcash.ui.screen.transactionprogress.AndroidKeystoneTransactionProgress
+import co.electriccoin.zcash.ui.screen.transactionprogress.KeystoneTransactionProgress
 import co.electriccoin.zcash.ui.screen.update.WrapCheckForUpdate
 import co.electriccoin.zcash.ui.screen.warning.WrapNotEnoughSpace
 import co.electriccoin.zcash.ui.screen.whatsnew.WrapWhatsNew
@@ -122,8 +128,6 @@ import org.koin.compose.koinInject
 internal fun MainActivity.Navigation() {
     val navController = LocalNavController.current
 
-    val topAppBarViewModel = koinActivityViewModel<ZashiMainTopAppBarViewModel>()
-
     // Helper properties for triggering the system security UI from callbacks
     val (exportPrivateDataAuthentication, setExportPrivateDataAuthentication) =
         rememberSaveable { mutableStateOf(false) }
@@ -136,22 +140,37 @@ internal fun MainActivity.Navigation() {
     LaunchedEffect(Unit) {
         navigationRouter.observe().collect {
             when (it) {
-                is NavigationCommand.Forward -> navController.navigate(it.route)
-                is NavigationCommand.Replace ->
+                is NavigationCommand.Forward.ByRoute -> {
+                    navController.navigate(it.route)
+                }
+                is NavigationCommand.Forward.ByTypeSafetyRoute<*> -> {
+                    navController.navigate(it.route)
+                }
+                is NavigationCommand.Replace.ByRoute -> {
                     navController.navigate(it.route) {
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
+                        popUpTo(navController.currentBackStackEntry?.destination?.id ?: 0) {
+                            inclusive = true
                         }
-                        restoreState = true
                     }
-                NavigationCommand.Back -> navController.popBackStack()
-            }
-        }
-    }
+                }
+                is NavigationCommand.Replace.ByTypeSafetyRoute<*> -> {
+                    navController.navigate(it.route) {
+                        popUpTo(navController.currentBackStackEntry?.destination?.id ?: 0) {
+                            inclusive = true
+                        }
+                    }
+                }
+                NavigationCommand.Back -> {
+                    navController.popBackStack()
+                }
 
-    LaunchedEffect(Unit) {
-        topAppBarViewModel.navigationCommand.collect {
-            navController.navigateJustOnce(it)
+                NavigationCommand.BackToRoot -> {
+                    navController.popBackStack(
+                        destinationId = navController.graph.startDestinationId,
+                        inclusive = false
+                    )
+                }
+            }
         }
     }
 
@@ -270,14 +289,13 @@ internal fun MainActivity.Navigation() {
         composable(SETTINGS_EXCHANGE_RATE_OPT_IN) {
             AndroidSettingsExchangeRateOptIn()
         }
-        composable(ScanKeystoneNavigationArgs.PATH) {
-            WrapScanKeystone()
+        composable<ScanKeystoneSignInRequest> {
+            WrapScanKeystoneSignInRequest()
         }
-        composable(KeystoneQrNavigationArgs.PATH) {
-            AndroidKeystoneQr()
+        composable<KeystoneSignTransaction> {
+            AndroidSignKeystoneTransaction()
         }
-        dialog(
-            route = AccountListArgs.PATH,
+        dialog<AccountList>(
             dialogProperties =
                 DialogProperties(
                     dismissOnBackPress = false,
@@ -393,6 +411,18 @@ internal fun MainActivity.Navigation() {
                 )
             }
         }
+        composable<ConnectKeystone> {
+            AndroidConnectKeystone()
+        }
+        composable<SelectKeystoneAccount> {
+            AndroidSelectKeystoneAccount(it.toRoute())
+        }
+        composable<ReviewKeystoneTransaction> {
+            AndroidReviewKeystoneTransaction()
+        }
+        composable<KeystoneTransactionProgress> {
+            AndroidKeystoneTransactionProgress(it.toRoute())
+        }
     }
 }
 
@@ -411,6 +441,9 @@ private fun MainActivity.NavigationHome(
                 fillInHandleForConfirmation(handle, zecSend, SendConfirmationStage.Prepared)
             }
             navController.navigateJustOnce(SEND_CONFIRMATION)
+        },
+        goReviewKeystoneTransaction = {
+            navController.navigate(it)
         },
         goPaymentRequest = { zecSend, zip321Uri ->
             navController.currentBackStackEntry?.savedStateHandle?.let { handle ->
@@ -445,7 +478,7 @@ private fun MainActivity.NavigationHome(
 
     val isEnoughSpace by storageCheckViewModel.isEnoughSpace.collectAsStateWithLifecycle()
 
-    val sdkStatus = walletViewModel.walletSnapshot.collectAsStateWithLifecycle().value?.status
+    val sdkStatus = walletViewModel.currentWalletSnapshot.collectAsStateWithLifecycle().value?.status
 
     if (isEnoughSpace == false) {
         Twig.info { "Not enough free space" }
