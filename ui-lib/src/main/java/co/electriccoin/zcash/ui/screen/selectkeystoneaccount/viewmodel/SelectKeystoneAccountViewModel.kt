@@ -2,7 +2,9 @@ package co.electriccoin.zcash.ui.screen.selectkeystoneaccount.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cash.z.ecc.android.sdk.exception.InitializeException
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
+import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.common.usecase.CreateKeystoneAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.DecodeUrToZashiAccountsUseCase
@@ -37,7 +39,13 @@ class SelectKeystoneAccountViewModel(
 
     val state = selectedAccount.map { selection ->
         createState(selection)
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT), null)
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+        initialValue = null
+    )
+
+    private var isCreatingAccount = false
 
     private suspend fun createState(selection: ZcashAccount?): SelectKeystoneAccountState {
         val alternativeStyle = accounts?.accounts?.size == 1
@@ -57,7 +65,11 @@ class SelectKeystoneAccountViewModel(
                 .orEmpty(),
             positiveButtonState = ButtonState(
                 text = stringRes(co.electriccoin.zcash.ui.R.string.select_keystone_account_positive),
-                onClick = { onUnlockClick(selection) },
+                onClick = {
+                    if (selection != null) {
+                        onUnlockClick(selection)
+                    }
+                },
                 isEnabled = selection != null
             ),
             negativeButtonState = ButtonState(
@@ -72,8 +84,8 @@ class SelectKeystoneAccountViewModel(
         index: Int,
         selection: ZcashAccount?
     ) = ZashiCheckboxListItemState(
-        title = account.name?.let { stringRes(it) } ?:
-        stringRes(co.electriccoin.zcash.ui.R.string.select_keystone_account_default),
+        title = account.name?.let { stringRes(it) }
+            ?: stringRes(co.electriccoin.zcash.ui.R.string.select_keystone_account_default),
         subtitle = stringRes(deriveKeystoneAccountUnifiedAddress(account)),
         icon = imageRes((index + 1).toString()),
         isSelected = selection == account,
@@ -84,8 +96,8 @@ class SelectKeystoneAccountViewModel(
         account: ZcashAccount,
         selection: ZcashAccount?
     ) = ZashiExpandedCheckboxListItemState(
-        title = account.name?.let { stringRes(it) } ?:
-        stringRes(co.electriccoin.zcash.ui.R.string.select_keystone_account_default),
+        title = account.name?.let { stringRes(it) }
+            ?: stringRes(co.electriccoin.zcash.ui.R.string.select_keystone_account_default),
         subtitle = stringRes(deriveKeystoneAccountUnifiedAddress(account)),
         icon = R.drawable.ic_item_keystone,
         isSelected = selection == account,
@@ -94,15 +106,26 @@ class SelectKeystoneAccountViewModel(
     )
 
     private fun onBackClick() {
-        navigationRouter.backToRoot()
+        if (!isCreatingAccount) {
+            navigationRouter.backToRoot()
+        }
     }
 
-    private fun onUnlockClick(account: ZcashAccount?) = viewModelScope.launch {
-        if (account == null) return@launch
-
-        createKeystoneAccount(account)
-        navigationRouter.backToRoot()
+    private fun onUnlockClick(account: ZcashAccount) = viewModelScope.launch {
+        try {
+            isCreatingAccount = true
+            createKeystoneAccount(account)
+            navigationRouter.backToRoot()
+        } catch (e: InitializeException.ImportAccountException) {
+            Twig.error(e) { "Error importing account" }
+        } finally {
+            isCreatingAccount = false
+        }
     }
 
-    private fun onForgetDeviceClick() = navigationRouter.backToRoot()
+    private fun onForgetDeviceClick() {
+        if (!isCreatingAccount) {
+            navigationRouter.backToRoot()
+        }
+    }
 }

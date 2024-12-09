@@ -25,6 +25,7 @@ import co.electriccoin.zcash.ui.common.compose.BalanceState
 import co.electriccoin.zcash.ui.common.compose.LocalActivity
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
+import co.electriccoin.zcash.ui.common.usecase.GetZashiAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetZashiSpendingKeyUseCase
 import co.electriccoin.zcash.ui.common.viewmodel.CheckUpdateViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.HomeViewModel
@@ -154,6 +155,7 @@ internal fun WrapBalances(
     val showStatusDialog = remember { mutableStateOf<StatusAction.Detailed?>(null) }
 
     val getZashiSpendingKey = koinInject<GetZashiSpendingKeyUseCase>()
+    val getZashiAccount = koinInject<GetZashiAccountUseCase>()
 
     if (null == synchronizer || null == walletSnapshot) {
         // TODO [#1146]: Consider moving CircularScreenProgressIndicator from Android layer to View layer
@@ -173,13 +175,14 @@ internal fun WrapBalances(
             onShielding = {
                 lifecycleScope.launch {
                     val spendingKey = getZashiSpendingKey()
+                    val zashiAccount = getZashiAccount()
                     setShieldState(ShieldState.Running)
 
                     Twig.debug { "Shielding transparent funds" }
 
                     runCatching {
                         synchronizer.proposeShielding(
-                            account = spendingKey.account,
+                            account = zashiAccount.sdkAccount,
                             shieldingThreshold = Zatoshi(DEFAULT_SHIELDING_THRESHOLD),
                             // Using empty string for memo to clear the default memo prefix value defined in the SDK
                             memo = "",

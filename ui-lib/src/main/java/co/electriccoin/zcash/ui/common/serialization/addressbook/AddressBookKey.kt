@@ -4,6 +4,7 @@ import cash.z.ecc.android.sdk.model.Account
 import cash.z.ecc.android.sdk.model.SeedPhrase
 import cash.z.ecc.android.sdk.model.ZcashNetwork
 import cash.z.ecc.android.sdk.tool.DerivationTool
+import co.electriccoin.zcash.ui.common.model.WalletAccount
 import com.google.crypto.tink.InsecureSecretKeyAccess
 import com.google.crypto.tink.aead.ChaCha20Poly1305Key
 import com.google.crypto.tink.subtle.Hkdf
@@ -62,14 +63,14 @@ class AddressBookKey(val key: SecretBytes) {
         suspend fun derive(
             seedPhrase: SeedPhrase,
             network: ZcashNetwork,
-            account: Account
+            account: WalletAccount
         ): AddressBookKey {
             val key =
                 DerivationTool.getInstance().deriveArbitraryAccountKey(
                     contextString = "ZashiAddressBookEncryptionV1".toByteArray(),
                     seed = seedPhrase.toByteArray(),
                     network = network,
-                    accountIndex = 0, // TODO keystone
+                    accountIndex = account.hdAccountIndex, // TODO keystone
                 )
             return AddressBookKey(SecretBytes.copyFrom(key, InsecureSecretKeyAccess.get()))
         }

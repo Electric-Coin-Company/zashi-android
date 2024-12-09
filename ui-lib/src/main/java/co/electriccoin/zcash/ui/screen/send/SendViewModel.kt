@@ -152,7 +152,7 @@ class SendViewModel(
             is ZashiAccount -> {
                 Twig.debug { "Getting send transaction proposal" }
                 runCatching {
-                    getSynchronizer().proposeSend(getZashiSpendingKey().account, newZecSend)
+                    getSynchronizer().proposeSend(getZashiAccount().sdkAccount, newZecSend)
                 }.onSuccess { proposal ->
                     Twig.debug { "Transaction proposal successful: ${proposal.toPrettyString()}" }
                     val enrichedZecSend = newZecSend.copy(proposal = proposal)

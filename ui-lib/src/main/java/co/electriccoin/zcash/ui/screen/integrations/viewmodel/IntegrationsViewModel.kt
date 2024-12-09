@@ -157,7 +157,7 @@ class IntegrationsViewModel(
                 Twig.debug { "Getting send transaction proposal" }
                 getSynchronizer()
                     .proposeSend(
-                        account = getSpendingKey().account,
+                        account = getZashiAccount().sdkAccount,
                         send = getZecSend(transaction.getOrNull())
                     )
             }.onSuccess { proposal ->

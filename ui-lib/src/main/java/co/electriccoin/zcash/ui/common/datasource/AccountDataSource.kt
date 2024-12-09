@@ -5,11 +5,13 @@ import cash.z.ecc.android.sdk.model.WalletAddress
 import cash.z.ecc.android.sdk.model.WalletBalance
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
+import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.provider.SelectedAccountUUIDProvider
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
+import co.electriccoin.zcash.ui.design.util.stringRes
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -47,6 +49,8 @@ interface AccountDataSource {
     suspend fun getZashiAccount(): ZashiAccount
 
     suspend fun getKeystoneAccount(): KeystoneAccount
+
+    suspend fun selectAccount(account: Account)
 
     suspend fun selectAccount(account: WalletAccount)
 }
@@ -109,9 +113,22 @@ class AccountDataSourceImpl(
         internalAccounts,
         selectedAccountUUIDProvider.uuid,
     ) { accounts, uuid ->
-        accounts?.flatMapIndexed { index, account ->
-            listOf(
-                ZashiAccount(
+        accounts?.mapIndexedNotNull { index, account ->
+            when (val keysource = account.sdkAccount.keySource?.lowercase()) {
+                "keystone" ->
+                    KeystoneAccount(
+                        sdkAccount = account.sdkAccount,
+                        unifiedAddress = account.unifiedAddress,
+                        saplingAddress = account.saplingAddress,
+                        transparentAddress = account.transparentAddress,
+                        orchardBalance = account.orchardBalance,
+                        transparentBalance = account.transparentBalance,
+                        saplingBalance = account.saplingBalance,
+                        isSelected = index == 0 && uuid == null || account.sdkAccount.accountUuid.contentEquals(uuid),
+                        name = account.sdkAccount.accountName?.let { stringRes(it) } ?: stringRes("Keystone"),
+                    )
+
+                null, "zashi" -> ZashiAccount(
                     sdkAccount = account.sdkAccount,
                     unifiedAddress = account.unifiedAddress,
                     saplingAddress = account.saplingAddress,
@@ -119,19 +136,15 @@ class AccountDataSourceImpl(
                     orchardBalance = account.orchardBalance,
                     transparentBalance = account.transparentBalance,
                     saplingBalance = account.saplingBalance,
-                    isSelected = false,
-                ),
-                KeystoneAccount(
-                    sdkAccount = account.sdkAccount,
-                    unifiedAddress = account.unifiedAddress,
-                    saplingAddress = account.saplingAddress,
-                    transparentAddress = account.transparentAddress,
-                    orchardBalance = account.orchardBalance,
-                    transparentBalance = account.transparentBalance,
-                    saplingBalance = account.saplingBalance,
-                    isSelected = true,
+                    isSelected = index == 0 && uuid == null || account.sdkAccount.accountUuid.contentEquals(uuid),
+                    name = account.sdkAccount.accountName?.let { stringRes(it) } ?: stringRes("Zashi"),
                 )
-            )
+
+                else -> {
+                    Twig.error { "account with keysource $keysource not supported" }
+                    null
+                }
+            }
         }
     }.flowOn(Dispatchers.Default)
         .stateIn(
@@ -163,7 +176,11 @@ class AccountDataSourceImpl(
 
     override suspend fun getKeystoneAccount() = keystoneAccount.filterNotNull().first()
 
-    override suspend fun selectAccount(account: WalletAccount) = withContext(NonCancellable) {
+    override suspend fun selectAccount(account: Account) = withContext(NonCancellable) {
+        selectedAccountUUIDProvider.setUUID(account.accountUuid)
+    }
+
+    override suspend fun selectAccount(account: WalletAccount) {
         selectedAccountUUIDProvider.setUUID(account.sdkAccount.accountUuid)
     }
 }
