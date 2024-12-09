@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="review_keystone_transaction_title"></string>
-    <string name="review_keystone_transaction_positive"></string>
-    <string name="review_keystone_transaction_negative"></string>
+    <string name="review_keystone_transaction_title">Revisar</string>
+    <string name="review_keystone_transaction_positive">Confirmar con Keystone</string>
+    <string name="review_keystone_transaction_negative">Cancelar</string>
 </resources>

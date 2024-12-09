@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="select_keystone_account_default"></string>
-    <string name="select_keystone_account_positive"></string>
-    <string name="select_keystone_account_negative"></string>
-    <string name="select_keystone_account_title"></string>
-    <string name="select_keystone_account_subtitle"></string>
+    <string name="select_keystone_account_default">Wallet Keystone</string>
+    <string name="select_keystone_account_positive">Desbloquear</string>
+    <string name="select_keystone_account_negative">Olvidar este dispositivo</string>
+    <string name="select_keystone_account_title">Confirmar Cuenta para Acceder</string>
+    <string name="select_keystone_account_subtitle">Selecciona el wallet al que deseas conectarte para continuar. Una vez conectado, podrás firmar transacciones de forma inalámbrica con tu wallet de hardware.</string>
 </resources>

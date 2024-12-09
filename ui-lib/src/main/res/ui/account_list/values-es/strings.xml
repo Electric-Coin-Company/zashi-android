@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="account_list_title"></string>
-    <string name="account_list_keystone_promo_title"></string>
-    <string name="account_list_keystone_promo_subtitle"></string>
+    <string name="account_list_title">Wallets y Dispositivos Hardware</string>
+    <string name="account_list_keystone_promo_title">Wallet de Hardware Keystone</string>
+    <string name="account_list_keystone_promo_subtitle">Aprovecha un 10%% de descuento en dispositivos de hardware aislados</string>
 </resources>
