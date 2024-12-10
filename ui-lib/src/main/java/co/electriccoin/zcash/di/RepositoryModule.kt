@@ -14,6 +14,8 @@ import co.electriccoin.zcash.ui.common.repository.FlexaRepository
 import co.electriccoin.zcash.ui.common.repository.FlexaRepositoryImpl
 import co.electriccoin.zcash.ui.common.repository.KeystoneProposalRepository
 import co.electriccoin.zcash.ui.common.repository.KeystoneProposalRepositoryImpl
+import co.electriccoin.zcash.ui.common.repository.TransactionRepository
+import co.electriccoin.zcash.ui.common.repository.TransactionRepositoryImpl
 import co.electriccoin.zcash.ui.common.repository.WalletRepository
 import co.electriccoin.zcash.ui.common.repository.WalletRepositoryImpl
 import org.koin.core.module.dsl.singleOf
@@ -30,4 +32,5 @@ val repositoryModule =
         singleOf(::FlexaRepositoryImpl) bind FlexaRepository::class
         singleOf(::BiometricRepositoryImpl) bind BiometricRepository::class
         singleOf(::KeystoneProposalRepositoryImpl) bind KeystoneProposalRepository::class
+        singleOf(::TransactionRepositoryImpl) bind TransactionRepository::class
     }

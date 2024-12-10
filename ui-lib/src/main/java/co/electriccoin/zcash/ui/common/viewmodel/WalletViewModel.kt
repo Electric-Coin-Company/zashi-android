@@ -27,6 +27,7 @@ import co.electriccoin.zcash.ui.common.repository.ExchangeRateRepository
 import co.electriccoin.zcash.ui.common.repository.WalletRepository
 import co.electriccoin.zcash.ui.common.usecase.GetSynchronizerUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsFlexaAvailableUseCase
+import co.electriccoin.zcash.ui.common.usecase.ObserveCurrentTransactionsUseCase
 import co.electriccoin.zcash.ui.common.usecase.ResetAddressBookUseCase
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
 import co.electriccoin.zcash.ui.screen.account.ext.TransactionOverviewExt
@@ -67,7 +68,8 @@ class WalletViewModel(
     private val getAvailableServers: GetDefaultServersProvider,
     private val resetAddressBook: ResetAddressBookUseCase,
     private val isFlexaAvailable: IsFlexaAvailableUseCase,
-    private val getSynchronizer: GetSynchronizerUseCase
+    private val getSynchronizer: GetSynchronizerUseCase,
+    private val observeCurrentTransactions: ObserveCurrentTransactionsUseCase
 ) : AndroidViewModel(application) {
     val synchronizer = walletRepository.synchronizer
 
@@ -87,14 +89,15 @@ class WalletViewModel(
             .filterNotNull()
             .flatMapLatest { synchronizer ->
                 combine(
-                    synchronizer.transactions,
+                    observeCurrentTransactions(),
                     synchronizer.status,
                     synchronizer.networkHeight
-                ) { transactions: List<TransactionOverview>,
+                ) { transactions: List<TransactionOverview>?,
                     status: Synchronizer.Status,
                     networkHeight: BlockHeight? ->
                     val enhancedTransactions =
                         transactions
+                            .orEmpty()
                             .sortedByDescending {
                                 it.getSortHeight(networkHeight)
                             }
