@@ -10,7 +10,7 @@ import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.stringRes
 
-sealed interface WalletAccount {
+sealed interface WalletAccount: Comparable<WalletAccount> {
 
     val sdkAccount: Account
 
@@ -54,9 +54,14 @@ data class ZashiAccount(
     override val orchardBalance: WalletBalance,
     override val transparentBalance: Zatoshi,
     override val isSelected: Boolean,
-    override val name: StringResource,
 ): WalletAccount {
+    override val name: StringResource = stringRes("Zashi")
     override val icon: Int = R.drawable.ic_item_zashi
+
+    override fun compareTo(other: WalletAccount) = when (other) {
+        is KeystoneAccount -> 1
+        is ZashiAccount -> 0
+    }
 }
 
 data class KeystoneAccount(
@@ -68,7 +73,12 @@ data class KeystoneAccount(
     override val orchardBalance: WalletBalance,
     override val transparentBalance: Zatoshi,
     override val isSelected: Boolean,
-    override val name: StringResource,
 ): WalletAccount {
     override val icon: Int = R.drawable.ic_item_keystone
+    override val name: StringResource = stringRes("Keystone")
+
+    override fun compareTo(other: WalletAccount) = when (other) {
+        is KeystoneAccount -> 0
+        is ZashiAccount -> -1
+    }
 }

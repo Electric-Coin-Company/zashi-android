@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class SelectKeystoneAccountViewModel(
@@ -89,8 +90,18 @@ class SelectKeystoneAccountViewModel(
         subtitle = stringRes(deriveKeystoneAccountUnifiedAddress(account)),
         icon = imageRes((index + 1).toString()),
         isSelected = selection == account,
-        onClick = { selectedAccount.value = account }
+        onClick = { onSelectAccountClick(account) }
     )
+
+    private fun onSelectAccountClick(account: ZcashAccount) {
+        selectedAccount.update {
+            if (it == account) {
+                null
+            } else {
+                account
+            }
+        }
+    }
 
     private suspend fun createAlternativeCheckboxState(
         account: ZcashAccount,
@@ -101,7 +112,7 @@ class SelectKeystoneAccountViewModel(
         subtitle = stringRes(deriveKeystoneAccountUnifiedAddress(account)),
         icon = R.drawable.ic_item_keystone,
         isSelected = selection == account,
-        onClick = { selectedAccount.value = account },
+        onClick = { onSelectAccountClick(account) },
         info = null
     )
 
@@ -112,10 +123,11 @@ class SelectKeystoneAccountViewModel(
     }
 
     private fun onUnlockClick(account: ZcashAccount) = viewModelScope.launch {
+        if (isCreatingAccount) return@launch
+
         try {
             isCreatingAccount = true
             createKeystoneAccount(account)
-            navigationRouter.backToRoot()
         } catch (e: InitializeException.ImportAccountException) {
             Twig.error(e) { "Error importing account" }
         } finally {

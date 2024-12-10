@@ -5,7 +5,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.consumeAsFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
 interface NavigationRouter {
@@ -25,7 +25,7 @@ interface NavigationRouter {
 }
 
 class NavigationRouterImpl : NavigationRouter {
-    private val scope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
+    private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
     private val channel = Channel<NavigationCommand>()
 
@@ -65,7 +65,7 @@ class NavigationRouterImpl : NavigationRouter {
         }
     }
 
-    override fun observe() = channel.consumeAsFlow()
+    override fun observe() = channel.receiveAsFlow()
 }
 
 sealed interface NavigationCommand {
