@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
@@ -155,6 +156,7 @@ private fun AddressPanel(
     ) {
         Row(modifier = Modifier.fillMaxWidth()) {
             Image(
+                modifier = Modifier.sizeIn(maxWidth = 34.dp, maxHeight = 34.dp),
                 painter = painterResource(id = state.icon),
                 contentDescription = null
             )
