@@ -237,8 +237,8 @@ private fun SendConfirmationMainContent(
     stage: SendConfirmationStage,
     submissionResults: ImmutableList<TransactionSubmitResult>,
     zecSend: ZecSend,
-    modifier: Modifier = Modifier,
     state: SendConfirmationState,
+    modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier) {
         when (stage) {
@@ -853,7 +853,10 @@ private fun SendConfirmationContent(
 }
 
 @Composable
-fun SendConfirmationExpandedInfo(state: SendConfirmationExpandedInfoState, modifier: Modifier = Modifier) {
+fun SendConfirmationExpandedInfo(
+    state: SendConfirmationExpandedInfoState,
+    modifier: Modifier = Modifier
+) {
     Column(
         modifier = modifier
     ) {

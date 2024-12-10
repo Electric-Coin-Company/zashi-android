@@ -59,11 +59,12 @@ class ZashiMainTopAppBarViewModel(
             },
         balanceVisibilityButton =
             IconButtonState(
-                icon = if (isHideBalances == true) {
-                    R.drawable.ic_app_bar_balances_hide
-                } else {
-                    R.drawable.ic_app_bar_balances_hide
-                },
+                icon =
+                    if (isHideBalances == true) {
+                        R.drawable.ic_app_bar_balances_hide
+                    } else {
+                        R.drawable.ic_app_bar_balances_hide
+                    },
                 onClick = ::onShowOrHideBalancesClicked
             ),
         settingsButton =

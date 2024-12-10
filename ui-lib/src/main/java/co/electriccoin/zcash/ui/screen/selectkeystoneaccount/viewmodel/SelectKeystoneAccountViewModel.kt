@@ -107,19 +107,21 @@ class SelectKeystoneAccountViewModel(
         }
     }
 
-    private fun onUnlockClick(accounts: ZcashAccounts, account: ZcashAccount) =
-        viewModelScope.launch {
-            if (isCreatingAccount) return@launch
+    private fun onUnlockClick(
+        accounts: ZcashAccounts,
+        account: ZcashAccount
+    ) = viewModelScope.launch {
+        if (isCreatingAccount) return@launch
 
-            try {
-                isCreatingAccount = true
-                createKeystoneAccount(accounts, account)
-            } catch (e: InitializeException.ImportAccountException) {
-                Twig.error(e) { "Error importing account" }
-            } finally {
-                isCreatingAccount = false
-            }
+        try {
+            isCreatingAccount = true
+            createKeystoneAccount(accounts, account)
+        } catch (e: InitializeException.ImportAccountException) {
+            Twig.error(e) { "Error importing account" }
+        } finally {
+            isCreatingAccount = false
         }
+    }
 
     private fun onForgetDeviceClick() {
         if (!isCreatingAccount) {

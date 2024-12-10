@@ -78,6 +78,7 @@ internal fun ReceiveView(
     }
 }
 
+@Suppress("UnstableCollections")
 @Composable
 private fun ReceiveContents(
     items: List<ReceiveAddressState>,

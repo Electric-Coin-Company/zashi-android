@@ -49,6 +49,7 @@ class SelectRecipientViewModel(
                 initialValue = createStateWithoutAccounts(contacts = null)
             )
 
+    @Suppress("SpreadOperator")
     private fun createStateWithAccounts(
         contacts: List<AddressBookContact>?,
         accounts: List<WalletAccount>

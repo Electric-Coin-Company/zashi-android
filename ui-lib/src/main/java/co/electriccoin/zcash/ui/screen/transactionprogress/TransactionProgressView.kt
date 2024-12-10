@@ -1,3 +1,5 @@
+@file:Suppress("TooManyFunctions")
+
 package co.electriccoin.zcash.ui.screen.transactionprogress
 
 import androidx.compose.foundation.Image
@@ -5,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -62,69 +65,82 @@ fun TransactionProgressView(state: TransactionProgressState) {
                 is MultipleFailuresTransactionState -> ZashiColors.Utility.ErrorRed.utilityError100
             },
         endColor = ZashiColors.Surfaces.bgPrimary,
-        topBar = {
-            ZashiSmallTopAppBar(
-                colors =
-                    ZcashTheme.colors.topAppBarColors.copyColors(
-                        containerColor = Color.Transparent
-                    ),
-                navigationAction = {
-                    if (state is MultipleFailuresTransactionState && state.showBackButton) {
-                        ZashiTopAppBarBackNavigation(onBack = state.onBack)
-                    }
-                }
-            )
-        },
-        bottomBar = {
-            ZashiBottomBar {
-                when (state) {
-                    is SendingTransactionState -> {
-                        // none
-                    }
+        topBar = { TopBar(state) },
+        bottomBar = { BottomBar(state) },
+        content = { Content(state, it) }
+    )
+}
 
-                    is SuccessfulTransactionState -> SuccessfulTransactionBottomBar(state)
-                    is FailureTransactionState -> FailureTransactionBottomBar(state)
-                    is GrpcFailureTransactionState -> GrpcFailureTransactionBottomBar(state)
-                    is MultipleFailuresTransactionState -> MultipleFailuresTransactionBottomBar(state)
-                }
+@Composable
+private fun TopBar(state: TransactionProgressState) {
+    ZashiSmallTopAppBar(
+        colors =
+            ZcashTheme.colors.topAppBarColors.copyColors(
+                containerColor = Color.Transparent
+            ),
+        navigationAction = {
+            if (state is MultipleFailuresTransactionState && state.showBackButton) {
+                ZashiTopAppBarBackNavigation(onBack = state.onBack)
             }
         }
-    ) {
+    )
+}
+
+@Composable
+private fun BottomBar(state: TransactionProgressState) {
+    ZashiBottomBar {
         when (state) {
-            is SendingTransactionState ->
-                SendingTransaction(
-                    state = state,
-                    modifier = Modifier.scaffoldPadding(it)
-                )
+            is SendingTransactionState -> {
+                // none
+            }
 
-            is SuccessfulTransactionState ->
-                SuccessfulTransaction(
-                    state = state,
-                    modifier = Modifier.scaffoldPadding(it)
-                )
-
-            is FailureTransactionState ->
-                FailureTransaction(
-                    state = state,
-                    modifier = Modifier.scaffoldPadding(it)
-                )
-
-            is GrpcFailureTransactionState ->
-                GrpcFailureTransaction(
-                    modifier = Modifier.scaffoldPadding(it)
-                )
-
-            is MultipleFailuresTransactionState ->
-                MultipleFailureTransaction(
-                    state = state,
-                    modifier = Modifier.scaffoldPadding(it)
-                )
+            is SuccessfulTransactionState -> SuccessfulTransactionBottomBar(state)
+            is FailureTransactionState -> FailureTransactionBottomBar(state)
+            is GrpcFailureTransactionState -> GrpcFailureTransactionBottomBar(state)
+            is MultipleFailuresTransactionState -> MultipleFailuresTransactionBottomBar(state)
         }
     }
 }
 
 @Composable
-fun SuccessfulTransactionBottomBar(state: SuccessfulTransactionState) {
+private fun Content(
+    state: TransactionProgressState,
+    it: PaddingValues
+) {
+    when (state) {
+        is SendingTransactionState ->
+            SendingTransaction(
+                state = state,
+                modifier = Modifier.scaffoldPadding(it)
+            )
+
+        is SuccessfulTransactionState ->
+            SuccessfulTransaction(
+                state = state,
+                modifier = Modifier.scaffoldPadding(it)
+            )
+
+        is FailureTransactionState ->
+            FailureTransaction(
+                state = state,
+                modifier = Modifier.scaffoldPadding(it)
+            )
+
+        is GrpcFailureTransactionState ->
+            GrpcFailureTransaction(
+                modifier = Modifier.scaffoldPadding(it)
+            )
+
+        is MultipleFailuresTransactionState ->
+            MultipleFailureTransaction(
+                state = state,
+                modifier = Modifier.scaffoldPadding(it)
+            )
+    }
+}
+
+@Composable
+private fun SuccessfulTransactionBottomBar(state: SuccessfulTransactionState) {
     ZashiButton(
         state =
             ButtonState(
@@ -139,7 +155,7 @@ fun SuccessfulTransactionBottomBar(state: SuccessfulTransactionState) {
 }
 
 @Composable
-fun ColumnScope.FailureTransactionBottomBar(state: FailureTransactionState) {
+private fun ColumnScope.FailureTransactionBottomBar(state: FailureTransactionState) {
     ZashiButton(
         state =
             ButtonState(
@@ -169,7 +185,7 @@ fun ColumnScope.FailureTransactionBottomBar(state: FailureTransactionState) {
 }
 
 @Composable
-fun GrpcFailureTransactionBottomBar(state: GrpcFailureTransactionState) {
+private fun GrpcFailureTransactionBottomBar(state: GrpcFailureTransactionState) {
     ZashiButton(
         state =
             ButtonState(
@@ -184,7 +200,7 @@ fun GrpcFailureTransactionBottomBar(state: GrpcFailureTransactionState) {
 }
 
 @Composable
-fun ColumnScope.MultipleFailuresTransactionBottomBar(state: MultipleFailuresTransactionState) {
+private fun ColumnScope.MultipleFailuresTransactionBottomBar(state: MultipleFailuresTransactionState) {
     ZashiButton(
         state =
             ButtonState(
@@ -214,7 +230,7 @@ fun ColumnScope.MultipleFailuresTransactionBottomBar(state: MultipleFailuresTran
 }
 
 @Composable
-fun SendingTransaction(
+private fun SendingTransaction(
     state: SendingTransactionState,
     modifier: Modifier = Modifier
 ) {
@@ -287,7 +303,7 @@ fun SendingTransaction(
 }
 
 @Composable
-fun SuccessfulTransaction(
+private fun SuccessfulTransaction(
     state: SuccessfulTransactionState,
     modifier: Modifier = Modifier
 ) {
@@ -367,7 +383,7 @@ fun SuccessfulTransaction(
 }
 
 @Composable
-fun FailureTransaction(
+private fun FailureTransaction(
     state: FailureTransactionState,
     modifier: Modifier = Modifier
 ) {
@@ -448,7 +464,7 @@ fun FailureTransaction(
 }
 
 @Composable
-fun GrpcFailureTransaction(modifier: Modifier = Modifier) {
+private fun GrpcFailureTransaction(modifier: Modifier = Modifier) {
     ConstraintLayout(modifier = modifier.fillMaxSize()) {
         val (content, spaceTop) = createRefs()
 
@@ -511,7 +527,7 @@ fun GrpcFailureTransaction(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun MultipleFailureTransaction(
+private fun MultipleFailureTransaction(
     state: MultipleFailuresTransactionState,
     modifier: Modifier = Modifier
 ) {

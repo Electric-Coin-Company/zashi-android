@@ -122,9 +122,8 @@ import org.koin.compose.koinInject
 
 // TODO [#1297]: Consider: Navigation passing complex data arguments different way
 // TODO [#1297]: https://github.com/Electric-Coin-Company/zashi-android/issues/1297
-
 @Composable
-@Suppress("LongMethod")
+@Suppress("LongMethod", "CyclomaticComplexMethod")
 internal fun MainActivity.Navigation() {
     val navController = LocalNavController.current
 

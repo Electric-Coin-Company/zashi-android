@@ -266,10 +266,11 @@ fun FinancialInfoWidget(state: FinancialInfoState) {
             textStyle =
                 StyledBalanceDefaults.textStyles(
                     mostSignificantPart = ZashiTypography.textSm.copy(fontWeight = FontWeight.SemiBold),
-                    leastSignificantPart = ZashiTypography.textXxs.copy(
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 8.sp,
-                    )
+                    leastSignificantPart =
+                        ZashiTypography.textXxs.copy(
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 8.sp,
+                        )
                 ),
         )
     }
@@ -422,12 +423,18 @@ private fun Zip321Preview() =
                                 address = stringRes("Address"),
                                 ZashiChipButtonState(
                                     icon = co.electriccoin.zcash.ui.R.drawable.ic_chevron_down,
-                                    text = stringRes(co.electriccoin.zcash.ui.R.string.payment_request_btn_show_address),
+                                    text =
+                                        stringRes(
+                                            co.electriccoin.zcash.ui.R.string.payment_request_btn_show_address,
+                                        ),
                                     onClick = {}
                                 ),
                                 ZashiChipButtonState(
                                     icon = co.electriccoin.zcash.ui.R.drawable.ic_user_plus,
-                                    text = stringRes(co.electriccoin.zcash.ui.R.string.payment_request_btn_save_contact),
+                                    text =
+                                        stringRes(
+                                            co.electriccoin.zcash.ui.R.string.payment_request_btn_save_contact,
+                                        ),
                                     onClick = {}
                                 )
                             ),

@@ -1,3 +1,5 @@
+@file:Suppress("TooManyFunctions")
+
 package co.electriccoin.zcash.ui.screen.addressbook.view
 
 import androidx.compose.animation.core.MutableTransitionState
@@ -241,7 +243,7 @@ private fun EmptyFullscreen(
     }
 }
 
-@Suppress("MagicNumber")
+@Suppress("MagicNumber", "ModifierComposed")
 fun Modifier.dashedBorder(
     strokeWidth: Dp,
     color: Color,

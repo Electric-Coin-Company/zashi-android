@@ -147,7 +147,9 @@ private fun SinglePreview() =
                     title = stringRes("Confirm Account to Access"),
                     subtitle =
                         stringRes(
-                            "Select the wallet you'd like to connect to proceed. Once connected, you’ll be able to wirelessly sign transactions with your hardware wallet."
+                            "Select the wallet you'd like to connect to proceed. " +
+                                "Once connected, you’ll be able to wirelessly sign transactions " +
+                                "with your hardware wallet."
                         ),
                     items =
                         listOf(
@@ -181,7 +183,8 @@ private fun MultiplePreview() =
                     title = stringRes("Confirm Account to Access"),
                     subtitle =
                         stringRes(
-                            "Select the wallet you'd like to connect to proceed. Once connected, you’ll be able to wirelessly sign transactions with your hardware wallet."
+                            "Select the wallet you'd like to connect to proceed. Once connected," +
+                                " you’ll be able to wirelessly sign transactions with your hardware wallet."
                         ),
                     items =
                         listOf(

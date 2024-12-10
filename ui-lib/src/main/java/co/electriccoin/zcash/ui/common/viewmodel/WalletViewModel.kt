@@ -107,7 +107,9 @@ class WalletViewModel(
                                         overview = it,
                                         recipient = recipient,
                                         recipientAddressType =
-                                            if (recipient != null && (recipient is TransactionRecipient.RecipientAddress)) {
+                                            if (recipient != null &&
+                                                (recipient is TransactionRecipient.RecipientAddress)
+                                            ) {
                                                 synchronizer.validateAddress(recipient.addressValue)
                                             } else {
                                                 null

@@ -19,20 +19,22 @@ class CreateKeystoneAccountUseCase(
     private val navigationRouter: NavigationRouter
 ) {
     @Throws(InitializeException.ImportAccountException::class)
-    suspend operator fun invoke(accounts: ZcashAccounts, account: ZcashAccount) =
-        withContext(Dispatchers.IO) {
-            val createdAccount =
-                synchronizerProvider.getSynchronizer().importAccountByUfvk( // TODO keystone add parameters
-                    purpose = AccountPurpose.Spending,
-                    setup =
-                        AccountImportSetup(
-                            accountName = "",
-                            keySource = "keystone",
-                            ufvk = UnifiedFullViewingKey(account.ufvk),
-                        ),
-                )
+    suspend operator fun invoke(
+        accounts: ZcashAccounts,
+        account: ZcashAccount
+    ) = withContext(Dispatchers.IO) {
+        val createdAccount =
+            synchronizerProvider.getSynchronizer().importAccountByUfvk( // TODO keystone add parameters
+                purpose = AccountPurpose.Spending,
+                setup =
+                    AccountImportSetup(
+                        accountName = "",
+                        keySource = "keystone",
+                        ufvk = UnifiedFullViewingKey(account.ufvk),
+                    ),
+            )
 
-            accountDataSource.selectAccount(createdAccount)
-            navigationRouter.backToRoot()
-        }
+        accountDataSource.selectAccount(createdAccount)
+        navigationRouter.backToRoot()
+    }
 }

@@ -35,6 +35,7 @@ class AccountListViewModel(
 
     private val bottomSheetHiddenResponse = MutableSharedFlow<Unit>()
 
+    @Suppress("SpreadOperator")
     val state =
         observeWalletAccounts().map { accounts ->
             val items =
@@ -45,7 +46,9 @@ class AccountListViewModel(
                                 ZashiAccountListItemState(
                                     title = account.name,
                                     subtitle =
-                                        stringRes("${account.unifiedAddress.address.take(ADDRESS_MAX_LENGTH)}..."),
+                                        stringRes(
+                                            "${account.unifiedAddress.address.take(ADDRESS_MAX_LENGTH)}...",
+                                        ),
                                     icon =
                                         when (account) {
                                             is KeystoneAccount -> R.drawable.ic_item_keystone
@@ -59,7 +62,10 @@ class AccountListViewModel(
                     AccountListItem.Other(
                         ZashiListItemState(
                             title = stringRes(co.electriccoin.zcash.ui.R.string.account_list_keystone_promo_title),
-                            subtitle = stringRes(co.electriccoin.zcash.ui.R.string.account_list_keystone_promo_subtitle),
+                            subtitle =
+                                stringRes(
+                                    co.electriccoin.zcash.ui.R.string.account_list_keystone_promo_subtitle,
+                                ),
                             icon = R.drawable.ic_item_keystone,
                             design = ZashiListItemDesignType.SECONDARY,
                             onClick = ::onAddWalletButtonClicked
