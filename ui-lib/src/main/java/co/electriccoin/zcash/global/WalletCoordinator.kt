@@ -17,6 +17,8 @@ fun WalletCoordinator.Companion.newInstance(
         persistableWallet =
             flow {
                 emitAll(persistableWalletPreference.observe(encryptedPreferenceProvider()))
-            }
+            },
+        accountName = "",
+        keySource = "zashi"
     )
 }

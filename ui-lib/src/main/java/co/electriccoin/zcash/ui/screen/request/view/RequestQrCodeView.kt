@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -21,7 +22,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
@@ -40,7 +40,6 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
-import co.electriccoin.zcash.ui.screen.request.model.QrCodeState
 import co.electriccoin.zcash.ui.screen.request.model.RequestState
 import kotlin.math.roundToInt
 
@@ -97,9 +96,7 @@ internal fun RequestQrCodeView(
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingBig))
 
         QrCode(
-            qrCodeState = state.request.qrCodeState,
-            onQrImageShare = state.onQrCodeShare,
-            onQrImageGenerate = state.onQrCodeGenerate,
+            state = state,
             modifier = Modifier.padding(horizontal = 24.dp),
         )
 
@@ -109,20 +106,17 @@ internal fun RequestQrCodeView(
 
 @Composable
 private fun ColumnScope.QrCode(
-    qrCodeState: QrCodeState,
-    onQrImageShare: (ImageBitmap) -> Unit,
-    onQrImageGenerate: (pixels: Int) -> Unit,
+    state: RequestState.QrCode,
     modifier: Modifier = Modifier
 ) {
     val sizePixels = with(LocalDensity.current) { DEFAULT_QR_CODE_SIZE.toPx() }.roundToInt()
 
-    if (qrCodeState.bitmap == null) {
-        onQrImageGenerate(sizePixels)
+    if (state.request.qrCodeState.bitmap == null) {
+        state.onQrCodeGenerate(sizePixels)
     }
 
     QrCode(
-        qrCodeImage = qrCodeState.bitmap,
-        onQrImageBitmapShare = onQrImageShare,
+        state = state,
         contentDescription = stringResource(id = R.string.request_qr_code_content_description),
         modifier =
             modifier
@@ -149,9 +143,8 @@ private fun ColumnScope.QrCode(
 
 @Composable
 private fun QrCode(
+    state: RequestState.QrCode,
     contentDescription: String,
-    qrCodeImage: ImageBitmap?,
-    onQrImageBitmapShare: (ImageBitmap) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -161,19 +154,20 @@ private fun QrCode(
                 .clickable(
                     indication = null,
                     interactionSource = remember { MutableInteractionSource() },
-                    onClick = { qrCodeImage?.let { onQrImageBitmapShare(qrCodeImage) } },
+                    onClick = { state.request.qrCodeState.bitmap?.let { state.onQrCodeShare(it) } },
                 )
                 .then(modifier)
     ) {
-        if (qrCodeImage == null) {
+        if (state.request.qrCodeState.bitmap == null) {
             CircularScreenProgressIndicator()
         } else {
             Image(
-                bitmap = qrCodeImage,
+                bitmap = state.request.qrCodeState.bitmap,
                 contentDescription = contentDescription,
             )
             Image(
-                painter = painterResource(id = R.drawable.logo_zec_fill_stroke),
+                modifier = Modifier.size(64.dp),
+                painter = painterResource(id = state.icon),
                 contentDescription = contentDescription,
             )
         }

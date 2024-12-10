@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="account_list_title"><![CDATA[Wallets & Hardware]]></string>
+    <string name="account_list_title">Wallets &amp; Hardware</string>
+    <string name="account_list_keystone_promo_title">Keystone Hardware Wallet</string>
+    <string name="account_list_keystone_promo_subtitle">Get 10%% off airgapped hardware wallet</string>
 </resources>

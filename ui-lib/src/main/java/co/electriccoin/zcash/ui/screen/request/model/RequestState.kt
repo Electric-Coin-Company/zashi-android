@@ -23,6 +23,7 @@ internal sealed class RequestState {
     ) : Prepared(onBack)
 
     data class Memo(
+        val icon: Int,
         val request: Request,
         val walletAddress: WalletAddress,
         val zcashCurrency: ZcashCurrency,
@@ -32,6 +33,7 @@ internal sealed class RequestState {
     ) : Prepared(onBack)
 
     data class QrCode(
+        val icon: Int,
         val request: Request,
         val walletAddress: WalletAddress,
         val onQrCodeShare: (ImageBitmap) -> Unit,

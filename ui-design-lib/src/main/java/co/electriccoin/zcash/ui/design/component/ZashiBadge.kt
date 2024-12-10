@@ -96,9 +96,19 @@ object ZashiBadgeDefaults {
         text = text,
         container = background,
     )
+
+    @Composable
+    fun hyperBlueColors(
+        border: Color = ZashiColors.Utility.HyperBlue.utilityBlueDark200,
+        text: Color = ZashiColors.Utility.HyperBlue.utilityBlueDark700,
+        background: Color = ZashiColors.Utility.HyperBlue.utilityBlueDark50,
+    ) = ZashiBadgeColors(
+        border = border,
+        text = text,
+        container = background,
+    )
 }
 
-@Suppress("UnusedPrivateMember")
 @PreviewScreens
 @Composable
 private fun BadgePreview() =

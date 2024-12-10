@@ -7,9 +7,14 @@ import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.NavigationTargets
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
+import co.electriccoin.zcash.ui.common.model.KeystoneAccount
+import co.electriccoin.zcash.ui.common.model.WalletAccount
+import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.usecase.CopyToClipboardUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetAddressesUseCase
+import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedWalletAccountUseCase
+import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.screen.addressbook.viewmodel.ADDRESS_MAX_LENGTH
+import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressState
 import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressType
 import co.electriccoin.zcash.ui.screen.receive.model.ReceiveState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -19,32 +24,77 @@ import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 
 class ReceiveViewModel(
+    observeSelectedWalletAccount: ObserveSelectedWalletAccountUseCase,
     private val application: Application,
-    getVersionInfo: GetVersionInfoProvider,
-    getAddresses: GetAddressesUseCase,
     private val copyToClipboard: CopyToClipboardUseCase,
     private val navigationRouter: NavigationRouter,
 ) : ViewModel() {
     @OptIn(ExperimentalCoroutinesApi::class)
     internal val state =
-        getAddresses().mapLatest { addresses ->
-            ReceiveState.Prepared(
-                walletAddresses = addresses,
-                isTestnet = getVersionInfo().isTestnet,
-                onAddressCopy = { address ->
-                    copyToClipboard(
-                        tag = application.getString(R.string.receive_clipboard_tag),
-                        value = address
-                    )
-                },
-                onQrCode = { addressType -> onQrCodeClick(addressType) },
-                onRequest = { addressType -> onRequestClick(addressType) },
+        observeSelectedWalletAccount.require().mapLatest { account ->
+            ReceiveState(
+                items =
+                    listOfNotNull(
+                        createAddressState(
+                            account = account,
+                            address = account.unified.address.address,
+                            type = ReceiveAddressType.Unified
+                        ),
+                        createAddressState(
+                            account = account,
+                            address = account.transparent.address.address,
+                            type = ReceiveAddressType.Transparent
+                        ),
+                    ),
+                isLoading = false
             )
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            initialValue = ReceiveState.Loading
+            initialValue = ReceiveState(items = null, isLoading = true)
         )
+
+    private fun createAddressState(
+        account: WalletAccount,
+        address: String,
+        type: ReceiveAddressType
+    ) = ReceiveAddressState(
+        icon =
+            when (account) {
+                is KeystoneAccount -> co.electriccoin.zcash.ui.design.R.drawable.ic_item_keystone
+                is ZashiAccount ->
+                    if (type == ReceiveAddressType.Unified) {
+                        R.drawable.ic_zec_round_full
+                    } else {
+                        R.drawable.ic_zec_round_stroke
+                    }
+            },
+        title =
+            when (account) {
+                is KeystoneAccount ->
+                    if (type == ReceiveAddressType.Unified) {
+                        stringRes(R.string.receive_wallet_address_shielded_keystone)
+                    } else {
+                        stringRes(R.string.receive_wallet_address_transparent_keystone)
+                    }
+                is ZashiAccount ->
+                    if (type == ReceiveAddressType.Unified) {
+                        stringRes(R.string.receive_wallet_address_shielded)
+                    } else {
+                        stringRes(R.string.receive_wallet_address_transparent)
+                    }
+            },
+        subtitle = stringRes("${address.take(ADDRESS_MAX_LENGTH)}..."),
+        isShielded = type == ReceiveAddressType.Unified,
+        onCopyClicked = {
+            copyToClipboard(
+                tag = application.getString(R.string.receive_clipboard_tag),
+                value = address
+            )
+        },
+        onQrClicked = { onQrCodeClick(type) },
+        onRequestClicked = { onRequestClick(type) },
+    )
 
     private fun onRequestClick(addressType: ReceiveAddressType) =
         navigationRouter.forward("${NavigationTargets.REQUEST}/${addressType.ordinal}")

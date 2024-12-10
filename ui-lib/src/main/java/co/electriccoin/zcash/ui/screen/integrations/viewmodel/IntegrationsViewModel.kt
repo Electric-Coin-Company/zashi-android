@@ -23,14 +23,14 @@ import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
 import co.electriccoin.zcash.ui.common.provider.GetZcashCurrencyProvider
 import co.electriccoin.zcash.ui.common.repository.BiometricRepository
 import co.electriccoin.zcash.ui.common.repository.BiometricRequest
-import co.electriccoin.zcash.ui.common.usecase.GetSpendingKeyUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSynchronizerUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetTransparentAddressUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetZashiAccountUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetZashiSpendingKeyUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsCoinbaseAvailableUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsFlexaAvailableUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveIsFlexaAvailableUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveWalletStateUseCase
-import co.electriccoin.zcash.ui.design.component.ZashiSettingsListItemState
+import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.integrations.model.IntegrationsState
 import co.electriccoin.zcash.ui.screen.send.model.RecipientAddressState
@@ -53,10 +53,10 @@ class IntegrationsViewModel(
     observeWalletState: ObserveWalletStateUseCase,
     observeIsFlexaAvailableUseCase: ObserveIsFlexaAvailableUseCase,
     private val getSynchronizer: GetSynchronizerUseCase,
-    private val getTransparentAddress: GetTransparentAddressUseCase,
+    private val getZashiAccount: GetZashiAccountUseCase,
     private val isFlexaAvailable: IsFlexaAvailableUseCase,
     private val isCoinbaseAvailable: IsCoinbaseAvailableUseCase,
-    private val getSpendingKey: GetSpendingKeyUseCase,
+    private val getSpendingKey: GetZashiSpendingKeyUseCase,
     private val context: Context,
     private val biometricRepository: BiometricRepository,
     private val navigationRouter: NavigationRouter
@@ -80,11 +80,11 @@ class IntegrationsViewModel(
                 onBack = ::onBack,
                 items =
                     listOfNotNull(
-                        ZashiSettingsListItemState(
+                        ZashiListItemState(
                             // Set the wallet currency by app build is more future-proof, although we hide it from
                             // the UI in the Testnet build
                             icon = R.drawable.ic_integrations_coinbase,
-                            text = stringRes(R.string.integrations_coinbase, getZcashCurrency.getLocalizedName()),
+                            title = stringRes(R.string.integrations_coinbase, getZcashCurrency.getLocalizedName()),
                             subtitle =
                                 stringRes(
                                     R.string.integrations_coinbase_subtitle,
@@ -92,7 +92,7 @@ class IntegrationsViewModel(
                                 ),
                             onClick = ::onBuyWithCoinbaseClicked
                         ).takeIf { isCoinbaseAvailable() },
-                        ZashiSettingsListItemState(
+                        ZashiListItemState(
                             // Set the wallet currency by app build is more future-proof, although we hide it from
                             // the UI in the Testnet build
                             isEnabled = isEnabled,
@@ -102,10 +102,10 @@ class IntegrationsViewModel(
                                 } else {
                                     R.drawable.ic_integrations_flexa_disabled
                                 },
-                            text = stringRes(R.string.integrations_flexa),
+                            title = stringRes(R.string.integrations_flexa),
                             subtitle = stringRes(R.string.integrations_flexa_subtitle),
                             onClick = ::onFlexaClicked
-                        ).takeIf { isFlexaAvailable == true }
+                        ).takeIf { isFlexaAvailable == true },
                     ).toImmutableList()
             )
         }.stateIn(
@@ -129,7 +129,7 @@ class IntegrationsViewModel(
                 }
 
                 appId.isNotEmpty() -> {
-                    val address = getTransparentAddress().address
+                    val address = getZashiAccount().transparent
                     val url =
                         "https://pay.coinbase.com/buy/select-asset?appId=$appId&addresses={\"${address}\":[\"zcash\"]}"
                     coinbaseNavigationCommand.emit(url)
@@ -157,7 +157,7 @@ class IntegrationsViewModel(
                 Twig.debug { "Getting send transaction proposal" }
                 getSynchronizer()
                     .proposeSend(
-                        account = getSpendingKey().account,
+                        account = getZashiAccount().sdkAccount,
                         send = getZecSend(transaction.getOrNull())
                     )
             }.onSuccess { proposal ->
@@ -241,7 +241,7 @@ class IntegrationsViewModel(
                 } else {
                     // Any subsequent transaction submission failed - user needs to resolve this manually. Multiple
                     // transaction failure screen presented
-                    SubmitResult.MultipleTrxFailure to null
+                    SubmitResult.MultipleTrxFailure(submitResults) to null
                 }
             } else {
                 // All transaction submissions were successful

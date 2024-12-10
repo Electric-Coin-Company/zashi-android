@@ -29,13 +29,13 @@ interface BalanceRepository {
 
 class BalanceRepositoryImpl(
     walletRepository: WalletRepository,
-    exchangeRateRepository: ExchangeRateRepository
+    exchangeRateRepository: ExchangeRateRepository,
 ) : BalanceRepository {
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     override val state: StateFlow<BalanceState> =
         combine(
-            walletRepository.walletSnapshot.filterNotNull(),
+            walletRepository.currentWalletSnapshot.filterNotNull(),
             exchangeRateRepository.state,
         ) { snapshot, exchangeRateUsd ->
             when {
