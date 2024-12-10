@@ -33,23 +33,23 @@ class ReceiveViewModel(
     internal val state =
         observeSelectedWalletAccount().mapLatest { account ->
             ReceiveState(
-                items = listOfNotNull(
-                    account?.unifiedAddress?.let {
-                        createAddressState(
-                            account = account,
-                            address = it.address,
-                            type = ReceiveAddressType.Unified
-                        )
-                    },
-                    account?.transparentAddress?.let {
-                        createAddressState(
-                            account = account,
-                            address = it.address,
-                            type = ReceiveAddressType.Transparent
-                        )
-                    },
-
-                ),
+                items =
+                    listOfNotNull(
+                        account?.unifiedAddress?.let {
+                            createAddressState(
+                                account = account,
+                                address = it.address,
+                                type = ReceiveAddressType.Unified
+                            )
+                        },
+                        account?.transparentAddress?.let {
+                            createAddressState(
+                                account = account,
+                                address = it.address,
+                                type = ReceiveAddressType.Transparent
+                            )
+                        },
+                    ),
                 isLoading = account == null
             )
         }.stateIn(
@@ -63,26 +63,31 @@ class ReceiveViewModel(
         address: String,
         type: ReceiveAddressType
     ) = ReceiveAddressState(
-        icon = when (account) {
-            is KeystoneAccount -> co.electriccoin.zcash.ui.design.R.drawable.ic_item_keystone
-            is ZashiAccount -> if (type == ReceiveAddressType.Unified) {
-                R.drawable.ic_zec_round_full
-            } else {
-                R.drawable.ic_zec_round_stroke
-            }
-        },
-        title = when (account) {
-            is KeystoneAccount -> if (type == ReceiveAddressType.Unified) {
-                stringRes(R.string.receive_wallet_address_shielded_keystone)
-            } else {
-                stringRes(R.string.receive_wallet_address_transparent_keystone)
-            }
-            is ZashiAccount -> if (type == ReceiveAddressType.Unified) {
-                stringRes(R.string.receive_wallet_address_shielded)
-            } else {
-                stringRes(R.string.receive_wallet_address_transparent)
-            }
-        },
+        icon =
+            when (account) {
+                is KeystoneAccount -> co.electriccoin.zcash.ui.design.R.drawable.ic_item_keystone
+                is ZashiAccount ->
+                    if (type == ReceiveAddressType.Unified) {
+                        R.drawable.ic_zec_round_full
+                    } else {
+                        R.drawable.ic_zec_round_stroke
+                    }
+            },
+        title =
+            when (account) {
+                is KeystoneAccount ->
+                    if (type == ReceiveAddressType.Unified) {
+                        stringRes(R.string.receive_wallet_address_shielded_keystone)
+                    } else {
+                        stringRes(R.string.receive_wallet_address_transparent_keystone)
+                    }
+                is ZashiAccount ->
+                    if (type == ReceiveAddressType.Unified) {
+                        stringRes(R.string.receive_wallet_address_shielded)
+                    } else {
+                        stringRes(R.string.receive_wallet_address_transparent)
+                    }
+            },
         subtitle = stringRes("${address.take(ADDRESS_MAX_LENGTH)}..."),
         isShielded = type == ReceiveAddressType.Unified,
         onCopyClicked = {

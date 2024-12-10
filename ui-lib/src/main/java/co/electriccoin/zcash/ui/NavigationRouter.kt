@@ -69,14 +69,15 @@ class NavigationRouterImpl : NavigationRouter {
 }
 
 sealed interface NavigationCommand {
-
     sealed interface Forward : NavigationCommand {
         data class ByRoute(val route: String) : Forward
+
         data class ByTypeSafetyRoute<T : Any>(val route: T) : Forward
     }
 
     sealed interface Replace : NavigationCommand {
         data class ByRoute(val route: String) : Replace
+
         data class ByTypeSafetyRoute<T : Any>(val route: T) : Replace
     }
 

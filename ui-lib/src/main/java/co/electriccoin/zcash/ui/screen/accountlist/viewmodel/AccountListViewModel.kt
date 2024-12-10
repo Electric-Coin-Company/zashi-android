@@ -31,42 +31,43 @@ class AccountListViewModel(
     private val selectWalletAccount: SelectWalletAccountUseCase,
     private val navigationRouter: NavigationRouter,
 ) : ViewModel() {
-
     val hideBottomSheetRequest = MutableSharedFlow<Unit>()
 
     private val bottomSheetHiddenResponse = MutableSharedFlow<Unit>()
 
     val state =
         observeWalletAccounts().map { accounts ->
-            val items = listOfNotNull(
-                *accounts.orEmpty()
-                    .map<WalletAccount, AccountListItem> { account ->
-                        AccountListItem.Account(
-                            ZashiAccountListItemState(
-                                title = account.name,
-                                subtitle =
-                                stringRes("${account.unifiedAddress.address.take(ADDRESS_MAX_LENGTH)}..."),
-                                icon = when (account) {
-                                    is KeystoneAccount -> R.drawable.ic_item_keystone
-                                    is ZashiAccount -> R.drawable.ic_item_zashi
-                                },
-                                isSelected = account.isSelected,
-                                onClick = { onAccountClicked(account) }
+            val items =
+                listOfNotNull(
+                    *accounts.orEmpty()
+                        .map<WalletAccount, AccountListItem> { account ->
+                            AccountListItem.Account(
+                                ZashiAccountListItemState(
+                                    title = account.name,
+                                    subtitle =
+                                        stringRes("${account.unifiedAddress.address.take(ADDRESS_MAX_LENGTH)}..."),
+                                    icon =
+                                        when (account) {
+                                            is KeystoneAccount -> R.drawable.ic_item_keystone
+                                            is ZashiAccount -> R.drawable.ic_item_zashi
+                                        },
+                                    isSelected = account.isSelected,
+                                    onClick = { onAccountClicked(account) }
+                                )
                             )
+                        }.toTypedArray(),
+                    AccountListItem.Other(
+                        ZashiListItemState(
+                            title = stringRes(co.electriccoin.zcash.ui.R.string.account_list_keystone_promo_title),
+                            subtitle = stringRes(co.electriccoin.zcash.ui.R.string.account_list_keystone_promo_subtitle),
+                            icon = R.drawable.ic_item_keystone,
+                            design = ZashiListItemDesignType.SECONDARY,
+                            onClick = ::onAddWalletButtonClicked
                         )
-                    }.toTypedArray(),
-                AccountListItem.Other(
-                    ZashiListItemState(
-                        title = stringRes(co.electriccoin.zcash.ui.R.string.account_list_keystone_promo_title),
-                        subtitle = stringRes(co.electriccoin.zcash.ui.R.string.account_list_keystone_promo_subtitle),
-                        icon = R.drawable.ic_item_keystone,
-                        design = ZashiListItemDesignType.SECONDARY,
-                        onClick = ::onAddWalletButtonClicked
-                    )
-                ).takeIf {
-                    accounts.orEmpty().none { it is KeystoneAccount }
-                }
-            )
+                    ).takeIf {
+                        accounts.orEmpty().none { it is KeystoneAccount }
+                    }
+                )
 
             AccountListState(
                 items = items,
@@ -85,23 +86,27 @@ class AccountListViewModel(
         bottomSheetHiddenResponse.first()
     }
 
-    private fun onAccountClicked(account: WalletAccount) = viewModelScope.launch {
-        selectWalletAccount(account)
-        hideBottomSheet()
-        navigationRouter.back()
-    }
+    private fun onAccountClicked(account: WalletAccount) =
+        viewModelScope.launch {
+            selectWalletAccount(account)
+            hideBottomSheet()
+            navigationRouter.back()
+        }
 
-    private fun onAddWalletButtonClicked() = viewModelScope.launch {
-        hideBottomSheet()
-        navigationRouter.forward(ConnectKeystone)
-    }
+    private fun onAddWalletButtonClicked() =
+        viewModelScope.launch {
+            hideBottomSheet()
+            navigationRouter.forward(ConnectKeystone)
+        }
 
-    private fun onBottomSheetHidden() = viewModelScope.launch {
-        bottomSheetHiddenResponse.emit(Unit)
-    }
+    private fun onBottomSheetHidden() =
+        viewModelScope.launch {
+            bottomSheetHiddenResponse.emit(Unit)
+        }
 
-    private fun onBack() = viewModelScope.launch {
-        hideBottomSheet()
-        navigationRouter.back()
-    }
+    private fun onBack() =
+        viewModelScope.launch {
+            hideBottomSheet()
+            navigationRouter.back()
+        }
 }

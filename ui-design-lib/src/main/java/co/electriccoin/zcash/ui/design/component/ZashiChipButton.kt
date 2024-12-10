@@ -27,16 +27,20 @@ import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.stringRes
 
 @Composable
-fun ZashiChipButton(state: ZashiChipButtonState, modifier: Modifier = Modifier) {
+fun ZashiChipButton(
+    state: ZashiChipButtonState,
+    modifier: Modifier = Modifier
+) {
     Surface(
         modifier = modifier,
         shape = RoundedCornerShape(10.dp),
         color = ZashiColors.Btns.Tertiary.btnTertiaryBg,
     ) {
         Row(
-            modifier = Modifier
-                .clickable(onClick = state.onClick)
-                .padding(horizontal = 12.dp, vertical = 8.dp),
+            modifier =
+                Modifier
+                    .clickable(onClick = state.onClick)
+                    .padding(horizontal = 12.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
@@ -63,12 +67,14 @@ data class ZashiChipButtonState(
 
 @PreviewScreens
 @Composable
-private fun ZashiChipButtonPreview() = ZcashTheme {
-    ZashiChipButton(
-        state = ZashiChipButtonState(
-            icon = R.drawable.ic_radio_button_checked,
-            text = stringRes("Test"),
-            onClick = {}
+private fun ZashiChipButtonPreview() =
+    ZcashTheme {
+        ZashiChipButton(
+            state =
+                ZashiChipButtonState(
+                    icon = R.drawable.ic_radio_button_checked,
+                    text = stringRes("Test"),
+                    onClick = {}
+                )
         )
-    )
-}
+    }

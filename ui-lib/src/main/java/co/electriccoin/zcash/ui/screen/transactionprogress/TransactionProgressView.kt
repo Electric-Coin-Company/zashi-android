@@ -53,20 +53,21 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 @Composable
 fun TransactionProgressView(state: TransactionProgressState) {
     GradientBgScaffold(
-        startColor = when (state) {
-            is SendingTransactionState -> ZashiColors.Surfaces.bgPrimary
-            is SuccessfulTransactionState -> ZashiColors.Utility.SuccessGreen.utilitySuccess100
-            is FailureTransactionState,
-            is GrpcFailureTransactionState,
-            is MultipleFailuresTransactionState -> ZashiColors.Utility.ErrorRed.utilityError100
-        },
+        startColor =
+            when (state) {
+                is SendingTransactionState -> ZashiColors.Surfaces.bgPrimary
+                is SuccessfulTransactionState -> ZashiColors.Utility.SuccessGreen.utilitySuccess100
+                is FailureTransactionState,
+                is GrpcFailureTransactionState,
+                is MultipleFailuresTransactionState -> ZashiColors.Utility.ErrorRed.utilityError100
+            },
         endColor = ZashiColors.Surfaces.bgPrimary,
         topBar = {
             ZashiSmallTopAppBar(
                 colors =
-                ZcashTheme.colors.topAppBarColors.copyColors(
-                    containerColor = Color.Transparent
-                ),
+                    ZcashTheme.colors.topAppBarColors.copyColors(
+                        containerColor = Color.Transparent
+                    ),
                 navigationAction = {
                     if (state is MultipleFailuresTransactionState && state.showBackButton) {
                         ZashiTopAppBarBackNavigation(onBack = state.onBack)
@@ -90,30 +91,34 @@ fun TransactionProgressView(state: TransactionProgressState) {
         }
     ) {
         when (state) {
-            is SendingTransactionState -> SendingTransaction(
-                state = state,
-                modifier = Modifier.scaffoldPadding(it)
-            )
+            is SendingTransactionState ->
+                SendingTransaction(
+                    state = state,
+                    modifier = Modifier.scaffoldPadding(it)
+                )
 
-            is SuccessfulTransactionState -> SuccessfulTransaction(
-                state = state,
-                modifier = Modifier.scaffoldPadding(it)
-            )
+            is SuccessfulTransactionState ->
+                SuccessfulTransaction(
+                    state = state,
+                    modifier = Modifier.scaffoldPadding(it)
+                )
 
-            is FailureTransactionState -> FailureTransaction(
-                state = state,
-                modifier = Modifier.scaffoldPadding(it)
-            )
+            is FailureTransactionState ->
+                FailureTransaction(
+                    state = state,
+                    modifier = Modifier.scaffoldPadding(it)
+                )
 
-            is GrpcFailureTransactionState -> GrpcFailureTransaction(
-                state = state,
-                modifier = Modifier.scaffoldPadding(it)
-            )
+            is GrpcFailureTransactionState ->
+                GrpcFailureTransaction(
+                    modifier = Modifier.scaffoldPadding(it)
+                )
 
-            is MultipleFailuresTransactionState -> MultipleFailureTransaction(
-                state = state,
-                modifier = Modifier.scaffoldPadding(it)
-            )
+            is MultipleFailuresTransactionState ->
+                MultipleFailureTransaction(
+                    state = state,
+                    modifier = Modifier.scaffoldPadding(it)
+                )
         }
     }
 }
@@ -122,14 +127,14 @@ fun TransactionProgressView(state: TransactionProgressState) {
 fun SuccessfulTransactionBottomBar(state: SuccessfulTransactionState) {
     ZashiButton(
         state =
-        ButtonState(
-            text = stringRes(R.string.send_confirmation_success_btn_close),
-            onClick = state.onCloseClick
-        ),
+            ButtonState(
+                text = stringRes(R.string.send_confirmation_success_btn_close),
+                onClick = state.onCloseClick
+            ),
         modifier =
-        Modifier
-            .fillMaxWidth()
-            .padding(horizontal = ZashiDimensions.Spacing.spacing2xl)
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = ZashiDimensions.Spacing.spacing2xl)
     )
 }
 
@@ -137,28 +142,28 @@ fun SuccessfulTransactionBottomBar(state: SuccessfulTransactionState) {
 fun ColumnScope.FailureTransactionBottomBar(state: FailureTransactionState) {
     ZashiButton(
         state =
-        ButtonState(
-            text = stringRes(R.string.send_confirmation_failure_close_button),
-            onClick = state.onCloseClick
-        ),
+            ButtonState(
+                text = stringRes(R.string.send_confirmation_failure_close_button),
+                onClick = state.onCloseClick
+            ),
         modifier =
-        Modifier
-            .fillMaxWidth()
-            .padding(horizontal = ZashiDimensions.Spacing.spacing2xl)
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = ZashiDimensions.Spacing.spacing2xl)
     )
 
     Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingLg))
 
     ZashiButton(
         state =
-        ButtonState(
-            text = stringRes(R.string.send_confirmation_failure_report_button),
-            onClick = state.onReportClick
-        ),
+            ButtonState(
+                text = stringRes(R.string.send_confirmation_failure_report_button),
+                onClick = state.onReportClick
+            ),
         modifier =
-        Modifier
-            .fillMaxWidth()
-            .padding(horizontal = ZashiDimensions.Spacing.spacing2xl),
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = ZashiDimensions.Spacing.spacing2xl),
         colors = ZashiButtonDefaults.tertiaryColors()
     )
 }
@@ -167,14 +172,14 @@ fun ColumnScope.FailureTransactionBottomBar(state: FailureTransactionState) {
 fun GrpcFailureTransactionBottomBar(state: GrpcFailureTransactionState) {
     ZashiButton(
         state =
-        ButtonState(
-            text = stringRes(R.string.send_confirmation_failure_grpc_close_button),
-            onClick = state.onCloseClick
-        ),
+            ButtonState(
+                text = stringRes(R.string.send_confirmation_failure_grpc_close_button),
+                onClick = state.onCloseClick
+            ),
         modifier =
-        Modifier
-            .fillMaxWidth()
-            .padding(horizontal = ZashiDimensions.Spacing.spacing2xl)
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = ZashiDimensions.Spacing.spacing2xl)
     )
 }
 
@@ -182,14 +187,14 @@ fun GrpcFailureTransactionBottomBar(state: GrpcFailureTransactionState) {
 fun ColumnScope.MultipleFailuresTransactionBottomBar(state: MultipleFailuresTransactionState) {
     ZashiButton(
         state =
-        ButtonState(
-            text = stringRes(R.string.send_confirmation_multiple_trx_failure_copy_button),
-            onClick = state.onCopyClick
-        ),
+            ButtonState(
+                text = stringRes(R.string.send_confirmation_multiple_trx_failure_copy_button),
+                onClick = state.onCopyClick
+            ),
         modifier =
-        Modifier
-            .fillMaxWidth()
-            .padding(horizontal = ZashiDimensions.Spacing.spacing2xl),
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = ZashiDimensions.Spacing.spacing2xl),
         colors = ZashiButtonDefaults.tertiaryColors()
     )
 
@@ -197,45 +202,48 @@ fun ColumnScope.MultipleFailuresTransactionBottomBar(state: MultipleFailuresTran
 
     ZashiButton(
         state =
-        ButtonState(
-            text = stringRes(R.string.send_confirmation_multiple_trx_failure_report_button),
-            onClick = state.onSupportClick,
-        ),
+            ButtonState(
+                text = stringRes(R.string.send_confirmation_multiple_trx_failure_report_button),
+                onClick = state.onSupportClick,
+            ),
         modifier =
-        Modifier
-            .fillMaxWidth()
-            .padding(horizontal = ZashiDimensions.Spacing.spacing2xl),
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = ZashiDimensions.Spacing.spacing2xl),
     )
 }
 
 @Composable
-fun SendingTransaction(state: SendingTransactionState, modifier: Modifier = Modifier) {
+fun SendingTransaction(
+    state: SendingTransactionState,
+    modifier: Modifier = Modifier
+) {
     ConstraintLayout(modifier = modifier.fillMaxSize()) {
         val (content, spaceTop) = createRefs()
 
         Spacer(
             modifier =
-            Modifier.constrainAs(spaceTop) {
-                height = Dimension.percent(TOP_BLANK_SPACE_RATIO)
-                width = Dimension.fillToConstraints
-                top.linkTo(parent.top)
-                bottom.linkTo(content.top)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-            }
+                Modifier.constrainAs(spaceTop) {
+                    height = Dimension.percent(TOP_BLANK_SPACE_RATIO)
+                    width = Dimension.fillToConstraints
+                    top.linkTo(parent.top)
+                    bottom.linkTo(content.top)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                }
         )
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier =
-            Modifier
-                .constrainAs(content) {
-                    top.linkTo(spaceTop.bottom)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                    width = Dimension.fillToConstraints
-                    height = Dimension.wrapContent
-                }
+                Modifier
+                    .constrainAs(content) {
+                        top.linkTo(spaceTop.bottom)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                        width = Dimension.fillToConstraints
+                        height = Dimension.wrapContent
+                    }
         ) {
             val lottieRes: Int =
                 if (isSystemInDarkTheme()) {
@@ -279,45 +287,48 @@ fun SendingTransaction(state: SendingTransactionState, modifier: Modifier = Modi
 }
 
 @Composable
-fun SuccessfulTransaction(state: SuccessfulTransactionState, modifier: Modifier = Modifier) {
+fun SuccessfulTransaction(
+    state: SuccessfulTransactionState,
+    modifier: Modifier = Modifier
+) {
     ConstraintLayout(modifier = modifier.fillMaxSize()) {
         val (content, spaceTop) = createRefs()
 
         Spacer(
             modifier =
-            Modifier.constrainAs(spaceTop) {
-                height = Dimension.percent(TOP_BLANK_SPACE_RATIO)
-                width = Dimension.fillToConstraints
-                top.linkTo(parent.top)
-                bottom.linkTo(content.top)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-            }
+                Modifier.constrainAs(spaceTop) {
+                    height = Dimension.percent(TOP_BLANK_SPACE_RATIO)
+                    width = Dimension.fillToConstraints
+                    top.linkTo(parent.top)
+                    bottom.linkTo(content.top)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                }
         )
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier =
-            Modifier
-                .constrainAs(content) {
-                    top.linkTo(spaceTop.bottom)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                    width = Dimension.fillToConstraints
-                    height = Dimension.wrapContent
-                }
+                Modifier
+                    .constrainAs(content) {
+                        top.linkTo(spaceTop.bottom)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                        width = Dimension.fillToConstraints
+                        height = Dimension.wrapContent
+                    }
         ) {
             Image(
                 painter =
-                painterResource(
-                    id =
-                    provideRandomResourceFrom(
-                        listOf(
-                            R.drawable.ic_fist_punch,
-                            R.drawable.ic_face_star
-                        )
-                    )
-                ),
+                    painterResource(
+                        id =
+                            provideRandomResourceFrom(
+                                listOf(
+                                    R.drawable.ic_fist_punch,
+                                    R.drawable.ic_face_star
+                                )
+                            )
+                    ),
                 contentDescription = null
             )
 
@@ -343,12 +354,12 @@ fun SuccessfulTransaction(state: SuccessfulTransactionState, modifier: Modifier 
 
             ZashiButton(
                 state =
-                ButtonState(
-                    text = stringRes(R.string.send_confirmation_success_view_trx),
-                    onClick = state.onViewTransactionClick,
-                ),
+                    ButtonState(
+                        text = stringRes(R.string.send_confirmation_success_view_trx),
+                        onClick = state.onViewTransactionClick,
+                    ),
                 modifier =
-                Modifier.wrapContentWidth(),
+                    Modifier.wrapContentWidth(),
                 colors = ZashiButtonDefaults.tertiaryColors()
             )
         }
@@ -356,46 +367,49 @@ fun SuccessfulTransaction(state: SuccessfulTransactionState, modifier: Modifier 
 }
 
 @Composable
-fun FailureTransaction(state: FailureTransactionState, modifier: Modifier = Modifier) {
+fun FailureTransaction(
+    state: FailureTransactionState,
+    modifier: Modifier = Modifier
+) {
     ConstraintLayout(modifier = modifier.fillMaxSize()) {
         val (content, spaceTop) = createRefs()
 
         Spacer(
             modifier =
-            Modifier.constrainAs(spaceTop) {
-                height = Dimension.percent(TOP_BLANK_SPACE_RATIO)
-                width = Dimension.fillToConstraints
-                top.linkTo(parent.top)
-                bottom.linkTo(content.top)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-            }
+                Modifier.constrainAs(spaceTop) {
+                    height = Dimension.percent(TOP_BLANK_SPACE_RATIO)
+                    width = Dimension.fillToConstraints
+                    top.linkTo(parent.top)
+                    bottom.linkTo(content.top)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                }
         )
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier =
-            Modifier
-                .constrainAs(content) {
-                    top.linkTo(spaceTop.bottom)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                    width = Dimension.fillToConstraints
-                    height = Dimension.wrapContent
-                }
+                Modifier
+                    .constrainAs(content) {
+                        top.linkTo(spaceTop.bottom)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                        width = Dimension.fillToConstraints
+                        height = Dimension.wrapContent
+                    }
         ) {
             Image(
                 painter =
-                painterResource(
-                    id =
-                    provideRandomResourceFrom(
-                        listOf(
-                            R.drawable.ic_skull,
-                            R.drawable.ic_cloud_eyes,
-                            R.drawable.ic_face_horns
-                        )
-                    )
-                ),
+                    painterResource(
+                        id =
+                            provideRandomResourceFrom(
+                                listOf(
+                                    R.drawable.ic_skull,
+                                    R.drawable.ic_cloud_eyes,
+                                    R.drawable.ic_face_horns
+                                )
+                            )
+                    ),
                 contentDescription = null
             )
 
@@ -421,12 +435,12 @@ fun FailureTransaction(state: FailureTransactionState, modifier: Modifier = Modi
 
             ZashiButton(
                 state =
-                ButtonState(
-                    text = stringRes(R.string.send_confirmation_failure_view_trx),
-                    onClick = state.onViewTransactionClick,
-                ),
+                    ButtonState(
+                        text = stringRes(R.string.send_confirmation_failure_view_trx),
+                        onClick = state.onViewTransactionClick,
+                    ),
                 modifier =
-                Modifier.wrapContentWidth(),
+                    Modifier.wrapContentWidth(),
                 colors = ZashiButtonDefaults.tertiaryColors()
             )
         }
@@ -434,44 +448,44 @@ fun FailureTransaction(state: FailureTransactionState, modifier: Modifier = Modi
 }
 
 @Composable
-fun GrpcFailureTransaction(state: GrpcFailureTransactionState, modifier: Modifier = Modifier) {
+fun GrpcFailureTransaction(modifier: Modifier = Modifier) {
     ConstraintLayout(modifier = modifier.fillMaxSize()) {
         val (content, spaceTop) = createRefs()
 
         Spacer(
             modifier =
-            Modifier.constrainAs(spaceTop) {
-                height = Dimension.percent(TOP_BLANK_SPACE_RATIO)
-                width = Dimension.fillToConstraints
-                top.linkTo(parent.top)
-                bottom.linkTo(content.top)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-            }
+                Modifier.constrainAs(spaceTop) {
+                    height = Dimension.percent(TOP_BLANK_SPACE_RATIO)
+                    width = Dimension.fillToConstraints
+                    top.linkTo(parent.top)
+                    bottom.linkTo(content.top)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                }
         )
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier =
-            Modifier
-                .constrainAs(content) {
-                    top.linkTo(spaceTop.bottom)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                    width = Dimension.fillToConstraints
-                    height = Dimension.wrapContent
-                }
+                Modifier
+                    .constrainAs(content) {
+                        top.linkTo(spaceTop.bottom)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                        width = Dimension.fillToConstraints
+                        height = Dimension.wrapContent
+                    }
         ) {
             Image(
                 painter =
-                painterResource(
-                    provideRandomResourceFrom(
-                        listOf(
-                            R.drawable.ic_frame,
-                            R.drawable.ic_phone
+                    painterResource(
+                        provideRandomResourceFrom(
+                            listOf(
+                                R.drawable.ic_frame,
+                                R.drawable.ic_phone
+                            )
                         )
-                    )
-                ),
+                    ),
                 contentDescription = null
             )
 
@@ -497,7 +511,10 @@ fun GrpcFailureTransaction(state: GrpcFailureTransactionState, modifier: Modifie
 }
 
 @Composable
-fun MultipleFailureTransaction(state: MultipleFailuresTransactionState, modifier: Modifier = Modifier) {
+fun MultipleFailureTransaction(
+    state: MultipleFailuresTransactionState,
+    modifier: Modifier = Modifier
+) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier,
@@ -561,16 +578,16 @@ fun MultipleFailureTransaction(state: MultipleFailuresTransactionState, modifier
                         style = ZashiTypography.textMd,
                         color = ZashiColors.Inputs.Default.text,
                         modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .background(
-                                shape = RoundedCornerShape(ZashiDimensions.Radius.radiusIg),
-                                color = ZashiColors.Inputs.Default.bg
-                            )
-                            .padding(
-                                horizontal = ZashiDimensions.Spacing.spacingLg,
-                                vertical = ZashiDimensions.Spacing.spacingMd
-                            )
+                            Modifier
+                                .fillMaxWidth()
+                                .background(
+                                    shape = RoundedCornerShape(ZashiDimensions.Radius.radiusIg),
+                                    color = ZashiColors.Inputs.Default.bg
+                                )
+                                .padding(
+                                    horizontal = ZashiDimensions.Spacing.spacingLg,
+                                    vertical = ZashiDimensions.Spacing.spacingMd
+                                )
                     )
                     Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingMd))
                 }
@@ -585,77 +602,88 @@ private const val TOP_BLANK_SPACE_RATIO = 0.35f
 
 @PreviewScreens
 @Composable
-private fun SendingPreview() = ZcashTheme {
-    TransactionProgressView(
-        state = SendingTransactionState(
-            address = "address",
-            onBack = {}
+private fun SendingPreview() =
+    ZcashTheme {
+        TransactionProgressView(
+            state =
+                SendingTransactionState(
+                    address = "address",
+                    onBack = {}
+                )
         )
-    )
-}
+    }
 
 @PreviewScreens
 @Composable
-private fun SuccessPreview() = ZcashTheme {
-    TransactionProgressView(
-        state = SuccessfulTransactionState(
-            address = "address",
-            onViewTransactionClick = {},
-            onCloseClick = {},
-            onBack = {}
+private fun SuccessPreview() =
+    ZcashTheme {
+        TransactionProgressView(
+            state =
+                SuccessfulTransactionState(
+                    address = "address",
+                    onViewTransactionClick = {},
+                    onCloseClick = {},
+                    onBack = {}
+                )
         )
-    )
-}
+    }
 
 @PreviewScreens
 @Composable
-private fun FailurePreview() = ZcashTheme {
-    TransactionProgressView(
-        state = FailureTransactionState(
-            onViewTransactionClick = {},
-            onCloseClick = {},
-            onReportClick = {},
-            onBack = {}
+private fun FailurePreview() =
+    ZcashTheme {
+        TransactionProgressView(
+            state =
+                FailureTransactionState(
+                    onViewTransactionClick = {},
+                    onCloseClick = {},
+                    onReportClick = {},
+                    onBack = {}
+                )
         )
-    )
-}
+    }
 
 @PreviewScreens
 @Composable
-private fun GrpcFailurePreview() = ZcashTheme {
-    TransactionProgressView(
-        state = GrpcFailureTransactionState(
-            onCloseClick = {},
-            onBack = {}
+private fun GrpcFailurePreview() =
+    ZcashTheme {
+        TransactionProgressView(
+            state =
+                GrpcFailureTransactionState(
+                    onCloseClick = {},
+                    onBack = {}
+                )
         )
-    )
-}
+    }
 
 @PreviewScreens
 @Composable
-private fun MultipleFailuresPreview() = ZcashTheme {
-    TransactionProgressView(
-        state = MultipleFailuresTransactionState(
-            transactionIds = listOf("id", "id", "id"),
-            onCopyClick = {},
-            onSupportClick = {},
-            onBack = {},
-            showBackButton = false
+private fun MultipleFailuresPreview() =
+    ZcashTheme {
+        TransactionProgressView(
+            state =
+                MultipleFailuresTransactionState(
+                    transactionIds = listOf("id", "id", "id"),
+                    onCopyClick = {},
+                    onSupportClick = {},
+                    onBack = {},
+                    showBackButton = false
+                )
         )
-    )
-}
+    }
 
 @PreviewScreens
 @Composable
-private fun MultipleFailuresWithCloseButtonPreview() = ZcashTheme {
-    TransactionProgressView(
-        state = MultipleFailuresTransactionState(
-            transactionIds = listOf("id", "id", "id"),
-            onCopyClick = {},
-            onSupportClick = {},
-            onBack = {},
-            showBackButton = true
+private fun MultipleFailuresWithCloseButtonPreview() =
+    ZcashTheme {
+        TransactionProgressView(
+            state =
+                MultipleFailuresTransactionState(
+                    transactionIds = listOf("id", "id", "id"),
+                    onCopyClick = {},
+                    onSupportClick = {},
+                    onBack = {},
+                    showBackButton = true
+                )
         )
-    )
-}
-
+    }

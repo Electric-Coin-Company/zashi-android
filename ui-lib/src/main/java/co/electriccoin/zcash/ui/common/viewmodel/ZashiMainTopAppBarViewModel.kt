@@ -34,36 +34,45 @@ class ZashiMainTopAppBarViewModel(
 ) : ViewModel() {
     private val isHideBalances: StateFlow<Boolean?> = booleanStateFlow(StandardPreferenceKeys.IS_HIDE_BALANCES)
 
-    val state = combine(walletRepository.currentAccount, isHideBalances) { currentAccount, isHideBalances ->
-        createState(currentAccount, isHideBalances)
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-        initialValue = createState(
-            currentAccount = null,
-            isHideBalances = null
+    val state =
+        combine(walletRepository.currentAccount, isHideBalances) { currentAccount, isHideBalances ->
+            createState(currentAccount, isHideBalances)
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+            initialValue =
+                createState(
+                    currentAccount = null,
+                    isHideBalances = null
+                )
         )
-    )
 
-    private fun createState(currentAccount: WalletAccount?, isHideBalances: Boolean?) =
-        ZashiMainTopAppBarState(
-            accountType = when (currentAccount) {
+    private fun createState(
+        currentAccount: WalletAccount?,
+        isHideBalances: Boolean?
+    ) = ZashiMainTopAppBarState(
+        accountType =
+            when (currentAccount) {
                 is KeystoneAccount -> ZashiMainTopAppBarState.AccountType.KEYSTONE
                 is ZashiAccount -> ZashiMainTopAppBarState.AccountType.ZASHI
                 null -> ZashiMainTopAppBarState.AccountType.ZASHI
             },
-            balanceVisibilityButton =
+        balanceVisibilityButton =
             IconButtonState(
-                icon = if (isHideBalances == true) R.drawable.ic_app_bar_balances_hide else R.drawable.ic_app_bar_balances_hide,
+                icon = if (isHideBalances == true) {
+                    R.drawable.ic_app_bar_balances_hide
+                } else {
+                    R.drawable.ic_app_bar_balances_hide
+                },
                 onClick = ::onShowOrHideBalancesClicked
             ),
-            settingsButton =
+        settingsButton =
             IconButtonState(
                 icon = R.drawable.ic_app_bar_settings,
                 onClick = ::onSettingsClicked
             ),
-            onAccountTypeClick = ::onAccountTypeClicked
-        )
+        onAccountTypeClick = ::onAccountTypeClicked
+    )
 
     private fun onAccountTypeClicked() = navigationRouter.forward(AccountList)
 

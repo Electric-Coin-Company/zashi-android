@@ -37,7 +37,8 @@ class SendEmailUseCase(
                 is SubmitResult.SimpleTrxFailure -> {
                     EmailUtil.formatMessage(
                         body = submitResult.toErrorMessage(),
-                        supportInfo = submitResult.toErrorStacktrace())
+                        supportInfo = submitResult.toErrorStacktrace()
+                    )
                 }
                 is SubmitResult.MultipleTrxFailure -> {
                     EmailUtil.formatMessage(

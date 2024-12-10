@@ -36,7 +36,10 @@ import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.stringRes
 
 @Composable
-fun ZashiExpandedCheckboxListItem(state: ZashiExpandedCheckboxListItemState, modifier: Modifier = Modifier) {
+fun ZashiExpandedCheckboxListItem(
+    state: ZashiExpandedCheckboxListItemState,
+    modifier: Modifier = Modifier
+) {
     ExpandedBaseListItem(
         modifier = modifier,
         contentPadding = PaddingValues(start = 16.dp, top = 12.dp, end = 16.dp, bottom = 16.dp),
@@ -91,14 +94,15 @@ fun ZashiExpandedCheckboxListItem(state: ZashiExpandedCheckboxListItemState, mod
                 }
             }
         },
-        border = BorderStroke(
-            1.dp,
-            if (state.isSelected) {
-                ZashiColors.Surfaces.bgAlt
-            } else {
-                ZashiColors.Surfaces.strokeSecondary
-            }
-        ),
+        border =
+            BorderStroke(
+                1.dp,
+                if (state.isSelected) {
+                    ZashiColors.Surfaces.bgAlt
+                } else {
+                    ZashiColors.Surfaces.strokeSecondary
+                }
+            ),
         onClick = state.onClick,
         shape = RoundedCornerShape(16.dp),
     )
@@ -106,14 +110,14 @@ fun ZashiExpandedCheckboxListItem(state: ZashiExpandedCheckboxListItemState, mod
 
 @Composable
 private fun ExpandedBaseListItem(
+    shape: Shape,
+    contentPadding: PaddingValues,
+    onClick: (() -> Unit)?,
     leading: @Composable (Modifier) -> Unit,
     content: @Composable (Modifier) -> Unit,
     trailing: @Composable (Modifier) -> Unit,
     below: @Composable ColumnScope.(Modifier) -> Unit,
-    onClick: (() -> Unit)?,
-    contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
-    shape: Shape,
     border: BorderStroke? = null,
 ) {
     Surface(
@@ -125,8 +129,9 @@ private fun ExpandedBaseListItem(
         tonalElevation = 0.dp,
     ) {
         Column(
-            modifier = clickableModifier(remember { MutableInteractionSource() }, onClick)
-                .padding(contentPadding)
+            modifier =
+                clickableModifier(remember { MutableInteractionSource() }, onClick)
+                    .padding(contentPadding)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically
@@ -149,7 +154,7 @@ data class ZashiExpandedCheckboxListItemState(
     val isSelected: Boolean,
     val info: ZashiExpandedCheckboxRowState?,
     val onClick: () -> Unit
-): CheckboxListItemState
+) : CheckboxListItemState
 
 data class ZashiExpandedCheckboxRowState(
     val title: StringResource,
@@ -158,61 +163,68 @@ data class ZashiExpandedCheckboxRowState(
 
 @Composable
 @PreviewScreens
-fun ExpandedPreviewChecked() = ZcashTheme {
-    BlankSurface {
-        ZashiExpandedCheckboxListItem(
-            modifier = Modifier.fillMaxWidth(),
-            state = ZashiExpandedCheckboxListItemState(
-                title = stringRes("title"),
-                subtitle = stringRes("subtitle"),
-                icon = R.drawable.ic_radio_button_checked,
-                isSelected = true,
-                info = ZashiExpandedCheckboxRowState(
-                    title = stringRes("title"),
-                    subtitle = stringRes("subtitle")
-                ),
-                onClick = {}
+private fun ExpandedPreviewChecked() =
+    ZcashTheme {
+        BlankSurface {
+            ZashiExpandedCheckboxListItem(
+                modifier = Modifier.fillMaxWidth(),
+                state =
+                    ZashiExpandedCheckboxListItemState(
+                        title = stringRes("title"),
+                        subtitle = stringRes("subtitle"),
+                        icon = R.drawable.ic_radio_button_checked,
+                        isSelected = true,
+                        info =
+                            ZashiExpandedCheckboxRowState(
+                                title = stringRes("title"),
+                                subtitle = stringRes("subtitle")
+                            ),
+                        onClick = {}
+                    )
             )
-        )
+        }
     }
-}
 
 @Composable
 @PreviewScreens
-fun PreviewWithNoInfo() = ZcashTheme {
-    BlankSurface {
-        ZashiExpandedCheckboxListItem(
-            modifier = Modifier.fillMaxWidth(),
-            state = ZashiExpandedCheckboxListItemState(
-                title = stringRes("title"),
-                subtitle = stringRes("subtitle"),
-                icon = R.drawable.ic_radio_button_checked,
-                isSelected = true,
-                info = null,
-                onClick = {}
+private fun PreviewWithNoInfo() =
+    ZcashTheme {
+        BlankSurface {
+            ZashiExpandedCheckboxListItem(
+                modifier = Modifier.fillMaxWidth(),
+                state =
+                    ZashiExpandedCheckboxListItemState(
+                        title = stringRes("title"),
+                        subtitle = stringRes("subtitle"),
+                        icon = R.drawable.ic_radio_button_checked,
+                        isSelected = true,
+                        info = null,
+                        onClick = {}
+                    )
             )
-        )
+        }
     }
-}
-
 
 @Composable
 @PreviewScreens
-fun ExpandedPreviewUnchecked() = ZcashTheme {
-    BlankSurface {
-        ZashiExpandedCheckboxListItem(
-            modifier = Modifier.fillMaxWidth(),
-            state = ZashiExpandedCheckboxListItemState(
-                title = stringRes("title"),
-                subtitle = stringRes("subtitle"),
-                icon = R.drawable.ic_radio_button_checked,
-                isSelected = false,
-                info = ZashiExpandedCheckboxRowState(
-                    title = stringRes("title"),
-                    subtitle = stringRes("subtitle")
-                ),
-                onClick = {}
+private fun ExpandedPreviewUnchecked() =
+    ZcashTheme {
+        BlankSurface {
+            ZashiExpandedCheckboxListItem(
+                modifier = Modifier.fillMaxWidth(),
+                state =
+                    ZashiExpandedCheckboxListItemState(
+                        title = stringRes("title"),
+                        subtitle = stringRes("subtitle"),
+                        icon = R.drawable.ic_radio_button_checked,
+                        isSelected = false,
+                        info =
+                            ZashiExpandedCheckboxRowState(
+                                title = stringRes("title"),
+                                subtitle = stringRes("subtitle")
+                            ),
+                        onClick = {}
+                    )
             )
-        )
+        }
     }
-}

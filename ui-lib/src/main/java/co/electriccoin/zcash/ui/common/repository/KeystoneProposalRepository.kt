@@ -60,77 +60,83 @@ class KeystoneProposalRepositoryImpl(
     private val accountDataSource: AccountDataSource,
     private val zashiSpendingKeyDataSource: ZashiSpendingKeyDataSource
 ) : KeystoneProposalRepository {
-
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     override val completeZecSend = MutableStateFlow<CompleteZecSend?>(null)
     override val submitState = MutableStateFlow<SubmitProposalState?>(null)
 
-    override suspend fun createProposal(zecSend: ZecSend): Boolean = withContext(NonCancellable) {
-        val result = runCatching {
-            val newProposal = synchronizerProvider.getSynchronizer().proposeSend(
-                account = accountDataSource.getKeystoneAccount().sdkAccount,
-                send = zecSend
-            )
+    override suspend fun createProposal(zecSend: ZecSend): Boolean =
+        withContext(NonCancellable) {
+            val result =
+                runCatching {
+                    val newProposal =
+                        synchronizerProvider.getSynchronizer().proposeSend(
+                            account = accountDataSource.getKeystoneAccount().sdkAccount,
+                            send = zecSend
+                        )
 
-            RegularZecSend(
-                destination = zecSend.destination,
-                amount = zecSend.amount,
-                memo = zecSend.memo,
-                proposal = newProposal,
-            )
-        }.getOrNull()
+                    RegularZecSend(
+                        destination = zecSend.destination,
+                        amount = zecSend.amount,
+                        memo = zecSend.memo,
+                        proposal = newProposal,
+                    )
+                }.getOrNull()
 
-        completeZecSend.update { result }
-        result != null
-    }
-
-    override suspend fun createZip321Proposal(zip321Uri: String): Boolean = withContext(NonCancellable) {
-        val synchronizer = synchronizerProvider.getSynchronizer()
-        val account = accountDataSource.getSelectedAccount()
-
-        val request =
-            runCatching {
-                // At this point there should by only a valid Zcash address coming
-                ZIP321.request(zip321Uri, null)
-            }.onFailure {
-                Twig.error(it) { "Failed to validate address" }
-            }.getOrNull()
-        val payment =
-            when (request) {
-                // We support only one payment currently
-                is ZIP321.ParserResult.Request -> {
-                    request.paymentRequest.payments[0]
-                }
-
-                else -> {
-                    completeZecSend.update { null }
-                    return@withContext false
-                }
-            }
-        val proposal = runCatching {
-            synchronizer.proposeFulfillingPaymentUri(account.sdkAccount, zip321Uri)
-        }.getOrNull()
-
-        if (proposal == null) {
-            completeZecSend.update { null }
-            return@withContext false
+            completeZecSend.update { result }
+            result != null
         }
 
-        val result = runCatching {
-            Zip321ZecSend(
-                destination = synchronizer
-                    .validateAddress(payment.recipientAddress.value)
-                    .toWalletAddress(payment.recipientAddress.value),
-                amount = payment.nonNegativeAmount.value.convertZecToZatoshi(),
-                memo = Memo(payment.memo?.let { String(it.data, Charsets.UTF_8) } ?: ""),
-                proposal = proposal,
-            )
-        }.getOrNull()
+    override suspend fun createZip321Proposal(zip321Uri: String): Boolean =
+        withContext(NonCancellable) {
+            val synchronizer = synchronizerProvider.getSynchronizer()
+            val account = accountDataSource.getSelectedAccount()
 
-        completeZecSend.update { result }
-        return@withContext result != null
-    }
+            val request =
+                runCatching {
+                    // At this point there should by only a valid Zcash address coming
+                    ZIP321.request(zip321Uri, null)
+                }.onFailure {
+                    Twig.error(it) { "Failed to validate address" }
+                }.getOrNull()
+            val payment =
+                when (request) {
+                    // We support only one payment currently
+                    is ZIP321.ParserResult.Request -> {
+                        request.paymentRequest.payments[0]
+                    }
+
+                    else -> {
+                        completeZecSend.update { null }
+                        return@withContext false
+                    }
+                }
+            val proposal =
+                runCatching {
+                    synchronizer.proposeFulfillingPaymentUri(account.sdkAccount, zip321Uri)
+                }.getOrNull()
+
+            if (proposal == null) {
+                completeZecSend.update { null }
+                return@withContext false
+            }
+
+            val result =
+                runCatching {
+                    Zip321ZecSend(
+                        destination =
+                            synchronizer
+                                .validateAddress(payment.recipientAddress.value)
+                                .toWalletAddress(payment.recipientAddress.value),
+                        amount = payment.nonNegativeAmount.value.convertZecToZatoshi(),
+                        memo = Memo(payment.memo?.let { String(it.data, Charsets.UTF_8) } ?: ""),
+                        proposal = proposal,
+                    )
+                }.getOrNull()
+
+            completeZecSend.update { result }
+            return@withContext result != null
+        }
 
     override suspend fun getCompleteZecSend(): CompleteZecSend = completeZecSend.filterNotNull().first()
 
@@ -162,9 +168,7 @@ class KeystoneProposalRepositoryImpl(
         submitState.update { null }
     }
 
-    private suspend fun submitTransaction(
-        proposal: Proposal
-    ): SubmitResult {
+    private suspend fun submitTransaction(proposal: Proposal): SubmitResult {
         val synchronizer = synchronizerProvider.getSdkSynchronizer()
 
         val submitResult =

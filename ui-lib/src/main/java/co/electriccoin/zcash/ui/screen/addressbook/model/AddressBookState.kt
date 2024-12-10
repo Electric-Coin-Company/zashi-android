@@ -14,21 +14,20 @@ data class AddressBookState(
     val manualButton: ButtonState
 )
 
-sealed interface AddressBookItem: Itemizable {
-
-    data class Title(val title: StringResource): AddressBookItem {
+sealed interface AddressBookItem : Itemizable {
+    data class Title(val title: StringResource) : AddressBookItem {
         override val contentType = "Title"
         override val key = Empty.contentType
     }
 
     data class Contact(
         val state: ZashiContactListItemState
-    ): AddressBookItem {
+    ) : AddressBookItem {
         override val contentType = "Contact"
         override val key = Empty.contentType
     }
 
-    data object Empty: AddressBookItem {
+    data object Empty : AddressBookItem {
         override val contentType = "Empty"
         override val key = contentType
     }

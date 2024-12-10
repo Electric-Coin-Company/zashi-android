@@ -16,7 +16,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.design.R
-
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.ZashiButton
@@ -75,21 +74,26 @@ private fun Content(state: SelectKeystoneAccountState) {
             }
 
             when (item) {
-                is ZashiCheckboxListItemState -> ZashiCheckboxListItem(
-                    state = item,
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp),
-                )
-                is ZashiExpandedCheckboxListItemState -> ZashiExpandedCheckboxListItem(
-                    state = item,
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp),
-                )
+                is ZashiCheckboxListItemState ->
+                    ZashiCheckboxListItem(
+                        state = item,
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp),
+                    )
+                is ZashiExpandedCheckboxListItemState ->
+                    ZashiExpandedCheckboxListItem(
+                        state = item,
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp),
+                    )
             }
         }
     }
 }
 
 @Composable
-private fun BottomSection(state: SelectKeystoneAccountState, modifier: Modifier = Modifier) {
+private fun BottomSection(
+    state: SelectKeystoneAccountState,
+    modifier: Modifier = Modifier
+) {
     Column(
         modifier
     ) {
@@ -106,7 +110,10 @@ private fun BottomSection(state: SelectKeystoneAccountState, modifier: Modifier 
 }
 
 @Composable
-private fun HeaderSection(state: SelectKeystoneAccountState, modifier: Modifier = Modifier) {
+private fun HeaderSection(
+    state: SelectKeystoneAccountState,
+    modifier: Modifier = Modifier
+) {
     Column(modifier) {
         Image(
             modifier = Modifier.height(32.dp),
@@ -134,26 +141,32 @@ private fun HeaderSection(state: SelectKeystoneAccountState, modifier: Modifier 
 private fun SinglePreview() =
     ZcashTheme {
         SelectKeystoneAccountView(
-            state = SelectKeystoneAccountState(
-                onBackClick = {},
-                title = stringRes("Confirm Account to Access"),
-                subtitle = stringRes("Select the wallet you'd like to connect to proceed. Once connected, you’ll be able to wirelessly sign transactions with your hardware wallet."),
-                items = listOf(
-                    ZashiExpandedCheckboxListItemState(
-                        title = stringRes("title"),
-                        subtitle = stringRes("subtitle"),
-                        icon = R.drawable.ic_item_zashi,
-                        isSelected = false,
-                        info = ZashiExpandedCheckboxRowState(
-                            title = stringRes("title"),
-                            subtitle = stringRes("subtitle")
+            state =
+                SelectKeystoneAccountState(
+                    onBackClick = {},
+                    title = stringRes("Confirm Account to Access"),
+                    subtitle =
+                        stringRes(
+                            "Select the wallet you'd like to connect to proceed. Once connected, you’ll be able to wirelessly sign transactions with your hardware wallet."
                         ),
-                        onClick = {}
-                    )
-                ),
-                positiveButtonState = ButtonState(stringRes("Unlock")),
-                negativeButtonState = ButtonState(stringRes("Forget this device"))
-            )
+                    items =
+                        listOf(
+                            ZashiExpandedCheckboxListItemState(
+                                title = stringRes("title"),
+                                subtitle = stringRes("subtitle"),
+                                icon = R.drawable.ic_item_zashi,
+                                isSelected = false,
+                                info =
+                                    ZashiExpandedCheckboxRowState(
+                                        title = stringRes("title"),
+                                        subtitle = stringRes("subtitle")
+                                    ),
+                                onClick = {}
+                            )
+                        ),
+                    positiveButtonState = ButtonState(stringRes("Unlock")),
+                    negativeButtonState = ButtonState(stringRes("Forget this device"))
+                )
         )
     }
 
@@ -162,29 +175,33 @@ private fun SinglePreview() =
 private fun MultiplePreview() =
     ZcashTheme {
         SelectKeystoneAccountView(
-            state = SelectKeystoneAccountState(
-                onBackClick = {},
-                title = stringRes("Confirm Account to Access"),
-                subtitle = stringRes("Select the wallet you'd like to connect to proceed. Once connected, you’ll be able to wirelessly sign transactions with your hardware wallet."),
-                items = listOf(
-                    ZashiCheckboxListItemState(
-                        title = stringRes("title"),
-                        subtitle = stringRes("subtitle"),
-                        icon = imageRes("1"),
-                        isSelected = true,
-                        onClick = {}
-                    ),
-                    ZashiCheckboxListItemState(
-                        title = stringRes("title"),
-                        subtitle = stringRes("subtitle"),
-                        icon = imageRes("2"),
-                        isSelected = false,
-                        onClick = {}
-                    )
-                ),
-                positiveButtonState = ButtonState(stringRes("Unlock")),
-                negativeButtonState = ButtonState(stringRes("Forget this device"))
-            )
+            state =
+                SelectKeystoneAccountState(
+                    onBackClick = {},
+                    title = stringRes("Confirm Account to Access"),
+                    subtitle =
+                        stringRes(
+                            "Select the wallet you'd like to connect to proceed. Once connected, you’ll be able to wirelessly sign transactions with your hardware wallet."
+                        ),
+                    items =
+                        listOf(
+                            ZashiCheckboxListItemState(
+                                title = stringRes("title"),
+                                subtitle = stringRes("subtitle"),
+                                icon = imageRes("1"),
+                                isSelected = true,
+                                onClick = {}
+                            ),
+                            ZashiCheckboxListItemState(
+                                title = stringRes("title"),
+                                subtitle = stringRes("subtitle"),
+                                icon = imageRes("2"),
+                                isSelected = false,
+                                onClick = {}
+                            )
+                        ),
+                    positiveButtonState = ButtonState(stringRes("Unlock")),
+                    negativeButtonState = ButtonState(stringRes("Forget this device"))
+                )
         )
     }
-

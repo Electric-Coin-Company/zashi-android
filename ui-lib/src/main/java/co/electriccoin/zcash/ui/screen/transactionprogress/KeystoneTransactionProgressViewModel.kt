@@ -27,28 +27,28 @@ class KeystoneTransactionProgressViewModel(
     private val copyToClipboardUseCase: CopyToClipboardUseCase,
     private val sendEmailUseCase: SendEmailUseCase
 ) : ViewModel() {
-
     private val supportContacted = MutableStateFlow(false)
 
     val state: StateFlow<TransactionProgressState?> =
         combine(keystoneProposalRepository.submitState, supportContacted) { submitState, supportContacted ->
             when (submitState) {
                 null, SubmitProposalState.Submitting -> createSendingTransactionState()
-                is SubmitProposalState.Result -> when (val result = submitState.submitResult) {
-                    is SubmitResult.MultipleTrxFailure ->
-                        createMultipleFailuresTransactionState(supportContacted, result)
+                is SubmitProposalState.Result ->
+                    when (val result = submitState.submitResult) {
+                        is SubmitResult.MultipleTrxFailure ->
+                            createMultipleFailuresTransactionState(supportContacted, result)
 
-                    is SubmitResult.SimpleTrxFailure.SimpleTrxFailureGrpc ->
-                        createGrpcFailureTransactionState()
+                        is SubmitResult.SimpleTrxFailure.SimpleTrxFailureGrpc ->
+                            createGrpcFailureTransactionState()
 
-                    is SubmitResult.SimpleTrxFailure.SimpleTrxFailureOther ->
-                        createFailureTransactionState(result)
+                        is SubmitResult.SimpleTrxFailure.SimpleTrxFailureOther ->
+                            createFailureTransactionState(result)
 
-                    is SubmitResult.SimpleTrxFailure.SimpleTrxFailureSubmit ->
-                        createFailureTransactionState(result)
+                        is SubmitResult.SimpleTrxFailure.SimpleTrxFailureSubmit ->
+                            createFailureTransactionState(result)
 
-                    SubmitResult.Success -> createSuccessfulTransactionState()
-                }
+                        SubmitResult.Success -> createSuccessfulTransactionState()
+                    }
             }
         }.stateIn(
             scope = viewModelScope,
@@ -82,10 +82,11 @@ class KeystoneTransactionProgressViewModel(
         transactionIds = result.results.map { it.txIdString() }
     )
 
-    private fun createGrpcFailureTransactionState() = GrpcFailureTransactionState(
-        onBack = ::onBackToHomepageAndClearDataRequested,
-        onCloseClick = ::onBackToHomepageAndClearDataRequested
-    )
+    private fun createGrpcFailureTransactionState() =
+        GrpcFailureTransactionState(
+            onBack = ::onBackToHomepageAndClearDataRequested,
+            onCloseClick = ::onBackToHomepageAndClearDataRequested
+        )
 
     private suspend fun createSuccessfulTransactionState() =
         SuccessfulTransactionState(
@@ -95,28 +96,30 @@ class KeystoneTransactionProgressViewModel(
             address = getAddressAbbreviated()
         )
 
-    private fun createFailureTransactionState(result: SubmitResult.SimpleTrxFailure) = FailureTransactionState(
-        onBack = {
-            navigationRouter.back()
-        },
-        onCloseClick = {
-            navigationRouter.back()
-        },
-        onViewTransactionClick = ::onBackToHomepageAndClearDataRequested,
-        onReportClick = {
-            viewModelScope.launch {
-                sendEmailUseCase(result)
-                this@KeystoneTransactionProgressViewModel.supportContacted.update { true }
+    private fun createFailureTransactionState(result: SubmitResult.SimpleTrxFailure) =
+        FailureTransactionState(
+            onBack = {
+                navigationRouter.back()
+            },
+            onCloseClick = {
+                navigationRouter.back()
+            },
+            onViewTransactionClick = ::onBackToHomepageAndClearDataRequested,
+            onReportClick = {
+                viewModelScope.launch {
+                    sendEmailUseCase(result)
+                    this@KeystoneTransactionProgressViewModel.supportContacted.update { true }
+                }
             }
-        }
-    )
+        )
 
-    private suspend fun createSendingTransactionState() = SendingTransactionState(
-        onBack = {
-            // do nothing
-        },
-        address = getAddressAbbreviated()
-    )
+    private suspend fun createSendingTransactionState() =
+        SendingTransactionState(
+            onBack = {
+                // do nothing
+            },
+            address = getAddressAbbreviated()
+        )
 
     private suspend fun getAddressAbbreviated(): String {
         return "${keystoneProposalRepository.getCompleteZecSend().destination.address.take(ADDRESS_MAX_LENGTH)}..."

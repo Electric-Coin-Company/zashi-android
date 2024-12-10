@@ -536,11 +536,11 @@ private fun ScanMainContent(
                 onOpenSettings = onOpenSettings,
                 scanState = scanState,
                 modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        horizontal = 24.dp
-                    )
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            horizontal = 24.dp
+                        )
             )
         }
     }

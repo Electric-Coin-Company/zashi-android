@@ -1,7 +1,6 @@
 package co.electriccoin.zcash.ui.common.usecase
 
 import co.electriccoin.zcash.spackle.Twig
-import com.google.gson.Gson
 import com.keystone.module.ZcashAccounts
 import com.keystone.sdk.KeystoneSDK
 import com.sparrowwallet.hummingbird.UR

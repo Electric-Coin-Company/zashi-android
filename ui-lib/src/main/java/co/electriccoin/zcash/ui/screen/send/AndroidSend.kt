@@ -13,28 +13,21 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cash.z.ecc.android.sdk.Synchronizer
-import cash.z.ecc.android.sdk.ext.convertZecToZatoshi
-import cash.z.ecc.android.sdk.model.Account
-import cash.z.ecc.android.sdk.model.Memo
 import cash.z.ecc.android.sdk.model.MonetarySeparators
-import cash.z.ecc.android.sdk.model.WalletAddress
 import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.android.sdk.model.toZecString
 import cash.z.ecc.android.sdk.type.AddressType
 import co.electriccoin.zcash.di.koinActivityViewModel
-import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.compose.BalanceState
 import co.electriccoin.zcash.ui.common.compose.LocalActivity
 import co.electriccoin.zcash.ui.common.compose.LocalNavController
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
-import co.electriccoin.zcash.ui.common.usecase.GetZashiSpendingKeyUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveClearSendUseCase
 import co.electriccoin.zcash.ui.common.viewmodel.HomeViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.ZashiMainTopAppBarViewModel
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
-import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewKeystoneTransaction
 import co.electriccoin.zcash.ui.screen.send.ext.Saver
 import co.electriccoin.zcash.ui.screen.send.model.AmountState
 import co.electriccoin.zcash.ui.screen.send.model.MemoState
@@ -42,11 +35,9 @@ import co.electriccoin.zcash.ui.screen.send.model.RecipientAddressState
 import co.electriccoin.zcash.ui.screen.send.model.SendArguments
 import co.electriccoin.zcash.ui.screen.send.model.SendStage
 import co.electriccoin.zcash.ui.screen.send.view.Send
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
-import org.zecdev.zip321.ZIP321
 import java.util.Locale
 
 @Composable
@@ -57,7 +48,6 @@ internal fun WrapSend(
     goBack: () -> Unit,
     goBalances: () -> Unit,
     goSendConfirmation: (ZecSend) -> Unit,
-    goReviewKeystoneTransaction: (ReviewKeystoneTransaction) -> Unit,
     goPaymentRequest: (ZecSend, String) -> Unit,
 ) {
     val activity = LocalActivity.current
@@ -82,10 +72,8 @@ internal fun WrapSend(
 
     WrapSend(
         balanceState = balanceState,
+        exchangeRateState = exchangeRateState,
         isHideBalances = isHideBalances,
-        sendArguments = sendArguments,
-        synchronizer = synchronizer,
-        walletSnapshot = walletSnapshot,
         goToQrScanner = goToQrScanner,
         goBack = goBack,
         goBalances = goBalances,
@@ -93,8 +81,9 @@ internal fun WrapSend(
         goPaymentRequest = goPaymentRequest,
         hasCameraFeature = hasCameraFeature,
         monetarySeparators = monetarySeparators,
-        exchangeRateState = exchangeRateState,
-        goReviewKeystoneTransaction = goReviewKeystoneTransaction
+        sendArguments = sendArguments,
+        synchronizer = synchronizer,
+        walletSnapshot = walletSnapshot
     )
 }
 
@@ -109,7 +98,6 @@ internal fun WrapSend(
     goBack: () -> Unit,
     goBalances: () -> Unit,
     goSendConfirmation: (ZecSend) -> Unit,
-    goReviewKeystoneTransaction: (ReviewKeystoneTransaction) -> Unit,
     goPaymentRequest: (ZecSend, String) -> Unit,
     hasCameraFeature: Boolean,
     monetarySeparators: MonetarySeparators,
@@ -144,8 +132,6 @@ internal fun WrapSend(
 
     val recipientAddressState by viewModel.recipientAddressState.collectAsStateWithLifecycle()
 
-    val getZashiSpendingKey = koinInject<GetZashiSpendingKeyUseCase>()
-
     val observeClearSend = koinInject<ObserveClearSendUseCase>()
 
     if (sendArguments?.recipientAddress != null) {
@@ -159,7 +145,8 @@ internal fun WrapSend(
 
     // Zip321 Uri scan result processing
     if (sendArguments?.zip321Uri != null &&
-        synchronizer != null) {
+        synchronizer != null
+    ) {
         LaunchedEffect(goPaymentRequest) {
             viewModel.onCreateZecSend321Click(
                 zip321Uri = sendArguments.zip321Uri,

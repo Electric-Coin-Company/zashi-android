@@ -32,7 +32,10 @@ import co.electriccoin.zcash.ui.design.util.stringRes
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
-fun ZashiCheckboxListItem(state: ZashiCheckboxListItemState, modifier: Modifier = Modifier) {
+fun ZashiCheckboxListItem(
+    state: ZashiCheckboxListItemState,
+    modifier: Modifier = Modifier
+) {
     BaseListItem(
         modifier = modifier,
         contentPadding = ZashiListItemDefaults.contentPadding,
@@ -42,25 +45,27 @@ fun ZashiCheckboxListItem(state: ZashiCheckboxListItemState, modifier: Modifier 
                 contentAlignment = Alignment.Center
             ) {
                 when (state.icon) {
-                    is ImageResource.ByDrawable -> Image(
-                        modifier = Modifier.sizeIn(maxWidth = 48.dp, maxHeight = 48.dp),
-                        painter = painterResource(state.icon.resource),
-                        contentDescription = null,
-                    )
+                    is ImageResource.ByDrawable ->
+                        Image(
+                            modifier = Modifier.sizeIn(maxWidth = 48.dp, maxHeight = 48.dp),
+                            painter = painterResource(state.icon.resource),
+                            contentDescription = null,
+                        )
 
-                    is ImageResource.DisplayString -> Text(
-                        modifier =
-                        Modifier
-                            .background(ZashiColors.Surfaces.bgSecondary, CircleShape)
-                            .size(40.dp)
-                            .padding(top = 11.dp)
-                            .align(Alignment.Center),
-                        text = state.icon.value,
-                        style = ZashiTypography.textSm,
-                        color = ZashiColors.Text.textTertiary,
-                        textAlign = TextAlign.Center,
-                        fontWeight = FontWeight.SemiBold,
-                    )
+                    is ImageResource.DisplayString ->
+                        Text(
+                            modifier =
+                                Modifier
+                                    .background(ZashiColors.Surfaces.bgSecondary, CircleShape)
+                                    .size(40.dp)
+                                    .padding(top = 11.dp)
+                                    .align(Alignment.Center),
+                            text = state.icon.value,
+                            style = ZashiTypography.textSm,
+                            color = ZashiColors.Text.textTertiary,
+                            textAlign = TextAlign.Center,
+                            fontWeight = FontWeight.SemiBold,
+                        )
                 }
             }
         },
@@ -81,37 +86,41 @@ fun ZashiCheckboxListItem(state: ZashiCheckboxListItemState, modifier: Modifier 
 
 @Composable
 @PreviewScreens
-fun PreviewChecked() = ZcashTheme {
-    BlankSurface {
-        ZashiCheckboxListItem(
-            modifier = Modifier.fillMaxWidth(),
-            state = ZashiCheckboxListItemState(
-                title = stringRes("title"),
-                subtitle = stringRes("subtitle"),
-                icon = imageRes("1"),
-                isSelected = true,
-                onClick = {}
+private fun PreviewChecked() =
+    ZcashTheme {
+        BlankSurface {
+            ZashiCheckboxListItem(
+                modifier = Modifier.fillMaxWidth(),
+                state =
+                    ZashiCheckboxListItemState(
+                        title = stringRes("title"),
+                        subtitle = stringRes("subtitle"),
+                        icon = imageRes("1"),
+                        isSelected = true,
+                        onClick = {}
+                    )
             )
-        )
+        }
     }
-}
 
 @Composable
 @PreviewScreens
-fun PreviewUnchecked() = ZcashTheme {
-    BlankSurface {
-        ZashiCheckboxListItem(
-            modifier = Modifier.fillMaxWidth(),
-            state = ZashiCheckboxListItemState(
-                title = stringRes("title"),
-                subtitle = stringRes("subtitle"),
-                icon = imageRes("1"),
-                isSelected = false,
-                onClick = {}
+private fun PreviewUnchecked() =
+    ZcashTheme {
+        BlankSurface {
+            ZashiCheckboxListItem(
+                modifier = Modifier.fillMaxWidth(),
+                state =
+                    ZashiCheckboxListItemState(
+                        title = stringRes("title"),
+                        subtitle = stringRes("subtitle"),
+                        icon = imageRes("1"),
+                        isSelected = false,
+                        onClick = {}
+                    )
             )
-        )
+        }
     }
-}
 
 data class ZashiCheckboxListItemState(
     val title: StringResource,

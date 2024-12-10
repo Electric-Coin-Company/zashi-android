@@ -86,9 +86,9 @@ fun AddressBookView(
                 EmptyFullscreen(
                     state = state,
                     modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .scaffoldPadding(paddingValues)
+                        Modifier
+                            .fillMaxSize()
+                            .scaffoldPadding(paddingValues)
                 )
             }
 
@@ -98,9 +98,9 @@ fun AddressBookView(
                 ) {
                     LazyColumn(
                         modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .weight(1f),
+                            Modifier
+                                .fillMaxWidth()
+                                .weight(1f),
                         contentPadding = paddingValues.asScaffoldScrollPaddingValues()
                     ) {
                         itemsIndexed(
@@ -138,9 +138,10 @@ fun AddressBookView(
                                 AddressBookItem.Empty -> {
                                     Spacer(modifier = Modifier.height(68.dp))
                                     EmptyItem(
-                                        modifier = Modifier
-                                            .padding(horizontal = 20.dp)
-                                            .fillMaxWidth()
+                                        modifier =
+                                            Modifier
+                                                .padding(horizontal = 20.dp)
+                                                .fillMaxWidth()
                                     )
                                 }
                             }
@@ -151,9 +152,9 @@ fun AddressBookView(
                         AddContactButton(
                             state = state,
                             modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = ZashiDimensions.Spacing.spacing3xl)
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = ZashiDimensions.Spacing.spacing3xl)
                         )
                     }
                 }
@@ -177,16 +178,15 @@ private fun ZashiTitleItem(
 }
 
 @Composable
-private fun EmptyItem(
-    modifier: Modifier = Modifier
-) {
+private fun EmptyItem(modifier: Modifier = Modifier) {
     Surface(
-        modifier = modifier.dashedBorder(
-            strokeWidth = 2.5.dp,
-            color = ZashiColors.Surfaces.strokeSecondary,
-            cornerRadiusDp = 16.dp,
-            density = LocalDensity.current
-        ),
+        modifier =
+            modifier.dashedBorder(
+                strokeWidth = 2.5.dp,
+                color = ZashiColors.Surfaces.strokeSecondary,
+                cornerRadiusDp = 16.dp,
+                density = LocalDensity.current
+            ),
         shape = RoundedCornerShape(16.dp),
     ) {
         Column(
@@ -234,13 +234,14 @@ private fun EmptyFullscreen(
         AddContactButton(
             state = state,
             modifier =
-            Modifier
-                .align(Alignment.BottomCenter)
-                .fillMaxWidth()
+                Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
         )
     }
 }
 
+@Suppress("MagicNumber")
 fun Modifier.dashedBorder(
     strokeWidth: Dp,
     color: Color,
@@ -254,10 +255,11 @@ fun Modifier.dashedBorder(
         this.then(
             Modifier.drawWithCache {
                 onDrawBehind {
-                    val stroke = Stroke(
-                        width = strokeWidthPx,
-                        pathEffect = PathEffect.dashPathEffect(floatArrayOf(30f, 25f), 0f)
-                    )
+                    val stroke =
+                        Stroke(
+                            width = strokeWidthPx,
+                            pathEffect = PathEffect.dashPathEffect(floatArrayOf(30f, 25f), 0f)
+                        )
 
                     drawRoundRect(
                         color = color,
@@ -280,16 +282,16 @@ private fun AddContactButton(
     ZashiButton(
         modifier = modifier,
         state =
-        ButtonState(
-            onClick = {
-                if (transitionState.targetState && transitionState.currentState) {
-                    transitionState.targetState = false
-                } else if (!transitionState.targetState && !transitionState.currentState) {
-                    transitionState.targetState = true
-                }
-            },
-            text = stringRes(R.string.address_book_add)
-        )
+            ButtonState(
+                onClick = {
+                    if (transitionState.targetState && transitionState.currentState) {
+                        transitionState.targetState = false
+                    } else if (!transitionState.targetState && !transitionState.currentState) {
+                        transitionState.targetState = true
+                    }
+                },
+                text = stringRes(R.string.address_book_add)
+            )
     ) { scope ->
         Image(
             painter = painterResource(id = R.drawable.ic_address_book_plus),
@@ -324,11 +326,11 @@ private fun AddressBookTopAppBar(
     ZashiSmallTopAppBar(
         title = state.title.getValue(),
         subtitle =
-        when (subTitleState) {
-            TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
-            TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
-            TopAppBarSubTitleState.None -> null
-        },
+            when (subTitleState) {
+                TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
+                TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
+                TopAppBarSubTitleState.None -> null
+            },
         modifier = Modifier.testTag(AddressBookTag.TOP_APP_BAR),
         showTitleLogo = true,
         navigationAction = {
@@ -343,41 +345,41 @@ private fun AddressBookDataPreview() {
     ZcashTheme {
         AddressBookView(
             state =
-            AddressBookState(
-                isLoading = false,
-                onBack = {},
-                items =
-                listOf(
-                    AddressBookItem.Title(stringRes("Title")),
-                    AddressBookItem.Contact(
-                        ZashiContactListItemState(
-                            name = stringRes("Name Surname"),
-                            address = stringRes("3iY5ZSkRnevzSMu4hosasdasdasdasd12312312dasd9hw2"),
-                            icon = imageRes("NS"),
-                            isShielded = false,
-                            onClick = {}
-                        )
-                    ),
-                    AddressBookItem.Contact(
-                        ZashiContactListItemState(
-                            name = stringRes("Name Surname"),
-                            address = stringRes("3iY5ZSkRnevzSMu4hosasdasdasdasd12312312dasd9hw2"),
-                            icon = imageRes("NS"),
-                            isShielded = false,
-                            onClick = {}
-                        )
-                    )
+                AddressBookState(
+                    isLoading = false,
+                    onBack = {},
+                    items =
+                        listOf(
+                            AddressBookItem.Title(stringRes("Title")),
+                            AddressBookItem.Contact(
+                                ZashiContactListItemState(
+                                    name = stringRes("Name Surname"),
+                                    address = stringRes("3iY5ZSkRnevzSMu4hosasdasdasdasd12312312dasd9hw2"),
+                                    icon = imageRes("NS"),
+                                    isShielded = false,
+                                    onClick = {}
+                                )
+                            ),
+                            AddressBookItem.Contact(
+                                ZashiContactListItemState(
+                                    name = stringRes("Name Surname"),
+                                    address = stringRes("3iY5ZSkRnevzSMu4hosasdasdasdasd12312312dasd9hw2"),
+                                    icon = imageRes("NS"),
+                                    isShielded = false,
+                                    onClick = {}
+                                )
+                            )
+                        ),
+                    scanButton =
+                        ButtonState(
+                            text = stringRes("Scan"),
+                        ),
+                    manualButton =
+                        ButtonState(
+                            text = stringRes("Manual"),
+                        ),
+                    title = stringRes("Address book")
                 ),
-                scanButton =
-                ButtonState(
-                    text = stringRes("Scan"),
-                ),
-                manualButton =
-                ButtonState(
-                    text = stringRes("Manual"),
-                ),
-                title = stringRes("Address book")
-            ),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )
     }
@@ -389,60 +391,60 @@ private fun SelectRecipientDataPreview() {
     ZcashTheme {
         AddressBookView(
             state =
-            AddressBookState(
-                isLoading = false,
-                onBack = {},
-                items =
-                listOf(
-                    AddressBookItem.Title(stringRes("Title")),
-                    AddressBookItem.Contact(
-                        ZashiContactListItemState(
-                            name = stringRes("Name Surname"),
-                            address = stringRes("3iY5ZSkRnevzSMu4hosasdasdasdasd12312312dasd9hw2"),
-                            icon = imageRes("NS"),
-                            isShielded = false,
-                            onClick = {}
-                        )
-                    ),
-                    AddressBookItem.Contact(
-                        ZashiContactListItemState(
-                            name = stringRes("Name Surname"),
-                            address = stringRes("3iY5ZSkRnevzSMu4hosasdasdasdasd12312312dasd9hw2"),
-                            icon = imageRes("NS"),
-                            isShielded = false,
-                            onClick = {}
-                        )
-                    ),
-                    AddressBookItem.Title(stringRes("Title")),
-                    AddressBookItem.Contact(
-                        ZashiContactListItemState(
-                            name = stringRes("Name Surname"),
-                            address = stringRes("3iY5ZSkRnevzSMu4hosasdasdasdasd12312312dasd9hw2"),
-                            icon = imageRes("NS"),
-                            isShielded = false,
-                            onClick = {}
-                        )
-                    ),
-                    AddressBookItem.Contact(
-                        ZashiContactListItemState(
-                            name = stringRes("Name Surname"),
-                            address = stringRes("3iY5ZSkRnevzSMu4hosasdasdasdasd12312312dasd9hw2"),
-                            icon = imageRes("NS"),
-                            isShielded = false,
-                            onClick = {}
-                        )
-                    )
+                AddressBookState(
+                    isLoading = false,
+                    onBack = {},
+                    items =
+                        listOf(
+                            AddressBookItem.Title(stringRes("Title")),
+                            AddressBookItem.Contact(
+                                ZashiContactListItemState(
+                                    name = stringRes("Name Surname"),
+                                    address = stringRes("3iY5ZSkRnevzSMu4hosasdasdasdasd12312312dasd9hw2"),
+                                    icon = imageRes("NS"),
+                                    isShielded = false,
+                                    onClick = {}
+                                )
+                            ),
+                            AddressBookItem.Contact(
+                                ZashiContactListItemState(
+                                    name = stringRes("Name Surname"),
+                                    address = stringRes("3iY5ZSkRnevzSMu4hosasdasdasdasd12312312dasd9hw2"),
+                                    icon = imageRes("NS"),
+                                    isShielded = false,
+                                    onClick = {}
+                                )
+                            ),
+                            AddressBookItem.Title(stringRes("Title")),
+                            AddressBookItem.Contact(
+                                ZashiContactListItemState(
+                                    name = stringRes("Name Surname"),
+                                    address = stringRes("3iY5ZSkRnevzSMu4hosasdasdasdasd12312312dasd9hw2"),
+                                    icon = imageRes("NS"),
+                                    isShielded = false,
+                                    onClick = {}
+                                )
+                            ),
+                            AddressBookItem.Contact(
+                                ZashiContactListItemState(
+                                    name = stringRes("Name Surname"),
+                                    address = stringRes("3iY5ZSkRnevzSMu4hosasdasdasdasd12312312dasd9hw2"),
+                                    icon = imageRes("NS"),
+                                    isShielded = false,
+                                    onClick = {}
+                                )
+                            )
+                        ),
+                    scanButton =
+                        ButtonState(
+                            text = stringRes("Scan"),
+                        ),
+                    manualButton =
+                        ButtonState(
+                            text = stringRes("Manual"),
+                        ),
+                    title = stringRes("Select Recipient")
                 ),
-                scanButton =
-                ButtonState(
-                    text = stringRes("Scan"),
-                ),
-                manualButton =
-                ButtonState(
-                    text = stringRes("Manual"),
-                ),
-                title = stringRes("Select Recipient")
-            ),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )
     }
@@ -454,20 +456,20 @@ private fun LoadingPreview() {
     ZcashTheme {
         AddressBookView(
             state =
-            AddressBookState(
-                isLoading = true,
-                onBack = {},
-                items = emptyList(),
-                scanButton =
-                ButtonState(
-                    text = stringRes("Scan"),
+                AddressBookState(
+                    isLoading = true,
+                    onBack = {},
+                    items = emptyList(),
+                    scanButton =
+                        ButtonState(
+                            text = stringRes("Scan"),
+                        ),
+                    manualButton =
+                        ButtonState(
+                            text = stringRes("Manual"),
+                        ),
+                    title = stringRes("Select Recipient")
                 ),
-                manualButton =
-                ButtonState(
-                    text = stringRes("Manual"),
-                ),
-                title = stringRes("Select Recipient")
-            ),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )
     }
@@ -479,20 +481,20 @@ private fun EmptyAddressBookPreview() {
     ZcashTheme {
         AddressBookView(
             state =
-            AddressBookState(
-                isLoading = false,
-                onBack = {},
-                items = emptyList(),
-                scanButton =
-                ButtonState(
-                    text = stringRes("Scan"),
+                AddressBookState(
+                    isLoading = false,
+                    onBack = {},
+                    items = emptyList(),
+                    scanButton =
+                        ButtonState(
+                            text = stringRes("Scan"),
+                        ),
+                    manualButton =
+                        ButtonState(
+                            text = stringRes("Manual"),
+                        ),
+                    title = stringRes("Address Book")
                 ),
-                manualButton =
-                ButtonState(
-                    text = stringRes("Manual"),
-                ),
-                title = stringRes("Address Book")
-            ),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )
     }
@@ -504,32 +506,33 @@ private fun EmptySelectRecipientPreview() {
     ZcashTheme {
         AddressBookView(
             state =
-            AddressBookState(
-                isLoading = false,
-                onBack = {},
-                items = listOf(
-                    AddressBookItem.Title(stringRes("Title")),
-                    AddressBookItem.Contact(
-                        ZashiContactListItemState(
-                            name = stringRes("Name Surname"),
-                            address = stringRes("3iY5ZSkRnevzSMu4hosasdasdasdasd12312312dasd9hw2"),
-                            icon = imageRes("NS"),
-                            isShielded = false,
-                            onClick = {}
-                        )
-                    ),
-                    AddressBookItem.Empty
+                AddressBookState(
+                    isLoading = false,
+                    onBack = {},
+                    items =
+                        listOf(
+                            AddressBookItem.Title(stringRes("Title")),
+                            AddressBookItem.Contact(
+                                ZashiContactListItemState(
+                                    name = stringRes("Name Surname"),
+                                    address = stringRes("3iY5ZSkRnevzSMu4hosasdasdasdasd12312312dasd9hw2"),
+                                    icon = imageRes("NS"),
+                                    isShielded = false,
+                                    onClick = {}
+                                )
+                            ),
+                            AddressBookItem.Empty
+                        ),
+                    scanButton =
+                        ButtonState(
+                            text = stringRes("Scan"),
+                        ),
+                    manualButton =
+                        ButtonState(
+                            text = stringRes("Manual"),
+                        ),
+                    title = stringRes("Select Recipient")
                 ),
-                scanButton =
-                ButtonState(
-                    text = stringRes("Scan"),
-                ),
-                manualButton =
-                ButtonState(
-                    text = stringRes("Manual"),
-                ),
-                title = stringRes("Select Recipient")
-            ),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )
     }

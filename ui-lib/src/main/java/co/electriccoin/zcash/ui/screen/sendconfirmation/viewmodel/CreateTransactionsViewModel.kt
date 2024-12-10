@@ -8,8 +8,6 @@ import cash.z.ecc.android.sdk.model.TransactionSubmitResult
 import cash.z.ecc.android.sdk.model.UnifiedSpendingKey
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.spackle.Twig
-import co.electriccoin.zcash.ui.common.model.KeystoneAccount
-import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -29,19 +27,20 @@ class CreateTransactionsViewModel(
     // Possible solution would be storing the value within [SavedStateHandle]
     val submissions: MutableStateFlow<List<TransactionSubmitResult>> = MutableStateFlow(emptyList())
 
-    val state = observeSelectedWalletAccountUseCase().map {
-        SendConfirmationState(
-            SendConfirmationExpandedInfoState(
-                title = stringRes(co.electriccoin.zcash.ui.R.string.send_confirmation_address_from),
-                icon = it.icon,
-                text = it.name
+    val state =
+        observeSelectedWalletAccountUseCase().map {
+            SendConfirmationState(
+                SendConfirmationExpandedInfoState(
+                    title = stringRes(co.electriccoin.zcash.ui.R.string.send_confirmation_address_from),
+                    icon = it.icon,
+                    text = it.name
+                )
             )
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+            initialValue = SendConfirmationState(from = null)
         )
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-        initialValue = SendConfirmationState(from = null)
-    )
 
     suspend fun runCreateTransactions(
         synchronizer: Synchronizer,

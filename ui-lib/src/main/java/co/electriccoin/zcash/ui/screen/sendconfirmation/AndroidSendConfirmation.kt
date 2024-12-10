@@ -126,8 +126,9 @@ internal fun WrapSendConfirmation(
             mutableStateOf(arguments.initialStage ?: SendConfirmationStage.Prepared)
         }
 
-    val submissionResults = createTransactionsViewModel
-        .submissions.collectAsStateWithLifecycle().value.toImmutableList()
+    val submissionResults =
+        createTransactionsViewModel
+            .submissions.collectAsStateWithLifecycle().value.toImmutableList()
 
     val state = createTransactionsViewModel.state.collectAsStateWithLifecycle().value
 

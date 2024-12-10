@@ -2,7 +2,6 @@ package co.electriccoin.zcash.ui.screen.connectkeystone.view
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.LinkAnnotation
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
@@ -51,10 +49,10 @@ fun ConnectKeystoneView(state: ConnectKeystoneState) {
     ) {
         Column(
             modifier =
-            Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .scaffoldPadding(it)
+                Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .scaffoldPadding(it)
         ) {
             HeaderSection(state)
             Spacer(Modifier.height(24.dp))
@@ -136,13 +134,14 @@ private fun HeaderSection(state: ConnectKeystoneState) {
                     LinkAnnotation.Clickable("CLICKABLE") { state.onViewKeystoneTutorialClicked() }
                 ) {
                     withStyle(
-                        style = ZashiTypography.textSm
-                            .copy(
-                                textDecoration = TextDecoration.Underline,
-                                fontWeight = FontWeight.SemiBold,
-                                color = HyperBlue.`700` orDark HyperBlue.`400`,
-                            )
-                            .toSpanStyle()
+                        style =
+                            ZashiTypography.textSm
+                                .copy(
+                                    textDecoration = TextDecoration.Underline,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = HyperBlue.`700` orDark HyperBlue.`400`,
+                                )
+                                .toSpanStyle()
                     ) {
                         append(stringResource(R.string.connect_keystone_subtitle_clickable))
                     }

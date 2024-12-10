@@ -43,7 +43,6 @@ import kotlin.time.Duration.Companion.seconds
 class SendViewModel(
     private val observeContactByAddress: ObserveContactByAddressUseCase,
     private val observeContactPicked: ObserveContactPickedUseCase,
-    private val getZashiSpendingKey: GetZashiSpendingKeyUseCase,
     private val getSynchronizer: GetSynchronizerUseCase,
     private val keystoneProposalRepository: KeystoneProposalRepository,
     private val getSelectedWalletAccount: GetSelectedWalletAccountUseCase,
@@ -144,11 +143,12 @@ class SendViewModel(
         setSendStage: (SendStage) -> Unit
     ) = viewModelScope.launch {
         when (getSelectedWalletAccount()) {
-            is KeystoneAccount -> if (keystoneProposalRepository.createProposal(newZecSend)) {
-                navigationRouter.forward(ReviewKeystoneTransaction)
-            } else {
-                setSendStage(SendStage.SendFailure(""))
-            }
+            is KeystoneAccount ->
+                if (keystoneProposalRepository.createProposal(newZecSend)) {
+                    navigationRouter.forward(ReviewKeystoneTransaction)
+                } else {
+                    setSendStage(SendStage.SendFailure(""))
+                }
             is ZashiAccount -> {
                 Twig.debug { "Getting send transaction proposal" }
                 runCatching {
@@ -173,17 +173,19 @@ class SendViewModel(
         goPaymentRequest: (ZecSend, String) -> Unit,
     ) = viewModelScope.launch {
         when (getSelectedWalletAccount()) {
-            is KeystoneAccount -> if (keystoneProposalRepository.createZip321Proposal(zip321Uri)) {
-                navigationRouter.forward(ReviewKeystoneTransaction)
-            } else {
-                setSendStage(SendStage.SendFailure(""))
-            }
-            is ZashiAccount -> onCreateZecSend321ZashiClick(
-                zip321Uri = zip321Uri,
-                setZecSend = setZecSend,
-                setSendStage = setSendStage,
-                goPaymentRequest = goPaymentRequest,
-            )
+            is KeystoneAccount ->
+                if (keystoneProposalRepository.createZip321Proposal(zip321Uri)) {
+                    navigationRouter.forward(ReviewKeystoneTransaction)
+                } else {
+                    setSendStage(SendStage.SendFailure(""))
+                }
+            is ZashiAccount ->
+                onCreateZecSend321ZashiClick(
+                    zip321Uri = zip321Uri,
+                    setZecSend = setZecSend,
+                    setSendStage = setSendStage,
+                    goPaymentRequest = goPaymentRequest,
+                )
         }
     }
 

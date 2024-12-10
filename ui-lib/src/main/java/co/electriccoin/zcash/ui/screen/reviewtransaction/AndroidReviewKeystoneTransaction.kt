@@ -19,4 +19,3 @@ fun AndroidReviewKeystoneTransaction() {
         ReviewTransactionView(it)
     }
 }
-

@@ -22,17 +22,18 @@ interface PersistableWalletProvider {
 class PersistableWalletProviderImpl(
     walletCoordinator: WalletCoordinator
 ) : PersistableWalletProvider {
-
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
-    override val persistableWallet: Flow<PersistableWallet?> = walletCoordinator.persistableWallet
-        .stateIn(
-            scope = scope,
-            started = SharingStarted.WhileSubscribed(Duration.ZERO, Duration.ZERO),
-            initialValue = null
-        )
+    override val persistableWallet: Flow<PersistableWallet?> =
+        walletCoordinator.persistableWallet
+            .stateIn(
+                scope = scope,
+                started = SharingStarted.WhileSubscribed(Duration.ZERO, Duration.ZERO),
+                initialValue = null
+            )
 
-    override suspend fun getPersistableWallet(): PersistableWallet = persistableWallet
-        .filterNotNull()
-        .first()
+    override suspend fun getPersistableWallet(): PersistableWallet =
+        persistableWallet
+            .filterNotNull()
+            .first()
 }

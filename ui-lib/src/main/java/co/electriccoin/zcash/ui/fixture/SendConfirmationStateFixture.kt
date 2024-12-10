@@ -6,11 +6,13 @@ import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SendConfirmationEx
 import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SendConfirmationState
 
 object SendConfirmationStateFixture {
-    fun new() = SendConfirmationState(
-        from = SendConfirmationExpandedInfoState(
-            stringRes("Sending from"),
-            R.drawable.ic_item_keystone,
-            stringRes("Keystone wallet")
+    fun new() =
+        SendConfirmationState(
+            from =
+                SendConfirmationExpandedInfoState(
+                    stringRes("Sending from"),
+                    R.drawable.ic_item_keystone,
+                    stringRes("Keystone wallet")
+                )
         )
-    )
 }

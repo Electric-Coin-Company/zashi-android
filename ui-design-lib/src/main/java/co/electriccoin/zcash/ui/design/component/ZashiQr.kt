@@ -45,7 +45,10 @@ fun ZashiQr(
     }
 }
 
-private fun getQrCode(address: String, size: Int): ImageBitmap {
+private fun getQrCode(
+    address: String,
+    size: Int
+): ImageBitmap {
     val qrCodePixelArray = JvmQrCodeGenerator.generate(address, size)
     return AndroidQrCodeImageGenerator.generate(qrCodePixelArray, size)
 }
@@ -53,5 +56,7 @@ private fun getQrCode(address: String, size: Int): ImageBitmap {
 object ZashiQrDefaults {
     val width: Dp
         @Composable
-        get() = (LocalConfiguration.current.screenWidthDp * 0.66).dp
+        get() = (LocalConfiguration.current.screenWidthDp * WIDTH_RATIO).dp
 }
+
+private const val WIDTH_RATIO = 0.66

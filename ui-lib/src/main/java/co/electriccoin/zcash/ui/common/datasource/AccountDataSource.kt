@@ -31,7 +31,6 @@ import kotlinx.coroutines.withContext
 import kotlin.time.Duration
 
 interface AccountDataSource {
-
     val allAccounts: StateFlow<List<WalletAccount>?>
 
     val selectedAccount: Flow<WalletAccount?>
@@ -57,7 +56,6 @@ class AccountDataSourceImpl(
     synchronizerProvider: SynchronizerProvider,
     private val selectedAccountUUIDProvider: SelectedAccountUUIDProvider,
 ) : AccountDataSource {
-
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -72,11 +70,11 @@ class AccountDataSourceImpl(
                             InternalAccountWithAddresses(
                                 sdkAccount = account,
                                 unifiedAddress =
-                                WalletAddress.Unified.new(synchronizer.getUnifiedAddress(account)),
+                                    WalletAddress.Unified.new(synchronizer.getUnifiedAddress(account)),
                                 saplingAddress =
-                                WalletAddress.Sapling.new(synchronizer.getSaplingAddress(account)),
+                                    WalletAddress.Sapling.new(synchronizer.getSaplingAddress(account)),
                                 transparentAddress =
-                                WalletAddress.Transparent.new(synchronizer.getTransparentAddress(account)),
+                                    WalletAddress.Transparent.new(synchronizer.getTransparentAddress(account)),
                             )
                         }
                     }
@@ -89,8 +87,9 @@ class AccountDataSourceImpl(
                                     null
                                 } else {
                                     accountsWithAddresses.map { accountWithAddresses ->
-                                        val balance = walletBalances
-                                            .getValue(accountWithAddresses.sdkAccount.accountUuid)
+                                        val balance =
+                                            walletBalances
+                                                .getValue(accountWithAddresses.sdkAccount.accountUuid)
 
                                         InternalAccountWithBalances(
                                             sdkAccount = accountWithAddresses.sdkAccount,
@@ -108,59 +107,64 @@ class AccountDataSourceImpl(
                     } ?: flowOf(null)
             }
 
-    override val allAccounts: StateFlow<List<WalletAccount>?> = combine(
-        internalAccounts,
-        selectedAccountUUIDProvider.uuid,
-    ) { accounts, uuid ->
-        accounts
-            ?.map { account ->
-                when (account.sdkAccount.keySource?.lowercase()) {
-                    "keystone" ->
-                        KeystoneAccount(
-                            sdkAccount = account.sdkAccount,
-                            unifiedAddress = account.unifiedAddress,
-                            saplingAddress = account.saplingAddress,
-                            transparentAddress = account.transparentAddress,
-                            orchardBalance = account.orchardBalance,
-                            transparentBalance = account.transparentBalance,
-                            saplingBalance = account.saplingBalance,
-                            isSelected = account.sdkAccount.accountUuid == uuid,
-                        )
+    override val allAccounts: StateFlow<List<WalletAccount>?> =
+        combine(
+            internalAccounts,
+            selectedAccountUUIDProvider.uuid,
+        ) { accounts, uuid ->
+            accounts
+                ?.map { account ->
+                    when (account.sdkAccount.keySource?.lowercase()) {
+                        "keystone" ->
+                            KeystoneAccount(
+                                sdkAccount = account.sdkAccount,
+                                unifiedAddress = account.unifiedAddress,
+                                saplingAddress = account.saplingAddress,
+                                transparentAddress = account.transparentAddress,
+                                orchardBalance = account.orchardBalance,
+                                transparentBalance = account.transparentBalance,
+                                saplingBalance = account.saplingBalance,
+                                isSelected = account.sdkAccount.accountUuid == uuid,
+                            )
 
-                    else -> ZashiAccount(
-                        sdkAccount = account.sdkAccount,
-                        unifiedAddress = account.unifiedAddress,
-                        saplingAddress = account.saplingAddress,
-                        transparentAddress = account.transparentAddress,
-                        orchardBalance = account.orchardBalance,
-                        transparentBalance = account.transparentBalance,
-                        saplingBalance = account.saplingBalance,
-                        isSelected = uuid == null || account.sdkAccount.accountUuid == uuid,
-                    )
+                        else ->
+                            ZashiAccount(
+                                sdkAccount = account.sdkAccount,
+                                unifiedAddress = account.unifiedAddress,
+                                saplingAddress = account.saplingAddress,
+                                transparentAddress = account.transparentAddress,
+                                orchardBalance = account.orchardBalance,
+                                transparentBalance = account.transparentBalance,
+                                saplingBalance = account.saplingBalance,
+                                isSelected = uuid == null || account.sdkAccount.accountUuid == uuid,
+                            )
+                    }
                 }
+                ?.sorted()
+        }.flowOn(Dispatchers.Default)
+            .stateIn(
+                scope = scope,
+                started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT, Duration.ZERO),
+                initialValue = null
+            )
+
+    override val selectedAccount: Flow<WalletAccount?> =
+        allAccounts
+            .map { account ->
+                account?.firstOrNull { it.isSelected }
             }
-            ?.sorted()
-    }.flowOn(Dispatchers.Default)
-        .stateIn(
-            scope = scope,
-            started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT, Duration.ZERO),
-            initialValue = null
-        )
 
-    override val selectedAccount: Flow<WalletAccount?> = allAccounts
-        .map { account ->
-            account?.firstOrNull { it.isSelected }
-        }
+    override val zashiAccount: Flow<ZashiAccount?> =
+        allAccounts
+            .map { account ->
+                account?.filterIsInstance<ZashiAccount>()?.firstOrNull()
+            }
 
-    override val zashiAccount: Flow<ZashiAccount?> = allAccounts
-        .map { account ->
-            account?.filterIsInstance<ZashiAccount>()?.firstOrNull()
-        }
-
-    override val keystoneAccount: Flow<KeystoneAccount?> = allAccounts
-        .map { account ->
-            account?.filterIsInstance<KeystoneAccount>()?.firstOrNull()
-        }
+    override val keystoneAccount: Flow<KeystoneAccount?> =
+        allAccounts
+            .map { account ->
+                account?.filterIsInstance<KeystoneAccount>()?.firstOrNull()
+            }
 
     override suspend fun getAllAccounts() = allAccounts.filterNotNull().first()
 
@@ -170,9 +174,10 @@ class AccountDataSourceImpl(
 
     override suspend fun getKeystoneAccount() = keystoneAccount.filterNotNull().first()
 
-    override suspend fun selectAccount(account: Account) = withContext(NonCancellable) {
-        selectedAccountUUIDProvider.setUUID(account.accountUuid)
-    }
+    override suspend fun selectAccount(account: Account) =
+        withContext(NonCancellable) {
+            selectedAccountUUIDProvider.setUUID(account.accountUuid)
+        }
 
     override suspend fun selectAccount(account: WalletAccount) {
         selectedAccountUUIDProvider.setUUID(account.sdkAccount.accountUuid)

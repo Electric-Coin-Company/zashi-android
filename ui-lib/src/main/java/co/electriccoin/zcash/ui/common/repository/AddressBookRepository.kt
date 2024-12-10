@@ -130,7 +130,8 @@ class AddressBookRepositoryImpl(
         } else {
             val account = accountDataSource.getZashiAccount()
             val persistableWallet = persistableWalletProvider.getPersistableWallet()
-            val newKey = AddressBookKey.derive(
+            val newKey =
+                AddressBookKey.derive(
                     seedPhrase = persistableWallet.seedPhrase,
                     network = persistableWallet.network,
                     account = account

@@ -26,7 +26,7 @@ import kotlinx.coroutines.flow.stateIn
 class AddressBookViewModel(
     observeAddressBookContacts: ObserveAddressBookContactsUseCase,
     private val navigationRouter: NavigationRouter,
-    ) : ViewModel() {
+) : ViewModel() {
     val state =
         observeAddressBookContacts()
             .map { contacts -> createState(contacts = contacts) }

@@ -68,10 +68,10 @@ internal fun ReceiveView(
                 ReceiveContents(
                     items = state.items.orEmpty(),
                     modifier =
-                    Modifier.padding(
-                        top = paddingValues.calculateTopPadding()
-                        // We intentionally do not set the rest paddings, those are set by the underlying composable
-                    ),
+                        Modifier.padding(
+                            top = paddingValues.calculateTopPadding()
+                            // We intentionally do not set the rest paddings, those are set by the underlying composable
+                        ),
                 )
             }
         }
@@ -87,10 +87,10 @@ private fun ReceiveContents(
 
     Column(
         modifier =
-        modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(all = ZcashTheme.dimens.spacingSmall),
+            modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(all = ZcashTheme.dimens.spacingSmall),
     ) {
         Spacer(Modifier.height(ZcashTheme.dimens.spacingDefault))
 
@@ -138,19 +138,19 @@ private fun AddressPanel(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier =
-        modifier
-            .wrapContentHeight()
-            .background(
-                if (state.isShielded) {
-                    ZashiColors.Utility.Purple.utilityPurple50
-                } else {
-                    ZashiColors.Utility.Gray.utilityGray50
-                },
-                RoundedCornerShape(ZashiDimensions.Radius.radius3xl)
-            )
-            .clip(RoundedCornerShape(ZashiDimensions.Radius.radius3xl))
-            .clickable { onExpand() }
-            .padding(all = ZcashTheme.dimens.spacingLarge)
+            modifier
+                .wrapContentHeight()
+                .background(
+                    if (state.isShielded) {
+                        ZashiColors.Utility.Purple.utilityPurple50
+                    } else {
+                        ZashiColors.Utility.Gray.utilityGray50
+                    },
+                    RoundedCornerShape(ZashiDimensions.Radius.radius3xl)
+                )
+                .clip(RoundedCornerShape(ZashiDimensions.Radius.radius3xl))
+                .clickable { onExpand() }
+                .padding(all = ZcashTheme.dimens.spacingLarge)
     ) {
         Row(modifier = Modifier.fillMaxWidth()) {
             Image(
@@ -193,9 +193,9 @@ private fun AddressPanel(
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(top = ZcashTheme.dimens.spacingDefault)
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(top = ZcashTheme.dimens.spacingDefault)
             ) {
                 ReceiveIconButton(
                     containerColor = ZashiColors.Utility.Purple.utilityPurple100,
@@ -245,11 +245,11 @@ private fun ReceiveIconButton(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier =
-        modifier
-            .background(containerColor, RoundedCornerShape(ZashiDimensions.Radius.radiusXl))
-            .clip(RoundedCornerShape(ZashiDimensions.Radius.radiusXl))
-            .clickable { onClick() }
-            .padding(ZcashTheme.dimens.spacingMid)
+            modifier
+                .background(containerColor, RoundedCornerShape(ZashiDimensions.Radius.radiusXl))
+                .clip(RoundedCornerShape(ZashiDimensions.Radius.radiusXl))
+                .clickable { onClick() }
+                .padding(ZcashTheme.dimens.spacingMid)
     ) {
         Icon(
             painter = iconPainter,
@@ -281,31 +281,33 @@ private fun LoadingPreview() =
 @PreviewScreens
 @Composable
 private fun ZashiPreview() =
-    ZcashTheme() {
+    ZcashTheme {
         ReceiveView(
-            state = ReceiveState(
-                items = listOf(
-                    ReceiveAddressState(
-                        icon = R.drawable.ic_zec_round_full,
-                        title = stringRes("Zashi"),
-                        subtitle = stringRes("subtitle"),
-                        isShielded = true,
-                        onCopyClicked = {},
-                        onQrClicked = { },
-                        onRequestClicked = {},
-                    ),
-                    ReceiveAddressState(
-                        icon = R.drawable.ic_zec_round_stroke,
-                        title = stringRes("Zashi"),
-                        subtitle = stringRes("subtitle"),
-                        isShielded = false,
-                        onCopyClicked = {},
-                        onQrClicked = { },
-                        onRequestClicked = { },
-                    )
+            state =
+                ReceiveState(
+                    items =
+                        listOf(
+                            ReceiveAddressState(
+                                icon = R.drawable.ic_zec_round_full,
+                                title = stringRes("Zashi"),
+                                subtitle = stringRes("subtitle"),
+                                isShielded = true,
+                                onCopyClicked = {},
+                                onQrClicked = { },
+                                onRequestClicked = {},
+                            ),
+                            ReceiveAddressState(
+                                icon = R.drawable.ic_zec_round_stroke,
+                                title = stringRes("Zashi"),
+                                subtitle = stringRes("subtitle"),
+                                isShielded = false,
+                                onCopyClicked = {},
+                                onQrClicked = { },
+                                onRequestClicked = { },
+                            )
+                        ),
+                    isLoading = false
                 ),
-                isLoading = false
-            ),
             zashiMainTopAppBarState = ZashiMainTopAppBarStateFixture.new()
         )
     }
@@ -315,22 +317,22 @@ private fun ZashiPreview() =
 private fun KeystonePreview() =
     ZcashTheme {
         ReceiveView(
-            state = ReceiveState(
-                items = listOf(
-                    ReceiveAddressState(
-                        icon = co.electriccoin.zcash.ui.design.R.drawable.ic_item_keystone,
-                        title = stringRes("Keystone Address"),
-                        subtitle = stringRes("subtitle"),
-                        isShielded = true,
-                        onCopyClicked = {},
-                        onQrClicked = {},
-                        onRequestClicked = {},
-                    ),
+            state =
+                ReceiveState(
+                    items =
+                        listOf(
+                            ReceiveAddressState(
+                                icon = co.electriccoin.zcash.ui.design.R.drawable.ic_item_keystone,
+                                title = stringRes("Keystone Address"),
+                                subtitle = stringRes("subtitle"),
+                                isShielded = true,
+                                onCopyClicked = {},
+                                onQrClicked = {},
+                                onRequestClicked = {},
+                            ),
+                        ),
+                    isLoading = false
                 ),
-                isLoading = false
-            ),
             zashiMainTopAppBarState = ZashiMainTopAppBarStateFixture.new()
         )
     }
-
-

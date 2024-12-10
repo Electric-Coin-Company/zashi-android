@@ -53,32 +53,73 @@ class SelectRecipientViewModel(
         contacts: List<AddressBookContact>?,
         accounts: List<WalletAccount>
     ): AddressBookState {
-        val accountItems = listOf(
-            AddressBookItem.Title(stringRes(R.string.address_book_multiple_wallets_title)),
-            *accounts.map { account ->
-                AddressBookItem.Contact(
-                    ZashiContactListItemState(
-                        icon = imageRes(
-                            when (account) {
-                                is KeystoneAccount -> co.electriccoin.zcash.ui.design.R.drawable.ic_item_keystone
-                                is ZashiAccount -> co.electriccoin.zcash.ui.design.R.drawable.ic_item_zashi
-                            }
-                        ),
-                        isShielded = false,
-                        name = account.name,
-                        address = stringRes("${account.unifiedAddress.address.take(ADDRESS_MAX_LENGTH)}..."),
-                        onClick = { onWalletAccountClick(account) }
-                    )
-                )
-            }.toTypedArray()
-        )
-
-        val addressBookItems = if (contacts.isNullOrEmpty()) {
-            listOf(AddressBookItem.Empty)
-        } else {
+        val accountItems =
             listOf(
-                AddressBookItem.Title(stringRes(R.string.address_book_multiple_wallets_contacts_title)),
-                *contacts.map { contact ->
+                AddressBookItem.Title(stringRes(R.string.address_book_multiple_wallets_title)),
+                *accounts.map { account ->
+                    AddressBookItem.Contact(
+                        ZashiContactListItemState(
+                            icon =
+                                imageRes(
+                                    when (account) {
+                                        is KeystoneAccount ->
+                                            co.electriccoin.zcash.ui.design.R.drawable.ic_item_keystone
+                                        is ZashiAccount ->
+                                            co.electriccoin.zcash.ui.design.R.drawable.ic_item_zashi
+                                    }
+                                ),
+                            isShielded = false,
+                            name = account.name,
+                            address = stringRes("${account.unifiedAddress.address.take(ADDRESS_MAX_LENGTH)}..."),
+                            onClick = { onWalletAccountClick(account) }
+                        )
+                    )
+                }.toTypedArray()
+            )
+
+        val addressBookItems =
+            if (contacts.isNullOrEmpty()) {
+                listOf(AddressBookItem.Empty)
+            } else {
+                listOf(
+                    AddressBookItem.Title(stringRes(R.string.address_book_multiple_wallets_contacts_title)),
+                    *contacts.map { contact ->
+                        AddressBookItem.Contact(
+                            ZashiContactListItemState(
+                                icon = getContactInitials(contact),
+                                isShielded = false,
+                                name = stringRes(contact.name),
+                                address = stringRes("${contact.address.take(ADDRESS_MAX_LENGTH)}..."),
+                                onClick = { onContactClick(contact) }
+                            )
+                        )
+                    }.toTypedArray()
+                )
+            }
+
+        return AddressBookState(
+            isLoading = contacts == null,
+            items = accountItems + addressBookItems,
+            onBack = ::onBack,
+            manualButton =
+                ButtonState(
+                    onClick = ::onAddContactManuallyClick,
+                    text = stringRes(R.string.address_book_manual_btn)
+                ),
+            scanButton =
+                ButtonState(
+                    onClick = ::onScanContactClick,
+                    text = stringRes(R.string.address_book_scan_btn)
+                ),
+            title = stringRes(R.string.address_book_select_recipient_title)
+        )
+    }
+
+    private fun createStateWithoutAccounts(contacts: List<AddressBookContact>?): AddressBookState {
+        return AddressBookState(
+            isLoading = contacts == null,
+            items =
+                contacts?.map { contact ->
                     AddressBookItem.Contact(
                         ZashiContactListItemState(
                             icon = getContactInitials(contact),
@@ -88,54 +129,18 @@ class SelectRecipientViewModel(
                             onClick = { onContactClick(contact) }
                         )
                     )
-                }.toTypedArray()
-            )
-        }
-
-        return AddressBookState(
-            isLoading = contacts == null,
-            items = accountItems + addressBookItems,
+                }.orEmpty(),
             onBack = ::onBack,
             manualButton =
-            ButtonState(
-                onClick = ::onAddContactManuallyClick,
-                text = stringRes(R.string.address_book_manual_btn)
-            ),
+                ButtonState(
+                    onClick = ::onAddContactManuallyClick,
+                    text = stringRes(R.string.address_book_manual_btn)
+                ),
             scanButton =
-            ButtonState(
-                onClick = ::onScanContactClick,
-                text = stringRes(R.string.address_book_scan_btn)
-            ),
-            title = stringRes(R.string.address_book_select_recipient_title)
-        )
-    }
-
-    private fun createStateWithoutAccounts(contacts: List<AddressBookContact>?): AddressBookState {
-        return AddressBookState(
-            isLoading = contacts == null,
-            items =
-            contacts?.map { contact ->
-                AddressBookItem.Contact(
-                    ZashiContactListItemState(
-                        icon = getContactInitials(contact),
-                        isShielded = false,
-                        name = stringRes(contact.name),
-                        address = stringRes("${contact.address.take(ADDRESS_MAX_LENGTH)}..."),
-                        onClick = { onContactClick(contact) }
-                    )
-                )
-            }.orEmpty(),
-            onBack = ::onBack,
-            manualButton =
-            ButtonState(
-                onClick = ::onAddContactManuallyClick,
-                text = stringRes(R.string.address_book_manual_btn)
-            ),
-            scanButton =
-            ButtonState(
-                onClick = ::onScanContactClick,
-                text = stringRes(R.string.address_book_scan_btn)
-            ),
+                ButtonState(
+                    onClick = ::onScanContactClick,
+                    text = stringRes(R.string.address_book_scan_btn)
+                ),
             title = stringRes(R.string.address_book_select_recipient_title)
         )
     }

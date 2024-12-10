@@ -7,11 +7,12 @@ import kotlinx.coroutines.flow.first
 class GetLoadedExchangeRateUseCase(
     private val exchangeRateRepository: ExchangeRateRepository
 ) {
-    suspend operator fun invoke() = exchangeRateRepository.state.first {
-        when (it) {
-            is ExchangeRateState.Data -> it.isLoading
-            is ExchangeRateState.OptIn -> true
-            ExchangeRateState.OptedOut -> true
+    suspend operator fun invoke() =
+        exchangeRateRepository.state.first {
+            when (it) {
+                is ExchangeRateState.Data -> it.isLoading
+                is ExchangeRateState.OptIn -> true
+                ExchangeRateState.OptedOut -> true
+            }
         }
-    }
 }

@@ -10,8 +10,7 @@ import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.stringRes
 
-sealed interface WalletAccount: Comparable<WalletAccount> {
-
+sealed interface WalletAccount : Comparable<WalletAccount> {
     val sdkAccount: Account
 
     val unifiedAddress: WalletAddress.Unified
@@ -22,6 +21,7 @@ sealed interface WalletAccount: Comparable<WalletAccount> {
     val transparentBalance: Zatoshi
     val isSelected: Boolean
     val name: StringResource
+
     @get:DrawableRes val icon: Int
 
     val hdAccountIndex: Zip32AccountIndex
@@ -41,7 +41,7 @@ sealed interface WalletAccount: Comparable<WalletAccount> {
         get() = orchardBalance.valuePending + saplingBalance.valuePending
     val hasValuePending: Boolean
         get() = valuePendingBalance.value > 0L
-    
+
     fun canSpend(amount: Zatoshi): Boolean = spendableBalance >= amount
 }
 
@@ -54,14 +54,15 @@ data class ZashiAccount(
     override val orchardBalance: WalletBalance,
     override val transparentBalance: Zatoshi,
     override val isSelected: Boolean,
-): WalletAccount {
+) : WalletAccount {
     override val name: StringResource = stringRes("Zashi")
     override val icon: Int = R.drawable.ic_item_zashi
 
-    override fun compareTo(other: WalletAccount) = when (other) {
-        is KeystoneAccount -> 1
-        is ZashiAccount -> 0
-    }
+    override fun compareTo(other: WalletAccount) =
+        when (other) {
+            is KeystoneAccount -> 1
+            is ZashiAccount -> 0
+        }
 }
 
 data class KeystoneAccount(
@@ -73,12 +74,13 @@ data class KeystoneAccount(
     override val orchardBalance: WalletBalance,
     override val transparentBalance: Zatoshi,
     override val isSelected: Boolean,
-): WalletAccount {
+) : WalletAccount {
     override val icon: Int = R.drawable.ic_item_keystone
     override val name: StringResource = stringRes("Keystone")
 
-    override fun compareTo(other: WalletAccount) = when (other) {
-        is KeystoneAccount -> 0
-        is ZashiAccount -> -1
-    }
+    override fun compareTo(other: WalletAccount) =
+        when (other) {
+            is KeystoneAccount -> 0
+            is ZashiAccount -> -1
+        }
 }

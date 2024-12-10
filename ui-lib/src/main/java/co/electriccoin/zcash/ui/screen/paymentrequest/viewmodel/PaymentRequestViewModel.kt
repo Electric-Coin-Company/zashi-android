@@ -12,8 +12,8 @@ import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.provider.GetMonetarySeparatorProvider
-import co.electriccoin.zcash.ui.common.usecase.GetZashiSpendingKeyUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSynchronizerUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetZashiSpendingKeyUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveAddressBookContactsUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.common.viewmodel.AuthenticationViewModel
@@ -82,19 +82,20 @@ class PaymentRequestViewModel(
             initialValue = PaymentRequestState.Loading
         )
 
-    val infoState = observeSelectedWalletAccountUseCase().map {
-        SendConfirmationState(
-            SendConfirmationExpandedInfoState(
-                title = stringRes(R.string.send_confirmation_address_from),
-                icon = it.icon,
-                text = it.name
+    val infoState =
+        observeSelectedWalletAccountUseCase().map {
+            SendConfirmationState(
+                SendConfirmationExpandedInfoState(
+                    title = stringRes(R.string.send_confirmation_address_from),
+                    icon = it.icon,
+                    text = it.name
+                )
             )
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+            initialValue = SendConfirmationState(from = null)
         )
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-        initialValue = SendConfirmationState(from = null)
-    )
 
     internal val backNavigationCommand = MutableSharedFlow<Unit>()
 

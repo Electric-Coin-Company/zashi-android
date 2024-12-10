@@ -21,9 +21,9 @@ import co.electriccoin.zcash.ui.common.usecase.ShareImageUseCase
 import co.electriccoin.zcash.ui.common.usecase.Zip321BuildUriUseCase
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
-import co.electriccoin.zcash.ui.screen.qrcode.ext.fromReceiveAddressType
 import co.electriccoin.zcash.ui.design.util.AndroidQrCodeImageGenerator
 import co.electriccoin.zcash.ui.design.util.JvmQrCodeGenerator
+import co.electriccoin.zcash.ui.screen.qrcode.ext.fromReceiveAddressType
 import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressType
 import co.electriccoin.zcash.ui.screen.request.ext.convertToDouble
 import co.electriccoin.zcash.ui.screen.request.model.AmountState
@@ -113,11 +113,12 @@ class RequestViewModel(
                 }
                 RequestStage.MEMO -> {
                     RequestState.Memo(
-                        icon = when (account) {
-                            is KeystoneAccount -> co.electriccoin.zcash.ui.design.R.drawable.ic_item_keystone
-                            is ZashiAccount -> R.drawable.ic_zec_round_full
-                            null -> R.drawable.ic_zec_round_full
-                        },
+                        icon =
+                            when (account) {
+                                is KeystoneAccount -> co.electriccoin.zcash.ui.design.R.drawable.ic_item_keystone
+                                is ZashiAccount -> R.drawable.ic_zec_round_full
+                                null -> R.drawable.ic_zec_round_full
+                            },
                         walletAddress = walletAddress,
                         request = request,
                         onMemo = { onMemo(it) },
@@ -128,12 +129,14 @@ class RequestViewModel(
                 }
                 RequestStage.QR_CODE -> {
                     RequestState.QrCode(
-                        icon = when (account) {
-                            is KeystoneAccount -> co.electriccoin.zcash.ui.design.R.drawable
-                                .ic_item_keystone_qr
-                            is ZashiAccount -> R.drawable.logo_zec_fill_stroke
-                            null -> R.drawable.logo_zec_fill_stroke
-                        },
+                        icon =
+                            when (account) {
+                                is KeystoneAccount ->
+                                    co.electriccoin.zcash.ui.design.R.drawable
+                                        .ic_item_keystone_qr
+                                is ZashiAccount -> R.drawable.logo_zec_fill_stroke
+                                null -> R.drawable.logo_zec_fill_stroke
+                            },
                         walletAddress = walletAddress,
                         request = request,
                         onQrCodeGenerate = { qrCodeForValue(request.qrCodeState.requestUri, it) },

@@ -61,9 +61,9 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
-import co.electriccoin.zcash.ui.screen.qrcode.model.QrCodeState
 import co.electriccoin.zcash.ui.design.util.AndroidQrCodeImageGenerator
 import co.electriccoin.zcash.ui.design.util.JvmQrCodeGenerator
+import co.electriccoin.zcash.ui.screen.qrcode.model.QrCodeState
 import co.electriccoin.zcash.ui.screen.qrcode.model.QrCodeType
 import kotlinx.coroutines.runBlocking
 import kotlin.math.roundToInt
@@ -103,18 +103,17 @@ private fun KeystonePreview() =
     ZcashTheme(forceDarkMode = false) {
         QrCodeView(
             state =
-            QrCodeState.Prepared(
-                qrCodeType = QrCodeType.KEYSTONE,
-                walletAddress = runBlocking { WalletAddressFixture.unified() },
-                onAddressCopy = {},
-                onQrCodeShare = {},
-                onBack = {},
-            ),
+                QrCodeState.Prepared(
+                    qrCodeType = QrCodeType.KEYSTONE,
+                    walletAddress = runBlocking { WalletAddressFixture.unified() },
+                    onAddressCopy = {},
+                    onQrCodeShare = {},
+                    onBack = {},
+                ),
             snackbarHostState = SnackbarHostState(),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )
     }
-
 
 @Composable
 internal fun QrCodeView(
@@ -311,14 +310,16 @@ fun UnifiedQrCodePanel(
         Text(
             text =
                 when (walletAddress) {
-                    is WalletAddress.Unified -> when (qrCodeType) {
-                        QrCodeType.ZASHI -> stringResource(R.string.qr_code_wallet_address_shielded)
-                        QrCodeType.KEYSTONE -> stringResource(R.string.qr_code_wallet_address_shielded_keystone)
-                    }
-                    is WalletAddress.Sapling -> when (qrCodeType) {
-                        QrCodeType.ZASHI -> stringResource(id = R.string.qr_code_wallet_address_sapling)
-                        QrCodeType.KEYSTONE -> stringResource(id = R.string.qr_code_wallet_address_sapling_keystone)
-                    }
+                    is WalletAddress.Unified ->
+                        when (qrCodeType) {
+                            QrCodeType.ZASHI -> stringResource(R.string.qr_code_wallet_address_shielded)
+                            QrCodeType.KEYSTONE -> stringResource(R.string.qr_code_wallet_address_shielded_keystone)
+                        }
+                    is WalletAddress.Sapling ->
+                        when (qrCodeType) {
+                            QrCodeType.ZASHI -> stringResource(id = R.string.qr_code_wallet_address_sapling)
+                            QrCodeType.KEYSTONE -> stringResource(id = R.string.qr_code_wallet_address_sapling_keystone)
+                        }
                     else -> error("Unsupported address type: $walletAddress")
                 },
             color = ZashiColors.Text.textPrimary,
@@ -525,11 +526,16 @@ private fun QrCode(
 
         Image(
             modifier = Modifier.size(64.dp),
-            painter = when (qrCodeType) {
-                QrCodeType.ZASHI -> painterResource(id = R.drawable.logo_zec_fill_stroke)
-                QrCodeType.KEYSTONE -> painterResource(id = co.electriccoin.zcash.ui.design.R.drawable
-                    .ic_item_keystone_qr)
-            },
+            painter =
+                when (qrCodeType) {
+                    QrCodeType.ZASHI -> painterResource(id = R.drawable.logo_zec_fill_stroke)
+                    QrCodeType.KEYSTONE ->
+                        painterResource(
+                            id =
+                                co.electriccoin.zcash.ui.design.R.drawable
+                                    .ic_item_keystone_qr
+                        )
+                },
             contentDescription = contentDescription,
         )
     }

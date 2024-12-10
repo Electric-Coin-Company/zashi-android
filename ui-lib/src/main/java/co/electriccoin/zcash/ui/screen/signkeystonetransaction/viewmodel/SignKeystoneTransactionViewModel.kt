@@ -36,27 +36,31 @@ class SignKeystoneTransactionViewModel(
 
     private val currentQrPart = MutableStateFlow(qr.nextPart())
 
-    val state: StateFlow<SignKeystoneTransactionState?> = combine(observeSelectedWalletAccount(), currentQrPart) {
-        wallet, qrData ->
-        SignKeystoneTransactionState(
-            accountInfo = ZashiAccountInfoListItemState(
-                icon = R.drawable.ic_settings_info,
-                title = wallet.name,
-                subtitle = stringRes("${wallet.unifiedAddress.address.take(ADDRESS_MAX_LENGTH)}...")
-            ),
-            generateNextQrCode = { currentQrPart.update { qr.nextPart() } },
-            qrData = qrData,
-            positiveButton = ButtonState(
-                text = stringRes(R.string.sign_keystone_transaction_positive),
-                onClick = ::onSignTransactionClick
-            ),
-            negativeButton = ButtonState(
-                text = stringRes(R.string.sign_keystone_transaction_negative),
-                onClick = ::onRejectClick
-            ),
-            onBack = ::onBack
-        )
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT), null)
+    val state: StateFlow<SignKeystoneTransactionState?> =
+        combine(observeSelectedWalletAccount(), currentQrPart) {
+                wallet, qrData ->
+            SignKeystoneTransactionState(
+                accountInfo =
+                    ZashiAccountInfoListItemState(
+                        icon = R.drawable.ic_settings_info,
+                        title = wallet.name,
+                        subtitle = stringRes("${wallet.unifiedAddress.address.take(ADDRESS_MAX_LENGTH)}...")
+                    ),
+                generateNextQrCode = { currentQrPart.update { qr.nextPart() } },
+                qrData = qrData,
+                positiveButton =
+                    ButtonState(
+                        text = stringRes(R.string.sign_keystone_transaction_positive),
+                        onClick = ::onSignTransactionClick
+                    ),
+                negativeButton =
+                    ButtonState(
+                        text = stringRes(R.string.sign_keystone_transaction_negative),
+                        onClick = ::onRejectClick
+                    ),
+                onBack = ::onBack
+            )
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT), null)
 
     private fun onBack() {
         keystoneProposalRepository.clear()

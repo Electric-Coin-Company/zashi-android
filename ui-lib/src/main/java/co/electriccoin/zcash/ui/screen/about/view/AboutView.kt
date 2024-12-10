@@ -173,11 +173,12 @@ fun AboutMainContent(
 
         ZashiListItem(
             modifier = Modifier.padding(horizontal = 4.dp),
-            state = ZashiListItemState(
-                icon = R.drawable.ic_settings_info,
-                title = stringRes(R.string.about_button_privacy_policy),
-                onClick = onPrivacyPolicy
-            )
+            state =
+                ZashiListItemState(
+                    icon = R.drawable.ic_settings_info,
+                    title = stringRes(R.string.about_button_privacy_policy),
+                    onClick = onPrivacyPolicy
+                )
         )
 
         Spacer(Modifier.weight(1f))

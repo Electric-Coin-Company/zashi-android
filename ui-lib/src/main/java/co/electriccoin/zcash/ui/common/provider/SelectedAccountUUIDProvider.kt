@@ -24,9 +24,10 @@ class SelectedAccountUUIDProviderImpl(
 ) : SelectedAccountUUIDProvider {
     private val default = SelectedAccountUUIDPreferenceDefault()
 
-    override val uuid: Flow<AccountUuid?> = flow {
-        emitAll(default.observe(encryptedPreferenceProvider()))
-    }
+    override val uuid: Flow<AccountUuid?> =
+        flow {
+            emitAll(default.observe(encryptedPreferenceProvider()))
+        }
 
     override suspend fun getUUID(): AccountUuid? {
         return default.getValue(encryptedPreferenceProvider())
@@ -38,7 +39,6 @@ class SelectedAccountUUIDProviderImpl(
 }
 
 private class SelectedAccountUUIDPreferenceDefault : PreferenceDefault<AccountUuid?> {
-
     override val key: PreferenceKey = PreferenceKey("selected_account_uuid")
 
     override suspend fun getValue(preferenceProvider: PreferenceProvider) =

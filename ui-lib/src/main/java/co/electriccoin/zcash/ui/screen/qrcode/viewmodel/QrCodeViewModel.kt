@@ -55,11 +55,12 @@ class QrCodeViewModel(
                 onAddressCopy = { address -> onAddressCopyClick(address) },
                 onQrCodeShare = { onQrCodeShareClick(it, versionInfo) },
                 onBack = ::onBack,
-                qrCodeType = when (wallet) {
-                    is KeystoneAccount -> QrCodeType.KEYSTONE
-                    is ZashiAccount -> QrCodeType.ZASHI
-                    null -> QrCodeType.ZASHI
-                }
+                qrCodeType =
+                    when (wallet) {
+                        is KeystoneAccount -> QrCodeType.KEYSTONE
+                        is ZashiAccount -> QrCodeType.ZASHI
+                        null -> QrCodeType.ZASHI
+                    }
             )
         }.stateIn(
             scope = viewModelScope,

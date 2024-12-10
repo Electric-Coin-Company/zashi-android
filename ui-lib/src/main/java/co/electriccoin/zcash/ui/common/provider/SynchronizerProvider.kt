@@ -18,12 +18,12 @@ interface SynchronizerProvider {
 }
 
 class SynchronizerProviderImpl(walletCoordinator: WalletCoordinator) : SynchronizerProvider {
-
     override val synchronizer: StateFlow<Synchronizer?> = walletCoordinator.synchronizer
 
-    override suspend fun getSynchronizer(): Synchronizer = withContext(Dispatchers.IO) {
-        synchronizer
-            .filterNotNull()
-            .first()
-    }
+    override suspend fun getSynchronizer(): Synchronizer =
+        withContext(Dispatchers.IO) {
+            synchronizer
+                .filterNotNull()
+                .first()
+        }
 }

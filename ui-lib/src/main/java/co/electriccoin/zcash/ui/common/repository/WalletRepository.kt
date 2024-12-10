@@ -423,26 +423,28 @@ private fun Synchronizer.toCommonError(): Flow<SynchronizerError?> =
 
 // No good way around needing magic numbers for the indices
 @Suppress("MagicNumber")
-private fun toWalletSnapshot(synchronizer: Synchronizer, account: WalletAccount) =
-    combine(
-        // 0
-        synchronizer.status,
-        // 1
-        synchronizer.processorInfo,
-        // 2
-        synchronizer.progress,
-        // 3
-        synchronizer.toCommonError()
-    ) { flows ->
-        val progressPercentDecimal = (flows[2] as PercentDecimal)
+private fun toWalletSnapshot(
+    synchronizer: Synchronizer,
+    account: WalletAccount
+) = combine(
+    // 0
+    synchronizer.status,
+    // 1
+    synchronizer.processorInfo,
+    // 2
+    synchronizer.progress,
+    // 3
+    synchronizer.toCommonError()
+) { flows ->
+    val progressPercentDecimal = (flows[2] as PercentDecimal)
 
-        WalletSnapshot(
-            status = flows[0] as Synchronizer.Status,
-            processorInfo = flows[1] as CompactBlockProcessor.ProcessorInfo,
-            orchardBalance = account.orchardBalance,
-            saplingBalance = account.saplingBalance,
-            transparentBalance = account.transparentBalance,
-            progress = progressPercentDecimal,
-            synchronizerError = flows[3] as SynchronizerError?
-        )
-    }
+    WalletSnapshot(
+        status = flows[0] as Synchronizer.Status,
+        processorInfo = flows[1] as CompactBlockProcessor.ProcessorInfo,
+        orchardBalance = account.orchardBalance,
+        saplingBalance = account.saplingBalance,
+        transparentBalance = account.transparentBalance,
+        progress = progressPercentDecimal,
+        synchronizerError = flows[3] as SynchronizerError?
+    )
+}

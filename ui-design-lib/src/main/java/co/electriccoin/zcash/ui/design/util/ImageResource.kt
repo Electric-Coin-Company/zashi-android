@@ -8,7 +8,9 @@ import androidx.compose.runtime.Stable
 sealed interface ImageResource {
     @Immutable
     @JvmInline
-    value class ByDrawable(@DrawableRes val resource: Int) : ImageResource
+    value class ByDrawable(
+        @DrawableRes val resource: Int
+    ) : ImageResource
 
     @JvmInline
     @Immutable
@@ -16,7 +18,9 @@ sealed interface ImageResource {
 }
 
 @Stable
-fun imageRes(@DrawableRes resource: Int): ImageResource = ImageResource.ByDrawable(resource)
+fun imageRes(
+    @DrawableRes resource: Int
+): ImageResource = ImageResource.ByDrawable(resource)
 
 @Stable
 fun imageRes(value: String): ImageResource = ImageResource.DisplayString(value)

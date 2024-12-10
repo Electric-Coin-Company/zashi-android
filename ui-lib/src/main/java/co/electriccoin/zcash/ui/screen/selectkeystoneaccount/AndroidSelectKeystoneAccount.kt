@@ -17,4 +17,3 @@ fun AndroidSelectKeystoneAccount(args: SelectKeystoneAccount) {
         SelectKeystoneAccountView(state = it)
     }
 }
-

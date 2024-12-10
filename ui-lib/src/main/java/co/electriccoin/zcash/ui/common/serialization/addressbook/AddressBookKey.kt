@@ -1,6 +1,5 @@
 package co.electriccoin.zcash.ui.common.serialization.addressbook
 
-import cash.z.ecc.android.sdk.model.Account
 import cash.z.ecc.android.sdk.model.SeedPhrase
 import cash.z.ecc.android.sdk.model.ZcashNetwork
 import cash.z.ecc.android.sdk.tool.DerivationTool

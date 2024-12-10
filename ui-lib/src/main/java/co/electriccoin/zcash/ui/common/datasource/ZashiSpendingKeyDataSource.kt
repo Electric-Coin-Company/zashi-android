@@ -10,7 +10,7 @@ interface ZashiSpendingKeyDataSource {
 
 class ZashiSpendingKeyDataSourceImpl(
     private val persistableWalletProvider: PersistableWalletProvider
-): ZashiSpendingKeyDataSource {
+) : ZashiSpendingKeyDataSource {
     override suspend fun getZashiSpendingKey(): UnifiedSpendingKey {
         return deriveSpendingKey(
             persistableWalletProvider.getPersistableWallet()

@@ -435,22 +435,6 @@ private fun MainActivity.NavigationHome(
     backStack: NavBackStackEntry
 ) {
     WrapHome(
-        goScan = { navController.navigateJustOnce(ScanNavigationArgs(ScanNavigationArgs.DEFAULT)) },
-        goSendConfirmation = { zecSend ->
-            navController.currentBackStackEntry?.savedStateHandle?.let { handle ->
-                fillInHandleForConfirmation(handle, zecSend, SendConfirmationStage.Prepared)
-            }
-            navController.navigateJustOnce(SEND_CONFIRMATION)
-        },
-        goReviewKeystoneTransaction = {
-            navController.navigate(it)
-        },
-        goPaymentRequest = { zecSend, zip321Uri ->
-            navController.currentBackStackEntry?.savedStateHandle?.let { handle ->
-                fillInHandleForPaymentRequest(handle, zecSend, zip321Uri)
-            }
-            navController.navigateJustOnce(PAYMENT_REQUEST)
-        },
         goMultiTrxSubmissionFailure = {
             // Ultimately we could approach reworking the MultipleTrxFailure screen into a separate
             // navigation endpoint
@@ -458,6 +442,19 @@ private fun MainActivity.NavigationHome(
                 fillInHandleForConfirmation(handle, null, SendConfirmationStage.MultipleTrxFailure)
             }
             navController.navigateJustOnce(SEND_CONFIRMATION)
+        },
+        goScan = { navController.navigateJustOnce(ScanNavigationArgs(ScanNavigationArgs.DEFAULT)) },
+        goSendConfirmation = { zecSend ->
+            navController.currentBackStackEntry?.savedStateHandle?.let { handle ->
+                fillInHandleForConfirmation(handle, zecSend, SendConfirmationStage.Prepared)
+            }
+            navController.navigateJustOnce(SEND_CONFIRMATION)
+        },
+        goPaymentRequest = { zecSend, zip321Uri ->
+            navController.currentBackStackEntry?.savedStateHandle?.let { handle ->
+                fillInHandleForPaymentRequest(handle, zecSend, zip321Uri)
+            }
+            navController.navigateJustOnce(PAYMENT_REQUEST)
         },
         sendArguments =
             SendArguments(

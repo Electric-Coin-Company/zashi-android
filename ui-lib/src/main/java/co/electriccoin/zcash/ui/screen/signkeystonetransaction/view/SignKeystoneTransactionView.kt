@@ -54,10 +54,10 @@ fun SignKeystoneTransactionView(state: SignKeystoneTransactionState) {
     ) {
         Column(
             modifier =
-            Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .scaffoldPadding(it)
+                Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .scaffoldPadding(it)
         ) {
             ZashiAccountInfoListItem(state.accountInfo)
             Spacer(Modifier.height(32.dp))
@@ -132,7 +132,10 @@ private fun ColumnScope.QrContent(state: SignKeystoneTransactionState) {
 }
 
 @Composable
-private fun BottomSection(state: SignKeystoneTransactionState, modifier: Modifier = Modifier) {
+private fun BottomSection(
+    state: SignKeystoneTransactionState,
+    modifier: Modifier = Modifier
+) {
     Column(
         modifier
     ) {
@@ -150,19 +153,22 @@ private fun BottomSection(state: SignKeystoneTransactionState, modifier: Modifie
 
 @PreviewScreens
 @Composable
-private fun Preview() = ZcashTheme {
-    SignKeystoneTransactionView(
-        state = SignKeystoneTransactionState(
-            accountInfo = ZashiAccountInfoListItemState(
-                icon = R.drawable.ic_item_keystone,
-                title = stringRes("title"),
-                subtitle = stringRes("subtitle"),
-            ),
-            generateNextQrCode = {},
-            qrData = "tralala",
-            positiveButton = ButtonState(stringRes("Get Signature")),
-            negativeButton = ButtonState(stringRes("Reject")),
-            onBack = {}
+private fun Preview() =
+    ZcashTheme {
+        SignKeystoneTransactionView(
+            state =
+                SignKeystoneTransactionState(
+                    accountInfo =
+                        ZashiAccountInfoListItemState(
+                            icon = R.drawable.ic_item_keystone,
+                            title = stringRes("title"),
+                            subtitle = stringRes("subtitle"),
+                        ),
+                    generateNextQrCode = {},
+                    qrData = "tralala",
+                    positiveButton = ButtonState(stringRes("Get Signature")),
+                    negativeButton = ButtonState(stringRes("Reject")),
+                    onBack = {}
+                )
         )
-    )
-}
+    }

@@ -88,19 +88,19 @@ fun ZashiCheckboxIndicator(isChecked: Boolean) {
         AnimatedVisibility(
             visible = isChecked,
             enter =
-            scaleIn(
-                spring(
-                    stiffness = Spring.StiffnessMedium,
-                    dampingRatio = Spring.DampingRatioMediumBouncy
-                )
-            ),
+                scaleIn(
+                    spring(
+                        stiffness = Spring.StiffnessMedium,
+                        dampingRatio = Spring.DampingRatioMediumBouncy
+                    )
+                ),
             exit =
-            scaleOut(
-                spring(
-                    stiffness = Spring.StiffnessHigh,
-                    dampingRatio = Spring.DampingRatioMediumBouncy
+                scaleOut(
+                    spring(
+                        stiffness = Spring.StiffnessHigh,
+                        dampingRatio = Spring.DampingRatioMediumBouncy
+                    )
                 )
-            )
         ) {
             Image(
                 painter = painterResource(R.drawable.ic_zashi_checkbox_checked),

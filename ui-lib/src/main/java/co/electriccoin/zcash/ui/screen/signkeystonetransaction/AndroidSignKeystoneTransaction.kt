@@ -15,4 +15,3 @@ fun AndroidSignKeystoneTransaction() {
         SignKeystoneTransactionView(it)
     }
 }
-

@@ -48,17 +48,17 @@ fun ZashiContactListItem(
         },
         onClick = state.onClick,
         contentPadding =
-        PaddingValues(
-            start = 20.dp,
-            top = 12.dp,
-            end = 20.dp,
-            bottom =
-            if (state.isShielded) {
-                8.dp
-            } else {
-                12.dp
-            }
-        )
+            PaddingValues(
+                start = 20.dp,
+                top = 12.dp,
+                end = 20.dp,
+                bottom =
+                    if (state.isShielded) {
+                        8.dp
+                    } else {
+                        12.dp
+                    }
+            )
     )
 }
 
@@ -68,39 +68,41 @@ private fun ContactItemLeading(
     modifier: Modifier = Modifier,
 ) {
     when (state.icon) {
-        is ImageResource.ByDrawable -> Image(
-            painter = painterResource(state.icon.resource),
-            contentDescription = null,
-            modifier = modifier.size(40.dp)
-        )
-
-        is ImageResource.DisplayString -> Box(
-            modifier.size(40.dp)
-        ) {
-            Text(
-                modifier =
-                Modifier
-                    .background(ZashiColors.Avatars.avatarBg, CircleShape)
-                    .size(40.dp)
-                    .padding(top = 11.dp)
-                    .align(Alignment.Center),
-                text = state.icon.value,
-                style = ZashiTypography.textSm,
-                color = ZashiColors.Avatars.avatarTextFg,
-                textAlign = TextAlign.Center,
-                fontWeight = FontWeight.SemiBold,
+        is ImageResource.ByDrawable ->
+            Image(
+                painter = painterResource(state.icon.resource),
+                contentDescription = null,
+                modifier = modifier.size(40.dp)
             )
-            if (state.isShielded) {
-                Image(
+
+        is ImageResource.DisplayString ->
+            Box(
+                modifier.size(40.dp)
+            ) {
+                Text(
                     modifier =
-                    Modifier
-                        .align(Alignment.BottomEnd)
-                        .size(24.dp),
-                    painter = painterResource(id = R.drawable.ic_address_book_shielded),
-                    contentDescription = ""
+                        Modifier
+                            .background(ZashiColors.Avatars.avatarBg, CircleShape)
+                            .size(40.dp)
+                            .padding(top = 11.dp)
+                            .align(Alignment.Center),
+                    text = state.icon.value,
+                    style = ZashiTypography.textSm,
+                    color = ZashiColors.Avatars.avatarTextFg,
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.SemiBold,
                 )
+                if (state.isShielded) {
+                    Image(
+                        modifier =
+                            Modifier
+                                .align(Alignment.BottomEnd)
+                                .size(24.dp),
+                        painter = painterResource(id = R.drawable.ic_address_book_shielded),
+                        contentDescription = ""
+                    )
+                }
             }
-        }
     }
 }
 
