@@ -31,26 +31,22 @@ class ReceiveViewModel(
 ) : ViewModel() {
     @OptIn(ExperimentalCoroutinesApi::class)
     internal val state =
-        observeSelectedWalletAccount().mapLatest { account ->
+        observeSelectedWalletAccount.require().mapLatest { account ->
             ReceiveState(
                 items =
                     listOfNotNull(
-                        account?.unifiedAddress?.let {
-                            createAddressState(
-                                account = account,
-                                address = it.address,
-                                type = ReceiveAddressType.Unified
-                            )
-                        },
-                        account?.transparentAddress?.let {
-                            createAddressState(
-                                account = account,
-                                address = it.address,
-                                type = ReceiveAddressType.Transparent
-                            )
-                        },
+                        createAddressState(
+                            account = account,
+                            address = account.unified.address.address,
+                            type = ReceiveAddressType.Unified
+                        ),
+                        createAddressState(
+                            account = account,
+                            address = account.transparent.address.address,
+                            type = ReceiveAddressType.Transparent
+                        ),
                     ),
-                isLoading = account == null
+                isLoading = false
             )
         }.stateIn(
             scope = viewModelScope,

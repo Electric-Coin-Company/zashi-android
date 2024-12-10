@@ -15,7 +15,6 @@ import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.provider.GetMonetarySeparatorProvider
 import co.electriccoin.zcash.ui.common.provider.GetZcashCurrencyProvider
-import co.electriccoin.zcash.ui.common.usecase.GetAddressesUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.ShareImageUseCase
 import co.electriccoin.zcash.ui.common.usecase.Zip321BuildUriUseCase
@@ -46,7 +45,6 @@ import kotlinx.coroutines.launch
 class RequestViewModel(
     private val addressTypeOrdinal: Int,
     private val application: Application,
-    getAddresses: GetAddressesUseCase,
     walletViewModel: WalletViewModel,
     getZcashCurrency: GetZcashCurrencyProvider,
     getMonetarySeparators: GetMonetarySeparatorProvider,
@@ -76,13 +74,14 @@ class RequestViewModel(
 
     internal val state =
         combine(
-            getAddresses(),
             request,
             stage,
             walletViewModel.exchangeRateUsd,
-            observeSelectedWalletAccount()
-        ) { addresses, request, currentStage, exchangeRateUsd, account ->
-            val walletAddress = addresses.fromReceiveAddressType(ReceiveAddressType.fromOrdinal(addressTypeOrdinal))
+            observeSelectedWalletAccount.require()
+        ) { request, currentStage, exchangeRateUsd, account ->
+            val walletAddress =
+                account.fromReceiveAddressType(ReceiveAddressType.fromOrdinal(addressTypeOrdinal))
+                    ?: return@combine RequestState.Loading
 
             when (currentStage) {
                 RequestStage.AMOUNT -> {

@@ -26,19 +26,19 @@ interface SynchronizerProvider {
 }
 
 class SynchronizerProviderImpl(walletCoordinator: WalletCoordinator) : SynchronizerProvider {
-
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    override val synchronizer: StateFlow<Synchronizer?> = walletCoordinator.synchronizer
-        .mapLatest { synchronizer ->
-            synchronizer?.networkHeight?.filterNotNull()?.first()
-            synchronizer
-        }.stateIn(
-            scope = scope,
-            started = SharingStarted.WhileSubscribed(Duration.ZERO, Duration.ZERO),
-            initialValue = null
-        ) // TODO keystone
+    override val synchronizer: StateFlow<Synchronizer?> =
+        walletCoordinator.synchronizer
+            .mapLatest { synchronizer ->
+                synchronizer?.networkHeight?.filterNotNull()?.first()
+                synchronizer
+            }.stateIn(
+                scope = scope,
+                started = SharingStarted.WhileSubscribed(Duration.ZERO, Duration.ZERO),
+                initialValue = null
+            ) // TODO keystone
 
     override suspend fun getSynchronizer(): Synchronizer =
         withContext(Dispatchers.IO) {

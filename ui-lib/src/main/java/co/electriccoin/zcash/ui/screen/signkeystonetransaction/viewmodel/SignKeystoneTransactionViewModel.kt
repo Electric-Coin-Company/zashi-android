@@ -37,14 +37,14 @@ class SignKeystoneTransactionViewModel(
     private val currentQrPart = MutableStateFlow(qr.nextPart())
 
     val state: StateFlow<SignKeystoneTransactionState?> =
-        combine(observeSelectedWalletAccount(), currentQrPart) {
+        combine(observeSelectedWalletAccount.require(), currentQrPart) {
                 wallet, qrData ->
             SignKeystoneTransactionState(
                 accountInfo =
                     ZashiAccountInfoListItemState(
                         icon = R.drawable.ic_settings_info,
                         title = wallet.name,
-                        subtitle = stringRes("${wallet.unifiedAddress.address.take(ADDRESS_MAX_LENGTH)}...")
+                        subtitle = stringRes("${wallet.unified.address.address.take(ADDRESS_MAX_LENGTH)}...")
                     ),
                 generateNextQrCode = { currentQrPart.update { qr.nextPart() } },
                 qrData = qrData,

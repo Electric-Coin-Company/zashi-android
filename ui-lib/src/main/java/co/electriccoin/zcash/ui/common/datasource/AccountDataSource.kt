@@ -6,6 +6,9 @@ import cash.z.ecc.android.sdk.model.WalletBalance
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.common.model.KeystoneAccount
+import co.electriccoin.zcash.ui.common.model.SaplingInfo
+import co.electriccoin.zcash.ui.common.model.TransparentInfo
+import co.electriccoin.zcash.ui.common.model.UnifiedInfo
 import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.provider.SelectedAccountUUIDProvider
@@ -67,15 +70,26 @@ class AccountDataSourceImpl(
                     ?.accountsFlow
                     ?.map { accounts ->
                         accounts?.map { account ->
-                            InternalAccountWithAddresses(
-                                sdkAccount = account,
-                                unifiedAddress =
-                                    WalletAddress.Unified.new(synchronizer.getUnifiedAddress(account)),
-                                saplingAddress =
-                                    WalletAddress.Sapling.new(synchronizer.getSaplingAddress(account)),
-                                transparentAddress =
-                                    WalletAddress.Transparent.new(synchronizer.getTransparentAddress(account)),
-                            )
+                            if (account.keySource == "keystone") {
+                                InternalAccountWithAddresses(
+                                    sdkAccount = account,
+                                    unifiedAddress =
+                                        WalletAddress.Unified.new(synchronizer.getUnifiedAddress(account)),
+                                    saplingAddress = null,
+                                    transparentAddress =
+                                        WalletAddress.Transparent.new(synchronizer.getTransparentAddress(account)),
+                                )
+                            } else {
+                                InternalAccountWithAddresses(
+                                    sdkAccount = account,
+                                    unifiedAddress =
+                                        WalletAddress.Unified.new(synchronizer.getUnifiedAddress(account)),
+                                    saplingAddress =
+                                        WalletAddress.Sapling.new(synchronizer.getSaplingAddress(account)),
+                                    transparentAddress =
+                                        WalletAddress.Transparent.new(synchronizer.getTransparentAddress(account)),
+                                )
+                            }
                         }
                     }
                     ?.flatMapLatest { accountsWithAddresses ->
@@ -118,29 +132,42 @@ class AccountDataSourceImpl(
                         "keystone" ->
                             KeystoneAccount(
                                 sdkAccount = account.sdkAccount,
-                                unifiedAddress = account.unifiedAddress,
-                                saplingAddress = account.saplingAddress,
-                                transparentAddress = account.transparentAddress,
-                                orchardBalance = account.orchardBalance,
-                                transparentBalance = account.transparentBalance,
-                                saplingBalance = account.saplingBalance,
+                                unified =
+                                    UnifiedInfo(
+                                        address = account.unifiedAddress,
+                                        balance = account.orchardBalance
+                                    ),
+                                transparent =
+                                    TransparentInfo(
+                                        address = account.transparentAddress,
+                                        balance = account.transparentBalance
+                                    ),
                                 isSelected = account.sdkAccount.accountUuid == uuid,
                             )
 
                         else ->
                             ZashiAccount(
                                 sdkAccount = account.sdkAccount,
-                                unifiedAddress = account.unifiedAddress,
-                                saplingAddress = account.saplingAddress,
-                                transparentAddress = account.transparentAddress,
-                                orchardBalance = account.orchardBalance,
-                                transparentBalance = account.transparentBalance,
-                                saplingBalance = account.saplingBalance,
+                                unified =
+                                    UnifiedInfo(
+                                        address = account.unifiedAddress,
+                                        balance = account.orchardBalance
+                                    ),
+                                transparent =
+                                    TransparentInfo(
+                                        address = account.transparentAddress,
+                                        balance = account.transparentBalance
+                                    ),
+                                sapling =
+                                    SaplingInfo(
+                                        address = account.saplingAddress!!,
+                                        balance = account.saplingBalance
+                                    ),
                                 isSelected = uuid == null || account.sdkAccount.accountUuid == uuid,
                             )
                     }
                 }
-                ?.sorted()
+                ?.sortedDescending()
         }.flowOn(Dispatchers.Default)
             .stateIn(
                 scope = scope,
@@ -187,14 +214,14 @@ class AccountDataSourceImpl(
 private data class InternalAccountWithAddresses(
     val sdkAccount: Account,
     val unifiedAddress: WalletAddress.Unified,
-    val saplingAddress: WalletAddress.Sapling,
+    val saplingAddress: WalletAddress.Sapling?,
     val transparentAddress: WalletAddress.Transparent,
 )
 
 private data class InternalAccountWithBalances(
     val sdkAccount: Account,
     val unifiedAddress: WalletAddress.Unified,
-    val saplingAddress: WalletAddress.Sapling,
+    val saplingAddress: WalletAddress.Sapling?,
     val transparentAddress: WalletAddress.Transparent,
     val saplingBalance: WalletBalance,
     val orchardBalance: WalletBalance,

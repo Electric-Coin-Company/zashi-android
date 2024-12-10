@@ -71,7 +71,7 @@ class SelectRecipientViewModel(
                                 ),
                             isShielded = false,
                             name = account.name,
-                            address = stringRes("${account.unifiedAddress.address.take(ADDRESS_MAX_LENGTH)}..."),
+                            address = stringRes("${account.unified.address.address.take(ADDRESS_MAX_LENGTH)}..."),
                             onClick = { onWalletAccountClick(account) }
                         )
                     )

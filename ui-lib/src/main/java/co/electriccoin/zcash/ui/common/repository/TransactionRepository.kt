@@ -23,8 +23,7 @@ interface TransactionRepository {
 class TransactionRepositoryImpl(
     synchronizerProvider: SynchronizerProvider,
     accountDataSource: AccountDataSource
-): TransactionRepository {
-
+) : TransactionRepository {
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -35,7 +34,7 @@ class TransactionRepositoryImpl(
             if (synchronizer == null || account == null) {
                 flowOf(null)
             } else {
-                synchronizer.transactions
+                synchronizer.getTransactions(account.sdkAccount.accountUuid)
             }
         }.stateIn(
             scope = scope,

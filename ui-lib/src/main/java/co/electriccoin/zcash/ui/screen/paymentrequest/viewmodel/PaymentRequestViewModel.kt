@@ -83,7 +83,7 @@ class PaymentRequestViewModel(
         )
 
     val infoState =
-        observeSelectedWalletAccountUseCase().map {
+        observeSelectedWalletAccountUseCase.require().map {
             SendConfirmationState(
                 SendConfirmationExpandedInfoState(
                     title = stringRes(R.string.send_confirmation_address_from),

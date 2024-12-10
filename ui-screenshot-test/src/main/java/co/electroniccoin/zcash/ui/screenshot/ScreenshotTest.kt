@@ -493,10 +493,6 @@ private fun receiveZecScreenshots(
     tag: String,
     composeTestRule: AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>
 ) {
-    composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) {
-        composeTestRule.activity.walletViewModel.currentAddresses.value != null
-    }
-
     composeTestRule.onNode(
         hasText(
             text = resContext.getString(R.string.receive_header),

@@ -47,7 +47,7 @@ class AccountListViewModel(
                                     title = account.name,
                                     subtitle =
                                         stringRes(
-                                            "${account.unifiedAddress.address.take(ADDRESS_MAX_LENGTH)}...",
+                                            "${account.unified.address.address.take(ADDRESS_MAX_LENGTH)}...",
                                         ),
                                     icon =
                                         when (account) {

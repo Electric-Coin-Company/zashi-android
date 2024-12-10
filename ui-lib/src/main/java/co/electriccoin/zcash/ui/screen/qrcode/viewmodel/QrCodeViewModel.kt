@@ -17,7 +17,6 @@ import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
 import co.electriccoin.zcash.ui.common.usecase.CopyToClipboardUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetAddressesUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.screen.qrcode.ext.fromReceiveAddressType
 import co.electriccoin.zcash.ui.screen.qrcode.model.QrCodeState
@@ -31,14 +30,13 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 
 class QrCodeViewModel(
-    getAddresses: GetAddressesUseCase,
     getVersionInfo: GetVersionInfoProvider,
     observeSelectedWalletAccount: ObserveSelectedWalletAccountUseCase,
     private val addressTypeOrdinal: Int,
@@ -49,19 +47,24 @@ class QrCodeViewModel(
     private val versionInfo by lazy { getVersionInfo() }
 
     internal val state =
-        combine(observeSelectedWalletAccount(), getAddresses()) { wallet, addresses ->
-            QrCodeState.Prepared(
-                walletAddress = addresses.fromReceiveAddressType(ReceiveAddressType.fromOrdinal(addressTypeOrdinal)),
-                onAddressCopy = { address -> onAddressCopyClick(address) },
-                onQrCodeShare = { onQrCodeShareClick(it, versionInfo) },
-                onBack = ::onBack,
-                qrCodeType =
-                    when (wallet) {
-                        is KeystoneAccount -> QrCodeType.KEYSTONE
-                        is ZashiAccount -> QrCodeType.ZASHI
-                        null -> QrCodeType.ZASHI
-                    }
-            )
+        observeSelectedWalletAccount.require().map { account ->
+            val walletAddress = account.fromReceiveAddressType(ReceiveAddressType.fromOrdinal(addressTypeOrdinal))
+
+            if (walletAddress == null) {
+                QrCodeState.Loading
+            } else {
+                QrCodeState.Prepared(
+                    walletAddress = walletAddress,
+                    onAddressCopy = { address -> onAddressCopyClick(address) },
+                    onQrCodeShare = { onQrCodeShareClick(it, versionInfo) },
+                    onBack = ::onBack,
+                    qrCodeType =
+                        when (account) {
+                            is KeystoneAccount -> QrCodeType.KEYSTONE
+                            is ZashiAccount -> QrCodeType.ZASHI
+                        }
+                )
+            }
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),

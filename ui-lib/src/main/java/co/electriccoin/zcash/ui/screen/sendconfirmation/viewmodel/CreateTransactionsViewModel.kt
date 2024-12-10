@@ -28,7 +28,7 @@ class CreateTransactionsViewModel(
     val submissions: MutableStateFlow<List<TransactionSubmitResult>> = MutableStateFlow(emptyList())
 
     val state =
-        observeSelectedWalletAccountUseCase().map {
+        observeSelectedWalletAccountUseCase.require().map {
             SendConfirmationState(
                 SendConfirmationExpandedInfoState(
                     title = stringRes(co.electriccoin.zcash.ui.R.string.send_confirmation_address_from),

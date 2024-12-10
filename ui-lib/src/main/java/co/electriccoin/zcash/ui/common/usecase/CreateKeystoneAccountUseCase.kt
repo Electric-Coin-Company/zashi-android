@@ -4,6 +4,7 @@ import cash.z.ecc.android.sdk.exception.InitializeException
 import cash.z.ecc.android.sdk.model.AccountImportSetup
 import cash.z.ecc.android.sdk.model.AccountPurpose
 import cash.z.ecc.android.sdk.model.UnifiedFullViewingKey
+import cash.z.ecc.android.sdk.model.Zip32AccountIndex
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
@@ -18,6 +19,7 @@ class CreateKeystoneAccountUseCase(
     private val synchronizerProvider: SynchronizerProvider,
     private val navigationRouter: NavigationRouter
 ) {
+    @OptIn(ExperimentalStdlibApi::class)
     @Throws(InitializeException.ImportAccountException::class)
     suspend operator fun invoke(
         accounts: ZcashAccounts,
@@ -31,6 +33,8 @@ class CreateKeystoneAccountUseCase(
                         accountName = "",
                         keySource = "keystone",
                         ufvk = UnifiedFullViewingKey(account.ufvk),
+                        seedFingerprint = accounts.seedFingerprint.hexToByteArray(),
+                        zip32AccountIndex = account.name?.toLongOrNull()?.let { Zip32AccountIndex.new(it) }
                     ),
             )
 

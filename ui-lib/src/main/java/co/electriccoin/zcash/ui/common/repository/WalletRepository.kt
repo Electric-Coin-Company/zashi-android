@@ -10,7 +10,6 @@ import cash.z.ecc.android.sdk.model.FastestServersResult
 import cash.z.ecc.android.sdk.model.PercentDecimal
 import cash.z.ecc.android.sdk.model.PersistableWallet
 import cash.z.ecc.android.sdk.model.SeedPhrase
-import cash.z.ecc.android.sdk.model.WalletAddresses
 import cash.z.ecc.android.sdk.model.ZcashNetwork
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.lightwallet.client.model.LightWalletEndpoint
@@ -76,7 +75,6 @@ interface WalletRepository {
 
     val allAccounts: Flow<List<WalletAccount>?>
     val currentAccount: Flow<WalletAccount?>
-    val currentAddresses: StateFlow<WalletAddresses?>
     val currentWalletSnapshot: StateFlow<WalletSnapshot?>
 
     /**
@@ -209,23 +207,6 @@ class WalletRepositoryImpl(
         secretState.map {
             (it as? SecretState.Ready?)?.persistableWallet
         }
-
-    override val currentAddresses: StateFlow<WalletAddresses?> =
-        currentAccount
-            .map { currentAccount ->
-                currentAccount?.let {
-                    WalletAddresses(
-                        unified = it.unifiedAddress,
-                        sapling = it.saplingAddress,
-                        transparent = it.transparentAddress
-                    )
-                }
-            }
-            .stateIn(
-                scope = scope,
-                started = SharingStarted.WhileSubscribed(),
-                initialValue = null
-            )
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override val currentWalletSnapshot: StateFlow<WalletSnapshot?> =
@@ -441,9 +422,9 @@ private fun toWalletSnapshot(
     WalletSnapshot(
         status = flows[0] as Synchronizer.Status,
         processorInfo = flows[1] as CompactBlockProcessor.ProcessorInfo,
-        orchardBalance = account.orchardBalance,
-        saplingBalance = account.saplingBalance,
-        transparentBalance = account.transparentBalance,
+        orchardBalance = account.unified.balance,
+        saplingBalance = account.sapling?.balance,
+        transparentBalance = account.transparent.balance,
         progress = progressPercentDecimal,
         synchronizerError = flows[3] as SynchronizerError?
     )

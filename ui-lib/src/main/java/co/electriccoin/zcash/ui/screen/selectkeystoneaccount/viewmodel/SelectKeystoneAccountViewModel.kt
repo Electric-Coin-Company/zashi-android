@@ -20,7 +20,7 @@ import com.keystone.module.ZcashAccounts
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -36,18 +36,21 @@ class SelectKeystoneAccountViewModel(
 
     private val selectedAccount = MutableStateFlow<ZcashAccount?>(null)
 
+    private val isCreatingAccount = MutableStateFlow(false)
+
     val state =
-        selectedAccount.map { selection ->
-            createState(selection)
+        combine(isCreatingAccount, selectedAccount) { isCreatingAccount, selection ->
+            createState(selection, isCreatingAccount)
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
             initialValue = null
         )
 
-    private var isCreatingAccount = false
-
-    private suspend fun createState(selection: ZcashAccount?): SelectKeystoneAccountState {
+    private suspend fun createState(
+        selection: ZcashAccount?,
+        isCreatingAccount: Boolean
+    ): SelectKeystoneAccountState {
         return SelectKeystoneAccountState(
             onBackClick = ::onBackClick,
             title = stringRes(co.electriccoin.zcash.ui.R.string.select_keystone_account_title),
@@ -67,7 +70,8 @@ class SelectKeystoneAccountViewModel(
                             onUnlockClick(accounts, selection)
                         }
                     },
-                    isEnabled = selection != null
+                    isEnabled = selection != null,
+                    isLoading = isCreatingAccount
                 ),
             negativeButtonState =
                 ButtonState(
@@ -102,7 +106,7 @@ class SelectKeystoneAccountViewModel(
     }
 
     private fun onBackClick() {
-        if (!isCreatingAccount) {
+        if (!isCreatingAccount.value) {
             navigationRouter.backToRoot()
         }
     }
@@ -111,20 +115,20 @@ class SelectKeystoneAccountViewModel(
         accounts: ZcashAccounts,
         account: ZcashAccount
     ) = viewModelScope.launch {
-        if (isCreatingAccount) return@launch
+        if (isCreatingAccount.value) return@launch
 
         try {
-            isCreatingAccount = true
+            isCreatingAccount.update { true }
             createKeystoneAccount(accounts, account)
         } catch (e: InitializeException.ImportAccountException) {
             Twig.error(e) { "Error importing account" }
         } finally {
-            isCreatingAccount = false
+            isCreatingAccount.update { false }
         }
     }
 
     private fun onForgetDeviceClick() {
-        if (!isCreatingAccount) {
+        if (!isCreatingAccount.value) {
             navigationRouter.backToRoot()
         }
     }

@@ -42,7 +42,7 @@ class ReviewKeystoneTransactionViewModel(
     @OptIn(ExperimentalCoroutinesApi::class)
     val state =
         combine(
-            observeSelectedWalletAccount(),
+            observeSelectedWalletAccount.require(),
             keystoneProposalRepository.completeZecSend,
             isReceiverExpanded
         ) { wallet, zecSend, isReceiverExpanded ->

@@ -11,7 +11,6 @@ import cash.z.ecc.android.sdk.model.PersistableWallet
 import cash.z.ecc.android.sdk.model.SeedPhrase
 import cash.z.ecc.android.sdk.model.TransactionOverview
 import cash.z.ecc.android.sdk.model.TransactionRecipient
-import cash.z.ecc.android.sdk.model.WalletAddresses
 import cash.z.ecc.android.sdk.model.ZcashNetwork
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import cash.z.ecc.sdk.type.fromResources
@@ -80,8 +79,6 @@ class WalletViewModel(
     val secretState: StateFlow<SecretState> = walletRepository.secretState
 
     val currentWalletSnapshot: StateFlow<WalletSnapshot?> = walletRepository.currentWalletSnapshot
-
-    val currentAddresses: StateFlow<WalletAddresses?> = walletRepository.currentAddresses
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val transactionHistoryState =

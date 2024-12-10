@@ -129,7 +129,7 @@ class IntegrationsViewModel(
                 }
 
                 appId.isNotEmpty() -> {
-                    val address = getZashiAccount().transparentAddress
+                    val address = getZashiAccount().transparent
                     val url =
                         "https://pay.coinbase.com/buy/select-asset?appId=$appId&addresses={\"${address}\":[\"zcash\"]}"
                     coinbaseNavigationCommand.emit(url)
