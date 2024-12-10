@@ -12,6 +12,7 @@ import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.repository.WalletRepository
 import co.electriccoin.zcash.ui.design.R
+import co.electriccoin.zcash.ui.design.component.AccountSwitchState
 import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.component.ZashiMainTopAppBarState
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
@@ -51,17 +52,20 @@ class ZashiMainTopAppBarViewModel(
         currentAccount: WalletAccount?,
         isHideBalances: Boolean?
     ) = ZashiMainTopAppBarState(
-        accountType =
+        accountSwitchState = AccountSwitchState(
+            accountType =
             when (currentAccount) {
                 is KeystoneAccount -> ZashiMainTopAppBarState.AccountType.KEYSTONE
                 is ZashiAccount -> ZashiMainTopAppBarState.AccountType.ZASHI
                 null -> ZashiMainTopAppBarState.AccountType.ZASHI
             },
+            onAccountTypeClick = ::onAccountTypeClicked,
+        ),
         balanceVisibilityButton =
             IconButtonState(
                 icon =
                     if (isHideBalances == true) {
-                        R.drawable.ic_app_bar_balances_hide
+                        R.drawable.ic_app_bar_balances_show
                     } else {
                         R.drawable.ic_app_bar_balances_hide
                     },
@@ -71,8 +75,7 @@ class ZashiMainTopAppBarViewModel(
             IconButtonState(
                 icon = R.drawable.ic_app_bar_settings,
                 onClick = ::onSettingsClicked
-            ),
-        onAccountTypeClick = ::onAccountTypeClicked
+            )
     )
 
     private fun onAccountTypeClicked() = navigationRouter.forward(AccountList)
